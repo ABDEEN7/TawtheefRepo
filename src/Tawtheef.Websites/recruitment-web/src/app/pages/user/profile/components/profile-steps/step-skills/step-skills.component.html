@@ -3,12 +3,12 @@
     <div class="col-12">
         <div class="section-head">
             <h5 class="text-primary "> {{ 'wizard.skills.skills' | translate }}</h5>
-            <small class="text-muted d-block">{{ 'wizard.skills.hint' | translate }}</small>
+            <p class="text-muted d-block">{{ 'wizard.skills.hint' | translate }}</p>
         </div>
 
       <div class="row my-4">
            <div class="col-md-4">
-             <p-auto-complete
+             <p-auto-complete 
              [(ngModel)]="skillSearchModel"
              [suggestions]="skillOptions"
              (completeMethod)="onSkillSearch($event)"
@@ -59,7 +59,7 @@
             <tr>
               <th>{{ 'wizard.skills.skill' | translate }}</th>
               <th>{{ 'wizard.skills.level' | translate }}</th>
-              <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+              <th>{{ 'wizard.table.actions' | translate }}</th>
             </tr>
           </ng-template>
 
@@ -72,12 +72,15 @@
               </span>
               </td>
               <td class="text-end">
-                <button
-                  class="btn btn-sm btn-outline-danger rounded-pill"
+                  <div class="action-buttons">
+                       <button
+                  class="btn"
                   (click)="removeSkill(i)"
                   pTooltip="{{ 'wizard.buttons.delete' | translate }}">
-                  <i class="fa-solid fa-trash"></i>
+                  <i class="hgi hgi-stroke hgi-delete-02"></i>
                 </button>
+                  </div>
+                
               </td>
             </tr>
           </ng-template>

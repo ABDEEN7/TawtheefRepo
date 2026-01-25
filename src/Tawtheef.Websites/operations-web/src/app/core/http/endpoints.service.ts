@@ -82,6 +82,7 @@ export class EndpointsService {
   jobCandidates = {
     overview: this.getFullUrl('/jobCandidates/overview'),
     search: this.getFullUrl('/jobCandidates/search'),
+    profile: this.getFullUrl('/jobCandidates/profile'),
     export: this.getFullUrl('/jobCandidates/export'),
     sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
     filters: this.getFullUrl('/jobCandidates/filters'),

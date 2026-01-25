@@ -1,25 +1,27 @@
 <div
-  class="roles-container card shadow-sm p-4"
+  class="card card-table"
   i18nNamespace="pages/admin/roles-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="page-title">{{ 'ROLES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="this.openAdd()">
+    <div class="card-body">
+           <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">{{ 'ROLES.TITLE' | translate }}</h3>
+    <button type="button" class="btn btn-primary" (click)="this.openAdd()">
       <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
       {{ 'ROLES.ADD_ROLE' | translate }}
     </button>
   </div>
+  <div class="table-card rounded overflow-hidden">
 
-  <div class="table-wrapper">
-    <p-table class="custom-table" [value]="pagedRoles()" [rowHover]="true">
+  
+  <div class="table-responsive">
+    <p-table  [value]="pagedRoles()" [rowHover]="true">
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'ROLES.NAME' | translate }}</th>
           <th>{{ 'ROLES.DESCRIPTION' | translate }}</th>
           <th>{{ 'ROLES.PERMISSIONS' | translate }}</th>
-          <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'ROLES.ACTIONS' | translate }}</th>
+          <th>{{ 'ROLES.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -29,13 +31,13 @@
           <td>{{ this.localizedDescription(role) }}</td>
           <td>
             @for (perm of role.permissionNames?.length ? role.permissionNames : role.permissions; track perm) {
-              <span class="badge bg-secondary-subtle text-secondary me-1 mb-1 perm-pill">
+              <span class="pill neutral m-1">
                 {{ perm }}
               </span>
             }
           </td>
           @if (!role.isSystemRole) {
-            <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+            <td class="text-nowrap">
               <div class="action-buttons">
                 <button
                   type="button"
@@ -76,6 +78,7 @@
       </ng-template>
     </p-table>
   </div>
+  </div>
 </div>
 
 <div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
@@ -88,5 +91,8 @@
     (pageSizeChanged)="onPageSizeChange($event)">
   </app-pagination>
 </div>
+    </div>
+
+ 
 
 <p-confirmDialog></p-confirmDialog>

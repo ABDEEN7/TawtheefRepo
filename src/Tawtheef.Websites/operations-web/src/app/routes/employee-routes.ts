@@ -44,6 +44,9 @@ export const employeeRoutes = {
   jobCandidates(id: GUID){
     return this.employee + `/jobs/view/${id}/candidates`;
   },
+  jobCandidateProfile(jobId: GUID, candidateId: GUID) {
+    return this.employee + `/jobs/view/${jobId}/candidates/${candidateId}`;
+  },
   jobEdit(jobId: GUID){
     return this.employee + '/jobs/edit/' + jobId;
   },

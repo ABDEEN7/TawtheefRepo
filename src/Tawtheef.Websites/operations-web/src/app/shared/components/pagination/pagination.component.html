@@ -19,7 +19,7 @@
 
   <div class="page-size" *ngIf="pageSizeOptions().length">
     <label class="form-label me-2">{{ translationPrefix() + '.page_size' | translate }}</label>
-    <select class="form-select form-select-sm d-inline-block w-auto" [ngModel]="itemsPerPage()"
+    <select class="form-select d-inline-block w-auto" [ngModel]="itemsPerPage()"
             (ngModelChange)="changePageSize($event)">
       @for (size of pageSizeOptions(); track size) {
         <option [value]="size">{{ size }}</option>

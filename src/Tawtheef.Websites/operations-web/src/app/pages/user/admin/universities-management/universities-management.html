@@ -1,115 +1,127 @@
 <div
-  class="universities-container card shadow-sm p-4"
+  class="card card-table"
   i18nNamespace="pages/admin/universities-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
+      <div class="card-body">
+           <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+              <h3 class="fw-bold mb-0">{{ 'UNIVERSITIES.TITLE' | translate }}</h3>
+              <button type="button" class="btn btn-primary" (click)="openAdd()">
+                <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+                {{ 'UNIVERSITIES.ADD_UNIVERSITY' | translate }}
+              </button>
+            </div>
+              <div class="card card-table mb-3">
+                   <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                  <div class="col-md-5 col-lg-4">
+                    <label class="form-label">{{ 'UNIVERSITIES.SEARCH_BY_NAME' | translate }}</label>
+                    <div class="input-group search-bar">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [placeholder]="'UNIVERSITIES.SEARCH_PLACEHOLDER' | translate"
+                        [(ngModel)]="searchTerm"
+                        (ngModelChange)="onSearchChange()" />
+                    </div>
+                  </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h3 class="page-title mb-0">{{ 'UNIVERSITIES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-maroon btn-pill shadow-sm" (click)="openAdd()">
-      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
-      {{ 'UNIVERSITIES.ADD_UNIVERSITY' | translate }}
-    </button>
-  </div>
+                  <div class="col-md-4 col-lg-3">
+                    <label class="form-label">{{ 'UNIVERSITIES.FILTER_COUNTRY' | translate }}</label>
+                    <div class="input-group search-bar">
+                      <p-select
+                        [options]="countries()"
+                        optionLabel="name"
+                        optionValue="id"
+                        filter="true"
+                        style="width: 100%;"
+                        [showClear]="true"
+                        [placeholder]="'UNIVERSITIES.SELECT_COUNTRY' | translate"
+                        [(ngModel)]="selectedCountry"
+                        (onChange)="onCountryFilterChange($event.value)">
+                      </p-select>
+                    </div>
+                  </div>
+                </div>
+                   </div>
+                
+              </div>
+              <div class="table-card rounded overflow-hidden">
+                    <div class="table-responsive">
+                  <table class="table table-bordered table-hover align-middle w-100">
+                    <thead class="table-light">
+                    <tr>
+                      <th>{{ 'UNIVERSITIES.NAME_AR' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.NAME_EN' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.COUNTRY' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.CITY' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.CODE' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.EMAIL' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.PHONE' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.WEBSITE' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.STATUS' | translate }}</th>
+                      <th>{{ 'UNIVERSITIES.ACTIONS' | translate }}</th>
+                    </tr>
+                    </thead>
 
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3 align-items-end">
-      <div class="col-md-5 col-lg-4">
-        <label class="form-label">{{ 'UNIVERSITIES.SEARCH_BY_NAME' | translate }}</label>
-        <div class="input-group search-bar">
-          <input
-            type="text"
-            class="form-control form-control-sm border-start-0"
-            [placeholder]="'UNIVERSITIES.SEARCH_PLACEHOLDER' | translate"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onSearchChange()" />
-        </div>
+                    <tbody>
+                      @if (universities().length === 0) {
+                        <tr>
+                          <td colspan="10" class="text-muted no-data text-center">
+                            {{ 'NO_RECORDS' | translate }}
+                          </td>
+                        </tr>
+                      } @else {
+                        @for (university of universities(); track university.id; let i = $index) {
+                          <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                            <td>{{ university.nameAr }}</td>
+                            <td>{{ university.nameEn }}</td>
+                            <td>{{ university.countryName }}</td>
+                            <td>{{ university.cityName }}</td>
+                            <td>{{ university.code || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
+                            <td>{{ university.email || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
+                            <td>{{ university.phone || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
+                            <td>{{ university.webSite || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
+                            <td>
+                              <span class="pill" [class.success]="university.isActive" [class.soft]="!university.isActive">
+                                {{ university.isActive ? ('UNIVERSITIES.ACTIVE' | translate) : ('UNIVERSITIES.INACTIVE' | translate) }}
+                              </span>
+                            </td>
+                            <td class="text-nowrap ">
+                                <div class="action-buttons">
+                                      <button
+                                type="button"
+                                class="btn"
+                                (click)="openEdit(university)"
+                                [pTooltip]="'UNIVERSITIES.EDIT' | translate"
+                                tooltipPosition="top"
+                                aria-label="{{ 'UNIVERSITIES.EDIT' | translate }}">
+                                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                              </button>
+
+                              <p-toggle-switch
+                                [ngModel]="university.isActive"
+                                (ngModelChange)="toggleStatus(university)"
+                                [pTooltip]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)"
+                                tooltipPosition="top"
+                                [attr.aria-label]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)">
+                              </p-toggle-switch>
+                                </div>
+                              
+                            </td>
+                          </tr>
+                        }
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+ 
       </div>
 
-      <div class="col-md-4 col-lg-3">
-        <label class="form-label">{{ 'UNIVERSITIES.FILTER_COUNTRY' | translate }}</label>
-        <div class="input-group search-bar">
-          <p-select
-            [options]="countries()"
-            optionLabel="name"
-            optionValue="id"
-            filter="true"
-            style="width: 100%;"
-            [showClear]="true"
-            [placeholder]="'UNIVERSITIES.SELECT_COUNTRY' | translate"
-            [(ngModel)]="selectedCountry"
-            (onChange)="onCountryFilterChange($event.value)">
-          </p-select>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 
-  <div class="table-responsive table-wrapper">
-    <table class="table custom-table align-middle mb-0">
-      <thead>
-      <tr>
-        <th>{{ 'UNIVERSITIES.NAME_AR' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.NAME_EN' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.COUNTRY' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.CITY' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.CODE' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.EMAIL' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.PHONE' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.WEBSITE' | translate }}</th>
-        <th>{{ 'UNIVERSITIES.STATUS' | translate }}</th>
-        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'UNIVERSITIES.ACTIONS' | translate }}</th>
-      </tr>
-      </thead>
 
-      <tbody>
-        @if (universities().length === 0) {
-          <tr>
-            <td colspan="10" class="text-muted no-data text-center">
-              {{ 'NO_RECORDS' | translate }}
-            </td>
-          </tr>
-        } @else {
-          @for (university of universities(); track university.id; let i = $index) {
-            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-              <td>{{ university.nameAr }}</td>
-              <td>{{ university.nameEn }}</td>
-              <td>{{ university.countryName }}</td>
-              <td>{{ university.cityName }}</td>
-              <td>{{ university.code || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
-              <td>{{ university.email || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
-              <td>{{ university.phone || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
-              <td>{{ university.webSite || ('UNIVERSITIES.NO_VALUE' | translate) }}</td>
-              <td>
-                <span class="badge" [class.bg-success-subtle]="university.isActive" [class.text-success]="university.isActive" [class.bg-danger-subtle]="!university.isActive" [class.text-danger]="!university.isActive">
-                  {{ university.isActive ? ('UNIVERSITIES.ACTIVE' | translate) : ('UNIVERSITIES.INACTIVE' | translate) }}
-                </span>
-              </td>
-              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="openEdit(university)"
-                  [pTooltip]="'UNIVERSITIES.EDIT' | translate"
-                  tooltipPosition="top"
-                  aria-label="{{ 'UNIVERSITIES.EDIT' | translate }}">
-                  <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                </button>
-
-                <p-toggle-switch
-                  [ngModel]="university.isActive"
-                  (ngModelChange)="toggleStatus(university)"
-                  [pTooltip]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)"
-                  tooltipPosition="top"
-                  [attr.aria-label]="university.isActive ? ('UNIVERSITIES.DEACTIVATE' | translate) : ('UNIVERSITIES.ACTIVATE' | translate)">
-                </p-toggle-switch>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
-  </div>
 </div>
 
 <div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
