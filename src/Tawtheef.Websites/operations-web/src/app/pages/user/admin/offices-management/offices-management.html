@@ -1,104 +1,110 @@
 <div
-  class="offices-container card shadow-sm p-4"
+  class="card card-table"
   i18nNamespace="pages/admin/offices-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
+    <div class="card-body">
+           <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+              <h3 class="fw-bold">{{ 'OFFICES.TITLE' | translate }}</h3>
+              <button type="button" class="btn btn-primary" (click)="openAdd()">
+                <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+                {{ 'OFFICES.ADD_OFFICE' | translate }}
+              </button>
+            </div>
+          <div class="card card-table mb-3">
+              <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5 col-lg-4">
+                          <label class="form-label">{{ 'OFFICES.SEARCH_BY_NAME' | translate }}</label>
+                          <div class="input-group search-bar">
+                            <input
+                              type="text"
+                              class="form-control"
+                              [placeholder]="'OFFICES.SEARCH_PLACEHOLDER' | translate"
+                              [(ngModel)]="searchTerm"
+                              (ngModelChange)="onSearchChange()" />
+                          </div>
+                        </div>
+                    </div>
+              </div>
+          
+          </div>
+          <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+              <table class="table table-bordered table-hover align-middle w-100">
+                          <thead class="table-light">
+                <tr>
+                  <th>{{ 'OFFICES.NAME' | translate }}</th>
+                  <th>{{ 'OFFICES.COUNTRY' | translate }}</th>
+                  <th>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</th>
+                  <th>{{ 'OFFICES.ADMIN_EMAIL' | translate }}</th>
+                  <th >{{ 'OFFICES.ACTIONS' | translate }}</th>
+                </tr>
+                </thead>
 
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h3 class="page-title mb-0">{{ 'OFFICES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-primary" (click)="openAdd()">
-      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
-      {{ 'OFFICES.ADD_OFFICE' | translate }}
-    </button>
-  </div>
+                <tbody>
+                  @if (offices().length === 0) {
+                    <tr>
+                      <td colspan="5" class="text-muted no-data text-center">
+                        {{ 'NO_RECORDS' | translate }}
+                      </td>
+                    </tr>
+                  } @else {
+                    @for (office of offices(); track office.id; let i = $index) {
+                      <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                        <td>{{ localizedOfficeName(office) }}</td>
+                        <td>{{ office.country.name }}</td>
+                        <td>
+                          @for (country of supportedCountriesLabel(office); track country; let cIndex = $index) {
+                            <span class="pill neutral">{{ country }}</span>
+                          }
+                        </td>
+                        <td>{{ office.adminEmail }}</td>
+                        <td class="text-nowrap">
+                            <div class="action-buttons">
+                                 <button
+                            type="button"
+                            class="btn"
+                            (click)="openView(office)"
+                            [pTooltip]="'OFFICES.VIEW' | translate"
+                            tooltipPosition="top"
+                            [tooltipDisabled]="false"
+                            aria-label="{{ 'OFFICES.VIEW' | translate }}">
+                            <i class="hgi hgi-stroke hgi-view"></i>
+                          </button>
 
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3 align-items-end">
-      <div class="col-md-5 col-lg-4">
-        <label class="form-label">{{ 'OFFICES.SEARCH_BY_NAME' | translate }}</label>
-        <div class="input-group search-bar">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-          <input
-            type="text"
-            class="form-control form-control-sm border-start-0"
-            [placeholder]="'OFFICES.SEARCH_PLACEHOLDER' | translate"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onSearchChange()" />
-        </div>
-      </div>
+                          <button
+                            type="button"
+                            class="btn"
+                            (click)="openEdit(office)"
+                            [pTooltip]="'OFFICES.EDIT' | translate"
+                            tooltipPosition="top"
+                            [tooltipDisabled]="false"
+                            aria-label="{{ 'OFFICES.EDIT' | translate }}">
+                            <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="btn"
+                            (click)="confirmDelete(office)"
+                            [pTooltip]="'OFFICES.DELETE' | translate"
+                            tooltipPosition="top"
+                            [tooltipDisabled]="false"
+                            aria-label="{{ 'OFFICES.DELETE' | translate }}">
+                            <i class="hgi hgi-stroke hgi-delete-02"></i>
+                          </button>
+                            </div>
+                          
+                        </td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
     </div>
-  </div>
-
-  <div class="table-responsive table-wrapper">
-    <table class="table custom-table align-middle mb-0">
-      <thead>
-      <tr>
-        <th>{{ 'OFFICES.NAME' | translate }}</th>
-        <th>{{ 'OFFICES.COUNTRY' | translate }}</th>
-        <th>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</th>
-        <th>{{ 'OFFICES.ADMIN_EMAIL' | translate }}</th>
-        <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'OFFICES.ACTIONS' | translate }}</th>
-      </tr>
-      </thead>
-
-      <tbody>
-        @if (offices().length === 0) {
-          <tr>
-            <td colspan="5" class="text-muted no-data text-center">
-              {{ 'NO_RECORDS' | translate }}
-            </td>
-          </tr>
-        } @else {
-          @for (office of offices(); track office.id; let i = $index) {
-            <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-              <td>{{ localizedOfficeName(office) }}</td>
-              <td>{{ office.country.name }}</td>
-              <td>
-                @for (country of supportedCountriesLabel(office); track country; let cIndex = $index) {
-                  <span class="pill neutral">{{ country }}</span>
-                }
-              </td>
-              <td>{{ office.adminEmail }}</td>
-              <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="openView(office)"
-                  [pTooltip]="'OFFICES.VIEW' | translate"
-                  tooltipPosition="top"
-                  [tooltipDisabled]="false"
-                  aria-label="{{ 'OFFICES.VIEW' | translate }}">
-                  <i class="bi bi-eye"></i>
-                </button>
-
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="openEdit(office)"
-                  [pTooltip]="'OFFICES.EDIT' | translate"
-                  tooltipPosition="top"
-                  [tooltipDisabled]="false"
-                  aria-label="{{ 'OFFICES.EDIT' | translate }}">
-                  <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                </button>
-
-                <button
-                  type="button"
-                  class="icon-btn text-danger"
-                  (click)="confirmDelete(office)"
-                  [pTooltip]="'OFFICES.DELETE' | translate"
-                  tooltipPosition="top"
-                  [tooltipDisabled]="false"
-                  aria-label="{{ 'OFFICES.DELETE' | translate }}">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
-  </div>
 </div>
 
 <app-pagination

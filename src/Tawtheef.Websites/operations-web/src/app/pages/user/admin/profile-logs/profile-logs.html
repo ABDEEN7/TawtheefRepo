@@ -1,165 +1,169 @@
 <div
-  class="profile-logs-container card shadow-sm p-4"
+  class="card card-table"
   i18nNamespace="pages/admin/profile-logs"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h3 class="page-title mb-0">{{ 'PROFILE_LOGS.TITLE' | translate }}</h3>
+     <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h3 class="fw-bold">{{ 'PROFILE_LOGS.TITLE' | translate }}</h3>
+      </div>
+
+  <div class="card card-table mb-3">
+       <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_PROFILE_ID' | translate }}</label>
+                <input type="text"
+                      class="form-control"
+                      [(ngModel)]="profileIdFilter"
+                      (input)="onFiltersChanged()"
+                      [placeholder]="'PROFILE_LOGS.FILTER_PROFILE_ID_PLACEHOLDER' | translate"/>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
+                <input type="text"
+                      class="form-control"
+                      [(ngModel)]="userIdFilter"
+                      (input)="onFiltersChanged()"
+                      [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"/>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_ACTION' | translate }}</label>
+                <input type="text"
+                      class="form-control"
+                      [(ngModel)]="actionTypeFilter"
+                      (input)="onFiltersChanged()"
+                      [placeholder]="'PROFILE_LOGS.FILTER_ACTION_PLACEHOLDER' | translate"/>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SEARCH' | translate }}</label>
+                <input type="text"
+                      class="form-control"
+                      [(ngModel)]="searchFilter"
+                      (input)="onFiltersChanged()"
+                      [placeholder]="'PROFILE_LOGS.FILTER_SEARCH_PLACEHOLDER' | translate"/>
+              </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SOURCE' | translate }}</label>
+                <p-select
+                  [options]="sourceOptions"
+                  [showClear]="true"
+                  [placeholder]="'PROFILE_LOGS.FILTER_SOURCE_PLACEHOLDER' | translate"
+                  optionLabel="label"
+                  optionValue="id"
+                  name="source"
+                  [ngModel]="sourceFilter"
+                  (onChange)="sourceFilter = $event.value; onFiltersChanged()"
+                  (onClear)="sourceFilter = null; onFiltersChanged()" class="form-select p-0"
+                >
+                  <ng-template #selectedItem let-option>
+                    {{ option.label | translate }}
+                  </ng-template>
+                  <ng-template #item let-option>
+                    {{ option.label | translate }}
+                  </ng-template>
+                </p-select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_REVIEW_STATUS' | translate }}</label>
+                <p-select
+                  [options]="reviewStatusOptions"
+                  [showClear]="true"
+                  [placeholder]="'PROFILE_LOGS.FILTER_REVIEW_STATUS_PLACEHOLDER' | translate"
+                  optionLabel="label"
+                  optionValue="id"
+                  name="reviewStatus"
+                  [ngModel]="reviewStatusFilter"
+                  (onChange)="reviewStatusFilter = $event.value; onFiltersChanged()"
+                  (onClear)="reviewStatusFilter = null; onFiltersChanged()" class="form-select p-0"
+                >
+                  <ng-template #selectedItem let-option>
+                    {{ option.label | translate }}
+                  </ng-template>
+                  <ng-template #item let-option>
+                    {{ option.label | translate }}
+                  </ng-template>
+                </p-select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
+                <input type="datetime-local"
+                      class="form-control"
+                      [ngModel]="toDateInputValue(fromDate)"
+                      (ngModelChange)="onFromDateChange($event)"/>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_TO' | translate }}</label>
+                <input type="datetime-local"
+                      class="form-control"
+                      [ngModel]="toDateInputValue(toDate)"
+                      (ngModelChange)="onToDateChange($event)"/>
+              </div>
+            </div>
+        </div>
   </div>
+  <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive table-wrapper">
+            <table class="table table-bordered table-hover align-middle w-100">
+                <thead class="table-light">
+              <tr>
+                <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_PROFILE_ID' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_REVIEW_STATUS' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_USER' | translate }}</th>
+                <th>{{ 'PROFILE_LOGS.TABLE_NOTES' | translate }}</th>
+              </tr>
+              </thead>
 
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3">
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_PROFILE_ID' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="profileIdFilter"
-               (input)="onFiltersChanged()"
-               [placeholder]="'PROFILE_LOGS.FILTER_PROFILE_ID_PLACEHOLDER' | translate"/>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="userIdFilter"
-               (input)="onFiltersChanged()"
-               [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"/>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_ACTION' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="actionTypeFilter"
-               (input)="onFiltersChanged()"
-               [placeholder]="'PROFILE_LOGS.FILTER_ACTION_PLACEHOLDER' | translate"/>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SEARCH' | translate }}</label>
-        <input type="text"
-               class="form-control form-control-sm"
-               [(ngModel)]="searchFilter"
-               (input)="onFiltersChanged()"
-               [placeholder]="'PROFILE_LOGS.FILTER_SEARCH_PLACEHOLDER' | translate"/>
-      </div>
-    </div>
-
-    <div class="row g-3 mt-1">
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SOURCE' | translate }}</label>
-        <p-select
-          [options]="sourceOptions"
-          [showClear]="true"
-          [placeholder]="'PROFILE_LOGS.FILTER_SOURCE_PLACEHOLDER' | translate"
-          optionLabel="label"
-          optionValue="id"
-          name="source"
-          size="small"
-          [ngModel]="sourceFilter"
-          (onChange)="sourceFilter = $event.value; onFiltersChanged()"
-          (onClear)="sourceFilter = null; onFiltersChanged()"
-        >
-          <ng-template #selectedItem let-option>
-            {{ option.label | translate }}
-          </ng-template>
-          <ng-template #item let-option>
-            {{ option.label | translate }}
-          </ng-template>
-        </p-select>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_REVIEW_STATUS' | translate }}</label>
-        <p-select
-          [options]="reviewStatusOptions"
-          [showClear]="true"
-          [placeholder]="'PROFILE_LOGS.FILTER_REVIEW_STATUS_PLACEHOLDER' | translate"
-          optionLabel="label"
-          optionValue="id"
-          name="reviewStatus"
-          size="small"
-          [ngModel]="reviewStatusFilter"
-          (onChange)="reviewStatusFilter = $event.value; onFiltersChanged()"
-          (onClear)="reviewStatusFilter = null; onFiltersChanged()"
-        >
-          <ng-template #selectedItem let-option>
-            {{ option.label | translate }}
-          </ng-template>
-          <ng-template #item let-option>
-            {{ option.label | translate }}
-          </ng-template>
-        </p-select>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
-        <input type="datetime-local"
-               class="form-control form-control-sm"
-               [ngModel]="toDateInputValue(fromDate)"
-               (ngModelChange)="onFromDateChange($event)"/>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">{{ 'PROFILE_LOGS.FILTER_TO' | translate }}</label>
-        <input type="datetime-local"
-               class="form-control form-control-sm"
-               [ngModel]="toDateInputValue(toDate)"
-               (ngModelChange)="onToDateChange($event)"/>
-      </div>
-    </div>
-  </div>
-
-  <div class="table-responsive table-wrapper">
-    <table class="table custom-table align-middle mb-0">
-      <thead>
-      <tr>
-        <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_PROFILE_ID' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_REVIEW_STATUS' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_USER' | translate }}</th>
-        <th>{{ 'PROFILE_LOGS.TABLE_NOTES' | translate }}</th>
-      </tr>
-      </thead>
-
-      <tbody>
-      @if (logs().length === 0) {
-        <tr>
-          <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
-            {{ 'NO_RECORDS' | translate }}
-          </td>
-        </tr>
-      } @else {
-        @for (log of logs(); track log.id; let i = $index) {
-          <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-            <td>{{ log.createdDate | date:'short' }}</td>
-            <td class="text-break">{{ log.userProfileId }}</td>
-            <td>
-              <span class="badge bg-light text-body fw-semibold">
-                {{ sourceLabel(log.source) }}
-              </span>
-            </td>
-            <td class="text-break fw-semibold">{{ log.actionType }}</td>
-            <td class="text-break">{{ log.section || '-' }}</td>
-            <td>
-              @if (log.reviewStatus !== undefined && log.reviewStatus !== null) {
-                <span class="pill info">
-                  {{ reviewStatusLabel(log.reviewStatus) }}
-                </span>
+              <tbody>
+              @if (logs().length === 0) {
+                <tr>
+                  <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+                    {{ 'NO_RECORDS' | translate }}
+                  </td>
+                </tr>
               } @else {
-                <span class="text-muted small">-</span>
+                @for (log of logs(); track log.id; let i = $index) {
+                  <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                    <td>{{ log.createdDate | date:'short' }}</td>
+                    <td class="text-break">{{ log.userProfileId }}</td>
+                    <td>
+                      <span class="pill neutral">
+                        {{ sourceLabel(log.source) }}
+                      </span>
+                    </td>
+                    <td class="text-break fw-semibold">{{ log.actionType }}</td>
+                    <td class="text-break">{{ log.section || '-' }}</td>
+                    <td>
+                      @if (log.reviewStatus !== undefined && log.reviewStatus !== null) {
+                        <span class="pill info">
+                          {{ reviewStatusLabel(log.reviewStatus) }}
+                        </span>
+                      } @else {
+                        <span class="text-muted small">-</span>
+                      }
+                    </td>
+                    <td class="text-break">
+                      <div class="fw-semibold">{{ log.userName || log.userId || ('PROFILE_LOGS.UNKNOWN_USER' | translate) }}</div>
+                      @if (log.userId) {
+                        <div class="text-muted small">{{ log.userId }}</div>
+                      }
+                    </td>
+                    <td class="text-break small">{{ log.notes || '-' }}</td>
+                  </tr>
+                }
               }
-            </td>
-            <td class="text-break">
-              <div class="fw-semibold">{{ log.userName || log.userId || ('PROFILE_LOGS.UNKNOWN_USER' | translate) }}</div>
-              @if (log.userId) {
-                <div class="text-muted small">{{ log.userId }}</div>
-              }
-            </td>
-            <td class="text-break small">{{ log.notes || '-' }}</td>
-          </tr>
-        }
-      }
-      </tbody>
-    </table>
+              </tbody>
+            </table>
+        </div>
+  </div>
+  
   </div>
 </div>
 

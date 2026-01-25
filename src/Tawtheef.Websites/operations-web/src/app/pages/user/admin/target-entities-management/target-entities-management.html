@@ -1,36 +1,35 @@
-<div
-  class="target-entities-container card shadow-sm p-4"
+<div class="card card-table"
   i18nNamespace="pages/admin/target-entities-management"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h3 class="page-title mb-0">{{ 'TARGET_ENTITIES.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-primary" (click)="openAdd()">
-      <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
-      {{ 'TARGET_ENTITIES.ADD_TARGET_ENTITY' | translate }}
-    </button>
-  </div>
-
-  <div class="filters card p-3 mb-3">
-    <div class="row g-3 align-items-end">
-      <div class="col-md-5 col-lg-4">
-        <label class="form-label">{{ 'TARGET_ENTITIES.SEARCH_BY_NAME' | translate }}</label>
-        <div class="input-group search-bar">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-          <input
-            type="text"
-            class="form-control form-control-sm border-start-0"
-            [placeholder]="'TARGET_ENTITIES.SEARCH_PLACEHOLDER' | translate"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onSearchChange()" />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="table-wrapper">
-    <p-table class="custom-table" [value]="targetEntities()" [rowHover]="true">
+      <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                  <h3 class="fw-bold">{{ 'TARGET_ENTITIES.TITLE' | translate }}</h3>
+                  <button type="button" class="btn btn-primary" (click)="openAdd()">
+                    <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+                    {{ 'TARGET_ENTITIES.ADD_TARGET_ENTITY' | translate }}
+                  </button>
+            </div>
+              <div class="card card-table mb-3">
+                  <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                          <div class="col-md-5 col-lg-4">
+                            <label class="form-label">{{ 'TARGET_ENTITIES.SEARCH_BY_NAME' | translate }}</label>
+                            <div class="input-group search-bar">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [placeholder]="'TARGET_ENTITIES.SEARCH_PLACEHOLDER' | translate"
+                                [(ngModel)]="searchTerm"
+                                (ngModelChange)="onSearchChange()" />
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+              </div>
+              <div class="table-card rounded overflow-hidden">
+                   <div class="table-responsive">
+                         <p-table class="custom-table" [value]="targetEntities()" [rowHover]="true">
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'TARGET_ENTITIES.NAME_AR' | translate }}</th>
@@ -38,7 +37,7 @@
           <th>{{ 'TARGET_ENTITIES.DESC_AR' | translate }}</th>
           <th>{{ 'TARGET_ENTITIES.DESC_EN' | translate }}</th>
           <th>{{ 'TARGET_ENTITIES.STATUS' | translate }}</th>
-          <th [class.text-end]="!isRtl()" [class.text-start]="isRtl()">{{ 'TARGET_ENTITIES.ACTIONS' | translate }}</th>
+          <th >{{ 'TARGET_ENTITIES.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -53,7 +52,7 @@
               {{ targetEntity.isActive ? ('TARGET_ENTITIES.ACTIVE' | translate) : ('TARGET_ENTITIES.INACTIVE' | translate) }}
             </span>
           </td>
-          <td class="text-nowrap action-cell" [class.text-end]="!isRtl()" [class.text-start]="isRtl()">
+          <td class="text-nowrap">
             <div class="action-buttons">
               <button
                 type="button"
@@ -85,7 +84,14 @@
         </tr>
       </ng-template>
     </p-table>
-  </div>
+                   </div>
+              </div>
+      </div>
+
+
+ 
+
+
 </div>
 
 <div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
