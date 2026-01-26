@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Application.Operation;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,8 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
         new DefaultAzureCredential(),
         new KeyVaultSecretManager());
 }
-builder.Services.AddApplicationInsightsTelemetry();
+// Enable OpenTelemetry -> Azure Monitor (Application Insights)
+builder.Services.AddOpenTelemetry().UseAzureMonitor();
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => {
         var telemetryConfiguration = services.GetRequiredService<TelemetryConfiguration>();
