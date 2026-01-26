@@ -1,25 +1,9 @@
-trigger:
-  branches:
-    include:
-      - Development
-  tags:
-    include:
-      - stage-*
-      - prod-*
+trigger: none
 
 pr:
   branches:
     include:
       - "*"
-
-variables:
-  buildConfiguration: Release
-  apiProject: src/Tawtheef.APIs/Operations.API/Operations.API.csproj
-  efMigrationsProject: src/Infrastructure/Infrastructure.csproj
-  efStartupProject: src/Tawtheef.APIs/Operations.API/Operations.API.csproj
-  azureServiceConnection: moehe-devtest-qc
-  stageAppServiceName: App-Tawtheef-Operations-Api-Dev-01
-  prodAppServiceName: App-Tawtheef-Recruitment-Api-Dev-01
 
 pool:
   vmImage: "ubuntu-latest"
@@ -31,7 +15,6 @@ stages:
   # =========================
   - stage: detect_changes_stage
     displayName: Detect Changes
-    condition: eq(variables['Build.Reason'], 'PullRequest')
     jobs:
       - job: detect
         displayName: Detect changed files
@@ -105,12 +88,9 @@ stages:
     dependsOn: detect_changes_stage
     # Condition will be evaluated at runtime
     condition: |
-      and(
-        eq(variables['Build.Reason'], 'PullRequest'),
-        or(
-          eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'], 'true'),
-          eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'], 'true')
-        )
+      or(
+        eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'], 'true'),
+        eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'], 'true')
       )
     jobs:
       - job: buildOperations
@@ -174,11 +154,7 @@ stages:
   - stage: backend_stage
     displayName: Build Backend
     dependsOn: detect_changes_stage
-    condition: |
-      and(
-        eq(variables['Build.Reason'], 'PullRequest'),
-        eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.backendChanged'], 'true')
-      )
+    condition: eq(stageDependencies.detect_changes_stage.outputs['detect.detectChanges.backendChanged'], 'true')
     jobs:
       - job: buildBackend
         displayName: Build .NET backend
@@ -191,7 +167,7 @@ stages:
               echo "Building backend..."
               echo "📦 Restoring .NET solution..."
               dotnet restore Tawtheef.sln
-  
+              
               echo "🏗️ Building backend in Release mode..."
               dotnet build Tawtheef.sln -c Release --no-restore
             displayName: Build backend
@@ -206,7 +182,7 @@ stages:
       - detect_changes_stage
       - frontends_stage
       - backend_stage
-    condition: and(always(), eq(variables['Build.Reason'], 'PullRequest'))
+    condition: always()
     variables:
       OPS: $[ stageDependencies.detect_changes_stage.outputs['detect.detectChanges.opsChanged'] ]
       REC: $[ stageDependencies.detect_changes_stage.outputs['detect.detectChanges.recChanged'] ]
@@ -225,109 +201,3 @@ stages:
               # For actual PR comment, you would use the REST API here
               echo "##vso[task.complete result=Succeeded;]PR summary logged"
             displayName: Log PR summary
-
-
-  # =========================
-  # Stage 5: CI Build & Publish (Development branch + tags)
-  # =========================
-  - stage: build_publish_stage
-    displayName: Build & Publish API
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    jobs:
-      - job: build_api
-        displayName: Build API
-        steps:
-          - checkout: self
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: '10.x'
-          - script: |
-              set -euo pipefail
-              dotnet restore Tawtheef.sln
-            displayName: Restore solution
-          - script: |
-              set -euo pipefail
-              dotnet build Tawtheef.sln -c $(buildConfiguration) --no-restore
-            displayName: Build solution
-          - script: |
-              set -euo pipefail
-              dotnet publish $(apiProject) -c $(buildConfiguration) --no-build -o $(Build.ArtifactStagingDirectory)/publish
-            displayName: Publish API
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: $(Build.ArtifactStagingDirectory)/publish
-              ArtifactName: drop
-              publishLocation: Container
-
-
-  # =========================
-  # Stage 6: Deploy to Stage (tag: stage-*)
-  # =========================
-  - stage: deploy_stage
-    displayName: Deploy to Stage
-    dependsOn: build_publish_stage
-    condition: |
-      and(
-        succeeded(),
-        startsWith(variables['Build.SourceBranch'], 'refs/tags/stage-')
-      )
-    jobs:
-      - job: deploy_stage_api
-        displayName: Migrate & Deploy Stage
-        steps:
-          - download: current
-            artifact: drop
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: '10.x'
-          - script: |
-              set -euo pipefail
-              dotnet tool install -g dotnet-ef
-              export PATH="$PATH:$HOME/.dotnet/tools"
-              dotnet ef database update --project $(efMigrationsProject) --startup-project $(efStartupProject)
-            displayName: Run EF migrations (Stage)
-            env:
-              ConnectionStrings__DefaultConnection: $(StageDbConnectionString)
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: $(azureServiceConnection)
-              appName: $(stageAppServiceName)
-              package: $(Pipeline.Workspace)/drop
-
-
-  # =========================
-  # Stage 7: Deploy to Production (tag: prod-*)
-  # =========================
-  - stage: deploy_production
-    displayName: Deploy to Production
-    dependsOn: build_publish_stage
-    condition: |
-      and(
-        succeeded(),
-        startsWith(variables['Build.SourceBranch'], 'refs/tags/prod-')
-      )
-    jobs:
-      - job: deploy_prod_api
-        displayName: Migrate & Deploy Production
-        steps:
-          - download: current
-            artifact: drop
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: '10.x'
-          - script: |
-              set -euo pipefail
-              dotnet tool install -g dotnet-ef
-              export PATH="$PATH:$HOME/.dotnet/tools"
-              dotnet ef database update --project $(efMigrationsProject) --startup-project $(efStartupProject)
-            displayName: Run EF migrations (Production)
-            env:
-              ConnectionStrings__DefaultConnection: $(ProdDbConnectionString)
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: $(azureServiceConnection)
-              appName: $(prodAppServiceName)
-              package: $(Pipeline.Workspace)/drop
