@@ -43,8 +43,6 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
 builder.Services.AddOpenTelemetry().UseAzureMonitor();
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => {
-        var telemetryConfiguration = services.GetRequiredService<TelemetryConfiguration>();
-
         lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
@@ -54,8 +52,7 @@ builder.Host.UseSerilog((ctx, services, lc) => {
             .WriteTo.Console()
             .WriteTo.Seq(
                 serverUrl: ctx.Configuration["Seq:Url"] ?? "http://127.0.0.1:5341",
-                apiKey: ctx.Configuration["Seq:ApiKey"])
-            .WriteTo.ApplicationInsights(telemetryConfiguration, new TraceTelemetryConverter());
+                apiKey: ctx.Configuration["Seq:ApiKey"]);
     }
 );
 
