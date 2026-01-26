@@ -17,9 +17,9 @@ variables:
   apiProject: src/Tawtheef.APIs/Operations.API/Operations.API.csproj
   efMigrationsProject: src/Infrastructure/Infrastructure.csproj
   efStartupProject: src/Tawtheef.APIs/Operations.API/Operations.API.csproj
-  azureServiceConnection: AzureServiceConnection
-  stageAppServiceName: tawtheef-stage-api
-  prodAppServiceName: tawtheef-prod-api
+  azureServiceConnection: moehe-devtest-qc
+  stageAppServiceName: App-Tawtheef-Operations-Api-Dev-01
+  prodAppServiceName: App-Tawtheef-Recruitment-Api-Dev-01
 
 pool:
   vmImage: "ubuntu-latest"
