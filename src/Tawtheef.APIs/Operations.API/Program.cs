@@ -24,13 +24,9 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
-{
-    var keyVaultUri = builder.Configuration["KeyVault:Uri"];
-    if (string.IsNullOrWhiteSpace(keyVaultUri))
-    {
-        throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
-    }
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
+    var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
+                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
 
     builder.Configuration.AddAzureKeyVault(
         new Uri(keyVaultUri),
@@ -41,15 +37,14 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-builder.Host.UseSerilog((ctx, services, lc) =>
-    {
+builder.Host.UseSerilog((ctx, services, lc) => {
         var seqUrl = ctx.Configuration["Seq:Url"];
         var seqKey = ctx.Configuration["Seq:ApiKey"];
         var config = lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
             .Enrich.WithExceptionDetails()
-            .ReadFrom.Configuration(ctx.Configuration) // uses Seq:Url and Seq:ApiKey
+            .ReadFrom.Configuration(ctx.Configuration)
             .ReadFrom.Services(services)
             .WriteTo.Console();
             
@@ -59,8 +54,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
 );
 
 // ----- Services -----
-builder.Services.Configure<ForwardedHeadersOptions>(o =>
-{
+builder.Services.Configure<ForwardedHeadersOptions>(o => {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
@@ -71,17 +65,14 @@ builder.Services.AddApplicationOperation(builder.Configuration);
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => {
-    options.InvalidModelStateResponseFactory = ctx =>
-    {
-        var problem = new ValidationProblemDetails(ctx.ModelState)
-        {
+    options.InvalidModelStateResponseFactory = ctx => {
+        var problem = new ValidationProblemDetails(ctx.ModelState) {
             Status  = StatusCodes.Status400BadRequest,
             Type    = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
             Title   = "One or more validation errors occurred.",
             Detail  = "See the 'errors' property for details.",
             Instance= ctx.HttpContext.Request.Path,
-            Extensions =
-            {
+            Extensions = {
                 ["traceId"] = ctx.HttpContext.TraceIdentifier,
                 ["correlationId"] = ctx.HttpContext.Items.TryGetValue("CorrelationId", out var cid) ? cid : null
             }
@@ -107,26 +98,18 @@ builder.Services.AddProblemDetails();
 builder.Services.AddSwagger();
 #endif
 
-// Reverse-proxy awareness (nginx)
-builder.Services.Configure<ForwardedHeadersOptions>(o =>
-{
-    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
-
 var app = builder.Build();
 
 // ----- Pipeline (order matters) -----
 app.UseForwardedHeaders();
 
 app.UseLanguageMiddleware();
-app.UseMiddleware<RequestSanitizationMiddleware>();
 
+app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
-app.UseSerilogRequestLogging(opts =>
-{
-    opts.EnrichDiagnosticContext = (diag, http) =>
-    {
+app.UseSerilogRequestLogging(opts => {
+    opts.EnrichDiagnosticContext = (diag, http) => {
         var userId = http.User.FindFirst("sub")?.Value
                   ?? http.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
@@ -148,8 +131,7 @@ app.UseHttpsRedirection();
 #endif
 app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
-app.Use(async (context, next) =>
-{
+app.Use(async (context, next) => {
     context.Request.Scheme = "https";
     await next();
 });
@@ -160,6 +142,8 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
+//enable rate limiter middleware
+app.UseRateLimiter();
 
 app.MapGet("/", () => Results.Json(new { status = "" }));
 app.MapControllers();
