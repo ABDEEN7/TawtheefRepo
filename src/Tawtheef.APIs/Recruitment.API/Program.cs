@@ -43,17 +43,20 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-builder.Host.UseSerilog((ctx, services, lc) => {
-    lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .Enrich.FromLogContext()
-        .Enrich.WithMachineName()
-        .Enrich.WithExceptionDetails()
-        .ReadFrom.Configuration(ctx.Configuration) // uses Seq:Url and Seq:ApiKey
-        .ReadFrom.Services(services)
-        .WriteTo.Console()
-        .WriteTo.Seq(
-            serverUrl: ctx.Configuration["Seq:Url"] ?? "http://127.0.0.1:5341",
-            apiKey: ctx.Configuration["Seq:ApiKey"]);
+builder.Host.UseSerilog((ctx, services, lc) =>
+    {
+        var seqUrl = ctx.Configuration["Seq:Url"];
+        var seqKey = ctx.Configuration["Seq:ApiKey"];
+        var config = lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithExceptionDetails()
+            .ReadFrom.Configuration(ctx.Configuration) // uses Seq:Url and Seq:ApiKey
+            .ReadFrom.Services(services)
+            .WriteTo.Console();
+            
+        if(!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
+            config.WriteTo.Seq(serverUrl: seqUrl,apiKey: seqKey);
     }
 );
 
