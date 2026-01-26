@@ -30,8 +30,12 @@
            <div class="col-md-5">
                 <div class="image-wrapper mb-5 pb-5">
                     <div class="images position-relative aos-init aos-animate" data-aos="zoom-out" data-aos-delay="400">
-                      <img src="../../../../assets/img/img-2.png?q=80&w=1200&auto=format&fit=crop'" alt="Business Meeting" class="img-fluid main-image rounded-4">
-                      <img src="../../../../assets/img/img-1.png?q=80&w=1200&auto=format&fit=crop'" alt="Team Discussion" class="img-fluid small-image rounded-4">
+                      <img src="../../../../assets/img/img-2.png?q=80&w=1200&auto=format&fit=crop'"
+                           [attr.alt]="'home.tracks.mainImageAlt' | translate"
+                           class="img-fluid main-image rounded-4">
+                      <img src="../../../../assets/img/img-1.png?q=80&w=1200&auto=format&fit=crop'"
+                           [attr.alt]="'home.tracks.secondaryImageAlt' | translate"
+                           class="img-fluid small-image rounded-4">
                     </div>
                 </div>
            </div>
@@ -66,7 +70,7 @@
         <div class="col-12 col-md-6 col-lg-3" *ngFor="let w of whyItems; index as i" data-aos="fade-up" [attr.data-aos-delay]="i*60">
           <div class="card-ghost h-100 px-3 py-5">
             <div class="d-flex align-items-center gap-2 mb-2 flex-column text-center">
-              <span class="icon-circle mb-3"><i class="fs-32 hgi hgi-stroke" [ngClass]="w.icon"></i></span>
+              <span class="icon-circle mb-3"><i class="fs-32 fa-solid" [ngClass]="w.icon"></i></span>
               <h6 class="m-0 fs-18 fw-semibold">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
               <p class="m-0 fs-16">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
             </div>
@@ -90,32 +94,29 @@
   [circular]="false"
   [autoplayInterval]="false"
   [responsiveOptions]="responsiveOptions">
-   <ng-template pTemplate="item" let-review >
+   <ng-template pTemplate="item" let-review let-i="index">
                   <div class="row">
-                       <div class="col-md-4" *ngFor="let s of successStats; index as i" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
+                       <div class="col-md-4 mx-auto" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
                             <div class=" card-ghost p-3">
                                  <div class="profile row mb-3">
                                       <div class="col-md-2 col-2">
-                                            <img class="icon-circle"  [src]="s.img" alt="">
+                                            <img class="icon-circle" [src]="review.img" [attr.alt]="review.profile | translate">
                                       </div>
                                       <div class="col-10">
-                                          <h6 class="mb-1">{{ s.profile | translate}}</h6>
-                                          <p class="m-0">{{ s.desc | translate}}</p>
+                                          <h6 class="mb-1">{{ review.profile | translate}}</h6>
+                                          <p class="m-0">{{ review.desc | translate}}</p>
                                       </div>
                                   </div>
                                   <div class="row">
                                       <div class="col-12">
-                                          <div class="fs-18 fw-semibold">{{ s.value | translate}}</div>
-                                          <div class="text-muted mt-1">{{ s.label | translate }}</div>
+                                          <div class="fs-18 fw-semibold">{{ review.value | translate}}</div>
+                                          <div class="text-muted mt-1">{{ review.label | translate }}</div>
                                       </div>
                                   </div>
                             </div>
                               
                         </div>
                   </div>
-                             
-                    
-            
           </ng-template>
           
       </p-carousel>
