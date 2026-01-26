@@ -167,7 +167,7 @@ stages:
               echo "Building backend..."
               echo "📦 Restoring .NET solution..."
               dotnet restore Tawtheef.sln
-  
+              
               echo "🏗️ Building backend in Release mode..."
               dotnet build Tawtheef.sln -c Release --no-restore
             displayName: Build backend
