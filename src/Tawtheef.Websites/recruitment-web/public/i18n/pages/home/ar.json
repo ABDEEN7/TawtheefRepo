@@ -17,6 +17,8 @@
   "home.tracks.items.schools.desc": "تتيح المنصة فرصًا وظيفية في المدارس الحكومية بدولة قطر، وتهدف إلى استقطاب الكفاءات التعليمية والإدارية المؤهلة، بما يسهم في دعم جودة التعليم وتحقيق أهداف التطوير المستدام.",
   "home.tracks.items.ministry.title": "الوزارة",
   "home.tracks.items.ministry.desc": "تتيح وزارة التربية والتعليم والتعليم العالي فرصًا وظيفية متنوعة لاستقطاب الكفاءات المؤهلة، بما يسهم في دعم التطوير المؤسسي وتعزيز جودة منظومة التعليم في دولة قطر.",
+  "home.tracks.mainImageAlt": "اجتماع تعليمي",
+  "home.tracks.secondaryImageAlt": "نقاش فريق العمل",
 
   "home.why.title": "لماذا تنضم إلينا",
   "home.why.desc": "قيمنا الوطنية وبرامج التطوير المهني تجعل رحلتك المهنية أكثر أثراً",
@@ -35,18 +37,17 @@
   "home.success.avgReviewTime": "الملحقات الصفية كانت باب لتجربة دولية غنية بالتحديات والفرص",
   "home.success.partners": "الملحقات الصفية كانت باب لتجربة دولية غنية بالتحديات والفرص",
 
-  "home.success.label1": "تعامل ممتاز وتجربه مميزة",
-  "home.success.label2": "منصة موثوقة وتجربة ناجحة",
-  "home.success.label3": "تجربة استخدام سلسة ومفيدة",
+  "home.success.label1": "إرشاد واضح واستجابة سريعة",
+  "home.success.label2": "مراجعة سريعة وتحديثات شفافة",
+  "home.success.label3": "تجربة سلسة من التقديم حتى العرض",
 
-  "home.success.profile1": "محمود",
-  "home.success.profile2": "محمود",
-  "home.success.profile3": "محمود",
+  "home.success.profile1": "عائشة الأنصاري",
+  "home.success.profile2": "عمر الكواري",
+  "home.success.profile3": "سلمى حسن",
 
-  
-  "home.success.desc1": "د/ بقسم التكنولوجيا",
-  "home.success.desc2": "د/ بقسم التكنولوجيا",
-  "home.success.desc3": "د/ بقسم التكنولوجيا",
+  "home.success.desc1": "أخصائية تقنية تعليمية",
+  "home.success.desc2": "منسق عمليات المدارس",
+  "home.success.desc3": "محللة برامج الوزارة",
 
   "home.faq.title": "الأسئلة الشائعة",
   "home.faq.desc": "نهدف إلى مساعدتكم والإجابة عن أبرز الاستفسارات المتعلقة بنظام التوظيف.",

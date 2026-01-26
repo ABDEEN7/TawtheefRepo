@@ -15,7 +15,7 @@ export class Navbar {
   @Input() menuTemplate: TemplateRef<any> | null | undefined;
   constructor(public language: LanguageService) {}
 
-  switchLang(lang: 'ar' | 'en') {
-    this.language.set(lang);
+  toggleLanguage() {
+    this.language.toggle();
   }
 }
