@@ -3,13 +3,11 @@ using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
@@ -40,9 +38,10 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
         new Uri(keyVaultUri),
         new DefaultAzureCredential(),
         new KeyVaultSecretManager());
+    
+    // Enable OpenTelemetry -> Azure Monitor (Application Insights)
+    builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
-// Enable OpenTelemetry -> Azure Monitor (Application Insights)
-builder.Services.AddOpenTelemetry().UseAzureMonitor();
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => {
     lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
