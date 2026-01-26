@@ -133,7 +133,7 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 var deleted = 0;
 
                 // Use pagination to iterate blobs with prefix
-                await foreach (var blobItem in _container.GetBlobsAsync(prefix: prefix, cancellationToken: ct).ConfigureAwait(false))
+                await foreach (var blobItem in _container.GetBlobsAsync(cancellationToken: ct).ConfigureAwait(false))
                 {
                     ct.ThrowIfCancellationRequested();
 
