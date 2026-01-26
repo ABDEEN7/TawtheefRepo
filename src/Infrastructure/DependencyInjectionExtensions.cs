@@ -34,12 +34,14 @@ using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
+using Tawtheef.Application.Common.Models.Logges;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
+using Tawtheef.Infrastructure.Middlewares;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services.Authorization;
@@ -166,6 +168,14 @@ namespace Tawtheef.Infrastructure
                 // Background (Common) - keep only what truly runs in both
                 services.AddHostedService<EmailDispatcher>();
                 services.AddHostedService<NotificationDispatcher>();
+                
+                // Logging of request bodies (Common)
+                services
+                    .AddOptions<RequestBodyLoggingOptions>()
+                    .Bind(configuration.GetSection(RequestBodyLoggingOptions.SectionName))
+                    .ValidateDataAnnotations();
+
+                services.AddSingleton<IRequestBodyCapture, RequestBodyCapture>();
             }
 
             private void AddCommonRepositories()

@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Tawtheef.Application;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
@@ -114,16 +115,31 @@ app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseSerilogRequestLogging(opts => {
-    opts.EnrichDiagnosticContext = (diag, http) => {
-        var userId = http.User.FindFirst("sub")?.Value
-                  ?? http.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    opts.EnrichDiagnosticContext = (diagCtx, httpCtx) => {
+        var userId = httpCtx.User.FindFirst("sub")?.Value
+                     ?? httpCtx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        diag.Set("CorrelationId", (http.Items.TryGetValue("CorrelationId", out var cid) ? cid : http.TraceIdentifier) ?? "");
-        diag.Set("UserId", userId ?? "anonymous");
-        diag.Set("QueryString", http.Request.QueryString.HasValue ? http.Request.QueryString.Value : "");
-        diag.Set("Route", http.GetEndpoint()?.DisplayName ?? "");
-        diag.Set("ClientIP", http.Connection.RemoteIpAddress?.ToString() ?? "unknown");
-        diag.Set("Path", http.Request.Path);
+        diagCtx.Set("CorrelationId", (httpCtx.Items.TryGetValue("CorrelationId", out var cid) ? cid : httpCtx.TraceIdentifier) ?? "");
+        diagCtx.Set("UserId", userId ?? "anonymous");
+        diagCtx.Set("QueryString", httpCtx.Request.QueryString.HasValue ? httpCtx.Request.QueryString.Value : "");
+        diagCtx.Set("Route", httpCtx.GetEndpoint()?.DisplayName ?? "");
+        diagCtx.Set("ClientIP", httpCtx.Connection.RemoteIpAddress?.ToString() ?? "unknown");
+        diagCtx.Set("Path", httpCtx.Request.Path);
+        var capture = httpCtx.RequestServices.GetService<IRequestBodyCapture>();
+        if (capture is null)
+            return;
+
+        // Safe best-effort: if it cannot be captured quickly, skip.
+        try
+        {
+            var body = capture.TryGetRedactedBodyAsync(httpCtx).GetAwaiter().GetResult();
+            if (!string.IsNullOrEmpty(body))
+                diagCtx.Set("RequestBody", body);
+        }
+        catch
+        {
+            // swallow: never fail the request because of logging
+        }
     };
 });
 
