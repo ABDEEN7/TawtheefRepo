@@ -36,5 +36,6 @@
 
     <ItemGroup>
       <None Remove="Properties\PublishProfiles\App-Tawtheef-Recruitment-Api-Dev-01 - Zip Deploy.pubxml" />
+      <None Remove="Properties\PublishProfiles\App-Tawtheef-Recruitment-Web-Dev-01 - Zip Deploy.pubxml" />
     </ItemGroup>
 </Project>
