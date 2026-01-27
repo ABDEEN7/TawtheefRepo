@@ -39,11 +39,9 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
 }
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
-{
+if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
-    builder.Services.AddSingleton(sp =>
-    {
+    builder.Services.AddSingleton(_ => {
         var cfg = TelemetryConfiguration.CreateDefault();
         cfg.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
         return cfg;
