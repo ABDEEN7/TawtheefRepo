@@ -27,11 +27,11 @@ builder.Configuration
 
 if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
-    builder.Configuration.AddAzureKeyVault(
-        new Uri(keyVaultUri), 
-        new DefaultAzureCredential(),
-        new KeyVaultSecretManager());
+            throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+    var clientId = builder.Configuration["KeyVault:ClientId"] ??
+            throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
     
     // Enable OpenTelemetry -> Azure Monitor (Application Insights)
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
