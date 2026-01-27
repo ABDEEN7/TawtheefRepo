@@ -475,7 +475,7 @@ namespace Tawtheef.Infrastructure
 
                 // ===== Google external login (optional) =====
                 var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName).Get<GoogleAuthenticationSettings>();
-                if (googleSettings is not null)
+                if (googleSettings is not null && googleSettings.IsEnabled)
                 {
                     services.AddAuthentication().AddGoogle(options =>
                     {
@@ -491,7 +491,7 @@ namespace Tawtheef.Infrastructure
 
                 // ===== Azure OIDC (optional) =====
                 var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName).Get<AzureAuthenticationSettings>();
-                if (azureSettings is not null)
+                if (azureSettings is not null && azureSettings.IsEnabled)
                 {
                     services.AddAuthentication()
                         .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
