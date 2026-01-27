@@ -102,44 +102,40 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   private setupSequenceListeners(): void {
-    this.form.controls.sectorId.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(sectorId => {
-        if (sectorId) {
-          this.lookupsService.loadManagementsBySector(sectorId as GUID);
-          this.form.controls.managementId.setValue('');
-          this.form.controls.departmentId.setValue('');
-          this.lookupsService.resetDepartments();
-        } else {
-          this.lookupsService.resetManagements();
-          this.form.controls.managementId.setValue('');
-          this.form.controls.departmentId.setValue('');
-        }
-      });
+  this.form.controls.managementId.disable({ emitEvent: false });
+  this.form.controls.departmentId.disable({ emitEvent: false });
 
-    this.form.controls.managementId.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(managementId => {
-        if (managementId) {
-          this.lookupsService.loadDepartmentsByManagement(managementId as GUID);
-          this.form.controls.departmentId.setValue('');
-        } else {
-          this.lookupsService.resetDepartments();
-          this.form.controls.departmentId.setValue('');
-        }
-      });
+  this.form.controls.sectorId.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(sectorId => {
+      this.form.controls.managementId.reset('', { emitEvent: false });
+      this.form.controls.departmentId.reset('', { emitEvent: false });
 
-    this.form.controls.majorId.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(majorId => {
-        if (majorId) {
-          this.form.controls.subMajorId.setValue('');
-        } else {
-          this.lookupsService.resetSubMajors();
-          this.form.controls.subMajorId.setValue('');
-        }
-      });
-  }
+      if (sectorId) {
+        this.lookupsService.loadManagementsBySector(sectorId as GUID);
+        this.form.controls.managementId.enable({ emitEvent: false });
+      } else {
+        this.lookupsService.resetManagements();
+        this.form.controls.managementId.disable({ emitEvent: false });
+        this.form.controls.departmentId.disable({ emitEvent: false });
+        this.lookupsService.resetDepartments();
+      }
+    });
+
+  this.form.controls.managementId.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(managementId => {
+      this.form.controls.departmentId.reset('', { emitEvent: false });
+
+      if (managementId) {
+        this.lookupsService.loadDepartmentsByManagement(managementId as GUID);
+        this.form.controls.departmentId.enable({ emitEvent: false });
+      } else {
+        this.lookupsService.resetDepartments();
+        this.form.controls.departmentId.disable({ emitEvent: false });
+      }
+    });
+}
 
   private loadJobForEdit(): void {
     if (!this.jobId) return;

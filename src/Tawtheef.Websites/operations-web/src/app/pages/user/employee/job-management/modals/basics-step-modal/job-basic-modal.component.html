@@ -36,7 +36,6 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
-          [disabled]="!form.controls.sectorId.value"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -59,7 +58,6 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
-          [disabled]="!canSelectDepartment()"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER' | translate }}"
         ></p-select>
 
