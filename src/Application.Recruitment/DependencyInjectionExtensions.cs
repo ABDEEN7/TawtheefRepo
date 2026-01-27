@@ -29,7 +29,6 @@ namespace Application.Recruitment
             private void RegisterMediator(IConfiguration configuration)
             {
                 services.AddCortexMediator(
-                    configuration: configuration,
                     handlerAssemblyMarkerTypes:
                     [
                         typeof(ApplicationAssemblyMarker),

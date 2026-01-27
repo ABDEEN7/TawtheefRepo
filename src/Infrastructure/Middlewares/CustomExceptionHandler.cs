@@ -53,8 +53,7 @@ public sealed class CustomExceptionHandler : IExceptionHandler
             {
                 // Add useful metadata extensions (visible to the client)
                 ["ticket"] = correlationId,
-                ["traceId"] = correlationId,
-                ["userId"] = userId
+                ["traceId"] = correlationId
             }
         };
 

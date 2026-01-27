@@ -36,7 +36,6 @@ namespace Application.Operation
             private void RegisterMediator(IConfiguration configuration)
             {
                 services.AddCortexMediator(
-                    configuration: configuration,
                     handlerAssemblyMarkerTypes:
                     [
                         typeof(ApplicationAssemblyMarker),

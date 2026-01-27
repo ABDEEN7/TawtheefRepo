@@ -34,12 +34,14 @@ using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
+using Tawtheef.Application.Common.Models.Logges;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
+using Tawtheef.Infrastructure.Middlewares;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services.Authorization;
@@ -166,6 +168,14 @@ namespace Tawtheef.Infrastructure
                 // Background (Common) - keep only what truly runs in both
                 services.AddHostedService<EmailDispatcher>();
                 services.AddHostedService<NotificationDispatcher>();
+                
+                // Logging of request bodies (Common)
+                services
+                    .AddOptions<RequestBodyLoggingOptions>()
+                    .Bind(configuration.GetSection(RequestBodyLoggingOptions.SectionName))
+                    .ValidateDataAnnotations();
+
+                services.AddSingleton<IRequestBodyCapture, RequestBodyCapture>();
             }
 
             private void AddCommonRepositories()
@@ -464,8 +474,9 @@ namespace Tawtheef.Infrastructure
                     });
 
                 // ===== Google external login (optional) =====
-                var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName).Get<GoogleAuthenticationSettings>();
-                if (googleSettings is not null)
+                var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName)
+                    .Get<GoogleAuthenticationSettings>();
+                if (googleSettings is not null && googleSettings.IsEnabled)
                 {
                     services.AddAuthentication().AddGoogle(options =>
                     {
@@ -480,8 +491,9 @@ namespace Tawtheef.Infrastructure
                 }
 
                 // ===== Azure OIDC (optional) =====
-                var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName).Get<AzureAuthenticationSettings>();
-                if (azureSettings is not null)
+                var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName)
+                    .Get<AzureAuthenticationSettings>();
+                if (azureSettings is not null && azureSettings.IsEnabled)
                 {
                     services.AddAuthentication()
                         .AddMicrosoftIdentityWebApp(configuration, AzureAuthenticationSettings.SectionName,
@@ -509,7 +521,6 @@ namespace Tawtheef.Infrastructure
                             new OpenIdConnectConfigurationRetriever(),
                             retriever);
                     });
-                    // Common services
                     services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 }
 

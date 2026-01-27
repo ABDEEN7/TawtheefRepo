@@ -28,15 +28,15 @@ public sealed class CreateOfficeUserCommandHandler(
         if (officeAdmin?.OfficeId is null)
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminNotFound);
 
-        var email = request.Email?.Trim();
+        var email = request.Email.Trim();
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Guid>(ErrorsCodes.EmailRequired);
 
-        var nameAr = request.NameAr?.Trim();
+        var nameAr = request.NameAr.Trim();
         if (string.IsNullOrWhiteSpace(nameAr))
             return Result.Fail<Guid>(ErrorsCodes.NameArRequired);
 
-        var nameEn = request.NameEn?.Trim();
+        var nameEn = request.NameEn.Trim();
         if (string.IsNullOrWhiteSpace(nameEn))
             return Result.Fail<Guid>(ErrorsCodes.NameEnRequired);
 

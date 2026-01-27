@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish Web Deploy" type="CompoundRunConfigurationType">
+    <toRun name="Operations.API: Web Deploy" type="DotNetMsBuildPublish" />
+    <toRun name="Recruitment.API:Web Deploy" type="DotNetMsBuildPublish" />
+    <method v="2" />
+  </configuration>
+</component>

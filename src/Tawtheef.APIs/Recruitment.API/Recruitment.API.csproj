@@ -33,4 +33,24 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\api\specification.json" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\PublishProfiles\App-Tawtheef-Recruitment-Api-Dev-01 - Zip Deploy.pubxml" />
+      <None Remove="Properties\PublishProfiles\App-Tawtheef-Recruitment-Web-Dev-01 - Zip Deploy.pubxml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="appsettings.Development.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="appsettings.Producation.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="appsettings.Stage.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>
