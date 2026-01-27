@@ -24,10 +24,10 @@ export class IndexComponent implements AfterViewInit {
     this.activeTab = tabKey;
   }
   whyItems = [
-    { key: 'fair',      icon: 'hgi-star-award-02' },
+    { key: 'fair',      icon: 'fa-award' },
     { key: 'digital',   icon: 'fa-laptop-code'    },
-    { key: 'transparent', icon: 'hgi-justice-scale-01' },
-    { key: 'support',   icon: 'hgi-laptop-programming'       }
+    { key: 'transparent', icon: 'fa-scale-balanced' },
+    { key: 'support',   icon: 'fa-headset'       }
   ];
 responsiveOptions: CarouselResponsiveOptions[] = [
   {
