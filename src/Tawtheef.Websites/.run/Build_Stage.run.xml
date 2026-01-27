@@ -1,0 +1,7 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build:Stage" type="CompoundRunConfigurationType">
+    <toRun name="operation:build-stage" type="js.build_tools.npm" />
+    <toRun name="recruitment:build-stage" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>
