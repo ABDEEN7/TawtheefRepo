@@ -31,20 +31,29 @@ builder.Configuration
 
 if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-            throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
-            throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+                   throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
     var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
-    
-    // Enable OpenTelemetry -> Azure Monitor (Application Insights)
-    builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
+
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
+if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+{
+    builder.Services.AddOpenTelemetry().UseAzureMonitor();
+    builder.Services.AddSingleton(sp =>
+    {
+        var cfg = TelemetryConfiguration.CreateDefault();
+        cfg.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+        return cfg;
+    });
+}
+
 builder.Host.UseSerilog((ctx, services, lc) => {
         var seqUrl = ctx.Configuration["Seq:Url"];
         var seqKey = ctx.Configuration["Seq:ApiKey"];
-        var config = lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
             .Enrich.WithExceptionDetails()
@@ -57,9 +66,11 @@ builder.Host.UseSerilog((ctx, services, lc) => {
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
     // ✅ Application Insights
-    lc.WriteTo.ApplicationInsights(
-        services.GetRequiredService<TelemetryConfiguration>(),
-        new TraceTelemetryConverter());
+    
+    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+        lc.WriteTo.ApplicationInsights(
+            services.GetRequiredService<TelemetryConfiguration>(),
+            new TraceTelemetryConverter());
 });
 
 // ----- Services -----
