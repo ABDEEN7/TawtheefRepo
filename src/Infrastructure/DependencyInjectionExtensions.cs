@@ -474,7 +474,8 @@ namespace Tawtheef.Infrastructure
                     });
 
                 // ===== Google external login (optional) =====
-                var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName).Get<GoogleAuthenticationSettings>();
+                var googleSettings = configuration.GetSection(GoogleAuthenticationSettings.SectionName)
+                    .Get<GoogleAuthenticationSettings>();
                 if (googleSettings is not null && googleSettings.IsEnabled)
                 {
                     services.AddAuthentication().AddGoogle(options =>
@@ -490,7 +491,8 @@ namespace Tawtheef.Infrastructure
                 }
 
                 // ===== Azure OIDC (optional) =====
-                var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName).Get<AzureAuthenticationSettings>();
+                var azureSettings = configuration.GetSection(AzureAuthenticationSettings.SectionName)
+                    .Get<AzureAuthenticationSettings>();
                 if (azureSettings is not null && azureSettings.IsEnabled)
                 {
                     services.AddAuthentication()
@@ -519,7 +521,6 @@ namespace Tawtheef.Infrastructure
                             new OpenIdConnectConfigurationRetriever(),
                             retriever);
                     });
-                    // Common services
                     services.AddTransient<IExternalIdTokenValidator, AzureIdTokenValidator>();
                 }
 
