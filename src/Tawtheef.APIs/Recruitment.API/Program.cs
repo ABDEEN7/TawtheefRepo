@@ -2,7 +2,6 @@
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -34,8 +33,7 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
             throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
             throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
-    //var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
-    var credential = new DefaultAzureCredential();
+    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
     
     // Enable OpenTelemetry -> Azure Monitor (Application Insights)
