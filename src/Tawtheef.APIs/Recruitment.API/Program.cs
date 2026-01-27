@@ -64,7 +64,6 @@ builder.Host.UseSerilog((ctx, services, lc) => {
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
     // ✅ Application Insights
-    
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
         lc.WriteTo.ApplicationInsights(
             services.GetRequiredService<TelemetryConfiguration>(),
@@ -161,10 +160,10 @@ app.UseSerilogRequestLogging(opts => {
 #if DEBUG
 app.UseDeveloperExceptionPage();
 app.MapSwagger();
-app.UseHttpsRedirection();
 #else
     app.UseExceptionHandler();
 #endif
+app.UseHttpsRedirection();
 app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
 app.Use(async (context, next) => {
