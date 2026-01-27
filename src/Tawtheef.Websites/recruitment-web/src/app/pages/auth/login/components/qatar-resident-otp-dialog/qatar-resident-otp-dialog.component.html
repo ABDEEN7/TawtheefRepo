@@ -17,7 +17,6 @@
               class="form-control"
               pInputText
               formControlName="qid"
-              [readonly]="form.disabled"
               inputmode="numeric"
               autocomplete="off" />
           </span>
@@ -40,7 +39,6 @@
               [showOnFocus]="true"
               dateFormat="yy-mm-dd"
               [dataType]="'string'"
-              [disabled]="form.disabled"
               [appendTo]="'body'" showIcon
               fluid>
             </p-date-picker>
@@ -67,7 +65,7 @@
               [phoneValidation]="true"
               [separateDialCode]="true"
               formControlName="phoneNumber"
-              [disabled]="form.disabled">
+              >
             </ngx-intl-tel-input>
           </div>
 
