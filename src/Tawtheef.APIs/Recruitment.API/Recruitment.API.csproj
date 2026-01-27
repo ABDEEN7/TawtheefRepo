@@ -33,4 +33,8 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\api\specification.json" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\PublishProfiles\App-Tawtheef-Recruitment-Api-Dev-01 - Zip Deploy.pubxml" />
+    </ItemGroup>
 </Project>
