@@ -1,13 +1,15 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Security;
@@ -32,11 +34,12 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
             throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
             throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
-    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
+    //var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
+    var credential = new DefaultAzureCredential();
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
     
     // Enable OpenTelemetry -> Azure Monitor (Application Insights)
-    builder.Services.AddOpenTelemetry().UseAzureMonitor();
+    //builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 builder.Host.UseSerilog((ctx, services, lc) => {
@@ -49,11 +52,16 @@ builder.Host.UseSerilog((ctx, services, lc) => {
             .ReadFrom.Configuration(ctx.Configuration)
             .ReadFrom.Services(services)
             .WriteTo.Console();
-            
-        if(!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
-            config.WriteTo.Seq(serverUrl: seqUrl,apiKey: seqKey);
-    }
-);
+
+    // Seq
+    if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
+        lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
+
+    // ✅ Application Insights
+    lc.WriteTo.ApplicationInsights(
+        services.GetRequiredService<TelemetryConfiguration>(),
+        new TraceTelemetryConverter());
+});
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {

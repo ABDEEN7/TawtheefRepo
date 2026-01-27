@@ -1,13 +1,15 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Operation;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Infrastructure;
@@ -37,21 +39,27 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
 }
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-builder.Host.UseSerilog((ctx, services, lc) => {
-        var seqUrl = ctx.Configuration["Seq:Url"];
-        var seqKey = ctx.Configuration["Seq:ApiKey"];
-        var config = lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName()
-            .Enrich.WithExceptionDetails()
-            .ReadFrom.Configuration(ctx.Configuration)
-            .ReadFrom.Services(services)
-            .WriteTo.Console();
-            
-        if(!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
-            config.WriteTo.Seq(serverUrl: seqUrl,apiKey: seqKey);
-    }
-);
+builder.Host.UseSerilog((ctx, services, lc) =>
+{
+    var seqUrl = ctx.Configuration["Seq:Url"];
+    var seqKey = ctx.Configuration["Seq:ApiKey"];
+    var config = lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithExceptionDetails()
+        .ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services)
+        .WriteTo.Console();
+
+    // Seq
+    if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
+        lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
+
+    // ✅ Application Insights
+    lc.WriteTo.ApplicationInsights(
+        services.GetRequiredService<TelemetryConfiguration>(),
+        new TraceTelemetryConverter());
+});
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {
