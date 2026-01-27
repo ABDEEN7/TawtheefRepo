@@ -156,10 +156,10 @@ app.UseSerilogRequestLogging(opts => {
 #if DEBUG
 app.UseDeveloperExceptionPage();
 app.MapSwagger();
-app.UseHttpsRedirection();
 #else
     app.UseExceptionHandler();
 #endif
+app.UseHttpsRedirection();
 app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
 app.Use(async (context, next) => {

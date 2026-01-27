@@ -31,9 +31,9 @@ builder.Configuration
 
 if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+            throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
-                   throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+            throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
     var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
@@ -49,15 +49,15 @@ if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
 }
 
 builder.Host.UseSerilog((ctx, services, lc) => {
-        var seqUrl = ctx.Configuration["Seq:Url"];
-        var seqKey = ctx.Configuration["Seq:ApiKey"];
-        lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName()
-            .Enrich.WithExceptionDetails()
-            .ReadFrom.Configuration(ctx.Configuration)
-            .ReadFrom.Services(services)
-            .WriteTo.Console();
+    var seqUrl = ctx.Configuration["Seq:Url"];
+    var seqKey = ctx.Configuration["Seq:ApiKey"];
+    lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithExceptionDetails()
+        .ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services)
+        .WriteTo.Console();
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
@@ -81,9 +81,10 @@ builder.Services.AddApplicationLayer(builder.Configuration);
 builder.Services.AddApplicationRecruitment(builder.Configuration);
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 builder.Services.AddAuthorization(options => {
-    options.AddPolicy(PolicyNames.CompletedProfile, 
+    options.AddPolicy(PolicyNames.CompletedProfile,
         policy => policy.Requirements.Add(new ProfileCompletedRequirement()));
 });
+
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => {
     options.InvalidModelStateResponseFactory = ctx => {
@@ -161,10 +162,10 @@ app.UseSerilogRequestLogging(opts => {
 #if DEBUG
 app.UseDeveloperExceptionPage();
 app.MapSwagger();
-app.UseHttpsRedirection();
 #else
     app.UseExceptionHandler();
 #endif
+app.UseHttpsRedirection();
 app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
 app.Use(async (context, next) => {
