@@ -15,6 +15,7 @@ namespace Application.Recruitment
         {
             public IServiceCollection AddApplicationRecruitment(IConfiguration config)
             {
+                services.AddApplicationLayer(config);
                 services.RegisterMapster();
                 services.RegisterMediator(config);
                 return services;

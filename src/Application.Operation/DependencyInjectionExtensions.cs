@@ -20,6 +20,7 @@ namespace Application.Operation
         {
             public IServiceCollection AddApplicationOperation(IConfiguration config)
             {
+                services.AddApplicationLayer(config);
                 services.RegisterMapster();
                 services.RegisterMediator(config);
                 services.RegisterRepositories();

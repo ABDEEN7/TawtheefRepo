@@ -10,7 +10,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
-using Tawtheef.Application;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
@@ -77,7 +76,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(o => {
 });
 
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
-builder.Services.AddApplicationLayer(builder.Configuration);
 builder.Services.AddApplicationRecruitment(builder.Configuration);
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 builder.Services.AddAuthorization(options => {
@@ -165,9 +163,9 @@ app.MapSwagger();
 #else
     app.UseExceptionHandler();
 #endif
+app.UseMiddleware<ResponseLoggingMiddleware>();
+
 app.UseHttpsRedirection();
-app.UseExceptionHandlingMiddleware();
-app.UseMiddleware<ResponseLoggingMiddleware>(); 
 
 app.UseCors(myCors);
 app.UseCookiePolicy(); 

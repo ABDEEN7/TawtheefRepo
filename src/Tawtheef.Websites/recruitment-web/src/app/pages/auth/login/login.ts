@@ -1,9 +1,7 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {race, Subscription, timer} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {LanguageService} from '../../../core/services/language.service';
-import {catchError, map} from 'rxjs/operators';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {NgIf} from '@angular/common';
+import {TranslateService} from '@ngx-translate/core';
 import {ExternalLoginService} from '../../../core/auth/external-login';
 import {HttpService} from '../../../core/http/http.service';
 import {RESIDENCY_CHOSEN_MANUALLY_KEY, RESIDENCY_MODE_KEY} from '../../../core/constants/website-storage.const';
