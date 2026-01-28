@@ -23,8 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
@@ -34,6 +33,8 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
+
+builder.Configuration.AddEnvironmentVariables();
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
@@ -61,7 +62,6 @@ builder.Host.UseSerilog((ctx, services, lc) => {
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
     // ✅ Application Insights
-    
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
         lc.WriteTo.ApplicationInsights(
             services.GetRequiredService<TelemetryConfiguration>(),
