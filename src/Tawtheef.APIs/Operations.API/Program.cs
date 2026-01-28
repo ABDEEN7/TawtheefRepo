@@ -121,7 +121,14 @@ app.UseLanguageMiddleware();
 
 app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
+app.Use(async (ctx, next) =>
+{
+    var capture = ctx.RequestServices.GetService<IRequestBodyCapture>();
+    if (capture != null)
+        ctx.Items["RequestBody"] = await capture.TryGetRedactedBodyAsync(ctx);
 
+    await next();
+});
 app.UseSerilogRequestLogging(opts => {
     opts.EnrichDiagnosticContext = (diagCtx, httpCtx) => {
         var userId = httpCtx.User.FindFirst("sub")?.Value
@@ -137,17 +144,7 @@ app.UseSerilogRequestLogging(opts => {
         if (capture is null)
             return;
 
-        // Safe best-effort: if it cannot be captured quickly, skip.
-        try
-        {
-            var body = capture.TryGetRedactedBodyAsync(httpCtx).GetAwaiter().GetResult();
-            if (!string.IsNullOrEmpty(body))
-                diagCtx.Set("RequestBody", body);
-        }
-        catch
-        {
-            // swallow: never fail the request because of logging
-        }
+        diagCtx.Set("RequestBody", httpCtx.Items.TryGetValue("RequestBody", out var v) ? v : "");
     };
 });
 
