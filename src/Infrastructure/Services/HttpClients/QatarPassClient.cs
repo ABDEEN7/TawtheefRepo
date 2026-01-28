@@ -2,10 +2,11 @@ using System.Net.Http.Json;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using FluentResults;
+using Serilog;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
-public sealed class QatarPassClient(HttpClient http) : IQatarPassClient
+public sealed class QatarPassClient(HttpClient http, ILogger logger) : IQatarPassClient
 {
     public async Task<IResult<QatarPassEnvelope>> GetDataAsync(
         string code,
@@ -23,17 +24,24 @@ public sealed class QatarPassClient(HttpClient http) : IQatarPassClient
         }
         catch (Exception ex) when (ex is TaskCanceledException || ex is HttpRequestException)
         {
+            logger.Error(ex, "QatarPassClient: HTTP error");
             return Result.Fail<QatarPassEnvelope>($"QatarPassClient: HTTP error - {ex.Message}");
         }
 
         if (!res.IsSuccessStatusCode)
+        {
+            logger.Error("QatarPassClient: Failed to fetch data. Status code: {StatusCode}", (int)res.StatusCode);
             return Result.Fail<QatarPassEnvelope>(
                 $"QatarPassClient: Failed to fetch data. Status code: {(int)res.StatusCode}");
+        }
 
         var payload = await res.Content.ReadFromJsonAsync<QatarPassEnvelope>(cancellationToken: ct);
 
         if (payload is null)
+        {
+            logger.Error("QatarPassClient: Empty payload returned.");
             return Result.Fail<QatarPassEnvelope>("QatarPassClient: Empty payload returned.");
+        }
 
         return Result.Ok(payload);
     }

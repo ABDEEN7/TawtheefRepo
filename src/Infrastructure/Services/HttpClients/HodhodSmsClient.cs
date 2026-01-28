@@ -1,13 +1,15 @@
 using FluentResults;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
 
-public sealed class HodhodSmsClient(HttpClient http, IOptions<HodhodSmsSettings> opt) : ISmsGatewayClient
+public sealed class HodhodSmsClient(HttpClient http, ILogger logger,
+    IOptions<HodhodSmsSettings> opt) : ISmsGatewayClient
 {
     private readonly HodhodSmsSettings _opt = opt.Value;
 
@@ -42,11 +44,15 @@ public sealed class HodhodSmsClient(HttpClient http, IOptions<HodhodSmsSettings>
         }
         catch (Exception ex) when (ex is TaskCanceledException || ex is HttpRequestException)
         {
+            logger.Error(ex, "SMSPush failed");
             return Result.Fail<string>($"SMSPush failed: HTTP error - {ex.Message}");
         }
 
         if (!resp.IsSuccessStatusCode)
+        {
+            logger.Error("SMSPush failed: {StatusCode}", (int)resp.StatusCode);
             return Result.Fail<string>($"SMSPush failed: {(int)resp.StatusCode}");
+        }
 
         var payload = await resp.Content.ReadAsStringAsync(ct);
         return Result.Ok(payload);
