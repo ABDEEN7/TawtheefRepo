@@ -36,7 +36,7 @@ export class ManageRolesDialogComponent implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
 
-  private readonly switchableSystemRoles = [
+  private readonly switchableSystemRoles: string[] = [
     SystemRoles.Employee,
     SystemRoles.HrManager,
     SystemRoles.DepartmentManager
