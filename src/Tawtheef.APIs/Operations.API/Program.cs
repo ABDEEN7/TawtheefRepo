@@ -23,25 +23,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
+{
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-            throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
-            throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+                   throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
     var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
-builder.Configuration.AddEnvironmentVariables();
-
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
+if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+{
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     builder.Services.AddOpenTelemetry().UseAzureMonitor();
     builder.Services.AddSingleton(_ => {
         var cfg = TelemetryConfiguration.CreateDefault();
-        cfg.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+        cfg.ConnectionString = aiCs;
         return cfg;
     });
 }

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections;
+using System.Security.Claims;
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
@@ -25,7 +26,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
@@ -36,13 +38,10 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
-builder.Configuration.AddEnvironmentVariables();
-
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
-    var aiCs = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    Console.WriteLine($"AI CS exists: {!string.IsNullOrWhiteSpace(aiCs)}; length={(aiCs?.Length ?? 0)}");
-    builder.Services.AddOpenTelemetry().UseAzureMonitor();
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+    builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
     builder.Services.AddSingleton(_ => {
         var cfg = TelemetryConfiguration.CreateDefault();
         cfg.ConnectionString = aiCs;
