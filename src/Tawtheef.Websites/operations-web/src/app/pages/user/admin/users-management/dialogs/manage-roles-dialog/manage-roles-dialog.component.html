@@ -5,15 +5,39 @@
   </div>
 
   <div class="mb-3">
+    <label class="form-label">{{ 'USERS.SYSTEM_ROLE' | translate }}</label>
+    <p-select
+      class="w-100"
+      [options]="systemRoleOptions()"
+      [ngModel]="selectedSystemRoleId()"
+      (onChange)="onSystemRoleChange($event.value)"
+      optionValue="id"
+      [disabled]="isLoading() || isSystemRoleLocked()"
+      [placeholder]="'USERS.SYSTEM_ROLE_PLACEHOLDER' | translate">
+      <ng-template #selectedItem let-option>
+        {{ currentLang() === 'ar' ? option?.nameAr : option?.nameEn }}
+      </ng-template>
+      <ng-template #item let-option>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <span>{{ currentLang() === 'ar' ? option.nameAr : option.nameEn }}</span>
+          <small class="text-muted">{{ currentLang() === 'ar' ? option.nameEn : option.nameAr }}</small>
+        </div>
+      </ng-template>
+    </p-select>
+    @if (showSystemRoleError() && !selectedSystemRoleId()) {
+      <div class="text-danger small mt-1">{{ 'USERS.SYSTEM_ROLE_REQUIRED' | translate }}</div>
+    }
+  </div>
+
+  <div class="mb-3">
     <label class="form-label">{{ 'USERS.SELECT_ROLES' | translate }}</label>
     <p-multiSelect
       class="role-multiselect"
-      [options]="allRoleOptions()"
+      [options]="assignableRoleOptions()"
       [optionLabel]="currentLang() === 'ar' ? 'nameAr' : 'nameEn'"
       optionValue="id"
-      optionDisabled="isSystemRole"
       display="chip"
-      [ngModel]="selectedRoleIds()"
+      [ngModel]="selectedAssignableRoleIds()"
       (ngModelChange)="onRolesChange($event)"
       [placeholder]="'USERS.SELECT_ROLES_PLACEHOLDER' | translate"
       [appendTo]="'body'"

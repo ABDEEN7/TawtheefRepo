@@ -33,22 +33,46 @@ public sealed class UpdateUserRolesCommandHandler(
             return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
 
         var systemRoles = roles.Where(r => r.IsSystemRole).ToList();
-        if (systemRoles.Any(r => r.Id == SystemRoleIds.SystemAdmin))
-            return Result.Fail<Unit>(ErrorsCodes.SystemAdminAssignmentNotAllowed);
+        if (systemRoles.Count == 0)
+            return Result.Fail<Unit>(ErrorsCodes.SystemRoleRequired);
 
         if (systemRoles.Count > 1)
             return Result.Fail<Unit>(ErrorsCodes.MultipleSystemRolesNotAllowed);
 
         var currentRoles = await userManager.GetRolesAsync(user);
+        var systemRoleNames = await roleManager.Roles
+            .Where(r => r.IsSystemRole && r.Name != null)
+            .Select(r => r.Name!)
+            .ToListAsync(cancellationToken);
+
+        var currentSystemRoleName = currentRoles
+            .FirstOrDefault(role => systemRoleNames.Contains(role, StringComparer.OrdinalIgnoreCase));
+        var desiredSystemRoleName = systemRoles.FirstOrDefault()?.Name;
+
+        if (string.IsNullOrWhiteSpace(desiredSystemRoleName))
+            return Result.Fail<Unit>(ErrorsCodes.RoleNotFound);
+
+        var lockedSystemRoles = new[]
+        {
+            nameof(SystemRoleIds.SystemAdmin),
+            nameof(SystemRoleIds.OfficeAdmin),
+            nameof(SystemRoleIds.OfficeUser)
+        };
+
+        if (lockedSystemRoles.Contains(desiredSystemRoleName, StringComparer.OrdinalIgnoreCase) &&
+            !string.Equals(currentSystemRoleName, desiredSystemRoleName, StringComparison.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.SystemRoleChangeNotAllowed);
+
+        if (!string.IsNullOrWhiteSpace(currentSystemRoleName) &&
+            lockedSystemRoles.Contains(currentSystemRoleName, StringComparer.OrdinalIgnoreCase) &&
+            !string.Equals(currentSystemRoleName, desiredSystemRoleName, StringComparison.OrdinalIgnoreCase))
+            return Result.Fail<Unit>(ErrorsCodes.SystemRoleChangeNotAllowed);
+
         var desiredRoles = roles
             .Select(r => r.Name)
             .Where(n => !string.IsNullOrWhiteSpace(n))
             .Cast<string>()
             .ToArray();
-
-        if (currentRoles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase) &&
-            !desiredRoles.Contains(nameof(SystemRoleIds.SystemAdmin), StringComparer.OrdinalIgnoreCase))
-            return Result.Fail<Unit>(ErrorsCodes.SystemAdminAssignmentNotAllowed);
 
         var toRemove = currentRoles.Except(desiredRoles, StringComparer.OrdinalIgnoreCase).ToArray();
         var toAdd = desiredRoles.Except(currentRoles, StringComparer.OrdinalIgnoreCase).ToArray();
