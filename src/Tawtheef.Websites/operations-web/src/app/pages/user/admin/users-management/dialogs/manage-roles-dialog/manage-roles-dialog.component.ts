@@ -4,6 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MultiSelectModule} from 'primeng/multiselect';
+import {Select} from 'primeng/select';
 import {UserDto} from '../../models/user.dto';
 import {RoleSummaryDto} from '../../models/role-summary.dto';
 import {UsersService} from '../../services/users.service';
@@ -11,6 +12,7 @@ import {finalize} from 'rxjs/operators';
 import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../../../core/services/language.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
+import {SystemRoles} from '../../../../../../core/constants/systemRoles';
 
 @Component({
   selector: 'app-manage-roles-dialog',
@@ -22,6 +24,7 @@ import {NotificationService} from '../../../../../../core/services/notification.
     FormsModule,
     TranslatePipe,
     MultiSelectModule,
+    Select,
     I18nNamespaceDirective
   ]
 })
@@ -33,12 +36,26 @@ export class ManageRolesDialogComponent implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
 
+  private readonly switchableSystemRoles: string[] = [
+    SystemRoles.Employee,
+    SystemRoles.HrManager,
+    SystemRoles.DepartmentManager
+  ];
+  private readonly lockedSystemRoles = [
+    SystemRoles.SystemAdmin,
+    SystemRoles.OfficeAdmin,
+    SystemRoles.OfficeUser
+  ];
+
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
   allRoleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
-  lockedSystemRoleIds = signal<string[]>([]);
-  systemRoleIds = signal<string[]>([]);
+  allSystemRoleOptions = signal<RoleSummaryDto[]>([]);
+  assignableRoleOptions = signal<RoleSummaryDto[]>([]);
+  systemRoleOptions = signal<RoleSummaryDto[]>([]);
   selectedAssignableRoleIds = signal<string[]>([]);
-  selectedRoleIds = signal<string[]>([]);
+  selectedSystemRoleId = signal<string | null>(null);
+  isSystemRoleLocked = signal(false);
+  showSystemRoleError = signal(false);
   isLoading = signal(false);
   currentLang = signal<Lang>(this.language.get());
 
@@ -57,12 +74,26 @@ export class ManageRolesDialogComponent implements OnInit {
         next: (assignedRoles: string[]) => {
           const roleIds = assignedRoles.map(id => id.toString());
 
-          const assignedSystemRoles = roleIds.filter(id => this.isSystemRoleId(id));
-          const assignableRoles = roleIds.filter(id => !this.isSystemRoleId(id));
+          const assignedSystemRole = roleIds
+            .map(id => this.getRoleById(id))
+            .find(role => role?.isSystemRole);
+          const assignableRoles = roleIds.filter(id => {
+            const role = this.getRoleById(id);
+            return role && !role.isSystemRole;
+          });
 
-          this.lockedSystemRoleIds.set(assignedSystemRoles);
+          const assignedSystemRoleName = assignedSystemRole?.systemName ?? '';
+          const isLockedSystemRole = this.lockedSystemRoles
+            .some(role => role === assignedSystemRoleName);
+          const availableSystemRoles = isLockedSystemRole
+            ? assignedSystemRole ? [assignedSystemRole] : []
+            : this.allSystemRoleOptions().filter(role =>
+              this.switchableSystemRoles.includes(role.systemName));
+
+          this.systemRoleOptions.set(availableSystemRoles);
+          this.selectedSystemRoleId.set(assignedSystemRole?.id ?? null);
+          this.isSystemRoleLocked.set(isLockedSystemRole);
           this.selectedAssignableRoleIds.set(assignableRoles);
-          this.updateSelectedRoles(assignableRoles);
         },
         error: () => {
           this.dialogRef.close(false);
@@ -72,17 +103,34 @@ export class ManageRolesDialogComponent implements OnInit {
 
   onRolesChange(assignableRoleIds: string[]) {
     this.selectedAssignableRoleIds.set(assignableRoleIds);
-    this.updateSelectedRoles(assignableRoleIds);
+  }
+
+  onSystemRoleChange(roleId: string | null) {
+    this.selectedSystemRoleId.set(roleId);
+    if (roleId) {
+      this.showSystemRoleError.set(false);
+    }
   }
 
   saveRoles() {
     if (!this.user) return;
+    if (!this.selectedSystemRoleId()) {
+      this.showSystemRoleError.set(true);
+      return;
+    }
 
-    this.usersService.updateUserRoles(this.user.id, this.selectedRoleIds())
+    const roleIds = Array.from(
+      new Set([this.selectedSystemRoleId(), ...this.selectedAssignableRoleIds()].filter(Boolean))
+    ) as string[];
+
+    this.usersService.updateUserRoles(this.user.id, roleIds)
       .subscribe({
         next: () => {
           this.notification.success(this.translate.instant('USERS.ROLES_UPDATE_SUCCESS'));
           this.dialogRef.close(true);
+        },
+        error: () => {
+          this.notification.error(this.translate.instant('USERS.ROLES_UPDATE_FAILED'));
         }
       });
   }
@@ -94,16 +142,13 @@ export class ManageRolesDialogComponent implements OnInit {
   private initializeRoleOptions() {
     const options = this.config.data?.roleOptions as RoleSummaryDto[] ?? [];
     this.allRoleOptions.set(options);
-    this.systemRoleIds.set(options.filter(role => role.isSystemRole).map(role => role.id));
+    this.allSystemRoleOptions.set(options.filter(role => role.isSystemRole));
+    this.assignableRoleOptions.set(options.filter(role => !role.isSystemRole));
+    this.systemRoleOptions.set(this.allSystemRoleOptions()
+      .filter(role => this.switchableSystemRoles.includes(role.systemName)));
   }
 
-  private isSystemRoleId(roleId: string) {
-    return this.systemRoleIds().includes(roleId);
-  }
-
-  private updateSelectedRoles(assignableRoleIds: string[]) {
-    const merged = [...this.lockedSystemRoleIds(), ...assignableRoleIds];
-    const uniqueIds = Array.from(new Set(merged));
-    this.selectedRoleIds.set(uniqueIds);
+  private getRoleById(roleId: string) {
+    return this.allRoleOptions().find(role => role.id === roleId);
   }
 }

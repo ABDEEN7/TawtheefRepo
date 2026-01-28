@@ -57,6 +57,8 @@ public class ErrorsCodes
     public const string MultipleSystemRolesNotAllowed = "MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED";
     public const string SystemAdminAssignmentNotAllowed = "SYSTEM_ADMIN_ASSIGNMENT_NOT_ALLOWED";
     public const string SystemAdminBlockNotAllowed = "SYSTEM_ADMIN_BLOCK_NOT_ALLOWED";
+    public const string SystemRoleRequired = "SYSTEM_ROLE_REQUIRED";
+    public const string SystemRoleChangeNotAllowed = "SYSTEM_ROLE_CHANGE_NOT_ALLOWED";
     #endregion
 
     // =========================================================
