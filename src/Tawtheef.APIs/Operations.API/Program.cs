@@ -162,11 +162,6 @@ app.MapSwagger();
 app.UseHttpsRedirection();
 app.UseExceptionHandlingMiddleware();
 app.UseMiddleware<ResponseLoggingMiddleware>(); 
-app.Use(async (context, next) => {
-    context.Request.Scheme = "https";
-    await next();
-});
-app.UseForwardedHeaders();
 
 app.UseCors(myCors);
 app.UseCookiePolicy(); 
