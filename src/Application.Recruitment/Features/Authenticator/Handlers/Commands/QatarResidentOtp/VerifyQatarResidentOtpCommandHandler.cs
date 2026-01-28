@@ -7,6 +7,7 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Utils;
@@ -24,28 +25,59 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     IMediator mediator,
     UserManager<User> userManager,
     ITokenService tokenService,
-    TimeProvider timeProvider)
-    : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
+    TimeProvider timeProvider,
+    ILogger logger
+) : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
-    const int QatarNationalityCode = 634;
-    public async Task<IResult<AuthResponse>> Handle(VerifyQatarResidentOtpCommand request, CancellationToken cancellationToken)
+    private const int QatarNationalityCode = 634;
+
+    private readonly ILogger _log = logger.ForContext<VerifyQatarResidentOtpCommandHandler>();
+
+    public async Task<IResult<AuthResponse>> Handle(
+        VerifyQatarResidentOtpCommand request,
+        CancellationToken cancellationToken)
     {
+        // IMPORTANT: do not log OTP / full QID / full phone.
         var normalizedQid = QidUtilities.Normalize(request.Qid);
+        var qidMasked = MaskQid(normalizedQid);
+
+        _log.Information(
+            "Verify Qatar resident OTP started. Qid={QidMasked} Expiry={Expiry}",
+            qidMasked,
+            request.QidExpiry);
+
         if (!QidUtilities.IsValid(normalizedQid))
+        {
+            _log.Warning("Invalid QID format. Qid={QidMasked}", qidMasked);
             return Result.Fail<AuthResponse>(ErrorsCodes.QatarResidentInvalidQid);
+        }
 
         var normalizedPhone = NormalizePhone(request.PhoneNumber);
         if (string.IsNullOrWhiteSpace(normalizedPhone))
+        {
+            _log.Warning("Phone number missing/invalid. Qid={QidMasked}", qidMasked);
             return Result.Fail<AuthResponse>(ErrorsCodes.UserPhoneRequired);
+        }
 
         var user = await userManager.FindByLoginAsync(QatarResidentOtpConstants.Provider, normalizedQid);
         if (user is null)
+        {
+            _log.Warning("User not found by provider login. Provider={Provider} Qid={QidMasked}",
+                QatarResidentOtpConstants.Provider, qidMasked);
+
             return Result.Fail<AuthResponse>(ErrorsCodes.UserNotFound);
+        }
 
         var storedPhone = NormalizePhone(user.PhoneNumber ?? string.Empty);
         if (!string.Equals(storedPhone, normalizedPhone, StringComparison.Ordinal))
+        {
+            _log.Warning("Phone mismatch for QID. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
             return Result.Fail<AuthResponse>(ErrorsCodes.QatarResidentPhoneMismatch);
+        }
+
         var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
+
+        // DO NOT log OTP or attempt counter values from user object if it can be abused.
         var otpCheck = user.ValidateOtp(
             request.Otp,
             nowUtc,
@@ -53,59 +85,170 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             QatarResidentOtpConstants.OtpLockDuration);
 
         var persistOtp = await userManager.UpdateAsync(user);
-        if (!persistOtp.Succeeded) return FailureFromIdentity<AuthResponse>(persistOtp);
-        
-        if (otpCheck.IsFailed) 
+        if (!persistOtp.Succeeded)
+        {
+            _log.Error(
+                "Failed to persist OTP state after validation. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(", ", persistOtp.Errors.Select(e => e.Description)));
+
+            return FailureFromIdentity<AuthResponse>(persistOtp);
+        }
+
+        if (otpCheck.IsFailed)
+        {
+            _log.Warning(
+                "OTP validation failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                user.Id,
+                qidMasked,
+                string.Join(" | ", otpCheck.Errors.Select(e => e.Message)));
+
             return Result.Fail<AuthResponse>(otpCheck.Errors);
+        }
 
         user.PhoneNumberConfirmed = true;
         var update = await userManager.UpdateAsync(user);
-        if (!update.Succeeded) return FailureFromIdentity<AuthResponse>(update);
-        
-        var loginAllowed = await CheckIfQatarUsingKawaderAsync(user.Id, normalizedQid, request.QidExpiry, cancellationToken);
-        if(loginAllowed.IsFailed) return Result.Fail<AuthResponse>(loginAllowed.Errors);
+        if (!update.Succeeded)
+        {
+            _log.Error(
+                "Failed to confirm phone after OTP success. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(", ", update.Errors.Select(e => e.Description)));
+
+            return FailureFromIdentity<AuthResponse>(update);
+        }
+
+        var loginAllowed = await CheckIfQatarUsingKawaderAsync(
+            user.Id,
+            normalizedQid,
+            request.QidExpiry,
+            cancellationToken);
+
+        if (loginAllowed.IsFailed)
+        {
+            _log.Warning(
+                "Login blocked by Kawader check. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                user.Id,
+                qidMasked,
+                string.Join(" | ", loginAllowed.Errors.Select(e => e.Message)));
+
+            return Result.Fail<AuthResponse>(loginAllowed.Errors);
+        }
+
         await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, cancellationToken);
+
         var upsert = await UpsertQatarPassClaimsAsync(user, request, normalizedPhone);
-        if (upsert.IsFailed) return Result.Fail<AuthResponse>(upsert.Errors);
-        return await tokenService.IssueTokensAsync(user, QatarResidentOtpConstants.Provider, cancellationToken);
+        if (upsert.IsFailed)
+        {
+            _log.Error(
+                "Upsert qatarresidentotp claims failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                user.Id,
+                qidMasked,
+                string.Join(" | ", upsert.Errors.Select(e => e.Message)));
+
+            return Result.Fail<AuthResponse>(upsert.Errors);
+        }
+
+        var tokens = await tokenService.IssueTokensAsync(user, QatarResidentOtpConstants.Provider, cancellationToken);
+
+        if (tokens.IsFailed)
+        {
+            _log.Warning(
+                "Token issuance failed. UserId={UserId} Provider={Provider} Errors={Errors}",
+                user.Id,
+                QatarResidentOtpConstants.Provider,
+                string.Join(" | ", tokens.Errors.Select(e => e.Message)));
+        }
+        else
+        {
+            _log.Information(
+                "Verify Qatar resident OTP succeeded. UserId={UserId} Provider={Provider}",
+                user.Id,
+                QatarResidentOtpConstants.Provider);
+        }
+
+        return tokens;
     }
 
-    private async Task<IResult<Unit>> CheckIfQatarUsingKawaderAsync(Guid userId, string qid, DateOnly expiryDate, CancellationToken cancellationToken)
+    private async Task<IResult<Unit>> CheckIfQatarUsingKawaderAsync(
+        Guid userId,
+        string qid,
+        DateOnly expiryDate,
+        CancellationToken cancellationToken)
     {
-        var request = await mediator.SendQueryAsync
-            <GetPersonalInformationByQidQuery,IResult<MOEPersonalInfo>>
-            (new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)), cancellationToken);
-        if(request.IsFailed) return Result.Fail<Unit>(request.Errors);
-        if(request.Value.NationalityCode != QatarNationalityCode) return Result.Ok(Unit.Value);
+        var qidMasked = MaskQid(qid);
+
+        var request = await mediator.SendQueryAsync<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>(
+            new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)),
+            cancellationToken);
+
+        if (request.IsFailed)
+        {
+            _log.Warning(
+                "MOI personal info query failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                userId,
+                qidMasked,
+                string.Join(" | ", request.Errors.Select(e => e.Message)));
+
+            return Result.Fail<Unit>(request.Errors);
+        }
+
+        if (request.Value.NationalityCode != QatarNationalityCode)
+            return Result.Ok(Unit.Value);
+
         var allowLogin = await CheckIfAllowLoginAsync();
-        return allowLogin ? Result.Ok(Unit.Value) : Result.Fail<Unit>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
-        
+        return allowLogin
+            ? Result.Ok(Unit.Value)
+            : Result.Fail<Unit>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
+
         async Task<bool> CheckIfAllowLoginAsync()
         {
             var isKawaderUser = await uow.GetEntityRepository<KawaderQid>()
-                .DbSet.AsNoTracking().AnyAsync(x => x.Qid == qid, cancellationToken);
+                .DbSet.AsNoTracking()
+                .AnyAsync(x => x.Qid == qid, cancellationToken);
+
+            _log.Information(
+                "Kawader allow-login check. UserId={UserId} Qid={QidMasked} IsKawaderUser={IsKawaderUser}",
+                userId,
+                qidMasked,
+                isKawaderUser);
+
             return isKawaderUser;
         }
     }
-    
-    private async Task UpdateUserProfileAsync(Guid userId, string qidNumber, DateOnly expiryDate, CancellationToken cancellationToken)
+
+    private async Task UpdateUserProfileAsync(
+        Guid userId,
+        string qidNumber,
+        DateOnly expiryDate,
+        CancellationToken cancellationToken)
     {
-        // create user profile if user not have one and update information QID and ExpireDate
-        var userProfile = await uow.GetEntityRepository<UserProfile>().
-            DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
-        if (userProfile is not null)
+        var qidMasked = MaskQid(qidNumber);
+
+        var userProfile = await uow.GetEntityRepository<UserProfile>()
+            .DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
+
+        if (userProfile is null)
         {
-            userProfile.NationalNumber = qidNumber;
-            userProfile.QIDExpiry = expiryDate;
-            await uow.SaveChangesAsync(cancellationToken);
+            // keeping your current behavior (no create). Just log.
+            _log.Information("UserProfile not found; skipping update. UserId={UserId} Qid={QidMasked}", userId, qidMasked);
+            return;
         }
+
+        userProfile.NationalNumber = qidNumber;
+        userProfile.QIDExpiry = expiryDate;
+        await uow.SaveChangesAsync(cancellationToken);
+
+        _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked, expiryDate);
     }
-    
-    private async Task<IResult<Unit>> UpsertQatarPassClaimsAsync(User user, VerifyQatarResidentOtpCommand data, string? normalizedPhone)
+
+    private async Task<IResult<Unit>> UpsertQatarPassClaimsAsync(
+        User user,
+        VerifyQatarResidentOtpCommand data,
+        string? normalizedPhone)
     {
         var existing = await userManager.GetClaimsAsync(user);
 
-        // Map of claim suffix -> value
         var claims = new (string Key, string? Value)[]
         {
             ("qid", data.Qid),
@@ -137,7 +280,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         var update = await userManager.UpdateAsync(user);
         return update.Succeeded ? Result.Ok() : FailureFromIdentity<Unit>(update);
     }
-    
+
     private static string NormalizePhone(string phone)
     {
         var digits = new string(phone.Where(char.IsDigit).ToArray());
@@ -147,6 +290,15 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         if (digits.Length == 8) return "+974" + digits;
 
         return "+" + digits;
+    }
+
+    private static string MaskQid(string? qid)
+    {
+        if (string.IsNullOrWhiteSpace(qid)) return "—";
+        // keep last 3 digits only
+        var digits = new string(qid.Where(char.IsDigit).ToArray());
+        if (digits.Length <= 3) return "***";
+        return new string('*', digits.Length - 3) + digits[^3..];
     }
 
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>

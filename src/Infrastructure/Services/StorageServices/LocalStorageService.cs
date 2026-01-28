@@ -112,67 +112,6 @@ public sealed class LocalStorageService : IFileStorageService
         }
     }
 
-    public Task<Result<int>> DeletePrefixAsync(string prefix, CancellationToken ct = default)
-    {
-        try
-        {
-            ct.ThrowIfCancellationRequested();
-
-            // Map *directory* for prefix
-            var mapped = MapPath(prefix);
-            if (!mapped.IsSuccess) return Task.FromResult(Result.Fail<int>(mapped.Errors));
-
-            var fullPrefix = mapped.Value!;
-            // Ensure it's a directory path
-            if (!Directory.Exists(fullPrefix))
-                return Task.FromResult(Result.Ok(0));
-
-            var deleted = 0;
-
-            foreach (var file in Directory.EnumerateFiles(fullPrefix, "*", SearchOption.AllDirectories))
-            {
-                ct.ThrowIfCancellationRequested();
-                File.Delete(file);
-                deleted++;
-            }
-
-            // cleanup dirs (best-effort)
-            foreach (var dir in Directory.EnumerateDirectories(fullPrefix, "*", SearchOption.AllDirectories)
-                         .OrderByDescending(d => d.Length))
-            {
-                TryDeleteDir(dir);
-            }
-            TryDeleteDir(fullPrefix);
-
-            return Task.FromResult(Result.Ok(deleted));
-
-            static void TryDeleteDir(string d)
-            {
-                try { Directory.Delete(d); } catch { /* ignore */ }
-            }
-        }
-        catch (OperationCanceledException oce)
-        {
-            _logger.Error(oce, "DeletePrefixAsync cancelled for {Prefix}", prefix);
-            return Task.FromResult(Result.Fail<int>(ErrorsCodes.Cancelled));
-        }
-        catch (UnauthorizedAccessException uae)
-        {
-            _logger.Error(uae, "DeletePrefixAsync access denied for {Prefix}", prefix);
-            return Task.FromResult(Result.Fail<int>(ErrorsCodes.AccessDenied));
-        }
-        catch (IOException ioe)
-        {
-            _logger.Error(ioe, "DeletePrefixAsync IO error for {Prefix}", prefix);
-            return Task.FromResult(Result.Fail<int>(ErrorsCodes.IoError));
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "DeletePrefixAsync error for {Prefix}", prefix);
-            return Task.FromResult(Result.Fail<int>(ErrorsCodes.IoError));
-        }
-    }
-
     public IResult<string> ToPublicUrl(string blobKey)
     {
         if (string.IsNullOrWhiteSpace(_publicBaseUrl))

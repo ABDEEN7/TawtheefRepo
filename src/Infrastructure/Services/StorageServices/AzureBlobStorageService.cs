@@ -51,16 +51,21 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 }
 
                 await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct).ConfigureAwait(false);
-
-                // Fetch properties to get size
-                var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
-                var size = props.Value.ContentLength;
+                long size = 0;
+                if (stream.CanSeek)
+                    size = stream.Length;
+                else
+                {
+                    // fallback: GetPropertiesAsync after upload
+                    var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
+                    size = props.Value.ContentLength;
+                }
 
                 return Result.Ok(new FileSaved(blobKey, (ulong)size));
             }
             catch (OperationCanceledException oce)
             {
-                _logger.Error(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
+                _logger.Information(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
                 return Result.Fail<FileSaved>(ErrorsCodes.Cancelled);
             }
             catch (RequestFailedException rfe) when (rfe.Status == 403)
@@ -98,7 +103,7 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
             }
             catch (OperationCanceledException oce)
             {
-                _logger.Error(oce, "DeleteAsync cancelled for {BlobKey}", blobKey);
+                _logger.Information(oce, "DeleteAsync cancelled for {BlobKey}", blobKey);
                 return Result.Fail<bool>(ErrorsCodes.Cancelled);
             }
             catch (RequestFailedException rfe) when (rfe.Status == 403)
@@ -115,62 +120,6 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
             {
                 _logger.Error(ex, "DeleteAsync error for {BlobKey}", blobKey);
                 return Result.Fail<bool>(ErrorsCodes.IoError);
-            }
-        }
-
-        public async Task<Result<int>> DeletePrefixAsync(string prefix, CancellationToken ct = default)
-        {
-            try
-            {
-                ct.ThrowIfCancellationRequested();
-
-                if (string.IsNullOrWhiteSpace(prefix))
-                    return Result.Fail<int>(ErrorsCodes.InvalidBlobKey);
-
-                // normalize
-                prefix = prefix.Replace('\\', '/');
-
-                var deleted = 0;
-
-                // Use pagination to iterate blobs with prefix
-                await foreach (var blobItem in _container.GetBlobsAsync(cancellationToken: ct).ConfigureAwait(false))
-                {
-                    ct.ThrowIfCancellationRequested();
-
-                    try
-                    {
-                        var client = _container.GetBlobClient(blobItem.Name);
-                        var delResp = await client.DeleteIfExistsAsync(cancellationToken: ct).ConfigureAwait(false);
-                        if (delResp.Value) deleted++;
-                    }
-                    catch (RequestFailedException rf)
-                    {
-                        // log and continue (best-effort)
-                        _logger.Warning(rf, "Failed to delete blob {Blob} while deleting prefix {Prefix}", blobItem.Name, prefix);
-                    }
-                }
-
-                return Result.Ok(deleted);
-            }
-            catch (OperationCanceledException oce)
-            {
-                _logger.Error(oce, "DeletePrefixAsync cancelled for {Prefix}", prefix);
-                return Result.Fail<int>(ErrorsCodes.Cancelled);
-            }
-            catch (RequestFailedException rfe) when (rfe.Status == 403)
-            {
-                _logger.Error(rfe, "DeletePrefixAsync access denied for {Prefix}", prefix);
-                return Result.Fail<int>(ErrorsCodes.AccessDenied);
-            }
-            catch (RequestFailedException rfe)
-            {
-                _logger.Error(rfe, "DeletePrefixAsync Azure error for {Prefix}", prefix);
-                return Result.Fail<int>(ErrorsCodes.IoError);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "DeletePrefixAsync error for {Prefix}", prefix);
-                return Result.Fail<int>(ErrorsCodes.IoError);
             }
         }
 

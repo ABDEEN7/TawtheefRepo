@@ -4,6 +4,7 @@ using Application.Operation.Features.Authenticator.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -21,35 +22,60 @@ public sealed class AzureExternalCallbackLoginHandler(
     SignInManager<User> signInManager,
     ITokenService tokenService,
     IEmployeeProfileService employeeProfileService,
-    ILoginAuditService loginAudit
+    ILoginAuditService loginAudit,
+    ILogger logger
 ) : BaseExternalCallbackLoginHandler(loginAudit),
     ICommandHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     private const string ProviderName = "Azure";
     private const string ProviderDisplayName = "Azure AD";
 
+    private readonly ILogger _log = logger.ForContext<AzureExternalCallbackLoginHandler>();
+
     protected override string Provider => ProviderName;
     protected override Guid? DefaultUserType => UserTypeIds.Employee;
 
     public async Task<IResult<AuthResponse>> Handle(AzureExternalCallbackLoginCommand request, CancellationToken ct)
     {
+        _log.Information(
+            "Azure callback started. ErrorPresent={ErrorPresent}",
+            !string.IsNullOrWhiteSpace(request.Error));
+
         // 1) Fail fast on external provider error
         if (!string.IsNullOrWhiteSpace(request.Error))
+        {
+            _log.Warning("Azure callback failed: ProviderError={ProviderError}", request.Error);
             return await LogFailureAsync(ErrorsCodes.ExternalLoginError(request.Error), ct: ct);
+        }
 
         // 2) Get id_token + validate
         var idToken = await GetExternalIdTokenAsync();
         if (idToken is null)
+        {
+            _log.Warning("Azure callback failed: id_token not found in ExternalLoginInfo tokens");
             return await LogFailureAsync(ErrorsCodes.ExternalLoginInfoNotFound, ct: ct);
+        }
 
         var principalResult = await azureTokenValidator.ValidateAsync(idToken, ct);
         if (principalResult.IsFailed)
+        {
+            _log.Warning(
+                "Azure token validation failed. Errors={Errors}",
+                string.Join(" | ", principalResult.Errors.Select(e => e.Message)));
+
             return await LogFailureAsync(principalResult.Errors, ct: ct);
+        }
 
         var principal = principalResult.Value;
 
         // 3) Build normalized claims model
         var claims = AzureClaims.From(principal);
+
+        _log.Information(
+            "Azure claims extracted. ProviderKeyPresent={ProviderKeyPresent} EmailPresent={EmailPresent}",
+            !string.IsNullOrWhiteSpace(claims.ProviderKey),
+            !string.IsNullOrWhiteSpace(claims.Email));
+
         if (string.IsNullOrWhiteSpace(claims.ProviderKey))
             return await LogFailureAsync(ErrorsCodes.ExternalLoginMissingProviderKey, ct: ct);
 
@@ -57,25 +83,62 @@ public sealed class AzureExternalCallbackLoginHandler(
             return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailNotFound, ct: ct);
 
         if (!IsEduGovQaEmail(claims.Email))
+        {
+            _log.Warning("Azure callback blocked: email domain not allowed. Email={Email}", claims.Email);
             return await LogFailureAsync(ErrorsCodes.ExternalLoginEmailDomainNotAllowed, ct: ct);
+        }
 
         // 4) Resolve user (linked -> existing by email -> create new)
         var resolvedUser = await ResolveUserAsync(claims);
         if (resolvedUser.IsFailed)
+        {
+            _log.Warning(
+                "Azure resolve user failed. Email={Email} Errors={Errors}",
+                claims.Email,
+                string.Join(" | ", resolvedUser.Errors.Select(e => e.Message)));
+
             return await LogFailureAsync(resolvedUser.Errors, ct: ct);
+        }
 
         var user = resolvedUser.Value;
+
+        _log.Information(
+            "Azure user resolved. UserId={UserId} UserTypeId={UserTypeId}",
+            user.Id,
+            user.UserTypeId);
 
         // 5) Upsert provider claims + sync employee profile (if applicable)
         await UpsertProviderClaimsAsync(userManager, user, Provider, principal);
 
         var syncResult = await SyncEmployeeProfileAsync(user, ct);
         if (syncResult.IsFailed)
+        {
+            _log.Warning(
+                "Azure employee profile sync failed. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(" | ", syncResult.Errors.Select(e => e.Message)));
+
             return await LogFailureAsync(syncResult.Errors, user.Id, user.UserTypeId, ct: ct);
+        }
 
         // 6) Sign-in + issue tokens
         await signInManager.SignInAsync(user, isPersistent: false);
-        return await tokenService.IssueTokensAsync(user, Provider, ct);
+
+        var tokenResult = await tokenService.IssueTokensAsync(user, Provider, ct);
+
+        if (tokenResult.IsFailed)
+        {
+            _log.Warning(
+                "Azure token issuance failed. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(" | ", tokenResult.Errors.Select(e => e.Message)));
+        }
+        else
+        {
+            _log.Information("Azure login succeeded. UserId={UserId}", user.Id);
+        }
+
+        return tokenResult;
     }
 
     private async Task<string?> GetExternalIdTokenAsync()
@@ -89,14 +152,21 @@ public sealed class AzureExternalCallbackLoginHandler(
         // A) If already linked, return that user
         var linkedUser = await userManager.FindByLoginAsync(Provider, claims.ProviderKey);
         if (linkedUser is not null)
+        {
+            _log.Information("Azure resolve: already linked. UserId={UserId}", linkedUser.Id);
             return Result.Ok(linkedUser);
+        }
 
         // B) If user exists by email, link this provider to that account
         var existingUser = await userManager.FindByEmailAsync(claims.Email);
         if (existingUser is not null)
+        {
+            _log.Information("Azure resolve: found by email; linking provider. UserId={UserId}", existingUser.Id);
             return await LinkProviderToExistingUserAsync(existingUser, claims.ProviderKey);
+        }
 
         // C) Otherwise create a new employee user
+        _log.Information("Azure resolve: user not found; creating new employee. Email={Email}", claims.Email);
         return await CreateEmployeeUserAsync(claims);
 
         async Task<Result<User>> LinkProviderToExistingUserAsync(User user, string providerKey)
@@ -104,15 +174,27 @@ public sealed class AzureExternalCallbackLoginHandler(
             // Defensive: ensure providerKey isn't already linked to another account
             var duplicate = await userManager.FindByLoginAsync(Provider, providerKey);
             if (duplicate is not null && duplicate.Id != user.Id)
+            {
+                _log.Warning(
+                    "Azure resolve: provider key already linked to different user. ExistingUserId={ExistingUserId} DuplicateUserId={DuplicateUserId}",
+                    user.Id,
+                    duplicate.Id);
+
                 return Result.Fail(ErrorsCodes.ExternalLoginAlreadyLinked);
+            }
 
             var addLoginRes = await userManager.AddLoginAsync(
                 user,
                 new UserLoginInfo(Provider, providerKey, ProviderDisplayName));
 
-            return addLoginRes.Succeeded
-                ? Result.Ok(user)
-                : Result.Fail(string.Join(", ", addLoginRes.Errors.Select(e => e.Description)));
+            if (!addLoginRes.Succeeded)
+            {
+                var errors = string.Join(", ", addLoginRes.Errors.Select(e => e.Description));
+                _log.Warning("Azure resolve: AddLoginAsync failed. UserId={UserId} Errors={Errors}", user.Id, errors);
+                return Result.Fail(errors);
+            }
+
+            return Result.Ok(user);
         }
     }
 
@@ -126,7 +208,14 @@ public sealed class AzureExternalCallbackLoginHandler(
             UserTypeIds.Employee);
 
         if (registerResult.IsFailed)
+        {
+            _log.Warning(
+                "Azure create employee failed: domain register failed. Email={Email} Errors={Errors}",
+                claims.Email,
+                string.Join(" | ", registerResult.Errors.Select(e => e.Message)));
+
             return Result.Fail(registerResult.Errors);
+        }
 
         var newUser = (EmployeeUser)registerResult.Value;
 
@@ -138,14 +227,24 @@ public sealed class AzureExternalCallbackLoginHandler(
 
         var createRes = await userManager.CreateAsync(newUser);
         if (!createRes.Succeeded)
-            return Result.Fail(string.Join(", ", createRes.Errors.Select(e => e.Description)));
+        {
+            var errors = string.Join(", ", createRes.Errors.Select(e => e.Description));
+            _log.Warning("Azure create employee failed: CreateAsync failed. Email={Email} Errors={Errors}", claims.Email, errors);
+            return Result.Fail(errors);
+        }
 
         var addLoginRes = await userManager.AddLoginAsync(
             newUser,
             new UserLoginInfo(Provider, claims.ProviderKey, ProviderDisplayName));
 
         if (!addLoginRes.Succeeded)
-            return Result.Fail(string.Join(", ", addLoginRes.Errors.Select(e => e.Description)));
+        {
+            var errors = string.Join(", ", addLoginRes.Errors.Select(e => e.Description));
+            _log.Warning("Azure create employee failed: AddLoginAsync failed. UserId={UserId} Errors={Errors}", newUser.Id, errors);
+            return Result.Fail(errors);
+        }
+
+        _log.Information("Azure create employee succeeded. UserId={UserId}", newUser.Id);
 
         return Result.Ok<User>(newUser);
     }
@@ -175,12 +274,12 @@ public sealed class AzureExternalCallbackLoginHandler(
         var data = ProviderProfileClaims.FromAzure(principal);
 
         // Populate missing core fields (domain model)
-        if(string.IsNullOrWhiteSpace(user.FullNameEn))
+        if (string.IsNullOrWhiteSpace(user.FullNameEn))
             user.FullNameEn = data.FullName ?? data.Email!.Split('@')[0];
-        if(string.IsNullOrWhiteSpace(user.FullNameAr))
+        if (string.IsNullOrWhiteSpace(user.FullNameAr))
             user.FullNameAr = data.FullName ?? data.Email!.Split('@')[0];
-        
-        user.Avatar     ??= data.Picture;
+
+        user.Avatar ??= data.Picture;
         user.EmailConfirmed = true;
 
         var existingClaims = await userManager.GetClaimsAsync(user);

@@ -13,6 +13,9 @@ public sealed class CustomExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (httpContext.Response.HasStarted)
+            return false;
+        
         // Correlation & user context
         var correlationId = httpContext.TraceIdentifier;
         var userId = httpContext.User.FindFirst("sub")?.Value
