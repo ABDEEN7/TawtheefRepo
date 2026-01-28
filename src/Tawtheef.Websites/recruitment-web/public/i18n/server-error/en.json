@@ -43,6 +43,8 @@
   "server-error.INVALID_PERMISSION": "Invalid permission.",
   "server-error.SYSTEM_ROLE_MODIFICATION_NOT_ALLOWED": "System roles cannot be modified.",
   "server-error.MULTIPLE_SYSTEM_ROLES_NOT_ALLOWED": "Multiple system roles are not allowed.",
+  "server-error.SYSTEM_ROLE_REQUIRED": "A system role is required.",
+  "server-error.SYSTEM_ROLE_CHANGE_NOT_ALLOWED": "System role changes are not allowed.",
   "server-error.SYSTEM_ADMIN_ASSIGNMENT_NOT_ALLOWED": "System admin assignment is not allowed.",
   "server-error.PROTECTED_USER_DELETION_NOT_ALLOWED": "This user cannot be deleted.",
   "server-error.SYSTEM_ADMIN_BLOCK_NOT_ALLOWED": "System admin cannot be blocked.",
