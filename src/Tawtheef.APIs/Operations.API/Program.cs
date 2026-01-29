@@ -56,6 +56,7 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
     lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
         .Enrich.WithExceptionDetails()

@@ -20,7 +20,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
@@ -375,8 +374,7 @@ namespace Tawtheef.Infrastructure
                 {
                     options
                         .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors()
-                        .LogTo(Console.WriteLine, LogLevel.Information);
+                        .EnableDetailedErrors();
                 }
             });
 
