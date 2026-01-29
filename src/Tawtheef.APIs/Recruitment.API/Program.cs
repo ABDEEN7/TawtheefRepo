@@ -7,6 +7,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
@@ -51,7 +52,9 @@ if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
         });
     }
 }
-
+#if DEBUG
+SelfLog.Enable(msg => Console.Error.WriteLine(msg));
+#endif
 builder.Host.UseSerilog((ctx, services, lc) => {
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
