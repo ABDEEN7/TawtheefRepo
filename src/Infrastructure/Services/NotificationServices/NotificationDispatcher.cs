@@ -2,7 +2,7 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Models.Notification;
@@ -13,12 +13,12 @@ namespace Tawtheef.Infrastructure.Services.NotificationServices;
 public sealed class NotificationDispatcher(
     IServiceScopeFactory scopeFactory,
     TimeProvider time,
-    ILogger<NotificationDispatcher> logger)
+    ILogger logger)
     : BackgroundService
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(5);
     private const int BatchSize = 25;
-
+    private readonly ILogger _log = logger.ForContext<NotificationDispatcher>();
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -51,7 +51,7 @@ public sealed class NotificationDispatcher(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Notification dispatcher cycle failed");
+            _log.Error(ex, "Notification dispatcher cycle failed");
         }
     }
 
@@ -85,7 +85,7 @@ public sealed class NotificationDispatcher(
         catch (Exception ex)
         {
             n.MarkFailed(ex.Message);
-            logger.LogError(ex, "Notification {Id} failed", n.Id);
+            _log.Error(ex, "Notification {Id} failed", n.Id);
         }
     }
 
