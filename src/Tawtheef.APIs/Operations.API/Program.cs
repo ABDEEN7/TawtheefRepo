@@ -26,23 +26,30 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
+{
     var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-            throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
-            throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+                   throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
     var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
-    builder.Services.AddOpenTelemetry().UseAzureMonitor();
-    builder.Services.AddSingleton(_ => {
-        var cfg = TelemetryConfiguration.CreateDefault();
-        cfg.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-        return cfg;
-    });
+if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+{
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+    if (!string.IsNullOrEmpty(aiCs))
+    {
+        builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
+        builder.Services.AddSingleton(_ =>
+        {
+            var cfg = TelemetryConfiguration.CreateDefault();
+            cfg.ConnectionString = aiCs;
+            return cfg;
+        });
+    }
 }
 
 builder.Host.UseSerilog((ctx, services, lc) => {
@@ -60,9 +67,9 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
-    // ✅ Application Insights
-    
-    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+    // Application Insights
+    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(
             services.GetRequiredService<TelemetryConfiguration>(),
             new TraceTelemetryConverter());
