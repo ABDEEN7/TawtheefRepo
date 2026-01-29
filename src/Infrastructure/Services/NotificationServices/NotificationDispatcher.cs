@@ -111,7 +111,7 @@ public sealed class NotificationDispatcher(
     {
         return new Dictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>>
         {
-            [NotificationChannel.Email] = (n, ct) => emailSender.SendAsync(n, ct),
+            [NotificationChannel.Email] = emailSender.SendAsync,
 
             [NotificationChannel.Sms] = async (n, ct) =>
             {
