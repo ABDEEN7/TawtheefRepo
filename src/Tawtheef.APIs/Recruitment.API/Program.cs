@@ -41,12 +41,16 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
-    builder.Services.AddSingleton(_ => {
-        var cfg = TelemetryConfiguration.CreateDefault();
-        cfg.ConnectionString = aiCs;
-        return cfg;
-    });
+    if (!string.IsNullOrEmpty(aiCs))
+    {
+        builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
+        builder.Services.AddSingleton(_ =>
+        {
+            var cfg = TelemetryConfiguration.CreateDefault();
+            cfg.ConnectionString = aiCs;
+            return cfg;
+        });
+    }
 }
 
 builder.Host.UseSerilog((ctx, services, lc) => {
@@ -64,8 +68,9 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     // Application Insights
-    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
+    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(
             services.GetRequiredService<TelemetryConfiguration>(),
             new TraceTelemetryConverter());
