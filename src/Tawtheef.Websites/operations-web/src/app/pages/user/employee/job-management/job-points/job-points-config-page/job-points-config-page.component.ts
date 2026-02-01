@@ -17,7 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { DialogHelperService } from '../../../../../../core/services/dialog-helper.service';
 import { JobStatus } from '../../../../../../core/enums/lookups.enum';
 import { JobLookupService } from '../../services/job-lookup.service';
-import {routes} from '../../../../../../routes/routes';
+import { routes } from '../../../../../../routes/routes';
 import { AuthService } from '../../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../../core/constants/permissions';
 
@@ -75,68 +75,67 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
- private initForm(): void {
-  this.form = this.fb.group({
-    main: this.fb.group({
-      applicantCategory: [0, [Validators.min(0)]],
-      education: [0, [Validators.min(0)]],
-      experience: [0, [Validators.min(0)]],
-      training: [0, [Validators.min(0)]],
-      skills: [0, [Validators.min(0)]],
-      languages: [0, [Validators.min(0)]],
-      certificates: [0, [Validators.min(0)]],
-      total: [{ value: 0, disabled: true }],
-    }),
-
-    details: this.fb.group({
-      applicantCategory: this.fb.group({}), // dynamic -> will be added later
-      education: this.fb.group({}),         // dynamic -> will be added later
-      skills: this.fb.group({}),            // dynamic -> will be added later
-
-      experience: this.fb.group({
-        pointsPerYear: [0],
-        maxYears: [0],
+  private initForm(): void {
+    this.form = this.fb.group({
+      main: this.fb.group({
+        applicantCategory: [0, [Validators.min(0)]],
+        education: [0, [Validators.min(0)]],
+        experience: [0, [Validators.min(0)]],
+        training: [0, [Validators.min(0)]],
+        skills: [0, [Validators.min(0)]],
+        languages: [0, [Validators.min(0)]],
+        certificates: [0, [Validators.min(0)]],
         total: [{ value: 0, disabled: true }],
       }),
 
-      training: this.fb.group({
-        highLinked: [0],
-        mediumLinked: [0],
-        lowLinked: [0],
-      }),
+      details: this.fb.group({
+        applicantCategory: this.fb.group({}), 
+        education: this.fb.group({}), 
+        skills: this.fb.group({}), 
 
-      certificates: this.fb.group({
-        certificatesLinked: [0],
-        certificatesNotLinked: [0],
-        prize: [0],
-      }),
-
-      languages: this.fb.group({
-        speaking: this.fb.group({
-          max: [0],
-          excellent: [0],
-          veryGood: [0],
-          good: [0],
-        }),
-        reading: this.fb.group({
-          max: [0],
-          excellent: [0],
-          veryGood: [0],
-          good: [0],
-        }),
-        conversation: this.fb.group({
-          max: [0],
-          excellent: [0],
-          veryGood: [0],
-          good: [0],
+        experience: this.fb.group({
+          pointsPerYear: [0],
+          maxYears: [0],
+          total: [{ value: 0, disabled: true }],
         }),
 
-        // ✅ your LANGUAGE_ITEMS includes 'native', so it must exist too:
-        native: [0],
+        training: this.fb.group({
+          highLinked: [0],
+          mediumLinked: [0],
+          lowLinked: [0],
+        }),
+
+        certificates: this.fb.group({
+          certificatesLinked: [0],
+          certificatesNotLinked: [0],
+          prize: [0],
+        }),
+
+        languages: this.fb.group({
+          speaking: this.fb.group({
+            max: [0],
+            excellent: [0],
+            veryGood: [0],
+            good: [0],
+          }),
+          reading: this.fb.group({
+            max: [0],
+            excellent: [0],
+            veryGood: [0],
+            good: [0],
+          }),
+          conversation: this.fb.group({
+            max: [0],
+            excellent: [0],
+            veryGood: [0],
+            good: [0],
+          }),
+
+          native: [0],
+        }),
       }),
-    }),
-  });
-}
+    });
+  }
 
   get mainFormGroup(): FormGroup {
     return this.form.get('main') as FormGroup;
@@ -227,7 +226,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
 
   private handleExperienceTotal(): void {
     const exp = this.detailsFormGroup.get('experience') as FormGroup;
-    exp.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((v) => {
+    exp.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const total = this.pointsCalculationService.experienceTotal(exp);
       exp.get('total')?.setValue(total, { emitEvent: false });
       this.updateFinalApprovalAvailability();
@@ -281,7 +280,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
         Id: isUpdate ? this.jobPoints!.id : GuidUtils.emptyGuid,
         jobId: this.jobId,
         ...this.getMainPoints(),
-        details: this.getDetails(),
+        details: this.getDetails(), 
         isApproved: false,
       },
     };
@@ -404,13 +403,13 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     const d = this.detailsFormGroup.getRawValue();
     const result: JobPointsDetail[] = [];
 
-    this.pushCategory(result, d.applicantCategory, JobPointRuleTypeEnum.ApplicantCategory);
-    this.pushCategory(result, d.training, JobPointRuleTypeEnum.Training);
-    this.pushCategory(result, d.skills, JobPointRuleTypeEnum.Skill, true);
-    this.pushCategory(result, d.education, JobPointRuleTypeEnum.Education, true);
-    this.pushCategory(result, d.certificates, JobPointRuleTypeEnum.Certificate);
-    this.pushCategory(result, d.experience, JobPointRuleTypeEnum.Experience);
-    this.pushCategory(result, d.languages, JobPointRuleTypeEnum.Language);
+    this.pushCategory(result, d.applicantCategory, JobPointRuleTypeEnum.ApplicantCategory, false, undefined, true);
+    this.pushCategory(result, d.training, JobPointRuleTypeEnum.Training, false, undefined, true);
+    this.pushCategory(result, d.skills, JobPointRuleTypeEnum.Skill, true, undefined, true);
+    this.pushCategory(result, d.education, JobPointRuleTypeEnum.Education, true, undefined, true);
+    this.pushCategory(result, d.certificates, JobPointRuleTypeEnum.Certificate, false, undefined, true);
+    this.pushCategory(result, d.experience, JobPointRuleTypeEnum.Experience, false, undefined, true);
+    this.pushCategory(result, d.languages, JobPointRuleTypeEnum.Language, false, undefined, true);
 
     return result;
   }
@@ -420,13 +419,18 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     source: any,
     type: JobPointRuleTypeEnum,
     withRef = false,
-    parentKey?: string
+    parentKey?: string,
+    includeZero: boolean = true
   ): void {
     Object.keys(source || {}).forEach((key) => {
       const value = source[key];
       const code = parentKey ? `${parentKey}.${key}` : key;
 
-      if (typeof value === 'number' && value > 0) {
+      if (typeof value === 'number') {
+        if (value === null || value === undefined) return;
+        if (!includeZero && value <= 0) return;
+        if (includeZero && value < 0) return; 
+
         const ref =
           withRef && type === JobPointRuleTypeEnum.Education
             ? this.job?.degrees?.find((d) => d.degree.backendName === code)?.degree?.id
@@ -440,8 +444,10 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           points: value,
           referenceId: ref,
         });
-      } else if (typeof value === 'object' && value !== null) {
-        this.pushCategory(target, value, type, withRef, code);
+        return;
+      }
+      if (typeof value === 'object' && value !== null) {
+        this.pushCategory(target, value, type, withRef, code, includeZero);
       }
     });
   }
