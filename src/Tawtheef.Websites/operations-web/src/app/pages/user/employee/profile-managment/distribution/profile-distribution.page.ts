@@ -83,7 +83,6 @@ export class ProfileDistributionPage implements OnInit {
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
-  private searchDebounce?: number;
 
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
@@ -171,26 +170,20 @@ export class ProfileDistributionPage implements OnInit {
 
   onSearchChange(value: string): void {
     this.search.set(value);
-    if (this.searchDebounce) {
-      window.clearTimeout(this.searchDebounce);
-    }
-    this.searchDebounce = window.setTimeout(() => {
-      this.pageNumber.set(1);
-      this.clearSelection();
-      this.loadData();
-    }, 400);
   }
 
   onSelectionChange(selection: DistributionFile[]): void {
     this.selectedIds.set(new Set(selection.map(item => item.profileId)));
   }
 
-  selectAll(): void {
-    this.selectedIds.set(new Set(this.displayedFiles().map(f => f.profileId)));
-  }
-
   clearSelection(): void {
     this.selectedIds.set(new Set());
+  }
+
+  applySearch(): void {
+    this.pageNumber.set(1);
+    this.clearSelection();
+    this.loadData();
   }
   openManualDialog(profileId?: string): void {
     if (!this.canManageDistribution()) return;

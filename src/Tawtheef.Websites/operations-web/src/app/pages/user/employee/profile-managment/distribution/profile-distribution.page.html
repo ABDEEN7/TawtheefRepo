@@ -41,12 +41,12 @@
                                <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
                                     <input
-
                                       type="search"
                                       class="w-100 form-control"
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
                                       [ngModel]="search()"
                                       (ngModelChange)="onSearchChange($event)"
+                                      (keydown.enter)="applySearch()"
                                     />
                                   </span>
                              </div>
@@ -67,15 +67,9 @@
                                  </p-select>
                              </div>
                              <div class="col-lg-4 col-md-12 d-flex gap-2  flex-wrap">
-                                 <button  class="btn btn-primary" type="button" (click)="selectAll()">
-                                   {{ 'distribution.filters.selectAll' | translate }}
+                                 <button class="btn btn-primary" type="button" (click)="applySearch()">
+                                   {{ 'distribution.filters.searchButton' | translate }}
                                  </button>
-                                 <div class="action-buttons">
-                                   <button  class="btn-text" type="button" (click)="clearSelection()">
-                                     {{ 'distribution.filters.clearSelection' | translate }}
-                                   </button>
-                                 </div>
-
                              </div>
                            </div>
                          </div>
