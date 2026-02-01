@@ -176,6 +176,7 @@ export class ProfileDistributionPage implements OnInit {
     }
     this.searchDebounce = window.setTimeout(() => {
       this.pageNumber.set(1);
+      this.clearSelection();
       this.loadData();
     }, 400);
   }
@@ -235,6 +236,50 @@ export class ProfileDistributionPage implements OnInit {
       this.assignAuto(res.payload);
     });
   }
+
+  openReassignDialog(mode: 'manual' | 'auto', profileId?: string): void {
+    if (!this.canManageDistribution()) return;
+    if (profileId) this.selectedIds.set(new Set([profileId]));
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) {
+      return;
+    }
+
+    if (mode === 'manual') {
+      this.dialogService.open(ManualAssignDialog, {
+        header: 'distribution.dialog.manual.title',
+        width: '520px',
+        modal: true,
+        dismissableMask: false,
+        data: {
+          employees: this.employees(),
+          selectedProfileIds: ids,
+          initialEmployeeId: this.manualEmployeeId() || null,
+        },
+      })?.onClose.subscribe((res: DistributionDialogResult) => {
+        if (!res || res.kind !== 'manual') return;
+        this.reassignManual(res.payload);
+      });
+      return;
+    }
+
+    this.dialogService.open(AutoAssignDialog, {
+      header: 'distribution.dialog.auto.title',
+      width: '640px',
+      modal: true,
+      dismissableMask: false,
+      data: {
+        employees: this.employees(),
+        selectedProfileIds: ids,
+        initialLimit: this.autoLimit(),
+        initialEmployeeIds: Array.from(this.autoEmployeeIds()),
+      },
+    })?.onClose.subscribe((res: DistributionDialogResult) => {
+      if (!res || res.kind !== 'auto') return;
+      this.reassignAuto(res.payload);
+    });
+  }
+
   private assignManual(payload: ManualAssignRequest): void {
     if (!this.canManageDistribution()) return;
     this.loading.set(true);
@@ -255,20 +300,31 @@ export class ProfileDistributionPage implements OnInit {
       });
   }
 
-  redistribute(mode: 'manual' | 'auto'): void {
+  private reassignManual(payload: ManualAssignRequest): void {
     if (!this.canManageDistribution()) return;
-    if (this.selectedIds().size === 0) return;
-
-    const payload: ReassignRequest = {
-      mode,
-      profileIds: Array.from(this.selectedIds()),
-      employeeId: this.manualEmployeeId(),
-      employeeIds: Array.from(this.autoEmployeeIds()),
-      perEmployeeCount: this.autoLimit(),
+    const request: ReassignRequest = {
+      mode: 'manual',
+      profileIds: payload.profileIds,
+      employeeId: payload.employeeId,
     };
-
     this.loading.set(true);
-    this.api.reassign(payload)
+    this.api.reassign(request)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: result => this.handleResult(result.assignedCount, result)
+      });
+  }
+
+  private reassignAuto(payload: AutoAssignRequest): void {
+    if (!this.canManageDistribution()) return;
+    const request: ReassignRequest = {
+      mode: 'auto',
+      profileIds: payload.profileIds ?? [],
+      employeeIds: payload.employeeIds,
+      perEmployeeCount: payload.perEmployeeCount,
+    };
+    this.loading.set(true);
+    this.api.reassign(request)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: result => this.handleResult(result.assignedCount, result)

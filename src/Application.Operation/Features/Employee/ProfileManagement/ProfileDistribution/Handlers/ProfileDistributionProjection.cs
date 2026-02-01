@@ -56,17 +56,28 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
         // 4) Optional search filter
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var trimmed = searchTerm.Trim();
+            var term = $"%{trimmed}%";
+            var compactTerm = trimmed.Replace(" ", string.Empty);
+            var compactLike = $"%{compactTerm}%";
             profilesQuery = profilesQuery.Where(p =>
                 (p.User != null &&
                  (EF.Functions.Like(p.User.FullNameAr ?? string.Empty, term) ||
-                  EF.Functions.Like(p.User.FullNameEn ?? string.Empty, term))) ||
+                  EF.Functions.Like(p.User.FullNameEn ?? string.Empty, term) ||
+                  (compactTerm.Length > 0 &&
+                   (EF.Functions.Like(
+                        (p.User.FullNameAr ?? string.Empty).Replace(" ", string.Empty),
+                        compactLike) ||
+                    EF.Functions.Like(
+                        (p.User.FullNameEn ?? string.Empty).Replace(" ", string.Empty),
+                        compactLike))))) ||
                 (p.CandidateType != null &&
                  (EF.Functions.Like(p.CandidateType.NameAr ?? string.Empty, term) ||
                   EF.Functions.Like(p.CandidateType.NameEn ?? string.Empty, term))) ||
                 (p.TargetEntity != null &&
                  (EF.Functions.Like(p.TargetEntity.NameAr ?? string.Empty, term) ||
                   EF.Functions.Like(p.TargetEntity.NameEn ?? string.Empty, term))) ||
+                EF.Functions.Like(p.NationalNumber ?? string.Empty, term) ||
                 assignmentRepo.DbSet.Any(a =>
                     a.IsActive &&
                     a.UserProfileId == p.Id &&
