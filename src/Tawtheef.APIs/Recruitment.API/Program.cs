@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Debugging;
-using Serilog.Events;
 using Serilog.Exceptions;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure;
@@ -57,26 +55,30 @@ if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     }
 }
 #if DEBUG
-SelfLog.Enable(msg => Console.Error.WriteLine(msg));
+SelfLog.Enable(msg =>
+    File.AppendAllText(@"C:\home\LogFiles\serilog-selflog.txt", msg + Environment.NewLine));
 #endif
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Host.UseSerilog((ctx, services, lc) => {
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
-    lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
-        .Enrich.WithProperty("Version", "1.0.0")
-        .WriteTo.Console(
-            outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}")
+    
+    lc.ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services)
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName()
+        .Enrich.WithEnvironmentUserName()
+        .Enrich.WithThreadId()
         .Enrich.WithExceptionDetails()
-        .ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .WriteTo.Logger(lc => lc
-            .Filter.ByExcluding(logEvent =>
-                logEvent.Exception?.GetType() == typeof(UnauthorizedAccessException)))
-        .WriteTo.Debug()
-        .WriteTo.Console();
+        .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
+        .Enrich.WithProperty("Version", "1.0.0")
+        .WriteTo.Console(outputTemplate:
+            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+        .WriteTo.File(
+            @"C:\home\LogFiles\app-serilog-tawtheef-.log",
+            rollingInterval: RollingInterval.Day,
+            shared: true);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
@@ -91,10 +93,6 @@ builder.Host.UseSerilog((ctx, services, lc) => {
         lc.WriteTo.ApplicationInsights(
             services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
 });
-builder.Services.AddApplicationInsightsTelemetry();
-Trace.Listeners.Clear();
-Trace.Listeners.Add(new ConsoleTraceListener()); // يكتب إلى stdout
-Trace.AutoFlush = true;
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {
