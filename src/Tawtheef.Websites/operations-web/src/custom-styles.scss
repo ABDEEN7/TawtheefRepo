@@ -811,3 +811,10 @@ body.ltr
   right: auto;
   left: 0;
 }
+
+
+:dir(rtl) .sidebar .sidebar-nav .nav-item.active::after{
+      left: 12px;
+      right: auto !important;
+}
+:dir(rtl) .sidebar .sidebar-nav .nav-item .label{    text-align: right !important;}

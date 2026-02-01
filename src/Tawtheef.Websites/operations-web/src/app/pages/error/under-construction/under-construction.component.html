@@ -1,16 +1,19 @@
-<div class="error-box">
-  <img src="assets/img/error/img-01.svg" alt="img" class="img-fluid bg-01" />
-  <img src="assets/img/error/img-02.svg" alt="img" class="img-fluid bg-02" />
-  <img src="assets/img/error/img-03.svg" alt="img" class="img-fluid bg-03" />
-  <img src="assets/img/error/img-04.svg" alt="img" class="img-fluid bg-04" />
-  <img src="assets/img/error/img-05.svg" alt="img" class="img-fluid bg-05" />
-  <img src="assets/img/error/img-06.svg" alt="img" class="img-fluid bg-06" />
-  <div class="error-logo">
+<div class="error-page d-flex align-items-center justify-content-center min-vh-100">
+     <!-- Decorative background -->
+      <div class="decorations">
+           <img src="assets/img/error/img-01.svg" alt="img" class="dec bg-01" />
+          <img src="assets/img/error/img-02.svg" alt="img" class="dec bg-02" />
+          <img src="assets/img/error/img-03.svg" alt="img" class="dec bg-03" />
+          <img src="assets/img/error/img-04.svg" alt="img" class="dec bg-04" />
+          <img src="assets/img/error/img-05.svg" alt="img" class="dec bg-05" />
+          <img src="assets/img/error/img-06.svg" alt="img" class="dec bg-06" />
+      </div>
+  
+  <div class="error-card text-center p-4 p-md-5 shadow-sm">
     <a [routerLink]="routes.home">
       <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" alt="Logo" />
     </a>
-  </div>
-  <div class="error-box-img">
+     <div class="illustration mb-4">
     <img src="assets/img/error/error-03.svg" alt="Img" class="img-fluid" />
   </div>
   <h3 class="h2 mb-3">
@@ -25,4 +28,6 @@
     class="btn back-to-home-btn d-inline-flex align-items-center"
   ><i class="isax isax-arrow-left-2 me-1"></i> {{ 'app.underConstruction.backToHome' | translate }}</a
   >
+  </div>
+ 
 </div>
