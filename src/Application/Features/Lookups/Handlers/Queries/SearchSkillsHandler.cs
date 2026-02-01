@@ -32,7 +32,10 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper, IMemory
                 EF.Functions.Like(s.DescriptionAr ?? "", $"%{term}%") ||
                 EF.Functions.Like(s.DescriptionEn ?? "", $"%{term}%"));
 
-        var cacheKeyPrefix = $"{CacheKeyPrefix}:{term}";
+        var languageToken = string.IsNullOrWhiteSpace(request.Language)
+            ? "en"
+            : request.Language.Trim().ToLowerInvariant();
+        var cacheKeyPrefix = $"{CacheKeyPrefix}:{languageToken}:{term}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(query, cacheKeyPrefix, cancellationToken);
 
         var matches = await cache.GetOrCreateAsync(cacheKey, async entry =>

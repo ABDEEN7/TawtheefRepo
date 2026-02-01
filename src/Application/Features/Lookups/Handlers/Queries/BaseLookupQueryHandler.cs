@@ -37,7 +37,10 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var searchToken = string.IsNullOrEmpty(normalizedSearch)
             ? "all"
             : normalizedSearch.ToLowerInvariant();
-        var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{searchToken}";
+        var languageToken = string.IsNullOrWhiteSpace(request.Language)
+            ? "en"
+            : request.Language.Trim().ToLowerInvariant();
+        var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{languageToken}:{searchToken}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(dbSet, cacheKeyPrefix, cancellationToken);
 
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
