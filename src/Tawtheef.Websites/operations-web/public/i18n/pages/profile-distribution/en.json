@@ -21,6 +21,7 @@
 
   "distribution.filters.search": "Search",
   "distribution.filters.searchPlaceholder": "Search by name, specialization, or entity",
+  "distribution.filters.searchButton": "Search",
   "distribution.filters.status": "Profile Status",
   "distribution.filters.statusAll": "All Allowed Statuses",
   "distribution.filters.statusSubmitted": "Submitted",
