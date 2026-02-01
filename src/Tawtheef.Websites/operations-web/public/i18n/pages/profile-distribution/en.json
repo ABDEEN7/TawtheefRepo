@@ -20,7 +20,8 @@
   "distribution.actions.cancel": "Cancel",
 
   "distribution.filters.search": "Search",
-  "distribution.filters.searchPlaceholder": "Search by name, specialization, or entity",
+  "distribution.filters.searchPlaceholder": "Search by name, candidate category, or entity",
+  "distribution.filters.searchButton": "Search",
   "distribution.filters.status": "Profile Status",
   "distribution.filters.statusAll": "All Allowed Statuses",
   "distribution.filters.statusSubmitted": "Submitted",
@@ -33,6 +34,7 @@
   "distribution.table.subtitle": "Final statuses are automatically excluded",
   "distribution.table.candidate": "Candidate",
   "distribution.table.specialization": "Specialization",
+  "distribution.table.candidateCategory": "Candidate Category",
   "distribution.table.entity": "Entity",
   "distribution.table.status": "Status",
   "distribution.table.assignee": "Assigned Employee",

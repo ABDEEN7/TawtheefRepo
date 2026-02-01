@@ -14,7 +14,9 @@ import {
 } from '../../constants/job-points-constants';
 import { LanguageAbilityType } from '../../types/language-ability-type';
 import { JobLookupService } from '../../services/job-lookup.service';
-
+import { JobPointsDetailType } from '../../types/job-points-detail.type';
+import { SaveJobPointsRequestDto } from '../../models/save-job-points-request-dto';
+import { SaveJobPointsDetailDto } from '../../models/save-job-points-detail-dto';
 @Component({
   selector: 'app-job-points-tab',
   standalone: false,
@@ -26,7 +28,8 @@ export class JobPointsTabComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() job: JobResponse | null = null;
 
-  @Output() save = new EventEmitter<void>();
+  @Output() save = new EventEmitter<SaveJobPointsRequestDto>();
+
   @Output() ready = new EventEmitter<void>();
   @Output() goPrevious = new EventEmitter<void>();
 
@@ -34,7 +37,6 @@ export class JobPointsTabComponent implements OnInit {
   private pointsCalculationService = inject(JobPointsCalculationService);
   private lookupService = inject(JobLookupService);
 
-  // Define form group mappings
   private formGroupMappings = {
     applicantCategory: {
       items: APPLICANT_CATEGORY_ITEMS,
@@ -94,7 +96,6 @@ export class JobPointsTabComponent implements OnInit {
     },
   };
 
-  // Public getters for template
   get applicantCategoryFormGroup(): FormGroup {
     return this.formGroupMappings.applicantCategory.getter();
   }
@@ -117,18 +118,15 @@ export class JobPointsTabComponent implements OnInit {
     return this.formGroupMappings.certificates.getter();
   }
 
-  // Item arrays (some are dynamic)
   trainingItems = TRAINING_ITEMS;
   experienceItems = EXPERIENCE_ITEMS;
   certificatesItems = CERTIFICATES_ITEMS;
 
-  // These will be set in ngOnInit
   educationItems: DetailItem[] = [];
   skillsItems: DetailItem[] = [];
   applicantCategoryItems: DetailItem[] = [];
   languageItems = LANGUAGE_ITEMS;
 
-  // Language ability getters
   get speakingFormGroup(): FormGroup {
     return this.languagesFormGroup.get('speaking') as FormGroup;
   }
@@ -153,7 +151,6 @@ export class JobPointsTabComponent implements OnInit {
   }
 
   private initFormControls(): void {
-    // Initialize all form controls
     Object.keys(this.formGroupMappings).forEach((key) => {
       const mapping = this.formGroupMappings[key as keyof typeof this.formGroupMappings];
       const group = mapping.getter();
@@ -253,7 +250,8 @@ export class JobPointsTabComponent implements OnInit {
 
   saveDetails(): void {
     if (!this.areAllCategoriesValid()) return;
-    this.save.emit();
+    const payload = this.buildSavePayload();
+    this.save.emit(payload);
   }
 
   maxValue(groupName: string): number {
@@ -272,5 +270,69 @@ export class JobPointsTabComponent implements OnInit {
   isAbilityValid(abilityName: LanguageAbilityType): boolean {
     const abilityGroup = this.languagesFormGroup.get(abilityName) as FormGroup;
     return this.pointsCalculationService.isAbilityValid(abilityGroup);
+  }
+
+  private buildSavePayload(): SaveJobPointsRequestDto {
+    const jobId = this.job?.id;
+    if (!jobId) {
+      throw new Error('Job is not loaded yet (missing jobId).');
+    }
+
+    const applicantCategory = this.applicantCategorySum();
+    const education = this.educationSum();
+    const experience = this.experienceTotal;
+    const training = this.trainingSum();
+    const skills = this.skillsSum();
+    const languages = this.languagesSum();
+    const certificates = this.certificatesSum();
+    const total =
+      applicantCategory + education + experience + training + skills + languages + certificates;
+
+    const details: SaveJobPointsDetailDto[] = [
+      ...this.buildCategoryDetails('ApplicantCategory', this.applicantCategoryFormGroup, this.applicantCategoryItems),
+      ...this.buildCategoryDetails('Education', this.educationFormGroup, this.educationItems),
+      ...this.buildCategoryDetails('Experience', this.experienceFormGroup, this.experienceItems),
+      ...this.buildCategoryDetails('Training', this.trainingFormGroup, this.trainingItems),
+      ...this.buildCategoryDetails('Skills', this.skillsFormGroup, this.skillsItems),
+      ...this.buildCategoryDetails('Languages', this.languagesFormGroup, this.languageItems),
+      ...this.buildCategoryDetails('Certificates', this.certificatesFormGroup, this.certificatesItems),
+    ];
+
+    return {
+      jobId,
+      applicantCategory,
+      education,
+      experience,
+      training,
+      skills,
+      languages,
+      certificates,
+      total,
+      details,
+    };
+  }
+
+  private buildCategoryDetails(
+    type: JobPointsDetailType,
+    group: FormGroup,
+    items: DetailItem[]
+  ): SaveJobPointsDetailDto[] {
+    const raw = group.getRawValue(); 
+    return items.map((item) => {
+      const points = this.readValueByKeyPath(raw, item.key);
+
+      return {
+        type,
+        code: item.key,
+        name: item.label,
+        referenceId: (item as any).id ?? null, 
+        points: Number(points ?? 0),
+      };
+    });
+  }
+
+  private readValueByKeyPath(raw: any, key: string): any {
+    if (!key.includes('.')) return raw?.[key];
+    return key.split('.').reduce((acc, part) => acc?.[part], raw);
   }
 }
