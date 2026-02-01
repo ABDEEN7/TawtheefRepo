@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
@@ -40,9 +39,6 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
 if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    Console.WriteLine($"aiCs: ${aiCs}");
-    Debug.WriteLine($"aiCs: ${aiCs}");
-    Trace.TraceInformation($"aiCs: ${aiCs}");
     if (!string.IsNullOrEmpty(aiCs))
     {
         builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
@@ -85,9 +81,6 @@ builder.Host.UseSerilog((ctx, services, lc) => {
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    Console.WriteLine($"aiCs-Serilog: ${aiCs}");
-    Debug.WriteLine($"aiCs-Serilog: ${aiCs}");
-    Trace.TraceInformation($"aiCs-Serilog: ${aiCs}");
     // Application Insights
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(

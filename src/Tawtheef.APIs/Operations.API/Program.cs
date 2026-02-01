@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Debugging;
-using Serilog.Events;
 using Serilog.Exceptions;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
@@ -38,8 +36,7 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
 }
 
 // ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
-{
+if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     if (!string.IsNullOrEmpty(aiCs))
     {
@@ -53,31 +50,42 @@ if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled"))
     }
 }
 #if DEBUG
-SelfLog.Enable(msg => Console.Error.WriteLine(msg));
+SelfLog.Enable(msg =>
+    File.AppendAllText(@"C:\home\LogFiles\serilog-selflog.txt", msg + Environment.NewLine));
 #endif
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Host.UseSerilog((ctx, services, lc) => {
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
-    lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+    
+    lc.ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services)
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName()
+        .Enrich.WithEnvironmentUserName()
+        .Enrich.WithThreadId()
         .Enrich.WithExceptionDetails()
-        .ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .WriteTo.Console();
+        .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
+        .Enrich.WithProperty("Version", "1.0.0")
+        .WriteTo.Console(outputTemplate:
+            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+        .WriteTo.File(
+            @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
+            rollingInterval: RollingInterval.Day,
+            shared: true);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
-    var aiCs = ctx.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     // Application Insights
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(),
-            new TraceTelemetryConverter());
+            services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
 });
+
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {
