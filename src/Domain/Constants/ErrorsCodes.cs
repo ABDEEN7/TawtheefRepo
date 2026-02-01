@@ -151,6 +151,7 @@ public class ErrorsCodes
     public const string InvalidBlobKey = "INVALID_BLOB_KEY";
     public const string IoError = "IO_ERROR";
     public const string AccessDenied = "ACCESS_DENIED";
+    public const string NotFound = "NOT_FOUND";
     public const string Cancelled = "CANCELLED";
     public const string EmptyFile = "EMPTY_FILE";
     #endregion
