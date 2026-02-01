@@ -64,11 +64,18 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     var seqKey = ctx.Configuration["Seq:ApiKey"];
     lc.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+        .Enrich.WithProperty("Version", "1.0.0")
+        .WriteTo.Console(
+            outputTemplate: "{Timestamp:HH:mm} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}")
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
         .Enrich.WithExceptionDetails()
         .ReadFrom.Configuration(ctx.Configuration)
         .ReadFrom.Services(services)
+        .WriteTo.Logger(lc => lc
+            .Filter.ByExcluding(logEvent =>
+                logEvent.Exception?.GetType() == typeof(UnauthorizedAccessException)))
+        .WriteTo.Debug()
         .WriteTo.Console();
 
     // Seq
@@ -82,9 +89,9 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     // Application Insights
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(),
-            new TraceTelemetryConverter());
+            services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
 });
+builder.Services.AddApplicationInsightsTelemetry();
 Trace.Listeners.Clear();
 Trace.Listeners.Add(new ConsoleTraceListener()); // يكتب إلى stdout
 Trace.AutoFlush = true;
