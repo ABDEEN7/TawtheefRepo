@@ -17,6 +17,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
         Guid userId,
         PaginatedRequest paginatedRequest,
         UserProfileStatus? status,
+        string? searchTerm,
         CancellationToken ct)
     {
         var profileRepo    = uow.GetEntityRepository<UserProfile>();
@@ -52,7 +53,40 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
         if (status is not null)
             profilesQuery = profilesQuery.Where(p => p.Status == status);
 
-        // 4) Paginate
+        // 4) Optional search filter
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var trimmed = searchTerm.Trim();
+            var term = $"%{trimmed}%";
+            var compactTerm = trimmed.Replace(" ", string.Empty);
+            var compactLike = $"%{compactTerm}%";
+            profilesQuery = profilesQuery.Where(p =>
+                (p.User != null &&
+                 (EF.Functions.Like(p.User.FullNameAr ?? string.Empty, term) ||
+                  EF.Functions.Like(p.User.FullNameEn ?? string.Empty, term) ||
+                  (compactTerm.Length > 0 &&
+                   (EF.Functions.Like(
+                        (p.User.FullNameAr ?? string.Empty).Replace(" ", string.Empty),
+                        compactLike) ||
+                    EF.Functions.Like(
+                        (p.User.FullNameEn ?? string.Empty).Replace(" ", string.Empty),
+                        compactLike))))) ||
+                (p.CandidateType != null &&
+                 (EF.Functions.Like(p.CandidateType.NameAr ?? string.Empty, term) ||
+                  EF.Functions.Like(p.CandidateType.NameEn ?? string.Empty, term))) ||
+                (p.TargetEntity != null &&
+                 (EF.Functions.Like(p.TargetEntity.NameAr ?? string.Empty, term) ||
+                  EF.Functions.Like(p.TargetEntity.NameEn ?? string.Empty, term))) ||
+                EF.Functions.Like(p.NationalNumber ?? string.Empty, term) ||
+                assignmentRepo.DbSet.Any(a =>
+                    a.IsActive &&
+                    a.UserProfileId == p.Id &&
+                    a.Employee != null &&
+                    (EF.Functions.Like(a.Employee.FullNameAr ?? string.Empty, term) ||
+                     EF.Functions.Like(a.Employee.FullNameEn ?? string.Empty, term))));
+        }
+
+        // 5) Paginate
         var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
         if (profiles.Metadata.TotalCount == 0)
         {
@@ -63,7 +97,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
                 profiles.Metadata.PageSize);
         }
 
-        // 5) Load active assignments for returned profile IDs (batched)
+        // 6) Load active assignments for returned profile IDs (batched)
         var profileIds = profiles.Items.Select(p => p.Id).ToList();
 
         var assignments = await assignmentRepo.DbSet
@@ -73,7 +107,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
-        // 6) Map DTOs
+        // 7) Map DTOs
         var items = profiles.Items
             .Select(profile =>
             {
@@ -164,6 +198,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             userId: userId, // replace with actual current userId if needed by your workflow
             paginatedRequest: new PaginatedRequest { PageSize = int.MaxValue },
             status: null,
+            searchTerm: null,
             ct: ct);
 
         return new DistributionResultDto

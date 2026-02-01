@@ -83,35 +83,24 @@ export class ProfileDistributionPage implements OnInit {
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
+  private searchDebounce?: number;
 
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
   );
 
-  readonly filteredFiles = computed(() => {
-    const searchTerm = this.search().trim().toLowerCase();
-    const status = this.statusFilter();
-
-    return this.files().filter(file => {
-      const matchesStatus = status === 'all' ? true : file.status === status;
-      const matchesSearch =
-        !searchTerm ||
-        file.candidateName.toLowerCase().includes(searchTerm) ||
-        (file.specialization ?? '').toLowerCase().includes(searchTerm) ||
-        (file.targetEntity ?? '').toLowerCase().includes(searchTerm);
-      return matchesStatus && matchesSearch;
-    });
-  });
+  readonly displayedFiles = computed(() => this.files());
 
   readonly kpis = computed(() => {
-    const filteredFiles = this.filteredFiles();
+    const displayedFiles = this.displayedFiles();
+    const totalCount = this.paginationMetadata()?.totalCount ?? this.files().length;
 
     return {
-      total: this.paginationMetadata()?.totalCount ?? this.files().length,
-      filtered: filteredFiles.length,
-      submitted: filteredFiles.filter(file => file.status === ProfileStatusNumber.Submitted).length,
-      underReview: filteredFiles.filter(file => file.status === ProfileStatusNumber.UnderReview).length,
-      needsChanges: filteredFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate)
+      total: totalCount,
+      filtered: totalCount,
+      submitted: displayedFiles.filter(file => file.status === ProfileStatusNumber.Submitted).length,
+      underReview: displayedFiles.filter(file => file.status === ProfileStatusNumber.UnderReview).length,
+      needsChanges: displayedFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate)
         .length,
     };
   });
@@ -143,6 +132,8 @@ export class ProfileDistributionPage implements OnInit {
     };
     const status = this.statusFilter();
     if (status !== 'all') filters.status = status;
+    const searchTerm = this.search().trim();
+    if (searchTerm) filters.searchTerm = searchTerm;
 
     this.api
       .getFiles(filters)
@@ -178,12 +169,24 @@ export class ProfileDistributionPage implements OnInit {
     this.loadData();
   }
 
+  onSearchChange(value: string): void {
+    this.search.set(value);
+    if (this.searchDebounce) {
+      window.clearTimeout(this.searchDebounce);
+    }
+    this.searchDebounce = window.setTimeout(() => {
+      this.pageNumber.set(1);
+      this.clearSelection();
+      this.loadData();
+    }, 400);
+  }
+
   onSelectionChange(selection: DistributionFile[]): void {
     this.selectedIds.set(new Set(selection.map(item => item.profileId)));
   }
 
   selectAll(): void {
-    this.selectedIds.set(new Set(this.filteredFiles().map(f => f.profileId)));
+    this.selectedIds.set(new Set(this.displayedFiles().map(f => f.profileId)));
   }
 
   clearSelection(): void {
@@ -233,6 +236,50 @@ export class ProfileDistributionPage implements OnInit {
       this.assignAuto(res.payload);
     });
   }
+
+  openReassignDialog(mode: 'manual' | 'auto', profileId?: string): void {
+    if (!this.canManageDistribution()) return;
+    if (profileId) this.selectedIds.set(new Set([profileId]));
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) {
+      return;
+    }
+
+    if (mode === 'manual') {
+      this.dialogService.open(ManualAssignDialog, {
+        header: 'distribution.dialog.manual.title',
+        width: '520px',
+        modal: true,
+        dismissableMask: false,
+        data: {
+          employees: this.employees(),
+          selectedProfileIds: ids,
+          initialEmployeeId: this.manualEmployeeId() || null,
+        },
+      })?.onClose.subscribe((res: DistributionDialogResult) => {
+        if (!res || res.kind !== 'manual') return;
+        this.reassignManual(res.payload);
+      });
+      return;
+    }
+
+    this.dialogService.open(AutoAssignDialog, {
+      header: 'distribution.dialog.auto.title',
+      width: '640px',
+      modal: true,
+      dismissableMask: false,
+      data: {
+        employees: this.employees(),
+        selectedProfileIds: ids,
+        initialLimit: this.autoLimit(),
+        initialEmployeeIds: Array.from(this.autoEmployeeIds()),
+      },
+    })?.onClose.subscribe((res: DistributionDialogResult) => {
+      if (!res || res.kind !== 'auto') return;
+      this.reassignAuto(res.payload);
+    });
+  }
+
   private assignManual(payload: ManualAssignRequest): void {
     if (!this.canManageDistribution()) return;
     this.loading.set(true);
@@ -253,20 +300,31 @@ export class ProfileDistributionPage implements OnInit {
       });
   }
 
-  redistribute(mode: 'manual' | 'auto'): void {
+  private reassignManual(payload: ManualAssignRequest): void {
     if (!this.canManageDistribution()) return;
-    if (this.selectedIds().size === 0) return;
-
-    const payload: ReassignRequest = {
-      mode,
-      profileIds: Array.from(this.selectedIds()),
-      employeeId: this.manualEmployeeId(),
-      employeeIds: Array.from(this.autoEmployeeIds()),
-      perEmployeeCount: this.autoLimit(),
+    const request: ReassignRequest = {
+      mode: 'manual',
+      profileIds: payload.profileIds,
+      employeeId: payload.employeeId,
     };
-
     this.loading.set(true);
-    this.api.reassign(payload)
+    this.api.reassign(request)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: result => this.handleResult(result.assignedCount, result)
+      });
+  }
+
+  private reassignAuto(payload: AutoAssignRequest): void {
+    if (!this.canManageDistribution()) return;
+    const request: ReassignRequest = {
+      mode: 'auto',
+      profileIds: payload.profileIds ?? [],
+      employeeIds: payload.employeeIds,
+      perEmployeeCount: payload.perEmployeeCount,
+    };
+    this.loading.set(true);
+    this.api.reassign(request)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: result => this.handleResult(result.assignedCount, result)

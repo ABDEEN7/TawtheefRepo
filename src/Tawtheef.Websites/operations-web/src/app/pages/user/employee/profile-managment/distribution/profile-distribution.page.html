@@ -46,7 +46,7 @@
                                       class="w-100 form-control"
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
                                       [ngModel]="search()"
-                                      (ngModelChange)="search.set($event)"
+                                      (ngModelChange)="onSearchChange($event)"
                                     />
                                   </span>
                              </div>
@@ -129,7 +129,7 @@
                                          <div class="table-card rounded overflow-hidden">
                                               <div class="table-responsive">
                                                   <p-table
-                                                    [value]="filteredFiles()"
+                                                    [value]="displayedFiles()"
                                                     dataKey="profileId"
                                                     [selection]="selectedFiles()"
                                                     (selectionChange)="onSelectionChange($event)"
@@ -211,7 +211,7 @@
                                                    type="button"
                                                    class="p-button-rounded p-button-text"
                                                    [pTooltip]="'distribution.actions.redistribute' | translate"
-                                                   (click)="redistribute('auto')">
+                                                   (click)="openReassignDialog('auto', profile.profileId)">
                                                    <i class="pi pi-sync" pButtonIcon></i></button>
                                                </div>
                                              </td>
@@ -324,7 +324,7 @@
                                        pButton
                                        class="p-button-outlined w-100"
                                        type="button"
-                                       (click)="redistribute('auto')"
+                                       (click)="openReassignDialog('auto')"
                                        [disabled]="loading() || selectedIds().size === 0">
                                        <span pButtonLabel>{{'distribution.auto.reassign' | translate}}</span>
                                        <i class="pi replay" pButtonIcon></i>
@@ -367,7 +367,7 @@
                                        pButton
                                        class="p-button-outlined w-100"
                                        type="button"
-                                       (click)="redistribute('manual')"
+                                       (click)="openReassignDialog('manual')"
                                        [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()">
                                        <span pButtonLabel>{{'distribution.manual.reassign' | translate}}</span>
                                        <i class="pi replay" pButtonIcon></i>
@@ -390,7 +390,7 @@
                                     pButton
                                     class="p-button-outlined"
                                     type="button"
-                                    (click)="redistribute('manual')"
+                                    (click)="openReassignDialog('manual')"
                                     [disabled]="loading() || selectedIds().size === 0">
                                     <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
                                     <i class="pi pi-replay" pButtonIcon></i>

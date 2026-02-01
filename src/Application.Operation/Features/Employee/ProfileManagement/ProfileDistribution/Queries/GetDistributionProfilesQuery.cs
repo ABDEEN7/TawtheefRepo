@@ -6,5 +6,8 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
 
-public sealed record GetDistributionProfilesQuery(Guid? UserId, UserProfileStatus? Status = null)
+public sealed record GetDistributionProfilesQuery(
+    Guid? UserId,
+    UserProfileStatus? Status = null,
+    string? SearchTerm = null)
     : PaginatedRequest, IQuery<Result<PaginatedResult<DistributionProfileDto>>>;
