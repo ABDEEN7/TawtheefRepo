@@ -160,6 +160,8 @@
               [useGrouping]="false"
               [min]="0" [max]="100"
               [maxlength]="5"
+              [minFractionDigits]="1"
+              [maxFractionDigits]="2"
               [showButtons]="false" class="w-100"
               [ngClass]="{'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)}">
             </p-inputNumber>
