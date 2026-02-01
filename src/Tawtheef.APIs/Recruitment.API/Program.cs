@@ -44,6 +44,7 @@ if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     Console.WriteLine($"aiCs: ${aiCs}");
     Debug.WriteLine($"aiCs: ${aiCs}");
+    Trace.TraceInformation($"aiCs: ${aiCs}");
     if (!string.IsNullOrEmpty(aiCs))
     {
         builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
@@ -77,6 +78,7 @@ builder.Host.UseSerilog((ctx, services, lc) => {
     var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
     Console.WriteLine($"aiCs-Serilog: ${aiCs}");
     Debug.WriteLine($"aiCs-Serilog: ${aiCs}");
+    Trace.TraceInformation($"aiCs-Serilog: ${aiCs}");
     // Application Insights
     if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
         lc.WriteTo.ApplicationInsights(
