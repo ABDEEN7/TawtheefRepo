@@ -52,12 +52,6 @@ public class GetSignedBlobHandler(IFileStorageService storage, ILogger logger, I
         }
 
         var path = map.Value!;
-        if (!File.Exists(path))
-        {
-            logger.Error("File not found: {Path}", path);
-            return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.FileNotFound));
-        }
-
         // 5. mime
         var contentType = TryGetMimeType(path, out var mt) ? mt : "application/octet-stream";
         var dlName = Path.GetFileName(path);

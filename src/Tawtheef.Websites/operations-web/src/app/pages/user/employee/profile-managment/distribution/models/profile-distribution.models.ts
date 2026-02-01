@@ -56,4 +56,5 @@ export interface DistributionResult {
 
 export interface DistributionProfilesFilters extends PaginatedRequest {
   status?: ProfileStatusNumber;
+  searchTerm?: string;
 }

@@ -187,7 +187,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private buildParams(searchTerm?: string): HttpParams {
     let params = new HttpParams();
 
-    if (this.value !== null && this.value !== undefined && this.value !== '') {
+    if (typeof(this.value) !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
       params = params.set(this.idParamName, String(this.value));
     }
 

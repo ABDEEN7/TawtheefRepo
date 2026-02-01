@@ -44,6 +44,7 @@
         <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" />
         <PackageReference Include="Polly" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="System.Security.Permissions" />
     </ItemGroup>
 
     <ItemGroup>

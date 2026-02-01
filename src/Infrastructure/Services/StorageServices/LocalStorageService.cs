@@ -135,9 +135,12 @@ public sealed class LocalStorageService : IFileStorageService
             var combined = Path.GetFullPath(Path.Combine(_rootFull, blobKey.Replace('/', Path.DirectorySeparatorChar)));
 
             // allow the case where combined == _rootFull (prefix pointing to root subdir)
-            return !combined.StartsWith(_rootFull, StringComparison.Ordinal) ? 
-                Result.Fail<string>(ErrorsCodes.InvalidBlobKey) :
-                Result.Ok(combined);
+            return !combined.StartsWith(_rootFull, StringComparison.Ordinal)
+                ?
+                Result.Fail<string>(ErrorsCodes.InvalidBlobKey)
+                : !File.Exists(combined)
+                    ? Result.Fail<string>(ErrorsCodes.FileNotFound)
+                    : Result.Ok(combined);
         }
         catch (Exception ex)
         {
