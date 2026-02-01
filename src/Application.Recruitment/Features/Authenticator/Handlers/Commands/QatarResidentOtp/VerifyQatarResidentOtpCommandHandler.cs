@@ -118,21 +118,34 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             return FailureFromIdentity<AuthResponse>(update);
         }
 
-        var loginAllowed = await CheckIfQatarUsingKawaderAsync(
+        var personalInfoResult = await GetMoiPersonalInfoAsync(
             user.Id,
             normalizedQid,
             request.QidExpiry,
             cancellationToken);
 
-        if (loginAllowed.IsFailed)
+        if (personalInfoResult.IsFailed)
         {
             _log.Warning(
                 "Login blocked by Kawader check. UserId={UserId} Qid={QidMasked} Errors={Errors}",
                 user.Id,
                 qidMasked,
-                string.Join(" | ", loginAllowed.Errors.Select(e => e.Message)));
+                string.Join(" | ", personalInfoResult.Errors.Select(e => e.Message)));
 
-            return Result.Fail<AuthResponse>(loginAllowed.Errors);
+            return Result.Fail<AuthResponse>(personalInfoResult.Errors);
+        }
+
+        var personalInfo = personalInfoResult.Value;
+        var nameUpdate = await UpdateUserFullNameAsync(user, personalInfo);
+        if (nameUpdate.IsFailed)
+        {
+            _log.Error(
+                "Failed to update user name after MOI lookup. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                user.Id,
+                qidMasked,
+                string.Join(" | ", nameUpdate.Errors.Select(e => e.Message)));
+
+            return Result.Fail<AuthResponse>(nameUpdate.Errors);
         }
 
         await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, cancellationToken);
@@ -170,7 +183,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         return tokens;
     }
 
-    private async Task<IResult<Unit>> CheckIfQatarUsingKawaderAsync(
+    private async Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoAsync(
         Guid userId,
         string qid,
         DateOnly expiryDate,
@@ -190,16 +203,16 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
                 qidMasked,
                 string.Join(" | ", request.Errors.Select(e => e.Message)));
 
-            return Result.Fail<Unit>(request.Errors);
+            return Result.Fail<MOEPersonalInfo>(request.Errors);
         }
 
         if (request.Value.NationalityCode != QatarNationalityCode)
-            return Result.Ok(Unit.Value);
+            return Result.Ok(request.Value);
 
         var allowLogin = await CheckIfAllowLoginAsync();
         return allowLogin
-            ? Result.Ok(Unit.Value)
-            : Result.Fail<Unit>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
+            ? Result.Ok(request.Value)
+            : Result.Fail<MOEPersonalInfo>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
 
         async Task<bool> CheckIfAllowLoginAsync()
         {
@@ -240,6 +253,33 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         await uow.SaveChangesAsync(cancellationToken);
 
         _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked, expiryDate);
+    }
+
+    private async Task<IResult<Unit>> UpdateUserFullNameAsync(User user, MOEPersonalInfo personalInfo)
+    {
+        var englishName = personalInfo.EnglishFullName?.Trim();
+        var arabicName = personalInfo.ArabicFullName?.Trim();
+        var updated = false;
+
+        if (!string.IsNullOrWhiteSpace(englishName) &&
+            !string.Equals(user.FullNameEn, englishName, StringComparison.Ordinal))
+        {
+            user.FullNameEn = englishName;
+            updated = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(arabicName) &&
+            !string.Equals(user.FullNameAr, arabicName, StringComparison.Ordinal))
+        {
+            user.FullNameAr = arabicName;
+            updated = true;
+        }
+
+        if (!updated)
+            return Result.Ok(Unit.Value);
+
+        var update = await userManager.UpdateAsync(user);
+        return update.Succeeded ? Result.Ok(Unit.Value) : FailureFromIdentity<Unit>(update);
     }
 
     private async Task<IResult<Unit>> UpsertQatarPassClaimsAsync(
