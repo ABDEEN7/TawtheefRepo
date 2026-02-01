@@ -46,7 +46,7 @@
                                       class="w-100 form-control"
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
                                       [ngModel]="search()"
-                                      (ngModelChange)="search.set($event)"
+                                      (ngModelChange)="onSearchChange($event)"
                                     />
                                   </span>
                              </div>
@@ -129,7 +129,7 @@
                                          <div class="table-card rounded overflow-hidden">
                                               <div class="table-responsive">
                                                   <p-table
-                                                    [value]="filteredFiles()"
+                                                    [value]="displayedFiles()"
                                                     dataKey="profileId"
                                                     [selection]="selectedFiles()"
                                                     (selectionChange)="onSelectionChange($event)"

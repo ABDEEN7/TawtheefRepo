@@ -83,35 +83,24 @@ export class ProfileDistributionPage implements OnInit {
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
+  private searchDebounce?: number;
 
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
   );
 
-  readonly filteredFiles = computed(() => {
-    const searchTerm = this.search().trim().toLowerCase();
-    const status = this.statusFilter();
-
-    return this.files().filter(file => {
-      const matchesStatus = status === 'all' ? true : file.status === status;
-      const matchesSearch =
-        !searchTerm ||
-        file.candidateName.toLowerCase().includes(searchTerm) ||
-        (file.specialization ?? '').toLowerCase().includes(searchTerm) ||
-        (file.targetEntity ?? '').toLowerCase().includes(searchTerm);
-      return matchesStatus && matchesSearch;
-    });
-  });
+  readonly displayedFiles = computed(() => this.files());
 
   readonly kpis = computed(() => {
-    const filteredFiles = this.filteredFiles();
+    const displayedFiles = this.displayedFiles();
+    const totalCount = this.paginationMetadata()?.totalCount ?? this.files().length;
 
     return {
-      total: this.paginationMetadata()?.totalCount ?? this.files().length,
-      filtered: filteredFiles.length,
-      submitted: filteredFiles.filter(file => file.status === ProfileStatusNumber.Submitted).length,
-      underReview: filteredFiles.filter(file => file.status === ProfileStatusNumber.UnderReview).length,
-      needsChanges: filteredFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate)
+      total: totalCount,
+      filtered: totalCount,
+      submitted: displayedFiles.filter(file => file.status === ProfileStatusNumber.Submitted).length,
+      underReview: displayedFiles.filter(file => file.status === ProfileStatusNumber.UnderReview).length,
+      needsChanges: displayedFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate)
         .length,
     };
   });
@@ -143,6 +132,8 @@ export class ProfileDistributionPage implements OnInit {
     };
     const status = this.statusFilter();
     if (status !== 'all') filters.status = status;
+    const searchTerm = this.search().trim();
+    if (searchTerm) filters.searchTerm = searchTerm;
 
     this.api
       .getFiles(filters)
@@ -178,12 +169,23 @@ export class ProfileDistributionPage implements OnInit {
     this.loadData();
   }
 
+  onSearchChange(value: string): void {
+    this.search.set(value);
+    if (this.searchDebounce) {
+      window.clearTimeout(this.searchDebounce);
+    }
+    this.searchDebounce = window.setTimeout(() => {
+      this.pageNumber.set(1);
+      this.loadData();
+    }, 400);
+  }
+
   onSelectionChange(selection: DistributionFile[]): void {
     this.selectedIds.set(new Set(selection.map(item => item.profileId)));
   }
 
   selectAll(): void {
-    this.selectedIds.set(new Set(this.filteredFiles().map(f => f.profileId)));
+    this.selectedIds.set(new Set(this.displayedFiles().map(f => f.profileId)));
   }
 
   clearSelection(): void {
