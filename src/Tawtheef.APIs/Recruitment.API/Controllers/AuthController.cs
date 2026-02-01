@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
@@ -45,6 +46,10 @@ public class AuthController(IMediator mediator) : ControllerBase
         logger.Warning("Sending notification log warning test");
         logger.Verbose("Sending notification log verbose test");
         logger.Fatal("Sending notification log fatal test");
+        
+        Trace.TraceInformation("Trace information log test");
+        Debug.WriteLine("Debug write line log test");
+        Console.WriteLine("Console write line log test");
     }
     
     [HttpGet("send-notification-logger")]

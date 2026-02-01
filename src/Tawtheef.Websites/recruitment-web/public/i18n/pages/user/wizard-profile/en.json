@@ -219,7 +219,7 @@
   "wizard.skills.title": "Skills & Languages",
   "wizard.skills.skills": "Skills (Tags)",
   "wizard.skills.skill": "Skills (Tags)",
-  "wizard.skills.hint": "Type at least 3 characters to search for skills from the server.",
+  "wizard.skills.hint": "Type at least 3 characters to search.",
   "wizard.skills.placeholder": "Start typing to search for skills...",
   "wizard.skills.typeMore": "Type at least 3 characters to start searching...",
   "wizard.skills.noResults": "No matching results.",
