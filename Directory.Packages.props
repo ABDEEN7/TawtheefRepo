@@ -76,6 +76,7 @@
     <PackageVersion Include="SpecFlow.NUnit" Version="3.9.74" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.2" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+    <PackageVersion Include="System.Security.Permissions" Version="10.0.2" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.0.0" />
   </ItemGroup>
 </Project>
