@@ -39,13 +39,20 @@ public class AuthController(IMediator mediator) : ControllerBase
 
     #if DEBUG
     [HttpGet("test-logger")]
-    public void TestLogger([FromServices] ILogger logger)
+    public void TestLogger([FromServices] Serilog.ILogger logger, [FromServices] Microsoft.Extensions.Logging.ILogger<AuthController> logger2)
     {
-        logger.Error("Sending notification log error test");
-        logger.Debug("Sending notification log debug test");
-        logger.Warning("Sending notification log warning test");
-        logger.Verbose("Sending notification log verbose test");
-        logger.Fatal("Sending notification log fatal test");
+        logger.Error("Serilog Sending notification log error test");
+        logger.Debug("Serilog Sending notification log debug test");
+        logger.Warning("Serilog Sending notification log warning test");
+        logger.Verbose("Serilog Sending notification log verbose test");
+        logger.Fatal("Serilog Sending notification log fatal test");
+        
+        logger2.LogError("Microsoft logger error log test");
+        logger2.LogDebug("Microsoft logger debug log test");
+        logger2.LogWarning("Microsoft logger warning log test");
+        logger2.LogInformation("Microsoft logger information log test");
+        logger2.LogCritical("Microsoft logger critical log test");
+        logger2.LogTrace("Microsoft logger trace log test");
         
         Trace.TraceInformation("Trace information log test");
         Debug.WriteLine("Debug write line log test");
