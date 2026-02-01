@@ -85,6 +85,9 @@ builder.Host.UseSerilog((ctx, services, lc) => {
             services.GetRequiredService<TelemetryConfiguration>(),
             new TraceTelemetryConverter());
 });
+Trace.Listeners.Clear();
+Trace.Listeners.Add(new ConsoleTraceListener()); // يكتب إلى stdout
+Trace.AutoFlush = true;
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {
