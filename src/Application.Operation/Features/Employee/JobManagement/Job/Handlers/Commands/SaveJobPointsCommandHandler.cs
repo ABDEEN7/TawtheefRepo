@@ -72,7 +72,7 @@ public sealed class SaveJobPointsCommandHandler(
                 })]
             };
 
-            await repo.AddAsync(main);
+            await repo.AddAsync(main, ct);
         }
         else
         {
