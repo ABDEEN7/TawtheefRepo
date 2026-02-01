@@ -110,34 +110,27 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         }
     }
 
-    private SmtpClient CreateSmtpClient()
+    private static SmtpClient CreateSmtpClient()
     {
         var client = new SmtpClient
         {
             Timeout = DefaultTimeoutMs
         };
-
-        // IMPORTANT:
-        // We are intentionally doing "plain SMTP" like System.Net.Mail on port 25.
-        // No TLS => no certificate validation issues.
-
         return client;
     }
 
     private async Task ConnectAsync(SmtpClient client, CancellationToken ct)
     {
-        // Force the same behavior as:
-        // new SmtpClient("smtp.edu.gov.qa", 25) with no SSL
-        var socketOptions = SecureSocketOptions.None;
+        var socketOptions = _settings.EnableSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None;
 
-        await client.ConnectAsync(_settings.SmtpHost, 25, socketOptions, ct);
+        await client.ConnectAsync(_settings.SmtpHost, _settings.SmtpPort, socketOptions, ct);
 
         // Do NOT authenticate (matches your working example).
         // If your SMTP later requires auth, enable it conditionally.
         // await client.AuthenticateAsync(_settings.EmailUser, _settings.EmailPass, ct);
 
         _log.Information("SMTP connected (host={Host}, port={Port}, ssl={Ssl})",
-            _settings.SmtpHost, 25, socketOptions);
+            _settings.SmtpHost, _settings.SmtpPort, socketOptions);
     }
 
     private void ReturnClient(SmtpClient client)

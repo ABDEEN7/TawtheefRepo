@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -9,81 +10,105 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Infrastructure.Services.StorageServices;
 
-    public sealed class AzureBlobStorageService : IFileStorageService
+public sealed class AzureBlobStorageService : IFileStorageService
+{
+    private readonly BlobContainerClient _container;
+    private readonly string? _publicBaseUrl;
+    private readonly ILogger _logger;
+
+    public AzureBlobStorageService(
+        BlobServiceClient blobServiceClient,
+        IOptions<StorageSettings> storageSettings,
+        ILogger logger)
     {
-        private readonly BlobContainerClient _container;
-        private readonly string? _publicBaseUrl;
-        private readonly ILogger _logger;
+        var cfg = storageSettings.Value ?? throw new InvalidOperationException("Storage settings missing");
 
-        public AzureBlobStorageService(
-            BlobServiceClient blobServiceClient,
-            IOptions<StorageSettings> storageSettings,
-            ILogger logger)
+        // IMPORTANT: container name must be lowercase and must NOT contain '/'
+        var containerName = cfg.RootPath ?? throw new InvalidOperationException("Storage:ContainerName missing");
+        containerName = containerName.Trim();
+
+        if (containerName.Contains('/'))
+            throw new InvalidOperationException("Storage:ContainerName must not contain '/'");
+
+        containerName = containerName.ToLowerInvariant();
+
+        _publicBaseUrl = string.IsNullOrWhiteSpace(cfg.PublicBaseUrl) ? null : cfg.PublicBaseUrl.TrimEnd('/');
+
+        _container = blobServiceClient.GetBlobContainerClient(containerName);
+        _logger = logger.ForContext<AzureBlobStorageService>();
+    }
+
+    private string BuildBlobName(string blobKey)
+    {
+        blobKey = (blobKey ?? "").Trim().Replace('\\', '/').TrimStart('/');
+
+        if (string.IsNullOrWhiteSpace(blobKey))
+            return blobKey;
+
+        return blobKey;
+    }
+
+    public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
+    {
+        try
         {
-            var cfg = storageSettings.Value ?? throw new InvalidOperationException("Storage settings missing");
+            ct.ThrowIfCancellationRequested();
 
-            string containerName = cfg.RootPath ?? throw new InvalidOperationException("Storage:ContainerName missing");
-            _publicBaseUrl = string.IsNullOrWhiteSpace(cfg.PublicBaseUrl) ? null : cfg.PublicBaseUrl.TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(blobKey))
+                return Result.Fail<FileSaved>(ErrorsCodes.InvalidBlobKey);
 
-            _container = blobServiceClient.GetBlobContainerClient(containerName);
-            _logger = logger.ForContext<AzureBlobStorageService>();
+            var blobName = BuildBlobName(blobKey);
+            var blobClient = _container.GetBlobClient(blobName);
+
+            if (stream.CanSeek)
+            {
+                try { stream.Position = 0; } catch { }
+            }
+
+            // Optional but recommended: ensure container exists (especially in Stage/Dev)
+            await _container.CreateIfNotExistsAsync(cancellationToken: ct).ConfigureAwait(false);
+
+            await blobClient.UploadAsync(
+                stream,
+                new BlobUploadOptions
+                {
+                    HttpHeaders = new BlobHttpHeaders
+                    {
+                        // if you know file type, set it; otherwise omit
+                        // ContentType = "application/pdf"
+                    }
+                },
+                ct
+            ).ConfigureAwait(false);
+
+            var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
+            var size = props.Value.ContentLength;
+
+            return Result.Ok(new FileSaved(blobName, (ulong)size));
         }
-
-        public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
+        catch (RequestFailedException rfe)
         {
-            try
-            {
-                ct.ThrowIfCancellationRequested();
+            // This will tell you EXACT reason (InvalidResourceName, ContainerNotFound, etc.)
+            _logger.Error(rfe, "SaveAsync Azure error. Status={Status} Code={Code} Msg={Msg}",
+                rfe.Status, rfe.ErrorCode, rfe.Message);
 
-                if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Fail<FileSaved>(ErrorsCodes.InvalidBlobKey);
+            if (rfe.Status == 403) return Result.Fail<FileSaved>(ErrorsCodes.AccessDenied);
+            if (rfe.Status == 404) return Result.Fail<FileSaved>(ErrorsCodes.NotFound);
 
-                // normalize blob key to use forward slashes
-                blobKey = blobKey.Replace('\\', '/');
-
-                var blobClient = _container.GetBlobClient(blobKey);
-
-                // Upload (will overwrite)
-                // Reset stream position if possible
-                if (stream.CanSeek)
-                {
-                    try { stream.Position = 0; } catch { /* ignore */ }
-                }
-
-                await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: ct).ConfigureAwait(false);
-                long size = 0;
-                if (stream.CanSeek)
-                    size = stream.Length;
-                else
-                {
-                    // fallback: GetPropertiesAsync after upload
-                    var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
-                    size = props.Value.ContentLength;
-                }
-
-                return Result.Ok(new FileSaved(blobKey, (ulong)size));
-            }
-            catch (OperationCanceledException oce)
-            {
-                _logger.Information(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
-                return Result.Fail<FileSaved>(ErrorsCodes.Cancelled);
-            }
-            catch (RequestFailedException rfe) when (rfe.Status == 403)
-            {
-                _logger.Error(rfe, "SaveAsync access denied for {BlobKey}", blobKey);
-                return Result.Fail<FileSaved>(ErrorsCodes.AccessDenied);
-            }
-            catch (RequestFailedException rfe)
-            {
-                _logger.Error(rfe, "SaveAsync Azure error for {BlobKey}", blobKey);
-                return Result.Fail<FileSaved>(ErrorsCodes.IoError);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "SaveAsync error for {BlobKey}", blobKey);
-                return Result.Fail<FileSaved>(ErrorsCodes.IoError);
-            }
+            return Result.Fail<FileSaved>(ErrorsCodes.IoError);
         }
+        catch (OperationCanceledException oce)
+        {
+            _logger.Information(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
+            return Result.Fail<FileSaved>(ErrorsCodes.Cancelled);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "SaveAsync error for {BlobKey}", blobKey);
+            return Result.Fail<FileSaved>(ErrorsCodes.IoError);
+        }
+    }
+    
 
         public async Task<Result<bool>> DeleteAsync(string blobKey, CancellationToken ct = default)
         {
@@ -171,4 +196,4 @@ namespace Tawtheef.Infrastructure.Services.StorageServices;
                 return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
             }
         }
-    }
+}
