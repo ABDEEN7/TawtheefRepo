@@ -20,7 +20,7 @@
   "distribution.actions.cancel": "إلغاء",
 
   "distribution.filters.search": "بحث",
-  "distribution.filters.searchPlaceholder": "ابحث بالاسم أو التخصص أو الجهة",
+  "distribution.filters.searchPlaceholder": "ابحث بالاسم أو فئة المرشح أو الجهة",
   "distribution.filters.searchButton": "بحث",
   "distribution.filters.status": "حالة الملف",
   "distribution.filters.statusAll": "كل الحالات المسموحة",
@@ -34,6 +34,7 @@
   "distribution.table.subtitle": "يتم استبعاد الحالات النهائية تلقائيًا",
   "distribution.table.candidate": "المرشح",
   "distribution.table.specialization": "التخصص",
+  "distribution.table.candidateCategory": "فئة المرشح",
   "distribution.table.entity": "الجهة",
   "distribution.table.status": "الحالة",
   "distribution.table.assignee": "الموظف المكلف",
