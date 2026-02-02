@@ -51,16 +51,10 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-            if (isPaged)
+            if (isPaged && request.PaginatedRequest != null)
             {
-                var ordered = languageToken == "ar"
-                    ? dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameAr)
-                    : dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameEn);
-                if (request.PaginatedRequest != null)
-                {
-                    var entities = await ordered.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
+                    var entities = await dbSet.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
                     return mapper.Map<List<DropdownOptions>>(entities);
-                }
             }
 
             var allEntities = await dbSet.ToListAsync(cancellationToken);
