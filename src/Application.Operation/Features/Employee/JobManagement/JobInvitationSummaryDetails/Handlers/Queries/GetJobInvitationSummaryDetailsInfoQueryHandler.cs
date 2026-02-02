@@ -44,9 +44,9 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
                 Description = localizationService.GetLocalizedDescription(job.JobStatus),
                 AdditionalData = new
                 {
-                    nameAr = job.JobStatus.NameAr,
-                    nameEn = job.JobStatus.NameEn,
-                    displayOrder = job.JobStatus.DisplayOrder
+                     job.JobStatus.NameAr,
+                     job.JobStatus.NameEn,
+                     job.JobStatus.DisplayOrder
                 }
             };
 

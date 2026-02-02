@@ -42,11 +42,11 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork, IMemoryCach
                     BackendName = c.BackendName,
                     AdditionalData = new
                     {
-                        nameAr = c.NameAr,
-                        nameEn = c.NameEn,
-                        code = c.Code,
-                        isoCode = c.ISOCode,
-                        codeAlpha = c.CodeAlpha
+                        c.NameAr,
+                        c.NameEn,
+                        c.Code,
+                        c.ISOCode,
+                        c.CodeAlpha
                     }
                 })
                 .ToListAsync(cancellationToken);
