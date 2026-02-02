@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {LanguageService} from '../../../core/services/language.service';
 import {Router, RouterLink} from '@angular/router';
 import {routes} from '../../../routes/routes';
@@ -9,7 +9,7 @@ import {InAppNotificationService} from '../../../core/services/in-app-notificati
 import {NotificationModel} from '../../../shared/models/notification.model';
 import {Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-nav',
@@ -17,7 +17,11 @@ import {DatePipe} from '@angular/common';
   styleUrl: './navbar.scss',
   imports: [
     TranslatePipe,
-    DatePipe
+    DatePipe,
+    DatePipe,
+    NgForOf,
+    NgIf,
+    TranslatePipe
   ]
 })
 export class Navbar implements OnInit, OnDestroy {
@@ -25,6 +29,11 @@ export class Navbar implements OnInit, OnDestroy {
   language = inject(LanguageService);
   router = inject(Router);
   private readonly notificationsApi = inject(InAppNotificationService);
+
+  @ViewChild('notificationRoot', { static: false })
+  notificationRoot?: ElementRef<HTMLElement>;
+  @ViewChild('notificationMenu')
+  notificationMenu?: ElementRef<HTMLElement>;
   isLoggedIn: boolean = false;
   userName: string| null = null;
   userAvatar: string = 'assets/images/default-avatar.png';
@@ -33,10 +42,17 @@ export class Navbar implements OnInit, OnDestroy {
   showNotificationMenu: boolean = false;
   notifications: NotificationModel[] = [];
   isLoadingNotifications: boolean = false;
+  alignLeft = false;
+  alignRight = false;
+  skeletonItems = Array.from({ length: 4 });
   private readonly subscriptions = new Subscription();
 
   protected readonly routes = routes;
 
+  get notificationBadgeText(): string {
+    if (this.notificationCount <= 0) return '';
+    return this.notificationCount > 99 ? '99+' : `${this.notificationCount}`;
+  }
   ngOnInit(): void {
     this.checkAuthStatus();
     if (this.isLoggedIn) {
@@ -95,10 +111,29 @@ export class Navbar implements OnInit, OnDestroy {
     this.language.toggle();
   }
 
-  toggleNotificationMenu(): void {
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  login(): void {
+    this.router.navigate([routes.auth.login]);
+  }
+
+  logout(): void {
+    this.auth.logout();
+  }
+
+  toggleNotificationMenu(event?: MouseEvent): void {
+    event?.stopPropagation();
     this.showNotificationMenu = !this.showNotificationMenu;
-    if (this.showNotificationMenu && this.notifications.length === 0) {
-      this.refreshNotifications();
+
+    if (this.showNotificationMenu) {
+      // wait until menu renders
+      setTimeout(() => this.repositionNotificationMenu(), 0);
+
+      if (this.notifications.length === 0 && !this.isLoadingNotifications) {
+        this.refreshNotifications();
+      }
     }
   }
 
@@ -111,15 +146,63 @@ export class Navbar implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  toggleUserMenu(): void {
-    this.showUserMenu = !this.showUserMenu;
+  notificationTrackBy(index: number, notification: NotificationModel): string {
+    return notification.id;
   }
 
-  login(): void {
-    this.router.navigate([routes.auth.login]);
-  }
+  // ✅ Close when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.showNotificationMenu) return;
 
-  logout(): void {
-    this.auth.logout();
+    const target = event.target as Node | null;
+    const root = this.notificationRoot?.nativeElement;
+
+    if (!root || !target) {
+      this.showNotificationMenu = false;
+      return;
+    }
+
+    // if click is outside notification root => close
+    if (!root.contains(target)) {
+      this.showNotificationMenu = false;
+    }
+  }
+  private repositionNotificationMenu(): void {
+    const el = this.notificationMenu?.nativeElement;
+    if (!el) return;
+
+    const padding = 8;
+    const rect = el.getBoundingClientRect();
+    const vw = window.innerWidth;
+
+    // detect RTL from document
+    const isRtl = document?.documentElement?.dir === 'rtl';
+
+    // does it overflow?
+    const overflowRight = rect.right > vw - padding;
+    const overflowLeft = rect.left < padding;
+
+    // default anchor based on direction:
+    // RTL => prefer left, LTR => prefer right
+    if (isRtl) {
+      this.alignLeft = true;
+      this.alignRight = false;
+
+      // if it still overflows right, flip to right
+      if (overflowRight && !overflowLeft) {
+        this.alignLeft = false;
+        this.alignRight = true;
+      }
+    } else {
+      this.alignLeft = false;
+      this.alignRight = true;
+
+      // if it overflows left, flip to left
+      if (overflowLeft && !overflowRight) {
+        this.alignLeft = true;
+        this.alignRight = false;
+      }
+    }
   }
 }
