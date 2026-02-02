@@ -1,11 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, forwardRef, OnChanges, SimpleChanges, inject } from '@angular/core';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Subject, Subscription, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  forwardRef,
+  inject,
+} from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Subject, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
+type LoadRequest = { term: string; page: number; append: boolean };
 
 @Component({
   selector: 'app-remote-select',
@@ -22,12 +32,10 @@ import { TranslateService } from '@ngx-translate/core';
   ],
 })
 export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
-  translate = inject(TranslateService);
-  emptyMessage = '';
-  lastQuery = '';
+  private http = inject(HttpClient);
+  private translate = inject(TranslateService);
   @Input() searchUrl!: string;
   @Input() minChars = 3;
-  @Input() debounceMs = 400;
   @Input() searchParamName = 'search';
   @Input() idParamName = 'id';
   @Input() pageSize = 10;
@@ -43,28 +51,25 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() showClear = false;
   @Input() preloadedOptions: any[] = [];
 
-  // ====== Parent dependency (cascading) ======
+  @Input() virtualScrollItemSize = 38;
   @Input() parentId: string | number | null | undefined;
   @Input() parentParamName = 'parentId';
   @Input() requireParent = false;
 
-  // ====== Validation styling from parent ======
   @Input() invalid = false;
 
-  disabled = false;
   options: any[] = [];
+  value: any = null;
   isLoading = false;
   hasMore = true;
-  pageIndex = 0;
-  searchTerm = '';
-  value: any;
+  emptyMessage = '';
+  private panelOpen = false;
+  private currentTerm = '';
+  private pageIndex = 0;
 
-  private search$ = new Subject<string>();
-  private load$ = new Subject<{ searchTerm: string; pageIndex: number; append: boolean }>();
-  private searchSub?: Subscription;
-  private loadSub?: Subscription;
-
-  constructor(private http: HttpClient) {}
+  private requestedPages = new Set<string>();
+  private destroy$ = new Subject<void>();
+  private request$ = new Subject<LoadRequest>();
 
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
@@ -74,7 +79,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
     if (this.value !== null && this.value !== undefined && this.value !== '') {
-      this.loadPage(this.searchTerm, 0, false);
+      this.resetDataset(false);
+      this.load({ term: this.currentTerm, page: 0, append: false });
     }
   }
 
@@ -90,121 +96,118 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.disabled = isDisabled;
   }
 
+  disabled = false;
+
+  get isDisabledComputed(): boolean {
+    if (this.disabled) return true;
+    if (this.requireParent && this.isParentMissing()) return true;
+    if (this.disableWhileLoading && this.isLoading && !this.panelOpen) return true;
+    return false;
+  }
+
+  get computedPlaceholder(): string {
+    return this.placeholder;
+  }
+
   ngOnInit(): void {
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
-    this.loadSub = this.load$
+    this.request$
       .pipe(
-        switchMap(request => {
-          if (!this.searchUrl) return of({ request, res: [] });
-
-          if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-            return of({ request, res: [] });
-          }
+        switchMap(req => {
+          if (!this.searchUrl) return of({ req, res: [] as any[] });
+          if (this.requireParent && this.isParentMissing()) return of({ req, res: [] as any[] });
 
           this.isLoading = true;
-          const params = this.buildParams(request.searchTerm, request.pageIndex, this.pageSize);
+          const params = this.buildParams(req.term, req.page, this.pageSize);
 
-          return this.http.get<any[]>(this.searchUrl, { params }).pipe(
-            map(res => ({ request, res: res ?? [] })),
-            catchError(() => of({ request, res: [] })),
+          return this.http.get<any[]>(this.searchUrl, { params,headers:new HttpHeaders({ 'X-Skip-Loading': 'true' }) }).pipe(
+            map(res => ({ req, res: res ?? [] })),
+            catchError(() => of({ req, res: [] as any[] })),
             finalize(() => (this.isLoading = false))
           );
-        })
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe(({ request, res }) => this.applyResults(request, res));
+      .subscribe(({ req, res }) => this.applyResults(req, res));
 
-    this.searchSub = this.search$
-      .pipe(
-        debounceTime(this.debounceMs),
-        distinctUntilChanged()
-      )
-      .subscribe(term => this.applySearch(term));
-
-    this.loadPage('', 0, false);
+    this.resetDataset(true);
+    if (!this.requireParent || !this.isParentMissing()) {
+      this.load({ term: '', page: 0, append: false });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['parentId'] && !changes['parentId'].firstChange) {
-      this.options = [];
-      this.value = null;
-      this.onChange(null);
-      this.pageIndex = 0;
-      this.searchTerm = '';
-      this.hasMore = true;
-
-      if (!this.requireParent || (this.parentId !== null && this.parentId !== undefined && this.parentId !== '')) {
-        this.loadPage('', 0, false);
-      }
-    }
-
     if (changes['preloadedOptions']) {
       this.options = this.mergeWithSelected(this.preloadedOptions);
+    }
 
-      if (this.value !== null && this.value !== undefined && this.value !== '') {
-        this.loadPage(this.searchTerm, 0, false);
+    if (changes['parentId'] && !changes['parentId'].firstChange) {
+      this.value = null;
+      this.onChange(null);
+      this.resetDataset(true);
+
+      if (!this.requireParent || !this.isParentMissing()) {
+        this.load({ term: '', page: 0, append: false });
       }
     }
   }
 
   ngOnDestroy(): void {
-    this.searchSub?.unsubscribe();
-    this.loadSub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
+
   onOpen(): void {
-    if (!this.lastQuery || this.lastQuery.length < this.minChars) {
+    this.panelOpen = true;
+    if (!this.currentTerm || this.currentTerm.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
     }
   }
-  // ====== Template helpers ======
-  get isDisabledComputed(): boolean {
-    if (this.disabled) return true;
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return true;
-    }
-    if (this.disableWhileLoading && this.isLoading) return true;
-    return false;
+  onClose(): void {
+    this.panelOpen = false;
   }
 
-  get computedPlaceholder(): string {
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return this.placeholder;
-    }
-    return this.placeholder;
-  }
-
-  // ====== Events ======
   onFilter(event: any): void {
-    const query = event?.filter ?? '';
-    this.lastQuery = query;
+    const term = (event?.filter ?? '').toString().trim();
 
-    if (!query) {
+    if (this.requireParent && this.isParentMissing()) {
+      this.options = this.mergeWithSelected([]);
+      this.hasMore = false;
       this.emptyMessage = '';
-      this.pageIndex = 0;
-      this.searchTerm = '';
-      this.hasMore = true;
-      this.loadPage('', 0, false);
       return;
     }
 
-    if (query.length < this.minChars) {
+    if (!term) {
+      this.emptyMessage = '';
+      this.reloadFirstPage('');
+      return;
+    }
+
+    if (term.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
       this.options = this.mergeWithSelected([]);
       this.hasMore = false;
       return;
     }
     this.emptyMessage = '';
-    this.search$.next(query);
+    this.reloadFirstPage(term);
   }
 
   onLazyLoad(event: { first?: number; rows?: number }): void {
     if (this.isLoading || !this.hasMore) return;
+    if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
-    const nextPage = Math.floor(first / this.pageSize);
-    if (nextPage <= this.pageIndex) return;
-
-    this.loadPage(this.searchTerm, nextPage, true);
+    const rows = event?.rows ?? this.pageSize;
+    const lastVisibleIndex = first + rows;
+    const nearEnd = lastVisibleIndex >= this.options.length - 2;
+    if (!nearEnd) return;
+    const nextPage = this.pageIndex + 1;
+    const key = this.requestKey(nextPage, this.currentTerm);
+    if (this.requestedPages.has(key)) return;
+    this.requestedPages.add(key);
+    this.load({ term: this.currentTerm, page: nextPage, append: true });
   }
 
   handleChange(event: any): void {
@@ -214,17 +217,63 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.onTouched();
   }
 
-  private buildParams(searchTerm: string, pageIndex: number, pageSize: number): HttpParams {
+  onClearSelection(): void {
+    this.value = null;
+    this.onChange(null);
+    this.onTouched();
+
+    if (!this.requireParent || !this.isParentMissing()) {
+      this.reloadFirstPage('');
+    }
+  }
+
+  private reloadFirstPage(term: string): void {
+    this.resetDataset(true);
+    this.currentTerm = term;
+    this.requestedPages.add(this.requestKey(0, term));
+    this.load({ term, page: 0, append: false });
+  }
+
+  private resetDataset(clearOptions: boolean): void {
+    this.requestedPages.clear();
+    this.pageIndex = 0;
+    this.currentTerm = '';
+    this.hasMore = true;
+
+    if (clearOptions) {
+      this.options = this.mergeWithSelected([]);
+    }
+  }
+
+  private load(req: LoadRequest): void {
+    if (!this.searchUrl) return;
+    if (this.requireParent && this.isParentMissing()) return;
+
+    this.currentTerm = (req.term ?? '').trim();
+    this.pageIndex = req.page;
+
+    this.request$.next(req);
+  }
+
+  private isParentMissing(): boolean {
+    return this.parentId === null || this.parentId === undefined || this.parentId === '';
+  }
+
+  private requestKey(page: number, term: string): string {
+    const parentKey = this.parentId ?? '';
+    const t = (term ?? '').trim();
+    return `${parentKey}::${t}::${page}`;
+  }
+
+  private buildParams(term: string, pageIndex: number, pageSize: number): HttpParams {
     let params = new HttpParams();
 
     if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
       params = params.set(this.idParamName, String(this.value));
     }
 
-    const q = (searchTerm ?? '').trim();
-    if (q) {
-      params = params.set(this.searchParamName, q);
-    }
+    const q = (term ?? '').trim();
+    if (q) params = params.set(this.searchParamName, q);
 
     if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
       params = params.set(this.parentParamName, String(this.parentId));
@@ -236,41 +285,11 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return params;
   }
 
-  private loadPage(searchTerm: string, pageIndex: number, append: boolean): void {
-    if (!this.searchUrl) return;
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return;
-    }
-
-    this.searchTerm = searchTerm;
-    this.pageIndex = pageIndex;
-    this.load$.next({ searchTerm, pageIndex, append });
-  }
-
-  private applySearch(term: string): void {
-    const query = term?.trim() ?? '';
-    this.lastQuery = query;
-
-    if (!query) {
-      this.emptyMessage = '';
-      this.pageIndex = 0;
-      this.searchTerm = '';
-      this.hasMore = true;
-      this.loadPage('', 0, false);
-      return;
-    }
-
-    if (query.length < this.minChars) {
-      this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
-      this.options = this.mergeWithSelected([]);
-      this.hasMore = false;
-      return;
-    }
-
-    this.emptyMessage = '';
-    this.pageIndex = 0;
-    this.hasMore = true;
-    this.loadPage(query, 0, false);
+  private applyResults(req: LoadRequest, res: any[]): void {
+    const next = res ?? [];
+    const merged = req.append ? this.mergeById([...this.options, ...next]) : this.mergeById(next);
+    this.options = this.mergeWithSelected(merged);
+    this.hasMore = next.length === this.pageSize;
   }
 
   private mergeWithSelected(nextOptions: any[]): any[] {
@@ -287,9 +306,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private findSelectedOption(): any | null {
     if (this.value === null || this.value === undefined) return null;
 
-    if (!this.optionValue) {
-      return this.value;
-    }
+    if (!this.optionValue) return this.value;
 
     const fromPreloaded = this.preloadedOptions?.find(opt => this.getOptionValue(opt) === this.value);
     if (fromPreloaded) return fromPreloaded;
@@ -299,10 +316,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private containsOption(options: any[], option: any): boolean {
-    if (!this.optionValue) {
-      return options.includes(option);
-    }
-
+    if (!this.optionValue) return options.includes(option);
     const optionVal = this.getOptionValue(option);
     return options.some(opt => this.getOptionValue(opt) === optionVal);
   }
@@ -312,29 +326,12 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return option?.[this.optionValue];
   }
 
-  private applyResults(
-    request: { searchTerm: string; pageIndex: number; append: boolean },
-    res: any[]
-  ): void {
-    const next = res || [];
-    if (request.append) {
-      const merged = this.mergeById([...this.options, ...next]);
-      this.options = this.mergeWithSelected(merged);
-    } else {
-      this.options = this.mergeWithSelected(this.mergeById(next));
-    }
-
-    this.hasMore = next.length === this.pageSize;
-  }
-
   private mergeById(items: any[]): any[] {
     const seen = new Map<string, any>();
     for (const item of items) {
       const key = this.getOptionId(item);
       if (!key) continue;
-      if (!seen.has(key)) {
-        seen.set(key, item);
-      }
+      if (!seen.has(key)) seen.set(key, item);
     }
     return Array.from(seen.values());
   }

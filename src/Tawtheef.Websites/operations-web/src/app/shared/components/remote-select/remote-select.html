@@ -10,7 +10,9 @@
     (onFilter)="onFilter($event)"
     (onLazyLoad)="onLazyLoad($event)"
     (onShow)="onOpen()"
+    (onHide)="onClose()"
     (onChange)="handleChange($event)"
+    (onClear)="onClearSelection()"
     [(ngModel)]="value"
     [emptyMessage]="emptyMessage"
     [size]="size"
@@ -18,13 +20,14 @@
     [panelStyle]="panelStyle"
     [virtualScroll]="true"
     [lazy]="true"
-    [virtualScrollItemSize]="38"
+    [virtualScrollItemSize]="virtualScrollItemSize"
     [showClear]="showClear"
-    [class]="invalid ? 'p-invalid' : ''">
+    [class]="invalid ? 'p-invalid' : 'panelStyle'">
   </p-select>
-  @if(isLoading) {
-  <div class="select-loading-overlay">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-  </div>
-}
+
+  @if (isLoading) {
+    <div class="select-loading-overlay">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+  }
 </div>
