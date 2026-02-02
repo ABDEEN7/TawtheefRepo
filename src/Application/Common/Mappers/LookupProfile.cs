@@ -23,7 +23,7 @@ public class LookupProfile : IRegister
                var localized = MapContext.Current!.GetService<ILocalizationService>();
                dest.Name = localized.GetLocalizedName(src);
                dest.Description = localized.GetLocalizedDescription(src);
-               dest.AdditionalData = new { nameAr = src.NameAr, nameEn = src.NameEn };
+               dest.AdditionalData = new { src.NameAr, src.NameEn };
            });
        
         config.NewConfig<LocalizedLookupBase, string>()
