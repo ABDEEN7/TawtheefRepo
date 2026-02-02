@@ -8,7 +8,7 @@
 
       <div class="row my-4">
            <div class="col-md-4">
-             <p-auto-complete 
+             <p-auto-complete
              [(ngModel)]="skillSearchModel"
              [suggestions]="skillOptions"
              (completeMethod)="onSkillSearch($event)"
@@ -37,7 +37,10 @@
              </ng-template>
            </p-auto-complete></div>
            <div class="col-md-4">
-              <p-select [options]="lookups.skillLevels()" optionLabel="name" [(ngModel)]="selectedLevel" [placeholder]="'wizard.skills.selectLevel' | translate" class="w-full w-100" [showClear]="true"></p-select>
+              <p-select [options]="lookups.skillLevels()" optionLabel="name" [(ngModel)]="selectedLevel"
+                        [placeholder]="'wizard.skills.selectLevel' | translate" class="w-full w-100"
+                        [showClear]="true">
+              </p-select>
 
            </div>
            <div class="col-md-4"> <button
@@ -80,7 +83,7 @@
                   <i class="hgi hgi-stroke hgi-delete-02"></i>
                 </button>
                   </div>
-                
+
               </td>
             </tr>
           </ng-template>
