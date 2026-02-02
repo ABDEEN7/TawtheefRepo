@@ -12,15 +12,9 @@ import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 import {Achievement} from '../../../../wizard-profile/models/achievement.model';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
 import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
-import {EXPERIENCE_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
+import {ACHIEVEMENTS_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
 import {GUID} from '../../../../../../../shared/types/guid.type';
 import {I18nNamespaceDirective} from '../../../../../../../shared/directives/i18n-namespace.directive';
-
-export const ACHIEVEMENT_DIALOG_LIMITS = {
-  descriptionMaxLength: 500,
-  maxFileSizeBytes: 1_000_000,
-  maxFileSizeLabel: '1MB',
-};
 
 @Component({
   selector: 'app-achievement-modal',
@@ -47,7 +41,7 @@ export class AchievementModal implements OnInit {
   private translate = inject(TranslateService);
   private fileUtils = inject(FileUtilsService);
 
-  readonly limits = ACHIEVEMENT_DIALOG_LIMITS;
+  readonly limits = ACHIEVEMENTS_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;

@@ -197,7 +197,7 @@
           [options]="lookups.sponsorTypes()"
           name="sponsorType"
           [ngModel]="ds.state().sponsorType"
-          (ngModelChange)="updateField('sponsorType', $event)"
+          (ngModelChange)="onSponsorTypeChange($event)"
           [filter]="true"
           filterBy="name"
           optionLabel="name"
@@ -226,20 +226,35 @@
           />
         </div>
         <!-- Sponsor Employer Number (Ministry of Labor) -->
+        !-- Sponsor Employer Number (QID / Establishment No.) -->
         <div class="col-md-4">
           <label class="form-label required">
             {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
           </label>
+
           <input
             pInputText
             type="text"
             class="form-control"
-
             name="sponsorEmployerNumber"
+            inputmode="numeric"
+            autocomplete="off"
+            [attr.maxlength]="sponsorEmployerNumberMaxLen"
+            [attr.placeholder]="'wizard.placeholders.typeHere' | translate"
             [ngModel]="ds.state().sponsorEmployerNumber"
-            (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
-            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+            (ngModelChange)="onSponsorEmployerNumberChange($event)"
+            [ngClass]="{
+      'p-invalid': sponsorEmployerNumberInvalid
+    }"
           />
+
+          <small class="fz-2xs text-muted">
+            {{ sponsorEmployerNumberHintKey | translate }}
+          </small>
+
+          <small *ngIf="sponsorEmployerNumberInvalid" class="text-danger fz-2xs">
+            {{ sponsorEmployerNumberErrorKey | translate }}
+          </small>
         </div>
         <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>

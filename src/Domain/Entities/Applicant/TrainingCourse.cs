@@ -20,7 +20,7 @@ public class TrainingCourse : EventEntity
     public Country? Country { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
-    [MaxLength(256)]
+    [MaxLength(250)]
     public string? Description { get; set; }
 
     public SpecializationRelationLevel? SpecializationRelation { get; set; }

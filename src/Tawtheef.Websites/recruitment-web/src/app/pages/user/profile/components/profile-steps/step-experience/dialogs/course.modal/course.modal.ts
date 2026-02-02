@@ -10,7 +10,7 @@ import {periodRangeValidator} from '../../../../../../../../shared/validator/per
 import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type';
 import {Select} from 'primeng/select';
 import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
+import {COURSE_DIALOG_LIMITS} from '../dialog-config';
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {TrainingCourse} from '../../../../../wizard-profile/models/experience.model';
 import {Textarea} from 'primeng/textarea';
@@ -42,7 +42,7 @@ export class CourseModal implements OnInit {
   protected lookups = inject(ProfileLookupsService);
   private fileUtils = inject(FileUtilsService);
 
-  readonly limits = EXPERIENCE_DIALOG_LIMITS;
+  readonly limits = COURSE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;

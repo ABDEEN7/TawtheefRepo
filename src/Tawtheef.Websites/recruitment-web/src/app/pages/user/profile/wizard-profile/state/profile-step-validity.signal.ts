@@ -197,6 +197,28 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
     if (!isFilledField(s.sponsorCardName)) {
       addRequiredError(errors, 'personal', 'sponsorCardName');
     }
+
+    // sponsorEmployerNumber validation
+    const sponsorType = s.sponsorType?.backendName;
+    const sponsorNo = (s.sponsorEmployerNumber ?? '').trim();
+    if (sponsorType) {
+      if (!sponsorNo) {
+        addRequiredError(errors, 'personal', 'sponsorEmployerNumber');
+      } else if (!/^\d+$/.test(sponsorNo)) {
+        errors.push({ field: 'sponsorEmployerNumber', i18nKey: 'wizard.personal.sponsorEmployerNumber.digitsOnly' });
+      } else {
+        const requiredLen = sponsorType === SponsorType.Company ? 8 : 11;
+        if (sponsorNo.length !== requiredLen) {
+          errors.push({
+            field: 'sponsorEmployerNumber',
+            i18nKey:
+              sponsorType === SponsorType.Company
+                ? 'wizard.personal.sponsor.company.numberInvalid8'
+                : 'wizard.personal.sponsor.individual.qidInvalid11'
+          });
+        }
+      }
+    }
   }
 
   return {

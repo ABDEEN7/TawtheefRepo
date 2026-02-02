@@ -168,8 +168,8 @@
   "wizard.experience.tasks": "المهام والمسؤوليات",
   "wizard.experience.current": "أعمل هنا حتى الآن",
   "wizard.experience.attachment": "إرفاق شهادة خبرة (PDF)",
-  "wizard.experience.country": "بلد الدورة",
-  "wizard.experience.choiceCountry": "اختر بلد الدورة",
+  "wizard.experience.country": "بلد الخبرة",
+  "wizard.experience.choiceCountry": "اختر بلد الخبرة",
   "wizard.experience.relatedDegree.question": "هل هذه الخبرة مرتبطة بمؤهل دراسي؟",
   "wizard.experience.relatedDegree.label": "المؤهل المرتبط",
   "wizard.experience.relatedDegree.placeholder": "اختر المؤهل",
@@ -217,8 +217,8 @@
   "wizard.courses.table.file": "الملف",
   "wizard.courses.add": "إضافة دورة",
   "wizard.skills.title": "المهارات واللغات",
-  "wizard.skills.skills": "المهارات (Tags)",
-  "wizard.skills.skill": "المهارات (Tags)",
+  "wizard.skills.skills": "المهارات",
+  "wizard.skills.skill": "المهارات",
   "wizard.skills.hint": "اكتب 3 أحرف على الأقل للبحث عن المهارات.",
   "wizard.skills.placeholder": "ابدأ بالكتابة للبحث عن المهارات...",
   "wizard.skills.typeMore": "اكتب 3 أحرف على الأقل لبدء البحث...",
@@ -360,5 +360,13 @@
   "wizard.review.titleStep": "المراجعة النهائية",
   "wizard.profile.skills.duplicateMessage": "تمت إضافة هذه المهارة بالفعل.",
   "wizard.profile.languages.duplicate": "تمت إضافة هذه اللغة بالفعل.",
-  "wizard.profile.degrees.duplicate": "تمت إضافة هذا المؤهل بالفعل."
+  "wizard.profile.degrees.duplicate": "تمت إضافة هذا المؤهل بالفعل.",
+  "wizard.personal.sponsorEmployerNumber.required": "رقم الكفيل مطلوب.",
+  "wizard.personal.sponsorEmployerNumber.digitsOnly": "يجب إدخال أرقام فقط.",
+
+  "wizard.personal.sponsor.individual.qidHint11": "رقم البطاقة الشخصية يجب أن يتكوّن من 11 رقمًا.",
+  "wizard.personal.sponsor.individual.qidInvalid11": "رقم البطاقة الشخصية يجب أن يكون 11 رقمًا بالضبط.",
+
+  "wizard.personal.sponsor.company.numberHint8": "رقم المنشأة يجب أن يتكوّن من 8 أرقام.",
+  "wizard.personal.sponsor.company.numberInvalid8": "رقم المنشأة يجب أن يكون 8 أرقام بالضبط."
 }

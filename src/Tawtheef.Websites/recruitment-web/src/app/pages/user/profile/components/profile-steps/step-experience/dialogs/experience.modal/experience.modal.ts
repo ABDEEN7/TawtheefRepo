@@ -16,14 +16,12 @@ import { NgClass, NgIf } from '@angular/common';
 import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type';
 import {Select} from 'primeng/select';
 import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
+import {EXPERIENCE_DIALOG_CONFIG} from '../dialog-config';
 import {dropdownOptionsModel} from '../../../../../../../../shared/models/dropdown-options.model';
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {Experience} from '../../../../../wizard-profile/models/experience.model';
 import {Degree} from '../../../../../wizard-profile/models/degree.model';
 import {Textarea} from 'primeng/textarea';
-import {FieldError} from '../../../../../wizard-profile/models/profile-validation.model';
-import {NotificationService} from '../../../../../../../../core/services/notification.service';
 import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
@@ -51,9 +49,8 @@ export class ExperienceModal implements OnInit {
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
   private fileUtils = inject(FileUtilsService);
-  private notify = inject(NotificationService);
 
-  readonly limits = EXPERIENCE_DIALOG_LIMITS;
+  readonly limits = EXPERIENCE_DIALOG_CONFIG;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
@@ -72,7 +69,7 @@ export class ExperienceModal implements OnInit {
       current: [false],
       description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
       fileName: [''],
-      file: [null, Validators.required], // ✅ required
+      file: [null, Validators.required],
       hasQualification: [false],
       qualificationId: [null],
     },
@@ -242,59 +239,9 @@ export class ExperienceModal implements OnInit {
     }
     this.form.updateValueAndValidity({ emitEvent: false });
   }
-
-  private validateData(experience: Experience) {
-    const errors: {i18nKey: string}[] = [];
-    const today = startOfToday();
-    if ((!experience.file || !experience.fileName) && !experience.attachmentId) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.attachment.required',
-      });
-    }
-
-    const startDate = parseDate(experience?.from);
-    const endDate = parseDate(experience?.to);
-
-    if (startDate && startDate.getTime() > today.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.futureDate',
-      });
-    }
-
-    if (endDate && endDate.getTime() > today.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.futureDate',
-      });
-    }
-
-    if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.invalidRange',
-      });
-    }
-
-    this.notify.error(
-      `${this.translate.instant('wizard.validationErrorTitle')}: ${errors
-        .map(e => `* ${this.translate.instant(e.i18nKey)}`)
-        .join('\n')}`,
-    );
-  }
 }
 
 // ===== Validators =====
-
-function parseDate(value?: string | null): Date | null {
-  if (!value) return null;
-
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function startOfToday(): Date {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return now;
-}
 
 export function dateRangeValidator(fromKey: string, toKey: string) {
   return (group: AbstractControl): ValidationErrors | null => {
