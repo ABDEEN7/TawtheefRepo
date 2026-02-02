@@ -31,8 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications", "src\Notifi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.TemplateTester", "tests\Notifications.TemplateTester\Notifications.TemplateTester.csproj", "{52E04E2A-C193-4A54-915B-391B966E0DE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tawtheef.Application.Tests", "tests\Tawtheef.Application.Tests\Tawtheef.Application.Tests.csproj", "{08890CA1-8F0E-4129-A728-B8288087E518}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B45F5473-33C2-49A7-8E46-29F378BD4187}"
 EndProject
 Global
@@ -93,10 +91,6 @@ Global
 		{52E04E2A-C193-4A54-915B-391B966E0DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52E04E2A-C193-4A54-915B-391B966E0DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52E04E2A-C193-4A54-915B-391B966E0DE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08890CA1-8F0E-4129-A728-B8288087E518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08890CA1-8F0E-4129-A728-B8288087E518}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08890CA1-8F0E-4129-A728-B8288087E518}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08890CA1-8F0E-4129-A728-B8288087E518}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,7 +101,6 @@ Global
 		{4E4EE20C-F06A-4A1B-851F-C5577796941C} = {F97FCCC7-1539-4D2E-B893-BBA6F5269E42}
 		{90B05558-4218-4217-9F32-A0A627CF4054} = {F97FCCC7-1539-4D2E-B893-BBA6F5269E42}
 		{52E04E2A-C193-4A54-915B-391B966E0DE9} = {B45F5473-33C2-49A7-8E46-29F378BD4187}
-		{08890CA1-8F0E-4129-A728-B8288087E518} = {B45F5473-33C2-49A7-8E46-29F378BD4187}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3CB609D9-5D54-4C11-A371-DAAC8B74E430}
