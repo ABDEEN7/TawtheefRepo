@@ -80,7 +80,7 @@ public sealed class LocalStorageService : IFileStorageService
         {
             ct.ThrowIfCancellationRequested();
 
-            var mapRes = MapPath(blobKey);
+            var mapRes = MapPath(blobKey, true);
             if (!mapRes.IsSuccess) return Task.FromResult(Result.Fail<bool>(mapRes.Errors));
 
             var full = mapRes.Value!;
@@ -124,7 +124,7 @@ public sealed class LocalStorageService : IFileStorageService
         return Result.Ok(url);
     }
 
-    public IResult<string> MapPath(string blobKey)
+    public IResult<string> MapPath(string blobKey, bool isReadOperation = false)
     {
         try
         {
@@ -135,12 +135,19 @@ public sealed class LocalStorageService : IFileStorageService
             var combined = Path.GetFullPath(Path.Combine(_rootFull, blobKey.Replace('/', Path.DirectorySeparatorChar)));
 
             // allow the case where combined == _rootFull (prefix pointing to root subdir)
-            return !combined.StartsWith(_rootFull, StringComparison.Ordinal)
-                ?
-                Result.Fail<string>(ErrorsCodes.InvalidBlobKey)
-                : !File.Exists(combined)
-                    ? Result.Fail<string>(ErrorsCodes.FileNotFound)
-                    : Result.Ok(combined);
+            // Validate path traversal first
+            if (!combined.StartsWith(_rootFull, StringComparison.Ordinal))
+                return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
+
+            // If not read operation → just return path
+            if (!isReadOperation)
+                return Result.Ok(combined);
+
+            // Read operation → ensure file exists
+            if (!File.Exists(combined))
+                return Result.Fail<string>(ErrorsCodes.FileNotFound);
+
+            return Result.Ok(combined);
         }
         catch (Exception ex)
         {

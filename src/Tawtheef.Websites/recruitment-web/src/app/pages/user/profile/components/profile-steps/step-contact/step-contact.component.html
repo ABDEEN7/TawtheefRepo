@@ -38,9 +38,6 @@
         (ngModelChange)="onPhoneChange($event)"
         [disabled]="ds.isLocked('phone')"
       ></ngx-intl-tel-input>
-      <small *ngIf="ds.isLocked('phone')" class="fz-2xs text-muted">
-        {{'wizard.accountFieldNote' | translate}}
-      </small>
       <div *ngIf="phone.touched && !phone.valid" class="text-danger fz-2xs small mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
@@ -110,12 +107,13 @@
         [disabled]="ds.isLocked('email') || email.status === 'verified'"
         [ngClass]="{ 'locked-field': ds.isLocked('email') || email.status === 'verified' }"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
-      <small *ngIf="ds.isLocked('email')" class="text-muted m-2">
-        {{'wizard.accountFieldNote' | translate}}
-      </small>
       <div *ngIf="email.touched && !email.valid" class="text-danger m-2">
         {{ 'validation.emailInvalid' | translate }}
       </div>
+      <span *ngIf="email.status === 'verified'" class="text-success">
+          <i class="fa-solid fa-circle-check me-1"></i>
+        {{ 'wizard.contact.emailVerified' | translate }}
+        </span>
       <ng-container *ngIf="ds.state().email && !ds.state().emailVerified">
         <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
         <span *ngIf="email.status === 'idle'" class="text-muted">
@@ -126,10 +124,6 @@
         </span>
         <span *ngIf="email.status === 'verifying'" class="text-muted">
           {{ 'wizard.contact.emailVerifying' | translate }}
-        </span>
-        <span *ngIf="email.status === 'verified'" class="text-success">
-          <i class="fa-solid fa-circle-check me-1"></i>
-            {{ 'wizard.contact.emailVerified' | translate }}
         </span>
         <span *ngIf="email.status === 'failed'" class="text-danger">
           {{ 'wizard.contact.emailFailed' | translate }}

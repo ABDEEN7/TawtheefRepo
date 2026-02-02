@@ -89,15 +89,16 @@ export class StepReviewComponent {
       concatMap(() =>
         this.auth.refreshToken().pipe(
           catchError(err => {
-            // log it, but don't block dashboard navigation
-            console.warn('[submit] refreshToken failed, continue to dashboard', err);
+            console.warn('[submit] refreshToken failed, continue', err);
             return of(null);
           })
         )
       ),
       tap(() => this.submitted.set(true)),
-      concatMap(() => from(this.router.navigateByUrl(routes.user.dashboard))),
       finalize(() => this.submitting.set(false))
-    ).subscribe();
+    ).subscribe(() => {
+      // ✅ hard reload with fresh auth state
+      window.location.href = routes.user.dashboard;
+    });
   }
 }
