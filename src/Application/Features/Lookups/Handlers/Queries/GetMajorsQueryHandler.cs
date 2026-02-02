@@ -19,6 +19,11 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
             .AsNoTracking()
             .Where(s => s.IsActive)
             .Where(m => m.SubMajors!.Count > 0);
+        var normalizedSearch = request.Search?.Trim();
+        var isPaged = request.PageIndex.HasValue || request.PageSize.HasValue;
+        var pageIndex = request.PageIndex ?? 0;
+        var pageSize = request.PageSize ?? 10;
+
         List<Major> byId = [];
         if (request.Id.HasValue)
         {
@@ -27,17 +32,23 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
                 .ToListAsync(cancellationToken);
         }
 
-        List<Major> bySearch = [];
-        if (!string.IsNullOrWhiteSpace(request.Search))
+        var bySearch = new List<Major>();
+        if (!string.IsNullOrWhiteSpace(normalizedSearch) || isPaged)
         {
-            bySearch = await baseQuery
-                .Where(m =>
-                    EF.Functions.Like(m.NameAr, $"%{request.Search}%") ||
-                    EF.Functions.Like(m.NameEn, $"%{request.Search}%") ||
-                    EF.Functions.Like(m.DescriptionAr ?? "", $"%{request.Search}%") ||
-                    EF.Functions.Like(m.DescriptionEn ?? "", $"%{request.Search}%"))
+            var searchQuery = baseQuery;
+            if (!string.IsNullOrWhiteSpace(normalizedSearch))
+            {
+                searchQuery = searchQuery.Where(m =>
+                    EF.Functions.Like(m.NameAr, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.NameEn, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.DescriptionAr ?? "", $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.DescriptionEn ?? "", $"%{normalizedSearch}%"));
+            }
+
+            bySearch = await searchQuery
                 .OrderBy(m => m.DisplayOrder)
-                .Take(10)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
 

@@ -65,7 +65,7 @@
         [ngModel]="ds.state().nationality"
         (ngModelChange)="updateField('nationality', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
@@ -115,7 +115,7 @@
         [ngModel]="ds.state().religion"
         (ngModelChange)="updateField('religion', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
 
         [placeholder]="'wizard.placeholders.selectReligion' | translate"
@@ -132,7 +132,7 @@
         [ngModel]="ds.state().marital"
         (ngModelChange)="updateField('marital', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
 
         [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
@@ -199,7 +199,7 @@
           [ngModel]="ds.state().sponsorType"
           (ngModelChange)="updateField('sponsorType', $event)"
           [filter]="true"
-          filterBy="name"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           optionLabel="name"
 
           [placeholder]="'wizard.placeholders.selectSponsorType' | translate"

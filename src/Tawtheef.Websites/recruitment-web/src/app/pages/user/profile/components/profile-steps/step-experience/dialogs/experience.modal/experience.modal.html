@@ -40,7 +40,7 @@
           <label for="country" class="form-label required d-block">
             {{ 'wizard.experience.country' | translate }}
           </label>
-          <p-select size="small" [filter]="true" [filterBy]="'name'"
+          <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
                     inputId="country"
                     formControlName="country"
                     [options]="lookups.countries()" optionLabel="name"
@@ -68,7 +68,7 @@
                 <label class="form-label  required" for="qualificationId">
                   {{ 'wizard.experience.relatedDegree.label' | translate }}
                 </label>
-                <p-select size="small" [filter]="true" [filterBy]="'name'"
+                <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
                           inputId="qualificationId" formControlName="qualificationId"
                           [options]="degreeOptions" optionLabel="name" optionValue="id"
                           [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"

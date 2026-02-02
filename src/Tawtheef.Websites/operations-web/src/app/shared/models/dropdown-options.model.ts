@@ -4,8 +4,11 @@ export interface dropdownOptionsModel {
   name: string;
   description: string;
   additionalData?: {
+    nameAr?: string;
+    nameEn?: string;
     code?: number;
     isoCode?: string;
     codeAlpha?: string;
+    [key: string]: unknown;
   };
 }

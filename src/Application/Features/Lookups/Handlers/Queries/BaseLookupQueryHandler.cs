@@ -40,16 +40,52 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var languageToken = string.IsNullOrWhiteSpace(request.Language)
             ? "en"
             : request.Language.Trim().ToLowerInvariant();
+        var isPaged = request.PageSize.HasValue || request.PageIndex.HasValue;
+        var pageSize = request.PageSize ?? 10;
+        var pageIndex = request.PageIndex ?? 0;
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{languageToken}:{searchToken}";
+        if (isPaged)
+            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{pageIndex}:{pageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(dbSet, cacheKeyPrefix, cancellationToken);
 
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-            var entities = await dbSet.ToListAsync(cancellationToken);
-            return mapper.Map<List<DropdownOptions>>(entities).OrderBy(e => e.Name).ToList();
+            if (isPaged)
+            {
+                var ordered = languageToken == "ar"
+                    ? dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameAr)
+                    : dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameEn);
+                var entities = await ordered
+                    .Skip(pageIndex * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(cancellationToken);
+                return mapper.Map<List<DropdownOptions>>(entities);
+            }
+
+            var allEntities = await dbSet.ToListAsync(cancellationToken);
+            return mapper.Map<List<DropdownOptions>>(allEntities).OrderBy(e => e.Name).ToList();
         });
+
+        if (request.Id.HasValue)
+        {
+            var byId = await unitOfWork.GetEntityRepository<TLookup>().DbSet
+                .AsNoTracking()
+                .Where(x => x.IsActive && x.Id == request.Id.Value)
+                .ToListAsync(cancellationToken);
+            var mappedById = mapper.Map<List<DropdownOptions>>(byId);
+            var merged = data ?? new List<DropdownOptions>();
+            foreach (var item in mappedById)
+            {
+                if (!merged.Any(existing => existing.Id == item.Id))
+                {
+                    merged.Add(item);
+                }
+            }
+
+            return Result.Ok(merged);
+        }
 
         return Result.Ok(data ?? new List<DropdownOptions>());
     }
