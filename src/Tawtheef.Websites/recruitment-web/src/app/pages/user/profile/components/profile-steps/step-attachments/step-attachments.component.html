@@ -39,17 +39,17 @@
                      [disabled]="g.disabled"
                      [class.is-invalid]="isInvalid(i,'file')">
 
-              <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border">
-        <i class="fa-solid fa-paperclip ms-1"></i>
-        {{ getFileName(i) }}
-      </span>
-
-                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none"
-                        *ngIf="canPreview(i)"
-                        (click)="previewFile(i, $event)">
-                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                </button>
+              <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-3">
+                    <span class="pill soft">
+                      <i class="fa-solid fa-paperclip ms-1"></i>
+                      {{ getFileName(i) }}
+                    </span>
+                    <div class="action-buttons">
+                          <button type="button" class="btn-text" *ngIf="canPreview(i)"  (click)="previewFile(i, $event)">
+                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                          </button>
+                    </div>
+               
 
                 <button type="button"
                         class="btn btn-sm btn-outline-primary"

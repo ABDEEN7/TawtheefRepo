@@ -95,14 +95,14 @@
   [autoplayInterval]="false"
   [responsiveOptions]="responsiveOptions">
    <ng-template pTemplate="item" let-review let-i="index">
-                  <div class="row">
-                       <div class="col-md-4 mx-auto" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
+                  <div class="">
+                       <div class="px-3" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
                             <div class=" card-ghost p-3">
                                  <div class="profile row mb-3">
-                                      <div class="col-md-2 col-2">
-                                            <img class="icon-circle" [src]="review.img" [attr.alt]="review.profile | translate">
+                                      <div class="col-lg-2 col-md-3 col-3">
+                                            <img class="icon-circle img-fluid" [src]="review.img" [attr.alt]="review.profile | translate" >
                                       </div>
-                                      <div class="col-10">
+                                      <div class="col-lg-10 col-md-9 col-9">
                                           <h6 class="mb-1">{{ review.profile | translate}}</h6>
                                           <p class="m-0">{{ review.desc | translate}}</p>
                                       </div>
