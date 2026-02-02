@@ -818,3 +818,7 @@ body.ltr
       right: auto !important;
 }
 :dir(rtl) .sidebar .sidebar-nav .nav-item .label{    text-align: right !important;}
+.iti__flag-container .dropdown-menu{
+    font-size: 0.80rem !important;
+    min-width: 14rem !important;
+}
