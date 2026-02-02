@@ -37,6 +37,8 @@
   "public.nav.success": "Success Stories",
   "public.nav.faq": "Frequently Asked Questions",
   "public.nav.login": "Login",
+  "public.nav.logout": "Logout",
+  "public.nav.profile.dashboard": "Dashboard",
 
   "public.footer.rights": "All rights reserved © 2025",
   "public.footer.ministry": "Ministry of Education and Higher Education 2025 — All rights reserved",

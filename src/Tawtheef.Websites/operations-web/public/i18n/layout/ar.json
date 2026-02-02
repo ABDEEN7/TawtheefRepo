@@ -28,6 +28,8 @@
   "public.nav.success": "قصص نجاح",
   "public.nav.faq": "الأسئلة الشائعة",
   "public.nav.login": "تسجيل الدخول",
+  "public.nav.logout": "تسجيل الخروج",
+  "public.nav.profile.dashboard": "لوحة التحكم",
 
   "internal.sidebar.home": "الرئيسية",
   "internal.sidebar.distribution": "توزيع الملفات",

@@ -6,7 +6,7 @@ export const userRoutes = {
     return this.user + 'dashboard';
   },
   get profileWizard(){
-    return this.user + 'wizard-profile';
+    return this.user + 'create-profile';
   },
   get profileSections(){
     return this.user + 'profile-sections';
