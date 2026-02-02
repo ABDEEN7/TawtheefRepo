@@ -2,11 +2,13 @@
   <p-select
     [options]="options"
     [filter]="true"
+    filterBy="additionalData.nameAr,additionalData.nameEn,name"
     [optionLabel]="optionLabel"
     [optionValue]="optionValue"
     [placeholder]="computedPlaceholder"
     [disabled]="isDisabledComputed"
     (onFilter)="onFilter($event)"
+    (onLazyLoad)="onLazyLoad($event)"
     (onShow)="onOpen()"
     (onChange)="handleChange($event)"
     [(ngModel)]="value"
@@ -14,6 +16,9 @@
     [size]="size"
     [appendTo]="appendTo"
     [panelStyle]="panelStyle"
+    [virtualScroll]="true"
+    [lazy]="true"
+    [virtualScrollItemSize]="38"
     [showClear]="showClear"
     [class]="invalid ? 'p-invalid' : ''">
   </p-select>

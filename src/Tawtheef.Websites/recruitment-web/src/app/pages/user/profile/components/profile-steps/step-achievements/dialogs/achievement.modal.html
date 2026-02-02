@@ -6,6 +6,7 @@
 
                 inputId="achievementType"
                 [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name"
                 formControlName="achievementType"
                 [options]="lookups.achievementTypes()"
                 optionLabel="name"
@@ -35,6 +36,7 @@
                 formControlName="country"
                 [options]="lookups.countries()" optionLabel="name"
                 [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name"
                 [placeholder]="'wizard.achievements.choiceCountry' | translate"
                 [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
                 [ngClass]="{

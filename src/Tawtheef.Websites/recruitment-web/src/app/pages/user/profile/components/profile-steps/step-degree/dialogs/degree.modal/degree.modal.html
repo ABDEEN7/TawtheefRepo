@@ -14,6 +14,7 @@
               formControlName="degree"
               [options]="lookups.degrees()" optionLabel="name"
               [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [placeholder]="'wizard.degrees.choiceDegree' | translate"
               [appendTo]="'body'"
               [ngClass]="{'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)}" fluid>
@@ -33,6 +34,7 @@
               formControlName="gradCountry"
               [options]="lookups.countries()" optionLabel="name"
               [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
               [appendTo]="'body'"
               [ngClass]="{'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)}" fluid>

@@ -41,7 +41,7 @@
             <label for="country" class="form-label required d-block">
               {{ 'wizard.courses.country' | translate }}
             </label>
-            <p-select size="small" [filter]="true" [filterBy]="'name'"
+            <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
                       inputId="country"
                       formControlName="country"
                       [options]="lookups.countries()" optionLabel="name"

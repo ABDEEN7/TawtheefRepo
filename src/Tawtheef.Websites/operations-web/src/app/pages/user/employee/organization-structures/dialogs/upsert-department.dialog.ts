@@ -49,6 +49,7 @@ export interface UpsertDepartmentDialogData {
               [(ngModel)]="vm.sectorId"
               name="sectorId"
               [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
               (onChange)="onSectorChange($event.value)">
@@ -65,6 +66,7 @@ export interface UpsertDepartmentDialogData {
               [(ngModel)]="vm.managementId"
               name="managementId"
               [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
             </p-select>

@@ -37,6 +37,7 @@
                     (onChange)="onBlockedFilterChange($event.value)"
                     (onClear)="onBlockedFilterChange(null)"
                     [filter]="true"
+                    filterBy="additionalData.nameAr,additionalData.nameEn,name"
                     [ngModel]="filters().isBlocked"
                     optionLabel="name"
                     optionValue="id"
