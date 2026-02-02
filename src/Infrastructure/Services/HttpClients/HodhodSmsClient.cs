@@ -1,14 +1,14 @@
 using FluentResults;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
 
-public sealed class HodhodSmsClient(HttpClient http, ILogger logger,
+public sealed class HodhodSmsClient(HttpClient http, IAppLogger logger,
     IOptions<HodhodSmsSettings> opt) : ISmsGatewayClient
 {
     private readonly HodhodSmsSettings _opt = opt.Value;

@@ -3,7 +3,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using FluentResults;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
@@ -14,12 +14,12 @@ public sealed class AzureBlobStorageService : IFileStorageService
 {
     private readonly BlobContainerClient _container;
     private readonly string? _publicBaseUrl;
-    private readonly ILogger _logger;
+    private readonly IAppLogger _logger;
 
     public AzureBlobStorageService(
         BlobServiceClient blobServiceClient,
         IOptions<StorageSettings> storageSettings,
-        ILogger logger)
+        IAppLogger logger)
     {
         var cfg = storageSettings.Value ?? throw new InvalidOperationException("Storage settings missing");
 
@@ -35,7 +35,7 @@ public sealed class AzureBlobStorageService : IFileStorageService
         _publicBaseUrl = string.IsNullOrWhiteSpace(cfg.PublicBaseUrl) ? null : cfg.PublicBaseUrl.TrimEnd('/');
 
         _container = blobServiceClient.GetBlobContainerClient(containerName);
-        _logger = logger.ForContext<AzureBlobStorageService>();
+        _logger = logger.ForContext(typeof(AzureBlobStorageService));
     }
 
     private string BuildBlobName(string blobKey)

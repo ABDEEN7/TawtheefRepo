@@ -7,7 +7,7 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Utils;
@@ -26,12 +26,12 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     UserManager<User> userManager,
     ITokenService tokenService,
     TimeProvider timeProvider,
-    ILogger logger
+    IAppLogger logger
 ) : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
     private const int QatarNationalityCode = 634;
 
-    private readonly ILogger _log = logger.ForContext<VerifyQatarResidentOtpCommandHandler>();
+    private readonly IAppLogger _log = logger.ForContext(typeof(VerifyQatarResidentOtpCommandHandler));
 
     public async Task<IResult<AuthResponse>> Handle(
         VerifyQatarResidentOtpCommand request,

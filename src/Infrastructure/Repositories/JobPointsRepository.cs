@@ -1,7 +1,7 @@
 ﻿using Application.Operation.Common.Repositories;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
@@ -9,7 +9,7 @@ using Tawtheef.Infrastructure.Repositories.Base;
 
 namespace Tawtheef.Infrastructure.Repositories;
 
-public class JobPointsRepository(IGenericRepository<JobPointsMain> repository, ILogger logger)
+public class JobPointsRepository(IGenericRepository<JobPointsMain> repository, IAppLogger logger)
     : BaseRepository<JobPointsMain>(repository), IJobPointsRepository
 {
     
