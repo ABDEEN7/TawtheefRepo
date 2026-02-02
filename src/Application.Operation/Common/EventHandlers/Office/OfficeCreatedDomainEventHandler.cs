@@ -2,7 +2,7 @@ using System.Text.Json;
 using Cortex.Mediator.Notifications;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
@@ -11,7 +11,7 @@ using Tawtheef.Notifications.Templates.OfficeCreatedNotification;
 
 namespace Application.Operation.Common.EventHandlers.Office;
 
-public sealed class OfficeCreatedDomainEventHandler(IUnitOfWork unitOfWork, UserManager<User> userManager, ILogger logger)
+public sealed class OfficeCreatedDomainEventHandler(IUnitOfWork unitOfWork, UserManager<User> userManager, IAppLogger logger)
     : INotificationHandler<OfficeCreatedDomainEvent>
 {
     public async Task Handle(OfficeCreatedDomainEvent notification, CancellationToken ct)

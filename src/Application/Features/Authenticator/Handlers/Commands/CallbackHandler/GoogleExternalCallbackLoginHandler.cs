@@ -3,7 +3,7 @@ using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -21,11 +21,11 @@ public class GoogleExternalCallbackLoginHandler(
     ITokenService tokenService,
     IUnitOfWork uow,
     ILoginAuditService loginAudit,
-    ILogger logger
+    IAppLogger logger
 ) : BaseExternalCallbackLoginHandler(loginAudit),
     ICommandHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
-    private readonly ILogger _log = logger.ForContext<GoogleExternalCallbackLoginHandler>();
+    private readonly IAppLogger _log = logger.ForContext(typeof(GoogleExternalCallbackLoginHandler));
 
     protected override string Provider => "Google";
     protected override Guid? DefaultUserType => null;

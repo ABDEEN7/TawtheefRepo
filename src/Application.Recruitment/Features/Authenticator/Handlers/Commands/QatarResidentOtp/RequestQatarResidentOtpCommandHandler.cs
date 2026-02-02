@@ -5,7 +5,7 @@ using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
@@ -19,10 +19,10 @@ public sealed class RequestQatarResidentOtpCommandHandler(
     UserManager<User> userManager,
     ISmsSender smsSender,
     TimeProvider timeProvider,
-    ILogger logger
+    IAppLogger logger
 ) : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
-    private readonly ILogger _log = logger.ForContext<RequestQatarResidentOtpCommandHandler>();
+    private readonly IAppLogger _log = logger.ForContext(typeof(RequestQatarResidentOtpCommandHandler));
 
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {

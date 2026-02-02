@@ -4,7 +4,7 @@ using Application.Operation.Features.Authenticator.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -23,14 +23,14 @@ public sealed class AzureExternalCallbackLoginHandler(
     ITokenService tokenService,
     IEmployeeProfileService employeeProfileService,
     ILoginAuditService loginAudit,
-    ILogger logger
+    IAppLogger logger
 ) : BaseExternalCallbackLoginHandler(loginAudit),
     ICommandHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     private const string ProviderName = "Azure";
     private const string ProviderDisplayName = "Azure AD";
 
-    private readonly ILogger _log = logger.ForContext<AzureExternalCallbackLoginHandler>();
+    private readonly IAppLogger _log = logger.ForContext(typeof(AzureExternalCallbackLoginHandler));
 
     protected override string Provider => ProviderName;
     protected override Guid? DefaultUserType => UserTypeIds.Employee;

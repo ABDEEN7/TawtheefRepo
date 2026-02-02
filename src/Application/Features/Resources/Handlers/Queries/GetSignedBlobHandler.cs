@@ -4,7 +4,7 @@ using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
@@ -13,7 +13,7 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Resources.Handlers.Queries;
 
-public class GetSignedBlobHandler(IFileStorageService storage, ILogger logger, IOptions<AppConfigSettings> cfg)
+public class GetSignedBlobHandler(IFileStorageService storage, IAppLogger logger, IOptions<AppConfigSettings> cfg)
     : IQueryHandler<GetSignedBlobQuery, Result<FileResponse>>
 {
     public Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)

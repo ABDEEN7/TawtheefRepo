@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
@@ -11,16 +11,16 @@ public sealed class LocalStorageService : IFileStorageService
 {
     private readonly string _rootFull;
     private readonly string _publicBaseUrl;
-    private readonly ILogger _logger;
+    private readonly IAppLogger _logger;
 
-    public LocalStorageService(IOptions<StorageSettings> storageSettings, ILogger logger)
+    public LocalStorageService(IOptions<StorageSettings> storageSettings, IAppLogger logger)
     {
         var root = storageSettings.Value.RootPath ?? throw new InvalidOperationException("Storage:RootPath missing");
         _publicBaseUrl = storageSettings.Value.PublicBaseUrl;
 
         _rootFull = Path.GetFullPath(root);
         Directory.CreateDirectory(_rootFull);
-        _logger = logger.ForContext<LocalStorageService>();
+        _logger = logger.ForContext(typeof(LocalStorageService));
     }
 
     public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)

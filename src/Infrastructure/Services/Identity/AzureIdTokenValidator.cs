@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
@@ -14,7 +14,7 @@ namespace Tawtheef.Infrastructure.Services.Identity;
 
 
 public sealed class AzureIdTokenValidator(
-    ILogger logger,
+    IAppLogger logger,
     IOptions<AzureAuthenticationSettings> azureOptions,
     IConfigurationManager<OpenIdConnectConfiguration> oidcManager)
     : IExternalIdTokenValidator

@@ -2,11 +2,11 @@ using System.Net.Http.Json;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using FluentResults;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
-public sealed class QatarPassClient(HttpClient http, ILogger logger) : IQatarPassClient
+public sealed class QatarPassClient(HttpClient http, IAppLogger logger) : IQatarPassClient
 {
     public async Task<IResult<QatarPassEnvelope>> GetDataAsync(
         string code,

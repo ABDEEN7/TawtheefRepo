@@ -2,7 +2,7 @@
 using System.Threading.Channels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Configurations.Settings;
@@ -11,7 +11,7 @@ namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public sealed class EmailDispatcher(
     IEmailQueue queue, IEmailTransport transport,
-    IOptions<EmailDispatcherSettings> opt, ILogger log) : BackgroundService
+    IOptions<EmailDispatcherSettings> opt, IAppLogger log) : BackgroundService
 {
     private readonly EmailDispatcherSettings _cfg = opt.Value;
     private int _activeWorkers;

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Utils;
 using Polly;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Configurations.Settings;
@@ -20,7 +20,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     private readonly AsyncPolicy _resiliencePolicy;
     private readonly ConcurrentBag<SmtpClient> _clientPool = new();
     private readonly int _poolSize;
-    private readonly ILogger _log;
+    private readonly IAppLogger _log;
 
     private const int DefaultTimeoutMs = 60000;
     private const int MaxRetryAttempts = 3;
@@ -29,12 +29,12 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     private static readonly TimeSpan OperationTimeout = TimeSpan.FromSeconds(60);
 
     public MailKitEmailTransport(IOptions<AppConfigSettings> appConfiguration,
-        IOptions<EmailSettings> settings, ILogger log)
+        IOptions<EmailSettings> settings, IAppLogger log)
     {
         _settings = settings.Value;
         _appConfiguration = appConfiguration.Value;
         _poolSize = Math.Max(1, _settings.MaxSmtpClients);
-        _log = log.ForContext<MailKitEmailTransport>();
+        _log = log.ForContext(typeof(MailKitEmailTransport));
 
         _resiliencePolicy = BuildResiliencePolicy();
     }
