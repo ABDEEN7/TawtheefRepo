@@ -23,8 +23,8 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper, IMemory
         if (!string.IsNullOrWhiteSpace(term) && term.Length < 3)
             return Result.Ok(new List<DropdownOptions>());
 
-        var pageIndex = request.PageIndex ?? 0;
-        var pageSize = request.PageSize ?? 10;
+        var pageIndex = request.PaginatedRequest?.PageNumber ?? 0;
+        var pageSize = request.PaginatedRequest?.PageSize ?? 10;
 
         var query = uow.GetEntityRepository<Skill>().DbSet
             .AsNoTracking()

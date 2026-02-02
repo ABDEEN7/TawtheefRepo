@@ -65,7 +65,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   emptyMessage = '';
   private panelOpen = false;
   private currentTerm = '';
-  private pageIndex = 0;
+  private pageNumber = 0;
 
   private requestedPages = new Set<string>();
   private destroy$ = new Subject<void>();
@@ -203,7 +203,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     const lastVisibleIndex = first + rows;
     const nearEnd = lastVisibleIndex >= this.options.length - 2;
     if (!nearEnd) return;
-    const nextPage = this.pageIndex + 1;
+    const nextPage = this.pageNumber + 1;
     const key = this.requestKey(nextPage, this.currentTerm);
     if (this.requestedPages.has(key)) return;
     this.requestedPages.add(key);
@@ -236,7 +236,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   private resetDataset(clearOptions: boolean): void {
     this.requestedPages.clear();
-    this.pageIndex = 0;
+    this.pageNumber = 0;
     this.currentTerm = '';
     this.hasMore = true;
 
@@ -250,7 +250,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     if (this.requireParent && this.isParentMissing()) return;
 
     this.currentTerm = (req.term ?? '').trim();
-    this.pageIndex = req.page;
+    this.pageNumber = req.page;
 
     this.request$.next(req);
   }
@@ -265,25 +265,28 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return `${parentKey}::${t}::${page}`;
   }
 
-  private buildParams(term: string, pageIndex: number, pageSize: number): HttpParams {
-    let params = new HttpParams();
+  private buildParams(term: string, pageNumber: number, pageSize: number): HttpParams {
+  let params = new HttpParams();
 
-    if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
-      params = params.set(this.idParamName, String(this.value));
-    }
-
-    const q = (term ?? '').trim();
-    if (q) params = params.set(this.searchParamName, q);
-
-    if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
-      params = params.set(this.parentParamName, String(this.parentId));
-    }
-
-    params = params.set('pageIndex', String(pageIndex));
-    params = params.set('pageSize', String(pageSize));
-
-    return params;
+  if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
+    params = params.set(this.idParamName, String(this.value));
   }
+
+  const q = (term ?? '').trim();
+  if (q) params = params.set(this.searchParamName, q);
+
+  if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
+    params = params.set(this.parentParamName, String(this.parentId));
+  }
+
+  params = params
+  .set('PaginatedRequest.PageNumber', String(pageNumber + 1))
+  .set('PaginatedRequest.PageSize', String(pageSize))
+  .set('PaginatedRequest.SortBy', 'name')
+  .set('PaginatedRequest.SortDirection', 'asc');
+
+  return params;
+}
 
   private applyResults(req: LoadRequest, res: any[]): void {
     const next = res ?? [];

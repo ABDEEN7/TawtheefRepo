@@ -19,9 +19,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetUniversitiesQuery request, CancellationToken cancellationToken)
     {
         var normalizedSearch = request.Search?.Trim();
-        var isPaged = request.PageIndex.HasValue || request.PageSize.HasValue;
-        var pageIndex = request.PageIndex ?? 0;
-        var pageSize = request.PageSize ?? 10;
+        var isPaged = request.PaginatedRequest is not null;
         var languageToken = string.IsNullOrWhiteSpace(request.Language)
             ? "en"
             : request.Language.Trim().ToLowerInvariant();
@@ -41,7 +39,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
             : normalizedSearch.ToLowerInvariant();
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{request.CountryId}:{searchToken}";
         if (isPaged)
-            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{pageIndex}:{pageSize}";
+            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(query, cacheKeyPrefix, cancellationToken);
 
         var universities = await cache.GetOrCreateAsync(cacheKey, async entry =>
@@ -53,11 +51,11 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
                 var ordered = languageToken == "ar"
                     ? query.OrderBy(university => university.DisplayOrder).ThenBy(university => university.NameAr)
                     : query.OrderBy(university => university.DisplayOrder).ThenBy(university => university.NameEn);
-                var entities = await ordered
-                    .Skip(pageIndex * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync(cancellationToken);
-                return mapper.Map<List<DropdownOptions>>(entities);
+                if (request.PaginatedRequest != null)
+                {
+                    var entities = await ordered.ToPaginatedListAsync(request.PaginatedRequest,cancellationToken);
+                    return mapper.Map<List<DropdownOptions>>(entities);
+                }
             }
 
             var allEntities = await query
@@ -75,12 +73,9 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
                 .ToListAsync(cancellationToken);
             var mappedById = mapper.Map<List<DropdownOptions>>(byId);
             var merged = universities ?? new List<DropdownOptions>();
-            foreach (var item in mappedById)
+            foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
             {
-                if (!merged.Any(existing => existing.Id == item.Id))
-                {
-                    merged.Add(item);
-                }
+                merged.Add(item);
             }
 
             return Result.Ok(merged);

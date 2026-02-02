@@ -4,6 +4,7 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -20,9 +21,8 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
             .Where(s => s.IsActive)
             .Where(m => m.SubMajors!.Count > 0);
         var normalizedSearch = request.Search?.Trim();
-        var isPaged = request.PageIndex.HasValue || request.PageSize.HasValue;
-        var pageIndex = request.PageIndex ?? 0;
-        var pageSize = request.PageSize ?? 10;
+        var isPaged = request.PaginatedRequest is not null;
+
 
         List<Major> byId = [];
         if (request.Id.HasValue)
@@ -45,11 +45,8 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
                     EF.Functions.Like(m.DescriptionEn ?? "", $"%{normalizedSearch}%"));
             }
 
-            bySearch = await searchQuery
-                .OrderBy(m => m.DisplayOrder)
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToListAsync(cancellationToken);
+            if (request.PaginatedRequest != null)
+                bySearch = await searchQuery.ToPaginatedResultAsync(request.PaginatedRequest, cancellationToken);
         }
 
         var merged = byId

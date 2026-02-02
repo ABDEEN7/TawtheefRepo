@@ -40,12 +40,11 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var languageToken = string.IsNullOrWhiteSpace(request.Language)
             ? "en"
             : request.Language.Trim().ToLowerInvariant();
-        var isPaged = request.PageSize.HasValue || request.PageIndex.HasValue;
-        var pageSize = request.PageSize ?? 10;
-        var pageIndex = request.PageIndex ?? 0;
+        
+        var isPaged = request.PaginatedRequest is not null;
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{languageToken}:{searchToken}";
         if (isPaged)
-            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{pageIndex}:{pageSize}";
+            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(dbSet, cacheKeyPrefix, cancellationToken);
 
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
@@ -57,18 +56,18 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
                 var ordered = languageToken == "ar"
                     ? dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameAr)
                     : dbSet.OrderBy(x => x.DisplayOrder).ThenBy(x => x.NameEn);
-                var entities = await ordered
-                    .Skip(pageIndex * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync(cancellationToken);
-                return mapper.Map<List<DropdownOptions>>(entities);
+                if (request.PaginatedRequest != null)
+                {
+                    var entities = await ordered.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
+                    return mapper.Map<List<DropdownOptions>>(entities);
+                }
             }
 
             var allEntities = await dbSet.ToListAsync(cancellationToken);
             return mapper.Map<List<DropdownOptions>>(allEntities).OrderBy(e => e.Name).ToList();
         });
 
-        if (request.Id.HasValue)
+        if (request is { Id: not null })
         {
             var byId = await unitOfWork.GetEntityRepository<TLookup>().DbSet
                 .AsNoTracking()
@@ -76,12 +75,9 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
                 .ToListAsync(cancellationToken);
             var mappedById = mapper.Map<List<DropdownOptions>>(byId);
             var merged = data ?? new List<DropdownOptions>();
-            foreach (var item in mappedById)
+            foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
             {
-                if (!merged.Any(existing => existing.Id == item.Id))
-                {
-                    merged.Add(item);
-                }
+                merged.Add(item);
             }
 
             return Result.Ok(merged);
