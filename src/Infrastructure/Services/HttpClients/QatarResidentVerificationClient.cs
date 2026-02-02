@@ -5,13 +5,13 @@ using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using FluentResults;
 using Microsoft.Extensions.Options;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
-public sealed class QatarResidentVerificationClient(HttpClient httpClient, ILogger logger,
+public sealed class QatarResidentVerificationClient(HttpClient httpClient, IAppLogger logger,
     IOptions<QatarResidentOtpSettings> settings) : IQatarResidentVerificationClient
 {
     private readonly QatarResidentOtpSettings _settings = settings.Value;

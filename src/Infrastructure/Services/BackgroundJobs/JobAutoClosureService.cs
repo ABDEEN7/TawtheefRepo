@@ -3,7 +3,7 @@ using Cortex.Mediator;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Domain.Entities.Lookups;
 
@@ -11,9 +11,9 @@ namespace Tawtheef.Infrastructure.Services.BackgroundJobs
 {
     public class JobAutoClosureService(
         IServiceScopeFactory scopeFactory,
-        ILogger logger) : BackgroundService
+        IAppLogger logger) : BackgroundService
     {
-        private readonly ILogger _logger = logger.ForContext<JobAutoClosureService>();
+        private readonly IAppLogger _logger = logger.ForContext(typeof(JobAutoClosureService));
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var timer = new PeriodicTimer(TimeSpan.FromHours(1));

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -22,7 +23,6 @@ using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Notifications.Templates.ChangeJobStatusNotification;
-using ILogger = Serilog.ILogger;
 
 namespace Recruitment.API.Controllers;
 
@@ -39,7 +39,7 @@ public class AuthController(IMediator mediator) : ControllerBase
 
     #if DEBUG
     [HttpGet("test-logger")]
-    public void TestLogger([FromServices] Serilog.ILogger logger, [FromServices] Microsoft.Extensions.Logging.ILogger<AuthController> logger2)
+    public void TestLogger([FromServices] IAppLogger logger, [FromServices] ILogger<AuthController> logger2)
     {
         logger.Error("Serilog Sending notification log error test");
         logger.Debug("Serilog Sending notification log debug test");
@@ -60,7 +60,7 @@ public class AuthController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("send-notification-logger")]
-    public async Task<IActionResult> SendNotificationLogger([FromServices] ILogger logger,
+    public async Task<IActionResult> SendNotificationLogger([FromServices] IAppLogger logger,
         [FromServices] IUnitOfWork uow, CancellationToken ct = default)
     {
         logger.Information("Sending notification log test");

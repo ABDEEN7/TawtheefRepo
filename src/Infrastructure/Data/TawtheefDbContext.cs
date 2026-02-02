@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Tawtheef.Application.Common.Interfaces;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Entities;
@@ -22,12 +23,11 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Security;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
-using ILogger = Serilog.ILogger;
 
 namespace Tawtheef.Infrastructure.Data;
 
 public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
-    ILogger logger)
+    IAppLogger logger)
     : IdentityDbContext<
         User,
         ApplicationRole,

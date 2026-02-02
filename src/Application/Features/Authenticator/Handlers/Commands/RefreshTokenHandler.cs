@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Authenticator.Commands;
@@ -18,7 +18,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
 {
     public class RefreshTokenHandler(
-        ILogger logger,
+        IAppLogger logger,
         UserManager<User> userManager,
         ITokenService tokenService,
         ISessionService sessions,

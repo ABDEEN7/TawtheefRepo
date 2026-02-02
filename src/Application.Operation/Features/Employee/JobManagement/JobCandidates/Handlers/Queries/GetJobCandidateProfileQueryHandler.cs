@@ -5,7 +5,7 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Querie
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using Cortex.Mediator.Queries;
 using FluentResults;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
@@ -16,7 +16,7 @@ public sealed class GetJobCandidateProfileQueryHandler(
     IJobRepository jobRepository,
     IUserProfileRepository userProfileRepository,
     ILocalizationService localizationService,
-    ILogger logger)
+    IAppLogger logger)
     : IQueryHandler<GetJobCandidateProfileQuery, IResult<JobCandidateProfileDto>>
 {
     public async Task<IResult<JobCandidateProfileDto>> Handle(
