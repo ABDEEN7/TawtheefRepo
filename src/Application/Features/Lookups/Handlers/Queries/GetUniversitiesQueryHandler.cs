@@ -38,7 +38,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
             ? "all"
             : normalizedSearch.ToLowerInvariant();
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{request.CountryId}:{searchToken}";
-        if (isPaged)
+         if (isPaged)
             cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(query, cacheKeyPrefix, cancellationToken);
 
@@ -46,16 +46,10 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-            if (isPaged)
+            if (isPaged && request.PaginatedRequest != null)
             {
-                var ordered = languageToken == "ar"
-                    ? query.OrderBy(university => university.DisplayOrder).ThenBy(university => university.NameAr)
-                    : query.OrderBy(university => university.DisplayOrder).ThenBy(university => university.NameEn);
-                if (request.PaginatedRequest != null)
-                {
-                    var entities = await ordered.ToPaginatedListAsync(request.PaginatedRequest,cancellationToken);
-                    return mapper.Map<List<DropdownOptions>>(entities);
-                }
+                    var entities = await query.ToPaginatedListAsync(request.PaginatedRequest,cancellationToken);
+                    return  mapper.Map<List<DropdownOptions>>(entities.Items);
             }
 
             var allEntities = await query
