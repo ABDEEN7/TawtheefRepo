@@ -823,3 +823,13 @@ body.ltr
     transform: rotate(180deg);
 
 }
+:dir(rtl) .iti__flag-container .dropdown-menu.show{
+    
+    inset: 100% 0 auto auto !important;
+}
+
+
+.p-dialog-title{
+    font-weight: bold !important;
+    color: $color-primary;
+}

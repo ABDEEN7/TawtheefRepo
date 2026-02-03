@@ -10,7 +10,7 @@
 
 .page-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: var(--ink);
 }
@@ -29,7 +29,7 @@
 
 .element-title {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink);
   white-space: nowrap;
 }
@@ -41,7 +41,7 @@
   border-radius: 999px;
   overflow: hidden;
   background: #ffffff;
-  height: 36px;
+  height: 44px;
 }
 
 :host ::ng-deep .points-input.p-inputnumber {
@@ -53,14 +53,15 @@
 :host ::ng-deep .points-input .p-inputnumber-input {
   border: 0;
   background: transparent;
-  text-align: center;
+  text-align: left;
   font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--ink);
-  padding: 0;
-  height: 24px;
+  font-weight: 600;
+  color: rgba(102, 103, 102, 1);
+  padding: 0 10px;
 }
-
+:host ::ng-deep .p-tablist-tab-list{
+  border: 0 !important;
+}
 :host ::ng-deep .points-input .p-inputnumber-input:focus {
   box-shadow: none;
 }
@@ -78,12 +79,12 @@
   }
 
   .total-pill {
-    background: #fff;
+    background: rgba(242, 248, 245, 1);
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 10px 14px;
-    font-weight: 900;
-    color: var(--brand);
+    font-weight: 700;
+    color: rgba(47, 127, 56, 1);
     min-width: 160px;
     text-align: center;
   }
@@ -96,14 +97,17 @@
   background: #fde7ee;
   color: #a0153e;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
+  max-width: 120px;
+  min-width: 120px;
+  justify-content: center;
 }
 
 .bottom-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid var(--line);
