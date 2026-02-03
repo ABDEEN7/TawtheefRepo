@@ -189,14 +189,6 @@
   <ng-container *ngIf="ds.isResidentQatar">
     <hr class="my-4">
     <div class="mb-2 fw-bold" style="color:#7b1e3a">{{ 'wizard.nationalAddress.title' | translate }}</div>
-    <div class="plate mb-3 d-flex align-items-center gap-3" style="background:#1e73be;color:#fff;border-radius:14px;padding:10px 14px;">
-      <div class="lbl fw-bold">{{'wizard.nationalAddress.numberLabel' | translate}}</div>
-      <div class="box"><small>{{ 'wizard.nationalAddress.zone' | translate }}</small><span>{{ ds.state().naZone || '—' }}</span></div>
-      <div class="box"><small>{{ 'wizard.nationalAddress.street' | translate }}</small><span>{{ ds.state().naStreet || '—' }}</span></div>
-      <div class="box"><small>{{ 'wizard.nationalAddress.building' | translate }}</small><span>{{ ds.state().naBuilding || '—' }}</span></div>
-      <div class="box"><small>{{ 'wizard.nationalAddress.unit' | translate }}</small><span>{{ ds.state().naUnit || '—' }}</span></div>
-    </div>
-
     <div class="row g-3">
       <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
         <input class="form-control" [ngModel]="ds.state().naZone" placeholder="{{'wizard.placeholders.typeHere' | translate}}"

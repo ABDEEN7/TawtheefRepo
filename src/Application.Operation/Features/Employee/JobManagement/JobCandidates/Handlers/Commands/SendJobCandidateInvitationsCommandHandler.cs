@@ -7,7 +7,7 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilit
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
@@ -25,7 +25,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
     IJobRequirementsService jobRequirementsService,
     IJobCandidatesQueryBuilderService jobCandidatesQueryBuilderService,
-    ILogger logger)
+    IAppLogger logger)
     : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(

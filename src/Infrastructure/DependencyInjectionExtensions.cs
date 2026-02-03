@@ -48,6 +48,7 @@ using Tawtheef.Infrastructure.Services.BackgroundJobs;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Localization;
+using Tawtheef.Infrastructure.Services.Logging;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.Office;
 using Tawtheef.Infrastructure.Services.StorageServices;
@@ -146,6 +147,9 @@ namespace Tawtheef.Infrastructure
 
                 // Validators
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                
+                // Logging (Common)
+                services.AddAppLogging(AppLoggingProvider.Serilog);
 
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
                 services.AddScoped<ILoginAuditService, LoginAuditService>();

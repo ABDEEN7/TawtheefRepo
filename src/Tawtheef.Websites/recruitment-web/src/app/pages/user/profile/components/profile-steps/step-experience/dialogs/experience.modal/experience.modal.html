@@ -4,8 +4,7 @@
       <div class="row  align-items-start">
         <!-- Org -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label  required">
-            <i class="fa-solid fa-trophy me-1"></i> {{ 'wizard.experience.org' | translate }}
+          <label class="form-label  required">{{ 'wizard.experience.org' | translate }}
           </label>
           <input pInputText class="form-control"
                  formControlName="org"
@@ -20,8 +19,7 @@
 
         <!-- Title -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label  required">
-            <i class="fa-solid fa-medal me-1"></i> {{ 'wizard.experience.table.title' | translate }}
+          <label class="form-label  required">{{ 'wizard.experience.table.title' | translate }}
           </label>
           <input pInputText class="form-control"
                  formControlName="name"
@@ -95,8 +93,7 @@
         <div class="row  align-items-start">
           <!-- From -->
           <div class="col-12 col-md-6 mb-3">
-            <label class="form-label required">
-              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.experience.from' | translate }}
+            <label class="form-label required">{{ 'wizard.experience.from' | translate }}
             </label>
             <p-date-picker
               formControlName="from"
@@ -121,7 +118,7 @@
           <!-- To -->
           <div class="col-12 col-md-6 mb-3" *ngIf="!f['current'].value">
             <label class="form-label" [ngClass]="{'required': !f['current'].value}">
-              <i class="fa-solid fa-calendar-day me-1"></i> {{ 'wizard.experience.to' | translate }}
+              {{ 'wizard.experience.to' | translate }}
               <small class="text-muted ms-1" *ngIf="f['current'].value">({{ 'common.optional' | translate }})</small>
             </label>
             <p-date-picker
@@ -160,7 +157,7 @@
       <div class="row  align-items-start mt-1">
         <div class="col-12 mb-3">
           <label class="form-label  required">
-            <i class="fa-solid fa-list-check me-1"></i> {{ 'wizard.experience.tasks' | translate }}
+           {{ 'wizard.experience.tasks' | translate }}
           </label>
           <textarea class="form-control" pTextarea rows="4"
                     formControlName="description"

@@ -1,6 +1,6 @@
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
-using ILogger = Serilog.ILogger;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 
@@ -12,7 +12,7 @@ internal static class JobCandidatePointsCalculator
         List<JobDegree> jobDegrees,
         Guid jobMajorId,
         Guid? jobSubMajorId,
-        ILogger logger
+        IAppLogger logger
         )
     {
         var breakdown = CalculateBreakdown(
@@ -32,7 +32,7 @@ internal static class JobCandidatePointsCalculator
         List<JobDegree> jobDegrees,
         Guid jobMajorId,
         Guid? jobSubMajorId,
-        ILogger logger)
+        IAppLogger logger)
     {
         if (candidate.Profile == null)
         {

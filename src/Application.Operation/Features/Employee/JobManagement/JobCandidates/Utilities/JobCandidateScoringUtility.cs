@@ -1,5 +1,5 @@
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Users;
 
@@ -15,7 +15,7 @@ internal static class JobCandidateScoringUtility
         Guid jobMajorId,
         Guid? jobSubMajorId,
         List<JobDegree> jobDegrees,
-        ILogger logger)
+        IAppLogger logger)
     {
         var map = profiles.ToDictionary(p => p.UserId);
         var scored = new List<JobCandidateRecord>(window.Count);

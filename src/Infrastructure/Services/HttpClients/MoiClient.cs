@@ -3,14 +3,14 @@ using System.Runtime.Serialization;
 using System.Xml;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using FluentResults;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Infrastructure.Services.HttpClients;
 
 
-public sealed class MoiClient(ILogger logger, HttpClient http): IMoiClient
+public sealed class MoiClient(IAppLogger logger, HttpClient http): IMoiClient
 {
     public async Task<IResult<MOEPersonalInfo>> GetPersonalInfoAsync(
         string qid, DateOnly expiryDate, CancellationToken ct = default)

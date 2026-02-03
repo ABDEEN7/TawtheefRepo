@@ -1,10 +1,10 @@
 ﻿using System.Data.Common;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 
 namespace Tawtheef.Infrastructure.Data.Interceptors;
 
-public class SlowQueryInterceptor(ILogger logger, int slowQueryThreshold = 200) : DbCommandInterceptor
+public class SlowQueryInterceptor(IAppLogger logger, int slowQueryThreshold = 200) : DbCommandInterceptor
 {
     public override DbDataReader ReaderExecuted(
         DbCommand command,
