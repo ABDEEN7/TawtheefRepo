@@ -256,3 +256,12 @@
     box-shadow: 0 10px 24px rgba(0, 0, 0, .08);
   }
 }
+
+.empty-state {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  background: rgba(17, 24, 39, .02);
+}

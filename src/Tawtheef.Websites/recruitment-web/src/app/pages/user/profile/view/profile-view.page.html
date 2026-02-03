@@ -62,22 +62,34 @@
                     <div id="profileImage" class="profile-image"><img class="avatar shadow-sm" [src]="avatar" alt="Avatar" /></div>
                </div>
               <div class="text-start">
-                  <div class="d-flex align-items-center gap-2 flex-wrap">
-                      <h4 class="mb-1 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</h4>
-                      <span class="pill success" [ngClass]="statusVm().severity">
-                        <i class="hgi hgi-stroke"   [ngClass]="statusVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02  ' : 'hgi-hourglass'"></i>
-                        {{ statusVm().labelKey | translate }}
-                      </span>
-                  </div>
-                  <p class="fs-16 m-0">{{ statusVm().hintKey | translate }}</p>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <h4 class="mb-1 fw-bold">
+                    {{ header()?.fullNameAr || header()?.fullNameEn || ('profileOverview.header.noName' | translate) }}
+                  </h4>
+                  <span class="pill success" [ngClass]="statusVm().severity">
+                    <i class="hgi hgi-stroke" [ngClass]="statusVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02' : 'hgi-hourglass'"></i>
+                    {{ statusVm().labelKey | translate }}
+                  </span>
+                  <span class="pill success" [ngClass]="completionVm().severity">
+                    <i class="hgi hgi-stroke" [ngClass]="completionVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02' : 'hgi-alert-02'"></i>
+                    {{ completionVm().labelKey | translate }}
+                  </span>
+                  @if (completionVm().missingCount > 0) {
+                    <span class="pill danger" [pTooltip]="'profileOverview.header.missingListTitle' | translate">
+                      <i class="hgi hgi-stroke hgi-alert-02"></i>
+                      {{ completionVm().missingCount }} {{ 'profileOverview.header.missing' | translate }}
+                    </span>
+                  }
+                </div>
+                <p class="fs-16 m-0">{{ statusVm().hintKey | translate }}</p>
               </div>
 
           </div>
         </div>
 
-        <div class="row ">
+        <div class="row g-3">
           <div class="col-12 col-md-6">
-              <div class="card card-table mb-3 lift-on-hover">
+              <div class="card card-table lift-on-hover">
                    <div class="card-body">
                         <div class="d-flex justify-content-between">
                              <div class="d-flex align-items-center gap-3">
@@ -87,16 +99,19 @@
                                   <div class="fw-bold">{{ header()?.phone || '—' }}</div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
+                            <div class="d-flex align-items-center gap-2">
+                              <span class="pill" [ngClass]="header()?.phoneVerified ? 'success chip-ok' : 'danger chip-warn'">
+                                <i class="hgi hgi-stroke" [ngClass]="header()?.phoneVerified ? 'hgi-tick-02' : 'hgi-alert-02'"></i>
+                                {{ (header()?.phoneVerified ? 'profileView.verification.verified' : 'profileView.verification.unverified') | translate }}
+                              </span>
+                            </div>
                         </div>
-                        
                    </div>
-                  
               </div>
           </div>
 
           <div class="col-12 col-md-6">
-               <div class="card card-table mb-3 lift-on-hover">
+               <div class="card card-table lift-on-hover">
                    <div class="card-body">
                         <div class="d-flex justify-content-between">
                              <div class="d-flex align-items-center gap-3">
@@ -106,7 +121,12 @@
                                       <div class="fw-bold">{{ header()?.email || '—' }}</div>
                                   </div>
                               </div>
-                            <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
+                            <div class="d-flex align-items-center gap-2">
+                              <span class="pill" [ngClass]="header()?.emailVerified ? 'success chip-ok' : 'danger chip-warn'">
+                                <i class="hgi hgi-stroke" [ngClass]="header()?.emailVerified ? 'hgi-tick-02' : 'hgi-alert-02'"></i>
+                                {{ (header()?.emailVerified ? 'profileView.verification.verified' : 'profileView.verification.unverified') | translate }}
+                              </span>
+                            </div>
                             
                         </div>
                     </div>
@@ -187,6 +207,20 @@
             </div>
           </div>
         </div>
+    </div>
+    <div class="card-body mt-3" *ngIf="!summaryLoading() && (activeSectionReviewNotes()?.length || 0) === 0">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="hr-title">
+          <i class="bi bi-journal-text"></i>
+          {{ 'profileView.hrNotes.title' | translate }}
+        </div>
+      </div>
+      <div class="mini-card empty-state">
+        <div class="d-flex align-items-center gap-2 text-muted">
+          <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+          {{ 'profileOverview.review.noNote' | translate }}
+        </div>
+      </div>
     </div>
     <div class="card-body">
       @if(expanded()){
