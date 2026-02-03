@@ -137,7 +137,7 @@
 :host ::ng-deep .p-carousel-prev-button,
 :host ::ng-deep .p-carousel-next-button {
   position: absolute;
-  bottom: -35%;
+  bottom: -25%;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -148,9 +148,19 @@
 }
 
 :host ::ng-deep .p-carousel-prev-button {
-  left: 50%;
+  left: 45%;
 }
 
 :host ::ng-deep .p-carousel-next-button {
-  left: 55%;
+  left: 50%;
+}
+:host ::ng-deep .p-carousel-prev-button{
+    @media (max-width: 680px) {
+        left: 37%;
+    }
+}
+:host ::ng-deep .p-carousel-next-button{
+    @media (max-width: 1200px) {
+        left: 50%;
+    }
 }

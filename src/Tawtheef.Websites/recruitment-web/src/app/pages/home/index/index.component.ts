@@ -30,6 +30,7 @@ export class IndexComponent implements AfterViewInit {
     { key: 'support',   icon: 'fa-headset'       }
   ];
 responsiveOptions: CarouselResponsiveOptions[] = [
+ 
   {
     breakpoint: '1024px',
     numVisible: 2,
