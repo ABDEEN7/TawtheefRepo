@@ -54,7 +54,7 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
             if (isPaged && request.PaginatedRequest != null)
             {
                     var entities = await dbSet.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
-                    return mapper.Map<List<DropdownOptions>>(entities);
+                    return mapper.Map<List<DropdownOptions>>(entities.Items);
             }
 
             var allEntities = await dbSet.ToListAsync(cancellationToken);
