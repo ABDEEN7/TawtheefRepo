@@ -33,7 +33,7 @@ export class ProfileViewActionApi {
       case ProfileSectionEnum.Experience:
         return this.endpoints.user.profile.sections.experience;
       case ProfileSectionEnum.TrainingCourses:
-        return this.endpoints.user.profile.sections.experience;
+        return this.endpoints.user.profile.sections.training;
       case ProfileSectionEnum.CertificatesAndAwards:
         return this.endpoints.user.profile.sections.achievements;
       case ProfileSectionEnum.Skills:

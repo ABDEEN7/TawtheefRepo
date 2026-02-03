@@ -119,6 +119,27 @@ export class ProfileViewPage {
   readonly reviewLoading = computed(() => this.review.status() === 'loading');
   readonly changeRequestsLoading = computed(() => this.changeRequests.status() === 'loading');
   readonly summaryLoading = computed(() => this.reviewLoading() || this.changeRequestsLoading());
+
+  readonly completionVm = computed(() => {
+    const profile = this.header();
+    const missingCount = profile?.missing?.length ?? 0;
+    const isComplete = profile?.isComplete ?? false;
+    const isDraft = profile?.isDraft ?? false;
+
+    if (isComplete) {
+      return {
+        labelKey: 'profileOverview.header.complete',
+        severity: 'chip-ok',
+        missingCount
+      };
+    }
+
+    return {
+      labelKey: isDraft ? 'profileOverview.header.draft' : 'profileOverview.header.incomplete',
+      severity: 'chip-warn',
+      missingCount
+    };
+  });
   get keyLabel(){
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
@@ -196,6 +217,7 @@ export class ProfileViewPage {
     });
 
     this.lookups.loadAll().subscribe(() => {});
+    this.openCard(this.expanded());
   }
 
   readonly header = computed(() => this.basics.value());
@@ -281,8 +303,8 @@ export class ProfileViewPage {
     if(this.enableChangeMode)
       return true;
     if(status === UserProfileStatusEnum.RequiresUpdate) {
-      const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
-      return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
+      const sectionNotes = this.review.value()?.sections?.find(item => item.section === section);
+      return (sectionNotes?.notesCount ?? 0) > 0;
     }
     return false;
   }
