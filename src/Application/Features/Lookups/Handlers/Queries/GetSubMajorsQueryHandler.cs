@@ -4,6 +4,7 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -19,6 +20,8 @@ public sealed class GetSubMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper map
             .AsNoTracking()
             .Where(s => s.IsActive && !s.IsDeleted)
             .Where(x => x.ParentId == request.ParentId);
+        var normalizedSearch = request.Search?.Trim();
+        var isPaged = request.PaginatedRequest is not  null;
         
         List<Major> byId = [];
         if (request.Id.HasValue)
@@ -28,18 +31,21 @@ public sealed class GetSubMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper map
                 .ToListAsync(cancellationToken);
         }
         
-        List<Major> bySearch = [];
-        if (!string.IsNullOrWhiteSpace(request.Search))
+        var bySearch = new List<Major>();
+        if (!string.IsNullOrWhiteSpace(normalizedSearch) || isPaged)
         {
-            bySearch = await baseQuery
-                .Where(m =>
-                    EF.Functions.Like(m.NameAr, $"%{request.Search}%") ||
-                    EF.Functions.Like(m.NameEn, $"%{request.Search}%") ||
-                    EF.Functions.Like(m.DescriptionAr ?? "", $"%{request.Search}%") ||
-                    EF.Functions.Like(m.DescriptionEn ?? "", $"%{request.Search}%"))
-                .OrderBy(m => m.DisplayOrder)
-                .Take(10)
-                .ToListAsync(cancellationToken);
+            var searchQuery = baseQuery;
+            if (!string.IsNullOrWhiteSpace(normalizedSearch))
+            {
+                searchQuery = searchQuery.Where(m =>
+                    EF.Functions.Like(m.NameAr, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.NameEn, $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.DescriptionAr ?? "", $"%{normalizedSearch}%") ||
+                    EF.Functions.Like(m.DescriptionEn ?? "", $"%{normalizedSearch}%"));
+            }
+
+            if (request.PaginatedRequest != null)
+                bySearch = await searchQuery.ToPaginatedResultAsync(request.PaginatedRequest, cancellationToken);
         }
 
         var merged = byId

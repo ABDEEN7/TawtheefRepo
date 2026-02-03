@@ -40,7 +40,14 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork, IMemoryCach
                     Name = c.GetLocalizedName(language)!,
                     Description = c.GetLocalizedDescription(language)!,
                     BackendName = c.BackendName,
-                    AdditionalData = new { c.Code, c.ISOCode, c.CodeAlpha }
+                    AdditionalData = new
+                    {
+                        c.NameAr,
+                        c.NameEn,
+                        c.Code,
+                        c.ISOCode,
+                        c.CodeAlpha
+                    }
                 })
                 .ToListAsync(cancellationToken);
         });
