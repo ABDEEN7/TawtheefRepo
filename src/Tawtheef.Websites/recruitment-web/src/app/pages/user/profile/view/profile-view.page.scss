@@ -177,6 +177,11 @@
       background-color: transparent;
     }
   }
+
+  &.needs-update {
+    border-color: rgba($danger, .35);
+    box-shadow: inset 0 0 0 2px rgba($danger, .18);
+  }
 }
 
 /* =========================

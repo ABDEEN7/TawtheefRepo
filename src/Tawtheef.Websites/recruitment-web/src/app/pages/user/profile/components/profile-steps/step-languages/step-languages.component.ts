@@ -88,6 +88,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(languages);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

@@ -157,6 +157,7 @@ export class StepExperienceComponent implements OnInit {
     const signature = this.buildSignature(experiences, courses);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      this.notify.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

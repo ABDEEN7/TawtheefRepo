@@ -44,7 +44,7 @@ export class ProfileExperienceSectionComponent {
   @Output() refresh = new EventEmitter<void>();
 
   protected experiencesUnderReview() {
-    return this.changesRequest.map(i => i.newValue).map((cr, index) => {
+    return this.normalizePendingItems().map(cr => {
       return {
         employerName: cr.EmployerName,
         jobTitle: cr.JobTitle,
@@ -62,14 +62,24 @@ export class ProfileExperienceSectionComponent {
   }
 
   protected noteForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!exp?.id) return null;
-    return (
-      this.notes.find(
-        note =>
-          note.targetType === ReviewTargetTypeEnum.Row &&
-          note.entityId?.toLowerCase() === exp.id.toLowerCase()
-      ) ?? null
-    );
+    if (!exp) return null;
+    const rowNote = exp.id
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Row &&
+            note.entityId?.toLowerCase() === exp.id.toLowerCase()
+        ) ?? null
+      : null;
+
+    const attachmentNote = exp.attachment?.resourceId
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Attachment &&
+            note.resourceId?.toLowerCase() === exp.attachment?.resourceId.toLowerCase()
+        ) ?? null
+      : null;
+
+    return rowNote ?? attachmentNote ?? null;
   }
 
   protected addExperience() {this.dialogService
@@ -101,6 +111,13 @@ export class ProfileExperienceSectionComponent {
       current: exp.isCurrent ?? false,
       description: exp.description ?? '',
       fileName: exp.attachment?.fileName ?? '',
+      attachment: exp.attachment
+        ? {
+            resourceId: exp.attachment.resourceId,
+            resourceName: exp.attachment.fileName,
+            url: exp.attachment.url ?? null,
+          }
+        : null,
       qualificationId: exp.qualificationId ?? null,
     };this.dialogService
       .open(ExperienceModal, {
@@ -158,5 +175,13 @@ export class ProfileExperienceSectionComponent {
       attachmentId: q.attachment?.resourceId ?? null,
       fileName: q.attachment?.fileName ?? undefined,
     }));
+  }
+
+  private normalizePendingItems(): any[] {
+    const items = this.changesRequest.map(change => change.newValue).flatMap(value => {
+      if (!value) return [];
+      return Array.isArray(value) ? value : [value];
+    });
+    return items.filter(item => item?.EmployerName || item?.JobTitle);
   }
 }

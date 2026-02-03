@@ -595,6 +595,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(dto, s);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

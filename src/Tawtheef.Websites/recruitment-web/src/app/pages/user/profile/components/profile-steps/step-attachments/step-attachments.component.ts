@@ -182,6 +182,7 @@ export class StepAttachmentsComponent implements OnInit {
 
     const signature = this.buildSignature(attachments);
     if (signature && signature === this.lastSubmittedSignature) {
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }
