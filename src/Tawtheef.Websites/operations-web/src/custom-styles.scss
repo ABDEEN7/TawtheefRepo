@@ -110,6 +110,21 @@ a {
 .input-group-text {
   border-radius: 2rem;
 }
+.btn{
+  &.btn-link{
+      text-decoration: none;
+      color: $color-primary;
+    }
+  &.btn-outline-primary
+  {
+    &.light{
+      background-color: rgba(241, 230, 229, 1);
+      &:hover{ color: $color-primary;}
+    }
+  }
+ 
+}
+
 p{
   color:rgba(102, 103, 102, 1);
   margin: 0;
