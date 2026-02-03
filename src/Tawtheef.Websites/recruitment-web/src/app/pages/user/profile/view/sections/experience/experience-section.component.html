@@ -21,7 +21,7 @@
 
 
 <ng-template #experienceTemplate let-exp>
-  @let fileNote = noteForRaw(exp.attachment);
+  @let fileNote = noteForRaw(exp);
   <div class="col-12 col-lg-6">
     <div class="card h-100 card-table" [ngClass]="{ 'attach-card--warn': fileNote }">
       <div class="card-body  d-flex flex-column gap-2 h-100">

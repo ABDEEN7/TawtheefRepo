@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -39,6 +39,7 @@ import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.
 import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
 import {ProfileOverviewService} from './services/profile-overview.service';
 import {createProfileOverviewVisibility, ProfileOverviewVisibility} from './services/profile-overview.visibility';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -86,7 +87,17 @@ export class ProfileViewPage {
   private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
   private readonly lookups = inject(ProfileLookupsService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly profileService = inject(ProfileService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
+  @ViewChild('sectionContent') sectionContent?: ElementRef<HTMLElement>;
+  private readonly optionalSections = new Set<ProfileSectionEnum>([
+    ProfileSectionEnum.TrainingCourses,
+    ProfileSectionEnum.CertificatesAndAwards,
+    ProfileSectionEnum.Skills,
+    ProfileSectionEnum.Languages,
+    ProfileSectionEnum.Attachments
+  ]);
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
     isResident: false,
@@ -111,6 +122,19 @@ export class ProfileViewPage {
     { section: ProfileSectionEnum.Languages, icon: 'pi pi-language', labelKey: 'profileOverview.sections.languages' },
     { section: ProfileSectionEnum.Attachments, icon: 'pi pi-paperclip', labelKey: 'profileOverview.sections.attachments' }
   ];
+  readonly visibleCards = computed(() => {
+    const profile = this.header();
+    const review = this.reviewNotes();
+    const pending = this.pendingChangeRequests();
+
+    return this.cards.filter(card => {
+      if (!this.optionalSections.has(card.section)) return true;
+      const hasData = this.sectionHasData(card.section, profile);
+      const hasNotes = (review?.sections ?? []).some(section => section.section === card.section && (section.notes?.length ?? 0) > 0);
+      const hasPending = pending.some(change => change.section === card.section);
+      return hasData || hasNotes || hasPending;
+    });
+  });
   readonly pageLoading = computed(() =>
     this.basics.status() === 'loading' ||
     this.review.status() === 'loading' ||
@@ -183,6 +207,14 @@ export class ProfileViewPage {
     let resultChanges: FieldChange[] = [];
     sectionChanges.forEach((change) => {
       if (change.action === ProfileChangeActionEnum.UpdateField) {
+        if (change.fieldPath) {
+          resultChanges.push({
+            field: change.fieldPath,
+            oldValue: parseJsonValue(change.oldValue),
+            newValue: parseJsonValue(change.newValue)
+          });
+          return;
+        }
         resultChanges = resultChanges.concat(
           detectChangedFields(change.oldValue ?? '', change.newValue ?? '')
         );
@@ -217,7 +249,7 @@ export class ProfileViewPage {
     });
 
     this.lookups.loadAll().subscribe(() => {});
-    this.openCard(this.expanded());
+    this.openCard(this.expanded(), false);
   }
 
   readonly header = computed(() => this.basics.value());
@@ -321,10 +353,13 @@ export class ProfileViewPage {
     return notes.filter(n => n.targetType === ReviewTargetTypeEnum.Section);
   });
 
-  openCard(section: ProfileSectionEnum) {
+  openCard(section: ProfileSectionEnum, shouldScroll: boolean = true) {
     const res = this.sections.get(section);
     this.expanded.set(section);
     res?.reload();
+    if (shouldScroll) {
+      this.scrollToSection();
+    }
   }
 
   reloadSection(section: ProfileSectionEnum) {
@@ -342,6 +377,23 @@ export class ProfileViewPage {
     return applyFieldChanges(value, this.changes(section));
   }
 
+  sectionNotesCount(section: ProfileSectionEnum) {
+    return this.reviewNotes()?.sectionIndex?.[section] ?? 0;
+  }
+
+  sectionNeedsUpdate(section: ProfileSectionEnum): boolean {
+    const notes = this.reviewNotes()?.sections?.find(s => s.section === section)?.notes ?? [];
+    return notes.some(
+      note =>
+        note.status === ReviewStatusEnum.NeedsCorrection ||
+        note.status === ReviewStatusEnum.Rejected
+    );
+  }
+
+  sectionHasPendingChanges(section: ProfileSectionEnum): boolean {
+    return this.pendingChangeRequests().some(request => request.section === section);
+  }
+
   readonly changeRequestsVm = computed(() => {
     const items = (this.changeRequests.value() as ProfileChangeRequestDto[] | undefined) ?? [];
     return items.map(item => ({
@@ -350,6 +402,13 @@ export class ProfileViewPage {
       statusSeverity: this.changeStatusSeverity(item.status),
       sectionLabelKey: this.sectionLabelKey(item.section)
     })) as changeRequestDto[];
+  });
+  readonly pendingChangeRequests = computed(() => {
+    return this.changeRequestsVm().filter(
+      item =>
+        item.status === ProfileChangeRequestStatusEnum.Pending ||
+        item.status === ProfileChangeRequestStatusEnum.UnderReview
+    );
   });
 
   openEditDialog(section: ProfileSectionEnum) {
@@ -366,6 +425,20 @@ export class ProfileViewPage {
     })?.onClose.subscribe(result => {
       if (!result) return;
       this.reloadSection(section);
+    });
+  }
+
+  resubmitProfile() {
+    this.profileService.resubmitProfile().subscribe({
+      next: () => {
+        this.notificationService.success(this.i18n.instant('profileView.notifications.resubmitted'));
+        this.basics.reload();
+        this.review.reload();
+        this.changeRequests.reload();
+      },
+      error: () => {
+        this.notificationService.error(this.i18n.instant('profileView.notifications.resubmitFailed'));
+      }
     });
   }
 
@@ -445,6 +518,31 @@ export class ProfileViewPage {
   }
 
   protected readonly UserProfileStatusEnum = UserProfileStatusEnum;
+
+  private scrollToSection() {
+    if (!this.sectionContent?.nativeElement) return;
+    setTimeout(() => {
+      this.sectionContent?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+  }
+
+  private sectionHasData(section: ProfileSectionEnum, profile: ProfileStatusDto | undefined): boolean {
+    if (!profile) return false;
+    switch (section) {
+      case ProfileSectionEnum.TrainingCourses:
+        return (profile.trainingCourses ?? []).length > 0;
+      case ProfileSectionEnum.CertificatesAndAwards:
+        return (profile.achievements ?? []).length > 0;
+      case ProfileSectionEnum.Skills:
+        return (profile.skills ?? []).length > 0;
+      case ProfileSectionEnum.Languages:
+        return (profile.languages ?? []).length > 0;
+      case ProfileSectionEnum.Attachments:
+        return (profile.additionalAttachments ?? []).length > 0;
+      default:
+        return true;
+    }
+  }
 }
 
 function parseJsonValue(value?: string | null) {

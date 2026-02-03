@@ -124,6 +124,7 @@ export class StepDegreeComponent implements OnInit {
     const signature = this.buildSignature(degrees);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      this.notify.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }
