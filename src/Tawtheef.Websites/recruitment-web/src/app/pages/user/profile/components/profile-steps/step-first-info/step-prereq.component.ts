@@ -98,12 +98,13 @@ export class StepPrereqComponent implements OnInit {
   }
 
   onCandidateTypeChange(option: any) {
-    if (this.ds.isCandidateTypeLocked) return;
+    if (this.ds.isCandidateTypeLocked || this.profile.isChangeRequestMode()) return;
     this.ds.up('candidateType', option);
     this.hasCheckedProfile = false;
   }
 
   onQidExpirySelect(date: Date) {
+    if (this.profile.isChangeRequestMode()) return;
     this.ds.up('qidExpiry', dateToDateOnly(date));
     this.hasCheckedProfile = false;
   }
@@ -211,7 +212,9 @@ export class StepPrereqComponent implements OnInit {
     // If nothing changed and we don't need to re-check → just go next
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
-      this.next.emit();
+      if (!this.profile.isChangeRequestMode()) {
+        this.next.emit();
+      }
       return;
     }
 
