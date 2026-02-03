@@ -15,7 +15,7 @@
         [ngModel]="ds.state().country"
         (ngModelChange)="onCountryChange($event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
         [placeholder]="'wizard.placeholders.selectCountry' | translate"
         class="w-full md:w-56"
@@ -177,7 +177,7 @@
     <div class="col-md-3 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
       <p-select [options]="lookups.countries()" [ngModel]="ds.state().interviewPlace"
-                [filter]="true" [loading]="false" filterBy="name" optionLabel="name"
+                [filter]="true" [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
                 class="w-full md:w-56"
                 [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
                 [disabled]="true"></p-select>

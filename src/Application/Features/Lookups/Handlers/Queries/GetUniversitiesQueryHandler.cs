@@ -19,6 +19,10 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetUniversitiesQuery request, CancellationToken cancellationToken)
     {
         var normalizedSearch = request.Search?.Trim();
+        var isPaged = request.PaginatedRequest is not null;
+        var languageToken = string.IsNullOrWhiteSpace(request.Language)
+            ? "en"
+            : request.Language.Trim().ToLowerInvariant();
         var query = unitOfWork.GetEntityRepository<University>().DbSet
             .AsNoTracking()
             .Where(s => s.IsActive)
@@ -34,17 +38,42 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
             ? "all"
             : normalizedSearch.ToLowerInvariant();
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{request.CountryId}:{searchToken}";
+         if (isPaged)
+            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(query, cacheKeyPrefix, cancellationToken);
 
         var universities = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-            var entities = await query
+            if (isPaged && request.PaginatedRequest != null)
+            {
+                    var entities = await query.ToPaginatedListAsync(request.PaginatedRequest,cancellationToken);
+                    return  mapper.Map<List<DropdownOptions>>(entities.Items);
+            }
+
+            var allEntities = await query
                 .OrderBy(university => university.DisplayOrder)
                 .ToListAsync(cancellationToken);
-            return mapper.Map<List<DropdownOptions>>(entities);
+            return mapper.Map<List<DropdownOptions>>(allEntities);
         });
+
+        if (request.Id.HasValue)
+        {
+            var byId = await unitOfWork.GetEntityRepository<University>().DbSet
+                .AsNoTracking()
+                .Where(u => u.IsActive)
+                .Where(u => u.Id == request.Id.Value)
+                .ToListAsync(cancellationToken);
+            var mappedById = mapper.Map<List<DropdownOptions>>(byId);
+            var merged = universities ?? new List<DropdownOptions>();
+            foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
+            {
+                merged.Add(item);
+            }
+
+            return Result.Ok(merged);
+        }
 
         return Result.Ok(universities ?? new List<DropdownOptions>());
     }

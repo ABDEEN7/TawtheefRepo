@@ -64,7 +64,12 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
                     BackendName = invitation.InvitationStatus.BackendName,
                     Name = localizationService.GetLocalizedName(invitation.InvitationStatus),
                     Description = localizationService.GetLocalizedDescription(invitation.InvitationStatus),
-                    AdditionalData = invitation.InvitationStatus.DisplayOrder
+                    AdditionalData = new
+                    {
+                        invitation.InvitationStatus.NameAr,
+                        invitation.InvitationStatus.NameEn,
+                        invitation.InvitationStatus.DisplayOrder
+                    }
                 };
             item.ReadDate = invitation.InvitationStatusId == InvitationStatusIds.Read
                 ? invitation.UpdatedDate

@@ -2,24 +2,32 @@
   <p-select
     [options]="options"
     [filter]="true"
+    filterBy="additionalData.nameAr,additionalData.nameEn,name"
     [optionLabel]="optionLabel"
     [optionValue]="optionValue"
     [placeholder]="computedPlaceholder"
     [disabled]="isDisabledComputed"
     (onFilter)="onFilter($event)"
+    (onLazyLoad)="onLazyLoad($event)"
     (onShow)="onOpen()"
+    (onHide)="onClose()"
     (onChange)="handleChange($event)"
+    (onClear)="onClearSelection()"
     [(ngModel)]="value"
     [emptyMessage]="emptyMessage"
     [size]="size"
     [appendTo]="appendTo"
     [panelStyle]="panelStyle"
+    [virtualScroll]="true"
+    [lazy]="true"
+    [virtualScrollItemSize]="virtualScrollItemSize"
     [showClear]="showClear"
-    [class]="invalid ? 'p-invalid' : ''">
+    [class]="invalid ? 'p-invalid' : 'panelStyle'">
   </p-select>
-  @if(isLoading) {
-  <div class="select-loading-overlay">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-  </div>
-}
+
+  @if (isLoading) {
+    <div class="select-loading-overlay">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+  }
 </div>

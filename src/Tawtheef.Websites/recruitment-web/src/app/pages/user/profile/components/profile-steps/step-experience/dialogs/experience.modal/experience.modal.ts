@@ -173,8 +173,9 @@ export class ExperienceModal implements OnInit {
 
     const v = this.form.getRawValue();
     const qualificationOption = this.degreeOptions.find(d => d.id === v.qualificationId) ?? null;
-    if(qualificationOption){
-      if(v.from.getFullYear() < qualificationOption.additionalData.year){
+    if (qualificationOption && qualificationOption.additionalData) {
+      const additionalData = qualificationOption.additionalData as { year?: number };
+      if (additionalData.year && v.from.getFullYear() < additionalData.year) {
         this.form.setErrors({ invalidQualificationDate: true });
         this.form.markAllAsTouched();
         return;

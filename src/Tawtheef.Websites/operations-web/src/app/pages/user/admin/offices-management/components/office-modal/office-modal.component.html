@@ -56,7 +56,7 @@
                       [options]="countries"
                       optionValue="id"
                       [filter]="true"
-                      filterBy="name"
+                      filterBy="additionalData.nameAr,additionalData.nameEn,name"
                       [showClear]="false"
                       [placeholder]="'OFFICES.SELECT_COUNTRY' | translate"
                       [disabled]="isEditMode() || isViewMode()"

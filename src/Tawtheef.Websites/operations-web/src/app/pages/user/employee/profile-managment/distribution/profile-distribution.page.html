@@ -342,6 +342,7 @@
                                        optionLabel="name"
                                        optionValue="employeeId"
                                        [filter]="true"
+                                       filterBy="additionalData.nameAr,additionalData.nameEn,name"
                                        [ngModel]="manualEmployeeId()"
                                        (onChange)="manualEmployeeId.set($event.value)"
                                        [showClear]="true"
