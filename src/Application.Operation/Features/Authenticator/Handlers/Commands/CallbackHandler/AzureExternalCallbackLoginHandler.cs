@@ -12,7 +12,6 @@ using Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHand
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Domain.Events.Operation.Employee.Register;
 
 namespace Application.Operation.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
@@ -219,11 +218,11 @@ public sealed class AzureExternalCallbackLoginHandler(
 
         var newUser = (EmployeeUser)registerResult.Value;
 
-        newUser.AddDomainEvent(new EmployeeRegisterEvent(
-            newUser.Id,
-            newUser.FullNameEn,
-            newUser.Email!,
-            DateTimeOffset.UtcNow));
+        // newUser.AddDomainEvent(new EmployeeRegisterEvent(
+        //     newUser.Id,
+        //     newUser.FullNameEn,
+        //     newUser.Email!,
+        //     DateTimeOffset.UtcNow));
 
         var createRes = await userManager.CreateAsync(newUser);
         if (!createRes.Succeeded)
@@ -241,6 +240,17 @@ public sealed class AzureExternalCallbackLoginHandler(
         {
             var errors = string.Join(", ", addLoginRes.Errors.Select(e => e.Description));
             _log.Warning("Azure create employee failed: AddLoginAsync failed. UserId={UserId} Errors={Errors}", newUser.Id, errors);
+            return Result.Fail(errors);
+        }
+        
+        var addRoleRes = await userManager.AddToRoleAsync(newUser, nameof(SystemRoleIds.Employee));
+        if (!addRoleRes.Succeeded)
+        {
+            var errors = string.Join(", ", addRoleRes.Errors.Select(e => e.Description));
+            _log.Warning("Azure create employee failed: AddToRoleAsync failed. UserId={UserId} Errors={Errors}", newUser.Id, errors);
+
+            await userManager.DeleteAsync(newUser);
+
             return Result.Fail(errors);
         }
 

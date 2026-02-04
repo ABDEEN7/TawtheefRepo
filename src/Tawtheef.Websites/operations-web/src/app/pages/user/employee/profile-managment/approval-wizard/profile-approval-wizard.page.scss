@@ -161,3 +161,8 @@
   .status-draft   { color: rgba(0,0,0,.65); }
   .status-unknown { color: rgba(0,0,0,.55); }
 }
+
+:host ::ng-deep .p-avatar img {
+    width: auto !important;
+    height: auto !important;
+}

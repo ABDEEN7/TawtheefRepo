@@ -37,6 +37,8 @@ import {Permissions} from '../../../../../core/constants/permissions';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {PaginationComponent} from '../../../../../shared/components/pagination/pagination.component';
+import { AssignFiles } from './dialogs/assign-files/assign-files';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -58,7 +60,7 @@ import {PaginationComponent} from '../../../../../shared/components/pagination/p
     Select,
     Ripple,
     Tooltip,
-    ToggleSwitch,
+    ProgressBarModule
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
@@ -206,6 +208,14 @@ export class ProfileDistributionPage implements OnInit {
       this.assignManual(res.payload);
     });
   }
+ openAssignFilesDialog(): void {
+  this.dialogService.open(AssignFiles, {
+    header: 'تعيين الملفات على موظف',
+      width: '720px',
+      modal: true,
+      
+    })
+ }
 
   openAutoDialog(): void {
     if (!this.canManageDistribution()) return;
