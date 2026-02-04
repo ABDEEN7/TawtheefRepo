@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
 } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -13,18 +13,22 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
-import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type';
-import {Select} from 'primeng/select';
-import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {EXPERIENCE_DIALOG_LIMITS} from '../dialog-config';
-import {dropdownOptionsModel} from '../../../../../../../../shared/models/dropdown-options.model';
-import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
-import {Experience} from '../../../../../wizard-profile/models/experience.model';
-import {Degree} from '../../../../../wizard-profile/models/degree.model';
-import {Textarea} from 'primeng/textarea';
-import {FieldError} from '../../../../../wizard-profile/models/profile-validation.model';
-import {NotificationService} from '../../../../../../../../core/services/notification.service';
-import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import { dateToDateOnly } from '../../../../../../../../shared/types/dateOnly.type';
+import { Select } from 'primeng/select';
+import { FileUtilsService } from '../../../../../../../../core/utils/file-utils';
+import { EXPERIENCE_DIALOG_LIMITS } from '../dialog-config';
+import { dropdownOptionsModel } from '../../../../../../../../shared/models/dropdown-options.model';
+import { ProfileLookupsService } from '../../../../../wizard-profile/services/profile-lookups.service';
+import { Experience } from '../../../../../wizard-profile/models/experience.model';
+import { Degree } from '../../../../../wizard-profile/models/degree.model';
+import { Textarea } from 'primeng/textarea';
+import { NotificationService } from '../../../../../../../../core/services/notification.service';
+import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
+
+type ExperienceModalInit = Partial<Experience> & {
+  // your parent passes an "initialValue" shaped like Experience-ish,
+  // so we accept it as Experience.
+};
 
 @Component({
   selector: 'app-experience',
@@ -39,7 +43,7 @@ import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/
     NgClass,
     Select,
     Textarea,
-    I18nNamespaceDirective
+    I18nNamespaceDirective,
   ],
   templateUrl: './experience.modal.html',
   styleUrl: './experience.modal.scss',
@@ -55,10 +59,15 @@ export class ExperienceModal implements OnInit {
 
   readonly limits = EXPERIENCE_DIALOG_LIMITS;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+
   fileError: string | null = null;
+
   initialAttachmentUrl: string | null = null;
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
+
+  // NEW: supports edit mode where upload is blocked
+  private disableFileUpload = false;
 
   today = new Date();
 
@@ -72,7 +81,7 @@ export class ExperienceModal implements OnInit {
       current: [false],
       description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
       fileName: [''],
-      file: [null, Validators.required], // ✅ required
+      file: [null], // validators set dynamically
       hasQualification: [false],
       qualificationId: [null],
     },
@@ -87,12 +96,16 @@ export class ExperienceModal implements OnInit {
   );
 
   ngOnInit(): void {
-    const init = this.config.data?.initialValue as Experience | undefined;
+    this.disableFileUpload = !!this.config.data?.disableFileUpload;
+
+    // Parent passes initialValue for edit mode
+    const init = (this.config.data?.initialValue as ExperienceModalInit | undefined) ?? undefined;
+
     if (init) {
       this.form.patchValue({
-        org: init.employerName,
-        name: init.jobTitle,
-        country: init.country ?? null,
+        org: init.employerName ?? '',
+        name: init.jobTitle ?? '',
+        country: this.lookups.countries().find(c => c.id === init.country?.id) ?? null,
         from: init.from ? new Date(init.from) : null,
         to: init.to ? new Date(init.to) : null,
         current: !!init.current,
@@ -101,17 +114,26 @@ export class ExperienceModal implements OnInit {
         hasQualification: !!init.qualificationId,
         qualificationId: init.qualificationId ?? null,
       });
-      this.initialAttachmentUrl = init?.attachment?.url ?? null;
-      this.initialId = this.config.data?.initialId ?? init?.id ?? null;
-      this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
+
+      this.initialAttachmentUrl = init.attachment?.url ?? null;
+      this.initialId = this.config.data?.initialId ?? init.id ?? null;
+      this.initialAttachmentId =
+        this.config.data?.attachmentId ?? init.attachment?.resourceId ?? null;
+    } else {
+      // create mode: no initial values
+      this.initialId = this.config.data?.initialId ?? null;
+      this.initialAttachmentId = this.config.data?.attachmentId ?? null;
     }
 
-    if (init?.file || init?.attachment || this.initialAttachmentId) {
-      this.form.get('file')?.clearValidators();
+    // Enforce disable upload (edit mode)
+    if (this.disableFileUpload) {
+      this.form.get('file')?.disable({ emitEvent: false });
     } else {
-      this.form.get('file')?.setValidators([Validators.required]);
+      this.form.get('file')?.enable({ emitEvent: false });
     }
-    this.form.get('file')?.updateValueAndValidity({ emitEvent: false });
+
+    // Set file validators based on mode + existing attachment
+    this.applyFileValidators();
 
     this.syncToDisabled();
     this.syncQualification();
@@ -136,7 +158,30 @@ export class ExperienceModal implements OnInit {
     this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
   }
 
+  private applyFileValidators() {
+    const fileCtrl = this.form.get('file');
+    if (!fileCtrl) return;
+
+    const hasExistingAttachment = !!this.initialAttachmentId || !!this.initialAttachmentUrl;
+
+    if (this.disableFileUpload) {
+      fileCtrl.clearValidators();
+      fileCtrl.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+
+    if (hasExistingAttachment) {
+      fileCtrl.clearValidators();
+    } else {
+      fileCtrl.setValidators([Validators.required]);
+    }
+
+    fileCtrl.updateValueAndValidity({ emitEvent: false });
+  }
+
   onUpload(evt: any) {
+    if (this.disableFileUpload) return;
+
     this.fileError = null;
     const input = evt.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
@@ -144,19 +189,24 @@ export class ExperienceModal implements OnInit {
 
     if (!this.allowedTypes.includes(file.type)) {
       this.fileError = this.translate.instant('validation.fileType', {
-        types: 'PDF, PNG, JPEG, WEBP'
+        types: 'PDF, PNG, JPEG, WEBP',
       });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
 
     if (file.size > this.limits.maxFileSizeBytes) {
-      this.fileError = this.translate.instant('validation.fileSize', { size: this.limits.maxFileSizeLabel });
+      this.fileError = this.translate.instant('validation.fileSize', {
+        size: this.limits.maxFileSizeLabel,
+      });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
 
-    this.form.patchValue({ file: file, fileName: file.name });
+    this.form.patchValue({ file, fileName: file.name });
+
+    this.form.get('file')?.markAsDirty();
+    this.form.updateValueAndValidity({ emitEvent: true });
   }
 
   touchDates() {
@@ -168,14 +218,31 @@ export class ExperienceModal implements OnInit {
   onSave() {
     if (this.form.invalid || this.fileError) {
       this.form.markAllAsTouched();
+
+      const v = this.form.getRawValue();
+      this.validateData({
+        id: this.initialId ?? undefined,
+        employerName: v.org,
+        jobTitle: v.name,
+        from: v.from ? dateToDateOnly(v.from) : null,
+        to: v.current ? null : v.to ? dateToDateOnly(v.to) : null,
+        current: !!v.current,
+        description: v.description,
+        file: v.file,
+        fileName: v.file?.name ?? v.fileName ?? null,
+        qualificationId: v.hasQualification ? v.qualificationId : null,
+        attachmentId: this.initialAttachmentId ?? undefined,
+      } as unknown as Experience);
+
       return;
     }
 
     const v = this.form.getRawValue();
-    const qualificationOption = this.degreeOptions.find(d => d.id === v.qualificationId) ?? null;
-    if (qualificationOption && qualificationOption.additionalData) {
+    const qualificationOption = this.degreeOptions.find((d) => d.id === v.qualificationId) ?? null;
+
+    if (qualificationOption?.additionalData) {
       const additionalData = qualificationOption.additionalData as { year?: number };
-      if (additionalData.year && v.from.getFullYear() < additionalData.year) {
+      if (additionalData.year && v.from && v.from.getFullYear() < additionalData.year) {
         this.form.setErrors({ invalidQualificationDate: true });
         this.form.markAllAsTouched();
         return;
@@ -211,6 +278,7 @@ export class ExperienceModal implements OnInit {
 
   previewFile(ev?: Event): void {
     ev?.stopPropagation();
+
     const file = this.form.get('file')?.value as File | null;
     if (file) {
       this.fileUtils.previewBlob(file);
@@ -218,22 +286,26 @@ export class ExperienceModal implements OnInit {
     }
 
     if (this.initialAttachmentUrl) {
-      this.fileUtils.previewUrl(this.initialAttachmentUrl, this.form.get('fileName')?.value ?? '', false);
+      this.fileUtils.previewUrl(
+        this.initialAttachmentUrl,
+        this.form.get('fileName')?.value ?? '',
+        false
+      );
     }
   }
 
   get degreeOptions(): dropdownOptionsModel[] {
     const degrees = (this.config.data?.degrees as Degree[] | undefined) ?? [];
     return degrees
-      .filter(d => !!d.id)
-      .map(d => ({
+      .filter((d) => !!d.id)
+      .map((d) => ({
         id: d.id!,
         backendName: d.degree?.backendName ?? '',
         name: `${d.degree?.name ?? ''} - ${d.major?.name ?? ''} (${d.gradYear ?? ''})`,
         description: d.university?.name ?? '',
         additionalData: {
-          year: d.gradYear
-        }
+          year: d.gradYear,
+        },
       }));
   }
 
@@ -245,39 +317,36 @@ export class ExperienceModal implements OnInit {
   }
 
   private validateData(experience: Experience) {
-    const errors: {i18nKey: string}[] = [];
+    const errors: { i18nKey: string }[] = [];
     const today = startOfToday();
+
     if ((!experience.file || !experience.fileName) && !experience.attachmentId) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.attachment.required',
-      });
+      errors.push({ i18nKey: 'wizard.profile.experience.attachment.required' });
     }
 
-    const startDate = parseDate(experience?.from);
-    const endDate = parseDate(experience?.to);
+    const startDate = parseDate(experience?.from as any);
+    const endDate = parseDate(experience?.to as any);
 
     if (startDate && startDate.getTime() > today.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.futureDate',
-      });
+      errors.push({ i18nKey: 'wizard.profile.experience.futureDate' });
     }
 
     if (endDate && endDate.getTime() > today.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.futureDate',
-      });
+      errors.push({ i18nKey: 'wizard.profile.experience.futureDate' });
     }
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
-      errors.push({
-        i18nKey: 'wizard.profile.experience.invalidRange',
-      });
+      errors.push({ i18nKey: 'wizard.profile.experience.invalidRange' });
+    }
+
+    if (!errors.length) {
+      errors.push({ i18nKey: 'wizard.validationErrorTitle' });
     }
 
     this.notify.error(
       `${this.translate.instant('wizard.validationErrorTitle')}: ${errors
-        .map(e => `* ${this.translate.instant(e.i18nKey)}`)
-        .join('\n')}`,
+        .map((e) => `* ${this.translate.instant(e.i18nKey)}`)
+        .join('\n')}`
     );
   }
 }
@@ -302,9 +371,8 @@ export function dateRangeValidator(fromKey: string, toKey: string) {
     const from = group.get(fromKey)?.value as Date | null;
     const to = group.get(toKey)?.value as Date | null;
     if (!from || !to) return null;
-    return new Date(from).getTime() <= new Date(to).getTime()
-      ? null
-      : { dateRange: true };
+
+    return new Date(from).getTime() <= new Date(to).getTime() ? null : { dateRange: true };
   };
 }
 

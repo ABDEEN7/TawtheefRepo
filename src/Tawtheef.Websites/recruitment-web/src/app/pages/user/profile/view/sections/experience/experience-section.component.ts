@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
-  AchievementDto,
   ExperienceDto,
   FileRefDto,
-  ProfileStatusDto
+  ProfileStatusDto,
 } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import {
+  MyProfileReviewNoteDto,
+  ReviewTargetTypeEnum,
+} from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -19,13 +28,26 @@ import { Experience } from '../../../wizard-profile/models/experience.model';
 import { Degree } from '../../../wizard-profile/models/degree.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 
+type PendingExperienceChange = {
+  EmployerName?: string;
+  JobTitle?: string;
+  CountryId?: string | number | null;
+  StartDate?: string | null;
+  EndDate?: string | null;
+  IsCurrent?: boolean | null;
+  Description?: string | null;
+  QualificationId?: string | number | null;
+  AttachmentResourceId?: string | null;
+  FileName?: string | null;
+};
+
 @Component({
   selector: 'app-profile-experience-section',
   standalone: true,
   imports: [CommonModule, TranslatePipe, TooltipModule],
   templateUrl: './experience-section.component.html',
   styleUrls: ['./experience-section.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileExperienceSectionComponent {
   private readonly dialogService = inject(DialogService);
@@ -38,73 +60,93 @@ export class ProfileExperienceSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
-  @Input() changesRequest!: FieldChange[];
-  @Input() isProfileApproved!: boolean;
+  @Input() changesRequest: FieldChange[] = [];
+  @Input() isProfileApproved = false;
+
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
 
-  protected experiencesUnderReview() {
-    return this.normalizePendingItems().map(cr => {
+  protected experiencesUnderReview(): ExperienceDto[] {
+    return this.normalizePendingItems().map((cr) => {
       return {
-        employerName: cr.EmployerName,
-        jobTitle: cr.JobTitle,
-        countryId: cr.CountryId,
-        country: this.lookups.countries().find(c => c.id === cr.CountryId) ?? null,
-        startDate: cr.StartDate,
-        endDate: cr.EndDate,
-        isCurrent: cr.IsCurrent,
-        description: cr.Description,
-        qualificationId: cr.QualificationId,
-        qualification: this.profile?.qualifications?.find(q => q.id === cr.QualificationId) ?? null,
-        attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
+        employerName: cr.EmployerName ?? '',
+        jobTitle: cr.JobTitle ?? '',
+        countryId: cr.CountryId ?? null,
+        country: this.lookups.countries().find((c) => c.id === cr.CountryId) ?? null,
+        startDate: cr.StartDate ?? null,
+        endDate: cr.EndDate ?? null,
+        isCurrent: !!cr.IsCurrent,
+        description: cr.Description ?? null,
+        qualificationId: cr.QualificationId ?? null,
+        qualification:
+          this.profile?.qualifications?.find((q) => q.id === cr.QualificationId) ?? null,
+        attachment: cr.AttachmentResourceId
+          ? ({
+              resourceId: cr.AttachmentResourceId,
+              fileName: cr.FileName ?? '',
+            } as FileRefDto)
+          : (null as any),
       } as ExperienceDto;
     });
   }
 
   protected noteForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!exp) return null;
-    const rowNote = exp.id
-      ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Row &&
-            note.entityId?.toLowerCase() === exp.id.toLowerCase()
-        ) ?? null
-      : null;
 
-    const attachmentNote = exp.attachment?.resourceId
-      ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Attachment &&
-            note.resourceId?.toLowerCase() === exp.attachment?.resourceId.toLowerCase()
-        ) ?? null
-      : null;
+    const rowNote =
+      exp.id
+        ? this.notes.find(
+            (note) =>
+              note.targetType === ReviewTargetTypeEnum.Row &&
+              note.entityId?.toLowerCase() === exp.id.toLowerCase()
+          ) ?? null
+        : null;
+
+    const attachmentNote =
+      exp.attachment?.resourceId
+        ? this.notes.find(
+            (note) =>
+              note.targetType === ReviewTargetTypeEnum.Attachment &&
+              note.resourceId?.toLowerCase() === exp.attachment?.resourceId.toLowerCase()
+          ) ?? null
+        : null;
 
     return rowNote ?? attachmentNote ?? null;
   }
 
-  protected addExperience() {this.dialogService
-    .open(ExperienceModal, {
-      header: this.translate.instant('profileView.actions.addExperience'),
-      width: '50%',
-      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-      baseZIndex: 10000,
-      closable: true,
-      data: { degrees: this.mapDegrees() },
-    })?.onClose.subscribe((experience: Experience | null) => {
-      if (!experience) return;
-      this.profileService.saveExperienceSection([experience], []).subscribe({
-        next: () => {
-          this.notify.success(this.translate.instant('profileView.notifications.saved'));
-          this.refresh.emit();
-        }
+  protected addExperience() {
+    this.dialogService
+      .open(ExperienceModal, {
+        header: this.translate.instant('profileView.actions.addExperience'),
+        width: '50%',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        closable: true,
+        data: {
+          degrees: this.mapDegrees(),
+          // create mode => do not disable upload
+          disableFileUpload: false,
+        },
+      })
+      ?.onClose.subscribe((experience: Experience | null) => {
+        if (!experience) return;
+
+        this.profileService.saveExperienceSection([experience], []).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          },
+          error: () => {
+            this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
+          },
+        });
       });
-    });
   }
 
   protected editExperience(exp: ExperienceDto) {
     const initialValue = {
-      org: exp.employerName,
-      name: exp.jobTitle,
+      employerName: exp.employerName,
+      jobTitle: exp.jobTitle,
       country: exp.country ?? null,
       from: exp.startDate ?? null,
       to: exp.endDate ?? null,
@@ -119,7 +161,11 @@ export class ProfileExperienceSectionComponent {
           }
         : null,
       qualificationId: exp.qualificationId ?? null,
-    };this.dialogService
+      id: exp.id ?? null,
+      attachmentId: exp.attachment?.resourceId ?? null,
+    };
+
+    this.dialogService
       .open(ExperienceModal, {
         header: this.translate.instant('profileView.actions.editExperience'),
         width: '50%',
@@ -129,13 +175,15 @@ export class ProfileExperienceSectionComponent {
         data: {
           degrees: this.mapDegrees(),
           initialValue,
-          disableFileUpload: true,
           initialId: exp.id,
-          attachmentId: exp.attachment?.resourceId ?? null
+          attachmentId: exp.attachment?.resourceId ?? null,
+          // edit mode in your case => prevent changing the file
+          disableFileUpload: true,
         },
       })
       ?.onClose.subscribe((experience: Experience | null) => {
         if (!experience) return;
+
         this.profileService.saveExperienceSection([experience], []).subscribe({
           next: () => {
             this.notify.success(this.translate.instant('profileView.notifications.saved'));
@@ -143,7 +191,7 @@ export class ProfileExperienceSectionComponent {
           },
           error: () => {
             this.notify.error(this.translate.instant('profileView.notifications.saveFailed'));
-          }
+          },
         });
       });
   }
@@ -154,7 +202,7 @@ export class ProfileExperienceSectionComponent {
   }
 
   private mapDegrees(): Degree[] {
-    return (this.profile?.qualifications ?? []).map(q => ({
+    return (this.profile?.qualifications ?? []).map((q) => ({
       id: q.id,
       degree: q.degree ?? null,
       gradCountry: q.gradCountry ?? null,
@@ -177,11 +225,14 @@ export class ProfileExperienceSectionComponent {
     }));
   }
 
-  private normalizePendingItems(): any[] {
-    const items = this.changesRequest.map(change => change.newValue).flatMap(value => {
-      if (!value) return [];
-      return Array.isArray(value) ? value : [value];
-    });
-    return items.filter(item => item?.EmployerName || item?.JobTitle);
+  private normalizePendingItems(): PendingExperienceChange[] {
+    const items = this.changesRequest
+      .map((change) => change.newValue)
+      .flatMap((value) => {
+        if (!value) return [];
+        return Array.isArray(value) ? value : [value];
+      }) as PendingExperienceChange[];
+
+    return items.filter((item) => !!item?.EmployerName || !!item?.JobTitle);
   }
 }

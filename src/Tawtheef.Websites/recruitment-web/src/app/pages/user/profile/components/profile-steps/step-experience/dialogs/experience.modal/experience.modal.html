@@ -1,34 +1,57 @@
-<form class="p-fluid" [formGroup]="form" (ngSubmit)="onSave()" i18nNamespace="pages/user/profile/experience">
+<form
+  class="p-fluid"
+  [formGroup]="form"
+  (ngSubmit)="onSave()"
+  i18nNamespace="pages/user/profile/experience"
+>
   <div class="deg-panel border-0 shadow-none">
     <div class="py-3">
-      <div class="row  align-items-start">
+      <div class="row align-items-start">
         <!-- Org -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label  required">{{ 'wizard.experience.org' | translate }}
-          </label>
-          <input pInputText class="form-control"
-                 formControlName="org"
-                 [ngClass]="{'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched)}">
-          <small *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+          <label class="form-label required">{{ 'wizard.experience.org' | translate }} </label>
+          <input
+            pInputText
+            class="form-control"
+            formControlName="org"
+            [ngClass]="{ 'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched) }"
+          />
+          <small
+            *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)"
+            class="text-danger mt-1 d-block"
+          >
             {{ 'validation.required' | translate }}
           </small>
-          <small *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
-            {{ 'validation.maxLength' | translate:{max:150} }}
+          <small
+            *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)"
+            class="text-danger mt-1 d-block"
+          >
+            {{ 'validation.maxLength' | translate: { max: 150 } }}
           </small>
         </div>
 
         <!-- Title -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label  required">{{ 'wizard.experience.table.title' | translate }}
+          <label class="form-label required"
+            >{{ 'wizard.experience.table.title' | translate }}
           </label>
-          <input pInputText class="form-control"
-                 formControlName="name"
-                 [ngClass]="{'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched)}">
-          <small *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
+          <input
+            pInputText
+            class="form-control"
+            formControlName="name"
+            [ngClass]="{ 'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched) }"
+          />
+          <small
+            *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)"
+            class="text-danger mt-1 d-block"
+          >
             {{ 'validation.required' | translate }}
           </small>
-          <small *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
-            {{ 'validation.maxLength' | translate:{max:150} }}
+          <small
+            *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)"
+            class="text-danger mt-1 d-block"
+          >
+            {{ 'validation.maxLength' | translate: { max: 150 } }}
           </small>
         </div>
       </div>
@@ -38,63 +61,95 @@
           <label for="country" class="form-label required d-block">
             {{ 'wizard.experience.country' | translate }}
           </label>
-          <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
-                    inputId="country"
-                    formControlName="country"
-                    [options]="lookups.countries()" optionLabel="name"
-                    [placeholder]="'wizard.experience.choiceCountry' | translate"
-                    [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }" class="w-100"
-                    [ngClass]="{
-                'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
-              }">
+          <p-select
+            size="small"
+            [filter]="true"
+            [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
+            inputId="country"
+            formControlName="country"
+            [options]="lookups.countries()"
+            optionLabel="name"
+            [placeholder]="'wizard.experience.choiceCountry' | translate"
+            [appendTo]="'body'"
+            [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
+            class="w-100"
+            [ngClass]="{
+              'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched),
+            }"
+          >
           </p-select>
-          <small *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
-                 class="text-danger mt-1 d-block">
+          <small
+            *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
+            class="text-danger mt-1 d-block"
+          >
             {{ 'validation.required' | translate }}
           </small>
         </div>
       </div>
       <div class="row align-items-start">
-          <div class="col-12 col-md-6 d-flex align-items-center gap-2">
-              <input type="checkbox" id="hasQualification" class="form-check-input"
-                     formControlName="hasQualification" (change)="onQualificationToggle()">
-              <label for="hasQualification" class="form-check-label">
-                {{ 'wizard.experience.relatedDegree.question' | translate }}
-              </label>
-          </div>
-          <div class="col-12 col-md-6" *ngIf="f['hasQualification'].value">
-                <label class="form-label  required" for="qualificationId">
-                  {{ 'wizard.experience.relatedDegree.label' | translate }}
-                </label>
-                <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
-                          inputId="qualificationId" formControlName="qualificationId"
-                          [options]="degreeOptions" optionLabel="name" optionValue="id"
-                          [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"
-                          [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
-                          [ngClass]="{'p-invalid': form.hasError('qualificationRequired') && (f['qualificationId'].dirty || f['qualificationId'].touched)}">
-                </p-select>
-                <small *ngIf="form.hasError('qualificationRequired') && (f['qualificationId'].dirty || f['qualificationId'].touched)"
-                       class="text-danger mt-1 d-block">
-                  {{ 'validation.required' | translate }}
-                </small>
-          </div>
+        <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+          <input
+            type="checkbox"
+            id="hasQualification"
+            class="form-check-input"
+            formControlName="hasQualification"
+            (change)="onQualificationToggle()"
+          />
+          <label for="hasQualification" class="form-check-label">
+            {{ 'wizard.experience.relatedDegree.question' | translate }}
+          </label>
+        </div>
+        <div class="col-12 col-md-6" *ngIf="f['hasQualification'].value">
+          <label class="form-label required" for="qualificationId">
+            {{ 'wizard.experience.relatedDegree.label' | translate }}
+          </label>
+          <p-select
+            size="small"
+            [filter]="true"
+            [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
+            inputId="qualificationId"
+            formControlName="qualificationId"
+            [options]="degreeOptions"
+            optionLabel="name"
+            optionValue="id"
+            [placeholder]="'wizard.experience.relatedDegree.placeholder' | translate"
+            [appendTo]="'body'"
+            [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
+            [ngClass]="{
+              'p-invalid':
+                form.hasError('qualificationRequired') &&
+                (f['qualificationId'].dirty || f['qualificationId'].touched),
+            }"
+          >
+          </p-select>
+          <small
+            *ngIf="
+              form.hasError('qualificationRequired') &&
+              (f['qualificationId'].dirty || f['qualificationId'].touched)
+            "
+            class="text-danger mt-1 d-block"
+          >
+            {{ 'validation.required' | translate }}
+          </small>
+        </div>
       </div>
-      <div class="row  align-items-start">
+      <div class="row align-items-start">
         <div class="col-12 mb-3 d-flex align-items-center gap-2">
-          <input type="checkbox"
-                 id="current"
-                 class="form-check-input"
-                 formControlName="current"
-                 (change)="onCurrentToggle()">
+          <input
+            type="checkbox"
+            id="current"
+            class="form-check-input"
+            formControlName="current"
+            (change)="onCurrentToggle()"
+          />
           <label for="current" class="form-check-label">
             {{ 'wizard.experience.current' | translate }}
           </label>
         </div>
-        <div class="row  align-items-start">
+        <div class="row align-items-start">
           <!-- From -->
           <div class="col-12 col-md-6 mb-3">
-            <label class="form-label required">{{ 'wizard.experience.from' | translate }}
-            </label>
+            <label class="form-label required">{{ 'wizard.experience.from' | translate }} </label>
             <p-date-picker
               formControlName="from"
               view="month"
@@ -103,23 +158,37 @@
               [maxDate]="today"
               (onSelect)="touchDates()"
               [ngClass]="{
-        'p-invalid': (f['from'].invalid || form.hasError('dateRange') || form.hasError('futureDate')) && (f['from'].dirty || f['from'].touched)
-      }">
+                'p-invalid':
+                  (f['from'].invalid ||
+                    form.hasError('dateRange') ||
+                    form.hasError('futureDate')) &&
+                  (f['from'].dirty || f['from'].touched),
+              }"
+            >
             </p-date-picker>
-            <small *ngIf="form.hasError('futureDate') && (f['from'].dirty || f['from'].touched)"
-                   class="text-danger mt-1 d-block">
+            <small
+              *ngIf="form.hasError('futureDate') && (f['from'].dirty || f['from'].touched)"
+              class="text-danger mt-1 d-block"
+            >
               {{ 'validation.noFuture' | translate }}
             </small>
-            <small *ngIf="form.hasError('invalidQualificationDate') && (f['qualificationId'].dirty || f['qualificationId'].touched)"
-                   class="text-danger mt-1 d-block">
+            <small
+              *ngIf="
+                form.hasError('invalidQualificationDate') &&
+                (f['qualificationId'].dirty || f['qualificationId'].touched)
+              "
+              class="text-danger mt-1 d-block"
+            >
               {{ 'wizard.profile.experience.beforeLinkedGraduation' | translate }}
             </small>
           </div>
           <!-- To -->
           <div class="col-12 col-md-6 mb-3" *ngIf="!f['current'].value">
-            <label class="form-label" [ngClass]="{'required': !f['current'].value}">
+            <label class="form-label" [ngClass]="{ required: !f['current'].value }">
               {{ 'wizard.experience.to' | translate }}
-              <small class="text-muted ms-1" *ngIf="f['current'].value">({{ 'common.optional' | translate }})</small>
+              <small class="text-muted ms-1" *ngIf="f['current'].value"
+                >({{ 'common.optional' | translate }})</small
+              >
             </label>
             <p-date-picker
               formControlName="to"
@@ -131,22 +200,36 @@
               [maxDate]="today"
               (onSelect)="touchDates()"
               [ngClass]="{
-        'p-invalid': (!f['current'].value && (form.hasError('toRequiredIfNotCurrent') || form.hasError('dateRange') || form.hasError('futureDate'))) && (f['to'].dirty || f['to'].touched)
-      }">
+                'p-invalid':
+                  !f['current'].value &&
+                  (form.hasError('toRequiredIfNotCurrent') ||
+                    form.hasError('dateRange') ||
+                    form.hasError('futureDate')) &&
+                  (f['to'].dirty || f['to'].touched),
+              }"
+            >
             </p-date-picker>
 
             <!-- Only show when not current -->
             <ng-container *ngIf="!f['current'].value">
-              <small *ngIf="form.hasError('toRequiredIfNotCurrent') && (f['to'].dirty || f['to'].touched)"
-                     class="text-danger mt-1 d-block">
+              <small
+                *ngIf="
+                  form.hasError('toRequiredIfNotCurrent') && (f['to'].dirty || f['to'].touched)
+                "
+                class="text-danger mt-1 d-block"
+              >
                 {{ 'validation.required' | translate }}
               </small>
-              <small *ngIf="form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)"
-                     class="text-danger mt-1 d-block">
+              <small
+                *ngIf="form.hasError('dateRange') && (f['to'].dirty || f['to'].touched)"
+                class="text-danger mt-1 d-block"
+              >
                 {{ 'validation.dateRange' | translate }}
               </small>
-              <small *ngIf="form.hasError('futureDate') && (f['to'].dirty || f['to'].touched)"
-                     class="text-danger mt-1 d-block">
+              <small
+                *ngIf="form.hasError('futureDate') && (f['to'].dirty || f['to'].touched)"
+                class="text-danger mt-1 d-block"
+              >
                 {{ 'validation.noFuture' | translate }}
               </small>
             </ng-container>
@@ -154,21 +237,38 @@
         </div>
       </div>
 
-      <div class="row  align-items-start mt-1">
+      <div class="row align-items-start mt-1">
         <div class="col-12 mb-3">
-          <label class="form-label  required">
-           {{ 'wizard.experience.tasks' | translate }}
+          <label class="form-label required">
+            {{ 'wizard.experience.tasks' | translate }}
           </label>
-          <textarea class="form-control" pTextarea rows="4"
-                    formControlName="description"
-                    [attr.maxlength]="limits.descriptionMaxLength"
-                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}">
+          <textarea
+            class="form-control"
+            pTextarea
+            rows="4"
+            formControlName="description"
+            [attr.maxlength]="limits.descriptionMaxLength"
+            [ngClass]="{
+              'p-invalid':
+                f['description'].invalid && (f['description'].dirty || f['description'].touched),
+            }"
+          >
           </textarea>
-          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
-            {{ 'validation.maxLength' | translate:{max: limits.descriptionMaxLength} }}
+          <small
+            *ngIf="
+              f['description'].hasError('maxlength') &&
+              (f['description'].dirty || f['description'].touched)
+            "
+            class="text-danger mt-1 d-block"
+          >
+            {{ 'validation.maxLength' | translate: { max: limits.descriptionMaxLength } }}
           </small>
           <small class="char-counter">
-            {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength - (f['description'].value?.length || 0)} }}
+            {{
+              'common.charactersRemaining'
+                | translate
+                  : { count: limits.descriptionMaxLength - (f['description'].value?.length || 0) }
+            }}
           </small>
         </div>
       </div>
@@ -177,24 +277,34 @@
         <label class="form-label required">
           {{ 'wizard.experience.attachment' | translate }}
         </label>
-        <div class="upload-field"
-             (click)="naInput.click()">
+        <div class="upload-field" (click)="naInput.click()">
           <div class="upload-field__icon">
-            <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"
-                 class="cursor-pointer"
-                 (click)="previewFile($event)"/>
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload" />
+            <img
+              src="assets/img/icons/file-eye.svg"
+              *ngIf="f['fileName'].value"
+              alt="view"
+              class="cursor-pointer"
+              (click)="previewFile($event)"
+            />
           </div>
 
           <div class="upload-field__text">
             {{ f['fileName'].value || ('wizard.experience.attachment' | translate) }}
           </div>
 
-          <input #naInput type="file" class="d-none" accept=".pdf,image/*"
-                 (change)="onUpload($event)" />
+          <input
+            #naInput
+            type="file"
+            class="d-none"
+            accept=".pdf,image/*"
+            (change)="onUpload($event)"
+          />
         </div>
-        <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)"
-               class="text-danger mt-1 d-block">
+        <small
+          *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)"
+          class="text-danger mt-1 d-block"
+        >
           {{ 'validation.required' | translate }}
         </small>
         <small *ngIf="fileError" class="text-danger mt-1 d-block">
@@ -206,15 +316,20 @@
 
   <!-- ===== FOOTER ===== -->
   <div class="d-flex justify-content-end gap-2">
-    <p-button styleClass="p-button-text" icon="pi pi-times"
-              type="button"
-              (onClick)="onCancel()"
-              [label]="'wizard.buttons.cancel' | translate"></p-button>
+    <p-button
+      styleClass="p-button-text"
+      icon="pi pi-times"
+      type="button"
+      (onClick)="onCancel()"
+      [label]="'wizard.buttons.cancel' | translate"
+    ></p-button>
 
-    <p-button styleClass="p-button-primary"
-              icon="pi pi-save"
-              type="submit"
-              [disabled]="form.invalid || !!fileError"
-              [label]="'wizard.experience.add' | translate"></p-button>
+    <p-button
+      styleClass="p-button-primary"
+      icon="pi pi-save"
+      type="submit"
+      [disabled]="form.invalid || !!fileError"
+      [label]="'wizard.experience.add' | translate"
+    ></p-button>
   </div>
 </form>
