@@ -30,7 +30,7 @@
   }
 
   &.completed {
-    color: #28a745;
+    color: #89153D;
   }
 
   i {
@@ -64,8 +64,8 @@
   }
 
   &.completed {
-    border-color: #28a745;
-    background: #28a745;
+    border-color: #89153D;
+    background: #89153D;
     color: #fff;
   }
 
@@ -91,7 +91,7 @@
   transition: background 0.3s ease;
 
   &.completed {
-    background: #28a745;
+    background: #89153D;
   }
 }
 
