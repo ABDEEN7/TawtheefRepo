@@ -13,8 +13,6 @@ public sealed class ProfileDistributionProfile : IRegister
             .Map(dest => dest.ProfileId, src => src.Id)
             .Map(dest => dest.Status, src => src.Status)
             .Map(dest => dest.SubmittedAtUtc, src => src.CreatedDate)
-            .Ignore(dest => dest.AssignedEmployeeId)
-            .Ignore(dest => dest.AssignedEmployeeName)
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
