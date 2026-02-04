@@ -17,7 +17,7 @@
                                    <i class="pi pi-check-square mx-2"></i>
                                   {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
                               </div></div>
-                             
+
                              <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
                                  <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
                                  <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
@@ -168,7 +168,7 @@
                                                <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
                                              </td>
                                              <td class="text-end">
-                                               <div class="d-flex gap-2 justify-content-end">
+                                               <div class="d-flex gap-1 justify-content-end">
                                                  <button
                                                    pButton
                                                    pRipple
@@ -207,7 +207,7 @@
                                      </div>
                          </div>
                      </div>
-                   
+
                      <div class="col-md-12">
                           <div class="card card-table">
                             <div class="card-body">

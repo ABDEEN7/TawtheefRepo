@@ -39,6 +39,8 @@ import {PaginationComponent} from '../../../../../shared/components/pagination/p
 import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
 import {NotificationService} from '../../../../../core/services/notification.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { AssignFiles } from './dialogs/assign-files/assign-files';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -60,6 +62,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     Select,
     Ripple,
     Tooltip,
+    ProgressBarModule
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
@@ -238,6 +241,14 @@ export class ProfileDistributionPage implements OnInit {
       this.assignManual(res.payload);
     });
   }
+ openAssignFilesDialog(): void {
+  this.dialogService.open(AssignFiles, {
+    header: 'تعيين الملفات على موظف',
+      width: '720px',
+      modal: true,
+
+    })
+ }
 
   openAutoDialog(): void {
     if (!this.canManageDistribution()) return;

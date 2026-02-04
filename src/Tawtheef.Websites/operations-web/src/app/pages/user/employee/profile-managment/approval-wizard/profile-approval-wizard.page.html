@@ -26,18 +26,18 @@
                                           <div>
                                                <h3 class="fw-bold mb-1">{{ info.fullName || ('profileApproval.list.anonymous' | translate) }}</h3>
                                                 <div class="d-flex flex-wrap gap-2">
-                                                    <span class="pill neutral m-1" *ngIf="info.profile?.basicInformation?.email">
+                                                    <span class="d-flex align-items-center gap-1 mx-1" *ngIf="info.profile?.basicInformation?.email">
                                                           <i class="hgi hgi-stroke hgi-mail-01"></i>
                                                           <span> {{ 'profileApproval.detail.snapshot.email' | translate }}: {{ info.profile.basicInformation.email }}</span>
                                                       </span>
-                                                      <span class="pill neutral m-1" *ngIf="info.profile?.basicInformation?.phoneNumber">
+                                                      <span class="d-flex align-items-center gap-1 mx-1" *ngIf="info.profile?.basicInformation?.phoneNumber">
                                                           <i class="hgi hgi-stroke hgi-call-02"></i>
                                                           <span>
                                                             {{ 'profileApproval.detail.snapshot.phoneNumber' | translate }}:
                                                             {{ info.profile.basicInformation.phoneNumber }}
                                                           </span>
                                                       </span>
-                                                      <span class="pill neutral m-1" *ngIf="info.profile?.basicInformation?.residenceCountry">
+                                                      <span class="d-flex align-items-center gap-1 mx-1" *ngIf="info.profile?.basicInformation?.residenceCountry">
                                                         <i class="hgi hgi-stroke hgi-globe-02"></i>
                                                         <span>{{ info.profile.basicInformation.residenceCountry }}</span>
                                                       </span>
@@ -74,7 +74,7 @@
                                         </span>
                                     </div> 
                                  </div>
-                                 <div class="col-md-12">
+                                 <!-- <div class="col-md-12">
                                       <div class="card card-table  bg-light rounded">
                                            <div class="card-body p-2">
                                               <div class="d-flex justify-content-between small text-muted mb-2">
@@ -85,7 +85,7 @@
                                           </div>
                                       </div>
                                       
-                                 </div>
+                                 </div> -->
                                  
                               
                             </div>
