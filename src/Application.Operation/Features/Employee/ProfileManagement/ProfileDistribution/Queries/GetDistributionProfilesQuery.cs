@@ -9,5 +9,6 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 public sealed record GetDistributionProfilesQuery(
     Guid? UserId,
     UserProfileStatus? Status = null,
-    string? SearchTerm = null)
+    string? SearchTerm = null,
+    Guid? TargetEntityId = null)
     : PaginatedRequest, IQuery<Result<PaginatedResult<DistributionProfileDto>>>;
