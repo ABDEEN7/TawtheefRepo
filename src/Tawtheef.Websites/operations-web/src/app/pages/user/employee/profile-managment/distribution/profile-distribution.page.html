@@ -143,7 +143,7 @@
                                                <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
                                              </td>
                                              <td class="text-end">
-                                               <div class="d-flex gap-2 justify-content-end">
+                                               <div class="d-flex gap-1 justify-content-end">
                                                  <button
                                                    pButton
                                                    pRipple
@@ -161,6 +161,10 @@
                                                    [pTooltip]="'distribution.actions.redistribute' | translate"
                                                    (click)="openReassignDialog('auto', profile.profileId)">
                                                    <i class="pi pi-sync" pButtonIcon></i></button>
+                                                   <div class="action-buttons">
+                                                         <a class="btn-text" (click)="openAssignFilesDialog()">عرض الملف <i class="hgi hgi-stroke hgi-view"></i></a>
+                                                   </div>
+                                                  
                                                </div>
                                              </td>
                                            </tr>
