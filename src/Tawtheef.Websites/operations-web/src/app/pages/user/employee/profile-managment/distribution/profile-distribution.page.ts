@@ -58,7 +58,6 @@ import {PaginationComponent} from '../../../../../shared/components/pagination/p
     Select,
     Ripple,
     Tooltip,
-    ToggleSwitch,
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
