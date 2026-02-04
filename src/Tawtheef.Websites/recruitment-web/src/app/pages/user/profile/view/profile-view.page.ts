@@ -325,15 +325,17 @@ export class ProfileViewPage {
         const notesCount = review?.sectionIndex?.[card.section] ?? 0;
         const hasPending = pending.some(cr => cr.section === card.section);
         const hasData = this.hasSectionData(card.section);
+        const canEdit = this.canEditSections(card.section);
 
         const isOptional = this.optionalSections.has(card.section);
-        const shouldShow = !isOptional || hasData || notesCount > 0 || hasPending;
+        const shouldShow = !isOptional || hasData || notesCount > 0 || hasPending || canEdit;
 
         return {
           ...card,
           notesCount,
           hasPending,
           hasData,
+          canEdit,
           isOptional,
           shouldShow,
           isActive: active === card.section
@@ -399,7 +401,8 @@ export class ProfileViewPage {
 
     if (status === UserProfileStatusEnum.RequiresUpdate) {
       const sectionNotes = this.reviewSummary()?.sections?.find(item => item.section === section);
-      return (sectionNotes?.notesCount ?? 0) > 0;
+      const hasNotes = (sectionNotes?.notesCount ?? 0) > 0;
+      return hasNotes || !this.hasSectionData(section);
     }
 
     return false;

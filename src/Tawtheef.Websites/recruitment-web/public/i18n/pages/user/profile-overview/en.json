@@ -289,7 +289,7 @@
   "profileView.attachments.fileLabel": "Attachment file",
   "profileView.notifications.saved": "Changes saved successfully.",
   "profileView.notifications.saveFailed": "Failed to save changes.",
-  "profileView.notifications.noChanges": "No changes detected to save.",
+  "profileView.notifications.noChanges": "You must add changes before saving.",
   "profileView.notifications.changeRequestSent": "Change request sent for review.",
   "profileView.notifications.resubmitted": "Your profile has been resubmitted successfully.",
   "profileView.notifications.resubmitFailed": "Failed to resubmit your profile.",

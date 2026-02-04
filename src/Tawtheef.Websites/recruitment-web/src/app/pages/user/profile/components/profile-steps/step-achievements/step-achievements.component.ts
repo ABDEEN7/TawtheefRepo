@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from '@ngx-translate/core';
 import {ACHIEVEMENT_DIALOG_LIMITS, AchievementModal} from './dialogs/achievement.modal';
@@ -18,6 +18,9 @@ import {Achievement} from '../../../wizard-profile/models/achievement.model';
 export class StepAchievementsComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -115,6 +118,10 @@ export class StepAchievementsComponent implements OnInit {
     const signature = this.buildSignature(achievements);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
       this.notify.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;

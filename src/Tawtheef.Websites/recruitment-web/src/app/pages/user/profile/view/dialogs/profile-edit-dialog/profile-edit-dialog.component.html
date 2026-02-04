@@ -11,50 +11,79 @@
   } @else if (vmReady()) {
     <ng-container [ngSwitch]="sectionKey()">
       <app-step-prereq *ngSwitchCase="'prerequisites'"
+                       [submitLabelKey]="'common.save'"
+                       [requireChanges]="true"
                        (next)="close()">
       </app-step-prereq>
 
       <app-step-personal *ngSwitchCase="'personal'"
+                         [submitLabelKey]="'common.save'"
+                         [showBack]="false"
+                         [requireChanges]="true"
                          (back)="close()"
                          (next)="close()">
       </app-step-personal>
 
       <app-step-contact *ngSwitchCase="'contact'"
+                        [submitLabelKey]="'common.save'"
+                        [showBack]="false"
+                        [requireChanges]="true"
                         (back)="close()"
                         (next)="close()">
       </app-step-contact>
 
       <app-step-degrees *ngSwitchCase="'qualifications'"
+                        [submitLabelKey]="'common.save'"
+                        [showBack]="false"
+                        [requireChanges]="true"
                         (back)="close()"
                         (next)="close()">
       </app-step-degrees>
 
       <app-step-experience *ngSwitchCase="'experience'"
+                           [submitLabelKey]="'common.save'"
+                           [showBack]="false"
+                           [requireChanges]="true"
                            (back)="close()"
                            (next)="close()">
       </app-step-experience>
 
       <app-step-experience *ngSwitchCase="'training'"
+                           [submitLabelKey]="'common.save'"
+                           [showBack]="false"
+                           [requireChanges]="true"
                            (back)="close()"
                            (next)="close()">
       </app-step-experience>
 
       <app-step-achievements *ngSwitchCase="'achievements'"
+                             [submitLabelKey]="'common.save'"
+                             [showBack]="false"
+                             [requireChanges]="true"
                              (back)="close()"
                              (next)="close()">
       </app-step-achievements>
 
       <app-step-skills *ngSwitchCase="'skills'"
+                       [submitLabelKey]="'common.save'"
+                       [showBack]="false"
+                       [requireChanges]="true"
                        (back)="close()"
                        (next)="close()">
       </app-step-skills>
 
       <app-step-languages *ngSwitchCase="'languages'"
+                          [submitLabelKey]="'common.save'"
+                          [showBack]="false"
+                          [requireChanges]="true"
                           (back)="close()"
                           (next)="close()">
       </app-step-languages>
 
       <app-step-attachments *ngSwitchCase="'attachments'"
+                            [submitLabelKey]="'common.save'"
+                            [showBack]="false"
+                            [requireChanges]="true"
                             (back)="close()"
                             (next)="close()">
       </app-step-attachments>

@@ -169,14 +169,15 @@
                               <i class="hgi hgi-stroke hgi-alert-02" aria-hidden="true"></i>
                               {{ 'profileOverview.review.notesCount' | translate }}
                             </span>
+                          } @else if (card.hasPending) {
+                            <span class="pv-pill pv-pill--danger">
+                              <i class="hgi hgi-stroke hgi-hourglass" aria-hidden="true"></i>
+                              {{ 'profileOverview.changeRequests.status.pending' | translate }}
+                            </span>
                           } @else {
                             <span class="pv-pill pv-pill--success">
                               <i class="hgi hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i>
-                              @if (profileStatus() == UserProfileStatusEnum.Approved) {
-                                {{ 'profileView.sections.status.ok' | translate }}
-                              } @else {
-                                {{ 'profileOverview.reviewStatus.pending' | translate }}
-                              }
+                              {{ 'profileView.sections.status.ok' | translate }}
                             </span>
                           }
                         </div>
