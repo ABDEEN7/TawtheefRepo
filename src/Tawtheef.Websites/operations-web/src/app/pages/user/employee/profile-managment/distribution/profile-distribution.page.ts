@@ -1,8 +1,8 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, DestroyRef, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {finalize} from 'rxjs';
-import {TranslateModule} from '@ngx-translate/core';
+import {debounceTime, distinctUntilChanged, finalize, Subject} from 'rxjs';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TableModule} from 'primeng/table';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
@@ -25,7 +25,6 @@ import {
 import {Select} from 'primeng/select';
 import {Ripple} from 'primeng/ripple';
 import {Tooltip} from 'primeng/tooltip';
-import {ToggleSwitch} from 'primeng/toggleswitch';
 import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
 import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
 import {DistributionDialogResult} from './models/profile-distribution.dialogs';
@@ -37,6 +36,9 @@ import {Permissions} from '../../../../../core/constants/permissions';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 import {PaginationComponent} from '../../../../../shared/components/pagination/pagination.component';
+import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {NotificationService} from '../../../../../core/services/notification.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -67,21 +69,27 @@ export class ProfileDistributionPage implements OnInit {
   private api = inject(ProfileDistributionService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
+  private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
+  targetEntities = signal<dropdownOptionsModel[]>([]);
   loading = signal(false);
   paginationMetadata = signal<PaginationMetadata | null>(null);
 
   statusFilter = signal<ProfileStatusNumber | 'all'>('all');
   search = signal('');
+  targetEntityId = signal<string>('');
   selectedIds = signal<Set<string>>(new Set());
   pageNumber = signal(1);
   pageSize = signal(10);
-
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
   autoLimit = signal<number | null>(null);
+
+  private searchChanges$ = new Subject<string>();
 
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
@@ -119,7 +127,9 @@ export class ProfileDistributionPage implements OnInit {
   protected readonly EmployeeAvailability = EmployeeAvailability;
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadData();
+    this.loadTargetEntities();
   }
 
   loadData(): void {
@@ -132,6 +142,8 @@ export class ProfileDistributionPage implements OnInit {
     if (status !== 'all') filters.status = status;
     const searchTerm = this.search().trim();
     if (searchTerm) filters.searchTerm = searchTerm;
+    const targetEntityId = this.targetEntityId();
+    if (targetEntityId) filters.targetEntityId = targetEntityId;
 
     this.api
       .getFiles(filters)
@@ -150,6 +162,12 @@ export class ProfileDistributionPage implements OnInit {
     });
   }
 
+  loadTargetEntities(): void {
+    this.api.getTargetEntities().subscribe({
+      next: entities => this.targetEntities.set(entities ?? [])
+    });
+  }
+
   onPageChange(page: number): void {
     this.pageNumber.set(page);
     this.loadData();
@@ -163,12 +181,17 @@ export class ProfileDistributionPage implements OnInit {
 
   onStatusChange(value: ProfileStatusNumber | 'all'): void {
     this.statusFilter.set(value);
-    this.pageNumber.set(1);
-    this.loadData();
+    this.applySearch();
   }
 
   onSearchChange(value: string): void {
     this.search.set(value);
+    this.searchChanges$.next(value);
+  }
+
+  onTargetEntityChange(value: string): void {
+    this.targetEntityId.set(value);
+    this.applySearch();
   }
 
   onSelectionChange(selection: DistributionFile[]): void {
@@ -177,6 +200,13 @@ export class ProfileDistributionPage implements OnInit {
 
   clearSelection(): void {
     this.selectedIds.set(new Set());
+  }
+
+  clearSearch(): void {
+    this.search.set('');
+    this.statusFilter.set('all');
+    this.targetEntityId.set('');
+    this.applySearch();
   }
 
   applySearch(): void {
@@ -188,7 +218,10 @@ export class ProfileDistributionPage implements OnInit {
     if (!this.canManageDistribution()) return;
     if (profileId) this.selectedIds.set(new Set([profileId]));
     const ids = Array.from(this.selectedIds());
-    if (ids.length === 0) return;
+    if (ids.length === 0) {
+      this.notifyNoSelection();
+      return;
+    }
 
     this.dialogService.open(ManualAssignDialog, {
       header: 'distribution.dialog.manual.title',
@@ -210,6 +243,7 @@ export class ProfileDistributionPage implements OnInit {
     if (!this.canManageDistribution()) return;
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) {
+      this.notifyNoSelection();
       return;
     }
     this.dialogService.open(AutoAssignDialog, {
@@ -234,6 +268,7 @@ export class ProfileDistributionPage implements OnInit {
     if (profileId) this.selectedIds.set(new Set([profileId]));
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) {
+      this.notifyNoSelection();
       return;
     }
 
@@ -386,6 +421,17 @@ export class ProfileDistributionPage implements OnInit {
 
   canManageDistribution(): boolean {
     return this.authService.hasPermission(Permissions.ProfileDistribution.Manage);
+  }
+
+  private setupSearchListener(): void {
+    this.searchChanges$
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.applySearch());
+  }
+
+  private notifyNoSelection(): void {
+    const message = this.translate.instant('distribution.errors.noProfilesSelected');
+    this.notifications.warn(message);
   }
 
   protected readonly Number = Number;

@@ -22,7 +22,10 @@
   "distribution.filters.search": "Search",
   "distribution.filters.searchPlaceholder": "Search by name, candidate category, or entity",
   "distribution.filters.searchButton": "Search",
+  "distribution.filters.clearSearch": "Clear search",
   "distribution.filters.status": "Profile Status",
+  "distribution.filters.targetEntity": "Target entity",
+  "distribution.filters.targetEntityPlaceholder": "Select target entity",
   "distribution.filters.statusAll": "All Allowed Statuses",
   "distribution.filters.statusSubmitted": "Submitted",
   "distribution.filters.statusUnderReview": "Under Review",
@@ -80,6 +83,7 @@
   "distribution.summary.total": "Total Profiles",
   "distribution.summary.ctaTitle": "Ready for Distribution",
   "distribution.summary.ctaSubtitle": "Choose automatic or manual distribution for the selected profiles",
+  "distribution.summary.selectedCountLabel": "Selected {{count}} profiles",
 
   "distribution.dialog.manual.title": "Assign to Your Employee",
   "distribution.dialog.manual.subtitle": "Select the employee and the number of profiles to assign manually",
