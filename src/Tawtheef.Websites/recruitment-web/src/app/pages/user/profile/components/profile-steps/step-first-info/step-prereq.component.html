@@ -182,7 +182,7 @@
      <div class="col-12">
        <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving">
           <span *ngIf="!saving" class=" d-flex align-items-center">
-            <span>{{ 'wizard.buttons.next' | translate }}</span>
+            <span>{{ submitLabelKey | translate }}</span>
             <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
           </span>
            <span *ngIf="saving" class="d-flex align-items-center">

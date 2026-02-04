@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {
@@ -36,6 +36,9 @@ import {NotificationService} from '../../../../../../core/services/notification.
 export class StepPersonalComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -148,6 +151,10 @@ export class StepPersonalComponent implements OnInit {
     const signature = this.buildSignature(dto);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, isDevMode, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, isDevMode, OnDestroy, OnInit, Output} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
@@ -16,6 +16,9 @@ import {NotificationService} from '../../../../../../core/services/notification.
 export class StepLanguagesComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
@@ -88,6 +91,10 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(languages);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
