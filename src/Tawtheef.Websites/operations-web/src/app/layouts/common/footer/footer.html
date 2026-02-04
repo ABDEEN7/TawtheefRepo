@@ -1,29 +1,38 @@
 <footer class="main-footer">
-  <div class="footer-container">
-    <!-- Copyright -->
-    <div class="copyright">
-      <p>{{ 'internal.footer.ministry' | translate }}</p>
-    </div>
-    <!-- Social Media Icons -->
-    <div class="social-links">
-      <a href="https://www.facebook.com/qatar.edu" target="_blank" rel="noopener" aria-label="Facebook">
-        <i class="hgi hgi-stroke hgi-facebook-02"></i>
-      </a>
-      <a href="https://www.linkedin.com/company/qatar_edu" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <i class="hgi hgi-stroke hgi-linkedin-01"></i>
-      </a>
-      <a href="https://www.instagram.com/qatar_edu" target="_blank" rel="noopener" aria-label="Instagram">
-        <i class="hgi hgi-stroke hgi-instagram"></i>
-      </a>
-      <a href="https://x.com/qatar_edu" target="_blank" rel="noopener" aria-label="Twitter/X">
-        <i class="hgi hgi-stroke hgi-new-twitter"></i>
-      </a>
-    </div>
-    <!-- Footer Links -->
-    <div class="footer-links">
-      <a [routerLink]="routes.privacy">{{'internal.footer.privacy' | translate}}</a>
-      <span class="separator">|</span>
-      <a [routerLink]="routes.terms">{{'internal.footer.terms' | translate}}</a>
-    </div>
+  <div class="container">
+       <div class="row align-items-center">
+            <div class="col-md-4">
+                 <!-- Copyright -->
+                <div class="copyright"><p>{{ 'internal.footer.ministry' | translate }}</p></div>
+            </div>
+            <div class="col-md-4">
+                 <!-- Social Media Icons -->
+                <div class="social-links text-center">
+                      <a href="https://www.facebook.com/qatar.edu" target="_blank" rel="noopener" aria-label="Facebook">
+                        <i class="hgi hgi-stroke hgi-facebook-02"></i>
+                      </a>
+                      <a href="https://www.linkedin.com/company/qatar_edu" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="hgi hgi-stroke hgi-linkedin-01"></i>
+                      </a>
+                      <a href="https://www.instagram.com/qatar_edu" target="_blank" rel="noopener" aria-label="Instagram">
+                        <i class="hgi hgi-stroke hgi-instagram"></i>
+                      </a>
+                      <a href="https://x.com/qatar_edu" target="_blank" rel="noopener" aria-label="Twitter/X">
+                        <i class="hgi hgi-stroke hgi-new-twitter"></i>
+                      </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                     <!-- Footer Links -->
+                    <div class="footer-links text-end justify-content-end">
+                      <a [routerLink]="routes.privacy">{{'internal.footer.privacy' | translate}}</a>
+                      <span class="separator">|</span>
+                      <a [routerLink]="routes.terms">{{'internal.footer.terms' | translate}}</a>
+                    </div>
+            </div>
+       </div>
+    
+    
+
   </div>
 </footer>
