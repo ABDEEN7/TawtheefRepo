@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  Input,
   isDevMode,
   OnDestroy,
   OnInit,
@@ -29,6 +30,9 @@ import {NotificationService} from '../../../../../../core/services/notification.
 export class StepSkillsComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
@@ -162,6 +166,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(skills);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
