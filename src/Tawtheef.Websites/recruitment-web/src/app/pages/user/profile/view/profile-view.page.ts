@@ -209,13 +209,13 @@ export class ProfileViewPage {
     return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
   }
 
-  /** For now disabled like your code; you can later implement properly */
   get enableChangeMode() {
-    return false;
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate;
   }
 
   get canReplaceAttachment() {
-    return this.enableChangeMode;
+    return this.profileStatus() === UserProfileStatusEnum.Approved;
   }
 
   get canAddAttachments() {
@@ -397,7 +397,7 @@ export class ProfileViewPage {
   canEditSections(section: ProfileSectionEnum) {
     const status = this.profileStatus();
 
-    if (this.enableChangeMode) return true;
+    if (status === UserProfileStatusEnum.Approved) return true;
 
     if (status === UserProfileStatusEnum.RequiresUpdate) {
       const sectionNotes = this.reviewSummary()?.sections?.find(item => item.section === section);
