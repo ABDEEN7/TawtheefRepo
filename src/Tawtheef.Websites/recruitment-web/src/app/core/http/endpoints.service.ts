@@ -97,6 +97,7 @@ export class EndpointsService {
         contact: this.getFullUrl(`/profiles/contact`),
         education: this.getFullUrl(`/profiles/education`),
         experience: this.getFullUrl(`/profiles/experience`),
+        training: this.getFullUrl(`/profiles/training`),
         achievements: this.getFullUrl(`/profiles/achievements`),
         skills: this.getFullUrl(`/profiles/skills`),
         languages: this.getFullUrl(`/profiles/languages`),

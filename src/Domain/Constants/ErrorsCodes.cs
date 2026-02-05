@@ -126,6 +126,8 @@ public class ErrorsCodes
     public const string DegreeLinkedToExperience = "DEGREE_LINKED_TO_EXPERIENCE";
     public const string InvalidExperienceQualification = "INVALID_EXPERIENCE_QUALIFICATION";
     public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
+    public const string NoChangesMade = "NO_CHANGES_MADE";
+    
     #endregion
 
     // =========================================================

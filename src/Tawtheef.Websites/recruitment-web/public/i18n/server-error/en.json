@@ -16,6 +16,7 @@
   "server-error.INVALID_TOKEN_TYPE": "Invalid token type.",
   "server-error.TOKEN_EXPIRED": "Token has expired.",
   "server-error.INVALID_ALGORITHM": "Unsupported encryption algorithm.",
+  "server-error.NO_CHANGES_MADE": "No changes were made.",
 
   "server-error.SITE_URL_NOT_CONFIGURED": "Site URL is not configured.",
 

@@ -62,6 +62,9 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     [HttpGet("experience")]
     public Task<IActionResult> GetExperience(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.Experience);
 
+    [HttpGet("training")]
+    public Task<IActionResult> GetTraining(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.TrainingCourses);
+
     [HttpGet("achievements")]
     public Task<IActionResult> GetAchievements(CancellationToken ct) => GetProfileStatus(ct, ProfileSection.CertificatesAndAwards);
 

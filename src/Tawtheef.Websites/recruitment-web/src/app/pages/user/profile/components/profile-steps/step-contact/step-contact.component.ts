@@ -1,4 +1,4 @@
-import {Component, effect, EventEmitter, inject, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, effect, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {finalize} from 'rxjs/operators';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
@@ -58,6 +58,9 @@ interface VerificationState {
 export class StepContactComponent implements OnInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   // services
   ds = inject(ProfileDataService);
@@ -140,6 +143,14 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (state.phone) {
       this.phone.value = state.phone.e164Number;
       this.phone.valid = true;
+      const savedIso2 = (state.phone.countryCode ?? '').toLowerCase();
+      const isAllowed =
+        !savedIso2 ||
+        this.onlyPhoneCountries.length === 0 ||
+        this.onlyPhoneCountries.some(c => c.toLowerCase() === savedIso2);
+      if (savedIso2 && isAllowed) {
+        this.selectedCountryIso2 = state.phone.countryCode as CountryISO;
+      }
     }
     // Enforce rule on initial load:
     if (state.phone && !this.isQatarPhone(state.phone)) {
@@ -299,6 +310,15 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (!value || this.ds.isLocked('phone')) return;
 
     this.phoneInput = value;
+    const incomingIso2 = (value.countryCode ?? '').toLowerCase();
+    if (incomingIso2) {
+      const isAllowed =
+        this.onlyPhoneCountries.length === 0 ||
+        this.onlyPhoneCountries.some(c => c.toLowerCase() === incomingIso2);
+      if (isAllowed) {
+        this.selectedCountryIso2 = value.countryCode as CountryISO;
+      }
+    }
     this.phone.touched = true;
     this.phone.errorMessage = null;
 
@@ -595,6 +615,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(dto, s);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

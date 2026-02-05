@@ -93,8 +93,9 @@ public sealed class ReviseProfilePersonalHandler(
         }
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
-        await uow.SaveChangesAsync(ct);
-        return Result.Ok(Unit.Value);
+        var result = await uow.SaveChangesAsync(ct);
+        return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);
+
         
         
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)

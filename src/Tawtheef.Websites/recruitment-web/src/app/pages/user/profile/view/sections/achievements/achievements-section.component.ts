@@ -38,7 +38,7 @@ export class ProfileAchievementsSectionComponent {
   @Output() refresh = new EventEmitter<void>();
 
   protected achievementsUnderReview(){
-    return this.changesRequest.map(i=>i.newValue).map((cr,index)=>{
+    return this.normalizePendingItems().map(cr => {
       return {
         id: cr.Id,
         achievementTypeId: cr.AchievementTypeId,
@@ -52,18 +52,28 @@ export class ProfileAchievementsSectionComponent {
         attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
         relatedToSpecialization: cr.RelatedToSpecialization,
       } as AchievementDto;
-    })
+    });
   }
 
   protected noteForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewNoteDto | null {
-    if (!achievement?.id) return null;
-    return (
-      this.notes.find(
-        note =>
-          note.targetType === ReviewTargetTypeEnum.Row &&
-          note.entityId?.toLowerCase() === achievement.id.toLowerCase()
-      ) ?? null
-    );
+    if (!achievement) return null;
+    const rowNote = achievement.id
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Row &&
+            note.entityId?.toLowerCase() === achievement.id.toLowerCase()
+        ) ?? null
+      : null;
+
+    const attachmentNote = achievement.attachment?.resourceId
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Attachment &&
+            note.resourceId?.toLowerCase() === achievement.attachment?.resourceId.toLowerCase()
+        ) ?? null
+      : null;
+
+    return rowNote ?? attachmentNote ?? null;
   }
 
   protected addAchievement() {this.dialogService
@@ -95,6 +105,13 @@ export class ProfileAchievementsSectionComponent {
       issueDate: achievement.issueDate ? new Date(achievement.issueDate) : null,
       description: achievement.description ?? '',
       fileName: achievement.attachment?.fileName ?? '',
+      attachment: achievement.attachment
+        ? {
+            resourceId: achievement.attachment.resourceId,
+            resourceName: achievement.attachment.fileName,
+            url: achievement.attachment.url ?? null,
+          }
+        : null,
       relatedToSpecialization: achievement.relatedToSpecialization ?? null,
     };
 
@@ -129,5 +146,13 @@ export class ProfileAchievementsSectionComponent {
   protected open(file: FileRefDto | null | undefined) {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');
+  }
+
+  private normalizePendingItems(): any[] {
+    const items = this.changesRequest.map(change => change.newValue).flatMap(value => {
+      if (!value) return [];
+      return Array.isArray(value) ? value : [value];
+    });
+    return items.filter(item => item?.AchievementTypeId || item?.Title);
   }
 }

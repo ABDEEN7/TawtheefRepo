@@ -83,8 +83,8 @@ public sealed class ReviseProfilePrereqHandler(
         CleanCandidateTypeDependents();
 
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
-        await uow.SaveChangesAsync(ct);
-        return Result.Ok(Unit.Value);
+        var result = await uow.SaveChangesAsync(ct);
+        return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);
 
         void CleanCandidateTypeDependents()
         {

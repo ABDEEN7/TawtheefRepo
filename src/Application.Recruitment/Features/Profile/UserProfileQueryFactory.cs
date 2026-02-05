@@ -59,10 +59,13 @@ internal static class UserProfileQueryFactory
                 .Include(p => p.Qualifications)!.ThenInclude(q => q.Certificate),
             ProfileSection.Experience or ProfileSection.TrainingCourses => query
                 .Include(p => p.Experiences)!.ThenInclude(e => e.Country)
-                .Include(p => p.Experiences)!.ThenInclude(e => e.Qualification)
                 .Include(p => p.Experiences)!.ThenInclude(e => e.Certificate)
                 .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Country)
-                .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate),
+                .Include(p => p.TrainingCourses)!.ThenInclude(t => t.Certificate)
+                .Include(p => p.Qualifications)!.ThenInclude(q => q.Degree)
+                .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
+                .Include(p => p.Qualifications)!.ThenInclude(q => q.SubMajor)
+            ,
             ProfileSection.CertificatesAndAwards => query
                 .Include(p => p.Achievements)!.ThenInclude(a => a.AchievementType)
                 .Include(p => p.Achievements)!.ThenInclude(a => a.Country)
