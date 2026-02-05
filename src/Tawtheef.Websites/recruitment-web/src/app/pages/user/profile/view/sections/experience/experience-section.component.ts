@@ -49,6 +49,7 @@ type PendingExperienceChange = {
   styleUrls: ['./experience-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class ProfileExperienceSectionComponent {
   private readonly dialogService = inject(DialogService);
   private readonly translate = inject(TranslateService);
