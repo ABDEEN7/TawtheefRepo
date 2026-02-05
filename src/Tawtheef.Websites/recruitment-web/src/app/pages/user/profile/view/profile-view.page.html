@@ -1,412 +1,332 @@
-<main
-  class="container-fluid py-3"
-  [i18nNamespace]="['pages/user/profile-overview', 'pages/user/wizard-profile']"
->
-  <div class="container-xxl">
+<main  [i18nNamespace]="['pages/user/profile-overview','pages/user/wizard-profile']">
 
-    @if (pageLoading()) {
-      <!-- FULL PAGE SKELETON -->
-      <section class="card shadow-sm mb-3">
-        <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-column gap-4">
+  @if (pageLoading()) {
+    <!-- FULL PAGE SKELETON -->
+    <section class="card card-table mb-4">
+          <div class="card-body">
+                <div class="d-flex flex-column gap-4">
 
-            <!-- Header skeleton -->
-            <div class="d-flex align-items-center gap-3 flex-wrap">
-              <p-skeleton shape="circle" size="88px"></p-skeleton>
+        <!-- Header skeleton -->
+        <div class="d-flex align-items-center gap-3">
+          <p-skeleton shape="circle" size="88px"></p-skeleton>
 
-              <div class="flex-grow-1">
-                <p-skeleton width="40%" height="1.75rem"></p-skeleton>
-                <p-skeleton width="60%" height="1rem" class="mt-2"></p-skeleton>
-              </div>
-            </div>
-
-            <!-- Mini cards skeleton -->
-            <div class="row g-3">
-              @for (_ of [1, 2]; track _) {
-                <div class="col-12 col-md-6">
-                  <p-skeleton width="100%" height="3.5rem"></p-skeleton>
-                </div>
-              }
-            </div>
-
-            <!-- Tiles skeleton -->
-            <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
-              @for (_ of [1, 2, 3, 4, 5]; track _) {
-                <div class="col">
-                  <div class="pv-tile pv-tile--skeleton">
-                    <p-skeleton width="100%" height="4.5rem"></p-skeleton>
-                  </div>
-                </div>
-              }
-            </div>
-
+          <div class="flex-grow-1">
+            <p-skeleton width="40%" height="1.75rem"></p-skeleton>
+            <p-skeleton width="60%" height="1rem" class="mt-2"></p-skeleton>
           </div>
         </div>
-      </section>
 
-      <section class="card shadow-sm">
-        <div class="card-body p-3 p-md-4">
-          <p-skeleton width="30%" height="1.5rem"></p-skeleton>
-          <p-skeleton width="100%" height="8rem" class="mt-3"></p-skeleton>
-        </div>
-      </section>
-
-    } @else {
-
-      <!-- TOP CARD -->
-      <section class="card shadow-sm mb-3">
-        <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-column gap-4">
-
-            <!-- Header -->
-            <header class="pv-header">
-              <div class="pv-header__left">
-                <div class="pv-avatar">
-                  <img class="pv-avatar__img" [src]="avatar" alt="Avatar" />
-                </div>
-
-                <div class="pv-header__meta">
-                  <div class="pv-header__name-row">
-                    <h4 class="pv-header__name text-truncate">
-                      {{ header()?.fullNameAr || header()?.fullNameEn }}
-                    </h4>
-
-                    <span class="pv-chip" [ngClass]="statusVm().severity">
-                      <i
-                        class="hgi hgi-stroke"
-                        [ngClass]="
-                          statusVm().severity === 'chip-ok'
-                            ? 'hgi-checkmark-circle-02'
-                            : 'hgi-hourglass'
-                        "
-                        aria-hidden="true"
-                      ></i>
-                      {{ statusVm().labelKey | translate }}
-                    </span>
-                  </div>
-
-                  <p class="pv-header__hint mb-0">
-                    {{ statusVm().hintKey | translate }}
-                  </p>
-                </div>
+        <!-- Mini cards skeleton -->
+        <div class="row g-3">
+          @for (_ of [1,2]; track _) {
+            <div class="col-12 col-md-6">
+              <div class="mini-card">
+                <p-skeleton width="100%" height="3.5rem"></p-skeleton>
               </div>
-            </header>
-
-            <!-- Contact cards -->
-            <section class="row g-3">
-              <div class="col-12 col-md-6">
-                <div class="pv-mini-card pv-mini-card--lift h-100">
-                  <div class="pv-mini-card__inner">
-                    <div class="pv-mini-card__left">
-                      <span class="pv-icon-pill" aria-hidden="true">
-                        <i class="bi bi-telephone"></i>
-                      </span>
-
-                      <div class="pv-mini-card__text">
-                        <p class="pv-muted">
-                          {{ 'profileView.fields.phone' | translate }}
-                        </p>
-                        <div class="pv-strong text-truncate">
-                          {{ header()?.phone || '—' }}
-                        </div>
-                      </div>
-                    </div>
-
-                    <span class="pv-badge pv-badge--ok">
-                      <i class="hgi hgi-stroke hgi-tick-02" aria-hidden="true"></i>
-                      {{ 'profileView.verification.verified' | translate }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-md-6">
-                <div class="pv-mini-card pv-mini-card--lift h-100">
-                  <div class="pv-mini-card__inner">
-                    <div class="pv-mini-card__left">
-                      <span class="pv-icon-pill" aria-hidden="true">
-                        <i class="hgi hgi-stroke hgi-mail-01"></i>
-                      </span>
-
-                      <div class="pv-mini-card__text">
-                        <p class="pv-muted">
-                          {{ 'profileView.fields.email' | translate }}
-                        </p>
-                        <div class="pv-strong text-truncate">
-                          {{ header()?.email || '—' }}
-                        </div>
-                      </div>
-                    </div>
-
-                    <span class="pv-badge pv-badge--ok">
-                      <i class="hgi hgi-stroke hgi-tick-02" aria-hidden="true"></i>
-                      {{ 'profileView.verification.verified' | translate }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- Tiles (FIX: use tilesVm()) -->
-            <section class="pv-tiles">
-              <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
-                @for (card of tilesVm(); track card.section) {
-                  <div class="col">
-                    <button
-                      type="button"
-                      class="pv-tile"
-                      [class.is-active]="card.isActive"
-                      (click)="openCard(card.section)"
-                    >
-                      <div class="pv-tile__top">
-                        <div class="pv-tile__num">
-                          @if (card.notesCount) { {{ card.notesCount }} }
-                        </div>
-
-                        <div class="pv-tile__badge">
-                          @if (card.notesCount) {
-                            <span class="pv-pill pv-pill--danger">
-                              <i class="hgi hgi-stroke hgi-alert-02" aria-hidden="true"></i>
-                              {{ 'profileOverview.review.notesCount' | translate }}
-                            </span>
-                          } @else if (card.hasPending) {
-                            <span class="pv-pill pv-pill--danger">
-                              <i class="hgi hgi-stroke hgi-hourglass" aria-hidden="true"></i>
-                              {{ 'profileOverview.changeRequests.status.pending' | translate }}
-                            </span>
-                          } @else {
-                            <span class="pv-pill pv-pill--success">
-                              <i class="hgi hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i>
-                              {{ 'profileView.sections.status.ok' | translate }}
-                            </span>
-                          }
-                        </div>
-                      </div>
-
-                      <div class="pv-tile__title">
-                        {{ card.labelKey | translate }}
-                      </div>
-                    </button>
-                  </div>
-                }
-              </div>
-            </section>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- LOWER CARD -->
-      <section class="card shadow-sm">
-        <div class="card-body p-3 p-md-4">
-
-          @if (summaryLoading()) {
-            <div class="pv-inline-loading">
-              <p-progressSpinner styleClass="spinner-sm" strokeWidth="4"></p-progressSpinner>
-              <span>{{ 'common.loading' | translate }}</span>
-            </div>
-          } @else {
-
-            <!-- HR Notes -->
-            @if ((activeSectionReviewNotes().length || 0) > 0) {
-              <section class="coi-card">
-                <header class="coi-header">
-                  <div class="coi-title">
-                    <span class="coi-title-text">
-                      {{ 'profileView.hrNotes.title' | translate }}
-                    </span>
-                    <i class="bi bi-journal-text coi-title-icon" aria-hidden="true"></i>
-                  </div>
-                </header>
-
-                <div class="coi-content">
-                  <div class="coi-content-inner" role="region" aria-label="HR notes">
-                    <ol class="coi-notes">
-                      @for (note of activeSectionReviewNotes(); track note.reviewItemId) {
-                        <li class="coi-note">
-                          @if (note.note) {
-                            <div class="coi-note-text">{{ note.note }}</div>
-                          }
-                        </li>
-                      }
-                    </ol>
-                  </div>
-
-                  <div class="coi-scrollbar" aria-hidden="true">
-                    <div class="coi-scrollbar-bar">
-                      <div class="coi-scrollbar-thumb"></div>
-                    </div>
-                    <div class="coi-scrollbar-spacer"></div>
-                  </div>
-
-                  <div class="coi-resize-handle" aria-hidden="true">
-                    <span class="coi-resize-line coi-resize-line-1"></span>
-                    <span class="coi-resize-line coi-resize-line-2"></span>
-                  </div>
-                </div>
-              </section>
-            }
-
-            <!-- Section details -->
-            <div class="pv-section-body" #sectionContent>
-              @if (expanded()) {
-                @let active = expanded()!;
-
-                @if (sectionStatus(active) === 'loading') {
-                  <div class="pv-section-head">
-                    <div class="pv-section-title">{{ keyLabel | translate }}</div>
-                    <span class="pv-inline-loading pv-inline-loading--sm">
-                      <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
-                      {{ 'common.loading' | translate }}
-                    </span>
-                  </div>
-                  <div class="mt-3">
-                    <p-skeleton width="100%" height="3rem"></p-skeleton>
-                  </div>
-                } @else if (sectionStatus(active) === 'error') {
-                  <div class="alert alert-danger mt-3">
-                    {{ 'common.loadFailed' | translate }}
-                  </div>
-                } @else if (sectionStatus(active) === 'resolved') {
-                  @switch (active) {
-
-                    @case (ProfileSectionEnum.Prerequisites) {
-                      <app-profile-prerequisites-section
-                        [profile]="sectionValue(active)"
-                        [visibility]="visibility()"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
-                        [changesRequest]="changes(ProfileSectionEnum.Prerequisites)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Personal) {
-                      <app-profile-personal-section
-                        [profile]="sectionValue(active)"
-                        [visibility]="visibility()"
-                        [canReplaceAttachment]="canReplaceAttachment"
-                        [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
-                        [changesRequest]="changes(ProfileSectionEnum.Personal)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Personal)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Contact) {
-                      <app-profile-contact-section
-                        [profile]="sectionValue(active)"
-                        [visibility]="visibility()"
-                        [canReplaceAttachment]="canReplaceAttachment"
-                        [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
-                        [changesRequest]="changes(ProfileSectionEnum.Contact)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Contact)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Qualifications) {
-                      <app-profile-qualifications-section
-                        [profile]="sectionValue(active)"
-                        [canReplaceAttachment]="canReplaceAttachment"
-                        [canAddAttachment]="canAddAttachments"
-                        [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Qualifications)"
-                        (refresh)="reloadSection(ProfileSectionEnum.Qualifications)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Experience) {
-                      <app-profile-experience-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canAddAttachment]="canAddAttachments"
-                        [changesRequest]="changes(ProfileSectionEnum.Experience)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Experience)"
-                        (refresh)="reloadSection(ProfileSectionEnum.Experience)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.TrainingCourses) {
-                      <app-profile-training-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canAddAttachment]="canAddAttachments"
-                        [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.TrainingCourses)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.CertificatesAndAwards) {
-                      <app-profile-achievements-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canAddAttachment]="canAddAttachments"
-                        [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.CertificatesAndAwards)"
-                        (refresh)="reloadSection(ProfileSectionEnum.CertificatesAndAwards)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Skills) {
-                      <app-profile-skills-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
-                        [changesRequest]="changes(ProfileSectionEnum.Skills)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Skills)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Languages) {
-                      <app-profile-languages-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
-                        [changesRequest]="changes(ProfileSectionEnum.Languages)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Languages)"
-                      />
-                    }
-
-                    @case (ProfileSectionEnum.Attachments) {
-                      <app-profile-attachments-section
-                        [profile]="sectionValue(active)"
-                        [isProfileApproved]="canReplaceAttachment"
-                        [canAddAttachment]="canAddAttachments"
-                        [changesRequest]="changes(ProfileSectionEnum.Attachments)"
-                        [notes]="activeSectionNotes()"
-                        (edit)="openEditDialog(ProfileSectionEnum.Attachments)"
-                        (refresh)="reloadSection(ProfileSectionEnum.Attachments)"
-                      />
-                    }
-
-                  }
-                }
-              } @else {
-                <div class="pv-empty">
-                  <button
-                    pButton
-                    type="button"
-                    class="btn btn-primary"
-                    (click)="openCard(ProfileSectionEnum.Prerequisites)"
-                  >
-                    {{ 'profileView.sections.openFirst' | translate }}
-                  </button>
-                </div>
-              }
             </div>
           }
-
         </div>
-      </section>
 
-    }
-  </div>
+        <!-- Section tiles skeleton -->
+        <div class="row g-3 mt-1 row-cols-1 row-cols-sm-2 row-cols-lg-5">
+          @for (_ of [1,2,3,4,5]; track _) {
+            <div class="col">
+              <div class="section-tile">
+                <p-skeleton width="100%" height="4.5rem"></p-skeleton>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+          </div>
+      
+    </section>
+
+    <!-- Lower panel skeleton -->
+    <section class="panel p-3 mt-3 p-md-4 shadow-sm">
+      <p-skeleton width="30%" height="1.5rem"></p-skeleton>
+      <p-skeleton width="100%" height="8rem" class="mt-3"></p-skeleton>
+    </section>
+  }
+
+  @else {
+  <!-- Big wrapper panel -->
+  <section class="card card-table mb-4">
+    <!-- Profile summary -->
+    <div class="card-body">
+      <div class="d-flex flex-column gap-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 header-row">
+          <div class="d-flex align-items-center gap-3">
+               <div class="profile-wrapper position-relative">
+                    <div id="profileImage" class="profile-image"><img class="avatar shadow-sm" [src]="avatar" alt="Avatar" /></div>
+               </div>
+              <div class="text-start">
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <h4 class="mb-1 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</h4>
+                      <span class="pill success" [ngClass]="statusVm().severity">
+                        <i class="hgi hgi-stroke"   [ngClass]="statusVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02  ' : 'hgi-hourglass'"></i>
+                        {{ statusVm().labelKey | translate }}
+                      </span>
+                  </div>
+                  <p class="fs-16 m-0">{{ statusVm().hintKey | translate }}</p>
+              </div>
+
+          </div>
+        </div>
+
+        <div class="row ">
+          <div class="col-12 col-md-6">
+              <div class="card card-table mb-3 lift-on-hover">
+                   <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                             <div class="d-flex align-items-center gap-3">
+                                <div class="action-buttons"><span class="btn bg-primary-light"><i class="bi bi-telephone"></i></span></div>
+                                <div class="text-start">
+                                  <p class="muted ">{{ 'profileView.fields.phone' | translate }}</p>
+                                  <div class="fw-bold">{{ header()?.phone || '—' }}</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
+                        </div>
+                        
+                   </div>
+                  
+              </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+               <div class="card card-table mb-3 lift-on-hover">
+                   <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                             <div class="d-flex align-items-center gap-3">
+                                  <div class="action-buttons"><span class="btn bg-primary-light"><i class="hgi hgi-stroke hgi-mail-01"></i></span></div>
+                                  <div class="text-start">
+                                      <p class="muted">{{ 'profileView.fields.email' | translate }}</p>
+                                      <div class="fw-bold">{{ header()?.email || '—' }}</div>
+                                  </div>
+                              </div>
+                            <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
+                            
+                        </div>
+                    </div>
+                </div>
+          </div>
+        </div>
+        <!-- Section tiles -->
+         <div class="card card-table pb-0">
+              <div class="card-body pb-0">
+                  <div class="row gx-3">
+                        @for (card of cards; track card.section) {
+                          <div class="col-md-2 mb-4">
+                               <div class="card card-table bg-light lift-on-hover" role="button" tabindex="0" [ngClass]="expanded() === card.section ? 'active' : ''" (click)="openCard(card.section)" (keydown.enter)="openCard(card.section)" (keydown.space)="$event.preventDefault(); openCard(card.section)">
+                                    <div class="card-body p-3">
+                                          <div class="d-flex align-items-center justify-content-between">
+                                            <div class="fs-18 fw-bold"><span *ngIf="reviewNotes()?.sectionIndex?.[card.section]">{{ reviewNotes()?.sectionIndex?.[card.section] }}</span></div>
+                                            <div class="text-end">
+                                                <span class="pill danger tile-badge" *ngIf="reviewNotes()?.sectionIndex?.[card.section] as c">
+                                                    <i class="hgi hgi-stroke hgi-alert-02"></i>
+                                                    {{ 'profileOverview.review.notesCount' | translate }}
+                                                </span>
+                                                <span class="pill success tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                                                      <i class="hgi hgi-stroke hgi-checkmark-circle-02 fs-16"></i>
+                                                      @if(profileStatus() == UserProfileStatusEnum.Approved){
+                                                        {{ 'profileView.sections.status.ok' | translate }}
+                                                      }
+                                                      @else{
+                                                        {{ 'profileOverview.reviewStatus.pending' | translate }}
+                                                      }
+                                                </span>
+                                            </div>
+                                          </div>
+                                        <div class="mt-2 fw-semibold">{{ card.labelKey | translate }}</div>
+                                    </div>
+                               </div>
+                          </div>
+                        }
+                  </div>
+              </div>
+        </div>
+       
+
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-table">
+      <!-- HR Notes -->
+      <div  *ngIf="summaryLoading()">
+          <div class="d-flex align-items-center gap-2 text-muted small">
+            <p-progressSpinner styleClass="spinner-sm" strokeWidth="4"></p-progressSpinner>
+            <span>{{ 'common.loading' | translate }}</span>
+          </div>
+      </div>
+    <div class="card-body mt-3" *ngIf="!summaryLoading() && (activeSectionReviewNotes()?.length || 0) > 0">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="hr-title">
+            <i class="bi bi-journal-text"></i>
+            {{ 'profileView.hrNotes.title' | translate }}
+          </div>
+        </div>
+
+        <div class="mini-card" style="min-height:140px">
+          <div class="d-flex gap-3">
+            <div class="text-start">
+              <ol class="mb-0 small" style="list-style-type: none;">
+                @for (note of activeSectionReviewNotes(); track note.reviewItemId) {
+                  <li class="mb-2">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
+                        {{ noteStatusLabelKey(note.status) | translate }}
+                      </span>
+                    </div>
+                    <div class="text-muted" *ngIf="note.note">{{ note.note }}</div>
+                  </li>
+                }
+              </ol>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="card-body">
+      @if(expanded()){
+        @let active = expanded()!;
+        <ng-container>
+          @if (sectionStatus(active) === 'loading') {
+              <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                  <div class="fw-semibold">{{ keyLabel | translate }}</div>
+                  <span class="text-muted small d-flex align-items-center gap-2">
+                      <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
+                      {{ 'common.loading' | translate }}
+                  </span>
+              </div>
+              <div class="mt-3"><p-skeleton width="100%" height="3rem"></p-skeleton></div>
+          }
+
+          @if (sectionStatus(active) === 'error') {
+            <div class="alert alert-danger mt-3">{{ 'common.loadFailed' | translate }}</div>
+          }
+
+          @if (sectionStatus(active) === 'resolved') {
+            <div [ngSwitch]="active">
+              <app-profile-prerequisites-section
+                *ngSwitchCase="ProfileSectionEnum.Prerequisites"
+                [profile]="sectionValue(active)"
+                [visibility]="visibility()"
+                [isProfileApproved]="canReplaceAttachment"
+                [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
+                [changesRequest]="changes(ProfileSectionEnum.Prerequisites)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)">
+              </app-profile-prerequisites-section>
+
+              <app-profile-personal-section
+                *ngSwitchCase="ProfileSectionEnum.Personal"
+                [profile]="sectionValue(active)"
+                [visibility]="visibility()"
+                [canReplaceAttachment]="canReplaceAttachment"
+                [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
+                [changesRequest]="changes(ProfileSectionEnum.Personal)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Personal)">
+              </app-profile-personal-section>
+
+              <app-profile-contact-section
+                *ngSwitchCase="ProfileSectionEnum.Contact"
+                [profile]="sectionValue(active)"
+                [visibility]="visibility()"
+                [canReplaceAttachment]="canReplaceAttachment"
+                [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
+                [changesRequest]="changes(ProfileSectionEnum.Contact)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Contact)">
+              </app-profile-contact-section>
+
+              <app-profile-qualifications-section
+                *ngSwitchCase="ProfileSectionEnum.Qualifications"
+                [profile]="sectionValue(active)"
+                [canReplaceAttachment]="canReplaceAttachment"
+                [canAddAttachment]="canAddAttachments"
+                [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Qualifications)"
+                (refresh)="reloadSection(ProfileSectionEnum.Qualifications)">
+              </app-profile-qualifications-section>
+
+              <app-profile-experience-section
+                *ngSwitchCase="ProfileSectionEnum.Experience"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canAddAttachment]="canAddAttachments"
+                [changesRequest]="changes(ProfileSectionEnum.Experience)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Experience)"
+                (refresh)="reloadSection(ProfileSectionEnum.Experience)">
+              </app-profile-experience-section>
+
+              <app-profile-training-section
+                *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canAddAttachment]="canAddAttachments"
+                [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.TrainingCourses)">
+              </app-profile-training-section>
+
+              <app-profile-achievements-section
+                *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canAddAttachment]="canAddAttachments"
+                [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.CertificatesAndAwards)"
+                (refresh)="reloadSection(ProfileSectionEnum.CertificatesAndAwards)">
+              </app-profile-achievements-section>
+
+              <app-profile-skills-section
+                *ngSwitchCase="ProfileSectionEnum.Skills"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
+                [changesRequest]="changes(ProfileSectionEnum.Skills)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Skills)">
+              </app-profile-skills-section>
+
+              <app-profile-languages-section
+                *ngSwitchCase="ProfileSectionEnum.Languages"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
+                [changesRequest]="changes(ProfileSectionEnum.Languages)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Languages)">
+              </app-profile-languages-section>
+
+              <app-profile-attachments-section
+                *ngSwitchCase="ProfileSectionEnum.Attachments"
+                [profile]="sectionValue(active)"
+                [isProfileApproved]="canReplaceAttachment"
+                [canAddAttachment]="canAddAttachments"
+                [changesRequest]="changes(ProfileSectionEnum.Attachments)"
+                [notes]="activeSectionNotes()"
+                (edit)="openEditDialog(ProfileSectionEnum.Attachments)"
+                (refresh)="reloadSection(ProfileSectionEnum.Attachments)">
+              </app-profile-attachments-section>
+            </div>
+          }
+        </ng-container>
+      }
+      @else{
+        <div class="text-center mt-3">
+          <button pButton type="button" class="btn btn-primary" (click)="openCard(ProfileSectionEnum.Prerequisites)">
+            {{ 'profileView.sections.openFirst' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+  }
 </main>
