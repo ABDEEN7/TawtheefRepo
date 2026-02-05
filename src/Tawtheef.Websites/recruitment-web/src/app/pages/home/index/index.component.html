@@ -89,7 +89,7 @@
       
       <p-carousel  class="mt-5"
   [value]="successStats"
-  [numVisible]="1"
+  [numVisible]="3"
   [numScroll]="1"
   [circular]="false"
   [autoplayInterval]="false"
@@ -109,7 +109,7 @@
                                   </div>
                                   <div class="row">
                                       <div class="col-12">
-                                          <div class="fs-18 fw-semibold">{{ review.value | translate}}</div>
+                                          <div class="fs-18 fw-semibold text-truncate-1">{{ review.value | translate}}</div>
                                           <div class="text-muted mt-1">{{ review.label | translate }}</div>
                                       </div>
                                   </div>
