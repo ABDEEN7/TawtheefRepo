@@ -41,7 +41,9 @@ export class FirstInfoSectionComponent {
     const b = this.profile?.basicInformation;
     return !!(
       b?.birthdayCertificate ||
-      b?.marriageCertificate
+      b?.marriageCertificate ||
+      b?.nationalCard ||
+      b?.resumeAttachment
     );
   }
 
