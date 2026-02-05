@@ -3,25 +3,31 @@ using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribut
 using Cortex.Mediator.Queries;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Queries;
 
-public sealed class GetDistributionProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
+public sealed class GetDistributionProfilesHandler(
+    IUnitOfWork uow,
+    UserManager<User> userManager,
+    ILocalizationService localizationService,
+    MapsterMapper.IMapper mapper)
     : IQueryHandler<GetDistributionProfilesQuery, Result<PaginatedResult<DistributionProfileDto>>>
 {
     public async Task<Result<PaginatedResult<DistributionProfileDto>>> Handle(
         GetDistributionProfilesQuery request,
         CancellationToken ct)
     {
-        var projection = new ProfileDistributionProjection(uow, userManager);
+        var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
         var items = await projection.LoadProfilesAsync(
             request.UserId!.Value,
             request,
             request.Status,
             request.SearchTerm,
+            request.TargetEntityId,
             ct);
         return Result.Ok(items);
     }

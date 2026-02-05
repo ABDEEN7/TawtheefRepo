@@ -17,7 +17,7 @@
                                    <i class="pi pi-check-square mx-2"></i>
                                   {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
                               </div></div>
-                             
+
                              <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
                                  <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
                                  <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
@@ -35,10 +35,12 @@
                                    </div>
                                     <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
 
-                                      <div class="small text-muted" *ngIf="loading()">{{ 'distribution.loading' | translate }}</div>
+                                      @if (loading()) {
+                                        <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
+                                      }
                                     </div>
                                   <div class="row align-items-end mb-4">
-                             <div class="col-lg-5 col-md-6">
+                             <div class="col-lg-4 col-md-6">
                                <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
                                <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
@@ -48,7 +50,6 @@
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
                                       [ngModel]="search()"
                                       (ngModelChange)="onSearchChange($event)"
-                                      (keydown.enter)="applySearch()"
                                     />
                                   </span>
                              </div>
@@ -68,10 +69,28 @@
                                    </ng-template>
                                  </p-select>
                              </div>
-                             <div class="col-lg-4 col-md-12 d-flex gap-2  flex-wrap">
-                                 <button class="btn btn-primary" type="button" (click)="applySearch()">
-                                   {{ 'distribution.filters.searchButton' | translate }}
-                                 </button>
+                             <div class="col-lg-3 col-md-4">
+                               <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
+                               <p-select
+                                 class="w-100"
+                                 [options]="targetEntities()"
+                                 optionValue="id"
+                                 [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
+                                 [ngModel]="targetEntityId()"
+                                 (onChange)="onTargetEntityChange($event.value)">
+                                 <ng-template pTemplate="selectedItem" let-item>
+                                   <span>{{ item?.name }}</span>
+                                 </ng-template>
+                                 <ng-template let-item pTemplate="item">
+                                   <span>{{ item.name }}</span>
+                                 </ng-template>
+                               </p-select>
+                             </div>
+                             <div class="col-lg-2 col-md-4 d-flex gap-2 flex-wrap">
+                               <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
+                                 <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
+                                 <i class="pi pi-times" pButtonIcon></i>
+                               </button>
                              </div>
                            </div>
                                          <div class="table-card rounded overflow-hidden">
@@ -106,7 +125,9 @@
                                                <div class="fw-semibold">{{ profile.candidateName }}</div>
                                              </td>
                                              <td>
-                                               <span class="pill neutral">{{ profile.specialization || ('distribution.table.noValue' | translate) }}</span>
+                                               <span class="pill neutral">
+                                                 {{ profile.specialization || ('distribution.table.noValue' | translate) }}
+                                               </span>
                                              </td>
                                              <td>
                                                <p-tag
@@ -121,20 +142,24 @@
                                              </td>
                                              <td>
                                                <div class="d-flex align-items-center gap-2">
-                                                 <p-avatar
-                                                   icon="pi pi-user"
-                                                   shape="circle"
-                                                   class="bg-light text-muted d-none d-xl-flex"
-                                                   *ngIf="!profile.assignedEmployeeName"
-                                                 ></p-avatar>
-                                                 <p-avatar
-                                                   [label]="profile.assignedEmployeeName ? profile.assignedEmployeeName[0] : ''"
-                                                   shape="circle"
-                                                   class="bg-primary text-white"
-                                                   *ngIf="profile.assignedEmployeeName"
-                                                 ></p-avatar>
+                                                 @if (!profile.assignedEmployeeName) {
+                                                   <p-avatar
+                                                     icon="pi pi-user"
+                                                     shape="circle"
+                                                     class="bg-light text-muted d-none d-xl-flex"
+                                                   ></p-avatar>
+                                                 }
+                                                 @if (profile.assignedEmployeeName) {
+                                                   <p-avatar
+                                                     [label]="profile.assignedEmployeeName[0]"
+                                                     shape="circle"
+                                                     class="bg-primary text-white"
+                                                   ></p-avatar>
+                                                 }
                                                  <div>
-                                                   <div class="fw-semibold">{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</div>
+                                                   <div class="fw-semibold">
+                                                     {{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}
+                                                   </div>
                                                  </div>
                                                </div>
                                              </td>
@@ -153,18 +178,6 @@
                                                    (click)="openManualDialog(profile.profileId)">
                                                    <i class="pi pi-user-plus" pButtonIcon></i>
                                                  </button>
-                                                 <button
-                                                   pButton
-                                                   pRipple
-                                                   type="button"
-                                                   class="p-button-rounded p-button-text"
-                                                   [pTooltip]="'distribution.actions.redistribute' | translate"
-                                                   (click)="openReassignDialog('auto', profile.profileId)">
-                                                   <i class="pi pi-sync" pButtonIcon></i></button>
-                                                   <div class="action-buttons">
-                                                         <a class="btn-text" (click)="openAssignFilesDialog()">عرض الملف <i class="hgi hgi-stroke hgi-view"></i></a>
-                                                   </div>
-                                                  
                                                </div>
                                              </td>
                                            </tr>
@@ -194,42 +207,39 @@
                                      </div>
                          </div>
                      </div>
-                   
+
                      <div class="col-md-12">
                           <div class="card card-table">
                             <div class="card-body">
-                              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                                <div>
-                                  <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
-                                  <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
-                                </div>
-                                <div class="d-flex gap-2 flex-wrap">
-                                  <button
-                                    pButton
-                                    class="p-button-outlined"
-                                    type="button"
-                                    (click)="openReassignDialog('manual')"
-                                    [disabled]="loading() || selectedIds().size === 0">
-                                    <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
-                                    <i class="pi pi-replay" pButtonIcon></i>
-                                  </button>
-                                  <button
-                                    pButton
-                                    class="p-button-secondary"
-                                    type="button"
-                                    (click)="openAutoDialog()"
-                                    [disabled]="loading()">
-                                    <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
-                                    <i class="pi pi-sync" pButtonIcon></i>
-                                  </button>
-                                  <button
-                                    pButton
-                                    type="button"
-                                    (click)="openManualDialog()"
-                                    [disabled]="loading()">
-                                    <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
-                                    <i class="pi pi-user-plus" pButtonIcon></i>
-                                  </button>
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                  <div>
+                                    <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
+                                    <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
+                                  </div>
+                                <div class="distribution-actions d-flex align-items-center flex-wrap gap-3">
+                                  <div class="selection-count">
+                                    {{ 'distribution.summary.selectedCountLabel' | translate: { count: selectedIds().size } }}
+                                  </div>
+                                  <div class="d-flex gap-2 flex-wrap">
+                                    <button
+                                      pButton
+                                      class="distribution-btn distribution-btn--auto"
+                                      type="button"
+                                      (click)="openAutoDialog()"
+                                      [disabled]="loading()">
+                                      <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+                                      <i class="pi pi-sync" pButtonIcon></i>
+                                    </button>
+                                    <button
+                                      pButton
+                                      type="button"
+                                      class="distribution-btn distribution-btn--manual"
+                                      (click)="openManualDialog()"
+                                      [disabled]="loading()">
+                                      <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+                                      <i class="pi pi-user-plus" pButtonIcon></i>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
