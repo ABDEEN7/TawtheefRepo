@@ -1,7 +1,7 @@
 import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
 import {DialogService} from 'primeng/dynamicdialog';
 import {TranslateService} from '@ngx-translate/core';
-import {ACHIEVEMENT_DIALOG_LIMITS, AchievementModal} from './dialogs/achievement.modal';
+import {AchievementModal} from './dialogs/achievement.modal';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
@@ -31,8 +31,6 @@ export class StepAchievementsComponent implements OnInit {
 
   saving = false;
   private lastSubmittedSignature: string | null = null;
-
-  readonly limits = ACHIEVEMENT_DIALOG_LIMITS;
 
   get step() {
     const stepValidity = createStepValiditySignal(this.ds.state);

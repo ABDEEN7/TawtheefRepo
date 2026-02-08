@@ -51,9 +51,6 @@
         [readonly]="ds.isLocked('qid')"
         [ngClass]="{ 'locked-field': ds.isLocked('qid') }"
       />
-      <small *ngIf="ds.isLocked('qid')" class="fz-2xs text-muted">
-        {{ 'wizard.accountFieldNote' | translate }}
-      </small>
     </div>
 
     <!-- Nationality -->
@@ -72,9 +69,6 @@
         [readonly]="ds.isLocked('nationality')"
         [ngClass]="{ 'locked-field': ds.isLocked('nationality') }"
       ></p-select>
-      <small *ngIf="ds.isLocked('nationality')" class="fz-2xs text-muted">
-        {{ 'wizard.accountFieldNote' | translate }}
-      </small>
     </div>
 
     <!-- DOB -->
@@ -86,9 +80,6 @@
                      [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'"
                      [disabled]="ds.isLocked('dob')" [ngClass]="{ 'locked-field': ds.isLocked('dob') }" fluid>
       </p-date-picker>
-      <small *ngIf="ds.isLocked('dob')" class="fz-2xs text-muted">
-        {{ 'wizard.accountFieldNote' | translate }}
-      </small>
     </div>
 
     <!-- Gender -->
@@ -101,9 +92,6 @@
         class="w-full md:w-56" [readonly]="ds.isLocked('gender')"
         [ngClass]="{ 'locked-field': ds.isLocked('gender') }"
       ></p-select>
-      <small *ngIf="ds.isLocked('gender')" class="fz-2xs text-muted">
-        {{ 'wizard.accountFieldNote' | translate }}
-      </small>
     </div>
 
     <!-- Religion -->
@@ -197,7 +185,7 @@
           [options]="lookups.sponsorTypes()"
           name="sponsorType"
           [ngModel]="ds.state().sponsorType"
-          (ngModelChange)="updateField('sponsorType', $event)"
+          (ngModelChange)="onSponsorTypeChange($event)"
           [filter]="true"
           filterBy="additionalData.nameAr,additionalData.nameEn,name"
           optionLabel="name"
@@ -226,20 +214,35 @@
           />
         </div>
         <!-- Sponsor Employer Number (Ministry of Labor) -->
+        !-- Sponsor Employer Number (QID / Establishment No.) -->
         <div class="col-md-4">
           <label class="form-label required">
             {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.qid`| lowercase | translate }}
           </label>
+
           <input
             pInputText
             type="text"
             class="form-control"
-
             name="sponsorEmployerNumber"
+            inputmode="numeric"
+            autocomplete="off"
+            [attr.maxlength]="sponsorEmployerNumberMaxLen"
+            [attr.placeholder]="'wizard.placeholders.typeHere' | translate"
             [ngModel]="ds.state().sponsorEmployerNumber"
-            (ngModelChange)="updateField('sponsorEmployerNumber', $event)"
-            placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+            (ngModelChange)="onSponsorEmployerNumberChange($event)"
+            [ngClass]="{
+      'p-invalid': sponsorEmployerNumberInvalid
+    }"
           />
+
+          <small class="fz-2xs text-muted">
+            {{ sponsorEmployerNumberHintKey | translate }}
+          </small>
+
+          <small *ngIf="sponsorEmployerNumberInvalid" class="text-danger fz-2xs">
+            {{ sponsorEmployerNumberErrorKey | translate }}
+          </small>
         </div>
         <div class="col-md-4" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
           <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>

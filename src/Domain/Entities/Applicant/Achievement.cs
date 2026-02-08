@@ -24,7 +24,7 @@ public class Achievement : EventEntity
     public Country? Country { get; set; }
 
     public DateOnly IssueDate { get; set; }
-    [MaxLength(256)]
+    [MaxLength(500)]
     public string? Description { get; set; }
 
     public bool? RelatedToSpecialization { get; set; }

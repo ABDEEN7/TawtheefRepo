@@ -28,7 +28,8 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         if(UserId.IsFailed)
             return Unauthorized(UserId.Errors);
-        var result = await mediator.Send(new GetOperationProfileQuery { UserId = UserId.Value});
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetOperationProfileQuery { UserId = UserId.Value, Language = language});
         return result.ToActionResult();
     }
 }

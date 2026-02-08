@@ -22,11 +22,8 @@
           >
             {{ 'validation.required' | translate }}
           </small>
-          <small
-            *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)"
-            class="text-danger mt-1 d-block"
-          >
-            {{ 'validation.maxLength' | translate: { max: 150 } }}
+          <small *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+            {{ 'validation.maxLength' | translate:{max:256} }}
           </small>
         </div>
 
@@ -152,8 +149,7 @@
             <label class="form-label required">{{ 'wizard.experience.from' | translate }} </label>
             <p-date-picker
               formControlName="from"
-              view="month"
-              dateFormat="yy-mm"
+              [showOnFocus]="true" dateFormat="yy-mm-dd"
               fluid
               [maxDate]="today"
               (onSelect)="touchDates()"
@@ -192,8 +188,7 @@
             </label>
             <p-date-picker
               formControlName="to"
-              view="month"
-              dateFormat="yy-mm"
+              [showOnFocus]="true" dateFormat="yy-mm-dd"
               fluid
               [disabled]="f['current'].value"
               [minDate]="f['from'].value || null"

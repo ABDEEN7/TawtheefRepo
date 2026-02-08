@@ -28,6 +28,8 @@
   "public.nav.success": "Success stories",
   "public.nav.faq": "Frequently Asked Questions",
   "public.nav.login": "Login",
+  "public.nav.logout": "Logout",
+  "public.nav.profile.dashboard": "Dashboard",
 
   "internal.sidebar.home": "Home",
   "internal.sidebar.distribution": "Facility Distribution",

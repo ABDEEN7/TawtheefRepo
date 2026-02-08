@@ -37,6 +37,8 @@
   "public.nav.success": "قصص نجاح",
   "public.nav.faq": "الأسئلة الشائعة",
   "public.nav.login": "تسجيل الدخول",
+  "public.nav.logout": "تسجيل الخروج",
+  "public.nav.profile.dashboard": "لوحة التحكم",
 
   "public.footer.rights": "جميع الحقوق محفوظة © 2026",
   "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 —جميع الحقوق محفوظة",

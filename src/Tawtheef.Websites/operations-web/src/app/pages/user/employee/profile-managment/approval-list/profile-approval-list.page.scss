@@ -1,0 +1,39 @@
+.approval-table tr:hover {
+  background: #f7f9fb;
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #eef2f6;
+}
+
+.pill.warning {
+  background: #fff3cd;
+}
+.approval-card .card-body { padding: 1.25rem; }
+
+.approval-filters .card-body { padding: 1rem; }
+
+.table-card { background: #fff; }
+
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background: rgba(0,0,0,.02); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: .28rem .6rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  line-height: 1;
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+.pill.neutral { background: rgba(0,0,0,.04); }
+.pill.warning { background: rgba(255,193,7,.15); border-color: rgba(255,193,7,.35); }
+
+.min-w-170 { min-width: 170px; }
+.min-w-200 { min-width: 200px; }
+.min-w-250 { min-width: 250px; }

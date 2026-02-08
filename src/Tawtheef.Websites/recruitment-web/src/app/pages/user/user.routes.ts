@@ -21,7 +21,7 @@ export const userRoutes: Routes = [
       import('./job-details/job-details').then(m => m.JobDetails)
   },
   {
-    path: 'wizard-profile',
+    path: 'create-profile',
     loadChildren: () =>
       import('./profile//wizard-profile/wizard-profile.module').then(m => m.WizardProfileModule),
   }

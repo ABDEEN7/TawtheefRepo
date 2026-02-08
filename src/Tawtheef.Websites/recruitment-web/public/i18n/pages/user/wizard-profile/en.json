@@ -217,8 +217,8 @@
   "wizard.courses.table.file": "File",
   "wizard.courses.add": "Add course",
   "wizard.skills.title": "Skills & Languages",
-  "wizard.skills.skills": "Skills (Tags)",
-  "wizard.skills.skill": "Skills (Tags)",
+  "wizard.skills.skills": "Skills",
+  "wizard.skills.skill": "Skills",
   "wizard.skills.hint": "Type at least 3 characters to search.",
   "wizard.skills.placeholder": "Start typing to search for skills...",
   "wizard.skills.typeMore": "Type at least 3 characters to start searching...",
@@ -360,5 +360,12 @@
   "wizard.review.titleStep": "Final review",
   "wizard.profile.skills.duplicateMessage": "This skill has already been added.",
   "wizard.profile.languages.duplicate": "This language has already been added.",
-  "wizard.profile.degrees.duplicate": "This degree has already been added."
+  "wizard.profile.degrees.duplicate": "This degree has already been added.",  "wizard.personal.sponsorEmployerNumber.required": "Sponsor number is required.",
+  "wizard.personal.sponsorEmployerNumber.digitsOnly": "Digits only.",
+
+  "wizard.personal.sponsor.individual.qidHint11": "QID must be 11 digits.",
+  "wizard.personal.sponsor.individual.qidInvalid11": "QID must be exactly 11 digits.",
+
+  "wizard.personal.sponsor.company.numberHint8": "Establishment number must be 8 digits.",
+  "wizard.personal.sponsor.company.numberInvalid8": "Establishment number must be exactly 8 digits."
 }

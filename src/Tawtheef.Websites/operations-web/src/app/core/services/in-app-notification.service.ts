@@ -1,4 +1,4 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
@@ -24,7 +24,10 @@ export class InAppNotificationService {
     const params = new HttpParams().set('limit', limit);
     this.loadingSubject.next(true);
 
-    return this.http.get<NotificationModel[]>(this.endpoints.notifications.list, {params}).pipe(
+    return this.http.get<NotificationModel[]>(this.endpoints.notifications.list, {
+      params,
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    },).pipe(
       tap(notifications => this.notificationsSubject.next(notifications)),
       catchError(() => {
         if (notifyOnError) {

@@ -4,6 +4,7 @@ using Cortex.Mediator.Queries;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Authenticator.Handlers.Queries;
@@ -26,7 +27,7 @@ public class GetOperationProfileHandler(IUserRepository userRepository, IMediaUr
             UserId = user.Id,
             Email = user.Email!,
             Avatar = generator.ResolveAbsolute(user.Avatar),
-            FullName = user.FullNameEn,
+            FullName = user.GetLocalizedName(request.Language) ?? string.Empty,
             PhoneNumber =  user.PhoneNumber ?? string.Empty
         });
     }
