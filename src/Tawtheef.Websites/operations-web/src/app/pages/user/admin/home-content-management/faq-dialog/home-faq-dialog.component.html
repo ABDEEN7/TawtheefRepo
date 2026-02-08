@@ -1,0 +1,59 @@
+<div i18nNamespace="pages/admin/home-content-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <form class="modal-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">{{ 'HOME_CONTENT.QUESTION_AR' | translate }}</label>
+        <input class="form-control" formControlName="questionAr" [class.is-invalid]="submitted && form.controls.questionAr.invalid" />
+        @if (submitted && form.controls.questionAr.invalid) {
+          <div class="invalid-feedback d-block">{{ requiredError() }}</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ 'HOME_CONTENT.QUESTION_EN' | translate }}</label>
+        <input class="form-control" formControlName="questionEn" [class.is-invalid]="submitted && form.controls.questionEn.invalid" />
+        @if (submitted && form.controls.questionEn.invalid) {
+          <div class="invalid-feedback d-block">{{ requiredError() }}</div>
+        }
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-md-6">
+        <label class="form-label">{{ 'HOME_CONTENT.ANSWER_AR' | translate }}</label>
+        <textarea class="form-control" rows="4" formControlName="answerAr" [class.is-invalid]="submitted && form.controls.answerAr.invalid"></textarea>
+        @if (submitted && form.controls.answerAr.invalid) {
+          <div class="invalid-feedback d-block">{{ requiredError() }}</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ 'HOME_CONTENT.ANSWER_EN' | translate }}</label>
+        <textarea class="form-control" rows="4" formControlName="answerEn" [class.is-invalid]="submitted && form.controls.answerEn.invalid"></textarea>
+        @if (submitted && form.controls.answerEn.invalid) {
+          <div class="invalid-feedback d-block">{{ requiredError() }}</div>
+        }
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-md-4">
+        <label class="form-label">{{ 'HOME_CONTENT.DISPLAY_ORDER' | translate }}</label>
+        <input class="form-control" type="number" formControlName="displayOrder" min="0" />
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="faqActive" formControlName="isActive" />
+          <label class="form-check-label" for="faqActive">{{ 'HOME_CONTENT.IS_ACTIVE' | translate }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4 gap-2">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        {{ 'HOME_CONTENT.CANCEL' | translate }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ 'HOME_CONTENT.SAVE' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

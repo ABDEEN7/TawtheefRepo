@@ -164,4 +164,8 @@ export class EndpointsService {
       departments: this.getFullUrl(`/dashboard/lookups/department`)
     }
   };
+
+  homeContent = {
+    content: this.getFullUrl('/home-content')
+  };
 }

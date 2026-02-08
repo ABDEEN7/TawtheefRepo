@@ -70,6 +70,12 @@ public static class PermissionKeys
         public const string Manage = "targetentities.manage";
     }
 
+    public static class HomeContent
+    {
+        public const string View = "home.content.view";
+        public const string Manage = "home.content.manage";
+    }
+
     public static class Profile
     {
         public const string View = "profile.view";

@@ -33,6 +33,9 @@ public static class PermissionCatalog
         Permissions.TargetEntities.View,
         Permissions.TargetEntities.Manage,
 
+        Permissions.HomeContent.View,
+        Permissions.HomeContent.Manage,
+
         Permissions.ProfileLogs.View,
 
         Permissions.Profile.View,
