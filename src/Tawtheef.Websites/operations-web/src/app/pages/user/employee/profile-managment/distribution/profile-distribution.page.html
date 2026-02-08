@@ -167,13 +167,13 @@
                                                <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
                                                <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
                                              </td>
-                                             <td class="text-end">
-                                               <div class="d-flex gap-1 justify-content-end">
+                                             <td>
+                                               <div class="action-buttons">
                                                  <button
-                                                   pButton
+                                                   
                                                    pRipple
                                                    type="button"
-                                                   class="p-button-rounded p-button-text"
+                                                   class="btn"
                                                    [pTooltip]="'distribution.actions.assignTo' | translate"
                                                    (click)="openManualDialog(profile.profileId)">
                                                    <i class="pi pi-user-plus" pButtonIcon></i>

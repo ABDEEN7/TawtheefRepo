@@ -30,3 +30,61 @@
 :host ::ng-deep .p-inputnumber-input {
   width: 100%;
 }
+
+
+.points-control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e6dde1;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #ffffff;
+  height: 44px;
+}
+
+:host ::ng-deep .points-input.p-inputnumber {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .points-input .p-inputnumber-input {
+  border: 0;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(102, 103, 102, 1);
+  padding: 0 10px;
+}
+.points-chip {
+  display: flex;
+  align-items: center;
+  padding: 0 0.9rem;
+  background: #fde7ee;
+  color: #a0153e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 120px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+:host ::ng-deep .points-input.p-inputnumber {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .points-input .p-inputnumber-input {
+  border: 0;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(102, 103, 102, 1);
+  padding: 0 10px;
+}
+
+:host ::ng-deep .points-input .p-inputnumber-input:focus {
+  box-shadow: none;
+}

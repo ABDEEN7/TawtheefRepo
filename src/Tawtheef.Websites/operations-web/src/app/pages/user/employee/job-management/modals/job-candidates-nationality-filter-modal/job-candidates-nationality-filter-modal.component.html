@@ -1,65 +1,51 @@
 <section i18nNamespace="pages/job-candidates" class="jc-dialog jc-dialog--lg">
-  <form [formGroup]="form" class="jc-dialog__body">
-    <div formArrayName="percentages" class="vstack gap-3">
-      <div
-        *ngFor="let group of percentageControls.controls; let i = index"
-        [formGroupName]="i"
-        class="card jc-card"
-      >
-        <div class="card-body">
-          <div class="row g-3 align-items-center">
-            <!-- Label -->
-            <div class="col-12 col-lg-5">
-              <div class="fw-semibold">
-                {{ getCandidateTypeName(group.get('candidateTypeId')?.value) }}
-              </div>
-            </div>
+        <div class="card card-table bg-light mb-3">
+             <div class="card-body">
+                  <form [formGroup]="form">
+                      <div formArrayName="percentages" class="vstack gap-3">
+                        <div *ngFor="let group of percentageControls.controls; let i = index" [formGroupName]="i" >
+                          <div class="row g-3 align-items-end">
+                              <!-- Label -->
+                              <div class="col-12 col-lg-5">
+                                <div class="grey-div fw-semibold">
+                                  {{ getCandidateTypeName(group.get('candidateTypeId')?.value) }}
+                                </div>
+                              </div>
 
-            <!-- Percentage -->
-            <div class="col-12 col-sm-6 col-lg-3">
-              <label class="form-label mb-1 small text-muted">
-                {{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate }}
-              </label>
-              <p-inputNumber
-                formControlName="percentage"
-                [min]="0"
-                [max]="100"
-                [showButtons]="true"
-                [placeholder]="'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate"
-                class="w-100"
-              ></p-inputNumber>
-            </div>
+                              <!-- Percentage -->
+                              <div class="col-12 col-lg-4">
+                                <label class="form-label">{{ 'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate }}</label>
+                                <div class="points-control">
+                                    <span class="points-chip">100 ≥</span>
+                                    <p-inputNumber formControlName="percentage" [min]="0" [max]="100" [showButtons]="true" [placeholder]="'JOB_CANDIDATE_FILTERS_PERCENTAGE_VALUE' | translate" class="points-input"></p-inputNumber>
+                                </div>
+                                
+                              </div>
 
-            <!-- Breakdown button -->
-            <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-lg-end">
-              @if (hasNationalityBreakdown(group.get('candidateTypeId')?.value)) {
-              <button
-                class="btn btn-sm btn-outline-secondary w-100 w-sm-auto"
-                type="button"
-                (click)="openNationalityBreakdown(group.get('candidateTypeId')?.value)"
-              >
-                {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN' | translate }}
-                <span class="text-muted">
-                  ({{ getNationalityBreakdownCount(group.get('candidateTypeId')?.value) }})
-                </span>
-              </button>
-              }
-            </div>
-          </div>
+                              <!-- Breakdown button -->
+                              <div class="col-12 col-lg-3 d-flex">
+                                @if (hasNationalityBreakdown(group.get('candidateTypeId')?.value)) {
+                                  <button class="btn btn-primary" type="button" (click)="openNationalityBreakdown(group.get('candidateTypeId')?.value)">
+                                      {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_BREAKDOWN' | translate }}
+                                      <span>({{ getNationalityBreakdownCount(group.get('candidateTypeId')?.value) }})</span>
+                                  </button>
+                                }
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                  </form>
+             </div>
         </div>
-      </div>
-    </div>
-  </form>
+  
 
   <!-- Sticky footer actions -->
-  <div class="jc-dialog__footer border-top bg-body">
-    <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
-      <button class="btn btn-outline-primary w-100 w-sm-auto" type="button" (click)="close()">
-        {{ 'common.cancel' | translate }}
+  <div class="modal-footer justify-content-end gap-3 border-0">
+      <button class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" type="button" (click)="close()">
+              <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i> {{ 'common.cancel' | translate }}
       </button>
-      <button class="btn btn-primary w-100 w-sm-auto" type="button" (click)="save()">
-        {{ 'common.save' | translate }}
+      <button class="btn btn-primary d-flex gap-2 justify-content-center align-items-center" type="button" (click)="save()">
+              <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i> {{ 'common.save' | translate }}
       </button>
-    </div>
   </div>
 </section>
