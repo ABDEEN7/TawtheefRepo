@@ -23,17 +23,7 @@ import {Experience} from '../../../../../wizard-profile/models/experience.model'
 import {Degree} from '../../../../../wizard-profile/models/degree.model';
 import {Textarea} from 'primeng/textarea';
 import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
-import { dateToDateOnly } from '../../../../../../../../shared/types/dateOnly.type';
-import { Select } from 'primeng/select';
-import { FileUtilsService } from '../../../../../../../../core/utils/file-utils';
-import { EXPERIENCE_DIALOG_LIMITS } from '../dialog-config';
-import { dropdownOptionsModel } from '../../../../../../../../shared/models/dropdown-options.model';
-import { ProfileLookupsService } from '../../../../../wizard-profile/services/profile-lookups.service';
-import { Experience } from '../../../../../wizard-profile/models/experience.model';
-import { Degree } from '../../../../../wizard-profile/models/degree.model';
-import { Textarea } from 'primeng/textarea';
 import { NotificationService } from '../../../../../../../../core/services/notification.service';
-import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 type ExperienceModalInit = Partial<Experience> & {
   // your parent passes an "initialValue" shaped like Experience-ish,
@@ -65,6 +55,7 @@ export class ExperienceModal implements OnInit {
   private translate = inject(TranslateService);
   protected lookups = inject(ProfileLookupsService);
   private fileUtils = inject(FileUtilsService);
+  private notify = inject(NotificationService);
 
   readonly limits = EXPERIENCE_DIALOG_CONFIG;
   readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
@@ -299,7 +290,7 @@ export class ExperienceModal implements OnInit {
         this.initialAttachmentUrl,
         this.form.get('fileName')?.value ?? '',
         false
-      );
+      ).then(r => {});
     }
   }
 
@@ -359,7 +350,18 @@ export class ExperienceModal implements OnInit {
     );
   }
 }
+function parseDate(value?: string | null): Date | null {
+  if (!value) return null;
 
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function startOfToday(): Date {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
 // ===== Validators =====
 
 export function dateRangeValidator(fromKey: string, toKey: string) {
