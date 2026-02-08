@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
@@ -18,6 +18,9 @@ import {NotificationService} from '../../../../../../core/services/notification.
 export class StepAttachmentsComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
   @Output() back = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   ds = inject(ProfileDataService);
   private fb = inject(FormBuilder);
@@ -182,6 +185,11 @@ export class StepAttachmentsComponent implements OnInit {
 
     const signature = this.buildSignature(attachments);
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

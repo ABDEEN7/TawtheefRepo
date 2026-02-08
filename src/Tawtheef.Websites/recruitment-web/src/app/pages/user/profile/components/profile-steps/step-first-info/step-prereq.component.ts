@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
@@ -31,6 +31,8 @@ import {NotificationService} from '../../../../../../core/services/notification.
 })
 export class StepPrereqComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() requireChanges = false;
   ds        = inject(ProfileDataService);
   translate = inject(TranslateService);
   lookups   = inject(ProfileLookupsService);
@@ -98,12 +100,13 @@ export class StepPrereqComponent implements OnInit {
   }
 
   onCandidateTypeChange(option: any) {
-    if (this.ds.isCandidateTypeLocked) return;
+    if (this.ds.isCandidateTypeLocked || this.profile.isChangeRequestMode()) return;
     this.ds.up('candidateType', option);
     this.hasCheckedProfile = false;
   }
 
   onQidExpirySelect(date: Date) {
+    if (this.profile.isChangeRequestMode()) return;
     this.ds.up('qidExpiry', dateToDateOnly(date));
     this.hasCheckedProfile = false;
   }
@@ -210,7 +213,14 @@ export class StepPrereqComponent implements OnInit {
 
     // If nothing changed and we don't need to re-check → just go next
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
-      this.next.emit();
+      if (this.requireChanges) {
+        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
+      this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
+      if (!this.profile.isChangeRequestMode()) {
+        this.next.emit();
+      }
       return;
     }
 

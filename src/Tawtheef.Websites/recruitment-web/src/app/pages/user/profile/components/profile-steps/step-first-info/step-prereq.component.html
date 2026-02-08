@@ -12,7 +12,9 @@
       <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType"
                 [filter]="false" [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
                 class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
-                (ngModelChange)="onCandidateTypeChange($event)" [disabled]="ds.isCandidateTypeLocked" fluid></p-select>
+                (ngModelChange)="onCandidateTypeChange($event)"
+                [disabled]="ds.isCandidateTypeLocked || profile.isChangeRequestMode()"
+                fluid></p-select>
     </div>
     <div class="col-md-6">
       <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
@@ -27,7 +29,7 @@
       <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
                      [ngModel]="ds.state().qidExpiry" (onSelect)="onQidExpirySelect($event)"
                      [minDate]="today" [showOnFocus]="true" dateFormat="yy-mm-dd"
-                     [dataType]="'string'" fluid>
+                     [dataType]="'string'" [disabled]="profile.isChangeRequestMode()" fluid>
       </p-date-picker>
     </div>
 
@@ -180,7 +182,7 @@
      <div class="col-12">
        <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving">
           <span *ngIf="!saving" class=" d-flex align-items-center">
-            <span>{{ 'wizard.buttons.next' | translate }}</span>
+            <span>{{ submitLabelKey | translate }}</span>
             <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
           </span>
            <span *ngIf="saving" class="d-flex align-items-center">

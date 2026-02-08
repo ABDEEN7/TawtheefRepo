@@ -110,7 +110,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         if (profile.ResumeAttachmentId is not null)
             yield return NewFile(
                 profile.Id,
-                ProfileSection.Personal,
+                ProfileSection.Prerequisites,
                 nameof(profile.ResumeAttachmentId),
                 profile.ResumeAttachmentId.Value,
                 ProfileReviewConstants.AttachmentTitles.Resume);
@@ -118,7 +118,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         if (profile.NationalCardId is not null)
             yield return NewFile(
                 profile.Id,
-                ProfileSection.Personal,
+                ProfileSection.Prerequisites,
                 nameof(profile.NationalCardId),
                 profile.NationalCardId.Value,
                 ProfileReviewConstants.AttachmentTitles.NationalCard);

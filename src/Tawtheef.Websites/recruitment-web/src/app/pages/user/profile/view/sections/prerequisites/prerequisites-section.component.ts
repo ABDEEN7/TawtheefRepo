@@ -40,6 +40,8 @@ export class ProfilePrerequisitesSectionComponent {
     const needsBirth = this.visibility?.needsBirth ?? true;
     const needsMarriage = this.visibility?.needsMarriage ?? true;
     return [
+      { key: 'resumeAttachment', titleKey: 'profileOverview.attachments.resume', file: p.resumeAttachment ?? null },
+      { key: 'nationalCard', titleKey: 'profileOverview.attachments.nationalCard', file: p.nationalCard ?? null },
       needsBirth
         ? { key: 'birthdayCertificate', titleKey: 'profileOverview.attachments.birthdayCertificate', file: p.birthdayCertificate ?? null }
         : null,

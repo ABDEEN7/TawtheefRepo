@@ -289,6 +289,7 @@
   "profileView.attachments.fileLabel": "ملف المرفق",
   "profileView.notifications.saved": "تم حفظ التعديلات بنجاح.",
   "profileView.notifications.saveFailed": "تعذر حفظ التعديلات حالياً.",
+  "profileView.notifications.noChanges": "يجب إضافة تغييرات قبل الحفظ.",
   "profileView.notifications.changeRequestSent": "تم إرسال طلب التعديل للمراجعة.",
   "profileView.notifications.resubmitted": "تمت إعادة إرسال ملفك الشخصي بنجاح.",
   "profileView.notifications.resubmitFailed": "تعذر إعادة إرسال ملفك الشخصي حالياً.",

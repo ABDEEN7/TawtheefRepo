@@ -61,11 +61,7 @@ export class BasicInfoSectionComponent {
 
   hasBasicFiles(): boolean {
     const b = this.profile?.basicInformation;
-    return !!(
-      b?.resumeAttachment ||
-      b?.nationalCard ||
-      b?.sponsorCard
-    );
+    return !!b?.sponsorCard;
   }
 
   preview(url?: string | null): void {

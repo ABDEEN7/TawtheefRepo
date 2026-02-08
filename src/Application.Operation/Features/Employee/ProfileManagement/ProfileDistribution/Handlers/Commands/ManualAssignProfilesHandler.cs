@@ -2,9 +2,11 @@ using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribut
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Cortex.Mediator.Commands;
 using FluentResults;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -12,7 +14,11 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
-public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<User> userManager)
+public sealed class ManualAssignProfilesHandler(
+    IUnitOfWork uow,
+    UserManager<User> userManager,
+    ILocalizationService localizationService,
+    IMapper mapper)
     : ICommandHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ManualAssignProfilesCommand request, CancellationToken ct)
@@ -103,8 +109,8 @@ public sealed class ManualAssignProfilesHandler(IUnitOfWork uow, UserManager<Use
 
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow,userManager);
-        var result = await projection.BuildResultAsync(request.UserId,profiles.Count, ct);
+        var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
+        var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
 
         return Result.Ok(result);
     }

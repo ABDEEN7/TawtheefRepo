@@ -12,6 +12,7 @@ import {
 import {HttpService} from '../../../../../../core/http/http.service';
 import {EndpointsService} from '../../../../../../core/http/endpoints.service';
 import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
+import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileDistributionService {
@@ -24,6 +25,10 @@ export class ProfileDistributionService {
 
   getEmployees(): Observable<DistributionEmployee[]> {
     return this.http.get<DistributionEmployee[]>(this.endpoints.distribution.employees);
+  }
+
+  getTargetEntities(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.targetEntities);
   }
 
   assignManually(request: ManualAssignRequest): Observable<DistributionResult> {

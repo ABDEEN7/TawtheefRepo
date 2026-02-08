@@ -22,7 +22,10 @@
   "distribution.filters.search": "بحث",
   "distribution.filters.searchPlaceholder": "ابحث بالاسم أو فئة المرشح أو الجهة",
   "distribution.filters.searchButton": "بحث",
+  "distribution.filters.clearSearch": "مسح البحث",
   "distribution.filters.status": "حالة الملف",
+  "distribution.filters.targetEntity": "الجهة المستهدفة",
+  "distribution.filters.targetEntityPlaceholder": "اختر الجهة المستهدفة",
   "distribution.filters.statusAll": "كل الحالات المسموحة",
   "distribution.filters.statusSubmitted": "تم التقديم",
   "distribution.filters.statusUnderReview": "قيد المراجعة",
@@ -80,6 +83,7 @@
   "distribution.summary.total": "إجمالي الملفات",
   "distribution.summary.ctaTitle": "جاهز للتوزيع",
   "distribution.summary.ctaSubtitle": "اختر التوزيع الآلي أو اليدوي للملفات المحددة",
+  "distribution.summary.selectedCountLabel": "تم اختيار {{count}} ملفات",
 
   "distribution.dialog.manual.title": "توزيع على موظفك",
   "distribution.dialog.manual.subtitle": "حدد الموظف وعدد الملفات التي تريد تعيينها يدويًا",

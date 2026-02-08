@@ -1,6 +1,8 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
@@ -11,13 +13,18 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
-internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager<User> userManager)
+internal sealed class ProfileDistributionProjection(
+    IUnitOfWork uow,
+    UserManager<User> userManager,
+    ILocalizationService localizationService,
+    IMapper mapper)
 {
     public async Task<PaginatedResult<DistributionProfileDto>> LoadProfilesAsync(
         Guid userId,
         PaginatedRequest paginatedRequest,
         UserProfileStatus? status,
         string? searchTerm,
+        Guid? targetEntityId,
         CancellationToken ct)
     {
         var profileRepo    = uow.GetEntityRepository<UserProfile>();
@@ -86,6 +93,11 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
                      EF.Functions.Like(a.Employee.FullNameEn ?? string.Empty, term))));
         }
 
+        if (targetEntityId.HasValue)
+        {
+            profilesQuery = profilesQuery.Where(p => p.TargetEntityId == targetEntityId.Value);
+        }
+
         // 5) Paginate
         var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
         if (profiles.Metadata.TotalCount == 0)
@@ -113,22 +125,12 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);
 
-                var submittedAt     = profile.CreatedDate;
-                var candidateName   = profile.User?.FullNameAr ?? profile.User?.FullNameEn ?? string.Empty;
-                var specialization  = profile.CandidateType?.NameAr ?? profile.CandidateType?.NameEn ?? string.Empty;
-                var target          = profile.TargetEntity?.NameAr ?? profile.TargetEntity?.NameEn ?? string.Empty;
-
-                return new DistributionProfileDto
-                {
-                    ProfileId = profile.Id,
-                    CandidateName = candidateName,
-                    Specialization = specialization,
-                    TargetEntity = target,
-                    Status = profile.Status,
-                    AssignedEmployeeId = assignment?.EmployeeId,
-                    AssignedEmployeeName = assignment?.Employee?.FullNameAr ?? assignment?.Employee?.FullNameEn,
-                    SubmittedAtUtc = submittedAt
-                };
+                var dto = mapper.Map<DistributionProfileDto>(profile);
+                dto.AssignedEmployeeId = assignment?.EmployeeId;
+                dto.AssignedEmployeeName = assignment?.Employee == null
+                    ? null
+                    : localizationService.GetLocalizedFullName(assignment.Employee);
+                return dto;
             })
             .OrderByDescending(p => p.SubmittedAtUtc)
             .ToList();
@@ -177,7 +179,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
                 return new DistributionEmployeeDto
                 {
                     EmployeeId = emp.Id,
-                    Name = emp.FullNameAr,
+                    Name = localizationService.GetLocalizedFullName(emp),
                     TotalAssigned = load?.Total ?? 0,
                     Completed = load?.Completed ?? 0,
                     InReview = load?.InReview ?? 0,
@@ -199,6 +201,7 @@ internal sealed class ProfileDistributionProjection(IUnitOfWork uow, UserManager
             paginatedRequest: new PaginatedRequest { PageSize = int.MaxValue },
             status: null,
             searchTerm: null,
+            targetEntityId: null,
             ct: ct);
 
         return new DistributionResultDto
