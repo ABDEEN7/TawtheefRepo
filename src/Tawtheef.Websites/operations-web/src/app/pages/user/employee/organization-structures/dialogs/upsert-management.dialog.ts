@@ -48,6 +48,7 @@ export interface UpsertManagementDialogData {
                       name="sectorId"
                       [showClear]="true"
                       [filter]="true"
+                      filterBy="additionalData.nameAr,additionalData.nameEn,name"
                       [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
                     </p-select>
                     <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>

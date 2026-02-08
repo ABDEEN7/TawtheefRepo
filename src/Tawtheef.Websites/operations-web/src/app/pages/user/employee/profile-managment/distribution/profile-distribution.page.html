@@ -4,7 +4,6 @@
                 <div class="row mb-4">
                      <div class="col-md-6">
                          <div>
-                           <p class="eyebrow text-primary mb-0">{{ 'distribution.eyebrow' | translate }}</p>
                            <div class="d-flex align-items-center gap-2 flex-wrap">
                              <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
                              <span class="pill soft">{{ 'distribution.table.title' | translate }}</span>
@@ -14,16 +13,11 @@
                      </div>
                      <div class="col-md-6">
                        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
-                            <span class="pill info">
-                              <i class="pi pi-users"></i>
-                              {{ 'distribution.availableEmployees' | translate }}
-                              <span class="count">{{ employees().length }}</span>
-                            </span>
-                             <span class="pill neutral m-1">
-                                   <i class="pi pi-check-square"></i>
-                                   {{ 'distribution.selectedCount' | translate }}
-                                   <span class="count">{{ selectedIds().size }}</span>
-                              </span>
+                              <div class="action-buttons"><div class="btn-text">
+                                   <i class="pi pi-check-square mx-2"></i>
+                                  {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
+                              </div></div>
+
                              <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
                                  <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
                                  <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
@@ -31,12 +25,22 @@
                        </div>
                      </div>
                 </div>
-                <div class="row">
-                     <div class="col-md-12">
-                       <div class="card card-table mb-4">
-                         <div class="card-body">
-                           <div class="row align-items-end">
-                             <div class="col-lg-5 col-md-6">
+                <div class="row g-3">
+                     <div class="col-lg-12">
+                         <div class="card card-table mb-4">
+                               <div class="card-body">
+                                   <div class="mb-3">
+                                        <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
+                                        <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
+                                   </div>
+                                    <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
+
+                                      @if (loading()) {
+                                        <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
+                                      }
+                                    </div>
+                                  <div class="row align-items-end mb-4">
+                             <div class="col-lg-4 col-md-6">
                                <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
                                <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
@@ -46,7 +50,6 @@
                                       [placeholder]="'distribution.filters.searchPlaceholder' | translate"
                                       [ngModel]="search()"
                                       (ngModelChange)="onSearchChange($event)"
-                                      (keydown.enter)="applySearch()"
                                     />
                                   </span>
                              </div>
@@ -66,60 +69,30 @@
                                    </ng-template>
                                  </p-select>
                              </div>
-                             <div class="col-lg-4 col-md-12 d-flex gap-2  flex-wrap">
-                                 <button class="btn btn-primary" type="button" (click)="applySearch()">
-                                   {{ 'distribution.filters.searchButton' | translate }}
-                                 </button>
+                             <div class="col-lg-3 col-md-4">
+                               <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
+                               <p-select
+                                 class="w-100"
+                                 [options]="targetEntities()"
+                                 optionValue="id"
+                                 [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
+                                 [ngModel]="targetEntityId()"
+                                 (onChange)="onTargetEntityChange($event.value)">
+                                 <ng-template pTemplate="selectedItem" let-item>
+                                   <span>{{ item?.name }}</span>
+                                 </ng-template>
+                                 <ng-template let-item pTemplate="item">
+                                   <span>{{ item.name }}</span>
+                                 </ng-template>
+                               </p-select>
+                             </div>
+                             <div class="col-lg-2 col-md-4 d-flex gap-2 flex-wrap">
+                               <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
+                                 <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
+                                 <i class="pi pi-times" pButtonIcon></i>
+                               </button>
                              </div>
                            </div>
-                         </div>
-                       </div>
-                     </div>
-                </div>
-                <div class="row g-3">
-                     <div class="col-lg-9">
-                         <div class="card card-table mb-4">
-                               <div class="card-body">
-                                   <div class="mb-3">
-                                        <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
-                                        <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
-                                   </div>
-                                   <div class="row g-3 mb-3">
-                                     <div class="col-md-4 col-lg-3">
-                                       <div class="kpi-card">
-                                         <div class="kpi-label">{{ 'distribution.kpi.total' | translate }}</div>
-                                         <div class="kpi-value">{{ kpis().total }}</div>
-                                       </div>
-                                     </div>
-                                     <div class="col-md-4 col-lg-3">
-                                       <div class="kpi-card">
-                                         <div class="kpi-label">{{ 'distribution.kpi.filtered' | translate }}</div>
-                                         <div class="kpi-value">{{ kpis().filtered }}</div>
-                                       </div>
-                                     </div>
-                                     <div class="col-md-4 col-lg-2">
-                                       <div class="kpi-card">
-                                         <div class="kpi-label">{{ 'distribution.kpi.submitted' | translate }}</div>
-                                         <div class="kpi-value">{{ kpis().submitted }}</div>
-                                       </div>
-                                     </div>
-                                     <div class="col-md-6 col-lg-2">
-                                       <div class="kpi-card">
-                                         <div class="kpi-label">{{ 'distribution.kpi.underReview' | translate }}</div>
-                                         <div class="kpi-value">{{ kpis().underReview }}</div>
-                                       </div>
-                                     </div>
-                                     <div class="col-md-6 col-lg-2">
-                                       <div class="kpi-card">
-                                         <div class="kpi-label">{{ 'distribution.kpi.needsChanges' | translate }}</div>
-                                         <div class="kpi-value">{{ kpis().needsChanges }}</div>
-                                       </div>
-                                     </div>
-                                   </div>
-                                    <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
-
-                                   <div class="small text-muted" *ngIf="loading()">{{ 'distribution.loading' | translate }}</div>
-                                 </div>
                                          <div class="table-card rounded overflow-hidden">
                                               <div class="table-responsive">
                                                   <p-table
@@ -152,7 +125,9 @@
                                                <div class="fw-semibold">{{ profile.candidateName }}</div>
                                              </td>
                                              <td>
-                                               <span class="pill neutral">{{ profile.specialization || ('distribution.table.noValue' | translate) }}</span>
+                                               <span class="pill neutral">
+                                                 {{ profile.specialization || ('distribution.table.noValue' | translate) }}
+                                               </span>
                                              </td>
                                              <td>
                                                <p-tag
@@ -167,20 +142,24 @@
                                              </td>
                                              <td>
                                                <div class="d-flex align-items-center gap-2">
-                                                 <p-avatar
-                                                   icon="pi pi-user"
-                                                   shape="circle"
-                                                   class="bg-light text-muted d-none d-xl-flex"
-                                                   *ngIf="!profile.assignedEmployeeName"
-                                                 ></p-avatar>
-                                                 <p-avatar
-                                                   [label]="profile.assignedEmployeeName ? profile.assignedEmployeeName[0] : ''"
-                                                   shape="circle"
-                                                   class="bg-primary text-white"
-                                                   *ngIf="profile.assignedEmployeeName"
-                                                 ></p-avatar>
+                                                 @if (!profile.assignedEmployeeName) {
+                                                   <p-avatar
+                                                     icon="pi pi-user"
+                                                     shape="circle"
+                                                     class="bg-light text-muted d-none d-xl-flex"
+                                                   ></p-avatar>
+                                                 }
+                                                 @if (profile.assignedEmployeeName) {
+                                                   <p-avatar
+                                                     [label]="profile.assignedEmployeeName[0]"
+                                                     shape="circle"
+                                                     class="bg-primary text-white"
+                                                   ></p-avatar>
+                                                 }
                                                  <div>
-                                                   <div class="fw-semibold">{{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}</div>
+                                                   <div class="fw-semibold">
+                                                     {{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}
+                                                   </div>
                                                  </div>
                                                </div>
                                              </td>
@@ -189,7 +168,7 @@
                                                <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
                                              </td>
                                              <td class="text-end">
-                                               <div class="d-flex gap-2 justify-content-end">
+                                               <div class="d-flex gap-1 justify-content-end">
                                                  <button
                                                    pButton
                                                    pRipple
@@ -199,14 +178,6 @@
                                                    (click)="openManualDialog(profile.profileId)">
                                                    <i class="pi pi-user-plus" pButtonIcon></i>
                                                  </button>
-                                                 <button
-                                                   pButton
-                                                   pRipple
-                                                   type="button"
-                                                   class="p-button-rounded p-button-text"
-                                                   [pTooltip]="'distribution.actions.redistribute' | translate"
-                                                   (click)="openReassignDialog('auto', profile.profileId)">
-                                                   <i class="pi pi-sync" pButtonIcon></i></button>
                                                </div>
                                              </td>
                                            </tr>
@@ -236,176 +207,39 @@
                                      </div>
                          </div>
                      </div>
-                     <div class="col-lg-3">
-                          <div class="card card-table mb-4">
-                               <div class="card-body">
-                                 <div class="side-card">
-                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                         <div>
-                                             <div class="card-title mb-1">{{ 'distribution.summary.title' | translate }}</div>
-                                             <div class="card-sub">{{ 'distribution.summary.subtitle' | translate }}</div>
-                                         </div>
-                                         <p-badge [value]="selectedIds().size" severity="danger"></p-badge>
-                                     </div>
-                                     <div class="summary-block">
-                                         <span class="label">{{ 'distribution.summary.selected' | translate }}</span>
-                                         <strong>{{ selectedIds().size }}</strong>
-                                     </div>
-                                     <div class="summary-block">
-                                         <span class="label">{{ 'distribution.summary.available' | translate }}</span>
-                                         <strong>{{ availableEmployees().length }}</strong>
-                                     </div>
-                                     <div class="summary-block">
-                                         <span class="label">{{ 'distribution.summary.total' | translate }}</span>
-                                         <strong>{{ files().length }}</strong>
-                                     </div>
-                                 </div>
 
-                                 <div class="side-card">
-                                   <div class="d-flex justify-content-between align-items-center mb-2">
-                                     <div>
-                                       <div class="card-title mb-1">{{ 'distribution.auto.title' | translate }}</div>
-                                       <div class="card-sub">{{ 'distribution.auto.subtitle' | translate }}</div>
-                                     </div>
-                                     <i class="pi pi-cog text-secondary"></i>
-                                   </div>
-                                   <div class="mb-3">
-                                     <label class="form-label d-block">{{ 'distribution.auto.limit' | translate }}</label>
-                                     <p-input-number
-                                       inputId="autoLimit"
-                                       [ngModel]="autoLimit()"
-                                       (onInput)="autoLimit.set($event.value)"
-                                       mode="decimal"
-                                       inputStyleClass="form-control"
-                                       [placeholder]="'distribution.auto.limitPlaceholder' | translate"
-                                       [min]="1"
-                                     ></p-input-number>
-                                   </div>
-                                   <div class="employee-mini-list">
-                                     <div
-                                       class="employee-tile"
-                                       *ngFor="let employee of availableEmployees()"
-                                       [class.disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available">
-                                       <div class="d-flex justify-content-between align-items-center gap-2">
-                                         <div>
-                                           <div class="fw-semibold">{{ employee.name }}</div>
-                                           <div class="small text-muted">{{ availabilityLabel(employee.availability) | translate }}</div>
-                                         </div>
-                                         <p-toggle-switch
-                                           [ngModel]="autoEmployeeIds().has(employee.employeeId)"
-                                           (onChange)="toggleEmployee(employee.employeeId)"
-                                           [disabled]="!employee.isActive || employee.availability !== EmployeeAvailability.Available"
-                                         ></p-toggle-switch>
-                                       </div>
-                                       <div class="d-flex gap-2 flex-wrap mt-2">
-                                         <span class="pill neutral small-pill">{{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}</span>
-                                         <span class="pill success small-pill">{{ 'distribution.employees.completed' | translate }} {{ employee.completed }}</span>
-                                         <span class="pill info small-pill">{{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}</span>
-                                       </div>
-                                     </div>
-                                   </div>
-                                   <div class="d-flex gap-2 mt-3 flex-wrap">
-                                     <button
-                                       pButton
-                                       class="w-100"
-                                       type="button"
-                                       (click)="openAutoDialog()"
-                                       [disabled]="loading()">
-                                       <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
-                                       <i class="pi pi-play" pButtonIcon></i>
-                                     </button>
-                                     <button
-                                       pButton
-                                       class="p-button-outlined w-100"
-                                       type="button"
-                                       (click)="openReassignDialog('auto')"
-                                       [disabled]="loading() || selectedIds().size === 0">
-                                       <span pButtonLabel>{{'distribution.auto.reassign' | translate}}</span>
-                                       <i class="pi replay" pButtonIcon></i>
-                                     </button>
-                                   </div>
-                                 </div>
-
-                                 <div class="side-card">
-                                   <div class="d-flex justify-content-between align-items-center mb-2">
-                                     <div>
-                                       <div class="card-title mb-1">{{ 'distribution.manual.title' | translate }}</div>
-                                       <div class="card-sub">{{ 'distribution.manual.subtitle' | translate }}</div>
-                                     </div>
-                                     <i class="pi pi-user-plus text-secondary"></i>
-                                   </div>
-                                   <div class="mb-3">
-                                     <label class="form-label  d-block">{{ 'distribution.manual.employee' | translate }}</label>
-                                     <p-select
-                                       class="w-100"
-                                       [options]="availableEmployees()"
-                                       optionLabel="name"
-                                       optionValue="employeeId"
-                                       [filter]="true"
-                                       [ngModel]="manualEmployeeId()"
-                                       (onChange)="manualEmployeeId.set($event.value)"
-                                       [showClear]="true"
-                                       [placeholder]="'distribution.manual.selectPlaceholder' | translate"
-                                     ></p-select>
-                                   </div>
-                                   <div class="d-flex gap-2 flex-wrap">
-                                     <button
-                                       pButton
-                                       class="w-100"
-                                       type="button"
-                                       (click)="openManualDialog()"
-                                       [disabled]="loading()">
-                                       <span pButtonLabel>{{'distribution.manual.assign' | translate}}</span>
-                                       <i class="pi user" pButtonIcon></i></button>
-                                     <button
-                                       pButton
-                                       class="p-button-outlined w-100"
-                                       type="button"
-                                       (click)="openReassignDialog('manual')"
-                                       [disabled]="loading() || selectedIds().size === 0 || !manualEmployeeId()">
-                                       <span pButtonLabel>{{'distribution.manual.reassign' | translate}}</span>
-                                       <i class="pi replay" pButtonIcon></i>
-                                     </button>
-                                   </div>
-                                 </div>
-                               </div>
-                          </div>
-                     </div>
                      <div class="col-md-12">
                           <div class="card card-table">
                             <div class="card-body">
-                              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                                <div>
-                                  <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
-                                  <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
-                                </div>
-                                <div class="d-flex gap-2 flex-wrap">
-                                  <button
-                                    pButton
-                                    class="p-button-outlined"
-                                    type="button"
-                                    (click)="openReassignDialog('manual')"
-                                    [disabled]="loading() || selectedIds().size === 0">
-                                    <span pButtonLabel>{{'distribution.actions.redistribute' | translate}}</span>
-                                    <i class="pi pi-replay" pButtonIcon></i>
-                                  </button>
-                                  <button
-                                    pButton
-                                    class="p-button-secondary"
-                                    type="button"
-                                    (click)="openAutoDialog()"
-                                    [disabled]="loading()">
-                                    <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
-                                    <i class="pi pi-sync" pButtonIcon></i>
-                                  </button>
-                                  <button
-                                    pButton
-                                    type="button"
-                                    (click)="openManualDialog()"
-                                    [disabled]="loading()">
-                                    <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
-                                    <i class="pi pi-user-plus" pButtonIcon></i>
-                                  </button>
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                  <div>
+                                    <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
+                                    <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
+                                  </div>
+                                <div class="distribution-actions d-flex align-items-center flex-wrap gap-3">
+                                  <div class="selection-count">
+                                    {{ 'distribution.summary.selectedCountLabel' | translate: { count: selectedIds().size } }}
+                                  </div>
+                                  <div class="d-flex gap-2 flex-wrap">
+                                    <button
+                                      pButton
+                                      class="distribution-btn distribution-btn--auto"
+                                      type="button"
+                                      (click)="openAutoDialog()"
+                                      [disabled]="loading()">
+                                      <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+                                      <i class="pi pi-sync" pButtonIcon></i>
+                                    </button>
+                                    <button
+                                      pButton
+                                      type="button"
+                                      class="distribution-btn distribution-btn--manual"
+                                      (click)="openManualDialog()"
+                                      [disabled]="loading()">
+                                      <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+                                      <i class="pi pi-user-plus" pButtonIcon></i>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>

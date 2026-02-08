@@ -6,8 +6,8 @@
 
 $primary: #000;
 .form-check-input:checked {
-  background-color: #a9445f !important;
-  border-color: #a9445f !important;
+  background-color: #8B1538  !important;
+  border-color: #8B1538  !important;
 }
 body {
   background: radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%), #fff;
@@ -25,11 +25,11 @@ body {
 
 
 .p-datepicker-fluid{
-    border:1px solid var(--p-inputtext-border-color);
-    padding: 0.240rem 0.75rem  !important;
-    border-radius: 2rem !important;
+    // border:1px solid var(--p-inputtext-border-color);
+     
+    // border-radius: 2rem !important;
     .p-inputtext{
-      border:0;
+      padding: 0.47rem 0.75rem  !important;
     }
     .p-datepicker-dropdown{
       background-color: transparent;

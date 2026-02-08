@@ -69,20 +69,7 @@
                           aria-hidden="true"></i>
                       }
                     </a>
-                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote || isProfileApproved">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary rounded-pill"
-                        (click)="replaceInput.click()">
-                        {{ 'profileView.actions.replaceFile' | translate }}
-                      </button>
-                      <input
-                        #replaceInput
-                        type="file"
-                        class="d-none"
-                        accept=".pdf,.png,.jpeg,.jpg,.webp"
-                        (change)="replaceAttachment(att, $event)" />
-                    </div>
+                    
                   } @else {
                     <span class="text-muted">
                       {{ 'common.none' | translate }}

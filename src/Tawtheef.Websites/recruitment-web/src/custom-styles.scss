@@ -288,7 +288,10 @@ header.topbar {
   input[type="file"] {
     display: none;
   }
-
+.form-check-input[type=checkbox]{
+  
+    border-color: rgb(203, 203, 203) !important;
+}
   .profile-image {
     width: 100%;
     height: 100%;
@@ -808,4 +811,25 @@ body.ltr
 }
 .iti__flag-container .iti__country-list{
     max-height: 30vh;
+}
+
+
+
+:dir(rtl) .p-datepicker-prev-button .p-icon{
+    transform: rotate(180deg);
+
+}
+:dir(rtl) .p-datepicker-next-button .p-icon{
+    transform: rotate(180deg);
+
+}
+:dir(rtl) .iti__flag-container .dropdown-menu.show{
+    
+    inset: 100% 0 auto auto !important;
+}
+
+
+.p-dialog-title{
+    font-weight: bold !important;
+    color: $color-primary;
 }

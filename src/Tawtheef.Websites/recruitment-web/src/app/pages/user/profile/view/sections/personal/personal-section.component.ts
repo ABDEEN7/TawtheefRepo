@@ -54,8 +54,6 @@ export class ProfilePersonalSectionComponent {
     if (!p) return [] as { key: string; titleKey: string; file: FileRefDto | null }[];
     const showSponsor = this.visibility?.showSponsorSection ?? true;
     return [
-      { key: 'resumeAttachment', titleKey: 'profileOverview.attachments.resume', file: p.resumeAttachment ?? null },
-      { key: 'nationalCard', titleKey: 'profileOverview.attachments.nationalCard', file: p.nationalCard ?? null },
       showSponsor
         ? { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
         : null

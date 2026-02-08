@@ -59,6 +59,7 @@ public class GetProfileOverviewHandler(
 
         var latestItems = reviewItems
             .Where(r => r.Status != ReviewStatus.Approved)
+            .OrderByDescending(item => item.ReviewedAtUtc ?? item.CreatedDate.ToUniversalTime())
             .GroupBy(r => new { r.TargetType, r.Section, r.FieldPath, r.EntityName, r.EntityId, r.ResourceId, r.ProfileChangeId })
             .Select(g => g.First())
             .ToList();

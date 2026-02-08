@@ -5,8 +5,7 @@
         <div class="row align-items-start">
           <!-- Provider -->
           <div class="col-12 col-md-6 mb-3">
-            <label class="form-label required">
-              <i class="fa-solid fa-trophy me-1"></i> {{ 'wizard.courses.provider' | translate }}
+            <label class="form-label required">{{ 'wizard.courses.provider' | translate }}
             </label>
             <input pInputText class="form-control"
                    formControlName="org"
@@ -21,8 +20,7 @@
 
           <!-- Title -->
           <div class="col-12 col-md-6 mb-3">
-            <label class="form-label  required">
-              <i class="fa-solid fa-medal me-1"></i> {{ 'wizard.courses.table.courseName' | translate }}
+            <label class="form-label  required">{{ 'wizard.courses.table.courseName' | translate }}
             </label>
             <input pInputText class="form-control"
                    formControlName="name"
@@ -41,7 +39,7 @@
             <label for="country" class="form-label required d-block">
               {{ 'wizard.courses.country' | translate }}
             </label>
-            <p-select size="small" [filter]="true" [filterBy]="'name'"
+            <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
                       inputId="country"
                       formControlName="country"
                       [options]="lookups.countries()" optionLabel="name"
@@ -58,7 +56,6 @@
           </div>
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label  required">
-              <i class="fa-solid fa-calendar-day me-1"></i>
               {{ 'wizard.courses.period' | translate }}
             </label>
             <p-date-picker
@@ -88,8 +85,7 @@
 
       <div class="row  align-items-start ">
         <div class="col-12  mb-3">
-          <label class="form-label">
-            <i class="fa-solid fa-note-sticky me-1"></i> {{ 'wizard.courses.notes' | translate }}
+          <label class="form-label">{{ 'wizard.courses.notes' | translate }}
           </label>
           <textarea class="form-control" pTextarea rows="4"
                     formControlName="description"

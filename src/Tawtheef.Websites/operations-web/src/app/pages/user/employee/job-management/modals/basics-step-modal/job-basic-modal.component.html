@@ -14,6 +14,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -36,6 +37,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -58,6 +60,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -138,6 +141,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -160,6 +164,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.WORK_LOCATION_PLACEHOLDER' | translate }}"
         ></p-select>
 
@@ -183,7 +188,6 @@
           optionValue="id"
           [preloadedOptions]="majorOptions"
           [appendTo]="'body'"
-          [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
           [invalid]="
             form.controls.majorId.invalid &&
             (form.controls.majorId.dirty || form.controls.majorId.touched)
@@ -216,7 +220,6 @@
           optionValue="id"
           [preloadedOptions]="subMajorOptions"
           [appendTo]="'body'"
-          [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }"
           [invalid]="
             form.controls.subMajorId.invalid &&
             (form.controls.subMajorId.dirty || form.controls.subMajorId.touched)
@@ -260,6 +263,7 @@
           optionValue="id"
           [showClear]="true"
           [filter]="true"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.WORK_TYPE_PLACEHOLDER' | translate }}"
         ></p-select>
 

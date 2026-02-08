@@ -68,7 +68,7 @@ export class AchievementModal implements OnInit {
         achievementType: initial.achievementType,
         title: initial.title,
         issuingAuthority: initial.issuingAuthority,
-        country: initial.country,
+        country: this.lookups.countries().find(c => c.id === initial.country?.id) ?? null,
         issueDate: initial.issueDate ? new Date(initial.issueDate) : null,
         description: initial.description,
         fileName: initial.fileName || initial.attachment?.resourceName,

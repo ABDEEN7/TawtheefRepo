@@ -1,7 +1,7 @@
 
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-attachment-square"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.attachments' | translate }}</span></h5>
-        <div *ngIf="canAddAttachment"><button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" (click)="addAttachment()"><i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addAttachment' | translate }}</span></button></div>
+        <div *ngIf="canAddAttachment || !attachments().length"><button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" (click)="addAttachment()"><i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addAttachment' | translate }}</span></button></div>
     </div>
 
     <div class="row g-3">
@@ -22,7 +22,7 @@
                     </div>
 
                     <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview(att.file?.resourceId)">
-                      {{ 'profileOverview.status.pending' | translate }}
+                      {{ 'profileOverview.status.pending' | translate }} 
                     </span>
                   </div>
 

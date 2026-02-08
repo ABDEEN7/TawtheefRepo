@@ -104,6 +104,21 @@ export function mapProfileStatusToState(
     ?? (prefill as any)?.isKwaderQid
     ?? false;
 
+  const residenceCountry = mapIdToDropdown(lookups, 'countries', dto.residenceCountryId);
+  const defaultPhoneRegion = [
+    (prefill?.locale ?? '').split('-')[1],
+    (residenceCountry?.additionalData as { code?: string; iso2?: string } | undefined)?.code,
+    (residenceCountry?.additionalData as { code?: string; iso2?: string } | undefined)?.iso2
+  ]
+    .filter(Boolean)
+    .map(value => String(value).toUpperCase())[0] ?? 'JO';
+
+  const mappedPhone = dto.phone
+    ? phoneMapper.toPhoneObject(dto.phone, defaultPhoneRegion)
+    : prefill?.phone
+      ? phoneMapper.toPhoneObject(prefill.phone, defaultPhoneRegion)
+      : null;
+
   return {
     provider: (dto.provider as ProfileState['provider']) ?? 'Google',
     isKawaderQid,
@@ -148,11 +163,10 @@ export function mapProfileStatusToState(
     sponsorCard: mapFile(dto.sponsorCard),
 
     // ----------- Contact -----------
-    country: mapIdToDropdown(lookups, 'countries', dto.residenceCountryId),
+    country: residenceCountry,
     address: dto.address ?? undefined,
 
-    phone: dto.phone ? phoneMapper.toPhoneObject(dto.phone) :
-      prefill?.phone ? phoneMapper.toPhoneObject(prefill.phone) : null,
+    phone: mappedPhone,
 
     phoneVerified: dto.phoneVerified ?? prefill?.phoneVerified ?? false,
 

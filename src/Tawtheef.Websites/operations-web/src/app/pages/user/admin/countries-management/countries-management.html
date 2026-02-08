@@ -28,6 +28,7 @@
                           (onChange)="onStatusChange($event.value)"
                           (onClear)="onStatusChange(null)"
                           [filter]="true"
+                          filterBy="additionalData.nameAr,additionalData.nameEn,name"
                           [ngModel]="filters().isActive"
                           optionLabel="name"
                           optionValue="id"

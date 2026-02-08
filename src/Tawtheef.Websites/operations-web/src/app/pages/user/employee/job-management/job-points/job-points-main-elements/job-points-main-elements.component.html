@@ -1,6 +1,6 @@
 <form [formGroup]="form">
-  <div class="page-container">
-    <div class="outer-card">
+  <div class="card card-table">
+    <div class="card-body">
       <div class="header">
         <h2 class="page-title">
           {{ 'JOB_POINTS.MAIN_ELEMENTS.TITLE' | translate }}
@@ -57,13 +57,14 @@
         }}
       </div>
       }
-    </div>
-
-    <div class="bottom-nav">
-      <button type="button" class="primary-pill" (click)="next.emit()" [disabled]="!isTotalValid()">
-        <i class="fa fa-arrow-left" faDirArrow="end"></i>
-        {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }}
+      <div class="bottom-nav">
+      <button type="button" class="btn btn-outline-primary light d-flex align-items-center gap-2" (click)="next.emit()" [disabled]="!isTotalValid()">
+        
+        {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }} <i class="fa fa-arrow-left" faDirArrow="end"></i>
       </button>
     </div>
+    </div>
+
+    
   </div>
 </form>

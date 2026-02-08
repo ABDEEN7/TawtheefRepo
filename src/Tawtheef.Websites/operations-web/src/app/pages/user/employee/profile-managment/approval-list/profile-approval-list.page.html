@@ -29,14 +29,14 @@
       </div>
 
       <!-- Filters -->
-      <div class="card card-table mb-4">
+      <div class="card card-table mb-3">
         <div class="card-body">
 
-          <form class="row g-3 align-items-end" (ngSubmit)="applyFilters()">
+          <form class="row gx-2 align-items-end" (ngSubmit)="applyFilters()">
 
             <!-- Search -->
-            <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label fw-semibold">
+            <div class="col-md-2">
+              <label class="form-label">
                 {{ 'profileApproval.list.searchPlaceholder' | translate }}
               </label>
 
@@ -52,8 +52,8 @@
             </div>
 
             <!-- Specialization -->
-            <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label fw-semibold">
+            <div class="col-md-2">
+              <label class="form-label">
                 {{ 'profileApproval.list.filter.specialization' | translate }}
               </label>
 
@@ -69,8 +69,8 @@
             </div>
 
             <!-- Target -->
-            <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label fw-semibold">
+            <div class="col-md-2">
+              <label class="form-label">
                 {{ 'profileApproval.list.filter.targetEntity' | translate }}
               </label>
 

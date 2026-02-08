@@ -43,6 +43,7 @@
     "bootstrap": "5.3.8",
     "bootstrap-icons": "^1.13.1",
     "google-libphonenumber": "^3.2.43",
+    "ngx-bootstrap": "^20.0.2",
     "ngx-intl-tel-input": "^17.0.0",
     "ngx-translate-multi-http-loader": "^20.0.0",
     "primeicons": "^7.0.0",

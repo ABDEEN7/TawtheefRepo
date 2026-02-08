@@ -9,6 +9,7 @@
       optionLabel="name"
       optionValue="employeeId"
       [filter]="true"
+      filterBy="additionalData.nameAr,additionalData.nameEn,name"
       [ngModel]="employeeId()"
       (onChange)="employeeId.set($event.value)"
       [placeholder]="'distribution.manual.selectPlaceholder' | translate"

@@ -39,7 +39,57 @@
       </ng-template>
 
       <div class="file-stack">
+        <ng-container *ngIf="profile.basicInformation.nationalCard as nationalCard">
+          <div class="file-entry">
+            <button
+              type="button"
+              class="file-chip"
+              pButton
+              pRipple
+              [label]="
+                ('profileApproval.detail.snapshot.nationalCard' | translate) +
+                ': ' +
+                (nationalCard.fileName || '-')
+              "
+              (click)="preview(nationalCard.url)"
+              icon="pi pi-external-link"
+              iconPos="right"
+            ></button>
+            <app-item-inline-review
+              *ngIf="reviewItemFor(nationalCard.resourceId) as review"
+              [reviewItemId]="review.reviewItemId"
+              [status]="review.status"
+              [note]="review.note"
+              (review)="reviewItem.emit($event)"
+            ></app-item-inline-review>
+          </div>
+        </ng-container>
 
+        <ng-container *ngIf="profile.basicInformation.resumeAttachment as resume">
+          <div class="file-entry">
+            <button
+              type="button"
+              class="file-chip"
+              pButton
+              pRipple
+              [label]="
+                ('profileApproval.detail.snapshot.resumeAttachment' | translate) +
+                ': ' +
+                (resume.fileName || '-')
+              "
+              (click)="preview(resume.url)"
+              icon="pi pi-external-link"
+              iconPos="right"
+            ></button>
+            <app-item-inline-review
+              *ngIf="reviewItemFor(resume.resourceId) as review"
+              [reviewItemId]="review.reviewItemId"
+              [status]="review.status"
+              [note]="review.note"
+              (review)="reviewItem.emit($event)"
+            ></app-item-inline-review>
+          </div>
+        </ng-container>
         <ng-container *ngIf="profile.basicInformation.birthdayCertificate as birthdayCertificate">
           <div class="file-entry">
             <button

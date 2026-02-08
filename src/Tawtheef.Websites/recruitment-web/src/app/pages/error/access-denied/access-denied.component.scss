@@ -42,3 +42,24 @@
     }
   }
 }
+
+
+.decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  .dec {
+    position: absolute;
+    opacity: 0.35;
+    filter: blur(0.2px);
+    animation: float 12s ease-in-out infinite;
+  }
+
+  .bg-01 { top: 8%; left: 6%; width: 90px; }
+  .bg-02 { top: 18%; right: 10%; width: 70px; animation-delay: -2s; }
+  .bg-03 { bottom: 22%; left: 12%; width: 110px; animation-delay: -4s; }
+  .bg-04 { bottom: 10%; right: 14%; width: 80px; animation-delay: -6s; }
+  .bg-05 { top: 40%; left: 2%; width: 60px; animation-delay: -8s; }
+  .bg-06 { top: 55%; right: 4%; width: 100px; animation-delay: -10s; }
+}

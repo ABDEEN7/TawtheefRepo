@@ -46,7 +46,7 @@ export class ProfileTrainingSectionComponent {
   @Output() refresh = new EventEmitter<void>();
 
   protected coursesUnderReview() {
-    return this.changesRequest.map(i => i.newValue).map((cr, index) => {
+    return this.normalizePendingItems().map(cr => {
       return {
         title: cr.Title,
         provider: cr.Provider,
@@ -67,14 +67,24 @@ export class ProfileTrainingSectionComponent {
 
 
   protected noteForRaw(course: TrainingCourse | null | undefined): MyProfileReviewNoteDto | null {
-    if (!course?.id) return null;
-    return (
-      this.notes.find(
-        note =>
-          note.targetType === ReviewTargetTypeEnum.Row &&
-          note.entityId?.toLowerCase() === course.id?.toLowerCase()
-      ) ?? null
-    );
+    if (!course) return null;
+    const rowNote = course.id
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Row &&
+            note.entityId?.toLowerCase() === course.id?.toLowerCase()
+        ) ?? null
+      : null;
+
+    const attachmentNote = course.attachment?.resourceId
+      ? this.notes.find(
+          note =>
+            note.targetType === ReviewTargetTypeEnum.Attachment &&
+            note.resourceId?.toLowerCase() === course.attachment?.resourceId.toLowerCase()
+        ) ?? null
+      : null;
+
+    return rowNote ?? attachmentNote ?? null;
   }
 
   protected addCourseTraining() {
@@ -137,5 +147,13 @@ export class ProfileTrainingSectionComponent {
   protected open(file: FileRefDto | null | undefined) {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');
+  }
+
+  private normalizePendingItems(): any[] {
+    const items = this.changesRequest.map(change => change.newValue).flatMap(value => {
+      if (!value) return [];
+      return Array.isArray(value) ? value : [value];
+    });
+    return items.filter(item => item?.Title || item?.Provider);
   }
 }

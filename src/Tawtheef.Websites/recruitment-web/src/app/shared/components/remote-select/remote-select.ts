@@ -1,11 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, forwardRef, OnChanges, SimpleChanges, inject } from '@angular/core';
-import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Subject, Subscription, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, finalize } from 'rxjs/operators';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  forwardRef,
+  inject,
+} from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Subject, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
+type LoadRequest = { term: string; page: number; append: boolean };
 
 @Component({
   selector: 'app-remote-select',
@@ -22,14 +32,13 @@ import { TranslateService } from '@ngx-translate/core';
   ],
 })
 export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
-  translate = inject(TranslateService);
-  emptyMessage = '';
-  lastQuery = '';
+  private http = inject(HttpClient);
+  private translate = inject(TranslateService);
   @Input() searchUrl!: string;
   @Input() minChars = 3;
-  @Input() debounceMs = 400;
   @Input() searchParamName = 'search';
   @Input() idParamName = 'id';
+  @Input() pageSize = 10;
 
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
@@ -42,23 +51,25 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() showClear = false;
   @Input() preloadedOptions: any[] = [];
 
-  // ====== Parent dependency (cascading) ======
+  @Input() virtualScrollItemSize = 38;
   @Input() parentId: string | number | null | undefined;
   @Input() parentParamName = 'parentId';
   @Input() requireParent = false;
 
-  // ====== Validation styling from parent ======
   @Input() invalid = false;
 
-  disabled = false;
   options: any[] = [];
+  value: any = null;
   isLoading = false;
-  value: any;
+  hasMore = true;
+  emptyMessage = '';
+  private panelOpen = false;
+  private currentTerm = '';
+  private pageNumber = 0;
 
-  private search$ = new Subject<string>();
-  private sub?: Subscription;
-
-  constructor(private http: HttpClient) {}
+  private requestedPages = new Set<string>();
+  private destroy$ = new Subject<void>();
+  private request$ = new Subject<LoadRequest>();
 
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
@@ -68,7 +79,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
     if (this.value !== null && this.value !== undefined && this.value !== '') {
-      this.loadOptions(undefined);
+      this.resetDataset(false);
+      this.load({ term: this.currentTerm, page: 0, append: false });
     }
   }
 
@@ -84,96 +96,118 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.disabled = isDisabled;
   }
 
+  disabled = false;
+
+  get isDisabledComputed(): boolean {
+    if (this.disabled) return true;
+    if (this.requireParent && this.isParentMissing()) return true;
+    if (this.disableWhileLoading && this.isLoading && !this.panelOpen) return true;
+    return false;
+  }
+
+  get computedPlaceholder(): string {
+    return this.placeholder;
+  }
+
   ngOnInit(): void {
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
-    this.sub = this.search$
+    this.request$
       .pipe(
-        debounceTime(this.debounceMs),
-        distinctUntilChanged(),
-        switchMap(term => {
-          const query = term?.trim() ?? '';
-
-          // Guard: no search if query is too short
-          if (!query || query.length < this.minChars || !this.searchUrl) {
-            this.isLoading = false;
-            return of([]);
-          }
-
-          // Guard: requirement for parentId
-          if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-            this.isLoading = false;
-            return of([]);
-          }
+        switchMap(req => {
+          if (!this.searchUrl) return of({ req, res: [] as any[] });
+          if (this.requireParent && this.isParentMissing()) return of({ req, res: [] as any[] });
 
           this.isLoading = true;
+          const params = this.buildParams(req.term, req.page, this.pageSize);
 
-          const params = this.buildParams(query);
-
-          return this.http
-            .get<any[]>(this.searchUrl, { params })
-            .pipe(finalize(() => (this.isLoading = false)));
-        })
+          return this.http.get<any[]>(this.searchUrl, { params,headers:new HttpHeaders({ 'X-Skip-Loading': 'true' }) }).pipe(
+            map(res => ({ req, res: res ?? [] })),
+            catchError(() => of({ req, res: [] as any[] })),
+            finalize(() => (this.isLoading = false))
+          );
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe({
-        next: res => (this.options = this.mergeWithSelected(res || [])),
-        error: () => (this.options = this.mergeWithSelected([])),
-      });
+      .subscribe(({ req, res }) => this.applyResults(req, res));
+
+    this.resetDataset(true);
+    if (!this.requireParent || !this.isParentMissing()) {
+      this.load({ term: '', page: 0, append: false });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['parentId'] && !changes['parentId'].firstChange) {
-      this.options = [];
-      this.value = null;
-      this.onChange(null);
-    }
-
     if (changes['preloadedOptions']) {
       this.options = this.mergeWithSelected(this.preloadedOptions);
+    }
 
-      if (this.value !== null && this.value !== undefined && this.value !== '') {
-        this.loadOptions(undefined);
+    if (changes['parentId'] && !changes['parentId'].firstChange) {
+      this.value = null;
+      this.onChange(null);
+      this.resetDataset(true);
+
+      if (!this.requireParent || !this.isParentMissing()) {
+        this.load({ term: '', page: 0, append: false });
       }
     }
   }
 
   ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
+
   onOpen(): void {
-    if (!this.lastQuery || this.lastQuery.length < this.minChars) {
+    this.panelOpen = true;
+    if (!this.currentTerm || this.currentTerm.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
     }
   }
-  // ====== Template helpers ======
-  get isDisabledComputed(): boolean {
-    if (this.disabled) return true;
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return true;
-    }
-    if (this.disableWhileLoading && this.isLoading) return true;
-    return false;
+  onClose(): void {
+    this.panelOpen = false;
   }
 
-  get computedPlaceholder(): string {
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return this.placeholder;
-    }
-    return this.placeholder;
-  }
-
-  // ====== Events ======
   onFilter(event: any): void {
-    const query = event?.filter ?? '';
-    this.lastQuery = query;
+    const term = (event?.filter ?? '').toString().trim();
 
-    if (query.length < this.minChars) {
+    if (this.requireParent && this.isParentMissing()) {
+      this.options = this.mergeWithSelected([]);
+      this.hasMore = false;
+      this.emptyMessage = '';
+      return;
+    }
+
+    if (!term) {
+      this.emptyMessage = '';
+      this.reloadFirstPage('');
+      return;
+    }
+
+    if (term.length < this.minChars) {
       this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
       this.options = this.mergeWithSelected([]);
+      this.hasMore = false;
       return;
     }
     this.emptyMessage = '';
-    this.search$.next(query);
+    this.reloadFirstPage(term);
+  }
+
+  onLazyLoad(event: { first?: number; rows?: number }): void {
+    if (this.isLoading || !this.hasMore) return;
+    if (this.requireParent && this.isParentMissing()) return;
+
+    const first = event?.first ?? 0;
+    const rows = event?.rows ?? this.pageSize;
+    const lastVisibleIndex = first + rows;
+    const nearEnd = lastVisibleIndex >= this.options.length - 2;
+    if (!nearEnd) return;
+    const nextPage = this.pageNumber + 1;
+    const key = this.requestKey(nextPage, this.currentTerm);
+    if (this.requestedPages.has(key)) return;
+    this.requestedPages.add(key);
+    this.load({ term: this.currentTerm, page: nextPage, append: true });
   }
 
   handleChange(event: any): void {
@@ -183,42 +217,82 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.onTouched();
   }
 
-  private buildParams(searchTerm?: string): HttpParams {
-    let params = new HttpParams();
+  onClearSelection(): void {
+    this.value = null;
+    this.onChange(null);
+    this.onTouched();
 
-    if (typeof(this.value) !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
-      params = params.set(this.idParamName, String(this.value));
+    if (!this.requireParent || !this.isParentMissing()) {
+      this.reloadFirstPage('');
     }
-
-    const q = (searchTerm ?? '').trim();
-    if (q) {
-      params = params.set(this.searchParamName, q);
-    }
-
-    if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
-      params = params.set(this.parentParamName, String(this.parentId));
-    }
-
-    return params;
   }
 
-  private loadOptions(searchTerm?: string): void {
-    if (!this.searchUrl) return;
+  private reloadFirstPage(term: string): void {
+    this.resetDataset(true);
+    this.currentTerm = term;
+    this.requestedPages.add(this.requestKey(0, term));
+    this.load({ term, page: 0, append: false });
+  }
 
-    if (this.requireParent && (this.parentId === null || this.parentId === undefined || this.parentId === '')) {
-      return;
+  private resetDataset(clearOptions: boolean): void {
+    this.requestedPages.clear();
+    this.pageNumber = 0;
+    this.currentTerm = '';
+    this.hasMore = true;
+
+    if (clearOptions) {
+      this.options = this.mergeWithSelected([]);
     }
+  }
 
-    const params = this.buildParams(searchTerm);
+  private load(req: LoadRequest): void {
+    if (!this.searchUrl) return;
+    if (this.requireParent && this.isParentMissing()) return;
 
-    this.isLoading = true;
-    this.http
-      .get<any[]>(this.searchUrl, { params })
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: res => (this.options = this.mergeWithSelected(res || [])),
-        error: () => (this.options = this.mergeWithSelected([])),
-      });
+    this.currentTerm = (req.term ?? '').trim();
+    this.pageNumber = req.page;
+
+    this.request$.next(req);
+  }
+
+  private isParentMissing(): boolean {
+    return this.parentId === null || this.parentId === undefined || this.parentId === '';
+  }
+
+  private requestKey(page: number, term: string): string {
+    const parentKey = this.parentId ?? '';
+    const t = (term ?? '').trim();
+    return `${parentKey}::${t}::${page}`;
+  }
+
+   private buildParams(term: string, pageNumber: number, pageSize: number): HttpParams {
+  let params = new HttpParams();
+
+  if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
+    params = params.set(this.idParamName, String(this.value));
+  }
+
+  const q = (term ?? '').trim();
+  if (q) params = params.set(this.searchParamName, q);
+
+  if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
+    params = params.set(this.parentParamName, String(this.parentId));
+  }
+
+  params = params
+  .set('PaginatedRequest.PageNumber', String(pageNumber + 1))
+  .set('PaginatedRequest.PageSize', String(pageSize))
+  .set('PaginatedRequest.SortBy', 'name')
+  .set('PaginatedRequest.SortDirection', 'asc');
+
+  return params;
+}
+
+  private applyResults(req: LoadRequest, res: any[]): void {
+    const next = res ?? [];
+    const merged = req.append ? this.mergeById([...this.options, ...next]) : this.mergeById(next);
+    this.options = this.mergeWithSelected(merged);
+    this.hasMore = next.length === this.pageSize;
   }
 
   private mergeWithSelected(nextOptions: any[]): any[] {
@@ -235,9 +309,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private findSelectedOption(): any | null {
     if (this.value === null || this.value === undefined) return null;
 
-    if (!this.optionValue) {
-      return this.value;
-    }
+    if (!this.optionValue) return this.value;
 
     const fromPreloaded = this.preloadedOptions?.find(opt => this.getOptionValue(opt) === this.value);
     if (fromPreloaded) return fromPreloaded;
@@ -247,10 +319,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private containsOption(options: any[], option: any): boolean {
-    if (!this.optionValue) {
-      return options.includes(option);
-    }
-
+    if (!this.optionValue) return options.includes(option);
     const optionVal = this.getOptionValue(option);
     return options.some(opt => this.getOptionValue(opt) === optionVal);
   }
@@ -258,5 +327,20 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private getOptionValue(option: any): any {
     if (!option || !this.optionValue) return option;
     return option?.[this.optionValue];
+  }
+
+  private mergeById(items: any[]): any[] {
+    const seen = new Map<string, any>();
+    for (const item of items) {
+      const key = this.getOptionId(item);
+      if (!key) continue;
+      if (!seen.has(key)) seen.set(key, item);
+    }
+    return Array.from(seen.values());
+  }
+
+  private getOptionId(option: any): string | null {
+    const id = option?.id ?? option?.Id;
+    return id ? String(id) : null;
   }
 }

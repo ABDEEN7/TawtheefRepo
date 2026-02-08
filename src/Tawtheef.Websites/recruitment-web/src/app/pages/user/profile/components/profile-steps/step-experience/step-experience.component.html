@@ -104,7 +104,7 @@
                    <th>{{'wizard.courses.table.period' | translate}}</th>
                    <th>{{'wizard.courses.table.description' | translate}}</th>
                    <th>{{'wizard.courses.table.file'  | translate }}</th>
-                   <th class="text-end">{{ 'wizard.table.actions' | translate }}</th>
+                   <th>{{ 'wizard.table.actions' | translate }}</th>
                  </tr>
                </ng-template>
                <ng-template pTemplate="body" let-r let-i="rowIndex">
@@ -122,20 +122,22 @@
                      <ng-container *ngIf="r.fileName || r.file?.name; else noCourseFile">
                        <div class="d-flex align-items-center gap-2">
                          <span>{{ r.fileName || r.file?.name }}</span>
-                         <button class="btn btn-link p-0 text-decoration-none" (click)="previewCourse(r, $event)">
+                         <div class="action-buttons">
+                              <button class="btn-text" (click)="previewCourse(r, $event)">
                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                          </button>
+                         </div>
+                         
                        </div>
                      </ng-container>
                      <ng-template #noCourseFile>—</ng-template>
                    </td>
-                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="editCourse(i)">
-                      <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                    </button>
-                     <button class="btn btn-sm btn-outline-danger" (click)="removeCourse(i)">
-                       <i class="hgi hgi-stroke hgi-delete-02"></i>
-                     </button>
+                   <td>
+                       <div class="action-buttons">
+                            <button class="btn" (click)="editCourse(i)"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i></button>
+                            <button class="btn " (click)="removeCourse(i)"><i class="hgi hgi-stroke hgi-delete-02"></i></button>
+                       </div>
+                    
                    </td>
                  </tr>
                </ng-template>
@@ -148,13 +150,13 @@
        </div>
   </div>
 
-<div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
+  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
-    <span>{{ 'wizard.buttons.next' | translate }}</span>
+    <span>{{ submitLabelKey | translate }}</span>
     <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
   </button>
 </div>

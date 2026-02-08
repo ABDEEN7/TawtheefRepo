@@ -42,7 +42,12 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
                 BackendName = job.JobStatus.BackendName,
                 Name = localizationService.GetLocalizedName(job.JobStatus),
                 Description = localizationService.GetLocalizedDescription(job.JobStatus),
-                AdditionalData = job.JobStatus.DisplayOrder
+                AdditionalData = new
+                {
+                     job.JobStatus.NameAr,
+                     job.JobStatus.NameEn,
+                     job.JobStatus.DisplayOrder
+                }
             };
 
         dto.CurrentBatchNumber = await unitOfWork.GetEntityRepository<Invitation>().DbSet

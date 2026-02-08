@@ -40,16 +40,42 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var languageToken = string.IsNullOrWhiteSpace(request.Language)
             ? "en"
             : request.Language.Trim().ToLowerInvariant();
+        
+        var isPaged = request.PaginatedRequest is not null;
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{languageToken}:{searchToken}";
+        if (isPaged)
+            cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
         var cacheKey = await LookupCacheKeyBuilder.BuildAsync(dbSet, cacheKeyPrefix, cancellationToken);
 
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
-            var entities = await dbSet.ToListAsync(cancellationToken);
-            return mapper.Map<List<DropdownOptions>>(entities).OrderBy(e => e.Name).ToList();
+            if (isPaged && request.PaginatedRequest != null)
+            {
+                    var entities = await dbSet.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
+                    return mapper.Map<List<DropdownOptions>>(entities.Items);
+            }
+
+            var allEntities = await dbSet.ToListAsync(cancellationToken);
+            return mapper.Map<List<DropdownOptions>>(allEntities).OrderBy(e => e.Name).ToList();
         });
+
+        if (request is { Id: not null })
+        {
+            var byId = await unitOfWork.GetEntityRepository<TLookup>().DbSet
+                .AsNoTracking()
+                .Where(x => x.IsActive && x.Id == request.Id.Value)
+                .ToListAsync(cancellationToken);
+            var mappedById = mapper.Map<List<DropdownOptions>>(byId);
+            var merged = data ?? new List<DropdownOptions>();
+            foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
+            {
+                merged.Add(item);
+            }
+
+            return Result.Ok(merged);
+        }
 
         return Result.Ok(data ?? new List<DropdownOptions>());
     }

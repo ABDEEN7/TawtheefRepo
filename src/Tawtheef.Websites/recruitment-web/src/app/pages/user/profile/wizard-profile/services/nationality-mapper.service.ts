@@ -12,6 +12,6 @@ export class NationalityMapperService {
    */
   toNationalityObject(raw?: string | null | undefined): dropdownOptionsModel | null {
     if (!raw) return null;
-    return this.lookups.nationalities().find(x => x.additionalData?.code == raw || x.id == raw) ?? null;
+    return this.lookups.nationalities().find(x => x.additionalData?.["code"] == raw || x.id == raw) ?? null;
   }
 }

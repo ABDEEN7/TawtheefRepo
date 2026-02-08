@@ -4,12 +4,12 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 
 public sealed class DistributionProfileDto
 {
-    public Guid ProfileId { get; init; }
-    public string CandidateName { get; init; } = string.Empty;
-    public string Specialization { get; init; } = string.Empty;
-    public string TargetEntity { get; init; } = string.Empty;
-    public UserProfileStatus Status { get; init; }
-    public Guid? AssignedEmployeeId { get; init; }
-    public string? AssignedEmployeeName { get; init; }
-    public DateTimeOffset SubmittedAtUtc { get; init; }
+    public Guid ProfileId { get; set; }
+    public string CandidateName { get; set; } = string.Empty;
+    public string Specialization { get; set; } = string.Empty;
+    public string TargetEntity { get; set; } = string.Empty;
+    public UserProfileStatus Status { get; set; }
+    public Guid? AssignedEmployeeId { get; set; } = Guid.Empty;
+    public string? AssignedEmployeeName { get; set; } = string.Empty;
+    public DateTimeOffset SubmittedAtUtc { get; set; }
 }

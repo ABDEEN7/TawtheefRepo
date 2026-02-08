@@ -62,7 +62,7 @@
         [ngModel]="ds.state().nationality"
         (ngModelChange)="updateField('nationality', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
         [placeholder]="'wizard.placeholders.selectNationality' | translate"
         class="w-full md:w-56"
@@ -103,7 +103,7 @@
         [ngModel]="ds.state().religion"
         (ngModelChange)="updateField('religion', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
 
         [placeholder]="'wizard.placeholders.selectReligion' | translate"
@@ -120,7 +120,7 @@
         [ngModel]="ds.state().marital"
         (ngModelChange)="updateField('marital', $event)"
         [filter]="true"
-        filterBy="name"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name"
         optionLabel="name"
 
         [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
@@ -187,7 +187,7 @@
           [ngModel]="ds.state().sponsorType"
           (ngModelChange)="onSponsorTypeChange($event)"
           [filter]="true"
-          filterBy="name"
+          filterBy="additionalData.nameAr,additionalData.nameEn,name"
           optionLabel="name"
 
           [placeholder]="'wizard.placeholders.selectSponsorType' | translate"
@@ -293,15 +293,15 @@
   </div>
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
+  <button *ngIf="showBack" class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i> <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   <button class="btn btn-primary"
           (click)="onNext()"
           [disabled]="savingPersonal">
     <span *ngIf="!savingPersonal" class="d-flex align-items-center">
-     <span> {{ 'wizard.buttons.next' | translate }}</span>
+     <span> {{ submitLabelKey | translate }}</span>
       <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
     </span>
     <span *ngIf="savingPersonal">

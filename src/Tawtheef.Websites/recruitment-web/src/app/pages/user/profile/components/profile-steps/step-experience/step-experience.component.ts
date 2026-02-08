@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, isDevMode, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -21,6 +21,9 @@ import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.mode
 export class StepExperienceComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Input() submitLabelKey = 'wizard.buttons.next';
+  @Input() showBack = true;
+  @Input() requireChanges = false;
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -157,6 +160,11 @@ export class StepExperienceComponent implements OnInit {
     const signature = this.buildSignature(experiences, courses);
 
     if (signature && signature === this.lastSubmittedSignature) {
+      if (this.requireChanges) {
+        this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
+        return;
+      }
+      this.notify.info(this.translate.instant('profileView.notifications.noChanges'));
       this.next.emit();
       return;
     }

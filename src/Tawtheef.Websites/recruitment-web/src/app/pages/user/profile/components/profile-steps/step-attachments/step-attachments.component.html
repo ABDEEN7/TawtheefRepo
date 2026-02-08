@@ -39,17 +39,17 @@
                      [disabled]="g.disabled"
                      [class.is-invalid]="isInvalid(i,'file')">
 
-              <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-2">
-      <span class="badge bg-light text-dark border">
-        <i class="fa-solid fa-paperclip ms-1"></i>
-        {{ getFileName(i) }}
-      </span>
-
-                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none"
-                        *ngIf="canPreview(i)"
-                        (click)="previewFile(i, $event)">
-                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                </button>
+              <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-3">
+                    <span class="pill soft">
+                      <i class="fa-solid fa-paperclip ms-1"></i>
+                      {{ getFileName(i) }}
+                    </span>
+                    <div class="action-buttons">
+                          <button type="button" class="btn-text" *ngIf="canPreview(i)"  (click)="previewFile(i, $event)">
+                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                          </button>
+                    </div>
+               
 
                 <button type="button"
                         class="btn btn-sm btn-outline-primary"
@@ -93,14 +93,14 @@
 
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end">
-  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="onBack()">
+<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
+  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex align-items-center" (click)="onBack()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
 
   <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
-    <span>{{ 'wizard.buttons.next' | translate }}</span>
+    <span>{{ submitLabelKey | translate }}</span>
     <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
   </button>
 </div>
