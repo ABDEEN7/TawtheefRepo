@@ -84,6 +84,7 @@
         background: #89153D;
         color: #ffffff;
         transform: translateY(-2px);
+      
       }
 
       // ✅ ACTIVE STATE (button itself)
@@ -130,7 +131,7 @@
         border-radius: 50%;
         right: 12px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-50%);display: none;
       }
     }
   }
@@ -202,4 +203,5 @@
     }
   }
 }
-.sidebar.collapsed .sidebar-nav .nav-item.active{width: 44px;}
+.sidebar.collapsed .sidebar-nav .nav-item.active,
+.sidebar.collapsed .sidebar-nav .nav-item:hover{width: 44px;}
