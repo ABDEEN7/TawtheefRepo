@@ -44,7 +44,7 @@ public class GetSignedBlobHandler(IFileStorageService storage, IAppLogger logger
         }
 
         // 4. map to path using storage service (preserve original behavior)
-        var map = storage.MapPath(blobKey);
+        var map = storage.MapPath(blobKey, true);
         if (!map.IsSuccess)
         {
             logger.Error("Failed to map blob key to path: {Error}", map.Errors);

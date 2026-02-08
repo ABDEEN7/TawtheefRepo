@@ -7,62 +7,106 @@
       </div>
       <div class="col-lg-6">
         <div class="d-flex align-items-center gap-3 justify-content-end">
-
-          <div class="notification">
+          <div class="notification" #notificationRoot>
             <button
               class="notification-btn btn position-relative"
               [class.has-notifications]="notificationCount > 0"
-              (click)="toggleNotificationMenu()"
+              (click)="toggleNotificationMenu($event)"
               type="button"
               aria-haspopup="true"
               [attr.aria-expanded]="showNotificationMenu">
+
               <i class="hgi hgi-stroke hgi-notification-01"></i>
-              @if (notificationCount > 0) {
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill">{{ notificationCount }}</span>
-              }
+
+              <!-- Badge -->
+              <span
+                class="notification-badge"
+                *ngIf="notificationCount > 0">
+                {{ notificationBadgeText }}
+              </span>
             </button>
 
-            @if (showNotificationMenu) {
-              <div class="notification-menu shadow-sm">
-                <div class="notification-menu__header">
-                  <span class="notification-menu__title">{{ 'internal.nav.notifications.title' | translate }}</span>
-                  <button type="button"
-                          class="btn btn-outline-primary btn-sm notification-menu__refresh"
-                          (click)="refreshNotifications()"
-                          [disabled]="isLoadingNotifications">
-                    <i class="hgi hgi-stroke hgi-refresh-cw-02" [class.spin]="isLoadingNotifications"></i>
-                    <span class="ms-1">{{ 'internal.nav.notifications.refresh' | translate }}</span>
-                  </button>
+            <!-- Dropdown -->
+            <div
+              class="notification-menu shadow-sm"
+              #notificationMenu
+              [class.align-left]="alignLeft"
+              [class.align-right]="alignRight"
+              *ngIf="showNotificationMenu"
+              (click)="$event.stopPropagation()">
+
+              <div class="notification-menu__header">
+                <span class="notification-menu__title">
+                  {{ 'internal.nav.notifications.title' | translate }}
+                </span>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm notification-menu__refresh"
+                  (click)="refreshNotifications(true); $event.stopPropagation()"
+                  [disabled]="isLoadingNotifications">
+
+                  <i class="hgi hgi-stroke hgi-refresh-cw-02" [class.spin]="isLoadingNotifications"></i>
+                  <span class="ms-1">{{ 'internal.nav.notifications.refresh' | translate }}</span>
+                </button>
+              </div>
+
+              <div class="notification-menu__content position-relative">
+
+                <!-- Loading overlay inside menu -->
+                <div class="notification-loading" *ngIf="isLoadingNotifications">
+                  <div class="notification-loading__spinner" aria-label="Loading"></div>
+                  <div class="notification-loading__text">
+                    {{ 'common.loading' | translate }}
+                  </div>
                 </div>
 
-                <div class="notification-menu__content">
-                  @if (notifications.length > 0) {
-                    @for (notification of notifications; track notification.id) {
-                      <div class="notification-item">
-                        <div class="notification-item__subject">
-                          {{ notification.subject || ('internal.nav.notifications.defaultSubject' | translate) }}
-                        </div>
+                <ng-container *ngIf="!isLoadingNotifications; else loadingSkeleton">
+                  <ng-container *ngIf="notifications.length > 0; else emptyState">
+                    <div
+                      class="notification-item"
+                      *ngFor="let notification of notifications; trackBy: notificationTrackBy">
 
-                        @if (notification.body) {
-                          <div class="notification-item__body">{{ notification.body }}</div>
-                        }
-
-                        <div class="notification-item__meta">
-                          <span class="badge text-bg-light notification-item__status" [class.status-error]="notification.status === 'Failed'">
-                            {{ notification.status }}
-                          </span>
-                          <span class="notification-item__timestamp">{{ notification.createdDate | date:'short' }}</span>
-                        </div>
+                      <div class="notification-item__subject">
+                        {{ notification.subject || ('internal.nav.notifications.defaultSubject' | translate) }}
                       </div>
-                    }
-                  } @else {
+
+                      <div class="notification-item__body" *ngIf="notification.body">
+                        {{ notification.body }}
+                      </div>
+
+                      <div class="notification-item__meta">
+              <span
+                class="badge text-bg-light notification-item__status"
+                [class.status-error]="notification.status === 'Failed'">
+                {{ notification.status }}
+              </span>
+
+                        <span class="notification-item__timestamp">
+                {{ notification.createdDate | date:'short' }}
+              </span>
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #emptyState>
                     <div class="notification-empty">
                       {{ 'internal.nav.notifications.empty' | translate }}
                     </div>
-                  }
-                </div>
+                  </ng-template>
+                </ng-container>
+
+                <!-- Optional skeleton while loading (nice UX) -->
+                <ng-template #loadingSkeleton>
+                  <div class="notification-skeleton" *ngFor="let i of skeletonItems">
+                    <div class="sk-line w-60"></div>
+                    <div class="sk-line w-90"></div>
+                    <div class="sk-line w-40"></div>
+                  </div>
+                </ng-template>
+
               </div>
-            }
+            </div>
           </div>
 
           <!-- Language Switcher -->

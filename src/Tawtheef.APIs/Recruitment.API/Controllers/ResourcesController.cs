@@ -25,7 +25,7 @@ public class ResourcesController(IMediator mediator, IFileStorageService storage
         if (!blobKey.StartsWith("private/", StringComparison.OrdinalIgnoreCase))
             return BadRequest("Only private blob keys allowed here.");
     
-        var map = storage.MapPath(blobKey);
+        var map = storage.MapPath(blobKey, true);
         if (map.IsFailed) 
             return Problem(map.Errors[0].Message);
     

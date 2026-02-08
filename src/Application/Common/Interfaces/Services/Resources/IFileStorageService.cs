@@ -9,5 +9,5 @@ public interface IFileStorageService
         Stream stream, string blobKey, CancellationToken ct = default);
     Task<Result<bool>> DeleteAsync(string blobKey, CancellationToken ct = default);
     IResult<string> ToPublicUrl(string blobKey); 
-    IResult<string> MapPath(string blobKey);
+    IResult<string> MapPath(string blobKey, bool isReadOperation = false);
 }

@@ -174,7 +174,7 @@ public sealed class AzureBlobStorageService : IFileStorageService
             }
         }
 
-        public IResult<string> MapPath(string blobKey)
+        public IResult<string> MapPath(string blobKey, bool isReadOperation = false)
         {
             try
             {

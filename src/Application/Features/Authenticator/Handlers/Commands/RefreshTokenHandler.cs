@@ -62,7 +62,7 @@ namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
             if (stored  is null)
                 return Result.Fail<TokenResponse>(ErrorsCodes.RefreshTokenNotFound);
 
-            if (!stored .IsActive)
+            if (!stored.IsActive)
                 return Result.Fail<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
 
             // Single-session checks using SecurityStamp

@@ -70,7 +70,56 @@ export class StepPersonalComponent implements OnInit {
     if (this.ds.isLocked(key as any)) return;
     this.ds.up(key as any, value as any);
   }
+  get sponsorEmployerNumberMaxLen(): number {
+    const t = this.ds.state().sponsorType?.backendName;
+    if (t === SponsorType.Individual) return 11;
+    if (t === SponsorType.Company) return 8;
+    return 11; // safe default
+  }
 
+  get sponsorEmployerNumberHintKey(): string {
+    const t = this.ds.state().sponsorType?.backendName;
+    return t === SponsorType.Company
+      ? 'wizard.personal.sponsor.company.numberHint8'
+      : 'wizard.personal.sponsor.individual.qidHint11';
+  }
+
+  get sponsorEmployerNumberInvalid(): boolean {
+    const s = this.ds.state();
+    const t = s.sponsorType?.backendName;
+    const v = (s.sponsorEmployerNumber ?? '').trim();
+
+    if (!t) return false;            // no sponsor type selected yet
+    if (!v) return false;            // required validation handled in step validity
+    if (!/^\d+$/.test(v)) return true;
+
+    const need = t === SponsorType.Company ? 8 : 11;
+    return v.length !== need;
+  }
+
+  get sponsorEmployerNumberErrorKey(): string {
+    const t = this.ds.state().sponsorType?.backendName;
+    return t === SponsorType.Company
+      ? 'wizard.personal.sponsor.company.numberInvalid8'
+      : 'wizard.personal.sponsor.individual.qidInvalid11';
+  }
+
+  onSponsorEmployerNumberChange(raw: string) {
+    // keep digits only + enforce max length while typing
+    const digitsOnly = (raw ?? '').replace(/\D/g, '');
+    const maxLen = this.sponsorEmployerNumberMaxLen;
+    const trimmed = digitsOnly.slice(0, maxLen);
+
+    this.updateField('sponsorEmployerNumber', trimmed as any);
+  }
+  onSponsorTypeChange(value: any) {
+    this.updateField('sponsorType', value);
+
+    // trim sponsorEmployerNumber to new max and remove non-digits
+    const current = this.ds.state().sponsorEmployerNumber ?? '';
+    const digits = current.replace(/\D/g, '').slice(0, this.sponsorEmployerNumberMaxLen);
+    this.updateField('sponsorEmployerNumber', digits as any);
+  }
   verifySponsorProfile() {
     const state = this.ds.state();
 
