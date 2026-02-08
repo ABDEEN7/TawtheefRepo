@@ -13,6 +13,7 @@ import {JobPointsConfigurationComponent} from './job-points-configuration/job-po
 import {
   JobCategoryCandidateSettingsComponent
 } from './job-category-candidate-settings/job-category-candidate-settings.component';
+import {HomeContentManagementComponent} from './home-content-management/home-content-management.component';
 import {permissionGuard} from '../../../core/guards/route-guard/permission-guards';
 import {Permissions} from '../../../core/constants/permissions';
 
@@ -88,5 +89,11 @@ export const adminRoutes: Routes = [
     component: JobCategoryCandidateSettingsComponent,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Jobs.Manage] },
+  },
+  {
+    path: "home-content-management",
+    component: HomeContentManagementComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.HomeContent.Manage] },
   },
 ];

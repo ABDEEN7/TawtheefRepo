@@ -45,6 +45,10 @@ export const Permissions = {
     View: 'targetentities.view',
     Manage: 'targetentities.manage',
   },
+  HomeContent: {
+    View: 'home.content.view',
+    Manage: 'home.content.manage',
+  },
   Profile: {
     View: 'profile.view',
     Manage: 'profile.manage',

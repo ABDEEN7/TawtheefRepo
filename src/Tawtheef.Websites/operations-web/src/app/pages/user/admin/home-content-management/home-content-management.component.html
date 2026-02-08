@@ -1,0 +1,161 @@
+<div
+  class="card card-table"
+  i18nNamespace="pages/admin/home-content-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+  <div class="card-body">
+    <h3 class="fw-bold mb-4">{{ 'HOME_CONTENT.TITLE' | translate }}</h3>
+
+    <section class="content-section mb-5">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <h4 class="fw-semibold mb-0">{{ 'HOME_CONTENT.SUCCESS_STORIES_TITLE' | translate }}</h4>
+        <button type="button" class="btn btn-primary" (click)="openAddSuccessStory()">
+          <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+          {{ 'HOME_CONTENT.ADD_SUCCESS_STORY' | translate }}
+        </button>
+      </div>
+
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle w-100">
+            <thead class="table-light">
+              <tr>
+                <th>{{ 'HOME_CONTENT.NAME_AR' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.NAME_EN' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.ROLE_AR' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.ROLE_EN' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.DISPLAY_ORDER' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.STATUS' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (successStories().length === 0) {
+                <tr>
+                  <td colspan="7" class="text-muted no-data text-center">{{ 'NO_RECORDS' | translate }}</td>
+                </tr>
+              } @else {
+                @for (story of successStories(); track story.id; let i = $index) {
+                  <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                    <td>{{ story.nameAr }}</td>
+                    <td>{{ story.nameEn }}</td>
+                    <td>{{ story.roleAr }}</td>
+                    <td>{{ story.roleEn }}</td>
+                    <td>{{ story.displayOrder }}</td>
+                    <td>
+                      <span class="pill" [class.success]="story.isActive" [class.soft]="!story.isActive">
+                        {{ story.isActive ? ('HOME_CONTENT.ACTIVE' | translate) : ('HOME_CONTENT.INACTIVE' | translate) }}
+                      </span>
+                    </td>
+                    <td class="text-nowrap">
+                      <div class="action-buttons">
+                        <button
+                          type="button"
+                          class="btn"
+                          (click)="openEditSuccessStory(story)"
+                          [pTooltip]="'HOME_CONTENT.EDIT' | translate"
+                          tooltipPosition="top"
+                          aria-label="{{ 'HOME_CONTENT.EDIT' | translate }}">
+                          <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn"
+                          (click)="confirmDeleteSuccessStory(story)"
+                          [pTooltip]="'HOME_CONTENT.DELETE' | translate"
+                          tooltipPosition="top"
+                          aria-label="{{ 'HOME_CONTENT.DELETE' | translate }}">
+                          <i class="hgi hgi-stroke hgi-delete-02"></i>
+                        </button>
+                        <p-toggle-switch
+                          [ngModel]="story.isActive"
+                          (ngModelChange)="toggleSuccessStoryStatus(story)"
+                          [pTooltip]="story.isActive ? ('HOME_CONTENT.INACTIVE' | translate) : ('HOME_CONTENT.ACTIVE' | translate)"
+                          tooltipPosition="top">
+                        </p-toggle-switch>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <h4 class="fw-semibold mb-0">{{ 'HOME_CONTENT.FAQS_TITLE' | translate }}</h4>
+        <button type="button" class="btn btn-primary" (click)="openAddFaq()">
+          <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+          {{ 'HOME_CONTENT.ADD_FAQ' | translate }}
+        </button>
+      </div>
+
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle w-100">
+            <thead class="table-light">
+              <tr>
+                <th>{{ 'HOME_CONTENT.QUESTION_AR' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.QUESTION_EN' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.DISPLAY_ORDER' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.STATUS' | translate }}</th>
+                <th>{{ 'HOME_CONTENT.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (faqs().length === 0) {
+                <tr>
+                  <td colspan="5" class="text-muted no-data text-center">{{ 'NO_RECORDS' | translate }}</td>
+                </tr>
+              } @else {
+                @for (faq of faqs(); track faq.id; let i = $index) {
+                  <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                    <td>{{ faq.questionAr }}</td>
+                    <td>{{ faq.questionEn }}</td>
+                    <td>{{ faq.displayOrder }}</td>
+                    <td>
+                      <span class="pill" [class.success]="faq.isActive" [class.soft]="!faq.isActive">
+                        {{ faq.isActive ? ('HOME_CONTENT.ACTIVE' | translate) : ('HOME_CONTENT.INACTIVE' | translate) }}
+                      </span>
+                    </td>
+                    <td class="text-nowrap">
+                      <div class="action-buttons">
+                        <button
+                          type="button"
+                          class="btn"
+                          (click)="openEditFaq(faq)"
+                          [pTooltip]="'HOME_CONTENT.EDIT' | translate"
+                          tooltipPosition="top"
+                          aria-label="{{ 'HOME_CONTENT.EDIT' | translate }}">
+                          <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn"
+                          (click)="confirmDeleteFaq(faq)"
+                          [pTooltip]="'HOME_CONTENT.DELETE' | translate"
+                          tooltipPosition="top"
+                          aria-label="{{ 'HOME_CONTENT.DELETE' | translate }}">
+                          <i class="hgi hgi-stroke hgi-delete-02"></i>
+                        </button>
+                        <p-toggle-switch
+                          [ngModel]="faq.isActive"
+                          (ngModelChange)="toggleFaqStatus(faq)"
+                          [pTooltip]="faq.isActive ? ('HOME_CONTENT.INACTIVE' | translate) : ('HOME_CONTENT.ACTIVE' | translate)"
+                          tooltipPosition="top">
+                        </p-toggle-switch>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

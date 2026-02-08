@@ -1,7 +1,10 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, computed, inject, OnInit, signal} from '@angular/core';
 import AOS from 'aos';
 import {routes} from '../../../routes/routes';
-import { Carousel, CarouselResponsiveOptions } from 'primeng/carousel';
+import { CarouselResponsiveOptions } from 'primeng/carousel';
+import {HomeContentService} from '../services/home-content.service';
+import {FAQ, HomeSuccessStory} from '../models/home-content.model';
+import {Lang, LanguageService} from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +13,10 @@ import { Carousel, CarouselResponsiveOptions } from 'primeng/carousel';
   standalone: false
 })
 
-export class IndexComponent implements AfterViewInit {
+export class IndexComponent implements OnInit, AfterViewInit {
+  private homeContentService = inject(HomeContentService);
+  private languageService = inject(LanguageService);
+
   protected readonly routes = routes;
   activeTab: string = 'schools';
 
@@ -42,11 +48,30 @@ responsiveOptions: CarouselResponsiveOptions[] = [
     numScroll: 1
   }
 ];
-  successStats = [
-    { profile: 'home.success.profile1', desc: 'home.success.desc1', value: 'home.success.label1', label: 'home.success.placementRate',  img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'},
-    { profile: 'home.success.profile2', desc: 'home.success.desc2', value: 'home.success.label2',  label: 'home.success.avgReviewTime', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop' },
-     { profile: 'home.success.profile3', desc: 'home.success.desc3', value: 'home.success.label3', label: 'home.success.partners', img: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1200&auto=format&fit=crop'      }
-  ];
+  private _successStories = signal<HomeSuccessStory[]>([]);
+  private _faqItems = signal<FAQ[]>([]);
+
+  currentLang = signal<Lang>(this.languageService.get());
+  isRtl = computed(() => this.currentLang() === 'ar');
+
+  successStoriesView = computed(() =>
+    this._successStories().map(story => ({
+      id: story.id,
+      profile: this.isRtl() ? story.nameAr : story.nameEn,
+      desc: this.isRtl() ? story.roleAr : story.roleEn,
+      value: this.isRtl() ? story.metricTitleAr : story.metricTitleEn,
+      label: this.isRtl() ? story.metricDescriptionAr : story.metricDescriptionEn,
+      img: story.imageUrl
+    }))
+  );
+
+  faqItemsView = computed(() =>
+    this._faqItems().map(item => ({
+      id: item.id,
+      question: this.isRtl() ? item.questionAr : item.questionEn,
+      answer: this.isRtl() ? item.answerAr : item.answerEn
+    }))
+  );
 
 //   reviews = [
 //   {
@@ -69,15 +94,20 @@ responsiveOptions: CarouselResponsiveOptions[] = [
 //   }
 // ];
 
-  faqItems = [
-    { q: 'home.faq.q1', a: 'home.faq.a1' },
-    { q: 'home.faq.q2', a: 'home.faq.a2' },
-    { q: 'home.faq.q3', a: 'home.faq.a3' },
-    { q: 'home.faq.q4', a: 'home.faq.a4' }
-  ];
   expandedFaq: number | null = 0;
 
   toggleFaq(i: number) { this.expandedFaq = this.expandedFaq === i ? null : i; }
+
+  ngOnInit(): void {
+    this.homeContentService.getHomeContent().subscribe({
+      next: response => {
+        this._successStories.set(response.successStories ?? []);
+        this._faqItems.set(response.faqs ?? []);
+        this.expandedFaq = (response.faqs ?? []).length > 0 ? 0 : null;
+      }
+    });
+    this.languageService.current$.subscribe(lang => this.currentLang.set(lang));
+  }
 
   ngAfterViewInit(): void {
     AOS.init({ once: true, duration: 600 });

@@ -218,6 +218,27 @@ public static class Permissions
                 17);
     }
 
+    public static class HomeContent
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.HomeContent.View,
+                nameof(PermissionKeys.HomeContent),
+                PermissionAction.View,
+                "Home Content - View",
+                "محتوى الصفحة الرئيسية - عرض",
+                20);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.HomeContent.Manage,
+                nameof(PermissionKeys.HomeContent),
+                PermissionAction.Manage,
+                "Home Content - Manage",
+                "محتوى الصفحة الرئيسية - إدارة",
+                21);
+    }
+
     public static class ProfileLogs
     {
         public static readonly PermissionDefinition View =

@@ -39,4 +39,7 @@
   get jobCategoryCandidateSettings(){
     return this.admin + '/job-category-candidate-settings'
   },
+  get homeContentManagement(){
+    return this.admin + '/home-content-management'
+  },
 }
