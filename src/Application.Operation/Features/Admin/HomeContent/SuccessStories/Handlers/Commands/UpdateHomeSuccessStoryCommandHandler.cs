@@ -36,6 +36,9 @@ public sealed class UpdateHomeSuccessStoryCommandHandler(
         var imageResult = await UploadImageAsync(request.StoryId, request.ImageFileIndex, files, cancellationToken);
         if (imageResult.IsFailed)
             return Result.Fail<Unit>(imageResult.Errors);
+        var imageUrl = request.ImageUrl?.Trim() ?? string.Empty;
+        if (imageResult.Value is null && string.IsNullOrWhiteSpace(imageUrl))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
 
         story.NameAr = request.NameAr.Trim();
         story.NameEn = request.NameEn.Trim();
@@ -45,7 +48,7 @@ public sealed class UpdateHomeSuccessStoryCommandHandler(
         story.MetricTitleEn = request.MetricTitleEn.Trim();
         story.MetricDescriptionAr = request.MetricDescriptionAr.Trim();
         story.MetricDescriptionEn = request.MetricDescriptionEn.Trim();
-        story.ImageUrl = imageResult.Value ?? request.ImageUrl.Trim();
+        story.ImageUrl = imageResult.Value ?? imageUrl;
         story.DisplayOrder = request.DisplayOrder;
         story.IsActive = request.IsActive;
         story.UpdatedDate = timeProvider.GetUtcNow();

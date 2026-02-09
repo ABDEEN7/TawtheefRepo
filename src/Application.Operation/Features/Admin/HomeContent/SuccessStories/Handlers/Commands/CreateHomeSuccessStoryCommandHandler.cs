@@ -33,6 +33,9 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
         var imageResult = await UploadImageAsync(storyId, request.ImageFileIndex, files, cancellationToken);
         if (imageResult.IsFailed)
             return Result.Fail<Guid>(imageResult.Errors);
+        var imageUrl = request.ImageUrl?.Trim() ?? string.Empty;
+        if (imageResult.Value is null && string.IsNullOrWhiteSpace(imageUrl))
+            return Result.Fail<Guid>(ErrorsCodes.InvalidAttachmentFile);
 
         var newStory = new HomeSuccessStory
         {
@@ -45,7 +48,7 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
             MetricTitleEn = request.MetricTitleEn.Trim(),
             MetricDescriptionAr = request.MetricDescriptionAr.Trim(),
             MetricDescriptionEn = request.MetricDescriptionEn.Trim(),
-            ImageUrl = imageResult.Value ?? request.ImageUrl.Trim(),
+            ImageUrl = imageResult.Value ?? imageUrl,
             DisplayOrder = request.DisplayOrder,
             IsActive = request.IsActive,
             CreatedDate = now,

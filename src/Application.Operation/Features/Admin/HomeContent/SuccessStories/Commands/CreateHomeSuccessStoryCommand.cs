@@ -13,7 +13,7 @@ public sealed record CreateHomeSuccessStoryCommand(
     string MetricTitleEn,
     string MetricDescriptionAr,
     string MetricDescriptionEn,
-    string ImageUrl,
+    string? ImageUrl,
     int DisplayOrder,
     bool IsActive,
     int? ImageFileIndex,
