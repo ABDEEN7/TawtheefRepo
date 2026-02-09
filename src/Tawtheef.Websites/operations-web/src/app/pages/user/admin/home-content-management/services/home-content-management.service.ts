@@ -18,11 +18,13 @@ export class HomeContentManagementService {
   }
 
   createSuccessStory(payload: HomeSuccessStoryPayload) {
-    return this.http.post<string>(this.endpoints.homeContent.successStories, payload);
+    const formData = this.buildSuccessStoryFormData(payload);
+    return this.http.post<string>(this.endpoints.homeContent.successStories, formData);
   }
 
   updateSuccessStory(id: string, payload: HomeSuccessStoryPayload) {
-    return this.http.put<void>(this.endpoints.homeContent.successStory(id), payload);
+    const formData = this.buildSuccessStoryFormData(payload);
+    return this.http.put<void>(this.endpoints.homeContent.successStory(id), formData);
   }
 
   updateSuccessStoryStatus(id: string, isActive: boolean) {
@@ -55,5 +57,31 @@ export class HomeContentManagementService {
 
   deleteFaq(id: string) {
     return this.http.delete<void>(this.endpoints.homeContent.faq(id));
+  }
+
+  private buildSuccessStoryFormData(payload: HomeSuccessStoryPayload): FormData {
+    const formData = new FormData();
+    const files: File[] = [];
+
+    const imageIndex = payload.imageFile ? files.push(payload.imageFile) - 1 : null;
+    files.forEach(file => formData.append('Files', file));
+
+    if (imageIndex !== null) {
+      formData.append('ImageFileIndex', imageIndex.toString());
+    }
+
+    formData.append('NameAr', payload.nameAr);
+    formData.append('NameEn', payload.nameEn);
+    formData.append('RoleAr', payload.roleAr);
+    formData.append('RoleEn', payload.roleEn);
+    formData.append('MetricTitleAr', payload.metricTitleAr);
+    formData.append('MetricTitleEn', payload.metricTitleEn);
+    formData.append('MetricDescriptionAr', payload.metricDescriptionAr);
+    formData.append('MetricDescriptionEn', payload.metricDescriptionEn);
+    formData.append('ImageUrl', payload.imageUrl ?? '');
+    formData.append('DisplayOrder', payload.displayOrder.toString());
+    formData.append('IsActive', payload.isActive.toString());
+
+    return formData;
   }
 }

@@ -13,4 +13,6 @@ export interface HomeSuccessStory {
   isActive: boolean;
 }
 
-export type HomeSuccessStoryPayload = Omit<HomeSuccessStory, 'id'>;
+export type HomeSuccessStoryPayload = Omit<HomeSuccessStory, 'id'> & {
+  imageFile?: File | null;
+};
