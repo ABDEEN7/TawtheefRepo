@@ -9,6 +9,7 @@ namespace Recruitment.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Route("api/home-content")]
 public class HomeContentController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
