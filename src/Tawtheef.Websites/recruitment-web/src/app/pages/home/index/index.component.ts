@@ -5,7 +5,6 @@ import { CarouselResponsiveOptions } from 'primeng/carousel';
 import {HomeContentService} from '../services/home-content.service';
 import {FAQ, HomeSuccessStory} from '../models/home-content.model';
 import {Lang, LanguageService} from '../../../core/services/language.service';
-import {EndpointsService} from '../../../core/http/endpoints.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +16,6 @@ import {EndpointsService} from '../../../core/http/endpoints.service';
 export class IndexComponent implements OnInit, AfterViewInit {
   private homeContentService = inject(HomeContentService);
   private languageService = inject(LanguageService);
-  private endpoints = inject(EndpointsService);
 
   protected readonly routes = routes;
   activeTab: string = 'schools';
@@ -63,7 +61,7 @@ responsiveOptions: CarouselResponsiveOptions[] = [
       desc: this.isRtl() ? story.roleAr : story.roleEn,
       value: this.isRtl() ? story.metricTitleAr : story.metricTitleEn,
       label: this.isRtl() ? story.metricDescriptionAr : story.metricDescriptionEn,
-      img: this.resolveImageUrl(story.imageUrl)
+      img: story.imageUrl
     }))
   );
 
@@ -115,15 +113,4 @@ responsiveOptions: CarouselResponsiveOptions[] = [
     AOS.init({ once: true, duration: 600 });
   }
 
-  private resolveImageUrl(imageUrl: string): string {
-    if (!imageUrl) {
-      return '';
-    }
-
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-
-    return this.endpoints.files.download(imageUrl);
-  }
 }
