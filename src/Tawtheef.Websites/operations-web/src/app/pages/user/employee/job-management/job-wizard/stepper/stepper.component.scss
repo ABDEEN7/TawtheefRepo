@@ -24,13 +24,14 @@
   font-weight: 600;
   color: #999999;
   cursor: pointer;
+  margin-right: -10px;
 
   &.active {
-    color: #89153D;
+    color: #8a1538;
   }
 
   &.completed {
-    color: #89153D;
+    color: #8a1538;
   }
 
   i {
@@ -60,12 +61,12 @@
   transition: all 0.3s ease;
 
   &.active {
-    border-color: #89153D;
+    border-color: #8a1538;
   }
 
   &.completed {
-    border-color: #89153D;
-    background: #89153D;
+    border-color: #8a1538;
+    background: #8a1538;
     color: #fff;
   }
 
@@ -73,7 +74,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #89153D;
+    background: #8a1538;
   }
 
   .checkmark {
@@ -91,7 +92,7 @@
   transition: background 0.3s ease;
 
   &.completed {
-    background: #89153D;
+    background: #8a1538;
   }
 }
 
@@ -124,3 +125,18 @@
     font-size: 14px;
   }
 }
+
+
+.step-wrapper{
+    display: flex;
+    flex-direction: column;
+    flex:auto;
+    position: relative;
+    min-width: 15%;
+}
+.stepper .step-wrapper:last-child {
+    flex: none;
+    min-width: auto;
+}
+.stepper .step-wrapper:last-child .step-progress .connector-line{display: none;}
+.stepper .step-wrapper:last-child .step-progress {width:32px ;}
