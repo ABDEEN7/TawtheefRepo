@@ -13,6 +13,7 @@ namespace Operations.API.Controllers.Admin;
 
 [ApiController]
 [Route("api/[controller]")]
+[Route("api/home-content")]
 [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class HomeContentController(IMediator mediator) : ControllerBase
 {
