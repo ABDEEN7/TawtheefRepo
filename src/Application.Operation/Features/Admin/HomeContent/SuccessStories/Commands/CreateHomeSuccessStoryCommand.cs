@@ -1,5 +1,6 @@
 using Cortex.Mediator.Commands;
 using FluentResults;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
 
@@ -12,6 +13,8 @@ public sealed record CreateHomeSuccessStoryCommand(
     string MetricTitleEn,
     string MetricDescriptionAr,
     string MetricDescriptionEn,
-    string ImageUrl,
+    string? ImageUrl,
     int DisplayOrder,
-    bool IsActive) : ICommand<IResult<Guid>>;
+    bool IsActive,
+    int? ImageFileIndex,
+    List<IFormFile> Files) : ICommand<IResult<Guid>>;

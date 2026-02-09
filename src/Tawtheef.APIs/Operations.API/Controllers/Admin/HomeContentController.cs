@@ -35,7 +35,7 @@ public class HomeContentController(IMediator mediator) : ControllerBase
 
     [HttpPost("success-stories")]
     [AuthorizePermission(PermissionKeys.HomeContent.Manage)]
-    public async Task<IActionResult> CreateSuccessStory([FromBody] CreateHomeSuccessStoryCommand command)
+    public async Task<IActionResult> CreateSuccessStory([FromForm] CreateHomeSuccessStoryCommand command)
     {
         var result = await mediator.Send(command);
         return result.ToActionResult();
@@ -43,7 +43,7 @@ public class HomeContentController(IMediator mediator) : ControllerBase
 
     [HttpPut("success-stories/{id:guid}")]
     [AuthorizePermission(PermissionKeys.HomeContent.Manage)]
-    public async Task<IActionResult> UpdateSuccessStory(Guid id, [FromBody] UpdateHomeSuccessStoryCommand command)
+    public async Task<IActionResult> UpdateSuccessStory(Guid id, [FromForm] UpdateHomeSuccessStoryCommand command)
     {
         var result = await mediator.Send(command with { StoryId = id });
         return result.ToActionResult();
