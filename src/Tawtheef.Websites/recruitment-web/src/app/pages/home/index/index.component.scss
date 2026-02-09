@@ -85,6 +85,15 @@
       border-radius: 50%;
     }
   }
+  .success-story-avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+    background: #fff;
+    display: block;
+  }
 } 
 
 .tracks {
