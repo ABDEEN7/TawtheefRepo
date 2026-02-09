@@ -79,7 +79,7 @@
               <h6 class="m-0 fs-18 fw-semibold">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
               <p class="m-0 fs-16">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
             </div>
-            
+
           </div>
           </div>
         }
@@ -92,10 +92,10 @@
         <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.success.title' | translate }}</h2>
         <p class="text-muted fs-18" data-aos="fade-up" data-aos-delay="50">{{ 'home.success.desc' | translate }}</p>
       </div>
-      
+
       <p-carousel  class="mt-5"
   [value]="successStoriesView()"
-  [numVisible]="1"
+  [numVisible]="3"
   [numScroll]="1"
   [circular]="false"
   [autoplayInterval]="false"
@@ -115,16 +115,16 @@
                                   </div>
                                   <div class="row">
                                       <div class="col-12">
-                                          <div class="fs-18 fw-semibold">{{ review.value }}</div>
+                                          <div class="fs-18 fw-semibold text-truncate-1">{{ review.value }}</div>
                                           <div class="text-muted mt-1">{{ review.label }}</div>
                                       </div>
                                   </div>
                             </div>
-                              
+
                         </div>
                   </div>
           </ng-template>
-          
+
       </p-carousel>
     </div>
   </section>

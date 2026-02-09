@@ -2,11 +2,11 @@
   <div class="card card-table">
     <div class="card-body">
       <div class="row mb-4">
-        <div class="col-md-10">
+        <div class="col-md-11">
           <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
           <p class="fs-16 m-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
         </div>
-        <div class="col-md-2 text-end">
+        <div class="col-md-1 text-end">
           @if (canManageJobs()) {
           <button class="btn btn-primary d-flex" (click)="createNewJob()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>

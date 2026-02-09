@@ -79,8 +79,8 @@
 
 .success{
   .card-ghost{
-  background-color: #F6EDF0;
-  border: 0;
+    background-color: #F6EDF0;
+    border: 0;
     .icon-circle{
       border-radius: 50%;
     }
@@ -146,7 +146,9 @@
   border: 1px solid rgba(203, 203, 203, 1);
   z-index: 9999;
 }
-
+:host ::ng-deep .p-carousel-content{
+  margin-bottom: 20px;
+}
 :host ::ng-deep .p-carousel-prev-button {
   left: 45%;
 }
@@ -155,12 +157,17 @@
   left: 50%;
 }
 :host ::ng-deep .p-carousel-prev-button{
-    @media (max-width: 680px) {
-        left: 37%;
+  @media (max-width: 998px) {
+        left: 43%;
     }
+    @media (max-width: 768px) {
+        left:39%;
+    }
+  
 }
 :host ::ng-deep .p-carousel-next-button{
     @media (max-width: 1200px) {
         left: 50%;
+
     }
 }

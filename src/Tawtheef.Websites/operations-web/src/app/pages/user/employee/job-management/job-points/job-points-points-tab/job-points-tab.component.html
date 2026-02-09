@@ -257,7 +257,7 @@
               />
             </div>
 
-            <div
+            <div><div
               class="ability-footer"
               [ngClass]="{
                 'valid-total': isAbilityValid('speaking'),
@@ -265,7 +265,7 @@
               }"
             >
               {{ getAbilitySum('speaking') }}/{{ getAbilityMax('speaking') }}
-            </div>
+            </div></div>
           </div>
 
           <div class="language-column" formGroupName="reading">
@@ -323,7 +323,7 @@
               />
             </div>
 
-            <div
+            <div><div
               class="ability-footer"
               [ngClass]="{
                 'valid-total': isAbilityValid('reading'),
@@ -331,7 +331,7 @@
               }"
             >
               {{ getAbilitySum('reading') }}/{{ getAbilityMax('reading') }}
-            </div>
+            </div></div>
           </div>
 
           <div class="language-column" formGroupName="conversation">
@@ -389,7 +389,7 @@
               />
             </div>
 
-            <div
+           <div> <div
               class="ability-footer"
               [ngClass]="{
                 'valid-total': isAbilityValid('conversation'),
@@ -397,7 +397,7 @@
               }"
             >
               {{ getAbilitySum('conversation') }}/{{ getAbilityMax('conversation') }}
-            </div>
+            </div></div>
           </div>
         </div>
 

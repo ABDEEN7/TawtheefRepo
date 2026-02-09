@@ -833,3 +833,10 @@ body.ltr
     font-weight: bold !important;
     color: $color-primary;
 }
+.text-truncate-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}

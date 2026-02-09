@@ -55,17 +55,16 @@
       color: white;
     }
     &:hover{
-      background-color: #8B1538 !important;
-      color: white;
+      background-color: #fde7ee !important;
+      color: #fde7ee;
     }
 
   }
-    .p-tablist-tab-list{
-  border: 0 !important;
-}
+
   .p-tab:not(.p-highlight):hover {
     background: rgba(169, 68, 95, 0.1);
-    border-color: #8B1538 ;
+    border-color: rgba(169, 68, 95, 0.1) ;
+    color:#8B1538 ;
   }
 
   .p-tab.p-highlight {
@@ -180,4 +179,7 @@
   font-size: 1rem;
   color: #198754; /* green for approved state */
   font-weight: 500;
+}    
+:host ::ng-deep .p-tablist-tab-list{
+  border: 0 !important;
 }
