@@ -83,7 +83,7 @@ export class HomeContentManagementComponent implements OnInit {
       data: { mode: 'create' }
     });
 
-    ref.onClose.subscribe((result?: SuccessStoryDialogResult) => {
+    ref?.onClose.subscribe((result?: SuccessStoryDialogResult) => {
       if (!result?.payload) return;
       this.createSuccessStory(result.payload);
     });
@@ -97,7 +97,7 @@ export class HomeContentManagementComponent implements OnInit {
       data: { mode: 'edit', story }
     });
 
-    ref.onClose.subscribe((result?: SuccessStoryDialogResult) => {
+    ref?.onClose.subscribe((result?: SuccessStoryDialogResult) => {
       if (!result?.payload || !story.id) return;
       this.updateSuccessStory(story.id, result.payload);
     });
@@ -140,7 +140,7 @@ export class HomeContentManagementComponent implements OnInit {
       description: 'HOME_CONTENT.DELETE_SUCCESS_STORY_DESC'
     });
 
-    dialogRef.onClose.subscribe(result => {
+    dialogRef?.onClose.subscribe(result => {
       if (!result) return;
       this.homeContentService.deleteSuccessStory(story.id).subscribe({
         next: () => {
@@ -159,7 +159,7 @@ export class HomeContentManagementComponent implements OnInit {
       data: { mode: 'create' }
     });
 
-    ref.onClose.subscribe((result?: FaqDialogResult) => {
+    ref?.onClose.subscribe((result?: FaqDialogResult) => {
       if (!result?.payload) return;
       this.createFaq(result.payload);
     });
@@ -173,7 +173,7 @@ export class HomeContentManagementComponent implements OnInit {
       data: { mode: 'edit', faq }
     });
 
-    ref.onClose.subscribe((result?: FaqDialogResult) => {
+    ref?.onClose.subscribe((result?: FaqDialogResult) => {
       if (!result?.payload || !faq.id) return;
       this.updateFaq(faq.id, result.payload);
     });
@@ -216,7 +216,7 @@ export class HomeContentManagementComponent implements OnInit {
       description: 'HOME_CONTENT.DELETE_FAQ_DESC'
     });
 
-    dialogRef.onClose.subscribe(result => {
+    dialogRef?.onClose.subscribe(result => {
       if (!result) return;
       this.homeContentService.deleteFaq(faq.id).subscribe({
         next: () => {

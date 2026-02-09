@@ -1,3 +1,4 @@
+using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
 
