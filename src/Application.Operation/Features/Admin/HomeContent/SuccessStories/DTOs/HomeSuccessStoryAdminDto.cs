@@ -11,5 +11,6 @@ public sealed record HomeSuccessStoryAdminDto(
     string MetricDescriptionAr,
     string MetricDescriptionEn,
     string ImageUrl,
+    string ImagePreviewUrl,
     int DisplayOrder,
     bool IsActive);

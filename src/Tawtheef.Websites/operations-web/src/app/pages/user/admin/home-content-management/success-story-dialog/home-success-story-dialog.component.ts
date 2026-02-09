@@ -7,7 +7,6 @@ import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-name
 import {Lang, LanguageService} from '../../../../../core/services/language.service';
 import {HomeSuccessStory, HomeSuccessStoryPayload} from '../models/home-success-story.model';
 import {FileUtilsService} from '../../../../../core/utils/file-utils';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
 
 interface SuccessStoryDialogData {
   mode: 'create' | 'edit';
@@ -28,7 +27,6 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private fileUtils = inject(FileUtilsService);
-  private endpoints = inject(EndpointsService);
 
   story = this.config.data?.story;
   mode: 'create' | 'edit' = this.config.data?.mode ?? 'create';
@@ -73,7 +71,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
         isActive: this.story.isActive
       });
       this.imageName.set(this.getExistingImageName());
-      this.setPreview(this.resolveImageUrl(this.story.imageUrl));
+      this.setPreview(this.getExistingImagePreviewUrl());
     }
   }
 
@@ -107,7 +105,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   onImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
-    const existingImageUrl = this.resolveImageUrl(this.story?.imageUrl ?? null);
+    const existingImageUrl = this.getExistingImagePreviewUrl();
 
     if (file && !file.type.startsWith('image/')) {
       this.imageError.set(this.translate.instant('HOME_CONTENT.INVALID_IMAGE_TYPE'));
@@ -152,7 +150,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
     this.setImageFile(null);
     this.imageError.set(null);
     this.imageName.set(this.getExistingImageName());
-    this.setPreview(this.resolveImageUrl(this.story?.imageUrl ?? null));
+    this.setPreview(this.getExistingImagePreviewUrl());
   }
 
   isEditMode() {
@@ -180,16 +178,20 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  private resolveImageUrl(imageUrl: string | null): string | null {
-    if (!imageUrl) {
+  private getExistingImagePreviewUrl(): string | null {
+    if (!this.story) {
       return null;
     }
 
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
+    if (this.story.imagePreviewUrl) {
+      return this.story.imagePreviewUrl;
     }
 
-    return this.endpoints.files.download(imageUrl);
+    if (this.story.imageUrl.startsWith('http')) {
+      return this.story.imageUrl;
+    }
+
+    return null;
   }
 
   private getExistingImageName(): string | null {

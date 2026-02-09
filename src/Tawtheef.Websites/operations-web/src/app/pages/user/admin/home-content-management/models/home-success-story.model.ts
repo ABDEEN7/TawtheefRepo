@@ -9,10 +9,11 @@ export interface HomeSuccessStory {
   metricDescriptionAr: string;
   metricDescriptionEn: string;
   imageUrl: string;
+  imagePreviewUrl: string;
   displayOrder: number;
   isActive: boolean;
 }
 
-export type HomeSuccessStoryPayload = Omit<HomeSuccessStory, 'id'> & {
+export type HomeSuccessStoryPayload = Omit<HomeSuccessStory, 'id' | 'imagePreviewUrl'> & {
   imageFile?: File | null;
 };
