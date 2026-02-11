@@ -251,8 +251,8 @@
                          [minDate]="today"  [showOnFocus]="true" dateFormat="yy-mm-dd" [dataType]="'string'" fluid>
           </p-date-picker>
         </div>
-        <div class="col-md-4 d-flex align-items-end" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
-          <button class="btn btn-outline-primary w-100" type="button" (click)="verifySponsorProfile()" [disabled]="verifyingSponsor">
+        <div class="col-md-4 d-flex align-items-center" *ngIf="ds.state().sponsorType?.backendName === SponsorType.Individual">
+          <button class="btn btn-outline-primary" type="button" (click)="verifySponsorProfile()" [disabled]="verifyingSponsor">
             <span *ngIf="!verifyingSponsor">
               {{ 'wizard.personal.verify.button' | translate }}
             </span>

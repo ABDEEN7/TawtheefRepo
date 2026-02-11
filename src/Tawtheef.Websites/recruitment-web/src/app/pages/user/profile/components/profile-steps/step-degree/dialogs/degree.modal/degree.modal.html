@@ -164,7 +164,7 @@
               [maxlength]="5"
               [minFractionDigits]="1"
               [maxFractionDigits]="2"
-              [showButtons]="false" class="w-100"
+              [showButtons]="false" class="w-100 form-control"
               [ngClass]="{'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)}">
             </p-inputNumber>
             <small *ngIf="f['gpa']?.errors?.['required'] && (f['gpa'].dirty || f['gpa'].touched)"
