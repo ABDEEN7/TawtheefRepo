@@ -77,7 +77,7 @@ export class ProfileAttachmentsSectionComponent {
     this.dialogService
       .open(AddAttachmentDialogComponent, {
         header: this.translate.instant('profileView.actions.addAttachment'),
-        styleClass: 'w-100 w-md-50'
+        styleClass: 'w-50'
       })
       ?.onClose.subscribe((attachment: Attachment | null | undefined) => {
         if (!attachment) return;

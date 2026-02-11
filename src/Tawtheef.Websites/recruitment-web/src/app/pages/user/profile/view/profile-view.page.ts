@@ -340,6 +340,7 @@ export class ProfileViewPage {
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
+      draggable: false,   // ✅ disables dragging
       styleClass: 'modal-dialog  modal-xl'
     })?.onClose.subscribe(result => {
       if (!result) return;

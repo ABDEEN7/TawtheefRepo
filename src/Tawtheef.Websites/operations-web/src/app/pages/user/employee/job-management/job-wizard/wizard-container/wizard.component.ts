@@ -153,6 +153,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       modal: true,
       header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
       styleClass: 'custom-bootstrap-dialog',
+      draggable: false,   // ✅ disables dragging
       data: {
         isCreateMode: isCreateMode,
         showInWizard: true,
@@ -191,6 +192,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           modal: true,
           header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
           styleClass: 'custom-bootstrap-dialog',
+          draggable: false,   // ✅ disables dragging
           data: {
             isCreateMode: true,
             showInWizard: true,

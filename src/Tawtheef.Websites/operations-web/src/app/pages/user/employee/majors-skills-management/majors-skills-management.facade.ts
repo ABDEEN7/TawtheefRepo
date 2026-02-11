@@ -220,6 +220,7 @@ export class MajorsSkillsManagementFacade {
       width: '520px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: { parentMajor: parent ?? null }
     });
   }
@@ -230,6 +231,7 @@ export class MajorsSkillsManagementFacade {
       width: '720px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: {
         mode: 'create',
         skillTypes: this.store.skillTypes() ?? [],
@@ -252,6 +254,7 @@ export class MajorsSkillsManagementFacade {
           width: '720px',
           modal: true,
           dismissableMask: true,
+          draggable: false,
           data: {
             mode: 'edit',
             model: details,
@@ -273,6 +276,7 @@ export class MajorsSkillsManagementFacade {
       width: '640px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: { mode: 'create', parentId }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
@@ -288,6 +292,7 @@ export class MajorsSkillsManagementFacade {
       width: '640px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: { mode: 'edit', model }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
@@ -303,6 +308,7 @@ export class MajorsSkillsManagementFacade {
       width: '720px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: { mode: 'create', skillTypes: this.store.skillTypes() ?? [] }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
@@ -318,6 +324,7 @@ export class MajorsSkillsManagementFacade {
       width: '720px',
       modal: true,
       dismissableMask: true,
+      draggable: false,
       data: { mode: 'edit', model, skillTypes: this.store.skillTypes() ?? [] }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;

@@ -230,6 +230,7 @@ export class ProfileDistributionPage implements OnInit {
       header: 'distribution.dialog.manual.title',
       width: '520px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
       dismissableMask: false,
       data: {
         employees: this.employees(),
@@ -246,6 +247,7 @@ export class ProfileDistributionPage implements OnInit {
     header: 'تعيين الملفات على موظف',
       width: '720px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
 
     })
  }
@@ -261,6 +263,7 @@ export class ProfileDistributionPage implements OnInit {
       header: 'distribution.dialog.auto.title',
       width: '640px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
       dismissableMask: false,
       data: {
         employees: this.employees(),
@@ -288,6 +291,7 @@ export class ProfileDistributionPage implements OnInit {
         header: 'distribution.dialog.manual.title',
         width: '520px',
         modal: true,
+        draggable: false,   // ✅ disables dragging
         dismissableMask: false,
         data: {
           employees: this.employees(),
@@ -305,6 +309,7 @@ export class ProfileDistributionPage implements OnInit {
       header: 'distribution.dialog.auto.title',
       width: '640px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
       dismissableMask: false,
       data: {
         employees: this.employees(),

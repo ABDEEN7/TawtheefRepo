@@ -204,6 +204,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
       data: { item: resolvedItem, action: 'changes', note: note ?? resolvedItem.note },
       width: '520px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
       dismissableMask: false
     })?.onClose.subscribe((result: ItemDialogResult | undefined) => {
       if (!result) return;

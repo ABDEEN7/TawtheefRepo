@@ -468,6 +468,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       header: this.transaltionService.instant('JOB_APPROVAL.ADD_REVIEW_ATTACHMENT'),
       width: '900px',
       modal: true,
+      draggable: false,   // ✅ disables dragging
       data: {
         existingAttachments: [...this.jobReviewAttachments]
       }

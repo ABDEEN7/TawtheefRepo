@@ -117,6 +117,7 @@ export class UsersManagement implements OnInit {
       header: this.translate.instant('USERS.MANAGE_ROLES_TITLE'),
       width: '900px',
       styleClass: 'manage-roles-dialog',
+      draggable: false,   // ✅ disables dragging
       data: { user, roleOptions: this.roleLookups()  }
     });
     ref?.onClose.subscribe((updated: boolean) => {

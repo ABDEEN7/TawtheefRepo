@@ -88,6 +88,7 @@ export class JobCandidatesNationalityFilterModalComponent implements OnInit {
     const ref = this.dialogService.open(JobCandidatesNationalityBreakdownDialogComponent, {
       header: candidateTypeName,
       width: '52rem',
+      draggable: false,   // ✅ disables dragging
       breakpoints: {
         '1200px': '70vw',
         '992px': '85vw',
