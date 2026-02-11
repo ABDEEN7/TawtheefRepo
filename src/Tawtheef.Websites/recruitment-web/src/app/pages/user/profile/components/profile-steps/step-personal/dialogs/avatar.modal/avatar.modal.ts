@@ -25,7 +25,8 @@ export class AvatarModal {
   private pendingInput?: HTMLInputElement;
   croppedImage: string | null = null;
   avatarError: string | null = null;
-
+  private readonly ALLOWED_MIME = new Set(['image/png', 'image/jpeg']);
+  private readonly ALLOWED_EXT  = new Set(['png', 'jpg', 'jpeg']);
   // تحكّم بصري
   zoom = 1;
   rotation = 0;
@@ -51,6 +52,14 @@ export class AvatarModal {
       input.value = '';
       return;
     }
+
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!this.ALLOWED_MIME.has(file.type) || !this.ALLOWED_EXT.has(ext)) {
+      this.avatarError = this.translate.instant('wizard.personal.avatar.errors.onlyPngJpg');
+      input.value = '';
+      return;
+    }
+
     if (file.size > this.MAX_AVATAR_BYTES) {
       this.avatarError = this.translate.instant('wizard.personal.avatar.errors.maxSize', { size: 3 });
       input.value = '';
