@@ -33,7 +33,7 @@ public sealed class UpdateFaqCommandHandler(
         faq.AnswerEn = request.AnswerEn.Trim();
         faq.DisplayOrder = request.DisplayOrder;
         faq.IsActive = request.IsActive;
-        faq.UpdatedDate = timeProvider.GetUtcNow();
+        faq.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;
         faq.UpdatedById = hasUser ? userId : faq.UpdatedById;
 
         await repository.UpdateAsync(faq);

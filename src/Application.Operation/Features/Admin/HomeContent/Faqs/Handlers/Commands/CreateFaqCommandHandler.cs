@@ -29,7 +29,7 @@ public sealed class CreateFaqCommandHandler(
             AnswerEn = request.AnswerEn.Trim(),
             DisplayOrder = request.DisplayOrder,
             IsActive = request.IsActive,
-            CreatedDate = now,
+            CreatedDate = now.UtcDateTime,
             CreatedById = hasUser ? userId : null
         };
 

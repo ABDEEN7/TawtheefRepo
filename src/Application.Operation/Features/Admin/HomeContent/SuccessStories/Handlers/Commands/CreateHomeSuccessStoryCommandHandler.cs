@@ -49,7 +49,7 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
             ImageUrl = imageResult.Value ?? imageUrl,
             DisplayOrder = request.DisplayOrder,
             IsActive = request.IsActive,
-            CreatedDate = now,
+            CreatedDate = now.UtcDateTime,
             CreatedById = hasUser ? userId : null
         };
 

@@ -28,7 +28,7 @@ public sealed class UpdateFaqStatusCommandHandler(
 
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
         faq.IsActive = request.IsActive;
-        faq.UpdatedDate = timeProvider.GetUtcNow();
+        faq.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;;
         faq.UpdatedById = hasUser ? userId : faq.UpdatedById;
 
         await repository.UpdateAsync(faq);
