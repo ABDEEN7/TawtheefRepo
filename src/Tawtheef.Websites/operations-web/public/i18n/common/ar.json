@@ -66,6 +66,6 @@
   "auth.externalLogin.loginSuccessful.summary": "تم تسجيل الدخول بنجاح",
   "auth.externalLogin.loginSuccessful.detail": "تم تسجيل الدخول بنجاح باستخدام مزود تسجيل الدخول الخارجي.",
 
-  "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث",
+  "remote-select.search-hint": "لا تتوفر بيانات.",
   "remote-select.select-parent": "حدد قيمة الحقل الأساسي أولاً"
 }

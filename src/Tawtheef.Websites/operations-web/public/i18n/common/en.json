@@ -67,6 +67,6 @@
   "auth.externalLogin.loginSuccessful.summary": "Login Successful",
   "auth.externalLogin.loginSuccessful.detail": "You have been logged in successfully using the external provider.",
 
-  "remote-select.search-hint": "Type at least {{minChars}} characters to search",
+  "remote-select.search-hint": "There is no data available.",
   "remote-select.select-parent": "Select the parent field value first"
 }

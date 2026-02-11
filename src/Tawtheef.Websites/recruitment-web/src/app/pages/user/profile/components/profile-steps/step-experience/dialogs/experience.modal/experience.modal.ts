@@ -17,7 +17,7 @@ import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type
 import {Select} from 'primeng/select';
 import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
 import {EXPERIENCE_DIALOG_CONFIG} from '../dialog-config';
-import {dropdownOptionsModel} from '../../../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../../../shared/models/dropdown-options.model';
 import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
 import {Experience} from '../../../../../wizard-profile/models/experience.model';
 import {Degree} from '../../../../../wizard-profile/models/degree.model';
@@ -294,11 +294,11 @@ export class ExperienceModal implements OnInit {
     }
   }
 
-  get degreeOptions(): dropdownOptionsModel[] {
+  get degreeOptions(): DropdownOptionVM[] {
     const degrees = (this.config.data?.degrees as Degree[] | undefined) ?? [];
     return degrees
       .filter((d) => !!d.id)
-      .map((d) => ({
+      .map((d) => new DropdownOptionVM({
         id: d.id!,
         backendName: d.degree?.backendName ?? '',
         name: `${d.degree?.name ?? ''} - ${d.major?.name ?? ''} (${d.gradYear ?? ''})`,

@@ -5,7 +5,7 @@ import {
   StepValidityResult,
 } from '../models/profile-validation.model';
 import {ProfileState} from '../models/profile-state.model';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
 
 function parseDate(value?: string | null): Date | null {
@@ -21,7 +21,7 @@ function startOfToday(): Date {
   return now;
 }
 
-function isCertificateType(type?: dropdownOptionsModel | null): boolean {
+function isCertificateType(type?: DropdownOptionVM | null): boolean {
   const backendName = type?.backendName?.toLowerCase() ?? '';
   return backendName.includes('certificate');
 }

@@ -44,7 +44,7 @@
                       </div>
                    </div>
              </div>
-          
+
         </div>
 
         <div class="table-responsive table-wrapper">
@@ -70,9 +70,9 @@
               } @else {
                 @for (country of this.countries(); track country.id; let i = $index) {
                   <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-                    <td>{{ this.currentLang() === 'ar' ? (country.nameAr || country.nameEn) : (country.nameEn || country.nameAr) }}</td>
-                    <td>{{ country.isoCode }}</td>
-                    <td>{{ country.codeAlpha }}</td>
+                    <td>{{ country.name }}</td>
+                    <td>{{ country.additionalData?.['isoCode'] }}</td>
+                    <td>{{ country.additionalData?.['codeAlpha'] }}</td>
                     <td>+{{ country.code }}</td>
                     <td>
                       <span class="pill" [class.success]="country.isActive" [class.soft]="!country.isActive">

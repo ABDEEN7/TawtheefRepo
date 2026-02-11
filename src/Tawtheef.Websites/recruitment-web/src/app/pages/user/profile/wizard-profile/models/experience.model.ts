@@ -1,5 +1,5 @@
 import {GUID} from '../../../../../shared/types/guid.type';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {UploadedFileRef} from './profile-state.model';
 
 export interface Experience {
@@ -8,7 +8,7 @@ export interface Experience {
   jobTitle: string;
   from?: string;
   to?: string;
-  country: dropdownOptionsModel | null | undefined;
+  country: DropdownOptionVM | null | undefined;
   description?: string;
   fileName?: string;
   file?: File | null;
@@ -22,7 +22,7 @@ export interface TrainingCourse {
   id?: GUID;
   title: string;
   provider: string;
-  country: dropdownOptionsModel | null | undefined;
+  country: DropdownOptionVM | null | undefined;
   from?: string;
   to?: string;
   description?: string;

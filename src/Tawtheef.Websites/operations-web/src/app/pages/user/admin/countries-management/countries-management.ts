@@ -6,7 +6,7 @@ import {Select} from 'primeng/select';
 import {ToggleSwitchModule} from 'primeng/toggleswitch';
 import {Tooltip} from 'primeng/tooltip';
 import {CountriesService} from './services/countries.service';
-import {CountryDto} from './models/country.dto';
+import {CountryDto, CountryVM} from './models/country.dto';
 import {CountryFilters} from './models/country-filters.dto';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
@@ -37,7 +37,7 @@ export class CountriesManagement implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
 
-  private _countries = signal<CountryDto[]>([]);
+  private _countries = signal<CountryVM[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
 
   public countries = this._countries.asReadonly();
@@ -69,7 +69,7 @@ export class CountriesManagement implements OnInit {
   loadCountries() {
     this.countriesService.getCountries(this.filters()).subscribe({
       next: (response: PaginatedResult<CountryDto>) => {
-        this._countries.set(response.items || []);
+        this._countries.set(response.items?.map((item)=> new CountryVM(item)) || []);
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {
@@ -115,13 +115,13 @@ export class CountriesManagement implements OnInit {
     this.loadCountries();
   }
 
-  toggleStatus(country: CountryDto) {
+  toggleStatus(country: CountryVM) {
     const desiredState = !country.isActive;
     this.countriesService.updateStatus(country.id, desiredState)
       .subscribe({
         next: () => {
           this._countries.update(items =>
-            items.map(c => c.id === country.id ? { ...c, isActive: desiredState } : c)
+            items.map(c => c.id === country.id ? new CountryVM(c, desiredState) : new CountryVM(c))
           );
           this.notification.success(this.translate.instant(desiredState ? 'COUNTRIES.ACTIVATE_SUCCESS' : 'COUNTRIES.DEACTIVATE_SUCCESS'));
         }

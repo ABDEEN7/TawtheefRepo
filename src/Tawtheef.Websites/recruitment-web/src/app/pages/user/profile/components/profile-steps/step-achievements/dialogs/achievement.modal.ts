@@ -11,7 +11,7 @@ import {ProfileLookupsService} from '../../../../wizard-profile/services/profile
 import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
 import {Achievement} from '../../../../wizard-profile/models/achievement.model';
 import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
-import {dropdownOptionsModel} from '../../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../../shared/models/dropdown-options.model';
 import {ACHIEVEMENTS_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
 import {GUID} from '../../../../../../../shared/types/guid.type';
 import {I18nNamespaceDirective} from '../../../../../../../shared/directives/i18n-namespace.directive';
@@ -162,7 +162,7 @@ export class AchievementModal implements OnInit {
   }
 
   get shouldShowSpecializationQuestion(): boolean {
-    const type = this.form.get('achievementType')?.value as dropdownOptionsModel | null;
+    const type = this.form.get('achievementType')?.value as DropdownOptionVM | null;
     const backend = type?.backendName?.toLowerCase() ?? '';
     return backend.includes('certificate');
   }

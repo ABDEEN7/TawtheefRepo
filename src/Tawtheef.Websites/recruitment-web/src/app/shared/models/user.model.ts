@@ -1,4 +1,4 @@
-import {dropdownOptionsModel} from "./dropdown-options.model";
+import {dropdownOptionsModel, DropdownOptionVM} from "./dropdown-options.model";
 
 export interface userModel {
   id: string;
@@ -6,7 +6,7 @@ export interface userModel {
   email: string;
   gender: string;
   role: string;
-  accountStatus: dropdownOptionsModel;
+  accountStatus: DropdownOptionVM;
   registerAt: Date;
   isVerifiedEmail: boolean;
   isVerifiedPhone: boolean;

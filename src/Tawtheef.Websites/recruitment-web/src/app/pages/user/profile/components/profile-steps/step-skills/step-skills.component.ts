@@ -17,7 +17,7 @@ import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lo
 import {TranslateService} from '@ngx-translate/core';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../shared/models/dropdown-options.model';
 import {Skill} from '../../../wizard-profile/models/skill.model';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 
@@ -50,14 +50,14 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     return validity['skills'];
   }
 
-  skillOptions: dropdownOptionsModel[] = [];
+  skillOptions: DropdownOptionVM[] = [];
   loadingSkills = false;
   lastQuery = '';
 
-  skillSearchModel: dropdownOptionsModel | null = null;
+  skillSearchModel: DropdownOptionVM | null = null;
 
-  selectedSkill: dropdownOptionsModel | null = null;
-  selectedLevel: dropdownOptionsModel | null = null;
+  selectedSkill: DropdownOptionVM | null = null;
+  selectedLevel: DropdownOptionVM | null = null;
 
   // search stream
   private readonly search$ = new Subject<string>();
@@ -114,7 +114,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
 
   onSkillSelect(e: AutoCompleteSelectEvent): void {
-    this.selectedSkill = e.value as dropdownOptionsModel;
+    this.selectedSkill = e.value as DropdownOptionVM;
   }
 
   addSkill(): void {

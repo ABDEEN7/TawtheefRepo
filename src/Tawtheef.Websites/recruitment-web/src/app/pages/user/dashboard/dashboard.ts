@@ -7,7 +7,7 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
 import {Select} from 'primeng/select';
 import {CandidateInvitationFilters} from './models/candidate-invitation-filters';
 import {CandidateInvitationModel} from './models/candidate-invitation.model';
-import {dropdownOptionsModel} from '../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../shared/models/dropdown-options.model';
 import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
 import {TableModule} from 'primeng/table';
 import {routes} from '../../../routes/routes';
@@ -103,7 +103,7 @@ export class Dashboard implements OnInit {
     return TYPE_BADGE_CLASSES[record.jobCategoryBackendName as keyof typeof TYPE_BADGE_CLASSES] ?? '';
   }
 
-  getActionButtons(invitationStatus: dropdownOptionsModel): ActionConfig {
+  getActionButtons(invitationStatus: DropdownOptionVM): ActionConfig {
     const status = invitationStatus.backendName as InvitationStatus;
 
     return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];

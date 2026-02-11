@@ -36,7 +36,7 @@
   "validation.invalidFileType": "نوع الملف غير مدعوم.",
   "validation.maxFileSize": "حجم الملف يجب ألا يتجاوز {{size}} ميغابايت.",
   "validation.dateRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.",
-  "remote-select.search-hint": "اكتب على الأقل {{minChars}} أحرف للبحث",
+  "remote-select.search-hint": "لا تتوفر بيانات.",
   "common.ar": "عربي",
   "common.en": "English",
   "common.optional": "اختياري",
