@@ -14,21 +14,14 @@
 
         <label class="form-label">{{ 'wizard.personal.avatar.choose' | translate }}</label>
         <input
-          type="file" accept="image/*"
+          type="file"
+          accept=".png,.jpg,.jpeg,image/png,image/jpeg"
           class="form-control"
           (change)="onAvatarPicked($event)"
           aria-label="Choose an image to upload">
         <div *ngIf="avatarError" class="text-danger small mt-2">
           <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ avatarError }}
         </div>
-
-        <!-- Small preview on md- only -->
-<!--        <div class="d-md-none text-center mt-3" *ngIf="croppedImage">-->
-<!--          <img [src]="croppedImage" class="candidate-avatar-preview fx-drop" alt="preview">-->
-<!--          <div class="small text-muted mt-1">-->
-<!--            {{ 'wizard.personal.avatar.previewNote' | translate }}-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
 
       <!-- Right: cropper -->
