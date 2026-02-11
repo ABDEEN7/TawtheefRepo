@@ -19,7 +19,8 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 
 public sealed class SaveJobReviewCommandHandler(
     IUnitOfWork uow,
-    IMediator mediator
+    IMediator mediator,
+    TimeProvider timeProvider
 ) : ICommandHandler<SaveJobReviewCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -35,11 +36,11 @@ public sealed class SaveJobReviewCommandHandler(
         if (cmd.Request.Tabs.Any(t => !t.Status.HasValue))
             return Result.Fail<Unit>(JobMessages.FieldRequired);
 
-        var createdAt = DateTimeOffset.UtcNow;
+        var createdAt = timeProvider.GetUtcNow().UtcDateTime;
         var tabNotes = MapTabNotes(cmd.JobId, reviewCycleId, cmd.Request.Tabs, createdAt);
 
         var tabReviewRepo = uow.GetEntityRepository<JobTabReviewNote>();
-        await tabReviewRepo.AddRangeAsync(tabNotes);
+        await tabReviewRepo.AddRangeAsync(tabNotes, ct);
 
         var reviewAttachmentRepo = uow.GetEntityRepository<JobReviewAttachment>();
         if (cmd.Request.AttachmentsJson != null)
@@ -64,7 +65,7 @@ public sealed class SaveJobReviewCommandHandler(
                     AttachmentId = attachmentId.Value,
                     FileName = fileName
                 };
-                await reviewAttachmentRepo.AddAsync(reviewAttachment);
+                await reviewAttachmentRepo.AddAsync(reviewAttachment, ct);
             }
         }
         await uow.SaveChangesAsync(ct);
@@ -75,7 +76,7 @@ public sealed class SaveJobReviewCommandHandler(
         Guid jobId,
         Guid reviewCycleId,
         IEnumerable<JobTabReviewUpsertDto> tabs,
-        DateTimeOffset createdAt)
+        DateTime createdAt)
     {
         return tabs
             .Where(t => t.Status.HasValue)

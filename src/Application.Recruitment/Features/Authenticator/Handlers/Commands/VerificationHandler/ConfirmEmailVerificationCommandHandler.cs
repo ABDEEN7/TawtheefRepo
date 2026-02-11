@@ -13,7 +13,8 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Verif
 
 public class ConfirmEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    TimeProvider timeProvider)
     : ICommandHandler<ConfirmEmailVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ConfirmEmailVerificationCommand request, CancellationToken cancellationToken)
@@ -22,7 +23,7 @@ public class ConfirmEmailVerificationCommandHandler(
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
 
-        var now = DateTimeOffset.UtcNow;
+        var now = timeProvider.GetUtcNow().UtcDateTime;
 
         var verification = await unitOfWork.GetEntityRepository<ContactVerification>().DbSet
             .Where(v =>

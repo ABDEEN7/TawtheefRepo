@@ -39,7 +39,7 @@ public sealed class DeleteOfficeCommandHandler(UserManager<User> userManager, IU
                 .Where(u => userIds.Contains(u.Id)).ExecuteUpdateAsync(
                     setters => setters
                         .SetProperty(u => u.IsDeleted, true)
-                        .SetProperty(u => u.DeletedDate, time.GetUtcNow())
+                        .SetProperty(u => u.DeletedDate, time.GetUtcNow().UtcDateTime)
                         .SetProperty(u => u.DeletedById, request.UserId), cancellationToken);
         }
         unitOfWork.Remove(office);

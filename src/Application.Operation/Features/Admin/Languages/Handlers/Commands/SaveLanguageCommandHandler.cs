@@ -35,7 +35,7 @@ public sealed class SaveLanguageCommandHandler(
         if (exists)
             return Result.Fail<Guid>(ErrorsCodes.LanguageNameExists);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         if (request.Id.HasValue)

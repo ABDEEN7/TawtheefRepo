@@ -178,7 +178,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     {
         // Get current user ID (you'll need to inject IHttpContextAccessor or similar)
         var currentUserId = GetCurrentUserId();
-        var now = DateTimeOffset.UtcNow;
+        var now = DateTime.UtcNow;
 
         foreach (var entry in ChangeTracker.Entries<IBaseEntity>())
         {

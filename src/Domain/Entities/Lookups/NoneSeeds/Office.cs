@@ -66,7 +66,7 @@ public class Office : LookupBase
         foreach (var id in ids)
             office.SupportedCountries.Add(new OfficeSupportedCountry { CountryId = id });
 
-        office.AddDomainEvent(new OfficeCreatedDomainEvent(office.Id, adminId, DateTimeOffset.UtcNow));
+        office.AddDomainEvent(new OfficeCreatedDomainEvent(office.Id, adminId, DateTimeOffset.Now));
         return Result.Ok(office);
     }
 }

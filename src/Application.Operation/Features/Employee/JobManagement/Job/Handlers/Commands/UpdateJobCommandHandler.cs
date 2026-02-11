@@ -73,7 +73,7 @@ public class UpdateJobCommandHandler(
         existingJob.SubMajorId = request.Job.SubMajorId;
         existingJob.WorkTypeId = request.Job.WorkTypeId;
         existingJob.NumberOfVacancies = request.Job.NumberOfVacancies;
-        existingJob.ClosingDate = request.Job.ClosingDate;
+        existingJob.ClosingDate = request.Job.ClosingDate.UtcDateTime;
         existingJob.MinimumAge = request.Job.MinimumAge;
         existingJob.MaximumAge = request.Job.MaximumAge;
         existingJob.OverViewAr = request.Job.OverviewAr;

@@ -78,14 +78,14 @@ public class ProfileChangeRequest : EventEntity
     /// User who created the request.
     /// </summary>
     public Guid RequestedById { get; set; }
-    public DateTimeOffset RequestedAtUtc { get; set; } = DateTime.UtcNow;
+    public DateTime RequestedAtUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Reviewer decisions.
     /// Reject reason is required when status = Rejected.
     /// </summary>
     public Guid? ReviewedById { get; set; }
-    public DateTimeOffset? ReviewedAtUtc { get; set; }
+    public DateTime? ReviewedAtUtc { get; set; }
     [MaxLength(2000)]
     public string? ReviewerNote { get; set; }
 

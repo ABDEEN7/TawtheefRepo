@@ -4,5 +4,5 @@ public interface ISoftDelete
 {
     bool IsDeleted { get; set; }
     Guid? DeletedById { get; set; }
-    DateTimeOffset? DeletedDate { get; set; }
+    DateTime? DeletedDate { get; set; }
 }

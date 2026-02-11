@@ -26,7 +26,7 @@ public sealed class UpdateReligionStatusCommandHandler(
         if (religion is null)
             return Result.Fail<Unit>(ErrorsCodes.ReligionNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         religion.IsActive = request.IsActive;

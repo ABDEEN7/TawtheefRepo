@@ -26,7 +26,7 @@ public sealed class UpdateUniversityStatusCommandHandler(
         if (university is null)
             return Result.Fail<Unit>(ErrorsCodes.UniversityNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         university.IsActive = request.IsActive;

@@ -26,7 +26,7 @@ public sealed class UpdateLanguageStatusCommandHandler(
         if (language is null)
             return Result.Fail<Unit>(ErrorsCodes.LanguageNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         language.IsActive = request.IsActive;

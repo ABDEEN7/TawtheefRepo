@@ -14,9 +14,9 @@ public class EntityLog : EventEntity
     public string? ActionDetails { get; init; }
     public DateTime ChangeDate { get; init; } = DateTime.UtcNow;
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
-    public string? OldValues { get; set; }
+    public string? OldValues { get; init; }
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
-    public string? NewValues { get; set; }
+    public string? NewValues { get; init; }
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     // ReSharper disable once InconsistentNaming
     public string? IPAddress { get; init; }
