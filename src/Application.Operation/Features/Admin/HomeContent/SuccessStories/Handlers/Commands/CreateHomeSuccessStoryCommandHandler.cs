@@ -3,11 +3,11 @@ using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Content;
 
@@ -77,7 +77,7 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
         if (file.Length == 0)
             return Result.Fail<string?>(ErrorsCodes.InvalidAttachmentFile);
 
-        var uploadPath = await HomeSuccessStoryImageUploadPathFactory.CreateAsync(storyId, file, false, ct);
+        var uploadPath = await HomeSuccessStoryImageUploadPathFactory.CreateAsync(storyId, file, true, ct);
 
         var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
             new UploadAttachmentCommand(
