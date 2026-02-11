@@ -81,18 +81,9 @@
             {{ phone.errorMessage }}
           </div>
 
-          <div *ngIf="phone.status === 'codeSent'" class="d-flex align-items-center gap-2 flex-grow-1">
-            <input
-              type="text"
-              maxlength="6"
-              class="form-control"
-              [(ngModel)]="phone.otp"
-              [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="verifyPhoneCode()"
-              [disabled]="!phone.otp">
+          <div *ngIf="phone.status === 'codeSent'" class="d-flex w-100 flex-wrap gap-2">
+            <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="phone.otp" [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
+            <button type="button" class="btn btn-primary" (click)="verifyPhoneCode()" [disabled]="!phone.otp">
               {{ 'wizard.contact.phoneVerify' | translate }}
             </button>
           </div>
@@ -129,7 +120,7 @@
           {{ 'wizard.contact.emailFailed' | translate }}
         </span>
         </div>
-        <div class="mt-2 d-flex align-items-center gap-2">
+        <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
           <button type="button"
                   class="btn btn-outline-secondary btn-sm"
                   (click)="sendEmailVerification()"
@@ -147,8 +138,8 @@
           </span>
           <div
             *ngIf="email.useCode && email.status === 'linkSent'"
-            class="d-flex align-items-center gap-2 flex-grow-1">
-            <input type="text" maxlength="6" class="form-control"
+            class="d-flex w-100 flex-wrap gap-2">
+            <input type="text" maxlength="6" class="form-control w-75"
               [(ngModel)]="email.otp" [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
             <button
               type="button"
