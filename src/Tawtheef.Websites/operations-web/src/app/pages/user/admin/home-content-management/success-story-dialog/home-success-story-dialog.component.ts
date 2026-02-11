@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
@@ -37,8 +37,11 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   imagePreview = signal<string | null>(null);
   imageError = signal<string | null>(null);
   imageName = signal<string | null>(null);
+  existingImageCleared = signal(false);
   imageDisplayName = computed(() => this.imageName() || this.getExistingImageName());
   private imageObjectUrl: string | null = null;
+
+  @ViewChild('imageInput') imageInput?: ElementRef<HTMLInputElement>;
 
   form = this.fb.nonNullable.group({
     nameAr: ['', Validators.required],
@@ -82,9 +85,6 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   submit() {
     this.submitted = true;
     const imageUrl = this.form.controls.imageUrl.value?.trim() ?? '';
-    if (!imageUrl && !this.imageFile) {
-      this.imageError.set(this.requiredError());
-    }
     if (this.form.invalid || this.imageError()) {
       this.form.markAllAsTouched();
       return;
@@ -120,6 +120,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
     this.setImageFile(file);
 
     if (file) {
+      this.existingImageCleared.set(false);
       this.imageName.set(file.name);
       this.setPreview(URL.createObjectURL(file), true);
     } else {
@@ -149,8 +150,14 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
 
     this.setImageFile(null);
     this.imageError.set(null);
-    this.imageName.set(this.getExistingImageName());
-    this.setPreview(this.getExistingImagePreviewUrl());
+    this.imageName.set(null);
+    this.existingImageCleared.set(true);
+    this.setPreview(null);
+    this.form.patchValue({imageUrl: ''});
+
+    if (this.imageInput?.nativeElement) {
+      this.imageInput.nativeElement.value = '';
+    }
   }
 
   isEditMode() {
@@ -179,7 +186,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   private getExistingImagePreviewUrl(): string | null {
-    if (!this.story) {
+    if (!this.story || this.existingImageCleared()) {
       return null;
     }
 
@@ -195,6 +202,10 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   private getExistingImageName(): string | null {
+    if (this.existingImageCleared()) {
+      return null;
+    }
+
     const raw = this.story?.imageUrl ?? null;
     if (!raw) return null;
 
