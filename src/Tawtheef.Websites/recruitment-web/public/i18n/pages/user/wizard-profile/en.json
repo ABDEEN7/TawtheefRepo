@@ -1,5 +1,5 @@
 ﻿{
-  "wizard.loading": "Loading...",
+  "wizard.loading": "Loading profile data...",
   "wizard.files.maxSize1mb": "File size must not exceed 1 MB.",
   "wizard.files.invalidFormat": "Invalid file format. Allowed: {{formats}}.",
   "wizard.files.formats.cv": "Allowed formats: PDF, DOC, DOCX",

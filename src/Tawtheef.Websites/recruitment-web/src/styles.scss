@@ -26,7 +26,7 @@ body {
 
 .p-datepicker-fluid{
     // border:1px solid var(--p-inputtext-border-color);
-     
+
     // border-radius: 2rem !important;
     .p-inputtext{
       padding: 0.47rem 0.75rem  !important;
@@ -53,4 +53,7 @@ body {
 
 :host ::ng-deep .iti__country-list {
   max-height: 300px;
+}
+.p-virtualscroller {
+  min-height: 50px; /* Should match your scrollHeight */
 }

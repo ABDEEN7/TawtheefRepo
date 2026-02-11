@@ -7,7 +7,7 @@ import {
   OnChanges,
   SimpleChanges,
   forwardRef,
-  inject,
+  inject, Renderer2,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -34,6 +34,7 @@ type LoadRequest = { term: string; page: number; append: boolean };
 export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
   private http = inject(HttpClient);
   private translate = inject(TranslateService);
+  private renderer = inject(Renderer2);
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() searchParamName = 'search';

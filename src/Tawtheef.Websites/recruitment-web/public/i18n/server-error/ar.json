@@ -245,7 +245,7 @@
   "server-error.MARRIAGE_CERTIFICATE_FILE_REQUIRED": "شهادة الزواج مطلوبة.",
   "server-error.BIRTH_CERTIFICATE_FILE_REQUIRED": "شهادة الميلاد مطلوبة.",
   "server-error.SPONSOR_CARD_REQUIRED": "بطاقة الكفيل مطلوبة.",
-  "server-error.OFFICE_REQUIRED": "الجهة مطلوبة.",
+  "server-error.OFFICE_REQUIRED": "لم يتم تعين مكتب لمعالجة الطالبة القادمة من هذه الدولة.",
   "server-error.ADDRESS_REQUIRED": "العنوان مطلوب.",
   "server-error.INVALID_NATIONAL_ADDRESS": "العنوان الوطني غير صالح.",
   "server-error.NATIONAL_ADDRESS_CERTIFICATE_REQUIRED": "شهادة العنوان الوطني مطلوبة.",

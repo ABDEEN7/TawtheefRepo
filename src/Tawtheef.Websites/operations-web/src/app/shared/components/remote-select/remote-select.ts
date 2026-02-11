@@ -7,7 +7,7 @@ import {
   OnChanges,
   SimpleChanges,
   forwardRef,
-  inject,
+  inject, Renderer2,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -34,6 +34,7 @@ type LoadRequest = { term: string; page: number; append: boolean };
 export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
   private http = inject(HttpClient);
   private translate = inject(TranslateService);
+  private renderer = inject(Renderer2);
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() searchParamName = 'search';
@@ -266,27 +267,27 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private buildParams(term: string, pageNumber: number, pageSize: number): HttpParams {
-  let params = new HttpParams();
+    let params = new HttpParams();
 
-  if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
-    params = params.set(this.idParamName, String(this.value));
+    if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
+      params = params.set(this.idParamName, String(this.value));
+    }
+
+    const q = (term ?? '').trim();
+    if (q) params = params.set(this.searchParamName, q);
+
+    if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
+      params = params.set(this.parentParamName, String(this.parentId));
+    }
+
+    params = params
+      .set('PaginatedRequest.PageNumber', String(pageNumber + 1))
+      .set('PaginatedRequest.PageSize', String(pageSize))
+      .set('PaginatedRequest.SortBy', 'name')
+      .set('PaginatedRequest.SortDirection', 'asc');
+
+    return params;
   }
-
-  const q = (term ?? '').trim();
-  if (q) params = params.set(this.searchParamName, q);
-
-  if (this.parentId !== null && this.parentId !== undefined && this.parentParamName) {
-    params = params.set(this.parentParamName, String(this.parentId));
-  }
-
-  params = params
-  .set('PaginatedRequest.PageNumber', String(pageNumber + 1))
-  .set('PaginatedRequest.PageSize', String(pageSize))
-  .set('PaginatedRequest.SortBy', 'name')
-  .set('PaginatedRequest.SortDirection', 'asc');
-
-  return params;
-}
 
   private applyResults(req: LoadRequest, res: any[]): void {
     const next = res ?? [];

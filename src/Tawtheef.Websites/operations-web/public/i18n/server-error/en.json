@@ -246,7 +246,7 @@
   "server-error.MARRIAGE_CERTIFICATE_FILE_REQUIRED": "Marriage certificate file is required.",
   "server-error.BIRTH_CERTIFICATE_FILE_REQUIRED": "Birth certificate file is required.",
   "server-error.SPONSOR_CARD_REQUIRED": "Sponsor card is required.",
-  "server-error.OFFICE_REQUIRED": "Office is required.",
+  "server-error.OFFICE_REQUIRED": "There is no office associated with the country.",
   "server-error.ADDRESS_REQUIRED": "Address is required.",
   "server-error.INVALID_NATIONAL_ADDRESS": "Invalid national address.",
   "server-error.NATIONAL_ADDRESS_CERTIFICATE_REQUIRED": "National address certificate is required.",
