@@ -6,29 +6,32 @@
    </div>
 
     @if (profile?.qualifications?.length || qualificationsUnderReview().length) {
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>{{ 'profileOverview.fields.degree' | translate }}</th>
-              <th>{{ 'profileOverview.fields.university' | translate }}</th>
-              <th>{{ 'profileOverview.fields.gradCountry' | translate }}</th>
-              <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
-              <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
-              <th>{{ 'profileOverview.table.attachment' | translate }}</th>
-              <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (q of profile?.qualifications; track q.id) {
-              <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
-            }
-            @for (q of qualificationsUnderReview(); track q.id) {
-              <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
-            }
-          </tbody>
-        </table>
-      </div>
+       <div class="table-card rounded overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle w-100">
+                  <thead class="table-light">
+                    <tr>
+                      <th>{{ 'profileOverview.fields.degree' | translate }}</th>
+                      <th>{{ 'profileOverview.fields.university' | translate }}</th>
+                      <th>{{ 'profileOverview.fields.gradCountry' | translate }}</th>
+                      <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
+                      <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
+                      <th>{{ 'profileOverview.table.attachment' | translate }}</th>
+                      <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (q of profile?.qualifications; track q.id) {
+                      <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
+                    }
+                    @for (q of qualificationsUnderReview(); track q.id) {
+                      <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
+                    }
+                  </tbody>
+                </table>
+            </div>
+       </div>
+      
     } @else {
       <div class="text-muted">{{ 'common.none' | translate }}</div>
     }

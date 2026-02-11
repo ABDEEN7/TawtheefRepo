@@ -66,6 +66,7 @@ export class JobDetails implements OnInit {
     this.dialogService.open(JobApplyConfirmationDialogComponent, {
       header: this.translate.instant('JOB_DETAILS.APPLY_CONFIRM_TITLE'),
       width: '520px',
+      draggable: false,   // ✅ disables dragging
       contentStyle: { 'border-radius': '12px' }
     })?.onClose.subscribe((confirmed) => {
       if (!confirmed) return;

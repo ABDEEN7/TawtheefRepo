@@ -130,7 +130,8 @@ export class OfficeUsersManagementPage implements OnInit {
     const ref = this.dialogService.open(OfficeUserDialogComponent, {
       header: this.translate.instant('OFFICE_USERS.ADD_TITLE'),
       styleClass: 'office-user-dialog',
-      width: '420px'
+      width: '420px',
+      draggable: false,   // ✅ disables dragging
     });
 
     ref?.onClose.subscribe(result => {
@@ -145,6 +146,7 @@ export class OfficeUsersManagementPage implements OnInit {
       header: this.translate.instant('OFFICE_USERS.EDIT_TITLE'),
       styleClass: 'office-user-dialog',
       width: '420px',
+      draggable: false,   // ✅ disables dragging
       data: { user }
     });
 

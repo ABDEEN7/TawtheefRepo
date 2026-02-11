@@ -20,13 +20,14 @@
   /* Button */
   .notification-btn {
     border: 0;
-    background: transparent;
     padding: 0.4rem 0.6rem;
-    border-radius: 0.75rem;
+    border-radius: 5rem;
     cursor: pointer;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: #8a1538;
+      color: white;
+      
     }
 
     &:focus-visible {
@@ -108,7 +109,6 @@
     }
 
     &__refresh {
-      color: #6c757d;
       padding: 0.25rem 0.5rem;
       text-decoration: none;
 

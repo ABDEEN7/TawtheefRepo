@@ -35,7 +35,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #89153D;
+      color: #8a1538;
       transition: 0.3s;
       cursor: pointer;
 
@@ -81,7 +81,7 @@
 
       // HOVER (non-active)
       &:hover:not(.active) {
-        background: #89153D;
+        background: #8a1538;
         color: #ffffff;
         transform: translateY(-2px);
       
@@ -89,7 +89,7 @@
 
       // ✅ ACTIVE STATE (button itself)
       &.active {
-        background: #89153D;
+        background: #8a1538;
         color: #ffffff;
         transform: translateY(-2px);
       }
@@ -171,7 +171,7 @@
 
       &:hover {
         background: #F8F8F8;
-        color: #89153D;
+        color: #8a1538;
         transform: translateY(-2px);
       }
 

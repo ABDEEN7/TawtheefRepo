@@ -51,6 +51,7 @@ export class StepDegreeComponent implements OnInit {
         contentStyle: { 'max-height': '80vh', 'overflow': 'auto' },
         baseZIndex: 10000,
         closable: true,
+        draggable: false,
       })?.onClose.subscribe((e: Degree) => {
       if (e) {
         this.ds.addDegree(e);
@@ -67,6 +68,7 @@ export class StepDegreeComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', 'overflow': 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
       data: { initialValue: degree },
     })?.onClose.subscribe((result: Degree | null) => {
       if (result) {

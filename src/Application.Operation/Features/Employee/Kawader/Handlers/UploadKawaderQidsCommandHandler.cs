@@ -99,7 +99,7 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
 
         if (toInsert.Count > 0)
         {
-            await repo.AddRangeAsync(toInsert);
+            await repo.AddRangeAsync(toInsert, ct);
             await uow.SaveChangesAsync(ct);
         }
 
@@ -136,7 +136,12 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
         while (reader.Read())
         {
             excelRow++;
-            var a = reader.GetValue(0).ToString()?.Trim() ?? string.Empty;
+            
+            var value = (object?)reader.GetValue(0);
+            if(value is null)
+                continue;
+            
+            var a = value.ToString()?.Trim() ?? string.Empty;
             if (a.Equals("QID", StringComparison.OrdinalIgnoreCase))
             {
                 headerRowIndex = excelRow;
@@ -163,7 +168,11 @@ public sealed class UploadKawaderQidsCommandHandler(IUnitOfWork uow)
             if (headerRowIndex > 0 && excelRow <= headerRowIndex)
                 continue;
 
-            var rawValue = reader2.GetValue(0).ToString()?.Trim() ?? string.Empty;
+            var value = (object?)reader2.GetValue(0);
+            if(value is null)
+                continue;
+            
+            var rawValue = value.ToString()?.Trim() ?? string.Empty;
             var normalized = QidUtilities.Normalize(rawValue);
 
             rows.Add(new RowEntry(excelRow, rawValue, normalized));

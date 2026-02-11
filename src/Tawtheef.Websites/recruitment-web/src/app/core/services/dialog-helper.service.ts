@@ -23,6 +23,7 @@ export class DialogHelperService {
       header: this.translateService.instant(options.title),
       width: '500px',
       contentStyle: { 'border-radius': '12px' },
+      draggable: false,   // ✅ disables dragging
       data: {
         ...options,
         showInputField: options.showInputField || false,

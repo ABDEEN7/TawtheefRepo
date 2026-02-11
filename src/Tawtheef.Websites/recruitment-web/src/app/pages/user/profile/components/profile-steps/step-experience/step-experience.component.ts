@@ -55,6 +55,7 @@ export class StepExperienceComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
       data: { degrees: this.ds.state().degrees },
     })?.onClose.subscribe(result => {
       if (result) {
@@ -71,6 +72,7 @@ export class StepExperienceComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
       data: { degrees: this.ds.state().degrees, initialValue: experience },
     })?.onClose.subscribe(result => {
       if (result) {
@@ -105,6 +107,7 @@ export class StepExperienceComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
     })?.onClose.subscribe(result => {
       if (result) {
         this.ds.addCourse(result);
@@ -120,6 +123,7 @@ export class StepExperienceComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
       data: { initialValue: course },
     })?.onClose.subscribe(result => {
       if (result) {
