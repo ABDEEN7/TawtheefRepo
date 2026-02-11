@@ -159,6 +159,7 @@ export class JobCandidatesComponent implements OnInit {
       modal: true,
       dismissableMask: true,
       width: 'min(960px, 95vw)',
+      draggable: false,   // ✅ disables dragging
       contentStyle: { 'max-height': '85vh', overflow: 'auto' },
     });
   }
@@ -232,6 +233,7 @@ export class JobCandidatesComponent implements OnInit {
     const ref = this.dialogService.open(JobCandidatesNationalityFilterModalComponent, {
       header: this.translationService.instant('JOB_CANDIDATE_FILTERS_PERCENTAGE_TITLE'),
       width: '60vw',
+      draggable: false,   // ✅ disables dragging
       data: {
         candidateTypePercentages: this.candidateTypePercentages,
         nationalityPercentages: this.nationalityPercentages,

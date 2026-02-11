@@ -50,6 +50,7 @@ export class StepAchievementsComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {
         this.ds.addAchievement(result);
@@ -65,6 +66,7 @@ export class StepAchievementsComponent implements OnInit {
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
       data: { initialValue: achievement },
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {

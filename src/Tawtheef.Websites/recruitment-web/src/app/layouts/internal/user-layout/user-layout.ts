@@ -55,6 +55,7 @@ export class UserLayout implements OnInit, OnDestroy {
       width: '520px',
       contentStyle: { 'border-radius': '12px' },
       dismissableMask: false,
+      draggable: false,
       closable: false
     })?.onClose
       .pipe(take(1))

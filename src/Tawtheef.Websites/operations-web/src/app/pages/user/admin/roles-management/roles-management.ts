@@ -157,6 +157,7 @@ export class RolesManagement implements OnInit {
     const ref = this.dialogService.open(RoleDialogComponent, {
       header: this.translate.instant(role ? 'ROLES.EDIT_ROLE' : 'ROLES.ADD_ROLE'),
       width: '820px',
+      draggable: false,   // ✅ disables dragging
       data: {
         role,
         permissions: this.permissions()

@@ -228,6 +228,7 @@ export class OrganizationStructuresFacade {
       header: this.translate.instant('ORG_STRUCTURES.CREATE_SECTOR'),
       data: { mode: 'create' as const },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createSector(payload).subscribe({
@@ -245,6 +246,7 @@ export class OrganizationStructuresFacade {
       header: this.translate.instant('ORG_STRUCTURES.EDIT_SECTOR'),
       data: { mode: 'edit' as const, model: sector },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateSector(sector.id, payload).subscribe({
@@ -262,6 +264,7 @@ export class OrganizationStructuresFacade {
       header: this.translate.instant('ORG_STRUCTURES.CREATE_MANAGEMENT'),
       data: { mode: 'create' as const, sectors: this.store.sectorLookups() },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createManagement(payload).subscribe({
@@ -279,6 +282,7 @@ export class OrganizationStructuresFacade {
       header: this.translate.instant('ORG_STRUCTURES.EDIT_MANAGEMENT'),
       data: { mode: 'edit' as const, model: management, sectors: this.store.sectorLookups() },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateManagement(management.id, payload).subscribe({
@@ -300,6 +304,7 @@ export class OrganizationStructuresFacade {
         managements: this.store.managementLookups(),
       },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.createDepartment(payload).subscribe({
@@ -321,6 +326,7 @@ export class OrganizationStructuresFacade {
         managements: this.store.managementLookups(),
       },
       dismissableMask: true,
+      draggable: false,
     })?.onClose.subscribe(payload => {
       if (!payload) return;
       this.api.updateDepartment(department.id, payload).subscribe({

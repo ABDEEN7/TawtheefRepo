@@ -230,6 +230,7 @@ export class WizardProfileComponent implements OnInit {
       contentStyle: {'max-height': '80vh', 'overflow': 'scroll'},
       baseZIndex: 10000,
       closable: true,
+      draggable: false,
     })?.onClose.subscribe((croppedImage: string | null) => {
       if (croppedImage) {
         this.ds.up('avatarUrl', croppedImage);
