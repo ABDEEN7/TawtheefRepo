@@ -19,4 +19,4 @@ public sealed record UpdateHomeSuccessStoryCommand(
     int DisplayOrder,
     bool IsActive,
     int? ImageFileIndex,
-    List<IFormFile> Files) : ICommand<IResult<Unit>>;
+    List<IFormFile>? Files) : ICommand<IResult<Unit>>;

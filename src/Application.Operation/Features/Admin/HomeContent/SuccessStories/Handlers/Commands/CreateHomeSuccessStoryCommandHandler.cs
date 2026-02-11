@@ -34,8 +34,6 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
         if (imageResult.IsFailed)
             return Result.Fail<Guid>(imageResult.Errors);
         var imageUrl = request.ImageUrl?.Trim() ?? string.Empty;
-        if (imageResult.Value is null && string.IsNullOrWhiteSpace(imageUrl))
-            return Result.Fail<Guid>(ErrorsCodes.InvalidAttachmentFile);
 
         var newStory = new HomeSuccessStory
         {

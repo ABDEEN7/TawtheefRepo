@@ -17,4 +17,4 @@ public sealed record CreateHomeSuccessStoryCommand(
     int DisplayOrder,
     bool IsActive,
     int? ImageFileIndex,
-    List<IFormFile> Files) : ICommand<IResult<Guid>>;
+    List<IFormFile>? Files) : ICommand<IResult<Guid>>;
