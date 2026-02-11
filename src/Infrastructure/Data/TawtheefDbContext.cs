@@ -13,6 +13,7 @@ using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Content;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
@@ -117,6 +118,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobCandidateFilterSetting> JobCandidateFilterSettings { get; set; }
     public DbSet<JobCandidateTypePercentage> JobCandidateTypePercentages { get; set; }
     public DbSet<JobCandidateNationalityPercentage> JobCandidateNationalityPercentages { get; set; }
+    public DbSet<HomeSuccessStory> HomeSuccessStories { get; set; }
+    public DbSet<FAQ> Faqs { get; set; }
     // Notification Tables
     public DbSet<EmailQueue> EmailQueues { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }

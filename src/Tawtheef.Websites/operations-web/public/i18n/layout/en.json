@@ -57,6 +57,7 @@
   "admin.sidebar.profileLogs": "Profile Logs",
   "admin.sidebar.jobPointsConfig": "Job Points Configuration",
   "admin.sidebar.jobCategoryCandidateSettings": "Job Category Candidate Settings",
+  "admin.sidebar.homeContent": "Home Content Management",
 
   "common.sidebar.settings": "Settings",
   "common.sidebar.logout": "Logout",

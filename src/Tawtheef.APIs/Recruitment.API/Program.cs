@@ -6,6 +6,7 @@ using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Exceptions;
@@ -188,7 +189,14 @@ app.UseAuthorization();
 
 //enable rate limiter middleware
 app.UseRateLimiter();
-
+var publicRoot = Path.Combine(builder.Configuration["Storage:RootPath"]!, "public");
+app.UseStaticFiles(new StaticFileOptions {
+    FileProvider = new PhysicalFileProvider(publicRoot),
+    RequestPath = "/files",
+    OnPrepareResponse = ctx => {
+        ctx.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+    }
+});
 app.MapGet("/", () => Results.Json(new { status = "" }));
 app.MapControllers();
 app.Run();

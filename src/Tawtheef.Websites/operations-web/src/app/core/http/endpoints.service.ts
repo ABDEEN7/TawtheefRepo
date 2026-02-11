@@ -196,6 +196,14 @@ export class EndpointsService {
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
   };
+  homeContent = {
+    successStories: this.getFullUrl('/home-content/success-stories'),
+    successStory: (id: string) => this.getFullUrl(`/home-content/success-stories/${id}`),
+    successStoryStatus: (id: string) => this.getFullUrl(`/home-content/success-stories/${id}/status`),
+    faqs: this.getFullUrl('/home-content/faqs'),
+    faq: (id: string) => this.getFullUrl(`/home-content/faqs/${id}`),
+    faqStatus: (id: string) => this.getFullUrl(`/home-content/faqs/${id}/status`)
+  };
   profileLogs = {
     list: this.getFullUrl('/profile-logs')
   };
