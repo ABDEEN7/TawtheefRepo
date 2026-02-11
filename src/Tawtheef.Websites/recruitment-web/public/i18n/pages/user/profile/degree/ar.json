@@ -18,6 +18,8 @@
   "wizard.degrees.choiceGrade": "اختر التقدير",
   "wizard.degrees.choiceDegreeFile": "اختر ملف شهادة المؤهل",
   "wizard.degrees.add": "إضافة مؤهل",
+  "wizard.degrees.edit": "تعديل المؤهل",
+  "wizard.degrees.delete": "حذف المؤهل",
   "wizard.degrees.deleteLinkedError": "لا يمكن حذف هذا المؤهل لارتباطه بإحدى الخبرات.",
   "wizard.buttons.cancel": "إلغاء",
   "wizard.buttons.delete": "حذف"

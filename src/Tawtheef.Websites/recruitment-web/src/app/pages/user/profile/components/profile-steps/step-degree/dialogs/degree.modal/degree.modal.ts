@@ -91,14 +91,12 @@ export class DegreeModal implements OnInit {
   ngOnInit() {
     if (this.config.data && this.config.data.initialValue) {
       const initialValue = this.config.data.initialValue as Degree;
-      this.form.patchValue({
-        ...initialValue,
-        gradYear: this.toYearDate((initialValue as any)?.gradYear),
-      });
       this.initialCertificate = initialValue?.certificate ?? null;
       this.initialId = initialValue?.id ?? null;
       this.initialAttachmentId = initialValue?.attachmentId ?? this.initialCertificate?.resourceId ?? null;
       this.form.patchValue({
+        ...initialValue,
+        gradYear: this.toDate(initialValue.gradYear),
         degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? null,
       });
     }
@@ -108,28 +106,12 @@ export class DegreeModal implements OnInit {
       this.updateQualificationValidators();
     });
   }
-  private toYearDate(value: unknown): Date | null {
+  private toDate(value: number): Date | null {
     if (value == null) return null;
 
-    // already a Date
-    if (value instanceof Date && !isNaN(value.getTime())) return value;
-
-    // number year: 2020
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      // treat as year if it's in a reasonable range
-      if (value >= 1900 && value <= 2100) return new Date(value, 0, 1);
-      return null;
-    }
-
-    // string: "2020" or ISO
-    if (typeof value === 'string') {
-      const s = value.trim();
-      if (/^\d{4}$/.test(s)) return new Date(+s, 0, 1);
-
-      const dt = new Date(s);
-      if (!isNaN(dt.getTime())) return dt;
-    }
-
+    // treat as year if it's in a reasonable range
+    if (value >= 1900 && value <= 2100)
+      return new Date(value, 0, 1);
     return null;
   }
   private updateQualificationValidators(): void {
@@ -147,7 +129,6 @@ export class DegreeModal implements OnInit {
       uni?.setValidators([Validators.required]);
       major?.setValidators([Validators.required]);
       subMajor?.setValidators([Validators.required]);
-      gradYear?.setValidators([Validators.required]);
       studySystem?.setValidators([Validators.required]);
       gpa?.setValidators([
         Validators.required,
@@ -155,7 +136,7 @@ export class DegreeModal implements OnInit {
       ]);
       grade?.setValidators([Validators.required]);
     } else {
-      [uni, major, subMajor, gradYear, studySystem, gpa, grade].forEach(c => {
+      [uni, major, subMajor, studySystem, gpa, grade].forEach(c => {
         c?.clearValidators();
         c?.setValue(null);
         c?.updateValueAndValidity({ emitEvent: false });

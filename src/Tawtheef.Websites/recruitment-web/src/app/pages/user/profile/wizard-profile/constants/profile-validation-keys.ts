@@ -5,6 +5,7 @@
     qidExpiry: 'wizard.profile.basic.qidExpiry.required',
     cvName: 'wizard.profile.basic.cv.required',
     idName: 'wizard.profile.basic.id.required',
+    passport: 'wizard.prereq.basic.passport.required',
     marriageCertificateName: 'wizard.profile.basic.marriageCertificate.required',
     birthCertificateName: 'wizard.profile.basic.birthCertificate.required',
   },

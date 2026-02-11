@@ -17,7 +17,8 @@
   "wizard.degrees.choiceStudySystem": "Select Study System",
   "wizard.degrees.choiceGrade": "Select Grade",
   "wizard.degrees.choiceDegreeFile": "Select Degree Certificate File",
-  "wizard.degrees.add": "Add Qualification",
+  "wizard.degrees.add": "Add qualification",
+  "wizard.degrees.edit": "Edit qualification",
   "wizard.degrees.deleteLinkedError": "This qualification cannot be deleted as it is linked to an experience.",
   "wizard.buttons.cancel": "Cancel",
   "wizard.buttons.delete": "Delete"

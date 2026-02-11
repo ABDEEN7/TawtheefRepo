@@ -120,8 +120,16 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
     addRequiredError(errors, 'basic', 'cvName');
   }
 
-  if (!isFilledField(s.idName)) {
-    addRequiredError(errors, 'basic', 'idName');
+  if (isFilledField(s.candidateType)) {
+    if(s.candidateType?.backendName != CandidateType.GCC) {
+      if (!isFilledField(s.idName)) {
+        addRequiredError(errors, 'basic', 'idName');
+      }
+    }else {
+      if (!isFilledField(s.idName)) {
+        addRequiredError(errors, 'basic', 'passport');
+      }
+    }
   }
 
   if (needsMarriageCertificate && !isFilledField(s.marriageCertificateName)) {
