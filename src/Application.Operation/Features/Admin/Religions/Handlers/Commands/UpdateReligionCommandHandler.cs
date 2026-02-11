@@ -38,7 +38,7 @@ public sealed class UpdateReligionCommandHandler(
         if (religion is null)
             return Result.Fail<Guid>(ErrorsCodes.ReligionNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         religion.NameAr = nameAr;

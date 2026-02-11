@@ -24,14 +24,14 @@ public sealed class UpdateTargetEntityStatusCommandHandler(
         if (targetEntity is null)
             return Result.Fail<Unit>(ErrorsCodes.TargetEntityNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         targetEntity.IsActive = request.IsActive;
         targetEntity.UpdatedDate = now;
         targetEntity.UpdatedById = hasUser ? userId : targetEntity.UpdatedById;
 
-        await repository.UpdateAsync(targetEntity);
+        await repository.UpdateAsync(targetEntity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);

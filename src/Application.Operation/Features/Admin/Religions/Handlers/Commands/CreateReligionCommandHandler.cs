@@ -31,7 +31,7 @@ public sealed class CreateReligionCommandHandler(
         if (exists)
             return Result.Fail<Guid>(ErrorsCodes.ReligionNameExists);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         var newReligion = new Religion

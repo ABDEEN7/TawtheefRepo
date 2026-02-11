@@ -3,7 +3,7 @@
 public interface ITrackedEntity : IEntity
 {
     Guid? CreatedById { get; set; }
-    DateTimeOffset CreatedDate { get; set; }
+    DateTime CreatedDate { get; set; }
     Guid? UpdatedById { get; set; }
-    DateTimeOffset? UpdatedDate { get; set; }
+    DateTime? UpdatedDate { get; set; }
 }

@@ -100,7 +100,7 @@ public class ReviewItem : EventEntity
     /// <summary>
     /// Timestamp when the review was completed
     /// </summary>
-    public DateTimeOffset? ReviewedAtUtc { get; set; }
+    public DateTime? ReviewedAtUtc { get; set; }
     
     /// <summary>
     /// Notes or comments from the reviewer

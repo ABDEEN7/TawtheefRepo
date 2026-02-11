@@ -15,7 +15,7 @@ public class Invitation : EventEntity
     public ApplicantUser? Applicant { get; set; }
     
     public bool IsAccepted { get; set; }
-    public DateTimeOffset? AcceptedAt { get; set; }
+    public DateTime? AcceptedAt { get; set; }
     
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; set; }
@@ -23,7 +23,7 @@ public class Invitation : EventEntity
     public Guid BatchNumber { get; set; }
     
     [NotMapped]
-    public DateTimeOffset? InvitationAt => CreatedDate;
+    public DateTime? InvitationAt => CreatedDate;
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
 

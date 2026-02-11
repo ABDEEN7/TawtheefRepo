@@ -806,7 +806,7 @@ internal sealed class ImportRunner
                 db.Office.Add(new Office
                 {
                     Id = Guid.NewGuid(),
-                    CreatedDate = DateTimeOffset.UtcNow,
+                    CreatedDate = DateTime.UtcNow,
                     IsDeleted = false,
                     OfficeAdminId = AdminUserIds.Admin1UserId,
                     CountryId = o.CountryId,
@@ -856,7 +856,7 @@ internal sealed class ImportRunner
                 db.SkillType.Add(new SkillType
                 {
                     Id = Guid.NewGuid(),
-                    CreatedDate = DateTimeOffset.UtcNow,
+                    CreatedDate = DateTime.UtcNow,
                     IsDeleted = false,
                     BackendName = s.Backend,
                     NameAr = s.Ar,
@@ -879,7 +879,7 @@ internal sealed class ImportRunner
         {
             var skillTypeId = Guid.Parse("2F1B6CE7-CBC3-2B5C-B264-A02C6A87BE1D");
             var createdById = Guid.Parse("42E0D563-7603-453C-81B1-6B2325622B40");
-            var now = DateTimeOffset.UtcNow;
+            var now = DateTime.UtcNow;
 
             var skills = new (string Backend, string Ar, string En, string? DescAr, string? DescEn, int Order)[]
             {
@@ -954,7 +954,7 @@ internal sealed class ImportRunner
         try
         {
             var createdById = AdminUserIds.Admin1UserId;
-            var now = DateTimeOffset.UtcNow;
+            var now = DateTime.UtcNow;
 
             var majorIds = db.Major.AsNoTracking()
                 .OrderBy(m => m.DisplayOrder)

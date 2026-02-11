@@ -13,24 +13,24 @@ public enum ContactVerificationType
 
 public class ContactVerification : EventEntity
 {
-    public Guid UserId { get; set; }
-    public User? User { get; set; }
+    public Guid UserId { get; init; }
+    public User? User { get; init; }
     
-    public ContactVerificationType Type { get; set; }
+    public ContactVerificationType Type { get; init; }
 
     /// <summary>Phone number in E.164 format or email address.</summary>
     [MaxLength(256)]
-    public required string Destination { get; set; }
+    public required string Destination { get; init; }
 
     /// <summary>Verification code (OTP).</summary>
     [MaxLength(10)]
-    public required string Code { get; set; }
+    public required string Code { get; init; }
 
-    public DateTimeOffset ExpiresAt { get; set; }
-    public DateTimeOffset? UsedAt { get; set; }
+    public DateTime ExpiresAt { get; init; }
+    public DateTime? UsedAt { get; set; }
 
     public bool IsUsed => UsedAt.HasValue;
-    public bool IsExpired => DateTimeOffset.UtcNow > ExpiresAt;
+    public bool IsExpired => DateTime.UtcNow > ExpiresAt;
 
     public void Send()
     {
