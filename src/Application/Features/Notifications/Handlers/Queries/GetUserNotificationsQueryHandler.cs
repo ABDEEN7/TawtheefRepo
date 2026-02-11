@@ -34,7 +34,7 @@ public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork)
                 Body = n.Body,
                 Status = n.Status.ToString(),
                 CreatedDate = n.CreatedDate,
-                SentAtUtc = n.SentAtUtc,
+                SentAtUtc = n.SentAt,
                 Error = n.Error
             })
             .ToListAsync(cancellationToken);

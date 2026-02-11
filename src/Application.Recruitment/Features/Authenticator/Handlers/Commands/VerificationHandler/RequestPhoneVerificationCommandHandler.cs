@@ -17,7 +17,7 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Verif
 public class RequestPhoneVerificationCommandHandler(
     IUnitOfWork unitOfWork,
     ISmsSender smsSender,
-    TimeProvider now,
+    TimeProvider timeProvider,
     UserManager<User> userManager)
     : ICommandHandler<RequestPhoneVerificationCommand, IResult<Unit>>
 {
@@ -32,7 +32,7 @@ public class RequestPhoneVerificationCommandHandler(
         if (phoneAlreadyUsed)
             return Result.Fail<Unit>(ErrorsCodes.PhoneAlreadyInUse);
         
-        var oneMinuteAgo = now.GetUtcNow().AddMinutes(-1);
+        var oneMinuteAgo = timeProvider.GetUtcNow().AddMinutes(-1);
         var lastMinuteCount = await unitOfWork.GetEntityRepository<ContactVerification>().DbSet
             .Where(x => x.UserId == request.UserId
                         && x.Type == ContactVerificationType.Phone
@@ -50,10 +50,10 @@ public class RequestPhoneVerificationCommandHandler(
             Type = ContactVerificationType.Phone,
             Destination = request.PhoneE164,
             Code = code,
-            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(10)
+            ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(10)
         };
 
-        await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity);
+        await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var message = $"Your verification code is: {code}";

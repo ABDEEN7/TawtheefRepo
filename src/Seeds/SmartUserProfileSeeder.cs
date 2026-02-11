@@ -132,7 +132,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
 
             if (user.Id == Guid.Empty) user.Id = Guid.NewGuid();
             user.CreatedById = createdById;
-            user.CreatedDate = DateTimeOffset.UtcNow;
+            user.CreatedDate = DateTime.UtcNow;
 
             user.FullNameEn = $"{name.FirstEn} {name.LastEn}";
             user.FullNameAr = $"{name.FirstAr} {name.LastAr}";
@@ -177,7 +177,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         SeedOptions options,
         CancellationToken ct)
     {
-        var now = DateTimeOffset.UtcNow;
+        var now = DateTime.UtcNow;
 
         var age = AgeFactory.PickAge(rnd);
         var birthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-age).AddDays(-rnd.NextInt(0, 365)));
@@ -449,7 +449,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
             {
                 Id = Guid.NewGuid(),
                 CreatedById = createdById,
-                CreatedDate = DateTimeOffset.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 IsDeleted = false,
 
                 Name = fileName,
@@ -698,7 +698,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                     RatingId = PickRating(rnd),
                     CertificateId = cert?.Id, // if required, keep mode != None
                     CreatedById = createdById,
-                    CreatedDate = DateTimeOffset.UtcNow
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 
@@ -798,7 +798,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                     SpecializationRelation = (SpecializationRelationLevel)rnd.NextInt(1, 4),
                     CertificateId = cert?.Id ?? Guid.Empty,
                     CreatedById = createdById,
-                    CreatedDate = DateTimeOffset.UtcNow
+                    CreatedDate = DateTime.UtcNow
                 });
 
                 cursor = end.AddMonths(rnd.NextInt(0, 6));
@@ -842,7 +842,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                     SpecializationRelation = (SpecializationRelationLevel?)rnd.NextInt(1, 4),
                     CertificateId = cert?.Id ?? Guid.Empty,
                     CreatedById = createdById,
-                    CreatedDate = DateTimeOffset.UtcNow
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 
@@ -882,7 +882,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                     RelatedToSpecialization = rnd.NextDouble() < 0.50,
                     AttachmentId = attach?.Id ?? Guid.Empty,
                     CreatedById = createdById,
-                    CreatedDate = DateTimeOffset.UtcNow
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 

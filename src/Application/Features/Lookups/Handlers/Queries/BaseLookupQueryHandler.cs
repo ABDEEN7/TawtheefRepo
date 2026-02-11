@@ -1,8 +1,8 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Extensions;
@@ -99,6 +99,6 @@ public static class LookupCacheKeyBuilder
             entity => entity.UpdatedDate ?? entity.CreatedDate,
             cancellationToken);
 
-        return $"{prefix}:{count}:{lastUpdated.UtcTicks}";
+        return $"{prefix}:{count}:{lastUpdated.Ticks}";
     }
 }

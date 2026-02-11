@@ -49,7 +49,7 @@ public sealed class CreateUniversityCommandHandler(
         if (exists)
             return Result.Fail<Guid>(ErrorsCodes.UniversityNameExists);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         _ = Guid.TryParse(currentUserService.UserId, out var userId);
         var files = request.Files;
         var universityId = Guid.NewGuid();

@@ -27,14 +27,14 @@ public sealed class UpdateCountryStatusCommandHandler(
         if (country is null)
             return Result.Fail<Unit>(ErrorsCodes.CountryNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         country.IsActive = request.IsActive;
         country.UpdatedDate = now;
         country.UpdatedById = hasUser ? userId : country.UpdatedById;
 
-        await repository.UpdateAsync(country);
+        await repository.UpdateAsync(country, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);

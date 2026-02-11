@@ -42,11 +42,11 @@ public class AuditableEntityInterceptor(
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedById = currentUserId;
-                    entry.Entity.CreatedDate = utcNow;
+                    entry.Entity.CreatedDate = utcNow.UtcDateTime;
                 }
 
                 entry.Entity.UpdatedById = currentUserId;
-                entry.Entity.UpdatedDate = utcNow;
+                entry.Entity.UpdatedDate = utcNow.UtcDateTime;
             }
         }
     }

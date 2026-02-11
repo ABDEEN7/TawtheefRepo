@@ -39,7 +39,7 @@ public sealed class UpdateTargetEntityCommandHandler(
         if (targetEntity is null)
             return Result.Fail<Guid>(ErrorsCodes.TargetEntityNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         targetEntity.NameAr = nameAr;

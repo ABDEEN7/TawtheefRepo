@@ -19,7 +19,8 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 
 public sealed class UpdateJobReviewCommandHandler(
     IUnitOfWork uow,
-    IMediator mediator
+    IMediator mediator,
+    TimeProvider timeProvider
 ) : ICommandHandler<UpdateJobReviewCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -54,7 +55,7 @@ public sealed class UpdateJobReviewCommandHandler(
             {
                 existingNote.UpdateNote(noteDto.Note, noteDto.TabStatus);
                 existingNote.IsResolved = noteDto.TabStatus == TabStatus.Approved;
-                existingNote.UpdatedDate = DateTimeOffset.UtcNow;
+                existingNote.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;
                 continue;
             }
 
@@ -111,7 +112,7 @@ public sealed class UpdateJobReviewCommandHandler(
         if (existingAttachment != null)
         {
             existingAttachment.FileName = fileName;
-            existingAttachment.UpdatedDate = DateTimeOffset.UtcNow;
+            existingAttachment.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;
             Result.Ok(Unit.Value);
             return;
         }
@@ -150,12 +151,12 @@ public sealed class UpdateJobReviewCommandHandler(
             : Result.Ok<UploadAttachmentRequest?>(result.Value);
     }
 
-    private static List<JobTabReviewNote> MapTabNotes(
+    private List<JobTabReviewNote> MapTabNotes(
         Guid jobId,
         Guid reviewCycleId,
         IEnumerable<JobTabReviewUpsertDto> tabs)
     {
-        var createdAt = DateTimeOffset.UtcNow;
+        var createdAt = timeProvider.GetUtcNow().UtcDateTime;
         return tabs
             .Where(t => t.Status.HasValue)
             .Select(t => new JobTabReviewNote

@@ -14,7 +14,8 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Verif
 
 public class RequestEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    TimeProvider timeProvider)
     : ICommandHandler<RequestEmailVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestEmailVerificationCommand request, CancellationToken cancellationToken)
@@ -36,11 +37,11 @@ public class RequestEmailVerificationCommandHandler(
             Type = ContactVerificationType.Email,
             Destination = request.Email,
             Code = code,
-            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(30)
+            ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(30)
         };
 
         entity.Send();
-        await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity);
+        await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }

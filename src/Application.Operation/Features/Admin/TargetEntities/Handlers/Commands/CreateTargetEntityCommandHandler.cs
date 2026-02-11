@@ -34,7 +34,7 @@ public sealed class CreateTargetEntityCommandHandler(
         if (exists)
             return Result.Fail<Guid>(ErrorsCodes.TargetEntityNameExists);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
 
         var targetEntity = new TargetEntity

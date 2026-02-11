@@ -53,7 +53,7 @@ public sealed class UpdateUniversityCommandHandler(
         if (university is null)
             return Result.Fail<Guid>(ErrorsCodes.UniversityNotFound);
 
-        var now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         _ = Guid.TryParse(currentUserService.UserId, out var userId);
         var files = request.Files;
 
