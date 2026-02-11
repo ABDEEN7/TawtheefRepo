@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Recruitment.Features.Dashboard.Handlers.Commands;
 
-public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWork)
+public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWork, TimeProvider timeProvider)
     : ICommandHandler<ApplyCandidateInvitationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ApplyCandidateInvitationCommand command, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWor
 
         invitation.ChangeInvitationStatus(InvitationStatusIds.Submitted);
         invitation.IsAccepted = true;
-        invitation.AcceptedAt = DateTimeOffset.UtcNow;
+        invitation.AcceptedAt = timeProvider.GetUtcNow().UtcDateTime;
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);

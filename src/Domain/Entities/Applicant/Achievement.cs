@@ -10,18 +10,18 @@ namespace Tawtheef.Domain.Entities.Applicant;
 [Table(nameof(Achievement), Schema = Schemas.Profile)]
 public class Achievement : EventEntity
 {
-    public Guid UserProfileId { get; set; }
+    public Guid UserProfileId { get; init; }
     public UserProfile? UserProfile { get; set; }
 
     public required Guid AchievementTypeId { get; set; }
-    public AchievementType? AchievementType { get; set; }
+    public AchievementType? AchievementType { get; init; }
     [MaxLength(64)]
     public required string Title { get; set; }
     [MaxLength(128)]
     public required string IssuingAuthority { get; set; }
 
     public required Guid CountryId { get; set; }
-    public Country? Country { get; set; }
+    public Country? Country { get; init; }
 
     public DateOnly IssueDate { get; set; }
     [MaxLength(500)]
@@ -30,5 +30,5 @@ public class Achievement : EventEntity
     public bool? RelatedToSpecialization { get; set; }
 
     public Guid AttachmentId { get; set; }
-    public Resource? Attachment { get; set; }
+    public Resource? Attachment { get; init; }
 }

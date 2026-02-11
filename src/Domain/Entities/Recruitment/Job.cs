@@ -54,10 +54,10 @@ public sealed class Job : EventEntity
     public int NumberOfVacancies { get; set; }
 
     [Required(ErrorMessage = JobMessages.ClosingDateRequired)]
-    public DateTimeOffset ClosingDate { get; set; }
+    public DateTime ClosingDate { get; set; }
 
-    public DateTimeOffset? PublishAt { get; set; }
-    public DateTimeOffset? CancelledAt { get; set; }
+    public DateTime? PublishAt { get; init; }
+    public DateTime? CancelledAt { get; init; }
 
     [Required(ErrorMessage = JobMessages.MinimumAgeRequired)]
     public int MinimumAge { get; set; }
@@ -94,39 +94,39 @@ public sealed class Job : EventEntity
     // Navigation Properties
     // =========================
 
-    public Sector? Sector { get; set; }
-    public Management? Management { get; set; }
-    public Department? Department { get; set; }
-    public JobCategory? JobCategory { get; set; }
-    public TargetEntity? WorkLocation { get; set; }
-    public Gender? Gender { get; set; }
-    public Major? Major { get; set; }
-    public Major? SubMajor { get; set; }
-    public WorkType? WorkType { get; set; }
-    public JobStatus? JobStatus { get; set; }
+    public Sector? Sector { get; init; }
+    public Management? Management { get; init; }
+    public Department? Department { get; init; }
+    public JobCategory? JobCategory { get; init; }
+    public TargetEntity? WorkLocation { get; init; }
+    public Gender? Gender { get; init; }
+    public Major? Major { get; init; }
+    public Major? SubMajor { get; init; }
+    public WorkType? WorkType { get; init; }
+    public JobStatus? JobStatus { get; init; }
     public JobPointsMain? JobPoints { get; set; }
-    public JobCandidateFilterSetting? CandidateFilterSetting { get; set; }
-    public JobReviewAttachment? ReviewAttachment { get; set; }
+    public JobCandidateFilterSetting? CandidateFilterSetting { get; init; }
+    public JobReviewAttachment? ReviewAttachment { get; init; }
 
     public List<JobDegree> JobDegrees { get; set; } = [];
     public List<JobCondition> JobConditions { get; set; } = [];
     public List<JobSkill> JobSkills { get; set; } = [];
     public List<JobResponsibility> JobResponsibilities { get; set; } = [];
     public List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
-    public List<Invitation> Invitations { get; set; } = [];
-    public List<JobTabReviewNote> TabReviewNotes { get; set; } = [];
+    public List<Invitation> Invitations { get; init; } = [];
+    public List<JobTabReviewNote> TabReviewNotes { get; init; } = [];
 
     public void ChangeStatus(Guid newStatusId)
     {
         JobStatusId = newStatusId;
         if (newStatusId == JobStatusIds.PendingApproval)
-            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now));
         else if (newStatusId == JobStatusIds.Approved )
-            AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+            AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.Now));
         else if (newStatusId == JobStatusIds.Rejected)
-            AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+            AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.Now));
         else if (newStatusId == JobStatusIds.NeedUpdate)
-            AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.UtcNow));
+            AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.Now));
     }
 }
 

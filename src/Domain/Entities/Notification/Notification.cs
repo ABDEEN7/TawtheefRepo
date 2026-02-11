@@ -50,7 +50,7 @@ public class Notification : EventEntity
     [MaxLength(1000)]
     public string? Error { get; private set; }
 
-    public DateTime? SentAtUtc { get; private set; }
+    public DateTime? SentAt { get; private set; }
 
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
@@ -72,7 +72,7 @@ public class Notification : EventEntity
     public void MarkSent(string? providerId, DateTime whenUtc)
     {
         ProviderMessageId = providerId;
-        SentAtUtc = whenUtc;
+        SentAt = whenUtc;
         Status = NotificationStatus.Sent;
         Error = null;
     }

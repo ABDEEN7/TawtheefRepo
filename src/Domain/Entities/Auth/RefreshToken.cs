@@ -11,13 +11,13 @@ public class RefreshToken : EventEntity
     [MaxLength(512)]
     public required string Token { get; init; }
 
-    public DateTimeOffset Expires { get; init; }
+    public DateTime Expires { get; init; }
 
     // IPv4 max = 15 chars, IPv6 max = 45 chars
     [MaxLength(45)]
     public string? CreatedByIp { get; init; }
 
-    public DateTimeOffset? RevokedAt { get; set; }
+    public DateTime? RevokedAt { get; set; }
 
     // IPv4 / IPv6
     [MaxLength(45)]
@@ -31,7 +31,7 @@ public class RefreshToken : EventEntity
     [MaxLength(256)]
     public string? RevokedReason { get; set; }
 
-    public bool IsExpired => DateTimeOffset.UtcNow >= Expires;
+    public bool IsExpired => DateTime.UtcNow >= Expires;
     public bool IsRevoked => RevokedAt != null;
     public bool IsActive => !IsRevoked && !IsExpired;
 
@@ -46,7 +46,7 @@ public class RefreshToken : EventEntity
     [MaxLength(64)]
     public required string SecurityStamp { get; set; }
 
-    public void Revoked(DateTimeOffset now, string? revokedReason = null)
+    public void Revoked(DateTime now, string? revokedReason = null)
     {
         RevokedAt = now;
         RevokedReason = revokedReason;

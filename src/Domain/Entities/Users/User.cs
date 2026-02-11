@@ -21,7 +21,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public required string FullNameAr { get; set; }
     public bool IsBlocked { get; set; }
     public bool AgreedToTerms { get; set; }
-    public DateTimeOffset? LastLoginDate { get; set; }
+    public DateTime? LastLoginDate { get; set; }
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
@@ -29,12 +29,12 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public UserType? UserType { get; init; }
     
     public Guid? CreatedById { get; set; }
-    public DateTimeOffset CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
     public Guid? UpdatedById { get; set; }
-    public DateTimeOffset? UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
     public bool IsDeleted { get; set; }
     public Guid? DeletedById { get; set; }
-    public DateTimeOffset? DeletedDate { get; set; }
+    public DateTime? DeletedDate { get; set; }
     
     public virtual ICollection<Notification.Notification> Notifications { get; init; } = [];
     public virtual ICollection<RefreshToken> RefreshTokens { get; init; } = [];
@@ -44,16 +44,16 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public string? CurrentAuthToken { get; set; }
     [MaxLength(6)]
     public string? OtpReference { get; private set; }
-    public DateTimeOffset? OtpExpiry { get; private set; }
+    public DateTime? OtpExpiry { get; private set; }
     public int OtpAttempts { get; set; }
-    public DateTimeOffset? OtpLockedUntilUtc { get; private set; }
+    public DateTime? OtpLockedUntilUtc { get; private set; }
     /// <summary>
     /// Number of OTPs sent to the user
     /// </summary>
-    public DateTimeOffset? OtpSendWindowStartUtc { get; private set; }
+    public DateTime? OtpSendWindowStartUtc { get; private set; }
     public int OtpSendsInWindow { get; private set; }
     
-    public Result CanSendOtp(DateTimeOffset utcNow, int maxSends, TimeSpan window)
+    public Result CanSendOtp(DateTime utcNow, int maxSends, TimeSpan window)
     {
         if (OtpSendWindowStartUtc is null || utcNow - OtpSendWindowStartUtc >= window)
         {
@@ -71,13 +71,13 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     {
         OtpSendsInWindow++;
     }
-    public void SetOtpReference(string otpReference, DateTimeOffset expiryUtc)
+    public void SetOtpReference(string otpReference, DateTime expiryUtc)
     {
         OtpReference = otpReference;
         OtpExpiry = expiryUtc;
         OtpAttempts = 0;
     }
-    public Result ValidateOtp(string otp, DateTimeOffset utcNow, int maxAttempts, TimeSpan lockDuration)
+    public Result ValidateOtp(string otp, DateTime utcNow, int maxAttempts, TimeSpan lockDuration)
     {
         // If currently locked, reject but do NOT increment attempts
         if (OtpLockedUntilUtc is not null && OtpLockedUntilUtc > utcNow)
@@ -142,7 +142,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
             user.Id = Guid.NewGuid();
 
         if (user.CreatedDate == default)
-            user.CreatedDate = DateTimeOffset.UtcNow;
+            user.CreatedDate = DateTime.UtcNow;
 
         user.UserTypeId = userTypeId;
         
