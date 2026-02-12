@@ -14,11 +14,11 @@ namespace Recruitment.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ResourcesController(IMediator mediator, IFileStorageService storage) : ControllerBase
 {
     private static readonly FileExtensionContentTypeProvider Mime = new();
     [HttpGet("{encoded}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Get(string encoded)
     {
         var blobKey = Decode(encoded);
@@ -38,6 +38,7 @@ public class ResourcesController(IMediator mediator, IFileStorageService storage
     }
     
     [HttpGet("dl")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetSigned([FromQuery] string b, [FromQuery] long exp, [FromQuery] string sig)
     {
         var result = await mediator.Send(new GetSignedBlobQuery(b, exp, sig));
@@ -48,6 +49,11 @@ public class ResourcesController(IMediator mediator, IFileStorageService storage
         return PhysicalFile(file.Path, file.ContentType, file.DownloadName, file.EnableRangeProcessing);
     }
 
+    [HttpGet("/files/{*path}")]
+    public async Task<IActionResult> GetFile(string path)
+    {
+        return await mediator.Send(new GetPublicFileQuery(Uri.UnescapeDataString(path)));
+    }
     private static string Decode(string encoded)
         => Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(encoded));
 }
