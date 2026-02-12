@@ -1,11 +1,11 @@
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
-using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
@@ -13,6 +13,7 @@ namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetCandidateTypesByProviderQueryHandler(
     IUnitOfWork unitOfWork,
+    UserManager<User> userManager,
     IMapper mapper)
     : IQueryHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
 {
@@ -20,41 +21,17 @@ public sealed class GetCandidateTypesByProviderQueryHandler(
         GetCandidateTypesByProviderQuery request,
         CancellationToken ct)
     {
-        var userQid = await GetUserQidAsync(request.UserId, ct);
+        var candidateTypes = await GetProviderCandidateTypesAsync(request.Provider, ct);
+        
+        var user = await userManager.Users.OfType<ApplicantUser>().AsNoTracking()
+            .SingleAsync(x => x.Id == request.UserId, ct);
+        if (!user.IsUserKawader)
+            return Result.Ok(mapper.Map<List<DropdownOptions>>(candidateTypes));
 
-        List<CandidateType> candidateTypes;
-        // If user doesn't have a QID, treat as non-Kawader and return provider mapping (or empty list).
-        if (string.IsNullOrWhiteSpace(userQid))
-        {
-            candidateTypes = await GetProviderCandidateTypesAsync(request.Provider, ct);
-        }
-        else
-        {
-            var isKawaderUser = await IsKawaderUserAsync(userQid, ct);
-            candidateTypes = isKawaderUser
-                ? await GetQatariCandidateTypeAsync(ct)
-                : await GetProviderCandidateTypesAsync(request.Provider, ct);
-        }
+        var qatariCandidateType = await GetQatariCandidateTypeAsync(ct);
+        candidateTypes.AddRange(qatariCandidateType);
 
         return Result.Ok(mapper.Map<List<DropdownOptions>>(candidateTypes));
-    }
-
-    private async Task<string?> GetUserQidAsync(Guid userId, CancellationToken ct)
-    {
-        return await unitOfWork.GetEntityRepository<UserProfile>()
-            .DbSet
-            .AsNoTracking()
-            .Where(x => x.UserId == userId)
-            .Select(x => x.NationalNumber)
-            .FirstOrDefaultAsync(ct);
-    }
-
-    private async Task<bool> IsKawaderUserAsync(string qid, CancellationToken ct)
-    {
-        return await unitOfWork.GetEntityRepository<KawaderQid>()
-            .DbSet
-            .AsNoTracking()
-            .AnyAsync(x => x.Qid == qid, ct);
     }
 
     private async Task<List<CandidateType>> GetQatariCandidateTypeAsync(CancellationToken ct)
