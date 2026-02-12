@@ -37,7 +37,7 @@
     naZone: 'wizard.profile.contact.naZone.required',
     naStreet: 'wizard.profile.contact.naStreet.required',
     naBuilding: 'wizard.profile.contact.naBuilding.required',
-    naFiler: 'wizard.profile.contact.naFiler.required',
+    naFile: 'wizard.profile.contact.naFile.required',
   },
   skills: {
     skills: 'wizard.profile.skills.required',

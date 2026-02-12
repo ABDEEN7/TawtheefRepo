@@ -287,7 +287,7 @@ function validateContactStep(s: ProfileState): StepValidationResult {
     if (!isFilledField(s.naFileName)) {
       errors.push({
         field: 'naFileName',
-        i18nKey: VALIDATION_KEYS.contact.naFiler || 'wizard.profile.contact.naFileName.required',
+        i18nKey: VALIDATION_KEYS.contact.naFile || 'wizard.profile.contact.naFileName.required',
       });
     }
   }
