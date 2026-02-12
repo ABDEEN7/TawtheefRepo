@@ -8764,7 +8764,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid?>("BirthdayCertificateId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CandidateTypeId")
+                    b.Property<Guid?>("CandidateTypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ChildrenCount")
@@ -8852,7 +8852,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasDefaultValue("InCreation");
 
-                    b.Property<Guid>("TargetEntityId")
+                    b.Property<Guid?>("TargetEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
@@ -9094,6 +9094,12 @@ namespace Tawtheef.Infrastructure.Migrations
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.ApplicantUser", b =>
                 {
                     b.HasBaseType("Tawtheef.Domain.Entities.Users.User");
+
+                    b.Property<bool>("IsCompletedProfile")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUserKawader")
+                        .HasColumnType("bit");
 
                     b.HasDiscriminator().HasValue("ApplicantUser");
                 });
@@ -11862,9 +11868,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.CandidateType", "CandidateType")
                         .WithMany()
-                        .HasForeignKey("CandidateTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CandidateTypeId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
@@ -11927,9 +11931,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.TargetEntity", "TargetEntity")
                         .WithMany()
-                        .HasForeignKey("TargetEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TargetEntityId");
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
