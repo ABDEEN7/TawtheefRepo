@@ -38,7 +38,7 @@
   "validation.maxFileSize": "File size must not exceed {{size}} MB.",
   "validation.dateRange": "End date must be after start date.",
 
-  "remote-select.search-hint": "Type at least {{minChars}} characters to search",
+  "remote-select.search-hint": "There is no data available.",
 
   "common.ar": "Arabic",
   "common.en": "English",

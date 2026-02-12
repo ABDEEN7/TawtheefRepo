@@ -3,10 +3,10 @@ import {Attachment} from './attachment.model';
 import {Language} from './language.model';
 import {Experience, TrainingCourse} from './experience.model';
 import {Achievement} from './achievement.model';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {PhoneNumber} from './phone-number.model';
 import {Skill} from './skill.model';
-import {CountryDto} from '../services/profile-lookups.service';
+import {CountryDto, CountryVM} from '../services/profile-lookups.service';
 
 export interface UploadedFileRef {
   resourceId: string;
@@ -17,8 +17,8 @@ export interface UploadedFileRef {
 export interface ProfileState {
   provider: 'Google' | 'QatarPass' | 'QatarResidentOtp'
   // prereq
-  candidateType?: dropdownOptionsModel;
-  targetEntity?: dropdownOptionsModel;
+  candidateType?: DropdownOptionVM;
+  targetEntity?: DropdownOptionVM;
   cvName?: string | null;
   cvFile?: UploadedFileRef | null;
   idName?: string | null;
@@ -33,15 +33,15 @@ export interface ProfileState {
   fullNameEn?: string;
   qid?: string | null;
   qidExpiry?: string | null;
-  nationality?: dropdownOptionsModel | null;
-  gender?: dropdownOptionsModel;
-  religion?: dropdownOptionsModel;
-  marital?: dropdownOptionsModel;
+  nationality?: DropdownOptionVM | null;
+  gender?: DropdownOptionVM;
+  religion?: DropdownOptionVM;
+  marital?: DropdownOptionVM;
   dob?: string;
 
   hasDisability: boolean;
   disabilityDetails?: string | null;
-  sponsorType?: dropdownOptionsModel | null;
+  sponsorType?: DropdownOptionVM | null;
   sponsorEmployerName?: string | null;
   sponsorEmployerNumber?: string | null;
   sponsorQidExpiry?: string | null;
@@ -49,13 +49,13 @@ export interface ProfileState {
   sponsorCard?: UploadedFileRef | null;
 
   // contact
-  country?: CountryDto;
+  country?: CountryVM;
   address?: string;
   phone?: PhoneNumber | null;
   phoneVerified: boolean | null;
   email?: string | null;
   emailVerified: boolean | null;
-  interviewPlace?: dropdownOptionsModel;
+  interviewPlace?: DropdownOptionVM;
   naZone?: string | null;
   naStreet?: string | null;
   naBuilding?: string | null;

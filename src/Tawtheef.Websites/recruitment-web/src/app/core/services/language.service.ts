@@ -56,7 +56,7 @@ export class LanguageService {
 
   // ---- internals ----
   private resolveInitialLang(): Lang {
-    const stored = this.safeGet(APP_LANGUAGE_KEY)?.toLowerCase();
+    const stored = LanguageService.safeGet(APP_LANGUAGE_KEY)?.toLowerCase();
     if (stored === 'ar' || stored === 'en') return stored as Lang;
 
     const nav = (navigator?.language || (navigator as any)?.languages?.[0] || DEFAULT_LANG).toLowerCase();
@@ -101,7 +101,7 @@ export class LanguageService {
     if (opts.emit) this.current$.next(lang);
   }
 
-  private safeGet(key: string): string | null {
+  public static safeGet(key: string): string | null {
     try { return localStorage.getItem(key); } catch { return null; }
   }
   private safeSet(key: string, val: string): void {

@@ -232,7 +232,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   private getCountryIso(country?: dropdownOptionsModel | null): CountryISO {
-    const iso = country?.additionalData?.isoCode || country?.additionalData?.codeAlpha;
+    const iso = (country?.additionalData?.['isoCode'] || country?.additionalData?.['codeAlpha']) as string;
     if (!iso) {
       return CountryISO.Qatar;
     }

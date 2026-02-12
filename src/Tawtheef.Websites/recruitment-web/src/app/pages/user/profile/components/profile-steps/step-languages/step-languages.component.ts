@@ -4,7 +4,7 @@ import {ProfileDataService} from '../../../wizard-profile/services/profile-data.
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ProfileService} from '../../../wizard-profile/services/profile.service';
 import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../shared/models/dropdown-options.model';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 
 @Component({
@@ -35,10 +35,10 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     return validity['languages'];
   }
 
-  newLanguage?: dropdownOptionsModel;
-  newSpeakingLevel?: dropdownOptionsModel;
-  newWritingLevel?: dropdownOptionsModel;
-  newReadingLevel?: dropdownOptionsModel;
+  newLanguage?: DropdownOptionVM;
+  newSpeakingLevel?: DropdownOptionVM;
+  newWritingLevel?: DropdownOptionVM;
+  newReadingLevel?: DropdownOptionVM;
 
   ngOnInit(): void {
     const state = this.ds.state();

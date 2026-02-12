@@ -2,12 +2,16 @@ import {inject, Injectable, signal} from '@angular/core';
 import {forkJoin, Observable, of} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {GUID} from '../../../../../shared/types/guid.type';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {
+  dropdownOptionsModel,
+  DropdownOptionVM
+} from '../../../../../shared/models/dropdown-options.model';
 import {TranslateService} from '@ngx-translate/core';
 import { HttpService } from "../../../../../core/http/http.service";
 import {EndpointsService} from '../../../../../core/http/endpoints.service';
 import {NotificationService} from '../../../../../core/services/notification.service';
 import {Gender, JobCategory, JobStatus, WorkType} from '../../../../../core/enums/lookups.enum';
+import {CountryDto, CountryVM} from '../../../admin/countries-management/models/country.dto';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
@@ -18,21 +22,21 @@ export class JobLookupService {
 
   private loading = signal<boolean>(false);
   public loaded = signal<boolean>(false);
-  departments = signal<dropdownOptionsModel[]>([]);
-  majors = signal<dropdownOptionsModel[]>([]);
-  subMajors = signal<dropdownOptionsModel[]>([]);
-  degrees = signal<dropdownOptionsModel[]>([]);
-  workTypes = signal<dropdownOptionsModel[]>([]);
-  jobCategories = signal<dropdownOptionsModel[]>([]);
-  genders = signal<dropdownOptionsModel[]>([]);
-  workLocations = signal<dropdownOptionsModel[]>([]);
-  nationalities = signal<dropdownOptionsModel[]>([]);
-  jobStatus = signal<dropdownOptionsModel[]>([]);
-  jobInvitesStatus = signal<dropdownOptionsModel[]>([]);
-  candidateTypes = signal<dropdownOptionsModel[]>([]);
-  managements = signal<dropdownOptionsModel[]>([]);
-  sectors = signal<dropdownOptionsModel[]>([]);
-  skills = signal<dropdownOptionsModel[]>([]);
+  departments = signal<DropdownOptionVM[]>([]);
+  majors = signal<DropdownOptionVM[]>([]);
+  subMajors = signal<DropdownOptionVM[]>([]);
+  degrees = signal<DropdownOptionVM[]>([]);
+  workTypes = signal<DropdownOptionVM[]>([]);
+  jobCategories = signal<DropdownOptionVM[]>([]);
+  genders = signal<DropdownOptionVM[]>([]);
+  workLocations = signal<DropdownOptionVM[]>([]);
+  nationalities = signal<DropdownOptionVM[]>([]);
+  jobStatus = signal<DropdownOptionVM[]>([]);
+  jobInvitesStatus = signal<DropdownOptionVM[]>([]);
+  candidateTypes = signal<DropdownOptionVM[]>([]);
+  managements = signal<DropdownOptionVM[]>([]);
+  sectors = signal<DropdownOptionVM[]>([]);
+  skills = signal<DropdownOptionVM[]>([]);
 
   loadAll(): void {
     if (this.loaded() || this.loading()) return;
@@ -40,17 +44,17 @@ export class JobLookupService {
     this.loading.set(true);
 
     forkJoin({
-      sectors: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.sectors),
-      majors: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.majors),
-      degrees: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.degrees),
-      workTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.workTypes),
-      jobCategories: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobCategories),
-      genders: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.genders),
-      targetEntities: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.targetEntities),
-      nationalities: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.nationalities),
-      jobStatus: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobStatus),
-      jobInvitesStatus: this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.jobInvitesStatus),
-      candidateTypes: this.http.get<dropdownOptionsModel[]>(this.endpoints.jobCandidates.lookups.candidateTypes),
+      sectors: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.sectors),
+      majors: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.majors),
+      degrees: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.degrees),
+      workTypes: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.workTypes),
+      jobCategories: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.jobCategories),
+      genders: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.genders),
+      targetEntities: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.targetEntities),
+      nationalities: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.nationalities),
+      jobStatus: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.jobStatus),
+      jobInvitesStatus: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.jobInvitesStatus),
+      candidateTypes: this.http.get<DropdownOptionVM[]>(this.endpoints.jobCandidates.lookups.candidateTypes),
     }).subscribe({
       next: (res) => {
         this.sectors.set(res.sectors);
@@ -138,7 +142,7 @@ export class JobLookupService {
       return;
     }
 
-    this.http.get<dropdownOptionsModel[]>(
+    this.http.get<DropdownOptionVM[]>(
       `${this.endpoints.job.lookups.subMajors}?majorId=${majorId}`
     ).subscribe({
       next: (subMajors) => this.subMajors.set(subMajors),
@@ -154,7 +158,7 @@ export class JobLookupService {
       return;
     }
 
-    this.http.get<dropdownOptionsModel[]>(
+    this.http.get<DropdownOptionVM[]>(
       `${this.endpoints.job.lookups.skills}?majorId=${majorId}`
     ).subscribe({
       next: (skills) => this.skills.set(skills),
@@ -170,7 +174,7 @@ export class JobLookupService {
       return;
     }
 
-    this.http.get<dropdownOptionsModel[]>(
+    this.http.get<DropdownOptionVM[]>(
       `${this.endpoints.job.lookups.managements}?sectorId=${sectorId}`
     ).subscribe({
       next: (managements) => this.managements.set(managements),
@@ -186,7 +190,7 @@ export class JobLookupService {
       return;
     }
 
-    this.http.get<dropdownOptionsModel[]>(
+    this.http.get<DropdownOptionVM[]>(
       `${this.endpoints.job.lookups.departments}?managementId=${managementId}`
     ).subscribe({
       next: (departments) => this.departments.set(departments),
@@ -196,8 +200,8 @@ export class JobLookupService {
     });
   }
 
- loadJobStatus(): Observable<dropdownOptionsModel[]> {
-  return this.http.get<dropdownOptionsModel[]>(
+ loadJobStatus(): Observable<DropdownOptionVM[]> {
+  return this.http.get<DropdownOptionVM[]>(
     this.endpoints.job.lookups.jobStatus
   ).pipe(
     tap(jobStatus => this.jobStatus.set(jobStatus)),
@@ -208,9 +212,9 @@ export class JobLookupService {
   );
 }
 
-  loadJobCategories(): Observable<dropdownOptionsModel[]>
+  loadJobCategories(): Observable<DropdownOptionVM[]>
   {
-    return this.http.get<dropdownOptionsModel[]>(
+    return this.http.get<DropdownOptionVM[]>(
     this.endpoints.job.lookups.jobCategories
   ).pipe(
     tap(jobCategories => this.jobCategories.set(jobCategories)),
@@ -221,8 +225,8 @@ export class JobLookupService {
   );
   }
 
-  loadCandidateTypes(): Observable<dropdownOptionsModel[]> {
-   return this.http.get<dropdownOptionsModel[]>(
+  loadCandidateTypes(): Observable<DropdownOptionVM[]> {
+   return this.http.get<DropdownOptionVM[]>(
     this.endpoints.jobCandidates.lookups.candidateTypes
   ).pipe(
     tap(candidateTypes => this.candidateTypes.set(candidateTypes)),
@@ -233,8 +237,8 @@ export class JobLookupService {
   );
   }
 
-  loadNationalities(): Observable<dropdownOptionsModel[]> {
-    return this.http.get<dropdownOptionsModel[]>(
+  loadNationalities(): Observable<DropdownOptionVM[]> {
+    return this.http.get<DropdownOptionVM[]>(
     this.endpoints.job.lookups.nationalities
   ).pipe(
     tap(nationalities => this.nationalities.set(nationalities)),
@@ -245,8 +249,8 @@ export class JobLookupService {
   );
   }
 
-  loadGenders() : Observable<dropdownOptionsModel[]>{
-    return this.http.get<dropdownOptionsModel[]>(
+  loadGenders() : Observable<DropdownOptionVM[]>{
+    return this.http.get<DropdownOptionVM[]>(
     this.endpoints.job.lookups.genders
   ).pipe(
     tap(genders => this.genders.set(genders)),
@@ -352,5 +356,12 @@ export class JobLookupService {
     this.managements.set([]);
     this.sectors.set([]);
     this.skills.set([]);
+  }
+
+  private toVMs<T extends dropdownOptionsModel>(arr: T[]): DropdownOptionVM[] {
+    return (arr ?? []).map(x => new DropdownOptionVM(x));
+  }
+  private toCountryVMs(arr: CountryDto[]): CountryVM[] {
+    return (arr ?? []).map(x => new CountryVM(x));
   }
 }

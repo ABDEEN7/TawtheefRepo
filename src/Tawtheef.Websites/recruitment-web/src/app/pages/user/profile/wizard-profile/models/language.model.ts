@@ -1,14 +1,14 @@
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {GUID} from '../../../../../shared/types/guid.type';
 
 export interface Language {
   id?: GUID;
   langId: string;
-  lang: dropdownOptionsModel | null | undefined;
+  lang: DropdownOptionVM | null | undefined;
   speakingLevelId: string;
-  speakingLevel: dropdownOptionsModel | null | undefined;
+  speakingLevel: DropdownOptionVM | null | undefined;
   writingLevelId: string;
-  writingLevel: dropdownOptionsModel | null | undefined;
+  writingLevel: DropdownOptionVM | null | undefined;
   readingLevelId: string;
-  readingLevel: dropdownOptionsModel | null | undefined;
+  readingLevel: DropdownOptionVM | null | undefined;
 }

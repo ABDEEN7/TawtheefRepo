@@ -50,7 +50,7 @@
               {{ 'wizard.degrees.university' | translate }}
             </label>
             <app-remote-select
-              formControlName="university"
+              formControlName="university" [minChars]="1"
               [parentId]="form.get('gradCountry')?.value?.id"
               parentParamName="countryId" [requireParent]="true"
               [searchUrl]="endpoints.profile.lookups.universities"

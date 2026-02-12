@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {forkJoin, tap} from 'rxjs';
 import {EndpointsService} from '../../../../core/http/endpoints.service';
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {DropdownOptionVM} from '../../../../shared/models/dropdown-options.model';
 import {HttpService} from '../../../../core/http/http.service';
 import {CandidateInvitationFilters} from '../models/candidate-invitation-filters';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
@@ -18,9 +18,9 @@ export class CandidateDashboardService {
   loading = signal<boolean>(false);
   loaded = signal<boolean>(false);
 
-  invitationStatuses   = signal<dropdownOptionsModel[]>([]);
-  jobCategories   = signal<dropdownOptionsModel[]>([]);
-  departments          = signal<dropdownOptionsModel[]>([]);
+  invitationStatuses   = signal<DropdownOptionVM[]>([]);
+  jobCategories   = signal<DropdownOptionVM[]>([]);
+  departments          = signal<DropdownOptionVM[]>([]);
 
   invitationStatistics = signal<CandidateInvitationStatistics | null>(null);
 
@@ -52,9 +52,9 @@ export class CandidateDashboardService {
     this.loading.set(true);
 
     forkJoin({
-      invitationStatuses:  this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.invitationStatuses),
-      jobCategories:  this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.jobCategories),
-      departments:    this.http.get<dropdownOptionsModel[]>(this.endpoints.dashboard.lookups.departments),
+      invitationStatuses:  this.http.get<DropdownOptionVM[]>(this.endpoints.dashboard.lookups.invitationStatuses),
+      jobCategories:  this.http.get<DropdownOptionVM[]>(this.endpoints.dashboard.lookups.jobCategories),
+      departments:    this.http.get<DropdownOptionVM[]>(this.endpoints.dashboard.lookups.departments),
 
     }).subscribe({
       next: (res) => {

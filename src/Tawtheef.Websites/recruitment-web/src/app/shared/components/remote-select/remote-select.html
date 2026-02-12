@@ -19,15 +19,15 @@
     [appendTo]="appendTo"
     [panelStyle]="panelStyle"
     [virtualScroll]="true"
-    [lazy]="true"
     [virtualScrollItemSize]="virtualScrollItemSize"
+    [lazy]="true"
     [showClear]="showClear"
     [class]="invalid ? 'p-invalid' : 'panelStyle'">
   </p-select>
 
   @if (isLoading) {
     <div class="select-loading-overlay">
-      <i class="fa-solid fa-spinner fa-spin"></i>
+      <div class="spinner"></div>
     </div>
   }
 </div>

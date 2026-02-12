@@ -1,9 +1,9 @@
-import {Component, effect, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {finalize} from 'rxjs/operators';
 import {PhoneNumberUtil} from 'google-libphonenumber';
 import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
 import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {CountryDto, ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
+import {CountryVM, ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 import {ContactVerificationService} from '../../../wizard-profile/services/contact-verification.service';
 import {TranslateService} from '@ngx-translate/core';
 import {GeoIpService} from '../../../../../../core/services/geo-ip.service';
@@ -107,7 +107,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   selectedCountryIso2: CountryISO = CountryISO.UnitedStates;
   onlyPhoneCountries: CountryISO[] = [];
-  readonly CountryISO = CountryISO;
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
   private pendingGeoCountryIso2: string | null = null;
@@ -116,12 +115,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const validity = stepValidity();
     return validity['contact'];
   }
-
-  private readonly geoCountrySync = effect(() => {
-    // Re-run when countries lookup refreshes to apply GeoIP once available.
-    this.lookups.countries();
-    this.tryApplyPendingGeoCountry();
-  });
 
   ngOnInit(): void {
     this.configurePhoneCountries();
@@ -297,11 +290,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.setCountryFromIso(this.pendingGeoCountryIso2);
   }
 
-  private syncCountryDependents(country: CountryDto | null): void {
+  private syncCountryDependents(country: CountryVM | null): void {
     this.syncInterviewPlace(country);
   }
 
-  private syncInterviewPlace(country: CountryDto | null): void {
+  private syncInterviewPlace(country: CountryVM | null): void {
     this.ds.up('interviewPlace', country ?? null);
   }
 
@@ -389,7 +382,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.phone.status = 'verified';
   }
 
-  onCountryChange(country: CountryDto | null): void {
+  onCountryChange(country: CountryVM | null): void {
     this.ds.up('country', country ?? null);
     this.syncCountryDependents(country);
   }

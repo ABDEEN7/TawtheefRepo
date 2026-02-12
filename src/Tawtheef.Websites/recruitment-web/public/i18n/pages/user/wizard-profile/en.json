@@ -1,5 +1,5 @@
 ﻿{
-  "wizard.loading": "Loading...",
+  "wizard.loading": "Loading profile data...",
   "wizard.files.maxSize1mb": "File size must not exceed 1 MB.",
   "wizard.files.invalidFormat": "Invalid file format. Allowed: {{formats}}.",
   "wizard.files.formats.cv": "Allowed formats: PDF, DOC, DOCX",
@@ -222,9 +222,9 @@
   "wizard.skills.title": "Skills & Languages",
   "wizard.skills.skills": "Skills",
   "wizard.skills.skill": "Skills",
-  "wizard.skills.hint": "Type at least 3 characters to search.",
+  "wizard.skills.hint": "There is no data available.",
   "wizard.skills.placeholder": "Start typing to search for skills...",
-  "wizard.skills.typeMore": "Type at least 3 characters to start searching...",
+  "wizard.skills.typeMore": "There is no data available.",
   "wizard.skills.noResults": "No matching results.",
   "wizard.skills.max10": "We show up to 10 results per search.",
   "wizard.skills.languages": "Languages",

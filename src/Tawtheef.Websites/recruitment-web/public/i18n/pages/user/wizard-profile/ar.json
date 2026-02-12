@@ -1,5 +1,5 @@
 ﻿{
-  "wizard.loading": "جاري تحميل...",
+  "wizard.loading": "جاري تحميل بيانات ملفك الشخصي...",
   "wizard.files.maxSize1mb": "حجم الملف يجب ألا يتجاوز 1 ميجابايت.",
   "wizard.files.invalidFormat": "صيغة ملف غير صحيحة. المسموح: {{formats}}.",
   "wizard.files.formats.cv": "الصيغ المسموحة: PDF, DOC, DOCX",
@@ -223,9 +223,9 @@
   "wizard.skills.title": "المهارات واللغات",
   "wizard.skills.skills": "المهارات",
   "wizard.skills.skill": "المهارات",
-  "wizard.skills.hint": "اكتب 3 أحرف على الأقل للبحث عن المهارات.",
+  "wizard.skills.hint": "لا تتوفر مهارات",
   "wizard.skills.placeholder": "ابدأ بالكتابة للبحث عن المهارات...",
-  "wizard.skills.typeMore": "اكتب 3 أحرف على الأقل لبدء البحث...",
+  "wizard.skills.typeMore": "لا تتوفر مهارات",
   "wizard.skills.noResults": "لا توجد نتائج مطابقة.",
   "wizard.skills.max10": "نعرض حتى 10 نتائج لكل بحث.",
   "wizard.skills.languages": "اللغات",

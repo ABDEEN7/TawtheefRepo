@@ -1,15 +1,15 @@
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {UploadedFileRef} from './profile-state.model';
 import {GUID} from '../../../../../shared/types/guid.type';
 
 export interface Achievement {
   id?: GUID;
   achievementTypeId: GUID;
-  achievementType: dropdownOptionsModel | null;
+  achievementType: DropdownOptionVM | null;
   title: string;
   issuingAuthority: string;
   countryId: GUID;
-  country: dropdownOptionsModel | null;
+  country: DropdownOptionVM | null;
   issueDate?: string;
   description?: string;
   fileName?: string | null;

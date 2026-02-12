@@ -1,4 +1,4 @@
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../shared/models/dropdown-options.model';
 
 export interface CandidateInvitationModel {
   invitationId: string; // Guid
@@ -6,6 +6,6 @@ export interface CandidateInvitationModel {
   departmentName: string;
   jobCategory: string;
   jobCategoryBackendName: string;
-  invitationStatus: dropdownOptionsModel;
+  invitationStatus: DropdownOptionVM;
   createdDate: Date;
 }

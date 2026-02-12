@@ -11,7 +11,7 @@ import {Skill} from '../models/skill.model';
 import {Language} from '../models/language.model';
 import {Attachment} from '../models/attachment.model';
 import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
-import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-options.model';
+import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
     submit: false,
@@ -123,8 +123,8 @@ export function mapProfileStatusToState(
     provider: (dto.provider as ProfileState['provider']) ?? 'Google',
     isKawaderQid,
     // ----------- Prereq -----------
-    candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as dropdownOptionsModel,
-    targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as dropdownOptionsModel,
+    candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as DropdownOptionVM,
+    targetEntity: mapIdToDropdown(lookups, 'targetEntity', dto.targetEntityId) as DropdownOptionVM,
     // Attachments
     cvFile: mapFile(dto.resumeAttachment),
     cvName: dto.resumeAttachment?.fileName ?? null,
@@ -293,7 +293,7 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
 'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |'skillLevel' |
 'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'achievementTypes',
-  id?: string | null): dropdownOptionsModel | undefined {
+  id?: string | null): DropdownOptionVM | undefined {
   if (!id) return undefined;
   switch (kind) {
     case 'candidateType':
