@@ -7,6 +7,8 @@ namespace Tawtheef.Domain.Entities.Users;
 
 public class ApplicantUser : User
 {
+    public bool IsCompletedProfile { get; set; }
+    public bool IsUserKawader { get; set; }
     public UserProfile? Profile { get; set; }
     public ICollection<Invitation> Invitations { get; init; } = [];
     public static Result<User> Register(string email,string displayName)

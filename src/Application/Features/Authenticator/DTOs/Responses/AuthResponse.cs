@@ -28,6 +28,7 @@ public sealed class ProfilePrefillDto
 public sealed class ProfileStatusDto
 {
     public bool IsComplete { get; init; }
+    public bool IsKawaderQid { get; init; }
     public bool AgreedToTerms { get; init; }
     public UserProfileStatus Status { get; init; }
     public bool AvailableForRecruitment { get; init; }

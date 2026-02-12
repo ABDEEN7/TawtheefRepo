@@ -18,7 +18,7 @@ public sealed class UpdateCandidateUserBlockStatusCommandHandler(UserManager<Use
     {
         var user = await userManager.Users
             .OfType<ApplicantUser>()
-            .FirstOrDefaultAsync(u => u.Id == request.UserId && !u.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);

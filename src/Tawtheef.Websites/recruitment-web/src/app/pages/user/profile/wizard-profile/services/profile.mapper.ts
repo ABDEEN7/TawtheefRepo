@@ -145,8 +145,8 @@ export function mapProfileStatusToState(
     qid: dto.nationalNumber ?? prefill?.qid ?? undefined,
     qidExpiry: dto.qidExpiry ?? undefined,
 
-    nationality: mapIdToDropdown(lookups, 'nationality', dto.nationalityId ?? prefill?.nationality ?? undefined),
-    gender: mapIdToDropdown(lookups, 'gender', dto.genderId ?? prefill?.gender ?? undefined),
+    nationality: mapIdToDropdown(lookups, 'nationality', dto.nationalityId ?? undefined),
+    gender: mapIdToDropdown(lookups, 'gender', dto.genderId ?? undefined),
     religion: mapIdToDropdown(lookups, 'religion', dto.religionId ?? undefined),
     marital: mapIdToDropdown(lookups, 'marital', dto.maritalStatusId ?? undefined),
     sponsorType: mapIdToDropdown(lookups, 'sponsorType', dto.sponsorTypeId ?? undefined),

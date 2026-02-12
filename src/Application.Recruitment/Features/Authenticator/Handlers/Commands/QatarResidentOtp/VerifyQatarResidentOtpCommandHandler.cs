@@ -136,7 +136,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         }
 
         var personalInfo = personalInfoResult.Value;
-        var nameUpdate = await UpdateUserFullNameAsync(user, personalInfo);
+        var nameUpdate = await UpdateUserAsync(user, personalInfo);
         if (nameUpdate.IsFailed)
         {
             _log.Error(
@@ -171,13 +171,6 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
                 user.Id,
                 QatarResidentOtpConstants.Provider,
                 string.Join(" | ", tokens.Errors.Select(e => e.Message)));
-        }
-        else
-        {
-            _log.Information(
-                "Verify Qatar resident OTP succeeded. UserId={UserId} Provider={Provider}",
-                user.Id,
-                QatarResidentOtpConstants.Provider);
         }
 
         return tokens;
@@ -255,7 +248,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked, expiryDate);
     }
 
-    private async Task<IResult<Unit>> UpdateUserFullNameAsync(User user, MOEPersonalInfo personalInfo)
+    private async Task<IResult<Unit>> UpdateUserAsync(User user, MOEPersonalInfo personalInfo)
     {
         var englishName = personalInfo.EnglishFullName?.Trim();
         var arabicName = personalInfo.ArabicFullName?.Trim();
@@ -273,6 +266,16 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         {
             user.FullNameAr = arabicName;
             updated = true;
+        }
+
+        if (user is ApplicantUser applicantUser)
+        {
+            var newIsKawader = personalInfo.NationalityCode == QatarNationalityCode;
+            if (applicantUser.IsUserKawader != newIsKawader)
+            {
+                applicantUser.IsUserKawader = newIsKawader;
+                updated = true;
+            }
         }
 
         if (!updated)
