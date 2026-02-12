@@ -196,4 +196,29 @@ public sealed class AzureBlobStorageService : IFileStorageService
                 return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
             }
         }
+        
+        public async Task<bool> ExistsAsync(string path, CancellationToken ct)
+        {
+            var blob = _container.GetBlobClient(Norm(path));
+            return await blob.ExistsAsync(ct);
+        }
+
+        public async Task<StoredFileStream?> OpenReadAsync(string path, CancellationToken ct)
+        {
+            var blob = _container.GetBlobClient(Norm(path));
+            if (!await blob.ExistsAsync(ct)) return null;
+
+            var resp = await blob.DownloadStreamingAsync(cancellationToken: ct);
+            var d = resp.Value.Details;
+
+            return new StoredFileStream(
+                Stream: resp.Value.Content,
+                ContentType: d.ContentType ?? "application/octet-stream",
+                ETag: d.ETag.ToString(),
+                LastModified: d.LastModified,
+                Length: d.ContentLength
+            );
+        }
+
+        private static string Norm(string path) => path.Replace('\\', '/').TrimStart('/');
 }

@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
@@ -12,7 +13,7 @@ public sealed class LocalStorageService : IFileStorageService
     private readonly string _rootFull;
     private readonly string _publicBaseUrl;
     private readonly IAppLogger _logger;
-
+    private static readonly FileExtensionContentTypeProvider Ct = new();
     public LocalStorageService(IOptions<StorageSettings> storageSettings, IAppLogger logger)
     {
         var root = storageSettings.Value.RootPath ?? throw new InvalidOperationException("Storage:RootPath missing");
@@ -155,5 +156,43 @@ public sealed class LocalStorageService : IFileStorageService
             _logger.Error(ex, "MapPath error for {BlobKey}", blobKey);
             return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
         }
+    }
+    
+    public Task<bool> ExistsAsync(string path, CancellationToken ct)
+    {
+        var full = GetFullPath(path);
+        return Task.FromResult(File.Exists(full));
+    }
+
+    public Task<StoredFileStream?> OpenReadAsync(string path, CancellationToken ct)
+    {
+        var full = GetFullPath(path);
+        if (!File.Exists(full)) return Task.FromResult<StoredFileStream?>(null);
+
+        var stream = File.OpenRead(full);
+        if (!Ct.TryGetContentType(full, out var contentType))
+            contentType = "application/octet-stream";
+
+        var fi = new FileInfo(full);
+        var etag = $"\"{fi.LastWriteTimeUtc.Ticks:x}-{fi.Length:x}\""; // cheap ETag
+        var lastModified = new DateTimeOffset(fi.LastWriteTimeUtc);
+
+        return Task.FromResult<StoredFileStream?>(new(
+            Stream: stream,
+            ContentType: contentType,
+            ETag: etag,
+            LastModified: lastModified,
+            Length: fi.Length
+        ));
+    }
+
+    private string GetFullPath(string path)
+    {
+        path = path.Replace('\\', '/').TrimStart('/');
+        var full = Path.GetFullPath(Path.Combine(_rootFull,"public", path));
+        if (!full.StartsWith(_rootFull, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Invalid path traversal.");
+
+        return full;
     }
 }
