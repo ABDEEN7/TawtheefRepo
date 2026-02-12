@@ -62,12 +62,19 @@ public class TokenService(
 
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking().FirstAsync(t => t.Id == user.UserTypeId, ct);
-        var data = await pcs.EvaluateAsync(user.Id, ct);
-        var prefill = !data.IsComplete ? await pcs.BuildPrefillAsync(user, ct) : null;
+        var profileComplete = true;
+        var additionalClaims = new List<Claim>();
+        ProfilePrefillDto? prefill = null;
+        if (user is ApplicantUser applicantUser)
+        {
+            prefill = !applicantUser.IsCompletedProfile ? await pcs.BuildPrefillAsync(user, ct) : null;
+            profileComplete = applicantUser.IsCompletedProfile;
+            additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
+        }
         var accessToken =
             await GenerateAccessTokenAsync(user, userType, [
                 new Claim(JwtRegisteredClaimNames.Sid, sid),
-                new Claim(ProfileCompleteClaimType, data.IsComplete ? "true" : "false")
+                ..additionalClaims
             ], ct);
 
         await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId,  loginSource,
@@ -76,7 +83,7 @@ public class TokenService(
         var logins = await userManager.GetLoginsAsync(user);
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
         return Result.Ok(new AuthResponse(
-            !data.IsComplete,
+            !profileComplete,
             new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, user.AgreedToTerms, providerName, prefill),
             new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
         ));

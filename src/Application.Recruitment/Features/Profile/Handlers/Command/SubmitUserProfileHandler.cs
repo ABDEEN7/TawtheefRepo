@@ -19,7 +19,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
-        var user = await userManager.FindByIdAsync(cmd.UserId.ToString());
+        var user = await userManager.Users
+            .OfType<ApplicantUser>()
+            .FirstOrDefaultAsync(u => u.Id == cmd.UserId && !u.IsDeleted, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
         
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
@@ -52,24 +54,26 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
                 Notes = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
-            });
+            }, ct);
         }
 
         // 1️⃣ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
         {
             var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
-            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot));
+            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot), ct);
         }
 
         // 2️⃣ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
-            await reviewRepo.AddAsync(item);
+            await reviewRepo.AddAsync(item, ct);
 
         // 3️⃣ Row-level entities (ONLY rows)
         AddRows(reviewRepo, profile);
 
         profile.Status = UserProfileStatus.Submitted;
+        user.IsCompletedProfile = true;
+        
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

@@ -67,7 +67,7 @@ public sealed class ProfileCompletenessService(
             Phone    = qpMobile,
             PhoneVerified = user.PhoneNumberConfirmed,
             Nationality  = qpNat,
-            Provider     = qpQid is not null ? "qatarpass" : "google"
+            Provider     = qpQid is not null ? "qatarresidentotp" : "google"
         };
     }
 }
