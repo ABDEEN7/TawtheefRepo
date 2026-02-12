@@ -15,6 +15,7 @@ import {UserService} from '../../../../core/auth/user.service';
 import {routes} from '../../../../routes/routes';
 import {AvatarModal} from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import {ProfileService} from './services/profile.service';
+import {AvatarUtils} from '../../../../core/utils/avatar-utils';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -35,7 +36,8 @@ export class WizardProfileComponent implements OnInit {
   userService = inject(UserService);
   profileService = inject(ProfileService);
 
-  avatarPreviewUrl: string | null = null;
+  avatarPreviewUrl: string | null = null
+  defaultAvatar = AvatarUtils.default;
 
   step = 1;
   total = 10;

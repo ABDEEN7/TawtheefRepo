@@ -9,7 +9,8 @@
                                 <div class="col-md-9">
                                   <div class="d-flex align-items-center gap-3">
                                     <div class="avatar-wrapper">
-                                         <img #userPictureRef [src]="ds.state().avatarUrl || avatarPreviewUrl || 'https://placehold.co/76x76?text=Avatar'" (error)="userPictureRef.src ='https://placehold.co/76x76?text=Avatar'"
+                                         <img #userPictureRef [src]="ds.state().avatarUrl || avatarPreviewUrl"
+                                              (error)="userPictureRef.src = defaultAvatar"
                                            class="candidate-avatar-pulse"  alt="{{ 'wizard.personal.avatar.alt' | translate }}" (click)="openAvatarDialog()"/>
                                          <div class="edit-badge" (click)="openAvatarDialog()"><i class="fa fa-camera"></i></div>
                                     </div>
