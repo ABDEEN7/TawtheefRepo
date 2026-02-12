@@ -16,10 +16,10 @@ public class UserProfile : EventEntity
     public ApplicantUser? User { get; set; }
     [MaxLength(50)]
     public string Provider { get; set; } = default!;
-    public Guid CandidateTypeId { get; set; }
+    public Guid? CandidateTypeId { get; set; }
     public CandidateType? CandidateType { get; set; }
 
-    public Guid TargetEntityId { get; set; }
+    public Guid? TargetEntityId { get; set; }
     public TargetEntity? TargetEntity { get; set; }
 
     public Guid? OfficeId { get; set; }

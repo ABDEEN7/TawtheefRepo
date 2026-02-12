@@ -42,7 +42,7 @@ public sealed class SaveProfilePrereqHandler(
                 CandidateTypeId = cmd.Request.CandidateTypeId,
                 TargetEntityId = cmd.Request.TargetEntityId
             };
-            await uow.GetEntityRepository<UserProfile>().AddAsync(profile);
+            await uow.GetEntityRepository<UserProfile>().AddAsync(profile, ct);
         }
         
         var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request.CandidateTypeId);

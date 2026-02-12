@@ -140,7 +140,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return Result.Ok();
     }
 
-    private static Result EnsureCandidateTypeIntegrity(Guid existingCandidateTypeId, Guid incomingCandidateTypeId)
+    private static Result EnsureCandidateTypeIntegrity(Guid? existingCandidateTypeId, Guid incomingCandidateTypeId)
     {
         if (existingCandidateTypeId != Guid.Empty && existingCandidateTypeId != incomingCandidateTypeId)
             return Result.Fail(ErrorsCodes.CandidateTypeChangeNotAllowed);
