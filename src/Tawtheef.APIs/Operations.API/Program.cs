@@ -2,12 +2,10 @@
 using Application.Operation;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using Serilog.Debugging;
 using Serilog.Exceptions;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Infrastructure;
@@ -35,57 +33,66 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
-// ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
-    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    if (!string.IsNullOrEmpty(aiCs))
+// ----- Application Insights (SDK) -----
+var aiCs =
+    builder.Configuration["ApplicationInsights:ConnectionString"]
+    ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    ?? builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+var aiEnabled = builder.Configuration.GetValue<bool>("ApplicationInsights:Enabled");
+
+// لو ما بدك flag، احذف الشرط وخليه دايمًا يتفعل لما aiCs موجود
+if (aiEnabled && !string.IsNullOrWhiteSpace(aiCs))
+{
+    builder.Services.AddApplicationInsightsTelemetry(o =>
     {
-        builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
-        builder.Services.AddSingleton(_ =>
-        {
-            var cfg = TelemetryConfiguration.CreateDefault();
-            cfg.ConnectionString = aiCs;
-            return cfg;
-        });
-    }
+        o.ConnectionString = aiCs;
+        // اختياري:
+        // o.EnableAdaptiveSampling = false;
+    });
 }
-#if DEBUG
-SelfLog.Enable(msg =>
-    File.AppendAllText(@"C:\home\LogFiles\serilog-selflog.txt", msg + Environment.NewLine));
-#endif
-builder.Services.AddApplicationInsightsTelemetry();
-builder.Host.UseSerilog((ctx, services, lc) => {
+
+// ----- Serilog (single place; reads appsettings.*) -----
+builder.Host.UseSerilog((ctx, services, lc) =>
+{
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
-    
+
     lc.ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .Enrich.WithMachineName()
-        .Enrich.WithEnvironmentName()
-        .Enrich.WithEnvironmentUserName()
-        .Enrich.WithThreadId()
-        .Enrich.WithExceptionDetails()
-        .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
-        .Enrich.WithProperty("Version", "1.0.0")
-        .WriteTo.Console(outputTemplate:
-            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
-        .WriteTo.File(
-            @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
-            rollingInterval: RollingInterval.Day,
-            shared: true);
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+      .Enrich.WithMachineName()
+      .Enrich.WithEnvironmentName()
+      .Enrich.WithEnvironmentUserName()
+      .Enrich.WithThreadId()
+      .Enrich.WithExceptionDetails()
+      .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
+      .Enrich.WithProperty("Version", "1.0.0")
+      .WriteTo.Console(outputTemplate:
+          "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+      .WriteTo.File(
+          @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
+          rollingInterval: RollingInterval.Day,
+          shared: true);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
-    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    // Application Insights
-    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
-        lc.WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
-});
+    // Application Insights sink (Serilog -> AI Traces)
+    var sinkAiCs =
+        ctx.Configuration["ApplicationInsights:ConnectionString"]
+        ?? ctx.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+        ?? ctx.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
+    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled") 
+        && !string.IsNullOrWhiteSpace(sinkAiCs))
+    {
+        lc.WriteTo.ApplicationInsights(
+            services.GetRequiredService<TelemetryConfiguration>(),
+            TelemetryConverter.Traces);
+    }
+});
 
 // ----- Services -----
 builder.Services.Configure<ForwardedHeadersOptions>(o => {

@@ -2,7 +2,6 @@
 using Application.Recruitment;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -27,99 +26,128 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-if (builder.Configuration.GetValue<bool>("KeyVault:Enabled")) {
-    var keyVaultUri = builder.Configuration["KeyVault:Uri"] ??
-                      throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
-    var clientId = builder.Configuration["KeyVault:ClientId"] ??
-                   throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
-    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
+if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
+{
+    var keyVaultUri = builder.Configuration["KeyVault:Uri"]
+                      ?? throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
+
+    var clientId = builder.Configuration["KeyVault:ClientId"]
+                   ?? throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+
+    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+    {
+        ManagedIdentityClientId = clientId
+    });
+
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
-// ----- Serilog + Seq (single place; reads appsettings.*) -----
-if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled")) {
-    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    if (!string.IsNullOrEmpty(aiCs))
-    {
-        builder.Services.AddOpenTelemetry().UseAzureMonitor(o => o.ConnectionString = aiCs);
-        builder.Services.AddSingleton(_ =>
-        {
-            var cfg = TelemetryConfiguration.CreateDefault();
-            cfg.ConnectionString = aiCs;
-            return cfg;
-        });
-    }
-}
 #if DEBUG
 SelfLog.Enable(msg =>
     File.AppendAllText(@"C:\home\LogFiles\serilog-selflog.txt", msg + Environment.NewLine));
 #endif
-builder.Services.AddApplicationInsightsTelemetry();
-builder.Host.UseSerilog((ctx, services, lc) => {
+
+// ----- Application Insights (SDK) -----
+var aiCs =
+    builder.Configuration["ApplicationInsights:ConnectionString"]
+    ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    ?? builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+var aiEnabled = builder.Configuration.GetValue<bool>("ApplicationInsights:Enabled");
+
+// لو ما بدك flag، احذف الشرط وخليه دايمًا يتفعل لما aiCs موجود
+if (aiEnabled && !string.IsNullOrWhiteSpace(aiCs))
+{
+    builder.Services.AddApplicationInsightsTelemetry(o =>
+    {
+        o.ConnectionString = aiCs;
+        // اختياري:
+        // o.EnableAdaptiveSampling = false;
+    });
+}
+
+// ----- Serilog (single place; reads appsettings.*) -----
+builder.Host.UseSerilog((ctx, services, lc) =>
+{
     var seqUrl = ctx.Configuration["Seq:Url"];
     var seqKey = ctx.Configuration["Seq:ApiKey"];
-    
+
     lc.ReadFrom.Configuration(ctx.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .Enrich.WithMachineName()
-        .Enrich.WithEnvironmentName()
-        .Enrich.WithEnvironmentUserName()
-        .Enrich.WithThreadId()
-        .Enrich.WithExceptionDetails()
-        .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
-        .Enrich.WithProperty("Version", "1.0.0")
-        .WriteTo.Console(outputTemplate:
-            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
-        .WriteTo.File(
-            @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
-            rollingInterval: RollingInterval.Day,
-            shared: true);
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+      .Enrich.WithMachineName()
+      .Enrich.WithEnvironmentName()
+      .Enrich.WithEnvironmentUserName()
+      .Enrich.WithThreadId()
+      .Enrich.WithExceptionDetails()
+      .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
+      .Enrich.WithProperty("Version", "1.0.0")
+      .WriteTo.Console(outputTemplate:
+          "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+      .WriteTo.File(
+          @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
+          rollingInterval: RollingInterval.Day,
+          shared: true);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
         lc.WriteTo.Seq(seqUrl, apiKey: seqKey);
 
-    var aiCs = builder.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
-    // Application Insights
-    if (builder.Configuration.GetValue<bool>("AzureMonitor:Enabled") && !string.IsNullOrEmpty(aiCs))
+    // Application Insights sink (Serilog -> AI Traces)
+    var sinkAiCs =
+        ctx.Configuration["ApplicationInsights:ConnectionString"]
+        ?? ctx.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+        ?? ctx.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled") 
+        && !string.IsNullOrWhiteSpace(sinkAiCs))
+    {
         lc.WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
+            services.GetRequiredService<TelemetryConfiguration>(),
+            TelemetryConverter.Traces);
+    }
 });
 
 // ----- Services -----
-builder.Services.Configure<ForwardedHeadersOptions>(o => {
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationRecruitment(builder.Configuration);
-// builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
-builder.Services.AddAuthorization(options => {
+
+builder.Services.AddAuthorization(options =>
+{
     options.AddPolicy(PolicyNames.CompletedProfile,
         policy => policy.Requirements.Add(new ProfileCompletedRequirement()));
 });
 
 builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options => {
-    options.InvalidModelStateResponseFactory = ctx => {
-        var problem = new ValidationProblemDetails(ctx.ModelState) {
-            Status  = StatusCodes.Status400BadRequest,
-            Type    = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
-            Title   = "One or more validation errors occurred.",
-            Detail  = "See the 'errors' property for details.",
-            Instance= ctx.HttpContext.Request.Path,
-            Extensions = {
-                ["traceId"] = ctx.HttpContext.TraceIdentifier,
-                ["correlationId"] = ctx.HttpContext.Items.TryGetValue("CorrelationId", out var cid) ? cid : null
-            }
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = ctx =>
+        {
+            var problem = new ValidationProblemDetails(ctx.ModelState)
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                Title = "One or more validation errors occurred.",
+                Detail = "See the 'errors' property for details.",
+                Instance = ctx.HttpContext.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = ctx.HttpContext.TraceIdentifier,
+                    ["correlationId"] = ctx.HttpContext.Items.TryGetValue("CorrelationId", out var cid) ? cid : null
+                }
+            };
+
+            return new BadRequestObjectResult(problem);
         };
+    });
 
-        return new BadRequestObjectResult(problem);
-    };
-});
-
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(myCors, policy =>
         policy.WithOrigins(builder.Configuration["AppConfig:FrontendUrl"]!)
               .AllowAnyHeader()
@@ -144,6 +172,7 @@ app.UseLanguageMiddleware();
 
 app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.Use(async (ctx, next) =>
 {
     var capture = ctx.RequestServices.GetService<IRequestBodyCapture>();
@@ -152,20 +181,25 @@ app.Use(async (ctx, next) =>
 
     await next();
 });
-app.UseSerilogRequestLogging(opts => {
-    opts.EnrichDiagnosticContext = (diagCtx, httpCtx) => {
+
+app.UseSerilogRequestLogging(opts =>
+{
+    opts.EnrichDiagnosticContext = (diagCtx, httpCtx) =>
+    {
         var userId = httpCtx.User.FindFirst("sub")?.Value
                      ?? httpCtx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
-        diagCtx.Set("CorrelationId", (httpCtx.Items.TryGetValue("CorrelationId", out var cid) ? cid : httpCtx.TraceIdentifier) ?? "");
+
+        diagCtx.Set("CorrelationId",
+            (httpCtx.Items.TryGetValue("CorrelationId", out var cid) ? cid : httpCtx.TraceIdentifier) ?? "");
+
         diagCtx.Set("UserId", userId ?? "anonymous");
         diagCtx.Set("QueryString", httpCtx.Request.QueryString.HasValue ? httpCtx.Request.QueryString.Value : "");
         diagCtx.Set("Route", httpCtx.GetEndpoint()?.DisplayName ?? "");
         diagCtx.Set("ClientIP", httpCtx.Connection.RemoteIpAddress?.ToString() ?? "unknown");
         diagCtx.Set("Path", httpCtx.Request.Path);
+
         var capture = httpCtx.RequestServices.GetService<IRequestBodyCapture>();
-        if (capture is null)
-            return;
+        if (capture is null) return;
 
         diagCtx.Set("RequestBody", httpCtx.Items.TryGetValue("RequestBody", out var v) ? v : "");
     };
@@ -175,19 +209,20 @@ app.UseSerilogRequestLogging(opts => {
 app.UseDeveloperExceptionPage();
 app.MapSwagger();
 #else
-    app.UseExceptionHandler();
+app.UseExceptionHandler();
 #endif
+
 app.UseMiddleware<ResponseLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseCors(myCors);
-app.UseCookiePolicy(); 
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//enable rate limiter middleware
 app.UseRateLimiter();
+
 app.MapGet("/", () => Results.Json(new { status = "" }));
 app.MapControllers();
 app.Run();
