@@ -5,18 +5,12 @@ using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Logges;
 
-namespace Tawtheef.Infrastructure.Middlewares;
+namespace Tawtheef.Infrastructure.Services;
 
-public sealed class RequestBodyCapture : IRequestBodyCapture
+public sealed class RequestBodyCapture(IHostEnvironment env, IOptions<RequestBodyLoggingOptions> opt)
+    : IRequestBodyCapture
 {
-    private readonly IHostEnvironment _env;
-    private readonly RequestBodyLoggingOptions _opt;
-
-    public RequestBodyCapture(IHostEnvironment env, IOptions<RequestBodyLoggingOptions> opt)
-    {
-        _env = env;
-        _opt = opt.Value;
-    }
+    private readonly RequestBodyLoggingOptions _opt = opt.Value;
 
     public async Task<string?> TryGetRedactedBodyAsync(HttpContext ctx)
     {
@@ -33,7 +27,7 @@ public sealed class RequestBodyCapture : IRequestBodyCapture
         if (HttpMethods.IsGet(ctx.Request.Method) || HttpMethods.IsHead(ctx.Request.Method))
             return null;
 
-        if (ctx.Request.ContentLength is null || ctx.Request.ContentLength <= 0)
+        if (ctx.Request.ContentLength is null or <= 0)
             return null;
 
         // Enable buffering with limits (once)
@@ -85,7 +79,7 @@ public sealed class RequestBodyCapture : IRequestBodyCapture
 
         if (_opt.Mode == RequestBodyLoggingMode.None) return false;
 
-        if (_opt.Mode == RequestBodyLoggingMode.DevelopmentOnly && !_env.IsDevelopment())
+        if (_opt.Mode == RequestBodyLoggingMode.DevelopmentOnly && !env.IsDevelopment())
             return false;
 
         // Health always excluded

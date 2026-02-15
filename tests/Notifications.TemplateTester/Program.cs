@@ -1,16 +1,3 @@
-// Program.cs
-// Notification Template Tester (UX-enhanced)
-// - Search/filter templates
-// - Favorites + Recents
-// - Profiles (To/Cc/SubjectPrefix)
-// - Preview / Dry-run / Send
-// - Fast model modes: auto / last / prompt / json
-//
-// Notes:
-// 1) This keeps your existing discovery via NotificationTemplateAttribute.
-// 2) CC bug fixed: CC is added to message.CC not To.
-// 3) SMTP Credentials remain unset to match your original. Enable if needed.
-
 using Tawtheef.Notifications;
 using Tawtheef.Notifications.TemplateTester;
 using Tawtheef.Notifications.Utils;

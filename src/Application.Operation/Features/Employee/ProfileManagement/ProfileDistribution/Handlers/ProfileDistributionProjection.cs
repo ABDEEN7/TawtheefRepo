@@ -2,8 +2,8 @@ using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribut
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Configurations.Rules;
@@ -69,28 +69,28 @@ internal sealed class ProfileDistributionProjection(
             var compactLike = $"%{compactTerm}%";
             profilesQuery = profilesQuery.Where(p =>
                 (p.User != null &&
-                 (EF.Functions.Like(p.User.FullNameAr ?? string.Empty, term) ||
-                  EF.Functions.Like(p.User.FullNameEn ?? string.Empty, term) ||
+                 (EF.Functions.Like(p.User.FullNameAr, term) ||
+                  EF.Functions.Like(p.User.FullNameEn, term) ||
                   (compactTerm.Length > 0 &&
                    (EF.Functions.Like(
-                        (p.User.FullNameAr ?? string.Empty).Replace(" ", string.Empty),
+                        (p.User.FullNameAr).Replace(" ", string.Empty),
                         compactLike) ||
                     EF.Functions.Like(
-                        (p.User.FullNameEn ?? string.Empty).Replace(" ", string.Empty),
+                        (p.User.FullNameEn).Replace(" ", string.Empty),
                         compactLike))))) ||
                 (p.CandidateType != null &&
-                 (EF.Functions.Like(p.CandidateType.NameAr ?? string.Empty, term) ||
-                  EF.Functions.Like(p.CandidateType.NameEn ?? string.Empty, term))) ||
+                 (EF.Functions.Like(p.CandidateType.NameAr, term) ||
+                  EF.Functions.Like(p.CandidateType.NameEn, term))) ||
                 (p.TargetEntity != null &&
-                 (EF.Functions.Like(p.TargetEntity.NameAr ?? string.Empty, term) ||
-                  EF.Functions.Like(p.TargetEntity.NameEn ?? string.Empty, term))) ||
+                 (EF.Functions.Like(p.TargetEntity.NameAr, term) ||
+                  EF.Functions.Like(p.TargetEntity.NameEn, term))) ||
                 EF.Functions.Like(p.NationalNumber ?? string.Empty, term) ||
                 assignmentRepo.DbSet.Any(a =>
                     a.IsActive &&
                     a.UserProfileId == p.Id &&
                     a.Employee != null &&
-                    (EF.Functions.Like(a.Employee.FullNameAr ?? string.Empty, term) ||
-                     EF.Functions.Like(a.Employee.FullNameEn ?? string.Empty, term))));
+                    (EF.Functions.Like(a.Employee.FullNameAr, term) ||
+                     EF.Functions.Like(a.Employee.FullNameEn, term))));
         }
 
         if (targetEntityId.HasValue)
@@ -228,7 +228,7 @@ internal sealed class ProfileDistributionProjection(
             EmployeeUser => CountryIds.Qatar,
 
             // OfficeUser => Office.CountryId
-            OfficeUser officeUser when officeUser.Office is not null => officeUser.Office.CountryId,
+            OfficeUser { Office: not null } officeUser => officeUser.Office.CountryId,
 
             _ => null
         };

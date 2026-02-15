@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Content;
-using Tawtheef.Infrastructure.Configurations.Entities;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Content;
 

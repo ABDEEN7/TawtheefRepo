@@ -22,7 +22,7 @@ namespace Application.Operation
             {
                 services.AddApplicationLayer(config);
                 services.RegisterMapster();
-                services.RegisterMediator(config);
+                services.RegisterMediator();
                 services.RegisterRepositories();
                 services.RegisterValidators();
                 return services;
@@ -34,7 +34,7 @@ namespace Application.Operation
                 config.Scan(typeof(OperationAssemblyMarker).Assembly);
             }
 
-            private void RegisterMediator(IConfiguration configuration)
+            private void RegisterMediator()
             {
                 services.AddCortexMediator(
                     handlerAssemblyMarkerTypes:

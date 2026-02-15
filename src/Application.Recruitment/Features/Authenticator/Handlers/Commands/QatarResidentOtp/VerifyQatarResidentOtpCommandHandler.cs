@@ -257,8 +257,8 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
     private async Task<IResult<Unit>> UpdateUserFullNameAsync(User user, MOEPersonalInfo personalInfo)
     {
-        var englishName = personalInfo.EnglishFullName?.Trim();
-        var arabicName = personalInfo.ArabicFullName?.Trim();
+        var englishName = personalInfo.EnglishFullName.Trim();
+        var arabicName = personalInfo.ArabicFullName.Trim();
         var updated = false;
 
         if (!string.IsNullOrWhiteSpace(englishName) &&

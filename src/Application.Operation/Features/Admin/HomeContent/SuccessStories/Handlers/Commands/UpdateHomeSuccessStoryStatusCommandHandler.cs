@@ -28,10 +28,10 @@ public sealed class UpdateHomeSuccessStoryStatusCommandHandler(
 
         var hasUser = Guid.TryParse(currentUserService.UserId, out var userId);
         story.IsActive = request.IsActive;
-        story.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;;
+        story.UpdatedDate = timeProvider.GetUtcNow().UtcDateTime;
         story.UpdatedById = hasUser ? userId : story.UpdatedById;
 
-        await repository.UpdateAsync(story);
+        await repository.UpdateAsync(story, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);

@@ -40,11 +40,7 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
     private string BuildBlobName(string blobKey)
     {
-        blobKey = (blobKey ?? "").Trim().Replace('\\', '/').TrimStart('/');
-
-        if (string.IsNullOrWhiteSpace(blobKey))
-            return blobKey;
-
+        blobKey = blobKey.Trim().Replace('\\', '/').TrimStart('/');
         return blobKey;
     }
 
@@ -62,7 +58,11 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
             if (stream.CanSeek)
             {
-                try { stream.Position = 0; } catch { }
+                try { stream.Position = 0; }
+                catch
+                {
+                    // ignored
+                }
             }
 
             // Optional but recommended: ensure container exists (especially in Stage/Dev)

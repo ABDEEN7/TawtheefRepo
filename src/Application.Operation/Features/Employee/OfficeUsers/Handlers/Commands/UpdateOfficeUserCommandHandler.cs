@@ -38,15 +38,15 @@ public sealed class UpdateOfficeUserCommandHandler(
         if (officeUser is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
 
-        var email = request.Email?.Trim();
+        var email = request.Email.Trim();
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Unit>(ErrorsCodes.EmailRequired);
 
-        var nameAr = request.NameAr?.Trim();
+        var nameAr = request.NameAr.Trim();
         if (string.IsNullOrWhiteSpace(nameAr))
             return Result.Fail<Unit>(ErrorsCodes.NameArRequired);
 
-        var nameEn = request.NameEn?.Trim();
+        var nameEn = request.NameEn.Trim();
         if (string.IsNullOrWhiteSpace(nameEn))
             return Result.Fail<Unit>(ErrorsCodes.NameEnRequired);
 

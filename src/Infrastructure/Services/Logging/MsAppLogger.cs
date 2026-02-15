@@ -3,24 +3,15 @@ using Tawtheef.Application.Common.Interfaces.Logging;
 
 namespace Tawtheef.Infrastructure.Services.Logging;
 
-public sealed class MsAppLogger : IAppLogger
+public sealed class MsAppLogger(ILoggerFactory factory, string? categoryName = null) : IAppLogger
 {
-    private readonly ILogger _logger;
-    private readonly ILoggerFactory _factory;
-    private readonly string _categoryName;
-
-    public MsAppLogger(ILoggerFactory factory, string? categoryName = null)
-    {
-        _factory = factory;
-        _categoryName = string.IsNullOrWhiteSpace(categoryName) ? "App" : categoryName;
-        _logger = factory.CreateLogger(_categoryName);
-    }
+    private readonly ILogger _logger = factory.CreateLogger(string.IsNullOrWhiteSpace(categoryName) ? "App" : categoryName);
 
     public IAppLogger ForContext(Type type) =>
-        new MsAppLogger(_factory, type.FullName ?? type.Name);
+        new MsAppLogger(factory, type.FullName ?? type.Name);
 
     public IAppLogger ForContext(string contextName) =>
-        new MsAppLogger(_factory, contextName);
+        new MsAppLogger(factory, contextName);
 
     public void Write(AppLogLevel level, string messageTemplate, params object?[] propertyValues) =>
         _logger.Log(MapLevel(level), messageTemplate, propertyValues);

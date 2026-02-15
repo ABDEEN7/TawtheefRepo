@@ -17,7 +17,7 @@ namespace Application.Recruitment
             {
                 services.AddApplicationLayer(config);
                 services.RegisterMapster();
-                services.RegisterMediator(config);
+                services.RegisterMediator();
                 return services;
             }
 
@@ -27,7 +27,7 @@ namespace Application.Recruitment
                 config.Scan(typeof(RecruitmentAssemblyMarker).Assembly);
             }
 
-            private void RegisterMediator(IConfiguration configuration)
+            private void RegisterMediator()
             {
                 services.AddCortexMediator(
                     handlerAssemblyMarkerTypes:
