@@ -91,40 +91,29 @@
         }
       </div>
 
-      <!-- titleAr -->
       <div class="col-md-6 mb-3">
         <label class="form-label">
-          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR' | translate }}
+          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE' | translate }}
         </label>
-
-        <input
-          pInputText
-          class="form-control"
-          formControlName="titleAr"
-          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR_PLACEHOLDER' | translate }}"
-        />
-
-        @if (form.controls.titleAr.touched && form.controls.titleAr.invalid) {
+        <p-select
+          class="form-select px-0"
+          [options]="lookupsService.jobTitles()"
+          formControlName="jobTitleId"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="additionalData.jobNameAr,additionalData.jobNameEn,name"
+          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER' | translate }}"
+        ></p-select>
+        @if (form.controls.jobTitleId.touched && form.controls.jobTitleId.invalid) {
         <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
         }
       </div>
 
-      <!-- titleEn -->
       <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN' | translate }}
-        </label>
-
-        <input
-          pInputText
-          class="form-control"
-          formControlName="titleEn"
-          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN_PLACEHOLDER' | translate }}"
-        />
-
-        @if (form.controls.titleEn.touched && form.controls.titleEn.invalid) {
-        <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
-        }
+        <label class="form-label">{{ 'JOB_WIZARD.STEPS.BASICS.JOB_NUMBER' | translate }}</label>
+        <input pInputText class="form-control" formControlName="jobNumber" disabled />
       </div>
 
       <!-- jobCategory -->

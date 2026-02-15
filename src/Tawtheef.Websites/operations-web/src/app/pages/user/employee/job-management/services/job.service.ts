@@ -39,8 +39,10 @@ export class JobService {
     defaultClosingDate.setDate(today.getDate() + 30);
 
     const draft: Job = {
+      jobTitleId: '' as GUID,
       titleAr: '',
       titleEn: '',
+      jobNumber: '',
       sectorId: '' as GUID,
       managementId: '' as GUID,
       departmentId: '' as GUID,
@@ -80,8 +82,10 @@ export class JobService {
   }
 
   updateCurrentJobBasics(data: {
-    titleAr: string;
-    titleEn: string;
+    jobTitleId: GUID;
+    titleAr?: string;
+    titleEn?: string;
+    jobNumber?: string;
     sectorId: GUID;
     managementId: GUID;
     departmentId: GUID;
@@ -189,8 +193,7 @@ export class JobService {
   validateRequiredFields(job: Job): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (!job.titleAr) errors.push('VALIDATION.JOB.TITLE_AR_REQUIRED');
-    if (!job.titleEn) errors.push('VALIDATION.JOB.TITLE_EN_REQUIRED');
+    if (!job.jobTitleId) errors.push('VALIDATION.REQUIRED_FIELD');
     if (!job.sectorId) errors.push('VALIDATION.JOB.SECTOR_REQUIRED');
     if (!job.managementId) errors.push('VALIDATION.JOB.MANAGEMENT_REQUIRED');
     if (!job.departmentId) errors.push('VALIDATION.JOB.DEPARTMENT_REQUIRED');
@@ -338,8 +341,10 @@ export class JobService {
     return this.getById(jobId).pipe(
       tap((jobResponse) => {
         const job: Job = {
+          jobTitleId: jobResponse.jobTitleId,
           titleAr: jobResponse.titleAr,
           titleEn: jobResponse.titleEn,
+          jobNumber: jobResponse.jobNumber,
           sectorId: jobResponse.sector.id as GUID,
           managementId: jobResponse.management.id as GUID,
           departmentId: jobResponse.department.id as GUID,

@@ -1,0 +1,43 @@
+<div class="container-fluid" i18nNamespace="pages/job-wizard">
+  <div class="card p-3 mb-3" [formGroup]="form">
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input class="form-control" formControlName="jobNameAr" placeholder="Arabic name" />
+      </div>
+      <div class="col-md-4">
+        <input class="form-control" formControlName="jobNameEn" placeholder="English name" />
+      </div>
+      <div class="col-md-2">
+        <input class="form-control" formControlName="jobNumber" placeholder="Number" />
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button class="btn btn-primary" (click)="save()">Save</button>
+        <button class="btn btn-outline-secondary" (click)="reset()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Job Number</th>
+        <th>Arabic</th>
+        <th>English</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of items(); track item.id) {
+        <tr>
+          <td>{{ item.jobNumber }}</td>
+          <td>{{ item.jobNameAr }}</td>
+          <td>{{ item.jobNameEn }}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(item)">Edit</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(item.id)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

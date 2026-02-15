@@ -7,8 +7,10 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 public class JobResponseDto
 {
     public Guid Id { get; set; }
+    public Guid JobTitleId { get; set; }
     public string? TitleAr { get; set; } 
     public string? TitleEn { get; set; } 
+    public string? JobNumber { get; set; }
     public int NumberOfVacancies { get; set; }
     public DateTimeOffset ClosingDate { get; set; }
     public string? BenefitsAr { get; set; } 

@@ -31,6 +31,11 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
             .HasForeignKey(j => j.JobCategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(j => j.JobTitle)
+            .WithMany()
+            .HasForeignKey(j => j.JobTitleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(j => j.Gender)
             .WithMany()
             .HasForeignKey(j => j.GenderId)
@@ -103,14 +108,14 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
 
         builder.HasIndex(j => new
         {
-            j.TitleAr,
+            j.JobTitleId,
             j.DepartmentId,
             j.JobCategoryId,
             j.SubMajorId
         })
         .IsUnique()
         .HasFilter($"[{nameof(EventEntity.IsDeleted)}] = 0")
-        .HasDatabaseName("IX_Job_Unique_Title_Department_Category_SubMajor");
+        .HasDatabaseName("IX_Job_Unique_JobTitle_Department_Category_SubMajor");
 
         builder.HasIndex(j => j.SectorId)
             .HasDatabaseName("IX_Job_SectorId");

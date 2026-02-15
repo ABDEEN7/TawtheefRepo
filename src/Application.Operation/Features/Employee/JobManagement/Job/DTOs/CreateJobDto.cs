@@ -6,12 +6,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 public class CreateJobDto
 {
     [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
-    [MaxLength(500)]
-    public required string TitleAr { get; set; }
-
-    [Required(ErrorMessage = JobMessages.JobTitleEnRequired)]
-    [MaxLength(500)]
-    public required string TitleEn { get; set; }
+    public Guid JobTitleId { get; set; }
 
     [Required(ErrorMessage = JobMessages.SectorRequired)]
     public Guid SectorId { get; set; }

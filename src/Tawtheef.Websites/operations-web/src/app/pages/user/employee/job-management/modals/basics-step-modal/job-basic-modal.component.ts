@@ -56,8 +56,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     managementId: ['', Validators.required],
     departmentId: ['', Validators.required],
     yearsOfExperience: [0, [Validators.required, Validators.min(0)]],
-    titleAr: ['', [Validators.required, Validators.maxLength(200)]],
-    titleEn: ['', [Validators.required, Validators.maxLength(200)]],
+    jobTitleId: ['', Validators.required],
+    jobNumber: [{ value: '', disabled: true }],
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
     genderId: ['',Validators.required],
@@ -102,6 +102,13 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   private setupSequenceListeners(): void {
+  this.form.controls.jobTitleId.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(jobTitleId => {
+      const selected = this.lookupsService.jobTitles().find(item => item.id === jobTitleId);
+      this.form.patchValue({ jobNumber: (selected?.additionalData as any)?.jobNumber || '' }, { emitEvent: false });
+    });
+
   this.form.controls.managementId.disable({ emitEvent: false });
   this.form.controls.departmentId.disable({ emitEvent: false });
 
@@ -150,8 +157,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           managementId: jobResponse.management.id || '',
           departmentId: jobResponse.department.id || '',
           yearsOfExperience: jobResponse.yearsOfExperience || 0,
-          titleAr: jobResponse.titleAr || '',
-          titleEn: jobResponse.titleEn || '',
+          jobTitleId: jobResponse.jobTitleId || '',
+          jobNumber: jobResponse.jobNumber || '',
           jobCategoryId: jobResponse.jobCategory.id || '',
           workLocationId: jobResponse.workLocation.id || '',
           genderId: jobResponse.gender?.id || '',
@@ -225,8 +232,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const formValue = this.form.getRawValue();
     const normalizedClosingDate = this.normalizeDate(formValue.closingDate);
     const jobData = {
-      titleAr: formValue.titleAr,
-      titleEn: formValue.titleEn,
+      jobTitleId: formValue.jobTitleId,
+      jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
       departmentId: formValue.departmentId as GUID,
@@ -257,8 +264,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     if (this.isCopyMode && this.copyTemplate && this.copySourceId) {
       const copyPayload = {
         ...this.copyTemplate,
-        titleAr: jobData.titleAr,
-        titleEn: jobData.titleEn,
+        jobTitleId: jobData.jobTitleId,
+        jobNumber: jobData.jobNumber,
         sectorId: jobData.sectorId,
         managementId: jobData.managementId,
         departmentId: jobData.departmentId,
@@ -337,8 +344,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const formValue = this.form.getRawValue();
 
     const updateData = {
-      titleAr: formValue.titleAr,
-      titleEn: formValue.titleEn,
+      jobTitleId: formValue.jobTitleId,
+      jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
       departmentId: formValue.departmentId as GUID,
@@ -432,8 +439,8 @@ private applyTemplateToForm(template: JobCopyTemplate): void {
       managementId: template.managementId || '',
       departmentId: template.departmentId || '',
       yearsOfExperience: template.yearsOfExperience || 0,
-      titleAr: template.titleAr || '',
-      titleEn: template.titleEn || '',
+      jobTitleId: template.jobTitleId || '',
+      jobNumber: template.jobNumber || '',
       jobCategoryId: template.jobCategoryId || '',
       workLocationId: template.workLocationId || '',
       genderId: template.genderId || '',
