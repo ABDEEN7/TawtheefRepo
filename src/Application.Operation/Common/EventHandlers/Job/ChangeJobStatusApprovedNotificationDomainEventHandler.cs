@@ -17,7 +17,7 @@ public sealed class ChangeJobStatusApprovedNotificationDomainEventHandler(
 {
     public async Task Handle(ChangeJobStatusApprovedNotificationDomainEvent notification, CancellationToken ct)
     {
-        var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
+        var jobTitle = localizationService.GetLocalizedValue(notification.Job.JobTitle?.JobNameAr ?? string.Empty, notification.Job.JobTitle?.JobNameEn ?? string.Empty);
         var payload = JsonSerializer.Serialize(new ChangeJobStatusApprovedNotificationModel(jobTitle));
         await JobNotificationEmailHelper.QueueForEmployeeAsync(
             unitOfWork,

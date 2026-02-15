@@ -32,7 +32,7 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
             return Result.Fail<JobInvitationSummaryDetailsInfoDto>(JobMessages.JobNotFound);
 
         var dto = mapper.Map<JobInvitationSummaryDetailsInfoDto>(job);
-        dto.JobName = localizationService.GetLocalizedValue(job.TitleAr, job.TitleEn);
+        dto.JobName = localizationService.GetLocalizedValue(job.JobTitle?.JobNameAr ?? string.Empty, job.JobTitle?.JobNameEn ?? string.Empty);
         dto.DepartmentName = localizationService.GetLocalizedName(job.Department);
         dto.JobStatus = job.JobStatus == null
             ? new DropdownOptions()

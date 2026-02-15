@@ -7,14 +7,13 @@ namespace Tawtheef.Application.Common.Services;
 public static class JobBusinessRules
 {
     public static bool AreRequiredBasicFieldsCompleted(
-        string titleAr, string titleEn,
+        Guid jobTitleId,
         Guid sectorId, Guid managementId, Guid departmentId,
         Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
         Guid majorId, int numberOfVacancies, DateTimeOffset closingDate,
         int minimumAge, int maximumAge, int yearsOfExperience)
     {
-        return !string.IsNullOrWhiteSpace(titleAr) &&
-               !string.IsNullOrWhiteSpace(titleEn) &&
+        return jobTitleId != Guid.Empty &&
                sectorId != Guid.Empty &&
                managementId != Guid.Empty &&
                departmentId != Guid.Empty &&
@@ -70,11 +69,11 @@ public static class JobBusinessRules
     }
 
     public static bool IsDuplicateJob(
-        string titleAr, Guid departmentId, Guid jobCategoryId, Guid? subMajorId,
-        string existingTitleAr, Guid existingDepartmentId,
+        Guid jobTitleId, Guid departmentId, Guid jobCategoryId, Guid? subMajorId,
+        Guid existingJobTitleId, Guid existingDepartmentId,
         Guid existingJobCategoryId, Guid? existingSubMajorId)
     {
-        return titleAr.Equals(existingTitleAr, StringComparison.OrdinalIgnoreCase) &&
+        return jobTitleId == existingJobTitleId &&
                departmentId == existingDepartmentId &&
                jobCategoryId == existingJobCategoryId &&
                subMajorId == existingSubMajorId;
@@ -221,10 +220,10 @@ public static class JobBusinessRules
         return jobStatusId == JobStatusIds.Draft && allTabsCompleted;
     }
 
-    public static bool HasDuplicatePendingApproval(string titleAr, Guid departmentId, Guid jobCategoryId, Guid? subMajorId, ICollection<Job> existingJobs)
+    public static bool HasDuplicatePendingApproval(Guid jobTitleId, Guid departmentId, Guid jobCategoryId, Guid? subMajorId, ICollection<Job> existingJobs)
     {
         return existingJobs.Any(j =>
-            j.TitleAr.Equals(titleAr, StringComparison.OrdinalIgnoreCase) &&
+            j.JobTitleId == jobTitleId &&
             j.DepartmentId == departmentId &&
             j.JobCategoryId == jobCategoryId &&
             j.SubMajorId == subMajorId &&

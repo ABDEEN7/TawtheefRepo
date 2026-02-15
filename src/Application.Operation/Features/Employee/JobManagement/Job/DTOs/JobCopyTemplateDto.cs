@@ -2,8 +2,10 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class JobCopyTemplateDto
 {
-    public string? TitleAr { get; set; }
-    public string? TitleEn { get; set; }
+    public Guid JobTitleId { get; set; }
+    public string? JobTitleAr { get; set; }
+    public string? JobTitleEn { get; set; }
+    public string? JobNumber { get; set; }
     public Guid SectorId { get; set; }
     public Guid ManagementId { get; set; }
     public Guid DepartmentId { get; set; }

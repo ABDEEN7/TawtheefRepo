@@ -10,7 +10,7 @@ public sealed class JobInvitationSummaryDetailsProfile : IRegister
     {
         config.NewConfig<Job, JobInvitationSummaryDetailsInfoDto>()
             .Map(dest => dest.JobId, src => src.Id)
-            .Map(dest => dest.JobName, src => src.TitleEn);
+            .Map(dest => dest.JobName, src => src.JobTitle != null ? src.JobTitle.JobNameEn : string.Empty);
 
         config.NewConfig<Invitation, JobInvitationSummaryDetailsRowDto>()
             .Map(dest => dest.InviteId, src => src.Id)

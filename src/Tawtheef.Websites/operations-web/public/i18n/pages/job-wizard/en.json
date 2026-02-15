@@ -8,47 +8,37 @@
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS": "Attachments",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS": "Benefits",
   "JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW": "Review",
-
   "JOB_WIZARD.HEADER.PROGRESS_LABEL": "Progress",
   "JOB_WIZARD.HEADER.CANCEL": "Cancel",
-
   "JOB_WIZARD.SHARED.BUTTONS.BACK": "Back",
   "JOB_WIZARD.SHARED.BUTTONS.NEXT": "Next",
   "JOB_WIZARD.SHARED.BUTTONS.SUBMIT_FOR_APPROVAL": "Submit for Approval",
-
   "JOB_WIZARD.LOADING.PREPARING_WIZARD": "Preparing the job creation wizard...",
   "JOB_WIZARD.LOADING.PLEASE_WAIT": "Please wait...",
   "JOB_WIZARD.LOADING.OPEN_MODAL_HINT": "A window will open to enter the basic job information",
-
   "JOB_WIZARD.ERROR.LOAD_FAILED": "Failed to load the job",
   "JOB_WIZARD.ERROR.COMPLETE_REQUIRED_FIELDS": "Please complete all required fields in this step",
   "JOB_WIZARD.ERROR.COMPLETE_PREVIOUS_STEPS": "Previous steps must be completed first",
   "JOB_WIZARD.ERROR.NO_JOB_ID": "No job ID found",
   "JOB_WIZARD.ERROR.COMPLETE_ALL_STEPS": "Please complete all steps before submitting",
   "JOB_WIZARD.ERROR.FAILED_TO_SUBMIT": "Failed to submit the job for approval",
-
   "JOB_WIZARD.SUCCESS.SUBMITTED_FOR_APPROVAL": "Job submitted for approval successfully",
-
   "JOB_WIZARD.CONFIRM.CANCEL_WIZARD": "Do you want to cancel the process? All unsaved changes will be lost.",
-
   "JOB_WIZARD.EDIT_JOB": "Edit Job",
   "JOB_WIZARD.CREATE_JOB": "Create Job",
   "JOB_WIZARD.EDIT_DETAILS": "Edit Job Details",
   "JOB_WIZARD.ENTER_DETAILS": "Enter Job Details",
-
   "JOB_WIZARD.HEADER.PROGRESS": "Progress",
   "JOB_WIZARD.SHARED.BUTTONS.CANCEL": "Cancel",
   "JOB_WIZARD.LOADING.TITLE": "Preparing Job Creation Form",
   "JOB_WIZARD.LOADING.SUBTITLE": "Please wait...",
   "JOB_WIZARD.LOADING.CREATE_HINT": "A window will open to enter the basic job information",
-
   "JOB_BASIC_MODAL.TITLE": "Job Basic Information",
   "JOB_BASIC_MODAL.CANCEL_BUTTON": "Cancel",
   "JOB_BASIC_MODAL.SAVE_BUTTON": "Save",
   "JOB_BASIC_MODAL.START_CREATION_BUTTON": "Start Creation",
   "JOB_BASIC_MODAL.UPDATE_BUTTON": "Update",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM": "Do you want to cancel the process? All unsaved changes will be lost.",
-
   "JOB_BASIC_MODAL.ERROR.LOAD_FAILED": "Failed to load job data",
   "JOB_BASIC_MODAL.ERROR.DUPLICATE_JOB": "A duplicate job exists with the same title, entity, and major",
   "JOB_BASIC_MODAL.SUCCESS.CREATED": "Job created successfully",
@@ -56,9 +46,7 @@
   "JOB_BASIC_MODAL.ERROR.CHECK_DUPLICATE": "Failed to check duplication",
   "JOB_BASIC_MODAL.SUCCESS.UPDATED": "Basic job information updated successfully",
   "JOB_BASIC_MODAL.ERROR.UPDATE_FAILED": "Failed to update job information",
-
   "VALIDATION.REQUIRED_FIELD": "This field is required",
-
   "JOB_WIZARD.STEPS.BASICS.SECTOR": "Sector",
   "JOB_WIZARD.STEPS.BASICS.SECTOR_PLACEHOLDER": "Select sector",
   "JOB_WIZARD.STEPS.BASICS.MANAGEMENT": "Management",
@@ -90,10 +78,8 @@
   "JOB_WIZARD.STEPS.BASICS.VACANCIES": "Number of Vacancies",
   "JOB_WIZARD.STEPS.BASICS.VACANCIES_PLACEHOLDER": "Enter number of vacancies",
   "JOB_WIZARD.STEPS.BASICS.DEADLINE": "Closing Date",
-
   "JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE": "Cancel Job Completion Process",
   "JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE": "Cancel",
-
   "JOB_WIZARD.VALIDATION.SECTOR_REQUIRED": "Sector must be selected first",
   "JOB_WIZARD.VALIDATION.MANAGEMENT_REQUIRED": "Management must be selected first",
   "JOB_WIZARD.VALIDATION.MAJOR_REQUIRED": "Main major must be selected first",
@@ -103,11 +89,9 @@
   "JOB_WIZARD.VALIDATION.MIN_VACANCIES": "At least one vacancy is required",
   "JOB_WIZARD.VALIDATION.POSITIVE_INTEGER": "Please enter a positive integer",
   "JOB_WIZARD.VALIDATION.FUTURE_DATE_REQUIRED": "Please select a future date",
-
   "JOB_WIZARD.VALIDATION.SEQUENCE_SECTOR_REQUIRED": "Sector must be selected before management",
   "JOB_WIZARD.VALIDATION.SEQUENCE_MANAGEMENT_REQUIRED": "Management must be selected before department",
   "JOB_WIZARD.VALIDATION.SEQUENCE_MAJOR_REQUIRED": "Main major must be selected before sub major",
-
   "VALIDATION.JOB.TITLE_AR_REQUIRED": "Arabic job title is required",
   "VALIDATION.JOB.TITLE_EN_REQUIRED": "English job title is required",
   "VALIDATION.JOB.SECTOR_REQUIRED": "Sector is required",
@@ -117,11 +101,9 @@
   "VALIDATION.JOB.WORK_LOCATION_REQUIRED": "Work location is required",
   "VALIDATION.JOB.MAJOR_REQUIRED": "Main major is required",
   "VALIDATION.JOB.WORK_TYPE_REQUIRED": "Work type is required",
-
   "JOB_WIZARD.ERRORS.NO_JOB_TO_SUBMIT": "No job available to submit",
   "JOB_WIZARD.MESSAGES.DRAFT_SAVED": "Job draft saved successfully",
   "JOB_WIZARD.MESSAGES.SUBMITTED_FOR_APPROVAL": "Job submitted for approval",
-
   "JOB_WIZARD.SUCCESS.JOB_SUBMITTED": "Job submitted for approval successfully",
   "JOB_WIZARD.ERRORS.LOAD_JOB_FAILED": "Failed to load job",
   "JOB_WIZARD.ERRORS.STEPS_CONTAINER_NOT_AVAILABLE": "Failed to load wizard steps container",
@@ -134,19 +116,15 @@
   "JOB_WIZARD.WARNINGS.COMPLETE_REQUIRED_FIELDS": "Please complete all required fields in this step",
   "JOB_WIZARD.WARNINGS.COMPLETE_PREVIOUS_STEPS": "Previous steps must be completed first",
   "JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD": "Do you want to cancel the process? All unsaved changes will be lost.",
-
   "JOB_WIZARD.TITLES.EDIT_JOB": "Edit Job",
   "JOB_WIZARD.TITLES.CREATE_JOB": "Create New Job",
   "JOB_WIZARD.SUBTITLES.EDIT_DETAILS": "Edit job details",
   "JOB_WIZARD.SUBTITLES.ENTER_DETAILS": "Enter job details",
-
   "JOB_WIZARD.BUTTONS.NEXT": "Next",
   "JOB_WIZARD.BUTTONS.BACK": "Back",
   "JOB_WIZARD.BUTTONS.CANCEL": "Cancel",
   "JOB_WIZARD.BUTTONS.SUBMIT_FOR_APPROVAL": "Submit for Approval",
-
   "JOB_WIZARD.HEADERS.PROGRESS": "Progress",
-
   "JOB_WIZARD.STEPS.OVERVIEW": "Overview",
   "JOB_WIZARD.STEPS.QUALIFICATIONS": "Qualifications",
   "JOB_WIZARD.STEPS.RESPONSIBILITIES": "Responsibilities",
@@ -155,7 +133,6 @@
   "JOB_WIZARD.STEPS.ATTACHMENTS": "Attachments",
   "JOB_WIZARD.STEPS.BENEFITS": "Benefits",
   "JOB_WIZARD.STEPS.REVIEW": "Review",
-
   "JOB_WIZARD.STEPS.OVERVIEW.SUBTITLE": "Please provide a clear overview of this job announcement.",
   "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR": "Overview (Arabic)",
   "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_AR_PLACEHOLDER": "Write the job overview in Arabic...",
@@ -163,7 +140,6 @@
   "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_EN": "Overview (English)",
   "JOB_WIZARD.STEPS.OVERVIEW.DESCRIPTION_EN_PLACEHOLDER": "Write the job overview in English...",
   "JOB_WIZARD.STEPS.OVERVIEW.ENGLISH_TIPS": "Ensure the English overview is clear, concise, and professional.",
-
   "JOB_WIZARD.STEPS.QUALIFICATIONS.SUBTITLE": "Specify the academic and professional requirements for this job.",
   "JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS": "Required Academic Levels",
   "JOB_WIZARD.STEPS.QUALIFICATIONS.LOADING_DEGREES": "Loading academic qualifications...",
@@ -175,7 +151,6 @@
   "JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH_PLACEHOLDER": "Write qualifications description in English...",
   "JOB_WIZARD.STEPS.QUALIFICATIONS.ENGLISH_TIPS": "Ensure the English qualifications description is clear and professional.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_FIELDS": "Please complete all required fields before proceeding.",
-
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.SUBTITLE": "List the main duties and responsibilities of this job.",
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.ADD_NEW": "Add New Responsibility",
   "JOB_WIZARD.STEPS.RESPONSIBILITIES.DESCRIPTION_AR": "Responsibility Description (Arabic)",
@@ -194,7 +169,6 @@
   "JOB_WIZARD.VALIDATION.MAX_LENGTH": "Maximum length is {{max}} characters.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY": "Please add at least one responsibility to proceed.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_RESPONSIBILITIES": "Please complete all responsibility fields before proceeding.",
-
   "JOB_WIZARD.STEPS.SKILLS.SUBTITLE": "List the required skills for this job.",
   "JOB_WIZARD.STEPS.SKILLS.ADD_SKILL": "Add Skill",
   "JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE_TITLE": "No skills added yet",
@@ -210,7 +184,6 @@
   "JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS_HELP": "Specify whether this skill is visible to applicants.",
   "JOB_WIZARD.STEPS.SKILLS.SELECTED_SKILL": "Selected Skill",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_SKILLS": "Please complete all skill fields before proceeding.",
-
   "JOB_WIZARD.STEPS.CONDITIONS.SUBTITLE": "Define the conditions and requirements for this job.",
   "JOB_WIZARD.STEPS.CONDITIONS.ADD_NEW": "Add New Condition",
   "JOB_WIZARD.STEPS.CONDITIONS.DESCRIPTION_AR": "Condition Description (Arabic)",
@@ -228,7 +201,6 @@
   "JOB_WIZARD.VALIDATION.CONDITION_EN_REQUIRED": "English condition description is required.",
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION": "Please add at least one condition to proceed.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_CONDITIONS": "Please complete all condition fields before proceeding.",
-
   "JOB_WIZARD.STEPS.BENEFITS.SUBTITLE": "Describe the benefits offered for this job.",
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_AR": "Benefits Description (Arabic)",
   "JOB_WIZARD.STEPS.BENEFITS.DESCRIPTION_AR_PLACEHOLDER": "Write benefits in Arabic...",
@@ -239,7 +211,6 @@
   "JOB_WIZARD.STEPS.BENEFITS.AR_TIPS": "Provide a clear and detailed description of benefits in Arabic.",
   "JOB_WIZARD.STEPS.BENEFITS.EN_TIPS": "Provide a clear and detailed description of benefits in English.",
   "JOB_WIZARD.VALIDATION.COMPLETE_BENEFITS": "Please complete the benefits section before proceeding.",
-
   "JOB_WIZARD.STEPS.ATTACHMENTS.SUBTITLE": "Add any required or optional attachments for this job.",
   "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE_TITLE": "No attachments added yet",
   "JOB_WIZARD.STEPS.ATTACHMENTS.EMPTY_STATE_DESC": "You can add attachments to provide additional information for applicants.",
@@ -259,7 +230,6 @@
   "JOB_WIZARD.VALIDATION.ATTACHMENT_NAME_REQUIRED": "Arabic attachment name is required.",
   "JOB_WIZARD.VALIDATION.COMPLETE_ALL_ATTACHMENTS": "Please complete all attachment fields before proceeding.",
   "JOB_WIZARD.STEPS.ATTACHMENTS.ADD_NEW": "Add New Attachment",
-
   "JOB_WIZARD.STEPS.REVIEW.SUBTITLE": "Review all entered job details before publishing.",
   "JOB_WIZARD.STEPS.REVIEW.EDIT": "Edit",
   "JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW": "Edit Overview",
@@ -268,33 +238,26 @@
   "JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS": "Edit Conditions",
   "JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS": "Edit Skills",
   "JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS": "Edit Attachments",
-
   "JOB_WIZARD.STEPS.REVIEW.OVERVIEW_AR": "Overview (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.OVERVIEW_EN": "Overview (English)",
   "JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR": "Qualifications Description (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_EN": "Qualifications Description (English)",
-
   "JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY": "Responsibility",
   "JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_AR": "Text (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_EN": "Text (English)",
-
   "JOB_WIZARD.STEPS.REVIEW.CONDITION": "Condition",
   "JOB_WIZARD.STEPS.REVIEW.CONDITION_AR": "Text (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.CONDITION_EN": "Text (English)",
-
   "JOB_WIZARD.STEPS.REVIEW.SKILL": "Skill",
   "JOB_WIZARD.STEPS.REVIEW.SKILL_SHOWN": "Visible to Applicants",
   "JOB_WIZARD.STEPS.REVIEW.SKILL_HIDDEN": "Hidden",
-
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT": "Document",
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_AR": "Title (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_EN": "Title (English)",
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_MANDATORY": "Mandatory Document",
   "JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_OPTIONAL": "Optional Document",
-
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR": "Benefits & Allowances (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "Benefits & Allowances (English)",
-
   "JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR": "No data has been entered yet.",
   "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR": "Duplicate responsibility cannot be added.",
   "JOB_WIZARD.REVIEW_NOTES.TITLE": "Notes",
@@ -302,5 +265,8 @@
   "JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS": "Supporting Attachments",
   "JOB_WIZARD.STEPS.NO_ENTERED_DATA_ERROR": "Data must be added",
   "JOB_WIZARD.STEPS.SKILLS.VIEW": "View Skill",
-  "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_SKILL": "At least one skill must be added"
+  "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_SKILL": "At least one skill must be added",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "Job Title",
+  "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "Select job title",
+  "JOB_WIZARD.STEPS.BASICS.JOB_NUMBER": "Job Number"
 }
