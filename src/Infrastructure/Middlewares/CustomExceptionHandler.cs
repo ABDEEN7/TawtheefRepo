@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Tawtheef.Application.Common.Exceptions;
 
 namespace Tawtheef.Infrastructure.Middlewares;
@@ -34,12 +35,12 @@ public sealed class CustomExceptionHandler : IExceptionHandler
         };
 
         // Log once with rich context (Seq will index these properties)
-        // Log.ForContext("UserId", userId)
-        //    .ForContext("CorrelationId", correlationId)
-        //    .ForContext("Ticket", correlationId)
-        //    .ForContext("Path", httpContext.Request.Path)
-        //    .ForContext("Method", httpContext.Request.Method)
-        //    .Errors(exception, "Unhandled exception -> {StatusCode}", statusCode);
+        Log.ForContext("UserId", userId)
+           .ForContext("CorrelationId", correlationId)
+           .ForContext("Ticket", correlationId)
+           .ForContext("Path", httpContext.Request.Path)
+           .ForContext("Method", httpContext.Request.Method)
+           .Error(exception, "Unhandled exception -> {StatusCode}", statusCode);
 
         // Build RFC 7807 payload
         var problem = new ProblemDetails

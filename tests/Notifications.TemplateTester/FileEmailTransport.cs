@@ -9,13 +9,11 @@ internal sealed class FileEmailTransport(EmailSettings emailSettings) : IEmailTr
 {
     public Task SendAsync(EmailEnvelope envelope, CancellationToken ct = default)
     {
-        using var message = new MailMessage
-        {
-            From = new MailAddress(emailSettings.EmailUser),
-            Subject = envelope.Subject,
-            Body = envelope.HtmlBody,
-            IsBodyHtml = true,
-        };
+        using var message = new MailMessage();
+        message.From = new MailAddress(emailSettings.EmailUser);
+        message.Subject = envelope.Subject;
+        message.Body = envelope.HtmlBody;
+        message.IsBodyHtml = true;
 
         foreach (var to in envelope.To)
             message.To.Add(to);
@@ -23,13 +21,8 @@ internal sealed class FileEmailTransport(EmailSettings emailSettings) : IEmailTr
         foreach (var cc in envelope.Cc ?? [])
             message.CC.Add(cc); // CC FIX
 
-        using var smtp = new SmtpClient(emailSettings.SmtpHost, emailSettings.SmtpPort)
-        {
-            EnableSsl = true,
-            // IMPORTANT: no Credentials set (same as your original)
-            // If required:
-            // Credentials = new NetworkCredential(emailSettings.EmailUser, emailSettings.EmailPass)
-        };
+        using var smtp = new SmtpClient(emailSettings.SmtpHost, emailSettings.SmtpPort);
+        smtp.EnableSsl = true;
 
         smtp.Send(message);
         return Task.CompletedTask;

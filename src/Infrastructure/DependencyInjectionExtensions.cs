@@ -40,9 +40,9 @@ using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
-using Tawtheef.Infrastructure.Middlewares;
 using Tawtheef.Infrastructure.Repositories;
 using Tawtheef.Infrastructure.Repositories.Base;
+using Tawtheef.Infrastructure.Services;
 using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.BackgroundJobs;
 using Tawtheef.Infrastructure.Services.HttpClients;
@@ -149,7 +149,7 @@ namespace Tawtheef.Infrastructure
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                 
                 // Logging (Common)
-                services.AddAppLogging(AppLoggingProvider.Serilog);
+                services.AddAppLogging();
 
                 services.AddScoped<IPasswordVerifier, PasswordVerifier>();
                 services.AddScoped<ILoginAuditService, LoginAuditService>();

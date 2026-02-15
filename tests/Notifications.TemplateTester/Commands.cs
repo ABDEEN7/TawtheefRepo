@@ -260,7 +260,7 @@ internal static class Commands
                     {
                         To = to,
                         Cc = cc,
-                        SubjectPrefix = prefix ?? ""
+                        SubjectPrefix = prefix
                     };
                     state.ActiveProfile = name;
                     StateStore.Save(state);
@@ -296,12 +296,6 @@ internal static class Commands
                 Console.WriteLine("Usage: profile list|use|save|rm ...");
                 return;
         }
-    }
-
-    private static EmailProfile? GetActiveProfile(TesterState state)
-    {
-        if (state.ActiveProfile is null) return null;
-        return state.Profiles.TryGetValue(state.ActiveProfile, out var p) ? p : null;
     }
 
     private static TemplateEntry? ResolveTemplate(List<string> args, List<TemplateEntry> visible, List<TemplateEntry> all)

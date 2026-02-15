@@ -20,9 +20,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
     {
         var normalizedSearch = request.Search?.Trim();
         var isPaged = request.PaginatedRequest is not null;
-        var languageToken = string.IsNullOrWhiteSpace(request.Language)
-            ? "en"
-            : request.Language.Trim().ToLowerInvariant();
+        
         var query = unitOfWork.GetEntityRepository<University>().DbSet
             .AsNoTracking()
             .Where(s => s.IsActive)
@@ -66,7 +64,7 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
                 .Where(u => u.Id == request.Id.Value)
                 .ToListAsync(cancellationToken);
             var mappedById = mapper.Map<List<DropdownOptions>>(byId);
-            var merged = universities ?? new List<DropdownOptions>();
+            var merged = universities ?? [];
             foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
             {
                 merged.Add(item);
@@ -75,6 +73,6 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
             return Result.Ok(merged);
         }
 
-        return Result.Ok(universities ?? new List<DropdownOptions>());
+        return Result.Ok(universities ?? []);
     }
 }
