@@ -4,8 +4,8 @@ import {AuthStateService} from "./auth-state.service";
 import {UserService} from "./user.service";
 import {Observable} from "rxjs";
 import {UserInfoModel} from "../../shared/models/user-info.model";
-import {HttpClient} from '@angular/common/http';
 import {AuthResponse} from '../models/auth-response.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -14,7 +14,6 @@ export class AuthService {
     protected core: AuthCoreService,
     protected state: AuthStateService,
     protected user: UserService,
-    protected http: HttpClient,
   ) {
     this.state.checkAuthState();
     this.state.isAuthenticated$.subscribe(isAuth => {
@@ -49,7 +48,9 @@ export class AuthService {
   }
 
   refreshToken(): Observable<string | null> {
-    return this.core.refreshToken();
+    return this.state.refreshAccessToken$().pipe(
+      map((ok) => (ok ? this.core.getToken : null)),
+    );
   }
 
   getCurrentUser(): UserInfoModel | null {

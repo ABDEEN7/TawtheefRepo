@@ -32,8 +32,6 @@ import {PaginationMetadata} from '../../../../../core/models/pagination-metadata
 export class ProfileApprovalListPage implements OnInit {
   private api = inject(ProfileApprovalService);
   private router = inject(Router);
-  private translate = inject(TranslateService);
-  private notifications = inject(NotificationService);
 
   items = signal<ProfileApprovalListItem[]>([]);
   meta = signal<PaginationMetadata>({
@@ -119,10 +117,9 @@ export class ProfileApprovalListPage implements OnInit {
     if (!event.field) return;
 
     const sortMap: Record<string, ProfileApprovalListFilter['sortBy']> = {
-      fullName: 'name',
-      overallStatus: 'status',
-      targetEntity: 'entity',
-      submittedAtUtc: 'date',
+      overallStatus: 'Status',
+      targetEntity: 'TargetEntityId',
+      submittedAtUtc: 'CreatedDate',
     };
 
     const mapped = sortMap[event.field] ?? 'date';

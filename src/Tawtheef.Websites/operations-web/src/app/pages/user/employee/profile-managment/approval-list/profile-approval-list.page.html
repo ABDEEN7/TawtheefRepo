@@ -116,6 +116,12 @@
                 [showClear]="true"
                 (onChange)="updateFilter('status', $event.value ?? '')"
                 name="status">
+                <ng-template pTemplate="selectedItem" let-item>
+                  <span>{{ item?.label | translate }}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                  <span>{{ item.label | translate }}</span>
+                </ng-template>
               </p-select>
             </div>
 
@@ -130,7 +136,7 @@
                   {{ 'profileApproval.list.filter.reset' | translate }}
                 </button>
                 </div>
-                
+
               </div>
             </div>
 
@@ -145,39 +151,30 @@
           {{ 'profileApproval.list.empty' | translate }}
         </div>
         <div class="table-card rounded overflow-hidden">
-          
-        
+
+
         <div class="table-responsive" *ngIf="items().length > 0">
 
-          <p-table
-            [value]="items()"
-            [customSort]="true"
-            sortMode="single"
-            (sortFunction)="onSort($event)"
-            dataKey="userProfileId"
-            styleClass="approval-table">
+          <p-table [value]="items()"
+            dataKey="userProfileId" styleClass="approval-table">
 
             <!-- Header -->
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="fullName">
+                <th>
                   {{ 'profileApproval.list.columns.name' | translate }}
-                  <p-sortIcon field="fullName"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="overallStatus">
+                <th>
                   {{ 'profileApproval.list.columns.status' | translate }}
-                  <p-sortIcon field="overallStatus"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="targetEntity">
+                <th>
                   {{ 'profileApproval.list.columns.targetEntity' | translate }}
-                  <p-sortIcon field="targetEntity"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="submittedAtUtc">
+                <th>
                   {{ 'profileApproval.list.columns.submissionDate' | translate }}
-                  <p-sortIcon field="submittedAtUtc"></p-sortIcon>
                 </th>
 
                 <!-- NEW -->
@@ -220,8 +217,14 @@
 
                 <!-- ✅ View Button -->
                 <td>
-                   <button  class="btn btn-primary d-flex gap-1 align-items-center" type="button" (click)="openProfile(row); $event.stopPropagation()"><i class="hgi hgi-stroke hgi-view"></i> {{ 'common.view' | translate }}</button>
-                    
+                    <div class="action-buttons">
+                          <button  class="btn-text d-flex gap-1 align-items-center" type="button"
+                                   (click)="openProfile(row); $event.stopPropagation()">
+                            <i class="hgi hgi-stroke hgi-view"></i>
+                            {{ 'common.view' | translate }}
+                          </button>
+                    </div>
+
                 </td>
 
               </tr>
@@ -239,7 +242,7 @@
         </div>
       </div>
 
-      
+
       </div>
       <ng-template #loadingTpl>
         <div class="text-center py-5 text-muted">

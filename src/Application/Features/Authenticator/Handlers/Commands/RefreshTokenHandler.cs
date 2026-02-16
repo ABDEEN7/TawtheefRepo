@@ -1,109 +1,88 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Cortex.Mediator.Commands;
 using FluentResults;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
-using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
-using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Entities.Auth;
 
-namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands
+namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
+
+public class RefreshTokenHandler(
+    IAppLogger logger,
+    ITokenService tokenService,
+    IUnitOfWork uow,
+    TimeProvider time)
+    : ICommandHandler<RefreshTokenCommand, IResult<TokenResponse>>
 {
-    public class RefreshTokenHandler(
-        IAppLogger logger,
-        UserManager<User> userManager,
-        ITokenService tokenService,
-        ISessionService sessions,
-        IOptions<JwtSettings> jwtSettings,
-        IOptions<AppConfigSettings> appSettings)
-        : ICommandHandler<RefreshTokenCommand, IResult<TokenResponse>>
+    public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenRequired));
+
+        var incomingTokenHash = tokenService.HashRefreshToken(request.RefreshToken);
+        var storedToken = await uow.GetEntityRepository<RefreshToken>().DbSet
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => rt.TokenHash == incomingTokenHash, cancellationToken);
+
+        if (storedToken is null)
+            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenNotFound));
+
+        var user = storedToken.User;
+        if (user is null)
         {
-            // Validate inputs
-            if (string.IsNullOrWhiteSpace(request.AccessToken))
-                return Result.Fail<TokenResponse>(ErrorsCodes.AccessTokenRequired);
-            if (string.IsNullOrWhiteSpace(request.RefreshToken))
-                return Result.Fail<TokenResponse>(ErrorsCodes.RefreshTokenRequired);
-
-            // Read principal from expired access token (no lifetime check)
-            var principalResult = GetPrincipalFromExpiredToken(request.AccessToken);
-            if (principalResult.IsFailed)
-                return Result.Fail<TokenResponse>(principalResult.Errors);
-
-            var principal = principalResult.Value;
-
-            var nameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrWhiteSpace(nameIdentifier))
-                return Result.Fail<TokenResponse>(ErrorsCodes.InvalidAccessToken);
-
-            if (!Guid.TryParse(nameIdentifier, out var userId))
-                return Result.Fail<TokenResponse>(ErrorsCodes.InvalidUserIdentifier);
-
-            // Load user and their refresh tokens
-            var user = await userManager.Users
-                .Include(u => u.UserType)
-                .Include(u => u.RefreshTokens)
-                .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-
-            if (user is null)
-                return Result.Fail<TokenResponse>(ErrorsCodes.UserNotFound);
-
-            // Validate refresh token existence + activity
-            var stored = user.RefreshTokens.FirstOrDefault(rt => rt.Token == request.RefreshToken);
-            if (stored  is null)
-                return Result.Fail<TokenResponse>(ErrorsCodes.RefreshTokenNotFound);
-
-            if (!stored.IsActive)
-                return Result.Fail<TokenResponse>(ErrorsCodes.InactiveRefreshToken);
-
-            // Single-session checks using SecurityStamp
-
-            var currentSid = await sessions.GetCurrentAsync(stored.UserId, cancellationToken);
-            if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, stored.SecurityStamp, StringComparison.Ordinal))
-                return Result.Fail<TokenResponse>(ErrorsCodes.SessionRevoked);
-
-            var authResponseResult = await tokenService.IssueTokensAsync(user, "RefreshToken", cancellationToken);
-            if (authResponseResult.IsFailed)
-                return Result.Fail<TokenResponse>(authResponseResult.Errors);
-            
-            return Result.Ok(authResponseResult.Value.Token!);
+            logger.Warning("Refresh token has no associated user", new { storedToken.Id, storedToken.UserId });
+            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.UserNotFound));
         }
 
-        private Result<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
+        var now = time.GetUtcNow().UtcDateTime;
+        if (storedToken.IsRevoked)
         {
-            var settings = jwtSettings.Value;
-            var parameters = settings.ToTokenValidationParameters(appSettings.Value.BackendUrl, appSettings.Value.FrontendUrl);
-            parameters.ValidateLifetime = false; // allow expired
-            parameters.ClockSkew = TimeSpan.FromMinutes(1);
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, parameters, out var securityToken);
-
-                if (securityToken is not JwtSecurityToken jwt)
-                    return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
-
-                if (!jwt.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase))
-                    return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAlgorithm);
-
-                return principal;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Failed to validate expired token");
-                return Result.Fail<ClaimsPrincipal>(ErrorsCodes.InvalidAccessToken);
-            }
+            await tokenService.RevokeSessionFamilyAsync(storedToken.UserId, storedToken.SecurityStamp,
+                request.IpAddress, "Refresh token replay detected", cancellationToken);
+            logger.Warning("Refresh token reuse detected", new { storedToken.UserId, storedToken.SecurityStamp });
+            return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
         }
+
+        if (storedToken.IsExpired)
+        {
+            storedToken.Revoke(now, request.IpAddress, "Refresh token expired");
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(storedToken);
+            await uow.SaveChangesAsync(cancellationToken);
+            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
+        }
+
+        var currentSid = await tokenService.GetCurrentSessionIdAsync(storedToken.UserId, cancellationToken);
+        if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, storedToken.SecurityStamp, StringComparison.Ordinal))
+            return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
+
+        var authResponseResult = await tokenService.RotateRefreshTokenAsync(
+            user,
+            storedToken,
+            request.IpAddress,
+            cancellationToken);
+
+        if (authResponseResult.IsFailed)
+            return Result.Fail<TokenResponse>(authResponseResult.Errors);
+
+        return Result.Ok(authResponseResult.Value.Token!);
+    }
+
+    private static Error UnauthorizedError(string errorCode)
+    {
+        return new Error("Unauthorized")
+            .WithMetadata("Code", errorCode)
+            .WithMetadata("StatusCode", StatusCodes.Status401Unauthorized);
+    }
+
+    private static Error ForbiddenError(string errorCode)
+    {
+        return new Error("Forbidden")
+            .WithMetadata("Code", errorCode)
+            .WithMetadata("StatusCode", StatusCodes.Status403Forbidden);
     }
 }
