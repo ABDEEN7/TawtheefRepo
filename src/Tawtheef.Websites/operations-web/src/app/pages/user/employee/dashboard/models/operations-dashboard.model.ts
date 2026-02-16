@@ -1,4 +1,4 @@
-import { PaginationMetadata } from '../../../../../../core/models/pagination-metadata.model';
+import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
 
 export interface OperationsDashboardFilters {
   fromDateUtc?: string;

@@ -18,7 +18,7 @@
               {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
             </div></div>
 
-            <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
+            <button pButton type="button"  class="p-button-outlined" (click)="loadData(true)" [disabled]="loading()">
               <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
               <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
             </button>

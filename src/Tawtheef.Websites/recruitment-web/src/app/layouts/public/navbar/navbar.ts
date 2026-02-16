@@ -1,31 +1,34 @@
-import {Component, Input, TemplateRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {routes} from '../../../routes/routes';
-import {LanguageService} from '../../../core/services/language.service';
-import {TranslatePipe} from '@ngx-translate/core';
-import {AuthService} from '../../../core/auth/auth.service';
-import {RouterLink} from '@angular/router';
+import {Component, Input, TemplateRef, ChangeDetectionStrategy, inject} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { routes } from '../../../routes/routes';
+import { LanguageService } from '../../../core/services/language.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { map, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
   imports: [CommonModule, TranslatePipe, RouterLink],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Navbar {
   routes = routes;
-  isLoggedIn: boolean = false;
   @Input() menuTemplate: TemplateRef<any> | null | undefined;
-  constructor(public language: LanguageService,
-              protected authService: AuthService) {
-    this.authService.isAuthenticated$.subscribe(loggedIn => {
-      this.isLoggedIn = loggedIn;
-    });
-  }
+  public language = inject(LanguageService);
+  protected authService = inject(AuthService);
+  // expose observable for template
+  readonly isLoggedIn$ = this.authService.isAuthenticated$.pipe(
+    distinctUntilChanged(),
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
 
   toggleLanguage() {
     this.language.toggle();
   }
+
   logout() {
     this.authService.logout();
   }

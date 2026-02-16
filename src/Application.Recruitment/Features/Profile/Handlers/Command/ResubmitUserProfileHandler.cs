@@ -50,7 +50,7 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
                 Notes          = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
                 Section        = UserProfileLogConstants.Sections.Assignment,
                 EntityId       = assignment.Id
-            });
+            }, ct);
         }
 
         // ---------------------------------------------------------

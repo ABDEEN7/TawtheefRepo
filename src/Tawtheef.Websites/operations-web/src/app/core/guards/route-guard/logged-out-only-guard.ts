@@ -6,22 +6,13 @@ import {routes} from "../../../routes/routes";
 import {take} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-/** optional: prevent going to /auth/* if already logged in */
 export const loggedOutOnlyGuard: CanMatchFn = () => {
-  const auth = inject(AuthStateService);
   const tokenService = inject(TokenService);
   const router = inject(Router);
 
-  // IMPORTANT: do NOT trigger refresh/login side-effects from this guard.
-  return auth.isAuthenticated$.pipe(
-    take(1),
-    map(isAuth => {
-      if (!isAuth) return true;
+  if (!tokenService.hasSession()) return true;
 
-      const role = tokenService.getMainUserRole();
-      const target = routes.dashboard(role);
-
-      return router.createUrlTree([target]);
-    })
-  );
+  const role = tokenService.getMainUserRole();
+  return router.createUrlTree([routes.dashboard(role)]);
 };
+

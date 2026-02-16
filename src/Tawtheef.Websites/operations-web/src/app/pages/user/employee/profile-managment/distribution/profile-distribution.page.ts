@@ -117,8 +117,7 @@ export class ProfileDistributionPage implements OnInit {
 
   // streams
   private searchChanges$ = new Subject<string>();
-  private query$ = new Subject<void>();
-
+  private query$ = new Subject<{ force?: boolean }>();
   // computed
   readonly selectedFiles = computed(() =>
     this.files().filter(file => this.selectedIds().has(file.profileId))
@@ -165,8 +164,8 @@ export class ProfileDistributionPage implements OnInit {
   }
 
   // ✅ Main query trigger (no duplication, no race conditions)
-  loadData(): void {
-    this.query$.next();
+  loadData(force = false): void {
+    this.query$.next({ force });
   }
 
   onSort(event: SortEvent): void {
@@ -223,9 +222,13 @@ export class ProfileDistributionPage implements OnInit {
   private setupQueryPipeline(): void {
     this.query$
       .pipe(
-        map(() => this.buildFilters()),
-        map(filters => ({ filters, key: this.filtersKey(filters) })),
-        distinctUntilChanged((a, b) => a.key === b.key), // ✅ prevents repeated same request
+        map(({ force }) => {
+          const filters = this.buildFilters();
+          return { filters, key: this.filtersKey(filters), force: !!force };
+        }),
+        // ✅ اسمح بالمرور إذا force=true حتى لو نفس الـ key
+        distinctUntilChanged((a, b) => !b.force && a.key === b.key),
+
         switchMap(({ filters }) =>
           defer(() => {
             this.loading.set(true);
@@ -245,7 +248,6 @@ export class ProfileDistributionPage implements OnInit {
         },
       });
   }
-
   private loadEmployees(): void {
     this.api
       .getEmployees()
@@ -461,9 +463,10 @@ export class ProfileDistributionPage implements OnInit {
     // update employees availability/loads returned by API
     this.employees.set(result.employees ?? this.employees());
     this.clearSelection();
-    this.loadData();
-  }
 
+    // ✅ لازم force=true عشان يتجاوز distinctUntilChanged
+    this.loadData(true);
+  }
   // helpers
   canManageDistribution(): boolean {
     return this.authService.hasPermission(Permissions.ProfileDistribution.Manage);

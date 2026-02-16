@@ -1,15 +1,16 @@
-﻿import {CanMatchFn, Router} from "@angular/router";
-import {inject} from "@angular/core";
-import {AuthStateService} from "../../auth/auth-state.service";
-import {TokenService} from "../../auth/token.service";
-import {routes} from "../../../routes/routes";
+﻿import { CanMatchFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { TokenService } from '../../auth/token.service';
+import { routes } from '../../../routes/routes';
 
-/** optional: prevent going to /auth/* if already logged in */
+/** prevent going to /auth/* if user already has a session */
 export const loggedOutOnlyGuard: CanMatchFn = () => {
-  const auth = inject(AuthStateService);
   const tokenService = inject(TokenService);
   const router = inject(Router);
-  const rawRole = tokenService.getRoleFromToken(tokenService.getToken() || '');
-  const role = (rawRole || '').toString().toLowerCase();
-  return auth.isAuthenticated(true) ? router.createUrlTree([routes.user.dashboard]) : true;
+
+  // Session = user_data exists AND (valid access OR refresh valid/unknown)
+  if (!tokenService.hasSession()) return true;
+
+  // user already logged-in -> redirect away from /auth/*
+  return router.createUrlTree([routes.user.dashboard]);
 };

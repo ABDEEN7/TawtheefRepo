@@ -5,10 +5,10 @@ import {
   DestroyRef,
   computed,
   inject,
-  signal,
+  signal, OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import { debounceTime, finalize, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import 'chart.js/auto';
@@ -27,14 +27,15 @@ import {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective, ChartModule, Tooltip],
+  imports: [CommonModule, FormsModule, I18nNamespaceDirective, ChartModule, Tooltip, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   private dashboardService = inject(OperationsDashboardService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly loading = signal(false);
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
@@ -99,10 +100,10 @@ export class Dashboard {
   readonly tableRows = computed<TeamPerformanceRow[]>(() => this.dashboard()?.teamPerformance.items ?? []);
 
   readonly profileTrendChartData = computed<ChartData<'line'>>(() => ({
-    labels: this.dashboard()?.profileTrend.points.map((point) => point.label) ?? [],
+    labels: this.dashboard()?.profileTrend.points.map((point) => this.translate.instant(point.label)) ?? [],
     datasets: [
       {
-        label: 'Profiles',
+        label: this.translate.instant('common.chart.profiles'),
         data: this.dashboard()?.profileTrend.points.map((point) => point.value) ?? [],
         borderColor: '#2f65d6',
         backgroundColor: 'rgba(47,101,214,0.2)',
@@ -113,16 +114,16 @@ export class Dashboard {
   }));
 
   readonly employeeComparisonChartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.tableRows().slice(0, 8).map((row) => row.name),
+    labels: this.tableRows().slice(0, 8).map((row) => this.translate.instant(row.name)),
     datasets: [
       {
-        label: 'Completed tasks',
+        label: this.translate.instant('common.chart.completedTasks'),
         data: this.tableRows().slice(0, 8).map((row) => row.completedTasks),
         backgroundColor: '#2b9d76',
         borderRadius: 6,
       },
       {
-        label: 'Remaining tasks',
+        label: this.translate.instant('common.chart.remainingTasks'),
         data: this.tableRows().slice(0, 8).map((row) => row.remainingTasks),
         backgroundColor: '#df6d4e',
         borderRadius: 6,
@@ -131,7 +132,7 @@ export class Dashboard {
   }));
 
   readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => ({
-    labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => item.status) ?? [],
+    labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => this.translate.instant(item.status)) ?? [],
     datasets: [
       {
         data: this.dashboard()?.profileBreakdown.byStatus.map((item) => item.count) ?? [],
@@ -141,10 +142,10 @@ export class Dashboard {
   }));
 
   readonly taskStatusChartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.dashboard()?.taskMonitoring.taskStatusStacked.map((item) => item.label) ?? [],
+    labels: this.dashboard()?.taskMonitoring.taskStatusStacked.map((item) => this.translate.instant(item.label)) ?? [],
     datasets: [
       {
-        label: 'Tasks',
+        label: this.translate.instant('common.chart.tasks'),
         data: this.dashboard()?.taskMonitoring.taskStatusStacked.map((item) => item.count) ?? [],
         backgroundColor: ['#2b9d76', '#4e80ea', '#df6d4e'],
         borderRadius: 6,
