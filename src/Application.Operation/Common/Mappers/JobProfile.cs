@@ -128,7 +128,7 @@ public class JobProfile : IRegister
             .Map(d => d.Text, s => Localize(s.TextAr, s.TextEn));
 
         config.NewConfig<JobRequiredAttachment, CandidateJobRequiredAttachmentDto>()
-            .Map(d => d.Title, s => Localize(s.JobTitle != null ? s.JobTitle.JobNameAr : string.Empty, s.JobTitle != null ? s.JobTitle.JobNameEn : string.Empty));
+            .Map(d => d.Title, s => Localize(s.TitleAr, s.TitleEn));
     }
     
     private static string Localize(string ar, string en)

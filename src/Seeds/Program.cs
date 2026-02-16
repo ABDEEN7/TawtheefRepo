@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Services.Identity;
+using Tawtheef.Infrastructure.Services.Logging;
 
 namespace Seeds;
 
@@ -21,7 +23,7 @@ public static class Program
 
         // 1) Connection string selection
         var connectionString = ConsoleUi.PromptConnectionString([
-            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB5;Trusted_Connection=True;"),
+            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB7;Trusted_Connection=True;"),
             new SavedConnection("Stage", "Server=DCSCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=tawthef_user;Password=Abc@1234;")
         ]);
 
@@ -53,6 +55,7 @@ public static class Program
             .ConfigureServices((_, services) =>
             {
                 services.AddSingleton(Log.Logger);
+                services.AddSingleton<IAppLogger>(_ => new SerilogAppLogger(Log.Logger));
                 services.AddDbContext<TawtheefDbContext>(opt => opt.UseSqlServer(connectionString));
                 services.AddScoped<CurrentUserService>();
             })

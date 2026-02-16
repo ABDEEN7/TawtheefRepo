@@ -113,7 +113,7 @@
 
       <div class="col-md-6 mb-3">
         <label class="form-label">{{ 'JOB_WIZARD.STEPS.BASICS.JOB_NUMBER' | translate }}</label>
-        <input pInputText class="form-control" formControlName="jobNumber" disabled />
+        <input pInputText class="form-control" formControlName="jobNumber" [disabled]="true"/>
       </div>
 
       <!-- jobCategory -->
@@ -232,7 +232,7 @@
 
                         <span class="form-check-label">{{ g.name }}</span>
                  </label>
-          
+
           }
         </div>
          @if (form.controls.genderId.touched && form.controls.genderId.invalid) {
@@ -288,7 +288,7 @@
         </label>
 
         <p-datePicker
-         
+
           formControlName="closingDate"
           [iconDisplay]="'input'"
           [showIcon]="true"

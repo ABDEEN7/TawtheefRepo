@@ -232,7 +232,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const formValue = this.form.getRawValue();
     const normalizedClosingDate = this.normalizeDate(formValue.closingDate);
     const jobData = {
-      jobTitleId: formValue.jobTitleId,
+      jobTitleId: formValue.jobTitleId as GUID,
       jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
@@ -344,7 +344,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const formValue = this.form.getRawValue();
 
     const updateData = {
-      jobTitleId: formValue.jobTitleId,
+      jobTitleId: formValue.jobTitleId as GUID,
       jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,

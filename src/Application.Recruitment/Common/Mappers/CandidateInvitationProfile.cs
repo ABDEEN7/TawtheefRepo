@@ -19,7 +19,7 @@ public class CandidateInvitationProfile: IRegister
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
-                dest.JobTitle = localized.GetLocalizedValue(src.Job!.TitleAr, src.Job!.TitleEn);
+                dest.JobTitle = localized.GetLocalizedValue(src.Job!.JobTitle!.JobNameAr, src.Job!.JobTitle!.JobNameEn);
             });
     }
 }
