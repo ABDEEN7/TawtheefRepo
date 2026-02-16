@@ -54,7 +54,7 @@
 
   .sidebar-nav {
     
-    display: flex;
+    display: block;
     flex-direction: column;
     gap: 12px;
     width: 100%;
@@ -77,7 +77,10 @@
       border: none;
       transition: all 0.3s ease;
       position: relative;
-      gap: 12px;
+      gap: 10px;
+      
+    margin-bottom: 10px;
+    margin-top: 10px;
 
       // HOVER (non-active)
       &:hover:not(.active) {
@@ -94,9 +97,10 @@
       }
 
       i {
-        font-size: 18px;
+        font-size: 22px;
         min-width: 20px;
         text-align: center;
+        color: rgba(102, 103, 102, 1);
       }
 
       .label {
@@ -210,4 +214,20 @@
 .sidebar.collapsed .sidebar-nav .nav-item.active,
 .sidebar.collapsed .sidebar-nav .nav-item:hover {
     width: 44px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.sidebar .sidebar-top .back-btn i{
+  
+    transform: rotate(180deg) !important;
+  
+}
+
+.sidebar.collapsed .sidebar-top .back-btn i{
+  
+    transform: rotate(0deg) !important;
+  
 }
