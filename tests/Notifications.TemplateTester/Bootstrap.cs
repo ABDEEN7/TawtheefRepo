@@ -15,8 +15,7 @@ internal static class Bootstrap
         return asm.GetTypes()
             .Where(type => type is { IsAbstract: false, IsInterface: false })
             .Select(type => new TemplateEntry(type, type.GetCustomAttribute<NotificationTemplateAttribute>()!))
-            .Where(entry => entry.Attribute is not null)
-            .Select(entry => entry with { Attribute = entry.Attribute! })
+            .Select(entry => entry with { Attribute = entry.Attribute })
             .OrderBy(entry => entry.Attribute.TemplateKey)
             .ToList();
     }
