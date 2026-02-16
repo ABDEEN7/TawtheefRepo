@@ -19,7 +19,7 @@
         [pTooltip]="isCollapsed ? (item.label | translate) : ''"
         tooltipPosition="right"
         [tooltipDisabled]="!isCollapsed">
-        <img class="icons" [src]="item.icon">
+        <i class="icons hgi hgi-stroke " [ngClass]="item.icon"></i>
         <span class="label">{{ item.label | translate }}</span>
       </button>
     }
