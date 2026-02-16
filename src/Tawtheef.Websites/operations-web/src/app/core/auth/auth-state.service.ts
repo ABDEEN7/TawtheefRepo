@@ -9,11 +9,7 @@ import { TokenService } from './token.service';
 import { UserService } from './user.service';
 import { routes } from '../../routes/routes';
 import { HDR } from '../utils/headers.flags';
-
-interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
+import { TokenModel } from '../models/token.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
@@ -22,7 +18,6 @@ export class AuthStateService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  // De-dupe concurrent refresh calls
   private refreshInFlight$?: Observable<boolean> | null;
 
   constructor(
@@ -33,12 +28,10 @@ export class AuthStateService {
     private userService: UserService
   ) {}
 
-  /** one-shot setter for components/services */
   setAuthenticated(value: boolean): void {
     this.isAuthenticatedSubject.next(value);
   }
 
-  /** quick sync check (no redirects). safe for UI rendering. */
   isAuthenticated(ignoreExpired = false): boolean {
     const token = this.tokenService.getToken();
     const data = localStorage.getItem('user_data');
@@ -53,7 +46,6 @@ export class AuthStateService {
       return false;
     }
 
-    // keep BehaviorSubject in sync
     if (!this.isAuthenticatedSubject.value) {
       try {
         const user = JSON.parse(data);
@@ -65,31 +57,20 @@ export class AuthStateService {
     return true;
   }
 
-  /**
-   * Guard SYNC helper (no HTTP). If you need refresh logic in guards, use ensureAuth$.
-   */
   ensureAuth(returnUrl?: string): true | UrlTree {
-    if (this.isAuthenticated(true)) return true; // ignoreExpired=true => just checks presence
+    if (this.isAuthenticated(true)) return true;
     return this.router.createUrlTree(
       [this.routes.auth.login],
       returnUrl ? { queryParams: { returnUrl } } : undefined
     );
   }
 
-  /**
-   * Guard/Init ASYNC helper (with refresh logic).
-   * - If access token valid => true
-   * - If expired => try refresh (only if refresh token can be attempted)
-   * - If refresh fails => UrlTree to login
-   */
   ensureAuth$(returnUrl?: string): Observable<true | UrlTree> {
-    // already valid
     if (this.isAuthenticated(false)) return of(true);
 
     const token = this.tokenService.getToken();
     const hasExpiredAccess = !!token && this.tokenService.isTokenExpired(token);
 
-    // no token OR not an "expired token" case => login
     if (!hasExpiredAccess) {
       return of(
         this.router.createUrlTree(
@@ -99,16 +80,11 @@ export class AuthStateService {
       );
     }
 
-    // expired access => attempt refresh
-    return this.refreshSession$().pipe(
+    return this.refreshAccessToken$().pipe(
       map((ok) => {
         if (ok) return true as const;
 
-        // refresh failed => clear and go login
-        this.tokenService.clearTokens();
-        this.userService.clearCurrentUser();
-        this.isAuthenticatedSubject.next(false);
-
+        this.logout(false);
         return this.router.createUrlTree(
           [this.routes.auth.login],
           returnUrl ? { queryParams: { returnUrl } } : undefined
@@ -117,19 +93,13 @@ export class AuthStateService {
     );
   }
 
-  /** full check (sync) */
   checkAuthState(): boolean {
     return this.isAuthenticated(false);
   }
 
-  /**
-   * Refresh session once; shared across callers.
-   * Returns true if refresh succeeded and tokens persisted.
-   */
-  private refreshSession$(): Observable<boolean> {
+  refreshAccessToken$(): Observable<boolean> {
     if (this.refreshInFlight$) return this.refreshInFlight$;
 
-    // Gate: if refresh token clearly invalid locally, don't call server
     if (!this.tokenService.canAttemptRefresh()) return of(false);
 
     const refreshToken = this.tokenService.getRefreshToken();
@@ -137,17 +107,20 @@ export class AuthStateService {
 
     const headers = new HttpHeaders({
       [HDR.SkipError]: 'true',
-      [HDR.SkipRefresh]: 'true', // avoid infinite loop
+      [HDR.SkipRefresh]: 'true',
+      [HDR.SkipAuth]: 'true',
     });
 
-    // Adjust payload/endpoint if your backend differs
     this.refreshInFlight$ = this.http
-      .post<TokenPair>(this.endpoints.auth.refresh, { refreshToken }, null, { headers })
+      .post<TokenModel>(this.endpoints.auth.refresh, { refreshToken }, null, { headers })
       .pipe(
         tap((tokens) => {
           if (tokens?.accessToken && tokens?.refreshToken) {
-            this.tokenService.persistTokens(tokens);
-            // after persist, update user state if you store user_data
+            this.tokenService.persistTokens({
+              accessToken: tokens.accessToken,
+              refreshToken: tokens.refreshToken,
+            });
+
             const data = localStorage.getItem('user_data');
             if (data) {
               try {
@@ -169,7 +142,6 @@ export class AuthStateService {
     return this.refreshInFlight$;
   }
 
-  /** robust logout: clears locally even if API fails */
   logout(callServer: boolean = true): void {
     const doLocalClear = () => {
       this.tokenService.clearTokens();

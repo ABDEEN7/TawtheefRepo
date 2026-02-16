@@ -77,6 +77,7 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
     {
+        command = command with { IpAddress = HttpContext.GetClientIpAddress() ?? "Unknown IP Address" };
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
