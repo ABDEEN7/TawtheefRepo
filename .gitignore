@@ -491,3 +491,5 @@ src/Tawtheef.Websites/.idea/
 src/Tawtheef.APIs/Operations.API/appsettings.*.json
 src/Tawtheef.APIs/Recruitment.API/appsettings.*.json
 src/Infrastructure/Migrations/
+src/Tawtheef.Websites/operations-web/src/assets/version.json
+src/Tawtheef.Websites/recruitment-web/src/assets/version.json
