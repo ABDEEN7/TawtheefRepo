@@ -1,18 +1,134 @@
-<div class="welcome-page vh-100 d-flex align-items-center justify-content-center">
+<section i18nNamespace="pages/employee/dashboard" class="ops-dashboard container-fluid py-4">
+  <div class="dashboard-shell">
+    <header class="dashboard-header">
+      <div>
+        <h1>{{ (isHrDashboard() ? 'dashboard.hr.title' : 'dashboard.department.title') | translate }}</h1>
+        <p class="text-muted mb-0">{{ (isHrDashboard() ? 'dashboard.hr.subtitle' : 'dashboard.department.subtitle') | translate }}</p>
+      </div>
 
-  <!-- Optional: Skeleton while loading -->
-  <p-skeleton
-    *ngIf="loading"
-    width="300px"
-    height="300px"
-    borderRadius="12px">
-  </p-skeleton>
+      <div class="filters-row">
+        <input
+          class="form-control"
+          [value]="searchEmployeeId()"
+          (input)="onEmployeeChange($any($event.target).value)"
+          [placeholder]="'dashboard.filters.employeeId' | translate" />
 
-  <!-- Image -->
-  <img
-    *ngIf="!loading"
-    src="assets/img/logo-black.png"
-    alt="Welcome"
-    class="welcome-image img-fluid" />
+        <select class="form-select" [value]="searchStatus()" (change)="onStatusChange($any($event.target).value)">
+          <option value="">{{ 'dashboard.filters.allStatuses' | translate }}</option>
+          <option value="Submitted">{{ 'dashboard.status.submitted' | translate }}</option>
+          <option value="UnderReview">{{ 'dashboard.status.underReview' | translate }}</option>
+          <option value="Approved">{{ 'dashboard.status.approved' | translate }}</option>
+          <option value="RequiresUpdate">{{ 'dashboard.status.returned' | translate }}</option>
+        </select>
+      </div>
+    </header>
 
-</div>
+    @if (loading()) {
+      <div class="skeleton-grid">
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]"></div>
+      </div>
+    } @else {
+      <section class="kpi-grid">
+        <article class="kpi-card" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.totalEmployees' | translate }}</span>
+          <h3>{{ activeKpis().totalEmployees }}</h3>
+        </article>
+        <article class="kpi-card" [pTooltip]="'dashboard.help.activeEmployees' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.activeEmployees' | translate }}</span>
+          <h3>{{ activeKpis().activeEmployees }}</h3>
+        </article>
+        <article class="kpi-card" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.totalProfiles' | translate }}</span>
+          <h3>{{ activeKpis().totalProfiles }}</h3>
+        </article>
+        <article class="kpi-card" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.approvalRate' | translate }}</span>
+          <h3>{{ activeKpis().approvalRate }}%</h3>
+        </article>
+        <article class="kpi-card" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.remainingTasks' | translate }}</span>
+          <h3>{{ activeKpis().remainingTasks }}</h3>
+        </article>
+        <article class="kpi-card kpi-card--danger" [pTooltip]="'dashboard.help.overdueTasks' | translate" tooltipPosition="top">
+          <span>{{ 'dashboard.kpi.overdueTasks' | translate }}</span>
+          <h3>{{ activeKpis().overdueTasks }}</h3>
+        </article>
+      </section>
+
+      <section class="content-grid mt-4">
+        <article class="panel panel--wide">
+          <h2>{{ 'dashboard.charts.profileTrend' | translate }}</h2>
+          <div class="chart-host">
+            <p-chart type="line" [data]="profileTrendChartData()" [options]="lineChartOptions"></p-chart>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h2>
+          <div class="chart-host chart-host--sm">
+            <p-chart type="doughnut" [data]="profileStatusChartData()" [options]="doughnutChartOptions"></p-chart>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>{{ 'dashboard.charts.taskStacked' | translate }}</h2>
+          <div class="chart-host chart-host--sm">
+            <p-chart type="bar" [data]="taskStatusChartData()" [options]="barChartOptions"></p-chart>
+          </div>
+        </article>
+
+        <article class="panel panel--wide">
+          <h2>{{ 'dashboard.charts.employeePerformance' | translate }}</h2>
+          <div class="chart-host">
+            <p-chart type="bar" [data]="employeeComparisonChartData()" [options]="barChartOptions"></p-chart>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>{{ 'dashboard.sections.smartInsights' | translate }}</h2>
+          <div class="insight-row" *ngFor="let insight of smartInsights()" [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
+            <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
+            <span>{{ insight.key | translate }}</span>
+          </div>
+        </article>
+
+        <article class="panel panel--wide">
+          <h2>{{ 'dashboard.sections.teamPerformance' | translate }}</h2>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+              <tr>
+                <th>{{ 'dashboard.table.employee' | translate }}</th>
+                <th>{{ 'dashboard.table.activeTasks' | translate }}</th>
+                <th>{{ 'dashboard.table.completedTasks' | translate }}</th>
+                <th>{{ 'dashboard.table.remainingTasks' | translate }}</th>
+                <th>{{ 'dashboard.table.approval' | translate }}</th>
+                <th>{{ 'dashboard.table.responseTime' | translate }}</th>
+                <th>{{ 'dashboard.table.workload' | translate }}</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of tableRows()">
+                  <td>
+                    <div class="fw-semibold">{{ row.name }}</div>
+                    <small class="text-muted">{{ row.departmentName || '-' }}</small>
+                  </td>
+                  <td>{{ row.activeTasks }}</td>
+                  <td>{{ row.completedTasks }}</td>
+                  <td>{{ row.remainingTasks }}</td>
+                  <td>{{ row.approvalRate }}%</td>
+                  <td>{{ row.averageResponseHours }}h</td>
+                  <td>
+                    <span class="badge" [class.text-bg-danger]="row.workloadBalanceIndicator === 'High'" [class.text-bg-success]="row.workloadBalanceIndicator !== 'High'">
+                      {{ ('dashboard.workload.' + row.workloadBalanceIndicator.toLowerCase()) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    }
+  </div>
+</section>

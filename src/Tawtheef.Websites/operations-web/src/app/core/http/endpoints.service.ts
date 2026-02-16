@@ -107,6 +107,10 @@ export class EndpointsService {
     finalize: (profileId:string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
+
+  operationsDashboard = {
+    summary: this.getFullUrl('/operations-dashboard'),
+  };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),
     employees: this.getFullUrl('/profile-distributions/employees'),
