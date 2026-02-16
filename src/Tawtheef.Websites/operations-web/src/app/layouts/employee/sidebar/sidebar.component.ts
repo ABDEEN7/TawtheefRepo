@@ -25,16 +25,16 @@ export class SidebarComponent implements OnInit {
   activeItem = '';
 
   menuItems: MenuItem[] = [
-    { key: 'home', label: 'internal.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.employee.dashboard, permission: Permissions.Dashboard.View },
-    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'assets/img/icons/files.svg', route: routes.employee.profileDistribution, permission: Permissions.ProfileDistribution.View },
-    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'assets/img/icons/approve.svg', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
-    { key: 'job', label: 'internal.sidebar.job', icon: 'assets/img/icons/job.svg', route: routes.employee.JobList, permission: Permissions.Jobs.View },
-    { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'assets/img/icons/add-to-list-stroke-rounded.svg', route: routes.employee.jobInvitationSummary, permission: Permissions.Nominations.View },
-    { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'assets/img/icons/users.svg', route: routes.employee.candidateUsersManagement, permission: Permissions.CandidateUsers.View },
-    { key: 'office-users', label: 'internal.sidebar.office-users', icon: 'assets/img/icons/users.svg', route: routes.employee.officeUsersManagement, permission: Permissions.OfficeUsers.View },
-    { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.employee.organizationStructures, permission: Permissions.OrganizationStructures.Manage },
-    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
-    { key: 'kawader', label: 'internal.sidebar.kawader', icon: 'assets/img/icons/users.svg', route: routes.employee.kawader, permission: Permissions.Kawader.Manage }
+    { key: 'home', label: 'internal.sidebar.home', icon: 'hgi-home-05', route: routes.employee.dashboard, permission: Permissions.Dashboard.View },
+    { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'hgi-mail-send-02', route: routes.employee.profileDistribution, permission: Permissions.ProfileDistribution.View },
+    { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'hgi-task-done-01', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
+    { key: 'job', label: 'internal.sidebar.job', icon: 'hgi-ai-beautify', route: routes.employee.JobList, permission: Permissions.Jobs.View },
+    { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'hgi-ai-setting', route: routes.employee.jobInvitationSummary, permission: Permissions.Nominations.View },
+    { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'hgi-user-switch', route: routes.employee.candidateUsersManagement, permission: Permissions.CandidateUsers.View },
+    { key: 'office-users', label: 'internal.sidebar.office-users', icon: 'hgi-file-star', route: routes.employee.officeUsersManagement, permission: Permissions.OfficeUsers.View },
+    { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'hgi-structure-03', route: routes.employee.organizationStructures, permission: Permissions.OrganizationStructures.Manage },
+    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
+    { key: 'kawader', label: 'internal.sidebar.kawader', icon: ' hgi-user-multiple', route: routes.employee.kawader, permission: Permissions.Kawader.Manage }
   ];
 
   constructor(private router: Router) {}

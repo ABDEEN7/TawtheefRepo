@@ -29,23 +29,26 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
 
         // 2) Load profiles (only relevant statuses) + apply DB pagination
-        var profiles = await GetProfilesPageAsync(assignedProfileIds, request, ct);
-        if (profiles.Count == 0)
+        var profilesPage = await GetProfilesPageAsync(assignedProfileIds, request, ct);
+        if (profilesPage.Metadata.TotalCount == 0)
             return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
 
-        var profileIds = profiles.Select(p => p.Id).ToList();
+        var profileIds = profilesPage.Items.Select(p => p.Id).ToList();
 
         // 3) Review summaries
         var fullReviewMap = await GetFullReviewSummariesAsync(profileIds, ct);
         var changeReviewMap = await GetChangeRequestSummariesAsync(profileIds, ct);
 
         // 4) Build DTOs
-        var dtoList = BuildDtos(localization, profiles, fullReviewMap, changeReviewMap);
+        var dtoList = BuildDtos(localization, profilesPage.Items, fullReviewMap, changeReviewMap);
 
         // 5) Apply in-memory filters (search + dropdown filters) + in-memory pagination
-        var filtered = ApplyFiltersAndPagination(dtoList, request);
-
-        return Result.Ok(filtered);
+        return Result.Ok(new PaginatedResult<ProfileApprovalListItemDto>(
+            dtoList,
+            profilesPage.Metadata.TotalCount,
+            profilesPage.Metadata.CurrentPage,
+            profilesPage.Metadata.PageSize
+        ));
     }
 
     // ----------------------------
@@ -64,7 +67,10 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             .ToListAsync(ct);
     }
 
-    private async Task<List<UserProfile>> GetProfilesPageAsync(List<Guid> assignedProfileIds, GetProfileApprovalsQuery request, CancellationToken ct)
+    private async Task<PaginatedResult<UserProfile>> GetProfilesPageAsync(
+        List<Guid> assignedProfileIds,
+        GetProfileApprovalsQuery request,
+        CancellationToken ct)
     {
         var profileRepo = uow.GetEntityRepository<UserProfile>();
 
@@ -80,7 +86,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
                 p.Status == UserProfileStatus.Submitted ||
                 p.Status == UserProfileStatus.UnderReview ||
                 p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending))
-            .ToPaginatedResultAsync(request, ct);
+            .ToPaginatedListAsync(request, ct);
     }
 
     private async Task<Dictionary<Guid, FullReviewSummary>> GetFullReviewSummariesAsync(List<Guid> profileIds, CancellationToken ct)

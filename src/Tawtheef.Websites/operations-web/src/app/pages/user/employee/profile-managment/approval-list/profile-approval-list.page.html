@@ -32,10 +32,10 @@
       <div class="card card-table mb-3">
         <div class="card-body">
 
-          <form class="row gx-2 align-items-end" (ngSubmit)="applyFilters()">
+          <form class="row align-items-end" (ngSubmit)="applyFilters()">
 
             <!-- Search -->
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">
                 {{ 'profileApproval.list.searchPlaceholder' | translate }}
               </label>
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Specialization -->
-            <div class="col-md-2">
+            <!-- <div class="col-md-2">
               <label class="form-label">
                 {{ 'profileApproval.list.filter.specialization' | translate }}
               </label>
@@ -66,10 +66,10 @@
                 (ngModelChange)="updateFilter('specialization', $event)"
                 name="specialization"
               />
-            </div>
+            </div> -->
 
             <!-- Target -->
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">
                 {{ 'profileApproval.list.filter.targetEntity' | translate }}
               </label>
@@ -86,7 +86,7 @@
             </div>
 
             <!-- Candidate Type -->
-            <div class="col-12 col-md-6 col-lg-3">
+            <!-- <div class="col-12 col-md-6 col-lg-3">
               <label class="form-label fw-semibold">
                 {{ 'profileApproval.list.filter.candidateType' | translate }}
               </label>
@@ -100,11 +100,11 @@
                 (ngModelChange)="updateFilter('candidateType', $event)"
                 name="candidateType"
               />
-            </div>
+            </div> -->
 
             <!-- Status -->
-            <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label fw-semibold">
+            <div class="col-md-3">
+              <label class="form-label">
                 {{ 'profileApproval.list.filter.status' | translate }}
               </label>
 
@@ -116,11 +116,17 @@
                 [showClear]="true"
                 (onChange)="updateFilter('status', $event.value ?? '')"
                 name="status">
+                <ng-template pTemplate="selectedItem" let-item>
+                  <span>{{ item?.label | translate }}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                  <span>{{ item.label | translate }}</span>
+                </ng-template>
               </p-select>
             </div>
 
             <!-- Actions -->
-            <div class="col-12 col-md-6 col-lg-3 mt-3">
+            <div class="col-md-3 mt-3">
               <div class="d-flex gap-2">
                 <button class="btn btn-primary" type="submit" [disabled]="loading()">
                   {{ 'profileApproval.list.filter.apply' | translate }}
@@ -130,7 +136,7 @@
                   {{ 'profileApproval.list.filter.reset' | translate }}
                 </button>
                 </div>
-                
+
               </div>
             </div>
 
@@ -144,38 +150,31 @@
         <div class="empty text-center py-4 text-muted" *ngIf="items().length === 0">
           {{ 'profileApproval.list.empty' | translate }}
         </div>
+        <div class="table-card rounded overflow-hidden">
+
 
         <div class="table-responsive" *ngIf="items().length > 0">
 
-          <p-table
-            [value]="items()"
-            [customSort]="true"
-            sortMode="single"
-            (sortFunction)="onSort($event)"
-            dataKey="userProfileId"
-            styleClass="approval-table">
+          <p-table [value]="items()"
+            dataKey="userProfileId" styleClass="approval-table">
 
             <!-- Header -->
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="fullName">
+                <th>
                   {{ 'profileApproval.list.columns.name' | translate }}
-                  <p-sortIcon field="fullName"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="overallStatus">
+                <th>
                   {{ 'profileApproval.list.columns.status' | translate }}
-                  <p-sortIcon field="overallStatus"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="targetEntity">
+                <th>
                   {{ 'profileApproval.list.columns.targetEntity' | translate }}
-                  <p-sortIcon field="targetEntity"></p-sortIcon>
                 </th>
 
-                <th pSortableColumn="submittedAtUtc">
+                <th>
                   {{ 'profileApproval.list.columns.submissionDate' | translate }}
-                  <p-sortIcon field="submittedAtUtc"></p-sortIcon>
                 </th>
 
                 <!-- NEW -->
@@ -219,9 +218,13 @@
                 <!-- ✅ View Button -->
                 <td>
                     <div class="action-buttons">
-                          <button  class="btn-text d-flex gap-1 align-items-center" type="button" (click)="openProfile(row); $event.stopPropagation()"><i class="hgi hgi-stroke hgi-view"></i> {{ 'common.view' | translate }}</button>
+                          <button  class="btn-text d-flex gap-1 align-items-center" type="button"
+                                   (click)="openProfile(row); $event.stopPropagation()">
+                            <i class="hgi hgi-stroke hgi-view"></i>
+                            {{ 'common.view' | translate }}
+                          </button>
                     </div>
-                  
+
                 </td>
 
               </tr>
@@ -239,6 +242,8 @@
         </div>
       </div>
 
+
+      </div>
       <ng-template #loadingTpl>
         <div class="text-center py-5 text-muted">
           <i class="fa fa-spinner fa-spin me-2"></i>

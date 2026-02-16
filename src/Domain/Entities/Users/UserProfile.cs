@@ -12,24 +12,24 @@ namespace Tawtheef.Domain.Entities.Users;
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
 public class UserProfile : EventEntity
 {
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
     public ApplicantUser? User { get; set; }
     [MaxLength(50)]
-    public string Provider { get; set; } = default!;
+    public string Provider { get; init; } = default!;
     public Guid? CandidateTypeId { get; set; }
-    public CandidateType? CandidateType { get; set; }
+    public CandidateType? CandidateType { get; init; }
 
     public Guid? TargetEntityId { get; set; }
-    public TargetEntity? TargetEntity { get; set; }
+    public TargetEntity? TargetEntity { get; init; }
 
     public Guid? OfficeId { get; set; }
-    public Office? Office { get; set; }
+    public Office? Office { get; init; }
 
     public Guid? ResumeAttachmentId { get; set; }
-    public Resource? ResumeAttachment { get; set; }
+    public Resource? ResumeAttachment { get; init; }
 
     public Guid? NationalCardId { get; set; }
-    public Resource? NationalCard { get; set; }
+    public Resource? NationalCard { get; init; }
 
     /// <summary>
     /// National ID number (e.g. QID)
@@ -54,7 +54,7 @@ public class UserProfile : EventEntity
     }
 
     public Guid? NationalityId { get; set; }
-    public Country? Nationality { get; set; }
+    public Country? Nationality { get; init; }
 
     public Guid? GenderId { get; set; }
     public Gender? Gender { get; init; }
@@ -63,16 +63,16 @@ public class UserProfile : EventEntity
     public Religion? Religion { get; init; }
 
     public Guid? MaritalStatusId { get; set; }
-    public MaritalStatus? MaritalStatus { get; set; }
+    public MaritalStatus? MaritalStatus { get; init; }
 
     public int ChildrenCount { get; set; }
 
 
     public Guid? ResidenceCountryId { get; set; }
-    public Country? ResidenceCountry { get; set; }
+    public Country? ResidenceCountry { get; init; }
 
     public Guid? InterviewLocationId { get; set; }
-    public Country? InterviewLocation { get; set; }
+    public Country? InterviewLocation { get; init; }
     [MaxLength(500)]
     public string? Address { get; set; }
 
@@ -87,10 +87,10 @@ public class UserProfile : EventEntity
     public SponsorProfile? SponsorProfile { get; set; }
 
     public Guid? BirthdayCertificateId { get; set; }
-    public Resource? BirthdayCertificate { get; set; }
+    public Resource? BirthdayCertificate { get; init; }
 
     public Guid? MarriageCertificateId { get; set; }
-    public Resource? MarriageCertificate { get; set; }
+    public Resource? MarriageCertificate { get; init; }
 
     public ICollection<Qualification>? Qualifications { get; set; } = [];
     public ICollection<Experience>? Experiences { get; set; } = [];

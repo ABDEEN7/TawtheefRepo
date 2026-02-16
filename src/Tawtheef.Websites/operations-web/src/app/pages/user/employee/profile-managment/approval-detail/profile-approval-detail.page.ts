@@ -93,7 +93,11 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   isRtl = computed(() => this.currentLang() === 'ar');
   draftDirty: Record<number, boolean> = {};
   draftInitialized = signal(false);
+  imageError = false;
 
+  handleImageError() {
+    this.imageError = true;
+  }
   initDraft(info: ProfileApprovalDetail) {
     for (const sec of info.sections ?? []) {
       const sectionId = sec.section;

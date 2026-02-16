@@ -30,7 +30,8 @@ public class TokenService(
     IProfileCompletenessService pcs,
     ISessionService sessions,
     IHttpContextAccessor httpContextAccessor,
-    TimeProvider time, IUnitOfWork uow,
+    TimeProvider time,
+    IUnitOfWork uow,
     ILoginAuditService loginAudit) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
@@ -38,9 +39,7 @@ public class TokenService(
     private const string PermClaimType = "permission";
     private const string ProfileCompleteClaimType = "profile.complete";
     private const string UserTypeClaimType = "user_type";
-    
-    
-    
+
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
         if (user.IsBlocked)
@@ -55,40 +54,123 @@ public class TokenService(
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
-        var refreshToken = GenerateRefreshToken(user.Id, sid);
+
+        var refreshToken = GenerateRefreshToken(user.Id, sid, device?.Ip);
         user.RefreshTokens.Add(refreshToken);
-        user.LastLoginDate = time.GetUtcNow().DateTime;
+
+        user.LastLoginDate = time.GetUtcNow().UtcDateTime;
         await userManager.UpdateSecurityStampAsync(user);
 
+        var tokenResult = await BuildAuthResponseAsync(user, refreshToken, sid, ct);
+        if (tokenResult.IsFailed)
+            return tokenResult;
+
+        await uow.SaveChangesAsync(ct);
+        await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource,
+            true, SessionId: sid, IpAddress: device?.Ip, AttemptedAt: time.GetUtcNow()), ct);
+
+        return tokenResult;
+    }
+
+    public async Task<IResult<AuthResponse>> RotateRefreshTokenAsync(
+        User user,
+        RefreshToken currentToken,
+        string? ipAddress,
+        CancellationToken ct)
+    {
+        var now = time.GetUtcNow().UtcDateTime;
+        var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
+
+        currentToken.Revoke(now, ipAddress, "Rotated");
+        currentToken.ReplacedByToken = replacement;
+
+        user.RefreshTokens.Add(replacement);
+
+        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken);
+
+        var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
+        if (result.IsFailed)
+            return result;
+
+        await uow.SaveChangesAsync(ct);
+        return result;
+    }
+
+    public async Task RevokeSessionFamilyAsync(
+        Guid userId,
+        string sessionId,
+        string? ipAddress,
+        string reason,
+        CancellationToken ct)
+    {
+        var now = time.GetUtcNow().UtcDateTime;
+
+        await sessions.RevokeAsync(userId, sessionId, ct);
+
+        var tokens = await uow.GetEntityRepository<RefreshToken>().DbSet
+            .Where(x => x.UserId == userId && x.SecurityStamp == sessionId && x.RevokedAt == null)
+            .ToListAsync(ct);
+
+        foreach (var token in tokens)
+        {
+            token.Revoke(now, ipAddress, reason);
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+        }
+
+        await uow.SaveChangesAsync(ct);
+    }
+
+    public async Task<string?> GetCurrentSessionIdAsync(Guid userId, CancellationToken ct)
+    {
+        return await sessions.GetCurrentAsync(userId, ct);
+    }
+
+    public string HashRefreshToken(string refreshToken)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken));
+        return Convert.ToHexString(bytes);
+    }
+
+    private async Task<IResult<AuthResponse>> BuildAuthResponseAsync(
+        User user,
+        RefreshToken refreshToken,
+        string sid,
+        CancellationToken ct)
+    {
         var userType = await uow.GetEntityRepository<UserType>().DbSet
-            .AsNoTracking().FirstAsync(t => t.Id == user.UserTypeId, ct);
+            .AsNoTracking()
+            .FirstAsync(t => t.Id == user.UserTypeId, ct);
+
         var profileComplete = true;
         var additionalClaims = new List<Claim>();
         ProfilePrefillDto? prefill = null;
+
         if (user is ApplicantUser applicantUser)
         {
             prefill = !applicantUser.IsCompletedProfile ? await pcs.BuildPrefillAsync(user, ct) : null;
             profileComplete = applicantUser.IsCompletedProfile;
             additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
         }
-        var accessToken =
-            await GenerateAccessTokenAsync(user, userType, [
-                new Claim(JwtRegisteredClaimNames.Sid, sid),
-                ..additionalClaims
-            ], ct);
 
-        await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId,  loginSource,
-            true, SessionId: sid, IpAddress: device?.Ip, AttemptedAt: time.GetUtcNow()), ct);
-        
+        var accessToken = await GenerateAccessTokenAsync(user, userType, [
+            new Claim(JwtRegisteredClaimNames.Sid, sid),
+            ..additionalClaims
+        ], ct);
+
         var logins = await userManager.GetLoginsAsync(user);
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
+
         return Result.Ok(new AuthResponse(
             !profileComplete,
             new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, user.AgreedToTerms, providerName, prefill),
-            new TokenResponse(accessToken.Token, accessToken.Expires, refreshToken.Token, refreshToken.Expires)
+            new TokenResponse(
+                accessToken.Token,
+                DateTime.SpecifyKind(accessToken.Expires, DateTimeKind.Utc),
+                refreshToken.TokenFingerprint,
+                DateTime.SpecifyKind(refreshToken.Expires, DateTimeKind.Utc))
         ));
     }
-    
+
     private async Task<(string Token, DateTime Expires)> GenerateAccessTokenAsync(User user, UserType userType,
         IEnumerable<Claim>? extraClaims = null, CancellationToken ct = default)
     {
@@ -111,11 +193,9 @@ public class TokenService(
         claims.AddRange(permissions.Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(perm => new Claim(PermClaimType, perm)));
 
-        // Remove duplicate claims
-        claims = claims.GroupBy(c => (c.Type, c.Value))
-            .Select(g => g.First()).ToList();
-        var expires = time.GetLocalNow().DateTime.AddMinutes(
-            jwtSettings.Value.ExpiryMinutes ?? 15);
+        claims = claims.GroupBy(c => (c.Type, c.Value)).Select(g => g.First()).ToList();
+
+        var expires = time.GetUtcNow().UtcDateTime.AddMinutes(jwtSettings.Value.ExpiryMinutes ?? 15);
 
         var token = new JwtSecurityToken(
             issuer: appSettings.Value.BackendUrl,
@@ -128,55 +208,50 @@ public class TokenService(
         token.Header["alg"] = SecurityAlgorithms.HmacSha256;
         return (new JwtSecurityTokenHandler().WriteToken(token), expires);
     }
-    
+
     private RefreshToken GenerateRefreshToken(Guid userId, string sid, string? ipAddress = null)
     {
+        var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         return new RefreshToken
         {
-            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-            Expires =  time.GetLocalNow().DateTime.AddDays(jwtSettings.Value.RefreshTokenExpirationDays ?? 7),
-            CreatedDate = time.GetLocalNow().DateTime,
+            TokenHash = HashRefreshToken(rawToken),
+            TokenFingerprint = rawToken,
+            Expires = time.GetUtcNow().UtcDateTime.AddDays(jwtSettings.Value.RefreshTokenExpirationDays ?? 7),
+            CreatedDate = time.GetUtcNow().UtcDateTime,
             UserId = userId,
             CreatedByIp = ipAddress,
-            SecurityStamp = sid // reuse column to store session id
+            SecurityStamp = sid
         };
     }
 
-    private async Task RevokeRefreshToken(RefreshToken token, string? ipAddress, string? reason = null, string? replacedByToken = null)
-    {
-        token.RevokedAt = time.GetLocalNow().DateTime;
-        token.RevokedByIp = ipAddress;
-        token.RevokedReason = reason;
-        token.ReplacedByToken = replacedByToken;
-        
-        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
-        await uow.SaveChangesAsync(cancellationToken: CancellationToken.None);
-    }
-    
     public async Task RevokeAllAsync(Guid userId, CancellationToken ct)
     {
-        // Clear session (so access tokens fail sid check on next request)
         await sessions.RevokeAllAsync(userId, ct);
 
-        // Revoke any active refresh tokens
+        var now = time.GetUtcNow().UtcDateTime;
         var refreshTokens = await uow.GetEntityRepository<RefreshToken>().DbSet
             .Where(x => x.UserId == userId && x.RevokedAt == null)
             .ToListAsync(ct);
 
         foreach (var token in refreshTokens)
-            await RevokeRefreshToken(token, null, "Admin/explicit revoke-all");
+        {
+            token.Revoke(now, null, "Admin/explicit revoke-all");
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+        }
+
+        await uow.SaveChangesAsync(ct);
     }
-    
+
     private static DeviceInfo? BuildDeviceInfo(HttpContext? ctx)
     {
         if (ctx is null) return null;
         var ip = ctx.Connection.RemoteIpAddress?.ToString();
         ctx.Request.Headers.TryGetValue("User-Agent", out var ua);
         var platform = ctx.Request.Headers.TryGetValue("X-Platform", out var p) ? p.ToString() : null;
-        var version  = ctx.Request.Headers.TryGetValue("X-App-Version", out var v) ? v.ToString() : null;
+        var version = ctx.Request.Headers.TryGetValue("X-App-Version", out var v) ? v.ToString() : null;
         return new DeviceInfo(ip, ua.ToString(), platform, version);
     }
-    
+
     private async Task<IReadOnlyCollection<string>> GetUserPermissionsAsync(
         IReadOnlyCollection<string> roleNames,
         CancellationToken ct)
@@ -190,7 +265,6 @@ public class TokenService(
         if (roles.Count == 0)
             return [];
 
-        // Fetch roles (no need for custom tables)
         var roleEntities = await roleManager.Roles
             .AsNoTracking()
             .Where(r => r.Name != null && roles.Contains(r.Name))
