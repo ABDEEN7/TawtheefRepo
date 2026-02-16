@@ -2,12 +2,10 @@ import {Injectable} from "@angular/core";
 import {AuthCoreService} from "./auth-core.service";
 import {AuthStateService} from "./auth-state.service";
 import {UserService} from "./user.service";
-import {Observable, of, shareReplay} from "rxjs";
+import { Observable } from 'rxjs';
 import {UserInfoModel} from "../../shared/models/user-info.model";
 import {AuthBootstrap, AuthResponse, ProfileStatusDto} from "../models/auth/auth-response.model";
-import {catchError, map} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {EndpointsService} from '../http/endpoints.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -16,7 +14,6 @@ export class AuthService {
     protected core: AuthCoreService,
     protected state: AuthStateService,
     protected user: UserService,
-    protected http: HttpClient,
   ) {
     this.state.checkAuthState(false);
     this.state.isAuthenticated$.subscribe(isAuth => {
@@ -52,7 +49,9 @@ export class AuthService {
   }
 
   refreshToken(): Observable<string | null> {
-    return this.core.refreshToken();
+    return this.state.refreshAccessToken$().pipe(
+      map((ok) => (ok ? this.core.getToken : null)),
+    );
   }
 
   getCurrentUser(): UserInfoModel | null {
