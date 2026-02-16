@@ -16,6 +16,7 @@ import {routes} from '../../../../routes/routes';
 import {AvatarModal} from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import {ProfileService} from './services/profile.service';
 import {AvatarUtils} from '../../../../core/utils/avatar-utils';
+import {BOOTSTRAP_KEY} from '../../../../core/guards/profile-complete.guard';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -136,38 +137,57 @@ export class WizardProfileComponent implements OnInit {
       }
     });
     this.lookups.loadAll().subscribe(() => {
-      const nav = this.router.currentNavigation();
-      const state = nav?.extras.state as ProfileStatusDto | null;
-      if (state) {
-        this.avatarPreviewUrl = state.avatar ?? null;
-        state.provider = provider;
-        this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,state, this.userService.getPrefill()));
+
+      const provider = this.userService.getCurrentUser()?.provider ?? 'Google';
+
+      // ✅ 1) try storage first (guard -> wizard)
+      const stored = this.readBootstrapFromStorage();
+      if (stored) {
+        this.avatarPreviewUrl = stored.avatar ?? null;
+        (stored as any).provider = provider;
+
+        this.ds.prefillFromBootstrap(
+          mapProfileStatusToState(this.phoneMapper, this.lookups, stored as ProfileStatusDto, this.userService.getPrefill())
+        );
+
         this.loading = false;
         this.moveToFirstInvalidStep();
         this.applyForcedStep();
         this.markTouched(this.step);
         return;
       }
+
+      // ✅ 2) fallback to api
       this.auth.getAuthBootstrap$()
-        .pipe(take(1))
-        .pipe(finalize(() => {
-          this.loading = false;
-        }))
+        .pipe(take(1), finalize(() => (this.loading = false)))
         .subscribe((b: Partial<ProfileStatusDto>) => {
           if (b.isComplete) {
             this.router.navigate([routes.user.dashboard]);
             return;
           }
+
           this.avatarPreviewUrl = b.avatar ?? null;
-          b.provider = provider;
-          this.ds.prefillFromBootstrap(mapProfileStatusToState(this.phoneMapper,this.lookups,b as ProfileStatusDto, this.userService.getPrefill()));
+          (b as any).provider = provider;
+
+          this.ds.prefillFromBootstrap(
+            mapProfileStatusToState(this.phoneMapper, this.lookups, b as ProfileStatusDto, this.userService.getPrefill())
+          );
+
           this.moveToFirstInvalidStep();
           this.applyForcedStep();
           this.markTouched(this.step);
         });
-    })
+    });
   }
-
+  private readBootstrapFromStorage(): Partial<ProfileStatusDto> | null {
+    try {
+      const raw = sessionStorage.getItem(BOOTSTRAP_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw) as Partial<ProfileStatusDto>;
+    } catch {
+      return null;
+    }
+  }
   moveToFirstInvalidStep() {
     //get the first step not valid by ds.stepValidity
     const firstInvalidStep =

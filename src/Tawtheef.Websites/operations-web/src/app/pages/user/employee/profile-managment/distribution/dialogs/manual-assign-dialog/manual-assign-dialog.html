@@ -13,6 +13,7 @@
       [ngModel]="employeeId()"
       (onChange)="employeeId.set($event.value)"
       [placeholder]="'distribution.manual.selectPlaceholder' | translate"
+      [appendTo]="'body'"
     ></p-select>
   </div>
 

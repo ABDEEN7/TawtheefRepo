@@ -97,6 +97,9 @@
                                               <div class="table-responsive">
                                                   <p-table
                                                     [value]="displayedFiles()"
+                                                    [customSort]="true"
+                                                    sortMode="single"
+                                                    (sortFunction)="onSort($event)"
                                                     dataKey="profileId"
                                                     [selection]="selectedFiles()"
                                                     (selectionChange)="onSelectionChange($event)"
@@ -112,7 +115,10 @@
                                              <th>{{ 'distribution.table.status' | translate }}</th>
                                              <th>{{ 'distribution.table.entity' | translate }}</th>
                                              <th>{{ 'distribution.table.assignee' | translate }}</th>
-                                             <th>{{ 'distribution.table.receivedAt' | translate }}</th>
+                                             <th pSortableColumn="CreatedDate">
+                                               {{ 'distribution.table.receivedAt' | translate }}
+                                               <p-sortIcon field="CreatedDate"></p-sortIcon>
+                                             </th>
                                              <th style="width: 120px">{{ 'distribution.table.actions' | translate }}</th>
                                            </tr>
                                          </ng-template>
@@ -170,7 +176,7 @@
                                              <td>
                                                <div class="action-buttons">
                                                  <button
-                                                   
+
                                                    pRipple
                                                    type="button"
                                                    class="btn"

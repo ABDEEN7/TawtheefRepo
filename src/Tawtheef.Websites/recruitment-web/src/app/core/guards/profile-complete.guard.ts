@@ -1,9 +1,10 @@
-import { inject } from '@angular/core';
+﻿import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { map } from 'rxjs/operators';
 import { routes } from '../../routes/routes';
 
+export const BOOTSTRAP_KEY = 'profileWizardBootstrap';
 export const profileCompleteGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -19,8 +20,12 @@ export const profileCompleteGuard: CanActivateFn = () => {
         return true;
       }
 
+      // ✅ store for wizard to read
+      sessionStorage.setItem(BOOTSTRAP_KEY, JSON.stringify(response));
+
+      // ✅ just redirect with url tree
       return router.createUrlTree([routes.user.profileWizard], {
-        state: { response },
+        queryParams: { fromGuard: 1 },
       });
     }),
   );

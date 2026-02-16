@@ -1,7 +1,6 @@
 using Cortex.Mediator.Commands;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,13 +9,11 @@ using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
 public class RefreshTokenHandler(
     IAppLogger logger,
-    UserManager<User> userManager,
     ITokenService tokenService,
     IUnitOfWork uow,
     TimeProvider time)

@@ -9,7 +9,7 @@ public class RefreshToken : EventEntity
     [MaxLength(512)]
     public required string TokenHash { get; init; }
 
-    [MaxLength(64)]
+    [MaxLength(256)]
     public required string TokenFingerprint { get; init; }
 
     public DateTime Expires { get; init; }
