@@ -116,6 +116,12 @@
                 [showClear]="true"
                 (onChange)="updateFilter('status', $event.value ?? '')"
                 name="status">
+                <ng-template pTemplate="selectedItem" let-item>
+                  <span>{{ item?.label | translate }}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                  <span>{{ item.label | translate }}</span>
+                </ng-template>
               </p-select>
             </div>
 

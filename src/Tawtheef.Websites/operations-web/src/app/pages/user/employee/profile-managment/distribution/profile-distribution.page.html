@@ -1,48 +1,48 @@
 <section class="distribution-shell" i18nNamespace="pages/profile-distribution">
-      <div class="card card-table mb-4">
-           <div class="card-body">
-                <div class="row mb-4">
-                     <div class="col-md-6">
-                         <div>
-                           <div class="d-flex align-items-center gap-2 flex-wrap">
-                             <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
-                             <span class="pill soft">{{ 'distribution.table.title' | translate }}</span>
-                           </div>
-                           <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
-                         </div>
-                     </div>
-                     <div class="col-md-6">
-                       <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
-                              <div class="action-buttons"><div class="btn-text gap-1">
-                                   <i class="hgi hgi-stroke hgi-doc-02 fs-18"></i>
-                                  {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
-                              </div></div>
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
+              <span class="pill soft">{{ 'distribution.table.title' | translate }}</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <div class="action-buttons"><div class="btn-text gap-1">
+              <i class="hgi hgi-stroke hgi-doc-02 fs-18"></i>
+              {{ 'distribution.kpi.total' | translate }} : {{ kpis().total }}
+            </div></div>
 
-                             <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
-                                 <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
-                                 <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
-                             </button>
-                       </div>
-                     </div>
-                </div>
-                <div class="row g-3">
-                     <div class="col-lg-12">
-                         <div class="card card-table mb-4">
-                               <div class="card-body">
-                                   <div class="mb-3">
-                                        <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
-                                        <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
-                                   </div>
-                                    <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
+            <button pButton type="button"  class="p-button-outlined" (click)="loadData()" [disabled]="loading()">
+              <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
+              <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-12">
+          <div class="card card-table mb-4">
+            <div class="card-body">
+              <div class="mb-3">
+                <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
+                <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
+              </div>
+              <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
 
-                                      @if (loading()) {
-                                        <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
-                                      }
-                                    </div>
-                                  <div class="row align-items-end mb-4">
-                             <div class="col-lg-4 col-md-6">
-                               <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
-                               <span class="p-input-icon-left w-100">
+                @if (loading()) {
+                  <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
+                }
+              </div>
+              <div class="row align-items-end mb-4">
+                <div class="col-lg-4 col-md-6">
+                  <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
+                  <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
                                     <input
                                       type="search"
@@ -52,213 +52,206 @@
                                       (ngModelChange)="onSearchChange($event)"
                                     />
                                   </span>
-                             </div>
-                             <div class="col-lg-3 col-md-4">
-                                 <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
-                                 <p-select
-                                   class="w-100"
-                                   [options]="statusOptions"
-                                   optionValue="value"
-                                   [ngModel]="statusFilter()"
-                                   (onChange)="onStatusChange($event.value)">
-                                   <ng-template pTemplate="selectedItem" let-item>
-                                     <span>{{ item?.label | translate }}</span>
-                                   </ng-template>
-                                   <ng-template let-item pTemplate="item">
-                                     <span>{{ item.label | translate }}</span>
-                                   </ng-template>
-                                 </p-select>
-                             </div>
-                             <div class="col-lg-3 col-md-4">
-                               <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
-                               <p-select
-                                 class="w-100"
-                                 [options]="targetEntities()"
-                                 optionValue="id"
-                                 [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
-                                 [ngModel]="targetEntityId()"
-                                 (onChange)="onTargetEntityChange($event.value)">
-                                 <ng-template pTemplate="selectedItem" let-item>
-                                   <span>{{ item?.name }}</span>
-                                 </ng-template>
-                                 <ng-template let-item pTemplate="item">
-                                   <span>{{ item.name }}</span>
-                                 </ng-template>
-                               </p-select>
-                             </div>
-                             <div class="col-lg-2 col-md-4 d-flex gap-2 flex-wrap">
-                               <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
-                                 <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
-                                 <i class="pi pi-times" pButtonIcon></i>
-                               </button>
-                             </div>
-                           </div>
-                                         <div class="table-card rounded overflow-hidden">
-                                              <div class="table-responsive">
-                                                  <p-table
-                                                    [value]="displayedFiles()"
-                                                    [customSort]="true"
-                                                    sortMode="single"
-                                                    (sortFunction)="onSort($event)"
-                                                    dataKey="profileId"
-                                                    [selection]="selectedFiles()"
-                                                    (selectionChange)="onSelectionChange($event)"
-                                                    selectionMode="multiple"
-                                                    class="distribution-table">
-                                         <ng-template pTemplate="header">
-                                           <tr>
-                                             <th>
-                                               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                             </th>
-                                             <th>{{ 'distribution.table.candidate' | translate }}</th>
-                                             <th>{{ 'distribution.table.candidateCategory' | translate }}</th>
-                                             <th>{{ 'distribution.table.status' | translate }}</th>
-                                             <th>{{ 'distribution.table.entity' | translate }}</th>
-                                             <th>{{ 'distribution.table.assignee' | translate }}</th>
-                                             <th pSortableColumn="CreatedDate">
-                                               {{ 'distribution.table.receivedAt' | translate }}
-                                               <p-sortIcon field="CreatedDate"></p-sortIcon>
-                                             </th>
-                                             <th style="width: 120px">{{ 'distribution.table.actions' | translate }}</th>
-                                           </tr>
-                                         </ng-template>
-                                         <ng-template pTemplate="body" let-profile>
-                                           <tr>
-                                             <td>
-                                               <p-tableCheckbox [value]="profile"></p-tableCheckbox>
-                                             </td>
-                                             <td>
-                                               <div class="fw-semibold">{{ profile.candidateName }}</div>
-                                             </td>
-                                             <td>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                  <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
+                  <p-select
+                    class="w-100"
+                    [options]="statusOptions"
+                    optionValue="value"
+                    [ngModel]="statusFilter()"
+                    (onChange)="onStatusChange($event.value)">
+                    <ng-template pTemplate="selectedItem" let-item>
+                      <span>{{ item?.label | translate }}</span>
+                    </ng-template>
+                    <ng-template let-item pTemplate="item">
+                      <span>{{ item.label | translate }}</span>
+                    </ng-template>
+                  </p-select>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                  <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
+                  <p-select
+                    class="w-100"
+                    [options]="targetEntities()"
+                    optionValue="id"
+                    [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
+                    [ngModel]="targetEntityId()"
+                    (onChange)="onTargetEntityChange($event.value)">
+                    <ng-template pTemplate="selectedItem" let-item>
+                      <span>{{ item?.name }}</span>
+                    </ng-template>
+                    <ng-template let-item pTemplate="item">
+                      <span>{{ item.name }}</span>
+                    </ng-template>
+                  </p-select>
+                </div>
+                <div class="col-lg-2 col-md-4 d-flex gap-2 flex-wrap">
+                  <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
+                    <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
+                    <i class="pi pi-times" pButtonIcon></i>
+                  </button>
+                </div>
+              </div>
+              <div class="table-card rounded overflow-hidden">
+                <div class="table-responsive">
+                  <p-table
+                    [value]="displayedFiles()"
+                    [customSort]="true"
+                    sortMode="single"
+                    (sortFunction)="onSort($event)"
+                    dataKey="profileId"
+                    [selection]="selectedFiles()"
+                    (selectionChange)="onSelectionChange($event)"
+                    selectionMode="multiple"
+                    class="distribution-table">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th>{{ 'distribution.table.candidate' | translate }}</th>
+                        <th>{{ 'distribution.table.candidateCategory' | translate }}</th>
+                        <th>{{ 'distribution.table.status' | translate }}</th>
+                        <th>{{ 'distribution.table.entity' | translate }}</th>
+                        <th>{{ 'distribution.table.assignee' | translate }}</th>
+                        <th pSortableColumn="CreatedDate">
+                          {{ 'distribution.table.receivedAt' | translate }}
+                          <p-sortIcon field="CreatedDate"></p-sortIcon>
+                        </th>
+                        <th style="width: 120px">{{ 'distribution.table.actions' | translate }}</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-profile>
+                      <tr>
+                        <td>
+                          <p-tableCheckbox [value]="profile"></p-tableCheckbox>
+                        </td>
+                        <td>
+                          <div class="fw-semibold">{{ profile.candidateName }}</div>
+                        </td>
+                        <td>
                                                <span class="pill neutral">
                                                  {{ profile.specialization || ('distribution.table.noValue' | translate) }}
                                                </span>
-                                             </td>
-                                             <td>
-                                               <p-tag
-                                                 [severity]="statusSeverity(profile.status)"
-                                                 [value]="statusLabel(profile.status) | translate"
-                                               ></p-tag>
-                                             </td>
-                                             <td>
-                                               <div class="text-truncate" style="max-width: 180px">
-                                                 {{ profile.targetEntity || ('distribution.table.noValue' | translate) }}
-                                               </div>
-                                             </td>
-                                             <td>
-                                               <div class="d-flex align-items-center gap-2">
-                                                 @if (!profile.assignedEmployeeName) {
-                                                   <p-avatar
-                                                     icon="pi pi-user"
-                                                     shape="circle"
-                                                     class="bg-light text-muted d-none d-xl-flex"
-                                                   ></p-avatar>
-                                                 }
-                                                 @if (profile.assignedEmployeeName) {
-                                                   <p-avatar
-                                                     [label]="profile.assignedEmployeeName[0]"
-                                                     shape="circle"
-                                                     class="bg-primary text-white"
-                                                   ></p-avatar>
-                                                 }
-                                                 <div>
-                                                   <div class="fw-semibold">
-                                                     {{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}
-                                                   </div>
-                                                 </div>
-                                               </div>
-                                             </td>
-                                             <td>
-                                               <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
-                                               <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
-                                             </td>
-                                             <td>
-                                               <div class="action-buttons">
-                                                 <button
-
-                                                   pRipple
-                                                   type="button"
-                                                   class="btn"
-                                                   [pTooltip]="'distribution.actions.assignTo' | translate"
-                                                   (click)="openManualDialog(profile.profileId)">
-                                                   <i class="pi pi-user-plus" pButtonIcon></i>
-                                                 </button>
-                                               </div>
-                                             </td>
-                                           </tr>
-                                         </ng-template>
-                                         <ng-template pTemplate="emptymessage">
-                                           <tr>
-                                             <td [attr.colspan]="8" class="text-center py-4 text-muted">
-                                               {{ 'distribution.table.empty' | translate }}
-                                             </td>
-                                           </tr>
-                                         </ng-template>
-                                       </p-table>
-                                             </div>
-                                        </div>
-                                        @if (paginationMetadata()?.totalCount) {
-                                          <div class="pagination-box mt-3">
-                                            <app-pagination
-                                              [currentPage]="pageNumber()"
-                                              [itemsPerPage]="pageSize()"
-                                              [totalItems]="paginationMetadata()?.totalCount || 0"
-                                              [pageSizeOptions]="rowsPerPageOptions"
-                                              (pageChanged)="onPageChange($event)"
-                                              (pageSizeChanged)="onPageSizeChange($event)">
-                                            </app-pagination>
-                                          </div>
-                                        }
-                                     </div>
-                         </div>
-                     </div>
-
-                     <div class="col-md-12">
-                          <div class="card card-table">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                                  <div>
-                                    <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
-                                    <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
-                                  </div>
-                                <div class="distribution-actions d-flex align-items-center flex-wrap gap-3">
-                                  <div class="selection-count">
-                                    {{ 'distribution.summary.selectedCountLabel' | translate: { count: selectedIds().size } }}
-                                  </div>
-                                  <div class="d-flex gap-2 flex-wrap">
-                                    <button
-                                      pButton
-                                      class="distribution-btn distribution-btn--auto"
-                                      type="button"
-                                      (click)="openAutoDialog()"
-                                      [disabled]="loading()">
-                                      <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
-                                      <i class="pi pi-sync" pButtonIcon></i>
-                                    </button>
-                                    <button
-                                      pButton
-                                      type="button"
-                                      class="distribution-btn distribution-btn--manual"
-                                      (click)="openManualDialog()"
-                                      [disabled]="loading()">
-                                      <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
-                                      <i class="pi pi-user-plus" pButtonIcon></i>
-                                    </button>
-                                  </div>
-                                </div>
+                        </td>
+                        <td>
+                          <p-tag
+                            [severity]="statusSeverity(profile.status)"
+                            [value]="statusLabel(profile.status) | translate"
+                          ></p-tag>
+                        </td>
+                        <td>
+                          <div class="text-truncate" style="max-width: 180px">
+                            {{ profile.targetEntity || ('distribution.table.noValue' | translate) }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            @if (!profile.assignedEmployeeName) {
+                              <p-avatar
+                                icon="pi pi-user"
+                                shape="circle"
+                                class="bg-light text-muted d-none d-xl-flex"
+                              ></p-avatar>
+                            }
+                            @if (profile.assignedEmployeeName) {
+                              <p-avatar
+                                [label]="profile.assignedEmployeeName[0]"
+                                shape="circle"
+                                class="bg-primary text-white"
+                              ></p-avatar>
+                            }
+                            <div>
+                              <div class="fw-semibold">
+                                {{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}
                               </div>
                             </div>
                           </div>
-                     </div>
+                        </td>
+                        <td>
+                          <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
+                          <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
+                        </td>
+                        <td>
+                          <div class="action-buttons">
+                            <button
+
+                              pRipple
+                              type="button"
+                              class="btn"
+                              [pTooltip]="'distribution.actions.assignTo' | translate"
+                              (click)="openManualDialog(profile.profileId)">
+                              <i class="pi pi-user-plus" pButtonIcon></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td [attr.colspan]="8" class="text-center py-4 text-muted">
+                          {{ 'distribution.table.empty' | translate }}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
                 </div>
+              </div>
+              @if (paginationMetadata()?.totalCount) {
+                <div class="pagination-box mt-3">
+                  <app-pagination
+                    [currentPage]="pageNumber()"
+                    [itemsPerPage]="pageSize()"
+                    [totalItems]="paginationMetadata()?.totalCount || 0"
+                    [pageSizeOptions]="rowsPerPageOptions"
+                    (pageChanged)="onPageChange($event)"
+                    (pageSizeChanged)="onPageSizeChange($event)">
+                  </app-pagination>
+                </div>
+              }
             </div>
-       </div>
+          </div>
+        </div>
 
-
-
-
-
-
-
+        <div class="col-md-12">
+          <div class="card card-table">
+            <div class="card-body">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                  <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
+                  <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
+                </div>
+                <div class="distribution-actions d-flex align-items-center flex-wrap gap-3">
+                  <div class="selection-count">
+                    {{ 'distribution.summary.selectedCountLabel' | translate: { count: selectedIds().size } }}
+                  </div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button
+                      pButton
+                      class="distribution-btn distribution-btn--auto"
+                      type="button"
+                      (click)="openAutoDialog()"
+                      [disabled]="loading()">
+                      <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+                      <i class="pi pi-sync" pButtonIcon></i>
+                    </button>
+                    <button
+                      pButton
+                      type="button"
+                      class="distribution-btn distribution-btn--manual"
+                      (click)="openManualDialog()"
+                      [disabled]="loading()">
+                      <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+                      <i class="pi pi-user-plus" pButtonIcon></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
