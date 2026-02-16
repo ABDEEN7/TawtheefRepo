@@ -27,17 +27,17 @@ export class SidebarComponent implements OnInit {
   activeItem = '';
 
   menuItems: MenuItem[] = [
-    { key: 'home', label: 'admin.sidebar.home', icon: 'assets/img/icons/home.svg', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
+    { key: 'home', label: 'admin.sidebar.home', icon: 'hgi-home-05', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
     { key: 'roles', label: 'admin.sidebar.roles', icon: 'assets/img/icons/shield.svg', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
-    { key: 'profileLogs', label: 'admin.sidebar.profileLogs', icon: 'assets/img/icons/file-eye.svg', route: routes.admin.profileLogs, permission: Permissions.ProfileLogs.View },
-    { key: 'users', label: 'admin.sidebar.users', icon: 'assets/img/icons/users.svg', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
-    { key: 'offices', label: 'admin.sidebar.offices', icon: 'assets/img/icons/files.svg', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
+    { key: 'profileLogs', label: 'admin.sidebar.profileLogs', icon: 'hgi-mail-send-02', route: routes.admin.profileLogs, permission: Permissions.ProfileLogs.View },
+    { key: 'users', label: 'admin.sidebar.users', icon: ' hgi-file-star', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
+    { key: 'offices', label: 'admin.sidebar.offices', icon: 'hgi-mail-send-02', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'assets/img/icons/globe.svg', route: routes.admin.countriesManagement, permission: Permissions.Countries.Manage },
     { key: 'languages', label: 'admin.sidebar.languages', icon: 'assets/img/icons/transfer.svg', route: routes.admin.languagesManagement, permission: Permissions.Languages.Manage },
     { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'assets/img/icons/transfer.svg', route: routes.admin.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
-    { key: 'religions', label: 'admin.sidebar.religions', icon: 'assets/img/icons/workflow-square-06-stroke-rounded.svg', route: routes.admin.religionsManagement, permission: Permissions.Religions.Manage },
+    { key: 'religions', label: 'admin.sidebar.religions', icon: 'hgi-structure-03', route: routes.admin.religionsManagement, permission: Permissions.Religions.Manage },
     { key: 'universities', label: 'admin.sidebar.universities', icon: 'assets/img/icons/university.svg', route: routes.admin.universitiesManagement, permission: Permissions.Universities.Manage },
-    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'assets/img/icons/job.svg', route: routes.admin.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
+    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.admin.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
     { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'assets/img/icons/settings-icon.svg', route: routes.admin.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'assets/img/icons/settings-icon.svg', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
   ];
