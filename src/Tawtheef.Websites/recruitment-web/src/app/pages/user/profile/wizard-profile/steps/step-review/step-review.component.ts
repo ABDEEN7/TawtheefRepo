@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
 import { ProfileDataService } from '../../services/profile-data.service';
 import { TranslateService } from '@ngx-translate/core';
-import {catchError, concatMap, finalize, switchMap, tap} from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import {ProfileService} from '../../services/profile.service';
 import {Skill} from '../../models/skill.model';
 import {CandidateType} from '../../../../../../core/enums/lookups.enum';
@@ -10,8 +10,6 @@ import {createStepValiditySignal} from '../../state/profile-step-validity.signal
 import {UploadedFileRef} from '../../models/profile-state.model';
 import {Router} from '@angular/router';
 import {routes} from '../../../../../../routes/routes';
-import {AuthService} from '../../../../../../core/auth/auth.service';
-import {from, of} from 'rxjs';
 
 @Component({
   selector: 'app-step-review',
@@ -26,7 +24,6 @@ export class StepReviewComponent {
   private i18n = inject(TranslateService);
   private profile = inject(ProfileService);
   private fileUtils = inject(FileUtilsService);
-  private auth = inject(AuthService);
 
   private stepValidity = createStepValiditySignal(this.ds.state);
 
@@ -86,14 +83,6 @@ export class StepReviewComponent {
     this.errorText.set(null);
 
     this.profile.finalizeProfile().pipe(
-      concatMap(() =>
-        this.auth.refreshToken().pipe(
-          catchError(err => {
-            console.warn('[submit] refreshToken failed, continue', err);
-            return of(null);
-          })
-        )
-      ),
       tap(() => this.submitted.set(true)),
       finalize(() => this.submitting.set(false))
     ).subscribe(() => {
