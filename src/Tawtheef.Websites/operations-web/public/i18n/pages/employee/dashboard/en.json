@@ -1,0 +1,55 @@
+{
+  "dashboard.hr.title": "HR Manager Operations Dashboard",
+  "dashboard.hr.subtitle": "Global profile approvals, workforce productivity, and workload balancing insights.",
+  "dashboard.department.title": "Department Manager Operations Dashboard",
+  "dashboard.department.subtitle": "Department-level profile pipeline, team SLA performance, and task completion monitoring.",
+
+  "dashboard.filters.employeeId": "Filter by employee ID",
+  "dashboard.filters.allStatuses": "All statuses",
+
+  "dashboard.kpi.totalEmployees": "Total employees",
+  "dashboard.kpi.activeEmployees": "Active employees",
+  "dashboard.kpi.totalProfiles": "Total profiles",
+  "dashboard.kpi.approvalRate": "Approval rate",
+  "dashboard.kpi.remainingTasks": "Remaining tasks",
+  "dashboard.kpi.overdueTasks": "Overdue tasks",
+
+  "dashboard.help.totalEmployees": "All employees visible based on your role and current filters.",
+  "dashboard.help.activeEmployees": "Employees not blocked and currently active in operations.",
+  "dashboard.help.totalProfiles": "Profiles created in the selected date range.",
+  "dashboard.help.approvalRate": "Approved profiles / total profiles * 100.",
+  "dashboard.help.remainingTasks": "Assigned tasks that are not completed yet.",
+  "dashboard.help.overdueTasks": "Tasks still pending after the SLA threshold.",
+
+  "dashboard.charts.profileTrend": "Profile trend over time",
+  "dashboard.charts.profileStatusBreakdown": "Profile status distribution",
+  "dashboard.charts.taskStacked": "Task status breakdown",
+  "dashboard.charts.employeePerformance": "Employee performance comparison",
+
+  "dashboard.sections.teamPerformance": "Team performance",
+  "dashboard.sections.smartInsights": "Smart recommendations",
+
+  "dashboard.table.employee": "Employee",
+  "dashboard.table.activeTasks": "Active tasks",
+  "dashboard.table.completedTasks": "Completed tasks",
+  "dashboard.table.remainingTasks": "Remaining tasks",
+  "dashboard.table.approval": "Approval",
+  "dashboard.table.responseTime": "Avg response",
+  "dashboard.table.workload": "Workload",
+
+  "dashboard.status.submitted": "Submitted",
+  "dashboard.status.underReview": "Under review",
+  "dashboard.status.underreview": "Under review",
+  "dashboard.status.approved": "Approved",
+  "dashboard.status.returned": "Returned",
+  "dashboard.status.requiresupdate": "Returned",
+
+  "dashboard.workload.high": "High",
+  "dashboard.workload.balanced": "Balanced",
+  "dashboard.workload.low": "Low",
+
+  "dashboard.insights.overdue": "Overdue tasks increased. Prioritize reassignment for overloaded staff.",
+  "dashboard.insights.approvalGood": "Approval quality is healthy. Current review accuracy is strong.",
+  "dashboard.insights.pipelinePressure": "Pending profiles exceed approved profiles. Consider temporary workforce balancing.",
+  "dashboard.insights.healthy": "Pipeline is healthy. Keep current team distribution strategy."
+}

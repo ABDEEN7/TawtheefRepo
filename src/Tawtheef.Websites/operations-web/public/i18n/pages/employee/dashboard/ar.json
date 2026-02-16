@@ -1,0 +1,55 @@
+{
+  "dashboard.hr.title": "لوحة عمليات مدير الموارد البشرية",
+  "dashboard.hr.subtitle": "مؤشرات اعتماد الملفات، إنتاجية الموظفين، وتوازن الأحمال التشغيلية.",
+  "dashboard.department.title": "لوحة عمليات مدير الإدارة",
+  "dashboard.department.subtitle": "متابعة مسار ملفات الإدارة، أداء الفريق حسب SLA، ومراقبة إنجاز المهام.",
+
+  "dashboard.filters.employeeId": "تصفية برقم الموظف",
+  "dashboard.filters.allStatuses": "كل الحالات",
+
+  "dashboard.kpi.totalEmployees": "إجمالي الموظفين",
+  "dashboard.kpi.activeEmployees": "الموظفون النشطون",
+  "dashboard.kpi.totalProfiles": "إجمالي الملفات",
+  "dashboard.kpi.approvalRate": "نسبة الاعتماد",
+  "dashboard.kpi.remainingTasks": "المهام المتبقية",
+  "dashboard.kpi.overdueTasks": "المهام المتأخرة",
+
+  "dashboard.help.totalEmployees": "جميع الموظفين الظاهرين حسب الدور والفلاتر الحالية.",
+  "dashboard.help.activeEmployees": "الموظفون غير المحظورين والنشطون حالياً في العمليات.",
+  "dashboard.help.totalProfiles": "الملفات التي أُنشئت ضمن نطاق التاريخ المحدد.",
+  "dashboard.help.approvalRate": "الملفات المعتمدة ÷ إجمالي الملفات × 100.",
+  "dashboard.help.remainingTasks": "المهام المسندة التي لم تُستكمل بعد.",
+  "dashboard.help.overdueTasks": "المهام التي تجاوزت حد اتفاقية مستوى الخدمة.",
+
+  "dashboard.charts.profileTrend": "اتجاه الملفات عبر الزمن",
+  "dashboard.charts.profileStatusBreakdown": "توزيع حالات الملفات",
+  "dashboard.charts.taskStacked": "تفصيل حالات المهام",
+  "dashboard.charts.employeePerformance": "مقارنة أداء الموظفين",
+
+  "dashboard.sections.teamPerformance": "أداء الفريق",
+  "dashboard.sections.smartInsights": "توصيات ذكية",
+
+  "dashboard.table.employee": "الموظف",
+  "dashboard.table.activeTasks": "المهام النشطة",
+  "dashboard.table.completedTasks": "المهام المكتملة",
+  "dashboard.table.remainingTasks": "المهام المتبقية",
+  "dashboard.table.approval": "الاعتماد",
+  "dashboard.table.responseTime": "متوسط الاستجابة",
+  "dashboard.table.workload": "العبء",
+
+  "dashboard.status.submitted": "مقدمة",
+  "dashboard.status.underReview": "قيد المراجعة",
+  "dashboard.status.underreview": "قيد المراجعة",
+  "dashboard.status.approved": "معتمدة",
+  "dashboard.status.returned": "معادة",
+  "dashboard.status.requiresupdate": "معادة",
+
+  "dashboard.workload.high": "مرتفع",
+  "dashboard.workload.balanced": "متوازن",
+  "dashboard.workload.low": "منخفض",
+
+  "dashboard.insights.overdue": "ارتفعت المهام المتأخرة. يُنصح بإعادة توزيع المهام على الموظفين المزدحمين.",
+  "dashboard.insights.approvalGood": "جودة الاعتماد جيدة. دقة المراجعة الحالية قوية.",
+  "dashboard.insights.pipelinePressure": "الملفات المعلقة أعلى من المعتمدة. يُفضّل موازنة الأحمال مؤقتاً.",
+  "dashboard.insights.healthy": "مسار العمل مستقر. استمر على استراتيجية توزيع الفريق الحالية."
+}
