@@ -18,7 +18,9 @@ public sealed class CustomExceptionHandler : IExceptionHandler
             return false;
         
         // Correlation & user context
-        var correlationId = httpContext.TraceIdentifier;
+        var correlationId =
+            httpContext.Items.TryGetValue("CorrelationId", out var cid) && cid is string s && !string.IsNullOrWhiteSpace(s)
+                ? s : httpContext.TraceIdentifier;
         var userId = httpContext.User.FindFirst("sub")?.Value
                      ?? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                      ?? "anonymous";
