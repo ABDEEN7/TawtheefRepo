@@ -13,7 +13,10 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Resources.Handlers.Queries;
 
-public class GetSignedBlobHandler(IFileStorageService storage, IAppLogger logger, IOptions<AppConfigSettings> cfg)
+public class GetSignedBlobHandler(IFileStorageService storage, 
+    IAppLogger logger,
+    IOptions<StorageSettings> storageSettings,
+    IOptions<AppConfigSettings> cfg)
     : IQueryHandler<GetSignedBlobQuery, Result<FileResponse>>
 {
     public Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)
@@ -42,7 +45,8 @@ public class GetSignedBlobHandler(IFileStorageService storage, IAppLogger logger
             logger.Error("User try to access blob with invalid key. Key must start with 'private/': {Key}", blobKey);
             return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.OnlyPrivateBlobKeysAllowed));
         }
-
+        
+        
         // 4. map to path using storage service (preserve original behavior)
         var map = storage.MapPath(blobKey, true);
         if (!map.IsSuccess)
@@ -52,19 +56,31 @@ public class GetSignedBlobHandler(IFileStorageService storage, IAppLogger logger
         }
 
         var path = map.Value!;
-        // 5. mime
         var contentType = TryGetMimeType(path, out var mt) ? mt : "application/octet-stream";
         var dlName = Path.GetFileName(path);
-
-        var file = new FileResponse
+        
+        if (storageSettings.Value.Provider == nameof(StorageProvider.AzureBlobStorage))
         {
-            Path = path,
-            ContentType = contentType,
-            DownloadName = dlName,
-            EnableRangeProcessing = true
-        };
-
-        return Task.FromResult(Result.Ok(file));
+            return Task.FromResult(Result.Ok(new FileResponse
+            {
+                SourceKind = FileSourceKind.RedirectUrl,
+                RedirectUrl = path,
+                ContentType = contentType,
+                DownloadName = dlName,
+                EnableRangeProcessing = false
+            }));
+        }
+        else
+        {
+            return Task.FromResult(Result.Ok(new FileResponse
+            {
+                SourceKind = FileSourceKind.LocalPath,
+                LocalPath = path,
+                ContentType = contentType,
+                DownloadName = dlName,
+                EnableRangeProcessing = true
+            }));
+        }
     }
 
     // Helpers (kept internal to handler)

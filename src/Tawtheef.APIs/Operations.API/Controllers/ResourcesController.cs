@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -47,8 +48,22 @@ public class ResourcesController(IMediator mediator, IFileStorageService storage
             return result.ToActionResult();
         
         var file = result.Value;
-        return PhysicalFile(file.Path, file.ContentType, file.DownloadName, file.EnableRangeProcessing);
+
+        if (file.SourceKind == FileSourceKind.RedirectUrl)
+        {
+            return Redirect(file.RedirectUrl!);
+        }
+        
+        // LocalPath
+        var path = file.LocalPath!;
+        if (!Path.IsPathRooted(path) || !System.IO.File.Exists(path)) return NotFound();
+
+        var downloadName = Path.GetFileName(file.DownloadName).Replace("\r","").Replace("\n","").Trim();
+        var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+
+        return PhysicalFile(path, contentType, downloadName, enableRangeProcessing: file.EnableRangeProcessing);
     }
+    
     [HttpGet("/files/{*path}")]
     public async Task<IActionResult> GetFile(string path)
     {
