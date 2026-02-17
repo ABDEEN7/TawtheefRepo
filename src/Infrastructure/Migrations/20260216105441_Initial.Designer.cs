@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260216105441_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3891,72 +3894,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("Country", "lkp");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.JobTitle", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<string>("JobNameAr")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("JobNameEn")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("JobNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("JobNumber")
-                        .IsUnique();
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("JobTitle", "lkp");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6274,9 +6211,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("JobStatusId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("JobTitleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6316,6 +6250,16 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<Guid?>("SubMajorId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TitleAr")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TitleEn")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
@@ -6378,9 +6322,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobStatusId", "ClosingDate", "IsDeleted")
                         .HasDatabaseName("IX_Job_Status_ClosingDate_Deleted");
 
-                    b.HasIndex("JobTitleId", "DepartmentId", "JobCategoryId", "SubMajorId")
+                    b.HasIndex("TitleAr", "DepartmentId", "JobCategoryId", "SubMajorId")
                         .IsUnique()
-                        .HasDatabaseName("IX_Job_Unique_JobTitle_Department_Category_SubMajor")
+                        .HasDatabaseName("IX_Job_Unique_Title_Department_Category_SubMajor")
                         .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Job", "hr");
@@ -10356,30 +10300,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.JobTitle", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -11094,12 +11014,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.JobTitle", "JobTitle")
-                        .WithMany()
-                        .HasForeignKey("JobTitleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
@@ -11151,8 +11065,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("JobCategory");
 
                     b.Navigation("JobStatus");
-
-                    b.Navigation("JobTitle");
 
                     b.Navigation("Major");
 

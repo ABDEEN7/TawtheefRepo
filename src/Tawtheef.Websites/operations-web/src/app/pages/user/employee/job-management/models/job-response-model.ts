@@ -8,26 +8,23 @@ import { JobResponsibilityResponse } from "./job-responsibility-response.model";
 import { JobSkillResponse } from "./job-skill-response.model";
 import { JobTabReviewNoteResponse } from "./job-tab-review-note-response";
 
-
 export interface JobResponse {
   id: GUID;
-
-  titleAr: string;
-  titleEn: string;
+  jobTitleId: GUID;
+  titleAr?: string;
+  titleEn?: string;
+  jobNumber?: string;
   numberOfVacancies: number;
   closingDate: Date;
   minimumAge: number;
   maximumAge: number;
   yearsOfExperience: number;
-
   createdDate: Date;
   modifiedDate?: Date;
   publishAt?: Date;
   cancelledAt?: Date;
-
   createdBy?: GUID;
   modifiedBy?: GUID;
-
   overViewAr?: string;
   overViewEn?: string;
   benefitsAr?: string;
@@ -36,7 +33,6 @@ export interface JobResponse {
   qualificationDescriptionEn?: string;
   approveNote?: string;
   rejectNote?:string;
-
   sector: dropdownOptionsModel;
   management: dropdownOptionsModel;
   department: dropdownOptionsModel;
@@ -47,7 +43,6 @@ export interface JobResponse {
   subMajor?: dropdownOptionsModel;
   workType: dropdownOptionsModel;
   jobStatus: dropdownOptionsModel;
-
   jobPoints : JobPointsResponse;
   degrees: JobDegreeResponse[];
   conditions: JobConditionResponse[];

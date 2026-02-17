@@ -6,7 +6,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.SECTOR' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.sectors()"
           formControlName="sectorId"
@@ -29,7 +29,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.managements()"
           formControlName="managementId"
@@ -52,7 +52,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.departments()"
           formControlName="departmentId"
@@ -91,38 +91,21 @@
         }
       </div>
 
-      <!-- titleAr -->
       <div class="col-md-6 mb-3">
         <label class="form-label">
-          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR' | translate }}
+          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE' | translate }}
         </label>
-
-        <input
-          pInputText
-          class="form-control"
-          formControlName="titleAr"
-          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_AR_PLACEHOLDER' | translate }}"
-        />
-
-        @if (form.controls.titleAr.touched && form.controls.titleAr.invalid) {
-        <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
-        }
-      </div>
-
-      <!-- titleEn -->
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN' | translate }}
-        </label>
-
-        <input
-          pInputText
-          class="form-control"
-          formControlName="titleEn"
-          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_EN_PLACEHOLDER' | translate }}"
-        />
-
-        @if (form.controls.titleEn.touched && form.controls.titleEn.invalid) {
+        <app-remote-select
+          [searchUrl]="endpoints.job.lookups.jobTitles"
+          [placeholder]="'JOB_WIZARD.STEPS.BASICS.JOB_TITLE' | translate"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [minChars]="1"
+          formControlName="jobTitleId"  [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+          [appendTo]="'body'">
+        </app-remote-select>
+        @if (form.controls.jobTitleId.touched && form.controls.jobTitleId.invalid) {
         <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
         }
       </div>
@@ -133,7 +116,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.jobCategories()"
           formControlName="jobCategoryId"
@@ -156,7 +139,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_LOCATION' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.workLocations()"
           formControlName="workLocationId"
@@ -243,7 +226,7 @@
 
                         <span class="form-check-label">{{ g.name }}</span>
                  </label>
-          
+
           }
         </div>
          @if (form.controls.genderId.touched && form.controls.genderId.invalid) {
@@ -255,7 +238,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_TYPE' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 px-0"
           [options]="lookupsService.workTypes()"
           formControlName="workTypeId"
@@ -299,7 +282,7 @@
         </label>
 
         <p-datePicker
-         
+
           formControlName="closingDate"
           [iconDisplay]="'input'"
           [showIcon]="true"

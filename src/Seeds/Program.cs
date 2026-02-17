@@ -23,7 +23,7 @@ public static class Program
 
         // 1) Connection string selection
         var connectionString = ConsoleUi.PromptConnectionString([
-            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB2;Trusted_Connection=True;"),
+            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB1;Trusted_Connection=True;"),
             new SavedConnection("Stage", "Server=DCSCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=tawthef_user;Password=Abc@1234;")
         ]);
 
@@ -319,6 +319,7 @@ internal static class ImportCatalog
         new ImportStep { Code = "CITY",    Title = "Import Cities (CSV)",    RunAsync = (r, ct) => r.ImportCitiesAsync(ct) },
         new ImportStep { Code = "UNIV",    Title = "Import Universities (CSV)", RunAsync = (r, ct) => r.ImportUniversitiesAsync(ct) },
         new ImportStep { Code = "MAJOR",   Title = "Import Majors (CSV)",    RunAsync = (r, ct) => r.ImportMajorsAsync(ct) },
+        new ImportStep { Code = "JTITLE",  Title = "Import Job Titles (CSV)", RunAsync = (r, ct) => r.ImportJobTitlesAsync(ct) },
         new ImportStep { Code = "OFFICE",  Title = "Insert Offices (Code)",  RunAsync = (r, ct) => r.ImportOfficesAsync(ct) },
         new ImportStep { Code = "SKTYPE",  Title = "Insert SkillTypes (Code)", RunAsync = (r, ct) => r.ImportSkillTypesAsync(ct) },
         new ImportStep { Code = "SKILL",   Title = "Insert Skills (Code)",   RunAsync = (r, ct) => r.ImportSkillsAsync(ct) },
@@ -383,6 +384,12 @@ internal sealed class ImportRunner
     {
         EnsurePreloadMajors();
         ImportMajors(_db, _errors, _majorIds!, _majorBackends!);
+        return Task.CompletedTask;
+    }
+
+    public Task ImportJobTitlesAsync(CancellationToken ct)
+    {
+        ImportJobTitles(_db, _errors);
         return Task.CompletedTask;
     }
 
@@ -769,6 +776,82 @@ internal sealed class ImportRunner
                 }
 
                 remaining.Remove(x);
+            }
+        }
+    }
+
+    // ================= Import Offices =================
+
+    private static void ImportJobTitles(TawtheefDbContext db, List<ImportError> errors)
+    {
+        var path = GetDataPath("JobTitlesData.csv");
+        using var reader = new StreamReader(path);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+        var existingByJobNumber = db.JobTitle
+            .ToDictionary(x => x.JobNumber, StringComparer.OrdinalIgnoreCase);
+
+        var createdById = AdminUserIds.Admin1UserId;
+        var now = DateTime.UtcNow;
+
+        while (csv.Read())
+        {
+            var row = csv.Context.Parser?.Row;
+
+            try
+            {
+                dynamic r = csv.GetRecord<dynamic>();
+
+                var jobNumber = ((string?)r.JobNumber)?.Trim();
+                var jobNameAr = ((string?)r.JobNameAr)?.Trim();
+                var jobNameEn = ((string?)r.JobNameEn)?.Trim();
+
+                if (string.IsNullOrWhiteSpace(jobNumber))
+                {
+                    errors.Add(new ImportError("JobTitlesData.csv", row, "JobNumber is required."));
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(jobNameAr))
+                {
+                    errors.Add(new ImportError("JobTitlesData.csv", row, $"JobNameAr is required for JobNumber: {jobNumber}."));
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(jobNameEn))
+                {
+                    errors.Add(new ImportError("JobTitlesData.csv", row, $"JobNameEn is required for JobNumber: {jobNumber}."));
+                    continue;
+                }
+
+                if (existingByJobNumber.TryGetValue(jobNumber, out var existing))
+                {
+                    existing.JobNameAr = jobNameAr[..Math.Min(200, jobNameAr.Length)];
+                    existing.JobNameEn = jobNameEn[..Math.Min(200, jobNameEn.Length)];
+                    existing.IsActive = true;
+                    existing.UpdatedById = createdById;
+                    existing.UpdatedDate = now;
+                    continue;
+                }
+
+                var entity = new JobTitle
+                {
+                    Id = Guid.NewGuid(),
+                    JobNumber = jobNumber[..Math.Min(100, jobNumber.Length)],
+                    JobNameAr = jobNameAr[..Math.Min(200, jobNameAr.Length)],
+                    JobNameEn = jobNameEn[..Math.Min(200, jobNameEn.Length)],
+                    IsActive = true,
+                    CreatedById = createdById,
+                    CreatedDate = now,
+                    IsDeleted = false
+                };
+
+                db.JobTitle.Add(entity);
+                existingByJobNumber[jobNumber] = entity;
+            }
+            catch (Exception ex)
+            {
+                errors.Add(new ImportError("JobTitlesData.csv", row, ex.GetBaseException().Message));
             }
         }
     }

@@ -42,4 +42,7 @@
   get homeContentManagement(){
     return this.admin + '/home-content-management'
   },
+  get jobTitlesManagement(){
+    return this.admin + '/job-titles-management'
+  },
 }

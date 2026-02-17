@@ -1,9 +1,8 @@
-﻿{
+{
   "internal.footer.terms": "Terms and Conditions",
   "internal.footer.privacy": "Privacy Policy",
   "internal.footer.rights": "All rights reserved © 2026",
   "internal.footer.ministry": "Ministry of Education and Higher Education 2026 — All rights reserved",
-
   "internal.nav.logoAlt": "Ministry of Education and Higher Education",
   "internal.nav.home": "Home",
   "internal.nav.personalProfile": "Profile",
@@ -21,7 +20,6 @@
   "internal.nav.userProfile": "Profile",
   "internal.nav.userSettings": "Settings",
   "internal.nav.logout": "Logout",
-
   "public.nav.about": "About the platform",
   "public.nav.tracks": "Career paths",
   "public.nav.why": "Why with us",
@@ -30,7 +28,6 @@
   "public.nav.login": "Login",
   "public.nav.logout": "Logout",
   "public.nav.profile.dashboard": "Dashboard",
-
   "internal.sidebar.home": "Home",
   "internal.sidebar.distribution": "Facility Distribution",
   "internal.sidebar.approve-profile": "Approve Profiles",
@@ -43,7 +40,6 @@
   "internal.sidebar.invitation-summary": "Job Invitation Summary",
   "internal.sidebar.candidate-users": "Candidate Users",
   "internal.sidebar.office-users": "Office Users",
-
   "admin.sidebar.home": "Home",
   "admin.sidebar.roles": "Manage Permissions",
   "admin.sidebar.users": "Manage Users",
@@ -58,10 +54,9 @@
   "admin.sidebar.jobPointsConfig": "Job Points Configuration",
   "admin.sidebar.jobCategoryCandidateSettings": "Job Category Candidate Settings",
   "admin.sidebar.homeContent": "Home Content Management",
-
   "common.sidebar.settings": "Settings",
   "common.sidebar.logout": "Logout",
-
   "public.footer.rights": "All Rights Reserved © 2026",
-  "public.footer.ministry": "Ministry of Education and Higher Education 2026 — All rights reserved"
+  "public.footer.ministry": "Ministry of Education and Higher Education 2026 — All rights reserved",
+  "admin.sidebar.jobTitles": "Job Titles"
 }

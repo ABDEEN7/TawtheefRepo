@@ -36,7 +36,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         if (job is null)
             return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobNotFound);
 
-        var jobTitle = job.TitleEn;
+        var jobTitle = job.JobTitle?.JobNameEn ?? job.JobTitle?.JobNameAr ?? string.Empty;
         var targetCount = await jobTargetCandidateCalculatorService
             .GetTargetCountAsync(job.JobCategoryId, job.NumberOfVacancies);
 

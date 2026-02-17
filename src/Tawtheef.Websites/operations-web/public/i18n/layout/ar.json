@@ -1,9 +1,8 @@
-﻿{
+{
   "internal.footer.terms": "الشروط والأحكام",
   "internal.footer.privacy": "سياسة الخصوصية",
   "internal.footer.rights": "جميع الحقوق محفوظة © 2026",
   "internal.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 — جميع الحقوق محفوظة",
-
   "internal.nav.logoAlt": "وزارة التربية والتعليم والتعليم العالي",
   "internal.nav.home": "الرئيسية",
   "internal.nav.personalProfile": "الملف الشخصي",
@@ -21,7 +20,6 @@
   "internal.nav.userProfile": "الملف الشخصي",
   "internal.nav.userSettings": "الإعدادات",
   "internal.nav.logout": "تسجيل خروج",
-
   "public.nav.about": "عن المنصة",
   "public.nav.tracks": "مسارات التوظيف",
   "public.nav.why": "لماذا معنا",
@@ -30,7 +28,6 @@
   "public.nav.login": "تسجيل الدخول",
   "public.nav.logout": "تسجيل الخروج",
   "public.nav.profile.dashboard": "لوحة التحكم",
-
   "internal.sidebar.home": "الرئيسية",
   "internal.sidebar.distribution": "توزيع الملفات",
   "internal.sidebar.approve-profile": "اعتماد الملفات",
@@ -43,7 +40,6 @@
   "internal.sidebar.invitation-summary": "ملخص دعوات التوظيف",
   "internal.sidebar.candidate-users": "إدارة مستخدمي المرشحين",
   "internal.sidebar.office-users": "مستخدمي المكتب",
-
   "admin.sidebar.home": "الرئيسية",
   "admin.sidebar.roles": "إدارة الصلاحيات",
   "admin.sidebar.users": "إدارة المستخدمين",
@@ -58,10 +54,9 @@
   "admin.sidebar.jobPointsConfig": "تهيئة نقاط الوظائف",
   "admin.sidebar.jobCategoryCandidateSettings": "إعدادات فئة المرشحين",
   "admin.sidebar.homeContent": "إدارة محتوى الصفحة الرئيسية",
-
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",
-
   "public.footer.rights": "جميع الحقوق محفوظة © 2026",
-  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 — جميع الحقوق محفوظة"
+  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 — جميع الحقوق محفوظة",
+  "admin.sidebar.jobTitles": "المسميات الوظيفية"
 }

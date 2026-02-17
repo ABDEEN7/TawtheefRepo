@@ -7,8 +7,10 @@ import { JobSkill } from './job-skill.model';
 import { JobPointsCopy } from './job-points-copy.model';
 
 export interface JobCopyTemplate {
-  titleAr?: string;
-  titleEn?: string;
+  jobTitleId: GUID;
+  jobTitleAr?: string;
+  jobTitleEn?: string;
+  jobNumber?: string;
   sectorId: GUID;
   managementId: GUID;
   departmentId: GUID;

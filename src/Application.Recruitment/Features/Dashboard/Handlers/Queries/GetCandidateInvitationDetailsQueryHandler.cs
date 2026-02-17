@@ -22,6 +22,7 @@ public sealed class GetCandidateInvitationDetailsQueryHandler(IUnitOfWork unitOf
             .Include(i => i.InvitationStatus)
             .Include(i => i.Job).ThenInclude(j => j!.JobCategory)
             .Include(i => i.Job).ThenInclude(j => j!.Department)
+            .Include(i => i.Job).ThenInclude(j => j!.JobTitle)
             .FirstOrDefaultAsync(
                 i => i.Id == query.InvitationId && i.ApplicantId == query.UserId,
                 cancellationToken);

@@ -75,6 +75,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Office> Office { get; set; }
     public DbSet<SkillType> SkillType { get; set; }
     public DbSet<University> University { get; set; }
+    public DbSet<JobTitle> JobTitle { get; set; }
 
     // Base User Tables
     public DbSet<AdminUser> Admin { get; set; }
