@@ -15,13 +15,13 @@ namespace Operations.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ResourcesController(IMediator mediator, IFileStorageService storage) : ControllerBase
+public class ResourcesController(IMediator mediator) : ControllerBase
 {
     private static readonly FileExtensionContentTypeProvider Mime = new();
     
     [HttpGet("{encoded}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IActionResult Get(string encoded)
+    public IActionResult Get(string encoded, [FromServices] IFileStorageService storage)
     {
         var blobKey = Decode(encoded);
         if (!blobKey.StartsWith("private/", StringComparison.OrdinalIgnoreCase))
@@ -44,24 +44,23 @@ public class ResourcesController(IMediator mediator, IFileStorageService storage
     public async Task<IActionResult> GetSigned([FromQuery] string b, [FromQuery] long exp, [FromQuery] string sig)
     {
         var result = await mediator.Send(new GetSignedBlobQuery(b, exp, sig));
-        if(result.IsFailed)
+        if (result.IsFailed)
             return result.ToActionResult();
-        
+
         var file = result.Value;
 
         if (file.SourceKind == FileSourceKind.RedirectUrl)
-        {
             return Redirect(file.RedirectUrl!);
-        }
-        
+
         // LocalPath
         var path = file.LocalPath!;
-        if (!Path.IsPathRooted(path) || !System.IO.File.Exists(path)) return NotFound();
+        if (string.IsNullOrWhiteSpace(path) || !Path.IsPathRooted(path) || !System.IO.File.Exists(path))
+            return NotFound();
 
-        var downloadName = Path.GetFileName(file.DownloadName).Replace("\r","").Replace("\n","").Trim();
+        var downloadName = Path.GetFileName(file.DownloadName).Replace("\r", "").Replace("\n", "").Trim();
         var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
 
-        return PhysicalFile(path, contentType, downloadName, enableRangeProcessing: file.EnableRangeProcessing);
+        return PhysicalFile(path, contentType, fileDownloadName: downloadName, enableRangeProcessing: file.EnableRangeProcessing);
     }
     
     [HttpGet("/files/{*path}")]

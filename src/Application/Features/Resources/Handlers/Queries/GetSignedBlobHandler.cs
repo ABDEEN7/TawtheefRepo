@@ -13,77 +13,89 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Resources.Handlers.Queries;
 
-public class GetSignedBlobHandler(IFileStorageService storage, 
+
+public class GetSignedBlobHandler(
+    IFileStorageService storage,
     IAppLogger logger,
     IOptions<StorageSettings> storageSettings,
     IOptions<AppConfigSettings> cfg)
     : IQueryHandler<GetSignedBlobQuery, Result<FileResponse>>
 {
-    public Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)
+    public async Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)
     {
-        // 1. secret
+        // 1) Secret
         var secret = cfg.Value.BlobSignKey;
-        if (string.IsNullOrEmpty(secret))
+        if (string.IsNullOrWhiteSpace(secret))
         {
             logger.Error("Blob sign key is missing from appsettings.json");
-            return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.BlobSignKeyConfigMissing));
+            return Result.Fail<FileResponse>(ErrorsCodes.BlobSignKeyConfigMissing);
         }
 
-        // 2. verify signature + expiry
+        // 2) Verify signature + expiry
         var payload = $"{request.B}.{request.Exp}";
         var expected = ComputeHmacSha256Base64Url(secret, payload);
-        if (!CryptographicEquals(expected, request.Sig) || DateTimeOffset.UtcNow.ToUnixTimeSeconds() > request.Exp)
+
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (!CryptographicEquals(expected, request.Sig) || now > request.Exp)
         {
-            logger.Error("User try to access blob with invalid signature or expired");
-            return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.UrlFileExpired));
+            logger.Error("User tried to access blob with invalid signature or expired");
+            return Result.Fail<FileResponse>(ErrorsCodes.UrlFileExpired);
         }
 
-        // 3. decode and validate key
-        var blobKey = Decode(request.B);
+        // 3) Decode and validate key
+        var blobKey = DecodeBase64UrlUtf8(request.B);
         if (!blobKey.StartsWith("private/", StringComparison.OrdinalIgnoreCase))
         {
-            logger.Error("User try to access blob with invalid key. Key must start with 'private/': {Key}", blobKey);
-            return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.OnlyPrivateBlobKeysAllowed));
+            logger.Error("User tried to access blob with invalid key. Must start with 'private/': {Key}", blobKey);
+            return Result.Fail<FileResponse>(ErrorsCodes.OnlyPrivateBlobKeysAllowed);
         }
-        
-        
-        // 4. map to path using storage service (preserve original behavior)
-        var map = storage.MapPath(blobKey, true);
-        if (!map.IsSuccess)
+
+        // 4) Provider-specific response
+        if (storageSettings.Value.Provider == nameof(StorageProvider.AzureBlobStorage))
         {
-            logger.Error("Failed to map blob key to path: {Error}", map.Errors);
-            return Task.FromResult(Result.Fail<FileResponse>(ErrorsCodes.UnExpectedError));
+            // TTL bounded by request.Exp (min 30s)
+            var ttlSeconds = Math.Max(30, request.Exp - now);
+            var downloadName = Path.GetFileName(blobKey);
+
+            var sas = await storage.GetSignedReadUrlAsync(blobKey, TimeSpan.FromSeconds(ttlSeconds), downloadName, cancellationToken);
+            if (sas.IsFailed)
+            {
+                logger.Error("Failed to generate SAS URL for blob: {BlobKey}. Errors: {Errors}", blobKey, sas.Errors);
+                return Result.Fail<FileResponse>(ErrorsCodes.UnExpectedError);
+            }
+
+            return Result.Ok(new FileResponse
+            {
+                SourceKind = FileSourceKind.RedirectUrl,
+                RedirectUrl = sas.Value,
+                ContentType = "application/octet-stream",
+                DownloadName = downloadName,
+                EnableRangeProcessing = false
+            });
+        }
+
+        // Local storage: map to absolute path + verify exists
+        var map = storage.MapPath(blobKey, isReadOperation: true);
+        if (map.IsFailed)
+        {
+            logger.Error("Failed to map blob key to local path: {BlobKey}. Errors: {Errors}", blobKey, map.Errors);
+            return Result.Fail<FileResponse>(ErrorsCodes.UnExpectedError);
         }
 
         var path = map.Value!;
         var contentType = TryGetMimeType(path, out var mt) ? mt : "application/octet-stream";
         var dlName = Path.GetFileName(path);
-        
-        if (storageSettings.Value.Provider == nameof(StorageProvider.AzureBlobStorage))
+
+        return Result.Ok(new FileResponse
         {
-            return Task.FromResult(Result.Ok(new FileResponse
-            {
-                SourceKind = FileSourceKind.RedirectUrl,
-                RedirectUrl = path,
-                ContentType = contentType,
-                DownloadName = dlName,
-                EnableRangeProcessing = false
-            }));
-        }
-        else
-        {
-            return Task.FromResult(Result.Ok(new FileResponse
-            {
-                SourceKind = FileSourceKind.LocalPath,
-                LocalPath = path,
-                ContentType = contentType,
-                DownloadName = dlName,
-                EnableRangeProcessing = true
-            }));
-        }
+            SourceKind = FileSourceKind.LocalPath,
+            LocalPath = path,
+            ContentType = contentType,
+            DownloadName = dlName,
+            EnableRangeProcessing = true
+        });
     }
 
-    // Helpers (kept internal to handler)
     private static bool CryptographicEquals(string a, string b)
     {
         try
@@ -91,6 +103,7 @@ public class GetSignedBlobHandler(IFileStorageService storage,
             var ba = WebEncoders.Base64UrlDecode(a);
             var bb = WebEncoders.Base64UrlDecode(b);
             if (ba.Length != bb.Length) return false;
+
             var diff = 0;
             for (var i = 0; i < ba.Length; i++) diff |= ba[i] ^ bb[i];
             return diff == 0;
@@ -108,10 +121,8 @@ public class GetSignedBlobHandler(IFileStorageService storage,
         return WebEncoders.Base64UrlEncode(bytes);
     }
 
-    private static string Decode(string input)
+    private static string DecodeBase64UrlUtf8(string input)
     {
-        // original Decode implementation ? replace with your actual decoding logic if different
-        // assuming URL-safe base64 that was used to encode the blob key
         try
         {
             var bytes = WebEncoders.Base64UrlDecode(input);
@@ -119,21 +130,19 @@ public class GetSignedBlobHandler(IFileStorageService storage,
         }
         catch
         {
-            // fallback: return raw input to allow MapPath to reject if it's invalid
+            // if invalid, return raw to fail validation quickly
             return input;
         }
     }
 
     private static bool TryGetMimeType(string path, out string mime)
     {
-        // try to detect content type; if you have MimeKit or other lib use it.
         mime = null!;
         try
         {
-            // Prefer the OS-provided mapping (Windows) or a library; simple fallback:
             var ext = Path.GetExtension(path);
             if (string.IsNullOrEmpty(ext)) return false;
-            // minimal mapping; expand if you want
+
             switch (ext.ToLowerInvariant())
             {
                 case ".pdf": mime = "application/pdf"; return true;
