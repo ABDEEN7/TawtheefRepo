@@ -388,6 +388,14 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     return this.savingSection() === section;
   }
 
+  sectionIsAutoApprovedEmpty(section: number): boolean {
+    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
+    if (!sec) return false;
+
+    const review = this.sectionReviewFor(sec);
+    return (sec.items?.length ?? 0) === 0 && review.status === ReviewStatus.Approved;
+  }
+
   sectionHasUndecidedItems(section: number): boolean {
     const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
     return (sec?.items ?? []).some(item =>
@@ -437,6 +445,13 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
 
     const st = this.draftStatus[section];
     const note = (this.draftNote[section] ?? '').trim();
+
+    if (this.sectionIsAutoApprovedEmpty(section)) {
+      this.notifications.success(
+        this.translate.instant('profileApproval.detail.sectionApproval.autoApprovedLocked'),
+      );
+      return;
+    }
 
     if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) return;
 

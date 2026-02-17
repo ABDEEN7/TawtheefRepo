@@ -273,6 +273,7 @@
   "profileApproval.detail.sectionApproval.saving": "جارٍ الحفظ...",
   "profileApproval.detail.sectionApproval.noteRequired": "يرجى كتابة ملاحظة توضح سبب طلب التعديل",
   "profileApproval.detail.sectionApproval.statusRequiredHint": "يرجى اختيار حالة هذا التبويب قبل المتابعة",
+  "profileApproval.detail.sectionApproval.autoApprovedLocked": "هذا القسم لا يحتوي على بيانات، لذلك تم اعتماده تلقائيًا ولا يمكن تعديله.",
   "profileApproval.detail.reviewState": "حالة المراجعة",
   "profileApproval.detail.startReview": "بدء المراجعة",
   "profileApproval.detail.startReviewOk": "تم بدء المراجعة.",

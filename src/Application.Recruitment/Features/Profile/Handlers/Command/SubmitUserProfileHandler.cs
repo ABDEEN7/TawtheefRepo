@@ -61,7 +61,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         foreach (var sec in ProfileApprovalFlow.Sections)
         {
             var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
-            await reviewRepo.AddAsync(NewPendingSection(profile.Id, sec, snapshot), ct);
+            await reviewRepo.AddAsync(NewSectionReviewItem(profile, sec, snapshot), ct);
         }
 
         // 2️⃣ Profile-level attachments
@@ -82,11 +82,38 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
     // -----------------------
     // Section
     // -----------------------
-    private static ReviewItem NewPendingSection(Guid profileId, ProfileSection sec, object? snapshot)
+    private static ReviewItem NewSectionReviewItem(UserProfile profile, ProfileSection sec, object? snapshot)
     {
-        var item = ReviewItem.Create(profileId, sec, ReviewTargetType.Section, currentValue: snapshot);
+        var item = ReviewItem.Create(profile.Id, sec, ReviewTargetType.Section, currentValue: snapshot);
+
+        if (ShouldAutoApproveEmptySection(profile, sec))
+        {
+            item.Status = ReviewStatus.Approved;
+            item.ApprovedHash = item.CurrentHash;
+            item.IsOutdated = false;
+            item.ReviewedAtUtc = null;
+            item.ReviewedById = null;
+            item.ReviewerNote = null;
+            return item;
+        }
+
         Normalize(item);
         return item;
+    }
+
+    private static bool ShouldAutoApproveEmptySection(UserProfile profile, ProfileSection section)
+    {
+        return section switch
+        {
+            ProfileSection.Qualifications => profile.Qualifications is null || profile.Qualifications.Count == 0,
+            ProfileSection.Experience => profile.Experiences is null || profile.Experiences.Count == 0,
+            ProfileSection.TrainingCourses => profile.TrainingCourses is null || profile.TrainingCourses.Count == 0,
+            ProfileSection.CertificatesAndAwards => profile.Achievements is null || profile.Achievements.Count == 0,
+            ProfileSection.Skills => profile.Skills is null || profile.Skills.Count == 0,
+            ProfileSection.Languages => profile.Languages is null || profile.Languages.Count == 0,
+            ProfileSection.Attachments => profile.AdditionalAttachments is null || profile.AdditionalAttachments.Count == 0,
+            _ => false
+        };
     }
 
     // -----------------------
