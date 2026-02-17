@@ -139,25 +139,6 @@ export class WizardProfileComponent implements OnInit {
     this.lookups.loadAll().subscribe(() => {
 
       const provider = this.userService.getCurrentUser()?.provider ?? 'Google';
-
-      // ✅ 1) try storage first (guard -> wizard)
-      const stored = this.readBootstrapFromStorage();
-      if (stored) {
-        this.avatarPreviewUrl = stored.avatar ?? null;
-        (stored as any).provider = provider;
-
-        this.ds.prefillFromBootstrap(
-          mapProfileStatusToState(this.phoneMapper, this.lookups, stored as ProfileStatusDto, this.userService.getPrefill())
-        );
-
-        this.loading = false;
-        this.moveToFirstInvalidStep();
-        this.applyForcedStep();
-        this.markTouched(this.step);
-        return;
-      }
-
-      // ✅ 2) fallback to api
       this.auth.getAuthBootstrap$()
         .pipe(take(1), finalize(() => (this.loading = false)))
         .subscribe((b: Partial<ProfileStatusDto>) => {

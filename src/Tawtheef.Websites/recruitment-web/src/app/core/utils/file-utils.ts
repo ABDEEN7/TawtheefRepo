@@ -2,6 +2,7 @@ import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {HttpResponse} from '@angular/common/http';
 import {HttpService} from "../http/http.service";
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class FileUtilsService {
@@ -14,32 +15,30 @@ export class FileUtilsService {
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
+  private get isAzure(): boolean {
+    return environment.storageProvider === 'Azure';
+  }
+  private isSasUrl(url: string): boolean {
+    // Azure SAS غالبًا يحتوي sv + sig
+    return /[?&]sv=/.test(url) && /[?&]sig=/.test(url);
+  }
 
-  /**
-   * Downloads a file from a given (possibly protected) URL using HttpClient so interceptors (JWT) apply.
-   * If the server sends `Content-Disposition: attachment; filename="..."`, we'll use it automatically.
-   */
-  async downloadUrl(fileUrl: string, fileName = ''): Promise<void> {
-    if (!this.isBrowser) return;
-
-    const res = await this.http.get(fileUrl, undefined, {
-      responseType: 'blob',
-      observe: 'response',
-      withCredentials: true,
-    }).toPromise() as HttpResponse<Blob>;
-
-    const blob = res.body!;
-    // Try to infer filename from headers if not provided
-    if (!fileName) {
-      const cd = res.headers.get('content-disposition') || '';
-      const match = /filename[*]?=(?:UTF-8''|")?([^;"']+)/i.exec(cd);
-      if (match?.[1]) {
-        try { fileName = decodeURIComponent(match[1].replace(/"/g, '')); }
-        catch { fileName = match[1].replace(/"/g, ''); }
-      }
+  private isSameOrigin(url: string): boolean {
+    try {
+      const u = new URL(url, window.location.origin);
+      return u.origin === window.location.origin;
+    } catch {
+      return false;
     }
+  }
 
-    this.triggerDownload(blob, fileName);
+  private isApiSignedDl(url: string): boolean {
+    try {
+      const u = new URL(url, window.location.origin);
+      return u.pathname.toLowerCase().endsWith('/api/resources/dl');
+    } catch {
+      return url.toLowerCase().includes('/api/resources/dl');
+    }
   }
 
   /**
@@ -85,17 +84,27 @@ export class FileUtilsService {
   async previewUrl(fileUrl: string, fileName = '', forceAuthFetch = false): Promise<void> {
     if (!this.isBrowser) return;
 
-    const isPdf = fileUrl.toLowerCase().includes('.pdf') || fileUrl.toLowerCase().includes('application/pdf');
-    const isImage = /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(fileUrl) ||
-      fileUrl.toLowerCase().includes('image');
+    // لو Azure و الرابط هو /dl:
+    // ❗ لا تفتحيه مباشرة لأنه يحتاج JWT (لن يُرسل في window.open)
+    // الأفضل: fetch JSON url (إذا سويتي endpoint JSON)
+    if (this.isAzure && this.isApiSignedDl(fileUrl)) {
+      // إذا عندك endpoint JSON:
+      const r = await this.http.get<{ url: string }>(fileUrl, undefined, {
+        responseType: 'json',
+        observe: 'body'
+      }).toPromise();
+      window.open(r!.url, '_blank');
+      return;
+    }
 
-    if (!forceAuthFetch && (isPdf || isImage)) {
+    // Local (أو روابط عامة): إذا بدك
+    if (!forceAuthFetch) {
       window.open(fileUrl, '_blank');
       return;
     }
 
-    // Auth-required path: fetch as blob so interceptors add JWT, then open as object URL
-    const blob = await this.http.get<Blob>(fileUrl, undefined,{ responseType: 'blob', observe: 'body' }).toPromise();
+    // fallback: auth fetch as blob
+    const blob = await this.http.get<Blob>(fileUrl, undefined, { responseType: 'blob', observe: 'body' }).toPromise();
     const url = URL.createObjectURL(blob!);
     window.open(url, '_blank');
     setTimeout(() => URL.revokeObjectURL(url), 30_000);
