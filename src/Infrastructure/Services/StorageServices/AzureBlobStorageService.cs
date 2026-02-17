@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using FluentResults;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -23,7 +24,6 @@ public sealed class AzureBlobStorageService : IFileStorageService
     {
         var cfg = storageSettings.Value ?? throw new InvalidOperationException("Storage settings missing");
 
-        // IMPORTANT: container name must be lowercase and must NOT contain '/'
         var containerName = cfg.RootPath ?? throw new InvalidOperationException("Storage:ContainerName missing");
         containerName = containerName.Trim();
 
@@ -38,10 +38,54 @@ public sealed class AzureBlobStorageService : IFileStorageService
         _logger = logger.ForContext(typeof(AzureBlobStorageService));
     }
 
-    private string BuildBlobName(string blobKey)
+    private static string BuildBlobName(string blobKey)
+        => blobKey.Trim().Replace('\\', '/').TrimStart('/');
+
+    public Task<IResult<string>> GetSignedReadUrlAsync(string blobKey, TimeSpan ttl, 
+        string? downloadName = null, CancellationToken ct = default)
     {
-        blobKey = blobKey.Trim().Replace('\\', '/').TrimStart('/');
-        return blobKey;
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrWhiteSpace(blobKey))
+                return Task.FromResult<IResult<string>>(Result.Fail<string>(ErrorsCodes.InvalidBlobKey));
+
+            var blobName = BuildBlobName(blobKey);
+            var blobClient = _container.GetBlobClient(blobName);
+
+            if (!blobClient.CanGenerateSasUri)
+            {
+                _logger.Error("BlobClient cannot generate SAS URI. Ensure connection string includes shared key.");
+                return Task.FromResult<IResult<string>>(Result.Fail<string>(ErrorsCodes.ConfigMissing));
+            }
+
+            var expiresOn = DateTimeOffset.UtcNow.Add(ttl);
+
+            var sas = new BlobSasBuilder
+            {
+                BlobContainerName = _container.Name,
+                BlobName = blobName,
+                Resource = "b",
+                ExpiresOn = expiresOn
+            };
+            sas.SetPermissions(BlobSasPermissions.Read);
+
+            // Optional: force download name
+            if (!string.IsNullOrWhiteSpace(downloadName))
+            {
+                downloadName = Path.GetFileName(downloadName).Replace("\r", "").Replace("\n", "").Trim();
+                sas.ContentDisposition = $"attachment; filename=\"{downloadName}\"";
+            }
+
+            var sasUri = blobClient.GenerateSasUri(sas);
+            return Task.FromResult<IResult<string>>(Result.Ok(sasUri.ToString()));
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "GetSignedReadUrlAsync error for {BlobKey}", blobKey);
+            return Task.FromResult<IResult<string>>(Result.Fail<string>(ErrorsCodes.IoError));
+        }
     }
 
     public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
@@ -58,14 +102,9 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
             if (stream.CanSeek)
             {
-                try { stream.Position = 0; }
-                catch
-                {
-                    // ignored
-                }
+                try { stream.Position = 0; } catch { /* ignore */ }
             }
 
-            // Optional but recommended: ensure container exists (especially in Stage/Dev)
             await _container.CreateIfNotExistsAsync(cancellationToken: ct).ConfigureAwait(false);
 
             await blobClient.UploadAsync(
@@ -74,21 +113,16 @@ public sealed class AzureBlobStorageService : IFileStorageService
                 {
                     HttpHeaders = new BlobHttpHeaders
                     {
-                        // if you know file type, set it; otherwise omit
-                        // ContentType = "application/pdf"
+                        // ContentType = "application/pdf" // set if you know it
                     }
                 },
-                ct
-            ).ConfigureAwait(false);
+                ct).ConfigureAwait(false);
 
             var props = await blobClient.GetPropertiesAsync(cancellationToken: ct).ConfigureAwait(false);
-            var size = props.Value.ContentLength;
-
-            return Result.Ok(new FileSaved(blobName, (ulong)size));
+            return Result.Ok(new FileSaved(blobName, (ulong)props.Value.ContentLength));
         }
         catch (RequestFailedException rfe)
         {
-            // This will tell you EXACT reason (InvalidResourceName, ContainerNotFound, etc.)
             _logger.Error(rfe, "SaveAsync Azure error. Status={Status} Code={Code} Msg={Msg}",
                 rfe.Status, rfe.ErrorCode, rfe.Message);
 
@@ -97,128 +131,110 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
             return Result.Fail<FileSaved>(ErrorsCodes.IoError);
         }
-        catch (OperationCanceledException oce)
-        {
-            _logger.Information(oce, "SaveAsync cancelled for {BlobKey}", blobKey);
-            return Result.Fail<FileSaved>(ErrorsCodes.Cancelled);
-        }
         catch (Exception ex)
         {
             _logger.Error(ex, "SaveAsync error for {BlobKey}", blobKey);
             return Result.Fail<FileSaved>(ErrorsCodes.IoError);
         }
     }
-    
 
-        public async Task<Result<bool>> DeleteAsync(string blobKey, CancellationToken ct = default)
+    public async Task<Result<bool>> DeleteAsync(string blobKey, CancellationToken ct = default)
+    {
+        try
         {
-            try
-            {
-                ct.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
 
-                if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Fail<bool>(ErrorsCodes.InvalidBlobKey);
+            if (string.IsNullOrWhiteSpace(blobKey))
+                return Result.Fail<bool>(ErrorsCodes.InvalidBlobKey);
 
-                blobKey = blobKey.Replace('\\', '/');
+            var blobName = BuildBlobName(blobKey);
+            var blobClient = _container.GetBlobClient(blobName);
 
-                var blobClient = _container.GetBlobClient(blobKey);
-                var resp = await blobClient.DeleteIfExistsAsync(cancellationToken: ct).ConfigureAwait(false);
-
-                return Result.Ok(resp.Value);
-            }
-            catch (OperationCanceledException oce)
-            {
-                _logger.Information(oce, "DeleteAsync cancelled for {BlobKey}", blobKey);
-                return Result.Fail<bool>(ErrorsCodes.Cancelled);
-            }
-            catch (RequestFailedException rfe) when (rfe.Status == 403)
-            {
-                _logger.Error(rfe, "DeleteAsync access denied for {BlobKey}", blobKey);
-                return Result.Fail<bool>(ErrorsCodes.AccessDenied);
-            }
-            catch (RequestFailedException rfe)
-            {
-                _logger.Error(rfe, "DeleteAsync Azure error for {BlobKey}", blobKey);
-                return Result.Fail<bool>(ErrorsCodes.IoError);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "DeleteAsync error for {BlobKey}", blobKey);
-                return Result.Fail<bool>(ErrorsCodes.IoError);
-            }
+            var resp = await blobClient.DeleteIfExistsAsync(cancellationToken: ct).ConfigureAwait(false);
+            return Result.Ok(resp.Value);
         }
-
-        public IResult<string> ToPublicUrl(string blobKey)
+        catch (RequestFailedException rfe) when (rfe.Status == 403)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(_publicBaseUrl))
-                    return Result.Fail<string>(ErrorsCodes.ConfigMissing);
-
-                if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
-
-                // follow same rule as LocalStorageService: require public/ prefix
-                const string pubPrefix = "public/";
-                if (!blobKey.StartsWith(pubPrefix, StringComparison.OrdinalIgnoreCase))
-                    return Result.Fail<string>(ErrorsCodes.NotPublicResource);
-
-                var relative = blobKey[pubPrefix.Length..].Replace('\\', '/');
-                var url = $"{_publicBaseUrl}/{relative}";
-                return Result.Ok(url);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "ToPublicUrl error for {BlobKey}", blobKey);
-                return Result.Fail<string>(ErrorsCodes.IoError);
-            }
+            _logger.Error(rfe, "DeleteAsync access denied for {BlobKey}", blobKey);
+            return Result.Fail<bool>(ErrorsCodes.AccessDenied);
         }
-
-        public IResult<string> MapPath(string blobKey, bool isReadOperation = false)
+        catch (Exception ex)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(blobKey))
-                    return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
+            _logger.Error(ex, "DeleteAsync error for {BlobKey}", blobKey);
+            return Result.Fail<bool>(ErrorsCodes.IoError);
+        }
+    }
 
-                // Normalize
-                blobKey = blobKey.Replace('\\', '/');
+    public IResult<string> ToPublicUrl(string blobKey)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_publicBaseUrl))
+                return Result.Fail<string>(ErrorsCodes.ConfigMissing);
 
-                // Return the absolute URI of the blob as the "path" equivalent.
-                var blobClient = _container.GetBlobClient(blobKey);
-                var uri = blobClient.Uri.AbsoluteUri;
-
-                return Result.Ok(uri);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "MapPath error for {BlobKey}", blobKey);
+            if (string.IsNullOrWhiteSpace(blobKey))
                 return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
-            }
+
+            const string pubPrefix = "public/";
+            if (!blobKey.StartsWith(pubPrefix, StringComparison.OrdinalIgnoreCase))
+                return Result.Fail<string>(ErrorsCodes.NotPublicResource);
+
+            var relative = BuildBlobName(blobKey)[pubPrefix.Length..];
+            return Result.Ok($"{_publicBaseUrl}/{relative}");
         }
-        
-        public async Task<bool> ExistsAsync(string path, CancellationToken ct)
+        catch (Exception ex)
         {
-            var blob = _container.GetBlobClient(Norm(path));
-            return await blob.ExistsAsync(ct);
+            _logger.Error(ex, "ToPublicUrl error for {BlobKey}", blobKey);
+            return Result.Fail<string>(ErrorsCodes.IoError);
         }
+    }
 
-        public async Task<StoredFileStream?> OpenReadAsync(string path, CancellationToken ct)
+    public IResult<string> MapPath(string blobKey, bool isReadOperation = false)
+    {
+        try
         {
-            var blob = _container.GetBlobClient(Norm(path));
-            if (!await blob.ExistsAsync(ct)) return null;
+            if (string.IsNullOrWhiteSpace(blobKey))
+                return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
 
-            var resp = await blob.DownloadStreamingAsync(cancellationToken: ct);
-            var d = resp.Value.Details;
+            // IMPORTANT: return normalized blob name (NOT URL)
+            var blobName = BuildBlobName(blobKey);
 
-            return new StoredFileStream(
-                Stream: resp.Value.Content,
-                ContentType: d.ContentType ?? "application/octet-stream",
-                ETag: d.ETag.ToString(),
-                LastModified: d.LastModified,
-                Length: d.ContentLength
-            );
+            // optional: if read op, verify exists (might cost a call; skip if you want)
+            // if (isReadOperation) { ... await ExistsAsync(blobName) ... } // but MapPath is sync, so skip
+
+            return Result.Ok(blobName);
         }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "MapPath error for {BlobKey}", blobKey);
+            return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
+        }
+    }
 
-        private static string Norm(string path) => path.Replace('\\', '/').TrimStart('/');
+    public async Task<bool> ExistsAsync(string pathOrBlobName, CancellationToken ct)
+    {
+        var blobName = BuildBlobName(pathOrBlobName);
+        var blob = _container.GetBlobClient(blobName);
+        return await blob.ExistsAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task<StoredFileStream?> OpenReadAsync(string pathOrBlobName, CancellationToken ct)
+    {
+        var blobName = BuildBlobName(pathOrBlobName);
+        var blob = _container.GetBlobClient(blobName);
+
+        if (!await blob.ExistsAsync(ct).ConfigureAwait(false))
+            return null;
+
+        var resp = await blob.DownloadStreamingAsync(cancellationToken: ct).ConfigureAwait(false);
+        var d = resp.Value.Details;
+
+        return new StoredFileStream(
+            Stream: resp.Value.Content,
+            ContentType: d.ContentType ?? "application/octet-stream",
+            ETag: d.ETag.ToString(),
+            LastModified: d.LastModified,
+            Length: d.ContentLength
+        );
+    }
 }

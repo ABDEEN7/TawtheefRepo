@@ -61,7 +61,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
                 ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
                 : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
             Section = nameof(ProfileSection.Personal)
-        });
+        }, ct);
 
         await loggerRepo.AddAsync(new UserProfileLogger
         {
@@ -73,7 +73,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
                 : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = hasCorrections ? ReviewStatus.NeedsCorrection : ReviewStatus.Approved
-        });
+        }, ct);
 
         var activeAssignments = await assignmentRepo.DbSet
             .Where(a => a.UserProfileId == profile.Id && a.IsActive)
@@ -91,7 +91,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
                 Notes = UserProfileLogConstants.Notes.AssignmentClosed,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
-            });
+            }, ct);
         }
 
         await uow.SaveChangesAsync(ct);

@@ -1,0 +1,118 @@
+import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
+
+export interface OperationsDashboardFilters {
+  fromDateUtc?: string;
+  toDateUtc?: string;
+  departmentId?: string;
+  employeeId?: string;
+  status?: string;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export interface OperationsDashboardResponse {
+  role: string;
+  filters: OperationsDashboardFilterSnapshot;
+  kpis: DashboardKpis;
+  profileBreakdown: ProfileBreakdown;
+  taskMonitoring: TaskMonitoring;
+  profileTrend: TrendSeries;
+  taskCompletionTrend: TrendSeries;
+  teamPerformance: PaginatedTeamPerformance;
+  topPerformers: PerformanceRank[];
+  underPerformers: PerformanceRank[];
+}
+
+export interface OperationsDashboardFilterSnapshot {
+  fromDateUtc?: string;
+  toDateUtc?: string;
+  departmentId?: string;
+  employeeId?: string;
+  status?: string;
+}
+
+export interface DashboardKpis {
+  totalEmployees: number;
+  activeEmployees: number;
+  totalProfiles: number;
+  newProfilesToday: number;
+  newProfilesThisWeek: number;
+  newProfilesThisMonth: number;
+  approvedProfiles: number;
+  rejectedProfiles: number;
+  pendingProfiles: number;
+  returnedProfiles: number;
+  approvalRate: number;
+  rejectionRate: number;
+  averageApprovalHours: number;
+  totalAssignedTasks: number;
+  remainingTasks: number;
+  overdueTasks: number;
+}
+
+export interface TrendSeries {
+  points: TrendPoint[];
+}
+
+export interface TrendPoint {
+  label: string;
+  value: number;
+}
+
+export interface ProfileBreakdown {
+  byStatus: StatusCount[];
+  byDepartment: GroupCount[];
+  byPriority: GroupCount[];
+  aging: AgingBucket[];
+}
+
+export interface TaskMonitoring {
+  tasksByDepartment: GroupCount[];
+  tasksByUrgency: GroupCount[];
+  taskStatusStacked: GroupCount[];
+}
+
+export interface StatusCount {
+  status: string;
+  count: number;
+}
+
+export interface GroupCount {
+  label: string;
+  count: number;
+}
+
+export interface AgingBucket {
+  bucket: string;
+  count: number;
+}
+
+export interface TeamPerformanceRow {
+  employeeId: string;
+  name: string;
+  departmentName?: string;
+  assignedTasks: number;
+  activeTasks: number;
+  completedTasks: number;
+  remainingTasks: number;
+  overdueTasks: number;
+  profilesReviewed: number;
+  approvalRate: number;
+  rejectionRate: number;
+  averageHandlingHours: number;
+  averageResponseHours: number;
+  workloadRatio: number;
+  workloadBalanceIndicator: string;
+  productivityScore: number;
+}
+
+export interface PaginatedTeamPerformance {
+  items: TeamPerformanceRow[];
+  metadata: PaginationMetadata;
+}
+
+export interface PerformanceRank {
+  employeeId: string;
+  name: string;
+  score: number;
+}

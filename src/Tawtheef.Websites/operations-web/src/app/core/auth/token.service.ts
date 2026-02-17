@@ -1,7 +1,11 @@
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Injectable } from '@angular/core';
-import { AUTH_TOKEN_KEY, OAUTH_STATE_KEY, REFRESH_TOKEN_KEY } from '../constants/auth-tokens.const';
-import {SystemRoles} from '../constants/systemRoles';
+import {
+  AUTH_TOKEN_KEY,
+  OAUTH_STATE_KEY,
+  REFRESH_TOKEN_KEY,
+} from '../constants/auth-tokens.const';
+import { SystemRoles } from '../constants/systemRoles';
 
 interface TokenPair {
   accessToken: string;
@@ -12,8 +16,13 @@ interface TokenPair {
 export class TokenService {
   private jwtHelper = new JwtHelperService();
   private mem: Partial<TokenPair> = {}; // fallback
-  private readonly RoleIdentifier = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
+  private readonly RoleIdentifier =
+    'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+
+  // -----------------------
+  // Tokens
+  // -----------------------
   getToken(): string | null {
     return this.safeGet(AUTH_TOKEN_KEY) ?? this.mem.accessToken ?? null;
   }
@@ -35,6 +44,55 @@ export class TokenService {
     this.mem = {};
   }
 
+  // -----------------------
+  // Session helpers (NEW)
+  // -----------------------
+  hasUserData(): boolean {
+    try {
+      return !!localStorage.getItem('user_data');
+    } catch {
+      return false;
+    }
+  }
+
+  /** access token present AND (if JWT) not expired */
+  hasValidAccessToken(): boolean {
+    const t = this.getToken();
+    if (!t) return false;
+
+    const res = this.isJwtTokenValid(t);
+    // If token is opaque (null), treat as NOT valid for auth decisions
+    // (you can change this to true if your access tokens are never opaque)
+    if (res === null) return false;
+
+    return res;
+  }
+
+  /**
+   * refresh token present AND:
+   * - if JWT: not expired
+   * - if opaque: unknown -> treat as "attemptable" (true for refresh attempt decisions)
+   */
+  hasValidRefreshTokenOrUnknown(): boolean {
+    const rt = this.getRefreshToken();
+    if (!rt) return false;
+
+    const res = this.isJwtTokenValid(rt);
+    return res !== false; // true OR null => ok to attempt refresh
+  }
+
+  /**
+   * “Has session” means:
+   * user_data exists AND (valid access OR refresh is valid/unknown)
+   * This is what you should use for loggedOutOnlyGuard redirecting away from /auth/*
+   */
+  hasSession(): boolean {
+    return this.hasUserData() && (this.hasValidAccessToken() || this.hasValidRefreshTokenOrUnknown());
+  }
+
+  // -----------------------
+  // JWT helpers
+  // -----------------------
   decodeToken(token: string): any {
     return this.jwtHelper.decodeToken(token);
   }
@@ -55,12 +113,11 @@ export class TokenService {
     const parts = token.split('.');
     const looksLikeJwt = parts.length === 3;
 
-    if (!looksLikeJwt) return null; // opaque token; server decides
+    if (!looksLikeJwt) return null;
 
     try {
       return !this.jwtHelper.isTokenExpired(token);
     } catch {
-      // malformed JWT
       return false;
     }
   }
@@ -79,24 +136,64 @@ export class TokenService {
 
   /**
    * Useful when deciding whether to attempt refresh:
-   * - If returns false => don't even try, logout.
-   * - If returns true/null => you may try refresh (null = opaque).
+   * - false => don't try
+   * - true/null => can try (null = opaque)
    */
   canAttemptRefresh(): boolean {
-    const res = this.isRefreshTokenStillValid();
-    return res !== false;
+    return this.isRefreshTokenStillValid() !== false;
   }
 
+  // -----------------------
+  // Claims / roles (hardened)
+  // -----------------------
   getClaim(token: string, claimName: string): string | undefined {
     const decoded = this.decodeToken(token);
     return decoded?.[claimName];
   }
 
+  /** Prefer roles claim; keep userType only if your backend really sets it */
   getRoleFromToken(token: string): string {
+    const roles = this.getRolesFromToken(token);
+    if (roles.length) return roles[0]; // or your own priority logic
     const decoded = this.decodeToken(token);
     return decoded?.userType ?? '';
   }
 
+  public getMainUserRole(): string {
+    const rawRoles = this.getRolesFromToken(this.getToken() || '');
+    return rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
+      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
+        : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
+          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
+            : rawRoles.includes(SystemRoles.DepartmentManager) ? SystemRoles.DepartmentManager
+              : rawRoles.includes(SystemRoles.HrManager) ? SystemRoles.HrManager
+                : '';
+  }
+
+  getRolesFromToken(token: string): string[] {
+    if (!token) return [];
+
+    let decoded: any;
+    try {
+      decoded = this.decodeToken(token);
+    } catch {
+      return [];
+    }
+
+    const roles = decoded?.[this.RoleIdentifier];
+
+    if (Array.isArray(roles)) {
+      return roles.filter((r) => typeof r === 'string' && r.trim().length > 0);
+    }
+
+    if (typeof roles === 'string' && roles.trim().length > 0) return [roles];
+
+    return [];
+  }
+
+  // -----------------------
+  // Persistence
+  // -----------------------
   tryPersistTokens(tokens: TokenPair): boolean {
     try {
       if (tokens.accessToken) localStorage.setItem(AUTH_TOKEN_KEY, tokens.accessToken);
@@ -115,22 +212,5 @@ export class TokenService {
     } catch {
       return null;
     }
-  }
-  public getMainUserRole(): string{
-    const rawRoles = this.getRolesFromToken(this.getToken() || '');
-    return rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
-      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-        : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
-          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
-            : rawRoles.includes(SystemRoles.DepartmentManager) ? SystemRoles.DepartmentManager
-              : rawRoles.includes(SystemRoles.HrManager) ? SystemRoles.HrManager
-                : '';
-  }
-
-  getRolesFromToken(token: string): string[] {
-    const decoded = this.decodeToken(token);
-    const roles = decoded?.[this.RoleIdentifier];
-    if (Array.isArray(roles)) return roles;
-    else return [roles];
   }
 }

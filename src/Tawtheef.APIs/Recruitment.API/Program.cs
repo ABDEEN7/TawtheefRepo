@@ -205,6 +205,7 @@ app.UseSerilogRequestLogging(opts =>
     };
 });
 
+app.UseMiddleware<ResponseLoggingMiddleware>();
 #if DEBUG
 app.UseDeveloperExceptionPage();
 app.MapSwagger();
@@ -212,7 +213,6 @@ app.MapSwagger();
 app.UseExceptionHandler();
 #endif
 
-app.UseMiddleware<ResponseLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 

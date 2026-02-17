@@ -30,12 +30,13 @@
           <span>{{ `common.${language.getPrev()}` | translate }}</span>
           <i class="hgi hgi-stroke hgi-earth"></i>
         </button>
-        <ng-container *ngIf="!isLoggedIn">
+        <ng-container *ngIf="(isLoggedIn$ | async) === false">
           <a [routerLink]="routes.auth.login" class="btn btn-primary d-inline-flex align-items-center me-2">
             {{ 'public.nav.login' | translate }}
           </a>
         </ng-container>
-        <ng-container *ngIf="isLoggedIn">
+
+        <ng-container *ngIf="(isLoggedIn$ | async) === true">
           <a [routerLink]="routes.user.dashboard" class="btn btn-primary d-inline-flex align-items-center me-2">
             <i class="isax isax-user me-2"></i>{{ 'public.nav.profile.dashboard' | translate }}
           </a>

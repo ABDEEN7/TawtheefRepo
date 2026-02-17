@@ -195,4 +195,6 @@ public sealed class LocalStorageService : IFileStorageService
 
         return full;
     }
+    public Task<IResult<string>> GetSignedReadUrlAsync(string blobKey, TimeSpan ttl, string? downloadName = null, CancellationToken ct = default)
+        => Task.FromResult<IResult<string>>(Result.Fail<string>(ErrorsCodes.NotSupported));
 }

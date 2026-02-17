@@ -1,4 +1,18 @@
 ﻿{
+
+  "common.chart.profiles": "الملفات الشخصية",
+  "common.chart.completedTasks": "المهام المكتملة",
+  "common.chart.remainingTasks": "المهام المتبقية",
+  "common.chart.tasks": "المهام",
+  "common.InCreation": "قيد الإنشاء",
+  "common.UnderReview": "قيد التنفيذ",
+  "common.RequiresUpdate": "بحاجة الى تعديلات",
+  "common.Submitted": "مُرسل للمراجعة",
+  "common.Approved": "معتمدة",
+  "common.completed": "مكتمل",
+  "common.rejected": "مرفوض",
+  "common.remaining": "متبقي",
+  "common.overdue": "متأخر",
   "common.actions": "الإجراءات",
   "common.discard": "تجاهل",
   "common.next": "التالي",
