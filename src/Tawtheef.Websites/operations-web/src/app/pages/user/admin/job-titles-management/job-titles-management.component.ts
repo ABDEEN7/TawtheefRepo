@@ -17,7 +17,7 @@ interface JobTitleItem {
 @Component({
   selector: 'app-job-titles-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective],
+  imports: [CommonModule, ReactiveFormsModule, I18nNamespaceDirective],
   templateUrl: './job-titles-management.component.html'
 })
 export class JobTitlesManagementComponent implements OnInit {

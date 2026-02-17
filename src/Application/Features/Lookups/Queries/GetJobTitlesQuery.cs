@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetJobTitlesQuery : IQuery<IResult<List<DropdownOptions>>>;
+public sealed record GetJobTitlesQuery : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;

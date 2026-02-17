@@ -57,7 +57,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     departmentId: ['', Validators.required],
     yearsOfExperience: [0, [Validators.required, Validators.min(0)]],
     jobTitleId: ['', Validators.required],
-    jobNumber: [{ value: '', disabled: true }],
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
     genderId: ['',Validators.required],
@@ -102,13 +101,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   private setupSequenceListeners(): void {
-  this.form.controls.jobTitleId.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(jobTitleId => {
-      const selected = this.lookupsService.jobTitles().find(item => item.id === jobTitleId);
-      this.form.patchValue({ jobNumber: (selected?.additionalData as any)?.jobNumber || '' }, { emitEvent: false });
-    });
-
   this.form.controls.managementId.disable({ emitEvent: false });
   this.form.controls.departmentId.disable({ emitEvent: false });
 
@@ -158,7 +150,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           departmentId: jobResponse.department.id || '',
           yearsOfExperience: jobResponse.yearsOfExperience || 0,
           jobTitleId: jobResponse.jobTitleId || '',
-          jobNumber: jobResponse.jobNumber || '',
           jobCategoryId: jobResponse.jobCategory.id || '',
           workLocationId: jobResponse.workLocation.id || '',
           genderId: jobResponse.gender?.id || '',
@@ -233,7 +224,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     const normalizedClosingDate = this.normalizeDate(formValue.closingDate);
     const jobData = {
       jobTitleId: formValue.jobTitleId as GUID,
-      jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
       departmentId: formValue.departmentId as GUID,
@@ -265,7 +255,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       const copyPayload = {
         ...this.copyTemplate,
         jobTitleId: jobData.jobTitleId,
-        jobNumber: jobData.jobNumber,
         sectorId: jobData.sectorId,
         managementId: jobData.managementId,
         departmentId: jobData.departmentId,
@@ -345,7 +334,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
 
     const updateData = {
       jobTitleId: formValue.jobTitleId as GUID,
-      jobNumber: this.form.getRawValue().jobNumber,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
       departmentId: formValue.departmentId as GUID,
@@ -440,7 +428,6 @@ private applyTemplateToForm(template: JobCopyTemplate): void {
       departmentId: template.departmentId || '',
       yearsOfExperience: template.yearsOfExperience || 0,
       jobTitleId: template.jobTitleId || '',
-      jobNumber: template.jobNumber || '',
       jobCategoryId: template.jobCategoryId || '',
       workLocationId: template.workLocationId || '',
       genderId: template.genderId || '',

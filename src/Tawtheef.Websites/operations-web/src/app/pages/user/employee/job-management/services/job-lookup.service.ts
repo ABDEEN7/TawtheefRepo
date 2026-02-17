@@ -25,7 +25,6 @@ export class JobLookupService {
   degrees = signal<DropdownOptionVM[]>([]);
   workTypes = signal<DropdownOptionVM[]>([]);
   jobCategories = signal<DropdownOptionVM[]>([]);
-  jobTitles = signal<DropdownOptionVM[]>([]);
   genders = signal<DropdownOptionVM[]>([]);
   workLocations = signal<DropdownOptionVM[]>([]);
   nationalities = signal<DropdownOptionVM[]>([]);
@@ -47,7 +46,6 @@ export class JobLookupService {
       degrees: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.degrees),
       workTypes: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.workTypes),
       jobCategories: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.jobCategories),
-      jobTitles: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.jobTitles),
       genders: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.genders),
       targetEntities: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.targetEntities),
       nationalities: this.http.get<DropdownOptionVM[]>(this.endpoints.job.lookups.nationalities),
@@ -61,7 +59,6 @@ export class JobLookupService {
         this.degrees.set(this.toVMs(res.degrees));
         this.workTypes.set(this.toVMs(res.workTypes));
         this.jobCategories.set(this.toVMs(res.jobCategories));
-        this.jobTitles.set(this.toVMs(res.jobTitles));
         this.genders.set(this.toVMs(res.genders));
         this.workLocations.set(this.toVMs(res.targetEntities));
         this.nationalities.set(this.toVMs(res.nationalities));

@@ -83,9 +83,10 @@ public class JobController(IMediator mediator) : ControllerBase
     
     [HttpGet("lookups/job-titles")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> GetJobTitles()
+    public async Task<IActionResult> GetJobTitles([FromQuery] GetJobTitlesQuery query)
     {
-        var result = await mediator.Send(new GetJobTitlesQuery());
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(query with { Language = language });
         return result.ToActionResult();
     }
 

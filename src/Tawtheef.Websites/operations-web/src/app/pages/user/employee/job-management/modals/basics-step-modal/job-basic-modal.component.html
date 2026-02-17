@@ -6,7 +6,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.SECTOR' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.sectors()"
           formControlName="sectorId"
@@ -29,7 +29,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MANAGEMENT' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.managements()"
           formControlName="managementId"
@@ -52,7 +52,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.departments()"
           formControlName="departmentId"
@@ -95,25 +95,19 @@
         <label class="form-label">
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE' | translate }}
         </label>
-        <p-select
-          class="form-select px-0"
-          [options]="lookupsService.jobTitles()"
-          formControlName="jobTitleId"
+        <app-remote-select
+          [searchUrl]="endpoints.job.lookups.jobTitles"
+          [placeholder]="'JOB_WIZARD.STEPS.BASICS.JOB_TITLE' | translate"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
-          [filter]="true"
-          filterBy="additionalData.jobNameAr,additionalData.jobNameEn,name"
-          placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER' | translate }}"
-        ></p-select>
+          [minChars]="1"
+          formControlName="jobTitleId"  [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+          [appendTo]="'body'">
+        </app-remote-select>
         @if (form.controls.jobTitleId.touched && form.controls.jobTitleId.invalid) {
         <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
         }
-      </div>
-
-      <div class="col-md-6 mb-3">
-        <label class="form-label">{{ 'JOB_WIZARD.STEPS.BASICS.JOB_NUMBER' | translate }}</label>
-        <input pInputText class="form-control" formControlName="jobNumber" [disabled]="true"/>
       </div>
 
       <!-- jobCategory -->
@@ -122,7 +116,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.JOB_CATEGORY' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.jobCategories()"
           formControlName="jobCategoryId"
@@ -145,7 +139,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_LOCATION' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 "
           [options]="lookupsService.workLocations()"
           formControlName="workLocationId"
@@ -244,7 +238,7 @@
           <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.WORK_TYPE' | translate }}
         </label>
 
-        <p-select
+        <p-select [appendTo]="'body'"
           class="form-select px-0 px-0"
           [options]="lookupsService.workTypes()"
           formControlName="workTypeId"
