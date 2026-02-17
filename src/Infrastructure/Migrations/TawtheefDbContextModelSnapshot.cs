@@ -1412,7 +1412,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContactVerification");
+                    b.ToTable("ContactVerification", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.LoginAttempt", b =>
@@ -1490,7 +1490,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserTypeId");
 
-                    b.ToTable("LoginAttempt");
+                    b.ToTable("LoginAttempt", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.RefreshToken", b =>
@@ -1582,7 +1582,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Content.FAQ", b =>
@@ -1905,7 +1905,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EntityLog");
+                    b.ToTable("EntityLog", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.AchievementType", b =>
@@ -5864,7 +5864,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailQueues");
+                    b.ToTable("EmailQueues", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailTemplate", b =>
@@ -5927,7 +5927,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailTemplates");
+                    b.ToTable("EmailTemplates", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.Notification", b =>
@@ -6021,7 +6021,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("Status", "Channel");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.AuditTrailEntry", b =>
@@ -6150,7 +6150,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("HistoryInvitation");
+                    b.ToTable("HistoryInvitation", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
@@ -7806,7 +7806,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Resources");
+                    b.ToTable("Resources", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Security.Permission", b =>
@@ -8584,7 +8584,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmployeeProfile");
+                    b.ToTable("EmployeeProfile", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -9048,7 +9048,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSession");
+                    b.ToTable("UserSession", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
