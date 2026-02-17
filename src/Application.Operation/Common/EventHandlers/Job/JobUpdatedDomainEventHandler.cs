@@ -17,7 +17,7 @@ public sealed class JobUpdatedDomainEventHandler(
 {
     public async Task Handle(JobUpdatedDomainEvent notification, CancellationToken ct)
     {
-        var jobTitle = localizationService.GetLocalizedValue(notification.Job.TitleAr, notification.Job.TitleEn);
+        var jobTitle = localizationService.GetLocalizedValue(notification.Job.JobTitle?.JobNameAr ?? string.Empty, notification.Job.JobTitle?.JobNameEn ?? string.Empty);
         var payload = JsonSerializer.Serialize(new JobUpdatedNotificationModel(jobTitle));
         await JobNotificationEmailHelper.QueueForDepartmentManagerAsync(
             unitOfWork,

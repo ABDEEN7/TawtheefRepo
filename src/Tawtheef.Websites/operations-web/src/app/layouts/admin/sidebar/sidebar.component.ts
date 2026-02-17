@@ -39,6 +39,7 @@ export class SidebarComponent implements OnInit {
     { key: 'universities', label: 'admin.sidebar.universities', icon: 'assets/img/icons/university.svg', route: routes.admin.universitiesManagement, permission: Permissions.Universities.Manage },
     { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.admin.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
     { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'assets/img/icons/settings-icon.svg', route: routes.admin.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
+    { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'assets/img/icons/job.svg', route: routes.admin.jobTitlesManagement, permission: Permissions.Jobs.Manage },
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'assets/img/icons/settings-icon.svg', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
   ];
 

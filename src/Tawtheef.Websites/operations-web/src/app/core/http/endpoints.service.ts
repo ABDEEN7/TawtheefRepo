@@ -71,6 +71,7 @@ export class EndpointsService {
       degrees: this.getFullUrl('/job/lookups/degrees'),
       workTypes: this.getFullUrl('/job/lookups/work-types'),
       jobCategories: this.getFullUrl('/job/lookups/job-categories'),
+      jobTitles: this.getFullUrl('/job/lookups/job-titles'),
       genders: this.getFullUrl('/job/lookups/genders'),
       targetEntities: this.getFullUrl('/job/lookups/target-entities'),
       nationalities: this.getFullUrl('/job/lookups/nationalities'),
@@ -196,6 +197,14 @@ export class EndpointsService {
       cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
     }
   };
+
+  jobTitles = {
+    list: this.getFullUrl('/jobtitles'),
+    create: this.getFullUrl('/jobtitles'),
+    update: (id: string) => this.getFullUrl(`/jobtitles/${id}`),
+    delete: (id: string) => this.getFullUrl(`/jobtitles/${id}`)
+  };
+
   homeContent = {
     successStories: this.getFullUrl('/home-content/success-stories'),
     successStory: (id: string) => this.getFullUrl(`/home-content/success-stories/${id}`),

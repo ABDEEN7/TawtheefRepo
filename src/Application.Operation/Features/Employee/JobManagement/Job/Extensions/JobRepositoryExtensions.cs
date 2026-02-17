@@ -14,7 +14,7 @@ public static class JobRepositoryExtensions
             if (pagination == null || string.IsNullOrWhiteSpace(pagination.SortBy))
             {
                 return query.OrderByDescending(j => j.CreatedDate)
-                    .ThenBy(j => j.TitleEn);
+                    .ThenBy(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty);
             }
 
             var sort = pagination.SortBy.ToLower();
@@ -22,7 +22,7 @@ public static class JobRepositoryExtensions
 
             return sort switch
             {
-                "title" => desc ? query.OrderByDescending(j => j.TitleEn) : query.OrderBy(j => j.TitleEn),
+                "title" => desc ? query.OrderByDescending(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty) : query.OrderBy(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty),
                 "deadline" => desc ? query.OrderByDescending(j => j.ClosingDate) : query.OrderBy(j => j.ClosingDate),
                 "vacancies" => desc ? query.OrderByDescending(j => j.NumberOfVacancies) : query.OrderBy(j => j.NumberOfVacancies),
                 "created" or "createddate"
@@ -43,8 +43,9 @@ public static class JobRepositoryExtensions
 
                 // SEARCH
                 .WhereIf(!string.IsNullOrWhiteSpace(filter.SearchTerm),
-                    j => j.TitleAr.Contains(filter.SearchTerm!) ||
-                         j.TitleEn.Contains(filter.SearchTerm!) ||
+                    j => (j.JobTitle != null && j.JobTitle.JobNameAr.Contains(filter.SearchTerm!)) ||
+                         (j.JobTitle != null && j.JobTitle.JobNameEn.Contains(filter.SearchTerm!)) ||
+                         (j.JobTitle != null && j.JobTitle.JobNumber.Contains(filter.SearchTerm!)) ||
                          j.BenefitsAr!.Contains(filter.SearchTerm!) ||
                          j.BenefitsEn!.Contains(filter.SearchTerm!) ||
                          (j.OverViewAr ?? "").Contains(filter.SearchTerm!) ||

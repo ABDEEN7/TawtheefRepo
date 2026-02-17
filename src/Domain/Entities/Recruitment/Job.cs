@@ -13,12 +13,7 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 public sealed class Job : EventEntity
 {
     [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
-    [MaxLength(500, ErrorMessage = JobMessages.JobTitleArMaxLength)]
-    public required string TitleAr { get; set; }
-
-    [Required(ErrorMessage = JobMessages.JobTitleEnRequired)]
-    [MaxLength(500, ErrorMessage = JobMessages.JobTitleEnMaxLength)]
-    public required string TitleEn { get; set; }
+    public Guid JobTitleId { get; set; }
 
     [Required(ErrorMessage = JobMessages.SectorRequired)]
     public Guid SectorId { get; set; }
@@ -98,6 +93,7 @@ public sealed class Job : EventEntity
     public Management? Management { get; init; }
     public Department? Department { get; init; }
     public JobCategory? JobCategory { get; init; }
+    public JobTitle? JobTitle { get; init; }
     public TargetEntity? WorkLocation { get; init; }
     public Gender? Gender { get; init; }
     public Major? Major { get; init; }
@@ -129,4 +125,3 @@ public sealed class Job : EventEntity
             AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.Now));
     }
 }
-

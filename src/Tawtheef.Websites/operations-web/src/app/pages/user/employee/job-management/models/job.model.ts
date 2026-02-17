@@ -9,8 +9,10 @@ import { JobTabReviewNoteResponse } from './job-tab-review-note-response';
 import { JobReviewAttachmentResponse } from './job-review-attachment-response';
 
 export interface Job {
-  titleAr: string;
-  titleEn: string;
+  jobTitleId: GUID;
+  titleAr?: string;
+  titleEn?: string;
+  jobNumber?: string;
   sectorId: GUID;
   managementId: GUID;
   departmentId: GUID;
@@ -40,4 +42,3 @@ export interface Job {
   tabReviewNotes?: JobTabReviewNoteResponse[];
   ReviewAttachment?: JobReviewAttachmentResponse;
 }
-

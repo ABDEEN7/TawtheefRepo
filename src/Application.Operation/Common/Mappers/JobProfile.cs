@@ -46,6 +46,9 @@ public class JobProfile : IRegister
             .Ignore(dest => dest.ReviewAttachment!);
 
         config.NewConfig<Job, JobResponseDto>()
+            .Map(dest => dest.TitleAr, src => src.JobTitle != null ? src.JobTitle.JobNameAr : string.Empty)
+            .Map(dest => dest.TitleEn, src => src.JobTitle != null ? src.JobTitle.JobNameEn : string.Empty)
+            .Map(dest => dest.JobNumber, src => src.JobTitle != null ? src.JobTitle.JobNumber : string.Empty)
             .Map(dest => dest.JobStatus, src => src.JobStatus)
             .Map(dest => dest.Degrees, src => src.JobDegrees)
             .Map(dest => dest.Conditions, src => src.JobConditions)
@@ -56,6 +59,9 @@ public class JobProfile : IRegister
             .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment);
         
         config.NewConfig<Job, JobCopyTemplateDto>()
+            .Map(dest => dest.JobTitleAr, src => src.JobTitle != null ? src.JobTitle.JobNameAr : string.Empty)
+            .Map(dest => dest.JobTitleEn, src => src.JobTitle != null ? src.JobTitle.JobNameEn : string.Empty)
+            .Map(dest => dest.JobNumber, src => src.JobTitle != null ? src.JobTitle.JobNumber : string.Empty)
             .Map(dest => dest.OverviewAr, src => src.OverViewAr)
             .Map(dest => dest.OverviewEn, src => src.OverViewEn)
             .Map(dest => dest.QualificationsDescriptionAr, src => src.QualificationDescriptionAr)
@@ -87,7 +93,7 @@ public class JobProfile : IRegister
         config.NewConfig<JobRequiredAttachment, JobRequiredAttachmentRequestDto>();
         
         config.NewConfig<Job, CandidateJobDetailsDto>()
-            .Map(d => d.Title, s => Localize(s.TitleAr, s.TitleEn))
+            .Map(d => d.Title, s => Localize(s.JobTitle != null ? s.JobTitle.JobNameAr : string.Empty, s.JobTitle != null ? s.JobTitle.JobNameEn : string.Empty))
             .Map(d => d.Benefits, s => Localize(s.BenefitsAr ?? string.Empty, s.BenefitsEn ?? string.Empty))
             .Map(d => d.OverView, s => Localize(s.OverViewAr ?? string.Empty, s.OverViewEn ?? string.Empty))
             .Map(d => d.QualificationDescription, s =>

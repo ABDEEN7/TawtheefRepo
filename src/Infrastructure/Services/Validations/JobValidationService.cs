@@ -20,7 +20,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         var failures = new List<ValidationFailure>();
 
         if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
-            dto.TitleAr, dto.TitleEn,
+            dto.JobTitleId,
             dto.SectorId, dto.ManagementId, dto.DepartmentId,
             dto.JobCategoryId, dto.WorkLocationId, dto.WorkTypeId,
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
@@ -87,7 +87,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     {
          return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
         .AnyAsync(j =>
-            j.TitleAr == jobDto.TitleAr &&
+            j.JobTitleId == jobDto.JobTitleId &&
             j.DepartmentId == jobDto.DepartmentId &&
             j.JobCategoryId == jobDto.JobCategoryId &&
             j.MajorId == jobDto.MajorId &&
@@ -152,7 +152,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (dto.RequiredAttachments?.Any(a => string.IsNullOrWhiteSpace(a.TitleEn)) == true)
             failures.Add(new ValidationFailure("Attachment.TitleEn", JobMessages.AttachmentTitleRequired));
 
-        if ((dto.TitleAr != existingJob.TitleAr || dto.TitleEn != existingJob.TitleEn) &&
+        if ((dto.JobTitleId != existingJob.JobTitleId) &&
             !JobBusinessRules.CanModifyTitle(existingJob.JobStatusId))
         {
             failures.Add(new ValidationFailure("Title", JobMessages.CannotModifyTitle));
@@ -184,7 +184,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             (job.JobStatusId == JobStatusIds.Draft || job.JobStatusId == JobStatusIds.NeedUpdate))
         {
             if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
-                    job.TitleAr, job.TitleEn,
+                    job.JobTitleId,
                     job.SectorId, job.ManagementId, job.DepartmentId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
@@ -210,7 +210,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (newStatusId == JobStatusIds.Approved)
         {
             if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
-                    job.TitleAr, job.TitleEn,
+                    job.JobTitleId,
                     job.SectorId, job.ManagementId, job.DepartmentId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
@@ -302,7 +302,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             .AsNoTracking()
             .AnyAsync(existing =>
                 existing.Id != job.Id &&
-                existing.TitleAr == job.TitleAr &&
+                existing.JobTitleId == job.JobTitleId &&
                 existing.DepartmentId == job.DepartmentId &&
                 existing.JobCategoryId == job.JobCategoryId &&
                 existing.MajorId == job.MajorId &&

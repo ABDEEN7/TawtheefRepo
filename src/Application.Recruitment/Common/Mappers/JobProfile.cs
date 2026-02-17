@@ -19,7 +19,7 @@ public class JobProfile : IRegister
             .Map(dest => dest.Url, src => src.Attachment != null ? src.Attachment.Url : string.Empty);
         
         config.NewConfig<Job, CandidateJobDetailsDto>()
-            .Map(d => d.Title, s => Localize(s.TitleAr, s.TitleEn))
+            .Map(d => d.Title, s => Localize(s.JobTitle!.JobNameAr, s.JobTitle!.JobNameEn))
             .Map(d => d.Benefits, s => Localize(s.BenefitsAr ?? string.Empty, s.BenefitsEn ?? string.Empty))
             .Map(d => d.OverView, s => Localize(s.OverViewAr ?? string.Empty, s.OverViewEn ?? string.Empty))
             .Map(d => d.QualificationDescription, s =>

@@ -60,8 +60,7 @@ public class UpdateJobCommandHandler(
         if (request.Job.RequiredAttachments != null)
             await UpdateRequiredAttachmentsAsync(existingJob, request.Job.RequiredAttachments);
 
-        existingJob.TitleAr = request.Job.TitleAr;
-        existingJob.TitleEn = request.Job.TitleEn;
+        existingJob.JobTitleId = request.Job.JobTitleId;
         existingJob.SectorId = request.Job.SectorId;
         existingJob.ManagementId = request.Job.ManagementId;
         existingJob.DepartmentId = request.Job.DepartmentId;
