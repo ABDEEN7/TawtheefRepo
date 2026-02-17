@@ -322,7 +322,7 @@
                             <div class="col-12">
                               <label class="form-label">
                                 {{ 'profileApproval.detail.sectionApproval.statusLabel' | translate }}
-                                <span class="req">*</span>
+                                <span class="req" *ngIf="!sectionIsAutoApprovedEmpty(sec.section)">*</span>
                               </label>
 
                               <p-select
@@ -332,6 +332,7 @@
                                 optionLabel="labelKey"
                                 [ngModel]="draftStatus[sec.section]"
                                 [placeholder]="'profileApproval.detail.sectionApproval.statusPlaceholder' | translate"
+                                [disabled]="sectionIsAutoApprovedEmpty(sec.section)"
                                 (onChange)="onSectionStatusChange(sec.section, $event.value)">
                                 <ng-template pTemplate="selectedItem" let-opt>
                                   <span *ngIf="opt">{{ opt.labelKey | translate }}</span>
@@ -343,7 +344,11 @@
                               </p-select>
 
                               <div class="text-muted small mt-2"
-                                   *ngIf="draftStatus[sec.section] === ReviewStatus.Pending">
+                                   *ngIf="sectionIsAutoApprovedEmpty(sec.section)">
+                                {{ 'profileApproval.detail.sectionApproval.autoApprovedLocked' | translate }}
+                              </div>
+                              <div class="text-muted small mt-2"
+                                   *ngIf="!sectionIsAutoApprovedEmpty(sec.section) && draftStatus[sec.section] === ReviewStatus.Pending">
                                 {{ 'profileApproval.detail.sectionApproval.statusRequiredHint' | translate }}
                               </div>
                               <div class="text-danger small mt-2"
@@ -358,7 +363,7 @@
 
                             <!-- Notes appear when needed or user typed something -->
                             <div class="col-12"
-                                 *ngIf="draftStatus[sec.section] === ReviewStatus.NeedsCorrection || (draftNote[sec.section] ?? '').trim().length">
+                                 *ngIf="!sectionIsAutoApprovedEmpty(sec.section) && (draftStatus[sec.section] === ReviewStatus.NeedsCorrection || (draftNote[sec.section] ?? '').trim().length)">
                               <label class="form-label">
                                 {{ 'profileApproval.detail.sectionApproval.notesLabel' | translate }}
                                 <span class="req" *ngIf="draftStatus[sec.section] === ReviewStatus.NeedsCorrection">*</span>
@@ -408,7 +413,7 @@
 
                               <button pButton type="button"
                                       (click)="saveSectionDecision(sec.section)"
-                                      [disabled]="isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section) || sectionHasUndecidedItems(sec.section) || sectionApprovalBlocked(sec.section)">
+                                      [disabled]="sectionIsAutoApprovedEmpty(sec.section) || isSaving(sec.section) || draftStatus[sec.section] === ReviewStatus.Pending || noteRequired(sec.section) || sectionHasUndecidedItems(sec.section) || sectionApprovalBlocked(sec.section)">
                                 <ng-container *ngIf="!isSaving(sec.section); else savingTpl">
                                   <i pButtonIcon class="pi pi-save"></i>
                                   <span pButtonLabel>{{ 'profileApproval.detail.sectionApproval.save' | translate }}</span>

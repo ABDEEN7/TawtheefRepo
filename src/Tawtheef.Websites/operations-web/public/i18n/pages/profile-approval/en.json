@@ -273,6 +273,7 @@
   "profileApproval.detail.sectionApproval.saving": "Saving...",
   "profileApproval.detail.sectionApproval.noteRequired": "Please provide a note explaining the required correction",
   "profileApproval.detail.sectionApproval.statusRequiredHint": "Please select a decision for this section before continuing",
+  "profileApproval.detail.sectionApproval.autoApprovedLocked": "This section has no data, so it is auto-approved and cannot be changed.",
   "profileApproval.detail.reviewState": "Review state",
   "profileApproval.detail.startReview": "Start review",
   "profileApproval.detail.startReviewOk": "Review started.",
