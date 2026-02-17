@@ -49,7 +49,7 @@ public class ResourcesController(IMediator mediator) : ControllerBase
         var file = result.Value;
 
         if (file.SourceKind == FileSourceKind.RedirectUrl)
-            return Redirect(file.RedirectUrl!);
+            return Ok(new { url = file.RedirectUrl });
 
         // LocalPath
         var path = file.LocalPath!;

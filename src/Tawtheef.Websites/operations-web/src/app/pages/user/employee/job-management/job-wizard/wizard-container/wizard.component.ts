@@ -535,10 +535,6 @@ private saveDraft(): void {
     this.fileUtils.previewUrl(file.url).then(() => {});
   }
 
-  download(file: any): void {
-    this.fileUtils.downloadUrl(file.url, file.fileName).then(() => {});
-  }
-
   fileIcon(name?: string): string {
     return name ? this.fileUtils.getFileIconClass(name) : '';
   }
