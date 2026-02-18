@@ -27,11 +27,18 @@
                     <h2 class="fw-bold fs-4"></h2>
                     <h5 class="hint">{{ 'auth.login.choose_residency' | translate }}</h5>
                   </div>
+
+                  @if (auth.loading && auth.popupStatusKey) {
+                    <div class="alert alert-info py-2 px-3 mb-3" role="status" aria-live="polite">
+                      {{ auth.popupStatusKey | translate }}
+                    </div>
+                  }
+
 <!--                  <button type="button" class="btn btn-primary btn-lg w-100 mb-3" (click)="startLogin('qatar_pass')">-->
 <!--                    <i class="fa-solid fa-shield-halved"></i>-->
 <!--                    <span>{{ 'auth.login.tawtheeq_cta' | translate }}</span>-->
 <!--                  </button>-->
-                <button type="button" class="btn btn-primary btn-lg w-100 mb-3" (click)="startLogin('qatar_resident')">
+                <button type="button" class="btn btn-primary btn-lg w-100 mb-3" (click)="startLogin('qatar_resident')" [disabled]="auth.loading">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>{{ 'auth.login.qatar_resident_cta'  | translate }}</span>
                  </button>
@@ -39,7 +46,7 @@
                 <div class="text-center my-5">
                     <h5 class="fw-bold ">{{ 'auth.login.non_qatar' | translate}}</h5>
 
-                    <button type="button" class="btn btn-outline-primary w-100 btn-lg my-3" (click)="startLogin('google')"><i class="fa-brands fa-google"></i><span>{{ 'auth.login.google_cta' | translate }}</span>
+                    <button type="button" class="btn btn-outline-primary w-100 btn-lg my-3" (click)="startLogin('google')" [disabled]="auth.loading"><i class="fa-brands fa-google"></i><span>{{ 'auth.login.google_cta' | translate }}</span>
                     </button>
                 </div>
 

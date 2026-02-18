@@ -20,7 +20,7 @@ type ResidencyMode = 'resident' | 'nonresident';
 export class Login implements OnInit, OnDestroy{
 
   private lang = inject(LanguageService);
-  private auth = inject(ExternalLoginService);
+  readonly auth = inject(ExternalLoginService);
   private http = inject(HttpService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
