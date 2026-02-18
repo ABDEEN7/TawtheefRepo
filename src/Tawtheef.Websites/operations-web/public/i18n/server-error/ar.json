@@ -240,7 +240,7 @@
   "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "المرفق مكرر.",
   "server-error.INVALID_ATTACHMENT_FILE": "ملف المرفق غير صالح.",
   "server-error.CV_FILE_REQUIRED": "ملف السيرة الذاتية مطلوب.",
-  "server-error.ID_FILE_REQUIRED": "ملف الهوية مطلوب.",
+  "server-error.ID_FILE_REQUIRED": "البطاقة الشخصية مطلوب.",
   "server-error.MARRIAGE_CERTIFICATE_FILE_REQUIRED": "شهادة الزواج مطلوبة.",
   "server-error.BIRTH_CERTIFICATE_FILE_REQUIRED": "شهادة الميلاد مطلوبة.",
   "server-error.SPONSOR_CARD_REQUIRED": "بطاقة الكفيل مطلوبة.",
