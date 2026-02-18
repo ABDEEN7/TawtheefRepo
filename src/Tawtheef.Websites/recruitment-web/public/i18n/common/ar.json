@@ -1,4 +1,4 @@
-﻿{
+{
   "common.error": "خطأ",
   "common.success": "نجاح",
   "common.submit": "إرسال",
@@ -52,19 +52,20 @@
   "common.save": "حفظ",
   "app.pagination.no_results": "لا توجد نتائج للعرض.",
   "common.charactersRemaining": "{{count}} حرف متبقي",
-
   "auth.externalLogin.popupBlocked.summary": "تم حظر النافذة المنبثقة",
   "auth.externalLogin.popupBlocked.detail": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع للمتابعة بتسجيل الدخول الخارجي",
-
   "auth.externalLogin.authError.summary": "خطأ",
   "auth.externalLogin.authError.detail": "حدث خطأ أثناء المصادقة",
-
   "auth.externalLogin.loginFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.loginFailed.detail": "تعذر المصادقة عبر مزود تسجيل الدخول الخارجي",
-
   "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية",
-
   "auth.storageBlocked.summary": "تم حظر التخزين",
-  "auth.storageBlocked.detail": "المتصفح يقوم بحظر التخزين. يرجى استخدام متصفح عادي (ليس داخل التطبيق أو التصفح الخاص)."
+  "auth.storageBlocked.detail": "المتصفح يقوم بحظر التخزين. يرجى استخدام متصفح عادي (ليس داخل التطبيق أو التصفح الخاص).",
+  "auth.externalLogin.popupClosed.summary": "تم إغلاق نافذة تسجيل الدخول",
+  "auth.externalLogin.popupClosed.detail": "تم إغلاق نافذة تسجيل الدخول قبل اكتمال المصادقة. يرجى المحاولة مرة أخرى.",
+  "auth.externalLogin.timeout.summary": "انتهت مهلة تسجيل الدخول",
+  "auth.externalLogin.timeout.detail": "استغرق إكمال تسجيل الدخول الخارجي وقتًا أطول من المتوقع. يرجى المحاولة مرة أخرى.",
+  "auth.externalLogin.loadingOpening": "جارٍ فتح نافذة تسجيل الدخول…",
+  "auth.externalLogin.loadingCompleting": "جارٍ إكمال تسجيل الدخول…"
 }

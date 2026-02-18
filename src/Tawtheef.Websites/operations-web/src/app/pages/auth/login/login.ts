@@ -16,7 +16,7 @@ import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.
   ]
 })
 export class Login implements OnInit, OnDestroy {
-  private auth = inject(ExternalLoginService);
+  readonly auth = inject(ExternalLoginService);
   private lang = inject(LanguageService);
 
   currentLang: 'ar' | 'en' = 'ar';
