@@ -1,4 +1,4 @@
-﻿{
+{
   "common.error": "Error",
   "common.success": "Success",
   "common.submit": "Submit",
@@ -18,7 +18,6 @@
   "common.notVerified": "Not Verified",
   "common.none": "None",
   "common.loadFailed": "Failed to load data",
-
   "validation.required": "This field is required",
   "validation.range": "The value must be between {{min}} and {{max}}",
   "validation.yearRange": "Graduation year must be between {{min}} and {{max}}",
@@ -37,9 +36,7 @@
   "validation.invalidFileType": "Unsupported file type.",
   "validation.maxFileSize": "File size must not exceed {{size}} MB.",
   "validation.dateRange": "End date must be after start date.",
-
   "remote-select.search-hint": "There is no data available.",
-
   "common.ar": "Arabic",
   "common.en": "English",
   "common.optional": "Optional",
@@ -55,19 +52,20 @@
   "common.save": "Save",
   "app.pagination.no_results": "No results to display.",
   "common.charactersRemaining": "{{count}} characters remaining",
-
   "auth.externalLogin.popupBlocked.summary": "Popup Blocked",
   "auth.externalLogin.popupBlocked.detail": "Please allow popups for this site to continue with external login",
-
   "auth.externalLogin.authError.summary": "Error",
   "auth.externalLogin.authError.detail": "An error occurred during authentication",
-
   "auth.externalLogin.loginFailed.summary": "Login Failed",
   "auth.externalLogin.loginFailed.detail": "Authentication via the external login provider failed",
-
   "auth.externalLogin.externalAuthFailed.summary": "Login Failed",
   "auth.externalLogin.externalAuthFailed.detailFallback": "External authentication failed",
-
   "auth.storageBlocked.summary": "Storage Blocked",
-  "auth.storageBlocked.detail": "The browser is blocking storage. Please use a regular browser (not in-app or private browsing mode)."
+  "auth.storageBlocked.detail": "The browser is blocking storage. Please use a regular browser (not in-app or private browsing mode).",
+  "auth.externalLogin.popupClosed.summary": "Login window closed",
+  "auth.externalLogin.popupClosed.detail": "The login window was closed before authentication completed. Please try again.",
+  "auth.externalLogin.timeout.summary": "Login timed out",
+  "auth.externalLogin.timeout.detail": "Completing external login took too long. Please try again.",
+  "auth.externalLogin.loadingOpening": "Opening login window…",
+  "auth.externalLogin.loadingCompleting": "Completing login…"
 }
