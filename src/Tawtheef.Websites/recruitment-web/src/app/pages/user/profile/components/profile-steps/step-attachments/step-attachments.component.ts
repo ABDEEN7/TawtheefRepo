@@ -48,7 +48,13 @@ export class StepAttachmentsComponent implements OnInit {
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
     attachments.forEach((att: any, idx: number) => {
-      const row = this.createRow(att.name ?? '', att.fileName ?? att.fileRef?.resourceName ?? att.name ?? '', true, att.id, att.attachmentId);
+      const row = this.createRow(
+        att.title ?? '',
+        att.fileName ?? att.fileRef?.resourceName ?? att.name ?? '',
+        true,
+        att.id,
+        att.attachmentId
+      );
       this.rows.push(row);
       this.filesStore[idx] = att.file ?? null;
       this.fileRefs[idx] = att.fileRef ?? null;
