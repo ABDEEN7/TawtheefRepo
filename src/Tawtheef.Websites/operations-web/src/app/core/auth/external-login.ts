@@ -1,13 +1,13 @@
-﻿import {inject, Injectable, NgZone, OnDestroy} from '@angular/core';
-import {AuthService} from './auth.service';
-import {EndpointsService} from '../http/endpoints.service';
-import {LoadingService} from '../services/loading.service';
-import {environment} from '../../../environments/environment';
-import {fromEvent, interval, Subject} from 'rxjs';
-import {filter, map, takeUntil, tap} from 'rxjs/operators';
-import {NotificationService} from '../services/notification.service';
-import {TranslateService} from '@ngx-translate/core';
-import {OAUTH_STATE_KEY} from '../constants/auth-tokens.const';
+import { inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { AuthService } from './auth.service';
+import { EndpointsService } from '../http/endpoints.service';
+import { LoadingService } from '../services/loading.service';
+import { environment } from '../../../environments/environment';
+import { fromEvent, interval, merge, Subject, Subscription, timer } from 'rxjs';
+import { filter, finalize, map, takeUntil } from 'rxjs/operators';
+import { NotificationService } from '../services/notification.service';
+import { TranslateService } from '@ngx-translate/core';
+import { OAUTH_STATE_KEY } from '../constants/auth-tokens.const';
 
 type ExternalMessageType = 'EXTERNAL_LOGIN_SUCCESS' | 'EXTERNAL_LOGIN_ERROR' | 'EXTERNAL_POPUP_CLOSED';
 interface ExternalMessage {
@@ -20,8 +20,14 @@ interface ExternalMessage {
 export class ExternalLoginService implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
   private popup: Window | null = null;
+  private popupDone$: Subject<void> | null = null;
+  private popupPollSub: Subscription | null = null;
+  private popupTimeoutSub: Subscription | null = null;
+  private popupFocusSub: Subscription | null = null;
+
   private readonly popupWidth = 600;
   private readonly popupHeight = 800;
+  private readonly popupTimeoutMs = 60_000;
 
   private readonly ngZone = inject(NgZone);
   private readonly authService = inject(AuthService);
@@ -31,6 +37,10 @@ export class ExternalLoginService implements OnDestroy {
   private readonly translate = inject(TranslateService);
 
   loading = false;
+  popupStatusKey: string | null = null;
+
+  private externalLoadingActive = false;
+  private readonly allowedOrigins = this.buildAllowedOrigins();
 
   // i18n keys (service-local)
   private readonly i18n = {
@@ -48,32 +58,17 @@ export class ExternalLoginService implements OnDestroy {
     authErrorDetailLogin: 'auth.externalLogin.authError.detailLogin',
 
     externalAuthFailedDetailFallback: 'auth.externalLogin.externalAuthFailed.detailFallback',
+
+    popupClosedSummary: 'auth.externalLogin.popupClosed.summary',
+    popupClosedDetail: 'auth.externalLogin.popupClosed.detail',
+    timeoutSummary: 'auth.externalLogin.timeout.summary',
+    timeoutDetail: 'auth.externalLogin.timeout.detail',
+
+    loadingOpening: 'auth.externalLogin.loadingOpening',
+    loadingCompleting: 'auth.externalLogin.loadingCompleting',
   } as const;
 
-  private i18nText(key: string, prefix: string = ''): string {
-    const error_message = [prefix, key].filter(key=> !!key).join('.');
-    const translate_message = this.translate.instant(error_message);
-    if(translate_message == error_message)
-      return key;
-
-    return translate_message;
-  }
-  private safeIsPopupClosed(): boolean {
-    try {
-      // Accessing .closed can throw under COOP when popup is cross-origin
-      return !this.popup || this.popup.closed;
-    } catch {
-      // Treat as "not closed" and let postMessage or timeout handle the flow
-      return false;
-    }
-  }
-
   constructor() {
-    this.loadingService.loading$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((state) => (this.loading = state));
-
-    // Listen for all postMessages reactively
     fromEvent<MessageEvent>(window, 'message')
       .pipe(
         takeUntil(this.destroy$),
@@ -83,31 +78,31 @@ export class ExternalLoginService implements OnDestroy {
       .subscribe((msg) => this.ngZone.run(() => this.handleMessage(msg)));
   }
 
-  /** Starts the Azure login process */
-  loginUsingAzure() {
-    const url = this.endpoints.auth.externalLogin('Azure');
-    this.closePopup();
-
-    const { left, top } = this.centerPopup();
-    this.popup = window.open(
-      url,
-      '_external_login',
-      `width=${this.popupWidth},height=${this.popupHeight},left=${left},top=${top}`
-    );
-
-    if (this.safeIsPopupClosed()) {
-      return this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetailShort);
+  private i18nText(key: string, prefix = ''): string {
+    const errorMessage = [prefix, key].filter((segment) => !!segment).join('.');
+    const translated = this.translate.instant(errorMessage);
+    if (translated === errorMessage) {
+      return key;
     }
 
-    // RxJS polling to detect manual popup close
-    interval(400)
-      .pipe(
-        takeUntil(this.destroy$),
-        map(() => this.safeIsPopupClosed()),
-        filter(Boolean),
-        tap(() => this.closePopup())
-      )
-      .subscribe();
+    return translated;
+  }
+
+  private safeIsPopupClosed(): boolean {
+    try {
+      // Accessing window.closed can throw under COOP when the popup is cross-origin.
+      // In that case we fallback to postMessage, focus checks, and a hard timeout.
+      return !this.popup || this.popup.closed;
+    } catch {
+      // Treat as "not closed" and let postMessage or timeout handle the flow.
+      return false;
+    }
+  }
+
+  /** Starts the Azure login process */
+  loginUsingAzure(): void {
+    const url = this.endpoints.auth.externalLogin('Azure');
+    this.startNewPopupFlow(url, this.i18n.popupBlockedDetailShort, this.centerPopup());
   }
 
   public loginUsingGoogle(): void {
@@ -116,74 +111,149 @@ export class ExternalLoginService implements OnDestroy {
   }
 
   private openPopupWithState(baseUrl: string): void {
-    this.closePopup();
-
     const state = Math.random().toString(36).slice(2);
     localStorage.setItem(OAUTH_STATE_KEY, state);
     const url = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
 
-    const { left, top } = this.centeredPosition();
+    this.startNewPopupFlow(url, this.i18n.popupBlockedDetailContinue, this.centeredPosition());
+  }
+
+  private startNewPopupFlow(
+    url: string,
+    popupBlockedDetailKey: string,
+    position: { left: number; top: number }
+  ): void {
+    this.finishPopupFlow({ stopLoading: true, closePopup: true });
+    this.popupDone$ = new Subject<void>();
+
+    this.setLoadingState(true, this.i18n.loadingOpening);
     this.popup = window.open(
       url,
       '_external_login',
-      `width=${this.popupWidth},height=${this.popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      `width=${this.popupWidth},height=${this.popupHeight},left=${position.left},top=${position.top},resizable=yes,scrollbars=yes`
     );
 
     if (this.safeIsPopupClosed()) {
-      this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetailContinue);
+      this.finishPopupFlow({ stopLoading: true, closePopup: true });
+      this.toastKey('warn', this.i18n.popupBlockedSummary, popupBlockedDetailKey);
       return;
     }
 
-    // Fallback: detect manual close via polling
-    interval(350)
-      .pipe(
-        takeUntil(this.destroy$),
-        map(() => this.safeIsPopupClosed()),
-        filter(Boolean),
-        tap(() => this.closePopup())
-      )
-      .subscribe();
+    this.setLoadingState(true, this.i18n.loadingCompleting);
+
+    const untilPopupDone$ = merge(this.destroy$, this.popupDone$);
+
+    this.popupPollSub = interval(350)
+      .pipe(takeUntil(untilPopupDone$))
+      .subscribe(() => {
+        if (this.safeIsPopupClosed()) {
+          this.finishPopupFlow({ stopLoading: true, closePopup: true });
+          this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
+        }
+      });
+
+    this.popupTimeoutSub = timer(this.popupTimeoutMs)
+      .pipe(takeUntil(untilPopupDone$))
+      .subscribe(() => {
+        this.finishPopupFlow({ stopLoading: true, closePopup: true });
+        this.toastKey('warn', this.i18n.timeoutSummary, this.i18n.timeoutDetail);
+      });
+
+    this.popupFocusSub = fromEvent(window, 'focus')
+      .pipe(takeUntil(untilPopupDone$))
+      .subscribe(() => {
+        if (this.popup && this.safeIsPopupClosed()) {
+          this.finishPopupFlow({ stopLoading: true, closePopup: true });
+          this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
+        }
+      });
+  }
+
+  private finishPopupFlow(options: { stopLoading: boolean; closePopup: boolean }): void {
+    if (this.popupDone$) {
+      this.popupDone$.next();
+      this.popupDone$.complete();
+      this.popupDone$ = null;
+    }
+
+    this.popupPollSub?.unsubscribe();
+    this.popupPollSub = null;
+
+    this.popupTimeoutSub?.unsubscribe();
+    this.popupTimeoutSub = null;
+
+    this.popupFocusSub?.unsubscribe();
+    this.popupFocusSub = null;
+
+    if (options.closePopup) {
+      this.closePopup();
+    }
+
+    if (options.stopLoading) {
+      this.setLoadingState(false);
+    }
   }
 
   /** Handles all incoming messages */
-  private handleMessage(msg: ExternalMessage) {
+  private handleMessage(msg: ExternalMessage): void {
     switch (msg.type) {
       case 'EXTERNAL_LOGIN_SUCCESS':
-        this.authService.externalLogin(msg.userData).subscribe({
-          next: (success) =>
-            success
-              ? this.toastKey('success', this.i18n.loginSuccessfulSummary, this.i18n.loginSuccessfulDetail)
-              : this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetailProvider),
-        });
-        this.closePopup();
+        this.setLoadingState(true, this.i18n.loadingCompleting);
+        this.finishPopupFlow({ stopLoading: false, closePopup: true });
+        this.authService
+          .externalLogin(msg.userData)
+          .pipe(finalize(() => this.setLoadingState(false)))
+          .subscribe({
+            next: (success) =>
+              success
+                ? this.toastKey('success', this.i18n.loginSuccessfulSummary, this.i18n.loginSuccessfulDetail)
+                : this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetailProvider),
+            error: () =>
+              this.toastKey('error', this.i18n.authErrorSummary, this.i18n.authErrorDetailLogin),
+          });
         break;
 
-      case 'EXTERNAL_LOGIN_ERROR':
-        const error_list = msg.message;
+      case 'EXTERNAL_LOGIN_ERROR': {
+        this.finishPopupFlow({ stopLoading: true, closePopup: true });
+        const errorList = msg.message;
         this.toast(
           'error',
           this.i18nText(this.i18n.loginFailedSummary),
-          error_list?.map(k=> this.i18nText(k.message, 'server-error')).join('\n')
+          errorList?.map((item) => this.i18nText(item.message, 'server-error')).join('\n')
             ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback),
         );
-        this.closePopup();
         break;
+      }
 
       case 'EXTERNAL_POPUP_CLOSED':
-        this.closePopup();
+        this.finishPopupFlow({ stopLoading: true, closePopup: true });
+        this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
         break;
     }
   }
 
   /** Checks allowed origins */
-  private isAllowedOrigin(origin: string) {
-    const allowed = [window.location.origin, environment.apiBaseUrl];
-    return allowed.includes(origin);
+  private isAllowedOrigin(origin: string): boolean {
+    return this.allowedOrigins.includes(origin);
+  }
+
+  private buildAllowedOrigins(): string[] {
+    const origins = [window.location.origin];
+
+    try {
+      origins.push(new URL(environment.apiBaseUrl).origin);
+    } catch {
+      // Keep app origin fallback if API base URL is malformed.
+    }
+
+    return [...new Set(origins)];
   }
 
   /** Closes popup safely */
-  private closePopup() {
-    if (!this.safeIsPopupClosed()) this.popup!.close();
+  private closePopup(): void {
+    if (!this.safeIsPopupClosed()) {
+      this.popup!.close();
+    }
     this.popup = null;
   }
 
@@ -216,11 +286,26 @@ export class ExternalLoginService implements OnDestroy {
     }
   }
 
+  private setLoadingState(isLoading: boolean, statusKey: string | null = null): void {
+    if (isLoading && !this.externalLoadingActive) {
+      this.loadingService.start();
+      this.externalLoadingActive = true;
+    }
+
+    if (!isLoading && this.externalLoadingActive) {
+      this.loadingService.stop();
+      this.externalLoadingActive = false;
+    }
+
+    this.loading = isLoading;
+    this.popupStatusKey = isLoading ? statusKey : null;
+  }
+
   /** Utilities */
   private centeredPosition() {
     // robust centering across multi-monitor setups
-    const dualLeft = (window.screenLeft ?? window.screenX ?? 0);
-    const dualTop = (window.screenTop ?? window.screenY ?? 0);
+    const dualLeft = window.screenLeft ?? window.screenX ?? 0;
+    const dualTop = window.screenTop ?? window.screenY ?? 0;
     const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
     const height = window.innerHeight || document.documentElement.clientHeight || screen.height;
     const left = Math.max(0, dualLeft + (width - this.popupWidth) / 2);
@@ -245,9 +330,9 @@ export class ExternalLoginService implements OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.closePopup();
+    this.finishPopupFlow({ stopLoading: true, closePopup: true });
   }
 }

@@ -1,5 +1,4 @@
-﻿{
-
+{
   "common.chart.profiles": "الملفات الشخصية",
   "common.chart.completedTasks": "المهام المكتملة",
   "common.chart.remainingTasks": "المهام المتبقية",
@@ -28,7 +27,7 @@
   "common.notVerified": "غير موثق",
   "common.none": "لا شيء",
   "common.loadFailed": "فشل تحميل البيانات",
-  "common.savedSuccessfully":"تم الحفظ بنجاح",
+  "common.savedSuccessfully": "تم الحفظ بنجاح",
   "app.pagination.page_size": "حجم الصفحة",
   "app.pagination.showing": "عرض",
   "app.pagination.of": "من",
@@ -37,22 +36,21 @@
   "app.pagination.previous": "السابق",
   "app.pagination.next": "التالي",
   "app.pagination.items_per_page": "عدد النتائج في الصفحة",
-
   "validation.requiredEmail": "البريد الإلكتروني مطلوب.",
   "validation.invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
   "validation.requiredPassword": "كلمة المرور مطلوبة.",
   "validation.minLengthPassword": "يجب أن تكون كلمة المرور {{min}} أحرف على الأقل.",
   "validation.required_filed": "هذا الحقل مطلوب",
   "validation.invalid_format": "التنسيق غير صحيح",
-  "common.success":"تم بنجاح",
+  "common.success": "تم بنجاح",
   "common.ar": "العربية",
   "common.en": "English",
   "common.refresh": "تحديث",
   "common.loading": "جارٍ التحميل",
-  "common.error":"خطأ",
+  "common.error": "خطأ",
   "common.save": "حفظ",
   "common.cancel": "إلغاء",
-  "common.apply" : "تطبيق",
+  "common.apply": "تطبيق",
   "common.back": "رجوع",
   "common.submit": "إرسال",
   "common.edit": "تعديل",
@@ -66,21 +64,22 @@
   "auth.externalLogin.popupBlocked.detail": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع للمتابعة بتسجيل الدخول الخارجي",
   "auth.externalLogin.popupBlocked.detailShort": "قام المتصفح بحظر نافذة تسجيل الدخول المنبثقة.",
   "auth.externalLogin.popupBlocked.detailContinue": "يرجى السماح بالنوافذ المنبثقة لهذا الموقع ثم المحاولة مرة أخرى.",
-
   "auth.externalLogin.authError.summary": "خطأ",
   "auth.externalLogin.authError.detail": "حدث خطأ أثناء المصادقة",
   "auth.externalLogin.authError.detailLogin": "حدث خطأ أثناء عملية تسجيل الدخول الخارجي. يرجى المحاولة مرة أخرى.",
-
   "auth.externalLogin.loginFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.loginFailed.detail": "تعذر المصادقة عبر مزود تسجيل الدخول الخارجي",
   "auth.externalLogin.loginFailed.detailProvider": "فشلت عملية المصادقة مع مزود تسجيل الدخول الخارجي المحدد.",
-
   "auth.externalLogin.externalAuthFailed.summary": "فشل تسجيل الدخول",
   "auth.externalLogin.externalAuthFailed.detailFallback": "فشلت المصادقة الخارجية",
-
   "auth.externalLogin.loginSuccessful.summary": "تم تسجيل الدخول بنجاح",
   "auth.externalLogin.loginSuccessful.detail": "تم تسجيل الدخول بنجاح باستخدام مزود تسجيل الدخول الخارجي.",
-
   "remote-select.search-hint": "لا تتوفر بيانات.",
-  "remote-select.select-parent": "حدد قيمة الحقل الأساسي أولاً"
+  "remote-select.select-parent": "حدد قيمة الحقل الأساسي أولاً",
+  "auth.externalLogin.popupClosed.summary": "تم إغلاق نافذة تسجيل الدخول",
+  "auth.externalLogin.popupClosed.detail": "تم إغلاق نافذة تسجيل الدخول قبل اكتمال المصادقة. يرجى المحاولة مرة أخرى.",
+  "auth.externalLogin.timeout.summary": "انتهت مهلة تسجيل الدخول",
+  "auth.externalLogin.timeout.detail": "استغرق إكمال تسجيل الدخول الخارجي وقتًا أطول من المتوقع. يرجى المحاولة مرة أخرى.",
+  "auth.externalLogin.loadingOpening": "جارٍ فتح نافذة تسجيل الدخول…",
+  "auth.externalLogin.loadingCompleting": "جارٍ إكمال تسجيل الدخول…"
 }

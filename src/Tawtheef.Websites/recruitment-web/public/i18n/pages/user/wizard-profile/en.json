@@ -39,7 +39,7 @@
   "wizard.buttons.next": "Next",
   "wizard.buttons.save": "Save",
   "wizard.buttons.submit": "Submit",
-  "wizard.buttons.finalSave": "Final save",
+  "wizard.buttons.finalSave": "Confirm & Submit",
   "wizard.buttons.add": "Add",
   "wizard.buttons.upload": "Upload",
   "wizard.buttons.preview": "Preview",

@@ -93,7 +93,7 @@
               </div>
             </div>
        </div>
-    
+
   </div>
 
   <!-- Contact & National Address -->
@@ -109,7 +109,7 @@
       </div>
       <div class="col-md-3">
         <label class="text-light w-100">{{ 'wizard.contact.phone' | translate }}</label>
-        <label class="fw-semibold mobile-phone">{{ ds.state().phone?.internationalNumber || '—' }}</label>
+        <label class="fw-semibold mobile-phone" style="direction: ltr; unicode-bidi: embed;">{{ ds.state().phone?.internationalNumber || '—' }}</label>
       </div>
       <div class="col-md-4">
         <label class="text-light w-100">{{ 'wizard.contact.email' | translate }}</label>
@@ -148,9 +148,17 @@
       <div class="small text-muted mt-2">
         <i class="fa-solid fa-paperclip me-1"></i> {{ ds.state().naFileName || '—' }}
       </div>
+      <div class="d-flex align-items-center gap-2">
+        <span>{{ ds.state().naFileName }}</span>
+        <div class="action-buttons">
+          <button class="btn-text" (click)="preview(ds.state().naFile, null, ds.state().naFileName, $event)">
+            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+          </button>
+        </div>
+      </div>
     </div>
        </div>
-   
+
   </div>
 
   <!-- Degrees -->
@@ -184,7 +192,7 @@
                                 <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                               </button>
                         </div>
-                        
+
                       </div>
                     </ng-container>
                     <ng-template #noDegreeReviewFile>—</ng-template>
@@ -195,7 +203,7 @@
                 <tr><td colspan="6" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
               </ng-template>
             </p-table></div></div>
-            
+
        </div>
   </div>
 
@@ -230,7 +238,7 @@
                           <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                         </button>
                   </div>
-                  
+
                 </div>
               </ng-container>
               <ng-template #noExpReviewFile>—</ng-template>
@@ -241,9 +249,9 @@
           <tr><td colspan="6" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
         </ng-template>
       </p-table></div></div>
-      
+
         </div>
-      
+
   </div>
 
   <!-- Courses -->
@@ -279,7 +287,7 @@
                               <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                             </button>
                     </div>
-                  
+
                   </div>
                 </ng-container>
                 <ng-template #noCourseReviewFile>—</ng-template>
@@ -290,9 +298,9 @@
             <tr><td colspan="6" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
           </ng-template>
         </p-table></div></div>
-        
+
        </div>
-        
+
   </div>
 
   <!-- Achievements -->
@@ -328,7 +336,7 @@
                   <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
                 </div>
-                
+
               </div>
             </ng-container>
             <ng-template #noAchievementReviewFile>—</ng-template>
@@ -339,9 +347,9 @@
         <tr><td colspan="7" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
       </ng-template>
     </p-table></div></div>
-    
+
        </div>
-    
+
   </div>
 
   <!-- Skills -->
@@ -362,9 +370,9 @@
         <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
       </ng-template>
     </p-table></div></div>
-    
+
       </div>
-    
+
   </div>
 
   <!-- Languages -->
@@ -393,9 +401,9 @@
       </ng-template>
     </p-table></div></div>
 
-    
+
        </div>
-   
+
   </div>
 
   <!-- Attachments -->
@@ -421,7 +429,7 @@
                   <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                 </button>
                 </div>
-               
+
               </div>
             </ng-container>
             <ng-template #noAttachmentReviewFile>—</ng-template>
@@ -432,9 +440,9 @@
         <tr><td colspan="2" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
       </ng-template>
     </p-table></div></div>
-    
+
        </div>
-    
+
   </div>
 </div>
 

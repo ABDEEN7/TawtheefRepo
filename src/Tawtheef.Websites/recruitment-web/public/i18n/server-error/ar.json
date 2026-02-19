@@ -241,7 +241,7 @@
   "server-error.DUPLICATE_ATTACHMENT_RESOURCE": "المرفق مكرر.",
   "server-error.INVALID_ATTACHMENT_FILE": "ملف المرفق غير صالح.",
   "server-error.CV_FILE_REQUIRED": "ملف السيرة الذاتية مطلوب.",
-  "server-error.ID_FILE_REQUIRED": "ملف الهوية مطلوب.",
+  "server-error.ID_FILE_REQUIRED": "البطاقة الشخصية مطلوب.",
   "server-error.MARRIAGE_CERTIFICATE_FILE_REQUIRED": "شهادة الزواج مطلوبة.",
   "server-error.BIRTH_CERTIFICATE_FILE_REQUIRED": "شهادة الميلاد مطلوبة.",
   "server-error.SPONSOR_CARD_REQUIRED": "بطاقة الكفيل مطلوبة.",
@@ -259,7 +259,7 @@
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "لا يمكن تعديل المرفق أثناء المراجعة.",
   "server-error.INVALID_ATTACHMENT_ID": "معرّف المرفق غير صالح.",
   "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "الخطوة السابقة من الملف الشخصي غير مكتملة.",
-  "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير نوع المرشح.",
+  "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير فئة الباحث.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "العنوان الوطني غير مسموح.",
 
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "الموظف غير نشط للتوزيع.",
