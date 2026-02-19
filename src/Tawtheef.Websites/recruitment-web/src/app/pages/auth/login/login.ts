@@ -80,7 +80,7 @@ export class Login implements OnInit, OnDestroy{
           contentStyle: { 'border-radius': '12px' },
           dismissableMask: false,
           draggable: false,
-          closable: false
+          closable: true
         });
         break;
     }

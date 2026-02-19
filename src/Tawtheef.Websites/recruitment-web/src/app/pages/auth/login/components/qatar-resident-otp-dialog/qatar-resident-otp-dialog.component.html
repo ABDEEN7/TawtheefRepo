@@ -101,11 +101,11 @@
       <div class="summary-row">
         <div class="summary-item">
           <span class="k me-2">{{ 'auth.login.qatarResidentDialog.qid' | translate }}</span>
-          <span class="v fw-bold">{{ maskQid(form.controls.qid.value) }}</span>
+          <span class="v fw-bold">{{ form.controls.qid.value }}</span>
         </div>
         <div class="summary-item">
           <span class="k me-2">{{ 'auth.login.qatarResidentDialog.phone' | translate }}</span>
-          <span class="v fw-bold">{{ getPhoneDisplay() }}</span>
+          <span class="v fw-bold" style="direction: ltr; unicode-bidi: embed;">{{ getPhoneDisplay() }}</span>
         </div>
       </div>
 

@@ -109,7 +109,7 @@
       </div>
       <div class="col-md-3">
         <label class="text-light w-100">{{ 'wizard.contact.phone' | translate }}</label>
-        <label class="fw-semibold mobile-phone">{{ ds.state().phone?.internationalNumber || '—' }}</label>
+        <label class="fw-semibold mobile-phone" style="direction: ltr; unicode-bidi: embed;">{{ ds.state().phone?.internationalNumber || '—' }}</label>
       </div>
       <div class="col-md-4">
         <label class="text-light w-100">{{ 'wizard.contact.email' | translate }}</label>

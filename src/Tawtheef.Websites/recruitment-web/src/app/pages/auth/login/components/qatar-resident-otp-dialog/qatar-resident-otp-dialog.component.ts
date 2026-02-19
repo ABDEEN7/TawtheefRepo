@@ -219,14 +219,6 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   // -------------------------
   // Template Helpers (called from HTML)
   // -------------------------
-  maskQid(qid: string | null | undefined): string {
-    if (!qid) return '';
-    const s = String(qid);
-    if (s.length <= 4) return s;
-    // 29478801376 -> 2947******76
-    return `${s.slice(0, 4)}******${s.slice(-2)}`;
-  }
-
   formatCooldown(totalSeconds: number): string {
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
