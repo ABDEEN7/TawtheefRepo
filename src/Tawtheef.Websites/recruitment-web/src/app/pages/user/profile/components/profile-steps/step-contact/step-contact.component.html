@@ -174,50 +174,70 @@
   <ng-container *ngIf="ds.isResidentQatar">
     <hr class="my-4">
     <div class="mb-2 fw-bold" style="color:#8a1538">{{ 'wizard.nationalAddress.title' | translate }}</div>
-    <div class="row g-3">
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
-        <input class="form-control" [ngModel]="ds.state().naZone" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-               (ngModelChange)="ds.up('naZone',$event)">
-      </div>
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.street' | translate }}</label>
-        <input class="form-control" [ngModel]="ds.state().naStreet" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-               (ngModelChange)="ds.up('naStreet',$event)">
-      </div>
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.building' | translate }}</label>
-        <input class="form-control" [ngModel]="ds.state().naBuilding" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-               (ngModelChange)="ds.up('naBuilding',$event)">
-      </div>
-      <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
-        <input class="form-control" [ngModel]="ds.state().naUnit" placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-               (ngModelChange)="ds.up('naUnit',$event)">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label required">
-          {{ 'wizard.nationalAddress.document' | translate }}
-          <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
-        </label>
-        <div class="upload-field"
-             (click)="naInput.click()">
-
-          <div class="upload-field__icon">
-            <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().naFileName"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().naFileName"
-                 class="cursor-pointer"
-                 (click)="previewNaFile($event)"/>
-          </div>
-
-          <div class="upload-field__text">
-            {{ ds.state().naFileName|| ('wizard.nationalAddress.document' | translate) }}
-          </div>
-
-          <input #naInput
-                 type="file"
-                 class="d-none"
-                 accept=".jpg,.jpeg,.png,.pdf"
-                 (change)="onNaFileSelected($event)" />
-        </div>
-      </div>
+    <div class="col-md-3">
+      <label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
+      <input
+        class="form-control"
+        inputmode="numeric"
+        autocomplete="off"
+        pattern="^[0-9]+$"
+        maxlength="6"
+        [ngModel]="ds.state().naZone"
+        (ngModelChange)="onNaNumberChange('naZone', $event)"
+        (keypress)="digitsOnlyKeypress($event)"
+        (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+      />
     </div>
+
+    <div class="col-md-3">
+      <label class="form-label required">{{ 'wizard.nationalAddress.street' | translate }}</label>
+      <input
+        class="form-control"
+        inputmode="numeric"
+        autocomplete="off"
+        pattern="^[0-9]+$"
+        maxlength="6"
+        [ngModel]="ds.state().naStreet"
+        (ngModelChange)="onNaNumberChange('naStreet', $event)"
+        (keypress)="digitsOnlyKeypress($event)"
+        (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+      />
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label required">{{ 'wizard.nationalAddress.building' | translate }}</label>
+      <input
+        class="form-control"
+        inputmode="numeric"
+        autocomplete="off"
+        pattern="^[0-9]+$"
+        maxlength="6"
+        [ngModel]="ds.state().naBuilding"
+        (ngModelChange)="onNaNumberChange('naBuilding', $event)"
+        (keypress)="digitsOnlyKeypress($event)"
+        (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+      />
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
+      <input
+        class="form-control"
+        inputmode="numeric"
+        autocomplete="off"
+        pattern="^[0-9]+$"
+        maxlength="6"
+        [ngModel]="ds.state().naUnit"
+        (ngModelChange)="onNaNumberChange('naUnit', $event)"
+        (keypress)="digitsOnlyKeypress($event)"
+        (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+      />
+    </div>
+
   </ng-container>
 </div>
 

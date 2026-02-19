@@ -27,7 +27,7 @@ import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
 import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 
-
+type NaField = 'naZone' | 'naStreet' | 'naBuilding' | 'naUnit';
 type VerificationStatus =
   | 'idle'
   | 'sending'
@@ -663,6 +663,42 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return JSON.stringify({ dto, nationalAddress, contactInfo });
     } catch {
       return null;
+    }
+  }
+
+  onNaNumberChange(field: NaField, value: any): void {
+    if (this.ds.isLocked(field)) return;
+
+    // allow empty for unit, but zone/street/building should be required by your step validator
+    const raw = String(value ?? '');
+
+    // keep digits only
+    const digits = raw.replace(/\D+/g, '');
+
+    // update state with digits (string of numbers)
+    this.ds.up(field, digits);
+
+    // optional: if user typed letters, show a small warning once (optional)
+    // if (raw !== digits) this.notificationService.info(this.translate.instant('validation.digitsOnly'));
+  }
+
+  digitsOnlyKeypress(event: KeyboardEvent): void {
+    // allow control keys
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+    const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];
+    if (allowed.includes(event.key)) return;
+
+    // allow digits only
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  digitsOnlyPaste(event: ClipboardEvent): void {
+    const text = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(text)) {
+      event.preventDefault();
     }
   }
 }
