@@ -371,3 +371,16 @@
     }
   }
 }
+
+
+@media (max-width:768px) {
+  header.topbar img.logo{
+     height: auto;
+  }
+}
+@media (max-width:640px) {
+  :dir(rtl) .user-menu .user-dropdown {
+    right:auto;
+    left: 0;
+  }
+}
