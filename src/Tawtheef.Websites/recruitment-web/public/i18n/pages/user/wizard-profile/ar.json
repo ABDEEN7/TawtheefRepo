@@ -1,4 +1,7 @@
 ﻿{
+  "wizard.courses.edit": "تعديل الدورة",
+  "wizard.achievements.edit": "تعديل الإنجاز",
+  "wizard.experience.edit": "تعديل الخبرة",
   "wizard.loading": "جاري تحميل بيانات ملفك الشخصي...",
   "wizard.files.maxSize1mb": "حجم الملف يجب ألا يتجاوز 1 ميجابايت.",
   "wizard.files.invalidFormat": "صيغة ملف غير صحيحة. المسموح: {{formats}}.",

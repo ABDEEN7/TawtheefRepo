@@ -96,8 +96,6 @@ export class ExperienceModal implements OnInit {
   );
 
   ngOnInit(): void {
-    this.disableFileUpload = !!this.config.data?.disableFileUpload;
-
     // Parent passes initialValue for edit mode
     const init = (this.config.data?.initialValue as ExperienceModalInit | undefined) ?? undefined;
 
@@ -110,19 +108,15 @@ export class ExperienceModal implements OnInit {
         to: init.to ? new Date(init.to) : null,
         current: !!init.current,
         description: init.description ?? '',
-        fileName: init.fileName ?? init.attachment?.resourceName ?? '',
+        file: init.file ?? null,
+        fileName: init.fileName ?? init.attachment?.resourceName ?? init.file?.name ?? '',
         hasQualification: !!init.qualificationId,
         qualificationId: init.qualificationId ?? null,
       });
 
       this.initialAttachmentUrl = init.attachment?.url ?? null;
-      this.initialId = this.config.data?.initialId ?? init.id ?? null;
-      this.initialAttachmentId =
-        this.config.data?.attachmentId ?? init.attachment?.resourceId ?? null;
-    } else {
-      // create mode: no initial values
-      this.initialId = this.config.data?.initialId ?? null;
-      this.initialAttachmentId = this.config.data?.attachmentId ?? null;
+      this.initialId = init.id ?? null;
+      this.initialAttachmentId = init.attachment?.resourceId ?? null;
     }
 
     // Enforce disable upload (edit mode)

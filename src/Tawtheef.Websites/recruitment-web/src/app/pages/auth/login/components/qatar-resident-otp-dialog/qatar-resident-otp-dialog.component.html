@@ -86,6 +86,9 @@
           <small class="text-danger" *ngIf="form.controls.phoneNumber.touched && form.controls.phoneNumber.hasError('nonQatar')">
             {{ 'auth.login.qatarResidentDialog.qatarPhoneOnly' | translate }}
           </small>
+          <small class="text-black-50 fst-italic">
+            {{ 'auth.otp.hintPhoneNumber' | translate }}
+          </small>
         </div>
 
 

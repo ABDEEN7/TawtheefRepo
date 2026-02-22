@@ -98,6 +98,8 @@ export class DegreeModal implements OnInit {
         ...initialValue,
         gradYear: this.toDate(initialValue.gradYear),
         degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? null,
+        file: initialValue.file ?? null,
+        fileName: initialValue.fileName ?? initialValue.certificate?.resourceName ?? initialValue.file?.name ?? '',
       });
     }
 

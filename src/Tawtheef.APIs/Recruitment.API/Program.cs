@@ -153,7 +153,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
-              .WithExposedHeaders("Content-Disposition"));
+              .WithExposedHeaders("Content-Disposition", "X-Blocked-By"));
 });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
@@ -170,7 +170,6 @@ app.UseForwardedHeaders();
 
 app.UseLanguageMiddleware();
 
-app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.Use(async (ctx, next) =>
@@ -217,6 +216,7 @@ app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseCors(myCors);
+app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();

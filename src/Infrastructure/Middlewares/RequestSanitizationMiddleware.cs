@@ -1,7 +1,7 @@
-﻿using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Infrastructure.Extensions;
 using HttpMethods = Microsoft.AspNetCore.Http.HttpMethods;
 
 namespace Tawtheef.Infrastructure.Middlewares
@@ -9,30 +9,30 @@ namespace Tawtheef.Infrastructure.Middlewares
     public class RequestSanitizationMiddleware(RequestDelegate next)
     {
         private readonly RequestDelegate _next = next;
+
         private static readonly Regex HtmlRegex = new(
             @"<script|</script|<[^>]+>",
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
-        private const string RejectionMessage = "Request not accepted.";
 
         public async Task Invoke(HttpContext context)
         {
             // Only check POST requests
             if (context.Request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase))
             {
-                // Check headers
+                // 1) Check headers
                 foreach (var header in context.Request.Headers)
                 {
                     if (ContainsHtmlOrScript(header.Value.ToString()))
                     {
-                        await WriteRejectedResponseAsync(context);
+                        await Reject(context);
                         return;
                     }
                 }
 
                 var contentType = context.Request.ContentType ?? string.Empty;
 
-                // POST: JSON body
+                // 2) JSON body
                 if (contentType.Contains("application/json", StringComparison.OrdinalIgnoreCase))
                 {
                     context.Request.EnableBuffering();
@@ -43,33 +43,29 @@ namespace Tawtheef.Infrastructure.Middlewares
 
                     if (ContainsHtmlOrScript(body))
                     {
-                        await WriteRejectedResponseAsync(context);
+                        await Reject(context);
                         return;
                     }
                 }
-
-                // POST: multipart/form-data (FormData)
-                if (contentType.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase))
+                // 3) multipart/form-data
+                else if (contentType.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase))
                 {
                     var form = await context.Request.ReadFormAsync();
 
-                    // Check form fields
                     foreach (var field in form)
                     {
-                        var value = field.Value.ToString();
-                        if (ContainsHtmlOrScript(value))
+                        if (ContainsHtmlOrScript(field.Value.ToString()))
                         {
-                            await WriteRejectedResponseAsync(context);
+                            await Reject(context);
                             return;
                         }
                     }
 
-                    // Check file names
                     foreach (var file in form.Files)
                     {
                         if (ContainsHtmlOrScript(file.FileName))
                         {
-                            await WriteRejectedResponseAsync(context);
+                            await Reject(context);
                             return;
                         }
                     }
@@ -80,22 +76,14 @@ namespace Tawtheef.Infrastructure.Middlewares
         }
 
         private static bool ContainsHtmlOrScript(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input)) return false;
-            return HtmlRegex.IsMatch(input);
-        }
+            => !string.IsNullOrWhiteSpace(input) && HtmlRegex.IsMatch(input);
 
-
-        private static async Task WriteRejectedResponseAsync(HttpContext context)
-        {
-            context.Response.Clear();
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            context.Response.ContentType = "application/json; charset=utf-8";
-            context.Response.Headers["X-Blocked-By"] = "RequestSanitizationMiddleware";
-
-            var errorObj = new { message = RejectionMessage, statusCode = context.Response.StatusCode };
-            await context.Response.WriteAsync(JsonSerializer.Serialize(errorObj), Encoding.UTF8);
-
-        }
+        private static Task Reject(HttpContext context)
+            => context.WriteErrorAsync(
+                code: ErrorsCodes.RequestContainsInvalidOrUnsafeContent,
+                userMessage: "Request contains invalid or unsafe content.",
+                statusCode: StatusCodes.Status400BadRequest,
+                blockedBy: "RequestSanitizationMiddleware"
+            );
     }
 }

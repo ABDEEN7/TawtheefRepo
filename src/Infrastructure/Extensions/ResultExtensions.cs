@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Text;
+using System.Text.Json;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -129,5 +131,57 @@ public static class ResultExtensions
 
         return string.Equals(aspnetcoreEnv, "Development", StringComparison.OrdinalIgnoreCase)
             || string.Equals(dotnetEnv, "Development", StringComparison.OrdinalIgnoreCase);
+    }
+    
+    
+
+    public static async Task WriteErrorAsync(
+        this HttpContext context,
+        string code,
+        string userMessage,
+        int statusCode,
+        string? blockedBy = null,
+        IReadOnlyList<IError>? errors = null)
+    {
+        if (context.Response.HasStarted)
+        {
+            // Too late to write a JSON body safely.
+            context.Abort();
+            return;
+        }
+
+        context.Response.Clear();
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/json; charset=utf-8";
+
+        if (!string.IsNullOrWhiteSpace(blockedBy))
+            context.Response.Headers["X-Blocked-By"] = blockedBy;
+
+        var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+
+        var safeErrors = errors ?? new List<IError>
+        {
+            new Error(code)
+                .WithMetadata("Code", code)
+                .WithMetadata("UserMessage", userMessage)
+                .WithMetadata("StatusCode", statusCode)
+        };
+
+        var apiResponse = ApiResponse<object?>.ErrorResponse(
+            safeErrors,
+            userMessage,
+            traceId
+        );
+
+        var json = JsonSerializer.Serialize(apiResponse, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+
+        // Helps some proxies/devtools show the body reliably
+        context.Response.ContentLength = Encoding.UTF8.GetByteCount(json);
+
+        await context.Response.WriteAsync(json, Encoding.UTF8);
+        await context.Response.CompleteAsync();
     }
 }

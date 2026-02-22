@@ -58,6 +58,8 @@
   "profile.field.language": "اللغة",
   "profile.field.languageLevel": "مستوى الإتقان",
 
+  "profileOverview.fields.current": "حالياً",
+
   "profile.field.file": "الملف",
   "profile.field.description": "الوصف",
 

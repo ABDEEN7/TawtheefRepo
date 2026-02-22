@@ -11,8 +11,9 @@
   "server-error.LOGIN_FAILED": "Login failed.",
   "server-error.UPLOAD_FAILED": "File upload failed.",
   "server-error.REVIEW_ITEM_NOT_FOUND": "Review item not found.",
+  "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT":"Request contains invalid or unsafe content.",
 
-  "server-error.INVALID_TOKEN": "Invalid token.",
+  "server-error.INVALID_TOKEN",: "Invalid token.",
   "server-error.INVALID_TOKEN_TYPE": "Invalid token type.",
   "server-error.TOKEN_EXPIRED": "Token has expired.",
   "server-error.INVALID_ALGORITHM": "Unsupported encryption algorithm.",
@@ -36,7 +37,7 @@
   "server-error.QATAR_RESIDENT_INVALID_QID": "Invalid Qatar ID.",
   "server-error.QATAR_RESIDENT_PHONE_INVALID": "Invalid phone number.",
   "server-error.QATAR_RESIDENT_PHONE_MISMATCH": "Phone number does not match the registered data.",
-  "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "Resident verification failed.",
+  "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "Unable to verify QID details. Please check the entered information is correct and try again.",
   "server-error.EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED": "User type is not allowed for external login.",
 
   "server-error.ROLE_NOT_FOUND": "Role not found.",
