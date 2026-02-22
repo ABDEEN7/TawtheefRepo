@@ -2,12 +2,12 @@
   <div class="card card-table">
     <div class="card-body">
         <div class="row align-items-center mb-3">
-             <div class="col-md-6">
+             <div class="col-md-8">
                 <p class="fw-bold text-primary mb-0">{{ 'kawader.header.eyebrow' | translate }}</p>
                 <h3 class="fw-bold m-0">{{ 'kawader.header.title' | translate }}</h3>
                 <p class="fs-16 m-0">{{ 'kawader.header.subtitle' | translate }}</p>
              </div>
-            <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+            <div class="col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
               <button
                 pButton
                 type="button"
@@ -21,7 +21,7 @@
         <div class="card card-table mb-4">
             <div class="card-body">
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row align-items-center mb-3">
-                  <div class="col-md-8">
+                  <div class="col-lg-8 col-md-7">
                        <div class="form-group">
                       <label class="form-label">{{ 'kawader.upload.label' | translate }}</label>
                       <input #fileInput
@@ -32,7 +32,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-lg-4 col-md-5">
                        <div class="d-flex gap-2 flex-wrap">
                       <button
                         pButton

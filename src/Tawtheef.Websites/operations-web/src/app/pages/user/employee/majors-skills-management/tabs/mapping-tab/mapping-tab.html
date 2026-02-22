@@ -34,7 +34,7 @@
       <div class="card card-table mb-3">
         <div class="card-body">
           <div class="row align-items-end">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">{{ 'MAJORS_SKILLS.SEARCH_LABEL' | translate }}</label>
               <input class="form-control"
                      [ngModel]="store.majorSkillFilters().search"
@@ -42,7 +42,7 @@
                      [placeholder]="'MAJORS_SKILLS.SEARCH_PLACEHOLDER' | translate" />
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
               <app-remote-select
                 [searchUrl]="store.endpoints.majorSkillsManagement.lookups.majors"
@@ -56,7 +56,7 @@
               </app-remote-select>
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">{{ 'MAJORS_SKILLS.SUB_MAJOR_LABEL' | translate }}</label>
               <app-remote-select
                 [searchUrl]="store.endpoints.majorSkillsManagement.lookups.subMajors"
@@ -73,7 +73,7 @@
               </app-remote-select>
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">{{ 'MAJORS_SKILLS.SKILL_TYPE' | translate }}</label>
               <p-select
                 [options]="store.skillTypes() ?? []"
@@ -146,8 +146,9 @@
           </span>
           </td>
 
-          <td class="d-flex justify-content-start gap-2 align-items-center">
-            <button type="button"
+          <td>
+              <div  class="d-flex justify-content-start gap-2 align-items-center">
+                    <button type="button"
               class="btn btn-outline-primary btn-sm d-flex justify-content-start gap-1 align-items-center"
               (click)="service.openEditMajorSkill(item.id)">
               <i class="hgi hgi-stroke hgi-pencil-edit-02" pButtonIcon></i>
@@ -158,6 +159,8 @@
               [ngModel]="item.isActive"
               (ngModelChange)="service.toggleMajorSkillActive(item.id, $event)">
             </p-toggle-switch>
+              </div>
+            
           </td>
         </tr>
       </ng-template>

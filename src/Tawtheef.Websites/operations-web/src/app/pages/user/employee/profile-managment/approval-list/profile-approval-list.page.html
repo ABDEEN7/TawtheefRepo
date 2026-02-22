@@ -35,7 +35,7 @@
           <form class="row align-items-end" (ngSubmit)="applyFilters()">
 
             <!-- Search -->
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">
                 {{ 'profileApproval.list.searchPlaceholder' | translate }}
               </label>
@@ -69,7 +69,7 @@
             </div> -->
 
             <!-- Target -->
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">
                 {{ 'profileApproval.list.filter.targetEntity' | translate }}
               </label>
@@ -103,7 +103,7 @@
             </div> -->
 
             <!-- Status -->
-            <div class="col-md-3">
+            <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">
                 {{ 'profileApproval.list.filter.status' | translate }}
               </label>
@@ -126,8 +126,8 @@
             </div>
 
             <!-- Actions -->
-            <div class="col-md-3 mt-3">
-              <div class="d-flex gap-2">
+            <div class="col-lg-4 col-md-6">
+              <div class="d-flex gap-2 mb-3 mb-lg-0 mt-0 mt-lg-3">
                 <button class="btn btn-primary" type="submit" [disabled]="loading()">
                   {{ 'profileApproval.list.filter.apply' | translate }}
                 </button>

@@ -22,7 +22,7 @@
               <div class="row align-items-end">
 
                 <!-- Search -->
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
                   <label class="form-label ">&nbsp; <i class="fa fa-search"></i></label>
 
                     <input
@@ -35,7 +35,7 @@
                 </div>
 
                 <!-- Job Type -->
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
                   <label class="form-label">
                     {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
                   </label>
@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Department -->
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
                   <label class="form-label">
                     {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
                   </label>
@@ -73,7 +73,7 @@
                 </div>
 
                 <!-- Status -->
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
                   <label class="form-label">
                     {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
                   </label>
@@ -93,13 +93,11 @@
                     
                     
                 </div>
-                <div class="col-md-2">
-                    <div class="action-buttons">
-                          <button (click)="clearFilters()" class="btn-text ">
-                      <i class="fa fa-rotate-left mx-1"></i>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                          <button (click)="clearFilters()" class="btn btn-outline-primary light d-flex align-items-center gap-2">
+                      <i class="hgi hgi-stroke hgi-filter"></i>
                       {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
                     </button>
-                    </div>
                 </div>
 
               </div>
