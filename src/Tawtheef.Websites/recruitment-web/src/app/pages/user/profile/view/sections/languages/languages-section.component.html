@@ -30,8 +30,12 @@
               <label class="text-light w-100 fs-16">{{ lang.language.name }}</label>
               <span class="pill info" *ngIf="!lang.id"> {{ 'profileOverview.status.pending' | translate }}</span>
           </div>
-        <label class="fw-semibold text-dark text-nowrap fs-16">{{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
-        <label class="fw-semibold text-dark text-nowrap fs-16">{{ lang.readingLevel.name }} / {{ lang.writingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap fs-16">
+          {{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap fs-16">
+          {{ 'profileOverview.fields.writingLevel' | translate }}: {{ lang.writingLevel.name }}</label>
+        <label class="fw-semibold text-dark text-nowrap fs-16">
+          {{ 'profileOverview.fields.readingLevel' | translate }}: {{ lang.readingLevel.name }}</label>
       </div>
     </div>
   </div>
