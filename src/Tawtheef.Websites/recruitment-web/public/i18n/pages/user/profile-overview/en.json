@@ -333,5 +333,6 @@
   "profileOverview.changeRequests.status.canceled": "Canceled",
   "profileOverview.sections.personalInfo": "Personal information",
   "profileView.hrNotes.title": "HR notes",
-  "profileView.sections.openFirst": "Click to switch between tabs"
+  "profileView.sections.openFirst": "Click to switch between tabs",
+  "profileOverview.fields.current": "Current"
 }

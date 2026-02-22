@@ -70,11 +70,12 @@ export class CourseModal implements OnInit {
         country: this.lookups.countries().find(c => c.id === init.country?.id) ?? null,
         period: period?.some(p => p) ? (period as Date[]) : null,
         description: init.description ?? '',
-        fileName: init.fileName ?? init.attachment?.resourceName ?? '',
+        file: init.file ?? null,
+        fileName: init.fileName ?? init.attachment?.resourceName ?? init.file?.name ?? '',
       });
       this.initialAttachmentUrl = init?.attachment?.url ?? null;
-      this.initialId = this.config.data?.initialId ?? init?.id ?? null;
-      this.initialAttachmentId = this.config.data?.attachmentId ?? init?.attachmentId ?? null;
+      this.initialId = init?.id ?? null;
+      this.initialAttachmentId = init?.attachmentId ?? null;
     }
 
     if (init?.file || init?.attachment || this.initialAttachmentId) {

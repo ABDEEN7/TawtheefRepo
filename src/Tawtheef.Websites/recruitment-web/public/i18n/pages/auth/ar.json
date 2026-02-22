@@ -49,5 +49,6 @@
   "auth.otp.verify": "تحقق",
   "auth.otp.cancel": "إلغاء",
   "auth.otp.securityNote": "لأسباب أمنية، لا تشارك رمز التحقق مع أي شخص.",
-  "auth.otp.footer": "© جميع الحقوق محفوظة"
+  "auth.otp.footer": "© جميع الحقوق محفوظة",
+  "auth.otp.hintPhoneNumber": "يجب أن يكون رقم الجوال مسجلاً تحت الرقم الشخصي"
 }
