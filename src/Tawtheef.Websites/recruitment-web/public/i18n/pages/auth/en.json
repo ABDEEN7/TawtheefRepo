@@ -49,5 +49,6 @@
   "auth.otp.verify": "Verify",
   "auth.otp.cancel": "Cancel",
   "auth.otp.securityNote": "For security reasons, do not share your verification code with anyone.",
-  "auth.otp.footer": "© All rights reserved"
+  "auth.otp.footer": "© All rights reserved",
+  "auth.otp.hintPhoneNumber":"The Phone number must be registered under the QID number."
 }
