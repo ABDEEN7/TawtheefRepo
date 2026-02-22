@@ -19,8 +19,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 public sealed class SaveProfilePrereqHandler(
     IUnitOfWork uow,
     IMediator mediator,
-    UserManager<User> userManager,
-    IProfileStepValidationService validationService)
+    UserManager<User> userManager)
     : ICommandHandler<SaveProfilePrereqCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
@@ -44,10 +43,6 @@ public sealed class SaveProfilePrereqHandler(
             };
             await uow.GetEntityRepository<UserProfile>().AddAsync(profile, ct);
         }
-        
-        var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request.CandidateTypeId);
-        if (validationResult.IsFailed)
-            return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
         if (profile.Status != UserProfileStatus.InCreation)
