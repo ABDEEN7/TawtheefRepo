@@ -109,13 +109,13 @@
         text-align: left;
       }
 
-      .icons {
-        transition: filter 0.3s ease;
-        display: block;
-        width: 22px;
-        height: 22px;
-        object-fit: contain;
-      }
+      // .icons {
+      //   transition: filter 0.3s ease;
+      //   display: block;
+      //   width: 22px;
+      //   height: 22px;
+      //   object-fit: contain;
+      // }
 
       // Icon color on hover
       &:hover:not(.active) .icons {
