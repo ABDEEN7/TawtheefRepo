@@ -16,6 +16,7 @@ public class ErrorsCodes
     public const string ResidenceAddressNotFound = "RESIDENCE_ADDRESS_NOT_FOUND";
     public const string SponsorProfileNotFound = "SPONSOR_PROFILE_NOT_FOUND";
     public const string NotSupported = "NOT_SUPPORTED";
+    public const string RequestContainsInvalidOrUnsafeContent = "REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT";
     #endregion
 
     // =========================================================

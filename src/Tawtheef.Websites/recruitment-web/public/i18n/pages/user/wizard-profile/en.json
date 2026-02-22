@@ -1,4 +1,7 @@
 ﻿{
+  "wizard.courses.edit": "Edit course",
+  "wizard.achievements.edit": "Edit achievement",
+  "wizard.experience.edit": "Edit experience",
   "wizard.loading": "Loading profile data...",
   "wizard.files.maxSize1mb": "File size must not exceed 1 MB.",
   "wizard.files.invalidFormat": "Invalid file format. Allowed: {{formats}}.",

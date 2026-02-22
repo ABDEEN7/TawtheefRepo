@@ -17,6 +17,7 @@
   "server-error.INVALID_ALGORITHM": "خوارزمية التشفير غير مدعومة.",
   "server-error.NO_CHANGES_MADE": "لم يتم إجراء أي تعديلات.",
   "server-error.SITE_URL_NOT_CONFIGURED": "رابط الموقع غير مهيأ في الإعدادات.",
+  "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT": "الطلب يحتوي على محتوى غير صالح أو غير آمن.",
 
   "server-error.PROFILE_NOT_FOUND": "الملف الشخصي غير موجود.",
   "server-error.INVALID_CREDENTIALS_PROVICED": "بيانات الدخول غير صحيحة.",

@@ -16,6 +16,7 @@
   "server-error.TOKEN_EXPIRED": "انتهت صلاحية الرمز.",
   "server-error.INVALID_ALGORITHM": "خوارزمية التشفير غير مدعومة.",
   "server-error.NO_CHANGES_MADE": "لم يتم إجراء أي تغييرات.",
+  "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT": "الطلب يحتوي على محتوى غير صالح أو غير آمن.",
 
   "server-error.SITE_URL_NOT_CONFIGURED": "رابط الموقع غير مهيأ في الإعدادات.",
 

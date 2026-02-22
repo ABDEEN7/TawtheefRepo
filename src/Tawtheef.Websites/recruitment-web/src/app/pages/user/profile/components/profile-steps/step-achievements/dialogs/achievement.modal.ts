@@ -71,13 +71,13 @@ export class AchievementModal implements OnInit {
         country: this.lookups.countries().find(c => c.id === initial.country?.id) ?? null,
         issueDate: initial.issueDate ? new Date(initial.issueDate) : null,
         description: initial.description,
-        fileName: initial.fileName || initial.attachment?.resourceName,
+        file: initial.file ?? null,
+        fileName: initial.fileName ?? initial.attachment?.resourceName ?? initial.file?.name ?? '',
         relatedToSpecialization: initial.relatedToSpecialization ?? null,
       });
       this.initialAttachmentUrl = initial.attachment?.url ?? null;
-      this.initialId = this.config.data?.initialId ?? initial.id ?? null;
-      this.initialAttachmentId =
-        this.config.data?.attachmentId ?? initial.attachmentId ?? initial.attachment?.resourceId ?? null;
+      this.initialId = initial.id ?? null;
+      this.initialAttachmentId = initial.attachmentId ?? null;
 
       if (!initial.file && initial.attachment) {
         this.form.get('file')?.clearValidators();

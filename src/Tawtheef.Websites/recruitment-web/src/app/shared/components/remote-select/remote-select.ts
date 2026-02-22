@@ -291,8 +291,11 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   private applyResults(req: LoadRequest, res: any[]): void {
     const next = res ?? [];
-    const merged = req.append ? this.mergeById([...this.options, ...next]) : this.mergeById(next);
-    this.options = this.mergeWithSelected(merged);
+    const mergedBase = req.append ?
+      this.mergeById([...this.options, ...next]) :
+      this.mergeById(next);
+    const mergedWithSelected = this.mergeWithSelected(mergedBase);
+    this.options = this.sortByOptionLabel(mergedWithSelected);
     this.hasMore = next.length === this.pageSize;
   }
 
@@ -343,5 +346,20 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private getOptionId(option: any): string | null {
     const id = option?.id ?? option?.Id;
     return id ? String(id) : null;
+  }
+  private getByPath(obj: any, path: string): any {
+    if (!obj || !path) return undefined;
+    return path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+  }
+
+  private getOptionLabelValue(option: any): string {
+    const key = (this.optionLabel ?? '').trim();
+    const raw = key.includes('.') ? this.getByPath(option, key) : option?.[key];
+    return (raw ?? '').toString().trim();
+  }
+
+  private sortByOptionLabel(items: any[]): any[] {
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    return [...(items ?? [])].sort((a, b) => collator.compare(this.getOptionLabelValue(a), this.getOptionLabelValue(b)));
   }
 }
