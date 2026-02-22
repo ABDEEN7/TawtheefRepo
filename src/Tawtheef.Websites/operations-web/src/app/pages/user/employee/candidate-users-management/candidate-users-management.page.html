@@ -8,8 +8,8 @@
   </div>
 
   <div class="filters card p-3 mb-3">
-    <div class="row g-3">
-      <div class="col-md-3">
+    <div class="row">
+      <div class="col-lg-3 col-md-4">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_NAME' | translate }}</label>
         <input
           type="text"
@@ -18,7 +18,7 @@
           (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_NAME_PLACEHOLDER' | translate" />
       </div>
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-4">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_EMAIL' | translate }}</label>
         <input
           type="text"
@@ -27,7 +27,7 @@
           (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_EMAIL_PLACEHOLDER' | translate" />
       </div>
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-4">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_QID' | translate }}</label>
         <input
           type="text"
@@ -36,7 +36,7 @@
           (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_QID_PLACEHOLDER' | translate" />
       </div>
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-4">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_MOBILE' | translate }}</label>
         <input
           type="text"
@@ -47,8 +47,9 @@
       </div>
     </div>
   </div>
-
-  <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
+  <div class="table-card rounded overflow-hidden">
+       <div class="table-responsive">
+            <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th>{{ 'CANDIDATE_USERS.NAME_EN' | translate }}</th>
@@ -103,6 +104,9 @@
       </tr>
     </ng-template>
   </p-table>
+       </div>
+  </div>
+  
 </div>
 
 <app-pagination

@@ -228,7 +228,8 @@ header.topbar {
   }
 
   @media (max-width: 768px) {
-    min-height: 135px;
+    min-height: auto;
+    padding: 10px 0;
   }
 }
 
@@ -239,7 +240,8 @@ header.topbar {
   margin-top: 85px; // push content below fixed header
 
   @media (max-width: 768px) {
-    margin-top: 135px;
+    margin-top: 90px;
+     overflow: visible;
   }
 }
 
@@ -828,7 +830,7 @@ body.ltr
   left: 0;
 }
 
-
+:dir(rtl) .sidebar{border-right:0 !important;border-left: 1px solid #CBCBCB;}
 :dir(rtl) .sidebar .sidebar-nav .nav-item.active::after{
       left: 12px;
       right: auto !important;
