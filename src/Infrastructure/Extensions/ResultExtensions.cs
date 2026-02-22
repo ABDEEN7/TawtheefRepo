@@ -182,6 +182,6 @@ public static class ResultExtensions
         context.Response.ContentLength = Encoding.UTF8.GetByteCount(json);
 
         await context.Response.WriteAsync(json, Encoding.UTF8);
-        await context.Response.CompleteAsync(); // ✅ finalize response
+        await context.Response.CompleteAsync();
     }
 }
