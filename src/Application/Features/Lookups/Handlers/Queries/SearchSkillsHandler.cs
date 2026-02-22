@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -46,11 +47,11 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper, IMemory
         {
             entry.SetSlidingExpiration(TimeSpan.FromMinutes(15));
 
-            var entities = await query
-                .OrderBy(s => s.DisplayOrder)
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToListAsync(cancellationToken);
+            List<Skill> entities;
+            if (request.PaginatedRequest is not null)
+                entities = await query.ToPaginatedResultAsync(request.PaginatedRequest, cancellationToken);
+            else
+                entities = await query.ToListAsync(cancellationToken);
             return mapper.Map<List<DropdownOptions>>(entities);
         });
 

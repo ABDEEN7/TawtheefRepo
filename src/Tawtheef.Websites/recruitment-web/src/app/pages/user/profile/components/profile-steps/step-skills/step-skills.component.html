@@ -8,34 +8,16 @@
 
       <div class="row my-4">
            <div class="col-md-4">
-             <p-auto-complete
-             [(ngModel)]="skillSearchModel"
-             [suggestions]="skillOptions"
-             (completeMethod)="onSkillSearch($event)"
-             [minQueryLength]="3"
-             [dropdown]="false"
-             [forceSelection]="true"
-             optionLabel="name"
-             (onSelect)="onSkillSelect($event)"
-             [placeholder]="'wizard.skills.placeholder' | translate"
-             [appendTo]="'body'" fluid>
-             <ng-template pTemplate="item" let-it>
-               <div class="d-flex align-items-center gap-2"> <i class="fa-solid fa-bolt"></i><span>{{ it.name }}</span>
-               </div>
-             </ng-template>
-
-             <!-- في حال لا توجد نتائج / أو النص قصير -->
-             <ng-template pTemplate="empty">
-               <div class="text-muted small p-2">
-                 <ng-container *ngIf="(lastQuery || '').length < 3; else noResults">
-                   {{ 'wizard.skills.typeMore' | translate }}
-                 </ng-container>
-                 <ng-template #noResults>
-                   {{ 'wizard.skills.noResults' | translate }}
-                 </ng-template>
-               </div>
-             </ng-template>
-           </p-auto-complete></div>
+             <app-remote-select
+               [(ngModel)]="selectedSkill"
+               [searchUrl]="endpoints.profile.lookups.skill"
+               [placeholder]="'wizard.skills.placeholder' | translate"
+               optionLabel="name" [minChars]="0"
+               [appendTo]="'body'"
+               [extraQueryParams]="buildUserExtraParams"
+               [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+             </app-remote-select>
+           </div>
            <div class="col-md-4">
               <p-select [options]="lookups.skillLevels()" optionLabel="name" [(ngModel)]="selectedLevel"
                         [placeholder]="'wizard.skills.selectLevel' | translate" class="w-full w-100"

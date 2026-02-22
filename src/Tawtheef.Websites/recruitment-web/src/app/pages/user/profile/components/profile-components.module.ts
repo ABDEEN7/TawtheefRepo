@@ -29,6 +29,7 @@ import {FaDirArrowDirective} from '../../../../shared/directives/dir-arrow.direc
 import {ImageCropperComponent} from 'ngx-image-cropper';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
+import {RemoteSelectComponent} from "../../../../shared/components/remote-select/remote-select";
 
 @NgModule({
   declarations: [
@@ -56,29 +57,30 @@ import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
     StepAchievementsComponent,
     StepAttachmentsComponent,
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbModalModule,
-    TranslatePipe,
-    TableModule,
-    ChipModule,
-    ToggleSwitchModule,
-    DynamicDialogModule,
-    SelectModule,
-    AutoCompleteModule,
-    FileUploadModule,
-    ButtonModule,
-    InputNumberModule,
-    DatePickerModule,
-    InputTextModule,
-    TextareaModule,
-    Tooltip,
-    FaDirArrowDirective,
-    ImageCropperComponent,
-    I18nNamespaceDirective,
-    NgxIntlTelInputModule,
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbModalModule,
+        TranslatePipe,
+        TableModule,
+        ChipModule,
+        ToggleSwitchModule,
+        DynamicDialogModule,
+        SelectModule,
+        AutoCompleteModule,
+        FileUploadModule,
+        ButtonModule,
+        InputNumberModule,
+        DatePickerModule,
+        InputTextModule,
+        TextareaModule,
+        Tooltip,
+        FaDirArrowDirective,
+        ImageCropperComponent,
+        I18nNamespaceDirective,
+        NgxIntlTelInputModule,
+        RemoteSelectComponent,
+    ]
 })
 export class ProfileComponentsModule {}

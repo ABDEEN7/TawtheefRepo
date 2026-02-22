@@ -20,6 +20,7 @@ import {createStepValiditySignal} from '../../../wizard-profile/state/profile-st
 import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../shared/models/dropdown-options.model';
 import {Skill} from '../../../wizard-profile/models/skill.model';
 import {NotificationService} from '../../../../../../core/services/notification.service';
+import {EndpointsService} from '../../../../../../core/http/endpoints.service';
 
 @Component({
   selector: 'app-step-skills',
@@ -36,6 +37,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
+  protected readonly endpoints = inject(EndpointsService);
   private readonly notificationService = inject(NotificationService);
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
@@ -62,7 +64,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   // search stream
   private readonly search$ = new Subject<string>();
   private sub?: Subscription;
-
+  buildUserExtraParams = () => ({
+    majors: this.ds.state().degrees.map((degree)=> degree.major!.id)
+      .concat(this.ds.state().degrees.map((degree)=> degree.subMajor!.id))
+  });
   ngOnInit(): void {
     const state = this.ds.state();
     this.lastSubmittedSignature = null;
