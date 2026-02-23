@@ -547,7 +547,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
    
     #region Lookups
     [HttpGet("lookups/skill-search")]
-    public async Task<IActionResult> Search([FromQuery] SearchSkillsQuery query)
+    public async Task<IActionResult> Search([FromQuery] GetSkillsBasedOnMajorQuery query)
     {
         var result = await mediator.Send(query);
         return result.ToActionResult();
