@@ -37,6 +37,15 @@ public sealed class GraphEmailTransport : IEmailTransport
 
     private async Task ExecuteSendAsync(EmailEnvelope envelope, CancellationToken ct)
     {
+#if DEBUG
+        _log.Information(
+            "GraphEmailTransport DEBUG -> toCount={ToCount} ccCount={CcCount} subject={Subject} hasHtml={HasHtml} hasText={HasText}",
+            envelope.To.Count,
+            envelope.Cc?.Count ?? 0,
+            Truncate(envelope.Subject, 120),
+            !string.IsNullOrWhiteSpace(envelope.HtmlBody),
+            !string.IsNullOrWhiteSpace(envelope.PlainTextBody));
+#endif
         var hasHtml = !string.IsNullOrWhiteSpace(envelope.HtmlBody);
 
         var htmlBody = envelope.HtmlBody;

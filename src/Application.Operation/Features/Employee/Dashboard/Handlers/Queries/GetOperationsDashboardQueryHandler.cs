@@ -424,7 +424,7 @@ public sealed class GetOperationsDashboardQueryHandler(
     {
         return profileQuery
             .GroupBy(x => x.TargetEntity != null
-                ? (x.TargetEntity.NameEn ?? x.TargetEntity.NameAr ?? "N/A")
+                ? (x.TargetEntity.NameEn)
                 : "N/A")
             .Select(g => new GroupCountDto { Label = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)

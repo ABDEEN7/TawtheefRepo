@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Infrastructure.Data;

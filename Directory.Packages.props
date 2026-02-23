@@ -2,10 +2,10 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AspireVersion>9.0.0</AspireVersion>
-    <AspnetVersion>9.0.0</AspnetVersion>
-    <EfcoreVersion>9.0.0</EfcoreVersion>
-    <MicrosoftExtensionsVersion>9.0.0</MicrosoftExtensionsVersion>
+    <AspireVersion>10.0.0</AspireVersion>
+    <AspnetVersion>10.0.0</AspnetVersion>
+    <EfcoreVersion>10.0.0</EfcoreVersion>
+    <MicrosoftExtensionsVersion>10.0.0</MicrosoftExtensionsVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.4.0" />
@@ -75,6 +75,8 @@
     <PackageVersion Include="Microsoft.Playwright" Version="1.48.0" />
     <PackageVersion Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
     <PackageVersion Include="SpecFlow.NUnit" Version="3.9.74" />
+    <PackageVersion Include="System.Drawing.Common" Version="10.0.0" />
+    <PackageVersion Include="System.Formats.Nrbf" Version="10.0.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
     <PackageVersion Include="System.Security.Permissions" Version="10.0.2" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.0.0" />
