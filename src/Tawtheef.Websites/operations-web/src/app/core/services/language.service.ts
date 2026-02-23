@@ -43,15 +43,27 @@ export class LanguageService {
   get isRtl() { return this.get() === 'ar'; }
 
   /** Set language and update TranslateService + <html dir/lang> + storage */
-  async set(lang: Lang): Promise<void> {
+  async set(lang: Lang, reload = true): Promise<void> {
     const safe = SUPPORTED_LANGS.includes(lang) ? lang : DEFAULT_LANG;
     if (this.current$.value === safe) return;
+
     await this.apply(safe, { emit: true, persist: true });
+
+    if (reload) {
+      this.reloadApp();
+    }
   }
 
   /** Toggle between ar/en */
   async toggle(): Promise<void> {
-    await this.set(this.get() === 'ar' ? 'en' : 'ar');
+    await this.set(this.get() === 'ar' ? 'en' : 'ar', true);
+  }
+
+  private reloadApp(): void {
+    // Small delay to allow DOM / dir / storage updates
+    setTimeout(() => {
+      window.location.reload();
+    }, 50);
   }
 
   // ---- internals ----
