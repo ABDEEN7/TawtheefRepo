@@ -5,7 +5,7 @@
   [class.table-rtl]="isRtl()">
     <div class="card-body">
          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <h3 class="page-title mb-0">{{ 'OFFICE_USERS.TITLE' | translate }}</h3>
+            <h3 class="fw-bold mb-0">{{ 'OFFICE_USERS.TITLE' | translate }}</h3>
             <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
               <button type="button" class="btn btn-primary" (click)="openAddDialog()">
                 <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
