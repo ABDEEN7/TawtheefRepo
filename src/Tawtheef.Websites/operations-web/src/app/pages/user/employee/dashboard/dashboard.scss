@@ -105,14 +105,15 @@
   gap: 0.55rem;
   align-items: flex-start;
   border: 1px solid #e8edf4;
-  border-left: 4px solid #3d73da;
+  border-left: 4px solid #8a1538;
   border-radius: 10px;
   padding: 0.6rem;
   margin-bottom: 0.55rem;
   color: #213454;
 
   i {
-    color: #3d73da;
+    color: #8a1538;
+    font-size: 1.4rem;
   }
 
   &.warning {
@@ -120,6 +121,7 @@
 
     i {
       color: #df6d4e;
+
     }
   }
 
