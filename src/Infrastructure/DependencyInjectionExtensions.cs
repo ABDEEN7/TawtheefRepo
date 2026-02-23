@@ -122,6 +122,7 @@ namespace Tawtheef.Infrastructure
                 AddValidatedOptions<JwtSettings>(services, configuration, JwtSettings.SectionName);
                 AddValidatedOptions<AppConfigSettings>(services, configuration, AppConfigSettings.SectionName);
                 AddValidatedOptions<EmailSettings>(services, configuration, EmailSettings.SectionName);
+                AddValidatedOptions<GraphEmailSettings>(services, configuration, GraphEmailSettings.SectionName);
                 AddValidatedOptions<StorageSettings>(services, configuration, StorageSettings.SectionName);
 
                 // Optional settings that you may want in both apps (no ValidateOnStart here)
@@ -198,7 +199,7 @@ namespace Tawtheef.Infrastructure
             {
                 services.AddSingleton<IEmailBranding, DefaultBranding>();
                 services.AddSingleton<IEmailQueue, EmailQueue>();
-                services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
+                services.AddSingleton<IEmailTransport, GraphEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
@@ -233,6 +234,15 @@ namespace Tawtheef.Infrastructure
                 {
                     var opt = sp.GetRequiredService<IOptions<HodhodSmsSettings>>().Value;
                     client.BaseAddress = new Uri(opt.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                });
+                
+                // ===== Email Gateway =====
+                AddValidatedOptions<GraphEmailSettings>(services, configuration, GraphEmailSettings.SectionName);
+                services.AddHttpClient<IGraphMailer, GraphMailer>((sp, client) =>
+                {
+                    var opt = sp.GetRequiredService<IOptions<GraphEmailSettings>>().Value;
+                    client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
             }
