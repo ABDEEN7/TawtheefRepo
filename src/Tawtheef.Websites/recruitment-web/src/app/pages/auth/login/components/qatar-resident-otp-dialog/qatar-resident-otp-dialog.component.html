@@ -11,18 +11,26 @@
 
           <span class="p-input-icon-left w-100">
 
-            <input
-              id="qid"
-              type="text"
-              class="form-control"
-              pInputText
-              formControlName="qid"
-              inputmode="numeric"
-              autocomplete="off" />
+           <input
+             id="qid"
+             type="text"
+             class="form-control"
+             pInputText
+             formControlName="qid"
+             inputmode="numeric"
+             autocomplete="off"
+             maxlength="11"
+             (keydown)="onDigitsOnlyKeyDown($event, 11)"
+             (input)="onDigitsOnlyInput('qid', 11)"
+             (paste)="onDigitsOnlyPaste($event, 'qid', 11)" />
           </span>
 
           <small class="text-danger" *ngIf="form.controls.qid.touched && form.controls.qid.invalid">
-            {{ 'validation.required' | translate }}
+            {{
+              form.controls.qid.errors?.['required']
+                ? ('validation.required' | translate)
+                : ('validation.qidMustBe11Digits' | translate)
+            }}
           </small>
         </div>
 

@@ -79,7 +79,10 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
 
   // Form
   readonly form = this.fb.group({
-    qid: this.fb.nonNullable.control('', [Validators.required]),
+    qid: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.pattern(/^\d{11}$/) // exactly 11 digits
+    ]),
     phoneNumber: this.fb.control<QatarPhoneNumber | null>(null, [
       Validators.required,
       qatarPhoneValidator()
@@ -269,6 +272,74 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
     const raw = this.form.controls.qidExpiry.value;
     if (!raw) return null;
     return toDateOnly(raw as any);
+  }
+
+  // Allow only digits typing + enforce max length
+  onDigitsOnlyKeyDown(event: KeyboardEvent, maxLen: number): void {
+    const allowedKeys = new Set([
+      'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+      'Tab', 'Home', 'End'
+    ]);
+
+    // allow ctrl/cmd shortcuts (copy/paste/select all/etc.)
+    if (event.ctrlKey || event.metaKey) return;
+
+    if (allowedKeys.has(event.key)) return;
+
+    // block non-digits
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+      return;
+    }
+
+    // enforce max length (consider selection replace)
+    const input = event.target as HTMLInputElement;
+    const selectionLength = (input.selectionEnd ?? 0) - (input.selectionStart ?? 0);
+    const nextLength = input.value.length - selectionLength + 1;
+    if (nextLength > maxLen) {
+      event.preventDefault();
+    }
+  }
+
+// Cleanup any non-digits (covers mobile input, autofill, drag-drop, etc.)
+  onDigitsOnlyInput(controlName: 'qid' | 'otp', maxLen: number): void {
+    const ctrl = this.form.controls[controlName];
+    const raw = (ctrl.value ?? '').toString();
+
+    const sanitized = raw.replace(/\D/g, '').slice(0, maxLen);
+
+    if (sanitized !== raw) {
+      ctrl.setValue(sanitized, { emitEvent: false });
+    }
+  }
+
+// Paste: allow only numeric and result must be <= maxLen
+  onDigitsOnlyPaste(event: ClipboardEvent, controlName: 'qid' | 'otp', maxLen: number): void {
+    const pasteText = event.clipboardData?.getData('text') ?? '';
+
+    // block if paste contains non-digits
+    if (!/^\d+$/.test(pasteText)) {
+      event.preventDefault();
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const current = input.value ?? '';
+
+    // account for selected text replacement on paste
+    const start = input.selectionStart ?? current.length;
+    const end = input.selectionEnd ?? current.length;
+
+    const next = current.slice(0, start) + pasteText + current.slice(end);
+
+    // block if it exceeds max length
+    if (next.length > maxLen) {
+      event.preventDefault();
+      return;
+    }
+
+    // let paste happen, but also ensure sanitization (sometimes UI libs interfere)
+    queueMicrotask(() => this.onDigitsOnlyInput(controlName, maxLen));
   }
 }
 
