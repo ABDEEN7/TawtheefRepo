@@ -2,7 +2,7 @@
   <div class="card card-table mb-4">
     <div class="card-body">
       <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
           <div>
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
@@ -11,7 +11,7 @@
             <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-12">
           <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
             <div class="action-buttons"><div class="btn-text gap-1">
               <i class="hgi hgi-stroke hgi-doc-02 fs-18"></i>
@@ -40,7 +40,7 @@
                 }
               </div>
               <div class="row align-items-end mb-4">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                   <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
                   <span class="p-input-icon-left w-100">
                                      <i class="pi pi-search ms-2"></i>
@@ -53,7 +53,7 @@
                                     />
                                   </span>
                 </div>
-                <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                   <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
                   <p-select
                     class="w-100"
@@ -69,7 +69,7 @@
                     </ng-template>
                   </p-select>
                 </div>
-                <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                   <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
                   <p-select
                     class="w-100"
@@ -86,7 +86,7 @@
                     </ng-template>
                   </p-select>
                 </div>
-                <div class="col-lg-2 col-md-4 d-flex gap-2 flex-wrap">
+                <div class="col-lg-3 col-md-6 d-flex gap-2 flex-wrap mb-3 mb-lg-0">
                   <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
                     <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
                     <i class="pi pi-times" pButtonIcon></i>

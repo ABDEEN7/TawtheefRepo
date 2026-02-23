@@ -140,3 +140,34 @@
 }
 .stepper .step-wrapper:last-child .step-progress .connector-line{display: none;}
 .stepper .step-wrapper:last-child .step-progress {width:32px ;}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stepper{
+        min-width: 50%;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .step-wrapper{
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        position: relative;
+        min-width: 32%;
+        margin-bottom: 1rem;
+    }
+.step-label span {
+        display: block;
+    }
+}
+@media (max-width: 640px) {
+    .stepper{
+        min-width: 100%;
+    }
+    .step-wrapper{
+        min-width: 48%;
+    }
+
+}
+

@@ -24,7 +24,7 @@ export interface UpsertSectorDialogData {
      <div class="modal-body">
           <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_EN' | translate }}</label>
                   <input pInputText class="w-100 form-control"
                         name="nameEn"
@@ -34,7 +34,7 @@ export interface UpsertSectorDialogData {
                         [placeholder]="'ORG_STRUCTURES.FIELD_NAME_EN' | translate" />
                   <small class="text-muted" *ngIf="f.submitted && !vm.nameEn">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_AR' | translate }}</label>
                   <input pInputText class="w-100 form-control"
                         name="nameAr"
@@ -47,7 +47,7 @@ export interface UpsertSectorDialogData {
               </div>
 
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate }}</label>
                   <textarea pInputTextarea rows="3" class="w-100 form-control"
                             name="descriptionEn"
@@ -56,7 +56,7 @@ export interface UpsertSectorDialogData {
                             [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate"></textarea>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
                   <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate }}</label>
                   <textarea pInputTextarea rows="3" class="w-100 form-control"
                             name="descriptionAr"
