@@ -75,6 +75,89 @@ export class StepPersonalComponent implements OnInit {
     if (t === SponsorType.Individual) return 11;
     if (t === SponsorType.Company) return 8;
     return 11; // safe default
+  }readonly MIN_AGE = 18;
+  readonly MAX_AGE = 100;
+
+  readonly minBirthDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - this.MAX_AGE);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  })();
+
+  readonly maxBirthDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - this.MIN_AGE);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  })();
+
+// optional UI error flags
+  dobInvalid = false;
+  dobErrorKey = 'wizard.personal.dobInvalid'; // add translations
+
+  onDobSelect(value: unknown) {
+    if (this.ds.isLocked('dob')) return;
+
+    const date = this.toDate(value);
+    if (!date) {
+      this.setDobInvalid('wizard.personal.dobInvalid');
+      this.updateField('dob', null as any);
+      return;
+    }
+
+    // normalize time
+    date.setHours(12, 0, 0, 0);
+
+    // validate logical range
+    if (date < this.minBirthDate) {
+      this.setDobInvalid('wizard.personal.dobTooOld'); // e.g. older than 100
+      this.updateField('dob', null as any);
+      return;
+    }
+
+    if (date > this.maxBirthDate) {
+      this.setDobInvalid('wizard.personal.dobTooYoung'); // e.g. younger than 18
+      this.updateField('dob', null as any);
+      return;
+    }
+
+    // good => store as DateOnly string
+    this.dobInvalid = false;
+    this.dobErrorKey = '';
+    this.updateField('dob', dateToDateOnly(date)! as any);
+  }
+
+  private setDobInvalid(key: string) {
+    this.dobInvalid = true;
+    this.dobErrorKey = key;
+  }
+
+  /**
+   * Accept Date or 'YYYY-MM-DD' (or anything) and return a valid Date or null.
+   */
+  private toDate(v: unknown): Date | null {
+    if (!v) return null;
+
+    if (v instanceof Date && !isNaN(v.getTime())) return v;
+
+    if (typeof v === 'string') {
+      // expect YYYY-MM-DD (because you store DateOnly string)
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v.trim());
+      if (!m) return null;
+
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+
+      const dt = new Date(y, mo - 1, d);
+      // strict check (avoid 2026-02-31 rolling)
+      if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+
+      return dt;
+    }
+
+    return null;
   }
 
   get sponsorEmployerNumberHintKey(): string {

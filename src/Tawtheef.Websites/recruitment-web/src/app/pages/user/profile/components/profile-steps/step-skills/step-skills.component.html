@@ -12,6 +12,7 @@
                [(ngModel)]="selectedSkill"
                [searchUrl]="endpoints.profile.lookups.skill"
                [placeholder]="'wizard.skills.placeholder' | translate"
+               [noResultsPlaceholder]="'wizard.skills.no-results' | translate"
                optionLabel="name" [minChars]="0"
                [appendTo]="'body'"
                [extraQueryParams]="buildUserExtraParams"

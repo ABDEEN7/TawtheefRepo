@@ -62,6 +62,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
   @Input() placeholder = '';
+  @Input() noResultsPlaceholder = '';
+  private lastLoadReturnedEmpty = false;
   @Input() size: 'small' | 'large' | undefined = undefined;
   @Input() appendTo: any = 'body';
   @Input() panelStyle: any;
@@ -265,7 +267,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   onOpen(): void {
     this.panelOpen = true;
     if (!this.currentTerm || this.currentTerm.length < this.minChars) {
-      this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
     }
   }
 
@@ -290,7 +292,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     }
 
     if (term.length < this.minChars) {
-      this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
 
       // ✅ IMPORTANT: don’t clear options (prevents empty/height collapse)
       this.hasMore = false;
@@ -415,6 +417,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   private applyResults(req: LoadRequest, res: any[]): void {
     const next = res ?? [];
+    this.lastLoadReturnedEmpty = next.length === 0 && (req.term?.length ?? 0) >= this.minChars;
 
     const mergedBase = req.append
       ? this.mergeById([...(this.options ?? []), ...next])
@@ -424,6 +427,11 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     this.options = this.sortByOptionLabel(mergedWithSelected);
     this.hasMore = next.length === this.pageSize;
+
+    // emptyMessage داخل القائمة
+    this.emptyMessage = next.length === 0 && (req.term?.length ?? 0) >= this.minChars
+      ? (this.noResultsPlaceholder ?? this.translate.instant('remote-select.no-results'))
+      : '';
   }
 
   // =============================
