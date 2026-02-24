@@ -72,7 +72,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
           "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
       .WriteTo.File(
           @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
-          rollingInterval: RollingInterval.Day,
+          rollingInterval: RollingInterval.Year,
           shared: true);
 
     // Seq

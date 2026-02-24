@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
-using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 

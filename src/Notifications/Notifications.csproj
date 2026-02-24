@@ -37,6 +37,8 @@
 
     <ItemGroup>
       <PackageReference Include="RazorLight" />
+      <PackageReference Include="System.Drawing.Common" />
+      <PackageReference Include="System.Formats.Nrbf" />
     </ItemGroup>
 
     <ItemGroup>

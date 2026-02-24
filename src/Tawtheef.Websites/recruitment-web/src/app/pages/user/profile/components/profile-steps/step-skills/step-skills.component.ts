@@ -65,8 +65,14 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private readonly search$ = new Subject<string>();
   private sub?: Subscription;
   buildUserExtraParams = () => ({
-    majors: this.ds.state().degrees.map((degree)=> degree.major!.id)
-      .concat(this.ds.state().degrees.map((degree)=> degree.subMajor!.id))
+    majors: this.ds.state().degrees
+      .filter((degree)=> degree?.major)
+      .map((degree)=> degree.major!.id)
+      .concat(
+        this.ds.state().degrees
+        .filter((degree)=> degree?.subMajor)
+        .map((degree)=> degree.subMajor!.id)
+      )
   });
   ngOnInit(): void {
     const state = this.ds.state();
