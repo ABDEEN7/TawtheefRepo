@@ -42,4 +42,4 @@ $muted:       #8a94a3;
   border-radius: 999px;
   font-weight: 800;
 }
-.w-100.form-control.p-component.p-inputnumber .p-inputnumber-input{border: 0 !important;padding: 0 !important;}
+:host ::ng-deep .no-borders .p-inputnumber-input{border: 0 !important;padding: 0 !important;}
