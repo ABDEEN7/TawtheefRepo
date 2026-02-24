@@ -270,14 +270,14 @@ export class MajorsSkillsManagementFacade {
     });
   }
 
-  openCreateMajor(parentId: string | null) {
+  openCreateMajor(parentId: string | null, parent: string | null) {
     this.dialog.open(UpsertMajorDialogComponent, {
       header: this.translate.instant(parentId ? 'MAJORS_SKILLS.CREATE_SUB_MAJOR' : 'MAJORS_SKILLS.CREATE_MAIN_MAJOR'),
       width: '640px',
       modal: true,
       dismissableMask: true,
       draggable: false,
-      data: { mode: 'create', parentId }
+      data: { mode: 'create', parentId, parent }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.createMajor(payload).subscribe({
@@ -349,8 +349,9 @@ export class MajorsSkillsManagementFacade {
 
   setMainMajorSearch(v: string) { this.store.updateMainMajorFilters({ search: v, pageNumber: 1 }); this.loadMainMajors(); }
   setSubMajorSearch(v: string)  { this.store.updateSubMajorFilters({ search: v, pageNumber: 1 }); this.loadSubMajors(); }
-  setSubMajorParent(v: string) {
-    this.store.updateSubMajorFilters({ parentMajorId: v, pageNumber: 1 });
+  setSubMajorParent(parent: MajorListItemModel | null) {
+    this.store.selectedParentMajor.set(parent);
+    this.store.updateSubMajorFilters({ parentMajorId: parent?.id ?? '', pageNumber: 1 });
     this.loadSubMajors();
   }
 
