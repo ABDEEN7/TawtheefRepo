@@ -1,4 +1,6 @@
 ﻿{
+  "wizard.contact.googleProviderNonQatarOnly": "يرجى استخدام تسجيل الدخول عبر جوجل إذا كنت غير قطري.",
+  "wizard.contact.phoneUpdateFailed": "فشل تحديث رقم الجوال، يرجى المحاولة مرة أخرى.",
   "wizard.courses.edit": "تعديل الدورة",
   "wizard.achievements.edit": "تعديل الإنجاز",
   "wizard.experience.edit": "تعديل الخبرة",

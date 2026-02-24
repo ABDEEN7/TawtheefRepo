@@ -1,4 +1,6 @@
 ﻿{
+  "wizard.contact.googleProviderNonQatarOnly": "Google sign-in is only available for non-Qatari users. Please use another sign-in method.",
+  "wizard.contact.phoneUpdateFailed": "Failed to update mobile number, please try again.",
   "wizard.courses.edit": "Edit course",
   "wizard.achievements.edit": "Edit achievement",
   "wizard.experience.edit": "Edit experience",

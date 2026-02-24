@@ -465,7 +465,10 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     // Safety: Google must not submit +974 due to backend rule
     if (s.phone.e164Number.startsWith(this.QATAR_E164_PREFIX)) {
-      this.notificationService.error(this.translate.instant('wizard.contact.googleProviderNonQatarOnly'), this.translate.instant('wizard.validationErrorTitle'));
+      this.notificationService.error(
+        this.translate.instant('wizard.contact.googleProviderNonQatarOnly'),
+        this.translate.instant('wizard.validationErrorTitle')
+      );
       return Promise.resolve(false);
     }
 
@@ -481,7 +484,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
             resolve(true);
           },
           error: () => {
-            this.notificationService.error(this.translate.instant('wizard.contact.phoneUpdateFailed'), this.translate.instant('wizard.validationErrorTitle'));
             resolve(false);
           }
         });
