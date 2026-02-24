@@ -6,7 +6,6 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using Serilog.Debugging;
 using Serilog.Exceptions;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Security;
@@ -41,11 +40,6 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
 
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
-
-#if DEBUG
-SelfLog.Enable(msg =>
-    File.AppendAllText(@"C:\home\LogFiles\serilog-selflog.txt", msg + Environment.NewLine));
-#endif
 
 // ----- Application Insights (SDK) -----
 var aiCs =
@@ -86,7 +80,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
           "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
       .WriteTo.File(
           @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
-          rollingInterval: RollingInterval.Day,
+          rollingInterval: RollingInterval.Year,
           shared: true);
 
     // Seq
