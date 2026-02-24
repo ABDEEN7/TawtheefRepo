@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Operations.API-Dev: Web Deploy" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
-    <riderPublish configuration="Release" platform="Any CPU" publish_profile="Operations-Api-Dev-Web-Deploy.pubxml" pubxml_path="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Properties/PublishProfiles/App-Tawtheef-Operations-Api-Dev-01 - Web Deploy.pubxml" save_password="true" user_name="$App-Tawtheef-Operations-Api-Dev-01" uuid_high="-8020817098792484329" uuid_low="-6975336237350567852" />
+    <riderPublish configuration="Debug" platform="Any CPU" publish_profile="Operations-Api-Dev-Web-Deploy.pubxml" pubxml_path="$PROJECT_DIR$/src/Tawtheef.APIs/Operations.API/Properties/PublishProfiles/App-Tawtheef-Operations-Api-Dev-01 - Web Deploy.pubxml" save_password="true" user_name="$App-Tawtheef-Operations-Api-Dev-01" uuid_high="-8020817098792484329" uuid_low="-6975336237350567852" />
     <method v="2" />
   </configuration>
 </component>
