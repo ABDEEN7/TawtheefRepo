@@ -43,10 +43,7 @@
       </label>
 
       <div class="upload-field" (click)="cvInput.click()">
-
-        
-
-        <div class="upload-field__text">
+              <div class="upload-field__text">
           {{ ds.state().cvName || ('wizard.prereq.cvLabel' | translate) }}
         </div>
 
@@ -58,6 +55,9 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('cv') }} – Max 1MB
         </span>
+        
+
+        
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().cvName"/>
           <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().cvName" class="cursor-pointer" (click)="previewFile('cv', $event)"/>
@@ -78,9 +78,7 @@
 
       <div class="upload-field" (click)="idInput.click()">
 
-        
-
-        <div class="upload-field__text">
+              <div class="upload-field__text">
           {{ ds.state().idName || ('wizard.prereq.idLabel' | translate) }}
         </div>
 
@@ -92,6 +90,8 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('id') }} – Max 1MB
         </span>
+
+        
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().idName"/>
           <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().idName" class="cursor-pointer" (click)="previewFile('id', $event)"/>
@@ -114,10 +114,7 @@
 
       <div class="upload-field"
            (click)="birthInput.click()">
-
-        
-
-        <div class="upload-field__text">
+                <div class="upload-field__text">
           {{ ds.state().birthCertificateName || ('wizard.prereq.birthCertificate' | translate) }}
         </div>
 
@@ -129,6 +126,7 @@
         <span class="text-muted fz-2xs">
           {{ formatsLabel('birth') }} – Max 1MB
         </span>
+        
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().birthCertificateName"/>
           <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().birthCertificateName"
@@ -152,23 +150,14 @@
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
       </label>
 
-      <div class="upload-field"
-           (click)="marriageInput.click()">
-
-        
-
-        <div class="upload-field__text">
+      <div class="upload-field" (click)="marriageInput.click()">
+              <div class="upload-field__text">
           {{ ds.state().marriageCertificateName || ('wizard.prereq.marriageCertificate' | translate) }}
         </div>
 
-        <input #marriageInput
-               type="file"
-               class="d-none"
-               [attr.accept]="acceptFor('marriage')"
-               (change)="onFileSelected('marriage', $event)" />
-        <span class="text-muted fz-2xs">
-          {{ formatsLabel('marriage') }} – Max 1MB
-        </span>
+        <input #marriageInput type="file" class="d-none" [attr.accept]="acceptFor('marriage')" (change)="onFileSelected('marriage', $event)" />
+        <span class="text-muted fz-2xs">{{ formatsLabel('marriage') }} – Max 1MB</span>
+        
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().marriageCertificateName"/>
           <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().marriageCertificateName"
