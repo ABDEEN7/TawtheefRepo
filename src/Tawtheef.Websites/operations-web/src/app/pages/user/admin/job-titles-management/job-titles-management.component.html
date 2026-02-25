@@ -1,43 +1,111 @@
-<div class="container-fluid" i18nNamespace="pages/job-wizard">
-  <div class="card p-3 mb-3" [formGroup]="form">
-    <div class="row g-2">
-      <div class="col-md-4">
-        <input class="form-control" formControlName="jobNameAr" placeholder="Arabic name" />
+<div
+  class="card card-table"
+  i18nNamespace="pages/admin/job-titles-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <h3 class="fw-bold mb-0">{{ 'JOB_TITLES.TITLE' | translate }}</h3>
+      <button type="button" class="btn btn-primary" (click)="openAdd()">
+        <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+        {{ 'JOB_TITLES.ADD_JOB_TITLE' | translate }}
+      </button>
+    </div>
+
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5 col-lg-4">
+            <label class="form-label">{{ 'JOB_TITLES.SEARCH_BY_NAME' | translate }}</label>
+            <div class="input-group search-bar">
+              <input
+                type="text"
+                class="form-control"
+                [placeholder]="'JOB_TITLES.SEARCH_PLACEHOLDER' | translate"
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearchChange()" />
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <input class="form-control" formControlName="jobNameEn" placeholder="English name" />
-      </div>
-      <div class="col-md-2">
-        <input class="form-control" formControlName="jobNumber" placeholder="Number" />
-      </div>
-      <div class="col-md-2 d-flex gap-2">
-        <button class="btn btn-primary" (click)="save()">Save</button>
-        <button class="btn btn-outline-secondary" (click)="reset()">Reset</button>
+    </div>
+
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle w-100">
+          <thead class="table-light">
+            <tr>
+              <th>{{ 'JOB_TITLES.JOB_NUMBER' | translate }}</th>
+              <th>{{ 'JOB_TITLES.NAME_AR' | translate }}</th>
+              <th>{{ 'JOB_TITLES.NAME_EN' | translate }}</th>
+              <th>{{ 'JOB_TITLES.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @if (jobTitles().length === 0) {
+              <tr>
+                <td colspan="4" class="text-muted no-data text-center">
+                  {{ 'NO_RECORDS' | translate }}
+                </td>
+              </tr>
+            } @else {
+              @for (jobTitle of jobTitles(); track jobTitle.id; let i = $index) {
+                <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+                  <td>{{ jobTitle.jobNumber }}</td>
+                  <td>{{ jobTitle.jobNameAr }}</td>
+                  <td>{{ jobTitle.jobNameEn }}</td>
+                  <td class="text-nowrap">
+                    <div class="action-buttons">
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="openEdit(jobTitle)"
+                        [pTooltip]="'JOB_TITLES.EDIT' | translate"
+                        tooltipPosition="top"
+                        aria-label="{{ 'JOB_TITLES.EDIT' | translate }}">
+                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="confirmDelete(jobTitle)"
+                        [pTooltip]="'JOB_TITLES.DELETE' | translate"
+                        tooltipPosition="top"
+                        aria-label="{{ 'JOB_TITLES.DELETE' | translate }}">
+                        <i class="hgi hgi-stroke hgi-delete-02"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Job Number</th>
-        <th>Arabic</th>
-        <th>English</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of items(); track item.id) {
-        <tr>
-          <td>{{ item.jobNumber }}</td>
-          <td>{{ item.jobNameAr }}</td>
-          <td>{{ item.jobNameEn }}</td>
-          <td class="text-end">
-            <button class="btn btn-sm btn-outline-primary me-2" (click)="edit(item)">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="delete(item.id)">Delete</button>
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
 </div>
+
+<div
+  class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3"
+  [class.flex-row-reverse]="isRtl()">
+  <app-pagination
+    [currentPage]="filters().pageNumber"
+    [totalItems]="totalItems()"
+    [itemsPerPage]="filters().pageSize"
+    (pageChanged)="onPageChange($event)"
+    (pageSizeChanged)="onPageSizeChange($event)">
+  </app-pagination>
+</div>
+
+@if (isModalOpen()) {
+  <app-job-title-modal
+    [visible]="isModalOpen()"
+    [mode]="modalMode()"
+    [jobTitle]="editingJobTitle()"
+    (cancel)="closeModal()"
+    (create)="createJobTitle($event)"
+    (update)="updateJobTitle($event)"></app-job-title-modal>
+}
