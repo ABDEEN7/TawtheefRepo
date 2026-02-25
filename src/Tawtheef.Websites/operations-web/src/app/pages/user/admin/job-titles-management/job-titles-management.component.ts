@@ -164,7 +164,7 @@ export class JobTitlesManagementComponent implements OnInit {
       rejectButtonStyleClass: 'btn btn-outline-secondary',
       defaultFocus: 'reject',
       accept: () => {
-        this.jobTitlesService.deleteJobTitle(jobTitle.id).subscribe({
+        this.jobTitlesService.deleteJobTitle(jobTitle.id!).subscribe({
           next: () => {
             this.notification.success(this.translate.instant('JOB_TITLES.DELETE_SUCCESS'));
             this.loadJobTitles();

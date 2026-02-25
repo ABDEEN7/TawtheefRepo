@@ -3,6 +3,7 @@ using Application.Operation.Features.Admin.JobTitles.Queries;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
 
