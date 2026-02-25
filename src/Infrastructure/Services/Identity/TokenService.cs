@@ -216,7 +216,7 @@ public class TokenService(
         {
             TokenHash = HashRefreshToken(rawToken),
             TokenFingerprint = rawToken,
-            Expires = time.GetUtcNow().UtcDateTime.AddDays(jwtSettings.Value.RefreshTokenExpirationDays ?? 7),
+            Expires = time.GetUtcNow().UtcDateTime.AddHours(jwtSettings.Value.RefreshTokenExpirationHours ?? 3),
             CreatedDate = time.GetUtcNow().UtcDateTime,
             UserId = userId,
             CreatedByIp = ipAddress,
