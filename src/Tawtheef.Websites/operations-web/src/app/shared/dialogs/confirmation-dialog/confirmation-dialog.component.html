@@ -31,7 +31,7 @@
 
         <div class="d-flex align-items-center justify-content-center">
           <button class="btn bg-gray-100 rounded-pill me-2" (click)="ref.close(false)">
-            {{ (config.data.cancelText || 'app.common.cancel') | translate }}
+            {{ (config.data.cancelText || 'common.cancel') | translate }}
           </button>
           <button class="btn rounded-pill"
                   (click)="onConfirm()"
@@ -41,7 +41,7 @@
                 'btn-primary': config.data.type === 'submit',
                 'btn-warning': config.data.type === 'warning'
               }">
-            {{ (config.data.confirmText || 'app.common.confirm') | translate }}
+            {{ (config.data.confirmText || 'common.confirm') | translate }}
           </button>
         </div>
       </div>

@@ -137,7 +137,7 @@ export class HomeContentManagementComponent implements OnInit {
     const dialogRef = this.dialogHelper.openConfirmDialog({
       type: 'delete',
       title: 'HOME_CONTENT.DELETE_SUCCESS_STORY_TITLE',
-      description: 'HOME_CONTENT.DELETE_SUCCESS_STORY_DESC'
+      description: 'HOME_CONTENT.DELETE_SUCCESS_STORY_DESC',
     });
 
     dialogRef?.onClose.subscribe(result => {

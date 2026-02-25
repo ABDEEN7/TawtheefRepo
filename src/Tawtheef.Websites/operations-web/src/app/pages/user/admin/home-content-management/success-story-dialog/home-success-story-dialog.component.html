@@ -3,14 +3,14 @@
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.NAME_AR' | translate }}</label>
-        <input class="form-control" formControlName="nameAr" [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+        <input class="form-control" formControlName="nameAr" [class.is-invalid]="submitted && form.controls.nameAr.invalid" maxlength="100"/>
         @if (submitted && form.controls.nameAr.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.NAME_EN' | translate }}</label>
-        <input class="form-control" formControlName="nameEn" [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+        <input class="form-control" formControlName="nameEn" [class.is-invalid]="submitted && form.controls.nameEn.invalid" maxlength="100"/>
         @if (submitted && form.controls.nameEn.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
@@ -20,14 +20,14 @@
     <div class="row g-3 mt-1">
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.ROLE_AR' | translate }}</label>
-        <input class="form-control" formControlName="roleAr" [class.is-invalid]="submitted && form.controls.roleAr.invalid" />
+        <input class="form-control" formControlName="roleAr" [class.is-invalid]="submitted && form.controls.roleAr.invalid" maxlength="100"/>
         @if (submitted && form.controls.roleAr.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.ROLE_EN' | translate }}</label>
-        <input class="form-control" formControlName="roleEn" [class.is-invalid]="submitted && form.controls.roleEn.invalid" />
+        <input class="form-control" formControlName="roleEn" [class.is-invalid]="submitted && form.controls.roleEn.invalid" maxlength="100"/>
         @if (submitted && form.controls.roleEn.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
@@ -37,14 +37,14 @@
     <div class="row g-3 mt-1">
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.METRIC_TITLE_AR' | translate }}</label>
-        <input class="form-control" formControlName="metricTitleAr" [class.is-invalid]="submitted && form.controls.metricTitleAr.invalid" />
+        <input class="form-control" formControlName="metricTitleAr" [class.is-invalid]="submitted && form.controls.metricTitleAr.invalid"  maxlength="100"/>
         @if (submitted && form.controls.metricTitleAr.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.METRIC_TITLE_EN' | translate }}</label>
-        <input class="form-control" formControlName="metricTitleEn" [class.is-invalid]="submitted && form.controls.metricTitleEn.invalid" />
+        <input class="form-control" formControlName="metricTitleEn" [class.is-invalid]="submitted && form.controls.metricTitleEn.invalid" maxlength="100"/>
         @if (submitted && form.controls.metricTitleEn.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
@@ -54,14 +54,14 @@
     <div class="row g-3 mt-1">
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.METRIC_DESC_AR' | translate }}</label>
-        <textarea class="form-control" rows="2" formControlName="metricDescriptionAr" [class.is-invalid]="submitted && form.controls.metricDescriptionAr.invalid"></textarea>
+        <textarea class="form-control" rows="2" formControlName="metricDescriptionAr" [class.is-invalid]="submitted && form.controls.metricDescriptionAr.invalid" maxlength="400"></textarea>
         @if (submitted && form.controls.metricDescriptionAr.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
       </div>
       <div class="col-md-6">
         <label class="form-label">{{ 'HOME_CONTENT.METRIC_DESC_EN' | translate }}</label>
-        <textarea class="form-control" rows="2" formControlName="metricDescriptionEn" [class.is-invalid]="submitted && form.controls.metricDescriptionEn.invalid"></textarea>
+        <textarea class="form-control" rows="2" formControlName="metricDescriptionEn" [class.is-invalid]="submitted && form.controls.metricDescriptionEn.invalid" maxlength="400"></textarea>
         @if (submitted && form.controls.metricDescriptionEn.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError() }}</div>
         }
@@ -104,7 +104,7 @@
             #imageInput
             type="file"
             class="d-none"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/bmp"
             (change)="onImageSelected($event)" />
         </div>
 
