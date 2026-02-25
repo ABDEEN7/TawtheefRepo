@@ -298,6 +298,11 @@ public class ErrorsCodes
     public const string TargetEntityNameExists = "TARGET_ENTITY_NAME_EXISTS";
     #endregion
 
+    #region Job Titles
+    public const string JobTitleNumberExists = "JOB_TITLE_NUMBER_EXISTS";
+    public const string JobTitleInUse = "JOB_TITLE_IN_USE";
+    #endregion
+
     #region Offices
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";

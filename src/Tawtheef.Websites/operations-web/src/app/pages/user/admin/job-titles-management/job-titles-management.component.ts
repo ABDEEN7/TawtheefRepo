@@ -1,85 +1,184 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { HttpService } from '../../../../core/http/http.service';
-import { EndpointsService } from '../../../../core/http/endpoints.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-
-interface JobTitleItem {
-  id: string;
-  jobNumber: string;
-  jobNameAr: string;
-  jobNameEn: string;
-}
+import {CommonModule} from '@angular/common';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {ConfirmationService} from 'primeng/api';
+import {ConfirmDialog} from 'primeng/confirmdialog';
+import {Tooltip} from 'primeng/tooltip';
+import {Lang, LanguageService} from '../../../../core/services/language.service';
+import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
+import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
+import {NotificationService} from '../../../../core/services/notification.service';
+import {JobTitleDto} from './models/job-title.dto';
+import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import {JobTitleFilters} from './models/job-title-filters.dto';
+import {JobTitleModalComponent} from './components/job-title-modal/job-title-modal.component';
+import {JobTitlesService} from './services/job-titles.service';
 
 @Component({
   selector: 'app-job-titles-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, I18nNamespaceDirective],
-  templateUrl: './job-titles-management.component.html'
+  templateUrl: './job-titles-management.component.html',
+  styleUrls: ['./job-titles-management.component.scss'],
+  providers: [ConfirmationService],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    ConfirmDialog,
+    PaginationComponent,
+    I18nNamespaceDirective,
+    Tooltip,
+    JobTitleModalComponent
+  ]
 })
 export class JobTitlesManagementComponent implements OnInit {
-  private http = inject(HttpService);
-  private endpoints = inject(EndpointsService);
-  private notify = inject(NotificationService);
+  private jobTitlesService = inject(JobTitlesService);
+  private notification = inject(NotificationService);
   private translate = inject(TranslateService);
-  private fb = inject(FormBuilder);
+  private language = inject(LanguageService);
+  private confirmationService = inject(ConfirmationService);
 
-  readonly items = signal<JobTitleItem[]>([]);
-  readonly editingId = signal<string | null>(null);
+  private _allJobTitles = signal<JobTitleDto[]>([]);
+  private _jobTitles = signal<JobTitleDto[]>([]);
+  private _paginationMetadata = signal<PaginationMetadata | null>(null);
 
-  readonly form = this.fb.nonNullable.group({
-    jobNumber: ['', Validators.required],
-    jobNameAr: ['', Validators.required],
-    jobNameEn: ['', Validators.required]
+  public jobTitles = this._jobTitles.asReadonly();
+  public paginationMetadata = this._paginationMetadata.asReadonly();
+
+  filters = signal<JobTitleFilters>({
+    pageNumber: 1,
+    pageSize: 10,
+    search: ''
   });
 
+  searchTerm = '';
+  currentLang = signal<Lang>(this.language.get());
+  isRtl = computed(() => this.currentLang() === 'ar');
+  totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+
+  isModalOpen = signal(false);
+  modalMode = signal<'create' | 'edit'>('create');
+  editingJobTitle = signal<JobTitleDto | null>(null);
+
   ngOnInit(): void {
-    this.load();
+    this.loadJobTitles();
+    this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
 
-  load(): void {
-    this.http.get<JobTitleItem[]>(this.endpoints.jobTitles.list).subscribe({
-      next: res => this.items.set(res)
-    });
-  }
-
-  edit(item: JobTitleItem): void {
-    this.editingId.set(item.id);
-    this.form.patchValue(item);
-  }
-
-  reset(): void {
-    this.editingId.set(null);
-    this.form.reset({ jobNumber: '', jobNameAr: '', jobNameEn: '' });
-  }
-
-  save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const payload = this.form.getRawValue();
-    const request = this.editingId()
-      ? this.http.put(this.endpoints.jobTitles.update(this.editingId()!), payload)
-      : this.http.post(this.endpoints.jobTitles.create, payload);
-
-    request.subscribe({
-      next: () => {
-        this.notify.success(this.translate.instant('common.savedSuccessfully'));
-        this.reset();
-        this.load();
+  loadJobTitles() {
+    this.jobTitlesService.getJobTitles().subscribe({
+      next: response => {
+        this._allJobTitles.set(response || []);
+        this.applyFilters();
       }
     });
   }
 
-  delete(id: string): void {
-    this.http.delete(this.endpoints.jobTitles.delete(id)).subscribe({
-      next: () => this.load(),
-      error: () => this.notify.error(this.translate.instant('common.operationFailed'))
+  applyFilters() {
+    const {pageNumber, pageSize, search} = this.filters();
+    const normalizedSearch = (search || '').trim().toLowerCase();
+
+    const filtered = normalizedSearch
+      ? this._allJobTitles().filter(item =>
+          item.jobNameAr.toLowerCase().includes(normalizedSearch) ||
+          item.jobNameEn.toLowerCase().includes(normalizedSearch) ||
+          item.jobNumber.toLowerCase().includes(normalizedSearch)
+        )
+      : this._allJobTitles();
+
+    const totalCount = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const safePage = Math.min(Math.max(1, pageNumber), totalPages);
+    const start = (safePage - 1) * pageSize;
+    const pagedItems = filtered.slice(start, start + pageSize);
+
+    this._jobTitles.set(pagedItems);
+    this._paginationMetadata.set({
+      totalCount,
+      pageSize,
+      currentPage: safePage,
+      totalPages,
+      hasPreviousPage: safePage > 1,
+      hasNext: safePage < totalPages
     });
+
+    if (safePage !== pageNumber) {
+      this.filters.update(f => ({...f, pageNumber: safePage}));
+    }
+  }
+
+  onSearchChange() {
+    this.filters.update(f => ({...f, pageNumber: 1, search: this.searchTerm}));
+    this.applyFilters();
+  }
+
+  onPageChange(page: number) {
+    this.filters.update(f => ({...f, pageNumber: page}));
+    this.applyFilters();
+  }
+
+  onPageSizeChange(size: number) {
+    this.filters.update(f => ({...f, pageNumber: 1, pageSize: size}));
+    this.applyFilters();
+  }
+
+  openAdd() {
+    this.modalMode.set('create');
+    this.editingJobTitle.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  openEdit(jobTitle: JobTitleDto) {
+    this.modalMode.set('edit');
+    this.editingJobTitle.set(jobTitle);
+    this.isModalOpen.set(true);
+  }
+
+  createJobTitle(payload: JobTitleDto) {
+    this.jobTitlesService.createJobTitle(payload).subscribe({
+      next: () => {
+        this.notification.success(this.translate.instant('JOB_TITLES.SAVE_SUCCESS'));
+        this.isModalOpen.set(false);
+        this.loadJobTitles();
+      }
+    });
+  }
+
+  updateJobTitle(payload: {id: string; payload: JobTitleDto}) {
+    this.jobTitlesService.updateJobTitle(payload.id, payload.payload).subscribe({
+      next: () => {
+        this.notification.success(this.translate.instant('JOB_TITLES.SAVE_SUCCESS'));
+        this.isModalOpen.set(false);
+        this.loadJobTitles();
+      }
+    });
+  }
+
+  confirmDelete(jobTitle: JobTitleDto) {
+    this.confirmationService.confirm({
+      message: this.translate.instant('JOB_TITLES.DELETE_CONFIRM'),
+      header: this.translate.instant('JOB_TITLES.DELETE_HEADER'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('JOB_TITLES.DELETE'),
+      rejectLabel: this.translate.instant('JOB_TITLES.CANCEL'),
+      acceptButtonStyleClass: 'btn btn-danger',
+      rejectButtonStyleClass: 'btn btn-outline-secondary',
+      defaultFocus: 'reject',
+      accept: () => {
+        this.jobTitlesService.deleteJobTitle(jobTitle.id!).subscribe({
+          next: () => {
+            this.notification.success(this.translate.instant('JOB_TITLES.DELETE_SUCCESS'));
+            this.loadJobTitles();
+          }
+        });
+      }
+    });
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
+    this.modalMode.set('create');
+    this.editingJobTitle.set(null);
   }
 }

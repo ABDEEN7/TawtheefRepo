@@ -1,0 +1,20 @@
+{
+  "JOB_TITLES.TITLE": "إدارة المسميات الوظيفية",
+  "JOB_TITLES.ADD_JOB_TITLE": "إضافة مسمى وظيفي",
+  "JOB_TITLES.EDIT_JOB_TITLE": "تعديل المسمى الوظيفي",
+  "JOB_TITLES.JOB_NUMBER": "رقم الوظيفة",
+  "JOB_TITLES.NAME_AR": "اسم المسمى الوظيفي (عربي)",
+  "JOB_TITLES.NAME_EN": "اسم المسمى الوظيفي (إنجليزي)",
+  "JOB_TITLES.SEARCH_BY_NAME": "البحث برقم الوظيفة أو الاسم",
+  "JOB_TITLES.SEARCH_PLACEHOLDER": "أدخل رقم الوظيفة أو الاسم",
+  "JOB_TITLES.ACTIONS": "الإجراءات",
+  "JOB_TITLES.EDIT": "تعديل",
+  "JOB_TITLES.DELETE": "حذف",
+  "JOB_TITLES.CANCEL": "إلغاء",
+  "JOB_TITLES.SAVE": "حفظ",
+  "JOB_TITLES.SAVE_SUCCESS": "تم حفظ المسمى الوظيفي بنجاح.",
+  "JOB_TITLES.DELETE_HEADER": "حذف المسمى الوظيفي",
+  "JOB_TITLES.DELETE_CONFIRM": "هل أنت متأكد من حذف هذا المسمى الوظيفي؟",
+  "JOB_TITLES.DELETE_SUCCESS": "تم حذف المسمى الوظيفي بنجاح.",
+  "JOB_TITLES.FIELD_REQUIRED": "هذا الحقل مطلوب."
+}
