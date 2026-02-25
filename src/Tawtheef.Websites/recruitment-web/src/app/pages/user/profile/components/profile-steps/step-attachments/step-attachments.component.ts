@@ -21,6 +21,19 @@ export class StepAttachmentsComponent implements OnInit {
   @Input() submitLabelKey = 'wizard.buttons.next';
   @Input() showBack = true;
   @Input() requireChanges = false;
+  private readonly maxFileSizeBytes = 5 * 1024 * 1024; // 5MB
+  private readonly allowedMimeTypes = new Set<string>([
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/bmp',
+    'image/tiff',
+    'image/svg+xml',
+    'image/heic',
+    'image/heif',
+  ]);
 
   ds = inject(ProfileDataService);
   private fb = inject(FormBuilder);
@@ -117,12 +130,35 @@ export class StepAttachmentsComponent implements OnInit {
     const file = input.files && input.files[0];
     const grp = this.rows.at(i) as FormGroup;
 
-    if (file) {
-      this.filesStore[i] = file;
-      this.fileRefs[i] = null;
-      grp.patchValue({ file, fileName: file.name });
-      grp.updateValueAndValidity({ emitEvent: false });
+    if (!file) return;
+
+    // 1) النوع
+    if (!this.isAllowedFile(file)) {
+      this.rejectFile(
+        i,
+        input,
+        this.translate.instant('wizard.attachments.onlyPdfOrImages')
+      );
+      return;
     }
+
+    // 2) الحجم
+    if (file.size > this.maxFileSizeBytes) {
+      this.rejectFile(
+        i,
+        input,
+        this.translate.instant('wizard.attachments.maxSize5mb')
+      );
+      return;
+    }
+
+    // قبول الملف
+    this.filesStore[i] = file;
+    this.fileRefs[i] = null;
+
+    grp.get('file')?.setErrors(null);
+    grp.patchValue({ file, fileName: file.name }, { emitEvent: false });
+    grp.updateValueAndValidity({ emitEvent: false });
   }
 
   changeFile(i: number): void {
@@ -247,5 +283,28 @@ export class StepAttachmentsComponent implements OnInit {
 
   canPreview(i: number): boolean {
     return !!this.filesStore[i] || !!this.fileRefs[i]?.url;
+  }
+
+  private isAllowedFile(file: File): boolean {
+    // بعض المتصفحات ممكن ترجع type فاضي => نتحقق من الامتداد كخطة B
+    if (file.type && this.allowedMimeTypes.has(file.type)) return true;
+
+    const name = (file.name || '').toLowerCase();
+    const ext = name.split('.').pop() || '';
+    return ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp', 'tif', 'tiff', 'svg', 'heic', 'heif'].includes(ext);
+  }
+
+  private rejectFile(i: number, input: HTMLInputElement, message: string): void {
+    // امسح الاختيار من الـ input ومن الفورم + المخزن
+    input.value = '';
+    this.filesStore[i] = null;
+    this.fileRefs[i] = null;
+
+    const grp = this.rows.at(i) as FormGroup;
+    grp.patchValue({ file: null, fileName: '' }, { emitEvent: false });
+    grp.get('file')?.markAsTouched();
+    grp.get('file')?.setErrors({ invalidFile: true });
+
+    this.notificationService.error(message, this.translate.instant('wizard.validationErrorTitle'));
   }
 }

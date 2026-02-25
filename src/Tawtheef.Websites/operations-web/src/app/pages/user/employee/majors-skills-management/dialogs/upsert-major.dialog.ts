@@ -87,7 +87,7 @@ export interface UpsertMajorDialogData {
           </div>
 
           <div class="text-muted small" *ngIf="vm.parentId">
-            {{ 'MAJORS_SKILLS.SUB_MAJOR_OF_PARENT' | translate }}: {{ vm.parentId }}
+            {{ 'MAJORS_SKILLS.SUB_MAJOR_OF_PARENT' | translate }}: {{ vm.parent.name }}
           </div>
         </div>
 
@@ -115,7 +115,7 @@ export class UpsertMajorDialogComponent {
   vm = {
     id: this.data.model?.id ?? null,
     parentId: this.data.mode === 'create' ? (this.data.parentId ?? null) : (this.data.model?.parentId ?? this.data.model?.parentMajorId ?? null),
-
+    parent: { name: this.data.parent ?? '' },
     // try common shapes:
     nameEn: this.data.model?.nameEn ?? this.data.model?.name?.en ?? this.data.model?.name ?? '',
     nameAr: this.data.model?.nameAr ?? this.data.model?.name?.ar ?? '',

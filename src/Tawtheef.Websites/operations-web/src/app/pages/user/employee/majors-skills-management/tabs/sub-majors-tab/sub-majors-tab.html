@@ -9,8 +9,8 @@
           pButton
           type="button"
           icon="pi pi-plus"
-          (click)="service.openCreateMajor(store.subMajorFilters().parentMajorId || null)"
-          [disabled]="!store.subMajorFilters().parentMajorId">
+          (click)="service.openCreateMajor(store.selectedParentMajorId(), store.selectedParentMajor()?.name ?? null)"
+          [disabled]="!store.selectedParentMajorId()">
           {{ 'MAJORS_SKILLS.CREATE' | translate }}
         </button>
     </div>
@@ -27,10 +27,9 @@
                 <app-remote-select
                   [searchUrl]="store.endpoints.majorSkillsManagement.lookups.majors"
                   optionLabel="name"
-                  optionValue="id"
                   [showClear]="true"
                   [minChars]="1"
-                  [ngModel]="store.subMajorFilters().parentMajorId"
+                  [ngModel]="store.selectedParentMajor()"
                   (ngModelChange)="service.setSubMajorParent($event)"
                   [appendTo]="'body'">
                 </app-remote-select>
@@ -98,7 +97,7 @@
 
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="4" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
+                  <td colspan="5" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
                 </tr>
               </ng-template>
            </p-table>

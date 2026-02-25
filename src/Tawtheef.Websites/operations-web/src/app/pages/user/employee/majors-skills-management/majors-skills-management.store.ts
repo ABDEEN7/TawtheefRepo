@@ -96,7 +96,10 @@ export class MajorsSkillsManagementStore {
 
   /** when mapping filters chooses a sub-major, show info button for its parent */
   showParentMajorInfoButton = computed(() => !!this.majorSkillFilters().subMajorId && !!this.majorSkillFilters().parentMajorId);
+  selectedParentMajor = signal<MajorListItemModel | null>(null);
 
+  selectedParentMajorId = computed(() => this.selectedParentMajor()?.id ?? '');
+  selectedParentMajorName = computed(() => this.selectedParentMajor()?.name ?? '-');
   // ===== State Writers =====
   setCurrentLang(lang: Lang) {
     this.currentLang.set(lang);
