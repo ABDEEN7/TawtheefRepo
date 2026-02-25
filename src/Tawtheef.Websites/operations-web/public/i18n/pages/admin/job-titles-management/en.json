@@ -1,0 +1,20 @@
+{
+  "JOB_TITLES.TITLE": "Job Titles Management",
+  "JOB_TITLES.ADD_JOB_TITLE": "Add Job Title",
+  "JOB_TITLES.EDIT_JOB_TITLE": "Edit Job Title",
+  "JOB_TITLES.JOB_NUMBER": "Job Number",
+  "JOB_TITLES.NAME_AR": "Job Name (Arabic)",
+  "JOB_TITLES.NAME_EN": "Job Name (English)",
+  "JOB_TITLES.SEARCH_BY_NAME": "Search by job number or name",
+  "JOB_TITLES.SEARCH_PLACEHOLDER": "Enter job number or name",
+  "JOB_TITLES.ACTIONS": "Actions",
+  "JOB_TITLES.EDIT": "Edit",
+  "JOB_TITLES.DELETE": "Delete",
+  "JOB_TITLES.CANCEL": "Cancel",
+  "JOB_TITLES.SAVE": "Save",
+  "JOB_TITLES.SAVE_SUCCESS": "Job title saved successfully.",
+  "JOB_TITLES.DELETE_HEADER": "Delete Job Title",
+  "JOB_TITLES.DELETE_CONFIRM": "Are you sure you want to delete this job title?",
+  "JOB_TITLES.DELETE_SUCCESS": "Job title deleted successfully.",
+  "JOB_TITLES.FIELD_REQUIRED": "This field is required."
+}

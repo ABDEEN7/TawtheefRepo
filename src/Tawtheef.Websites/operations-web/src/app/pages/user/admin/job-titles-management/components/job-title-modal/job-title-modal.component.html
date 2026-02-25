@@ -1,0 +1,54 @@
+<div
+  class="modal-overlay"
+  i18nNamespace="pages/admin/job-titles-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-card">
+    <h4 class="modal-title">
+      {{ isEditMode() ? ('JOB_TITLES.EDIT_JOB_TITLE' | translate) : ('JOB_TITLES.ADD_JOB_TITLE' | translate) }}
+    </h4>
+
+    <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">{{ 'JOB_TITLES.JOB_NUMBER' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="jobNumber"
+            [class.is-invalid]="submitted && form.controls.jobNumber.invalid" />
+          @if (submitted && form.controls.jobNumber.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('jobNumber') }}</div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'JOB_TITLES.NAME_AR' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="jobNameAr"
+            [class.is-invalid]="submitted && form.controls.jobNameAr.invalid" />
+          @if (submitted && form.controls.jobNameAr.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('jobNameAr') }}</div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'JOB_TITLES.NAME_EN' | translate }}</label>
+          <input
+            class="form-control"
+            formControlName="jobNameEn"
+            [class.is-invalid]="submitted && form.controls.jobNameEn.invalid" />
+          @if (submitted && form.controls.jobNameEn.invalid) {
+            <div class="invalid-feedback d-block">{{ requiredError('jobNameEn') }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4 gap-2">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          {{ 'JOB_TITLES.CANCEL' | translate }}
+        </button>
+        <button type="submit" class="btn btn-primary">
+          {{ 'JOB_TITLES.SAVE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
