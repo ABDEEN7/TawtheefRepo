@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
+using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
+using Application.Recruitment.Features.Authenticator.Handlers.Utils;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -16,19 +18,16 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
 
 public sealed class RequestQatarResidentOtpCommandHandler(
     IQatarResidentVerificationClient verificationClient,
-    UserManager<User> userManager,
-    ISmsSender smsSender,
-    TimeProvider timeProvider,
-    IAppLogger logger
+    UserManager<User> userManager, IMoiService moiService,
+    ISmsSender smsSender, TimeProvider timeProvider, IAppLogger logger
 ) : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
     private readonly IAppLogger _log = logger.ForContext(typeof(RequestQatarResidentOtpCommandHandler));
 
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {
-        // IMPORTANT: do not log OTP / full QID / full phone
         var normalizedQid = QidUtilities.Normalize(request.Qid);
-        var qidMasked = MaskQid(normalizedQid);
+        var qidMasked = MoiUtils.MaskQid(normalizedQid);
 
         _log.Information("Request Qatar resident OTP started. Qid={QidMasked}", qidMasked);
 
@@ -38,13 +37,13 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             return Result.Fail<Unit>(ErrorsCodes.QatarResidentInvalidQid);
         }
 
-        if (!IsQatarMobileNumber(request.PhoneNumber))
+        if (!MoiUtils.IsQatarMobileNumber(request.PhoneNumber))
         {
             _log.Warning("Invalid Qatar mobile format (must start with +974). Qid={QidMasked}", qidMasked);
             return Result.Fail<Unit>(ErrorsCodes.QatarResidentPhoneInvalid);
         }
 
-        var normalizedPhone = NormalizePhone(request.PhoneNumber);
+        var normalizedPhone = MoiUtils.NormalizePhone(request.PhoneNumber);
         if (string.IsNullOrWhiteSpace(normalizedPhone))
         {
             _log.Warning("Phone required/invalid after normalization. Qid={QidMasked}", qidMasked);
@@ -52,8 +51,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         }
 
         var verification = await verificationClient.VerifyAsync(normalizedQid, normalizedPhone, cancellationToken);
-        if (verification.IsFailed)
-        {
+        if (verification.IsFailed) {
             _log.Warning(
                 "Qatar resident verification failed. Qid={QidMasked} Errors={Errors}",
                 qidMasked,
@@ -61,9 +59,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
 
             return Result.Fail<Unit>(verification.Errors);
         }
-
-        // (This check is redundant because you already normalize to normalizedQid,
-        // but keeping your original logic and logging.)
+        
         if (!string.Equals(QidUtilities.Normalize(normalizedQid), normalizedQid, StringComparison.Ordinal))
         {
             _log.Warning("QID normalization mismatch detected. Qid={QidMasked}", qidMasked);
@@ -138,20 +134,29 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             user.PhoneNumberConfirmed = false;
         }
 
+        var personalInfoResult = await moiService.GetMoiPersonalInfoAsync(normalizedQid, request.QidExpiry,
+            cancellationToken);
+        if (personalInfoResult.IsFailed)
+        {
+            _log.Warning(
+                "Login blocked by Kawader check. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                user.Id,
+                qidMasked,
+                string.Join(" | ", personalInfoResult.Errors.Select(e => e.Message)));
+
+            return Result.Fail<Unit>(personalInfoResult.Errors);
+        }
+        
         var now = timeProvider.GetUtcNow().UtcDateTime;
 
-        var canSend = user.CanSendOtp(
-            now,
-            QatarResidentOtpConstants.MaxOtpSends,
+        var canSend = user.CanSendOtp(now, QatarResidentOtpConstants.MaxOtpSends, 
             QatarResidentOtpConstants.OtpSendWindow);
 
         if (canSend.IsFailed)
         {
             _log.Warning(
                 "OTP send not allowed (rate/lock rules). UserId={UserId} Qid={QidMasked} Errors={Errors}",
-                user.Id,
-                qidMasked,
-                string.Join(" | ", canSend.Errors.Select(e => e.Message)));
+                user.Id, qidMasked, string.Join(" | ", canSend.Errors.Select(e => e.Message)));
 
             return Result.Fail<Unit>(canSend.Errors);
         }
@@ -164,17 +169,13 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         {
             _log.Error(
                 "UpdateAsync failed after setting OTP reference. UserId={UserId} Errors={Errors}",
-                user.Id,
-                string.Join(", ", update.Errors.Select(e => e.Description)));
+                user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
 
             return FailureFromIdentity<Unit>(update);
         }
 
         // DO NOT log OTP content. (Even in dev.)
-        _ = await smsSender.SendAsync(
-            normalizedPhone,
-            $"Your verification code is: {otp}",
-            cancellationToken);
+        _ = await smsSender.SendAsync(normalizedPhone, $"Your verification code is: {otp}", cancellationToken);
 
         user.MarkOtpSent();
 
@@ -183,8 +184,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         {
             _log.Error(
                 "UpdateAsync failed after MarkOtpSent. UserId={UserId} Errors={Errors}",
-                user.Id,
-                string.Join(", ", update.Errors.Select(e => e.Description)));
+                user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
 
             return FailureFromIdentity<Unit>(update);
         }
@@ -192,19 +192,6 @@ public sealed class RequestQatarResidentOtpCommandHandler(
         _log.Information("Request Qatar resident OTP succeeded. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
 
         return Result.Ok(Unit.Value);
-    }
-
-    public static bool IsQatarMobileNumber(string phone) => phone.StartsWith("+974");
-
-    private static string NormalizePhone(string phone)
-    {
-        var digits = new string(phone.Where(char.IsDigit).ToArray());
-        if (string.IsNullOrWhiteSpace(digits)) return string.Empty;
-
-        if (digits.StartsWith("974") && digits.Length == 11) return "+" + digits;
-        if (digits.Length == 8) return "+974" + digits;
-
-        return "+" + digits;
     }
 
     private static string GenerateCode(int length)
@@ -216,14 +203,6 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             chars[i] = digits[bytes[i] % digits.Length];
 
         return new string(chars);
-    }
-
-    private static string MaskQid(string? qid)
-    {
-        if (string.IsNullOrWhiteSpace(qid)) return "—";
-        var digits = new string(qid.Where(char.IsDigit).ToArray());
-        if (digits.Length <= 3) return "***";
-        return new string('*', digits.Length - 3) + digits[^3..];
     }
 
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>

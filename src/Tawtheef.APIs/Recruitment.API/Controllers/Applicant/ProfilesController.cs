@@ -537,7 +537,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CheckProfile([FromBody] CheckProfileMOI request, CancellationToken ct)
     {
         if(UserId.IsFailed) return BadRequest(UserId.Errors);
-        var query = new GetPersonalInformationByQidQuery(UserId.Value, request);
+        var query = new GetPersonalInformationByQidQuery(request);
         var result = await mediator.Send(query, ct);
         return result.ToActionResult();
     }
