@@ -3,6 +3,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ConfirmationService} from 'primeng/api';
+import {ConfirmDialog} from 'primeng/confirmdialog';
 import {Tooltip} from 'primeng/tooltip';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
@@ -24,6 +25,7 @@ import {JobTitlesService} from './services/job-titles.service';
     CommonModule,
     FormsModule,
     TranslatePipe,
+    ConfirmDialog,
     PaginationComponent,
     I18nNamespaceDirective,
     Tooltip,
