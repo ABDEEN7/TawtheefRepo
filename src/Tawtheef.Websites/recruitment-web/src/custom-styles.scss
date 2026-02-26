@@ -213,9 +213,9 @@ header.topbar {
   z-index: 1030;
   min-height: 85px;
 
-  img.logo {
-    height: 65px;
-  }
+  // img.logo {
+  //   height: 65px;
+  // }
 
   @media (max-width: 768px) {
     min-height: 135px;
@@ -225,9 +225,11 @@ header.topbar {
 .layout {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  // overflow: hidden;
   margin-top: 85px; // push content below fixed header
-
+ @media (max-width: 992px) {
+    margin-top: 90px;
+  }
   @media (max-width: 768px) {
     margin-top: 135px;
   }
@@ -634,7 +636,7 @@ body.ltr
 --------------------------------------------------------------*/
 
 .form-label{
-  font-weight: bold;
+  font-weight: 600;
 }
 .p-select-fluid ,
 .p-inputtext,
@@ -840,3 +842,23 @@ body.ltr
   line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+.form-switch.wizard-profile .p-toggleswitch-slider{
+  background-color: rgba(47, 127, 56, 1) !important;
+}
+
+.form-switch.wizard-profile .p-toggleswitch{
+      height: 2rem !important;
+    width: 3rem !important;  
+}
+.form-switch.wizard-profile .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider{
+    background-color: #8a1538 !important ;
+}
+.form-switch.wizard-profile .p-toggleswitch-handle{
+    height: 1.5rem !important;
+    width: 1.5rem !important;
+    top: 39%;
+  i{
+    display: none !important;
+  }
+}
+.maritalstatus .p-select-option{padding: .2rem 0.75rem !important}
