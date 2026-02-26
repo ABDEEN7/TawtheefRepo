@@ -1,0 +1,73 @@
+@using Tawtheef.Domain.Entities.Users
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.FinalizeReviewProfile.FinalizeReviewProfileModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var isAccepted = m.Status == UserProfileStatus.Approved;
+    
+    string? notes = null;
+    IEnumerable<string>? reasons = null;
+    var profileUrl = website;
+}
+
+@if (isAccepted)
+{
+    @:Subject: Your Profile Has Been Approved - @product
+    @:
+    @:Hello,
+    @:
+    @:We’re pleased to inform you that your profile has been APPROVED on @product.
+    @:
+    @:You can now continue using the platform and access all available features.
+    @:
+    @:Access your profile here:
+    @:@profileUrl
+    @:
+    @:If you have any questions, feel free to contact us at:
+    @:@support
+    @:
+    @:Best regards,
+    @:@product Team
+    @:
+    @:© @(DateTime.UtcNow.Year) @product. All rights reserved.
+}
+else
+{
+    @:Subject: Action Required – Your Profile Needs Updates - @product
+    @:
+    @:Hello,
+    @:
+    @:Your profile has been returned for updates.
+    @:Please review the notes below, make the necessary corrections, and resubmit your profile.
+    @:
+    @if (!string.IsNullOrWhiteSpace(notes))
+    {
+        @:Review Notes:
+        @:@notes
+        @:
+    }
+    @if (reasons != null && reasons.Any())
+    {
+        @:Detailed Notes:
+        @foreach (var r in reasons)
+        {
+            @: - @r
+        }
+        @:
+    }
+    @:Update your profile here:
+    @:@profileUrl
+    @:
+    @:If you need assistance, contact us at:
+    @:@support
+    @:
+    @:Best regards,
+    @:@product Team
+    @:
+    @:© @(DateTime.UtcNow.Year) @product. All rights reserved.
+}
