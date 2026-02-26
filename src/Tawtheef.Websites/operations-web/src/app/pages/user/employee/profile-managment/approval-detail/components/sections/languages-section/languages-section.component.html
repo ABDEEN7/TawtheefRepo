@@ -14,15 +14,15 @@
         <div class="language-card" *ngFor="let l of languages">
           <div class="language-title">{{ displayOption(l.language, l.languageId) }}</div>
           <div class="language-levels">
-            <span class="badge rounded-pill text-bg-light">
+            <span class="pill rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.speaking' | translate }}:
               <strong>{{ displayOption(l.speakingLevel, l.speakingLevelId) }}</strong>
             </span>
-            <span class="badge rounded-pill text-bg-light">
+            <span class="pill rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.writing' | translate }}:
               <strong>{{ displayOption(l.writingLevel, l.writingLevelId) }}</strong>
             </span>
-            <span class="badge rounded-pill text-bg-light">
+            <span class="pill rounded-pill text-bg-light">
               {{ 'profileApproval.detail.snapshot.reading' | translate }}:
               <strong>{{ displayOption(l.readingLevel, l.readingLevelId) }}</strong>
             </span>
