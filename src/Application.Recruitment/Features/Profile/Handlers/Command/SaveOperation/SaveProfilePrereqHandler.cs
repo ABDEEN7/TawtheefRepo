@@ -1,3 +1,4 @@
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
@@ -47,7 +48,11 @@ public sealed class SaveProfilePrereqHandler(
         if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
-        profile.CandidateTypeId = r.CandidateTypeId;
+        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
+
+        if (!isLockedProvider)
+            profile.CandidateTypeId = r.CandidateTypeId;
+
         profile.TargetEntityId  = r.TargetEntityId;
 
         var needsSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
@@ -55,7 +60,14 @@ public sealed class SaveProfilePrereqHandler(
         var needsMarriageCertificate = ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId);
         var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
 
-        profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
+        if (!isLockedProvider)
+        {
+            profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
+        }
+        else if (requiresNationalAddress)
+        {
+            profile.QIDExpiry = profile.QIDExpiry ?? r.QIDExpiry;
+        }
 
         // CV
         var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, ProfileFileCategories.Cv);
