@@ -5,6 +5,8 @@ import { CarouselResponsiveOptions } from 'primeng/carousel';
 import {HomeContentService} from '../services/home-content.service';
 import {FAQ, HomeSuccessStory} from '../models/home-content.model';
 import {Lang, LanguageService} from '../../../core/services/language.service';
+import { AvatarUtils } from '../../../core/utils/avatar-utils';
+
 
 @Component({
   selector: 'app-home',
@@ -16,6 +18,7 @@ import {Lang, LanguageService} from '../../../core/services/language.service';
 export class IndexComponent implements OnInit, AfterViewInit {
   private homeContentService = inject(HomeContentService);
   private languageService = inject(LanguageService);
+  defaultAvatar = AvatarUtils.default;
 
   protected readonly routes = routes;
   activeTab: string = 'schools';
