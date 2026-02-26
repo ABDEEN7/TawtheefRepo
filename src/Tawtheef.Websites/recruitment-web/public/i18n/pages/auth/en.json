@@ -24,7 +24,7 @@
   "auth.login.qatarResidentDialog.errorDescription": "We could not verify the provided code. Please try again.",
   "auth.login.google_cta": "Sign in with Google (Non-residents)",
   "auth.login.non_qatar" : "For users not residing in the State of Qatar",
-  "auth.login.welcome" : "Welcome to the employment portal",
+  "auth.login.welcome" : "Welcome to the Employment Portal",
   "auth.login.detail" : "A unified platform for managing job applications",
   "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department",
   "auth.otp.title": "OTP Verification",
