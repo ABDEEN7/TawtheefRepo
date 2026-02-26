@@ -39,6 +39,7 @@ import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.
 import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
 import {ProfileOverviewService} from './services/profile-overview.service';
 import {createProfileOverviewVisibility, ProfileOverviewVisibility} from './services/profile-overview.visibility';
+import {LanguageService} from '../../../../core/services/language.service';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -86,6 +87,7 @@ export class ProfileViewPage {
   private readonly profileCqrs = inject(ProfileViewCqrs);
   private readonly dialogService = inject(DialogService);
   private readonly lookups = inject(ProfileLookupsService);
+  protected readonly languageService = inject(LanguageService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,

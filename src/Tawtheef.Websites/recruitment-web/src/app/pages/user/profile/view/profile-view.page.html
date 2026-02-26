@@ -40,7 +40,7 @@
 
       </div>
           </div>
-      
+
     </section>
 
     <!-- Lower panel skeleton -->
@@ -59,13 +59,15 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 header-row">
           <div class="d-flex align-items-center gap-3">
                <div class="profile-wrapper position-relative">
-                    <div id="profileImage" class="profile-image"><img class="avatar shadow-sm" [src]="avatar" alt="Avatar" /></div>
+                    <div id="profileImage" class="profile-image">
+                      <img class="avatar shadow-sm" [src]="avatar" alt="Avatar" />
+                    </div>
                </div>
               <div class="text-start">
                   <div class="d-flex align-items-center gap-2 flex-wrap">
-                      <h4 class="mb-1 fw-bold">{{ header()?.fullNameAr || header()?.fullNameEn}}</h4>
+                      <h4 class="mb-1 fw-bold">{{ (languageService.get() == "ar") ? header()?.fullNameAr : header()?.fullNameEn}}</h4>
                       <span class="pill success" [ngClass]="statusVm().severity">
-                        <i class="hgi hgi-stroke"   [ngClass]="statusVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02  ' : 'hgi-hourglass'"></i>
+                        <i class="hgi hgi-stroke"   [ngClass]="statusVm().severity === 'chip-ok' ? 'hgi-checkmark-circle-02' : 'hgi-hourglass'"></i>
                         {{ statusVm().labelKey | translate }}
                       </span>
                   </div>
@@ -89,9 +91,9 @@
                             </div>
                             <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
                         </div>
-                        
+
                    </div>
-                  
+
               </div>
           </div>
 
@@ -107,7 +109,7 @@
                                   </div>
                               </div>
                             <div class="d-flex align-items-center gap-2"><span class="pill success chip-ok"> <i class="hgi hgi-stroke hgi-tick-02"></i> {{ 'profileView.verification.verified' | translate }}</span> </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -147,7 +149,7 @@
                   </div>
               </div>
         </div>
-       
+
 
       </div>
     </div>
