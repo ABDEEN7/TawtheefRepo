@@ -9,6 +9,7 @@ import {TargetEntitiesManagement} from './target-entities-management/target-enti
 import {ReligionsManagement} from './religions-management/religions-management';
 import {UniversitiesManagement} from './universities-management/universities-management';
 import {ProfileLogsComponent} from './profile-logs/profile-logs';
+import {SystemAdminLogsComponent} from './system-admin-logs/system-admin-logs';
 import {JobPointsConfigurationComponent} from './job-points-configuration/job-points-configuration.component';
 import {
   JobCategoryCandidateSettingsComponent
@@ -34,6 +35,13 @@ export const adminRoutes: Routes = [
   {
     path: "profile-logs",
     component: ProfileLogsComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.ProfileLogs.View] },
+  },
+
+  {
+    path: "system-admin-logs",
+    component: SystemAdminLogsComponent,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileLogs.View] },
   },

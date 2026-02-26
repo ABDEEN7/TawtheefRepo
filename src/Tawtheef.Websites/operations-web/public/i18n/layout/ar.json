@@ -58,5 +58,6 @@
   "common.sidebar.logout": "الخروج",
   "public.footer.rights": "جميع الحقوق محفوظة © 2026",
   "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 — جميع الحقوق محفوظة",
-  "admin.sidebar.jobTitles": "المسميات الوظيفية"
+  "admin.sidebar.jobTitles": "المسميات الوظيفية",
+  "admin.sidebar.systemAdminLogs": "سجل إدارة النظام"
 }

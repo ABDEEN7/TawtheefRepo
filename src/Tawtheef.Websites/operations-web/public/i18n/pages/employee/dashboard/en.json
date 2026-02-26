@@ -44,6 +44,9 @@
   "dashboard.status.returned": "Returned",
   "dashboard.status.requiresupdate": "Returned",
 
+  "dashboard.validation.invalidEmployeeIdTitle": "Invalid employee ID",
+  "dashboard.validation.invalidEmployeeIdDescription": "Employee ID must be a valid GUID format (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).",
+
   "dashboard.workload.high": "High",
   "dashboard.workload.balanced": "Balanced",
   "dashboard.workload.low": "Low",

@@ -220,6 +220,9 @@ export class EndpointsService {
   profileLogs = {
     list: this.getFullUrl('/profile-logs')
   };
+  systemAdminLogs = {
+    list: this.getFullUrl('/system-admin-logs')
+  };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),
     targetEntityDetails: (id: string) => this.getFullUrl(`/targetentities/target-entity-details/${id}`),
