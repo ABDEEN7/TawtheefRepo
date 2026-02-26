@@ -50,10 +50,9 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
 
         var hasCorrections = sectionItems.Any(i => i.Status == ReviewStatus.NeedsCorrection);
-        profile.Status = hasCorrections ? UserProfileStatus.RequiresUpdate: UserProfileStatus.Approved;
+        profile.FinalizeReviewProfile(hasCorrections);
 
-        await auditRepo.AddAsync(new AuditTrailEntry
-        {
+        await auditRepo.AddAsync(new AuditTrailEntry {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
@@ -63,8 +62,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
             Section = nameof(ProfileSection.Personal)
         }, ct);
 
-        await loggerRepo.AddAsync(new UserProfileLogger
-        {
+        await loggerRepo.AddAsync(new UserProfileLogger {
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
