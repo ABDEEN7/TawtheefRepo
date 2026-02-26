@@ -190,7 +190,7 @@
   padding: .2rem .55rem;
   border-radius: 999px;
   font-size: .78rem;
-
+  
   &.badge-done {
     color: $ok;
     border-color: rgba($ok, .25);
@@ -254,5 +254,41 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 24px rgba(0, 0, 0, .08);
+    
   }
 }
+.lift-on-hover:hover .pill.warning,
+.lift-on-hover.active .pill.warning{
+      background: #fff5d6 !important;
+    color: #9a6b00 !important;
+    border-color: #ffe3a6 !important;
+    outline: none;
+    }
+
+.lift-on-hover:hover .pill.success ,
+.lift-on-hover.active .pill.success {
+    background: #e6f5eb !important;
+    color: #1f7a3a !important;
+    border-color: #c5e7cf !important;
+    outline: none;
+    }
+
+    .lift-on-hover:hover .pill.secondary ,
+.lift-on-hover.active .pill.secondary {
+    background: #dddddd !important;
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+    outline: none;
+    }
+
+    .pill.chip-ok{
+        background: #e6f5eb !important;
+        color: #1f7a3a !important;
+        border-color: #c5e7cf !important;
+      }
+       
+.pill.chip-warn{
+         background: #fff5d6 !important;
+        color: #9a6b00 !important;
+        border-color: #ffe3a6 !important;
+      }

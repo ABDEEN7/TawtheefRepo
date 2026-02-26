@@ -126,12 +126,12 @@
                                           <div class="d-flex align-items-center justify-content-between">
                                             <div class="fs-18 fw-bold"><span *ngIf="reviewNotes()?.sectionIndex?.[card.section]">{{ reviewNotes()?.sectionIndex?.[card.section] }}</span></div>
                                             <div class="text-end">
-                                                <span class="pill danger tile-badge" *ngIf="reviewNotes()?.sectionIndex?.[card.section] as c">
+                                                <span class="pill warning tile-badge" *ngIf="reviewNotes()?.sectionIndex?.[card.section] as c">
                                                     <i class="hgi hgi-stroke hgi-alert-02"></i>
                                                     {{ 'profileOverview.review.notesCount' | translate }}
                                                 </span>
-                                                <span class="pill success tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
-                                                      <i class="hgi hgi-stroke hgi-checkmark-circle-02 fs-16"></i>
+                                                <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                                                      <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
                                                       @if(profileStatus() == UserProfileStatusEnum.Approved){
                                                         {{ 'profileView.sections.status.ok' | translate }}
                                                       }
