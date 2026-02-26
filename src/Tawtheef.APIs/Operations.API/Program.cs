@@ -5,6 +5,7 @@ using Azure.Identity;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Operations.API.Filters;
 using Serilog;
 using Serilog.Exceptions;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -101,9 +102,13 @@ builder.Services.Configure<ForwardedHeadersOptions>(o => {
 
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationOperation(builder.Configuration);
+builder.Services.AddScoped<AdminActionAuditFilter>();
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.AddService<AdminActionAuditFilter>();
+    })
     .ConfigureApiBehaviorOptions(options => {
     options.InvalidModelStateResponseFactory = ctx => {
         var problem = new ValidationProblemDetails(ctx.ModelState) {
