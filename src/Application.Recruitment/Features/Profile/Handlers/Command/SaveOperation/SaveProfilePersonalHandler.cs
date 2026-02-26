@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Policies;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -107,7 +107,7 @@ public sealed class SaveProfilePersonalHandler(
                     SponsorTypeId = r.SponsorTypeId!.Value,
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
-                    QIDExpiry = r.SponsorCardExpiryData!.Value,
+                    QIDExpiry = r.SponsorQidExpiry!.Value,
                     SponsorCardId = idResult.Value,
                 };
             }
@@ -116,7 +116,7 @@ public sealed class SaveProfilePersonalHandler(
                 profile.SponsorProfile.SponsorTypeId = r.SponsorTypeId!.Value;
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
-                profile.SponsorProfile.QIDExpiry = r.SponsorCardExpiryData!.Value;
+                profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry!.Value;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
         }

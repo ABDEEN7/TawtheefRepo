@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using Application.Recruitment.Features.Profile.Policies;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -149,7 +149,7 @@ file sealed record PersonalSectionSnapshot
                 SponsorTypeId = request.SponsorTypeId,
                 SponsorEmployerName = request.SponsorEmployerName,
                 SponsorEmployerNumber = request.SponsorEmployerNumber,
-                SponsorQidExpiry = request.SponsorCardExpiryData ?? SponsorQidExpiry,
+                SponsorQidExpiry = request.SponsorQidExpiry ?? SponsorQidExpiry,
                 SponsorCardResourceId = sponsorCardResourceId ?? SponsorCardResourceId
             };
         }
