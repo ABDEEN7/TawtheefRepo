@@ -1,3 +1,4 @@
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Cortex.Mediator;
@@ -41,13 +42,18 @@ public sealed class RequestProfilePersonalChangeHandler(
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
+        var identityValidation = VerifiedIdentityPolicy.EnsureIdentityHydrated(user, profile);
+        if (identityValidation.IsFailed)
+            return Result.Fail<Unit>(identityValidation.Errors);
+
+        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
         var currentSnapshot = PersonalSectionSnapshot.From(user, profile);
 
         var sponsorCardUpload = await UploadIfNeededAsync(cmd.Request.SponsorCard, null);
         if (sponsorCardUpload.IsFailed)
             return Result.Fail<Unit>(sponsorCardUpload.Errors);
 
-        var nextSnapshot = currentSnapshot.ApplyRequest(cmd.Request, sponsorCardUpload.Value);
+        var nextSnapshot = currentSnapshot.ApplyRequest(cmd.Request, sponsorCardUpload.Value, isLockedProvider);
         if (nextSnapshot == currentSnapshot)
             return Result.Ok(Unit.Value);
 
@@ -116,17 +122,17 @@ file sealed record PersonalSectionSnapshot
         };
     }
 
-    public PersonalSectionSnapshot ApplyRequest(SaveProfilePersonalRequest request, Guid? sponsorCardResourceId)
+    public PersonalSectionSnapshot ApplyRequest(SaveProfilePersonalRequest request, Guid? sponsorCardResourceId, bool isLockedProvider)
     {
         var snapshot = this with
         {
-            FullNameAr = request.FullNameAr ?? FullNameAr,
-            FullNameEn = request.FullNameEn ?? FullNameEn,
-            NationalNumber = request.NationalNumber ?? NationalNumber,
-            QidExpiry = request.QIDExpiry ?? QidExpiry,
-            BirthDate = request.BirthDate ?? BirthDate,
-            NationalityId = request.NationalityId ?? NationalityId,
-            GenderId = request.GenderId ?? GenderId,
+            FullNameAr = isLockedProvider ? (string.IsNullOrWhiteSpace(FullNameAr) ? request.FullNameAr ?? FullNameAr : FullNameAr) : request.FullNameAr ?? FullNameAr,
+            FullNameEn = isLockedProvider ? (string.IsNullOrWhiteSpace(FullNameEn) ? request.FullNameEn ?? FullNameEn : FullNameEn) : request.FullNameEn ?? FullNameEn,
+            NationalNumber = isLockedProvider ? (string.IsNullOrWhiteSpace(NationalNumber) ? request.NationalNumber ?? NationalNumber : NationalNumber) : request.NationalNumber ?? NationalNumber,
+            QidExpiry = isLockedProvider ? QidExpiry ?? request.QIDExpiry : request.QIDExpiry ?? QidExpiry,
+            BirthDate = isLockedProvider ? BirthDate ?? request.BirthDate : request.BirthDate ?? BirthDate,
+            NationalityId = isLockedProvider ? NationalityId ?? request.NationalityId : request.NationalityId ?? NationalityId,
+            GenderId = isLockedProvider ? GenderId ?? request.GenderId : request.GenderId ?? GenderId,
             ReligionId = request.ReligionId ?? ReligionId,
             MaritalStatusId = request.MaritalStatusId ?? MaritalStatusId,
             ChildrenCount = request.ChildrenCount ?? ChildrenCount,
@@ -143,7 +149,7 @@ file sealed record PersonalSectionSnapshot
                 SponsorTypeId = request.SponsorTypeId,
                 SponsorEmployerName = request.SponsorEmployerName,
                 SponsorEmployerNumber = request.SponsorEmployerNumber,
-                SponsorQidExpiry = request.QIDExpiry ?? SponsorQidExpiry,
+                SponsorQidExpiry = request.SponsorCardExpiryData ?? SponsorQidExpiry,
                 SponsorCardResourceId = sponsorCardResourceId ?? SponsorCardResourceId
             };
         }

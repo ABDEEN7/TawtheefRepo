@@ -1,4 +1,5 @@
 using Application.Recruitment.Features.Authenticator.Commands;
+using Application.Recruitment.Features.Profile.Policies;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -21,6 +22,9 @@ public class RequestUpdatePhoneCommandHandler(
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
 
+        if (await IsLockedIdentityProviderAsync(user))
+            return Result.Fail<Unit>(ErrorsCodes.UnauthorizedAction);
+
         if (request.PhoneE164.StartsWith("+974"))
             return Result.Fail<Unit>(ErrorsCodes.ShouldVerifyQatarPhoneNumberBeforeAssignIt);
         
@@ -31,5 +35,11 @@ public class RequestUpdatePhoneCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
+    }
+
+    private async Task<bool> IsLockedIdentityProviderAsync(User user)
+    {
+        var logins = await userManager.GetLoginsAsync(user);
+        return logins.Any(x => VerifiedIdentityProviders.IsLockedProvider(x.LoginProvider));
     }
 }

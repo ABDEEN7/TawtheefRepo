@@ -1,4 +1,5 @@
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
@@ -37,6 +38,7 @@ public sealed class RequestProfilePrereqChangeHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
+        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
         var currentSnapshot = PrereqSectionSnapshot.From(profile);
 
@@ -57,7 +59,8 @@ public sealed class RequestProfilePrereqChangeHandler(
             cvUpload.Value,
             idUpload.Value,
             birthUpload.Value,
-            marriageUpload.Value
+            marriageUpload.Value,
+            isLockedProvider
         );
 
         if (nextSnapshot != currentSnapshot)
@@ -113,14 +116,15 @@ file sealed record PrereqSectionSnapshot
         Guid? resumeAttachmentId,
         Guid? nationalCardId,
         Guid? birthCertificateId,
-        Guid? marriageCertificateId)
+        Guid? marriageCertificateId,
+        bool isLockedProvider)
     {
         var nextCandidateTypeId = request.CandidateTypeId;
         var snapshot = this with
         {
-            CandidateTypeId = nextCandidateTypeId,
+            CandidateTypeId = isLockedProvider ? CandidateTypeId : nextCandidateTypeId,
             TargetEntityId = request.TargetEntityId,
-            QidExpiry = request.QIDExpiry ?? QidExpiry,
+            QidExpiry = isLockedProvider ? QidExpiry ?? request.QIDExpiry : request.QIDExpiry ?? QidExpiry,
             ResumeAttachmentId = resumeAttachmentId ?? ResumeAttachmentId,
             NationalCardId = nationalCardId ?? NationalCardId
         };

@@ -17,6 +17,8 @@ using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
+using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 using CheckProfileMOI = Application.Recruitment.Features.Authenticator.DTOs.CheckProfileMOI;
 
@@ -24,7 +26,8 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
 
 public sealed class VerifyQatarResidentOtpCommandHandler(
     IUnitOfWork uow, IMoiService moiService, UserManager<User> userManager,
-    ITokenService tokenService, TimeProvider timeProvider, IAppLogger logger
+    ITokenService tokenService, TimeProvider timeProvider, IAppLogger logger,
+    IIdentityFieldProtectionContext identityFieldProtectionContext
 ) : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
 
@@ -132,6 +135,8 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         }
 
         var personalInfo = personalInfoResult.Value;
+        using var trustedIdentityWriteScope = identityFieldProtectionContext.BeginTrustedIdentityWriteScope();
+
         var nameUpdate = await UpdateUserAsync(user, personalInfo);
         if (nameUpdate.IsFailed)
         {
@@ -144,7 +149,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             return Result.Fail<AuthResponse>(nameUpdate.Errors);
         }
 
-        await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, cancellationToken);
+        await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, personalInfo, cancellationToken);
 
         var upsert = await UpsertQatarPassClaimsAsync(user, request, normalizedPhone);
         if (upsert.IsFailed)
@@ -176,6 +181,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         Guid userId,
         string qidNumber,
         DateOnly expiryDate,
+        MOEPersonalInfo personalInfo,
         CancellationToken cancellationToken)
     {
         var qidMasked = MoiUtils.MaskQid(qidNumber);
@@ -192,6 +198,15 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
         userProfile.NationalNumber = qidNumber;
         userProfile.QIDExpiry = expiryDate;
+        userProfile.BirthDate = personalInfo.DateOfBirth;
+        userProfile.GenderId = ResolveGenderId(personalInfo.Gender);
+
+        var nationalityId = await ResolveNationalityIdAsync(personalInfo.NationalityCode, cancellationToken);
+        userProfile.NationalityId = nationalityId ?? userProfile.NationalityId;
+
+        if (personalInfo.NationalityCode == MoiUtils.QatarNationalityCode)
+            userProfile.CandidateTypeId = CandidateTypeIds.Qatari;
+
         await uow.SaveChangesAsync(cancellationToken);
 
         _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked, expiryDate);

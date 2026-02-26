@@ -1,4 +1,6 @@
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
@@ -40,22 +42,51 @@ public sealed class ReviseProfilePersonalHandler(
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
+        var identityValidation = VerifiedIdentityPolicy.EnsureIdentityHydrated(user, profile);
+        if (identityValidation.IsFailed)
+            return Result.Fail<Unit>(identityValidation.Errors);
+
         var r = cmd.Request;
-        
-        var checkNationalNumber = await uow.GetEntityRepository<UserProfile>()
-            .DbSet.AnyAsync(p => p.NationalNumber == r.NationalNumber && p.NationalityId == r.NationalityId
-                                 && p.Id != profile.Id, ct);
-        if (checkNationalNumber)
-            return Result.Fail<Unit>(ErrorsCodes.DuplicateNationalNumber);
+        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
-        user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
-        user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
-        profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
-        profile.BirthDate      = r.BirthDate ?? profile.BirthDate;
-        profile.QIDExpiry      = r.QIDExpiry ?? profile.QIDExpiry;
+        if (!isLockedProvider)
+        {
+            user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
+            user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
+            profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
+            profile.BirthDate      = r.BirthDate ?? profile.BirthDate;
+            profile.QIDExpiry      = r.QIDExpiry ?? profile.QIDExpiry;
+        }
+        else
+        {
+            user.FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr) ? r.FullNameAr ?? user.FullNameAr : user.FullNameAr;
+            user.FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn) ? r.FullNameEn ?? user.FullNameEn : user.FullNameEn;
+            profile.NationalNumber = string.IsNullOrWhiteSpace(profile.NationalNumber)
+                ? r.NationalNumber ?? profile.NationalNumber
+                : profile.NationalNumber;
+            profile.BirthDate = profile.BirthDate ?? r.BirthDate;
+            profile.QIDExpiry = profile.QIDExpiry ?? r.QIDExpiry;
+        }
 
-        profile.NationalityId   = r.NationalityId ?? profile.NationalityId;
-        profile.GenderId        = r.GenderId;
+        if (!string.IsNullOrWhiteSpace(profile.NationalNumber) && profile.NationalityId.HasValue)
+        {
+            var checkNationalNumber = await uow.GetEntityRepository<UserProfile>()
+                .DbSet.AnyAsync(p => p.NationalNumber == profile.NationalNumber && p.NationalityId == profile.NationalityId
+                                     && p.Id != profile.Id, ct);
+            if (checkNationalNumber)
+                return Result.Fail<Unit>(ErrorsCodes.DuplicateNationalNumber);
+        }
+
+        if (!isLockedProvider)
+        {
+            profile.NationalityId = r.NationalityId ?? profile.NationalityId;
+            profile.GenderId = r.GenderId;
+        }
+        else
+        {
+            profile.NationalityId = profile.NationalityId ?? r.NationalityId;
+            profile.GenderId = profile.GenderId ?? r.GenderId;
+        }
         profile.ReligionId      = r.ReligionId;
         profile.MaritalStatusId = r.MaritalStatusId ?? profile.MaritalStatusId;
         profile.ChildrenCount   = r.ChildrenCount ?? profile.ChildrenCount;
@@ -78,7 +109,7 @@ public sealed class ReviseProfilePersonalHandler(
                     SponsorTypeId = r.SponsorTypeId!.Value,
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
-                    QIDExpiry = r.QIDExpiry!.Value,
+                    QIDExpiry = r.SponsorCardExpiryData!.Value,
                     SponsorCardId = idResult.Value,
                 };
             }
@@ -87,7 +118,7 @@ public sealed class ReviseProfilePersonalHandler(
                 profile.SponsorProfile.SponsorTypeId = r.SponsorTypeId!.Value;
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
-                profile.SponsorProfile.QIDExpiry = r.QIDExpiry!.Value;
+                profile.SponsorProfile.QIDExpiry = r.SponsorCardExpiryData!.Value;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
         }
