@@ -6,6 +6,7 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
+using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Azure.Storage.Blobs;
 using FluentValidation;
@@ -263,6 +264,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
                 services.AddScoped<IProfileReviewService, ProfileReviewService>();
+                services.AddScoped<IMoiService, MoiService>();
 
             }
 

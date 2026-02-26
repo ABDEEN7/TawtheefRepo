@@ -5,5 +5,5 @@ using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Recruitment.Features.Profile.Queries;
 
-public record GetPersonalInformationByQidQuery(Guid UserId, CheckProfileMOI Request)
+public record GetPersonalInformationByQidQuery(CheckProfileMOI Request)
     : IQuery<IResult<MOEPersonalInfo>>;

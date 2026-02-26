@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Security.Claims;
+using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
+using Application.Recruitment.Features.Authenticator.Handlers.Utils;
 using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
@@ -21,15 +23,10 @@ using CheckProfileMOI = Application.Recruitment.Features.Authenticator.DTOs.Chec
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 
 public sealed class VerifyQatarResidentOtpCommandHandler(
-    IUnitOfWork uow,
-    IMediator mediator,
-    UserManager<User> userManager,
-    ITokenService tokenService,
-    TimeProvider timeProvider,
-    IAppLogger logger
+    IUnitOfWork uow, IMoiService moiService, UserManager<User> userManager,
+    ITokenService tokenService, TimeProvider timeProvider, IAppLogger logger
 ) : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
-    private const int QatarNationalityCode = 634;
 
     private readonly IAppLogger _log = logger.ForContext(typeof(VerifyQatarResidentOtpCommandHandler));
 
@@ -39,7 +36,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     {
         // IMPORTANT: do not log OTP / full QID / full phone.
         var normalizedQid = QidUtilities.Normalize(request.Qid);
-        var qidMasked = MaskQid(normalizedQid);
+        var qidMasked = MoiUtils.MaskQid(normalizedQid);
 
         _log.Information(
             "Verify Qatar resident OTP started. Qid={QidMasked} Expiry={Expiry}",
@@ -118,8 +115,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             return FailureFromIdentity<AuthResponse>(update);
         }
 
-        var personalInfoResult = await GetMoiPersonalInfoAsync(
-            user.Id,
+        var personalInfoResult = await moiService.GetMoiPersonalInfoAsync(
             normalizedQid,
             request.QidExpiry,
             cancellationToken);
@@ -176,60 +172,13 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         return tokens;
     }
 
-    private async Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoAsync(
-        Guid userId,
-        string qid,
-        DateOnly expiryDate,
-        CancellationToken cancellationToken)
-    {
-        var qidMasked = MaskQid(qid);
-
-        var request = await mediator.SendQueryAsync<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>(
-            new GetPersonalInformationByQidQuery(userId, new CheckProfileMOI(qid, expiryDate)),
-            cancellationToken);
-
-        if (request.IsFailed)
-        {
-            _log.Warning(
-                "MOI personal info query failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
-                userId,
-                qidMasked,
-                string.Join(" | ", request.Errors.Select(e => e.Message)));
-
-            return Result.Fail<MOEPersonalInfo>(request.Errors);
-        }
-
-        if (request.Value.NationalityCode != QatarNationalityCode)
-            return Result.Ok(request.Value);
-
-        var allowLogin = await CheckIfAllowLoginAsync();
-        return allowLogin
-            ? Result.Ok(request.Value)
-            : Result.Fail<MOEPersonalInfo>(ErrorsCodes.QatariPeopleNotAllowedLoginBeforeRegisterOnKawader);
-
-        async Task<bool> CheckIfAllowLoginAsync()
-        {
-            var isKawaderUser = await uow.GetEntityRepository<KawaderQid>()
-                .DbSet.AsNoTracking()
-                .AnyAsync(x => x.Qid == qid, cancellationToken);
-
-            _log.Information(
-                "Kawader allow-login check. UserId={UserId} Qid={QidMasked} IsKawaderUser={IsKawaderUser}",
-                userId,
-                qidMasked,
-                isKawaderUser);
-
-            return isKawaderUser;
-        }
-    }
-
     private async Task UpdateUserProfileAsync(
         Guid userId,
         string qidNumber,
         DateOnly expiryDate,
         CancellationToken cancellationToken)
     {
-        var qidMasked = MaskQid(qidNumber);
+        var qidMasked = MoiUtils.MaskQid(qidNumber);
 
         var userProfile = await uow.GetEntityRepository<UserProfile>()
             .DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
@@ -270,7 +219,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
         if (user is ApplicantUser applicantUser)
         {
-            var newIsKawader = personalInfo.NationalityCode == QatarNationalityCode;
+            var newIsKawader = personalInfo.NationalityCode == MoiUtils.QatarNationalityCode;
             if (applicantUser.IsUserKawader != newIsKawader)
             {
                 applicantUser.IsUserKawader = newIsKawader;
@@ -333,15 +282,6 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         if (digits.Length == 8) return "+974" + digits;
 
         return "+" + digits;
-    }
-
-    private static string MaskQid(string? qid)
-    {
-        if (string.IsNullOrWhiteSpace(qid)) return "—";
-        // keep last 3 digits only
-        var digits = new string(qid.Where(char.IsDigit).ToArray());
-        if (digits.Length <= 3) return "***";
-        return new string('*', digits.Length - 3) + digits[^3..];
     }
 
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>

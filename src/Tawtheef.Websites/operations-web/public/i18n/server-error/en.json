@@ -284,8 +284,8 @@
   "server-error.DEPARTMENT_NOT_FOUND": "Department not found.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "Department name already exists.",
 
-  "server-error.MOI_DATA_NOT_FOUND": "MOI data not found.",
-  "server-error.MOI_FAILED_REQUEST": "MOI request failed.",
+  "server-error.MOI_DATA_NOT_FOUND": "Occurred an error while fetching MOI data.",
+  "server-error.MOI_FAILED_REQUEST": "Occurred an error while fetching MOI data.",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "Employee directory request failed.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "Employee directory payload is invalid.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "Employee not found in employee directory.",
