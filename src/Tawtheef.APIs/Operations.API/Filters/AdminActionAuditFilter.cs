@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
-using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Infrastructure.Data;
 
 namespace Operations.API.Filters;
@@ -42,10 +42,11 @@ public sealed class AdminActionAuditFilter(
             var action = controllerAction.ActionName;
             var entityId = ResolveEntityId(context.ActionArguments);
 
-            var entry = new AuditTrailEntry
+            var entry = new ActionLog
             {
                 UserProfileId = Guid.Empty,
                 UserId = userId,
+                LogType = ActionLogType.Admin,
                 ActionType = $"{section}.{action}",
                 Section = section,
                 Notes = payload,
@@ -54,7 +55,7 @@ public sealed class AdminActionAuditFilter(
                 CreatedDate = DateTime.UtcNow
             };
 
-            dbContext.Set<AuditTrailEntry>().Add(entry);
+            dbContext.Set<ActionLog>().Add(entry);
             await dbContext.SaveChangesAsync(context.HttpContext.RequestAborted);
         }
         catch (Exception ex)

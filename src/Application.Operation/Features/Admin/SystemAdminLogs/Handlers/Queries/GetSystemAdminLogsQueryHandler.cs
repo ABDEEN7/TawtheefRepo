@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
-using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.SystemAdminLogs.Handlers.Queries;
@@ -22,9 +22,10 @@ public sealed class GetSystemAdminLogsQueryHandler(
         GetSystemAdminLogsQuery request,
         CancellationToken cancellationToken)
     {
-        var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var actionLogRepo = uow.GetEntityRepository<ActionLog>();
 
-        var query = auditRepo.DbSet
+        var query = actionLogRepo.DbSet
+            .Where(log => log.LogType == ActionLogType.Admin && log.UserId.HasValue)
             .AsNoTracking()
             .WhereIf(request.UserProfileId.HasValue, log => log.UserProfileId == request.UserProfileId!.Value)
             .WhereIf(request.UserId.HasValue, log => log.UserId == request.UserId!.Value)
@@ -34,8 +35,8 @@ public sealed class GetSystemAdminLogsQueryHandler(
             .Select(log => new SystemAdminLogProjection
             {
                 Id = log.Id,
-                UserProfileId = log.UserProfileId,
-                UserId = log.UserId,
+                UserProfileId = log.UserProfileId ?? Guid.Empty,
+                UserId = log.UserId!.Value,
                 ActionType = log.ActionType,
                 Section = log.Section,
                 Notes = log.Notes,
@@ -72,7 +73,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 UserProfileId = log.UserProfileId,
                 UserId = log.UserId,
                 UserName = userLookup.GetValueOrDefault(log.UserId),
-                Source = ProfileLogSources.AuditTrail,
+                Source = ProfileLogSources.ActionLog,
                 ActionType = log.ActionType,
                 Section = log.Section,
                 Notes = log.Notes,

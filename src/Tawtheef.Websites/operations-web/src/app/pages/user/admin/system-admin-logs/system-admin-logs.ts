@@ -48,7 +48,7 @@ export class SystemAdminLogsComponent implements OnInit {
   actionTypeFilter = '';
   searchFilter = '';
   reviewStatusFilter: ReviewStatus | null = null;
-  sourceFilter: string | null = 'AuditTrailEntry';
+  sourceFilter: string | null = 'ActionLog';
   fromDate: Date | null = null;
   toDate: Date | null = null;
 
@@ -57,8 +57,7 @@ export class SystemAdminLogsComponent implements OnInit {
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   sourceOptions = [
-    { id: 'UserProfileLogger', label: 'PROFILE_LOGS.SOURCE_USER_PROFILE' },
-    { id: 'AuditTrailEntry', label: 'PROFILE_LOGS.SOURCE_AUDIT_TRAIL' }
+    { id: 'ActionLog', label: 'PROFILE_LOGS.SOURCE_AUDIT_TRAIL' }
   ];
 
   reviewStatusOptions = [
@@ -129,7 +128,7 @@ export class SystemAdminLogsComponent implements OnInit {
     switch (source) {
       case 'UserProfileLogger':
         return this.translate.instant('PROFILE_LOGS.SOURCE_USER_PROFILE');
-      case 'AuditTrailEntry':
+      case 'ActionLog':
         return this.translate.instant('PROFILE_LOGS.SOURCE_AUDIT_TRAIL');
       default:
         return source;

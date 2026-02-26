@@ -4,7 +4,6 @@ export interface OperationsDashboardFilters {
   fromDateUtc?: string;
   toDateUtc?: string;
   departmentId?: string;
-  employeeId?: string;
   status?: string;
   pageNumber?: number;
   pageSize?: number;
@@ -27,7 +26,6 @@ export interface OperationsDashboardFilterSnapshot {
   fromDateUtc?: string;
   toDateUtc?: string;
   departmentId?: string;
-  employeeId?: string;
   status?: string;
 }
 

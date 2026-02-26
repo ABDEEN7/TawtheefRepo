@@ -41,6 +41,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 {
     // Base Table
     public DbSet<EntityLog> EntityLog { get; set; }
+    public DbSet<ActionLog> ActionLog { get; set; }
 
     // Lookup Tables
     public DbSet<CandidateType> CandidateType { get; set; }
