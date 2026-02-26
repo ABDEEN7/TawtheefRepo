@@ -44,6 +44,9 @@
   "dashboard.status.returned": "معادة",
   "dashboard.status.requiresupdate": "معادة",
 
+  "dashboard.validation.invalidEmployeeIdTitle": "رقم موظف غير صالح",
+  "dashboard.validation.invalidEmployeeIdDescription": "يجب أن يكون رقم الموظف بصيغة GUID صحيحة (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).",
+
   "dashboard.workload.high": "مرتفع",
   "dashboard.workload.balanced": "متوازن",
   "dashboard.workload.low": "منخفض",

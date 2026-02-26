@@ -20,7 +20,7 @@ public sealed class BlockOfficeUserCommandHandler(UserManager<User> userManager)
         if (officeUser is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
 
-        officeUser.Block();
+        officeUser.IsBlocked = request.IsBlocked;
         var updateResult = await userManager.UpdateAsync(officeUser);
         if (!updateResult.Succeeded)
             return Result.Fail<Unit>(string.Join(", ", updateResult.Errors.Select(e => e.Description)));

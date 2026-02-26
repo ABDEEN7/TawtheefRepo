@@ -16,6 +16,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { ChartModule } from 'primeng/chart';
 import { Tooltip } from 'primeng/tooltip';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import {NotificationService} from '../../../../core/services/notification.service';
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import {
   DashboardKpis,
@@ -36,6 +37,7 @@ export class Dashboard implements OnInit {
   private dashboardService = inject(OperationsDashboardService);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
+  private notification = inject(NotificationService);
 
   readonly loading = signal(false);
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
@@ -45,6 +47,7 @@ export class Dashboard implements OnInit {
   readonly searchStatus = signal<string>('');
 
   private filterChanges$ = new Subject<void>();
+  private readonly employeeIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
   readonly lineChartOptions: ChartOptions<'line'> = {
     responsive: true,
@@ -186,9 +189,18 @@ export class Dashboard implements OnInit {
   }
 
   applyFilters(): void {
+    const employeeId = this.searchEmployeeId().trim();
+    if (employeeId && !this.employeeIdPattern.test(employeeId)) {
+      this.notification.error(
+        this.translate.instant('dashboard.validation.invalidEmployeeIdDescription'),
+        this.translate.instant('dashboard.validation.invalidEmployeeIdTitle')
+      );
+      return;
+    }
+
     this.filters.update((value) => ({
       ...value,
-      employeeId: this.searchEmployeeId() || undefined,
+      employeeId: employeeId || undefined,
       status: this.searchStatus() || undefined,
       pageNumber: 1,
     }));
