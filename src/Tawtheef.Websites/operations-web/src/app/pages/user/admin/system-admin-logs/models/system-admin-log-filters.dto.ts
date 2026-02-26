@@ -1,7 +1,7 @@
 import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
 import {ReviewStatus} from '../../../employee/profile-managment/approval-list/models/profile-approval.models';
 
-export interface ProfileLogFilters extends PaginatedRequest {
+export interface SystemAdminLogFilters extends PaginatedRequest {
   userProfileId?: string | null;
   userId?: string | null;
   source?: string | null;

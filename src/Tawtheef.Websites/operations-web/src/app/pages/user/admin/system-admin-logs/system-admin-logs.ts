@@ -3,13 +3,12 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
-import {ProfileLogsService} from './services/profile-logs.service';
-import {ProfileLogDto} from './models/profile-log.dto';
-import {ProfileLogFilters} from './models/profile-log-filters.dto';
+import {SystemAdminLogsService} from './services/system-admin-logs.service';
+import {SystemAdminLogDto} from './models/system-admin-log.dto';
+import {SystemAdminLogFilters} from './models/system-admin-log-filters.dto';
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {NotificationService} from '../../../../core/services/notification.service';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
 import {ReviewStatus} from '../../employee/profile-managment/approval-list/models/profile-approval.models';
@@ -29,18 +28,17 @@ import {ReviewStatus} from '../../employee/profile-managment/approval-list/model
   ]
 })
 export class SystemAdminLogsComponent implements OnInit {
-  private profileLogsService = inject(ProfileLogsService);
+  private systemAdminLogsService = inject(SystemAdminLogsService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
-  private notification = inject(NotificationService);
 
-  private _logs = signal<ProfileLogDto[]>([]);
+  private _logs = signal<SystemAdminLogDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
 
   logs = this._logs.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
 
-  filters = signal<ProfileLogFilters>({
+  filters = signal<SystemAdminLogFilters>({
     pageNumber: 1,
     pageSize: 10,
   });
@@ -77,7 +75,7 @@ export class SystemAdminLogsComponent implements OnInit {
   }
 
   loadLogs() {
-    const updatedFilters: ProfileLogFilters = {
+    const updatedFilters: SystemAdminLogFilters = {
       ...this.filters(),
       userProfileId: this.profileIdFilter || null,
       userId: this.userIdFilter || null,
@@ -91,8 +89,8 @@ export class SystemAdminLogsComponent implements OnInit {
 
     this.filters.set(updatedFilters);
 
-    this.profileLogsService.getLogs(this.filters()).subscribe({
-      next: (response: PaginatedResult<ProfileLogDto>) => {
+    this.systemAdminLogsService.getLogs(this.filters()).subscribe({
+      next: (response: PaginatedResult<SystemAdminLogDto>) => {
         this._logs.set(response.items);
         this._paginationMetadata.set(response.metadata);
 

@@ -1,6 +1,6 @@
 import {ReviewStatus} from '../../../employee/profile-managment/approval-list/models/profile-approval.models';
 
-export interface ProfileLogDto {
+export interface SystemAdminLogDto {
   id: string;
   userProfileId: string;
   source: string;
