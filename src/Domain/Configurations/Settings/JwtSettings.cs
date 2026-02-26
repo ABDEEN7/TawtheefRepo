@@ -8,7 +8,7 @@ public sealed class JwtSettings
     [Required]
     public required string SigningKey { get; init; }
     public int? ExpiryMinutes { get; set; }
-    public int? RefreshTokenExpirationDays { get; set; }
+    public int? RefreshTokenExpirationHours { get; set; }
     public JwtValidationSettings TokenValidationParameters { get; init; } = new();
 }
 
