@@ -41,7 +41,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 Notes = log.Notes,
                 EntityId = log.EntityId,
                 AttachmentId = log.AttachmentId,
-                ReviewStatus = null,
+                //ReviewStatus = null,
                 CreatedDate = log.CreatedDate
             });
 

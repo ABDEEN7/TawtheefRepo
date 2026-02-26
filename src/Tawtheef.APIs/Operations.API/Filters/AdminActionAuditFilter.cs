@@ -51,7 +51,7 @@ public sealed class AdminActionAuditFilter(
                 Notes = payload,
                 EntityId = entityId,
                 AttachmentId = null,
-                CreatedDate = DateTimeOffset.UtcNow
+                CreatedDate = DateTime.UtcNow
             };
 
             dbContext.Set<AuditTrailEntry>().Add(entry);
