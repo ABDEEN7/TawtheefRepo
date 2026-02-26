@@ -1,6 +1,5 @@
 using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
-using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;

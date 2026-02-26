@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Application.Recruitment.Features.Authenticator.Handlers.Utils;
-using Application.Recruitment.Features.Profile.Queries;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -16,11 +15,9 @@ using Tawtheef.Application.Common.Utils;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
-using CheckProfileMOI = Application.Recruitment.Features.Authenticator.DTOs.CheckProfileMOI;
 
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 
@@ -301,4 +298,16 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>
         Result.Fail<T>(string.Join(", ", res.Errors.Select(e => e.Description)));
+
+    private Guid ResolveGenderId(string genderCode)
+    {
+        return genderCode == "MALE"? GenderIds.Male : GenderIds.Female;
+    }
+
+    public async Task<Guid?> ResolveNationalityIdAsync(int nationalityCode, CancellationToken cancellationToken)
+    {
+        var nationality = await uow.GetEntityRepository<Country>()
+            .DbSet.AsNoTracking().FirstOrDefaultAsync(country => country.Code == nationalityCode, cancellationToken);
+        return nationality?.Id;
+    }
 }

@@ -244,12 +244,12 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             if (!IsLockedProvider(entry.Entity.Provider))
                 continue;
 
-            ProtectProperty(entry, nameof(UserProfile.NationalNumber));
-            ProtectProperty(entry, nameof(UserProfile.QIDExpiry));
-            ProtectProperty(entry, nameof(UserProfile.BirthDate));
-            ProtectProperty(entry, nameof(UserProfile.NationalityId));
-            ProtectProperty(entry, nameof(UserProfile.GenderId));
-            ProtectProperty(entry, nameof(UserProfile.CandidateTypeId));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalNumber));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.QIDExpiry));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.BirthDate));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalityId));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.GenderId));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.CandidateTypeId));
         }
     }
 
