@@ -24,7 +24,7 @@ public sealed class SaveProfilePersonalRequest
     public Guid? SponsorTypeId { get; set; }
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
-    public DateOnly? SponsorCardExpiryData { get; set; }
+    public DateOnly? SponsorQidExpiry { get; set; }
     public IFormFile? SponsorCard { get; set; }
     public string? SponsorCardFileName { get; set; }
 }

@@ -28,7 +28,7 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 {
                     RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
                     RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
-                    RuleFor(x => x.Request.QIDExpiry).NotEmpty();
+                    RuleFor(x => x.Request.SponsorQidExpiry).NotEmpty();
 
                     RuleFor(x => x.Request)
                         .Must(r =>
