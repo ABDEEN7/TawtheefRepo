@@ -91,15 +91,12 @@ export class ExternalLoginService implements OnDestroy {
   }
 
   private safeIsPopupClosed(): boolean {
-    if (!this.popup) return true;
-
     try {
-      // This is the property that triggers the COOP error
-      return this.popup.closed;
-    } catch (e) {
-      // If we hit a security error, it means the popup is
-      // definitely still open but on a different domain (Google).
-      // We return false so the timer keeps running.
+      // Accessing window.closed can throw under COOP when the popup is cross-origin.
+      // In that case we fallback to postMessage, focus checks, and a hard timeout.
+      return !this.popup || this.popup.closed;
+    } catch {
+      // Treat as "not closed" and let postMessage or timeout handle the flow.
       return false;
     }
   }
