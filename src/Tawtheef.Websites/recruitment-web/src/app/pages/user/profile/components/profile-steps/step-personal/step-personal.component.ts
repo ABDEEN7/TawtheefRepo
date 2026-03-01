@@ -195,6 +195,13 @@ export class StepPersonalComponent implements OnInit {
 
     this.updateField('sponsorEmployerNumber', trimmed as any);
   }
+  onQidChange(raw: string | null | undefined) {
+    if (this.ds.isLocked('qid')) return;
+
+    const normalized = (raw ?? '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 20);
+    this.updateField('qid', normalized as any);
+  }
+
   onSponsorTypeChange(value: any) {
     this.updateField('sponsorType', value);
 
