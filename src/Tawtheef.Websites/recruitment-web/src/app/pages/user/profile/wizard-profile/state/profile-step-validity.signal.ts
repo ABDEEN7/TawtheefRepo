@@ -163,6 +163,14 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 
   if (!isFilledField(s.qid)) {
     addRequiredError(errors, 'personal', 'qid');
+  } else {
+    const qid = (s.qid ?? '').trim();
+    if (!/^\d+$/.test(qid)) {
+      errors.push({ field: 'qid', i18nKey: 'wizard.personal.qid.digitsOnly' });
+    }
+    if (qid.length > 20) {
+      errors.push({ field: 'qid', i18nKey: 'wizard.personal.qid.maxLength20' });
+    }
   }
 
   if (!isFilledField(s.dob)) {

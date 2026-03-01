@@ -43,11 +43,18 @@
       <label class="form-label required">{{ 'wizard.personal.qid' | translate }}</label>
       <input
         pInputText
+        type="text"
         class="form-control"
         name="qid"
         [ngModel]="ds.state().qid"
-        (ngModelChange)="updateField('qid', $event)"
+        (ngModelChange)="onQidChange($event)"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="20"
+        (keydown)="onQidKeyDown($event, 20)"
+        (input)="onQidInput(($any($event.target)).value, 20)"
+        (paste)="onQidPaste($event, ds.state().qid, 20)"
         [readonly]="ds.isLocked('qid')"
         [ngClass]="{ 'locked-field': ds.isLocked('qid') }"
       />

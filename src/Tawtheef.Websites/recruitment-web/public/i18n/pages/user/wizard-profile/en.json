@@ -81,6 +81,8 @@
   "wizard.personal.nameAr": "Name in Arabic",
   "wizard.personal.nameEn": "Name in English",
   "wizard.personal.qid": "Personal ID number",
+  "wizard.personal.qid.digitsOnly": "Personal ID number must contain digits only.",
+  "wizard.personal.qid.maxLength20": "Personal ID number must not exceed 20 digits.",
   "wizard.personal.qidExpiry": "ID expiry date",
   "wizard.personal.dob": "Date of birth",
   "wizard.personal.nationality": "Nationality",

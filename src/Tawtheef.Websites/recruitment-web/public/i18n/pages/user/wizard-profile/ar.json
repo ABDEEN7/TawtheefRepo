@@ -81,6 +81,8 @@
   "wizard.personal.nameAr": "الاسم باللغة العربية",
   "wizard.personal.nameEn": "الاسم باللغة الإنجليزية",
   "wizard.personal.qid": "رقم البطاقة الشخصية",
+  "wizard.personal.qid.digitsOnly": "رقم البطاقة الشخصية يجب أن يحتوي على أرقام فقط.",
+  "wizard.personal.qid.maxLength20": "رقم البطاقة الشخصية يجب ألا يتجاوز 20 رقمًا.",
   "wizard.personal.qidExpiry": "تاريخ انتهاء البطاقة الشخصية",
   "wizard.personal.dob": "تاريخ الميلاد",
   "wizard.personal.nationality": "الجنسية",

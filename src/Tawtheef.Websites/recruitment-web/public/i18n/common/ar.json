@@ -1,6 +1,8 @@
 {
   "common.error": "خطأ",
   "common.success": "نجاح",
+  "common.info": "معلومة",
+  "common.warning": "تحذير",
   "common.submit": "إرسال",
   "common.next": "التالي",
   "common.previous": "السابق",

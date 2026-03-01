@@ -1,6 +1,8 @@
 {
   "common.error": "Error",
   "common.success": "Success",
+  "common.info": "Info",
+  "common.warning": "Warning",
   "common.submit": "Submit",
   "common.next": "Next",
   "common.previous": "Previous",
