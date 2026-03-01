@@ -23,13 +23,16 @@ public sealed class GetSystemAdminLogsQueryHandler(
         CancellationToken cancellationToken)
     {
         var actionLogRepo = uow.GetEntityRepository<ActionLog>();
+        var actionType = request.ActionType?.Trim();
 
         var query = actionLogRepo.DbSet
             .Where(log => log.LogType == ActionLogType.Admin && log.UserId.HasValue)
             .AsNoTracking()
             .WhereIf(request.UserProfileId.HasValue, log => log.UserProfileId == request.UserProfileId!.Value)
             .WhereIf(request.UserId.HasValue, log => log.UserId == request.UserId!.Value)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.ActionType), log => log.ActionType == request.ActionType)
+            .WhereIf(
+                !string.IsNullOrWhiteSpace(actionType),
+                log => EF.Functions.Like(log.ActionType, $"%{actionType}%"))
             .WhereIf(request.From.HasValue, log => log.CreatedDate >= request.From!.Value)
             .WhereIf(request.To.HasValue, log => log.CreatedDate <= request.To!.Value)
             .Select(log => new SystemAdminLogProjection
