@@ -2,6 +2,7 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {Select} from 'primeng/select';
 import {SystemAdminLogsService} from './services/system-admin-logs.service';
 import {SystemAdminLogDto} from './models/system-admin-log.dto';
 import {SystemAdminLogFilters} from './models/system-admin-log-filters.dto';
@@ -10,7 +11,6 @@ import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespa
 import {Lang, LanguageService} from '../../../../core/services/language.service';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {ReviewStatus} from '../../employee/profile-managment/approval-list/models/profile-approval.models';
 
 @Component({
   selector: 'app-system-admin-logs',
@@ -23,6 +23,7 @@ import {ReviewStatus} from '../../employee/profile-managment/approval-list/model
     TranslatePipe,
     PaginationComponent,
     I18nNamespaceDirective,
+    Select,
   ]
 })
 export class SystemAdminLogsComponent implements OnInit {
@@ -32,16 +33,18 @@ export class SystemAdminLogsComponent implements OnInit {
 
   private _logs = signal<SystemAdminLogDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
+  private _userOptions = signal<{ id: string; label: string }[]>([]);
 
   logs = this._logs.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
+  userOptions = this._userOptions.asReadonly();
 
   filters = signal<SystemAdminLogFilters>({
     pageNumber: 1,
     pageSize: 10,
   });
 
-  userIdFilter = '';
+  userIdFilter: string | null = null;
   actionTypeFilter = '';
   searchFilter = '';
   fromDate: Date | null = null;
@@ -73,6 +76,7 @@ export class SystemAdminLogsComponent implements OnInit {
     this.systemAdminLogsService.getLogs(this.filters()).subscribe({
       next: (response: PaginatedResult<SystemAdminLogDto>) => {
         this._logs.set(response.items);
+        this.mergeUserOptions(response.items);
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {
@@ -107,7 +111,7 @@ export class SystemAdminLogsComponent implements OnInit {
   }
 
   clearFilters() {
-    this.userIdFilter = '';
+    this.userIdFilter = null;
     this.actionTypeFilter = '';
     this.searchFilter = '';
     this.fromDate = null;
@@ -126,27 +130,6 @@ export class SystemAdminLogsComponent implements OnInit {
     }
   }
 
-  reviewStatusLabel(status: ReviewStatus | null | undefined) {
-    if (status === null || status === undefined) {
-      return '';
-    }
-
-    switch (status) {
-      case ReviewStatus.NotReviewed:
-        return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED');
-      case ReviewStatus.Pending:
-        return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.PENDING');
-      case ReviewStatus.Approved:
-        return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.APPROVED');
-      case ReviewStatus.Rejected:
-        return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
-      case ReviewStatus.NeedsCorrection:
-        return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION');
-      default:
-        return '';
-    }
-  }
-
   toDateInputValue(date: Date | null) {
     if (!date) {
       return '';
@@ -156,5 +139,22 @@ export class SystemAdminLogsComponent implements OnInit {
 
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
       `T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  private mergeUserOptions(logs: SystemAdminLogDto[]) {
+    const existingOptions = new Map(this._userOptions().map(option => [option.id, option]));
+
+    logs.forEach(log => {
+      if (!log.userId) {
+        return;
+      }
+
+      existingOptions.set(log.userId, {
+        id: log.userId,
+        label: log.userName || log.userId,
+      });
+    });
+
+    this._userOptions.set(Array.from(existingOptions.values()).sort((a, b) => a.label.localeCompare(b.label)));
   }
 }

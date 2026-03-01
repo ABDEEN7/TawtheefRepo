@@ -13,11 +13,17 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
-                <input type="text"
-                      class="form-control"
-                      [(ngModel)]="userIdFilter"
-                      (input)="onFiltersChanged()"
-                      [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"/>
+                <p-select
+                  [options]="userOptions()"
+                  [showClear]="true"
+                  [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"
+                  optionLabel="label"
+                  optionValue="id"
+                  name="performedBy"
+                  [ngModel]="userIdFilter"
+                  (onChange)="userIdFilter = $event.value; onFiltersChanged()"
+                  (onClear)="userIdFilter = null; onFiltersChanged()" class="form-select p-0"
+                ></p-select>
               </div>
               <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_ACTION' | translate }}</label>
@@ -69,7 +75,6 @@
                 <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
-                <th>{{ 'PROFILE_LOGS.TABLE_REVIEW_STATUS' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_USER' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_NOTES' | translate }}</th>
               </tr>
@@ -78,7 +83,7 @@
               <tbody>
               @if (logs().length === 0) {
                 <tr>
-                  <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+                  <td colspan="6" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
                     {{ 'NO_RECORDS' | translate }}
                   </td>
                 </tr>
@@ -93,15 +98,6 @@
                     </td>
                     <td class="text-break fw-semibold">{{ log.actionType }}</td>
                     <td class="text-break">{{ log.section || '-' }}</td>
-                    <td>
-                      @if (log.reviewStatus !== undefined && log.reviewStatus !== null) {
-                        <span class="pill info">
-                          {{ reviewStatusLabel(log.reviewStatus) }}
-                        </span>
-                      } @else {
-                        <span class="text-muted small">-</span>
-                      }
-                    </td>
                     <td class="text-break">
                       <div class="fw-semibold">{{ log.userName || log.userId || ('PROFILE_LOGS.UNKNOWN_USER' | translate) }}</div>
                       @if (log.userId) {
