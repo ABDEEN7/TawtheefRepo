@@ -5,12 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Logging;
+using Tawtheef.Infrastructure.Services.Security;
 
 namespace Seeds;
 
@@ -56,6 +58,7 @@ public static class Program
             {
                 services.AddSingleton(Log.Logger);
                 services.AddSingleton<IAppLogger>(_ => new SerilogAppLogger(Log.Logger));
+                services.AddScoped<IIdentityFieldProtectionContext, IdentityFieldProtectionContext>();
                 services.AddDbContext<TawtheefDbContext>(opt => opt.UseSqlServer(connectionString));
                 services.AddScoped<CurrentUserService>();
             })

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Entities;
@@ -28,7 +29,8 @@ using Tawtheef.Infrastructure.Data.Interceptors;
 namespace Tawtheef.Infrastructure.Data;
 
 public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
-    IAppLogger logger)
+    IAppLogger logger,
+    IIdentityFieldProtectionContext identityFieldProtectionContext)
     : IdentityDbContext<
         User,
         ApplicationRole,
@@ -184,6 +186,9 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
         var currentUserId = GetCurrentUserId();
         var now = DateTime.UtcNow;
 
+
+        ProtectVerifiedIdentityFields();
+
         foreach (var entry in ChangeTracker.Entries<IBaseEntity>())
         {
             switch (entry.State)
@@ -213,6 +218,101 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
         var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return result;
     }
+    private void ProtectVerifiedIdentityFields()
+    {
+        if (identityFieldProtectionContext.AllowVerifiedIdentityWrite)
+            return;
+
+        foreach (var entry in ChangeTracker.Entries<User>())
+        {
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            if (!IsTrustedIdentityUser(entry.Entity.Id))
+                continue;
+
+            ProtectProperty(entry, nameof(User.FullNameAr));
+            ProtectProperty(entry, nameof(User.FullNameEn));
+            ProtectProperty(entry, nameof(User.PhoneNumber));
+        }
+
+        foreach (var entry in ChangeTracker.Entries<UserProfile>())
+        {
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            if (!IsLockedProvider(entry.Entity.Provider))
+                continue;
+
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalNumber));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.QIDExpiry));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.BirthDate));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalityId));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.GenderId));
+            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.CandidateTypeId));
+        }
+    }
+
+    private static bool IsLockedProvider(string? provider)
+    {
+        if (string.IsNullOrWhiteSpace(provider))
+            return false;
+
+        return provider.Equals("qatarpass", StringComparison.OrdinalIgnoreCase) ||
+               provider.Equals("qatarresidentotp", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsTrustedIdentityUser(Guid userId)
+    {
+        var trackedProfile = ChangeTracker.Entries<UserProfile>()
+            .Select(x => x.Entity)
+            .FirstOrDefault(p => p.UserId == userId);
+
+        if (trackedProfile is not null)
+            return IsLockedProvider(trackedProfile.Provider);
+
+        return UserProfile.AsNoTracking()
+            .Any(p => p.UserId == userId &&
+                      (p.Provider == "qatarpass" || p.Provider == "qatarresidentotp"));
+    }
+
+    private void ProtectProperty<TEntity>(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> entry, string propertyName)
+        where TEntity : class
+    {
+        var property = entry.Property(propertyName);
+        if (!property.IsModified)
+            return;
+
+        if (CanBootstrapVerifiedField(property.OriginalValue, property.CurrentValue))
+            return;
+
+        var originalValue = property.OriginalValue?.ToString() ?? "null";
+        var currentValue = property.CurrentValue?.ToString() ?? "null";
+
+        logger.Warning(
+            "Blocked write to verified identity field. Entity={Entity} Property={Property} Original={Original} Current={Current}",
+            typeof(TEntity).Name,
+            propertyName,
+            originalValue,
+            currentValue);
+
+        property.CurrentValue = property.OriginalValue;
+        property.IsModified = false;
+    }
+
+    private static bool CanBootstrapVerifiedField(object? originalValue, object? currentValue)
+    {
+        if (currentValue is null)
+            return false;
+
+        return originalValue switch
+        {
+            null => true,
+            string text => string.IsNullOrWhiteSpace(text),
+            _ => false
+        };
+    }
+
     private Guid? GetCurrentUserId()
     {
         try

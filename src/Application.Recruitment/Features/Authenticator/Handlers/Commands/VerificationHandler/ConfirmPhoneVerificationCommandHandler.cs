@@ -1,4 +1,5 @@
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
+using Application.Recruitment.Features.Profile.Policies;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -22,6 +23,9 @@ public class ConfirmPhoneVerificationCommandHandler(
         var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+
+        if (await IsLockedIdentityProviderAsync(user))
+            return Result.Fail<Unit>(ErrorsCodes.UnauthorizedAction);
 
         var now = timeProvider.GetUtcNow().UtcDateTime;
 
@@ -47,5 +51,11 @@ public class ConfirmPhoneVerificationCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
+    }
+
+    private async Task<bool> IsLockedIdentityProviderAsync(User user)
+    {
+        var logins = await userManager.GetLoginsAsync(user);
+        return logins.Any(x => VerifiedIdentityProviders.IsLockedProvider(x.LoginProvider));
     }
 }

@@ -48,6 +48,7 @@ using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.BackgroundJobs;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
+using Tawtheef.Infrastructure.Services.Security;
 using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.Logging;
 using Tawtheef.Infrastructure.Services.NotificationServices;
@@ -159,6 +160,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<ISessionService, EfSessionService>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
+                services.AddScoped<IIdentityFieldProtectionContext, IdentityFieldProtectionContext>();
                 services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
                 services.AddSingleton<ILocalizationService, LocalizationService>();
 
