@@ -12,14 +12,6 @@
        <div class="card-body">
             <div class="row g-3">
               <div class="col-md-3">
-                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_PROFILE_ID' | translate }}</label>
-                <input type="text"
-                      class="form-control"
-                      [(ngModel)]="profileIdFilter"
-                      (input)="onFiltersChanged()"
-                      [placeholder]="'PROFILE_LOGS.FILTER_PROFILE_ID_PLACEHOLDER' | translate"/>
-              </div>
-              <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
                 <input type="text"
                       class="form-control"
@@ -47,48 +39,6 @@
 
             <div class="row g-3 mt-1">
               <div class="col-md-3">
-                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SOURCE' | translate }}</label>
-                <p-select
-                  [options]="sourceOptions"
-                  [showClear]="true"
-                  [placeholder]="'PROFILE_LOGS.FILTER_SOURCE_PLACEHOLDER' | translate"
-                  optionLabel="label"
-                  optionValue="id"
-                  name="source"
-                  [ngModel]="sourceFilter"
-                  (onChange)="sourceFilter = $event.value; onFiltersChanged()"
-                  (onClear)="sourceFilter = null; onFiltersChanged()" class="form-select p-0"
-                >
-                  <ng-template #selectedItem let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                  <ng-template #item let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                </p-select>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_REVIEW_STATUS' | translate }}</label>
-                <p-select
-                  [options]="reviewStatusOptions"
-                  [showClear]="true"
-                  [placeholder]="'PROFILE_LOGS.FILTER_REVIEW_STATUS_PLACEHOLDER' | translate"
-                  optionLabel="label"
-                  optionValue="id"
-                  name="reviewStatus"
-                  [ngModel]="reviewStatusFilter"
-                  (onChange)="reviewStatusFilter = $event.value; onFiltersChanged()"
-                  (onClear)="reviewStatusFilter = null; onFiltersChanged()" class="form-select p-0"
-                >
-                  <ng-template #selectedItem let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                  <ng-template #item let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                </p-select>
-              </div>
-              <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
                 <input type="datetime-local"
                       class="form-control"
@@ -102,6 +52,11 @@
                       [ngModel]="toDateInputValue(toDate)"
                       (ngModelChange)="onToDateChange($event)"/>
               </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+                  {{ 'PROFILE_LOGS.CLEAR_SEARCH' | translate }}
+                </button>
+              </div>
             </div>
         </div>
   </div>
@@ -111,7 +66,6 @@
                 <thead class="table-light">
               <tr>
                 <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
-                <th>{{ 'PROFILE_LOGS.TABLE_PROFILE_ID' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
@@ -124,7 +78,7 @@
               <tbody>
               @if (logs().length === 0) {
                 <tr>
-                  <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+                  <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
                     {{ 'NO_RECORDS' | translate }}
                   </td>
                 </tr>
@@ -132,7 +86,6 @@
                 @for (log of logs(); track log.id; let i = $index) {
                   <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
                     <td>{{ log.createdDate | date:'short' }}</td>
-                    <td class="text-break">{{ log.userProfileId }}</td>
                     <td>
                       <span class="pill neutral">
                         {{ sourceLabel(log.source) }}

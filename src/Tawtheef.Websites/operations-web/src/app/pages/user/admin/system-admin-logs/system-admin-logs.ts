@@ -2,7 +2,6 @@ import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {Select} from 'primeng/select';
 import {SystemAdminLogsService} from './services/system-admin-logs.service';
 import {SystemAdminLogDto} from './models/system-admin-log.dto';
 import {SystemAdminLogFilters} from './models/system-admin-log-filters.dto';
@@ -24,7 +23,6 @@ import {ReviewStatus} from '../../employee/profile-managment/approval-list/model
     TranslatePipe,
     PaginationComponent,
     I18nNamespaceDirective,
-    Select,
   ]
 })
 export class SystemAdminLogsComponent implements OnInit {
@@ -43,30 +41,15 @@ export class SystemAdminLogsComponent implements OnInit {
     pageSize: 10,
   });
 
-  profileIdFilter = '';
   userIdFilter = '';
   actionTypeFilter = '';
   searchFilter = '';
-  reviewStatusFilter: ReviewStatus | null = null;
-  sourceFilter: string | null = 'ActionLog';
   fromDate: Date | null = null;
   toDate: Date | null = null;
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
-
-  sourceOptions = [
-    { id: 'ActionLog', label: 'PROFILE_LOGS.SOURCE_AUDIT_TRAIL' }
-  ];
-
-  reviewStatusOptions = [
-    { id: ReviewStatus.NotReviewed, label: 'PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED' },
-    { id: ReviewStatus.Pending, label: 'PROFILE_LOGS.REVIEW_STATUS.PENDING' },
-    { id: ReviewStatus.Approved, label: 'PROFILE_LOGS.REVIEW_STATUS.APPROVED' },
-    { id: ReviewStatus.Rejected, label: 'PROFILE_LOGS.REVIEW_STATUS.REJECTED' },
-    { id: ReviewStatus.NeedsCorrection, label: 'PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION' },
-  ];
 
   ngOnInit(): void {
     this.loadLogs();
@@ -76,11 +59,10 @@ export class SystemAdminLogsComponent implements OnInit {
   loadLogs() {
     const updatedFilters: SystemAdminLogFilters = {
       ...this.filters(),
-      userProfileId: this.profileIdFilter || null,
       userId: this.userIdFilter || null,
       actionType: this.actionTypeFilter || null,
-      source: this.sourceFilter,
-      reviewStatus: this.reviewStatusFilter,
+      source: 'ActionLog',
+      reviewStatus: null,
       from: this.fromDate ? this.fromDate.toISOString() : null,
       to: this.toDate ? this.toDate.toISOString() : null,
       search: this.searchFilter || null,
@@ -121,6 +103,15 @@ export class SystemAdminLogsComponent implements OnInit {
 
   onToDateChange(value: string) {
     this.toDate = value ? new Date(value) : null;
+    this.onFiltersChanged();
+  }
+
+  clearFilters() {
+    this.userIdFilter = '';
+    this.actionTypeFilter = '';
+    this.searchFilter = '';
+    this.fromDate = null;
+    this.toDate = null;
     this.onFiltersChanged();
   }
 
