@@ -5,6 +5,7 @@ using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Events.Operation.Employee.Profile;
 using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Domain.Entities.Users;
@@ -187,6 +188,12 @@ public class UserProfile : EventEntity
             return false;
 
         return true;
+    }
+
+    public void FinalizeReviewProfile(bool hasCorrections)
+    {
+        this.Status = hasCorrections ? UserProfileStatus.RequiresUpdate: UserProfileStatus.Approved;
+        AddDomainEvent(new FinalizeReviewProfileEvent(this.UserId, this.Status));
     }
 }
 

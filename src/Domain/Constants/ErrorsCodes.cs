@@ -101,6 +101,8 @@ public class ErrorsCodes
     public const string ProfileLockedUnderReview = "PROFILE_LOCKED_UNDER_REVIEW";
     public const string NotSubmitted = "NOT_SUBMITTED";
 
+    public const string VerifiedIdentityNotReady = "VERIFIED_IDENTITY_NOT_READY";
+
     public const string InvalidName = "INVALID_NAME";
 
     public const string DegreeNotFound = "DEGREE_NOT_FOUND";

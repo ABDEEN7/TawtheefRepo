@@ -1,0 +1,326 @@
+@using Tawtheef.Domain.Entities.Users
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.FinalizeReviewProfile.FinalizeReviewProfileModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;     // should be #881038 to match the logo
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    // ---- Profile review fields (adjust to your actual model) ----
+    // Expected: "Accepted" or "Returned" (or use an enum)
+    var isAccepted = m.Status == UserProfileStatus.Approved;
+
+    // Optional: a single note string or list of reasons
+    string? notes = null; // string? (optional)
+    IEnumerable<string>? reasons = null; // IEnumerable<string>? (optional)
+
+    // Optional: link to profile/review page
+    var profileUrl = website;
+
+    var logo = b.LogoUrl;          // must be a real https URL for email clients
+
+    // Text based on status
+    var title = isAccepted ? "Your profile has been approved" : "Your profile requires updates";
+    var preheader = isAccepted
+        ? $"Your {product} profile has been approved."
+        : $"Your {product} profile was returned for updates. Please review the notes.";
+    var badgeText = isAccepted ? "Approved" : "Action Required";
+    var badgeBg = isAccepted ? "#ECFDF3" : "#FFF7ED";
+    var badgeTextColor = isAccepted ? "#027A48" : "#9A3412";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Profile Review Result</title>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+
+  <style>
+    /* Base resets */
+    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-collapse:collapse !important; }
+    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+    a { text-decoration:none; }
+
+    /* Page background */
+    .email-wrap { width:100%; background:#f7f4f6; }
+
+    /* Card container */
+    .container {
+      width:100%;
+      max-width:600px;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid #efe7eb;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Brand strip */
+    .brand-bar { background:@primary; height:8px; line-height:8px; font-size:0; }
+
+    /* Spacing helpers */
+    .px { padding-left:24px; padding-right:24px; }
+    .py { padding-top:24px; padding-bottom:24px; }
+
+    /* Typography */
+    .h2 {
+      font-family: Arial, sans-serif;
+      font-size:22px;
+      line-height:28px;
+      color:#111827;
+      margin:0 0 8px 0;
+      font-weight:800;
+    }
+    .text {
+      font-family: Arial, sans-serif;
+      font-size:16px;
+      line-height:24px;
+      color:#111827;
+      margin:0 0 16px 0;
+    }
+    .muted {
+      font-family: Arial, sans-serif;
+      font-size:12px;
+      line-height:18px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .accent { color:@primary; }
+    .divider { height:1px; background:#efe7eb; }
+
+    /* Status badge */
+    .badge {
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-family: Arial, sans-serif;
+      font-size:12px;
+      font-weight:800;
+      background:@badgeBg;
+      color:@badgeTextColor;
+      border:1px solid rgba(17,24,39,0.06);
+    }
+
+    /* Notes box */
+    .notes-box{
+      background:#fbf6f8;
+      border:1px solid #efe7eb;
+      padding:14px 16px;
+      border-radius:10px;
+    }
+    .notes-title{
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 8px 0;
+    }
+    .notes-item{
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      line-height:20px;
+      color:#111827;
+      margin:0 0 6px 0;
+    }
+
+    /* Button */
+    .btn {
+      display:inline-block;
+      background:@primary;
+      color:#ffffff !important;
+      padding:12px 16px;
+      border-radius:10px;
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    /* Preheader */
+    .preheader { display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
+
+    /* Mobile */
+    @@media (max-width: 600px) {
+      .px { padding-left:16px !important; padding-right:16px !important; }
+      .py { padding-top:20px !important; padding-bottom:20px !important; }
+      .h2 { font-size:20px !important; line-height:26px !important; }
+      .text { font-size:15px !important; line-height:22px !important; }
+    }
+
+    /* Dark mode */
+    @@media (prefers-color-scheme: dark) {
+      .email-wrap { background:#0b0b0b !important; }
+      .container { background:#111214 !important; border-color:#2a2a2a !important; }
+      .h2 { color:#f3f4f6 !important; }
+      .text { color:#e5e7eb !important; }
+      .muted { color:#9ca3af !important; }
+      .divider { background:#2a2a2a !important; }
+      .notes-box { background:#17181a !important; border-color:#2a2a2a !important; }
+      .notes-title, .notes-item { color:#e5e7eb !important; }
+    }
+  </style>
+</head>
+
+<body class="email-wrap" style="background:#f7f4f6; margin:0; padding:20px;">
+  <!-- Preheader text -->
+  <div class="preheader">
+    @preheader
+  </div>
+
+  <table role="presentation" style="background:#f7f4f6;">
+    <tr>
+      <td style="padding:20px;">
+        <table role="presentation" class="container">
+
+          <!-- Brand bar -->
+          <tr>
+            <td class="brand-bar" aria-hidden="true">&nbsp;</td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td class="px" style="padding-top:18px; padding-bottom:12px;">
+              <table role="presentation" style="width:100%;">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    @if (!string.IsNullOrWhiteSpace(logo))
+                    {
+                      <a href="@website" style="display:inline-block;">
+                        <img src="@logo" alt="@product" width="140" style="max-width:140px; height:auto;">
+                      </a>
+                    }
+                    else
+                    {
+                      <div style="font-family:Arial, sans-serif; font-weight:800; font-size:18px; color:@primary;">
+                        @product
+                      </div>
+                    }
+                  </td>
+                  <td style="vertical-align:middle; text-align:right;">
+                    <span class="badge">@badgeText</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td class="px py">
+              <h2 class="h2">@title</h2>
+
+              @if (isAccepted)
+              {
+                <p class="text">
+                  We’re pleased to inform you that your profile has been <strong>approved</strong> on
+                  <span class="accent" style="color:@primary; font-weight:800;">@product</span>.
+                </p>
+
+                <p class="text" style="margin-bottom:18px;">
+                  You can now continue using the platform normally.
+                </p>
+              }
+              else
+              {
+                <p class="text">
+                  Your profile has been <strong>returned for updates</strong>.
+                  Please review the notes below, make the required changes, then resubmit your profile.
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
+                {
+                  <div class="notes-box" style="margin-top:10px; margin-bottom:16px;">
+                    <div class="notes-title">Review Notes</div>
+
+                    @if (!string.IsNullOrWhiteSpace(notes))
+                    {
+                      <p class="notes-item" style="margin-bottom:0;">@notes</p>
+                    }
+
+                    @if (reasons != null && reasons.Any())
+                    {
+                      <ul style="padding-left:18px; margin:10px 0 0 0;">
+                        @foreach (var r in reasons)
+                        {
+                          if (!string.IsNullOrWhiteSpace(r))
+                          {
+                            <li class="notes-item">@r</li>
+                          }
+                        }
+                      </ul>
+                    }
+                  </div>
+                }
+              }
+
+              @if (profileUrl != null)
+              {
+                  <a href="@profileUrl" class="btn">Open Profile</a>
+              }
+
+              <p class="text" style="margin-top:16px; margin-bottom:0;">
+                If you need assistance, contact our support team and we’ll be happy to help.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Help / Support -->
+          <tr>
+            <td class="px py" style="padding-top:18px; padding-bottom:12px;">
+              <p class="muted">
+                Need help? Contact us at
+                <a href="mailto:@support" style="color:@primary; font-weight:700;">@support</a>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="px" style="padding-bottom:22px;">
+              <p class="muted">
+                Sent by <span class="accent" style="color:@primary; font-weight:700;">@product</span>
+              </p>
+              <p class="muted" style="margin-top:6px;">
+                © @(DateTime.UtcNow.Year) @product. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

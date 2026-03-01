@@ -146,7 +146,9 @@
             <!-- User Menu -->
             <div class="user-menu" *ngIf="isLoggedIn">
               <button class="btn btn-primary btn-sm user-toggle" (click)="toggleUserMenu()">
-                <img [src]="userAvatar"  [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle" />
+                <!-- <img [src]="userAvatar"  [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle" /> -->
+                
+                <img #userPictureRef [src]="userAvatar" (error)="userPictureRef.src = defaultAvatar" [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle"/>
                 <span class="mx-2" *ngIf="userName">{{ userName }}</span>
               </button>
               <ul class="user-dropdown" *ngIf="showUserMenu">

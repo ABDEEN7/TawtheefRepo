@@ -66,6 +66,12 @@
       <EmbeddedResource Include="Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.txt.cshtml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Include="Templates\FinalizeReviewProfile\FinalizeReviewProfile.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Templates\FinalizeReviewProfile\FinalizeReviewProfile.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Include="Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.html.cshtml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>

@@ -38,11 +38,11 @@
         (ngModelChange)="onPhoneChange($event)"
         [disabled]="ds.isLocked('phone')"
       ></ngx-intl-tel-input>
-      <div *ngIf="phone.touched && !phone.valid" class="text-danger fz-2xs small mt-1">
+      <div *ngIf="phone.touched && !phone.valid" class="text-danger mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
       <ng-container *ngIf="ds.state().phone && canVerifyPhone">
-        <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
+        <div class="mt-1 d-flex align-items-center gap-2">
           <span *ngIf="phone.status === 'idle'" class="text-muted">
             {{ 'wizard.contact.phoneNotVerified' | translate }}
           </span>
@@ -231,7 +231,7 @@
         />
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mt-3">
       <label class="form-label required">
         {{ 'wizard.nationalAddress.document' | translate }}
         <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>

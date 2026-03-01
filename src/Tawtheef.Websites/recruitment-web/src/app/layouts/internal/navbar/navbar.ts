@@ -19,6 +19,7 @@ import { NotificationModel } from '../../../shared/models/notification.model';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+
 @Component({
   selector: 'app-nav',
   templateUrl: './navbar.html',
@@ -30,7 +31,7 @@ export class Navbar implements OnInit, OnDestroy {
   language = inject(LanguageService);
   router = inject(Router);
   private readonly notificationsApi = inject(InAppNotificationService);
-
+  defaultAvatar = AvatarUtils.default;
   @ViewChild('notificationRoot', { static: false })
   notificationRoot?: ElementRef<HTMLElement>;
   @ViewChild('notificationMenu')
