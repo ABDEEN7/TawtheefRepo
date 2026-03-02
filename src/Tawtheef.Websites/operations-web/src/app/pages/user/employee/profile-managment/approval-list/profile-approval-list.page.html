@@ -18,10 +18,7 @@
           </p>
         </div>
 
-        <button
-          class="btn btn-outline-primary d-flex align-items-center gap-2"
-          type="button"
-          (click)="loadList()"
+        <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button" (click)="loadList()"
           [disabled]="loading()">
           <i class="fa fa-rotate" [class.fa-spin]="loading()"></i>
           {{ 'common.refresh' | translate }}
@@ -40,15 +37,9 @@
                 {{ 'profileApproval.list.searchPlaceholder' | translate }}
               </label>
 
-              <input
-                pInputText
-                type="search"
-                class="w-100 form-control"
-                [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
-                [ngModel]="filters().search"
-                (ngModelChange)="updateFilter('search', $event)"
-                name="search"
-              />
+              <input pInputText type="search" class="w-100 form-control"
+                [placeholder]="'profileApproval.list.searchPlaceholder' | translate" [ngModel]="filters().search"
+                (ngModelChange)="updateFilter('search', $event)" name="search" />
             </div>
 
             <!-- Specialization -->
@@ -74,15 +65,17 @@
                 {{ 'profileApproval.list.filter.targetEntity' | translate }}
               </label>
 
-              <input
-                pInputText
-                type="text"
-                class="w-100 form-control"
+              <p-select class="w-100" [options]="targetEntities()" optionValue="id" [showClear]="true"
                 [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
-                [ngModel]="filters().targetEntity"
-                (ngModelChange)="updateFilter('targetEntity', $event)"
-                name="targetEntity"
-              />
+                [ngModel]="filters().targetEntityId" (ngModelChange)="updateFilter('targetEntityId', $event)"
+                name="targetEntityId">
+                <ng-template pTemplate="selectedItem" let-item>
+                  <span>{{ item?.name }}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                  <span>{{ item.name }}</span>
+                </ng-template>
+              </p-select>
             </div>
 
             <!-- Candidate Type -->
@@ -108,14 +101,8 @@
                 {{ 'profileApproval.list.filter.status' | translate }}
               </label>
 
-              <p-select
-                class="w-100"
-                [options]="statusOptions"
-                [optionValue]="'value'"
-                [ngModel]="filters().status"
-                [showClear]="true"
-                (onChange)="updateFilter('status', $event.value ?? '')"
-                name="status">
+              <p-select class="w-100" [options]="statusOptions" [optionValue]="'value'" [ngModel]="filters().status"
+                [showClear]="true" (onChange)="updateFilter('status', $event.value ?? '')" name="status">
                 <ng-template pTemplate="selectedItem" let-item>
                   <span>{{ item?.label | translate }}</span>
                 </ng-template>
@@ -132,9 +119,9 @@
                   {{ 'profileApproval.list.filter.apply' | translate }}
                 </button>
                 <div class="action-buttons">
-                    <button class="btn-text" type="button" (click)="resetFilters()">
-                  {{ 'profileApproval.list.filter.reset' | translate }}
-                </button>
+                  <button class="btn-text" type="button" (click)="resetFilters()">
+                    {{ 'profileApproval.list.filter.reset' | translate }}
+                  </button>
                 </div>
 
               </div>
@@ -153,94 +140,89 @@
         <div class="table-card rounded overflow-hidden">
 
 
-        <div class="table-responsive" *ngIf="items().length > 0">
+          <div class="table-responsive" *ngIf="items().length > 0">
 
-          <p-table [value]="items()"
-            dataKey="userProfileId" styleClass="approval-table">
+            <p-table [value]="items()" dataKey="userProfileId" styleClass="approval-table">
 
-            <!-- Header -->
-            <ng-template pTemplate="header">
-              <tr>
-                <th>
-                  {{ 'profileApproval.list.columns.name' | translate }}
-                </th>
+              <!-- Header -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>
+                    {{ 'profileApproval.list.columns.name' | translate }}
+                  </th>
 
-                <th>
-                  {{ 'profileApproval.list.columns.status' | translate }}
-                </th>
+                  <th>
+                    {{ 'profileApproval.list.columns.status' | translate }}
+                  </th>
 
-                <th>
-                  {{ 'profileApproval.list.columns.targetEntity' | translate }}
-                </th>
+                  <th>
+                    {{ 'profileApproval.list.columns.targetEntity' | translate }}
+                  </th>
 
-                <th>
-                  {{ 'profileApproval.list.columns.submissionDate' | translate }}
-                </th>
+                  <th>
+                    {{ 'profileApproval.list.columns.submissionDate' | translate }}
+                  </th>
 
-                <!-- NEW -->
-                <th>
-                  {{ 'common.actions' | translate }}
-                </th>
-              </tr>
-            </ng-template>
+                  <!-- NEW -->
+                  <th>
+                    {{ 'common.actions' | translate }}
+                  </th>
+                </tr>
+              </ng-template>
 
-            <!-- Body -->
-            <ng-template pTemplate="body" let-row>
-              <tr>
+              <!-- Body -->
+              <ng-template pTemplate="body" let-row>
+                <tr>
 
-                <td>
-                  <div class="fw-semibold">
-                    {{ row.fullName || ('profileApproval.list.anonymous' | translate) }}
-                  </div>
-                  <div class="text-muted small">
-                    {{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}
-                  </div>
-                </td>
+                  <td>
+                    <div class="fw-semibold">
+                      {{ row.fullName || ('profileApproval.list.anonymous' | translate) }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}
+                    </div>
+                  </td>
 
-                <td>
-                  <div class="d-flex gap-2">
-                    <span class="pill" [ngClass]="statusClass(row.overallStatus)">
-                      {{ statusLabel(row.overallStatus) | translate }}
-                    </span>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <span class="pill" [ngClass]="statusClass(row.overallStatus)">
+                        {{ statusLabel(row.overallStatus) | translate }}
+                      </span>
 
-                    <span class="pill warning" *ngIf="row.pendingCount > 0">
-                      {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
-                    </span>
-                  </div>
-                </td>
+                      <span class="pill warning" *ngIf="row.pendingCount > 0">
+                        {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
+                      </span>
+                    </div>
+                  </td>
 
-                <td>{{ row.targetEntity }}</td>
+                  <td>{{ row.targetEntity }}</td>
 
-                <td>
-                  {{ row.submittedAtUtc | date:'dd/MM/yyyy' }}
-                </td>
+                  <td>
+                    {{ row.submittedAtUtc | date:'dd/MM/yyyy' }}
+                  </td>
 
-                <!-- ✅ View Button -->
-                <td>
+                  <!-- ✅ View Button -->
+                  <td>
                     <div class="action-buttons">
-                          <button  class="btn-text d-flex gap-1 align-items-center" type="button"
-                                   (click)="openProfile(row); $event.stopPropagation()">
-                            <i class="hgi hgi-stroke hgi-view"></i>
-                            {{ 'common.view' | translate }}
-                          </button>
+                      <button class="btn-text d-flex gap-1 align-items-center" type="button"
+                        (click)="openProfile(row); $event.stopPropagation()">
+                        <i class="hgi hgi-stroke hgi-view"></i>
+                        {{ 'common.view' | translate }}
+                      </button>
                     </div>
 
-                </td>
+                  </td>
 
-              </tr>
-            </ng-template>
-          </p-table>
+                </tr>
+              </ng-template>
+            </p-table>
 
-          <app-pagination
-            class="mt-3 d-block"
-            [currentPage]="currentPage()"
-            [itemsPerPage]="pageSize()"
-            [totalItems]="totalItems()"
-            (pageChanged)="onPageChanged($event)">
-          </app-pagination>
+            <app-pagination class="mt-3 d-block" [currentPage]="currentPage()" [itemsPerPage]="pageSize()"
+              [totalItems]="totalItems()" (pageChanged)="onPageChanged($event)">
+            </app-pagination>
 
+          </div>
         </div>
-      </div>
 
 
       </div>

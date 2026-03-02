@@ -11,6 +11,6 @@ public record GetProfileApprovalsQuery(
     string? Search = null,
     string? Specialization = null,
     ReviewStatus? Status = null,
-    string? TargetEntity = null,
+    Guid? TargetEntityId = null,
     string? CandidateType = null
 ) : PaginatedRequest, IQuery<Result<PaginatedResult<ProfileApprovalListItemDto>>>;
