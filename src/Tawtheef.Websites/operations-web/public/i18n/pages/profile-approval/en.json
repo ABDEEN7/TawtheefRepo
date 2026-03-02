@@ -155,7 +155,7 @@
   "profileApproval.detail.attachments.fileName": "File Name",
   "profileApproval.detail.attachments.fileSize": "File Size",
   "profileApproval.detail.attachments.fileType": "File Type",
-  "profileApproval.detail.sectionApproval.title": "Section Approval for Personal Data",
+  "profileApproval.detail.sectionApproval.title": "Information Review & Approval Section",
   "profileApproval.detail.sectionApproval.statusLabel": "Status",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "Select Status",
   "profileApproval.detail.sectionApproval.notesLabel": "Notes",

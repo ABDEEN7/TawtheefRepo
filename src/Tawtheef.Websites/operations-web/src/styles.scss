@@ -25,3 +25,7 @@ body {
 .p-multiselect{
   height: calc(2.25rem) !important;
 }
+
+.p-virtualscroller {
+  min-height: 200px !important; /* Should match your scrollHeight */
+}

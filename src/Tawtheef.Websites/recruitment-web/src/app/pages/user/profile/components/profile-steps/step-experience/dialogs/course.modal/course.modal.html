@@ -7,13 +7,14 @@
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label required">{{ 'wizard.courses.provider' | translate }}
             </label>
-            <input pInputText class="form-control"
-                   formControlName="org"
-                   [ngClass]="{'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched)}">
-            <small *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+            <input pInputText class="form-control" formControlName="org"
+              [ngClass]="{'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched)}">
+            <small *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)"
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)" class="text-danger mt-1 d-block">
+            <small *ngIf="f['org'].hasError('maxlength') && (f['org'].dirty || f['org'].touched)"
+              class="text-danger mt-1 d-block">
               {{ 'validation.maxLength' | translate:{max:150} }}
             </small>
           </div>
@@ -22,13 +23,14 @@
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label  required">{{ 'wizard.courses.table.courseName' | translate }}
             </label>
-            <input pInputText class="form-control"
-                   formControlName="name"
-                   [ngClass]="{'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched)}">
-            <small *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
+            <input pInputText class="form-control" formControlName="name"
+              [ngClass]="{'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched)}">
+            <small *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)"
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)" class="text-danger mt-1 d-block">
+            <small *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)"
+              class="text-danger mt-1 d-block">
               {{ 'validation.maxLength' | translate:{max:150} }}
             </small>
           </div>
@@ -40,17 +42,14 @@
               {{ 'wizard.courses.country' | translate }}
             </label>
             <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
-                      inputId="country"
-                      formControlName="country"
-                      [options]="lookups.countries()" optionLabel="name"
-                      [placeholder]="'wizard.courses.choiceCountry' | translate" class="w-100"
-                      [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
-                      [ngClass]="{
+              inputId="country" formControlName="country" [options]="lookups.countries()" optionLabel="name"
+              [placeholder]="'wizard.courses.choiceCountry' | translate" class="w-100" [appendTo]="'body'"
+              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }" [ngClass]="{
                 'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched)
               }">
             </p-select>
             <small *ngIf="f['country'].invalid && (f['country'].dirty || f['country'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -58,25 +57,18 @@
             <label class="form-label  required">
               {{ 'wizard.courses.period' | translate }}
             </label>
-            <p-date-picker
-              formControlName="period"
-              selectionMode="range"
-              view="month"
-              dateFormat="yy-mm"
-              [maxDate]="today"
-              fluid
-              (onSelect)="touchPeriod()"
-              [ngClass]="{
+            <p-date-picker formControlName="period" selectionMode="range" view="month" dateFormat="yy-mm"
+              [maxDate]="today" fluid (onSelect)="touchPeriod()" [ngClass]="{
         'p-invalid':
           f['period'].invalid && (f['period'].dirty || f['period'].touched)
       }">
             </p-date-picker>
             <small *ngIf="f['period'].hasError('required') && (f['period'].dirty || f['period'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
             <small *ngIf="f['period'].hasError('periodRange') && (f['period'].dirty || f['period'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.dateRange' | translate }}
             </small>
           </div>
@@ -87,15 +79,16 @@
         <div class="col-12  mb-3">
           <label class="form-label">{{ 'wizard.courses.notes' | translate }}
           </label>
-          <textarea class="form-control" pTextarea rows="4"
-                    formControlName="description"
-                    [attr.maxlength]="limits.descriptionMaxLength"
-                    [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
-          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)" class="text-danger mt-1 d-block">
+          <textarea class="form-control" pTextarea rows="4" formControlName="description"
+            [attr.maxlength]="limits.descriptionMaxLength"
+            [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
+          <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)"
+            class="text-danger mt-1 d-block">
             {{ 'validation.maxLength' | translate:{max: limits.descriptionMaxLength} }}
           </small>
           <small class="char-counter">
-            {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength - (f['description'].value?.length || 0)} }}
+            {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength -
+            (f['description'].value?.length || 0)} }}
           </small>
         </div>
       </div>
@@ -103,24 +96,21 @@
         <label class="form-label required">
           {{ 'wizard.courses.certificate' | translate }}
         </label>
-        <div class="upload-field"
-             (click)="naInput.click()">
+        <div class="upload-field" (click)="naInput.click()">
           <div class="upload-field__icon">
-            <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload"/>
-            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view"
-                 class="cursor-pointer"
-                 (click)="previewFile($event)"/>
+            <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload" />
+            <img src="assets/img/icons/file-eye.svg" *ngIf="f['fileName'].value" alt="view" class="cursor-pointer"
+              (click)="previewFile($event)" />
           </div>
 
           <div class="upload-field__text">
             {{ f['fileName'].value || ('wizard.courses.certificate' | translate) }}
           </div>
 
-          <input #naInput type="file" class="d-none" accept=".pdf,image/*"
-                 (change)="onUpload($event)" />
+          <input #naInput type="file" class="d-none" accept="application/pdf,image/jpeg,image/png,image/webp,image/jpg"
+            (change)="onUpload($event)" />
         </div>
-        <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)"
-               class="text-danger mt-1 d-block">
+        <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)" class="text-danger mt-1 d-block">
           {{ 'validation.required' | translate }}
         </small>
         <small *ngIf="fileError" class="text-danger mt-1 d-block">
@@ -133,15 +123,10 @@
 
   <!-- ===== FOOTER ===== -->
   <div class="d-flex justify-content-end gap-2 mt-3">
-    <p-button styleClass="p-button-text" icon="pi pi-times"
-              type="button"
-              (onClick)="onCancel()"
-              [label]="'wizard.buttons.cancel' | translate"></p-button>
+    <p-button styleClass="p-button-text" icon="pi pi-times" type="button" (onClick)="onCancel()"
+      [label]="'wizard.buttons.cancel' | translate"></p-button>
 
-    <p-button styleClass="p-button-primary"
-              icon="pi pi-save"
-              type="submit"
-              [disabled]="form.invalid || !!fileError"
-              [label]="'wizard.courses.add' | translate"></p-button>
+    <p-button styleClass="p-button-primary" icon="pi pi-save" type="submit" [disabled]="form.invalid || !!fileError"
+      [label]="'wizard.courses.add' | translate"></p-button>
   </div>
 </form>

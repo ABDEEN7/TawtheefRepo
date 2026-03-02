@@ -1,22 +1,22 @@
-﻿import {Component, inject, OnInit} from '@angular/core';
-import {ProfileDataService} from './services/profile-data.service';
-import {TranslateService} from '@ngx-translate/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {take} from 'rxjs';
-import {finalize} from 'rxjs/operators';
-import {ProfileLookupsService} from './services/profile-lookups.service';
-import {DialogService} from 'primeng/dynamicdialog';
-import {PhoneMapperService} from './services/phone-mapper.service';
-import {mapProfileStatusToState} from './services/profile.mapper';
-import {ProfileStatusDto} from '../../../../core/models/auth/auth-response.model';
-import {AuthService} from '../../../../core/auth/auth.service';
-import {LanguageService} from '../../../../core/services/language.service';
-import {UserService} from '../../../../core/auth/user.service';
-import {routes} from '../../../../routes/routes';
-import {AvatarModal} from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
-import {ProfileService} from './services/profile.service';
-import {AvatarUtils} from '../../../../core/utils/avatar-utils';
-import {BOOTSTRAP_KEY} from '../../../../core/guards/profile-complete.guard';
+﻿import { Component, inject, OnInit } from '@angular/core';
+import { ProfileDataService } from './services/profile-data.service';
+import { TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { ProfileLookupsService } from './services/profile-lookups.service';
+import { DialogService } from 'primeng/dynamicdialog';
+import { PhoneMapperService } from './services/phone-mapper.service';
+import { mapProfileStatusToState } from './services/profile.mapper';
+import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { UserService } from '../../../../core/auth/user.service';
+import { routes } from '../../../../routes/routes';
+import { AvatarModal } from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
+import { ProfileService } from './services/profile.service';
+import { AvatarUtils } from '../../../../core/utils/avatar-utils';
+import { BOOTSTRAP_KEY } from '../../../../core/guards/profile-complete.guard';
 
 @Component({
   selector: 'app-wizard-profile',
@@ -46,7 +46,7 @@ export class WizardProfileComponent implements OnInit {
   loading = true;
   private forcedStep: number | null = null;
 
-  stepLabels: {label: string, icon: string}[] = [
+  stepLabels: { label: string, icon: string }[] = [
     { label: 'wizard.steps.firstInfo', icon: '' },
     { label: 'wizard.steps.personal', icon: 'hgi-user' },
     { label: 'wizard.steps.contact', icon: 'hgi-house-02' },
@@ -61,16 +61,16 @@ export class WizardProfileComponent implements OnInit {
 
   private stepKeyMap: Record<number,
     keyof ReturnType<typeof this.ds.stepValidity>> = {
-    1: 'basic',
-    2: 'personal',
-    3: 'contact',
-    4: 'degrees',
-    5: 'experience',
-    6: 'achievements',
-    7: 'skills',
-    8: 'languages',
-    9: 'attachments',
-  };
+      1: 'basic',
+      2: 'personal',
+      3: 'contact',
+      4: 'degrees',
+      5: 'experience',
+      6: 'achievements',
+      7: 'skills',
+      8: 'languages',
+      9: 'attachments',
+    };
 
   private orderedValidationSteps: (keyof ReturnType<typeof this.ds.stepValidity>)[] = [
     'basic',
@@ -121,7 +121,7 @@ export class WizardProfileComponent implements OnInit {
       .saveRecruitmentAvailability(available)
       .subscribe({
         next: () => {
-          this.ds.up('available',available);
+          this.ds.up('available', available);
         }
       });
   }
@@ -147,11 +147,12 @@ export class WizardProfileComponent implements OnInit {
             return;
           }
 
-          this.avatarPreviewUrl = b.avatar ?? null;
+          const prefill = this.userService.getPrefill();
+          this.avatarPreviewUrl = prefill?.avatar ?? b.avatar ?? this.userService.getCurrentUser()?.profilePictureUrl ?? null;
           (b as any).provider = provider;
 
           this.ds.prefillFromBootstrap(
-            mapProfileStatusToState(this.phoneMapper, this.lookups, b as ProfileStatusDto, this.userService.getPrefill())
+            mapProfileStatusToState(this.phoneMapper, this.lookups, b as ProfileStatusDto, prefill)
           );
 
           this.moveToFirstInvalidStep();
@@ -172,8 +173,8 @@ export class WizardProfileComponent implements OnInit {
   moveToFirstInvalidStep() {
     //get the first step not valid by ds.stepValidity
     const firstInvalidStep =
-      Array.from({length: this.total}, (_, i) => i + 1)
-      .find(i => !this.isStepValid(i));
+      Array.from({ length: this.total }, (_, i) => i + 1)
+        .find(i => !this.isStepValid(i));
 
     //make all step until firstInvalidStep touched
     for (let i = 1; i < firstInvalidStep!; i++) {
@@ -182,7 +183,7 @@ export class WizardProfileComponent implements OnInit {
 
     if (firstInvalidStep) {
       this.step = firstInvalidStep;
-    }else{
+    } else {
       //move to the last step
       this.step = this.total;
     }
@@ -230,7 +231,7 @@ export class WizardProfileComponent implements OnInit {
     this.dialog.open(AvatarModal, {
       header: this.translate.instant('wizard.personal.avatar.title'),
       width: '80%',
-      contentStyle: {'max-height': '80vh', 'overflow': 'scroll'},
+      contentStyle: { 'max-height': '80vh', 'overflow': 'scroll' },
       baseZIndex: 10000,
       closable: true,
       draggable: false,
@@ -238,6 +239,7 @@ export class WizardProfileComponent implements OnInit {
       if (croppedImage) {
         this.ds.up('avatarUrl', croppedImage);
         this.avatarPreviewUrl = croppedImage;
+        this.userService.updateProfilePicture(croppedImage);
       }
     });
   }

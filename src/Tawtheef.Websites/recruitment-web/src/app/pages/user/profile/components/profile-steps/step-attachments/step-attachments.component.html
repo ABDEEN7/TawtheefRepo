@@ -1,92 +1,82 @@
 <div class="attachments-card">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class=" text-primary">{{ 'wizard.attachments.title' | translate }}</h5>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class=" text-primary">{{ 'wizard.attachments.title' | translate }}</h5>
 
-        <button type="button" class="btn btn-primary rounded-pill px-3" (click)="addRow()">
-          <i class="hgi hgi-stroke hgi-add-01 ms-1"></i> {{ 'wizard.attachments.add' | translate }}
-        </button>
-    </div>
+    <button type="button" class="btn btn-primary rounded-pill px-3" (click)="addRow()">
+      <i class="hgi hgi-stroke hgi-add-01 ms-1"></i> {{ 'wizard.attachments.add' | translate }}
+    </button>
+  </div>
   <div class="table-card rounded overflow-hidden">
     <div class="table-responsive">
       <table class="table table-bordered table-hover align-middle w-100">
         <thead class="table-light">
-        <tr>
-          <th class="text-start" style="width:42%">{{ 'wizard.attachments.attachment' | translate }}</th>
-          <th class="text-start" style="width:42%">{{ 'wizard.attachments.file' | translate }}</th>
-          <th style="width:16%">{{ 'wizard.table.actions' | translate }}</th>
-        </tr>
+          <tr>
+            <th class="text-start" style="width:42%">{{ 'wizard.attachments.attachment' | translate }}</th>
+            <th class="text-start" style="width:42%">{{ 'wizard.attachments.file' | translate }}</th>
+            <th style="width:16%">{{ 'wizard.table.actions' | translate }}</th>
+          </tr>
         </thead>
 
         <tbody [formGroup]="form">
-        <ng-container formArrayName="rows">
-          <tr *ngFor="let g of rows.controls; let i = index"
-              [formGroupName]="i" [class.is-disabled]="g.disabled">
+          <ng-container formArrayName="rows">
+            <tr *ngFor="let g of rows.controls; let i = index" [formGroupName]="i" [class.is-disabled]="g.disabled">
 
-            <!-- عنوان -->
-            <td>
-              <input class="form-control"
-                     formControlName="title"
-                     placeholder="{{'wizard.attachments.placeholders.attachmentTitle' | translate}}"
-                     [disabled]="g.disabled"
-                     [class.is-invalid]="isInvalid(i,'title')">
-            </td>
+              <!-- عنوان -->
+              <td>
+                <input class="form-control" formControlName="title"
+                  placeholder="{{'wizard.attachments.placeholders.attachmentTitle' | translate}}"
+                  [disabled]="g.disabled" [class.is-invalid]="isInvalid(i,'title')">
+              </td>
 
-            <td>
-              <input *ngIf="!hasFile(i)"
-                     type="file"
-                     class="form-control"
-                     accept="application/pdf,image/*"
-                     (change)="onFileChange(i, $event)"
-                     [disabled]="g.disabled"
-                     [class.is-invalid]="isInvalid(i,'file')">
+              <td>
+                <input *ngIf="!hasFile(i)" type="file" class="form-control"
+                  accept="application/pdf,image/jpeg,image/png,image/webp,image/jpg" (change)="onFileChange(i, $event)"
+                  [disabled]="g.disabled" [class.is-invalid]="isInvalid(i,'file')">
 
-              <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-3">
-                    <span class="pill soft">
-                      <i class="fa-solid fa-paperclip ms-1"></i>
-                      {{ getFileName(i) }}
-                    </span>
-                    <div class="action-buttons">
-                          <button type="button" class="btn-text" *ngIf="canPreview(i)"  (click)="previewFile(i, $event)">
-                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                          </button>
-                    </div>
+                <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-3">
+                  <span class="pill soft">
+                    <i class="fa-solid fa-paperclip ms-1"></i>
+                    {{ getFileName(i) }}
+                  </span>
+                  <div class="action-buttons">
+                    <button type="button" class="btn-text" *ngIf="canPreview(i)" (click)="previewFile(i, $event)">
+                      <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                    </button>
+                  </div>
 
 
-                <button type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        (click)="changeFile(i)"
-                        [disabled]="g.disabled">
-                  <i class="fa-solid fa-rotate"></i> {{ 'wizard.attachments.change' | translate: {'default':'تغيير'} }}
-                </button>
-              </div>
-            </td>
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="changeFile(i)"
+                    [disabled]="g.disabled">
+                    <i class="fa-solid fa-rotate"></i> {{ 'wizard.attachments.change' | translate: {'default':'تغيير'}
+                    }}
+                  </button>
+                </div>
+              </td>
 
-            <td>
+              <td>
 
-              <div class="action-buttons">
-                <button type="button" class="btn" (click)="removeRow(i)">
-                  <i class="hgi hgi-stroke hgi-delete-02"></i>
-                </button>
+                <div class="action-buttons">
+                  <button type="button" class="btn" (click)="removeRow(i)">
+                    <i class="hgi hgi-stroke hgi-delete-02"></i>
+                  </button>
 
-                <button type="button" class="btn"
-                        (click)="confirmRow(i)" *ngIf="!g.disabled">
-                  <i class="hgi hgi-stroke hgi-tick-02"></i>
-                </button>
+                  <button type="button" class="btn" (click)="confirmRow(i)" *ngIf="!g.disabled">
+                    <i class="hgi hgi-stroke hgi-tick-02"></i>
+                  </button>
 
-                <button type="button" class="btn"
-                        (click)="editRow(i)" *ngIf="g.disabled">
-                  <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
-                </button>
-              </div>
+                  <button type="button" class="btn" (click)="editRow(i)" *ngIf="g.disabled">
+                    <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <tr *ngIf="rows.length === 0">
+            <td colspan="3" class="text-center text-muted py-4">
+              {{ 'wizard.attachments.empty' | translate }}
             </td>
           </tr>
-        </ng-container>
-
-        <tr *ngIf="rows.length === 0">
-          <td colspan="3" class="text-center text-muted py-4">
-            {{ 'wizard.attachments.empty' | translate }}
-          </td>
-        </tr>
         </tbody>
       </table>
     </div>

@@ -50,6 +50,7 @@
   "profileOverview.fields.writingLevel": "Writing level",
   "profileOverview.fields.readingLevel": "Reading level",
   "profileOverview.fields.degree": "Degree",
+  "profileOverview.fields.major": "Major",
   "profileOverview.fields.university": "University",
   "profileOverview.fields.gradCountry": "Graduation country",
   "profileOverview.fields.graduationYear": "Graduation year",

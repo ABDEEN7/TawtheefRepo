@@ -13,7 +13,7 @@
               inputId="degree"
               formControlName="degree"
               [options]="lookups.degrees()" optionLabel="name"
-              [filter]="true"
+              [filter]="true" dataKey="id"
               filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [placeholder]="'wizard.degrees.choiceDegree' | translate"
               [appendTo]="'body'"
@@ -33,7 +33,7 @@
               inputId="gradCountry"
               formControlName="gradCountry"
               [options]="lookups.countries()" optionLabel="name"
-              [filter]="true"
+              [filter]="true" dataKey="id"
               filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
               [appendTo]="'body'"
@@ -137,7 +137,7 @@
               {{ 'wizard.degrees.studySystem' | translate }}
             </label>
             <p-select
-              inputId="studySystem"
+              inputId="studySystem" dataKey="id"
               formControlName="studySystem"
               [options]="lookups.studyTypes()" optionLabel="name"
               [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
@@ -184,7 +184,7 @@
             <label for="grade" class="form-label required d-block">
               {{ 'wizard.degrees.grade' | translate }}
             </label>
-            <p-select inputId="grade" formControlName="grade" class="w-100" [options]="lookups.ratingGrades()" optionLabel="name" [placeholder]="'wizard.degrees.choiceGrade' | translate" [appendTo]="'body'"  [ngClass]="{'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)}">
+            <p-select inputId="grade"  dataKey="id" formControlName="grade" class="w-100" [options]="lookups.ratingGrades()" optionLabel="name" [placeholder]="'wizard.degrees.choiceGrade' | translate" [appendTo]="'body'"  [ngClass]="{'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)}">
             </p-select>
             <small *ngIf="f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)"
                    class="text-danger mt-1">

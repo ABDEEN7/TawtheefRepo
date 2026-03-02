@@ -15,6 +15,7 @@ import {ProfileLookupsService} from '../../../../../wizard-profile/services/prof
 import {TrainingCourse} from '../../../../../wizard-profile/models/experience.model';
 import {Textarea} from 'primeng/textarea';
 import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import {GUID} from '../../../../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-course',
@@ -75,7 +76,7 @@ export class CourseModal implements OnInit {
       });
       this.initialAttachmentUrl = init?.attachment?.url ?? null;
       this.initialId = init?.id ?? null;
-      this.initialAttachmentId = init?.attachmentId ?? null;
+      this.initialAttachmentId = init?.attachmentId ?? (init?.attachment?.resourceId as GUID) ?? null;
     }
 
     if (init?.file || init?.attachment || this.initialAttachmentId) {

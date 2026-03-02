@@ -1,17 +1,17 @@
-﻿import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
-import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
-import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
-import {ProfileState, UploadedFileRef} from '../models/profile-state.model';
-import {ProfileLookupsService} from './profile-lookups.service';
-import {PhoneMapperService} from './phone-mapper.service';
-import {Degree} from '../models/degree.model';
-import {Experience, TrainingCourse} from '../models/experience.model';
-import {Achievement} from '../models/achievement.model';
-import {Skill} from '../models/skill.model';
-import {Language} from '../models/language.model';
-import {Attachment} from '../models/attachment.model';
-import {FileRefDto, PrefillData, ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
+﻿import { SaveProfilePrereqRequestModel } from '../models/save-profile-prereq-request.model';
+import { SaveProfilePersonalRequestDto } from '../models/save-profile-personal-request.model';
+import { SaveProfileContactRequestDto } from '../models/save-user-contact-request.model';
+import { ProfileState, UploadedFileRef } from '../models/profile-state.model';
+import { ProfileLookupsService } from './profile-lookups.service';
+import { PhoneMapperService } from './phone-mapper.service';
+import { Degree } from '../models/degree.model';
+import { Experience, TrainingCourse } from '../models/experience.model';
+import { Achievement } from '../models/achievement.model';
+import { Skill } from '../models/skill.model';
+import { Language } from '../models/language.model';
+import { Attachment } from '../models/attachment.model';
+import { FileRefDto, PrefillData, ProfileStatusDto } from '../../../../../core/models/auth/auth-response.model';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../shared/models/dropdown-options.model';
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
     submit: false,
@@ -187,7 +187,7 @@ export function mapProfileStatusToState(
     // ----------- Collections -----------
     degrees: (dto.qualifications ?? []).map(q => ({
       id: q.id,
-      degree:  mapIdToDropdown(lookups, 'degree', q.degreeId),
+      degree: mapIdToDropdown(lookups, 'degree', q.degreeId),
       gradCountry: mapIdToDropdown(lookups, 'graduationCountry', q.gradCountryId),
       university: q.university,
       major: q.major,
@@ -275,7 +275,7 @@ export function mapProfileStatusToState(
 
     // ----------- UI fields -----------
     available: dto.availableForRecruitment ?? true,
-    avatarUrl: dto.avatar ?? prefill?.avatar ?? undefined,
+    avatarUrl: prefill?.avatar ?? dto.avatar ?? undefined,
   } as ProfileState;
 }
 
@@ -291,8 +291,8 @@ function mapFile(ref?: FileRefDto | null): UploadedFileRef | null {
 
 // Convert backend ID → dropdownOptionsModel
 export function mapIdToDropdown(lookups: ProfileLookupsService, kind: 'candidateType' | 'targetEntity' | 'countries' | 'language' | 'languageLevel' |
-'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' |'skillLevel' |
-'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'achievementTypes',
+  'nationality' | 'gender' | 'religion' | 'marital' | 'studyType' | 'degree' | 'ratingGrade' | 'skillLevel' |
+  'interviewLocation' | 'residenceCountry' | 'graduationCountry' | 'sponsorType' | 'country' | 'achievementTypes',
   id?: string | null): DropdownOptionVM | undefined {
   if (!id) return undefined;
   switch (kind) {

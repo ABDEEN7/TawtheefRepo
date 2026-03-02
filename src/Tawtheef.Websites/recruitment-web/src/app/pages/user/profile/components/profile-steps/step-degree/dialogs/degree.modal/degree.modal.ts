@@ -16,14 +16,14 @@ import { Select } from 'primeng/select';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
-import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
-import {RemoteSelectComponent} from '../../../../../../../../shared/components/remote-select/remote-select';
-import {EndpointsService} from '../../../../../../../../core/http/endpoints.service';
-import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {UploadedFileRef} from '../../../../../wizard-profile/models/profile-state.model';
-import {Degree} from '../../../../../wizard-profile/models/degree.model';
+import { ProfileLookupsService } from '../../../../../wizard-profile/services/profile-lookups.service';
+import { RemoteSelectComponent } from '../../../../../../../../shared/components/remote-select/remote-select';
+import { EndpointsService } from '../../../../../../../../core/http/endpoints.service';
+import { FileUtilsService } from '../../../../../../../../core/utils/file-utils';
+import { UploadedFileRef } from '../../../../../wizard-profile/models/profile-state.model';
+import { Degree } from '../../../../../wizard-profile/models/degree.model';
 import * as Lookups from '../../../../../../../../core/enums/lookups.enum';
-import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-qualification',
@@ -60,7 +60,7 @@ export class DegreeModal implements OnInit {
   degreeFile: File | null = null;
   maxFileSize = 1_000_000; // 1MB
   fileError: string | null = null;
-  allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
   initialCertificate: UploadedFileRef | null = null;
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
@@ -94,10 +94,11 @@ export class DegreeModal implements OnInit {
       this.initialCertificate = initialValue?.certificate ?? null;
       this.initialId = initialValue?.id ?? null;
       this.initialAttachmentId = initialValue?.attachmentId ?? this.initialCertificate?.resourceId ?? null;
+      this.degreeFile = initialValue?.file ?? null;
       this.form.patchValue({
         ...initialValue,
         gradYear: this.toDate(initialValue.gradYear),
-        degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? null,
+        degreeFileName: initialValue?.fileName ?? this.initialCertificate?.resourceName ?? initialValue?.file?.name ?? null,
         file: initialValue.file ?? null,
         fileName: initialValue.fileName ?? initialValue.certificate?.resourceName ?? initialValue.file?.name ?? '',
       });

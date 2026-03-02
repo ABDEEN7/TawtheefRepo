@@ -112,7 +112,6 @@ export class ProfileQualificationsSectionComponent {
     const mapped = this.mapQualificationToDegree(qualification);
     this.dialogService
       .open(DegreeModal, {
-        header: this.translate.instant('profileView.actions.editQualification'),
         width: '80%',
         contentStyle: { 'max-height': '80vh', overflow: 'auto' },
         baseZIndex: 10000,

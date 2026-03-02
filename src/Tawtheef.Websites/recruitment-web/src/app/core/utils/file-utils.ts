@@ -1,8 +1,8 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {DOCUMENT, isPlatformBrowser} from '@angular/common';
-import {HttpResponse} from '@angular/common/http';
-import {HttpService} from "../http/http.service";
-import {environment} from '../../../environments/environment';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
+import { HttpService } from "../http/http.service";
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class FileUtilsService {
@@ -57,21 +57,11 @@ export class FileUtilsService {
     if (!this.isBrowser) return;
 
     const type = (file as File).type ?? '';
-    if (type.includes('pdf')) {
+    if (type.includes('pdf') || type.includes('image')) {
       const url = URL.createObjectURL(file);
       window.open(url, '_blank');
       // Do NOT revoke immediately; some browsers need it alive after open.
       setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    } else if (type.includes('image')) {
-      if (file instanceof File) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => window.open(e.target.result, '_blank');
-        reader.readAsDataURL(file);
-      } else {
-        const url = URL.createObjectURL(file);
-        window.open(url, '_blank');
-        setTimeout(() => URL.revokeObjectURL(url), 30_000);
-      }
     }
   }
 
@@ -84,10 +74,12 @@ export class FileUtilsService {
   async previewUrl(fileUrl: string, fileName = '', forceAuthFetch = false): Promise<void> {
     if (!this.isBrowser) return;
 
+    const isDl = this.isApiSignedDl(fileUrl);
+
     // لو Azure و الرابط هو /dl:
     // ❗ لا تفتحيه مباشرة لأنه يحتاج JWT (لن يُرسل في window.open)
     // الأفضل: fetch JSON url (إذا سويتي endpoint JSON)
-    if (this.isAzure && this.isApiSignedDl(fileUrl)) {
+    if (this.isAzure && isDl) {
       // إذا عندك endpoint JSON:
       const r = await this.http.get<{ url: string }>(fileUrl, undefined, {
         responseType: 'json',
@@ -98,7 +90,7 @@ export class FileUtilsService {
     }
 
     // Local (أو روابط عامة): إذا بدك
-    if (!forceAuthFetch) {
+    if (!forceAuthFetch && !isDl) {
       window.open(fileUrl, '_blank');
       return;
     }

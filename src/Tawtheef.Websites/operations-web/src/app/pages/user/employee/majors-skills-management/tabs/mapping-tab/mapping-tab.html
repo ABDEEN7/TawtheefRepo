@@ -102,7 +102,7 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.MAJOR_SUBMAJOR_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
@@ -160,7 +160,7 @@
               (ngModelChange)="service.toggleMajorSkillActive(item.id, $event)">
             </p-toggle-switch>
               </div>
-            
+
           </td>
         </tr>
       </ng-template>
