@@ -862,3 +862,10 @@ body.ltr
   }
 }
 .maritalstatus .p-select-option{padding: .2rem 0.75rem !important}
+
+.p-datepicker-day {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 1.3rem !important;
+    height: 1.5rem !important;}
+    .p-datepicker .p-datepicker-panel{z-index: 99999 !important;}
