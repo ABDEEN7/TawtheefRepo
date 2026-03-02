@@ -130,7 +130,19 @@
                                                     <i class="hgi hgi-stroke hgi-alert-02"></i>
                                                     {{ 'profileOverview.review.notesCount' | translate }}
                                                 </span>
-                                                <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                                                @if(profileStatus() == UserProfileStatusEnum.Approved){
+                                                  <span class="pill success tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                                                      <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
+                                                       {{ 'profileView.sections.status.ok' | translate }}
+                                                  </span>
+                                                }
+                                                 @else{
+                                                  <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                                                      <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
+                                                      {{ 'profileOverview.reviewStatus.pending' | translate }}
+                                                  </span>
+                                                }
+                                                <!-- <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
                                                       <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
                                                       @if(profileStatus() == UserProfileStatusEnum.Approved){
                                                         {{ 'profileView.sections.status.ok' | translate }}
@@ -138,7 +150,7 @@
                                                       @else{
                                                         {{ 'profileOverview.reviewStatus.pending' | translate }}
                                                       }
-                                                </span>
+                                                </span> -->
                                             </div>
                                           </div>
                                         <div class="mt-2 fw-semibold">{{ card.labelKey | translate }}</div>
