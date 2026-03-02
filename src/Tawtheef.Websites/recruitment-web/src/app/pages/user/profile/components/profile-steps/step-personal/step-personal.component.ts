@@ -195,6 +195,74 @@ export class StepPersonalComponent implements OnInit {
 
     this.updateField('sponsorEmployerNumber', trimmed as any);
   }
+  onQidChange(raw: string | null | undefined) {
+    if (this.ds.isLocked('qid')) return;
+
+    const normalized = (raw ?? '').replace(/\D/g, '').slice(0, 20);
+    this.updateField('qid', normalized as any);
+  }
+
+  onQidKeyDown(event: KeyboardEvent, maxLen: number) {
+    if (this.ds.isLocked('qid')) {
+      event.preventDefault();
+      return;
+    }
+
+    const allowedKeys = new Set([
+      'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'
+    ]);
+
+    if (event.ctrlKey || event.metaKey || allowedKeys.has(event.key)) {
+      return;
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const selectionLength = (input.selectionEnd ?? 0) - (input.selectionStart ?? 0);
+    const nextLength = input.value.length - selectionLength + 1;
+
+    if (nextLength > maxLen) {
+      event.preventDefault();
+    }
+  }
+
+  onQidInput(raw: string | null | undefined, maxLen: number) {
+    if (this.ds.isLocked('qid')) return;
+
+    const sanitized = (raw ?? '').replace(/\D/g, '').slice(0, maxLen);
+    this.updateField('qid', sanitized as any);
+  }
+
+  onQidPaste(event: ClipboardEvent, currentValue: string | null | undefined, maxLen: number) {
+    if (this.ds.isLocked('qid')) {
+      event.preventDefault();
+      return;
+    }
+
+    const pasteText = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(pasteText)) {
+      event.preventDefault();
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const current = currentValue ?? '';
+    const start = input.selectionStart ?? current.length;
+    const end = input.selectionEnd ?? current.length;
+    const nextValue = current.slice(0, start) + pasteText + current.slice(end);
+
+    if (nextValue.length > maxLen) {
+      event.preventDefault();
+      return;
+    }
+
+    queueMicrotask(() => this.onQidInput(this.ds.state().qid, maxLen));
+  }
+
   onSponsorTypeChange(value: any) {
     this.updateField('sponsorType', value);
 

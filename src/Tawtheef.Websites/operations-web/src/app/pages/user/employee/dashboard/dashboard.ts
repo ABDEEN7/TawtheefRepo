@@ -41,7 +41,6 @@ export class Dashboard implements OnInit {
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
 
   readonly filters = signal<OperationsDashboardFilters>({ pageNumber: 1, pageSize: 10 });
-  readonly searchEmployeeId = signal<string>('');
   readonly searchStatus = signal<string>('');
 
   private filterChanges$ = new Subject<void>();
@@ -188,7 +187,6 @@ export class Dashboard implements OnInit {
   applyFilters(): void {
     this.filters.update((value) => ({
       ...value,
-      employeeId: this.searchEmployeeId() || undefined,
       status: this.searchStatus() || undefined,
       pageNumber: 1,
     }));
@@ -200,8 +198,4 @@ export class Dashboard implements OnInit {
     this.applyFilters();
   }
 
-  onEmployeeChange(value: string): void {
-    this.searchEmployeeId.set(value);
-    this.applyFilters();
-  }
 }

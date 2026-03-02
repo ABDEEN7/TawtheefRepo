@@ -6,6 +6,9 @@
   get profileLogs(){
     return this.admin + '/profile-logs';
   },
+  get systemAdminLogs(){
+    return this.admin + '/system-admin-logs';
+  },
   get settings(){
     return this.admin + '/settings';
   },

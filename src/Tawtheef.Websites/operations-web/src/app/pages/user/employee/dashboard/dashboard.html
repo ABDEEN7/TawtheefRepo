@@ -10,8 +10,6 @@
                      </div>
                      <div class="col-lg-4 col-md-12">
                           <div class="filters-row">
-                            <input class="form-control" [value]="searchEmployeeId()" (input)="onEmployeeChange($any($event.target).value)" [placeholder]="'dashboard.filters.employeeId' | translate" />
-
                             <select class="form-select" [value]="searchStatus()" (change)="onStatusChange($any($event.target).value)">
                               <option value="">{{ 'dashboard.filters.allStatuses' | translate }}</option>
                               <option value="Submitted">{{ 'dashboard.status.submitted' | translate }}</option>

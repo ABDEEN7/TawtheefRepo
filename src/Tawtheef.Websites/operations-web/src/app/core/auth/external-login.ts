@@ -27,7 +27,7 @@ export class ExternalLoginService implements OnDestroy {
 
   private readonly popupWidth = 600;
   private readonly popupHeight = 800;
-  private readonly popupTimeoutMs = 60_000;
+  private readonly popupTimeoutMs = 60_000 * 5;
 
   private readonly ngZone = inject(NgZone);
   private readonly authService = inject(AuthService);

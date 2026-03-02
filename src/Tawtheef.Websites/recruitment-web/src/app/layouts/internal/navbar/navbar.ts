@@ -132,6 +132,11 @@ export class Navbar implements OnInit, OnDestroy {
     this.auth.logout();
   }
 
+  navigateToHome(event?: Event): void {
+    event?.preventDefault();
+    this.router.navigateByUrl(this.routes.home).finally(() => window.location.reload());
+  }
+
   toggleNotificationMenu(event?: MouseEvent): void {
     event?.stopPropagation();
     this.showNotificationMenu = !this.showNotificationMenu;
