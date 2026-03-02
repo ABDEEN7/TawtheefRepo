@@ -1,21 +1,22 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {Router, RouterModule} from '@angular/router';
-import {SortEvent} from 'primeng/api';
-import {TableModule} from 'primeng/table';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {ProfileApprovalService} from './services/profile-approval.service';
-import {ProfileApprovalListFilter, ProfileApprovalListItem, ReviewStatus,} from './models/profile-approval.models';
-import {Select} from 'primeng/select';
-import {InputTextModule} from 'primeng/inputtext';
-import {finalize} from 'rxjs';
-import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
-import {routes} from '../../../../../routes/routes';
-import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {PaginationComponent} from '../../../../../shared/components/pagination/pagination.component';
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { SortEvent } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ProfileApprovalService } from './services/profile-approval.service';
+import { ProfileApprovalListFilter, ProfileApprovalListItem, ReviewStatus, } from './models/profile-approval.models';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import { Select } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
+import { finalize } from 'rxjs';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { routes } from '../../../../../routes/routes';
+import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
+import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 
 @Component({
   selector: 'app-profile-approval-list-page',
@@ -43,13 +44,14 @@ export class ProfileApprovalListPage implements OnInit {
     hasPreviousPage: false
   });
 
+  targetEntities = signal<dropdownOptionsModel[]>([]);
   loading = signal(false);
 
   filters = signal<ProfileApprovalListFilter>({
     search: '',
     status: '',
     candidateType: '',
-    targetEntity: '',
+    targetEntityId: '',
     specialization: '',
     sortBy: 'date',
     sortDirection: 'desc',
@@ -70,7 +72,15 @@ export class ProfileApprovalListPage implements OnInit {
 
 
   ngOnInit(): void {
+    this.loadTargetEntities();
     this.loadList();
+  }
+
+  loadTargetEntities(): void {
+    this.api.getTargetEntities()
+      .subscribe({
+        next: entities => this.targetEntities.set(entities ?? []),
+      });
   }
 
   updateFilter<K extends keyof ProfileApprovalListFilter>(
@@ -83,7 +93,12 @@ export class ProfileApprovalListPage implements OnInit {
   loadList(): void {
     this.loading.set(true);
 
-    this.api.getProfiles(this.filters())
+    const apiFilters = { ...this.filters() };
+    if (!apiFilters.targetEntityId) {
+      delete apiFilters.targetEntityId;
+    }
+
+    this.api.getProfiles(apiFilters)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: res => {
@@ -102,7 +117,7 @@ export class ProfileApprovalListPage implements OnInit {
       search: '',
       status: '',
       candidateType: '',
-      targetEntity: '',
+      targetEntityId: '',
       specialization: '',
       sortBy: 'date',
       sortDirection: 'desc',

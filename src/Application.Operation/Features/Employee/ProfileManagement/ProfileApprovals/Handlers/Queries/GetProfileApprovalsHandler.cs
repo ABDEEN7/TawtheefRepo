@@ -86,6 +86,7 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
                 p.Status == UserProfileStatus.Submitted ||
                 p.Status == UserProfileStatus.UnderReview ||
                 p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending))
+            .WhereIf(request.TargetEntityId.HasValue, p => p.TargetEntityId == request.TargetEntityId)
             .ToPaginatedListAsync(request, ct);
     }
 
@@ -259,9 +260,6 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             .WhereIf(!string.IsNullOrWhiteSpace(request.CandidateType), p =>
                 !string.IsNullOrWhiteSpace(p.CandidateType) &&
                 p.CandidateType.Contains(request.CandidateType!, StringComparison.OrdinalIgnoreCase))
-            .WhereIf(!string.IsNullOrWhiteSpace(request.TargetEntity), p =>
-                !string.IsNullOrWhiteSpace(p.TargetEntity) &&
-                p.TargetEntity.Contains(request.TargetEntity!, StringComparison.OrdinalIgnoreCase))
             .WhereIf(!string.IsNullOrWhiteSpace(request.Specialization), p =>
                 !string.IsNullOrWhiteSpace(p.Specialization) &&
                 p.Specialization.Contains(request.Specialization!, StringComparison.OrdinalIgnoreCase))

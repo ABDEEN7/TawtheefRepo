@@ -1,7 +1,7 @@
 import { GUID } from '../../../../../../shared/types/guid.type';
 import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 import { ProfileStatusNumber } from '../../../../../../core/enums/lookups.enum';
-import {PaginatedRequest} from '../../../../../../core/models/paginated-request.model';
+import { PaginatedRequest } from '../../../../../../core/models/paginated-request.model';
 
 export enum ReviewStatus {
   NotReviewed = 0,
@@ -155,7 +155,7 @@ export interface ProfileApprovalListFilter extends PaginatedRequest {
   search?: string;
   specialization?: string;
   status?: ReviewStatus | '';
-  targetEntity?: string;
+  targetEntityId?: string;
   candidateType?: string;
 }
 

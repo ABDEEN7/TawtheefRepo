@@ -6,10 +6,11 @@ import {
   ProfileApprovalListItem,
   ReviewStatus,
 } from '../models/profile-approval.models';
-import {EndpointsService} from '../../../../../../core/http/endpoints.service';
-import {HttpService} from '../../../../../../core/http/http.service';
-import {FinalizeProfileApprovalRequest} from '../models/profile-approval-finalize.model';
-import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
+import { EndpointsService } from '../../../../../../core/http/endpoints.service';
+import { HttpService } from '../../../../../../core/http/http.service';
+import { FinalizeProfileApprovalRequest } from '../models/profile-approval-finalize.model';
+import { PaginatedResult } from '../../../../../../core/models/paginated-result.model';
+import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileApprovalService {
@@ -18,6 +19,10 @@ export class ProfileApprovalService {
 
   getProfiles(filters?: ProfileApprovalListFilter): Observable<PaginatedResult<ProfileApprovalListItem>> {
     return this.http.get<PaginatedResult<ProfileApprovalListItem>>(this.endpoints.approvals.list, filters);
+  }
+
+  getTargetEntities(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.targetEntities);
   }
 
   getProfile(profileId: string): Observable<ProfileApprovalDetail> {
