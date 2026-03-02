@@ -1,13 +1,13 @@
-import {inject, Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
-import {TokenService} from "./token.service";
-import {UserInfoModel} from "../../shared/models/user-info.model";
-import {PrefillData} from '../models/auth/auth-response.model';
-import {PREFILL_DATA_KEY, USER_DATA_KEY} from '../constants/user-storage.const';
-import {AUTH_PROVIDER} from '../constants/auth-providers.const';
-import {VERIFIED_PHONE_KEY} from '../constants/wizard-keys.const';
+import { inject, Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { TokenService } from "./token.service";
+import { UserInfoModel } from "../../shared/models/user-info.model";
+import { PrefillData } from '../models/auth/auth-response.model';
+import { PREFILL_DATA_KEY, USER_DATA_KEY } from '../constants/user-storage.const';
+import { AUTH_PROVIDER } from '../constants/auth-providers.const';
+import { VERIFIED_PHONE_KEY } from '../constants/wizard-keys.const';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class UserService {
   public tokenService = inject(TokenService);
   private currentUserSubject = new BehaviorSubject<UserInfoModel | null>(null);
@@ -26,11 +26,11 @@ export class UserService {
       agreedToTerms: !!user.agreedToTerms,
       userType: this.tokenService.getRoleFromToken(accessToken),
       provider: user.provider || AUTH_PROVIDER.LOCAL,
-      notifications : user.notifications || 0
+      notifications: user.notifications || 0
     } as UserInfoModel;
 
     localStorage.setItem(USER_DATA_KEY, JSON.stringify(minimalUser));
-    if(user.prefill || user.prefill === null) localStorage.setItem(PREFILL_DATA_KEY, JSON.stringify(user.prefill));
+    if (user.prefill || user.prefill === null) localStorage.setItem(PREFILL_DATA_KEY, JSON.stringify(user.prefill));
     this.currentUserSubject.next(minimalUser);
   }
 
@@ -56,5 +56,19 @@ export class UserService {
 
     localStorage.setItem(USER_DATA_KEY, JSON.stringify(updatedUser));
     this.currentUserSubject.next(updatedUser);
+  }
+
+  updateProfilePicture(url: string): void {
+    const current = this.currentUserSubject.value;
+    if (current) {
+      current.profilePictureUrl = url;
+      localStorage.setItem(USER_DATA_KEY, JSON.stringify(current));
+      this.currentUserSubject.next(current);
+    }
+    const prefill = this.getPrefill();
+    if (prefill) {
+      prefill.avatar = url;
+      localStorage.setItem(PREFILL_DATA_KEY, JSON.stringify(prefill));
+    }
   }
 }

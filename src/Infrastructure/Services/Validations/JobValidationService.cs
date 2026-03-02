@@ -61,7 +61,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             var majorSkillRepo = unitOfWork.GetEntityRepository<MajorSkill>();
             var majorSkillsIds = await majorSkillRepo.DbSet
                 .AsNoTracking().Where(s => s.IsActive)
-                .Where(s => s.MajorId == dto.MajorId)
+                .Where(s => (s.MajorId == dto.MajorId) || (s.MajorId == dto.SubMajorId))
                 .Select(x=> x.SkillId)
                 .ToListAsync();
 

@@ -13,6 +13,7 @@
                     <tr>
                       <th>{{ 'profileOverview.fields.degree' | translate }}</th>
                       <th>{{ 'profileOverview.fields.university' | translate }}</th>
+                      <th>{{ 'profileOverview.fields.major' | translate }}</th>
                       <th>{{ 'profileOverview.fields.gradCountry' | translate }}</th>
                       <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
                       <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
@@ -31,7 +32,7 @@
                 </table>
             </div>
        </div>
-      
+
     } @else {
       <div class="text-muted">{{ 'common.none' | translate }}</div>
     }
@@ -48,6 +49,7 @@
       </div>
     </td>
     <td>{{ q.university?.name || '-' }}</td>
+    <td>{{ q.major?.name || '-' }}/{{q.subMajor?.name || '-'}}</td>
     <td>{{ q.gradCountry?.name || '-' }}</td>
     <td>{{ q.graduationYear || '-' }}</td>
     <td>{{ q.studyType?.name || '-' }}</td>

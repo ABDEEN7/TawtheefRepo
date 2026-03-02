@@ -155,7 +155,7 @@
   "profileApproval.detail.attachments.fileName": "اسم الملف",
   "profileApproval.detail.attachments.fileSize": "حجم الملف",
   "profileApproval.detail.attachments.fileType": "نوع الملف",
-  "profileApproval.detail.sectionApproval.title": "اعتماد القسم للبيانات الشخصية",
+  "profileApproval.detail.sectionApproval.title": "قسم مراجعة المعلومات والموافقة عليها",
   "profileApproval.detail.sectionApproval.statusLabel": "الحالة",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "اختر الحالة",
   "profileApproval.detail.sectionApproval.notesLabel": "ملاحظات",

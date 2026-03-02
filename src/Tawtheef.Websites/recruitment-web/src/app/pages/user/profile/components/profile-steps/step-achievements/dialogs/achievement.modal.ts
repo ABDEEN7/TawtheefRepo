@@ -77,7 +77,7 @@ export class AchievementModal implements OnInit {
       });
       this.initialAttachmentUrl = initial.attachment?.url ?? null;
       this.initialId = initial.id ?? null;
-      this.initialAttachmentId = initial.attachmentId ?? null;
+      this.initialAttachmentId = initial.attachmentId ?? (initial.attachment?.resourceId as GUID) ?? null;
 
       if (!initial.file && initial.attachment) {
         this.form.get('file')?.clearValidators();

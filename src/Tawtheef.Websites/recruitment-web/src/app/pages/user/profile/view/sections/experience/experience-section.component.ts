@@ -168,7 +168,6 @@ export class ProfileExperienceSectionComponent {
 
     this.dialogService
       .open(ExperienceModal, {
-        header: this.translate.instant('profileView.actions.editExperience'),
         width: '50%',
         contentStyle: { 'max-height': '80vh', overflow: 'auto' },
         baseZIndex: 10000,

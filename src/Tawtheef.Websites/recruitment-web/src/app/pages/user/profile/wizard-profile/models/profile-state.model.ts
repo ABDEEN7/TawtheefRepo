@@ -7,9 +7,10 @@ import {DropdownOptionVM} from '../../../../../shared/models/dropdown-options.mo
 import {PhoneNumber} from './phone-number.model';
 import {Skill} from './skill.model';
 import {CountryDto, CountryVM} from '../services/profile-lookups.service';
+import {GUID} from '../../../../../shared/types/guid.type';
 
 export interface UploadedFileRef {
-  resourceId: string;
+  resourceId: GUID | string;
   resourceName: string;
   url?: string | null;
   file?: File | null;

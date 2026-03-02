@@ -111,7 +111,6 @@ export class ProfileTrainingSectionComponent {
     const mapped = this.mapTrainingCourse(course);
     this.dialogService
       .open(CourseModal, {
-        header: this.translate.instant('profileView.actions.editTrainingCourse'),
         width: '80%',
         contentStyle: {'max-height': '80vh', overflow: 'auto'},
         baseZIndex: 10000,

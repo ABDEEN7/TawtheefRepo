@@ -28,6 +28,7 @@ export class ExternalLoginService implements OnDestroy {
   private readonly popupWidth = 600;
   private readonly popupHeight = 800;
   private readonly popupTimeoutMs = 60_000 * 5;
+  private isAccessRestricted = false;
 
   private readonly ngZone = inject(NgZone);
   private readonly authService = inject(AuthService);
@@ -89,13 +90,24 @@ export class ExternalLoginService implements OnDestroy {
   }
 
   private safeIsPopupClosed(): boolean {
+    if (!this.popup) return true;
+    if (this.isAccessRestricted) return false;
+
     try {
-      // Accessing window.closed can throw under COOP when the popup is cross-origin.
-      // In that case we fallback to postMessage, focus checks, and a hard timeout.
-      return !this.popup || this.popup.closed;
+      return this.popup.closed;
     } catch {
-      // Treat as "not closed" and let postMessage or timeout handle the flow.
+      // Access hit a SecurityError or COOP block.
+      this.isAccessRestricted = true;
       return false;
+    }
+  }
+
+  private isCrossChain(url: string): boolean {
+    try {
+      const target = new URL(url, window.location.origin);
+      return target.origin !== window.location.origin;
+    } catch {
+      return true; // Assume cross-origin if URL is malformed
     }
   }
 
@@ -143,9 +155,13 @@ export class ExternalLoginService implements OnDestroy {
 
     const untilPopupDone$ = merge(this.destroy$, this.popupDone$);
 
+    this.isAccessRestricted = this.isCrossChain(url);
+
     this.popupPollSub = interval(350)
       .pipe(takeUntil(untilPopupDone$))
       .subscribe(() => {
+        if (this.isAccessRestricted) return;
+
         if (this.safeIsPopupClosed()) {
           this.finishPopupFlow({ stopLoading: true, closePopup: true });
           this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
@@ -220,7 +236,7 @@ export class ExternalLoginService implements OnDestroy {
           'error',
           this.i18nText(this.i18n.loginFailedSummary),
           errorList?.map((item) => this.i18nText(item.message, 'server-error')).join('\n')
-            ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback),
+          ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback),
         );
         break;
       }
@@ -251,10 +267,17 @@ export class ExternalLoginService implements OnDestroy {
 
   /** Closes popup safely */
   private closePopup(): void {
-    if (!this.safeIsPopupClosed()) {
-      this.popup!.close();
+    if (!this.popup) return;
+
+    try {
+      if (!this.safeIsPopupClosed()) {
+        this.popup.close();
+      }
+    } catch {
+      // Ignore COOP/Cross-Origin errors on close
+    } finally {
+      this.popup = null;
     }
-    this.popup = null;
   }
 
   /** Center popup on screen */

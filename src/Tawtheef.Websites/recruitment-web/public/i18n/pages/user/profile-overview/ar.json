@@ -50,6 +50,7 @@
   "profileOverview.fields.writingLevel": "مستوى الكتابة",
   "profileOverview.fields.readingLevel": "مستوى القراءة",
   "profileOverview.fields.degree": "الدرجة العلمية",
+  "profileOverview.fields.major": "التخصص",
   "profileOverview.fields.university": "الجامعة",
   "profileOverview.fields.gradCountry": "بلد التخرج",
   "profileOverview.fields.graduationYear": "سنة التخرج",

@@ -1,13 +1,13 @@
-import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {TranslateService} from '@ngx-translate/core';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.model';
-import {Attachment} from '../../../wizard-profile/models/attachment.model';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import { Component, EventEmitter, inject, Input, isDevMode, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
+import { createStepValiditySignal } from '../../../wizard-profile/state/profile-step-validity.signal';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
+import { Attachment } from '../../../wizard-profile/models/attachment.model';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-step-attachments',
@@ -25,14 +25,9 @@ export class StepAttachmentsComponent implements OnInit {
   private readonly allowedMimeTypes = new Set<string>([
     'application/pdf',
     'image/jpeg',
+    'image/jpg',
     'image/png',
     'image/webp',
-    'image/gif',
-    'image/bmp',
-    'image/tiff',
-    'image/svg+xml',
-    'image/heic',
-    'image/heif',
   ]);
 
   ds = inject(ProfileDataService);
@@ -45,7 +40,7 @@ export class StepAttachmentsComponent implements OnInit {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step(){
+  get step() {
     const stepValidity = createStepValiditySignal(this.ds.state);
     const validity = stepValidity();
     return validity['attachments'];
@@ -247,7 +242,7 @@ export class StepAttachmentsComponent implements OnInit {
         this.next.emit();
       },
       error: (err: any) => {
-        if(isDevMode())
+        if (isDevMode())
           console.error(err);
         this.saving = false;
       },
