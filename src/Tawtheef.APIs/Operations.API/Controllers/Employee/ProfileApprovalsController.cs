@@ -113,7 +113,8 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
             OfficerId: OfficerId.Value,
             ReviewItemId: reviewItemId,
             Status: body.Status,
-            Note: body.Note);
+            Note: body.Note,
+            SpecializationRelation: body.SpecializationRelation);
 
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
