@@ -118,8 +118,8 @@ export class OfficesManagement implements OnInit {
 
   assignedCountryIds() {
     return this.offices()
-      .map(office => office.country?.id)
-      .filter((id): id is string => Boolean(id));
+      .map(o => o.country?.id)
+      .filter(Boolean) as string[];
   }
 
   openAdd() {

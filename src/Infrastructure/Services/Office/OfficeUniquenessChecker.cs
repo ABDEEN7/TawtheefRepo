@@ -2,7 +2,6 @@ using Application.Operation.Common.Interfaces.Services.Office;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Infrastructure.Services.Office;
@@ -26,7 +25,7 @@ public sealed class OfficeUniquenessChecker(UserManager<User> userManager, IUnit
         if (countryId == Guid.Empty)
             return false;
 
-        return await unitOfWork.GetEntityRepository<Office>().DbSet
+        return await unitOfWork.GetEntityRepository<Domain.Entities.Lookups.NoneSeeds.Office>().DbSet
             .AsNoTracking()
             .AnyAsync(o => o.CountryId == countryId, ct);
     }
