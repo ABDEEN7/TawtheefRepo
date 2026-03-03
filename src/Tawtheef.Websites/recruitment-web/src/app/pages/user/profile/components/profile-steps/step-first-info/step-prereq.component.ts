@@ -1,9 +1,26 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import {
   createFileSlot,
   FileSlot,
@@ -14,30 +31,38 @@ import {
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
-import {mapPrereqSection} from '../../../wizard-profile/services/profile.mapper';
-import {catchError, finalize, map, switchMap, tap} from 'rxjs/operators';
-import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-response-normalizer';
-import {of} from 'rxjs';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import { dateToDateOnly } from '../../../../../../shared/types/dateOnly.type';
+import { mapPrereqSection } from '../../../wizard-profile/services/profile.mapper';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { normalizeMoiResponse } from '../../../wizard-profile/services/moi-response-normalizer';
+import { of } from 'rxjs';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 
 @Component({
   selector: 'app-step-prereq',
   templateUrl: './step-prereq.component.html',
   styleUrl: './step-prereq.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    SelectModule,
+    DatePickerModule,
+    ButtonModule,
+    InputTextModule
+  ]
 })
 export class StepPrereqComponent implements OnInit {
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() requireChanges = false;
-  ds        = inject(ProfileDataService);
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  requireChanges = input<boolean>(false);
+  ds = inject(ProfileDataService);
   translate = inject(TranslateService);
-  lookups   = inject(ProfileLookupsService);
-  profile   = inject(ProfileService);
-  notificationService   = inject(NotificationService);
+  lookups = inject(ProfileLookupsService);
+  profile = inject(ProfileService);
+  notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
   private cvFile: FileSlot = createFileSlot();
@@ -48,11 +73,7 @@ export class StepPrereqComponent implements OnInit {
   private hasCheckedProfile = false;
   today = new Date();
 
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['basic'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().basic);
 
   saving = false;
   private static readonly MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
@@ -61,34 +82,27 @@ export class StepPrereqComponent implements OnInit {
     'cv' | 'id' | 'birth' | 'marriage',
     { exts: string[]; mimes: string[]; labelKey: string }
   > = {
-    // CV: typically PDF / DOC / DOCX
-    cv: {
-      exts: ['.pdf', '.doc', '.docx'],
-      mimes: [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ],
-      labelKey: 'wizard.files.formats.cv'
-    },
-
-    // ID / Certificates: images + PDF
-    id: {
-      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
-      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
-      labelKey: 'wizard.files.formats.id'
-    },
-    birth: {
-      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
-      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
-      labelKey: 'wizard.files.formats.birth'
-    },
-    marriage: {
-      exts: ['.jpg', '.jpeg', '.png', '.pdf'],
-      mimes: ['image/jpeg', 'image/png', 'application/pdf'],
-      labelKey: 'wizard.files.formats.marriage'
-    }
-  };
+      cv: {
+        exts: ['.pdf', '.jpg', '.jpeg', '.png'],
+        mimes: ['application/pdf', 'image/jpeg', 'image/png'],
+        labelKey: 'wizard.files.formats.cv'
+      },
+      id: {
+        exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+        mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+        labelKey: 'wizard.files.formats.id'
+      },
+      birth: {
+        exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+        mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+        labelKey: 'wizard.files.formats.birth'
+      },
+      marriage: {
+        exts: ['.jpg', '.jpeg', '.png', '.pdf'],
+        mimes: ['image/jpeg', 'image/png', 'application/pdf'],
+        labelKey: 'wizard.files.formats.marriage'
+      }
+    };
   ngOnInit(): void {
     const state = this.ds.state();
     updateRemote(this.cvFile, state.cvFile);
@@ -198,8 +212,8 @@ export class StepPrereqComponent implements OnInit {
 
 
   onNext() {
-    if (!this.step.valid) {
-      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
+    if (!this.step().valid) {
+      this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -213,7 +227,7 @@ export class StepPrereqComponent implements OnInit {
 
     // If nothing changed and we don't need to re-check → just go next
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -272,6 +286,7 @@ export class StepPrereqComponent implements OnInit {
         next: (canProceed: any) => {
           this.lastSubmittedSignature = signature;
           if (canProceed) {
+            this.ds.markStepSubmitted('basic');
             if (this.profile.isChangeRequestMode()) {
               this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
             }

@@ -11,16 +11,13 @@
   "server-error.LOGIN_FAILED": "Login failed.",
   "server-error.UPLOAD_FAILED": "File upload failed.",
   "server-error.REVIEW_ITEM_NOT_FOUND": "Review item not found.",
-  "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT":"Request contains invalid or unsafe content.",
-
+  "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT": "Request contains invalid or unsafe content.",
   "server-error.INVALID_TOKEN": "Invalid token.",
   "server-error.INVALID_TOKEN_TYPE": "Invalid token type.",
   "server-error.TOKEN_EXPIRED": "Token has expired.",
   "server-error.INVALID_ALGORITHM": "Unsupported encryption algorithm.",
   "server-error.NO_CHANGES_MADE": "No changes were made.",
-
   "server-error.SITE_URL_NOT_CONFIGURED": "Site URL is not configured.",
-
   "server-error.PROFILE_NOT_FOUND": "Profile not found.",
   "server-error.INVALID_CREDENTIALS_PROVICED": "Invalid login credentials.",
   "server-error.USER_NOT_FOUND": "User not found.",
@@ -39,7 +36,6 @@
   "server-error.QATAR_RESIDENT_PHONE_MISMATCH": "Phone number does not match the registered data.",
   "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "Unable to verify QID details. Please check the entered information is correct and try again.",
   "server-error.EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED": "User type is not allowed for external login.",
-
   "server-error.ROLE_NOT_FOUND": "Role not found.",
   "server-error.ROLE_NAME_EXISTS": "Role name already exists.",
   "server-error.INVALID_PERMISSION": "Invalid permission.",
@@ -50,9 +46,7 @@
   "server-error.SYSTEM_ADMIN_ASSIGNMENT_NOT_ALLOWED": "System admin assignment is not allowed.",
   "server-error.PROTECTED_USER_DELETION_NOT_ALLOWED": "This user cannot be deleted.",
   "server-error.SYSTEM_ADMIN_BLOCK_NOT_ALLOWED": "System admin cannot be blocked.",
-
   "server-error.EMAIL_IS_ALREADY_TAKEN": "Email is already taken.",
-
   "server-error.ACCESS_TOKEN_REQUIRED": "Access token is required.",
   "server-error.REFRESH_TOKEN_REQUIRED": "Refresh token is required.",
   "server-error.INVALID_ACCESS_TOKEN": "Invalid access token.",
@@ -60,7 +54,6 @@
   "server-error.REFRESH_TOKEN_NOT_FOUND": "Refresh token not found.",
   "server-error.INACTIVE_REFRESH_TOKEN": "Refresh token is inactive.",
   "server-error.SESSION_REVOKED": "Session has been revoked.",
-
   "server-error.VERIFICATION_CODE_EXPIRED": "Verification code has expired.",
   "server-error.INVALID_TOKEN_OR_EMAIL": "Invalid token or email.",
   "server-error.TOO_MANY_ATTEMPTS": "Too many attempts. Please try again later.",
@@ -72,7 +65,6 @@
   "server-error.USER_PHONE_REQUIRED": "User phone number is required.",
   "server-error.INVALID_CODE": "Invalid code.",
   "server-error.PHONE_VERIFICATION_RATE_LIMITED": "Phone verification attempts are rate limited.",
-
   "server-error.USER_PROFILE_NOT_COMPLETED": "User profile is not completed.",
   "server-error.USER_PROFILE_NOT_FOUND": "User profile not found.",
   "server-error.PROFILE_NOT_UNDER_REVIEW": "Profile is not under review.",
@@ -82,37 +74,31 @@
   "server-error.INVALID_PASSWORD": "Invalid password.",
   "server-error.INCORRECT_OLD_PASSWORD": "Incorrect current password.",
   "server-error.PASSWORD_CHANGE_FAILED": "Password change failed.",
-
   "server-error.JOB_NOT_FOUND": "Job not found.",
   "server-error.JOB_ALREADY_PUBLISHED": "Job is already published.",
   "server-error.JOB_ALREADY_CANCELLED": "Job is already cancelled.",
   "server-error.JOB_CANNOT_BE_CANCELLED": "Job cannot be cancelled.",
   "server-error.JOB_CLOSING_DATE_INVALID": "Invalid job closing date.",
   "server-error.NOTE_REQUIRED": "Note is required.",
-
   "server-error.COUNTRY_NOT_FOUND": "Country not found.",
   "server-error.LANGUAGE_NOT_FOUND": "Language not found.",
   "server-error.LANGUAGE_NAME_EXISTS": "Language name already exists.",
   "server-error.UNIVERSITY_NOT_FOUND": "University not found.",
   "server-error.UNIVERSITY_NAME_EXISTS": "University name already exists.",
   "server-error.CITY_NOT_FOUND": "City not found.",
-
   "server-error.OFFICE_NOT_FOUND": "Office not found.",
   "server-error.OFFICE_COUNTRY_NOT_FOUND": "Office country not found.",
   "server-error.OFFICE_SUPPORTED_COUNTRY_INVALID": "Invalid supported country for the office.",
   "server-error.OFFICE_ADMIN_EMAIL_INVALID": "Invalid office admin email.",
   "server-error.OFFICE_ADMIN_EMAIL_EXISTS": "Office admin email already exists.",
-
   "server-error.MAJOR_NOT_FOUND": "Major not found.",
   "server-error.MAJOR_ALREADY_USED": "Major is already used.",
   "server-error.MAJOR_NAME_ALREADY_EXISTS": "Major name already exists.",
-
   "server-error.SKILL_NOT_FOUND": "Skill not found.",
   "server-error.SKILL_ALREADY_USED": "Skill is already used.",
   "server-error.SKILL_NAME_ALREADY_EXISTS": "Skill name already exists.",
-
   "server-error.UN_EXPECTED_ERROR": "An unexpected error occurred. Please try again later.",
-
+  "server-error.INTERNAL_SERVER_ERROR": "Something went wrong. Please contact support with ticket number: {{ticket}}.",
   "server-error.FIELD_REQUIRED": "This field is required.",
   "server-error.CANNOT_MODIFY_AGE_RANGE": "Age range cannot be modified.",
   "server-error.CANNOT_CLOSE_MANUALLY_BEFORE_DEADLINE": "The job cannot be manually closed before the closing date.",
@@ -170,10 +156,8 @@
   "server-error.JOB_TAB_REVIEW_NOT_FOUND": "Job tab review not found.",
   "server-error.JOB_POINTS_CONFIGURATION_NOT_FOUND": "Job points configuration not found.",
   "server-error.JOB_CANNOT_BE_COPIED": "This job cannot be copied.",
-
   "server-error.RESIDENCE_ADDRESS_NOT_FOUND": "Residence address not found.",
   "server-error.SPONSOR_PROFILE_NOT_FOUND": "Sponsor profile not found.",
-
   "server-error.PROFILE_LOCKED_UNDER_REVIEW": "Profile is locked while under review.",
   "server-error.NOT_SUBMITTED": "Not submitted.",
   "server-error.DEGREE_NOT_FOUND": "Degree not found.",
@@ -184,7 +168,6 @@
   "server-error.DUPLICATE_NATIONAL_NUMBER": "National number is duplicated.",
   "server-error.NOTES_REQUIRED_FOR_CORRECTION": "Notes are required for correction.",
   "server-error.UNAPPROVED_ITEMS_EXIST": "Unapproved items exist.",
-
   "server-error.INVALID_DEGREE_UNIVERSITY_ID": "Invalid degree university id.",
   "server-error.INVALID_DEGREE_MAJOR_ID": "Invalid degree major id.",
   "server-error.INVALID_GPA": "Invalid GPA.",
@@ -198,7 +181,6 @@
   "server-error.DEGREE_LINKED_TO_EXPERIENCE": "Degree is linked to an experience.",
   "server-error.INVALID_EXPERIENCE_QUALIFICATION": "Invalid experience qualification.",
   "server-error.EXPERIENCE_BEFORE_GRADUATION": "Experience cannot be before graduation.",
-
   "server-error.EXTERNAL_LOGIN_INFO_NOT_FOUND": "External login info not found.",
   "server-error.EXTERNAL_LOGIN_EMAIL_NOT_FOUND": "External login email not found.",
   "server-error.EXTERNAL_LOGIN_USER_NOT_FOUND": "External login user not found.",
@@ -208,7 +190,6 @@
   "server-error.EXTERNAL_LOGIN_INVALID_TOKEN": "External login token is invalid.",
   "server-error.EXTERNAL_LOGIN_MISSING_PROVIDER_KEY": "External login provider key is missing.",
   "server-error.INVALID_REQUEST": "Invalid request.",
-
   "server-error.CONFIG_MISSING": "Configuration is missing.",
   "server-error.NOT_PUBLIC_RESOURCE": "Resource is not public.",
   "server-error.INVALID_BLOB_KEY": "Invalid blob key.",
@@ -216,12 +197,10 @@
   "server-error.ACCESS_DENIED": "Access denied.",
   "server-error.CANCELLED": "Operation cancelled.",
   "server-error.EMPTY_FILE": "File is empty.",
-
   "server-error.BLOB_SIGN_KEY_CONFIG_MISSING": "Blob signing key configuration is missing.",
   "server-error.ONLY_PRIVATE_BLOB_KEYS_ALLOWED": "Only private blob keys are allowed.",
   "server-error.FILE_NOT_FOUND": "File not found.",
   "server-error.URL_FILE_EXPIRED": "File URL has expired.",
-
   "server-error.INVALID_DEGREES_JSON": "Invalid degrees JSON.",
   "server-error.INVALID_EXPERIENCES_JSON": "Invalid experiences JSON.",
   "server-error.INVALID_TRAINING_COURSES_JSON": "Invalid training courses JSON.",
@@ -256,14 +235,12 @@
   "server-error.DEGREE_FILE_REQUIRED": "Degree file is required.",
   "server-error.EXPERIENCE_REQUIRED": "Experience is required.",
   "server-error.SKILL_OR_LANGUAGE_REQUIRED": "Skill or language is required.",
-
   "server-error.ATTACHMENT_NOT_FOUND": "Attachment not found.",
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "Attachment is not editable during revision.",
   "server-error.INVALID_ATTACHMENT_ID": "Invalid attachment id.",
   "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "Previous profile step is incomplete.",
   "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "Candidate type change is not allowed.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "National address is not allowed.",
-
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "Distribution employee is not active.",
   "server-error.DISTRIBUTION_PROFILES_NOT_FOUND": "Distribution profiles not found.",
   "server-error.DISTRIBUTION_FINAL_STATUS_NOT_ALLOWED": "Final status is not allowed for distribution.",
@@ -273,36 +250,29 @@
   "server-error.DISTRIBUTION_MODE_REQUIRED": "Distribution mode is required.",
   "server-error.DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED": "Per-employee distribution limit reached.",
   "server-error.PROFILE_NOT_ASSIGNABLE": "Profile is not assignable.",
-
   "server-error.INVITATION_NOT_FOUND": "Invitation not found.",
   "server-error.INVITATION_STATUS_CHANGE_NOT_ALLOWED": "Invitation status change is not allowed.",
-
   "server-error.SECTOR_NOT_FOUND": "Sector not found.",
   "server-error.SECTOR_NAME_ALREADY_EXISTS": "Sector name already exists.",
   "server-error.MANAGEMENT_NOT_FOUND": "Management not found.",
   "server-error.MANAGEMENT_NAME_ALREADY_EXISTS": "Management name already exists.",
   "server-error.DEPARTMENT_NOT_FOUND": "Department not found.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "Department name already exists.",
-
   "server-error.MOI_DATA_NOT_FOUND": "MOI data not found.",
   "server-error.MOI_FAILED_REQUEST": "MOI request failed.",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "Employee directory request failed.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "Employee directory payload is invalid.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "Employee not found in employee directory.",
   "server-error.QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER": "Qatari users are not allowed to login before registering on Kawader.",
-
   "server-error.RELIGION_NOT_FOUND": "Religion not found.",
   "server-error.RELIGION_NAME_EXISTS": "Religion name already exists.",
-
   "server-error.TARGET_ENTITY_NOT_FOUND": "Target entity not found.",
   "server-error.TARGET_ENTITY_NAME_EXISTS": "Target entity name already exists.",
-
   "server-error.OFFICE_SUPPORTED_COUNTRIES_REQUIRED": "Office supported countries are required.",
   "server-error.OFFICE_ADMIN_CREATION_FAILED": "Office admin creation failed.",
   "server-error.OFFICE_ROLE_ASSIGNMENT_FAILED": "Office role assignment failed.",
   "server-error.OFFICE_USER_NOT_FOUND": "Office user not found.",
   "server-error.OFFICE_ADMIN_NOT_FOUND": "Office admin not found.",
-
   "server-error.CHANGING_HIERARCHY_TYPE_NOT_ALLOWED": "Changing hierarchy type is not allowed.",
   "server-error.MAJOR_SKILL_LINK_ALREADY_EXISTS": "Major-skill link already exists.",
   "server-error.MAJOR_SKILL_LINK_NOT_FOUND": "Major-skill link not found.",

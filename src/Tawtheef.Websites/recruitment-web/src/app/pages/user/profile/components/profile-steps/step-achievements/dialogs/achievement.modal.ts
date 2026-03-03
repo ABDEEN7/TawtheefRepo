@@ -1,20 +1,20 @@
-import {Component, OnInit, inject} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {Select} from 'primeng/select';
-import {DatePicker} from 'primeng/datepicker';
-import {InputText} from 'primeng/inputtext';
-import {TextareaModule} from 'primeng/textarea';
-import {NgClass, NgIf} from '@angular/common';
-import {ProfileLookupsService} from '../../../../wizard-profile/services/profile-lookups.service';
-import {FileUtilsService} from '../../../../../../../core/utils/file-utils';
-import {Achievement} from '../../../../wizard-profile/models/achievement.model';
-import {dateToDateOnly} from '../../../../../../../shared/types/dateOnly.type';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../../shared/models/dropdown-options.model';
-import {ACHIEVEMENTS_DIALOG_LIMITS} from '../../step-experience/dialogs/dialog-config';
-import {GUID} from '../../../../../../../shared/types/guid.type';
-import {I18nNamespaceDirective} from '../../../../../../../shared/directives/i18n-namespace.directive';
+import { Component, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
+import { InputText } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
+import { NgClass, NgIf } from '@angular/common';
+import { ProfileLookupsService } from '../../../../wizard-profile/services/profile-lookups.service';
+import { FileUtilsService } from '../../../../../../../core/utils/file-utils';
+import { Achievement } from '../../../../wizard-profile/models/achievement.model';
+import { dateToDateOnly } from '../../../../../../../shared/types/dateOnly.type';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../../../shared/models/dropdown-options.model';
+import { ACHIEVEMENTS_DIALOG_LIMITS } from '../../step-experience/dialogs/dialog-config';
+import { GUID } from '../../../../../../../shared/types/guid.type';
+import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-achievement-modal',
@@ -42,7 +42,7 @@ export class AchievementModal implements OnInit {
   private fileUtils = inject(FileUtilsService);
 
   readonly limits = ACHIEVEMENTS_DIALOG_LIMITS;
-  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
   private initialId: GUID | null = null;
@@ -99,7 +99,7 @@ export class AchievementModal implements OnInit {
     if (!file) return;
 
     if (!this.allowedTypes.includes(file.type)) {
-      this.fileError = this.translate.instant('validation.fileType', { types: 'PDF, PNG, JPEG, WEBP' });
+      this.fileError = this.translate.instant('validation.fileType', { types: 'PDF, PNG, JPEG' });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }

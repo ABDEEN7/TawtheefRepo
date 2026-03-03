@@ -1,29 +1,53 @@
-import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {DialogService} from 'primeng/dynamicdialog';
-import {TranslateService} from '@ngx-translate/core';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {ExperienceModal} from './dialogs/experience.modal/experience.modal';
-import {Experience, TrainingCourse} from '../../../wizard-profile/models/experience.model';
-import {CourseModal} from './dialogs/course.modal/course.modal';
-import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.model';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  isDevMode,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { ExperienceModal } from './dialogs/experience.modal/experience.modal';
+import { Experience, TrainingCourse } from '../../../wizard-profile/models/experience.model';
+import { CourseModal } from './dialogs/course.modal/course.modal';
+import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
 
 
 @Component({
   selector: 'app-step-experience',
   templateUrl: './step-experience.component.html',
   styleUrl: './step-experience.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    TableModule,
+    ButtonModule,
+    FaDirArrowDirective
+  ]
 })
 export class StepExperienceComponent implements OnInit {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -35,11 +59,7 @@ export class StepExperienceComponent implements OnInit {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['experience'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().experience);
 
   ngOnInit(): void {
     const state = this.ds.state();
@@ -83,7 +103,7 @@ export class StepExperienceComponent implements OnInit {
 
   removeExperience(index: number) {
     var exp = this.ds.state().experiences[index];
-    if(exp.id){
+    if (exp.id) {
       this.profile.deleteExperience(exp.id).subscribe({
         next: () => {
           this.ds.delExp(index);
@@ -134,7 +154,7 @@ export class StepExperienceComponent implements OnInit {
 
   removeCourse(index: number) {
     const course = this.ds.state().courses[index];
-    if(course.id){
+    if (course.id) {
       this.profile.deleteTrainingCourse(course.id).subscribe({
         next: () => {
           this.ds.delCourse(index);
@@ -150,9 +170,9 @@ export class StepExperienceComponent implements OnInit {
   }
 
   onNext() {
-    if (!this.step.valid) {
+    if (!this.step().valid) {
       this.notify.error(
-        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step.errors
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors
           .map(e => `* ${this.translate.instant(e.i18nKey)}`)
           .join('\n')}`,
       );
@@ -164,7 +184,7 @@ export class StepExperienceComponent implements OnInit {
     const signature = this.buildSignature(experiences, courses);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -178,13 +198,14 @@ export class StepExperienceComponent implements OnInit {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        this.ds.markStepSubmitted('experience');
         if (this.profile.isChangeRequestMode()) {
           this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
         }
         this.next.emit();
       },
       error: (err: any) => {
-        if(isDevMode())
+        if (isDevMode())
           console.error(err);
         this.saving = false;
       },
@@ -200,7 +221,7 @@ export class StepExperienceComponent implements OnInit {
 
     if (ref?.url) {
       this.fileUtils.previewUrl(ref.url, ref.resourceName || fallbackName || '', false);
-    }else if(ref?.file){
+    } else if (ref?.file) {
       this.fileUtils.previewBlob(ref!.file);
     }
   }

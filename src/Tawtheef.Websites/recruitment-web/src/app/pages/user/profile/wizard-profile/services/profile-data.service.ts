@@ -1,16 +1,16 @@
-﻿import {computed, inject, Injectable, signal} from '@angular/core';
-import {ProfileState} from '../models/profile-state.model';
-import {Language} from '../models/language.model';
-import {Degree} from '../models/degree.model';
-import {Experience, TrainingCourse} from '../models/experience.model';
-import {Achievement} from '../models/achievement.model';
-import {Attachment} from '../models/attachment.model';
-import {Skill} from '../models/skill.model';
-import {PhoneMapperService} from './phone-mapper.service';
-import {ProfileLookupsService} from './profile-lookups.service';
-import {buildArabicFullName, buildEnglishFullName, MoiPersonalInfo} from '../models/moi-personal-info.model';
-import {ProfileService} from './profile.service';
-import {normalizeMoiResponse} from './moi-response-normalizer';
+﻿import { computed, inject, Injectable, signal } from '@angular/core';
+import { ProfileState } from '../models/profile-state.model';
+import { Language } from '../models/language.model';
+import { Degree } from '../models/degree.model';
+import { Experience, TrainingCourse } from '../models/experience.model';
+import { Achievement } from '../models/achievement.model';
+import { Attachment } from '../models/attachment.model';
+import { Skill } from '../models/skill.model';
+import { PhoneMapperService } from './phone-mapper.service';
+import { ProfileLookupsService } from './profile-lookups.service';
+import { buildArabicFullName, buildEnglishFullName, MoiPersonalInfo } from '../models/moi-personal-info.model';
+import { ProfileService } from './profile.service';
+import { normalizeMoiResponse } from './moi-response-normalizer';
 import {
   candidateTypeFromState,
   candidateTypeIsResident,
@@ -19,11 +19,11 @@ import {
   candidateTypeNeedsSponsor,
   createStepValiditySignal,
 } from '../state/profile-step-validity.signal';
-import {NationalityMapperService} from './nationality-mapper.service';
-import {take, tap} from 'rxjs';
-import {mapProfileStatusToState} from './profile.mapper';
-import {UserService} from '../../../../../core/auth/user.service';
-import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
+import { NationalityMapperService } from './nationality-mapper.service';
+import { take, tap } from 'rxjs';
+import { mapProfileStatusToState } from './profile.mapper';
+import { UserService } from '../../../../../core/auth/user.service';
+import { CandidateType, SponsorType } from '../../../../../core/enums/lookups.enum';
 
 @Injectable()
 export class ProfileDataService {
@@ -41,7 +41,30 @@ export class ProfileDataService {
     emailVerified: false, phoneVerified: false,
   });
 
-  get isNeedSponsor(){
+  /** Tracks which steps have been successfully saved to the server */
+  private submittedSteps = signal<Partial<Record<string, boolean>>>({
+    basic: false,
+    personal: false,
+    contact: false,
+    degrees: false,
+    experience: false,
+    achievements: false,
+    skills: false,
+    languages: false,
+    attachments: false,
+  });
+
+  /** Mark a step as successfully submitted to the server */
+  markStepSubmitted(stepKey: string): void {
+    this.submittedSteps.update(m => ({ ...m, [stepKey]: true }));
+  }
+
+  /** Check whether a step has been successfully submitted to the server */
+  isStepSubmitted(stepKey: string): boolean {
+    return !!this.submittedSteps()[stepKey];
+  }
+
+  get isNeedSponsor() {
     return candidateTypeNeedsSponsor(candidateTypeFromState(this.state()));
   }
   get isNeedBirthCertificate() {
@@ -79,7 +102,7 @@ export class ProfileDataService {
     return false;
   }
 
-  private lockableKeys: (keyof ProfileState)[] = ['qid','dob','nationality','gender','phone','email','fullNameAr','fullNameEn','sponsorEmployerName','sponsorEmployerNumber','candidateType'];
+  private lockableKeys: (keyof ProfileState)[] = ['qid', 'dob', 'nationality', 'gender', 'phone', 'email', 'fullNameAr', 'fullNameEn', 'sponsorEmployerName', 'sponsorEmployerNumber', 'candidateType'];
   lockFields(keys: (keyof ProfileState)[]) {
     this.locked.update(m => {
       const copy = { ...m };
@@ -92,6 +115,28 @@ export class ProfileDataService {
     this.lockedPrefillData();
     this.applyKawaderCandidateType();
     this.prefillFromCheckProfile();
+    this.autoMarkSubmittedFromBootstrap();
+  }
+
+  /**
+   * After bootstrap, mark each step as "submitted" if its validation is already
+   * passing (i.e. the server already has valid data for that section).
+   * This allows users who already completed earlier steps to navigate forward.
+   */
+  private autoMarkSubmittedFromBootstrap(): void {
+    const validity = this.stepValidity();
+    const orderedSteps: (keyof typeof validity)[] = [
+      'basic', 'personal', 'contact', 'degrees',
+      'experience', 'achievements', 'skills', 'languages', 'attachments',
+    ];
+    for (const key of orderedSteps) {
+      if (validity[key]) {
+        this.markStepSubmitted(key);
+      } else {
+        // Stop at the first invalid step — subsequent steps couldn't have been submitted
+        break;
+      }
+    }
   }
   private lockedPrefillData() {
     const prefill = this.userService.getPrefill();
@@ -316,44 +361,44 @@ export class ProfileDataService {
     }));
   }
 
-  addDegree(d: Degree){ this.state.update(s => ({...s, degrees:[...s.degrees, d]})); }
+  addDegree(d: Degree) { this.state.update(s => ({ ...s, degrees: [...s.degrees, d] })); }
   updateDegree(i: number, degree: Degree) {
     this.state.update(s => ({ ...s, degrees: s.degrees.map((item, idx) => (idx === i ? degree : item)) }));
   }
-  delDegree(i:number){ this.state.update(s => ({...s, degrees: s.degrees.filter((_,x)=>x!==i)})); }
+  delDegree(i: number) { this.state.update(s => ({ ...s, degrees: s.degrees.filter((_, x) => x !== i) })); }
 
-  addExp(e: Experience){ this.state.update(s => ({...s, experiences:[...s.experiences, e]})); }
+  addExp(e: Experience) { this.state.update(s => ({ ...s, experiences: [...s.experiences, e] })); }
   updateExp(i: number, exp: Experience) {
     this.state.update(s => ({ ...s, experiences: s.experiences.map((item, idx) => (idx === i ? exp : item)) }));
   }
-  delExp(i:number){ this.state.update(s => ({...s, experiences: s.experiences.filter((_,x)=>x!==i)})); }
+  delExp(i: number) { this.state.update(s => ({ ...s, experiences: s.experiences.filter((_, x) => x !== i) })); }
 
-  addCourse(e: TrainingCourse){ this.state.update(s => ({...s, courses:[...s.courses, e]})); }
+  addCourse(e: TrainingCourse) { this.state.update(s => ({ ...s, courses: [...s.courses, e] })); }
   updateCourse(i: number, course: TrainingCourse) {
     this.state.update(s => ({ ...s, courses: s.courses.map((item, idx) => (idx === i ? course : item)) }));
   }
-  delCourse(i:number){ this.state.update(s => ({...s, courses: s.courses.filter((_,x)=>x!==i)})); }
+  delCourse(i: number) { this.state.update(s => ({ ...s, courses: s.courses.filter((_, x) => x !== i) })); }
 
-  addAchievement(a: Achievement){ this.state.update(s => ({...s, achievements:[...s.achievements, a]})); }
-  updateAchievement(i: number, a: Achievement){ this.state.update(s => ({...s, achievements: s.achievements.map((item,idx)=> idx===i ? a : item)})); }
-  delAchievement(i:number){ this.state.update(s => ({...s, achievements: s.achievements.filter((_,x)=>x!==i)})); }
+  addAchievement(a: Achievement) { this.state.update(s => ({ ...s, achievements: [...s.achievements, a] })); }
+  updateAchievement(i: number, a: Achievement) { this.state.update(s => ({ ...s, achievements: s.achievements.map((item, idx) => idx === i ? a : item) })); }
+  delAchievement(i: number) { this.state.update(s => ({ ...s, achievements: s.achievements.filter((_, x) => x !== i) })); }
 
-  addLang(l: Language){ this.state.update(s => ({...s, languages:[...s.languages, l]})); }
-  delLang(i:number){ this.state.update(s => ({...s, languages: s.languages.filter((_,x)=>x!==i)})); }
+  addLang(l: Language) { this.state.update(s => ({ ...s, languages: [...s.languages, l] })); }
+  delLang(i: number) { this.state.update(s => ({ ...s, languages: s.languages.filter((_, x) => x !== i) })); }
 
-  addSkill(skill: Skill){
+  addSkill(skill: Skill) {
     this.state.update(s => s.skills.some(t => t.skillId === skill.skillId)
       ? s
-      : ({...s, skills:[...s.skills, skill]})
+      : ({ ...s, skills: [...s.skills, skill] })
     );
   }
-  delSkill(i: number){ this.state.update(s => ({...s, skills: s.skills.filter((_,x)=>x!==i)})); }
+  delSkill(i: number) { this.state.update(s => ({ ...s, skills: s.skills.filter((_, x) => x !== i) })); }
 
-  addAttachment(a: Attachment){ this.state.update(s => ({...s, attachments:[...s.attachments, a]})); }
+  addAttachment(a: Attachment) { this.state.update(s => ({ ...s, attachments: [...s.attachments, a] })); }
   updateAttachment(i: number, attachment: Attachment) {
     this.state.update(s => ({ ...s, attachments: s.attachments.map((item, idx) => (idx === i ? attachment : item)) }));
   }
-  delAttachment(i:number){ this.state.update(s => ({...s, attachments: s.attachments.filter((_,x)=>x!==i)})); }
+  delAttachment(i: number) { this.state.update(s => ({ ...s, attachments: s.attachments.filter((_, x) => x !== i) })); }
 
   setState(next: ProfileState): void {
     this.state.set(next);
@@ -371,16 +416,17 @@ export class ProfileDataService {
     return {
       provider: 'Google',
       isKawaderQid: false,
-      prerequisites: {},
-      personal: {},
-      contact: {},
-      qualifications: [],
+      degrees: [],
       experiences: [],
-      trainingCourses: [],
+      courses: [],
       achievements: [],
       skills: [],
       languages: [],
-      attachments: []
-    } as unknown as ProfileState;
+      attachments: [],
+      available: true,
+      hasDisability: false,
+      emailVerified: false,
+      phoneVerified: false,
+    } as ProfileState;
   }
 }

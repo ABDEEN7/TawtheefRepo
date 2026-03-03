@@ -1,6 +1,25 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {DialogService} from 'primeng/dynamicdialog';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  computed,
+  ChangeDetectionStrategy,
+  input,
+  output
+} from '@angular/core';
+import { CommonModule, NgClass, LowerCasePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+import { ButtonModule } from 'primeng/button';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { DialogService } from 'primeng/dynamicdialog';
 import {
   canPreviewFile,
   createFileSlot,
@@ -13,32 +32,41 @@ import {
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {ProfileState} from '../../../wizard-profile/models/profile-state.model';
-import {finalize} from 'rxjs/operators';
-import {normalizeMoiResponse} from '../../../wizard-profile/services/moi-response-normalizer';
-import {mapPersonalSection} from '../../../wizard-profile/services/profile.mapper';
-import {SponsorType} from '../../../../../../core/enums/lookups.enum';
-import {dateToDateOnly} from '../../../../../../shared/types/dateOnly.type';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { ProfileState } from '../../../wizard-profile/models/profile-state.model';
+import { finalize } from 'rxjs/operators';
+import { normalizeMoiResponse } from '../../../wizard-profile/services/moi-response-normalizer';
+import { mapPersonalSection } from '../../../wizard-profile/services/profile.mapper';
+import { SponsorType } from '../../../../../../core/enums/lookups.enum';
+import { dateToDateOnly } from '../../../../../../shared/types/dateOnly.type';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 
 @Component({
   selector: 'app-step-personal',
   templateUrl: './step-personal.component.html',
   styleUrl: './step-personal.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    InputTextModule,
+    SelectModule,
+    DatePickerModule,
+    ButtonModule,
+    FaDirArrowDirective,
+    LowerCasePipe
+  ]
 })
 export class StepPersonalComponent implements OnInit {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -50,11 +78,7 @@ export class StepPersonalComponent implements OnInit {
   protected readonly dateToDateOnly = dateToDateOnly;
   protected readonly SponsorType = SponsorType;
 
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['personal'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().personal);
 
   savingPersonal = false;
   verifyingSponsor = false;
@@ -75,7 +99,7 @@ export class StepPersonalComponent implements OnInit {
     if (t === SponsorType.Individual) return 11;
     if (t === SponsorType.Company) return 8;
     return 11; // safe default
-  }readonly MIN_AGE = 18;
+  } readonly MIN_AGE = 18;
   readonly MAX_AGE = 100;
 
   readonly minBirthDate = (() => {
@@ -92,7 +116,7 @@ export class StepPersonalComponent implements OnInit {
     return d;
   })();
 
-// optional UI error flags
+  // optional UI error flags
   dobInvalid = false;
   dobErrorKey = 'wizard.personal.dobInvalid'; // add translations
 
@@ -275,7 +299,7 @@ export class StepPersonalComponent implements OnInit {
     const state = this.ds.state();
 
     if (state.sponsorType?.backendName !== SponsorType.Individual) return;
-    if(state.sponsorEmployerNumber == state.qid){
+    if (state.sponsorEmployerNumber == state.qid) {
       this.notificationService.error(this.translate.instant('wizard.personal.verify.selfSponsor'), this.translate.instant('wizard.personal.verify.title'));
       return;
     }
@@ -341,8 +365,8 @@ export class StepPersonalComponent implements OnInit {
     input.value = '';
   }
   onNext() {
-    if (!this.step.valid) {
-      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
+    if (!this.step().valid) {
+      this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -351,7 +375,7 @@ export class StepPersonalComponent implements OnInit {
     const signature = this.buildSignature(dto);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -368,6 +392,7 @@ export class StepPersonalComponent implements OnInit {
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;
+          this.ds.markStepSubmitted('personal');
           if (this.profileService.isChangeRequestMode()) {
             this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
           }

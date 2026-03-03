@@ -1,80 +1,89 @@
 <div class="">
   <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="text-primary">{{ 'wizard.achievements.title' | translate }}</h5>
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
-          <i class="hgi hgi-stroke hgi-add-01"></i> {{ 'wizard.achievements.add' | translate }}
-        </button>
-      </div>
+    <h5 class="text-primary">{{ 'wizard.achievements.title' | translate }}</h5>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary rounded-pill ms-2" (click)="addAchievement()">
+        <i class="hgi hgi-stroke hgi-add-01"></i> {{ 'wizard.achievements.add' | translate }}
+      </button>
+    </div>
   </div>
   <div class="table-card rounded overflow-hidden">
     <div class="table-responsive">
-     <p-table [value]="ds.state().achievements">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>{{ 'wizard.achievements.table.type' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.name' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.country' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.description' | translate }}</th>
-          <th>{{ 'wizard.achievements.table.file' | translate }}</th>
-          <th>{{ 'wizard.table.actions' | translate }}</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-r let-i="rowIndex">
-        <tr>
-          <td>{{ r.achievementType?.name }}</td>
-          <td>{{ r.title }}</td>
-          <td>{{ r.issuingAuthority }}</td>
-          <td>{{ r.country?.name || '—' }}</td>
-          <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
-          <td>
-            <ng-container *ngIf="r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined; else notApplicable">
+      <p-table [value]="ds.state().achievements">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'wizard.achievements.table.type' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.name' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.country' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.description' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.file' | translate }}</th>
+            <th>{{ 'wizard.table.actions' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-r let-i="rowIndex">
+          <tr>
+            <td>{{ r.achievementType?.name }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.issuingAuthority }}</td>
+            <td>{{ r.country?.name || '—' }}</td>
+            <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
+            <td>
+              @if (r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined) {
               {{ r.relatedToSpecialization ? ('common.yes' | translate) : ('common.no' | translate) }}
-            </ng-container>
-            <ng-template #notApplicable>—</ng-template>
-          </td>
-          <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
-          <td>
-            <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementFile">
+              } @else {
+              —
+              }
+            </td>
+            <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
+            <td>
+              @if (r.fileName || r.file?.name) {
               <div class="d-flex align-items-center gap-2">
                 <span>{{ r.fileName || r.file?.name }}</span>
                 <div class="action-buttons">
-                      <button class="btn-text" (click)="preview(r, $event)">
-                  <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                </button>
+                  <button class="btn-text" (click)="preview(r, $event)">
+                    <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                  </button>
                 </div>
-                
               </div>
-            </ng-container>
-            <ng-template #noAchievementFile>—</ng-template>
-          </td>
-          <td class="d-flex gap-2">
+              } @else {
+              —
+              }
+            </td>
+            <td class="d-flex gap-2">
               <div class="action-buttons">
-                   <button class="btn" (click)="editAchievement(i)"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i></button>
-                   <button class="btn" (click)="removeAchievement(i)"><i class="hgi hgi-stroke hgi-delete-02"></i></button>
+                <button class="btn" (click)="editAchievement(i)"><i
+                    class="hgi hgi-stroke hgi-pencil-edit-02"></i></button>
+                <button class="btn" (click)="removeAchievement(i)"><i class="hgi hgi-stroke hgi-delete-02"></i></button>
               </div>
-            
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr><td colspan="9" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-      </ng-template>
-    </p-table></div>
+
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex justify-content-between text-end  align-items-center" (click)="back.emit()">
-    <i class="hgi  fs-18  lh-1" faDirArrow="start"></i>
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary d-flex justify-content-between text-end align-items-center"
+    (click)="back.emit()">
+    <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
-  <button class="btn btn-primary d-flex justify-content-between align-items-center" (click)="onNext()" [disabled]="saving">
-    <span>{{ submitLabelKey | translate }}</span>
-    <i class="hgi fs-18 ms-1  lh-1" faDirArrow="end"></i>
+  }
+  <button class="btn btn-primary d-flex justify-content-between align-items-center" (click)="onNext()"
+    [disabled]="saving">
+    <span>{{ submitLabelKey() | translate }}</span>
+    <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
   </button>
 </div>

@@ -618,7 +618,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("lookups/majors")]
-    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+    public async Task<IActionResult> GetMajors([FromQuery] GetMainMajorsQuery query)
     {
         //get language from header
         var language = Request.Headers.AcceptLanguage.ToString();

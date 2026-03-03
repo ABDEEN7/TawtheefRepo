@@ -1,7 +1,22 @@
-import { Component, EventEmitter, inject, Input, isDevMode, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { createStepValiditySignal } from '../../../wizard-profile/state/profile-step-validity.signal';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  isDevMode,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
@@ -13,21 +28,28 @@ import { NotificationService } from '../../../../../../core/services/notificatio
   selector: 'app-step-attachments',
   templateUrl: './step-attachments.component.html',
   styleUrl: './step-attachments.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ButtonModule,
+    TooltipModule,
+    FaDirArrowDirective
+  ]
 })
 export class StepAttachmentsComponent implements OnInit {
-  @Output() next = new EventEmitter<void>();
-  @Output() back = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  next = output<void>();
+  back = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
   private readonly maxFileSizeBytes = 5 * 1024 * 1024; // 5MB
   private readonly allowedMimeTypes = new Set<string>([
     'application/pdf',
     'image/jpeg',
-    'image/jpg',
     'image/png',
-    'image/webp',
   ]);
 
   ds = inject(ProfileDataService);
@@ -40,11 +62,7 @@ export class StepAttachmentsComponent implements OnInit {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step() {
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['attachments'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().attachments);
 
   private filesStore: (File | null)[] = [];
   private fileRefs: (UploadedFileRef | null)[] = [];
@@ -222,7 +240,7 @@ export class StepAttachmentsComponent implements OnInit {
 
     const signature = this.buildSignature(attachments);
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -236,6 +254,7 @@ export class StepAttachmentsComponent implements OnInit {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        this.ds.markStepSubmitted('attachments');
         if (this.profile.isChangeRequestMode()) {
           this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
         }
@@ -286,7 +305,7 @@ export class StepAttachmentsComponent implements OnInit {
 
     const name = (file.name || '').toLowerCase();
     const ext = name.split('.').pop() || '';
-    return ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp', 'tif', 'tiff', 'svg', 'heic', 'heif'].includes(ext);
+    return ['pdf', 'jpg', 'jpeg', 'png'].includes(ext);
   }
 
   private rejectFile(i: number, input: HTMLInputElement, message: string): void {

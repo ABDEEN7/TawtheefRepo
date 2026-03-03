@@ -20,6 +20,10 @@ public sealed class SaveProfileAchievementCommandValidator : AbstractValidator<S
                 RuleForEach(x => x.Request.AchievementFiles)
                     .Must(file => file is null || file.Length <= ProfileLimits.MaxAchievementFileSizeBytes)
                     .WithMessage(ErrorsCodes.AchievementFileTooLarge);
+
+                RuleForEach(x => x.Request.AchievementFiles)
+                    .Must(FileValidationHelpers.IsAllowedFileType)
+                    .WithMessage(ErrorsCodes.InvalidFileType);
             });
     }
 }

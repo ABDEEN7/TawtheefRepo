@@ -1,14 +1,32 @@
-import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {finalize} from 'rxjs/operators';
-import {PhoneNumberUtil} from 'google-libphonenumber';
-import {CountryISO, SearchCountryField} from 'ngx-intl-tel-input';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {CountryVM, ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {ContactVerificationService} from '../../../wizard-profile/services/contact-verification.service';
-import {TranslateService} from '@ngx-translate/core';
-import {GeoIpService} from '../../../../../../core/services/geo-ip.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { finalize } from 'rxjs/operators';
+import { PhoneNumberUtil } from 'google-libphonenumber';
+import { CountryISO, SearchCountryField, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { CountryVM, ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ContactVerificationService } from '../../../wizard-profile/services/contact-verification.service';
+import { GeoIpService } from '../../../../../../core/services/geo-ip.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import {
   canPreviewFile,
   createFileSlot,
@@ -21,11 +39,10 @@ import {
   setLocalFile,
   updateRemote
 } from '../../../wizard-profile/utils/file-slot';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {mapContactSection} from '../../../wizard-profile/services/profile.mapper';
-import {PhoneNumber} from '../../../wizard-profile/models/phone-number.model';
-import {VERIFIED_PHONE_KEY} from '../../../../../../core/constants/wizard-keys.const';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import { mapContactSection } from '../../../wizard-profile/services/profile.mapper';
+import { PhoneNumber } from '../../../wizard-profile/models/phone-number.model';
+import { VERIFIED_PHONE_KEY } from '../../../../../../core/constants/wizard-keys.const';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 type NaField = 'naZone' | 'naStreet' | 'naBuilding' | 'naUnit';
 type VerificationStatus =
@@ -53,14 +70,24 @@ interface VerificationState {
   selector: 'app-step-contact',
   templateUrl: './step-contact.component.html',
   styleUrl: './step-contact.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    NgxIntlTelInputModule,
+    SelectModule,
+    ButtonModule,
+    InputTextModule,
+    FaDirArrowDirective
+  ]
 })
 export class StepContactComponent implements OnInit, OnDestroy {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   // services
   ds = inject(ProfileDataService);
@@ -74,7 +101,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   naFileError: string | null = null;
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
-  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   private naLocalFile: FileSlot = createFileSlot();
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
@@ -110,16 +137,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
   savingContact = false;
   private lastSubmittedSignature: string | null = null;
   private pendingGeoCountryIso2: string | null = null;
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['contact'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().contact);
 
   ngOnInit(): void {
     this.configurePhoneCountries();
     this.geoIp.getCountryIso2().subscribe({
-      next:(code)=>{
+      next: (code) => {
         const ipCountry = code as CountryISO;
         if (this.onlyPhoneCountries.includes(ipCountry)) {
           this.selectedCountryIso2 = ipCountry;
@@ -596,8 +619,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
     input.value = '';
   }
   async onNext(): Promise<void> {
-    if (!this.step.valid) {
-      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
+    if (!this.step().valid) {
+      this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -610,7 +633,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(dto, s);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -626,6 +649,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;
+          this.ds.markStepSubmitted('contact');
           if (this.profileService.isChangeRequestMode()) {
             this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
           }

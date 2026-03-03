@@ -10,15 +10,16 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
-public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetMajorsQuery, IResult<List<DropdownOptions>>>
+public sealed class GetMainMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    : IQueryHandler<GetMainMajorsQuery, IResult<List<DropdownOptions>>>
 {
-    public async Task<IResult<List<DropdownOptions>>> Handle(GetMajorsQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<List<DropdownOptions>>> Handle(GetMainMajorsQuery request, CancellationToken cancellationToken)
     {
         var dbSet = unitOfWork.GetEntityRepository<Major>().DbSet;
         var baseQuery = dbSet
             .AsNoTracking()
-            .Where(s => s.IsActive)
+            .Where(m => m.IsActive)
+            .Where(m=> m.ParentId == null)
             .WhereIf(!request.IncludeOrphanMajors, m => m.SubMajors!.Count > 0);
         var normalizedSearch = request.Search?.Trim();
         var isPaged = request.PaginatedRequest is not null;

@@ -9,269 +9,251 @@
   <div class="row g-3">
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.country' | translate }}</label>
-      <p-select
-        [options]="lookups.countries()"
-        name="nationality"
-        [ngModel]="ds.state().country"
-        (ngModelChange)="onCountryChange($event)"
-        [filter]="true"
-        filterBy="additionalData.nameAr,additionalData.nameEn,name"
-        optionLabel="name"
-        [placeholder]="'wizard.placeholders.selectCountry' | translate"
-        class="w-full md:w-56"
-        [disabled]="ds.isLocked('country')"
-        [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
+      <p-select [options]="lookups.countries()" name="nationality" [ngModel]="ds.state().country"
+        (ngModelChange)="onCountryChange($event)" [filter]="true"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
+        [placeholder]="'wizard.placeholders.selectCountry' | translate" class="w-full md:w-56"
+        [disabled]="ds.isLocked('country')" [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
     </div>
     <div class="col-md-4 d-flex flex-column  contact">
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
-      <ngx-intl-tel-input
-        class="prime-tel-input"
-        [enableAutoCountrySelect]="true"
-        [enablePlaceholder]="false"
-        [searchCountryFlag]="true"
-        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-        [maxLength]="15"
-        [phoneValidation]="true"
-        [selectedCountryISO]="selectedCountryIso2"
-        [onlyCountries]="onlyPhoneCountries"
-        [ngModel]="phoneInput" [separateDialCode]="true"
-        (ngModelChange)="onPhoneChange($event)"
-        [disabled]="ds.isLocked('phone')"
-      ></ngx-intl-tel-input>
-      <div *ngIf="phone.touched && !phone.valid" class="text-danger mt-1">
+      <ngx-intl-tel-input class="prime-tel-input" [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
+        [searchCountryFlag]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+        [maxLength]="15" [phoneValidation]="true" [selectedCountryISO]="selectedCountryIso2"
+        [onlyCountries]="onlyPhoneCountries" [ngModel]="phoneInput" [separateDialCode]="true"
+        (ngModelChange)="onPhoneChange($event)" [disabled]="ds.isLocked('phone')"></ngx-intl-tel-input>
+      @if (phone.touched && !phone.valid) {
+      <div class="text-danger mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
-      <ng-container *ngIf="ds.state().phone && canVerifyPhone">
-        <div class="mt-1 d-flex align-items-center gap-2">
-          <span *ngIf="phone.status === 'idle'" class="text-muted">
-            {{ 'wizard.contact.phoneNotVerified' | translate }}
+      }
+      @if (ds.state().phone && canVerifyPhone) {
+      <div class="mt-1 d-flex align-items-center gap-2">
+        @if (phone.status === 'idle') {
+        <span class="text-muted">
+          {{ 'wizard.contact.phoneNotVerified' | translate }}
+        </span>
+        }
+        @if (phone.status === 'codeSent') {
+        <span class="text-info">
+          {{ 'wizard.contact.phoneCodeSent' | translate }}
+        </span>
+        }
+        @if (phone.status === 'verifying') {
+        <span class="text-muted">
+          {{ 'wizard.contact.phoneVerifying' | translate }}
+        </span>
+        }
+        @if (phone.status === 'verified') {
+        <span class="text-success">
+          <i class="fa-solid fa-circle-check me-1"></i>
+          {{ 'wizard.contact.phoneVerified' | translate }}
+        </span>
+        }
+        @if (phone.status === 'failed') {
+        <span class="text-danger">
+          {{ 'wizard.contact.phoneFailed' | translate }}
+        </span>
+        }
+      </div>
+      @if (!ds.state().phoneVerified) {
+      <div class="mt-2 d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="sendPhoneCode()"
+          [disabled]="!phone.valid || phone.status === 'sending' || phone.cooldown > 0">
+          @if (phone.status !== 'sending') {
+          <span>
+            {{ 'wizard.contact.phoneSendCode' | translate }}
           </span>
-          <span *ngIf="phone.status === 'codeSent'" class="text-info">
-            {{ 'wizard.contact.phoneCodeSent' | translate }}
+          } @else {
+          <span>
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>
+            {{ 'wizard.contact.phoneSending' | translate }}
           </span>
-          <span *ngIf="phone.status === 'verifying'" class="text-muted">
-            {{ 'wizard.contact.phoneVerifying' | translate }}
-          </span>
-          <span *ngIf="phone.status === 'verified'" class="text-success">
-            <i class="fa-solid fa-circle-check me-1"></i>
-            {{ 'wizard.contact.phoneVerified' | translate }}
-          </span>
-          <span *ngIf="phone.status === 'failed'" class="text-danger">
-            {{ 'wizard.contact.phoneFailed' | translate }}
-          </span>
+          }
+        </button>
+        @if (phone.cooldown > 0) {
+        <span class="text-muted fz-2xs ms-2">
+          {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phone.cooldown} }}
+        </span>
+        }
+        @if (phone.errorMessage) {
+        <div class="text-danger fz-2xs mt-1">
+          {{ phone.errorMessage }}
         </div>
-        <div class="mt-2 d-flex align-items-center gap-2" *ngIf="!ds.state().phoneVerified">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            (click)="sendPhoneCode()"
-            [disabled]="!phone.valid || phone.status === 'sending' || phone.cooldown > 0">
-              <span *ngIf="phone.status !== 'sending'">
-                {{ 'wizard.contact.phoneSendCode' | translate }}
-              </span>
-            <span *ngIf="phone.status === 'sending'">
-                <i class="fa-solid fa-spinner fa-spin me-1"></i>
-              {{ 'wizard.contact.phoneSending' | translate }}
-              </span>
-          </button>
-          <span *ngIf="phone.cooldown > 0" class="text-muted fz-2xs ms-2">
-            {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phone.cooldown} }}
-          </span>
-          <div *ngIf="phone.errorMessage" class="text-danger fz-2xs mt-1">
-            {{ phone.errorMessage }}
-          </div>
+        }
 
-          <div *ngIf="phone.status === 'codeSent'" class="d-flex w-100 flex-wrap gap-2">
-            <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="phone.otp" [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
-            <button type="button" class="btn btn-primary" (click)="verifyPhoneCode()" [disabled]="!phone.otp">
-              {{ 'wizard.contact.phoneVerify' | translate }}
-            </button>
-          </div>
+        @if (phone.status === 'codeSent') {
+        <div class="d-flex w-100 flex-wrap gap-2">
+          <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="phone.otp"
+            [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
+          <button type="button" class="btn btn-primary" (click)="verifyPhoneCode()" [disabled]="!phone.otp">
+            {{ 'wizard.contact.phoneVerify' | translate }}
+          </button>
         </div>
-      </ng-container>
+        }
+      </div>
+      }
+      }
     </div>
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.email' | translate }}</label>
-      <input pInputText type="email" class="form-control"
-             [ngModel]="email.value"
-             (ngModelChange)="onEmailChange($event)"
-             [disabled]="ds.isLocked('email') || email.status === 'verified'"
-             [ngClass]="{ 'locked-field': ds.isLocked('email') || email.status === 'verified' }"
-             placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
-      <div *ngIf="email.touched && !email.valid" class="text-danger m-2">
+      <input pInputText type="email" class="form-control" [ngModel]="email.value"
+        (ngModelChange)="onEmailChange($event)" [disabled]="ds.isLocked('email') || email.status === 'verified'"
+        [class.locked-field]="ds.isLocked('email') || email.status === 'verified'"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
+      @if (email.touched && !email.valid) {
+      <div class="text-danger m-2">
         {{ 'validation.emailInvalid' | translate }}
       </div>
-      <span *ngIf="email.status === 'verified'" class="text-success">
-          <i class="fa-solid fa-circle-check me-1"></i>
+      }
+      @if (email.status === 'verified') {
+      <span class="text-success">
+        <i class="fa-solid fa-circle-check me-1"></i>
         {{ 'wizard.contact.emailVerified' | translate }}
-        </span>
-      <ng-container *ngIf="ds.state().email && !ds.state().emailVerified">
-        <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
-        <span *ngIf="email.status === 'idle'" class="text-muted">
+      </span>
+      }
+      @if (ds.state().email && !ds.state().emailVerified) {
+      <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
+        @if (email.status === 'idle') {
+        <span class="text-muted">
           {{ 'wizard.contact.emailNotVerified' | translate }}
         </span>
-          <span *ngIf="email.status === 'linkSent'" class="text-info">
+        }
+        @if (email.status === 'linkSent') {
+        <span class="text-info">
           {{ 'wizard.contact.emailLinkSent' | translate }}
         </span>
-          <span *ngIf="email.status === 'verifying'" class="text-muted">
+        }
+        @if (email.status === 'verifying') {
+        <span class="text-muted">
           {{ 'wizard.contact.emailVerifying' | translate }}
         </span>
-          <span *ngIf="email.status === 'failed'" class="text-danger">
+        }
+        @if (email.status === 'failed') {
+        <span class="text-danger">
           {{ 'wizard.contact.emailFailed' | translate }}
         </span>
-        </div>
-        <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
-          <button type="button"
-                  class="btn btn-primary btn-sm"
-                  (click)="sendEmailVerification()"
-                  [disabled]="!email.valid || email.status === 'sending' || email.cooldown > 0">
-              <span *ngIf="email.status !== 'sending'">
-                {{ 'wizard.contact.emailSendVerification' | translate }}
-              </span>
-            <span *ngIf="email.status === 'sending'">
-                <i class="fa-solid fa-spinner fa-spin me-1"></i>
-              {{ 'wizard.contact.emailSending' | translate }}
-              </span>
-          </button>
-          <span *ngIf="email.cooldown > 0" class="text-muted fz-2xs ms-2">
-            {{ 'wizard.contact.emailRetryIn' | translate:{seconds: email.cooldown} }}
+        }
+      </div>
+      <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
+        <button type="button" class="btn btn-primary btn-sm" (click)="sendEmailVerification()"
+          [disabled]="!email.valid || email.status === 'sending' || email.cooldown > 0">
+          @if (email.status !== 'sending') {
+          <span>
+            {{ 'wizard.contact.emailSendVerification' | translate }}
           </span>
-          <div
-            *ngIf="email.useCode && email.status === 'linkSent'"
-            class="d-flex w-100 flex-wrap gap-2">
-            <input type="text" maxlength="6" class="form-control w-75"
-                   [(ngModel)]="email.otp" [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="verifyEmailCode()"
-              [disabled]="!email.otp">
-              {{ 'wizard.contact.emailVerify' | translate }}
-            </button>
-          </div>
+          } @else {
+          <span>
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>
+            {{ 'wizard.contact.emailSending' | translate }}
+          </span>
+          }
+        </button>
+        @if (email.cooldown > 0) {
+        <span class="text-muted fz-2xs ms-2">
+          {{ 'wizard.contact.emailRetryIn' | translate:{seconds: email.cooldown} }}
+        </span>
+        }
+        @if (email.useCode && email.status === 'linkSent') {
+        <div class="d-flex w-100 flex-wrap gap-2">
+          <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="email.otp"
+            [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
+          <button type="button" class="btn btn-primary" (click)="verifyEmailCode()" [disabled]="!email.otp">
+            {{ 'wizard.contact.emailVerify' | translate }}
+          </button>
         </div>
-      </ng-container>
+        }
+      </div>
+      }
     </div>
 
-    <div class="col-md-6" *ngIf="!ds.isResidentQatar">
+    @if (!ds.isResidentQatar) {
+    <div class="col-md-6">
       <label class="form-label required">{{ 'wizard.contact.address' | translate }}</label>
-      <input pInputText class="form-control" [(ngModel)]="ds.state().address"
-             placeholder="{{'wizard.placeholders.typeHere' | translate}}"
-             (ngModelChange)="ds.up('address',$event)">
+      <input pInputText class="form-control" [ngModel]="ds.state().address"
+        placeholder="{{'wizard.placeholders.typeHere' | translate}}" (ngModelChange)="ds.up('address',$event)">
     </div>
+    }
     <div class="col-md-3 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
-      <p-select [options]="lookups.countries()" [ngModel]="ds.state().interviewPlace"
-                [filter]="true" [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
-                class="w-full md:w-56"
-                [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
-                [disabled]="true"></p-select>
+      <p-select [options]="lookups.countries()" [ngModel]="ds.state().interviewPlace" [filter]="true" [loading]="false"
+        filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" class="w-full md:w-56"
+        [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate" [disabled]="true"></p-select>
     </div>
   </div>
 
-  <ng-container *ngIf="ds.isResidentQatar">
-    <hr class="my-4">
-    <div class="mb-2 fw-bold" style="color:#8a1538">{{ 'wizard.nationalAddress.title' | translate }}</div>
+  @if (ds.isResidentQatar) {
+  <hr class="my-4">
+  <div class="mb-2 fw-bold" style="color:#8a1538">{{ 'wizard.nationalAddress.title' | translate }}</div>
 
-    <div class="row g-3">
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
-        <input
-          class="form-control"
-          inputmode="numeric"
-          autocomplete="off"
-          pattern="^[0-9]+$"
-          maxlength="6"
-          [ngModel]="ds.state().naZone"
-          (ngModelChange)="onNaNumberChange('naZone', $event)"
-          (keypress)="digitsOnlyKeypress($event)"
-          (paste)="digitsOnlyPaste($event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.street' | translate }}</label>
-        <input
-          class="form-control"
-          inputmode="numeric"
-          autocomplete="off"
-          pattern="^[0-9]+$"
-          maxlength="6"
-          [ngModel]="ds.state().naStreet"
-          (ngModelChange)="onNaNumberChange('naStreet', $event)"
-          (keypress)="digitsOnlyKeypress($event)"
-          (paste)="digitsOnlyPaste($event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
-      <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.building' | translate }}</label>
-        <input
-          class="form-control"
-          inputmode="numeric"
-          autocomplete="off"
-          pattern="^[0-9]+$"
-          maxlength="6"
-          [ngModel]="ds.state().naBuilding"
-          (ngModelChange)="onNaNumberChange('naBuilding', $event)"
-          (keypress)="digitsOnlyKeypress($event)"
-          (paste)="digitsOnlyPaste($event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
-      <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
-        <input
-          class="form-control"
-          inputmode="numeric"
-          autocomplete="off"
-          pattern="^[0-9]+$"
-          maxlength="6"
-          [ngModel]="ds.state().naUnit"
-          (ngModelChange)="onNaNumberChange('naUnit', $event)"
-          (keypress)="digitsOnlyKeypress($event)"
-          (paste)="digitsOnlyPaste($event)"
-          placeholder="{{ 'wizard.placeholders.typeHere' | translate }}"
-        />
-      </div>
+  <div class="row g-3">
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
+      <input class="form-control" inputmode="numeric" autocomplete="off" pattern="^[0-9]+$" maxlength="6"
+        [ngModel]="ds.state().naZone" (ngModelChange)="onNaNumberChange('naZone', $event)"
+        (keypress)="digitsOnlyKeypress($event)" (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
     </div>
-    <div class="col-md-6 mt-3">
-      <label class="form-label required">
-        {{ 'wizard.nationalAddress.document' | translate }}
-        <span class="text-muted fz-2xs">(JPG, PNG, PDF)</span>
-      </label>
-      <div class="upload-field"
-           (click)="naInput.click()">
-
-        <div class="upload-field__icon">
-          <img src="assets/img/icons/file-upload.svg" *ngIf="!ds.state().naFileName"/>
-          <img src="assets/img/icons/file-eye.svg" *ngIf="ds.state().naFileName"
-               class="cursor-pointer"
-               (click)="previewNaFile($event)"/>
-        </div>
-
-        <div class="upload-field__text">
-          {{ ds.state().naFileName|| ('wizard.nationalAddress.document' | translate) }}
-        </div>
-
-        <input #naInput
-               type="file"
-               class="d-none"
-               accept=".jpg,.jpeg,.png,.pdf"
-               (change)="onNaFileSelected($event)" />
-      </div>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.street' | translate }}</label>
+      <input class="form-control" inputmode="numeric" autocomplete="off" pattern="^[0-9]+$" maxlength="6"
+        [ngModel]="ds.state().naStreet" (ngModelChange)="onNaNumberChange('naStreet', $event)"
+        (keypress)="digitsOnlyKeypress($event)" (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
     </div>
-  </ng-container>
+    <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.building' | translate }}</label>
+      <input class="form-control" inputmode="numeric" autocomplete="off" pattern="^[0-9]+$" maxlength="6"
+        [ngModel]="ds.state().naBuilding" (ngModelChange)="onNaNumberChange('naBuilding', $event)"
+        (keypress)="digitsOnlyKeypress($event)" (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
+    </div>
+    <div class="col-md-3"><label class="form-label">{{ 'wizard.nationalAddress.unit' | translate }}</label>
+      <input class="form-control" inputmode="numeric" autocomplete="off" pattern="^[0-9]+$" maxlength="6"
+        [ngModel]="ds.state().naUnit" (ngModelChange)="onNaNumberChange('naUnit', $event)"
+        (keypress)="digitsOnlyKeypress($event)" (paste)="digitsOnlyPaste($event)"
+        placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
+    </div>
+  </div>
+  <div class="col-md-6 mt-3">
+    <label class="form-label required">
+      {{ 'wizard.nationalAddress.document' | translate }}
+      <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
+    </label>
+    <div class="upload-field" (click)="naInput.click()">
+
+      <div class="upload-field__icon">
+        @if (!ds.state().naFileName) {
+        <img src="assets/img/icons/file-upload.svg" alt="upload" />
+        } @else {
+        <img src="assets/img/icons/file-eye.svg" alt="view" class="cursor-pointer" (click)="previewNaFile($event)" />
+        }
+      </div>
+
+      <div class="upload-field__text">
+        {{ ds.state().naFileName|| ('wizard.nationalAddress.document' | translate) }}
+      </div>
+
+      <input #naInput type="file" class="d-none" accept=".jpg,.jpeg,.png,.pdf" (change)="onNaFileSelected($event)" />
+    </div>
+  </div>
+  }
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary me-2 d-flex align-items-center" (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i><span> {{ 'wizard.buttons.prev' | translate }}</span>
   </button>
+  }
   <button class="btn btn-primary" (click)="onNext()" [disabled]="savingContact">
-  <span *ngIf="!savingContact" class="d-flex align-items-center">
-   <span> {{ submitLabelKey | translate }}</span>
-    <i class="hgi  fs-18 ms-1 lh-1" faDirArrow="end"></i>
-  </span>
-    <span *ngIf="savingContact">
-    <i class="fa-solid fa-spinner fa-spin me-1"></i>
+    @if (!savingContact) {
+    <span class="d-flex align-items-center">
+      <span> {{ submitLabelKey() | translate }}</span>
+      <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
+    </span>
+    } @else {
+    <span>
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
       {{ 'wizard.buttons.saving' | translate }}
-  </span>
+    </span>
+    }
   </button>
 </div>

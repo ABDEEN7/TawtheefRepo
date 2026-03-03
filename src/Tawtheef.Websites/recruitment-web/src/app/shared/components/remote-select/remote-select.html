@@ -1,33 +1,16 @@
 <div class="select-with-loading">
-  <p-select
-    [options]="options"
-    [filter]="true"
-    filterBy="additionalData.nameAr,additionalData.nameEn,name"
-    [optionLabel]="optionLabel"
-    [optionValue]="optionValue"
-    [placeholder]="computedPlaceholder"
-    [disabled]="isDisabledComputed"
-    (onFilter)="onFilter($event)"
-    (onLazyLoad)="onLazyLoad($event)"
-    (onShow)="onOpen()"
-    (onHide)="onClose()"
-    (onChange)="handleChange($event)"
-    (onClear)="onClearSelection()"
-    [(ngModel)]="value"
-    [emptyMessage]="emptyMessage"
-    [size]="size"
-    [appendTo]="appendTo"
-    [panelStyle]="panelStyle"
-    [virtualScroll]="true"
-    [virtualScrollItemSize]="virtualScrollItemSize"
-    [lazy]="true"
-    [showClear]="showClear"
+  <p-select [options]="options()" [filter]="true" filterBy="additionalData.nameAr,additionalData.nameEn,name"
+    [optionLabel]="optionLabel" [optionValue]="optionValue" [placeholder]="computedPlaceholder"
+    [disabled]="isDisabledComputed" (onFilter)="onFilter($event)" (onLazyLoad)="onLazyLoad($event)" (onShow)="onOpen()"
+    (onHide)="onClose()" (onChange)="handleChange($event)" (onClear)="onClearSelection()" [ngModel]="value()"
+    [emptyMessage]="emptyMessage()" [size]="size" [appendTo]="appendTo" [panelStyle]="panelStyle" [virtualScroll]="true"
+    [virtualScrollItemSize]="virtualScrollItemSize" [lazy]="true" [showClear]="showClear"
     [class]="invalid ? 'p-invalid' : 'panelStyle'">
   </p-select>
 
-  @if (isLoading) {
-    <div class="select-loading-overlay">
-      <div class="spinner"></div>
-    </div>
+  @if (isLoading()) {
+  <div class="select-loading-overlay">
+    <div class="spinner"></div>
+  </div>
   }
 </div>

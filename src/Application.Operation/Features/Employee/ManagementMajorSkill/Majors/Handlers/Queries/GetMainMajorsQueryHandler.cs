@@ -3,73 +3,61 @@ using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Querie
 using Cortex.Mediator.Queries;
 using FluentResults;
 using MapsterMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Handlers.Queries;
 
-public class GetMainMajorsQueryHandler(IUnitOfWork uow, IMapper mapper)
+public class GetMainMajorsQueryHandler(IUnitOfWork uow, ILocalizationService localized)
     : IQueryHandler<GetMainMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(
-        GetMainMajorsQuery request,
-        CancellationToken cancellationToken)
+        GetMainMajorsQuery request, CancellationToken ct)
     {
-        // Usage counts per major (direct)
-        var majorUsageCounts = await uow.GetEntityRepository<MajorSkill>().DbSet
+        var language = localized.GetCurrentLanguage() ?? "en";
+        var majorsRepo = uow.GetEntityRepository<Major>().DbSet;
+        var majorSkills = uow.GetEntityRepository<MajorSkill>().DbSet;
+
+        var search = request.Search?.Trim();
+        var like = !string.IsNullOrWhiteSpace(search) ? $"%{search}%" : null;
+
+        // Base query (main majors only? add ParentId == null if that's your definition)
+        var query = majorsRepo
             .AsNoTracking()
-            .GroupBy(x => x.MajorId)
-            .Select(g => new { MajorId = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.MajorId, x => x.Count, cancellationToken);
+            .Where(m => m.IsActive /* && m.ParentId == null */)
+            .WhereIf(!string.IsNullOrWhiteSpace(search), m =>
+                EF.Functions.Like(m.NameAr, like!) ||
+                EF.Functions.Like(m.NameEn, like!) ||
+                EF.Functions.Like(m.DescriptionAr ?? "", like!) ||
+                EF.Functions.Like(m.DescriptionEn ?? "", like!));
 
-        // Count submajors per parent (main major)
-        var subMajorsCountByParent = await uow.GetEntityRepository<Major>().DbSet
-            .AsNoTracking()
-            .Where(x => x.ParentId != null)
-            .GroupBy(x => x.ParentId!.Value)
-            .Select(g => new { ParentId = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.ParentId, x => x.Count, cancellationToken);
-
-        // child usage totals
-        var subMajorIdsByParent = await uow.GetEntityRepository<Major>().DbSet
-            .AsNoTracking()
-            .Where(x => x.ParentId != null)
-            .Select(x => new { x.Id, x.ParentId })
-            .ToListAsync(cancellationToken);
-
-        var childUsageTotals = subMajorIdsByParent
-            .GroupBy(x => x.ParentId!.Value)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Sum(x => majorUsageCounts.TryGetValue(x.Id, out var count) ? count : 0));
-
-        // paginated list
-        var majors = await uow.GetEntityRepository<Major>().DbSet
-            .AsNoTracking()
-            .Where(x => x.IsActive)
-            .WhereIf(!string.IsNullOrEmpty(request.Search),
-                s =>
-                    EF.Functions.Like(s.NameAr, $"%{request.Search}%") ||
-                    EF.Functions.Like(s.NameEn, $"%{request.Search}%") ||
-                    EF.Functions.Like(s.DescriptionAr ?? "", $"%{request.Search}%") ||
-                    EF.Functions.Like(s.DescriptionEn ?? "", $"%{request.Search}%"))
-            .ToPaginatedListAsync<Major, MajorDetailsDto>(mapper, request, cancellationToken);
-
-        // Fill computed fields
-        foreach (var major in majors.Items)
+        // Projection with correlated subqueries (translated to SQL)
+        var projected = query.Select(m => new MajorDetailsDto
         {
-            var directCount = majorUsageCounts.TryGetValue(major.Id, out var count) ? count : 0;
-            var childCount = childUsageTotals.TryGetValue(major.Id, out var total) ? total : 0;
+            Id = m.Id,
+            Name = m.GetLocalizedName(language)!,
+            Description = m.GetLocalizedDescription(language)!,
+            IsActive = m.IsActive,
 
-            major.UsedInMappingsCount = directCount + childCount;
+            // direct usage for this major
+            UsedInMappingsCount =
+                majorSkills.Count(ms => ms.MajorId == m.Id)
+                +
+                // usage in all direct submajors
+                majorSkills.Count(ms => majorsRepo.Any(sm => sm.Id == ms.MajorId && sm.ParentId == m.Id)),
 
-            // submajors count
-            major.SubMajorsCount = subMajorsCountByParent.TryGetValue(major.Id, out var smCount) ? smCount : 0;
-        }
+            // number of submajors
+            SubMajorsCount = majorsRepo.Count(sm => sm.ParentId == m.Id)
+        });
 
-        return Result.Ok(majors);
+        // paginate DTO directly (avoid mapping Major -> DTO then post-processing)
+        var result = await projected.ToPaginatedListAsync(request, ct);
+
+        return Result.Ok(result);
     }
 }

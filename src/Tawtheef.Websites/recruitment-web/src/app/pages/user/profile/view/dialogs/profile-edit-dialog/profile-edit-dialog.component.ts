@@ -1,20 +1,30 @@
-import {CommonModule, NgSwitch, NgSwitchCase} from '@angular/common';
-import {ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked} from '@angular/core';
-import {TranslatePipe} from '@ngx-translate/core';
-import {forkJoin} from 'rxjs';
-import {rxResource} from '@angular/core/rxjs-interop';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import { CommonModule, NgSwitch, NgSwitchCase } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {PhoneMapperService} from '../../../wizard-profile/services/phone-mapper.service';
-import {mapProfileStatusToState} from '../../../wizard-profile/services/profile.mapper';
-import {ProfileComponentsModule} from '../../../components/profile-components.module';
-import {ProfileSectionEnum, UserProfileStatusEnum} from '../../models/profile-overview.model';
-import {PROFILE_WRITE_MODE, ProfileWriteMode} from '../../../wizard-profile/services/profile-write-mode.token';
-import {UserService} from '../../../../../../core/auth/user.service';
-import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { PhoneMapperService } from '../../../wizard-profile/services/phone-mapper.service';
+import { mapProfileStatusToState } from '../../../wizard-profile/services/profile.mapper';
+import { ProfileSectionEnum, UserProfileStatusEnum } from '../../models/profile-overview.model';
+
+// Step components
+import { StepPrereqComponent } from '../../../components/profile-steps/step-first-info/step-prereq.component';
+import { StepPersonalComponent } from '../../../components/profile-steps/step-personal/step-personal.component';
+import { StepContactComponent } from '../../../components/profile-steps/step-contact/step-contact.component';
+import { StepDegreeComponent } from '../../../components/profile-steps/step-degree/step-degree.component';
+import { StepExperienceComponent } from '../../../components/profile-steps/step-experience/step-experience.component';
+import { StepAchievementsComponent } from '../../../components/profile-steps/step-achievements/step-achievements.component';
+import { StepSkillsComponent } from '../../../components/profile-steps/step-skills/step-skills.component';
+import { StepLanguagesComponent } from '../../../components/profile-steps/step-languages/step-languages.component';
+import { StepAttachmentsComponent } from '../../../components/profile-steps/step-attachments/step-attachments.component';
+import { PROFILE_WRITE_MODE, ProfileWriteMode } from '../../../wizard-profile/services/profile-write-mode.token';
+import { UserService } from '../../../../../../core/auth/user.service';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
 
 type EditSection =
   | 'prerequisites' | 'personal' | 'contact' | 'qualifications'
@@ -27,10 +37,18 @@ type EditSection =
   imports: [
     CommonModule,
     TranslatePipe,
-    ProfileComponentsModule,
     NgSwitchCase,
     NgSwitch,
     I18nNamespaceDirective,
+    StepPrereqComponent,
+    StepPersonalComponent,
+    StepContactComponent,
+    StepDegreeComponent,
+    StepExperienceComponent,
+    StepAchievementsComponent,
+    StepSkillsComponent,
+    StepLanguagesComponent,
+    StepAttachmentsComponent
   ],
   templateUrl: './profile-edit-dialog.component.html',
   styleUrls: ['./profile-edit-dialog.component.scss'],

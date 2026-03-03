@@ -1,24 +1,33 @@
-import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
-import { ProfileDataService } from '../../services/profile-data.service';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, EventEmitter, Output, computed, inject, signal, output, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, tap } from 'rxjs/operators';
-import {ProfileService} from '../../services/profile.service';
-import {Skill} from '../../models/skill.model';
-import {CandidateType} from '../../../../../../core/enums/lookups.enum';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {createStepValiditySignal} from '../../state/profile-step-validity.signal';
-import {UploadedFileRef} from '../../models/profile-state.model';
-import {Router} from '@angular/router';
-import {routes} from '../../../../../../routes/routes';
+import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { ProfileDataService } from '../../services/profile-data.service';
+import { ProfileService } from '../../services/profile.service';
+import { Skill } from '../../models/skill.model';
+import { CandidateType } from '../../../../../../core/enums/lookups.enum';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
+import { UploadedFileRef } from '../../models/profile-state.model';
+import { routes } from '../../../../../../routes/routes';
 
 @Component({
   selector: 'app-step-review',
   templateUrl: './step-review.component.html',
   styleUrl: './step-review.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    TranslatePipe,
+    ButtonModule,
+    TableModule
+  ]
 })
 export class StepReviewComponent {
-  @Output() back = new EventEmitter<void>();
+  back = output<void>();
   router = inject(Router);
   ds = inject(ProfileDataService);
   private i18n = inject(TranslateService);
