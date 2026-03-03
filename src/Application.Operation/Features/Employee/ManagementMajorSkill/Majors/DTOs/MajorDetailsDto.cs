@@ -9,5 +9,6 @@ public record MajorDetailsDto : DropdownOptions
 
     public bool IsActive { get; init; }
 
+    public int SubMajorsCount { get; set; }
     public int UsedInMappingsCount { get; set; }
 }

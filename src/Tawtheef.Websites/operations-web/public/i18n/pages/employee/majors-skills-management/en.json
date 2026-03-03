@@ -11,6 +11,7 @@
   "MAJORS_SKILLS.MAPPING_BADGE": "Mappings",
   "MAJORS_SKILLS.MAPPING_TITLE": "Major to Skill Links",
   "MAJORS_SKILLS.SUB_MAJOR_COLUMN": "Sub Major",
+  "MAJORS_SKILLS.NUMBER_SUB_MAJOR": "Count Sub Major",
   "MAJORS_SKILLS.MAPPING_HINT": "Manage how majors are connected to their required skills.",
   "MAJORS_SKILLS.AUTO_STATUS": "Auto activation enabled",
   "MAJORS_SKILLS.SEARCH_LABEL": "Search",

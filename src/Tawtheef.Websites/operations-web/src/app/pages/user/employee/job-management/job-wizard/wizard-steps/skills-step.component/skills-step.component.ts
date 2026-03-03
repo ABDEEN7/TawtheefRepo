@@ -30,8 +30,8 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
 
   ngOnInit() {
     const currentJob = this.jobService.getCurrentJob();
-    if (currentJob?.majorId) {
-      this.lookupsService.loadSkillsByMajor(currentJob.majorId);
+    if (currentJob?.subMajorId) {
+      this.lookupsService.loadSkillsByMajor(currentJob.subMajorId);
     }
 
     this.form.valueChanges.subscribe(() => {

@@ -134,7 +134,7 @@ export class UpsertMajorDialogComponent {
     // Payload is intentionally flexible to match your API:
     const payload: any = {
       id: this.vm.id ?? undefined,
-      parentId: this.vm.parentId ?? undefined,
+      parentMajorId: this.vm.parentId ?? undefined,
       nameEn: this.vm.nameEn.trim(),
       nameAr: this.vm.nameAr.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
