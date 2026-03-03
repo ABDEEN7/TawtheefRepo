@@ -8686,7 +8686,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<DateOnly>("QIDExpiry")
+                    b.Property<DateOnly?>("QIDExpiry")
                         .HasColumnType("date");
 
                     b.Property<Guid?>("SponsorCardId")
