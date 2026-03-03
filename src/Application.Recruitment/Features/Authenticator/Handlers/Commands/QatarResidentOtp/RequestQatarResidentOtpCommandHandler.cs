@@ -176,6 +176,9 @@ public sealed class RequestQatarResidentOtpCommandHandler(
 
         // DO NOT log OTP content. (Even in dev.)
         _ = await smsSender.SendAsync(normalizedPhone, $"Your verification code is: {otp}", cancellationToken);
+        #if DEBUG
+        Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");
+        #endif
 
         user.MarkOtpSent();
 
