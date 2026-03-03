@@ -8,8 +8,8 @@ namespace Application.Operation.Features.Admin.ProfileLogs.Queries;
 
 public sealed record GetProfileLogsQuery : PaginatedRequest, IQuery<IResult<PaginatedResult<ProfileLogDto>>>
 {
-    public Guid? UserProfileId { get; init; }
-    public Guid? UserId { get; init; }
+    public string? UserProfileId { get; init; }
+    public string? UserId { get; init; }
     public string? Source { get; init; }
     public string? ActionType { get; init; }
     public ReviewStatus? ReviewStatus { get; init; }

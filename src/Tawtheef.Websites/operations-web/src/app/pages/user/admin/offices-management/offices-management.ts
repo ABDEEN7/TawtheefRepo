@@ -107,6 +107,21 @@ export class OfficesManagement implements OnInit {
     this.loadOffices();
   }
 
+  onPageSizeChange(size: number) {
+    this.filters.update(f => ({
+      ...f,
+      pageNumber: 1,
+      pageSize: size,
+    }));
+    this.loadOffices();
+  }
+
+  assignedCountryIds() {
+    return this.offices()
+      .map(o => o.country?.id)
+      .filter(Boolean) as string[];
+  }
+
   openAdd() {
     this.modalMode.set('create');
     this.editingOffice.set(null);
@@ -204,6 +219,11 @@ export class OfficesManagement implements OnInit {
   }
 
   createOffice(payload: CreateOfficeRequest) {
+    if (this.assignedCountryIds().includes(payload.countryId)) {
+      this.notification.error(this.translate.instant('OFFICES.COUNTRY_ALREADY_HAS_OFFICE'));
+      return;
+    }
+
     this.officesService.createOffice(payload).subscribe({
       next: () => {
         this.notification.success(this.translate.instant('OFFICES.SAVE_SUCCESS'));

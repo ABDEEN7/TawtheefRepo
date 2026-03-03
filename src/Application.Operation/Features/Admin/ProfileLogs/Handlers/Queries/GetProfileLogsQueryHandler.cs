@@ -57,11 +57,15 @@ public sealed class GetProfileLogsQueryHandler(
                     CreatedDate = log.CreatedDate
                 }));
 
+        var profileIdFilter = ParseGuidOrNull(request.UserProfileId);
+        var userIdFilter = ParseGuidOrNull(request.UserId);
+        var actionTypeFilter = request.ActionType?.Trim();
+
         query = query
-            .WhereIf(request.UserProfileId.HasValue, log => log.UserProfileId == request.UserProfileId!.Value)
-            .WhereIf(request.UserId.HasValue, log => log.UserId == request.UserId!.Value)
+            .WhereIf(profileIdFilter.HasValue, log => log.UserProfileId == profileIdFilter!.Value)
+            .WhereIf(userIdFilter.HasValue, log => log.UserId == userIdFilter!.Value)
             .WhereIf(!string.IsNullOrWhiteSpace(request.Source), log => log.Source == request.Source)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.ActionType), log => log.ActionType == request.ActionType)
+            .WhereIf(!string.IsNullOrWhiteSpace(actionTypeFilter), log => EF.Functions.Like(log.ActionType, $"%{actionTypeFilter}%"))
             .WhereIf(request.ReviewStatus.HasValue, log => log.ReviewStatus == request.ReviewStatus)
             .WhereIf(request.From.HasValue, log => log.CreatedDate >= request.From!.Value)
             .WhereIf(request.To.HasValue, log => log.CreatedDate <= request.To!.Value);
@@ -146,6 +150,12 @@ public sealed class GetProfileLogsQueryHandler(
                 : !string.IsNullOrWhiteSpace(u.FullNameEn)
                     ? u.FullNameEn
                     : u.Email ?? string.Empty);
+    }
+
+
+    private static Guid? ParseGuidOrNull(string? value)
+    {
+        return Guid.TryParse(value, out var parsed) ? parsed : null;
     }
 
     private sealed record ProfileLogProjection

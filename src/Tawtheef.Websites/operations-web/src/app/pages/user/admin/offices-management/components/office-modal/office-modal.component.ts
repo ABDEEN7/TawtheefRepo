@@ -54,12 +54,21 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() countries: dropdownOptionsModel[] = [];
+  @Input() assignedCountryIds: string[] = [];
   @Input() office: OfficeDetailsDto | null = null;
   @Input() officeUsers: OfficeUserDto[] = [];
   @Input() loading = false;
 
   searchCountryFields = [SearchCountryField.Iso2, SearchCountryField.Name];
   selectedCountryIso = signal<CountryISO>(CountryISO.Qatar);
+
+  availableCountries = computed(() => {
+    const assigned = new Set(this.assignedCountryIds);
+    const currentCountryId = this.office?.countryId;
+
+    return this.countries.filter(country => !assigned.has(country.id) || country.id === currentCountryId);
+  });
+
   phoneCountries = computed(() => {
     const countries = this.countries
       .map(country => this.getCountryIso(country))
@@ -199,7 +208,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
     this.form.controls.supportedCountryIds.setValue([countryId], {emitEvent: false});
 
-    const selectedCountry = this.countries.find(country => country.id === countryId);
+    const selectedCountry = this.availableCountries().find(country => country.id === countryId);
     this.selectedCountryIso.set(this.getCountryIso(selectedCountry));
   }
 
@@ -217,7 +226,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     }
 
     const dialCode = this.formatDialCode(this.office.phoneCountryCode);
-    const country = this.countries.find(item => item.id === this.office?.countryId);
+    const country = this.availableCountries().find(item => item.id === this.office?.countryId);
     const countryCode = this.getCountryIso(country) ?? '';
     const e164Number = `${dialCode}${this.office.phoneNumber}`;
 
@@ -251,6 +260,14 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     this.submitted = true;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    const selectedCountryId = this.form.controls.countryId.value;
+    const selectedCountry = this.availableCountries().find(country => country.id === selectedCountryId);
+
+    if (!selectedCountry) {
+      this.form.controls.countryId.setErrors({required: true});
       return;
     }
 

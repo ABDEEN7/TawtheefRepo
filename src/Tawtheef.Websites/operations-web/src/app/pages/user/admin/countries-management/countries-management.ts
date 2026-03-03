@@ -69,7 +69,22 @@ export class CountriesManagement implements OnInit {
   loadCountries() {
     this.countriesService.getCountries(this.filters()).subscribe({
       next: (response: PaginatedResult<CountryDto>) => {
-        this._countries.set(response.items?.map((item)=> new CountryVM(item)) || []);
+        const items = (response.items ?? []).map((c: any) => new CountryVM({
+          id: c.id,
+          backendName: c.nameEn,     // required by DropdownOptionVM
+          description: '',           // required by DropdownOptionVM
+          name: c.nameEn,            // baseName in DropdownOptionVM
+          additionalData: {
+            nameAr: c.nameAr,
+            nameEn: c.nameEn,
+            isoCode: c.isoCode,
+            codeAlpha: c.codeAlpha
+          },
+          isActive: c.isActive,
+          code: c.code
+        }));
+
+        this._countries.set(items);
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {

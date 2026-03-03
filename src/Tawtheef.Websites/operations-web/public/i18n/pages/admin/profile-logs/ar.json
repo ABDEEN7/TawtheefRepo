@@ -2,8 +2,8 @@
   "PROFILE_LOGS.TITLE": "سجل نشاط الملفات",
   "PROFILE_LOGS.FILTER_PROFILE_ID": "معرف الملف",
   "PROFILE_LOGS.FILTER_PROFILE_ID_PLACEHOLDER": "أدخل معرف الملف",
-  "PROFILE_LOGS.FILTER_USER_ID": "معرف المستخدم",
-  "PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER": "أدخل معرف المراجع/الموظف",
+  "PROFILE_LOGS.FILTER_USER_ID": "نُفذ بواسطة",
+  "PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER": "اختر المستخدم",
   "PROFILE_LOGS.FILTER_ACTION": "نوع الإجراء",
   "PROFILE_LOGS.FILTER_ACTION_PLACEHOLDER": "اسم الإجراء أو الكود",
   "PROFILE_LOGS.FILTER_SEARCH": "بحث في الملاحظات/القسم",
@@ -30,5 +30,6 @@
   "PROFILE_LOGS.REVIEW_STATUS.REJECTED": "مرفوض",
   "PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION": "بحاجة لتصحيح",
   "PROFILE_LOGS.UNKNOWN_USER": "مستخدم غير معروف",
-  "PROFILE_LOGS.LOAD_FAILED": "تعذر تحميل سجلات الملف. يرجى المحاولة مرة أخرى."
+  "PROFILE_LOGS.LOAD_FAILED": "تعذر تحميل سجلات الملف. يرجى المحاولة مرة أخرى.",
+  "PROFILE_LOGS.CLEAR_SEARCH": "مسح البحث"
 }
