@@ -111,7 +111,8 @@
   [currentPage]="filters().pageNumber"
   [totalItems]="paginationMetadata()?.totalCount || 0"
   [itemsPerPage]="filters().pageSize"
-  (pageChanged)="onPageChange($event)"></app-pagination>
+  (pageChanged)="onPageChange($event)"
+  (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
 
 @if (isModalOpen()) {
   <app-office-modal
@@ -121,6 +122,7 @@
     [officeUsers]="editingOffice()?.users || []"
     [loading]="isModalLoading()"
     [countries]="countries()"
+    [assignedCountryIds]="assignedCountryIds()"
     (cancel)="closeModal()"
     (create)="createOffice($event)"
     (update)="updateOffice($event)"

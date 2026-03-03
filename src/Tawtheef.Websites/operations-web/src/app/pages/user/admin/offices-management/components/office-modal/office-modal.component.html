@@ -53,7 +53,7 @@
                     <label class="form-label">{{ 'OFFICES.COUNTRY' | translate }}</label>
                     <p-select
                       formControlName="countryId"
-                      [options]="countries"
+                      [options]="availableCountries()"
                       optionValue="id"
                       [filter]="true"
                       filterBy="additionalData.nameAr,additionalData.nameEn,name"

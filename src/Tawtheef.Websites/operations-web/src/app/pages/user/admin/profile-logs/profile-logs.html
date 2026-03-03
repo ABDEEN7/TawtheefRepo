@@ -21,11 +21,18 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
-                <input type="text"
-                      class="form-control"
-                      [(ngModel)]="userIdFilter"
-                      (input)="onFiltersChanged()"
-                      [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"/>
+                <p-select
+                  [options]="userOptions()"
+                  [showClear]="true"
+                  [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate"
+                  optionLabel="label"
+                  optionValue="id"
+                  name="performedBy"
+                  [ngModel]="userIdFilter"
+                  (onChange)="userIdFilter = $event.value; onFiltersChanged()"
+                  (onClear)="userIdFilter = null; onFiltersChanged()"
+                  class="form-select p-0"
+                ></p-select>
               </div>
               <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_ACTION' | translate }}</label>
@@ -46,27 +53,6 @@
             </div>
 
             <div class="row g-3 mt-1">
-              <div class="col-md-3">
-                <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SOURCE' | translate }}</label>
-                <p-select
-                  [options]="sourceOptions"
-                  [showClear]="true"
-                  [placeholder]="'PROFILE_LOGS.FILTER_SOURCE_PLACEHOLDER' | translate"
-                  optionLabel="label"
-                  optionValue="id"
-                  name="source"
-                  [ngModel]="sourceFilter"
-                  (onChange)="sourceFilter = $event.value; onFiltersChanged()"
-                  (onClear)="sourceFilter = null; onFiltersChanged()" class="form-select p-0"
-                >
-                  <ng-template #selectedItem let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                  <ng-template #item let-option>
-                    {{ option.label | translate }}
-                  </ng-template>
-                </p-select>
-              </div>
               <div class="col-md-3">
                 <label class="form-label">{{ 'PROFILE_LOGS.FILTER_REVIEW_STATUS' | translate }}</label>
                 <p-select
@@ -102,6 +88,11 @@
                       [ngModel]="toDateInputValue(toDate)"
                       (ngModelChange)="onToDateChange($event)"/>
               </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+                  {{ 'PROFILE_LOGS.CLEAR_SEARCH' | translate }}
+                </button>
+              </div>
             </div>
         </div>
   </div>
@@ -112,7 +103,6 @@
               <tr>
                 <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_PROFILE_ID' | translate }}</th>
-                <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
                 <th>{{ 'PROFILE_LOGS.TABLE_REVIEW_STATUS' | translate }}</th>
@@ -124,7 +114,7 @@
               <tbody>
               @if (logs().length === 0) {
                 <tr>
-                  <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+                  <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
                     {{ 'NO_RECORDS' | translate }}
                   </td>
                 </tr>
@@ -133,11 +123,6 @@
                   <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
                     <td>{{ log.createdDate | date:'short' }}</td>
                     <td class="text-break">{{ log.userProfileId }}</td>
-                    <td>
-                      <span class="pill neutral">
-                        {{ sourceLabel(log.source) }}
-                      </span>
-                    </td>
                     <td class="text-break fw-semibold">{{ log.actionType }}</td>
                     <td class="text-break">{{ log.section || '-' }}</td>
                     <td>
@@ -163,7 +148,7 @@
             </table>
         </div>
   </div>
-  
+
   </div>
 </div>
 
