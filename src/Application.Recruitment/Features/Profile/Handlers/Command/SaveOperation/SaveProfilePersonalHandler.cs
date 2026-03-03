@@ -107,7 +107,7 @@ public sealed class SaveProfilePersonalHandler(
                     SponsorTypeId = r.SponsorTypeId!.Value,
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
-                    QIDExpiry = r.SponsorQidExpiry!.Value,
+                    QIDExpiry = r.SponsorQidExpiry,
                     SponsorCardId = idResult.Value,
                 };
             }
@@ -116,7 +116,7 @@ public sealed class SaveProfilePersonalHandler(
                 profile.SponsorProfile.SponsorTypeId = r.SponsorTypeId!.Value;
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
-                profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry!.Value;
+                profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
         }

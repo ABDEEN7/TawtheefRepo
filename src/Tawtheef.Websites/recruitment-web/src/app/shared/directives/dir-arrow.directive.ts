@@ -1,8 +1,11 @@
 import { Directive, ElementRef, Input, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import {LanguageService} from '../../core/services/language.service';
+import { LanguageService } from '../../core/services/language.service';
 
-@Directive({ selector: '[faDirArrow]' })
+@Directive({
+  selector: '[faDirArrow]',
+  standalone: true
+})
 export class FaDirArrowDirective implements OnInit, OnDestroy {
   /** "start" | "end" — logical direction */
   @Input('faDirArrow') side: 'start' | 'end' = 'end';
@@ -13,7 +16,7 @@ export class FaDirArrowDirective implements OnInit, OnDestroy {
     private el: ElementRef<HTMLElement>,
     private r: Renderer2,
     private lang: LanguageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // apply once + react to future lang changes

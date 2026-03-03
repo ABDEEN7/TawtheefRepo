@@ -61,7 +61,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetSkills([FromQuery] Guid majorId)
     {
-        var result = await mediator.Send(new GetSkillByMajorQuery(majorId));
+        var result = await mediator.Send(new GetSkillBySubMajorIdAndRelatedParentSkillQuery(majorId));
         return result.ToActionResult();
     }
 

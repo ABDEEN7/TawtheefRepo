@@ -58,8 +58,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         if (dto.Skills?.Any() == true && dto.MajorId != Guid.Empty)
         {
-            var majorSkillRepo = unitOfWork.GetEntityRepository<MajorSkill>();
-            var majorSkillsIds = await majorSkillRepo.DbSet
+            var majorSkillsIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
                 .AsNoTracking().Where(s => s.IsActive)
                 .Where(s => (s.MajorId == dto.MajorId) || (s.MajorId == dto.SubMajorId))
                 .Select(x=> x.SkillId)

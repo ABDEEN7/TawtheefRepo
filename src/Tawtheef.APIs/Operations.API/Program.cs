@@ -12,6 +12,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
+using EnvironmentName = Tawtheef.Domain.Common.EnvironmentName;
 
 const string myCors = "_myAllowSpecificOrigins";
 
@@ -139,9 +140,10 @@ builder.Services.AddCors(options => {
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-#if DEBUG
+
+if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) {
 builder.Services.AddSwagger();
-#endif
+}
 
 var app = builder.Build();
 
@@ -182,10 +184,14 @@ app.UseSerilogRequestLogging(opts => {
 app.UseMiddleware<ResponseLoggingMiddleware>();
 #if DEBUG
 app.UseDeveloperExceptionPage();
-app.MapSwagger();
 #else
-    app.UseExceptionHandler();
+app.UseExceptionHandler();
 #endif
+
+if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
+{
+    app.MapSwagger();
+}
 
 app.UseHttpsRedirection();
 

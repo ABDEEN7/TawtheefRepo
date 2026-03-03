@@ -1,23 +1,23 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnDestroy, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {combineLatest, finalize, Subscription} from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { combineLatest, finalize, Subscription } from 'rxjs';
 
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {DialogModule} from 'primeng/dialog';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ToggleSwitchModule} from 'primeng/toggleswitch';
-import {Select} from 'primeng/select';
-import {Textarea} from 'primeng/textarea';
-import {DialogService} from 'primeng/dynamicdialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
+import { DialogService } from 'primeng/dynamicdialog';
 
-import {routes} from '../../../../../routes/routes';
-import {LanguageService} from '../../../../../core/services/language.service';
-import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
+import { routes } from '../../../../../routes/routes';
+import { LanguageService } from '../../../../../core/services/language.service';
+import { ProfileApprovalService } from '../approval-list/services/profile-approval.service';
 import {
   ProfileApprovalDetail,
   ProfileApprovalItem,
@@ -26,12 +26,12 @@ import {
   ReviewTargetType,
   SectionReviewSummary,
 } from '../approval-list/models/profile-approval.models';
-import {ProfileStatusNumber} from '../../../../../core/enums/lookups.enum';
-import {FileUtilsService} from '../../../../../core/utils/file-utils';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {FaDirArrowDirective} from '../../../../../shared/directives/dir-arrow.directive';
-import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
-import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
+import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
+import { AvatarUtils } from '../../../../../core/utils/avatar-utils';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 
 import {
   FirstInfoSectionComponent
@@ -54,7 +54,7 @@ import {
 import {
   CertificatesSectionComponent
 } from '../approval-detail/components/sections/certificates-section/certificates-section.component';
-import {SkillsSectionComponent} from '../approval-detail/components/sections/skills-section/skills-section.component';
+import { SkillsSectionComponent } from '../approval-detail/components/sections/skills-section/skills-section.component';
 import {
   LanguagesSectionComponent
 } from '../approval-detail/components/sections/languages-section/languages-section.component';
@@ -62,7 +62,7 @@ import {
   AttachmentsSectionComponent
 } from '../approval-detail/components/sections/attachments-section/attachments-section.component';
 
-import {ReviewAction, ReviewItemsComponent} from '../approval-detail/components/review-items/review-items.component';
+import { ReviewAction, ReviewItemsComponent } from '../approval-detail/components/review-items/review-items.component';
 import {
   ItemDialogResult,
   ItemReviewDialogComponent
@@ -314,12 +314,12 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   }
 
   previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
+    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => { });
   }
 
-  onInlineReview(event: { reviewItemId: string; status: ReviewStatus; note?: string | null }): void {
+  onInlineReview(event: { reviewItemId: string; status: ReviewStatus; note?: string | null; specializationRelation?: number | null }): void {
     if (event.status === ReviewStatus.Approved) {
-      this.submitReviewItem(event.reviewItemId, event.status, null);
+      this.submitReviewItem(event.reviewItemId, event.status, null, event.specializationRelation);
       return;
     }
 
@@ -337,8 +337,8 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     this.promptCorrection(item.reviewItemId, item.note ?? null, item);
   }
 
-  private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null): void {
-    this.api.decideReviewItem(reviewItemId, { status, note }).subscribe({
+  private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null, specializationRelation?: number | null): void {
+    this.api.decideReviewItem(reviewItemId, { status, note, specializationRelation }).subscribe({
       next: () => {
         this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
         this.loadDetail();

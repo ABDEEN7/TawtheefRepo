@@ -7,7 +7,9 @@ import {
   OnChanges,
   SimpleChanges,
   forwardRef,
-  inject, Renderer2,
+  inject,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -15,7 +17,20 @@ import { Subject, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
+
 type LoadRequest = { term: string; page: number; append: boolean };
+
+type QueryParamValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Array<string | number | boolean>;
+
+type ExtraQueryParams =
+  | Record<string, QueryParamValue>
+  | (() => Record<string, QueryParamValue>);
 
 @Component({
   selector: 'app-remote-select',
@@ -34,7 +49,10 @@ type LoadRequest = { term: string; page: number; append: boolean };
 export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
   private http = inject(HttpClient);
   private translate = inject(TranslateService);
-  private renderer = inject(Renderer2);
+
+  /** Optional: keep if you still want external listeners */
+  @Output() valueChange = new EventEmitter<any>();
+
   @Input() searchUrl!: string;
   @Input() minChars = 3;
   @Input() searchParamName = 'search';
@@ -44,6 +62,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() optionLabel = 'name';
   @Input() optionValue?: string;
   @Input() placeholder = '';
+  @Input() noResultsPlaceholder = '';
+  private lastLoadReturnedEmpty = false;
   @Input() size: 'small' | 'large' | undefined = undefined;
   @Input() appendTo: any = 'body';
   @Input() panelStyle: any;
@@ -58,12 +78,15 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() requireParent = false;
 
   @Input() invalid = false;
+  @Input() extraQueryParams?: ExtraQueryParams;
 
   options: any[] = [];
   value: any = null;
+
   isLoading = false;
   hasMore = true;
   emptyMessage = '';
+
   private panelOpen = false;
   private currentTerm = '';
   private pageNumber = 0;
@@ -74,15 +97,76 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
+  disabled = false;
 
+  /** --- Option B flags --- */
+  private initialized = false;
+  private pendingFirstLoad: LoadRequest | null = null;
+
+  /**
+   * “One-way” behavior:
+   * - allow only the FIRST parent write to set initial value
+   * - ignore subsequent parent writes (so parent can’t overwrite the user selection)
+   */
+  private hasAcceptedInitialWrite = false;
+
+  get isDisabledComputed(): boolean {
+    if (this.disabled) return true;
+    if (this.requireParent && this.isParentMissing()) return true;
+    if (this.disableWhileLoading && this.isLoading && !this.panelOpen) return true;
+    return false;
+  }
+
+  get computedPlaceholder(): string {
+    return this.placeholder;
+  }
+
+  // =============================
+  // CVA
+  // =============================
   writeValue(val: any): void {
-    this.value = val;
-    this.options = this.mergeWithSelected(this.preloadedOptions);
+    const isClear = val === null || val === undefined || val === '';
 
-    if (this.value !== null && this.value !== undefined && this.value !== '') {
-      this.resetDataset(false);
-      this.load({ term: this.currentTerm, page: 0, append: false });
+    // ✅ ALWAYS allow programmatic clear from parent
+    if (isClear) {
+      this.value = null;
+
+      // keep dataset stable (don’t collapse height)
+      const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
+      this.options = this.mergeWithSelected(merged);
+
+      // optional: reload first page after clear
+      if (!this.requireParent || !this.isParentMissing()) {
+        this.reloadFirstPage(this.currentTerm ?? '');
+      }
+
+      return;
     }
+
+    // ✅ Option B: ignore parent writes after initial accept
+    if (this.hasAcceptedInitialWrite) {
+      return;
+    }
+
+    // Accept initial value once
+    this.hasAcceptedInitialWrite = true;
+    this.value = val;
+
+    const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
+    this.options = this.mergeWithSelected(merged);
+
+    if (this.requireParent && this.isParentMissing()) return;
+
+    const req: LoadRequest = { term: this.currentTerm ?? '', page: 0, append: false };
+
+    if (!this.initialized) {
+      this.pendingFirstLoad = req;
+      return;
+    }
+
+    this.resetPagingOnly(true);
+    this.requestedPages.add(this.requestKey(0, req.term));
+    this.load(req);
   }
 
   registerOnChange(fn: any): void {
@@ -97,19 +181,9 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.disabled = isDisabled;
   }
 
-  disabled = false;
-
-  get isDisabledComputed(): boolean {
-    if (this.disabled) return true;
-    if (this.requireParent && this.isParentMissing()) return true;
-    if (this.disableWhileLoading && this.isLoading && !this.panelOpen) return true;
-    return false;
-  }
-
-  get computedPlaceholder(): string {
-    return this.placeholder;
-  }
-
+  // =============================
+  // Lifecycle
+  // =============================
   ngOnInit(): void {
     this.options = this.mergeWithSelected(this.preloadedOptions);
 
@@ -122,34 +196,62 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
           this.isLoading = true;
           const params = this.buildParams(req.term, req.page, this.pageSize);
 
-          return this.http.get<any[]>(this.searchUrl, { params,headers:new HttpHeaders({ 'X-Skip-Loading': 'true' }) }).pipe(
-            map(res => ({ req, res: res ?? [] })),
-            catchError(() => of({ req, res: [] as any[] })),
-            finalize(() => (this.isLoading = false))
-          );
+          return this.http
+            .get<any[]>(this.searchUrl, {
+              params,
+              headers: new HttpHeaders({ 'X-Skip-Loading': 'true' }),
+            })
+            .pipe(
+              map(res => ({ req, res: res ?? [] })),
+              catchError(() => of({ req, res: [] as any[] })),
+              finalize(() => (this.isLoading = false))
+            );
         }),
         takeUntil(this.destroy$)
       )
       .subscribe(({ req, res }) => this.applyResults(req, res));
 
-    this.resetDataset(true);
+    this.initialized = true;
+
+    // ✅ flush any pre-init request
+    if (this.pendingFirstLoad) {
+      const req = this.pendingFirstLoad;
+      this.pendingFirstLoad = null;
+
+      this.requestedPages.add(this.requestKey(req.page, req.term));
+      this.load(req);
+      return;
+    }
+
+    // initial load if no parent requirement
     if (!this.requireParent || !this.isParentMissing()) {
-      this.load({ term: '', page: 0, append: false });
+      this.reloadFirstPage('');
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['preloadedOptions']) {
-      this.options = this.mergeWithSelected(this.preloadedOptions);
+      // don’t wipe current options; merge
+      const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
+      this.options = this.sortByOptionLabel(this.mergeWithSelected(merged));
     }
 
     if (changes['parentId'] && !changes['parentId'].firstChange) {
+      // parent changed => we must reset selection
       this.value = null;
+
+      // allow parent to set value again if it wants (new context)
+      this.hasAcceptedInitialWrite = false;
+
       this.onChange(null);
-      this.resetDataset(true);
+      this.onTouched();
+      this.valueChange.emit(null);
+
+      this.options = this.mergeWithSelected([]);
+      this.resetPagingOnly(false);
 
       if (!this.requireParent || !this.isParentMissing()) {
-        this.load({ term: '', page: 0, append: false });
+        this.reloadFirstPage('');
       }
     }
   }
@@ -159,12 +261,16 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.destroy$.complete();
   }
 
+  // =============================
+  // UI events
+  // =============================
   onOpen(): void {
     this.panelOpen = true;
     if (!this.currentTerm || this.currentTerm.length < this.minChars) {
-      this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
     }
   }
+
   onClose(): void {
     this.panelOpen = false;
   }
@@ -186,64 +292,83 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     }
 
     if (term.length < this.minChars) {
-      this.emptyMessage = this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
-      this.options = this.mergeWithSelected([]);
+      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+
+      // ✅ IMPORTANT: don’t clear options (prevents empty/height collapse)
       this.hasMore = false;
       return;
     }
+
     this.emptyMessage = '';
     this.reloadFirstPage(term);
   }
 
+  /**
+   * ✅ PrimeNG correct lazy paging: derive page from first/rows
+   */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading || !this.hasMore) return;
+    if (this.isLoading) return;
+    if (!this.hasMore) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
     const rows = event?.rows ?? this.pageSize;
-    const lastVisibleIndex = first + rows;
-    const nearEnd = lastVisibleIndex >= this.options.length - 2;
-    if (!nearEnd) return;
-    const nextPage = this.pageNumber + 1;
-    const key = this.requestKey(nextPage, this.currentTerm);
+    const page = Math.floor(first / rows);
+
+    const key = this.requestKey(page, this.currentTerm);
     if (this.requestedPages.has(key)) return;
+
     this.requestedPages.add(key);
-    this.load({ term: this.currentTerm, page: nextPage, append: true });
+    this.load({ term: this.currentTerm, page, append: page > 0 });
   }
 
   handleChange(event: any): void {
     const newVal = event?.value;
     this.value = newVal;
+
+    // ✅ user-driven change flows outward
     this.onChange(newVal);
     this.onTouched();
+    this.valueChange.emit(newVal);
+
+    // ✅ lock out future parent writes (one-way)
+    this.hasAcceptedInitialWrite = true;
   }
 
   onClearSelection(): void {
     this.value = null;
+
     this.onChange(null);
     this.onTouched();
+    this.valueChange.emit(null);
+
+    // still one-way after user action
+    this.hasAcceptedInitialWrite = true;
 
     if (!this.requireParent || !this.isParentMissing()) {
       this.reloadFirstPage('');
     }
   }
 
+  // =============================
+  // Data flow
+  // =============================
   private reloadFirstPage(term: string): void {
-    this.resetDataset(true);
     this.currentTerm = term;
-    this.requestedPages.add(this.requestKey(0, term));
+    this.resetPagingOnly(true);
+
+    const key0 = this.requestKey(0, term);
+    this.requestedPages.add(key0);
+
+    // ✅ don’t clear options here
     this.load({ term, page: 0, append: false });
   }
 
-  private resetDataset(clearOptions: boolean): void {
+  private resetPagingOnly(preserveTerm: boolean): void {
     this.requestedPages.clear();
     this.pageNumber = 0;
-    this.currentTerm = '';
     this.hasMore = true;
-
-    if (clearOptions) {
-      this.options = this.mergeWithSelected([]);
-    }
+    if (!preserveTerm) this.currentTerm = '';
   }
 
   private load(req: LoadRequest): void {
@@ -269,6 +394,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private buildParams(term: string, pageNumber: number, pageSize: number): HttpParams {
     let params = new HttpParams();
 
+    // include selected id for “fetch by id” support
     if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
       params = params.set(this.idParamName, String(this.value));
     }
@@ -286,24 +412,35 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       .set('PaginatedRequest.SortBy', 'name')
       .set('PaginatedRequest.SortDirection', 'asc');
 
-    return params;
+    return this.appendExtraParams(params);
   }
 
   private applyResults(req: LoadRequest, res: any[]): void {
     const next = res ?? [];
-    const merged = req.append ? this.mergeById([...this.options, ...next]) : this.mergeById(next);
-    this.options = this.mergeWithSelected(merged);
+    this.lastLoadReturnedEmpty = next.length === 0 && (req.term?.length ?? 0) >= this.minChars;
+
+    const mergedBase = req.append
+      ? this.mergeById([...(this.options ?? []), ...next])
+      : this.mergeById(next);
+
+    const mergedWithSelected = this.mergeWithSelected(mergedBase);
+
+    this.options = this.sortByOptionLabel(mergedWithSelected);
     this.hasMore = next.length === this.pageSize;
+
+    // emptyMessage داخل القائمة
+    this.emptyMessage = next.length === 0 && (req.term?.length ?? 0) >= this.minChars
+      ? (this.noResultsPlaceholder ?? this.translate.instant('remote-select.no-results'))
+      : '';
   }
 
+  // =============================
+  // helpers (yours unchanged)
+  // =============================
   private mergeWithSelected(nextOptions: any[]): any[] {
     const merged = [...(nextOptions || [])];
-
     const selectedOption = this.findSelectedOption();
-    if (selectedOption && !this.containsOption(merged, selectedOption)) {
-      merged.push(selectedOption);
-    }
-
+    if (selectedOption && !this.containsOption(merged, selectedOption)) merged.push(selectedOption);
     return merged;
   }
 
@@ -343,5 +480,42 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private getOptionId(option: any): string | null {
     const id = option?.id ?? option?.Id;
     return id ? String(id) : null;
+  }
+
+  private getByPath(obj: any, path: string): any {
+    if (!obj || !path) return undefined;
+    return path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+  }
+
+  private getOptionLabelValue(option: any): string {
+    const key = (this.optionLabel ?? '').trim();
+    const raw = key.includes('.') ? this.getByPath(option, key) : option?.[key];
+    return (raw ?? '').toString().trim();
+  }
+
+  private sortByOptionLabel(items: any[]): any[] {
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    return [...(items ?? [])].sort((a, b) => collator.compare(this.getOptionLabelValue(a), this.getOptionLabelValue(b)));
+  }
+
+  private appendExtraParams(params: HttpParams): HttpParams {
+    const extra = typeof this.extraQueryParams === 'function' ? this.extraQueryParams() : this.extraQueryParams;
+    if (!extra) return params;
+
+    for (const [key, value] of Object.entries(extra)) {
+      if (!key) continue;
+      if (value === null || value === undefined || value === '') continue;
+
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          if (v === null || v === undefined || v === ('' as any)) continue;
+          params = params.append(key, String(v));
+        }
+        continue;
+      }
+
+      params = params.set(key, String(value));
+    }
+    return params;
   }
 }

@@ -135,10 +135,10 @@ p{
   line-height: 1.5;
 }
 
-:dir(rtl) [type=email], 
-:dir(rtl) [type=number], 
-:dir(rtl) [type=tel], 
-:dir(rtl) [type=url]{    
+:dir(rtl) [type=email],
+:dir(rtl) [type=number],
+:dir(rtl) [type=tel],
+:dir(rtl) [type=url]{
   direction: rtl;
 }
 
@@ -291,7 +291,7 @@ header.topbar {
     display: none;
   }
 .form-check-input[type=checkbox]{
-  
+
     border-color: rgb(203, 203, 203) !important;
 }
   .profile-image {
@@ -794,7 +794,7 @@ body.ltr
 :dir(rtl) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
   right: 0 !important;
     left: auto !IMPORTANT;
-   
+
 }
 :dir(rtl) .qatar-otp-dialog .phone-wrap .form-control,
 :dir(rtl) .contact .form-control{direction: ltr;}
@@ -803,7 +803,7 @@ body.ltr
 :dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
       right: auto;
     left: 0;
-   
+
 }
 
 
@@ -826,7 +826,7 @@ body.ltr
 
 }
 :dir(rtl) .iti__flag-container .dropdown-menu.show{
-    
+
     inset: 100% 0 auto auto !important;
 }
 
@@ -848,7 +848,7 @@ body.ltr
 
 .form-switch.wizard-profile .p-toggleswitch{
       height: 2rem !important;
-    width: 3rem !important;  
+    width: 3rem !important;
 }
 .form-switch.wizard-profile .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider{
     background-color: #8a1538 !important ;
@@ -867,5 +867,10 @@ body.ltr
     padding: 0 !important;
     margin: 0 !important;
     width: 1.3rem !important;
-    height: 1.5rem !important;}
-    .p-datepicker .p-datepicker-panel{z-index: 99999 !important;}
+    height: 1.5rem !important;
+}
+.p-datepicker .p-datepicker-panel{z-index: 99999 !important;}
+:dir(rtl) .iti__flag-container .dropdown-menu{
+  left: auto;
+  right:0 !important
+}

@@ -116,6 +116,7 @@ public class ErrorsCodes
     public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
     public const string NotesRequiredForCorrection = "NOTES_REQUIRED_FOR_CORRECTION";
     public const string UnapprovedItemsExist = "UNAPPROVED_ITEMS_EXIST";
+    public const string SpecializationRelationRequired = "SPECIALIZATION_RELATION_REQUIRED";
 
     public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
     public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
