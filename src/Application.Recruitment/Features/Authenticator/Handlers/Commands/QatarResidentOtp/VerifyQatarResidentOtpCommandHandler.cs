@@ -183,14 +183,18 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     {
         var qidMasked = MoiUtils.MaskQid(qidNumber);
 
-        var userProfile = await uow.GetEntityRepository<UserProfile>()
-            .DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
+        var repo = uow.GetEntityRepository<UserProfile>();
+        var userProfile = await repo.DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
 
         if (userProfile is null)
         {
-            // keeping your current behavior (no create). Just log.
-            _log.Information("UserProfile not found; skipping update. UserId={UserId} Qid={QidMasked}", userId, qidMasked);
-            return;
+            // create new profile and fill data
+            userProfile = new UserProfile()
+            {
+                UserId = userId,
+                Provider = QatarResidentOtpConstants.Provider,
+            };
+            await repo.DbSet.AddAsync(userProfile, cancellationToken);
         }
 
         userProfile.NationalNumber = qidNumber;
