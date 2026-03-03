@@ -14,14 +14,7 @@ public static class ProfileValidatorUtils
             CandidateTypeIds.WifeOfQatari,
         }.Contains(candidateTypeId ?? Guid.Empty);
     public static bool IsResidentQatar(Guid? candidateTypeId, string provider) => 
-        new []
-        {
-            CandidateTypeIds.Qatari,
-            CandidateTypeIds.ResidentQatar,
-            CandidateTypeIds.SonOfQatariMother,
-            CandidateTypeIds.WifeOfQatari,
-        }.Contains(candidateTypeId ?? Guid.Empty) || 
-        (candidateTypeId == CandidateTypeIds.GCC && provider is nameof(ProviderLoginIds.QatarPass) or nameof(ProviderLoginIds.QatarResidentOtp));
+        provider is nameof(ProviderLoginIds.QatarPass) or nameof(ProviderLoginIds.QatarResidentOtp);
     public static bool IsResidentOutsideQatar(Guid? candidateTypeId, string provider) => 
         !IsResidentQatar(candidateTypeId, provider);
     public static bool RequiresBirthCertificate(Guid? candidateTypeId) => candidateTypeId == CandidateTypeIds.SonOfQatariMother;
