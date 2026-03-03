@@ -51,5 +51,6 @@
   "OFFICES.BLOCK_STATUS_UPDATED": "User block status updated.",
   "OFFICES.BLOCK_STATUS_FAILED": "Failed to update user block status.",
   "OFFICES.ADMIN_CHANGED": "Office admin updated.",
-  "OFFICES.ADMIN_CHANGE_FAILED": "Failed to update office admin."
+  "OFFICES.ADMIN_CHANGE_FAILED": "Failed to update office admin.",
+  "OFFICES.COUNTRY_ALREADY_HAS_OFFICE": "An office already exists for the selected country."
 }

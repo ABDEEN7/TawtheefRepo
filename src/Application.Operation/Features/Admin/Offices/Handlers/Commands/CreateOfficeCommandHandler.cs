@@ -32,6 +32,9 @@ public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork,
         if (await uniquenessChecker.OfficeAdminEmailExistsAsync(email, ct))
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailExists);
 
+        if (await uniquenessChecker.OfficeCountryExistsAsync(request.CountryId, ct))
+            return Result.Fail<Guid>(ErrorsCodes.OfficeCountryAlreadyAssigned);
+
         // 2) Create admin user (infrastructure hidden behind port)
         var adminResult = await adminProvisioner.CreateOfficeAdminAsync(
             email, request.AdminNameAr, request.AdminNameEn, ct);

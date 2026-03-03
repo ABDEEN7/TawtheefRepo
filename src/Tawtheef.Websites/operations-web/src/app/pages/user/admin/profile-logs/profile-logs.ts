@@ -9,7 +9,6 @@ import {ProfileLogFilters} from './models/profile-log-filters.dto';
 import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
 import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
 import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {NotificationService} from '../../../../core/services/notification.service';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
 import {ReviewStatus} from '../../employee/profile-managment/approval-list/models/profile-approval.models';
@@ -32,13 +31,14 @@ export class ProfileLogsComponent implements OnInit {
   private profileLogsService = inject(ProfileLogsService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
-  private notification = inject(NotificationService);
 
   private _logs = signal<ProfileLogDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
+  private _userOptions = signal<{ id: string; label: string }[]>([]);
 
   logs = this._logs.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
+  userOptions = this._userOptions.asReadonly();
 
   filters = signal<ProfileLogFilters>({
     pageNumber: 1,
@@ -46,22 +46,16 @@ export class ProfileLogsComponent implements OnInit {
   });
 
   profileIdFilter = '';
-  userIdFilter = '';
+  userIdFilter: string | null = null;
   actionTypeFilter = '';
   searchFilter = '';
   reviewStatusFilter: ReviewStatus | null = null;
-  sourceFilter: string | null = null;
   fromDate: Date | null = null;
   toDate: Date | null = null;
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
-
-  sourceOptions = [
-    { id: 'UserProfileLogger', label: 'PROFILE_LOGS.SOURCE_USER_PROFILE' },
-    { id: 'AuditTrailEntry', label: 'PROFILE_LOGS.SOURCE_AUDIT_TRAIL' }
-  ];
 
   reviewStatusOptions = [
     { id: ReviewStatus.NotReviewed, label: 'PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED' },
@@ -79,14 +73,14 @@ export class ProfileLogsComponent implements OnInit {
   loadLogs() {
     const updatedFilters: ProfileLogFilters = {
       ...this.filters(),
-      userProfileId: this.profileIdFilter || null,
+      userProfileId: this.profileIdFilter.trim() || null,
       userId: this.userIdFilter || null,
-      actionType: this.actionTypeFilter || null,
-      source: this.sourceFilter,
+      actionType: this.actionTypeFilter.trim() || null,
+      source: 'UserProfileLogger',
       reviewStatus: this.reviewStatusFilter,
       from: this.fromDate ? this.fromDate.toISOString() : null,
       to: this.toDate ? this.toDate.toISOString() : null,
-      search: this.searchFilter || null,
+      search: this.searchFilter.trim() || null,
     };
 
     this.filters.set(updatedFilters);
@@ -94,6 +88,7 @@ export class ProfileLogsComponent implements OnInit {
     this.profileLogsService.getLogs(this.filters()).subscribe({
       next: (response: PaginatedResult<ProfileLogDto>) => {
         this._logs.set(response.items);
+        this.mergeUserOptions(response.items);
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {
@@ -127,15 +122,15 @@ export class ProfileLogsComponent implements OnInit {
     this.onFiltersChanged();
   }
 
-  sourceLabel(source: string) {
-    switch (source) {
-      case 'UserProfileLogger':
-        return this.translate.instant('PROFILE_LOGS.SOURCE_USER_PROFILE');
-      case 'AuditTrailEntry':
-        return this.translate.instant('PROFILE_LOGS.SOURCE_AUDIT_TRAIL');
-      default:
-        return source;
-    }
+  clearFilters() {
+    this.profileIdFilter = '';
+    this.userIdFilter = null;
+    this.actionTypeFilter = '';
+    this.searchFilter = '';
+    this.reviewStatusFilter = null;
+    this.fromDate = null;
+    this.toDate = null;
+    this.onFiltersChanged();
   }
 
   reviewStatusLabel(status: ReviewStatus | null | undefined) {
@@ -168,5 +163,22 @@ export class ProfileLogsComponent implements OnInit {
 
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
       `T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  private mergeUserOptions(logs: ProfileLogDto[]) {
+    const existingOptions = new Map(this._userOptions().map(option => [option.id, option]));
+
+    logs.forEach(log => {
+      if (!log.userId) {
+        return;
+      }
+
+      existingOptions.set(log.userId, {
+        id: log.userId,
+        label: log.userName || log.userId,
+      });
+    });
+
+    this._userOptions.set(Array.from(existingOptions.values()).sort((a, b) => a.label.localeCompare(b.label)));
   }
 }

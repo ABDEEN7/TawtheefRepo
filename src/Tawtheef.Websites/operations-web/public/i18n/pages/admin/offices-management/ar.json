@@ -51,5 +51,6 @@
   "OFFICES.BLOCK_STATUS_UPDATED": "تم تحديث حالة الحظر للمستخدم.",
   "OFFICES.BLOCK_STATUS_FAILED": "تعذر تحديث حالة الحظر للمستخدم.",
   "OFFICES.ADMIN_CHANGED": "تم تحديث مدير المكتب.",
-  "OFFICES.ADMIN_CHANGE_FAILED": "تعذر تحديث مدير المكتب."
+  "OFFICES.ADMIN_CHANGE_FAILED": "تعذر تحديث مدير المكتب.",
+  "OFFICES.COUNTRY_ALREADY_HAS_OFFICE": "يوجد مكتب بالفعل للدولة المحددة."
 }
