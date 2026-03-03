@@ -207,7 +207,7 @@ export class DegreeModal implements OnInit {
       studySystem: raw.studySystem,
       gpa: raw.gpa != null ? +raw.gpa : null,
       grade: raw.grade,
-      fileName: raw.degreeFileName ?? this.initialCertificate?.resourceName ?? null,
+      fileName: raw.degreeFileName ?? raw.file?.name ?? this.initialCertificate?.resourceName ?? null,
       file: this.degreeFile as File | null,
       attachmentId: this.initialAttachmentId,
     } as Degree;
