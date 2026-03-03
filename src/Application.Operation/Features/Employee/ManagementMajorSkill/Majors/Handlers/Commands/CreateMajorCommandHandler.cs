@@ -28,7 +28,7 @@ public class CreateMajorCommandHandler(IUnitOfWork uow) : ICommandHandler<Create
             IsActive = request.IsActive,
             ParentId = request.ParentMajorId,
             BackendName = code
-        });
+        }, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }

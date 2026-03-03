@@ -45,6 +45,7 @@
         <tr>
           <th>{{ 'MAJORS_SKILLS.MAJOR_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
+          <th>{{ 'MAJORS_SKILLS.NUMBER_SUB_MAJOR' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
         </tr>
@@ -58,6 +59,7 @@
           </td>
 
           <td>{{ major.usedInMappingsCount || 0 }}</td>
+          <td>{{ major.subMajorsCount || 0 }}</td>
 
           <td>
           <span class="pill"

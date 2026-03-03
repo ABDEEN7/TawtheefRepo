@@ -46,7 +46,7 @@
               <label class="form-label">{{ 'MAJORS_SKILLS.MAJOR_LABEL' | translate }}</label>
               <app-remote-select
                 [searchUrl]="store.endpoints.majorSkillsManagement.lookups.majors"
-                optionLabel="name"
+                optionLabel="name" [extraQueryParams]="{ IncludeOrphanMajors: true }"
                 optionValue="id"
                 [showClear]="true"
                 [minChars]="1"

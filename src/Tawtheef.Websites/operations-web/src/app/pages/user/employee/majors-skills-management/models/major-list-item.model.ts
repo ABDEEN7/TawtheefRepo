@@ -3,5 +3,6 @@ import {dropdownOptionsModel} from '../../../../../shared/models/dropdown-option
 export interface MajorListItemModel extends dropdownOptionsModel {
   parentId?: string | null;
   isActive?: boolean;
+  subMajorsCount?: number;
   usedInMappingsCount?: number;
 }

@@ -62,7 +62,7 @@ type Vm = {
 
             <app-remote-select
               [searchUrl]="selectCfg.parentMajor.searchUrl"
-              optionLabel="name"
+              optionLabel="name" [extraQueryParams]="{ IncludeOrphanMajors: true }"
               optionValue="id"
               [showClear]="true"
               [minChars]="1"
@@ -140,7 +140,7 @@ type Vm = {
           </div>
         </div>
 
-        
+
         <div class="modal-footer justify-content-end gap-3 border-0">
           <button  type="button" class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" (click)="cancel()">
             <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>

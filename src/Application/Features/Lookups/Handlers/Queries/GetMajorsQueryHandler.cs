@@ -18,7 +18,8 @@ public sealed class GetMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
         var dbSet = unitOfWork.GetEntityRepository<Major>().DbSet;
         var baseQuery = dbSet
             .AsNoTracking()
-            .Where(s => s.IsActive);
+            .Where(s => s.IsActive)
+            .WhereIf(!request.IncludeOrphanMajors, m => m.SubMajors!.Count > 0);
         var normalizedSearch = request.Search?.Trim();
         var isPaged = request.PaginatedRequest is not null;
 

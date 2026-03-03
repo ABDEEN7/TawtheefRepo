@@ -122,7 +122,7 @@ a {
       &:hover{ color: $color-primary;}
     }
   }
- 
+
 }
 
 p{
@@ -803,14 +803,14 @@ body.ltr
 :dir(rtl) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
   right: 0 !important;
     left: auto !IMPORTANT;
-   
+
 }
 :dir(rtl) .qatar-otp-dialog .phone-wrap .form-control{direction: ltr;}
 :dir(ltr) .qatar-otp-dialog .phone-wrap .form-control{direction: rtl;}
 :dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container{
       right: auto;
     left: 0;
-   
+
 }
 
 :dir(rtl) .office-phone .iti--allow-dropdown .iti__flag-container {
@@ -859,4 +859,8 @@ body.ltr
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
+}
+:dir(rtl) .iti__flag-container .dropdown-menu{
+  left: auto;
+  right:0 !important
 }
