@@ -18,6 +18,8 @@ const string myCors = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; });
+
 // ----- Configuration -----
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -139,6 +141,10 @@ builder.Services.AddCors(options => {
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
+builder.Services.AddHsts(options =>
+{
+    options.MaxAge = TimeSpan.FromDays(365);
+});
 
 
 if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) {
@@ -149,6 +155,7 @@ var app = builder.Build();
 
 // ----- Pipeline (order matters) -----
 app.UseForwardedHeaders();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseLanguageMiddleware();
 
@@ -187,6 +194,11 @@ app.UseDeveloperExceptionPage();
 #else
 app.UseExceptionHandler();
 #endif
+
+if (!builder.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
 {
