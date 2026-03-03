@@ -15,9 +15,9 @@ public class SkillTypeConfiguration : LookupBaseConfiguration<SkillType>
                 Id = SkillTypeIds.Educational,
                 BackendName = nameof(SkillTypeIds.Educational),
                 NameEn = "Educational",
-                NameAr = "ÊÚáíãí",
+                NameAr = "ØªØ¹Ù„ÙŠÙ…ÙŠ",
                 DescriptionEn = "Educational skills acquired through formal education",
-                DescriptionAr = "ãåÇÑÇÊ ÊÚáíãíÉ Êã ÇáÍÕæá ÚáíåÇ ãä ÎáÇá ÇáÊÚáíã ÇáÑÓãí",
+                DescriptionAr = "Ù…Ù‡Ø§Ø±Ø§Øª ØªØ¹Ù„ÙŠÙ…ÙŠØ© ØªÙ… Ø§ÙƒØªØ³Ø§Ø¨Ù‡Ø§ Ù…Ù† Ø®Ù„Ø§Ù„ Ø§Ù„ØªØ¹Ù„ÙŠÙ… Ø§Ù„Ø±Ø³Ù…ÙŠ",
                 DisplayOrder = 1
             },
             new SkillType
@@ -25,9 +25,9 @@ public class SkillTypeConfiguration : LookupBaseConfiguration<SkillType>
                 Id = SkillTypeIds.Technical,
                 BackendName = nameof(SkillTypeIds.Technical),
                 NameEn = "Technical",
-                NameAr = "ÊŞäí",
+                NameAr = "ØªÙ‚Ù†ÙŠ",
                 DescriptionEn = "Technical or hard skills related to specific tools, technologies, or methodologies",
-                DescriptionAr = "ãåÇÑÇÊ ÊŞäíÉ Ãæ ÕáÈÉ ÊÊÚáŞ ÈÃÏæÇÊ Ãæ ÊŞäíÇÊ Ãæ ãäåÌíÇÊ ãÍÏÏÉ",
+                DescriptionAr = "Ù…Ù‡Ø§Ø±Ø§Øª ØªÙ‚Ù†ÙŠØ© Ø£Ùˆ Ø¹Ù…Ù„ÙŠØ© Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø£Ø¯ÙˆØ§Øª Ø£Ùˆ ØªÙ‚Ù†ÙŠØ§Øª Ø£Ùˆ Ù…Ù†Ù‡Ø¬ÙŠØ§Øª Ù…Ø­Ø¯Ø¯Ø©",
                 DisplayOrder = 2
             },
             new SkillType
@@ -35,9 +35,9 @@ public class SkillTypeConfiguration : LookupBaseConfiguration<SkillType>
                 Id = SkillTypeIds.Professional,
                 BackendName = nameof(SkillTypeIds.Professional),
                 NameEn = "Professional",
-                NameAr = "ãåäí",
+                NameAr = "Ù…Ù‡Ù†ÙŠ",
                 DescriptionEn = "Professional soft skills and workplace competencies",
-                DescriptionAr = "ãåÇÑÇÊ ãåäíÉ äÇÚãÉ æßİÇÁÇÊ ãßÇä ÇáÚãá",
+                DescriptionAr = "Ù…Ù‡Ø§Ø±Ø§Øª Ù…Ù‡Ù†ÙŠØ© ÙˆØ³Ù„ÙˆÙƒÙŠØ© Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø¨ÙŠØ¦Ø© Ø§Ù„Ø¹Ù…Ù„",
                 DisplayOrder = 3
             },
             new SkillType
@@ -45,9 +45,9 @@ public class SkillTypeConfiguration : LookupBaseConfiguration<SkillType>
                 Id = SkillTypeIds.Other,
                 BackendName = nameof(SkillTypeIds.Other),
                 NameEn = "Other",
-                NameAr = "ÃÎÑì",
+                NameAr = "Ø£Ø®Ø±Ù‰",
                 DescriptionEn = "Other types of skills not categorized above",
-                DescriptionAr = "ÃäæÇÚ ÃÎÑì ãä ÇáãåÇÑÇÊ ÛíÑ ÇáãÕäİÉ ÃÚáÇå",
+                DescriptionAr = "Ø£Ù†ÙˆØ§Ø¹ Ø£Ø®Ø±Ù‰ Ù…Ù† Ø§Ù„Ù…Ù‡Ø§Ø±Ø§Øª ØºÙŠØ± Ø§Ù„Ù…ØµÙ†ÙØ© Ø£Ø¹Ù„Ø§Ù‡",
                 DisplayOrder = 4
             }
         );
