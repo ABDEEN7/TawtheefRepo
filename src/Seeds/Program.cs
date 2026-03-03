@@ -25,7 +25,7 @@ public static class Program
 
         // 1) Connection string selection
         var connectionString = ConsoleUi.PromptConnectionString([
-            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=NewTawtheefDB;Trusted_Connection=True;"),
+            new SavedConnection("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;"),
             new SavedConnection("PreStage", "Server=DCDCSQL2DNET01;Database=Tawthef;Trust Server Certificate=true;User id=tawthef_user;Password=Abc@1234;")
         ]);
 
