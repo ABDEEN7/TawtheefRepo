@@ -56,6 +56,30 @@ namespace Tawtheef.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("2f1b6ce7-cbc3-2b5c-b264-a02c6a87be1d"),
+                column: "DescriptionAr",
+                value: "مهارات تعليمية تم اكتسابها من خلال التعليم الرسمي");
+
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("83b504d0-25c1-5ca0-6757-df299869f002"),
+                column: "DescriptionAr",
+                value: "مهارات مهنية وسلوكية مرتبطة ببيئة العمل");
+
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("d14ac141-c057-16f5-ddd8-97d02f6a7c9b"),
+                column: "DescriptionAr",
+                value: "مهارات تقنية أو عملية مرتبطة بأدوات أو تقنيات أو منهجيات محددة");
+
             migrationBuilder.CreateIndex(
                 name: "IX_ActionLog_CreatedById",
                 schema: "hr",
@@ -81,6 +105,30 @@ namespace Tawtheef.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "ActionLog",
                 schema: "hr");
+
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("2f1b6ce7-cbc3-2b5c-b264-a02c6a87be1d"),
+                column: "DescriptionAr",
+                value: "مهارات تعليمية تم الحصول عليها من خلال التعليم الرسمي");
+
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("83b504d0-25c1-5ca0-6757-df299869f002"),
+                column: "DescriptionAr",
+                value: "مهارات مهنية ناعمة وكفاءات مكان العمل");
+
+            migrationBuilder.UpdateData(
+                schema: "lkp",
+                table: "SkillType",
+                keyColumn: "Id",
+                keyValue: new Guid("d14ac141-c057-16f5-ddd8-97d02f6a7c9b"),
+                column: "DescriptionAr",
+                value: "مهارات تقنية أو صلبة تتعلق بأدوات أو تقنيات أو منهجيات محددة");
         }
     }
 }
