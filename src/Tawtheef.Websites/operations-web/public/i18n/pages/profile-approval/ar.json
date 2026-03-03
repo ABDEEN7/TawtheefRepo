@@ -284,6 +284,7 @@
   "profileApproval.detail.finalizeBlocked": "يرجى إكمال قرارات جميع الأقسام قبل الاعتماد.",
   "profileApproval.detail.finalizeHint": "سيتاح الاعتماد بعد مراجعة جميع الأقسام.",
   "profileApproval.detail.sectionSaved": "تم حفظ قرار القسم.",
+  "profileApproval.detail.specializationRelationRequired": "يرجى تحديد مدى ارتباط الخبرة/الدورة بالتخصص قبل الاعتماد",
   "profileApproval.detail.sectionSaveFailed": "تعذر حفظ قرار القسم.",
   "profileApproval.detail.sectionApproval.unsaved": "تغييرات غير محفوظة",
   "profileApproval.detail.sectionApproval.pendingItemsBlock": "يرجى اتخاذ قرار لكل عنصر مراجعة في هذا القسم قبل حفظ القرار.",

@@ -284,6 +284,7 @@
   "profileApproval.detail.finalizeBlocked": "Complete all section decisions before finalizing.",
   "profileApproval.detail.finalizeHint": "Finalize becomes available once all sections are reviewed.",
   "profileApproval.detail.sectionSaved": "Section decision saved.",
+  "profileApproval.detail.specializationRelationRequired": "Please specify relevance to specialization before approving",
   "profileApproval.detail.sectionSaveFailed": "Failed to save section decision.",
   "profileApproval.detail.sectionApproval.unsaved": "Unsaved changes",
   "profileApproval.detail.sectionApproval.pendingItemsBlock": "Please decide on every review item in this section before saving your decision.",

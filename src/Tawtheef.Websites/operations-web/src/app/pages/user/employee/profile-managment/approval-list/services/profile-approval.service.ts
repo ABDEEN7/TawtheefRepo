@@ -33,7 +33,7 @@ export class ProfileApprovalService {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.changesDetail(profileId));
   }
 
-  decideReviewItem(reviewItemId: string, body: { status: ReviewStatus; note: string | null }) {
+  decideReviewItem(reviewItemId: string, body: { status: ReviewStatus; note: string | null; specializationRelation?: number | null }) {
     return this.http.put<void>(this.endpoints.approvals.reviewItem(reviewItemId), body);
   }
 

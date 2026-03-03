@@ -37,12 +37,20 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+
         var item = await reviewRepo.DbSet
             .Include(r => r.ProfileChange)
             .FirstOrDefaultAsync(r => r.Id == cmd.ReviewItemId && !r.IsDeleted, ct);
 
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
+
+        if (cmd.Status == ReviewStatus.Approved && 
+            (item.EntityName == ProfileReviewConstants.EntityNames.Experience || item.EntityName == ProfileReviewConstants.EntityNames.TrainingCourse) &&
+            cmd.SpecializationRelation == null)
+        {
+            return Result.Fail<Unit>(ErrorsCodes.SpecializationRelationRequired);
+        }
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var isAssigned = await assignmentRepo.DbSet
@@ -123,8 +131,37 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             ReviewStatus = cmd.Status
         });
 
+        if (cmd.Status == ReviewStatus.Approved)
+        {
+            await UpdateEntityRelevance(item, cmd.SpecializationRelation, ct);
+        }
+
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
+    }
+
+    private async Task UpdateEntityRelevance(ReviewItem item, SpecializationRelationLevel? relevance, CancellationToken ct)
+    {
+        if (relevance == null) return;
+
+        if (item.EntityName == ProfileReviewConstants.EntityNames.Experience)
+        {
+            var repo = uow.GetEntityRepository<Experience>();
+            var entity = await repo.DbSet.FirstOrDefaultAsync(e => e.Id == item.EntityId, ct);
+            if (entity != null)
+            {
+                entity.SpecializationRelation = relevance;
+            }
+        }
+        else if (item.EntityName == ProfileReviewConstants.EntityNames.TrainingCourse)
+        {
+            var repo = uow.GetEntityRepository<TrainingCourse>();
+            var entity = await repo.DbSet.FirstOrDefaultAsync(t => t.Id == item.EntityId, ct);
+            if (entity != null)
+            {
+                entity.SpecializationRelation = relevance;
+            }
+        }
     }
 
     private static Result ApplyChange(UserProfile profile, ReviewItem item, ProfileChangeRequest change)

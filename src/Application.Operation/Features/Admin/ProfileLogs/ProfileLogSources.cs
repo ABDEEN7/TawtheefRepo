@@ -1,4 +1,3 @@
-using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Features.Admin.ProfileLogs;

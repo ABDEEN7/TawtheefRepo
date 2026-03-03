@@ -18,15 +18,9 @@
             </div>
           </div>
 
-          <button
-            pButton
-            type="button"
-            class="p-button-text"
-            icon="pi pi-external-link"
-            (click)="preview(t.attachment?.url)"
-            [label]="'profileApproval.detail.viewFile' | translate"
-            [disabled]="!t.attachment?.url"
-          ></button>
+          <button pButton type="button" class="p-button-text" icon="pi pi-external-link"
+            (click)="preview(t.attachment?.url)" [label]="'profileApproval.detail.viewFile' | translate"
+            [disabled]="!t.attachment?.url"></button>
         </div>
       </ng-template>
 
@@ -56,13 +50,31 @@
         </div>
       </div>
 
-      <app-item-inline-review
-        *ngIf="reviewItemFor(t.id) as review"
-        [reviewItemId]="review.reviewItemId"
-        [status]="review.status"
-        [note]="review.note"
-        (review)="reviewItem.emit($event)"
-      ></app-item-inline-review>
+      <div class="row align-items-center mt-3 pt-3 border-top" *ngIf="reviewItemFor(t.id) as review">
+        <div class="col-md-6" *ngIf="review.status !== ReviewStatus.Approved">
+          <label class="form-label small text-muted d-block mb-1">
+            {{ 'profileApproval.detail.training.relation' | translate }}
+          </label>
+          <p-select [options]="relationOptions" [(ngModel)]="selectedRelations[t.id]" optionLabel="labelKey"
+            optionValue="value" [placeholder]="'profileApproval.detail.sectionApproval.statusPlaceholder' | translate"
+            class="w-100 p-inputtext-sm" [appendTo]="'body'">
+            <ng-template pTemplate="selectedItem" let-opt>
+              <span *ngIf="opt">{{ opt.labelKey | translate }}</span>
+            </ng-template>
+            <ng-template let-opt pTemplate="item">
+              {{ opt.labelKey | translate }}
+            </ng-template>
+          </p-select>
+          <small class="text-danger d-block mt-1"
+            *ngIf="review.status === ReviewStatus.Pending && !selectedRelations[t.id]">
+            {{ 'profileApproval.detail.specializationRelationRequired' | translate }}
+          </small>
+        </div>
+        <div class="col-md-6 text-end ms-auto">
+          <app-item-inline-review [reviewItemId]="review.reviewItemId" [status]="review.status" [note]="review.note"
+            (review)="onReview($event, t.id)"></app-item-inline-review>
+        </div>
+      </div>
     </p-card>
   </div>
 </div>

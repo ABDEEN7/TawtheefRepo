@@ -44,6 +44,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.Attachment, src => src.Certificate);
         
         config.NewConfig<Experience, ExperienceDto>()
+            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation)
             .Map(dest => dest.Attachment, src => src.Certificate)
             .Map(dest => dest.QualificationId, src => src.QualificationId)
             .Map(dest => dest.DegreeName,src=> src.Qualification == null ? null : src.Qualification.Degree)
@@ -52,6 +53,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.IsCurrent, src => src.EndDate == null);
 
         config.NewConfig<TrainingCourse, TrainingCourseDto>()
+            .Map(dest => dest.SpecializationRelation, src => src.SpecializationRelation)
             .Map(dest => dest.Attachment, src => src.Certificate);
 
         config.NewConfig<Achievement, AchievementDto>()
