@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
 import { AuthStateService } from './auth-state.service';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { EndpointsService } from '../http/endpoints.service';
 import { LoggerService } from '../services/logger.service';
 import { NavigationService } from '../services/navigation.service';
@@ -12,6 +12,7 @@ import { UserInfoModel } from '../../shared/models/user-info.model';
 import { AuthResponse } from '../models/auth/auth-response.model';
 import { NotificationService } from '../services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
+import { LoadingService } from '../services/loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthCoreService {
@@ -24,8 +25,9 @@ export class AuthCoreService {
     private authState: AuthStateService,
     private navigation: NavigationService,
     private notifier: NotificationService,
-    private translate: TranslateService
-  ) {}
+    private translate: TranslateService,
+    private loading: LoadingService
+  ) { }
 
   get getToken(): string | null {
     return this.tokenService.getToken();
@@ -73,7 +75,7 @@ export class AuthCoreService {
 
     return user$.pipe(
       map((user) => {
-        this.updateAuthState(user, accessToken);
+        this.updateAuthState(user as UserInfoModel, accessToken);
         this.navigation.safeNavigateAfterLogin();
         return true;
       }),
@@ -90,6 +92,9 @@ export class AuthCoreService {
   }
 
   private loadCurrentUser(): Observable<UserInfoModel> {
-    return this.http.get<UserInfoModel>(this.endpoints.auth.me);
+    this.loading.start();
+    return this.http.get<UserInfoModel>(this.endpoints.auth.me).pipe(
+      finalize(() => this.loading.stop())
+    );
   }
 }

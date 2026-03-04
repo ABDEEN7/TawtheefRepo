@@ -25,7 +25,7 @@ public sealed class AdditionalAttachmentUpsertDto
     [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Title contains invalid characters.")]
     public string Title { get; set; } = default!;
 
-    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-]+$", ErrorMessage = "File name contains invalid characters.")]
+    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-\(\)]+$", ErrorMessage = "File name contains invalid characters.")]
     public string FileName { get; set; } = default!;
     public Guid? AttachmentId { get; set; }
     public int? FileIndex { get; set; }

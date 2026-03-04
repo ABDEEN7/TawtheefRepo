@@ -170,18 +170,25 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
 
     this.otpService
       .verifyOtp(qid, phone, otp, qidExpiry)
-      .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: res => {
           this.auth.externalLogin(res).subscribe({
             next: success => {
-              if (success) this.ref.close(true);
+              if (success) {
+                this.ref.close(true);
+              } else {
+                this.loading = false;
+              }
             },
             error: () => {
+              this.loading = false;
               this.form.controls.otp.reset('', { emitEvent: false });
               this.form.controls.otp.enable({ emitEvent: false });
             }
           });
+        },
+        error: () => {
+          this.loading = false;
         }
       });
   }

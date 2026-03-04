@@ -238,7 +238,7 @@
   "server-error.ATTACHMENT_NOT_FOUND": "Attachment not found.",
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "Attachment is not editable during revision.",
   "server-error.INVALID_ATTACHMENT_ID": "Invalid attachment id.",
-  "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "Previous profile step is incomplete.",
+  "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "The '{{step}}' step must be completed before proceeding.",
   "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "Candidate type change is not allowed.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "National address is not allowed.",
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "Distribution employee is not active.",
@@ -279,5 +279,7 @@
   "server-error.CANNOT_LINK_INACTIVE_MAJOR_OR_SKILL": "Cannot link inactive major or skill.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE": "Cannot activate major-skill link because parent major is inactive.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE": "Cannot activate major-skill link because major is inactive.",
-  "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "Cannot activate major-skill link because skill is inactive."
+  "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "Cannot activate major-skill link because skill is inactive.",
+  "server-error.USER_IS_OFFICER": "User is registered as an officer, cannot login as an applicant.",
+  "server-error.USER_IS_APPLICANT": "User is registered as an applicant, cannot be added as an officer."
 }

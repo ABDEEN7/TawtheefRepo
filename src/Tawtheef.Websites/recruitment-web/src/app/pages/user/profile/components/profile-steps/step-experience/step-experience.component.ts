@@ -9,7 +9,8 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -56,7 +57,7 @@ export class StepExperienceComponent implements OnInit {
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
 
-  saving = false;
+  saving = signal(false);
   private lastSubmittedSignature: string | null = null;
 
   step = computed(() => this.ds.stepValidationDetailed().experience);
@@ -193,10 +194,10 @@ export class StepExperienceComponent implements OnInit {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
     this.profile.saveExperienceSection(experiences, courses).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.lastSubmittedSignature = signature;
         this.ds.markStepSubmitted('experience');
         if (this.profile.isChangeRequestMode()) {
@@ -207,7 +208,7 @@ export class StepExperienceComponent implements OnInit {
       error: (err: any) => {
         if (isDevMode())
           console.error(err);
-        this.saving = false;
+        this.saving.set(false);
       },
     });
   }

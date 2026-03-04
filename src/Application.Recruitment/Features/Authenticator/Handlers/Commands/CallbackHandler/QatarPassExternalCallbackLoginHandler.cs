@@ -71,6 +71,9 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         var linked = await userManager.FindByLoginAsync(ConstantQatarPass.Provider, providerKey);
         if (linked is not null)
         {
+            if (linked.UserTypeId == UserTypeIds.OfficeUser)
+                return await LogFailureAsync(ErrorsCodes.UserIsOfficer, linked.Id, linked.UserTypeId, ct: ct);
+
             var linkedResult = await UpsertClaimsAndIssueAsync(linked, qp, normalizedPhone, ct);
             return linkedResult.IsFailed
                 ? await LogFailureAsync(linkedResult.Errors, linked.Id, linked.UserTypeId, ct: ct)
@@ -80,6 +83,9 @@ public sealed class QatarPassExternalCallbackLoginHandler(
         var candidate = await FindCandidateByEmailAsync(placeholderEmail);
         if (candidate is not null)
         {
+            if (candidate.UserTypeId == UserTypeIds.OfficeUser)
+                return await LogFailureAsync(ErrorsCodes.UserIsOfficer, candidate.Id, candidate.UserTypeId, ct: ct);
+
             var linkRes = await LinkLoginAsync(candidate, providerKey);
             if (linkRes.IsFailed) return await LogFailureAsync(linkRes.Errors, candidate.Id, candidate.UserTypeId, ct: ct);
 

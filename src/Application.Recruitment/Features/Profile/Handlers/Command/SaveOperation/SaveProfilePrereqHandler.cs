@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Policies;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 using FluentResults;
@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
@@ -50,7 +51,7 @@ public sealed class SaveProfilePrereqHandler(
 
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
-        if (!isLockedProvider)
+        if (!isLockedProvider || profile.CandidateTypeId != CandidateTypeIds.Qatari)
             profile.CandidateTypeId = r.CandidateTypeId;
 
         profile.TargetEntityId  = r.TargetEntityId;

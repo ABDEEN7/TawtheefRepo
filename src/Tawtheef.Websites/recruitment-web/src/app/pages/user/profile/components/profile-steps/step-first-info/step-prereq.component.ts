@@ -8,7 +8,8 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -70,12 +71,12 @@ export class StepPrereqComponent implements OnInit {
   private birthCertificateFile: FileSlot = createFileSlot();
   private marriageCertificateFile: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
-  private hasCheckedProfile = false;
+  private hasCheckedProfile = signal(false);
   today = new Date();
 
   step = computed(() => this.ds.stepValidationDetailed().basic);
 
-  saving = false;
+  saving = signal(false);
   private static readonly MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
   private readonly FILE_RULES: Record<
@@ -116,13 +117,13 @@ export class StepPrereqComponent implements OnInit {
   onCandidateTypeChange(option: any) {
     if (this.ds.isCandidateTypeLocked || this.profile.isChangeRequestMode()) return;
     this.ds.up('candidateType', option);
-    this.hasCheckedProfile = false;
+    this.hasCheckedProfile.set(false);
   }
 
   onQidExpirySelect(date: Date) {
     if (this.profile.isChangeRequestMode()) return;
     this.ds.up('qidExpiry', dateToDateOnly(date));
-    this.hasCheckedProfile = false;
+    this.hasCheckedProfile.set(false);
   }
 
   private getFileExt(name: string): string {
@@ -223,7 +224,7 @@ export class StepPrereqComponent implements OnInit {
     const shouldCheckProfile = this.shouldCheckProfile();
 
     // Check is needed only if feature is enabled AND not already done
-    const needsCheckNow = shouldCheckProfile && !this.hasCheckedProfile;
+    const needsCheckNow = shouldCheckProfile && !this.hasCheckedProfile();
 
     // If nothing changed and we don't need to re-check → just go next
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
@@ -246,13 +247,13 @@ export class StepPrereqComponent implements OnInit {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
 
     const check$ = needsCheckNow
       ? this.profile.checkProfile(qid!, qidExpiry!).pipe(
         tap(res => {
           this.ds.applyMoiPersonalInfo(normalizeMoiResponse(res));
-          this.hasCheckedProfile = true;
+          this.hasCheckedProfile.set(true);
           this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
         }),
         map(() => true as const),
@@ -280,7 +281,7 @@ export class StepPrereqComponent implements OnInit {
             })
             .pipe(map(() => true as const));
         }),
-        finalize(() => (this.saving = false))
+        finalize(() => (this.saving.set(false)))
       )
       .subscribe({
         next: (canProceed: any) => {

@@ -9,7 +9,7 @@
               <div class="col-md-9">
                 <div class="d-flex align-items-center gap-3">
                   <div class="avatar-wrapper">
-                    <img #userPictureRef [src]="ds.state().avatarUrl || avatarPreviewUrl"
+                    <img #userPictureRef [src]="ds.state().avatarUrl || avatarPreviewUrl()"
                       (error)="userPictureRef.src = defaultAvatar" class="candidate-avatar-pulse"
                       alt="{{ 'wizard.personal.avatar.alt' | translate }}" (click)="openAvatarDialog()" />
                     <div class="edit-badge" (click)="openAvatarDialog()"><i class="fa fa-camera"></i></div>
@@ -40,10 +40,10 @@
                 <ul class="nav nav-pills flex-wrap stepper" aria-label="Profile steps">
                   @for (item of stepLabels; track i; let i = $index) {
                   <li class="nav-item">
-                    <a class="nav-link" [class.active]="step===i+1" [class.disabled]="!canGoTo(i+1)"
+                    <a class="nav-link" [class.active]="step()===i+1" [class.disabled]="!canGoTo(i+1)"
                       [attr.aria-disabled]="!canGoTo(i+1)" href
                       (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
-                      <span [class.is-active]="step===i+1">
+                      <span [class.is-active]="step()===i+1">
                         <i class="hgi hgi-stroke fw-normal fs-16" [class]="item.icon"></i>
                       </span>
                       <span class="step-label">{{ item.label | translate }}</span>
@@ -59,13 +59,13 @@
           <div class="col-12">
             <div class="card card-table mb-4 bg-light">
               <div class="card-body">
-                @if (loading) {
+                @if (loading()) {
                 <div class="wizard-loading" role="status" aria-live="polite">
                   <div class="loading-spinner"></div>
                   <p class="loading-text">{{ 'wizard.loading' | translate }}</p>
                 </div>
                 } @else {
-                @switch (step) {
+                @switch (step()) {
                 @case (1) { <app-step-prereq (next)="next()"></app-step-prereq> }
                 @case (2) { <app-step-personal (back)="prev()" (next)="next()"></app-step-personal> }
                 @case (3) { <app-step-contact (back)="prev()" (next)="next()"></app-step-contact> }

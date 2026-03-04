@@ -9,7 +9,7 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy, ChangeDetectorRef, signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -99,7 +99,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   notificationService = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
-  naFileError: string | null = null;
+  naFileError = signal<string | null>(null);
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
   allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   private naLocalFile: FileSlot = createFileSlot();
@@ -109,9 +109,10 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private readonly GOOGLE_PROVIDER = 'google';
   private readonly QATAR_PASS_PROVIDER = 'qatarpass';
   private readonly QATAR_RESIDENT_PROVIDER = 'qatarresidentotp';
-  // verification states
-  phoneInput: PhoneNumber | null = null;
-  phone: VerificationState = {
+  // state
+  phoneValue = signal<string | null>(null);
+  phoneOtp = signal('');
+  phone = signal<VerificationState>({
     value: null,
     valid: false,
     touched: false,
@@ -119,9 +120,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
     status: 'idle',
     cooldown: 0,
     errorMessage: null
-  };
+  });
 
-  email: VerificationState = {
+  emailValue = signal<string | null>(null);
+  emailOtp = signal('');
+  email = signal<VerificationState>({
     value: null,
     valid: false,
     touched: false,
@@ -130,22 +133,29 @@ export class StepContactComponent implements OnInit, OnDestroy {
     cooldown: 0,
     errorMessage: null,
     useCode: true
-  };
+  });
 
-  selectedCountryIso2: CountryISO = CountryISO.UnitedStates;
-  onlyPhoneCountries: CountryISO[] = [];
-  savingContact = false;
+  selectedCountryIso2 = signal<CountryISO>(CountryISO.UnitedStates);
+  onlyPhoneCountries = signal<CountryISO[]>([]);
+  savingContact = signal(false);
   private lastSubmittedSignature: string | null = null;
   private pendingGeoCountryIso2: string | null = null;
   step = computed(() => this.ds.stepValidationDetailed().contact);
+
+  requiresPhoneVerification = computed(() => {
+    const phone = this.ds.state().phone ?? null;
+    return this.isQatarProvider() && this.isQatarPhone(phone);
+  });
+
+  canVerifyPhone = computed(() => this.requiresPhoneVerification());
 
   ngOnInit(): void {
     this.configurePhoneCountries();
     this.geoIp.getCountryIso2().subscribe({
       next: (code) => {
         const ipCountry = code as CountryISO;
-        if (this.onlyPhoneCountries.includes(ipCountry)) {
-          this.selectedCountryIso2 = ipCountry;
+        if (this.onlyPhoneCountries().includes(ipCountry)) {
+          this.selectedCountryIso2.set(ipCountry);
           this.pendingGeoCountryIso2 = code;
           this.tryApplyPendingGeoCountry();
         }
@@ -155,17 +165,16 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const state = this.ds.state();
 
     // init phone
-    this.phoneInput = state.phone ?? null;
     if (state.phone) {
-      this.phone.value = state.phone.e164Number;
-      this.phone.valid = true;
+      this.phoneValue.set(state.phone.e164Number);
+      this.phone.update(s => ({ ...s, value: state.phone!.e164Number, valid: true }));
       const savedIso2 = (state.phone.countryCode ?? '').toLowerCase();
       const isAllowed =
         !savedIso2 ||
-        this.onlyPhoneCountries.length === 0 ||
-        this.onlyPhoneCountries.some(c => c.toLowerCase() === savedIso2);
+        this.onlyPhoneCountries().length === 0 ||
+        this.onlyPhoneCountries().some(c => c.toLowerCase() === savedIso2);
       if (savedIso2 && isAllowed) {
-        this.selectedCountryIso2 = state.phone.countryCode as CountryISO;
+        this.selectedCountryIso2.set(state.phone.countryCode as CountryISO);
       }
     }
     // Enforce rule on initial load:
@@ -175,7 +184,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     } else {
       // Qatar: keep your existing behavior
       if (state.phoneVerified) {
-        this.phone.status = 'verified';
+        this.phone.update(s => ({ ...s, status: 'verified' }));
         this.setLastVerifiedPhoneE164(state.phone!.e164Number);
       }
 
@@ -184,18 +193,18 @@ export class StepContactComponent implements OnInit, OnDestroy {
         const cached = this.getLastVerifiedPhoneE164();
         if (cached && cached === state.phone.e164Number) {
           this.ds.up('phoneVerified', true);
-          this.phone.status = 'verified';
+          this.phone.update(s => ({ ...s, status: 'verified' }));
         }
       }
     }
     this.syncCountryDependents(this.ds.state().country ?? null);
     // init email
     if (state.email) {
-      this.email.value = state.email;
-      this.email.valid = true;
+      this.emailValue.set(state.email);
+      this.email.update(s => ({ ...s, value: state.email!, valid: true }));
     }
     if (state.emailVerified) {
-      this.email.status = 'verified';
+      this.email.update(s => ({ ...s, status: 'verified' }));
     }
     updateRemote(this.naLocalFile, state.naFile);
     this.lastSubmittedSignature = null;
@@ -203,8 +212,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // clear timers to avoid leaks
-    if (this.phone.cooldownTimer) clearInterval(this.phone.cooldownTimer);
-    if (this.email.cooldownTimer) clearInterval(this.email.cooldownTimer);
+    if (this.phone().cooldownTimer) clearInterval(this.phone().cooldownTimer);
+    if (this.email().cooldownTimer) clearInterval(this.email().cooldownTimer);
     this.setLastVerifiedPhoneE164(null);
   }
 
@@ -226,10 +235,6 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private isQatarPhone(value: PhoneNumber | null): boolean {
     return (value as any)?.countryCode?.toUpperCase?.() === 'QA' || (value?.e164Number ?? '').startsWith('+974');
   }
-  get canVerifyPhone(): boolean {
-    return this.requiresPhoneVerification;
-  }
-
   private isQatarProvider(): boolean {
     const provider = (this.ds.state().provider ?? '').toLowerCase();
     return provider === this.QATAR_PASS_PROVIDER || provider === this.QATAR_RESIDENT_PROVIDER;
@@ -238,47 +243,45 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private isGoogleProvider(): boolean {
     return (this.ds.state().provider ?? '').toLowerCase() === this.GOOGLE_PROVIDER;
   }
-  /** Qatar provider requires Qatar phone and OTP verification. */
-  get requiresPhoneVerification(): boolean {
-    const phone = this.ds.state().phone ?? null;
-    return this.isQatarProvider() && this.isQatarPhone(phone);
-  }
 
   private resetPhoneVerificationState(): void {
     this.ds.up('phoneVerified', false);
-    this.phone.status = 'idle';
-    this.phone.otp = '';
-    this.phone.errorMessage = null;
+    this.phone.update(s => ({ ...s, status: 'idle', otp: '', errorMessage: null }));
+    this.phoneOtp.set('');
     this.setLastVerifiedPhoneE164(null); // clear cached verified phone
   }
-  private startCooldown(target: VerificationState, seconds: number): void {
-    target.cooldown = seconds;
-    if (target.cooldownTimer) clearInterval(target.cooldownTimer);
+  private startCooldown(target: any, seconds: number): void {
+    target.update((s: any) => ({ ...s, cooldown: seconds }));
+    if (target().cooldownTimer) clearInterval(target().cooldownTimer);
 
-    target.cooldownTimer = setInterval(() => {
-      target.cooldown--;
-      if (target.cooldown <= 0) {
-        target.cooldown = 0;
-        clearInterval(target.cooldownTimer);
-        target.cooldownTimer = undefined;
-      }
+    const timer = setInterval(() => {
+      target.update((s: any) => {
+        const nextCooldown = s.cooldown - 1;
+        if (nextCooldown <= 0) {
+          clearInterval(timer);
+          return { ...s, cooldown: 0, cooldownTimer: undefined };
+        }
+        return { ...s, cooldown: nextCooldown };
+      });
     }, 1000);
+
+    target.update((s: any) => ({ ...s, cooldownTimer: timer }));
   }
 
   private configurePhoneCountries(): void {
     if (this.isQatarProvider()) {
-      this.onlyPhoneCountries = [CountryISO.Qatar];
-      this.selectedCountryIso2 = CountryISO.Qatar;
+      this.onlyPhoneCountries.set([CountryISO.Qatar]);
+      this.selectedCountryIso2.set(CountryISO.Qatar);
       return;
     }
 
     if (this.isGoogleProvider()) {
-      this.onlyPhoneCountries = Object.values(CountryISO)
-        .filter(c => c !== CountryISO.Qatar) as CountryISO[];
+      this.onlyPhoneCountries.set(Object.values(CountryISO)
+        .filter(c => c !== CountryISO.Qatar) as CountryISO[]);
       return;
     }
 
-    this.onlyPhoneCountries = [];
+    this.onlyPhoneCountries.set([]);
   }
 
   private setCountryFromIso(iso2: string): void {
@@ -320,28 +323,26 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private syncInterviewPlace(country: CountryVM | null): void {
     this.ds.up('interviewPlace', country ?? null);
   }
-
   // ========== Phone ==========
   onPhoneChange(value: PhoneNumber | null): void {
     if (!value || this.ds.isLocked('phone')) return;
 
-    this.phoneInput = value;
+    this.phoneValue.set(value.e164Number);
     const incomingIso2 = (value.countryCode ?? '').toLowerCase();
     if (incomingIso2) {
       const isAllowed =
-        this.onlyPhoneCountries.length === 0 ||
-        this.onlyPhoneCountries.some(c => c.toLowerCase() === incomingIso2);
+        this.onlyPhoneCountries().length === 0 ||
+        this.onlyPhoneCountries().some(c => c.toLowerCase() === incomingIso2);
       if (isAllowed) {
-        this.selectedCountryIso2 = value.countryCode as CountryISO;
+        this.selectedCountryIso2.set(value.countryCode as CountryISO);
       }
     }
-    this.phone.touched = true;
-    this.phone.errorMessage = null;
+    this.phone.update(s => ({ ...s, touched: true, errorMessage: null }));
 
     // reset OTP workflow when the phone changes
-    if (this.phone.status === 'codeSent' || this.phone.status === 'verifying' || this.phone.status === 'failed') {
-      this.phone.otp = '';
-      this.phone.status = 'idle';
+    if (this.phone().status === 'codeSent' || this.phone().status === 'verifying' || this.phone().status === 'failed') {
+      this.phone.update(s => ({ ...s, status: 'idle' }));
+      this.phoneOtp.set('');
     }
 
     // Validate safely
@@ -363,12 +364,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
       isValid = false;
     }
 
-    this.phone.valid = isValid;
+    this.phone.update(s => ({ ...s, valid: isValid }));
 
     if (!isValid) {
       this.ds.up('phone', null);
       this.ds.up('phoneVerified', false);
-      this.phone.status = 'idle';
+      this.phone.update(s => ({ ...s, status: 'idle' }));
       return;
     }
 
@@ -383,26 +384,30 @@ export class StepContactComponent implements OnInit, OnDestroy {
       const cached = this.getLastVerifiedPhoneE164();
       if (cached && cached === value.e164Number) {
         this.ds.up('phoneVerified', true);
-        this.phone.status = 'verified';
+        this.phone.update(s => ({ ...s, status: 'verified' }));
         return;
       }
 
       this.ds.up('phoneVerified', false);
-      this.phone.status = 'idle';
+      this.phone.update(s => ({ ...s, status: 'idle' }));
       return;
     }
 
     // Google provider: no OTP required (verification UI hidden)
     if (this.isGoogleProvider()) {
       this.ds.up('phoneVerified', true); // treat as confirmed in UI to allow Next
-      this.phone.status = 'verified';
+      this.phone.update(s => ({ ...s, status: 'verified' }));
       this.setLastVerifiedPhoneE164(null);
       return;
     }
 
     // Other providers (if any): default no OTP
     this.ds.up('phoneVerified', true);
-    this.phone.status = 'verified';
+    this.phone.update(s => ({ ...s, status: 'verified' }));
+  }
+
+  onPhoneOtpChange(otp: string): void {
+    this.phoneOtp.set(otp);
   }
 
   onCountryChange(country: CountryVM | null): void {
@@ -416,33 +421,36 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.phone.valid || !state.phone || this.phone.cooldown > 0) return;
+    if (!this.phone().valid || !state.phone || this.phone().cooldown > 0) return;
 
-    this.phone.status = 'sending';
-    this.phone.errorMessage = null;
+    this.phone.update(s => ({ ...s, status: 'sending', errorMessage: null }));
 
     this.verificationService
       .requestPhoneCode({ phoneE164: state.phone.e164Number })
       .subscribe({
         next: () => {
-          this.phone.status = 'codeSent';
+          this.phone.update(s => ({ ...s, status: 'codeSent' }));
           this.startCooldown(this.phone, 60);
         },
         error: err => {
-          this.phone.status = 'failed';
+          this.phone.update(s => ({ ...s, status: 'failed' }));
 
           if (err.status === 429) {
             const retryAfterHeader = err.headers?.get?.('Retry-After');
             const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
             this.startCooldown(this.phone, retrySeconds);
-            this.phone.errorMessage = this.translate.instant(
-              'wizard.contact.codeSent.phone.cooldown',
-              { seconds: retrySeconds }
-            );
+            this.phone.update(s => ({
+              ...s,
+              errorMessage: this.translate.instant(
+                'wizard.contact.codeSent.phone.cooldown',
+                { seconds: retrySeconds }
+              )
+            }));
           } else {
-            this.phone.errorMessage = this.translate.instant(
-              'wizard.contact.codeSent.phone.error'
-            );
+            this.phone.update(s => ({
+              ...s,
+              errorMessage: this.translate.instant('wizard.contact.codeSent.phone.error')
+            }));
           }
         }
       });
@@ -455,27 +463,29 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.phone.otp) return;
+    if (!this.phoneOtp()) return;
     if (!state.phone) return;
 
-    this.phone.status = 'verifying';
-    this.phone.errorMessage = null;
+    this.phone.update(s => ({ ...s, status: 'verifying', errorMessage: null }));
 
     this.verificationService.verifyPhoneCode({
       phoneE164: state.phone.e164Number,
-      code: this.phone.otp
+      code: this.phoneOtp()
     }).subscribe({
       next: () => {
-        this.phone.status = 'verified';
+        this.phone.update(s => ({ ...s, status: 'verified' }));
+        this.phoneOtp.set('');
         this.ds.up('phoneVerified', true);
 
         // Cache last verified phone outside ProfileState
         this.setLastVerifiedPhoneE164(state.phone!.e164Number);
-        this.phone.otp = '';
       },
       error: () => {
-        this.phone.status = 'failed';
-        this.phone.errorMessage = this.translate.instant('wizard.contact.codeSent.phone.error');
+        this.phone.update(s => ({
+          ...s,
+          status: 'failed',
+          errorMessage: this.translate.instant('wizard.contact.codeSent.phone.error')
+        }));
       }
     });
   }
@@ -503,7 +513,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
           next: () => {
             // reflect confirmed phone in UI state
             this.ds.up('phoneVerified', true);
-            this.phone.status = 'verified';
+            this.phone.update(s => ({ ...s, status: 'verified' }));
             resolve(true);
           },
           error: () => {
@@ -515,55 +525,62 @@ export class StepContactComponent implements OnInit, OnDestroy {
   // ========== Email ==========
 
   onEmailChange(value: string): void {
-    if (!value || this.ds.isLocked('email')) return;
+    if (this.ds.isLocked('email')) return;
 
-    this.email.touched = true;
-    this.email.errorMessage = null;
+    this.emailValue.set(value);
+    this.email.update(s => ({ ...s, touched: true, errorMessage: null }));
 
-    this.email.valid = !!value && /\S+@\S+\.\S+/.test(value);
-    if (this.email.valid) {
-      this.email.value = value;
+    const isValid = !!value && /\S+@\S+\.\S+/.test(value);
+    this.email.update(s => ({ ...s, valid: isValid, value: value }));
+
+    if (isValid) {
       this.ds.up('email', value);
     } else {
-      this.email.value = value;
       this.ds.up('email', null);
     }
 
-    if (this.email.status === 'verified') {
-      this.email.status = 'idle';
+    if (this.email().status === 'verified') {
+      this.email.update(s => ({ ...s, status: 'idle' }));
       this.ds.up('emailVerified', false);
     }
   }
 
+  onEmailOtpChange(otp: string): void {
+    this.emailOtp.set(otp);
+  }
+
   sendEmailVerification(): void {
     const state = this.ds.state();
-    if (!this.email.valid || !state.email || this.email.cooldown > 0) return;
+    if (!this.email().valid || !state.email || this.email().cooldown > 0) return;
 
-    this.email.status = 'sending';
-    this.email.errorMessage = null;
+    this.email.update(s => ({ ...s, status: 'sending', errorMessage: null }));
 
     this.verificationService
       .requestEmailVerification({ email: state.email })
       .subscribe({
         next: () => {
-          this.email.status = 'linkSent';
+          this.email.update(s => ({ ...s, status: 'linkSent' }));
           this.startCooldown(this.email, 60);
         },
         error: (err: any) => {
-          this.email.status = 'failed';
+          this.email.update(s => ({ ...s, status: 'failed' }));
 
           if (err.status === 429) {
             const retryAfterHeader = err.headers?.get?.('Retry-After');
             const retrySeconds = retryAfterHeader ? +retryAfterHeader : 60;
             this.startCooldown(this.email, retrySeconds);
-            this.email.errorMessage = this.translate.instant(
-              'wizard.contact.codeSent.email.cooldown',
-              { seconds: retrySeconds }
-            );
+            this.email.update(s => ({
+              ...s,
+              errorMessage: this.translate.instant(
+                'wizard.contact.codeSent.email.cooldown',
+                { seconds: retrySeconds }
+              )
+            }));
           } else {
-            this.email.errorMessage = this.translate.instant(
-              'wizard.contact.codeSent.email.error'
-            );
+            this.email.update(s => ({
+              ...s,
+              errorMessage: this.translate.instant('wizard.contact.codeSent.email.error')
+            }));
           }
         }
       });
@@ -571,26 +588,27 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   verifyEmailCode(): void {
     const state = this.ds.state();
-    if (!this.email.useCode || !this.email.otp || !state.email) return;
+    if (!this.email().useCode || !this.emailOtp() || !state.email) return;
 
-    this.email.status = 'verifying';
-    this.email.errorMessage = null;
+    this.email.update(s => ({ ...s, status: 'verifying', errorMessage: null }));
 
     this.verificationService
       .verifyEmailCode({
         email: state.email,
-        code: this.email.otp
+        code: this.emailOtp()
       })
       .subscribe({
         next: () => {
-          this.email.status = 'verified';
+          this.email.update(s => ({ ...s, status: 'verified' }));
+          this.emailOtp.set('');
           this.ds.up('emailVerified', true);
         },
         error: () => {
-          this.email.status = 'failed';
-          this.email.errorMessage = this.translate.instant(
-            'wizard.contact.codeSent.email.error'
-          );
+          this.email.update(s => ({
+            ...s,
+            status: 'failed',
+            errorMessage: this.translate.instant('wizard.contact.codeSent.email.error')
+          }));
         }
       });
   }
@@ -602,17 +620,17 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const file = input.files?.[0] ?? null;
     if (!file) return;
     if (!this.allowedNaTypes.includes(file.type)) {
-      this.naFileError = this.translate.instant('wizard.nationalAddress.fileTypeError');
+      this.naFileError.set(this.translate.instant('wizard.nationalAddress.fileTypeError'));
       input.value = '';
       return;
     }
     if (file.size > this.maxNaFileSize) {
-      this.naFileError = this.translate.instant('wizard.nationalAddress.fileSizeError');
+      this.naFileError.set(this.translate.instant('wizard.nationalAddress.fileSizeError'));
       input.value = '';
       return;
     }
 
-    this.naFileError = null;
+    this.naFileError.set(null);
     setLocalFile(this.naLocalFile, file);
     this.ds.up('naFileName', file.name);
     this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
@@ -642,10 +660,10 @@ export class StepContactComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.savingContact = true;
+    this.savingContact.set(true);
     this.profileService
       .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
-      .pipe(finalize(() => (this.savingContact = false)))
+      .pipe(finalize(() => (this.savingContact.set(false))))
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;

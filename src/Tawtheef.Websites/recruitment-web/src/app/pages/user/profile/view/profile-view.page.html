@@ -60,7 +60,8 @@
           <div class="d-flex align-items-center gap-3">
             <div class="profile-wrapper position-relative">
               <div id="profileImage" class="profile-image">
-                <img class="avatar shadow-sm" [src]="avatar" alt="Avatar" />
+                <img #userPictureRef class="avatar shadow-sm" [src]="avatar" alt="Avatar"
+                     (error)="userPictureRef.src = defaultAvatar"/>
               </div>
             </div>
             <div class="text-start">

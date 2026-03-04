@@ -28,7 +28,6 @@ export class BasicInfoSectionComponent {
   basicFields(): { label: string; value: unknown }[] {
     const fields = [
       { label: 'profileApproval.detail.snapshot.nationalNumber', value: this.profile.basicInformation.nationalNumber },
-      { label: 'profileApproval.detail.snapshot.idExpiry', value: this.profile.basicInformation.qidExpiry },
       { label: 'profileApproval.detail.snapshot.fullNameAr', value: this.profile.basicInformation.fullNameAr },
       { label: 'profileApproval.detail.snapshot.fullNameEn', value: this.profile.basicInformation.fullNameEn },
       { label: 'profileApproval.detail.snapshot.birthDate', value: this.profile.basicInformation.birthDate },
@@ -46,6 +45,8 @@ export class BasicInfoSectionComponent {
               : this.translate.instant('profileApproval.detail.snapshot.disabilityNo'),
       },
       { label: 'profileApproval.detail.snapshot.disabilityDetails', value: this.profile.basicInformation.disabilityDetails },
+
+      { label: 'profileApproval.detail.snapshot.idExpiry', value: this.profile.basicInformation.qidExpiry },
       { label: 'profileApproval.detail.snapshot.sponsorType', value: this.profile.basicInformation.sponsorType },
       { label: 'profileApproval.detail.snapshot.sponsorEmployerName', value: this.profile.basicInformation.sponsorEmployerName },
       { label: 'profileApproval.detail.snapshot.sponsorEmployerNumber', value: this.profile.basicInformation.sponsorEmployerNumber },

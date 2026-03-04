@@ -77,13 +77,13 @@ export class WizardProfileComponent implements OnInit {
   userService = inject(UserService);
   profileService = inject(ProfileService);
 
-  avatarPreviewUrl: string | null = null
+  avatarPreviewUrl = signal<string | null>(null);
   defaultAvatar = AvatarUtils.default;
 
-  step = 1;
+  step = signal(1);
   total = 10;
 
-  loading = true;
+  loading = signal(true);
   private forcedStep: number | null = null;
 
   stepLabels: { label: string, icon: string }[] = [
@@ -123,13 +123,17 @@ export class WizardProfileComponent implements OnInit {
     'languages',
     'attachments',
   ];
-  private touchedSteps = new Set<number>();
+  private touchedSteps = signal<Set<number>>(new Set());
 
   private markTouched(step: number) {
-    this.touchedSteps.add(step);
+    this.touchedSteps.update(s => {
+      const next = new Set(s);
+      next.add(step);
+      return next;
+    });
   }
   isStepTouched(step: number): boolean {
-    return this.touchedSteps.has(step);
+    return this.touchedSteps().has(step);
   }
   // Complete = valid AND touched
   isStepComplete(step: number): boolean {
@@ -137,7 +141,7 @@ export class WizardProfileComponent implements OnInit {
   }
   isCurrentStepValid(): boolean {
     const validity = this.ds.stepValidity();
-    const key = this.stepKeyMap[this.step];
+    const key = this.stepKeyMap[this.step()];
     if (!key) return true;
     return validity[key];
   }
@@ -180,7 +184,7 @@ export class WizardProfileComponent implements OnInit {
 
       const provider = this.userService.getCurrentUser()?.provider ?? 'Google';
       this.auth.getAuthBootstrap$()
-        .pipe(take(1), finalize(() => (this.loading = false)))
+        .pipe(take(1), finalize(() => (this.loading.set(false))))
         .subscribe((b: Partial<ProfileStatusDto>) => {
           if (b.isComplete) {
             this.router.navigate([routes.user.dashboard]);
@@ -188,7 +192,7 @@ export class WizardProfileComponent implements OnInit {
           }
 
           const prefill = this.userService.getPrefill();
-          this.avatarPreviewUrl = prefill?.avatar ?? b.avatar ?? this.userService.getCurrentUser()?.profilePictureUrl ?? null;
+          this.avatarPreviewUrl.set(prefill?.avatar ?? b.avatar ?? this.userService.getCurrentUser()?.profilePictureUrl ?? null);
           (b as any).provider = provider;
 
           this.ds.prefillFromBootstrap(
@@ -197,7 +201,7 @@ export class WizardProfileComponent implements OnInit {
 
           this.moveToFirstInvalidStep();
           this.applyForcedStep();
-          this.markTouched(this.step);
+          this.markTouched(this.step());
         });
     });
   }
@@ -222,10 +226,10 @@ export class WizardProfileComponent implements OnInit {
     }
 
     if (firstInvalidStep) {
-      this.step = firstInvalidStep;
+      this.step.set(firstInvalidStep);
     } else {
       //move to the last step
-      this.step = this.total;
+      this.step.set(this.total);
     }
   }
 
@@ -245,27 +249,27 @@ export class WizardProfileComponent implements OnInit {
 
   go(step: number) {
     if (!this.canGoTo(step)) return;
-    this.step = step;
-    this.markTouched(this.step);
+    this.step.set(step);
+    this.markTouched(this.step());
   }
 
   next() {
-    this.markTouched(this.step);
+    this.markTouched(this.step());
     if (!this.isCurrentStepValid()) {
       return;
     }
 
-    if (this.step < this.total) {
-      this.step++;
-      this.markTouched(this.step);
+    if (this.step() < this.total) {
+      this.step.update(s => s + 1);
+      this.markTouched(this.step());
     }
   }
 
   prev() {
-    this.markTouched(this.step);
-    if (this.step > 1) {
-      this.step--;
-      this.markTouched(this.step);
+    this.markTouched(this.step());
+    if (this.step() > 1) {
+      this.step.update(s => s - 1);
+      this.markTouched(this.step());
     }
   }
 
@@ -280,7 +284,7 @@ export class WizardProfileComponent implements OnInit {
     })?.onClose.subscribe((croppedImage: string | null) => {
       if (croppedImage) {
         this.ds.up('avatarUrl', croppedImage);
-        this.avatarPreviewUrl = croppedImage;
+        this.avatarPreviewUrl.set(croppedImage);
         this.userService.updateProfilePicture(croppedImage);
       }
     });
@@ -297,7 +301,7 @@ export class WizardProfileComponent implements OnInit {
   private applyForcedStep() {
     if (!this.forcedStep) return;
     if (this.canGoTo(this.forcedStep)) {
-      this.step = this.forcedStep;
+      this.step.set(this.forcedStep);
     }
   }
 }

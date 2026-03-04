@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {ButtonDirective} from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
@@ -31,15 +31,16 @@ import { ProfileSkillsSectionComponent } from './sections/skills/skills-section.
 import { ProfileLanguagesSectionComponent } from './sections/languages/languages-section.component';
 import { ProfileAttachmentsSectionComponent } from './sections/attachments/attachments-section.component';
 import { ProfileViewCqrs } from './profile-view.cqrs';
-import {changeRequestDto} from './dtos/change-request-dto';
-import {applyFieldChanges, detectChangedFields, FieldChange} from './utils/detect-change-fields';
-import {AvatarUtils} from '../../../../core/utils/avatar-utils';
+import { changeRequestDto } from './dtos/change-request-dto';
+import { applyFieldChanges, detectChangedFields, FieldChange } from './utils/detect-change-fields';
+import { AvatarUtils } from '../../../../core/utils/avatar-utils';
 import { ProfileService } from '../wizard-profile/services/profile.service';
-import {ProfileLookupsService} from '../wizard-profile/services/profile-lookups.service';
-import {PROFILE_WRITE_MODE} from '../wizard-profile/services/profile-write-mode.token';
-import {ProfileOverviewService} from './services/profile-overview.service';
-import {createProfileOverviewVisibility, ProfileOverviewVisibility} from './services/profile-overview.visibility';
-import {LanguageService} from '../../../../core/services/language.service';
+import { ProfileLookupsService } from '../wizard-profile/services/profile-lookups.service';
+import { PROFILE_WRITE_MODE } from '../wizard-profile/services/profile-write-mode.token';
+import { ProfileOverviewService } from './services/profile-overview.service';
+import { createProfileOverviewVisibility, ProfileOverviewVisibility } from './services/profile-overview.visibility';
+import { LanguageService } from '../../../../core/services/language.service';
+import { AuthStateService } from '../../../../core/auth/auth-state.service';
 
 interface SectionCard {
   section: ProfileSectionEnum;
@@ -53,7 +54,7 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
 @Component({
   selector: 'app-profile-view-page',
   standalone: true,
-  providers:[
+  providers: [
     DialogService,
     ProfileService,
     { provide: PROFILE_WRITE_MODE, useValue: 'review-edit' },
@@ -88,6 +89,7 @@ export class ProfileViewPage {
   private readonly dialogService = inject(DialogService);
   private readonly lookups = inject(ProfileLookupsService);
   protected readonly languageService = inject(LanguageService);
+  private readonly authState = inject(AuthStateService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
@@ -121,17 +123,18 @@ export class ProfileViewPage {
   readonly reviewLoading = computed(() => this.review.status() === 'loading');
   readonly changeRequestsLoading = computed(() => this.changeRequests.status() === 'loading');
   readonly summaryLoading = computed(() => this.reviewLoading() || this.changeRequestsLoading());
-  get keyLabel(){
+  get keyLabel() {
     return this.cards.find(c => c.section === this.expanded())?.labelKey;
   }
-  get avatar(){
+  get avatar() {
     return this.header()?.avatar || AvatarUtils.build(this.header()?.fullNameEn ?? null);
   }
-  get canReplaceAttachment(){
+  defaultAvatar = AvatarUtils.default;
+  get canReplaceAttachment() {
     return this.enableChangeMode;
   }
-  get enableChangeMode(){
-    if(this.profileStatus() === UserProfileStatusEnum.Approved) {
+  get enableChangeMode() {
+    if (this.profileStatus() === UserProfileStatusEnum.Approved) {
       //TODO: for this moment the user can not edit his profile after approval
       // we need to change it in Phase. 2
       return false;
@@ -157,7 +160,7 @@ export class ProfileViewPage {
   protected readonly expanded = signal<ProfileSectionEnum>(ProfileSectionEnum.Personal);
 
   protected changes(section: ProfileSectionEnum) {
-    if(this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
+    if (this.profileStatus() !== UserProfileStatusEnum.Approved) return [];
     const sectionChanges = this.changeRequestsVm()
       .filter(cr => cr.section === section);
 
@@ -197,7 +200,7 @@ export class ProfileViewPage {
       );
     });
 
-    this.lookups.loadAll().subscribe(() => {});
+    this.lookups.loadAll().subscribe(() => { });
   }
 
   readonly header = computed(() => this.basics.value());
@@ -275,15 +278,15 @@ export class ProfileViewPage {
     }
   });
 
-  get canAddAttachments(){
+  get canAddAttachments() {
     return this.enableChangeMode;
   }
-  canEditSections(section: ProfileSectionEnum){
+  canEditSections(section: ProfileSectionEnum) {
     const status = this.profileStatus();
-    if(this.enableChangeMode)
+    if (this.enableChangeMode)
       return true;
-    if(status === UserProfileStatusEnum.RequiresUpdate) {
-      const indexSection = Math.min(Math.max(section - 1,0), ((this.review.value()?.sections.length ?? 1) - 1));
+    if (status === UserProfileStatusEnum.RequiresUpdate) {
+      const indexSection = Math.min(Math.max(section - 1, 0), ((this.review.value()?.sections.length ?? 1) - 1));
       return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
     }
     return false;
@@ -309,8 +312,11 @@ export class ProfileViewPage {
 
   reloadSection(section: ProfileSectionEnum) {
     this.sections.get(section)?.reload();
+    this.basics.reload();
     this.review.reload();
     this.changeRequests.reload();
+    this.authState.resetBootstrap();
+    this.authState.getAuthBootstrap$().subscribe();
   }
 
   sectionStatus(section: ProfileSectionEnum) {
@@ -342,7 +348,8 @@ export class ProfileViewPage {
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
       data: { section, mode },
-      draggable: false,   // ✅ disables dragging
+      draggable: true,
+      closable: true,
       styleClass: 'modal-dialog  modal-xl'
     })?.onClose.subscribe(result => {
       if (!result) return;

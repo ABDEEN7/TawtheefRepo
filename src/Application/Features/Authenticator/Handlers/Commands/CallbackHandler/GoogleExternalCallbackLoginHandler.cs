@@ -115,6 +115,15 @@ public class GoogleExternalCallbackLoginHandler(
                 return await LogFailureAsync(officeCheck.Errors, linkedUser.Id, linkedUser.UserTypeId, ct: ct);
             }
         }
+        else
+        {
+            // Applicant flow (or other)
+            if (linkedUser.UserTypeId == UserTypeIds.OfficeUser)
+            {
+                _log.Warning("Office user blocked from applicant login. UserId={UserId}", linkedUser.Id);
+                return await LogFailureAsync(ErrorsCodes.UserIsOfficer, linkedUser.Id, linkedUser.UserTypeId, ct: ct);
+            }
+        }
 
         return await FinalizeLoginAsync(linkedUser, info, ct);
     }
@@ -135,6 +144,12 @@ public class GoogleExternalCallbackLoginHandler(
         {
             _log.Warning("Office-not-linked flow: no user with email. Email={Email}", email);
             return await LogFailureAsync(ErrorsCodes.ExternalLoginNotLinkedOfficeUser, ct: ct);
+        }
+        
+        if (existingUser.UserTypeId == UserTypeIds.Applicant)
+        {
+             _log.Warning("Applicant user blocked from office login. UserId={UserId}", existingUser.Id);
+             return await LogFailureAsync(ErrorsCodes.UserIsApplicant, existingUser.Id, existingUser.UserTypeId, ct: ct);
         }
 
         var officeCheck = await EnsureActiveOfficeUserAsync(existingUser, ct);
@@ -198,6 +213,12 @@ public class GoogleExternalCallbackLoginHandler(
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
         {
+            if (existingUser.UserTypeId == UserTypeIds.OfficeUser)
+            {
+                _log.Warning("Office user blocked from applicant login. UserId={UserId}", existingUser.Id);
+                return await LogFailureAsync(ErrorsCodes.UserIsOfficer, existingUser.Id, existingUser.UserTypeId, ct: ct);
+            }
+
             _log.Information("Applicant-not-linked: user exists by email, attaching provider. UserId={UserId}", existingUser.Id);
             return await AttachProviderToExistingApplicantAsync(existingUser, info, ct);
         }

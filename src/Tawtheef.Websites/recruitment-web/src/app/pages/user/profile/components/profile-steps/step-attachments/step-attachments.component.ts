@@ -9,7 +9,8 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -59,7 +60,7 @@ export class StepAttachmentsComponent implements OnInit {
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
 
-  saving = false;
+  saving = signal(false);
   private lastSubmittedSignature: string | null = null;
 
   step = computed(() => this.ds.stepValidationDetailed().attachments);
@@ -249,10 +250,10 @@ export class StepAttachmentsComponent implements OnInit {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
     this.profile.saveAttachmentsSection(attachments).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.lastSubmittedSignature = signature;
         this.ds.markStepSubmitted('attachments');
         if (this.profile.isChangeRequestMode()) {
@@ -263,7 +264,7 @@ export class StepAttachmentsComponent implements OnInit {
       error: (err: any) => {
         if (isDevMode())
           console.error(err);
-        this.saving = false;
+        this.saving.set(false);
       },
     });
   }

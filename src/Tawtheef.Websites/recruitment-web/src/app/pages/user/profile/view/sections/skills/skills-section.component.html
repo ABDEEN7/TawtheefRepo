@@ -1,6 +1,13 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-sparkles" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.skills' | translate }}</span></h5>
-       <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
+      <h5 class="text-primary d-flex gap-2 align-items-center ">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
+        <span>{{ 'profileOverview.sections.skills' | translate }}</span>
+      </h5>
+       <button *ngIf="canEdit" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+               type="button" (click)="onEdit()">
+         <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i>
+         {{ 'common.edit' | translate }}
+       </button>
 </div>
 
 

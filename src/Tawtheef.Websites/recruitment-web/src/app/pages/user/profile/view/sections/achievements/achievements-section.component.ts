@@ -118,6 +118,7 @@ export class ProfileAchievementsSectionComponent {
 
     this.dialogService
       .open(AchievementModal, {
+        header: this.translate.instant('profileView.actions.editAchievement'),
         width: '50%',
         contentStyle: { 'max-height': '80vh', overflow: 'auto' },
         baseZIndex: 10000,

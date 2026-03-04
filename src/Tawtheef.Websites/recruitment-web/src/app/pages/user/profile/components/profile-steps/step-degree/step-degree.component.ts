@@ -8,7 +8,8 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -54,7 +55,7 @@ export class StepDegreeComponent implements OnInit {
   notify = inject(NotificationService);
   fileUtils = inject(FileUtilsService);
 
-  savingDegrees = false;
+  savingDegrees = signal(false);
   private lastSubmittedSignature: string | null = null;
 
   step = computed(() => this.ds.stepValidationDetailed().degrees);
@@ -163,13 +164,13 @@ export class StepDegreeComponent implements OnInit {
       return;
     }
 
-    this.savingDegrees = true;
+    this.savingDegrees.set(true);
     this.profile
       .saveEducationSection(degrees)
       .pipe(
         switchMap(() => this.ds.refreshDegreesFromBackend()),
         finalize(() => {
-          this.savingDegrees = false;
+          this.savingDegrees.set(false);
         })
       )
       .subscribe({

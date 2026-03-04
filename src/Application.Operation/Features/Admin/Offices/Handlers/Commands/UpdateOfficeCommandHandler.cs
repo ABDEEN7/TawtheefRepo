@@ -89,6 +89,21 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
         if (officeAdmin is null)
             return Result.Fail(ErrorsCodes.OfficeAdminNotFound);
 
+        if (officeAdmin.Email != email)
+        {
+            var existingUser = await userManager.Users
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (existingUser is not null && existingUser.Id != officeAdmin.Id)
+            {
+                if (existingUser.UserTypeId == UserTypeIds.Applicant)
+                    return Result.Fail(ErrorsCodes.UserIsApplicant);
+
+                return Result.Fail(ErrorsCodes.EmailAlreadyInUse);
+            }
+        }
+
         officeAdmin.Email = email;
         officeAdmin.NormalizedEmail = userManager.NormalizeEmail(email);
         officeAdmin.UserName = email;

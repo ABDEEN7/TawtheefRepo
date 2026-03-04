@@ -19,38 +19,38 @@
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
       <ngx-intl-tel-input class="prime-tel-input" [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
         [searchCountryFlag]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-        [maxLength]="15" [phoneValidation]="true" [selectedCountryISO]="selectedCountryIso2"
-        [onlyCountries]="onlyPhoneCountries" [ngModel]="phoneInput" [separateDialCode]="true"
+        [maxLength]="15" [phoneValidation]="true" [selectedCountryISO]="selectedCountryIso2()"
+        [onlyCountries]="onlyPhoneCountries()" [ngModel]="phoneValue()" [separateDialCode]="true"
         (ngModelChange)="onPhoneChange($event)" [disabled]="ds.isLocked('phone')"></ngx-intl-tel-input>
-      @if (phone.touched && !phone.valid) {
+      @if (phone().touched && !phone().valid) {
       <div class="text-danger mt-1">
         {{ 'validation.phoneInvalid' | translate }}
       </div>
       }
-      @if (ds.state().phone && canVerifyPhone) {
+      @if (ds.state().phone && canVerifyPhone()) {
       <div class="mt-1 d-flex align-items-center gap-2">
-        @if (phone.status === 'idle') {
+        @if (phone().status === 'idle') {
         <span class="text-muted">
           {{ 'wizard.contact.phoneNotVerified' | translate }}
         </span>
         }
-        @if (phone.status === 'codeSent') {
+        @if (phone().status === 'codeSent') {
         <span class="text-info">
           {{ 'wizard.contact.phoneCodeSent' | translate }}
         </span>
         }
-        @if (phone.status === 'verifying') {
+        @if (phone().status === 'verifying') {
         <span class="text-muted">
           {{ 'wizard.contact.phoneVerifying' | translate }}
         </span>
         }
-        @if (phone.status === 'verified') {
+        @if (phone().status === 'verified') {
         <span class="text-success">
           <i class="fa-solid fa-circle-check me-1"></i>
           {{ 'wizard.contact.phoneVerified' | translate }}
         </span>
         }
-        @if (phone.status === 'failed') {
+        @if (phone().status === 'failed') {
         <span class="text-danger">
           {{ 'wizard.contact.phoneFailed' | translate }}
         </span>
@@ -59,8 +59,8 @@
       @if (!ds.state().phoneVerified) {
       <div class="mt-2 d-flex align-items-center gap-2">
         <button type="button" class="btn btn-outline-secondary btn-sm" (click)="sendPhoneCode()"
-          [disabled]="!phone.valid || phone.status === 'sending' || phone.cooldown > 0">
-          @if (phone.status !== 'sending') {
+          [disabled]="!phone().valid || phone().status === 'sending' || phone().cooldown > 0">
+          @if (phone().status !== 'sending') {
           <span>
             {{ 'wizard.contact.phoneSendCode' | translate }}
           </span>
@@ -71,22 +71,23 @@
           </span>
           }
         </button>
-        @if (phone.cooldown > 0) {
+        @if (phone().cooldown > 0) {
         <span class="text-muted fz-2xs ms-2">
-          {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phone.cooldown} }}
+          {{ 'wizard.contact.phoneRetryIn' | translate:{seconds: phone().cooldown} }}
         </span>
         }
-        @if (phone.errorMessage) {
+        @if (phone().errorMessage) {
         <div class="text-danger fz-2xs mt-1">
-          {{ phone.errorMessage }}
+          {{ phone().errorMessage }}
         </div>
         }
 
-        @if (phone.status === 'codeSent') {
+        @if (phone().status === 'codeSent') {
         <div class="d-flex w-100 flex-wrap gap-2">
-          <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="phone.otp"
+          <input type="text" maxlength="6" class="form-control w-75" [ngModel]="phoneOtp()"
+            (ngModelChange)="onPhoneOtpChange($event)"
             [placeholder]="'wizard.contact.phoneOtpPlaceholder' | translate" />
-          <button type="button" class="btn btn-primary" (click)="verifyPhoneCode()" [disabled]="!phone.otp">
+          <button type="button" class="btn btn-primary" (click)="verifyPhoneCode()" [disabled]="!phoneOtp()">
             {{ 'wizard.contact.phoneVerify' | translate }}
           </button>
         </div>
@@ -97,16 +98,16 @@
     </div>
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.contact.email' | translate }}</label>
-      <input pInputText type="email" class="form-control" [ngModel]="email.value"
-        (ngModelChange)="onEmailChange($event)" [disabled]="ds.isLocked('email') || email.status === 'verified'"
-        [class.locked-field]="ds.isLocked('email') || email.status === 'verified'"
+      <input pInputText type="email" class="form-control" [ngModel]="emailValue()"
+        (ngModelChange)="onEmailChange($event)" [disabled]="ds.isLocked('email') || email().status === 'verified'"
+        [class.locked-field]="ds.isLocked('email') || email().status === 'verified'"
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
-      @if (email.touched && !email.valid) {
+      @if (email().touched && !email().valid) {
       <div class="text-danger m-2">
         {{ 'validation.emailInvalid' | translate }}
       </div>
       }
-      @if (email.status === 'verified') {
+      @if (email().status === 'verified') {
       <span class="text-success">
         <i class="fa-solid fa-circle-check me-1"></i>
         {{ 'wizard.contact.emailVerified' | translate }}
@@ -114,22 +115,22 @@
       }
       @if (ds.state().email && !ds.state().emailVerified) {
       <div class="mt-1 d-flex align-items-center gap-2 fz-2xs">
-        @if (email.status === 'idle') {
+        @if (email().status === 'idle') {
         <span class="text-muted">
           {{ 'wizard.contact.emailNotVerified' | translate }}
         </span>
         }
-        @if (email.status === 'linkSent') {
+        @if (email().status === 'linkSent') {
         <span class="text-info">
           {{ 'wizard.contact.emailLinkSent' | translate }}
         </span>
         }
-        @if (email.status === 'verifying') {
+        @if (email().status === 'verifying') {
         <span class="text-muted">
           {{ 'wizard.contact.emailVerifying' | translate }}
         </span>
         }
-        @if (email.status === 'failed') {
+        @if (email().status === 'failed') {
         <span class="text-danger">
           {{ 'wizard.contact.emailFailed' | translate }}
         </span>
@@ -137,8 +138,8 @@
       </div>
       <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
         <button type="button" class="btn btn-primary btn-sm" (click)="sendEmailVerification()"
-          [disabled]="!email.valid || email.status === 'sending' || email.cooldown > 0">
-          @if (email.status !== 'sending') {
+          [disabled]="!email().valid || email().status === 'sending' || email().cooldown > 0">
+          @if (email().status !== 'sending') {
           <span>
             {{ 'wizard.contact.emailSendVerification' | translate }}
           </span>
@@ -149,16 +150,17 @@
           </span>
           }
         </button>
-        @if (email.cooldown > 0) {
+        @if (email().cooldown > 0) {
         <span class="text-muted fz-2xs ms-2">
-          {{ 'wizard.contact.emailRetryIn' | translate:{seconds: email.cooldown} }}
+          {{ 'wizard.contact.emailRetryIn' | translate:{seconds: email().cooldown} }}
         </span>
         }
-        @if (email.useCode && email.status === 'linkSent') {
+        @if (email().useCode && email().status === 'linkSent') {
         <div class="d-flex w-100 flex-wrap gap-2">
-          <input type="text" maxlength="6" class="form-control w-75" [(ngModel)]="email.otp"
+          <input type="text" maxlength="6" class="form-control w-75" [ngModel]="emailOtp()"
+            (ngModelChange)="onEmailOtpChange($event)"
             [placeholder]="'wizard.contact.emailOtpPlaceholder' | translate" />
-          <button type="button" class="btn btn-primary" (click)="verifyEmailCode()" [disabled]="!email.otp">
+          <button type="button" class="btn btn-primary" (click)="verifyEmailCode()" [disabled]="!emailOtp()">
             {{ 'wizard.contact.emailVerify' | translate }}
           </button>
         </div>
@@ -243,8 +245,8 @@
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i><span> {{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   }
-  <button class="btn btn-primary" (click)="onNext()" [disabled]="savingContact">
-    @if (!savingContact) {
+  <button class="btn btn-primary" (click)="onNext()" [disabled]="savingContact()">
+    @if (!savingContact()) {
     <span class="d-flex align-items-center">
       <span> {{ submitLabelKey() | translate }}</span>
       <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>

@@ -7,19 +7,22 @@
       </div>
 
       <div class="row align-items-start">
-        <div class="col mb-4"><p-select [options]="lookups.languages()" optionLabel="name" [(ngModel)]="newLanguage"
-            [placeholder]="'wizard.skills.selectLanguage' | translate" [showClear]="true"
-            class="w-language w-100"></p-select></div>
+        <div class="col mb-4"><p-select [options]="lookups.languages()" optionLabel="name" [ngModel]="newLanguage()"
+            (ngModelChange)="newLanguage.set($event)" [placeholder]="'wizard.skills.selectLanguage' | translate"
+            [showClear]="true" class="w-language w-100"></p-select></div>
         <div class="col  mb-3"> <p-select [options]="lookups.languageLevels()" optionLabel="name"
-            [(ngModel)]="newSpeakingLevel" [placeholder]="'wizard.skills.selectSpeakingLevel' | translate"
-            [showClear]="true" class="w-level  w-100"></p-select></div>
+            [ngModel]="newSpeakingLevel()" (ngModelChange)="newSpeakingLevel.set($event)"
+            [placeholder]="'wizard.skills.selectSpeakingLevel' | translate" [showClear]="true"
+            class="w-level  w-100"></p-select></div>
         <div class="col mb-3"><p-select [options]="lookups.languageLevels()" optionLabel="name"
-            [(ngModel)]="newWritingLevel" [placeholder]="'wizard.skills.selectWritingLevel' | translate"
-            [showClear]="true" class="w-level  w-100"></p-select></div>
+            [ngModel]="newWritingLevel()" (ngModelChange)="newWritingLevel.set($event)"
+            [placeholder]="'wizard.skills.selectWritingLevel' | translate" [showClear]="true"
+            class="w-level  w-100"></p-select></div>
 
         <div class="col mb-3"><p-select [options]="lookups.languageLevels()" optionLabel="name"
-            [(ngModel)]="newReadingLevel" [placeholder]="'wizard.skills.selectReadingLevel' | translate"
-            [showClear]="true" class="w-level  w-100"></p-select></div>
+            [ngModel]="newReadingLevel()" (ngModelChange)="newReadingLevel.set($event)"
+            [placeholder]="'wizard.skills.selectReadingLevel' | translate" [showClear]="true"
+            class="w-level  w-100"></p-select></div>
 
         <div class="col mb-3"><button class="btn btn-primary d-flex" (click)="addLang()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i> {{ 'wizard.buttons.add' | translate }}
@@ -77,8 +80,15 @@
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
   }
-  <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
+  <button class="btn btn-primary d-flex align-items-center" (click)="onNext()" [disabled]="saving()">
+    @if (!saving()) {
     <span>{{ submitLabelKey() | translate }}</span>
     <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
+    } @else {
+    <span>
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      {{ 'wizard.buttons.saving' | translate }}
+    </span>
+    }
   </button>
 </div>

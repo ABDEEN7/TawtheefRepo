@@ -259,20 +259,20 @@
                     ((r.to | date: 'yy/MM') || '—') }}</td>
                   <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
                   <td>
-                    <ng-container
-                      *ngIf="r.certificate?.resourceName || r.fileName || r.file?.name; else noExpReviewFile">
-                      <div class="d-flex align-items-center gap-2">
-                        <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
-                        <div class="action-buttons">
-                          <button class="btn-text"
-                            (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
-                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                          </button>
-                        </div>
-
+                    @if (r.certificate?.resourceName || r.fileName || r.file?.name) {
+                    <div class="d-flex align-items-center gap-2">
+                      <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
+                      <div class="action-buttons">
+                        <button class="btn-text"
+                          (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
+                          <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                        </button>
                       </div>
-                    </ng-container>
-                    <ng-template #noExpReviewFile>—</ng-template>
+
+                    </div>
+                    } @else {
+                    —
+                    }
                   </td>
                 </tr>
               </ng-template>
@@ -314,20 +314,20 @@
                   <td>{{ (r.from | date: 'yy/MM') || '—' }} - {{ (r.to | date: 'yy/MM') || '—' }}</td>
                   <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
                   <td>
-                    <ng-container
-                      *ngIf="r.certificate?.resourceName || r.fileName || r.file?.name; else noCourseReviewFile">
-                      <div class="d-flex align-items-center gap-2">
-                        <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
-                        <div class="action-buttons">
-                          <button class="btn-text"
-                            (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
-                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                          </button>
-                        </div>
-
+                    @if (r.certificate?.resourceName || r.fileName || r.file?.name) {
+                    <div class="d-flex align-items-center gap-2">
+                      <span>{{ r.certificate?.resourceName || r.fileName || r.file?.name }}</span>
+                      <div class="action-buttons">
+                        <button class="btn-text"
+                          (click)="preview(r.attachment ?? r.certificate, r.file, r.fileName || r.certificate?.resourceName, $event)">
+                          <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                        </button>
                       </div>
-                    </ng-container>
-                    <ng-template #noCourseReviewFile>—</ng-template>
+
+                    </div>
+                    } @else {
+                    —
+                    }
                   </td>
                 </tr>
               </ng-template>
@@ -371,18 +371,19 @@
                   <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
                   <td class="text-truncate" style="max-width:260px">{{ r.description || '—' }}</td>
                   <td>
-                    <ng-container *ngIf="r.fileName || r.file?.name; else noAchievementReviewFile">
-                      <div class="d-flex align-items-center gap-2">
-                        <span>{{ r.fileName || r.file?.name }}</span>
-                        <div class="action-buttons">
-                          <button class="btn-text" (click)="preview(r.attachment, r.file, r.fileName, $event)">
-                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                          </button>
-                        </div>
-
+                    @if (r.fileName || r.file?.name) {
+                    <div class="d-flex align-items-center gap-2">
+                      <span>{{ r.fileName || r.file?.name }}</span>
+                      <div class="action-buttons">
+                        <button class="btn-text" (click)="preview(r.attachment, r.file, r.fileName, $event)">
+                          <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                        </button>
                       </div>
-                    </ng-container>
-                    <ng-template #noAchievementReviewFile>—</ng-template>
+
+                    </div>
+                    } @else {
+                    —
+                    }
                   </td>
                 </tr>
               </ng-template>
@@ -484,18 +485,19 @@
                 <tr>
                   <td>{{ r.title }}</td>
                   <td>
-                    <ng-container *ngIf="r.fileName; else noAttachmentReviewFile">
-                      <div class="d-flex align-items-center gap-2">
-                        <span>{{ r.fileName }}</span>
-                        <div class="action-buttons">
-                          <button class="btn-text" (click)="preview(r.fileRef, r.file, r.fileName, $event)">
-                            <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                          </button>
-                        </div>
-
+                    @if (r.fileName) {
+                    <div class="d-flex align-items-center gap-2">
+                      <span>{{ r.fileName }}</span>
+                      <div class="action-buttons">
+                        <button class="btn-text" (click)="preview(r.fileRef, r.file, r.fileName, $event)">
+                          <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
+                        </button>
                       </div>
-                    </ng-container>
-                    <ng-template #noAttachmentReviewFile>—</ng-template>
+
+                    </div>
+                    } @else {
+                    —
+                    }
                   </td>
                 </tr>
               </ng-template>
@@ -517,12 +519,12 @@
       <i class="fa-solid me-1" faDirArrow="start"></i> {{ 'wizard.buttons.prev' | translate }}
     </button>
     <button class="btn btn-primary ms-2" [disabled]="!canSubmit() || submitting() || submitted()" (click)="submit()">
-      <span *ngIf="!submitting(); else savingTpl">
+      @if (!submitting()) {
+      <span>
         {{ 'wizard.buttons.finalSave' | translate }} <i class="fa-solid fa-check ms-1"></i>
       </span>
+      } @else {
+      <i class="fa-solid fa-spinner fa-spin"></i> {{ 'wizard.review.saving' | translate }}
+      }
     </button>
   </div>
-
-  <ng-template #savingTpl>
-    <i class="fa-solid fa-spinner fa-spin"></i> {{ 'wizard.review.saving' | translate }}
-  </ng-template>
