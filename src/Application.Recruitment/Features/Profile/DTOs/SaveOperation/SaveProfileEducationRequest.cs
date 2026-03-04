@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
@@ -5,6 +6,8 @@ namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 public sealed record SaveProfileEducationRequest
 {
     public bool Submit { get; set; }
+
+    [RegularExpression(@"^[^\<\>]*$", ErrorMessage = "Invalid characters.")]
     public required string DegreesJson { get; set; }
     public List<IFormFile?> DegreeFiles { get; set; } = [];
 }
@@ -23,5 +26,8 @@ public sealed record SaveProfileEducationDegreeDto
     public decimal? Gpa { get; set; }
     public Guid? CertificateId { get; set; }
     public int? FileIndex { get; set; }
+
+    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-]+$", ErrorMessage = "File name contains invalid characters.")]
     public string? ExistingFileName { get; set; }
 }
+
