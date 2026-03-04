@@ -104,12 +104,11 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   this.form.controls.managementId.disable({ emitEvent: false });
   this.form.controls.departmentId.disable({ emitEvent: false });
 
+  // this code should be resolve issue Cascading when change the parent control,
+    // for example, when change sector should be clear management and department
   this.form.controls.sectorId.valueChanges
     .pipe(takeUntil(this.destroy$))
     .subscribe(sectorId => {
-      this.form.controls.managementId.reset('', { emitEvent: false });
-      this.form.controls.departmentId.reset('', { emitEvent: false });
-
       if (sectorId) {
         this.lookupsService.loadManagementsBySector(sectorId as GUID);
         this.form.controls.managementId.enable({ emitEvent: false });
@@ -124,8 +123,6 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   this.form.controls.managementId.valueChanges
     .pipe(takeUntil(this.destroy$))
     .subscribe(managementId => {
-      this.form.controls.departmentId.reset('', { emitEvent: false });
-
       if (managementId) {
         this.lookupsService.loadDepartmentsByManagement(managementId as GUID);
         this.form.controls.departmentId.enable({ emitEvent: false });
