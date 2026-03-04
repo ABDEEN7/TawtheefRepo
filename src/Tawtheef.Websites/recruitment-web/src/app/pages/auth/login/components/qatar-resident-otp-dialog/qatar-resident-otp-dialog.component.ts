@@ -9,7 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import {interval, merge, Subject} from 'rxjs';
+import { interval, merge, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -104,6 +104,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   // Submit Identify
   // -------------------------
   submitIdentification(): void {
+    if (this.loading) return;
     this.form.controls.qid.markAsTouched();
     this.form.controls.phoneNumber.markAsTouched();
     this.form.controls.qidExpiry.markAsTouched();
@@ -154,6 +155,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
   // Submit OTP
   // -------------------------
   submitOtp(): void {
+    if (this.loading) return;
     this.form.controls.otp.markAsTouched();
     if (this.form.controls.otp.invalid) return;
 
@@ -301,7 +303,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
     }
   }
 
-// Cleanup any non-digits (covers mobile input, autofill, drag-drop, etc.)
+  // Cleanup any non-digits (covers mobile input, autofill, drag-drop, etc.)
   onDigitsOnlyInput(controlName: 'qid' | 'otp', maxLen: number): void {
     const ctrl = this.form.controls[controlName];
     const raw = (ctrl.value ?? '').toString();
@@ -313,7 +315,7 @@ export class QatarResidentOtpDialogComponent implements OnDestroy {
     }
   }
 
-// Paste: allow only numeric and result must be <= maxLen
+  // Paste: allow only numeric and result must be <= maxLen
   onDigitsOnlyPaste(event: ClipboardEvent, controlName: 'qid' | 'otp', maxLen: number): void {
     const pasteText = event.clipboardData?.getData('text') ?? '';
 

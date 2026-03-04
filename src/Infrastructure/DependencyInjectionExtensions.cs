@@ -190,8 +190,8 @@ namespace Tawtheef.Infrastructure
 
             private void AddCommonRepositories()
             {
-                services.AddTransient<IUnitOfWork, UnitOfWork>()
-                    .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+                services.AddScoped<IUnitOfWork, UnitOfWork>()
+                    .AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>))
                     .AddTransient<IUserRepository, UserRepository>();
                 // Recruitment-only repositories
                 services.AddScoped<IUserProfileRepository, UserProfileRepository>();
