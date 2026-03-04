@@ -57,7 +57,6 @@ public class TokenService(
 
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
-        await sessions.SetCurrentAsync(user.Id, sid, device, ct);
 
         var refreshToken = GenerateRefreshToken(user.Id, sid, device?.Ip);
         user.RefreshTokens.Add(refreshToken);
@@ -69,6 +68,9 @@ public class TokenService(
         if (tokenResult.IsFailed)
             return tokenResult;
 
+        // Set the current session in Redis ONLY after building the token response successfully.
+        await sessions.SetCurrentAsync(user.Id, sid, device, ct);
+        
         await uow.SaveChangesAsync(ct);
         await loginAudit.LogAsync(new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource,
             true, SessionId: sid, IpAddress: device?.Ip, AttemptedAt: time.GetUtcNow()), ct);

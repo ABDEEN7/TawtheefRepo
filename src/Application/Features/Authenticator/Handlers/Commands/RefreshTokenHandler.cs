@@ -58,7 +58,11 @@ public class RefreshTokenHandler(
 
         var currentSid = await tokenService.GetCurrentSessionIdAsync(storedToken.UserId, cancellationToken);
         if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, storedToken.SecurityStamp, StringComparison.Ordinal))
+        {
+            logger.Warning("Session revoked for user {UserId}. Stored Token SID: {StoredSid}, Current Active SID: {CurrentSid}", 
+                storedToken.UserId, storedToken.SecurityStamp, currentSid);
             return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
+        }
 
         var authResponseResult = await tokenService.RotateRefreshTokenAsync(
             user,
