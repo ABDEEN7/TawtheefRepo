@@ -252,10 +252,6 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
             job.ReviewAttachment = review.reviewAttachment;
           }
 
-          if (job.majorId) {
-            this.lookupsService.loadSkillsByMajor(job.majorId);
-          }
-
           this.hasBasicData = true;
           this.showContainer = true;
           this.isLoading = false;
