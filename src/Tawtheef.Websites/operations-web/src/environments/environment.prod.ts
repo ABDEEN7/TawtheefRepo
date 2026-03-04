@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   storageProvider: 'Azure' as 'Local' | 'Azure',
-  apiBaseUrl: 'https://api.dev.example.com'
+  apiBaseUrl: 'https://careers-admin-api.edu.gov.qa/api'
 };
