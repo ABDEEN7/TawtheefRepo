@@ -208,15 +208,14 @@ app.UseSerilogRequestLogging(opts =>
 });
 
 app.UseMiddleware<ResponseLoggingMiddleware>();
-#if DEBUG
-app.UseDeveloperExceptionPage();
-#else
-app.UseExceptionHandler();
-#endif
-
 if (!builder.Environment.IsDevelopment())
 {
+    app.UseExceptionHandler();
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) {
