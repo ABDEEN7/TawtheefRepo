@@ -131,9 +131,11 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         for (var i = 0; i < currentIndex; i++)
         {
             var step = StepOrder[i];
-            if (!IsStepComplete(step, profile))
+            var validation = GetStepValidationResult(step, profile);
+            if (validation.IsFailed)
             {
-                return Result.Fail($"{ErrorsCodes.PreviousProfileStepIncomplete}:{step}");
+                var missingFields = string.Join(",", validation.Errors.Select(e => e.Message));
+                return Result.Fail($"{ErrorsCodes.PreviousProfileStepIncomplete}:{step}:{missingFields}");
             }
         }
 
@@ -148,86 +150,132 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return Result.Ok();
     }
 
-    private static bool IsStepComplete(ProfileStep step, UserProfile profile) => step switch
+    private static Result GetStepValidationResult(ProfileStep step, UserProfile profile) => step switch
     {
-        ProfileStep.Prerequisites => IsPrerequisitesComplete(profile),
-        ProfileStep.Personal => IsPersonalComplete(profile),
-        ProfileStep.Contact => IsContactComplete(profile),
-        ProfileStep.Education => profile.Qualifications is { Count: > 0 },
-        ProfileStep.Experience => true,
-        ProfileStep.Achievements => true,
-        ProfileStep.Skills => true,
-        ProfileStep.Languages => profile.Languages is { Count: > 0 },
-        ProfileStep.Attachments => true,
-        _ => false
+        ProfileStep.Prerequisites => ValidateStepPrerequisites(profile),
+        ProfileStep.Personal => ValidateStepPersonal(profile),
+        ProfileStep.Contact => ValidateStepContact(profile),
+        ProfileStep.Education => profile.Qualifications is { Count: > 0 } ? Result.Ok() : Result.Fail("atLeastOne"),
+        ProfileStep.Experience => ValidateStepExperience(profile),
+        ProfileStep.Achievements => ValidateStepAchievements(profile),
+        ProfileStep.Skills => ValidateStepSkills(profile),
+        ProfileStep.Languages => profile.Languages is { Count: > 0 } ? Result.Ok() : Result.Fail("atLeastOne"),
+        ProfileStep.Attachments => ValidateStepAttachments(profile),
+        _ => Result.Ok()
     };
 
-    private static bool IsPrerequisitesComplete(UserProfile profile)
+    private static Result ValidateStepExperience(UserProfile profile)
     {
-        if (profile.CandidateTypeId == Guid.Empty || profile.TargetEntityId == Guid.Empty)
-            return false;
+        var missing = new List<string>();
+        if (profile.Experiences is not { Count: > 0 }) 
+            missing.Add("atLeastOne");
+        
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
+    }
 
-        if (profile.ResumeAttachmentId is null || profile.NationalCardId is null)
-            return false;
+    private static Result ValidateStepAchievements(UserProfile profile)
+    {
+        var missing = new List<string>();
+        // Check if user has at least one achievement or course if required
+        // Implementation might depend on business rules, for now checking if list exist
+        if (profile.Achievements is null) missing.Add("listMissing");
+        
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
+    }
+
+    private static Result ValidateStepSkills(UserProfile profile)
+    {
+        var missing = new List<string>();
+        if (profile.Skills is not { Count: > 0 }) missing.Add("atLeastOne");
+        
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
+    }
+
+    private static Result ValidateStepAttachments(UserProfile profile)
+    {
+        var missing = new List<string>();
+        // if (profile.AdditionalAttachments is not { Count: > 0 }) missing.Add("atLeastOne");
+        
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
+    }
+
+    private static Result ValidateStepPrerequisites(UserProfile profile)
+    {
+        var missing = new List<string>();
+        if (profile.CandidateTypeId is null || profile.CandidateTypeId == Guid.Empty) missing.Add("candidateType");
+        if (profile.TargetEntityId is null || profile.TargetEntityId == Guid.Empty) missing.Add("targetEntity");
+        if (profile.ResumeAttachmentId is null) missing.Add("cv");
+        if (profile.NationalCardId is null) missing.Add("id");
 
         var requiresResidencyExpiry = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresResidencyExpiry && profile.QIDExpiry is null)
-            return false;
+            missing.Add("qidExpiry");
 
         if (ProfileValidatorUtils.RequiresBirthCertificate(profile.CandidateTypeId) && profile.BirthdayCertificateId is null)
-            return false;
+            missing.Add("birthCertificate");
 
         if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId) && profile.MarriageCertificateId is null)
-            return false;
+            missing.Add("marriageCertificate");
 
-        return true;
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 
-    private static bool IsPersonalComplete(UserProfile profile)
+    private static Result ValidateStepPersonal(UserProfile profile)
     {
-        if (string.IsNullOrWhiteSpace(profile.NationalNumber) || profile.BirthDate is null)
-            return false;
+        var missing = new List<string>();
+        if (string.IsNullOrWhiteSpace(profile.NationalNumber)) missing.Add("qid");
+        if (profile.BirthDate is null) missing.Add("dob");
 
         if (ProfileValidatorUtils.IsResidentQatar(profile.CandidateTypeId, profile.Provider))
         {
-            if(profile.QIDExpiry is null)
-                return false;
+            if (profile.QIDExpiry is null)
+                missing.Add("qidExpiry");
 
             if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider) && profile.SponsorProfileId is not null)
-                return false;
+                missing.Add("sponsorType"); // or some other related field
         }
 
-        if (profile.NationalityId is null || profile.GenderId is null ||
-            profile.ReligionId is null || profile.MaritalStatusId is null)
-            return false;
+        if (profile.NationalityId is null) missing.Add("nationality");
+        if (profile.GenderId is null) missing.Add("gender");
+        if (profile.ReligionId is null) missing.Add("religion");
+        if (profile.MaritalStatusId is null) missing.Add("marital");
 
-        if (profile.ChildrenCount < 0)
-            return false;
+        if (profile.ChildrenCount < 0) missing.Add("childrenCount");
 
-        return true;
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 
-    private static bool IsContactComplete(UserProfile profile)
+    private static Result ValidateStepContact(UserProfile profile)
     {
-        if (profile.ResidenceCountryId is null || profile.InterviewLocationId is null)
-            return false;
+        var missing = new List<string>();
+        if (profile.ResidenceCountryId is null) missing.Add("country");
+        if (profile.InterviewLocationId is null) missing.Add("interviewPlace");
 
         var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
         if (requiresNationalAddress)
         {
             if (profile.ResidenceAddress is null)
-                return false;
+            {
+                missing.Add("nationalAddress");
+            }
+            else
+            {
+                if (profile.ResidenceAddress.ZoneNo <= 0) missing.Add("naZone");
+                if (profile.ResidenceAddress.StreetNo <= 0) missing.Add("naStreet");
+                if (profile.ResidenceAddress.BuildingNo <= 0) missing.Add("naBuilding");
+                if (profile.ResidenceAddress.UnitNo < 0) missing.Add("naUnit");
+                if (profile.ResidenceAddress.CertificateId == Guid.Empty) missing.Add("naFile");
+            }
+        }
+        else
+        {
+            if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
+                missing.Add("office");
 
-            return profile.ResidenceAddress.ZoneNo > 0 &&
-                   profile.ResidenceAddress.StreetNo > 0 &&
-                   profile.ResidenceAddress.BuildingNo > 0 &&
-                   profile.ResidenceAddress.UnitNo >= 0 &&
-                   profile.ResidenceAddress.CertificateId != Guid.Empty;
+            if (string.IsNullOrWhiteSpace(profile.Address))
+                missing.Add("address");
         }
 
-        if (ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider) && profile.OfficeId is null)
-            return false;
-
-        return !string.IsNullOrWhiteSpace(profile.Address);
+        return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 }

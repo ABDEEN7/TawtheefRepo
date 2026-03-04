@@ -98,8 +98,15 @@
   </button>
   }
 
-  <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
+  <button class="btn btn-primary d-flex align-items-center" (click)="onNext()" [disabled]="saving()">
+    @if (!saving()) {
     <span>{{ submitLabelKey() | translate }}</span>
-    <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
+    <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
+    } @else {
+    <span>
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      {{ 'wizard.buttons.saving' | translate }}
+    </span>
+    }
   </button>
 </div>

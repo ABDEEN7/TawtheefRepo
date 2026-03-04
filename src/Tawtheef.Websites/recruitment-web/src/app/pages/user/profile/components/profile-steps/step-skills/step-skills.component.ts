@@ -11,7 +11,8 @@ import {
   Output,
   computed,
   input,
-  output
+  output,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -66,19 +67,19 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private readonly profile = inject(ProfileService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  saving = false;
+  saving = signal(false);
   private lastSubmittedSignature: string | null = null;
 
   step = computed(() => this.ds.stepValidationDetailed().skills);
 
-  skillOptions: DropdownOptionVM[] = [];
-  loadingSkills = false;
+  skillOptions = signal<DropdownOptionVM[]>([]);
+  loadingSkills = signal(false);
   lastQuery = '';
 
-  skillSearchModel: DropdownOptionVM | null = null;
+  skillSearchModel = signal<DropdownOptionVM | null>(null);
 
-  selectedSkill: DropdownOptionVM | null = null;
-  selectedLevel: DropdownOptionVM | null = null;
+  selectedSkill = signal<DropdownOptionVM | null>(null);
+  selectedLevel = signal<DropdownOptionVM | null>(null);
 
   // search stream
   private readonly search$ = new Subject<string>();
@@ -103,31 +104,30 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         tap(q => {
           this.lastQuery = q;
           if (q.length < 3) {
-            this.skillOptions = [];
-            this.loadingSkills = false;
+            this.skillOptions.set([]);
+            this.loadingSkills.set(false);
           }
         }),
         filter(q => q.length >= 3),
         debounceTime(300),
         switchMap(q => {
-          this.loadingSkills = true;
-          this.skillOptions = [];
+          this.loadingSkills.set(true);
+          this.skillOptions.set([]);
 
           return this.lookups.searchSkills(q).pipe(
             catchError(err => {
               console.error(err);
-              this.skillOptions = [];
+              this.skillOptions.set([]);
               return of([]);
             }),
             finalize(() => {
-              this.loadingSkills = false;
+              this.loadingSkills.set(false);
             })
           );
         })
       )
       .subscribe(res => {
-        this.skillOptions = res;
-        this.cdr.detectChanges();
+        this.skillOptions.set(res);
       });
   }
 
@@ -135,8 +135,8 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const q = (e?.query ?? '').trim();
 
     if (q.length < 3) {
-      this.skillOptions = [];
-      this.loadingSkills = false;
+      this.skillOptions.set([]);
+      this.loadingSkills.set(false);
       return;
     }
 
@@ -144,27 +144,29 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
 
   onSkillSelect(e: AutoCompleteSelectEvent): void {
-    this.selectedSkill = e.value as DropdownOptionVM;
+    this.selectedSkill.set(e.value as DropdownOptionVM);
   }
 
   addSkill(): void {
-    if (this.selectedSkill && this.selectedLevel) {
-      if (this.ds.state().skills.some(s => s.skill?.backendName == this.selectedSkill?.backendName)) {
+    const skillVal = this.selectedSkill();
+    const levelVal = this.selectedLevel();
+    if (skillVal && levelVal) {
+      if (this.ds.state().skills.some(s => s.skill?.backendName == skillVal.backendName)) {
         this.notificationService.error(this.translate.instant('wizard.profile.skills.duplicateMessage'));
         return;
       }
       const skill: Skill = {
-        skillId: this.selectedSkill.id?.toString() ?? this.selectedSkill.name,
-        skill: this.selectedSkill,
-        levelId: this.selectedLevel.id,
-        level: this.selectedLevel,
+        skillId: skillVal.id?.toString() ?? skillVal.name,
+        skill: skillVal,
+        levelId: levelVal.id,
+        level: levelVal,
       };
 
       this.ds.addSkill(skill);
-      this.selectedSkill = null;
-      this.selectedLevel = null;
-      this.skillSearchModel = null;
-      this.skillOptions = [];
+      this.selectedSkill.set(null);
+      this.selectedLevel.set(null);
+      this.skillSearchModel.set(null);
+      this.skillOptions.set([]);
       this.lastQuery = '';
     }
   }
@@ -205,10 +207,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
     this.profile.saveSkillsSection(skills).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.lastSubmittedSignature = signature;
         this.ds.markStepSubmitted('skills');
         if (this.profile.isChangeRequestMode()) {
@@ -217,7 +219,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
         this.next.emit();
       },
       error: (err: any) => {
-        this.saving = false;
+        this.saving.set(false);
       },
     });
   }

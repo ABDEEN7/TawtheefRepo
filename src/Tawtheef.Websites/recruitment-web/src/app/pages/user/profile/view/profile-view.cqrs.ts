@@ -50,18 +50,12 @@ export class ProfileViewActionApi {
 @Injectable({ providedIn: 'root' })
 export class ProfileViewCqrs {
   private readonly api = inject(ProfileViewActionApi);
-  private readonly basics$ = defer(() => this.api.basics()).pipe(shareReplay(1));
-  private readonly sectionCache = new Map<ProfileSectionEnum, Observable<ProfileStatusDto>>();
 
   basics(): Observable<ProfileStatusDto> {
-    return this.basics$;
+    return this.api.basics();
   }
 
   section(section: ProfileSectionEnum): Observable<ProfileStatusDto> {
-    if (!this.sectionCache.has(section)) {
-      this.sectionCache.set(section, defer(() => this.api.section(section)).pipe(shareReplay(1)));
-    }
-
-    return this.sectionCache.get(section)!;
+    return this.api.section(section);
   }
 }

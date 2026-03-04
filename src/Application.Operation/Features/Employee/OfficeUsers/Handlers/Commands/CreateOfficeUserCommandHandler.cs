@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.OfficeUsers.Handlers.Commands;
@@ -40,12 +41,17 @@ public sealed class CreateOfficeUserCommandHandler(
         if (string.IsNullOrWhiteSpace(nameEn))
             return Result.Fail<Guid>(ErrorsCodes.NameEnRequired);
 
-        var emailExists = await userManager.Users
+        var existingUser = await userManager.Users
             .IgnoreQueryFilters()
-            .AnyAsync(user => user.Email == email, cancellationToken);
-
-        if (emailExists)
+            .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
+        
+        if (existingUser is not null)
+        {
+            if (existingUser.UserTypeId == UserTypeIds.Applicant)
+                return Result.Fail<Guid>(ErrorsCodes.UserIsApplicant);
+                
             return Result.Fail<Guid>(ErrorsCodes.EmailAlreadyInUse);
+        }
 
         var registerResult = OfficeUser.Register(email, nameAr, nameEn);
         if (registerResult.IsFailed)

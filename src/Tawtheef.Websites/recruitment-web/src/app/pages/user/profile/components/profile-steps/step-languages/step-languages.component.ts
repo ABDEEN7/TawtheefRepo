@@ -10,7 +10,8 @@ import {
   computed,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -55,15 +56,15 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   translate = inject(TranslateService);
   profile = inject(ProfileService);
 
-  saving = false;
+  saving = signal(false);
   private lastSubmittedSignature: string | null = null;
 
   step = computed(() => this.ds.stepValidationDetailed().languages);
 
-  newLanguage?: DropdownOptionVM;
-  newSpeakingLevel?: DropdownOptionVM;
-  newWritingLevel?: DropdownOptionVM;
-  newReadingLevel?: DropdownOptionVM;
+  newLanguage = signal<DropdownOptionVM | undefined>(undefined);
+  newSpeakingLevel = signal<DropdownOptionVM | undefined>(undefined);
+  newWritingLevel = signal<DropdownOptionVM | undefined>(undefined);
+  newReadingLevel = signal<DropdownOptionVM | undefined>(undefined);
 
   ngOnInit(): void {
     const state = this.ds.state();
@@ -72,23 +73,31 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   addLang(): void {
-    if (this.newLanguage && this.newSpeakingLevel && this.newWritingLevel && this.newReadingLevel) {
-      if (this.ds.state().languages.some(s => s.lang?.backendName == this.newLanguage?.backendName)) {
+    const langVal = this.newLanguage();
+    const speakingVal = this.newSpeakingLevel();
+    const writingVal = this.newWritingLevel();
+    const readingVal = this.newReadingLevel();
+
+    if (langVal && speakingVal && writingVal && readingVal) {
+      if (this.ds.state().languages.some(s => s.lang?.backendName == langVal.backendName)) {
         this.notificationService.error(this.translate.instant('wizard.profile.languages.duplicate'));
         return;
       }
 
       this.ds.addLang({
-        langId: this.newLanguage.id,
-        lang: this.newLanguage,
-        speakingLevelId: this.newSpeakingLevel.id,
-        speakingLevel: this.newSpeakingLevel,
-        writingLevelId: this.newWritingLevel.id,
-        writingLevel: this.newWritingLevel,
-        readingLevelId: this.newReadingLevel.id,
-        readingLevel: this.newReadingLevel,
+        langId: langVal.id,
+        lang: langVal,
+        speakingLevelId: speakingVal.id,
+        speakingLevel: speakingVal,
+        writingLevelId: writingVal.id,
+        writingLevel: writingVal,
+        readingLevelId: readingVal.id,
+        readingLevel: readingVal,
       });
-      this.newLanguage = this.newSpeakingLevel = this.newWritingLevel = this.newReadingLevel = undefined;
+      this.newLanguage.set(undefined);
+      this.newSpeakingLevel.set(undefined);
+      this.newWritingLevel.set(undefined);
+      this.newReadingLevel.set(undefined);
     }
   }
 
@@ -130,10 +139,10 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.saving = true;
+    this.saving.set(true);
     this.profile.saveLanguagesSection(languages).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.lastSubmittedSignature = signature;
         this.ds.markStepSubmitted('languages');
         if (this.profile.isChangeRequestMode()) {
@@ -144,7 +153,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         if (isDevMode())
           console.error(err);
-        this.saving = false;
+        this.saving.set(false);
       },
     });
   }

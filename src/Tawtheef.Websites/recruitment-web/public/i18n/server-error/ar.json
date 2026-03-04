@@ -238,7 +238,7 @@
   "server-error.ATTACHMENT_NOT_FOUND": "المرفق غير موجود.",
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "لا يمكن تعديل المرفق أثناء المراجعة.",
   "server-error.INVALID_ATTACHMENT_ID": "معرّف المرفق غير صالح.",
-  "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "الخطوة السابقة من الملف الشخصي غير مكتملة.",
+  "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "يجب إكمال خطوة '{{step}}' قبل المتابعة.",
   "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير فئة الباحث.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "العنوان الوطني غير مسموح.",
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "الموظف غير نشط للتوزيع.",
@@ -279,5 +279,7 @@
   "server-error.CANNOT_LINK_INACTIVE_MAJOR_OR_SKILL": "لا يمكن ربط تخصص أو مهارة غير نشطة.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE": "لا يمكن تفعيل الربط لأن التخصص الرئيسي غير نشط.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE": "لا يمكن تفعيل الربط لأن التخصص غير نشط.",
-  "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "لا يمكن تفعيل الربط لأن المهارة غير نشطة."
+  "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "لا يمكن تفعيل الربط لأن المهارة غير نشطة.",
+  "server-error.USER_IS_OFFICER": "المستخدم مسجل كجهة، لا يمكن الدخول كباحث عمل.",
+  "server-error.USER_IS_APPLICANT": "المستخدم مسجل كباحث عمل، لا يمكن إضافته كجهة."
 }

@@ -167,8 +167,8 @@
 </div>
 <div class="row text-end mt-4">
   <div class="col-12">
-    <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving">
-      @if (!saving) {
+    <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving()">
+      @if (!saving()) {
       <span class=" d-flex align-items-center">
         <span>{{ submitLabelKey() | translate }}</span>
         <i class="hgi fs-18 lh-1" faDirArrow="end"></i>

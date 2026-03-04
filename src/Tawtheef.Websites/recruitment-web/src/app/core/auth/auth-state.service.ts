@@ -11,6 +11,7 @@ import { routes } from '../../routes/routes';
 import { HDR } from '../utils/headers.flags';
 import { ProfileStatusDto } from '../models/auth/auth-response.model';
 import { TokenModel } from '../models/auth/token.model';
+import { LoadingService } from '../services/loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
@@ -27,7 +28,8 @@ export class AuthStateService {
     private endpoints: EndpointsService,
     private tokenService: TokenService,
     private userService: UserService,
-  ) {}
+    private loading: LoadingService
+  ) { }
 
   setAuthenticated(value: boolean): void {
     this.isAuthenticatedSubject.next(value);
@@ -46,7 +48,7 @@ export class AuthStateService {
       try {
         const user = JSON.parse(data);
         this.userService.updateCurrentUser(user, token);
-      } catch {}
+      } catch { }
       this.isAuthenticatedSubject.next(true);
     }
 
@@ -84,7 +86,7 @@ export class AuthStateService {
               try {
                 const user = JSON.parse(data);
                 this.userService.updateCurrentUser(user, tokens.accessToken);
-              } catch {}
+              } catch { }
             }
 
             this.isAuthenticatedSubject.next(true);
@@ -160,7 +162,11 @@ export class AuthStateService {
       return this.bootstrap$;
     }
 
-    this.bootstrap$ = this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap).pipe(shareReplay(1));
+    this.loading.start();
+    this.bootstrap$ = this.http.get<ProfileStatusDto>(this.endpoints.user.bootstrap).pipe(
+      finalize(() => this.loading.stop()),
+      shareReplay(1)
+    );
 
     return this.bootstrap$;
   }

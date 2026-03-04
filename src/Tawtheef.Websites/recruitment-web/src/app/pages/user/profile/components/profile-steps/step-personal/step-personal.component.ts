@@ -8,7 +8,8 @@ import {
   computed,
   ChangeDetectionStrategy,
   input,
-  output
+  output,
+  signal
 } from '@angular/core';
 import { CommonModule, NgClass, LowerCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -80,8 +81,8 @@ export class StepPersonalComponent implements OnInit {
 
   step = computed(() => this.ds.stepValidationDetailed().personal);
 
-  savingPersonal = false;
-  verifyingSponsor = false;
+  savingPersonal = signal(false);
+  verifyingSponsor = signal(false);
   private sponsorCard: FileSlot = createFileSlot();
   private lastSubmittedSignature: string | null = null;
   readonly today = new Date();
@@ -117,8 +118,8 @@ export class StepPersonalComponent implements OnInit {
   })();
 
   // optional UI error flags
-  dobInvalid = false;
-  dobErrorKey = 'wizard.personal.dobInvalid'; // add translations
+  dobInvalid = signal(false);
+  dobErrorKey = signal('wizard.personal.dobInvalid'); // add translations
 
   onDobSelect(value: unknown) {
     if (this.ds.isLocked('dob')) return;
@@ -147,14 +148,14 @@ export class StepPersonalComponent implements OnInit {
     }
 
     // good => store as DateOnly string
-    this.dobInvalid = false;
-    this.dobErrorKey = '';
+    this.dobInvalid.set(false);
+    this.dobErrorKey.set('');
     this.updateField('dob', dateToDateOnly(date)! as any);
   }
 
   private setDobInvalid(key: string) {
-    this.dobInvalid = true;
-    this.dobErrorKey = key;
+    this.dobInvalid.set(true);
+    this.dobErrorKey.set(key);
   }
 
   /**
@@ -217,7 +218,13 @@ export class StepPersonalComponent implements OnInit {
     const maxLen = this.sponsorEmployerNumberMaxLen;
     const trimmed = digitsOnly.slice(0, maxLen);
 
-    this.updateField('sponsorEmployerNumber', trimmed as any);
+    // Bypass isLocked check to allow editing even if previously verified
+    this.ds.up('sponsorEmployerNumber', trimmed as any);
+
+    // If the number changes, any previously verified name is no longer valid
+    if (this.ds.state().sponsorType?.backendName === SponsorType.Individual) {
+      this.ds.up('sponsorEmployerName', null);
+    }
   }
   onQidChange(raw: string | null | undefined) {
     if (this.ds.isLocked('qid')) return;
@@ -293,7 +300,8 @@ export class StepPersonalComponent implements OnInit {
     // trim sponsorEmployerNumber to new max and remove non-digits
     const current = this.ds.state().sponsorEmployerNumber ?? '';
     const digits = current.replace(/\D/g, '').slice(0, this.sponsorEmployerNumberMaxLen);
-    this.updateField('sponsorEmployerNumber', digits as any);
+    this.ds.up('sponsorEmployerNumber', digits as any);
+    this.ds.up('sponsorEmployerName', null);
   }
   verifySponsorProfile() {
     const state = this.ds.state();
@@ -309,14 +317,20 @@ export class StepPersonalComponent implements OnInit {
       return;
     }
 
-    this.verifyingSponsor = true;
+    this.verifyingSponsor.set(true);
     this.profileService
       .checkProfile(state.sponsorEmployerNumber, state.sponsorQidExpiry)
-      .pipe(finalize(() => this.verifyingSponsor = false))
+      .pipe(finalize(() => this.verifyingSponsor.set(false)))
       .subscribe({
         next: (res: any) => {
           this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
           this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
+        },
+        error: () => {
+          // Clear sponsor name if verification fails
+          if (this.ds.state().sponsorType?.backendName === SponsorType.Individual) {
+            this.ds.up('sponsorEmployerName', null);
+          }
         }
       });
   }
@@ -384,11 +398,11 @@ export class StepPersonalComponent implements OnInit {
       return;
     }
 
-    this.savingPersonal = true;
+    this.savingPersonal.set(true);
 
     this.profileService
       .savePersonalSection(dto, { sponsorCard: fileToUpload(this.sponsorCard) })
-      .pipe(finalize(() => this.savingPersonal = false))
+      .pipe(finalize(() => this.savingPersonal.set(false)))
       .subscribe({
         next: () => {
           this.lastSubmittedSignature = signature;

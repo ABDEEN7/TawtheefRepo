@@ -45,11 +45,11 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var cacheKeyPrefix = $"{CacheKeyPrefix}:{typeof(TLookup).Name}:{languageToken}:{searchToken}";
         if (isPaged)
             cacheKeyPrefix = $"{cacheKeyPrefix}:page:{request.PaginatedRequest?.PageNumber}:{request.PaginatedRequest?.PageSize}";
-        var cacheKey = await LookupCacheKeyBuilder.BuildAsync(dbSet, cacheKeyPrefix, cancellationToken);
+        var cacheKey = cacheKeyPrefix;
 
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
-            entry.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+            entry.SetSlidingExpiration(TimeSpan.FromHours(1)); // Increased TTL for lookups
 
             if (isPaged && request.PaginatedRequest != null)
             {
@@ -83,22 +83,15 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
 
 public static class LookupCacheKeyBuilder
 {
-    public static async Task<string> BuildAsync<TEntity>(
+    public static Task<string> BuildAsync<TEntity>(
         IQueryable<TEntity> query,
         string prefix,
         CancellationToken cancellationToken)
         where TEntity : BaseEntity
     {
-        if (!await query.AnyAsync(cancellationToken))
-        {
-            return $"{prefix}:empty";
-        }
-
-        var count = await query.CountAsync(cancellationToken);
-        var lastUpdated = await query.MaxAsync(
-            entity => entity.UpdatedDate ?? entity.CreatedDate,
-            cancellationToken);
-
-        return $"{prefix}:{count}:{lastUpdated.Ticks}";
+        // Optimization: Avoid redundant database queries (Any, Count, Max) just for cache keys.
+        // For lookups, a TTL-based cache on the prefix is much more performant.
+        return Task.FromResult(prefix);
     }
 }
+

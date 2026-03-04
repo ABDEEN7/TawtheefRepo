@@ -2,14 +2,19 @@ using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Features.Admin.Offices.Commands;
 using Cortex.Mediator.Commands;
 using FluentResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
 public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork, 
     IOfficeUniquenessChecker uniquenessChecker,
+    UserManager<User> userManager,
     IOfficeAdminProvisioner adminProvisioner)
     : ICommandHandler<CreateOfficeCommand, IResult<Guid>>
 {
@@ -29,8 +34,16 @@ public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork,
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailInvalid);
 
-        if (await uniquenessChecker.OfficeAdminEmailExistsAsync(email, ct))
+        var existingUser = await userManager.Users
+            .FirstOrDefaultAsync(u => u.Email == email, ct);
+
+        if (existingUser is not null)
+        {
+            if (existingUser.UserTypeId == UserTypeIds.Applicant)
+                return Result.Fail<Guid>(ErrorsCodes.UserIsApplicant);
+
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailExists);
+        }
 
         if (await uniquenessChecker.OfficeCountryExistsAsync(request.CountryId, ct))
             return Result.Fail<Guid>(ErrorsCodes.OfficeCountryAlreadyAssigned);

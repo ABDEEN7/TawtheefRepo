@@ -1,27 +1,11 @@
-using Cortex.Mediator.Queries;
-using FluentResults;
 using MapsterMapper;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
-public sealed class GetAchievementTypesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetAchievementTypesQuery, IResult<List<DropdownOptions>>>
-{
-    public async Task<IResult<List<DropdownOptions>>> Handle(GetAchievementTypesQuery request, CancellationToken cancellationToken)
-    {
-        var dbSet = unitOfWork.GetEntityRepository<AchievementType>().DbSet;
-
-        var entities = await dbSet
-            .AsNoTracking()
-            .Where(s => s.IsActive)
-            .OrderBy(x => x.DisplayOrder)
-            .ToListAsync(cancellationToken);
-
-        return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
-    }
-}
+public sealed class GetAchievementTypesQueryHandler(
+    IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
+    : BaseLookupQueryHandler<AchievementType, GetAchievementTypesQuery>(unitOfWork, mapper, cache);
