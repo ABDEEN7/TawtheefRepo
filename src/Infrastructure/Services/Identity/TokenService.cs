@@ -2,10 +2,12 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -17,6 +19,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Extensions;
 using User = Tawtheef.Domain.Entities.Users.User;
 
@@ -26,13 +29,14 @@ public class TokenService(
     IOptions<JwtSettings> jwtSettings,
     IOptions<AppConfigSettings> appSettings,
     UserManager<User> userManager,
-    RoleManager<ApplicationRole> roleManager,
     IProfileCompletenessService pcs,
     ISessionService sessions,
     IHttpContextAccessor httpContextAccessor,
     TimeProvider time,
     IUnitOfWork uow,
-    ILoginAuditService loginAudit) : ITokenService
+    ILoginAuditService loginAudit,
+    IDistributedCache cache,
+    TawtheefDbContext dbContext) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
@@ -118,6 +122,8 @@ public class TokenService(
         }
 
         await uow.SaveChangesAsync(ct);
+        await cache.RemoveAsync($"roles:{userId}", ct);
+        await cache.RemoveAsync($"perms:{userId}", ct);
     }
 
     public async Task<string?> GetCurrentSessionIdAsync(Guid userId, CancellationToken ct)
@@ -176,8 +182,33 @@ public class TokenService(
     {
         var credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 
-        var roles = await userManager.GetRolesAsync(user);
-        var permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
+        var rolesKey = $"roles:{user.Id}";
+        var permsKey = $"perms:{user.Id}";
+
+        var cachedRoles = await cache.GetStringAsync(rolesKey, ct);
+        var cachedPerms = await cache.GetStringAsync(permsKey, ct);
+
+        IList<string> roles;
+        IReadOnlyCollection<string> permissions;
+
+        if (cachedRoles != null && cachedPerms != null)
+        {
+            roles = JsonSerializer.Deserialize<List<string>>(cachedRoles) ?? [];
+            permissions = JsonSerializer.Deserialize<List<string>>(cachedPerms) ?? [];
+        }
+        else
+        {
+            roles = await userManager.GetRolesAsync(user);
+            permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
+
+            var cacheOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(jwtSettings.Value.RefreshTokenExpirationHours ?? 3)
+            };
+            await cache.SetStringAsync(rolesKey, JsonSerializer.Serialize(roles), cacheOptions, ct);
+            await cache.SetStringAsync(permsKey, JsonSerializer.Serialize(permissions), cacheOptions, ct);
+        }
+
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -240,6 +271,8 @@ public class TokenService(
         }
 
         await uow.SaveChangesAsync(ct);
+        await cache.RemoveAsync($"roles:{userId}", ct);
+        await cache.RemoveAsync($"perms:{userId}", ct);
     }
 
     private static DeviceInfo? BuildDeviceInfo(HttpContext? ctx)
@@ -265,20 +298,17 @@ public class TokenService(
         if (roles.Count == 0)
             return [];
 
-        var roleEntities = await roleManager.Roles
+        var perms = await dbContext.RoleClaims
             .AsNoTracking()
-            .Where(r => r.Name != null && roles.Contains(r.Name))
+            .Where(rc => rc.ClaimType == PermClaimType)
+            .Join(dbContext.Roles.Where(r => roles.Contains(r.Name!)),
+                rc => rc.RoleId,
+                r => r.Id,
+                (rc, r) => rc.ClaimValue)
+            .Where(v => v != null)
+            .Distinct()
             .ToListAsync(ct);
 
-        var perms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var role in roleEntities)
-        {
-            var claims = await roleManager.GetClaimsAsync(role);
-            foreach (var c in claims.Where(x => x.Type == PermClaimType))
-                perms.Add(c.Value);
-        }
-
-        return perms.ToList();
+        return perms!;
     }
 }

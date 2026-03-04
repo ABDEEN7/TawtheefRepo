@@ -16,7 +16,7 @@ export class NotificationService {
     this.show('success', summary, detail);
   }
   error(detail: string, summary = this.translate.instant('common.error')){
-    this.show('error', summary, detail);
+    this.show('error', summary, detail ?? this.translate.instant('server-error.UN_EXPECTED_ERROR'));
   }
   info(detail: string, summary = this.translate.instant('common.info')){
     this.show('info', summary, detail);

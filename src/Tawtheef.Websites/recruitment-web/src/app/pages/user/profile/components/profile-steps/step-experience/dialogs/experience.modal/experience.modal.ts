@@ -13,16 +13,16 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { NgClass, NgIf } from '@angular/common';
-import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type';
-import {Select} from 'primeng/select';
-import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {EXPERIENCE_DIALOG_CONFIG} from '../dialog-config';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../../../shared/models/dropdown-options.model';
-import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
-import {Experience} from '../../../../../wizard-profile/models/experience.model';
-import {Degree} from '../../../../../wizard-profile/models/degree.model';
-import {Textarea} from 'primeng/textarea';
-import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import { dateToDateOnly } from '../../../../../../../../shared/types/dateOnly.type';
+import { Select } from 'primeng/select';
+import { FileUtilsService } from '../../../../../../../../core/utils/file-utils';
+import { EXPERIENCE_DIALOG_CONFIG } from '../dialog-config';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../../../../shared/models/dropdown-options.model';
+import { ProfileLookupsService } from '../../../../../wizard-profile/services/profile-lookups.service';
+import { Experience } from '../../../../../wizard-profile/models/experience.model';
+import { Degree } from '../../../../../wizard-profile/models/degree.model';
+import { Textarea } from 'primeng/textarea';
+import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../../../../../core/services/notification.service';
 
 type ExperienceModalInit = Partial<Experience> & {
@@ -58,7 +58,7 @@ export class ExperienceModal implements OnInit {
   private notify = inject(NotificationService);
 
   readonly limits = EXPERIENCE_DIALOG_CONFIG;
-  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
 
   fileError: string | null = null;
 
@@ -183,7 +183,7 @@ export class ExperienceModal implements OnInit {
 
     if (!this.allowedTypes.includes(file.type)) {
       this.fileError = this.translate.instant('validation.fileType', {
-        types: 'PDF, PNG, JPEG, WEBP',
+        types: 'PDF, PNG, JPEG',
       });
       this.form.patchValue({ file: null, fileName: '' });
       return;
@@ -226,7 +226,8 @@ export class ExperienceModal implements OnInit {
         fileName: v.file?.name ?? v.fileName ?? null,
         qualificationId: v.hasQualification ? v.qualificationId : null,
         attachmentId: this.initialAttachmentId ?? undefined,
-      } as unknown as Experience);
+        country: v.country,
+      } as Experience);
 
       return;
     }
@@ -257,6 +258,7 @@ export class ExperienceModal implements OnInit {
       qualificationId: v.hasQualification ? v.qualificationId : null,
       qualificationName: qualificationOption?.name ?? null,
       attachmentId: this.initialAttachmentId ?? undefined,
+      attachment: this.config.data?.initialValue?.attachment ?? null
     } as Experience;
 
     this.ref.close(payload);
@@ -284,7 +286,7 @@ export class ExperienceModal implements OnInit {
         this.initialAttachmentUrl,
         this.form.get('fileName')?.value ?? '',
         false
-      ).then(r => {});
+      ).then(r => { });
     }
   }
 

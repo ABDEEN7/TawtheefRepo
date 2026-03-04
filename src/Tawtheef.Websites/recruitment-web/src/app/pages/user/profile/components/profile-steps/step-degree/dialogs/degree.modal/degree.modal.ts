@@ -60,7 +60,7 @@ export class DegreeModal implements OnInit {
   degreeFile: File | null = null;
   maxFileSize = 1_000_000; // 1MB
   fileError: string | null = null;
-  allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+  allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   initialCertificate: UploadedFileRef | null = null;
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
@@ -178,7 +178,8 @@ export class DegreeModal implements OnInit {
   }
 
   onSave() {
-    if (this.form.invalid || this.yearError || (!this.degreeFile && !this.initialCertificate)) {
+    if (this.form.invalid || this.yearError ||
+      (!this.degreeFile && !this.initialCertificate && !this.initialAttachmentId)) {
       this.form.markAllAsTouched();
       return;
     }
@@ -210,6 +211,7 @@ export class DegreeModal implements OnInit {
       fileName: raw.degreeFileName ?? raw.file?.name ?? this.initialCertificate?.resourceName ?? null,
       file: this.degreeFile as File | null,
       attachmentId: this.initialAttachmentId,
+      certificate: this.initialCertificate,
     } as Degree;
 
     this.ref.close(payload);
@@ -224,7 +226,7 @@ export class DegreeModal implements OnInit {
     if (!this.allowedTypes.includes(file.type)) {
       this.fileError =
         this.translate.instant('validation.fileType') +
-        ': PDF, PNG, JPEG, WEBP';
+        ': PDF, PNG, JPEG';
       this.degreeFile = null;
       this.form.patchValue({ degreeFileName: null });
       input.value = '';

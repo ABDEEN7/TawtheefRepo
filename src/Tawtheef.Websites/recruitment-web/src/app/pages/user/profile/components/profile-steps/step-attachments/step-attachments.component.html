@@ -19,8 +19,8 @@
 
         <tbody [formGroup]="form">
           <ng-container formArrayName="rows">
-            <tr *ngFor="let g of rows.controls; let i = index" [formGroupName]="i" [class.is-disabled]="g.disabled">
-
+            @for (g of rows.controls; track i; let i = $index) {
+            <tr [formGroupName]="i" [class.is-disabled]="g.disabled">
               <!-- عنوان -->
               <td>
                 <input class="form-control" formControlName="title"
@@ -29,21 +29,22 @@
               </td>
 
               <td>
-                <input *ngIf="!hasFile(i)" type="file" class="form-control"
-                  accept="application/pdf,image/jpeg,image/png,image/webp,image/jpg" (change)="onFileChange(i, $event)"
+                @if (!hasFile(i)) {
+                <input type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileChange(i, $event)"
                   [disabled]="g.disabled" [class.is-invalid]="isInvalid(i,'file')">
-
-                <div *ngIf="hasFile(i)" class="d-flex align-items-center gap-3">
+                } @else {
+                <div class="d-flex align-items-center gap-3">
                   <span class="pill soft">
                     <i class="fa-solid fa-paperclip ms-1"></i>
                     {{ getFileName(i) }}
                   </span>
                   <div class="action-buttons">
-                    <button type="button" class="btn-text" *ngIf="canPreview(i)" (click)="previewFile(i, $event)">
+                    @if (canPreview(i)) {
+                    <button type="button" class="btn-text" (click)="previewFile(i, $event)">
                       <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                     </button>
+                    }
                   </div>
-
 
                   <button type="button" class="btn btn-sm btn-outline-primary" (click)="changeFile(i)"
                     [disabled]="g.disabled">
@@ -51,32 +52,37 @@
                     }}
                   </button>
                 </div>
+                }
               </td>
 
               <td>
-
                 <div class="action-buttons">
                   <button type="button" class="btn" (click)="removeRow(i)">
                     <i class="hgi hgi-stroke hgi-delete-02"></i>
                   </button>
 
-                  <button type="button" class="btn" (click)="confirmRow(i)" *ngIf="!g.disabled">
+                  @if (!g.disabled) {
+                  <button type="button" class="btn" (click)="confirmRow(i)">
                     <i class="hgi hgi-stroke hgi-tick-02"></i>
                   </button>
-
-                  <button type="button" class="btn" (click)="editRow(i)" *ngIf="g.disabled">
+                  } @else {
+                  <button type="button" class="btn" (click)="editRow(i)">
                     <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
                   </button>
+                  }
                 </div>
               </td>
             </tr>
+            }
           </ng-container>
 
-          <tr *ngIf="rows.length === 0">
+          @if (rows.length === 0) {
+          <tr>
             <td colspan="3" class="text-center text-muted py-4">
               {{ 'wizard.attachments.empty' | translate }}
             </td>
           </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -84,14 +90,16 @@
 
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex align-items-center" (click)="onBack()">
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="onBack()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
+  }
 
   <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
-    <span>{{ submitLabelKey | translate }}</span>
+    <span>{{ submitLabelKey() | translate }}</span>
     <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
   </button>
 </div>

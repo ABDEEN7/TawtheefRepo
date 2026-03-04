@@ -4,81 +4,90 @@
       <div class="d-flex justify-content-between align-items-center">
         <h5 class="text-primary  mb-4">{{ 'wizard.degrees.title' | translate }}</h5>
         <div class="d-flex gap-2">
-          <button class="btn btn-outline-primary rounded-pill ms-2" (click)="add()"><i class="hgi hgi-stroke hgi-add-01"></i> {{ 'wizard.degrees.add' | translate }}</button>
+          <button class="btn btn-outline-primary rounded-pill ms-2" (click)="add()"><i
+              class="hgi hgi-stroke hgi-add-01"></i> {{ 'wizard.degrees.add' | translate }}</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="table-card rounded overflow-hidden">
-        <div class="table-responsive">
-          <p-table [value]="ds.state().degrees" class="mt-3">
-            <ng-template pTemplate="header" class="table-light">
-              <tr>
-                <th>{{ 'wizard.degrees.degree' | translate }}</th>
-                <th>{{ 'wizard.degrees.gradCountry' | translate }}</th>
-                <th>{{ 'wizard.degrees.university' | translate }}</th>
-                <th>{{ 'wizard.degrees.main-major' | translate }}</th>
-                <th>{{ 'wizard.degrees.major' | translate }}</th>
-                <th>{{ 'wizard.degrees.gradYear' | translate }}</th>
-                <th>{{ 'wizard.degrees.studySystem' | translate }}</th>
-                <th>{{ 'wizard.degrees.gpa' | translate }}</th>
-                <th>{{ 'wizard.degrees.grade' | translate }}</th>
-                <th>{{ 'wizard.degrees.degreeFile' | translate }}</th>
-                <th>{{ 'wizard.table.actions' | translate }}</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-r let-i="rowIndex">
-              <tr>
-                <td>{{ r.degree.name }}</td>
-                <td>{{ r.gradCountry.name || '—' }}</td>
-                <td>{{ r.university?.name || '—' }}</td>
-                <td>{{ r.major?.name || '—' }}</td>
-                <td>{{ r.subMajor?.name || '—' }}</td>
-                <td>{{ r.gradYear || '—' }}</td>
-                <td>{{ r.studySystem?.name || '—' }}</td>
-                <td>{{ r.gpa || '—' }}</td>
-                <td>{{ r.grade?.name || '—' }}</td>
-                <td>
-                  <ng-container *ngIf="r.certificate?.resourceName || r.file?.name; else noDegreeFile">
-                    <div class="d-flex align-items-center gap-2">
-                      <span>{{ r.certificate?.resourceName || r.file?.name }}</span>
-                      <div class="action-buttons"><button class="btn-text" (click)="preview(r, $event)">
-                        <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
-                      </button></div>
-                    </div>
-                  </ng-container>
-                  <ng-template #noDegreeFile>—</ng-template>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                         <button class="btn" (click)="edit(i)">
-                    <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
+    <div class="table-responsive">
+      <p-table [value]="ds.state().degrees" class="mt-3">
+        <ng-template pTemplate="header" class="table-light">
+          <tr>
+            <th>{{ 'wizard.degrees.degree' | translate }}</th>
+            <th>{{ 'wizard.degrees.gradCountry' | translate }}</th>
+            <th>{{ 'wizard.degrees.university' | translate }}</th>
+            <th>{{ 'wizard.degrees.main-major' | translate }}</th>
+            <th>{{ 'wizard.degrees.major' | translate }}</th>
+            <th>{{ 'wizard.degrees.gradYear' | translate }}</th>
+            <th>{{ 'wizard.degrees.studySystem' | translate }}</th>
+            <th>{{ 'wizard.degrees.gpa' | translate }}</th>
+            <th>{{ 'wizard.degrees.grade' | translate }}</th>
+            <th>{{ 'wizard.degrees.degreeFile' | translate }}</th>
+            <th>{{ 'wizard.table.actions' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-r let-i="rowIndex">
+          <tr>
+            <td>{{ r.degree.name }}</td>
+            <td>{{ r.gradCountry.name || '—' }}</td>
+            <td>{{ r.university?.name || '—' }}</td>
+            <td>{{ r.major?.name || '—' }}</td>
+            <td>{{ r.subMajor?.name || '—' }}</td>
+            <td>{{ r.gradYear || '—' }}</td>
+            <td>{{ r.studySystem?.name || '—' }}</td>
+            <td>{{ r.gpa || '—' }}</td>
+            <td>{{ r.grade?.name || '—' }}</td>
+            <td>
+              @if (r.file?.name || r.fileName || r.certificate?.resourceName) {
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ r.file?.name || r.fileName || r.certificate?.resourceName }}</span>
+                <div class="action-buttons">
+                  <button class="btn-text" (click)="preview(r, $event)">
+                    <i class="hgi hgi-stroke hgi-view me-1"></i>{{ 'wizard.buttons.preview' | translate }}
                   </button>
-                  <button class="btn" (click)="del(i)">
-                    <i class="hgi hgi-stroke hgi-delete-02"></i>
-                  </button>
-                    </div>
-                  
-                </td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-              <tr><td colspan="11" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td></tr>
-            </ng-template>
-          </p-table>
-        </div>
+                </div>
+              </div>
+              } @else {
+              —
+              }
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn" (click)="edit(i)">
+                  <i class="hgi hgi-stroke hgi-pencil-edit-01"></i>
+                </button>
+                <button class="btn" (click)="del(i)">
+                  <i class="hgi hgi-stroke hgi-delete-02"></i>
+                </button>
+              </div>
+
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="11" class="text-center text-muted">{{ 'wizard.table.noRows' | translate }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex align-items-center justify-content-between text-end" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary d-flex align-items-center justify-content-between text-end"
+    (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
+  }
   <button class="btn btn-primary d-flex align-items-center" (click)="onNext()" [disabled]="savingDegrees">
-    <span>{{ submitLabelKey | translate }}</span>
+    <span>{{ submitLabelKey() | translate }}</span>
     <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
   </button>
 </div>

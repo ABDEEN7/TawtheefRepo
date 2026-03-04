@@ -183,6 +183,9 @@ namespace Tawtheef.Infrastructure
                     .ValidateDataAnnotations();
 
                 services.AddSingleton<IRequestBodyCapture, RequestBodyCapture>();
+
+                // Caching
+                services.AddDistributedMemoryCache();
             }
 
             private void AddCommonRepositories()

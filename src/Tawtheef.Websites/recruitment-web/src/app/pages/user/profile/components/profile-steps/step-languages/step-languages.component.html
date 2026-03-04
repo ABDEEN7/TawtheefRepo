@@ -7,41 +7,21 @@
       </div>
 
       <div class="row align-items-start">
-           <div class="col mb-4"><p-select
-             [options]="lookups.languages()"
-             optionLabel="name"
-             [(ngModel)]="newLanguage"
-             [placeholder]="'wizard.skills.selectLanguage' | translate"
-             [showClear]="true"
-             class="w-language w-100"
-           ></p-select></div>
-          <div class="col  mb-3"> <p-select
-            [options]="lookups.languageLevels()"
-            optionLabel="name"
-            [(ngModel)]="newSpeakingLevel"
-            [placeholder]="'wizard.skills.selectSpeakingLevel' | translate"
-            [showClear]="true"
-            class="w-level  w-100"
-          ></p-select></div>
-          <div class="col mb-3"><p-select
-            [options]="lookups.languageLevels()"
-            optionLabel="name"
-            [(ngModel)]="newWritingLevel"
-            [placeholder]="'wizard.skills.selectWritingLevel' | translate"
-            [showClear]="true"
-            class="w-level  w-100"
-          ></p-select></div>
+        <div class="col mb-4"><p-select [options]="lookups.languages()" optionLabel="name" [(ngModel)]="newLanguage"
+            [placeholder]="'wizard.skills.selectLanguage' | translate" [showClear]="true"
+            class="w-language w-100"></p-select></div>
+        <div class="col  mb-3"> <p-select [options]="lookups.languageLevels()" optionLabel="name"
+            [(ngModel)]="newSpeakingLevel" [placeholder]="'wizard.skills.selectSpeakingLevel' | translate"
+            [showClear]="true" class="w-level  w-100"></p-select></div>
+        <div class="col mb-3"><p-select [options]="lookups.languageLevels()" optionLabel="name"
+            [(ngModel)]="newWritingLevel" [placeholder]="'wizard.skills.selectWritingLevel' | translate"
+            [showClear]="true" class="w-level  w-100"></p-select></div>
 
-          <div class="col mb-3"><p-select
-            [options]="lookups.languageLevels()"
-            optionLabel="name"
-            [(ngModel)]="newReadingLevel"
-            [placeholder]="'wizard.skills.selectReadingLevel' | translate"
-            [showClear]="true"
-            class="w-level  w-100"
-          ></p-select></div>
+        <div class="col mb-3"><p-select [options]="lookups.languageLevels()" optionLabel="name"
+            [(ngModel)]="newReadingLevel" [placeholder]="'wizard.skills.selectReadingLevel' | translate"
+            [showClear]="true" class="w-level  w-100"></p-select></div>
 
-          <div class="col mb-3"><button class="btn btn-primary d-flex" (click)="addLang()">
+        <div class="col mb-3"><button class="btn btn-primary d-flex" (click)="addLang()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i> {{ 'wizard.buttons.add' | translate }}
           </button></div>
       </div>
@@ -64,15 +44,13 @@
                 <td><span class="pill soft">{{ r.speakingLevel.name }}</span></td>
                 <td><span class="pill soft">{{ r.writingLevel.name }}</span></td>
                 <td><span class="pill soft">{{ r.readingLevel.name }}</span></td>
-                <td >
+                <td>
                   <div class="action-buttons">
-                       <button class="btn"
-                          (click)="removeLang(i)"
-                          pTooltip="{{ 'wizard.buttons.delete' | translate }}">
-                    <i class="hgi hgi-stroke hgi-delete-02"></i>
-                  </button>
+                    <button class="btn" (click)="removeLang(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+                      <i class="hgi hgi-stroke hgi-delete-02"></i>
+                    </button>
                   </div>
-                 
+
                 </td>
               </tr>
             </ng-template>
@@ -92,13 +70,15 @@
   </div>
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
-  <button class="btn btn-primary  d-flex align-items-center" (click)="onNext()">
-    <span>{{ submitLabelKey | translate }}</span>
+  }
+  <button class="btn btn-primary d-flex align-items-center" (click)="onNext()">
+    <span>{{ submitLabelKey() | translate }}</span>
     <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
   </button>
 </div>

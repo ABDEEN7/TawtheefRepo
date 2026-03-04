@@ -33,6 +33,10 @@ public sealed class SaveProfileContactCommandValidator : AbstractValidator<SaveP
                             FileValidationHelpers.HasFile(na.NationalAddress) ||
                             FileValidationHelpers.HasExisting(na.NationalAddressFileName))
                         .WithMessage(ErrorsCodes.NationalAddressDocumentRequired);
+
+                    RuleFor(x => x.Request.NationalAddress!.NationalAddress)
+                        .Must(FileValidationHelpers.IsAllowedFileType)
+                        .WithMessage(ErrorsCodes.InvalidFileType);
                 });
             });
     }

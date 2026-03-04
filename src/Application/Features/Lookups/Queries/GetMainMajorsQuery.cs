@@ -4,4 +4,4 @@ using Tawtheef.Application.Common.Models;
 
 namespace Tawtheef.Application.Features.Lookups.Queries;
 
-public sealed record GetMajorsQuery(bool IncludeOrphanMajors): BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;
+public sealed record GetMainMajorsQuery(bool IncludeOrphanMajors): BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;

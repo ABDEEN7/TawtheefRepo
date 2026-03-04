@@ -7,7 +7,7 @@ namespace Tawtheef.Infrastructure.Services.Localization;
 
 public class LocalizationService(IHttpContextAccessor httpContextAccessor) : ILocalizationService
 {
-    private string GetCurrentLanguage()
+    public string GetCurrentLanguage()
     {
         return httpContextAccessor.HttpContext?.Items["Language"]?.ToString()?.ToLower() ?? "en";
     }

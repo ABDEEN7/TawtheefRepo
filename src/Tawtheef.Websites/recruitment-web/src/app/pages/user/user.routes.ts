@@ -1,6 +1,6 @@
 ﻿import { Routes } from '@angular/router';
-import {Dashboard} from './dashboard/dashboard';
-import {profileCompleteGuard} from '../../core/guards/profile-complete.guard';
+import { Dashboard } from './dashboard/dashboard';
+import { profileCompleteGuard } from '../../core/guards/profile-complete.guard';
 
 export const userRoutes: Routes = [
   {
@@ -22,7 +22,7 @@ export const userRoutes: Routes = [
   },
   {
     path: 'create-profile',
-    loadChildren: () =>
-      import('./profile//wizard-profile/wizard-profile.module').then(m => m.WizardProfileModule),
+    loadComponent: () =>
+      import('./profile/wizard-profile/wizard-profile.component').then(m => m.WizardProfileComponent),
   }
 ];

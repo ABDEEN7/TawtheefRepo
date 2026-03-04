@@ -1,98 +1,93 @@
 <div class="step-skills">
   <div class="row g-4">
     <div class="col-12">
-        <div class="section-head">
-            <h5 class="text-primary "> {{ 'wizard.skills.skills' | translate }}</h5>
-            <p class="text-muted d-block">{{ 'wizard.skills.hint' | translate }}</p>
-        </div>
+      <div class="section-head">
+        <h5 class="text-primary "> {{ 'wizard.skills.skills' | translate }}</h5>
+        <p class="text-muted d-block">{{ 'wizard.skills.hint' | translate }}</p>
+      </div>
 
       <div class="row my-4">
-           <div class="col-md-4">
-             <app-remote-select
-               [(ngModel)]="selectedSkill"
-               [searchUrl]="endpoints.profile.lookups.skill"
-               [placeholder]="'wizard.skills.placeholder' | translate"
-               [noResultsPlaceholder]="'wizard.skills.no-results' | translate"
-               optionLabel="name" [minChars]="0"
-               [appendTo]="'body'"
-               [extraQueryParams]="buildUserExtraParams"
-               [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
-             </app-remote-select>
-           </div>
-           <div class="col-md-4">
-              <p-select [options]="lookups.skillLevels()" optionLabel="name" [(ngModel)]="selectedLevel"
-                        [placeholder]="'wizard.skills.selectLevel' | translate" class="w-full w-100"
-                        [showClear]="true">
-              </p-select>
+        <div class="col-md-4">
+          <app-remote-select [(ngModel)]="selectedSkill" [searchUrl]="endpoints.profile.lookups.skill"
+            [placeholder]="'wizard.skills.placeholder' | translate"
+            [noResultsPlaceholder]="'wizard.skills.no-results' | translate" optionLabel="name" [minChars]="0"
+            [appendTo]="'body'" [extraQueryParams]="buildUserExtraParams"
+            [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }">
+          </app-remote-select>
+        </div>
+        <div class="col-md-4">
+          <p-select [options]="lookups.skillLevels()" optionLabel="name" [(ngModel)]="selectedLevel"
+            [placeholder]="'wizard.skills.selectLevel' | translate" class="w-full w-100" [showClear]="true">
+          </p-select>
 
-           </div>
-           <div class="col-md-4"> <button
-             class="btn btn-primary d-flex justify-content-between gap-1 align-items-center"
-             (click)="addSkill()"
-             [disabled]="!selectedSkill || !selectedLevel">
-             <i class="hgi hgi-stroke hgi-plus-sign fs-16"></i>
-             <span>{{ 'wizard.buttons.add' | translate }}</span>
-           </button></div>
+        </div>
+        <div class="col-md-4"> <button class="btn btn-primary d-flex justify-content-between gap-1 align-items-center"
+            (click)="addSkill()" [disabled]="!selectedSkill || !selectedLevel">
+            <i class="hgi hgi-stroke hgi-plus-sign fs-16"></i>
+            <span>{{ 'wizard.buttons.add' | translate }}</span>
+          </button></div>
       </div>
       <div class="table-card rounded overflow-hidden">
         <div class="table-responsive"><p-table [value]="ds.state().skills" class="p-datatable-sm ">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>{{ 'wizard.skills.skill' | translate }}</th>
-              <th>{{ 'wizard.skills.level' | translate }}</th>
-              <th>{{ 'wizard.table.actions' | translate }}</th>
-            </tr>
-          </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'wizard.skills.skill' | translate }}</th>
+                <th>{{ 'wizard.skills.level' | translate }}</th>
+                <th>{{ 'wizard.table.actions' | translate }}</th>
+              </tr>
+            </ng-template>
 
-          <ng-template pTemplate="body" let-r let-i="rowIndex">
-            <tr>
-              <td>{{ r.skill.name }}</td>
-              <td>
-              <span class=" pill soft">
-                {{ r.level.name }}
-              </span>
-              </td>
-              <td class="text-end">
+            <ng-template pTemplate="body" let-r let-i="rowIndex">
+              <tr>
+                <td>{{ r.skill.name }}</td>
+                <td>
+                  <span class=" pill soft">
+                    {{ r.level.name }}
+                  </span>
+                </td>
+                <td class="text-end">
                   <div class="action-buttons">
-                       <button
-                  class="btn"
-                  (click)="removeSkill(i)"
-                  pTooltip="{{ 'wizard.buttons.delete' | translate }}">
-                  <i class="hgi hgi-stroke hgi-delete-02"></i>
-                </button>
+                    <button class="btn" (click)="removeSkill(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+                      <i class="hgi hgi-stroke hgi-delete-02"></i>
+                    </button>
                   </div>
 
-              </td>
-            </tr>
-          </ng-template>
+                </td>
+              </tr>
+            </ng-template>
 
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="3" class="text-center text-muted">
-                {{ 'wizard.table.noRows' | translate }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table></div>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="3" class="text-center text-muted">
+                  {{ 'wizard.table.noRows' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table></div>
       </div>
 
     </div>
   </div>
 </div>
 
-<div class="d-flex justify-content-between mt-4 text-end" [ngClass]="{ 'justify-content-end': !showBack }">
-  <button *ngIf="showBack" class="btn btn-outline-secondary  d-flex align-items-center" (click)="back.emit()">
+<div class="d-flex justify-content-between mt-4 text-end" [class.justify-content-end]="!showBack()">
+  @if (showBack()) {
+  <button class="btn btn-outline-secondary d-flex align-items-center" (click)="back.emit()">
     <i class="hgi fs-18 lh-1" faDirArrow="start"></i>
     <span>{{ 'wizard.buttons.prev' | translate }}</span>
   </button>
+  }
   <button class="btn btn-primary d-flex justify-content-between" (click)="onNext()" [disabled]="saving">
-    <span *ngIf="!saving" class="d-flex align-items-center">
-       <span> {{ submitLabelKey | translate }}</span>
-        <i class="hgi  fs-18 ms-1 lh-1" faDirArrow="end"></i>
+    @if (!saving) {
+    <span class="d-flex align-items-center">
+      <span> {{ submitLabelKey() | translate }}</span>
+      <i class="hgi fs-18 ms-1 lh-1" faDirArrow="end"></i>
     </span>
-    <span *ngIf="saving">
-        <i class="fa-solid fa-spinner fa-spin me-1"></i>
-        <span> {{ 'wizard.buttons.saving' | translate }}</span>
+    } @else {
+    <span>
+      <i class="fa-solid fa-spinner fa-spin me-1"></i>
+      <span> {{ 'wizard.buttons.saving' | translate }}</span>
     </span>
+    }
   </button>
 </div>

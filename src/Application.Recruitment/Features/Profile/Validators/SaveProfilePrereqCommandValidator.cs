@@ -29,10 +29,18 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                                          FileValidationHelpers.HasExisting(cmd.Request.CvFileName))
                     .WithMessage(ErrorsCodes.CvFileRequired);
 
+                RuleFor(x => x.Request.CvFile)
+                    .Must(FileValidationHelpers.IsAllowedFileType)
+                    .WithMessage(ErrorsCodes.InvalidFileType);
+
                 RuleFor(x => x.Request.IdFile)
                     .Must((cmd, file) => FileValidationHelpers.HasFile(file) ||
                                          FileValidationHelpers.HasExisting(cmd.Request.IdFileName))
                     .WithMessage(ErrorsCodes.IdFileRequired);
+
+                RuleFor(x => x.Request.IdFile)
+                    .Must(FileValidationHelpers.IsAllowedFileType)
+                    .WithMessage(ErrorsCodes.InvalidFileType);
 
                 When(x => RequiresMarriageCertificate(x.Request), () =>
                 {
@@ -40,6 +48,10 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                         .Must((cmd, file) => FileValidationHelpers.HasFile(file) ||
                                              HasExistingMarriageFile(cmd.Request))
                         .WithMessage(ErrorsCodes.MarriageCertificateFileRequired);
+
+                    RuleFor(x => x.Request.MarriageCertificateFile)
+                        .Must(FileValidationHelpers.IsAllowedFileType)
+                        .WithMessage(ErrorsCodes.InvalidFileType);
                 });
 
                 When(x => RequiresBirthCertificate(x.Request), () =>
@@ -48,6 +60,10 @@ public sealed class SaveProfilePrereqCommandValidator : AbstractValidator<SavePr
                         .Must((cmd, file) => FileValidationHelpers.HasFile(file) ||
                                              FileValidationHelpers.HasExisting(cmd.Request.BirthCertificateFileName))
                         .WithMessage(ErrorsCodes.BirthCertificateFileRequired);
+
+                    RuleFor(x => x.Request.BirthCertificateFile)
+                        .Must(FileValidationHelpers.IsAllowedFileType)
+                        .WithMessage(ErrorsCodes.InvalidFileType);
                 });
             });
     }

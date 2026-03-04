@@ -50,9 +50,8 @@ public sealed class CustomExceptionHandler : IExceptionHandler
             Status   = statusCode,
             Title    = title,
             Instance = httpContext.Request.Path,
-            Type     = statusCode >= 500 ? "https://httpstatuses.com/500" : null,
-            // For 5xx: generic message only (no internal details leaked)
-            Detail = statusCode >= 500 ? $"Something went wrong. Please contact support with ticket number: {correlationId}." :
+            // For 5xx: use a translation key
+            Detail = statusCode >= 500 ? "INTERNAL_SERVER_ERROR" :
                 // For 4xx: show an exception message (or customize per exception)
                 exception.Message,
             Extensions =

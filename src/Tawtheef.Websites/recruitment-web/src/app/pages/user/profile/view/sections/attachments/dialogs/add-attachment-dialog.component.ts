@@ -66,7 +66,7 @@ export class AddAttachmentDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
 
-  protected readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  protected readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   protected readonly maxFileSize = 1_000_000;
   protected fileError: string | null = null;
   protected fileName: string | null = null;

@@ -1,26 +1,50 @@
-import {Component, EventEmitter, inject, Input, isDevMode, OnInit, Output} from '@angular/core';
-import {DialogService} from 'primeng/dynamicdialog';
-import {TranslateService} from '@ngx-translate/core';
-import {AchievementModal} from './dialogs/achievement.modal';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {Achievement} from '../../../wizard-profile/models/achievement.model';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  isDevMode,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { AchievementModal } from './dialogs/achievement.modal';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { Achievement } from '../../../wizard-profile/models/achievement.model';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 
 @Component({
   selector: 'app-step-achievements',
   templateUrl: './step-achievements.component.html',
   styleUrl: './step-achievements.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    TableModule,
+    ButtonModule,
+    FaDirArrowDirective
+  ]
 })
 export class StepAchievementsComponent implements OnInit {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   ds = inject(ProfileDataService);
   dialog = inject(DialogService);
@@ -32,11 +56,7 @@ export class StepAchievementsComponent implements OnInit {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step() {
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['achievements'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().achievements);
 
   ngOnInit(): void {
     const signature = this.buildSignature(this.ds.state().achievements);
@@ -81,7 +101,7 @@ export class StepAchievementsComponent implements OnInit {
       this.profile.deleteAchievement(achievement.id).subscribe({
         next: () => this.ds.delAchievement(index),
         error: (err: any) => {
-          if(isDevMode())
+          if (isDevMode())
             console.error(err);
         },
       });
@@ -105,9 +125,9 @@ export class StepAchievementsComponent implements OnInit {
   }
 
   onNext() {
-    if (!this.step.valid) {
+    if (!this.step().valid) {
       this.notify.error(
-        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step.errors
+        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors
           .map(e => `* ${this.translate.instant(e.i18nKey)}`)
           .join('\n')}`,
       );
@@ -118,7 +138,7 @@ export class StepAchievementsComponent implements OnInit {
     const signature = this.buildSignature(achievements);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -139,13 +159,14 @@ export class StepAchievementsComponent implements OnInit {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        this.ds.markStepSubmitted('achievements');
         if (this.profile.isChangeRequestMode()) {
           this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
         }
         this.next.emit();
       },
       error: (err: any) => {
-        if(isDevMode())
+        if (isDevMode())
           console.error(err);
         this.saving = false;
       },

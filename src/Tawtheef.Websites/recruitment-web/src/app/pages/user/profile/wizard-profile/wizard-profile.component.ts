@@ -1,11 +1,14 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
-import { ProfileDataService } from './services/profile-data.service';
-import { TranslateService } from '@ngx-translate/core';
+﻿import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ProfileLookupsService } from './services/profile-lookups.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ProfileDataService } from './services/profile-data.service';
+import { ProfileLookupsService } from './services/profile-lookups.service';
 import { PhoneMapperService } from './services/phone-mapper.service';
 import { mapProfileStatusToState } from './services/profile.mapper';
 import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
@@ -13,16 +16,53 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { UserService } from '../../../../core/auth/user.service';
 import { routes } from '../../../../routes/routes';
-import { AvatarModal } from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
 import { ProfileService } from './services/profile.service';
 import { AvatarUtils } from '../../../../core/utils/avatar-utils';
 import { BOOTSTRAP_KEY } from '../../../../core/guards/profile-complete.guard';
+import { PROFILE_WRITE_MODE } from './services/profile-write-mode.token';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+
+// Step components
+import { StepPrereqComponent } from '../components/profile-steps/step-first-info/step-prereq.component';
+import { StepPersonalComponent } from '../components/profile-steps/step-personal/step-personal.component';
+import { StepContactComponent } from '../components/profile-steps/step-contact/step-contact.component';
+import { StepDegreeComponent } from '../components/profile-steps/step-degree/step-degree.component';
+import { StepExperienceComponent } from '../components/profile-steps/step-experience/step-experience.component';
+import { StepAchievementsComponent } from '../components/profile-steps/step-achievements/step-achievements.component';
+import { StepSkillsComponent } from '../components/profile-steps/step-skills/step-skills.component';
+import { StepLanguagesComponent } from '../components/profile-steps/step-languages/step-languages.component';
+import { StepAttachmentsComponent } from '../components/profile-steps/step-attachments/step-attachments.component';
+import { StepReviewComponent } from './steps/step-review/step-review.component';
+import { AvatarModal } from '../components/profile-steps/step-personal/dialogs/avatar.modal/avatar.modal';
 
 @Component({
   selector: 'app-wizard-profile',
   templateUrl: './wizard-profile.component.html',
   styleUrls: ['./wizard-profile.component.scss'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    DialogService,
+    ProfileDataService,
+    ProfileService,
+    { provide: PROFILE_WRITE_MODE, useValue: 'create' },
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    ToggleSwitchModule,
+    I18nNamespaceDirective,
+    StepPrereqComponent,
+    StepPersonalComponent,
+    StepContactComponent,
+    StepDegreeComponent,
+    StepExperienceComponent,
+    StepAchievementsComponent,
+    StepSkillsComponent,
+    StepLanguagesComponent,
+    StepAttachmentsComponent,
+    StepReviewComponent
+  ]
 })
 export class WizardProfileComponent implements OnInit {
   private router = inject(Router);
@@ -193,7 +233,9 @@ export class WizardProfileComponent implements OnInit {
     if (targetStep === 1) return true;
     const validity = this.ds.stepValidity();
     for (let i = 0; i < targetStep - 1 && i < this.orderedValidationSteps.length; i++) {
-      if (!validity[this.orderedValidationSteps[i]]) {
+      const stepKey = this.orderedValidationSteps[i];
+      // Each preceding step must be both valid AND successfully submitted to the server
+      if (!validity[stepKey] || !this.ds.isStepSubmitted(stepKey)) {
         return false;
       }
     }

@@ -35,6 +35,10 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                             FileValidationHelpers.HasFile(r.SponsorCard) ||
                             FileValidationHelpers.HasExisting(r.SponsorCardFileName))
                         .WithMessage(ErrorsCodes.SponsorCardRequired);
+
+                    RuleFor(x => x.Request.SponsorCard)
+                        .Must(FileValidationHelpers.IsAllowedFileType)
+                        .WithMessage(ErrorsCodes.InvalidFileType);
                 });
             });
     }

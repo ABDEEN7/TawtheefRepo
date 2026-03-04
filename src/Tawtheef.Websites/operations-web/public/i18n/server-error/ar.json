@@ -18,7 +18,6 @@
   "server-error.NO_CHANGES_MADE": "لم يتم إجراء أي تعديلات.",
   "server-error.SITE_URL_NOT_CONFIGURED": "رابط الموقع غير مهيأ في الإعدادات.",
   "server-error.REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT": "الطلب يحتوي على محتوى غير صالح أو غير آمن.",
-
   "server-error.PROFILE_NOT_FOUND": "الملف الشخصي غير موجود.",
   "server-error.INVALID_CREDENTIALS_PROVICED": "بيانات الدخول غير صحيحة.",
   "server-error.USER_NOT_FOUND": "المستخدم غير موجود.",
@@ -37,7 +36,6 @@
   "server-error.QATAR_RESIDENT_PHONE_MISMATCH": "رقم الهاتف لا يتطابق مع البيانات المسجلة.",
   "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "تعذر التحقق من بيانات الرقم الشخصي، يرجى التأكد من صحة البيانات المدخلة والمحاولة مرة أخرى",
   "server-error.EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED": "نوع المستخدم غير مسموح لتسجيل الدخول الخارجي.",
-
   "server-error.ROLE_NOT_FOUND": "الدور غير موجود.",
   "server-error.ROLE_NAME_EXISTS": "اسم الدور موجود بالفعل.",
   "server-error.INVALID_PERMISSION": "الصلاحية غير صالحة.",
@@ -48,9 +46,7 @@
   "server-error.SYSTEM_ROLE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير الدور النظامي.",
   "server-error.PROTECTED_USER_DELETION_NOT_ALLOWED": "لا يمكن حذف هذا المستخدم.",
   "server-error.SYSTEM_ADMIN_BLOCK_NOT_ALLOWED": "لا يمكن حظر مدير النظام.",
-
   "server-error.EMAIL_IS_ALREADY_TAKEN": "البريد الإلكتروني محجوز مسبقًا.",
-
   "server-error.ACCESS_TOKEN_REQUIRED": "رمز الوصول مطلوب.",
   "server-error.REFRESH_TOKEN_REQUIRED": "رمز التحديث مطلوب.",
   "server-error.INVALID_ACCESS_TOKEN": "رمز الوصول غير صالح.",
@@ -58,7 +54,6 @@
   "server-error.REFRESH_TOKEN_NOT_FOUND": "رمز التحديث غير موجود.",
   "server-error.INACTIVE_REFRESH_TOKEN": "رمز التحديث غير نشط.",
   "server-error.SESSION_REVOKED": "تم إلغاء الجلسة.",
-
   "server-error.VERIFICATION_CODE_EXPIRED": "انتهت صلاحية رمز التحقق.",
   "server-error.INVALID_TOKEN_OR_EMAIL": "الرمز أو البريد الإلكتروني غير صالح.",
   "server-error.TOO_MANY_ATTEMPTS": "عدد المحاولات تجاوز الحد المسموح.",
@@ -70,7 +65,6 @@
   "server-error.USER_PHONE_REQUIRED": "رقم الهاتف مطلوب.",
   "server-error.INVALID_CODE": "الرمز غير صحيح.",
   "server-error.PHONE_VERIFICATION_RATE_LIMITED": "تم تقييد محاولات توثيق الهاتف.",
-
   "server-error.USER_PROFILE_NOT_COMPLETED": "الملف الشخصي غير مكتمل.",
   "server-error.USER_PROFILE_NOT_FOUND": "ملف المستخدم غير موجود.",
   "server-error.PROFILE_NOT_UNDER_REVIEW": "الملف الشخصي ليس قيد المراجعة.",
@@ -80,37 +74,31 @@
   "server-error.INVALID_PASSWORD": "كلمة المرور غير صالحة.",
   "server-error.INCORRECT_OLD_PASSWORD": "كلمة المرور الحالية غير صحيحة.",
   "server-error.PASSWORD_CHANGE_FAILED": "فشل تغيير كلمة المرور.",
-
   "server-error.JOB_NOT_FOUND": "الوظيفة غير موجودة.",
   "server-error.JOB_ALREADY_PUBLISHED": "تم نشر الوظيفة مسبقًا.",
   "server-error.JOB_ALREADY_CANCELLED": "تم إلغاء الوظيفة مسبقًا.",
   "server-error.JOB_CANNOT_BE_CANCELLED": "لا يمكن إلغاء الوظيفة.",
   "server-error.JOB_CLOSING_DATE_INVALID": "تاريخ إغلاق الوظيفة غير صالح.",
   "server-error.NOTE_REQUIRED": "الملاحظة مطلوبة.",
-
   "server-error.COUNTRY_NOT_FOUND": "الدولة غير موجودة.",
   "server-error.LANGUAGE_NOT_FOUND": "اللغة غير موجودة.",
   "server-error.LANGUAGE_NAME_EXISTS": "اسم اللغة موجود بالفعل.",
   "server-error.UNIVERSITY_NOT_FOUND": "الجامعة غير موجودة.",
   "server-error.UNIVERSITY_NAME_EXISTS": "اسم الجامعة موجود بالفعل.",
   "server-error.CITY_NOT_FOUND": "المدينة غير موجودة.",
-
   "server-error.OFFICE_NOT_FOUND": "الجهة غير موجودة.",
   "server-error.OFFICE_COUNTRY_NOT_FOUND": "دولة الجهة غير موجودة.",
   "server-error.OFFICE_SUPPORTED_COUNTRY_INVALID": "الدولة غير مدعومة للجهة.",
   "server-error.OFFICE_ADMIN_EMAIL_INVALID": "البريد الإلكتروني لمسؤول الجهة غير صالح.",
   "server-error.OFFICE_ADMIN_EMAIL_EXISTS": "البريد الإلكتروني لمسؤول الجهة مستخدم بالفعل.",
-
   "server-error.MAJOR_NOT_FOUND": "التخصص غير موجود.",
   "server-error.MAJOR_ALREADY_USED": "التخصص مستخدم بالفعل.",
   "server-error.MAJOR_NAME_ALREADY_EXISTS": "اسم التخصص موجود بالفعل.",
-
   "server-error.SKILL_NOT_FOUND": "المهارة غير موجودة.",
   "server-error.SKILL_ALREADY_USED": "المهارة مستخدمة بالفعل.",
   "server-error.SKILL_NAME_ALREADY_EXISTS": "اسم المهارة موجود بالفعل.",
-
   "server-error.UN_EXPECTED_ERROR": "حدث خطأ غير متوقع، يرجى المحاولة لاحقًا.",
-
+  "server-error.INTERNAL_SERVER_ERROR": "حدث خطأ ما. يرجى التواصل مع الدعم الفني وتزويدهم برقم التذكرة التالي: {{ticket}}.",
   "server-error.FIELD_REQUIRED": "هذا الحقل مطلوب.",
   "server-error.CANNOT_MODIFY_AGE_RANGE": "لا يمكن تعديل نطاق العمر.",
   "server-error.CANNOT_CLOSE_MANUALLY_BEFORE_DEADLINE": "لا يمكن إغلاق الوظيفة يدويًا قبل موعد الإغلاق المحدد.",
@@ -168,10 +156,8 @@
   "server-error.JOB_TAB_REVIEW_NOT_FOUND": "مراجعة تبويب الوظيفة غير موجودة.",
   "server-error.JOB_POINTS_CONFIGURATION_NOT_FOUND": "إعدادات نقاط الوظيفة غير موجودة.",
   "server-error.JOB_CANNOT_BE_COPIED": "لا يمكن نسخ هذه الوظيفة.",
-
   "server-error.RESIDENCE_ADDRESS_NOT_FOUND": "عنوان السكن غير موجود.",
   "server-error.SPONSOR_PROFILE_NOT_FOUND": "ملف الكفيل غير موجود.",
-
   "server-error.PROFILE_LOCKED_UNDER_REVIEW": "الملف الشخصي مقفل أثناء المراجعة.",
   "server-error.NOT_SUBMITTED": "لم يتم الإرسال.",
   "server-error.DEGREE_NOT_FOUND": "المؤهل الدراسي غير موجود.",
@@ -182,7 +168,6 @@
   "server-error.DUPLICATE_NATIONAL_NUMBER": "الرقم الوطني مكرر.",
   "server-error.NOTES_REQUIRED_FOR_CORRECTION": "الملاحظات مطلوبة لإجراء التصحيح.",
   "server-error.UNAPPROVED_ITEMS_EXIST": "توجد عناصر غير معتمدة.",
-
   "server-error.INVALID_DEGREE_UNIVERSITY_ID": "معرّف الجامعة للمؤهل غير صالح.",
   "server-error.INVALID_DEGREE_MAJOR_ID": "معرّف التخصص للمؤهل غير صالح.",
   "server-error.INVALID_GPA": "المعدل التراكمي غير صالح.",
@@ -196,7 +181,6 @@
   "server-error.DEGREE_LINKED_TO_EXPERIENCE": "المؤهل مرتبط بخبرة ولا يمكن حذفه.",
   "server-error.INVALID_EXPERIENCE_QUALIFICATION": "مؤهل الخبرة غير صالح.",
   "server-error.EXPERIENCE_BEFORE_GRADUATION": "لا يمكن إضافة خبرة قبل التخرج.",
-
   "server-error.EXTERNAL_LOGIN_INFO_NOT_FOUND": "بيانات تسجيل الدخول الخارجي غير موجودة.",
   "server-error.EXTERNAL_LOGIN_EMAIL_NOT_FOUND": "البريد الإلكتروني لتسجيل الدخول الخارجي غير موجود.",
   "server-error.EXTERNAL_LOGIN_USER_NOT_FOUND": "مستخدم تسجيل الدخول الخارجي غير موجود.",
@@ -206,7 +190,6 @@
   "server-error.EXTERNAL_LOGIN_INVALID_TOKEN": "رمز تسجيل الدخول الخارجي غير صالح.",
   "server-error.EXTERNAL_LOGIN_MISSING_PROVIDER_KEY": "مفتاح المزود مفقود لتسجيل الدخول الخارجي.",
   "server-error.INVALID_REQUEST": "طلب غير صالح.",
-
   "server-error.CONFIG_MISSING": "الإعدادات غير مكتملة.",
   "server-error.NOT_PUBLIC_RESOURCE": "المورد غير متاح للعامة.",
   "server-error.INVALID_BLOB_KEY": "مفتاح الملف غير صالح.",
@@ -214,12 +197,10 @@
   "server-error.ACCESS_DENIED": "تم رفض الوصول.",
   "server-error.CANCELLED": "تم إلغاء العملية.",
   "server-error.EMPTY_FILE": "الملف فارغ.",
-
   "server-error.BLOB_SIGN_KEY_CONFIG_MISSING": "إعداد مفتاح توقيع الملفات غير موجود.",
   "server-error.ONLY_PRIVATE_BLOB_KEYS_ALLOWED": "يسمح فقط بمفاتيح الملفات الخاصة.",
   "server-error.FILE_NOT_FOUND": "الملف غير موجود.",
   "server-error.URL_FILE_EXPIRED": "انتهت صلاحية رابط الملف.",
-
   "server-error.INVALID_DEGREES_JSON": "بيانات المؤهلات بصيغة JSON غير صالحة.",
   "server-error.INVALID_EXPERIENCES_JSON": "بيانات الخبرات بصيغة JSON غير صالحة.",
   "server-error.INVALID_TRAINING_COURSES_JSON": "بيانات الدورات التدريبية بصيغة JSON غير صالحة.",
@@ -254,14 +235,12 @@
   "server-error.DEGREE_FILE_REQUIRED": "ملف المؤهل مطلوب.",
   "server-error.EXPERIENCE_REQUIRED": "الخبرة مطلوبة.",
   "server-error.SKILL_OR_LANGUAGE_REQUIRED": "يجب إضافة مهارة أو لغة.",
-
   "server-error.ATTACHMENT_NOT_FOUND": "المرفق غير موجود.",
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "لا يمكن تعديل المرفق أثناء المراجعة.",
   "server-error.INVALID_ATTACHMENT_ID": "معرّف المرفق غير صالح.",
   "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "الخطوة السابقة من الملف الشخصي غير مكتملة.",
   "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير نوع المرشح.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "العنوان الوطني غير مسموح.",
-
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "الموظف غير نشط للتوزيع.",
   "server-error.DISTRIBUTION_PROFILES_NOT_FOUND": "لم يتم العثور على ملفات للتوزيع.",
   "server-error.DISTRIBUTION_FINAL_STATUS_NOT_ALLOWED": "لا يمكن التوزيع على حالة نهائية.",
@@ -271,36 +250,29 @@
   "server-error.DISTRIBUTION_MODE_REQUIRED": "وضع التوزيع مطلوب.",
   "server-error.DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED": "تم تجاوز الحد لكل موظف في التوزيع.",
   "server-error.PROFILE_NOT_ASSIGNABLE": "الملف غير قابل للإسناد.",
-
   "server-error.INVITATION_NOT_FOUND": "الدعوة غير موجودة.",
   "server-error.INVITATION_STATUS_CHANGE_NOT_ALLOWED": "لا يمكن تغيير حالة الدعوة.",
-
   "server-error.SECTOR_NOT_FOUND": "القطاع غير موجود.",
   "server-error.SECTOR_NAME_ALREADY_EXISTS": "اسم القطاع موجود بالفعل.",
   "server-error.MANAGEMENT_NOT_FOUND": "الإدارة غير موجودة.",
   "server-error.MANAGEMENT_NAME_ALREADY_EXISTS": "اسم الإدارة موجود بالفعل.",
   "server-error.DEPARTMENT_NOT_FOUND": "القسم غير موجود.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "اسم القسم موجود بالفعل.",
-
   "server-error.MOI_DATA_NOT_FOUND": "بيانات وزارة الداخلية غير موجودة.",
   "server-error.MOI_FAILED_REQUEST": "فشل طلب وزارة الداخلية.",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "فشل طلب دليل الموظفين.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "بيانات دليل الموظفين غير صالحة.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "المستخدم غير موجود في دليل الموظفين.",
   "server-error.QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER": "لا يمكن للقطريين تسجيل الدخول قبل التسجيل على كوادر.",
-
   "server-error.RELIGION_NOT_FOUND": "الديانة غير موجودة.",
   "server-error.RELIGION_NAME_EXISTS": "اسم الديانة موجود بالفعل.",
-
   "server-error.TARGET_ENTITY_NOT_FOUND": "الجهة المستهدفة غير موجودة.",
   "server-error.TARGET_ENTITY_NAME_EXISTS": "اسم الجهة المستهدفة موجود بالفعل.",
-
   "server-error.OFFICE_SUPPORTED_COUNTRIES_REQUIRED": "الدول المدعومة للجهة مطلوبة.",
   "server-error.OFFICE_ADMIN_CREATION_FAILED": "فشل إنشاء مسؤول الجهة.",
   "server-error.OFFICE_ROLE_ASSIGNMENT_FAILED": "فشل تعيين الدور للجهة.",
   "server-error.OFFICE_USER_NOT_FOUND": "مستخدم الجهة غير موجود.",
   "server-error.OFFICE_ADMIN_NOT_FOUND": "مسؤول الجهة غير موجود.",
-
   "server-error.CHANGING_HIERARCHY_TYPE_NOT_ALLOWED": "لا يمكن تغيير نوع الهيكلية.",
   "server-error.MAJOR_SKILL_LINK_ALREADY_EXISTS": "الربط بين التخصص والمهارة موجود بالفعل.",
   "server-error.MAJOR_SKILL_LINK_NOT_FOUND": "الربط بين التخصص والمهارة غير موجود.",

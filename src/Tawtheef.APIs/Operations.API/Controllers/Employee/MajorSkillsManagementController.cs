@@ -59,7 +59,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     
     [HttpGet("lookups/majors")]
     [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
-    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+    public async Task<IActionResult> GetMajors([FromQuery] GetMainMajorsQuery query)
     {
         //get language from header
         var language = Request.Headers.AcceptLanguage.ToString();

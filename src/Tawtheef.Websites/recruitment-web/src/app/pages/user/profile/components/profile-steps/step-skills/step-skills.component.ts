@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -8,32 +9,54 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  computed,
+  input,
+  output
 } from '@angular/core';
-import {AutoCompleteCompleteEvent, AutoCompleteSelectEvent,} from 'primeng/autocomplete';
-import {of, Subject, Subscription} from 'rxjs';
-import {catchError, debounceTime, filter, finalize, map, switchMap, tap,} from 'rxjs/operators';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../shared/models/dropdown-options.model';
-import {Skill} from '../../../wizard-profile/models/skill.model';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {EndpointsService} from '../../../../../../core/http/endpoints.service';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { AutoCompleteCompleteEvent, AutoCompleteSelectEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { of, Subject, Subscription } from 'rxjs';
+import { catchError, debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { TooltipModule } from 'primeng/tooltip';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../../shared/models/dropdown-options.model';
+import { Skill } from '../../../wizard-profile/models/skill.model';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { EndpointsService } from '../../../../../../core/http/endpoints.service';
+import { RemoteSelectComponent } from '../../../../../../shared/components/remote-select/remote-select';
 
 @Component({
   selector: 'app-step-skills',
   templateUrl: './step-skills.component.html',
   styleUrl: './step-skills.component.scss',
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    AutoCompleteModule,
+    SelectModule,
+    ButtonModule,
+    TableModule,
+    FaDirArrowDirective,
+    RemoteSelectComponent,
+    TooltipModule
+  ]
 })
 export class StepSkillsComponent implements OnInit, OnDestroy {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
@@ -46,11 +69,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  private readonly stepValidity = createStepValiditySignal(this.ds.state);
-  get step() {
-    const validity = this.stepValidity();
-    return validity['skills'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().skills);
 
   skillOptions: DropdownOptionVM[] = [];
   loadingSkills = false;
@@ -66,12 +85,12 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
   buildUserExtraParams = () => ({
     majors: this.ds.state().degrees
-      .filter((degree)=> degree?.major)
-      .map((degree)=> degree.major!.id)
+      .filter((degree) => degree?.major)
+      .map((degree) => degree.major!.id)
       .concat(
         this.ds.state().degrees
-        .filter((degree)=> degree?.subMajor)
-        .map((degree)=> degree.subMajor!.id)
+          .filter((degree) => degree?.subMajor)
+          .map((degree) => degree.subMajor!.id)
       )
   });
   ngOnInit(): void {
@@ -130,7 +149,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
 
   addSkill(): void {
     if (this.selectedSkill && this.selectedLevel) {
-      if(this.ds.state().skills.some(s=> s.skill?.backendName == this.selectedSkill?.backendName)){
+      if (this.ds.state().skills.some(s => s.skill?.backendName == this.selectedSkill?.backendName)) {
         this.notificationService.error(this.translate.instant('wizard.profile.skills.duplicateMessage'));
         return;
       }
@@ -165,10 +184,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
 
   onNext(): void {
-    if (!this.step.valid) {
-      this.notificationService.error(this.step.errors
-          .map(e => `* ${this.translate.instant(e.i18nKey)}`)
-          .join('\n'));
+    if (!this.step().valid) {
+      this.notificationService.error(this.step().errors
+        .map(e => `* ${this.translate.instant(e.i18nKey)}`)
+        .join('\n'));
       return;
     }
 
@@ -177,7 +196,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(skills);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -191,6 +210,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        this.ds.markStepSubmitted('skills');
         if (this.profile.isChangeRequestMode()) {
           this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
         }

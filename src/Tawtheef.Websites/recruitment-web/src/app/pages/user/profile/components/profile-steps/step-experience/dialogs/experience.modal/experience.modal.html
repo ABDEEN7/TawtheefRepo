@@ -193,8 +193,7 @@
             {{ f['fileName'].value || ('wizard.experience.attachment' | translate) }}
           </div>
 
-          <input #naInput type="file" class="d-none" accept="application/pdf,image/jpeg,image/png,image/webp,image/jpg"
-            (change)="onUpload($event)" />
+          <input #naInput type="file" class="d-none" accept=".pdf,.jpg,.jpeg,.png" (change)="onUpload($event)" />
         </div>
         <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)" class="text-danger mt-1 d-block">
           {{ 'validation.required' | translate }}

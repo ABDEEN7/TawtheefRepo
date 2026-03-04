@@ -9,18 +9,13 @@
             <label for="degree" class="form-label required">
               {{ 'wizard.degrees.degree' | translate }}
             </label>
-            <p-select
-              inputId="degree"
-              formControlName="degree"
-              [options]="lookups.degrees()" optionLabel="name"
-              [filter]="true" dataKey="id"
-              filterBy="additionalData.nameAr,additionalData.nameEn,name"
-              [placeholder]="'wizard.degrees.choiceDegree' | translate"
-              [appendTo]="'body'"
+            <p-select inputId="degree" formControlName="degree" [options]="lookups.degrees()" optionLabel="name"
+              [filter]="true" dataKey="id" filterBy="additionalData.nameAr,additionalData.nameEn,name"
+              [placeholder]="'wizard.degrees.choiceDegree' | translate" [appendTo]="'body'"
               [ngClass]="{'p-invalid': f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)}" fluid>
             </p-select>
             <small *ngIf="f['degree'].invalid && (f['degree'].dirty || f['degree'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -29,18 +24,15 @@
             <label for="gradCountry" class="form-label required">
               {{ 'wizard.degrees.gradCountry' | translate }}
             </label>
-            <p-select
-              inputId="gradCountry"
-              formControlName="gradCountry"
-              [options]="lookups.countries()" optionLabel="name"
-              [filter]="true" dataKey="id"
+            <p-select inputId="gradCountry" formControlName="gradCountry" [options]="lookups.countries()"
+              optionLabel="name" [filter]="true" dataKey="id"
               filterBy="additionalData.nameAr,additionalData.nameEn,name"
-              [placeholder]="'wizard.degrees.choiceGradCountry' | translate"
-              [appendTo]="'body'"
-              [ngClass]="{'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)}" fluid>
+              [placeholder]="'wizard.degrees.choiceGradCountry' | translate" [appendTo]="'body'"
+              [ngClass]="{'p-invalid': f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)}"
+              fluid>
             </p-select>
             <small *ngIf="f['gradCountry'].invalid && (f['gradCountry'].dirty || f['gradCountry'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -49,18 +41,15 @@
             <label for="university" class="form-label required">
               {{ 'wizard.degrees.university' | translate }}
             </label>
-            <app-remote-select
-              formControlName="university" [minChars]="1"
-              [parentId]="form.get('gradCountry')?.value?.id"
-              parentParamName="countryId" [requireParent]="true"
+            <app-remote-select formControlName="university" [minChars]="1"
+              [parentId]="form.get('gradCountry')?.value?.id" parentParamName="countryId" [requireParent]="true"
               [searchUrl]="endpoints.profile.lookups.universities"
-              [placeholder]="'wizard.degrees.choiceUniversity' | translate"
-              optionLabel="name"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+              [placeholder]="'wizard.degrees.choiceUniversity' | translate" optionLabel="name" [appendTo]="'body'"
+              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['university'].invalid && (f['university'].dirty || f['university'].touched)">
             </app-remote-select>
             <small *ngIf="f['university'].invalid && (f['university'].dirty || f['university'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -72,16 +61,13 @@
             <label for="major" class="form-label required">
               {{ 'wizard.degrees.main-major' | translate }}
             </label>
-            <app-remote-select
-              formControlName="major"
-              [searchUrl]="endpoints.profile.lookups.majors"
-              [placeholder]="'wizard.degrees.choiceMajor' | translate"
-              optionLabel="name"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+            <app-remote-select formControlName="major" [searchUrl]="endpoints.profile.lookups.majors"
+              [placeholder]="'wizard.degrees.choiceMajor' | translate" optionLabel="name" [appendTo]="'body'"
+              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['major'].invalid && (f['major'].dirty || f['major'].touched)">
             </app-remote-select>
             <small *ngIf="f['major'].invalid && (f['major'].dirty || f['major'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -90,18 +76,14 @@
             <label for="major" class="form-label required">
               {{ 'wizard.degrees.major' | translate }}
             </label>
-            <app-remote-select
-              formControlName="subMajor" [minChars]="1"
-              [parentId]="form.get('major')?.value?.id"
-              parentParamName="parentId" [requireParent]="true"
-              [searchUrl]="endpoints.profile.lookups.subMajors"
-              [placeholder]="'wizard.degrees.choiceMajor' | translate"
-              optionLabel="name"
-              [appendTo]="'body'" [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
+            <app-remote-select formControlName="subMajor" [minChars]="1" [parentId]="form.get('major')?.value?.id"
+              parentParamName="parentId" [requireParent]="true" [searchUrl]="endpoints.profile.lookups.subMajors"
+              [placeholder]="'wizard.degrees.choiceMajor' | translate" optionLabel="name" [appendTo]="'body'"
+              [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }"
               [invalid]="f['subMajor'].invalid && (f['subMajor'].dirty || f['subMajor'].touched)">
             </app-remote-select>
             <small *ngIf="f['subMajor'].invalid && (f['subMajor'].dirty || f['subMajor'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -113,21 +95,16 @@
             <label for="gradYear" class="form-label required">
               {{ 'wizard.degrees.gradYear' | translate }}
             </label>
-            <p-date-picker
-              inputId="gradYear" [showIcon]="false"
-              formControlName="gradYear" view="year" dateFormat="yy"
-              [maxDate]="today"
-              [appendTo]="'body'"
+            <p-date-picker inputId="gradYear" [showIcon]="false" formControlName="gradYear" view="year" dateFormat="yy"
+              [maxDate]="today" [appendTo]="'body'"
               [ngClass]="{'p-invalid': (f['gradYear'].invalid || yearError) && (f['gradYear'].dirty || f['gradYear'].touched)}"
-              (onSelect)="validateYear()" (onInput)="validateYear()"
-              fluid>
+              (onSelect)="validateYear()" (onInput)="validateYear()" fluid>
             </p-date-picker>
             <small *ngIf="f['gradYear'].invalid && (f['gradYear'].dirty || f['gradYear'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="!f['gradYear'].invalid && yearError"
-                   class="text-danger mt-1 d-block">
+            <small *ngIf="!f['gradYear'].invalid && yearError" class="text-danger mt-1 d-block">
               {{ 'validation.yearRange' | translate:{min:minYear, max:maxYear} }}
             </small>
           </div>
@@ -136,18 +113,14 @@
             <label for="studySystem" class="form-label required d-block">
               {{ 'wizard.degrees.studySystem' | translate }}
             </label>
-            <p-select
-              inputId="studySystem" dataKey="id"
-              formControlName="studySystem"
-              [options]="lookups.studyTypes()" optionLabel="name"
-              [placeholder]="'wizard.degrees.choiceStudySystem' | translate"
-              [appendTo]="'body'" class="w-100"
-              [ngClass]="{
+            <p-select inputId="studySystem" dataKey="id" formControlName="studySystem" [options]="lookups.studyTypes()"
+              optionLabel="name" [placeholder]="'wizard.degrees.choiceStudySystem' | translate" [appendTo]="'body'"
+              class="w-100" [ngClass]="{
                 'p-invalid': f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)
               }">
             </p-select>
             <small *ngIf="f['studySystem'].invalid && (f['studySystem'].dirty || f['studySystem'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -156,23 +129,18 @@
             <label for="gpa" class="form-label required d-block">
               {{ 'wizard.degrees.gpa' | translate }}
             </label>
-            <p-inputNumber
-              inputId="gpa"
-              formControlName="gpa"
-              [useGrouping]="false"
-              [min]="0" [max]="100"
-              [maxlength]="5"
-              [minFractionDigits]="1"
-              [maxFractionDigits]="2"
-              [showButtons]="false" class="w-100 form-control no-borders"
+            <p-inputNumber inputId="gpa" formControlName="gpa" [useGrouping]="false" [min]="0" [max]="100"
+              [maxlength]="5" [minFractionDigits]="1" [maxFractionDigits]="2" [showButtons]="false"
+              class="w-100 form-control no-borders"
               [ngClass]="{'p-invalid': f['gpa'].invalid && (f['gpa'].dirty || f['gpa'].touched)}">
             </p-inputNumber>
             <small *ngIf="f['gpa']?.errors?.['required'] && (f['gpa'].dirty || f['gpa'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
-            <small *ngIf="(f['gpa']?.errors?.['min'] || f['gpa']?.errors?.['max']) && (f['gpa'].dirty || f['gpa'].touched)"
-                   class="text-danger mt-1 d-block">
+            <small
+              *ngIf="(f['gpa']?.errors?.['min'] || f['gpa']?.errors?.['max']) && (f['gpa'].dirty || f['gpa'].touched)"
+              class="text-danger mt-1 d-block">
               {{ 'validation.range' | translate:{min:0, max:100} }}
             </small>
           </div>
@@ -184,10 +152,12 @@
             <label for="grade" class="form-label required d-block">
               {{ 'wizard.degrees.grade' | translate }}
             </label>
-            <p-select inputId="grade"  dataKey="id" formControlName="grade" class="w-100" [options]="lookups.ratingGrades()" optionLabel="name" [placeholder]="'wizard.degrees.choiceGrade' | translate" [appendTo]="'body'"  [ngClass]="{'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)}">
+            <p-select inputId="grade" dataKey="id" formControlName="grade" class="w-100"
+              [options]="lookups.ratingGrades()" optionLabel="name"
+              [placeholder]="'wizard.degrees.choiceGrade' | translate" [appendTo]="'body'"
+              [ngClass]="{'p-invalid': f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)}">
             </p-select>
-            <small *ngIf="f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)"
-                   class="text-danger mt-1">
+            <small *ngIf="f['grade'].invalid && (f['grade'].dirty || f['grade'].touched)" class="text-danger mt-1">
               {{ 'validation.required' | translate }}
             </small>
           </div>
@@ -196,35 +166,28 @@
 
             <label class="form-label required d-block">
               {{ 'wizard.degrees.degreeFile' | translate }}
-              <span class="text-muted fz-2xs">(PDF)</span>
+              <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
             </label>
-            <div class="upload-field"
-                 (click)="naInput.click()">
+            <div class="upload-field" (click)="naInput.click()">
 
               <div class="upload-field__icon">
-                <img src="assets/img/icons/file-upload.svg" *ngIf="!f['degreeFileName'].value" alt="upload"/>
+                <img src="assets/img/icons/file-upload.svg" *ngIf="!f['degreeFileName'].value" alt="upload" />
                 <img src="assets/img/icons/file-eye.svg" *ngIf="f['degreeFileName'].value" alt="view"
-                     class="cursor-pointer"
-                     (click)="previewFile($event)"/>
+                  class="cursor-pointer" (click)="previewFile($event)" />
               </div>
 
               <div class="upload-field__text">
                 {{ f['degreeFileName'].value || ('wizard.degrees.degreeFile' | translate) }}
               </div>
 
-              <input #naInput
-                     type="file"
-                     class="d-none"
-                     accept=".pdf"
-                     (change)="onUpload($event)" />
+              <input #naInput type="file" class="d-none" accept=".pdf,.jpg,.jpeg,.png" (change)="onUpload($event)" />
             </div>
             <small *ngIf="f['degreeFileName'].invalid && (f['degreeFileName'].dirty || f['degreeFileName'].touched)"
-                   class="text-danger mt-1 d-block">
+              class="text-danger mt-1 d-block">
               {{ 'validation.required' | translate }}
             </small>
 
-            <small *ngIf="fileError"
-                   class="text-danger mt-1 d-block">
+            <small *ngIf="fileError" class="text-danger mt-1 d-block">
               {{ fileError }}
             </small>
           </div>
@@ -235,15 +198,10 @@
 
   <!-- ===== FOOTER ===== -->
   <div class="d-flex justify-content-end gap-2">
-    <p-button styleClass="p-button-text" icon="pi pi-times"
-              type="button"
-              (onClick)="ref.close()"
-              [label]="'wizard.buttons.cancel' | translate"></p-button>
+    <p-button styleClass="p-button-text" icon="pi pi-times" type="button" (onClick)="ref.close()"
+      [label]="'wizard.buttons.cancel' | translate"></p-button>
 
-    <p-button styleClass="p-button-primary"
-              icon="pi pi-save"
-              type="submit"
-              [disabled]="form.invalid || yearError || !!fileError"
-              [label]="'wizard.degrees.add' | translate"></p-button>
+    <p-button styleClass="p-button-primary" icon="pi pi-save" type="submit"
+      [disabled]="form.invalid || yearError || !!fileError" [label]="'wizard.degrees.add' | translate"></p-button>
   </div>
 </form>

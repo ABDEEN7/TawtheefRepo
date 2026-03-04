@@ -1,21 +1,21 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Button } from 'primeng/button';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
-import {NgClass, NgIf} from '@angular/common';
-import {periodRangeValidator} from '../../../../../../../../shared/validator/period-range,validator';
-import {dateToDateOnly} from '../../../../../../../../shared/types/dateOnly.type';
-import {Select} from 'primeng/select';
-import {FileUtilsService} from '../../../../../../../../core/utils/file-utils';
-import {COURSE_DIALOG_LIMITS} from '../dialog-config';
-import {ProfileLookupsService} from '../../../../../wizard-profile/services/profile-lookups.service';
-import {TrainingCourse} from '../../../../../wizard-profile/models/experience.model';
-import {Textarea} from 'primeng/textarea';
-import {I18nNamespaceDirective} from '../../../../../../../../shared/directives/i18n-namespace.directive';
-import {GUID} from '../../../../../../../../shared/types/guid.type';
+import { NgClass, NgIf } from '@angular/common';
+import { periodRangeValidator } from '../../../../../../../../shared/validator/period-range,validator';
+import { dateToDateOnly } from '../../../../../../../../shared/types/dateOnly.type';
+import { Select } from 'primeng/select';
+import { FileUtilsService } from '../../../../../../../../core/utils/file-utils';
+import { COURSE_DIALOG_LIMITS } from '../dialog-config';
+import { ProfileLookupsService } from '../../../../../wizard-profile/services/profile-lookups.service';
+import { TrainingCourse } from '../../../../../wizard-profile/models/experience.model';
+import { Textarea } from 'primeng/textarea';
+import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import { GUID } from '../../../../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-course',
@@ -44,7 +44,7 @@ export class CourseModal implements OnInit {
   private fileUtils = inject(FileUtilsService);
 
   readonly limits = COURSE_DIALOG_LIMITS;
-  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+  readonly allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
   fileError: string | null = null;
   initialAttachmentUrl: string | null = null;
   private initialId: string | null = null;
@@ -94,7 +94,7 @@ export class CourseModal implements OnInit {
     if (!file) return;
 
     if (!this.allowedTypes.includes(file.type)) {
-      this.fileError = this.translate.instant('validation.fileType', { types: 'PDF, PNG, JPEG, WEBP' });
+      this.fileError = this.translate.instant('validation.fileType', { types: 'PDF, PNG, JPEG' });
       this.form.patchValue({ file: null, fileName: '' });
       return;
     }
@@ -120,7 +120,7 @@ export class CourseModal implements OnInit {
     const period = v.period as Date[] | null;
 
     const from = period && period.length > 0 ? dateToDateOnly(period[0]) : null;
-    const to   = period && period.length > 1 ? dateToDateOnly(period[1]) : null;
+    const to = period && period.length > 1 ? dateToDateOnly(period[1]) : null;
 
     const payload = {
       id: this.initialId ?? undefined,

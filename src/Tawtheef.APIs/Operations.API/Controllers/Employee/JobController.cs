@@ -42,7 +42,7 @@ public class JobController(IMediator mediator) : ControllerBase
 
     [HttpGet("lookups/majors")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> GetMajors([FromQuery] GetMajorsQuery query)
+    public async Task<IActionResult> GetMajors([FromQuery] GetMainMajorsQuery query)
    {
         var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(query with { Language = language });

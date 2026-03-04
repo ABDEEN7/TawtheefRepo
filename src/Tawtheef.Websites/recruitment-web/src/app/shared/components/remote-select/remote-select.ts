@@ -10,11 +10,12 @@ import {
   inject,
   EventEmitter,
   Output,
+  signal,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Subject, of } from 'rxjs';
-import { catchError, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -80,12 +81,12 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() invalid = false;
   @Input() extraQueryParams?: ExtraQueryParams;
 
-  options: any[] = [];
-  value: any = null;
+  options = signal<any[]>([]);
+  value = signal<any>(null);
 
-  isLoading = false;
-  hasMore = true;
-  emptyMessage = '';
+  isLoading = signal(false);
+  hasMore = signal(true);
+  emptyMessage = signal('');
 
   private panelOpen = false;
   private currentTerm = '';
@@ -95,8 +96,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private destroy$ = new Subject<void>();
   private request$ = new Subject<LoadRequest>();
 
-  private onChange: (value: any) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: any) => void = () => { };
+  private onTouched: () => void = () => { };
   disabled = false;
 
   /** --- Option B flags --- */
@@ -113,7 +114,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   get isDisabledComputed(): boolean {
     if (this.disabled) return true;
     if (this.requireParent && this.isParentMissing()) return true;
-    if (this.disableWhileLoading && this.isLoading && !this.panelOpen) return true;
+    if (this.disableWhileLoading && this.isLoading() && !this.panelOpen) return true;
     return false;
   }
 
@@ -129,11 +130,11 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     // ✅ ALWAYS allow programmatic clear from parent
     if (isClear) {
-      this.value = null;
+      this.value.set(null);
 
       // keep dataset stable (don’t collapse height)
-      const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
-      this.options = this.mergeWithSelected(merged);
+      const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
+      this.options.set(this.mergeWithSelected(merged));
 
       // optional: reload first page after clear
       if (!this.requireParent || !this.isParentMissing()) {
@@ -150,10 +151,10 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     // Accept initial value once
     this.hasAcceptedInitialWrite = true;
-    this.value = val;
+    this.value.set(val);
 
-    const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
-    this.options = this.mergeWithSelected(merged);
+    const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
+    this.options.set(this.mergeWithSelected(merged));
 
     if (this.requireParent && this.isParentMissing()) return;
 
@@ -185,15 +186,18 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   // Lifecycle
   // =============================
   ngOnInit(): void {
-    this.options = this.mergeWithSelected(this.preloadedOptions);
+    this.options.set(this.mergeWithSelected(this.preloadedOptions));
 
     this.request$
       .pipe(
+        debounceTime(300),
         switchMap(req => {
-          if (!this.searchUrl) return of({ req, res: [] as any[] });
-          if (this.requireParent && this.isParentMissing()) return of({ req, res: [] as any[] });
+          if (!this.searchUrl || (this.requireParent && this.isParentMissing())) {
+            this.isLoading.set(false);
+            return of({ req, res: [] as any[] });
+          }
 
-          this.isLoading = true;
+          this.isLoading.set(true);
           const params = this.buildParams(req.term, req.page, this.pageSize);
 
           return this.http
@@ -204,7 +208,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
             .pipe(
               map(res => ({ req, res: res ?? [] })),
               catchError(() => of({ req, res: [] as any[] })),
-              finalize(() => (this.isLoading = false))
+              finalize(() => this.isLoading.set(false))
             );
         }),
         takeUntil(this.destroy$)
@@ -232,13 +236,13 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['preloadedOptions']) {
       // don’t wipe current options; merge
-      const merged = this.mergeById([...(this.options ?? []), ...(this.preloadedOptions ?? [])]);
-      this.options = this.sortByOptionLabel(this.mergeWithSelected(merged));
+      const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
+      this.options.set(this.sortByOptionLabel(this.mergeWithSelected(merged)));
     }
 
     if (changes['parentId'] && !changes['parentId'].firstChange) {
       // parent changed => we must reset selection
-      this.value = null;
+      this.value.set(null);
 
       // allow parent to set value again if it wants (new context)
       this.hasAcceptedInitialWrite = false;
@@ -247,7 +251,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       this.onTouched();
       this.valueChange.emit(null);
 
-      this.options = this.mergeWithSelected([]);
+      this.options.set(this.mergeWithSelected([]));
       this.resetPagingOnly(false);
 
       if (!this.requireParent || !this.isParentMissing()) {
@@ -267,7 +271,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   onOpen(): void {
     this.panelOpen = true;
     if (!this.currentTerm || this.currentTerm.length < this.minChars) {
-      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+      this.emptyMessage.set(this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars }));
     }
   }
 
@@ -279,27 +283,27 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     const term = (event?.filter ?? '').toString().trim();
 
     if (this.requireParent && this.isParentMissing()) {
-      this.options = this.mergeWithSelected([]);
-      this.hasMore = false;
-      this.emptyMessage = '';
+      this.options.set(this.mergeWithSelected([]));
+      this.hasMore.set(false);
+      this.emptyMessage.set('');
       return;
     }
 
     if (!term) {
-      this.emptyMessage = '';
+      this.emptyMessage.set('');
       this.reloadFirstPage('');
       return;
     }
 
     if (term.length < this.minChars) {
-      this.emptyMessage = this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars });
+      this.emptyMessage.set(this.noResultsPlaceholder ?? this.translate.instant('remote-select.search-hint', { minChars: this.minChars }));
 
       // ✅ IMPORTANT: don’t clear options (prevents empty/height collapse)
-      this.hasMore = false;
+      this.hasMore.set(false);
       return;
     }
 
-    this.emptyMessage = '';
+    this.emptyMessage.set('');
     this.reloadFirstPage(term);
   }
 
@@ -307,8 +311,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
    * ✅ PrimeNG correct lazy paging: derive page from first/rows
    */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading) return;
-    if (!this.hasMore) return;
+    if (this.isLoading()) return;
+    if (!this.hasMore()) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
@@ -324,7 +328,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   handleChange(event: any): void {
     const newVal = event?.value;
-    this.value = newVal;
+    this.value.set(newVal);
 
     // ✅ user-driven change flows outward
     this.onChange(newVal);
@@ -336,7 +340,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   onClearSelection(): void {
-    this.value = null;
+    this.value.set(null);
 
     this.onChange(null);
     this.onTouched();
@@ -367,7 +371,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private resetPagingOnly(preserveTerm: boolean): void {
     this.requestedPages.clear();
     this.pageNumber = 0;
-    this.hasMore = true;
+    this.hasMore.set(true);
     if (!preserveTerm) this.currentTerm = '';
   }
 
@@ -378,6 +382,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.currentTerm = (req.term ?? '').trim();
     this.pageNumber = req.page;
 
+    this.isLoading.set(true);
     this.request$.next(req);
   }
 
@@ -395,8 +400,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     let params = new HttpParams();
 
     // include selected id for “fetch by id” support
-    if (typeof this.value !== 'object' && this.value !== null && this.value !== undefined && this.value !== '') {
-      params = params.set(this.idParamName, String(this.value));
+    if (typeof this.value() !== 'object' && this.value() !== null && this.value() !== undefined && this.value() !== '') {
+      params = params.set(this.idParamName, String(this.value()));
     }
 
     const q = (term ?? '').trim();
@@ -420,18 +425,18 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.lastLoadReturnedEmpty = next.length === 0 && (req.term?.length ?? 0) >= this.minChars;
 
     const mergedBase = req.append
-      ? this.mergeById([...(this.options ?? []), ...next])
+      ? this.mergeById([...(this.options() ?? []), ...next])
       : this.mergeById(next);
 
     const mergedWithSelected = this.mergeWithSelected(mergedBase);
 
-    this.options = this.sortByOptionLabel(mergedWithSelected);
-    this.hasMore = next.length === this.pageSize;
+    this.options.set(this.sortByOptionLabel(mergedWithSelected));
+    this.hasMore.set(next.length === this.pageSize);
 
     // emptyMessage داخل القائمة
-    this.emptyMessage = next.length === 0 && (req.term?.length ?? 0) >= this.minChars
+    this.emptyMessage.set(next.length === 0 && (req.term?.length ?? 0) >= this.minChars
       ? (this.noResultsPlaceholder ?? this.translate.instant('remote-select.no-results'))
-      : '';
+      : '');
   }
 
   // =============================
@@ -445,14 +450,14 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private findSelectedOption(): any | null {
-    if (this.value === null || this.value === undefined) return null;
+    if (this.value() === null || this.value() === undefined) return null;
 
-    if (!this.optionValue) return this.value;
+    if (!this.optionValue) return this.value();
 
-    const fromPreloaded = this.preloadedOptions?.find(opt => this.getOptionValue(opt) === this.value);
+    const fromPreloaded = this.preloadedOptions?.find(opt => this.getOptionValue(opt) === this.value());
     if (fromPreloaded) return fromPreloaded;
 
-    const fromOptions = this.options?.find(opt => this.getOptionValue(opt) === this.value);
+    const fromOptions = this.options()?.find(opt => this.getOptionValue(opt) === this.value());
     return fromOptions ?? null;
   }
 

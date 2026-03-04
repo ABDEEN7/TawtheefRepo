@@ -1,24 +1,53 @@
-import {Component, EventEmitter, inject, Input, isDevMode, OnDestroy, OnInit, Output} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {ProfileDataService} from '../../../wizard-profile/services/profile-data.service';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {createStepValiditySignal} from '../../../wizard-profile/state/profile-step-validity.signal';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../../shared/models/dropdown-options.model';
-import {NotificationService} from '../../../../../../core/services/notification.service';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  isDevMode,
+  OnDestroy,
+  OnInit,
+  Output,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy
+} from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../../shared/models/dropdown-options.model';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-step-languages',
   templateUrl: './step-languages.component.html',
   styleUrls: ['./step-languages.component.scss'],
-  standalone: false
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    SelectModule,
+    ButtonModule,
+    TableModule,
+    FaDirArrowDirective,
+    Tooltip
+  ]
 })
 export class StepLanguagesComponent implements OnInit, OnDestroy {
-  @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<void>();
-  @Input() submitLabelKey = 'wizard.buttons.next';
-  @Input() showBack = true;
-  @Input() requireChanges = false;
+  back = output<void>();
+  next = output<void>();
+  submitLabelKey = input<string>('wizard.buttons.next');
+  showBack = input<boolean>(true);
+  requireChanges = input<boolean>(false);
 
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
@@ -29,11 +58,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   saving = false;
   private lastSubmittedSignature: string | null = null;
 
-  get step(){
-    const stepValidity = createStepValiditySignal(this.ds.state);
-    const validity = stepValidity();
-    return validity['languages'];
-  }
+  step = computed(() => this.ds.stepValidationDetailed().languages);
 
   newLanguage?: DropdownOptionVM;
   newSpeakingLevel?: DropdownOptionVM;
@@ -48,7 +73,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   addLang(): void {
     if (this.newLanguage && this.newSpeakingLevel && this.newWritingLevel && this.newReadingLevel) {
-      if(this.ds.state().languages.some(s=> s.lang?.backendName == this.newLanguage?.backendName)) {
+      if (this.ds.state().languages.some(s => s.lang?.backendName == this.newLanguage?.backendName)) {
         this.notificationService.error(this.translate.instant('wizard.profile.languages.duplicate'));
         return;
       }
@@ -67,9 +92,9 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeLang(index: number){
+  removeLang(index: number) {
     const lang = this.ds.state().languages[index];
-    if(lang.id){
+    if (lang.id) {
       this.profile.deleteLanguage(lang.id).subscribe({
         next: () => {
           this.ds.delLang(index);
@@ -81,8 +106,8 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   onNext() {
-    if (!this.step.valid) {
-      this.notificationService.error(this.step.errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
+    if (!this.step().valid) {
+      this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
       return;
     }
 
@@ -91,7 +116,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(languages);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges) {
+      if (this.requireChanges()) {
         this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
         return;
       }
@@ -110,13 +135,14 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
       next: () => {
         this.saving = false;
         this.lastSubmittedSignature = signature;
+        this.ds.markStepSubmitted('languages');
         if (this.profile.isChangeRequestMode()) {
           this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
         }
         this.next.emit();
       },
       error: (err: any) => {
-        if(isDevMode())
+        if (isDevMode())
           console.error(err);
         this.saving = false;
       },
@@ -135,5 +161,5 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 }
