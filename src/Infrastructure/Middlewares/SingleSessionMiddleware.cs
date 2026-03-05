@@ -1,14 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 
 namespace Tawtheef.Infrastructure.Middlewares;
 
 public class SingleSessionMiddleware(RequestDelegate next)
 {
-    public async Task InvokeAsync(HttpContext ctx, UserManager<User> userManager)
+    public async Task InvokeAsync(HttpContext ctx, ISessionService sessionService)
     {
         var principal = ctx.User;
         if (principal.Identity?.IsAuthenticated == true)
@@ -16,12 +15,10 @@ public class SingleSessionMiddleware(RequestDelegate next)
             var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             var sid = principal.FindFirst(JwtRegisteredClaimNames.Sid)?.Value;
 
-            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(sid))
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(sid) && Guid.TryParse(userId, out var parsedUserId))
             {
-                var user = await userManager.FindByIdAsync(userId);
-                var currentStamp = user?.SecurityStamp;
-
-                if (string.IsNullOrEmpty(currentStamp) || !string.Equals(currentStamp, sid, StringComparison.Ordinal))
+                var isActive = await sessionService.IsActiveAsync(parsedUserId, sid, ctx.RequestAborted);
+                if (!isActive)
                 {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await ctx.Response.WriteAsJsonAsync(new
