@@ -167,9 +167,6 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
     private static Result ValidateStepExperience(UserProfile profile)
     {
         var missing = new List<string>();
-        if (profile.Experiences is not { Count: > 0 }) 
-            missing.Add("atLeastOne");
-        
         return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 
@@ -186,16 +183,12 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
     private static Result ValidateStepSkills(UserProfile profile)
     {
         var missing = new List<string>();
-        if (profile.Skills is not { Count: > 0 }) missing.Add("atLeastOne");
-        
         return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 
     private static Result ValidateStepAttachments(UserProfile profile)
     {
         var missing = new List<string>();
-        // if (profile.AdditionalAttachments is not { Count: > 0 }) missing.Add("atLeastOne");
-        
         return missing.Count > 0 ? Result.Fail(missing) : Result.Ok();
     }
 
