@@ -21,6 +21,13 @@ interface SuccessStoryDialogData {
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective]
 })
 export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
+  private static readonly allowedImageMimeTypes = new Set([
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/bmp'
+  ]);
+
   private fb = inject(FormBuilder);
   private dialogRef = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig<SuccessStoryDialogData>);
@@ -102,12 +109,12 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close(false);
   }
 
-  onImageSelected(event: Event) {
+  async onImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     const existingImageUrl = this.getExistingImagePreviewUrl();
 
-    if (file && !file.type.startsWith('image/')) {
+    if (file && !(await this.isAllowedStaticImage(file))) {
       this.imageError.set(this.translate.instant('HOME_CONTENT.INVALID_IMAGE_TYPE'));
       this.setImageFile(null);
       this.imageName.set(this.getExistingImageName());
@@ -220,5 +227,99 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
     }
 
     return `${this.translate.instant('HOME_CONTENT.IMAGE')} (${raw.slice(0, 8)}...)`;
+  }
+
+  private async isAllowedStaticImage(file: File): Promise<boolean> {
+    if (!HomeSuccessStoryDialogComponent.allowedImageMimeTypes.has(file.type)) {
+      return false;
+    }
+
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const isJpeg = this.hasSignature(bytes, [0xff, 0xd8, 0xff]);
+    if (isJpeg) {
+      return true;
+    }
+
+    if (this.isPng(bytes)) {
+      return !this.isAnimatedPng(bytes);
+    }
+
+    if (this.isWebp(bytes)) {
+      return !this.isAnimatedWebp(bytes);
+    }
+
+    return this.hasSignature(bytes, [0x42, 0x4d]);
+  }
+
+  private hasSignature(bytes: Uint8Array, signature: number[]): boolean {
+    if (bytes.length < signature.length) {
+      return false;
+    }
+
+    return signature.every((value, index) => bytes[index] === value);
+  }
+
+  private isPng(bytes: Uint8Array): boolean {
+    return this.hasSignature(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  }
+
+  private isAnimatedPng(bytes: Uint8Array): boolean {
+    let offset = 8;
+    while (offset + 8 <= bytes.length) {
+      const chunkLength = this.readUInt32(bytes, offset);
+      const chunkType = this.readAscii(bytes, offset + 4, 4);
+
+      if (chunkType === 'acTL') {
+        return true;
+      }
+
+      offset += chunkLength + 12;
+    }
+
+    return false;
+  }
+
+  private isWebp(bytes: Uint8Array): boolean {
+    return this.readAscii(bytes, 0, 4) === 'RIFF' && this.readAscii(bytes, 8, 4) === 'WEBP';
+  }
+
+  private isAnimatedWebp(bytes: Uint8Array): boolean {
+    let offset = 12;
+    while (offset + 8 <= bytes.length) {
+      const chunkType = this.readAscii(bytes, offset, 4);
+      const chunkLength = this.readUInt32(bytes, offset + 4);
+
+      if (chunkType === 'ANIM') {
+        return true;
+      }
+
+      if (chunkType === 'VP8X' && offset + 16 <= bytes.length) {
+        const flags = bytes[offset + 8];
+        if ((flags & 0x02) !== 0) {
+          return true;
+        }
+      }
+
+      const paddedLength = chunkLength + (chunkLength % 2);
+      offset += 8 + paddedLength;
+    }
+
+    return false;
+  }
+
+  private readUInt32(bytes: Uint8Array, offset: number): number {
+    if (offset + 4 > bytes.length) {
+      return 0;
+    }
+
+    return ((bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3]) >>> 0;
+  }
+
+  private readAscii(bytes: Uint8Array, offset: number, length: number): string {
+    if (offset + length > bytes.length) {
+      return '';
+    }
+
+    return String.fromCharCode(...bytes.slice(offset, offset + length));
   }
 }

@@ -75,6 +75,10 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
         if (file.Length == 0)
             return Result.Fail<string?>(ErrorsCodes.InvalidAttachmentFile);
 
+        var imageValidationResult = HomeSuccessStoryImageValidator.Validate(file);
+        if (imageValidationResult.IsFailed)
+            return Result.Fail<string?>(imageValidationResult.Errors);
+
         var uploadPath = await HomeSuccessStoryImageUploadPathFactory.CreateAsync(storyId, file, true, ct);
 
         var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
