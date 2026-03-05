@@ -56,11 +56,10 @@ public class RefreshTokenHandler(
             return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
         }
 
-        var currentSid = await tokenService.GetCurrentSessionIdAsync(storedToken.UserId, cancellationToken);
-        if (string.IsNullOrEmpty(currentSid) || !string.Equals(currentSid, storedToken.SecurityStamp, StringComparison.Ordinal))
+        if (!await tokenService.IsSessionActiveAsync(storedToken.UserId, storedToken.SecurityStamp, cancellationToken))
         {
-            logger.Warning("Session revoked for user {UserId}. Stored Token SID: {StoredSid}, Current Active SID: {CurrentSid}", 
-                storedToken.UserId, storedToken.SecurityStamp, currentSid);
+            logger.Warning("Session revoked for user {UserId}. SID: {Sid}", 
+                storedToken.UserId, storedToken.SecurityStamp);
             return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
         }
 

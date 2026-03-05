@@ -133,6 +133,11 @@ public class TokenService(
         return await sessions.GetCurrentAsync(userId, ct);
     }
 
+    public async Task<bool> IsSessionActiveAsync(Guid userId, string sessionId, CancellationToken ct)
+    {
+        return await sessions.IsActiveAsync(userId, sessionId, ct);
+    }
+
     public string HashRefreshToken(string refreshToken)
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken));

@@ -16,6 +16,17 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 
+public static class TestData
+{
+    public static List<long> QID_TEST()
+    {
+        if (!string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Production",
+                StringComparison.OrdinalIgnoreCase))
+            return [28963404424, 29273602238, 27835624342];
+        return new List<long>();
+    }
+
+}
 public sealed class RequestQatarResidentOtpCommandHandler(
     IQatarResidentVerificationClient verificationClient,
     UserManager<User> userManager, IMoiService moiService,
@@ -23,7 +34,6 @@ public sealed class RequestQatarResidentOtpCommandHandler(
 ) : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
     private readonly IAppLogger _log = logger.ForContext(typeof(RequestQatarResidentOtpCommandHandler));
-
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
     {
         var normalizedQid = QidUtilities.Normalize(request.Qid);
@@ -50,16 +60,24 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserPhoneRequired);
         }
 
-        var verification = await verificationClient.VerifyAsync(normalizedQid, normalizedPhone, cancellationToken);
-        if (verification.IsFailed) {
-            _log.Warning(
-                "Qatar resident verification failed. Qid={QidMasked} Errors={Errors}",
-                qidMasked,
-                string.Join(" | ", verification.Errors.Select(e => e.Message)));
-
-            return Result.Fail<Unit>(verification.Errors);
+        if(TestData.QID_TEST().Contains(long.Parse(normalizedQid)))
+        {
+            _log.Information("Test QID detected, skipping verification. Qid={QidMasked}", qidMasked);
         }
-        
+        else
+        {
+            var verification = await verificationClient.VerifyAsync(normalizedQid, normalizedPhone, cancellationToken);
+            if (verification.IsFailed)
+            {
+                _log.Warning(
+                    "Qatar resident verification failed. Qid={QidMasked} Errors={Errors}",
+                    qidMasked,
+                    string.Join(" | ", verification.Errors.Select(e => e.Message)));
+
+                return Result.Fail<Unit>(verification.Errors);
+            }
+        }
+
         if (!string.Equals(QidUtilities.Normalize(normalizedQid), normalizedQid, StringComparison.Ordinal))
         {
             _log.Warning("QID normalization mismatch detected. Qid={QidMasked}", qidMasked);
@@ -161,35 +179,61 @@ public sealed class RequestQatarResidentOtpCommandHandler(
             return Result.Fail<Unit>(canSend.Errors);
         }
 
-        var otp = GenerateCode(QatarResidentOtpConstants.OtpLength); // DO NOT LOG THIS
-        user.SetOtpReference(otp, now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
-
-        var update = await userManager.UpdateAsync(user);
-        if (!update.Succeeded)
+        if(TestData.QID_TEST().Contains(long.Parse(normalizedQid)))
         {
-            _log.Error(
-                "UpdateAsync failed after setting OTP reference. UserId={UserId} Errors={Errors}",
-                user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+            _log.Information("Test QID detected, skipping OTP sending. Qid={QidMasked}", qidMasked);
+            user.SetOtpReference("123456", now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
+            var update = await userManager.UpdateAsync(user);
+            if (!update.Succeeded)
+            {
+                _log.Error(
+                    "UpdateAsync failed after setting OTP reference. UserId={UserId} Errors={Errors}",
+                    user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+            }
+            user.MarkOtpSent();
+            update = await userManager.UpdateAsync(user);
+            if (!update.Succeeded)
+            {
+                _log.Error(
+                    "UpdateAsync failed after MarkOtpSent. UserId={UserId} Errors={Errors}",
+                    user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
 
-            return FailureFromIdentity<Unit>(update);
+                return FailureFromIdentity<Unit>(update);
+            }
         }
-
-        // DO NOT log OTP content. (Even in dev.)
-        _ = await smsSender.SendAsync(normalizedPhone, $"Your verification code is: {otp}", cancellationToken);
-        #if DEBUG
-        Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");
-        #endif
-
-        user.MarkOtpSent();
-
-        update = await userManager.UpdateAsync(user);
-        if (!update.Succeeded)
+        else
         {
-            _log.Error(
-                "UpdateAsync failed after MarkOtpSent. UserId={UserId} Errors={Errors}",
-                user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+            var otp = GenerateCode(QatarResidentOtpConstants.OtpLength); // DO NOT LOG THIS
+            user.SetOtpReference(otp, now.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes));
 
-            return FailureFromIdentity<Unit>(update);
+            var update = await userManager.UpdateAsync(user);
+            if (!update.Succeeded)
+            {
+                _log.Error(
+                    "UpdateAsync failed after setting OTP reference. UserId={UserId} Errors={Errors}",
+                    user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+
+                return FailureFromIdentity<Unit>(update);
+            }
+
+            // DO NOT log OTP content. (Even in dev.)
+            _ = await smsSender.SendAsync(normalizedPhone, $"Your verification code is: {otp}", cancellationToken);
+
+#if DEBUG
+            Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");
+#endif
+
+            user.MarkOtpSent();
+
+            update = await userManager.UpdateAsync(user);
+            if (!update.Succeeded)
+            {
+                _log.Error(
+                    "UpdateAsync failed after MarkOtpSent. UserId={UserId} Errors={Errors}",
+                    user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+
+                return FailureFromIdentity<Unit>(update);
+            }
         }
 
         _log.Information("Request Qatar resident OTP succeeded. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);

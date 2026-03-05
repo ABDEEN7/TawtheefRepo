@@ -15,13 +15,15 @@ public sealed class EfSessionService(
 {
     private static string GetSidKey(Guid userId) => $"sid:{userId}";
 
-    public async Task SetCurrentAsync(Guid userId, string sessionId, DeviceInfo? device, CancellationToken ct)
-    {
+    public async Task SetCurrentAsync(Guid userId, string sessionId, DeviceInfo? device, CancellationToken ct){
         var repo = uow.GetEntityRepository<UserSession>();
-        // Revoke all active sessions for this user
+        // NOTE: We used to revoke all here, but this prevents multi-tab/device usage. 
+        // We now allow multiple active sessions unless RevokeAllAsync is called explicitly.
+        /*
         await repo.DbSet
             .Where(s => s.UserId == userId && s.RevokedAtUtc == null)
             .ExecuteUpdateAsync(u => u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
+        */
 
         // Add the new one
         await repo.AddAsync(new UserSession {
@@ -32,7 +34,7 @@ public sealed class EfSessionService(
             UserAgent = device?.UserAgent,
             Platform = device?.Platform,
             AppVersion = device?.AppVersion
-        });
+        }, ct);
 
         await uow.SaveChangesAsync(ct);
 
@@ -65,6 +67,32 @@ public sealed class EfSessionService(
         }
 
         return sid;
+    }
+
+    public async Task<bool> IsActiveAsync(Guid userId, string sessionId, CancellationToken ct)
+    {
+        if (string.IsNullOrEmpty(sessionId)) return false;
+
+        // 1) Check Cache for the specific session status (optional optimization)
+        var cacheKey = $"sid_status:{sessionId}";
+        var cachedStatus = await cache.GetStringAsync(cacheKey, ct);
+        if (cachedStatus == "1") return true;
+        if (cachedStatus == "0") return false;
+
+        // 2) Check DB
+        var isActive = await uow.GetEntityRepository<UserSession>().DbSet
+            .AnyAsync(s => s.UserId == userId && s.SessionId == sessionId && s.RevokedAtUtc == null, ct);
+
+        // 3) Update Cache (short lived for individual session status)
+        if (isActive)
+        {
+            await cache.SetStringAsync(cacheKey, "1", new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            }, ct);
+        }
+
+        return isActive;
     }
 
     public async Task RevokeAllAsync(Guid userId, CancellationToken ct)

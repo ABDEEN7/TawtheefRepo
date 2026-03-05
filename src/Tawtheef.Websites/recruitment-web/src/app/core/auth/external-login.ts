@@ -10,6 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../services/notification.service';
 import { OAUTH_STATE_KEY } from '../constants/auth-tokens.const';
 
+type ExternalProvider = 'google' | 'qatarpass';
+
 @Injectable({ providedIn: 'root' })
 export class ExternalLoginService implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
@@ -32,11 +34,21 @@ export class ExternalLoginService implements OnDestroy {
   private readonly loadingService = inject(LoadingService);
   private readonly translate = inject(TranslateService);
 
+  /** UI State consumed by components */
   loading = false;
   popupStatusKey: string | null = null;
 
+  /** Whether we can show Retry / Open in new tab actions */
+  canRetry = false;
+  canOpenInNewTab = false;
+
   private externalLoadingActive = false;
   private readonly allowedOrigins = this.buildAllowedOrigins();
+
+  /** Remember last attempt so UI can retry/open tab */
+  private lastBaseUrl: string | null = null;
+  private lastFullUrl: string | null = null;
+  private lastProvider: ExternalProvider | null = null;
 
   // i18n keys (service-local)
   private readonly i18n = {
@@ -54,11 +66,15 @@ export class ExternalLoginService implements OnDestroy {
 
     popupClosedSummary: 'auth.externalLogin.popupClosed.summary',
     popupClosedDetail: 'auth.externalLogin.popupClosed.detail',
+
     timeoutSummary: 'auth.externalLogin.timeout.summary',
     timeoutDetail: 'auth.externalLogin.timeout.detail',
 
     loadingOpening: 'auth.externalLogin.loadingOpening',
+    loadingWaitingUser: 'auth.externalLogin.loadingWaitingUser', // NEW (recommended)
     loadingCompleting: 'auth.externalLogin.loadingCompleting',
+
+    hintReturnToApp: 'auth.externalLogin.hintReturnToApp', // NEW (recommended)
   } as const;
 
   constructor() {
@@ -73,18 +89,41 @@ export class ExternalLoginService implements OnDestroy {
 
   /** Public APIs */
   public loginUsingGoogle(): void {
-    const url = this.endpoints.auth.externalLogin('google');
-    this.openPopupWithState(url);
+    const baseUrl = this.endpoints.auth.externalLogin('google');
+    this.lastProvider = 'google';
+    this.lastBaseUrl = baseUrl;
+    this.openPopupWithState(baseUrl);
   }
 
   public loginUsingQatarPass(): void {
-    const url = environment.qatarPassLoginUrl;
-    this.openPopupWithState(url);
+    const baseUrl = environment.qatarPassLoginUrl;
+    this.lastProvider = 'qatarpass';
+    this.lastBaseUrl = baseUrl;
+    this.openPopupWithState(baseUrl);
   }
 
-  loginAsQatarResident() {
-    // open popup
-    // bass success auth
+  /** NEW: allow component to cancel ongoing flow */
+  public cancelExternalLogin(): void {
+    this.finishPopupFlow({ stopLoading: true, closePopup: true });
+    this.setActions({ retry: !!this.lastBaseUrl, openTab: !!this.lastFullUrl });
+  }
+
+  /** NEW: retry the last provider attempt (popup) */
+  public retryLast(): void {
+    if (!this.lastBaseUrl) return;
+    this.openPopupWithState(this.lastBaseUrl);
+  }
+
+  /** NEW: open last auth URL in a new tab (fallback when popup blocked) */
+  public openLastInNewTab(): void {
+    if (!this.lastFullUrl) return;
+    // try new tab
+    try {
+      window.open(this.lastFullUrl, '_blank', 'noopener,noreferrer');
+    } catch {
+      // last resort: same tab
+      window.location.href = this.lastFullUrl;
+    }
   }
 
   private i18nText(key: string): string {
@@ -93,12 +132,11 @@ export class ExternalLoginService implements OnDestroy {
 
   private safeIsPopupClosed(): boolean {
     if (!this.popup) return true;
-    if (this.isAccessRestricted) return false;
 
     try {
       return this.popup.closed;
     } catch {
-      // Access hit a SecurityError or COOP block.
+      // If browser blocks access, we can't reliably detect close
       this.isAccessRestricted = true;
       return false;
     }
@@ -115,11 +153,16 @@ export class ExternalLoginService implements OnDestroy {
 
   /** Open popup (centered), add `state`, and start guarded fallback listeners */
   private openPopupWithState(baseUrl: string): void {
-    const state = Math.random().toString(36).slice(2);
-    localStorage.setItem(OAUTH_STATE_KEY, state);
-    const url = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
+    // when user starts, reset actions until we know outcome
+    this.setActions({ retry: false, openTab: false });
 
-    this.startNewPopupFlow(url, this.centeredPosition());
+    const state = this.generateState();
+    localStorage.setItem(OAUTH_STATE_KEY, state);
+
+    const fullUrl = baseUrl.includes('?') ? `${baseUrl}&state=${state}` : `${baseUrl}?state=${state}`;
+    this.lastFullUrl = fullUrl;
+
+    this.startNewPopupFlow(fullUrl, this.centeredPosition());
   }
 
   private startNewPopupFlow(url: string, position: { left: number; top: number }): void {
@@ -127,32 +170,43 @@ export class ExternalLoginService implements OnDestroy {
     this.popupDone$ = new Subject<void>();
 
     this.setLoadingState(true, this.i18n.loadingOpening);
+
     this.popup = window.open(
       url,
       '_external_login',
       `width=${this.popupWidth},height=${this.popupHeight},left=${position.left},top=${position.top},resizable=yes,scrollbars=yes`
     );
 
+    // blocked
     if (this.safeIsPopupClosed()) {
       this.finishPopupFlow({ stopLoading: true, closePopup: true });
       this.toastKey('warn', this.i18n.popupBlockedSummary, this.i18n.popupBlockedDetail);
+
+      // Enable UI actions (Retry + Open in new tab)
+      this.setActions({ retry: true, openTab: true });
       return;
     }
 
-    this.setLoadingState(true, this.i18n.loadingCompleting);
+    // waiting for user to finish in provider
+    this.setLoadingState(true, this.i18n.loadingWaitingUser);
 
     const untilPopupDone$ = merge(this.destroy$, this.popupDone$);
 
     this.isAccessRestricted = this.isCrossChain(url);
 
-    this.popupPollSub = interval(350)
+    // If cross-origin restricted, polling close may be unreliable.
+    // Show a helpful hint to user.
+    if (this.isAccessRestricted) {
+      this.popupStatusKey = this.i18n.hintReturnToApp;
+    }
+
+    this.popupPollSub = interval(700)
       .pipe(takeUntil(untilPopupDone$))
       .subscribe(() => {
-        if (this.isAccessRestricted) return;
-
         if (this.safeIsPopupClosed()) {
           this.finishPopupFlow({ stopLoading: true, closePopup: true });
           this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
+          this.setActions({ retry: true, openTab: !!this.lastFullUrl });
         }
       });
 
@@ -161,14 +215,17 @@ export class ExternalLoginService implements OnDestroy {
       .subscribe(() => {
         this.finishPopupFlow({ stopLoading: true, closePopup: true });
         this.toastKey('warn', this.i18n.timeoutSummary, this.i18n.timeoutDetail);
+
+        this.setActions({ retry: true, openTab: !!this.lastFullUrl });
       });
 
     this.popupFocusSub = fromEvent(window, 'focus')
       .pipe(takeUntil(untilPopupDone$))
       .subscribe(() => {
-        if (this.popup && this.safeIsPopupClosed()) {
+        if (this.safeIsPopupClosed()) {
           this.finishPopupFlow({ stopLoading: true, closePopup: true });
           this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
+          this.setActions({ retry: true, openTab: !!this.lastFullUrl });
         }
       });
   }
@@ -200,8 +257,11 @@ export class ExternalLoginService implements OnDestroy {
 
   /** Handle messages from popup */
   private handleMessage(msg: ExternalMsg): void {
+    if (this.loading && msg.type === 'EXTERNAL_LOGIN_SUCCESS') return;
+
     switch (msg.type) {
       case 'EXTERNAL_LOGIN_SUCCESS':
+        // user finished provider, now completing on our side
         this.setLoadingState(true, this.i18n.loadingCompleting);
         this.finishPopupFlow({ stopLoading: false, closePopup: true });
 
@@ -217,6 +277,10 @@ export class ExternalLoginService implements OnDestroy {
           .subscribe((success) => {
             if (!success) {
               this.toastKey('error', this.i18n.loginFailedSummary, this.i18n.loginFailedDetail);
+              this.setActions({ retry: true, openTab: !!this.lastFullUrl });
+            } else {
+              // on success, disable actions
+              this.setActions({ retry: false, openTab: false });
             }
           });
         break;
@@ -228,22 +292,22 @@ export class ExternalLoginService implements OnDestroy {
           this.i18nText(this.i18n.externalAuthFailedSummary),
           msg.content ?? msg.message ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback)
         );
+        this.setActions({ retry: true, openTab: !!this.lastFullUrl });
         break;
 
       case 'EXTERNAL_POPUP_CLOSED':
         this.finishPopupFlow({ stopLoading: true, closePopup: true });
         this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);
+        this.setActions({ retry: true, openTab: !!this.lastFullUrl });
         break;
 
       default:
-        // ignore unknown messages
         break;
     }
   }
 
   /** Utilities */
   private centeredPosition() {
-    // robust centering across multi-monitor setups
     const dualLeft = window.screenLeft ?? window.screenX ?? 0;
     const dualTop = window.screenTop ?? window.screenY ?? 0;
     const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
@@ -294,6 +358,11 @@ export class ExternalLoginService implements OnDestroy {
     this.popupStatusKey = isLoading ? statusKey : null;
   }
 
+  private setActions(opts: { retry: boolean; openTab: boolean }) {
+    this.canRetry = opts.retry;
+    this.canOpenInNewTab = opts.openTab;
+  }
+
   private toastKey(
     severity: 'success' | 'info' | 'warn' | 'error',
     summaryKey: string,
@@ -329,6 +398,17 @@ export class ExternalLoginService implements OnDestroy {
       case 'error':
         this.notificationService.error(detail, summary);
         break;
+    }
+  }
+
+  private generateState(): string {
+    // crypto-safe state
+    try {
+      const arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      return Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('');
+    } catch {
+      return Math.random().toString(36).slice(2);
     }
   }
 
