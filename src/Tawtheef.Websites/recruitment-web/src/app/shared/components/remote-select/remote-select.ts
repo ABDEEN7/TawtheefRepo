@@ -311,19 +311,19 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
    * ✅ PrimeNG correct lazy paging: derive page from first/rows
    */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading()) return;
-    if (!this.hasMore()) return;
+    if (this.isLoading() || !this.hasMore) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
     const rows = event?.rows ?? this.pageSize;
-    const page = Math.floor(first / rows);
-
-    const key = this.requestKey(page, this.currentTerm);
+    const lastVisibleIndex = first + rows;
+    const nearEnd = lastVisibleIndex >= this.options().length - 2;
+    if (!nearEnd) return;
+    const nextPage = this.pageNumber + 1;
+    const key = this.requestKey(nextPage, this.currentTerm);
     if (this.requestedPages.has(key)) return;
-
     this.requestedPages.add(key);
-    this.load({ term: this.currentTerm, page, append: page > 0 });
+    this.load({ term: this.currentTerm, page: nextPage, append: true });
   }
 
   handleChange(event: any): void {
