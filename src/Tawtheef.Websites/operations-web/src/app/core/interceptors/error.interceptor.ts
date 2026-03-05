@@ -80,10 +80,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     // Handle single detail or message
     const errorKey = apiError.detail || apiError.message;
     if (errorKey) {
-      if (typeof errorKey === 'string' && errorKey.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
-        return handlePartialProfileError(errorKey);
-      }
-
       const translated = translate.instant(`server-error.${errorKey}`, { ticket });
       return (translated !== `server-error.${errorKey}`) ? translated : errorKey;
     }
@@ -92,19 +88,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   function tryLocalizedMessage(key: string): string {
-    if (typeof key === 'string' && key.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
-      return handlePartialProfileError(key);
-    }
-
     const fullKey = `server-error.${key}`;
     const translateValue = translate.instant(fullKey);
 
-    // إذا ما في ترجمة، ngx-translate بيرجع fullKey نفسه
     if (translateValue !== fullKey) {
       return translateValue;
     }
-
-    // fallback: رجّع رسالة السيرفر الأصلية
     return key;
   }
 
