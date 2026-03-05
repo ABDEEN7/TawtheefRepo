@@ -159,7 +159,7 @@
   "profileApproval.detail.sectionApproval.statusLabel": "الحالة",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "اختر الحالة",
   "profileApproval.detail.sectionApproval.notesLabel": "ملاحظات",
-  "profileApproval.detail.sectionApproval.notesPlaceholder": "ملاحظات القسم (حقل اختياري)",
+  "profileApproval.detail.sectionApproval.notesPlaceholder": "ملاحظات القسم",
   "profileApproval.detail.sectionApproval.prev": "السابق",
   "profileApproval.detail.sectionApproval.next": "التالي",
   "profileApproval.detail.stepper.tooltip.approved": "تم حفظ القرار كمعتمد",

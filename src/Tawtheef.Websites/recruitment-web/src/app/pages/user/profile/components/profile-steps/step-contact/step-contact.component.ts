@@ -161,12 +161,27 @@ export class StepContactComponent implements OnInit, OnDestroy {
         }
       }
     });
-
     const state = this.ds.state();
-
     // init phone
     if (state.phone) {
-      this.phoneValue.set(state.phone.e164Number);
+      if (state.phone?.e164Number) {
+        try {
+          const parsed = this.phoneNumberUtil.parse(state.phone.e164Number); // "+97433632375"
+          const national = String(parsed.getNationalNumber());              // "33632375"
+          const iso2 = this.phoneNumberUtil.getRegionCodeForNumber(parsed); // "QA"
+
+          this.selectedCountryIso2.set(iso2 as CountryISO);
+
+          // خزن بالحقل قيمة بدون +974 (إذا separateDialCode = true)
+          this.phoneValue.set(national);
+
+          // وخزن بالـ state نفس كائن PhoneNumber عندك (e164Number + countryCode)
+          this.phone.update(s => ({ ...s, value: state.phone!.e164Number, valid: true }));
+        } catch {
+          // fallback
+          this.phoneValue.set(state.phone.e164Number);
+        }
+      }
       this.phone.update(s => ({ ...s, value: state.phone!.e164Number, valid: true }));
       const savedIso2 = (state.phone.countryCode ?? '').toLowerCase();
       const isAllowed =
@@ -327,7 +342,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   onPhoneChange(value: PhoneNumber | null): void {
     if (!value || this.ds.isLocked('phone')) return;
 
-    this.phoneValue.set(value.e164Number);
+    this.phoneValue.set(value.e164Number.replace(value.dialCode,''));
     const incomingIso2 = (value.countryCode ?? '').toLowerCase();
     if (incomingIso2) {
       const isAllowed =

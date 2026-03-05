@@ -311,21 +311,20 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
    * ✅ PrimeNG correct lazy paging: derive page from first/rows
    */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading()) return;
-    if (!this.hasMore()) return;
+    if (this.isLoading() || !this.hasMore) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
     const rows = event?.rows ?? this.pageSize;
-    const page = Math.floor(first / rows);
-
-    const key = this.requestKey(page, this.currentTerm);
+    const lastVisibleIndex = first + rows;
+    const nearEnd = lastVisibleIndex >= this.options().length - 2;
+    if (!nearEnd) return;
+    const nextPage = this.pageNumber + 1;
+    const key = this.requestKey(nextPage, this.currentTerm);
     if (this.requestedPages.has(key)) return;
-
     this.requestedPages.add(key);
-    this.load({ term: this.currentTerm, page, append: page > 0 });
+    this.load({ term: this.currentTerm, page: nextPage, append: true });
   }
-
   handleChange(event: any): void {
     const newVal = event?.value;
     this.value.set(newVal);
@@ -462,9 +461,21 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private containsOption(options: any[], option: any): boolean {
-    if (!this.optionValue) return options.includes(option);
-    const optionVal = this.getOptionValue(option);
-    return options.some(opt => this.getOptionValue(opt) === optionVal);
+    // ✅ if optionValue exists, keep your current behavior
+    if (this.optionValue) {
+      const optionVal = this.getOptionValue(option);
+      return options.some(opt => this.getOptionValue(opt) === optionVal);
+    }
+
+    // ✅ when optionValue is NOT set, compare by id (fallback by label)
+    const optionId = this.getOptionId(option);
+    if (optionId) {
+      return options.some(opt => this.getOptionId(opt) === optionId);
+    }
+
+    // last resort: label compare (if no id exists)
+    const label = this.getOptionLabelValue(option);
+    return options.some(opt => this.getOptionLabelValue(opt) === label);
   }
 
   private getOptionValue(option: any): any {

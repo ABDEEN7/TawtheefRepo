@@ -91,13 +91,12 @@ export class ExternalLoginService implements OnDestroy {
 
   private safeIsPopupClosed(): boolean {
     if (!this.popup) return true;
-    if (this.isAccessRestricted) return false;
 
     try {
+      // `closed` غالبًا مسموح حتى مع cross-origin
       return this.popup.closed;
     } catch {
-      // Access hit a SecurityError or COOP block.
-      this.isAccessRestricted = true;
+      // لا تعمل "block" نهائي. خليه يحاول مرة ثانية بالـ poll القادم.
       return false;
     }
   }
@@ -160,8 +159,6 @@ export class ExternalLoginService implements OnDestroy {
     this.popupPollSub = interval(350)
       .pipe(takeUntil(untilPopupDone$))
       .subscribe(() => {
-        if (this.isAccessRestricted) return;
-
         if (this.safeIsPopupClosed()) {
           this.finishPopupFlow({ stopLoading: true, closePopup: true });
           this.toastKey('warn', this.i18n.popupClosedSummary, this.i18n.popupClosedDetail);

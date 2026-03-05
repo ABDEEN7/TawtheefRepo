@@ -159,7 +159,7 @@
   "profileApproval.detail.sectionApproval.statusLabel": "Status",
   "profileApproval.detail.sectionApproval.statusPlaceholder": "Select Status",
   "profileApproval.detail.sectionApproval.notesLabel": "Notes",
-  "profileApproval.detail.sectionApproval.notesPlaceholder": "Section Notes (Optional Field)",
+  "profileApproval.detail.sectionApproval.notesPlaceholder": "Notes",
   "profileApproval.detail.sectionApproval.prev": "Previous",
   "profileApproval.detail.sectionApproval.next": "Next",
   "profileApproval.detail.stepper.tooltip.approved": "Decision saved as Approved",
