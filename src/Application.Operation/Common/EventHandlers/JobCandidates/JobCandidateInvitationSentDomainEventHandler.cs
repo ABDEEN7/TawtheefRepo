@@ -21,7 +21,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
             var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
             var emailNotification = Notification.Create( NotificationChannel.Email, 
                 JobCandidateInvitationSent.TemplateKey, notification.ApplicantId, 
-                notification.Email, "Tawtheef Job Invitation", null, payload);
+                notification.Email, "Careers Job Invitation", null, payload);
             await repo.AddAsync(emailNotification, ct);
         }
 
@@ -33,7 +33,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
 
             var smsNotification = Notification.Create( NotificationChannel.Sms, 
                 nameof(JobCandidateInvitationSent), notification.ApplicantId, 
-                notification.PhoneNumber, "Tawtheef Job Invitation", body, null);
+                notification.PhoneNumber, "Careers Job Invitation", body, null);
             await repo.AddAsync(smsNotification, ct);
         }
 

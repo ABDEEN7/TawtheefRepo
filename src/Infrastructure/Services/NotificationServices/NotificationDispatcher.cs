@@ -43,11 +43,14 @@ public sealed class NotificationDispatcher(
             var handlers = BuildHandlers(emailSender, smsSender, pushSender);
 
             var batch = await FetchPendingBatch(repo, ct);
-            foreach (var n in batch)
-                await ProcessOne(n, handlers, ct);
+            if (batch.Count == 0)
+                return;
 
-            if (batch.Count > 0)
+            foreach (var n in batch)
+            {
+                await ProcessOne(n, handlers, ct);
                 await uow.SaveChangesAsync(ct);
+            }
         }
         catch (Exception ex)
         {
@@ -59,10 +62,29 @@ public sealed class NotificationDispatcher(
         IGenericRepository<Notification> repo,
         CancellationToken ct)
     {
-        return await repo.DbSet
+        var pendingIds = await repo.DbSet
             .Where(n => n.Status == NotificationStatus.Pending)
             .OrderBy(n => n.CreatedDate)
             .Take(BatchSize)
+            .Select(n => n.Id)
+            .ToListAsync(ct);
+
+        if (pendingIds.Count == 0)
+            return new List<Notification>();
+
+        var lockId = Guid.NewGuid().ToString();
+
+        var updatedCount = await repo.DbSet
+            .Where(n => pendingIds.Contains(n.Id) && n.Status == NotificationStatus.Pending)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(p => p.Status, NotificationStatus.Queued)
+                .SetProperty(p => p.ProviderMessageId, lockId), ct);
+
+        if (updatedCount == 0)
+            return new List<Notification>();
+
+        return await repo.DbSet
+            .Where(n => pendingIds.Contains(n.Id) && n.ProviderMessageId == lockId)
             .ToListAsync(ct);
     }
 

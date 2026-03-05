@@ -48,11 +48,11 @@ using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.BackgroundJobs;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
-using Tawtheef.Infrastructure.Services.Security;
 using Tawtheef.Infrastructure.Services.Localization;
 using Tawtheef.Infrastructure.Services.Logging;
 using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Infrastructure.Services.Office;
+using Tawtheef.Infrastructure.Services.Security;
 using Tawtheef.Infrastructure.Services.StorageServices;
 using Tawtheef.Infrastructure.Services.Validations;
 using Tawtheef.Notifications;
@@ -479,14 +479,9 @@ namespace Tawtheef.Infrastructure
                                 }
 
                                 var sessionService = ctx.HttpContext.RequestServices.GetRequiredService<ISessionService>();
-                                var currentSid = await sessionService.GetCurrentAsync(
-                                    Guid.Parse(userId),
-                                    ctx.HttpContext.RequestAborted);
-
-                                if (string.IsNullOrWhiteSpace(currentSid) ||
-                                    !string.Equals(currentSid, sidFromToken, StringComparison.Ordinal))
+                                if (!await sessionService.IsActiveAsync(Guid.Parse(userId), sidFromToken, ctx.HttpContext.RequestAborted))
                                 {
-                                    ctx.Fail("Session changed. Please sign in again.");
+                                    ctx.Fail("Session revoked or expired. Please sign in again.");
                                 }
                             }
                         };

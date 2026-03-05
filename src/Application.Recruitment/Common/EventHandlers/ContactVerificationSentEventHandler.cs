@@ -20,7 +20,7 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
             ContactVerificationSent.TemplateKey,
             @event.UserId,
             @event.Destination,
-            "Tawtheef Verification Code",
+            "Careers Verification Code",
             null,
             payload);
         await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);

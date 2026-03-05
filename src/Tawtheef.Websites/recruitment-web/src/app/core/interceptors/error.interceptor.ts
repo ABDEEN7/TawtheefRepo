@@ -117,7 +117,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         for (const k of possibleKeys) {
           const t = translate.instant(k);
-          if (t !== k) return `• ${t}`;
+          if (t !== k)
+            return `• ${t}`;
         }
         return `• ${f}`;
       });
@@ -132,10 +133,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       return handlePartialProfileError(key);
     }
 
-    const translateValue = translate.instant(`server-error.${key}`);
-    if (translateValue !== key) {
+    const fullKey = `server-error.${key}`;
+    const translateValue = translate.instant(fullKey);
+
+    // إذا ما في ترجمة، ngx-translate بيرجع fullKey نفسه
+    if (translateValue !== fullKey) {
       return translateValue;
     }
+
+    // fallback: رجّع رسالة السيرفر الأصلية
     return key;
   }
 
