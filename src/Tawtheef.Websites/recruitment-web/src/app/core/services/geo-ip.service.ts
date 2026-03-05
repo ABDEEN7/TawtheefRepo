@@ -1,7 +1,9 @@
 ﻿import { Injectable, inject } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable, of, race, timer } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { HttpService } from '../http/http.service';
+import { HDR } from '../utils/headers.flags';
 
 type GeoAny = {
   country?: string;                 // ipwhois sometimes returns country code, sometimes name
@@ -18,9 +20,14 @@ export class GeoIpService {
     // Emit a fallback object if all providers are slow
     const timeout$ = timer(1800).pipe(map(() => ({}) as GeoAny));
 
-    const ipapi$ = this.http.get<GeoAny>('https://ipapi.co/json/').pipe(
-      catchError(() => this.http.get<GeoAny>('https://ipwhois.app/json/')),
-      catchError(() => this.http.get<GeoAny>('https://www.geoplugin.net/json.gp')),
+    const skipHeaders = new HttpHeaders({
+      [HDR.SkipError]: 'true',
+      'X-Skip-Loading': 'true'
+    });
+
+    const ipapi$ = this.http.get<GeoAny>('https://ipapi.co/json/', undefined, { headers: skipHeaders }).pipe(
+      catchError(() => this.http.get<GeoAny>('https://ipwhois.app/json/', undefined, { headers: skipHeaders })),
+      catchError(() => this.http.get<GeoAny>('https://www.geoplugin.net/json.gp', undefined, { headers: skipHeaders })),
       catchError(() => of({} as GeoAny))
     );
 

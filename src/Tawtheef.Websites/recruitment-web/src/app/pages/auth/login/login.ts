@@ -86,19 +86,6 @@ export class Login implements OnInit, OnDestroy {
     }
   }
 
-  /** UI actions */
-  cancelExternal(): void {
-    this.auth.cancelExternalLogin();
-  }
-
-  retryExternal(): void {
-    this.auth.retryLast();
-  }
-
-  openInNewTab(): void {
-    this.auth.openLastInNewTab();
-  }
-
   private bestEffortGeoip(): void {
     const sub = this.geoIpService.getCountryIso2().subscribe(code => {
       const mode: ResidencyMode = code === 'QA' ? 'resident' : 'nonresident';

@@ -15,13 +15,15 @@
         [placeholder]="'wizard.placeholders.selectCountry' | translate" class="w-full md:w-56"
         [disabled]="ds.isLocked('country')" [ngClass]="{ 'locked-field': ds.isLocked('country') }"></p-select>
     </div>
-    <div class="col-md-4 d-flex flex-column  contact">
+    <div class="col-md-4 d-flex flex-column contact">
       <label class="form-label required">{{ 'wizard.contact.phone' | translate }}</label>
+      <div dir="ltr" class="phone-ltr">
       <ngx-intl-tel-input class="prime-tel-input" [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
         [searchCountryFlag]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
         [maxLength]="15" [phoneValidation]="true" [selectedCountryISO]="selectedCountryIso2()"
         [onlyCountries]="onlyPhoneCountries()" [ngModel]="phoneValue()" [separateDialCode]="true"
         (ngModelChange)="onPhoneChange($event)" [disabled]="ds.isLocked('phone')"></ngx-intl-tel-input>
+      </div>
       @if (phone().touched && !phone().valid) {
       <div class="text-danger mt-1">
         {{ 'validation.phoneInvalid' | translate }}
