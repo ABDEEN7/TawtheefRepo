@@ -80,10 +80,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     // Handle single detail or message
     const errorKey = apiError.detail || apiError.message;
     if (errorKey) {
-      if (typeof errorKey === 'string' && errorKey.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
-        return handlePartialProfileError(errorKey);
-      }
-
       const translated = translate.instant(`server-error.${errorKey}`, { ticket });
       return (translated !== `server-error.${errorKey}`) ? translated : errorKey;
     }
@@ -91,49 +87,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     return translate.instant('server-error.UN_EXPECTED_ERROR', { ticket });
   }
 
-  function handlePartialProfileError(rawKey: string): string {
-    const parts = rawKey.split(':');
-    const step = parts[1]; // e.g. Personal
-    const fields = parts[2] ? parts[2].split(',') : [];
-
-    const stepNameKey = `wizard.steps.${step.toLowerCase()}`;
-    let stepName = translate.instant(stepNameKey);
-    if (stepName === stepNameKey) {
-      stepName = step;
-    }
-
-    let result = translate.instant('server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE', { step: stepName });
-
-    if (fields.length > 0) {
-      const fieldMessages = fields.map(f => {
-        const possibleKeys = [
-          `wizard.profile.${step.toLowerCase()}.${f}.required`,
-          `wizard.profile.${step.toLowerCase()}.${f}`,
-          `wizard.personal.${f}`,      // common prefix for some
-          `wizard.contact.${f}`,       // common prefix for some
-          `wizard.${f}`,
-          f
-        ];
-
-        for (const k of possibleKeys) {
-          const t = translate.instant(k);
-          if (t !== k) return `• ${t}`;
-        }
-        return `• ${f}`;
-      });
-      result += '\n' + fieldMessages.join('\n');
-    }
-
-    return result;
-  }
-
   function tryLocalizedMessage(key: string): string {
-    if (typeof key === 'string' && key.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
-      return handlePartialProfileError(key);
-    }
+    const fullKey = `server-error.${key}`;
+    const translateValue = translate.instant(fullKey);
 
-    const translateValue = translate.instant(`server-error.${key}`);
-    if (translateValue !== key) {
+    if (translateValue !== fullKey) {
       return translateValue;
     }
     return key;

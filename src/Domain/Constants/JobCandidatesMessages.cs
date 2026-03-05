@@ -3,9 +3,9 @@ namespace Tawtheef.Domain.Constants;
 public static class JobCandidatesMessages
 {
     public const string JobInvitationWithoutTitle =
-        "You have been invited to apply for a role on Tawtheef. Please sign in to review the details.";
+        "You have been invited to apply for a role on Careers. Please sign in to review the details.";
     public const string JobInvitationWithTitle =
-        "You have been invited to apply for {0} on Tawtheef. Please sign in to review the details.";
+        "You have been invited to apply for {0} on Careers. Please sign in to review the details.";
     public const  string JobCategoryCandidateSettingsNotFound = "JOB_CATEGORY_CANDIDATE_SETTINGS_NOT_FOUND";
     public const string JobCandidatesFilterPercentagesInvalid = "JOB_CANDIDATE_FILTER_PERCENTAGES_INVALID";
     public const string JobCandidatesNationalityBreakdownInvalid = "JOB_CANDIDATE_NATIONALITY_BREAKDOWN_INVALID";
