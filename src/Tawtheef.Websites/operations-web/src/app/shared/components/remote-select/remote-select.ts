@@ -461,9 +461,21 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private containsOption(options: any[], option: any): boolean {
-    if (!this.optionValue) return options.includes(option);
-    const optionVal = this.getOptionValue(option);
-    return options.some(opt => this.getOptionValue(opt) === optionVal);
+    // ✅ if optionValue exists, keep your current behavior
+    if (this.optionValue) {
+      const optionVal = this.getOptionValue(option);
+      return options.some(opt => this.getOptionValue(opt) === optionVal);
+    }
+
+    // ✅ when optionValue is NOT set, compare by id (fallback by label)
+    const optionId = this.getOptionId(option);
+    if (optionId) {
+      return options.some(opt => this.getOptionId(opt) === optionId);
+    }
+
+    // last resort: label compare (if no id exists)
+    const label = this.getOptionLabelValue(option);
+    return options.some(opt => this.getOptionLabelValue(opt) === label);
   }
 
   private getOptionValue(option: any): any {
