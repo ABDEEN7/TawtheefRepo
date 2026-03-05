@@ -5,6 +5,7 @@ public interface ISessionService
 {
     Task SetCurrentAsync(Guid userId, string sessionId, DeviceInfo? device, CancellationToken ct);
     Task<string?> GetCurrentAsync(Guid userId, CancellationToken ct);
+    Task<bool> IsActiveAsync(Guid userId, string sessionId, CancellationToken ct);
     Task RevokeAllAsync(Guid userId, CancellationToken ct);
     Task RevokeAsync(Guid userId, string sessionId, CancellationToken ct);
 }

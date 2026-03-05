@@ -20,8 +20,8 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        Console.Title = "Tawtheef Import Tool";
-        ConsoleUi.PrintHeader("Tawtheef Seed Import");
+        Console.Title = "Careers Import Tool";
+        ConsoleUi.PrintHeader("Careers Seed Import");
 
         // 1) Connection string selection
         var connectionString = ConsoleUi.PromptConnectionString([
