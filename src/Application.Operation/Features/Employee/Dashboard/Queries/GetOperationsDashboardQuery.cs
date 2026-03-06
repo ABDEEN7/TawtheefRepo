@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.Dashboard.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.Dashboard.DTOs;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
 
@@ -13,4 +13,5 @@ public sealed record GetOperationsDashboardQuery(
     Guid? DepartmentId = null,
     Guid? EmployeeId = null,
     string? Status = null
-) : PaginatedRequest, IQuery<Result<OperationsDashboardDto>>;
+) : PaginatedRequest, IRequest<Result<OperationsDashboardDto>>;
+

@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -6,4 +6,5 @@ using Tawtheef.Domain.Entities.Recruitment;
 namespace Application.Recruitment.Features.Profile.Queries;
 
 public sealed record GetMyProfileStatusQuery(Guid UserId, ProfileSection? Section = null)
-    : IQuery<Result<ProfileStatusDto>>;
+    : IRequest<Result<ProfileStatusDto>>;
+

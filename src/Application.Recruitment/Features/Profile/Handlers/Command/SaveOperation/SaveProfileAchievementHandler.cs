@@ -1,8 +1,7 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ public sealed class SaveProfileAchievementHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileAchievementCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfileAchievementCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -166,7 +165,7 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
                 return Result.Fail<Guid?>(fileTooLargeError);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
             if (uploadResult.IsFailed)
@@ -188,3 +187,5 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
             return Result.Ok();
         }
 }
+
+

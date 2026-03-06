@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -13,4 +13,5 @@ public record GetProfileApprovalsQuery(
     ReviewStatus? Status = null,
     Guid? TargetEntityId = null,
     string? CandidateType = null
-) : PaginatedRequest, IQuery<Result<PaginatedResult<ProfileApprovalListItemDto>>>;
+) : PaginatedRequest, IRequest<Result<PaginatedResult<ProfileApprovalListItemDto>>>;
+

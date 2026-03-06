@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Dashboard.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Dashboard.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 namespace Application.Recruitment.Features.Dashboard.Handlers.Commands;
 
 public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWork, TimeProvider timeProvider)
-    : ICommandHandler<ApplyCandidateInvitationCommand, IResult<Unit>>
+    : IRequestHandler<ApplyCandidateInvitationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ApplyCandidateInvitationCommand command, CancellationToken cancellationToken)
     {
@@ -37,3 +36,4 @@ public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWor
         return Result.Ok(Unit.Value);
     }
 }
+

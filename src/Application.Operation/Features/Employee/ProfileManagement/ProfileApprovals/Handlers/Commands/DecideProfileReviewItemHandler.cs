@@ -1,9 +1,8 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.SaveOperation;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.Spanshot;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -15,7 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 
 public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider time)
-    : ICommandHandler<DecideProfileReviewItemCommand, IResult<Unit>>
+    : IRequestHandler<DecideProfileReviewItemCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -561,3 +560,4 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         }
     }
 }
+

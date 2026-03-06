@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Profile.Handlers.Command;
 
 public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
-    : ICommandHandler<ResubmitUserProfileCommand, IResult<Unit>>
+    : IRequestHandler<ResubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ResubmitUserProfileCommand cmd, CancellationToken ct)
     {
@@ -359,3 +358,4 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         return item is null ? null : snapshot(item);
     }
 }
+

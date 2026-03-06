@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.JobDetails.DTOs;
+﻿using Application.Recruitment.Features.JobDetails.DTOs;
 using Application.Recruitment.Features.JobDetails.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,7 @@ public sealed class GetCandidateJobDetailsQueryHandler(
     IUnitOfWork unitOfWork,
     IJobRepository jobRepository,
     IMapper mapper)
-    : IQueryHandler<GetCandidateJobDetailsQuery, IResult<CandidateJobDetailsDto>>
+    : IRequestHandler<GetCandidateJobDetailsQuery, IResult<CandidateJobDetailsDto>>
 {
     public async Task<IResult<CandidateJobDetailsDto>> Handle(GetCandidateJobDetailsQuery query, CancellationToken cancellationToken)
     {
@@ -41,3 +41,4 @@ public sealed class GetCandidateJobDetailsQueryHandler(
         return Result.Ok(jobDto);
     }
 }
+

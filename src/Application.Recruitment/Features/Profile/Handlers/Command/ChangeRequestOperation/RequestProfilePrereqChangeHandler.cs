@@ -1,8 +1,7 @@
-using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
+﻿using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -22,7 +21,7 @@ public sealed class RequestProfilePrereqChangeHandler(
     IMediator mediator,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService)
-    : ICommandHandler<RequestProfilePrereqChangeCommand, IResult<Unit>>
+    : IRequestHandler<RequestProfilePrereqChangeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestProfilePrereqChangeCommand cmd, CancellationToken ct)
     {
@@ -77,7 +76,7 @@ public sealed class RequestProfilePrereqChangeHandler(
                 return Result.Ok(existingId);
 
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, ct);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
             if (uploadResult.IsFailed)
@@ -176,3 +175,5 @@ file sealed record PrereqSectionSnapshot
     public static bool RequiresNationalAddress(Guid? candidateTypeId) =>
         candidateTypeId != CandidateTypeIds.NonQatari && candidateTypeId != CandidateTypeIds.GCC;
 }
+
+

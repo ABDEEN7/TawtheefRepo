@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.DTOs;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.DTOs;
 using Application.Operation.Features.Admin.HomeContent.Faqs.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Handlers.Queries;
 
 public sealed class ListFaqsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<ListFaqsQuery, IResult<IReadOnlyCollection<FAQAdminDto>>>
+    : IRequestHandler<ListFaqsQuery, IResult<IReadOnlyCollection<FAQAdminDto>>>
 {
     public async Task<IResult<IReadOnlyCollection<FAQAdminDto>>> Handle(
         ListFaqsQuery request,
@@ -29,3 +29,4 @@ public sealed class ListFaqsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         return Result.Ok<IReadOnlyCollection<FAQAdminDto>>(faqs);
     }
 }
+

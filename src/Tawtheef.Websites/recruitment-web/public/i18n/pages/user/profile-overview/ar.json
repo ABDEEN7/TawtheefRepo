@@ -255,7 +255,7 @@
   "profileOverview.status.adminCancelled": "ملغي",
 
   "profileOverview.statusHint.inCreation": "ملفك الشخصي ما زال قيد الإعداد.",
-  "profileOverview.statusHint.submitted": "تم إرسال ملفك وبانتظار المراجعة، ولا يمكنك التعديل حتى تنتهي.",
+  "profileOverview.statusHint.submitted": "تم إرسال ملفك وبانتظار المراجعة.",
   "profileOverview.statusHint.underReview": "ملفك قيد المراجعة حالياً، ولا يمكن إجراء تعديلات حتى صدور القرار.",
   "profileOverview.statusHint.requiresUpdate": "يمكنك تعديل العناصر التي حالتها بحاجة لتصحيح فقط، أما العناصر المعتمدة فتبقى مقفلة.",
   "profileOverview.statusHint.approved": "تمت الموافقة على ملفك. يمكنك تحديث البيانات الأساسية وإضافة عناصر جديدة أو استبدال المستندات، لكن لا يمكنك حذف العناصر المعتمدة.",

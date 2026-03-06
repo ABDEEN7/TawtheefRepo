@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetGendersQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache) 
-    : IQueryHandler<GetGendersQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetGendersQuery, IResult<List<DropdownOptions>>>
 {
     private const string CacheKey = "lookups:Gender:all:en";
 
@@ -35,3 +35,4 @@ public sealed class GetGendersQueryHandler(IUnitOfWork unitOfWork, IMapper mappe
         return Result.Ok(data ?? new List<DropdownOptions>());
     }
 }
+

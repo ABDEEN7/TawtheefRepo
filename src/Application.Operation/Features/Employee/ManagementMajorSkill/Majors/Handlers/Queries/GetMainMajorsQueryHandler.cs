@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +14,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Handlers.Queries;
 
 public class GetMainMajorsQueryHandler(IUnitOfWork uow, ILocalizationService localized)
-    : IQueryHandler<GetMainMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
+    : IRequestHandler<GetMainMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(
         GetMainMajorsQuery request, CancellationToken ct)
@@ -61,3 +61,4 @@ public class GetMainMajorsQueryHandler(IUnitOfWork uow, ILocalizationService loc
         return Result.Ok(result);
     }
 }
+

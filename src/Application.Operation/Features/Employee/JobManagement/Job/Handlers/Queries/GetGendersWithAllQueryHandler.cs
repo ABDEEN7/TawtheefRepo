@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public sealed class GetGendersWithAllQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetGendersWithAllQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetGendersWithAllQuery, IResult<List<DropdownOptions>>>
 {
 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetGendersWithAllQuery request, CancellationToken cancellationToken)
@@ -25,3 +25,4 @@ public sealed class GetGendersWithAllQueryHandler(IUnitOfWork unitOfWork, IMappe
         return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
     }
 }
+

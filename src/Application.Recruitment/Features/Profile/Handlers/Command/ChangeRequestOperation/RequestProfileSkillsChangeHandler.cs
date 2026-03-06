@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
@@ -14,7 +13,7 @@ public sealed class RequestProfileSkillsChangeHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService
-) : ICommandHandler<RequestProfileSkillsChangeCommand, IResult<Unit>>
+) : IRequestHandler<RequestProfileSkillsChangeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestProfileSkillsChangeCommand cmd, CancellationToken ct)
     {
@@ -41,3 +40,4 @@ public sealed class RequestProfileSkillsChangeHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

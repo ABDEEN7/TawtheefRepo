@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.JobTitles.Commands;
+﻿using Application.Operation.Features.Admin.JobTitles.Commands;
 using Application.Operation.Features.Admin.JobTitles.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.JobTitles.Handlers.Commands;
 
 public sealed class InsertJobTitleCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<InsertJobTitleCommand, IResult<JobTitleAdminDto>>
+    : IRequestHandler<InsertJobTitleCommand, IResult<JobTitleAdminDto>>
 {
     public async Task<IResult<JobTitleAdminDto>> Handle(
         InsertJobTitleCommand request,
@@ -65,3 +65,4 @@ public sealed class InsertJobTitleCommandHandler(IUnitOfWork unitOfWork)
     private static JobTitleAdminDto ToDto(JobTitle entity)
         => new(entity.Id, entity.JobNumber, entity.JobNameAr, entity.JobNameEn, entity.IsActive);
 }
+

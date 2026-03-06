@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateHomeSuccessStoryStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateHomeSuccessStoryStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateHomeSuccessStoryStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateHomeSuccessStoryStatusCommand request,
@@ -37,3 +36,4 @@ public sealed class UpdateHomeSuccessStoryStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

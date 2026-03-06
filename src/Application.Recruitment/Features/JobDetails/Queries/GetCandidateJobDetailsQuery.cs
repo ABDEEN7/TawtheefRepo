@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.JobDetails.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Recruitment.Features.JobDetails.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.JobDetails.Queries;
@@ -7,4 +7,5 @@ namespace Application.Recruitment.Features.JobDetails.Queries;
 public sealed record GetCandidateJobDetailsQuery(
     Guid InvitationId,
     Guid UserId
-) : IQuery<IResult<CandidateJobDetailsDto>>;
+) : IRequest<IResult<CandidateJobDetailsDto>>;
+

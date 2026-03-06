@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Universities.Commands;
+﻿using Application.Operation.Features.Admin.Universities.Commands;
 using Application.Operation.Features.Admin.Universities.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -73,3 +73,4 @@ public class UniversitiesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

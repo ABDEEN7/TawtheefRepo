@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -18,7 +17,7 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
     TimeProvider timeProvider,
     ICurrentUserService currentUserService,
     IMediator mediator)
-    : ICommandHandler<CreateHomeSuccessStoryCommand, IResult<Guid>>
+    : IRequestHandler<CreateHomeSuccessStoryCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateHomeSuccessStoryCommand request,
@@ -81,7 +80,7 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
 
         var uploadPath = await HomeSuccessStoryImageUploadPathFactory.CreateAsync(storyId, file, true, ct);
 
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(
                 Guid.TryParse(currentUserService.UserId, out var userId) ? userId : Guid.Empty,
                 uploadPath.FileId,
@@ -96,3 +95,5 @@ public sealed class CreateHomeSuccessStoryCommandHandler(
         return Result.Ok<string?>(uploadResult.Value.ResourceId.ToString());
     }
 }
+
+

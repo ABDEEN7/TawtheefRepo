@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.DTOs;
+﻿using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +12,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 
 public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
-    : IQueryHandler<GetMyProfileReviewSummaryQuery, IResult<MyProfileReviewSummaryDto>>
+    : IRequestHandler<GetMyProfileReviewSummaryQuery, IResult<MyProfileReviewSummaryDto>>
 {
     public async Task<IResult<MyProfileReviewSummaryDto>> Handle(
         GetMyProfileReviewSummaryQuery request, CancellationToken ct)
@@ -115,3 +115,4 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
         bool IsUserChanged(ReviewItem x) => x.IsOutdated;
     }
 }
+

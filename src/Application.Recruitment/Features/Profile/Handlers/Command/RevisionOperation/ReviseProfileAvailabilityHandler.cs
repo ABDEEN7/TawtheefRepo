@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.RevisionOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
@@ -10,7 +9,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOper
 
 public sealed class ReviseProfileAvailabilityHandler(
     IUnitOfWork uow
-) : ICommandHandler<ReviseProfileAvailabilityCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfileAvailabilityCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileAvailabilityCommand cmd, CancellationToken ct)
     {
@@ -27,3 +26,4 @@ public sealed class ReviseProfileAvailabilityHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

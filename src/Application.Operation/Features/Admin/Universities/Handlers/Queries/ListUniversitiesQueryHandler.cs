@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Universities.DTOs;
+﻿using Application.Operation.Features.Admin.Universities.DTOs;
 using Application.Operation.Features.Admin.Universities.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.Universities.Handlers.Queries;
 
 public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocalizationService localizationService)
-    : IQueryHandler<GetListUniversitiesQuery, IResult<PaginatedResult<UniversityAdminDto>>>
+    : IRequestHandler<GetListUniversitiesQuery, IResult<PaginatedResult<UniversityAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<UniversityAdminDto>>> Handle(
         GetListUniversitiesQuery request,
@@ -54,3 +54,4 @@ public sealed class ListUniversitiesQueryHandler(IUnitOfWork unitOfWork, ILocali
         return Result.Ok(universities);
     }
 }
+

@@ -1,10 +1,9 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.DTOs.ReviseOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.Validators;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +24,9 @@ public sealed class ReviseProfileEducationHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService)
-    : ICommandHandler<ReviseProfileEducationCommand, IResult<Unit>>
+    : IRequestHandler<ReviseProfileEducationCommand, IResult<Unit>>
 {
-    // JSON options مرة واحدة بدل ما نعيد إنشائها
+    // JSON options ظ…ط±ط© ظˆط§ط­ط¯ط© ط¨ط¯ظ„ ظ…ط§ ظ†ط¹ظٹط¯ ط¥ظ†ط´ط§ط¦ظ‡ط§
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
@@ -252,7 +251,7 @@ public sealed class ReviseProfileEducationHandler(
             return Result.Ok<Guid?>(null);
 
         var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
 
@@ -262,3 +261,5 @@ public sealed class ReviseProfileEducationHandler(
         return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 }
+
+

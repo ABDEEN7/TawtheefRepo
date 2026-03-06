@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.SaveOperation;
+﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.Policies;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,7 +20,7 @@ public sealed class SaveProfilePrereqHandler(
     IUnitOfWork uow,
     IMediator mediator,
     UserManager<User> userManager)
-    : ICommandHandler<SaveProfilePrereqCommand, IResult<Unit>>
+    : IRequestHandler<SaveProfilePrereqCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
     {
@@ -138,7 +137,7 @@ public sealed class SaveProfilePrereqHandler(
                     return Result.Ok(existingId);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, category, file, false, ct);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file), ct);
+            var uploadResult = await mediator.Send(new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file), ct);
             if (uploadResult.IsFailed) return Result.Fail<Guid?>(uploadResult.Errors);
             if (uploadResult.Value?.ResourceId is null || uploadResult.Value?.ResourceId == Guid.Empty) 
                 return Result.Fail<Guid?>(ErrorsCodes.UploadFailed);
@@ -147,3 +146,5 @@ public sealed class SaveProfilePrereqHandler(
         }
     }
 }
+
+

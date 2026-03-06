@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 
@@ -10,7 +10,7 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Ha
 public sealed class GetJobCategoryCandidateSettingsQueryHandler(
     IJobCategoryCandidateSettingsRepository settingsRepository,
     IMapper mapper)
-    : IQueryHandler<GetJobCategoryCandidateSettingsQuery, IResult<JobCategoryCandidateSettingsResponseDto>>
+    : IRequestHandler<GetJobCategoryCandidateSettingsQuery, IResult<JobCategoryCandidateSettingsResponseDto>>
 {
     public async Task<IResult<JobCategoryCandidateSettingsResponseDto>> Handle(
         GetJobCategoryCandidateSettingsQuery request,
@@ -27,3 +27,4 @@ public sealed class GetJobCategoryCandidateSettingsQueryHandler(
         return Result.Ok(dto);
     }
 }
+

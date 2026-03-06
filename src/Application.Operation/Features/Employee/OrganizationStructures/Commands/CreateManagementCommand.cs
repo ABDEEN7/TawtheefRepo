@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.OrganizationStructures.Commands;
@@ -10,4 +10,5 @@ public sealed record CreateManagementCommand(
     string? DescriptionAr,
     string? DescriptionEn,
     bool IsActive,
-    int DisplayOrder) : ICommand<IResult<Guid>>;
+    int DisplayOrder) : IRequest<IResult<Guid>>;
+

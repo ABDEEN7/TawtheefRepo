@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.OfficeUsers.DTOs;
+﻿using Application.Operation.Features.Employee.OfficeUsers.DTOs;
 using Application.Operation.Features.Employee.OfficeUsers.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +17,7 @@ public sealed class GetOfficeUsersQueryHandler(
     UserManager<User> userManager,
     ICurrentUserService currentUserService,
     IMapper mapper)
-    : IQueryHandler<GetOfficeUsersQuery, IResult<PaginatedResult<OfficeUserListItemDto>>>
+    : IRequestHandler<GetOfficeUsersQuery, IResult<PaginatedResult<OfficeUserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<OfficeUserListItemDto>>> Handle(
         GetOfficeUsersQuery request,
@@ -65,3 +65,4 @@ public sealed class GetOfficeUsersQueryHandler(
         return Result.Ok(result);
     }
 }
+

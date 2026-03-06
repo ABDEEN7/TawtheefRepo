@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,7 @@ public class LogoutHandler(
     IUnitOfWork uow,
     ITokenService tokenService,
     UserManager<User> userManager,
-    SignInManager<User> signInManager) : ICommandHandler<LogoutCommand, IResult<Unit>>
+    SignInManager<User> signInManager) : IRequestHandler<LogoutCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
@@ -33,3 +32,4 @@ public class LogoutHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

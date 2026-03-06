@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.TargetEntities.Commands;
+﻿using Application.Operation.Features.Admin.TargetEntities.Commands;
 using Application.Operation.Features.Admin.TargetEntities.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -54,3 +54,4 @@ public class TargetEntitiesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

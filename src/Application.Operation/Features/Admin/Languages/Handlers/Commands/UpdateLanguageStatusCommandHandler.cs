@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Languages.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Languages.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateLanguageStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateLanguageStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateLanguageStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateLanguageStatusCommand request,
@@ -39,3 +38,4 @@ public sealed class UpdateLanguageStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

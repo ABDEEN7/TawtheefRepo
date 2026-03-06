@@ -1,5 +1,5 @@
-using System.Text.Json;
-using Cortex.Mediator.Notifications;
+﻿using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -29,3 +29,4 @@ public sealed class ChangeJobStatusNeedUpdateNotificationDomainEventHandler(
             ct);
     }
 }
+

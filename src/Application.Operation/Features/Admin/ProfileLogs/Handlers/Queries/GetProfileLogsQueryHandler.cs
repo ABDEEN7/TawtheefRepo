@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.ProfileLogs.DTOs;
+﻿using Application.Operation.Features.Admin.ProfileLogs.DTOs;
 using Application.Operation.Features.Admin.ProfileLogs.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,7 @@ namespace Application.Operation.Features.Admin.ProfileLogs.Handlers.Queries;
 public sealed class GetProfileLogsQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager)
-    : IQueryHandler<GetProfileLogsQuery, IResult<PaginatedResult<ProfileLogDto>>>
+    : IRequestHandler<GetProfileLogsQuery, IResult<PaginatedResult<ProfileLogDto>>>
 {
     public async Task<IResult<PaginatedResult<ProfileLogDto>>> Handle(
         GetProfileLogsQuery request,
@@ -173,3 +173,4 @@ public sealed class GetProfileLogsQueryHandler(
         public required DateTimeOffset CreatedDate { get; init; }
     }
 }
+

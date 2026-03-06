@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Languages.Commands;
@@ -9,4 +9,5 @@ public sealed record SaveLanguageCommand(
     string NameEn,
     string? DescriptionAr,
     string? DescriptionEn,
-    bool IsActive) : ICommand<IResult<Guid>>;
+    bool IsActive) : IRequest<IResult<Guid>>;
+

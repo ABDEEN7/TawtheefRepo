@@ -1,7 +1,7 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -225,3 +225,4 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     #endregion
 }
+

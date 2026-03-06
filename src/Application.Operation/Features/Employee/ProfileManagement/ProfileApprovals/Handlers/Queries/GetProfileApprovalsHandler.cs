@@ -1,7 +1,7 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -15,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
 public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationService localization)
-    : IQueryHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
+    : IRequestHandler<GetProfileApprovalsQuery, Result<PaginatedResult<ProfileApprovalListItemDto>>>
 {
     public async Task<Result<PaginatedResult<ProfileApprovalListItemDto>>> Handle(GetProfileApprovalsQuery request, CancellationToken ct)
     {
@@ -291,3 +291,4 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
     // Local summary models (readability)
     // ----------------------------
 }
+

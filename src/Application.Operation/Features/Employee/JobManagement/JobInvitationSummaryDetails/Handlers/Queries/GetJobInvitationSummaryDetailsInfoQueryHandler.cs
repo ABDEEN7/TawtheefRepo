@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     ILocalizationService localizationService)
-    : IQueryHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
+    : IRequestHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
 {
     public async Task<IResult<JobInvitationSummaryDetailsInfoDto>> Handle(
         GetJobInvitationSummaryDetailsInfoQuery query,
@@ -59,3 +59,4 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
         return Result.Ok(dto);
     }
 }
+

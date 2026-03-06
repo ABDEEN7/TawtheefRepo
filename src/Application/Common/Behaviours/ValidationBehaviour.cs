@@ -1,13 +1,13 @@
-﻿using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentValidation;
 
 namespace Tawtheef.Application.Common.Behaviours;
 
 public class ValidationBehaviour<TCommand, TResponse>(IEnumerable<IValidator<TCommand>> validators)
-    : ICommandPipelineBehavior<TCommand, TResponse>
-    where TCommand : ICommand<TResponse>
+    : IPipelineBehavior<TCommand, TResponse>
+    where TCommand : IRequest<TResponse>
 {
-    public async Task<TResponse> Handle(TCommand request, CommandHandlerDelegate<TResponse> next,
+    public async Task<TResponse> Handle(TCommand request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
         if (validators.Any())
@@ -28,3 +28,4 @@ public class ValidationBehaviour<TCommand, TResponse>(IEnumerable<IValidator<TCo
         return await next();
     }
 }
+

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Users.Commands;
+﻿using Application.Operation.Features.Admin.Users.Commands;
 using Application.Operation.Features.Admin.Users.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -54,3 +54,4 @@ public class UserManagementController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

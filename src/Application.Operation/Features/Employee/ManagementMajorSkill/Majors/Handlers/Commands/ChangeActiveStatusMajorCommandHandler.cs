@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,7 +8,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Handlers.Commands;
 
-public class ChangeActiveStatusMajorCommandHandler(IUnitOfWork uow) : ICommandHandler<ChangeActiveStatusMajorCommand, IResult<Unit>>
+public class ChangeActiveStatusMajorCommandHandler(IUnitOfWork uow) : IRequestHandler<ChangeActiveStatusMajorCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ChangeActiveStatusMajorCommand request, CancellationToken cancellationToken)
     {
@@ -19,8 +18,8 @@ public class ChangeActiveStatusMajorCommandHandler(IUnitOfWork uow) : ICommandHa
 
         major.ChangeActiveStatus(request.IsActive);
         
-        // Deactivating main Major: deactivate all SubMajors and unlink Major–Skill (no child confirmation required)
-        // Activating main Major: activate all SubMajors and link Major–Skill (child confirmation required)
+        // Deactivating main Major: deactivate all SubMajors and unlink Majorâ€“Skill (no child confirmation required)
+        // Activating main Major: activate all SubMajors and link Majorâ€“Skill (child confirmation required)
         if (!request.IsActive || request.ApplyOnRelationship)
         {
             await uow.GetEntityRepository<Major>().DbSet.Where(m => m.ParentId == major.Id)
@@ -34,3 +33,4 @@ public class ChangeActiveStatusMajorCommandHandler(IUnitOfWork uow) : ICommandHa
         return Result.Ok(Unit.Value);
     }
 }
+

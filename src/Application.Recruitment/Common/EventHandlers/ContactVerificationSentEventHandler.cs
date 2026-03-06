@@ -1,5 +1,5 @@
-using System.Text.Json;
-using Cortex.Mediator.Notifications;
+﻿using System.Text.Json;
+using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Notification;
@@ -27,3 +27,4 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
         await uow.SaveChangesAsync(cancellationToken);
     }
 }
+

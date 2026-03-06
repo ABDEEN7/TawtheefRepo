@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.JobTitles.DTOs;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.JobTitles.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.JobTitles.Commands;
@@ -7,4 +7,5 @@ namespace Application.Operation.Features.Admin.JobTitles.Commands;
 public sealed record InsertJobTitleCommand(
     string JobNumber,
     string JobNameAr,
-    string JobNameEn) : ICommand<IResult<JobTitleAdminDto>>;
+    string JobNameEn) : IRequest<IResult<JobTitleAdminDto>>;
+

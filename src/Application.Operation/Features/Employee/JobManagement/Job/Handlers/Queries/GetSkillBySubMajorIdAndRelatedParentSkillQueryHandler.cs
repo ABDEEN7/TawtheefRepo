@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
-public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IQueryHandler<GetSkillBySubMajorIdAndRelatedParentSkillQuery, IResult<List<DropdownOptions>>>
+public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetSkillBySubMajorIdAndRelatedParentSkillQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillBySubMajorIdAndRelatedParentSkillQuery request, CancellationToken cancellationToken)
     {
@@ -42,3 +42,4 @@ public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork u
         return Result.Ok(mapper.Map<List<DropdownOptions>>(skills));
     }
 }
+

@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Authenticator.Commands.Verification;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Authenticator.Commands.Verification;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,7 @@ public class ConfirmEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager,
     TimeProvider timeProvider)
-    : ICommandHandler<ConfirmEmailVerificationCommand, IResult<Unit>>
+    : IRequestHandler<ConfirmEmailVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ConfirmEmailVerificationCommand request, CancellationToken cancellationToken)
     {
@@ -50,3 +49,4 @@ public class ConfirmEmailVerificationCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

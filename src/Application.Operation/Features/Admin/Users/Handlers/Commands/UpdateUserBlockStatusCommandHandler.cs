@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Users.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Users.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Admin.Users.Handlers.Commands;
 
 public sealed class UpdateUserBlockStatusCommandHandler(UserManager<User> userManager)
-    : ICommandHandler<UpdateUserBlockStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateUserBlockStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateUserBlockStatusCommand request, CancellationToken cancellationToken)
     {
@@ -38,3 +37,4 @@ public sealed class UpdateUserBlockStatusCommandHandler(UserManager<User> userMa
         return Result.Ok(Unit.Value);
     }
 }
+

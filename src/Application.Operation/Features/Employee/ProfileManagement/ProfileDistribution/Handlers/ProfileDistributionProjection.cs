@@ -54,11 +54,8 @@ internal sealed class ProfileDistributionProjection(
                       (c.Status == ProfileChangeRequestStatus.Pending ||
                        c.Status == ProfileChangeRequestStatus.UnderReview)))
                 )
-            );
-
-        // 3) Optional status filter
-        if (status is not null)
-            profilesQuery = profilesQuery.Where(p => p.Status == status);
+            )
+            .WhereIf(status is not null, p => p.Status == status);
 
         // 4) Optional search filter
         if (!string.IsNullOrWhiteSpace(searchTerm))

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Roles.DTOs;
+﻿using Application.Operation.Features.Admin.Roles.DTOs;
 using Application.Operation.Features.Admin.Roles.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,7 @@ public sealed class ListRolesQueryHandler(
     IMapper mapper,
     IUnitOfWork uow,
     ILocalizationService localizationService)
-    : IQueryHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
+    : IRequestHandler<GetListRolesQuery, IResult<PaginatedResult<RoleDto>>>
 {
     public async Task<IResult<PaginatedResult<RoleDto>>> Handle(GetListRolesQuery request, CancellationToken cancellationToken)
     {
@@ -55,3 +55,4 @@ public sealed class ListRolesQueryHandler(
         return Result.Ok(new PaginatedResult<RoleDto>(mapped, metadata.TotalCount, metadata.CurrentPage, metadata.PageSize));
     }
 }
+

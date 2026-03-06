@@ -1,8 +1,8 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Application.Recruitment.Features.Authenticator.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +30,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     IQatarPassClient qatarPassClient,
     ILoginAuditService loginAudit,
     IUnitOfWork uow
-) : BaseExternalCallbackLoginHandler(loginAudit), ICommandHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
+) : BaseExternalCallbackLoginHandler(loginAudit), IRequestHandler<QatarPassExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     protected override string Provider => ConstantQatarPass.Provider;
     protected override Guid? DefaultUserType => UserTypeIds.Applicant;
@@ -67,7 +67,7 @@ public sealed class QatarPassExternalCallbackLoginHandler(
 
         var placeholderEmail = $"qp{providerKey}{ConstantQatarPass.PlaceholderEmailDomain}";
 
-        // 2) If already linked → issue tokens
+        // 2) If already linked â†’ issue tokens
         var linked = await userManager.FindByLoginAsync(ConstantQatarPass.Provider, providerKey);
         if (linked is not null)
         {
@@ -237,3 +237,4 @@ public sealed class QatarPassExternalCallbackLoginHandler(
     private static Result FailureFromIdentity(IdentityResult res) =>
         Result.Fail(string.Join(", ", res.Errors.Select(e => e.Description)));
 }
+

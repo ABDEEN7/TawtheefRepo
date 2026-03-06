@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.OrganizationStructures.DTOs;
+﻿using Application.Operation.Features.Employee.OrganizationStructures.DTOs;
 using Application.Operation.Features.Employee.OrganizationStructures.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Employee.OrganizationStructures.Handlers.Queries;
 
 public sealed class GetDepartmentsPagedQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IQueryHandler<GetDepartmentsPagedQuery, IResult<PaginatedResult<DepartmentDto>>>
+    : IRequestHandler<GetDepartmentsPagedQuery, IResult<PaginatedResult<DepartmentDto>>>
 {
     public async Task<IResult<PaginatedResult<DepartmentDto>>> Handle(GetDepartmentsPagedQuery request, CancellationToken cancellationToken)
     {
@@ -35,3 +35,4 @@ public sealed class GetDepartmentsPagedQueryHandler(IUnitOfWork uow, IMapper map
         return Result.Ok(result);
     }
 }
+

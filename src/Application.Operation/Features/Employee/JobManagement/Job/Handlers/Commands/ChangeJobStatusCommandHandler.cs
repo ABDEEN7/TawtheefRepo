@@ -1,7 +1,6 @@
-using Application.Operation.Common.Validations;
+﻿using Application.Operation.Common.Validations;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public class ChangeJobStatusCommandHandler(
     IJobRepository jobRepository,
     IJobValidationService validationService,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<ChangeJobStatusCommand, IResult<Unit>>
+    : IRequestHandler<ChangeJobStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         ChangeJobStatusCommand request,
@@ -46,3 +45,4 @@ public class ChangeJobStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

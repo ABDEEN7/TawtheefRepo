@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.JobTitles.Commands;
+﻿using Application.Operation.Features.Admin.JobTitles.Commands;
 using Application.Operation.Features.Admin.JobTitles.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -62,3 +62,4 @@ public class JobTitlesController(IMediator mediator) : ControllerBase
         public required string JobNameEn { get; set; }
     }
 }
+

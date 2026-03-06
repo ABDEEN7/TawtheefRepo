@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.Profile.Command.DeleteOperation;
 
-public sealed record DeleteProfileLanguageCommand(Guid UserId,Guid Id): ICommand<IResult<Unit>>;
+public sealed record DeleteProfileLanguageCommand(Guid UserId,Guid Id): IRequest<IResult<Unit>>;
+

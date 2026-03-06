@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Languages.DTOs;
+﻿using Application.Operation.Features.Admin.Languages.DTOs;
 using Application.Operation.Features.Admin.Languages.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Admin.Languages.Handlers.Queries;
 
 public sealed class ListLanguagesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetListLanguagesQuery, IResult<PaginatedResult<LanguageAdminDto>>>
+    : IRequestHandler<GetListLanguagesQuery, IResult<PaginatedResult<LanguageAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<LanguageAdminDto>>> Handle(
         GetListLanguagesQuery request,
@@ -35,3 +35,4 @@ public sealed class ListLanguagesQueryHandler(IUnitOfWork unitOfWork, IMapper ma
         return Result.Ok(languages);
     }
 }
+

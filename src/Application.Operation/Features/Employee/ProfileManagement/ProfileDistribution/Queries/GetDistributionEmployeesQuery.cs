@@ -1,8 +1,9 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
 
 public sealed record GetDistributionEmployeesQuery
-    : IQuery<Result<IReadOnlyList<DistributionEmployeeDto>>>;
+    : IRequest<Result<IReadOnlyList<DistributionEmployeeDto>>>;
+

@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
 
-public sealed record DeleteHomeSuccessStoryCommand(Guid StoryId) : ICommand<IResult<Unit>>;
+public sealed record DeleteHomeSuccessStoryCommand(Guid StoryId) : IRequest<IResult<Unit>>;
+

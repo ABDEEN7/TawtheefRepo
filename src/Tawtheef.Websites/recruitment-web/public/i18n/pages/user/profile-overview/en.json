@@ -253,7 +253,7 @@
   "profileOverview.status.adminCancelled": "Cancelled",
 
   "profileOverview.statusHint.inCreation": "Your profile is still being prepared.",
-  "profileOverview.statusHint.submitted": "Your profile has been submitted and is awaiting review; you cannot edit it until finished.",
+  "profileOverview.statusHint.submitted": "Your profile has been submitted and is awaiting review.",
   "profileOverview.statusHint.underReview": "Your profile is currently under review and cannot be edited until a decision is made.",
   "profileOverview.statusHint.requiresUpdate": "You can only edit items marked as needing correction; approved items remain locked.",
   "profileOverview.statusHint.approved": "Your profile has been approved. You can update basic data, add new items, or replace documents, but you cannot delete approved items.",

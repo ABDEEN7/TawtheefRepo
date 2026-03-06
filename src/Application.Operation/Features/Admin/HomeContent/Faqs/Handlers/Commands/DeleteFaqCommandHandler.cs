@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Handlers.Commands;
 
 public sealed class DeleteFaqCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<DeleteFaqCommand, IResult<Unit>>
+    : IRequestHandler<DeleteFaqCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         DeleteFaqCommand request,
@@ -28,3 +27,4 @@ public sealed class DeleteFaqCommandHandler(IUnitOfWork unitOfWork)
         return Result.Ok(Unit.Value);
     }
 }
+

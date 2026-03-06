@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.DTOs;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
 
@@ -7,4 +7,5 @@ namespace Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Q
 
 
 public record GetMajorSkillsQuery(string? Search, Guid? ParentMajorId, Guid? SubMajorId, Guid? SkillTypeId, bool? IsActive) 
-    : PaginatedRequest, IQuery<IResult<PaginatedResult<MajorSkillListItemDto>>>;
+    : PaginatedRequest, IRequest<IResult<PaginatedResult<MajorSkillListItemDto>>>;
+

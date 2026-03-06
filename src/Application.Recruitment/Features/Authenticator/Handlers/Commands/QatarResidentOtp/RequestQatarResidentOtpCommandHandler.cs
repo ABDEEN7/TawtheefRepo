@@ -1,10 +1,9 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Application.Recruitment.Features.Authenticator.Handlers.Utils;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -31,7 +30,7 @@ public sealed class RequestQatarResidentOtpCommandHandler(
     IQatarResidentVerificationClient verificationClient,
     UserManager<User> userManager, IMoiService moiService,
     ISmsSender smsSender, TimeProvider timeProvider, IAppLogger logger
-) : ICommandHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
+) : IRequestHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
 {
     private readonly IAppLogger _log = logger.ForContext(typeof(RequestQatarResidentOtpCommandHandler));
     public async Task<IResult<Unit>> Handle(RequestQatarResidentOtpCommand request, CancellationToken cancellationToken)
@@ -255,3 +254,4 @@ public sealed class RequestQatarResidentOtpCommandHandler(
     private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>
         Result.Fail<T>(string.Join(", ", res.Errors.Select(e => e.Description)));
 }
+

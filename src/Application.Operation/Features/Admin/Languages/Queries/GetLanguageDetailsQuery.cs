@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Languages.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Languages.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Languages.Queries;
 
-public sealed record GetLanguageDetailsQuery(Guid Id) : IQuery<IResult<LanguageAdminDto>>;
+public sealed record GetLanguageDetailsQuery(Guid Id) : IRequest<IResult<LanguageAdminDto>>;
+

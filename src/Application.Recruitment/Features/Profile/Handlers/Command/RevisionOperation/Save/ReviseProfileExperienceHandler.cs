@@ -1,9 +1,8 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +22,7 @@ public sealed class ReviseProfileExperienceHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<ReviseProfileExperienceCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfileExperienceCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
@@ -251,7 +250,7 @@ public sealed class ReviseProfileExperienceHandler(
 
         var uploadPath =
             await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             cancellationToken);
         if (uploadResult.IsFailed)
@@ -310,3 +309,5 @@ public sealed class ReviseProfileExperienceHandler(
         return Result.Ok();
     }
 }
+
+

@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.DTOs;
+﻿using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -17,7 +17,7 @@ public sealed class GetMyProfileDetailHandler(
     IUnitOfWork uow,
     IMapper mapper,
     IMediaUrlResolver media)
-    : IQueryHandler<GetMyProfileDetailQuery, Result<MyProfileDetailDto>>
+    : IRequestHandler<GetMyProfileDetailQuery, Result<MyProfileDetailDto>>
 {
     public async Task<Result<MyProfileDetailDto>> Handle(GetMyProfileDetailQuery request, CancellationToken ct)
     {
@@ -88,7 +88,7 @@ public sealed class GetMyProfileDetailHandler(
 
         var draft = mapper.Map<ProfileApprovalDataDto>(profile);
 
-        // ApprovedProfile: if you don’t have snapshots/pointers yet, keep it simple for now:
+        // ApprovedProfile: if you donâ€™t have snapshots/pointers yet, keep it simple for now:
         // - if profile is Approved => ApprovedProfile = same as draft (until you implement snapshots)
         // - else null
         ProfileApprovalDataDto? approved = profile.Status == UserProfileStatus.Approved ? draft : null;
@@ -133,3 +133,4 @@ public sealed class GetMyProfileDetailHandler(
         };
     }
 }
+

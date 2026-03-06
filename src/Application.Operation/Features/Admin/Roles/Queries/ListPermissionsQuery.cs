@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Roles.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Roles.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Roles.Queries;
 
-public sealed record ListPermissionsQuery : IQuery<IResult<List<PermissionDto>>>;
+public sealed record ListPermissionsQuery : IRequest<IResult<List<PermissionDto>>>;
+

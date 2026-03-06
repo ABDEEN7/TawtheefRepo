@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -106,3 +106,4 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
     #endregion
 }
+

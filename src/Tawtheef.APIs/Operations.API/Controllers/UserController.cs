@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.Operation.Features.Authenticator.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -33,3 +33,4 @@ public class UserController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

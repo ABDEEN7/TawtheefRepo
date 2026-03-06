@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
-    : IQueryHandler<GetUniversitiesQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetUniversitiesQuery, IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups:universities";
 
@@ -76,3 +76,4 @@ public sealed class GetUniversitiesQueryHandler(IUnitOfWork unitOfWork, IMapper 
         return Result.Ok(universities ?? []);
     }
 }
+

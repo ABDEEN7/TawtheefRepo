@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.TargetEntities.Commands;
@@ -8,4 +8,5 @@ public sealed record CreateTargetEntityCommand(
     string NameEn,
     string? DescriptionAr,
     string? DescriptionEn,
-    bool IsActive) : ICommand<IResult<Guid>>;
+    bool IsActive) : IRequest<IResult<Guid>>;
+

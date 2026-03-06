@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +15,9 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IMemoryCache cache)
-    : IQueryHandler<TRequest, IResult<List<DropdownOptions>>>
+    : IRequestHandler<TRequest, IResult<List<DropdownOptions>>>
     where TLookup : LookupBase
-    where TRequest : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>
+    where TRequest : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups";
 
@@ -94,4 +94,5 @@ public static class LookupCacheKeyBuilder
         return Task.FromResult(prefix);
     }
 }
+
 

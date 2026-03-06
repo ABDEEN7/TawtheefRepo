@@ -1,7 +1,7 @@
-using Application.Operation.Features.Admin.ProfileLogs;
+﻿using Application.Operation.Features.Admin.ProfileLogs;
 using Application.Operation.Features.Admin.SystemAdminLogs.DTOs;
 using Application.Operation.Features.Admin.SystemAdminLogs.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace Application.Operation.Features.Admin.SystemAdminLogs.Handlers.Queries;
 public sealed class GetSystemAdminLogsQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager)
-    : IQueryHandler<GetSystemAdminLogsQuery, IResult<PaginatedResult<SystemAdminLogDto>>>
+    : IRequestHandler<GetSystemAdminLogsQuery, IResult<PaginatedResult<SystemAdminLogDto>>>
 {
     public async Task<IResult<PaginatedResult<SystemAdminLogDto>>> Handle(
         GetSystemAdminLogsQuery request,
@@ -130,3 +130,4 @@ public sealed class GetSystemAdminLogsQueryHandler(
         public required DateTimeOffset CreatedDate { get; init; }
     }
 }
+

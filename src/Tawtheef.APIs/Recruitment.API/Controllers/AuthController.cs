@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -192,3 +192,4 @@ public class AuthController(IMediator mediator) : ControllerBase
 
     #endregion
 }
+

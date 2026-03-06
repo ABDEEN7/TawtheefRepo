@@ -1,5 +1,5 @@
-using System.Security.Claims;
-using Cortex.Mediator;
+﻿using System.Security.Claims;
+using MediatR;
 using FluentResults;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,3 +36,4 @@ public class NotificationsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

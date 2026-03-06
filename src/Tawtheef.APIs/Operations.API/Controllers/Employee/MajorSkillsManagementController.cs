@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -75,3 +75,4 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
         return result.ToActionResult();
     }
 }
+

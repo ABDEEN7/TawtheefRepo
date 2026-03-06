@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 
 public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider time)
-    : ICommandHandler<DecideProfileSectionCommand, IResult<Unit>>
+    : IRequestHandler<DecideProfileSectionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DecideProfileSectionCommand cmd, CancellationToken ct)
     {
@@ -75,3 +74,4 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
         return Result.Ok(Unit.Value);
     }
 }
+

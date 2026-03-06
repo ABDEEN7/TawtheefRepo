@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Universities.DTOs;
+﻿using Application.Operation.Features.Admin.Universities.DTOs;
 using Application.Operation.Features.Admin.Universities.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -14,7 +14,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.Universities.Handlers.Queries;
 
 public sealed class GetUniversityDetailsQueryHandler(IUnitOfWork unitOfWork, IMediaUrlResolver media, IMapper mapper)
-    : IQueryHandler<GetUniversityDetailsQuery, IResult<UniversityAdminDto>>
+    : IRequestHandler<GetUniversityDetailsQuery, IResult<UniversityAdminDto>>
 {
     public async Task<IResult<UniversityAdminDto>> Handle(
         GetUniversityDetailsQuery request,
@@ -38,3 +38,4 @@ public sealed class GetUniversityDetailsQueryHandler(IUnitOfWork unitOfWork, IMe
         return Result.Ok(dto);
     }
 }
+

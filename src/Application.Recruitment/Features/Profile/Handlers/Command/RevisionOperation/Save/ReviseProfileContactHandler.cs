@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +22,7 @@ public sealed class ReviseProfileContactHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<ReviseProfileContactCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfileContactCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileContactCommand cmd, CancellationToken ct)
     {
@@ -99,7 +98,7 @@ public sealed class ReviseProfileContactHandler(
                 return Result.Ok(existingId);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.NationalAddress, file, false, ct);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
             if (uploadResult.IsFailed)
@@ -109,3 +108,5 @@ public sealed class ReviseProfileContactHandler(
         }
     }
 }
+
+

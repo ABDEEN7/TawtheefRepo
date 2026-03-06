@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using MediatR;
 using FluentResults;
 using FluentValidation;
 using Mapster;
@@ -15,7 +15,7 @@ public class CreateJobCommandHandler(
     IJobRepository jobRepository,
     IUnitOfWork unitOfWork,
     IValidator<CreateJobCommand> validator)
-    : ICommandHandler<CreateJobCommand, IResult<Guid>>
+    : IRequestHandler<CreateJobCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
@@ -39,3 +39,4 @@ public class CreateJobCommandHandler(
         return Result.Ok(job.Id);
     }
 }
+

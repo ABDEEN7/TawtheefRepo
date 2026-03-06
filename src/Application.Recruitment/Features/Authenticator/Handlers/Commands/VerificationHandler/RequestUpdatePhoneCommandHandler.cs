@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Authenticator.Commands;
+﻿using Application.Recruitment.Features.Authenticator.Commands;
 using Application.Recruitment.Features.Profile.Policies;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,7 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Verif
 public class RequestUpdatePhoneCommandHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager)
-    : ICommandHandler<RequestUpdatePhoneCommand, IResult<Unit>>
+    : IRequestHandler<RequestUpdatePhoneCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestUpdatePhoneCommand request, CancellationToken cancellationToken)
     {
@@ -43,3 +42,4 @@ public class RequestUpdatePhoneCommandHandler(
         return logins.Any(x => VerifiedIdentityProviders.IsLockedProvider(x.LoginProvider));
     }
 }
+

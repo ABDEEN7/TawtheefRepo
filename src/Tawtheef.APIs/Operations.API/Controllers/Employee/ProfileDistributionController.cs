@@ -1,7 +1,7 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -99,3 +99,4 @@ public sealed class ReassignRequest
     public List<Guid> ProfileIds { get; set; } = [];
     public int? PerEmployeeCount { get; set; }
 }
+

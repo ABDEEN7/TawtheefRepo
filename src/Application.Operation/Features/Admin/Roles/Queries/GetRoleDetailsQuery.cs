@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Roles.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Roles.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Roles.Queries;
 
-public sealed record GetRoleDetailsQuery(Guid Id) : IQuery<IResult<RoleDto>>;
+public sealed record GetRoleDetailsQuery(Guid Id) : IRequest<IResult<RoleDto>>;
+

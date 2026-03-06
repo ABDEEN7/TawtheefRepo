@@ -1,5 +1,5 @@
 ﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +31,7 @@ namespace Tawtheef.Infrastructure.Services.BackgroundJobs
 
                     foreach (var job in jobsToClose)
                     {
-                        await mediator.SendCommandAsync<ChangeJobStatusCommand, IResult<Unit>>(new ChangeJobStatusCommand(job.Id, JobStatusIds.Closed), stoppingToken);
+                        await mediator.Send(new ChangeJobStatusCommand(job.Id, JobStatusIds.Closed), stoppingToken);
                     }
 
                     _logger.Information("Job auto-closure completed. {Count} jobs closed.", jobsToClose.Count);
@@ -46,3 +46,5 @@ namespace Tawtheef.Infrastructure.Services.BackgroundJobs
         }
     }
 }
+
+

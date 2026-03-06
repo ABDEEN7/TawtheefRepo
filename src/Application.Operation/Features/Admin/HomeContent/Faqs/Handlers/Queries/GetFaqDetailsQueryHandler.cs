@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.DTOs;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.DTOs;
 using Application.Operation.Features.Admin.HomeContent.Faqs.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Handlers.Queries;
 
 public sealed class GetFaqDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetFaqDetailsQuery, IResult<FAQAdminDto>>
+    : IRequestHandler<GetFaqDetailsQuery, IResult<FAQAdminDto>>
 {
     public async Task<IResult<FAQAdminDto>> Handle(
         GetFaqDetailsQuery request,
@@ -29,3 +29,4 @@ public sealed class GetFaqDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper ma
         return Result.Ok(mapper.Map<FAQAdminDto>(faq));
     }
 }
+

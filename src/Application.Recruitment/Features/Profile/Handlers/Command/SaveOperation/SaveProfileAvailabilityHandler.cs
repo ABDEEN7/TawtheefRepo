@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +11,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 public sealed class SaveProfileAvailabilityHandler(
     IUnitOfWork uow,
     UserManager<User> userManager
-) : ICommandHandler<SaveProfileAvailabilityCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfileAvailabilityCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileAvailabilityCommand cmd, CancellationToken ct)
     {
@@ -41,3 +40,4 @@ public sealed class SaveProfileAvailabilityHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

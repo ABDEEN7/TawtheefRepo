@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.Profile.Command.RevisionOperation;
@@ -8,9 +7,10 @@ namespace Application.Recruitment.Features.Profile.Command.RevisionOperation;
 public sealed record ReviseProfileSkillsCommand(
     Guid UserId,
     SaveProfileSkillsRequest Request
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
 
 public sealed record ReviseProfileLanguagesCommand(
     Guid UserId,
     SaveProfileLanguagesRequest Request
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+

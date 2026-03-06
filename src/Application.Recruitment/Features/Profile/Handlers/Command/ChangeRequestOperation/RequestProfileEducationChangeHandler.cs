@@ -1,9 +1,8 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Validators;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -23,7 +22,7 @@ public sealed class RequestProfileEducationChangeHandler(
     IMediator mediator,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService)
-    : ICommandHandler<RequestProfileEducationChangeCommand, IResult<Unit>>
+    : IRequestHandler<RequestProfileEducationChangeCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -192,7 +191,7 @@ public sealed class RequestProfileEducationChangeHandler(
             return Result.Ok<Guid?>(null);
 
         var uploadPath = await UserProfileUploadPathFactory.CreateAsync(userId, ProfileFileCategories.Education, file!, false, ct);
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
 
@@ -230,3 +229,5 @@ file sealed record PendingQualificationSnapshot
         AttachmentResourceId = attachmentResourceId
     };
 }
+
+

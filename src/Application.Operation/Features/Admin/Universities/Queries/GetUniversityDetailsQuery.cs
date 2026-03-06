@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Universities.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Universities.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Universities.Queries;
 
-public sealed record GetUniversityDetailsQuery(Guid Id) : IQuery<IResult<UniversityAdminDto>>;
+public sealed record GetUniversityDetailsQuery(Guid Id) : IRequest<IResult<UniversityAdminDto>>;
+

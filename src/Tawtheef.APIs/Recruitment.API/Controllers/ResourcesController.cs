@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,3 +70,4 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     private static string Decode(string encoded)
         => Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(encoded));
 }
+

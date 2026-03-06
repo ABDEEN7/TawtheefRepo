@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Handlers.Commands;
 
 public sealed class UpdateSkillCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<UpdateSkillCommand, IResult<Unit>>
+    : IRequestHandler<UpdateSkillCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
     {
@@ -49,3 +48,4 @@ public sealed class UpdateSkillCommandHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
+

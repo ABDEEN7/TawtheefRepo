@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.Dashboard.DTOs;
+﻿using Application.Operation.Features.Employee.Dashboard.DTOs;
 using Application.Operation.Features.Employee.Dashboard.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ public sealed class GetOperationsDashboardQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
     ILocalizationService localizationService)
-    : IQueryHandler<GetOperationsDashboardQuery, Result<OperationsDashboardDto>>
+    : IRequestHandler<GetOperationsDashboardQuery, Result<OperationsDashboardDto>>
 {
     private const int DefaultLookbackDays = 30;
     private const int OverdueAfterDays = 3;
@@ -60,7 +60,7 @@ public sealed class GetOperationsDashboardQueryHandler(
 
         var rejectedProfiles = await CountRejectedProfilesAsync(repos.Review, range.From, range.To, ct);
 
-        // New profiles (global, not range-filtered) — keep same behavior as original code
+        // New profiles (global, not range-filtered) â€” keep same behavior as original code
         var newToday = await CountNewProfilesAsync(repos.Profile, todayStart, now, ct);
         var newWeek = await CountNewProfilesAsync(repos.Profile, weekStart, now, ct);
         var newMonth = await CountNewProfilesAsync(repos.Profile, monthStart, now, ct);
@@ -74,7 +74,7 @@ public sealed class GetOperationsDashboardQueryHandler(
             .AsNoTracking()
             .Where(a => !a.IsDeleted && employeeIds.Contains(a.EmployeeId));
 
-        // 1) لكل Profile: نجيب آخر AssignedAtUtc
+        // 1) ظ„ظƒظ„ Profile: ظ†ط¬ظٹط¨ ط¢ط®ط± AssignedAtUtc
         var latestAtPerProfile =
             from a in baseAssignments
             group a by a.UserProfileId into g
@@ -84,7 +84,7 @@ public sealed class GetOperationsDashboardQueryHandler(
                 MaxAssignedAt = g.Max(x => x.AssignedAtUtc)
             };
 
-        // 2) كسر التعادل بـ Max(Id) ضمن نفس MaxAssignedAt
+        // 2) ظƒط³ط± ط§ظ„طھط¹ط§ط¯ظ„ ط¨ظ€ Max(Id) ط¶ظ…ظ† ظ†ظپط³ MaxAssignedAt
         var latestIdPerProfile =
             from a in baseAssignments
             join m in latestAtPerProfile
@@ -97,7 +97,7 @@ public sealed class GetOperationsDashboardQueryHandler(
                 AssignmentId = g.Max(x => x.Id)
             };
 
-        // 3) جلب آخر Assignment + (Left Join) على UserProfile لقراءة Status
+        // 3) ط¬ظ„ط¨ ط¢ط®ط± Assignment + (Left Join) ط¹ظ„ظ‰ UserProfile ظ„ظ‚ط±ط§ط،ط© Status
         var latestAssignments =
             from lid in latestIdPerProfile
             join a in baseAssignments on lid.AssignmentId equals a.Id
@@ -757,3 +757,4 @@ public sealed class GetOperationsDashboardQueryHandler(
         );
     }
 }
+

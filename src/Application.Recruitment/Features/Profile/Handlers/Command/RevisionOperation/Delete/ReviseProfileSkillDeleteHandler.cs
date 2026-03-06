@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOperation.Delete;
 
 public sealed class ReviseProfileSkillDeleteHandler(IUnitOfWork uow) :
-    ICommandHandler<ReviseProfileSkillDeleteCommand, IResult<Unit>>
+    IRequestHandler<ReviseProfileSkillDeleteCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileSkillDeleteCommand cmd, CancellationToken ct)
     {
@@ -38,3 +37,4 @@ public sealed class ReviseProfileSkillDeleteHandler(IUnitOfWork uow) :
         return Result.Ok(Unit.Value);
     }
 }
+

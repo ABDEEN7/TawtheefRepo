@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using Application.Operation.Features.Authenticator.Commands;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -172,3 +172,4 @@ namespace Operations.API.Controllers
         #endregion
     }
 }
+

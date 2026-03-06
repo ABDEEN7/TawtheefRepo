@@ -1,9 +1,9 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -25,7 +25,7 @@ public sealed class GetJobCandidatesQueryHandler(
     IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
     ILocalizationService localizationService,
     IAppLogger logger)
-    : IQueryHandler<GetJobCandidatesQuery, IResult<JobCandidatesCombinedDto>>
+    : IRequestHandler<GetJobCandidatesQuery, IResult<JobCandidatesCombinedDto>>
 {
     public async Task<IResult<JobCandidatesCombinedDto>> Handle(
         GetJobCandidatesQuery request,
@@ -135,3 +135,4 @@ public sealed class GetJobCandidatesQueryHandler(
     }
 
 }
+

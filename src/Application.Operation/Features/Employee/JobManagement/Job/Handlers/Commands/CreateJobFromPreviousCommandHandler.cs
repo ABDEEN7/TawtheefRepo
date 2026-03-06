@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using FluentValidation;
 using Mapster;
@@ -20,7 +20,7 @@ public class CreateJobFromPreviousCommandHandler(
     IJobPointsRepository jobPointsRepository,
     IUnitOfWork unitOfWork,
     IValidator<CreateJobFromPreviousCommand> validator)
-    : ICommandHandler<CreateJobFromPreviousCommand, IResult<Guid>>
+    : IRequestHandler<CreateJobFromPreviousCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateJobFromPreviousCommand request,
@@ -219,3 +219,4 @@ public class CreateJobFromPreviousCommandHandler(
         };
     }
 }
+

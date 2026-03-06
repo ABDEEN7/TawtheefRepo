@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -12,5 +11,6 @@ public sealed record DecideProfileReviewItemCommand(
     ReviewStatus Status,
     string? Note,
     SpecializationRelationLevel? SpecializationRelation = null
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+
 

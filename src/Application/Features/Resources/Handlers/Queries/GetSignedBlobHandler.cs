@@ -1,6 +1,6 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
@@ -19,7 +19,7 @@ public class GetSignedBlobHandler(
     IAppLogger logger,
     IOptions<StorageSettings> storageSettings,
     IOptions<AppConfigSettings> cfg)
-    : IQueryHandler<GetSignedBlobQuery, Result<FileResponse>>
+    : IRequestHandler<GetSignedBlobQuery, Result<FileResponse>>
 {
     public async Task<Result<FileResponse>> Handle(GetSignedBlobQuery request, CancellationToken cancellationToken)
     {
@@ -160,3 +160,4 @@ public class GetSignedBlobHandler(
         }
     }
 }
+

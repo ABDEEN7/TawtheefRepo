@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.DTOs;
+﻿using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 public class GetProfileOverviewHandler(
     IUnitOfWork uow,
     IMapper mapper,
-    IMediaUrlResolver media) : IQueryHandler<GetProfileOverviewQuery, Result<ProfileOverviewDto>>
+    IMediaUrlResolver media) : IRequestHandler<GetProfileOverviewQuery, Result<ProfileOverviewDto>>
 {
     public async Task<Result<ProfileOverviewDto>> Handle(GetProfileOverviewQuery request, CancellationToken ct)
     {
@@ -142,3 +142,4 @@ public class GetProfileOverviewHandler(
         });
     }
 }
+

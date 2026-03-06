@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.Kawader.Commands;
-using Cortex.Mediator;
+﻿using Application.Operation.Features.Employee.Kawader.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -21,3 +21,4 @@ public class KawaderController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

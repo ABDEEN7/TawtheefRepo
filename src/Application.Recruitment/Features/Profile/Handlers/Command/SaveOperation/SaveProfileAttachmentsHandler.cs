@@ -1,8 +1,7 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -21,7 +20,7 @@ public sealed class SaveProfileAttachmentsHandler(
     IUnitOfWork uow,
     IMediator mediator,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -54,7 +53,7 @@ public sealed class SaveProfileAttachmentsHandler(
         profile.AdditionalAttachments ??= new List<ProfileAdditionalAttachment>();
 
         // Build lookup of existing by AttachmentId (resource id). This assumes AttachmentId is stable identity.
-        // If your row has its own PK Id and AttachmentId is not unique, tell me and I’ll adjust.
+        // If your row has its own PK Id and AttachmentId is not unique, tell me and Iâ€™ll adjust.
         var existingByAttachmentId = profile.AdditionalAttachments
             .Where(x => x.AttachmentId != Guid.Empty)
             .ToDictionary(x => x.AttachmentId);
@@ -141,7 +140,7 @@ public sealed class SaveProfileAttachmentsHandler(
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(
                 cmd.UserId, ProfileFileCategories.Additional, file, false, cancellationToken);
 
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
 
@@ -152,3 +151,5 @@ public sealed class SaveProfileAttachmentsHandler(
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
@@ -13,7 +13,7 @@ namespace Tawtheef.Application.Features.Resources.Handlers.Commands;
 public class UploadAttachmentHandler(
     IUnitOfWork uow,
     IFileStorageService fileStorageService)
-: ICommandHandler<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>
+: IRequestHandler<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>
 {
     public async Task<IResult<UploadAttachmentRequest>> Handle(UploadAttachmentCommand cmd, CancellationToken ct)
     {
@@ -44,3 +44,4 @@ public class UploadAttachmentHandler(
         return Result.Ok(new UploadAttachmentRequest(uploadResult.Value.Id, uploadResult.Value.Name));
     }
 }
+

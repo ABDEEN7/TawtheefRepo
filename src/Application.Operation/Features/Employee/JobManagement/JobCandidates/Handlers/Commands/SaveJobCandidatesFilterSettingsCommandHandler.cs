@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Commands;
 
 public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<SaveJobCandidatesFilterSettingsCommand, IResult<JobCandidateFilterSettingsDto>>
+    : IRequestHandler<SaveJobCandidatesFilterSettingsCommand, IResult<JobCandidateFilterSettingsDto>>
 {
     public async Task<IResult<JobCandidateFilterSettingsDto>> Handle(
         SaveJobCandidatesFilterSettingsCommand request,
@@ -127,3 +127,4 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
         return true;
     }
 }
+

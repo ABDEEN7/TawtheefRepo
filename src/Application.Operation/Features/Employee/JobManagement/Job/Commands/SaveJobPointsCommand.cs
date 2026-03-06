@@ -1,10 +1,10 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Commands;
 
 public sealed record SaveJobPointsCommand(
     JobPointsMainRequestDto Request
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+

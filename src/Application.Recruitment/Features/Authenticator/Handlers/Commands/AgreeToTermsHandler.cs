@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Authenticator.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Authenticator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands;
 
 public sealed class AgreeToTermsHandler(IUnitOfWork uow, UserManager<User> userManager) 
-    : ICommandHandler<AgreeToTermsCommand, IResult<Unit>>
+    : IRequestHandler<AgreeToTermsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(AgreeToTermsCommand request, CancellationToken cancellationToken)
     {
@@ -30,4 +29,5 @@ public sealed class AgreeToTermsHandler(IUnitOfWork uow, UserManager<User> userM
         return Result.Ok(Unit.Value);
     }
 }
+
 

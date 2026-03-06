@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Handlers.Queries;
 
-public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IQueryHandler<GetSubMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
+public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IRequestHandler<GetSubMajorsQuery, IResult<PaginatedResult<MajorDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(GetSubMajorsQuery request, CancellationToken cancellationToken)
     {
@@ -39,3 +39,4 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IQueryH
         return Result.Ok(majors);
     }
 }
+

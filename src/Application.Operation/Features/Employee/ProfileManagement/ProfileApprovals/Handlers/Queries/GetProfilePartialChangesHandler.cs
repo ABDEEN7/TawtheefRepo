@@ -1,9 +1,9 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.SaveOperation;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -28,7 +28,7 @@ public sealed class GetProfilePartialChangesHandler(
         IMapper mapper,
         IMediaUrlResolver media,
         ILocalizationService localization)
-    : IQueryHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
+    : IRequestHandler<GetProfilePartialChangesQuery, Result<GetProfilePartialChangesDetailDto>>
 {
     private sealed record FileDisplay(string FileName, string Url);
 
@@ -571,3 +571,4 @@ public sealed class GetProfilePartialChangesHandler(
         return items.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
     }
 }
+

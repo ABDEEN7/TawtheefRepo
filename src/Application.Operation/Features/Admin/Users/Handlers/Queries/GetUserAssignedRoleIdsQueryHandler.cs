@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.Users.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Users.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ namespace Application.Operation.Features.Admin.Users.Handlers.Queries;
 public sealed class GetUserAssignedRoleIdsQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IQueryHandler<GetUserAssignedRoleIdsQuery, IResult<IReadOnlyCollection<Guid>>>
+    : IRequestHandler<GetUserAssignedRoleIdsQuery, IResult<IReadOnlyCollection<Guid>>>
 {
     public async Task<IResult<IReadOnlyCollection<Guid>>> Handle(
         GetUserAssignedRoleIdsQuery request,
@@ -38,3 +38,4 @@ public sealed class GetUserAssignedRoleIdsQueryHandler(
         return Result.Ok<IReadOnlyCollection<Guid>>(roleIds);
     }
 }
+

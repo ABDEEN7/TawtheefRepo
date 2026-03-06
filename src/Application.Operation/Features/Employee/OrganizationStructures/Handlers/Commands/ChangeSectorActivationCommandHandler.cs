@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.OrganizationStructures.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.OrganizationStructures.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Employee.OrganizationStructures.Handlers.Commands;
 
 public sealed class ChangeSectorActivationCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<ChangeSectorActivationCommand, IResult<Unit>>
+    : IRequestHandler<ChangeSectorActivationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ChangeSectorActivationCommand request, CancellationToken cancellationToken)
     {
@@ -43,3 +42,4 @@ public sealed class ChangeSectorActivationCommandHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
+

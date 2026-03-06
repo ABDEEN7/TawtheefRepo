@@ -1,8 +1,7 @@
-using Application.Recruitment.Features.Profile.Command;
+﻿using Application.Recruitment.Features.Profile.Command;
 using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Profile.Handlers.Command;
 
 public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> userManager)
-    : ICommandHandler<SubmitUserProfileCommand, IResult<Unit>>
+    : IRequestHandler<SubmitUserProfileCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SubmitUserProfileCommand cmd, CancellationToken ct)
     {
@@ -57,18 +56,18 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
             }, ct);
         }
 
-        // 1️⃣ Section-level review items
+        // 1ï¸ڈâƒ£ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
         {
             var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
             await reviewRepo.AddAsync(NewSectionReviewItem(profile, sec, snapshot), ct);
         }
 
-        // 2️⃣ Profile-level attachments
+        // 2ï¸ڈâƒ£ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
             await reviewRepo.AddAsync(item, ct);
 
-        // 3️⃣ Row-level entities (ONLY rows)
+        // 3ï¸ڈâƒ£ Row-level entities (ONLY rows)
         AddRows(reviewRepo, profile);
 
         profile.Status = UserProfileStatus.Submitted;
@@ -317,3 +316,4 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         a.RelatedToSpecialization
     };
 }
+

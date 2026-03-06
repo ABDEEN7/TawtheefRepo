@@ -1,8 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.Utilities;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -16,7 +15,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 public sealed class SaveJobPointsCommandHandler(
     IUnitOfWork uow,
     IJobPointsConfigurationsRepository jobPointsConfigurationsRepository
-) : ICommandHandler<SaveJobPointsCommand, IResult<Unit>>
+) : IRequestHandler<SaveJobPointsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveJobPointsCommand cmd, CancellationToken ct)
     {
@@ -116,3 +115,4 @@ public sealed class SaveJobPointsCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

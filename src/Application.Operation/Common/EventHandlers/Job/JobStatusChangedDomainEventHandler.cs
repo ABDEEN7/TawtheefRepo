@@ -1,5 +1,5 @@
-using Application.Operation.Common.Repositories;
-using Cortex.Mediator.Notifications;
+﻿using Application.Operation.Common.Repositories;
+using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 
@@ -22,3 +22,4 @@ public sealed class JobStatusChangedDomainEventHandler(
         await uow.SaveChangesAsync(ct);
     }
 }
+

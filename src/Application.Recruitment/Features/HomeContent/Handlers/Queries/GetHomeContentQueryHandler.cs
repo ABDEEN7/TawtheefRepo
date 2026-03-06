@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.HomeContent.DTOs;
+﻿using Application.Recruitment.Features.HomeContent.DTOs;
 using Application.Recruitment.Features.HomeContent.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Recruitment.Features.HomeContent.Handlers.Queries;
 
 public sealed class GetHomeContentQueryHandler(IUnitOfWork unitOfWork, IMediaUrlResolver media)
-    : IQueryHandler<GetHomeContentQuery, IResult<HomeContentDto>>
+    : IRequestHandler<GetHomeContentQuery, IResult<HomeContentDto>>
 {
     public async Task<IResult<HomeContentDto>> Handle(
         GetHomeContentQuery request,
@@ -100,3 +100,4 @@ public sealed class GetHomeContentQueryHandler(IUnitOfWork unitOfWork, IMediaUrl
         return media.ResolveAbsolute(raw);
     }
 }
+

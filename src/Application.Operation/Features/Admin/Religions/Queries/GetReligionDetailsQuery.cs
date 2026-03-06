@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Religions.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Religions.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Religions.Queries;
 
-public sealed record GetReligionDetailsQuery(Guid Id) : IQuery<IResult<ReligionAdminDto>>;
+public sealed record GetReligionDetailsQuery(Guid Id) : IRequest<IResult<ReligionAdminDto>>;
+
