@@ -16,14 +16,14 @@ public static class UserProfileLoader
     public static async Task<UserProfile?> GetFullProfileByUserId(IUnitOfWork uow, 
         Guid userId,bool tracking = false, CancellationToken ct = default)
     {
-        var query = UserProfileQueryFactory.CreateFullQuery(uow, tracking);
+        var query = UserProfileQueryFactory.CreateFullQuery(uow, tracking).AsSingleQuery();
         var profile =  await query.FirstOrDefaultAsync(p => p.UserId == userId, ct);
         return profile;
     }
     public static async Task<UserProfile?> GetFullProfileByProfileId(IUnitOfWork uow, 
         Guid profileId,bool tracking = false, CancellationToken ct = default)
     {
-        var query = UserProfileQueryFactory.CreateFullQuery(uow, tracking);
+        var query = UserProfileQueryFactory.CreateFullQuery(uow, tracking).AsSingleQuery();
         var profile =  await query.FirstOrDefaultAsync(p => p.Id == profileId, ct);
         return profile;
     }
