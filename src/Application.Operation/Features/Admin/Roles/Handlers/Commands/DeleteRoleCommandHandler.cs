@@ -35,7 +35,12 @@ public sealed class DeleteRoleCommandHandler(
             return Result.Ok(Unit.Value);
         }
 
-        return RoleClaimSync.FailureFromIdentity(deleteResult);
+        var result = RoleClaimSync.FailureFromIdentity(deleteResult);
+        if (result.IsFailed)
+        {
+            return Result.Fail<Unit>(result.Errors);
+        }
+        return Result.Ok(Unit.Value);
     }
 }
 
