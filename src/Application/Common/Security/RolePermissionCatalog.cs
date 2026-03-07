@@ -23,13 +23,16 @@ public static class RolePermissionCatalog
                 Permissions.Dashboard.View.Key,
                 Permissions.OfficeUsers.View.Key,
                 Permissions.OfficeUsers.Manage.Key,
+                Permissions.Profile.View.Key,
+                Permissions.Profile.Manage.Key,
                 Permissions.ProfileDistribution.View.Key,
                 Permissions.ProfileDistribution.Manage.Key,
             ],
 
-            [SystemRoleIds.OfficeUser] =
-            [
+            [SystemRoleIds.OfficeUser] = [
                 Permissions.Dashboard.View.Key,
+                Permissions.Profile.View.Key,
+                Permissions.Profile.Manage.Key,
                 Permissions.ProfileApproval.View.Key,
                 Permissions.ProfileApproval.Review.Key,
                 Permissions.ProfileApproval.Changes.Key,
