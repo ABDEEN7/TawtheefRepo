@@ -2,12 +2,12 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Extensions;
@@ -45,6 +45,15 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    
+    [HttpGet("target-entities")]
+    [AuthorizePermission(PermissionKeys.Profile.View)]
+    public async Task<IActionResult> GetTargetEntities()
+    {
+        var result = await mediator.Send(new GetTargetEntitiesQuery());
+        return result.ToActionResult();
+    }
+    
     [HttpGet("{userProfileId:guid}/changes")]
     [AuthorizePermission(PermissionKeys.ProfileApproval.Changes)]
     public async Task<IActionResult> GetChangesDetail(Guid userProfileId, CancellationToken ct = default)

@@ -106,7 +106,7 @@ public class JobController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/target-entities")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage, PermissionKeys.ProfileDistribution.View)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());

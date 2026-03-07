@@ -1,7 +1,7 @@
 ﻿import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '../services/api-config.service';
 import { CaseUtils } from '../utils/case-utils';
-import {ReviewStatus} from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
+import { ReviewStatus } from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
 import { GUID } from '../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
@@ -20,8 +20,7 @@ export class EndpointsService {
     refresh: this.getFullUrl(`/auth/refresh-token`),
     externalLogin: (provider: string, returnUrl: string | null = null) =>
       this.getFullUrl(
-        `/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${
-          returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''
+        `/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''
         }`
       ),
     externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),
@@ -49,16 +48,16 @@ export class EndpointsService {
   };
 
   job = {
-    job : this.getFullUrl('/job'),
-    jobApproval : this.getFullUrl('/jobApproval'),
-    getLatestReview : (jobId : GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
-    jobPoints : this.getFullUrl('/jobPoints'),
-    getJobPoints :(jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}`),
-    getJobPointsConfig : this.getFullUrl(`/jobPoints/configurations`),
-    saveJobPointsConfig : this.getFullUrl(`/jobPoints/configurations/save`),
-    approveJobPoints : (jobId : GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
-    searchJob : this.getFullUrl('/job/search'),
-    CountByStatus : (jobStatusId : GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
+    job: this.getFullUrl('/job'),
+    jobApproval: this.getFullUrl('/jobApproval'),
+    getLatestReview: (jobId: GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
+    jobPoints: this.getFullUrl('/jobPoints'),
+    getJobPoints: (jobId: GUID) => this.getFullUrl(`/jobPoints/${jobId}`),
+    getJobPointsConfig: this.getFullUrl(`/jobPoints/configurations`),
+    saveJobPointsConfig: this.getFullUrl(`/jobPoints/configurations/save`),
+    approveJobPoints: (jobId: GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
+    searchJob: this.getFullUrl('/job/search'),
+    CountByStatus: (jobStatusId: GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
     copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
     copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
     lookups: {
@@ -75,8 +74,8 @@ export class EndpointsService {
       genders: this.getFullUrl('/job/lookups/genders'),
       targetEntities: this.getFullUrl('/job/lookups/target-entities'),
       nationalities: this.getFullUrl('/job/lookups/nationalities'),
-      jobStatus : this.getFullUrl('/job/lookups/job-status'),
-      jobInvitesStatus : this.getFullUrl('/job/lookups/invitation-statuses')
+      jobStatus: this.getFullUrl('/job/lookups/job-status'),
+      jobInvitesStatus: this.getFullUrl('/job/lookups/invitation-statuses')
     }
   };
 
@@ -90,7 +89,7 @@ export class EndpointsService {
     categorySettings: this.getFullUrl('/jobCandidates/category-settings'),
     lookups: {
       candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
-      nationalities : this.getFullUrl('/jobCandidates/lookups/nationalities'),
+      nationalities: this.getFullUrl('/jobCandidates/lookups/nationalities'),
     },
   };
 
@@ -100,12 +99,13 @@ export class EndpointsService {
 
   approvals = {
     list: this.getFullUrl('/profile-approvals'),
+    targetEntities: this.getFullUrl('/profile-approvals/target-entities'),
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
     changesDetail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/changes`),
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
     startReview: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
     decision: (profileId: string, section: string) => this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
-    finalize: (profileId:string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
+    finalize: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
 
@@ -114,6 +114,7 @@ export class EndpointsService {
   };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),
+    targetEntities: this.getFullUrl('/profile-distributions/target-entities'),
     employees: this.getFullUrl('/profile-distributions/employees'),
     assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
     assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),
@@ -249,7 +250,7 @@ export class EndpointsService {
       update: this.getFullUrl('/SkillsManagement'),
       changeActivation: this.getFullUrl('/SkillsManagement/change-activation')
     },
-    lookups:{
+    lookups: {
       skills: this.getFullUrl('/SkillsManagement/lookups/skills'),
       skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types'),
       majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
