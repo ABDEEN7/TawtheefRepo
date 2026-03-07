@@ -1,5 +1,6 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -21,9 +22,9 @@ public class RefreshTokenHandler(
 {
     public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var totalSw = System.Diagnostics.Stopwatch.StartNew();
+        var totalSw = Stopwatch.StartNew();
         var timings = new Dictionary<string, long>();
-        var metadata = new Dictionary<string, object> { ["IpAddress"] = request.IpAddress };
+        var metadata = new Dictionary<string, object> { ["RequestID"] = Guid.NewGuid().ToString() };
 
         try
         {
@@ -32,7 +33,7 @@ public class RefreshTokenHandler(
 
             var incomingTokenHash = tokenService.HashRefreshToken(request.RefreshToken);
 
-            var dbQuerySw = System.Diagnostics.Stopwatch.StartNew();
+            var dbQuerySw = Stopwatch.StartNew();
             var storedToken = await uow.GetEntityRepository<RefreshToken>().DbSet
                 .Include(rt => rt.User)
                 .FirstOrDefaultAsync(rt => rt.TokenHash == incomingTokenHash, cancellationToken);
@@ -66,7 +67,7 @@ public class RefreshTokenHandler(
                 return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
             }
 
-            var sessionCheckSw = System.Diagnostics.Stopwatch.StartNew();
+            var sessionCheckSw = Stopwatch.StartNew();
             var isSessionActive = await tokenService.IsSessionActiveAsync(storedToken.UserId, storedToken.SecurityStamp, cancellationToken);
             timings["SessionActiveCheck"] = sessionCheckSw.ElapsedMilliseconds;
 
@@ -75,7 +76,7 @@ public class RefreshTokenHandler(
                 return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
             }
 
-            var rotationSw = System.Diagnostics.Stopwatch.StartNew();
+            var rotationSw = Stopwatch.StartNew();
             var authResponseResult = await tokenService.RotateRefreshTokenAsync(
                 user,
                 storedToken,

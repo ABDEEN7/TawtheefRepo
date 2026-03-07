@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -86,7 +88,7 @@ public class TokenService(
         string? ipAddress,
         CancellationToken ct)
     {
-        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var sw = Stopwatch.StartNew();
         var timings = new Dictionary<string, long>();
         
         var now = time.GetUtcNow().UtcDateTime;
@@ -97,9 +99,9 @@ public class TokenService(
 
         user.RefreshTokens.Add(replacement);
 
-        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken);
+        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken, ct);
 
-        var buildSw = System.Diagnostics.Stopwatch.StartNew();
+        var buildSw = Stopwatch.StartNew();
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
         timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 
@@ -109,7 +111,7 @@ public class TokenService(
             return result;
         }
 
-        var saveSw = System.Diagnostics.Stopwatch.StartNew();
+        var saveSw = Stopwatch.StartNew();
         await uow.SaveChangesAsync(ct);
         timings["SaveChangesAsync"] = saveSw.ElapsedMilliseconds;
         
@@ -137,7 +139,7 @@ public class TokenService(
         foreach (var token in tokens)
         {
             token.Revoke(now, ipAddress, reason);
-            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token, ct);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -169,7 +171,7 @@ public class TokenService(
     {
         var timings = new Dictionary<string, long>();
         
-        var dbSw = System.Diagnostics.Stopwatch.StartNew();
+        var dbSw = Stopwatch.StartNew();
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking()
             .FirstAsync(t => t.Id == user.UserTypeId, ct);
@@ -181,7 +183,7 @@ public class TokenService(
 
         if (user is ApplicantUser applicantUser)
         {
-            var pcsSw = System.Diagnostics.Stopwatch.StartNew();
+            var pcsSw = Stopwatch.StartNew();
             prefill = !applicantUser.IsCompletedProfile ? await pcs.BuildPrefillAsync(user, ct) : null;
             timings["BuildPrefill"] = pcsSw.ElapsedMilliseconds;
             
@@ -189,14 +191,14 @@ public class TokenService(
             additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
         }
 
-        var genSw = System.Diagnostics.Stopwatch.StartNew();
+        var genSw = Stopwatch.StartNew();
         var accessToken = await GenerateAccessTokenAsync(user, userType, [
             new Claim(JwtRegisteredClaimNames.Sid, sid),
             ..additionalClaims
         ], ct);
         timings["GenerateAccessToken"] = genSw.ElapsedMilliseconds;
 
-        var loginSw = System.Diagnostics.Stopwatch.StartNew();
+        var loginSw = Stopwatch.StartNew();
         var logins = await userManager.GetLoginsAsync(user);
         timings["GetLogins"] = loginSw.ElapsedMilliseconds;
         
@@ -225,7 +227,7 @@ public class TokenService(
 
         var timings = new Dictionary<string, long>();
         
-        var cacheReadSw = System.Diagnostics.Stopwatch.StartNew();
+        var cacheReadSw = Stopwatch.StartNew();
         var cachedRoles = await cache.GetStringAsync(rolesKey, ct);
         var cachedPerms = await cache.GetStringAsync(permsKey, ct);
         timings["CacheRead"] = cacheReadSw.ElapsedMilliseconds;
@@ -240,7 +242,7 @@ public class TokenService(
         }
         else
         {
-            var identitySw = System.Diagnostics.Stopwatch.StartNew();
+            var identitySw = Stopwatch.StartNew();
             roles = await userManager.GetRolesAsync(user);
             permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
             timings["IdentityDbFetch"] = identitySw.ElapsedMilliseconds;
@@ -249,7 +251,7 @@ public class TokenService(
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(jwtSettings.Value.RefreshTokenExpirationHours ?? 3)
             };
-            var cacheWriteSw = System.Diagnostics.Stopwatch.StartNew();
+            var cacheWriteSw = Stopwatch.StartNew();
             await cache.SetStringAsync(rolesKey, JsonSerializer.Serialize(roles), cacheOptions, ct);
             await cache.SetStringAsync(permsKey, JsonSerializer.Serialize(permissions), cacheOptions, ct);
             timings["CacheWrite"] = cacheWriteSw.ElapsedMilliseconds;
@@ -315,7 +317,7 @@ public class TokenService(
         foreach (var token in refreshTokens)
         {
             token.Revoke(now, null, "Admin/explicit revoke-all");
-            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token, ct);
         }
 
         await uow.SaveChangesAsync(ct);
