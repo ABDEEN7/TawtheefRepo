@@ -98,9 +98,9 @@ public class TokenService(
         currentToken.Revoke(now, ipAddress, "Rotated");
         currentToken.ReplacedByToken = replacement;
 
-        user.RefreshTokens.Add(replacement);
-
-        // Optimization: Attach and mark as modified directly to avoid the FindAsync inside uow.UpdateAsync
+        // Optimization: Use direct DbSet operations to avoid virtual collection access (prevent lazy-load SELECT)
+        dbContext.Set<RefreshToken>().Add(replacement);
+        
         var entry = dbContext.Entry(currentToken);
         if (entry.State == EntityState.Detached)
         {
