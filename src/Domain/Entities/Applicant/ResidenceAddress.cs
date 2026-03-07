@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(ResidenceAddress), Schema = Schemas.Profile)]
+[Index(nameof(CertificateId))]
 public class ResidenceAddress : EventEntity
 {
     public int BuildingNo { get; set; }

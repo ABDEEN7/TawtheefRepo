@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
@@ -15,6 +16,7 @@ public static class EmployeeSuperAdminIds
     public static readonly Guid EmployeeId4 = new("42e0d563-7603-453c-81b1-6b2325622b40");
 }
 
+[Index(nameof(EmployeeProfileId))]
 public class EmployeeUser : User
 {
     public Guid? EmployeeProfileId { get; init; }

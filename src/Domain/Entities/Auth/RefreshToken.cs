@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Auth;
 
+[Index(nameof(TokenHash))]
+[Index(nameof(UserId), nameof(SecurityStamp))]
 public class RefreshToken : EventEntity
 {
     [MaxLength(512)]

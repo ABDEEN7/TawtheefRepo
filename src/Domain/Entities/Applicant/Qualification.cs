@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -7,6 +8,13 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(Qualification), Schema = Schemas.Profile)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(MajorId))]
+[Index(nameof(SubMajorId))]
+[Index(nameof(UniversityId))]
+[Index(nameof(StudyTypeId))]
+[Index(nameof(RatingId))]
+[Index(nameof(CertificateId))]
 public class Qualification : EventEntity
 {
     public Guid UserProfileId { get; set; }

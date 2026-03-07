@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307110619_GlobalPerformanceIndexes")]
+    partial class GlobalPerformanceIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1399,8 +1402,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("Provider");
-
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserProfileId");
@@ -1655,8 +1656,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("TokenHash");
 
                     b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("UserId", "SecurityStamp");
 
@@ -1983,23 +1982,15 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttachmentId");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CreatedDate");
 
                     b.HasIndex("DeletedById");
 
-                    b.HasIndex("EntityId");
-
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserProfileId");
 
                     b.ToTable("ActionLog", "hr");
                 });
@@ -2079,8 +2070,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("CreatedDate");
 
                     b.HasIndex("DeletedById");
-
-                    b.HasIndex("EntityId");
 
                     b.HasIndex("IsDeleted");
 
@@ -2368,8 +2357,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CandidateTypeId", "ProviderLoginId");
-
-                    b.HasIndex("CandidateTypeId");
 
                     b.HasIndex("ProviderLoginId");
 
@@ -6338,8 +6325,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("Status");
-
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserId");
@@ -6410,23 +6395,15 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttachmentId");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CreatedDate");
 
                     b.HasIndex("DeletedById");
 
-                    b.HasIndex("EntityId");
-
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserProfileId");
 
                     b.ToTable("AuditTrailEntry", "hr");
                 });
@@ -7275,8 +7252,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("JobPointsMainId");
 
-                    b.HasIndex("ReferenceId");
-
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("JobPointsDetail", "hr");
@@ -7561,8 +7536,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobId")
                         .IsUnique();
 
-                    b.HasIndex("ReviewCycleId");
-
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("JobId", "AttachmentId", "ReviewCycleId")
@@ -7697,8 +7670,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("DeletedById");
 
                     b.HasIndex("IsDeleted");
-
-                    b.HasIndex("ReviewCycleId");
 
                     b.HasIndex("UpdatedById");
 
@@ -7881,8 +7852,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CanceledById");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CreatedDate");
@@ -7891,19 +7860,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("NewResourceId");
-
-                    b.HasIndex("OldResourceId");
-
-                    b.HasIndex("RequestedById");
-
-                    b.HasIndex("ReviewedById");
-
-                    b.HasIndex("Status");
-
                     b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserProfileId");
 
                     b.HasIndex("UserProfileId", "TargetKey")
                         .IsUnique()
@@ -8077,17 +8034,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.HasIndex("EntityId");
-
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("ProfileChangeId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.HasIndex("ReviewedById");
-
-                    b.HasIndex("Status");
 
                     b.HasIndex("UpdatedById");
 
@@ -8162,15 +8111,11 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("ActionType");
 
-                    b.HasIndex("AttachmentId");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CreatedDate");
 
                     b.HasIndex("DeletedById");
-
-                    b.HasIndex("EntityId");
 
                     b.HasIndex("IsDeleted");
 
@@ -9260,10 +9205,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeletedById");
-
                     b.HasIndex("Email")
                         .IsUnique()
                         .HasFilter("[Email] IS NOT NULL");
@@ -9277,8 +9218,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserTypeId");
 
@@ -9436,13 +9375,9 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("NationalCardId");
 
-                    b.HasIndex("NationalNumber");
-
                     b.HasIndex("NationalityId");
 
                     b.HasIndex("OfficeId");
-
-                    b.HasIndex("Provider");
 
                     b.HasIndex("ReligionId");
 
@@ -9453,8 +9388,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("ResumeAttachmentId");
 
                     b.HasIndex("SponsorProfileId");
-
-                    b.HasIndex("Status");
 
                     b.HasIndex("TargetEntityId");
 

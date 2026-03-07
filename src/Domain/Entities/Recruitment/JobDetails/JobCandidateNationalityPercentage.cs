@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -6,6 +7,9 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 [Table(nameof(JobCandidateNationalityPercentage), Schema = Schemas.Hr)]
+[Index(nameof(JobCandidateFilterSettingId))]
+[Index(nameof(CandidateTypeId))]
+[Index(nameof(NationalityId))]
 public class JobCandidateNationalityPercentage : EventEntity
 {
     public Guid JobCandidateFilterSettingId { get; set; }

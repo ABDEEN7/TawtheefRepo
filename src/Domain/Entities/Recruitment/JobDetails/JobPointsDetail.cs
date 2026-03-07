@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 [Table(nameof(JobPointsDetail), Schema = Schemas.Hr)]
+[Index(nameof(JobPointsMainId))]
+[Index(nameof(ReferenceId))]
 public class JobPointsDetail : EventEntity
 {
     [Required]

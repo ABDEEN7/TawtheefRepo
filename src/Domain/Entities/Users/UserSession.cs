@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Users;
 
+[Index(nameof(SessionId))]
+[Index(nameof(UserId), nameof(SessionId))]
 public sealed class UserSession : EventEntity
 {
     public Guid UserId { get; set; }

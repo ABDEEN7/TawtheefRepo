@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 [Table(nameof(Skill), Schema = Schemas.Lookup)]
+[Index(nameof(SkillTypeId))]
 public class Skill : LookupBase
 {
     public Guid SkillTypeId { get; set; }

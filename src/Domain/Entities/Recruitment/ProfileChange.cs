@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
@@ -23,6 +24,13 @@ public enum ProfileChangeAction
 }
 
 [Table(nameof(ProfileChangeRequest), Schema = Schemas.Hr)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(OldResourceId))]
+[Index(nameof(NewResourceId))]
+[Index(nameof(RequestedById))]
+[Index(nameof(ReviewedById))]
+[Index(nameof(CanceledById))]
+[Index(nameof(Status))]
 public class ProfileChangeRequest : EventEntity
 {
     public Guid UserProfileId { get; set; }

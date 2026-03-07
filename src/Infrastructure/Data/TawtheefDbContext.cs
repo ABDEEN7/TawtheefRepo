@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Tawtheef.Application.Common.Interfaces;
@@ -145,6 +146,29 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 
         // Apply configurations
         builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
+        
+        // Automatically add indexes to common query/filtering fields on all models
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            var clrType = entityType.ClrType;
+
+            var props = entityType.GetProperties()
+                .Where(p => !p.IsPrimaryKey() && !p.IsForeignKey());
+
+            foreach (var prop in props)
+            {
+                var name = prop.Name;
+                var underlyingType = Nullable.GetUnderlyingType(prop.ClrType) ?? prop.ClrType;
+                
+                if ((name.EndsWith("Id") && underlyingType == typeof(Guid)) ||
+                    name == "NationalNumber" ||
+                    name == "Status" ||
+                    name == "Provider")
+                {
+                    builder.Entity(clrType).HasIndex(name);
+                }
+            }
+        }
 
         // Configure soft delete globally
         foreach (var entityType in builder.Model.GetEntityTypes())
@@ -160,11 +184,18 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             var lambda = Expression.Lambda(condition, parameter);
 
             builder.Entity(clrType).HasQueryFilter(lambda);
+            
+            // Create index for IsDeleted globally to enhance performance on the query filter
+            builder.Entity(clrType).HasIndex(nameof(ISoftDelete.IsDeleted));
 
             if (!typeof(BaseEntity).IsAssignableFrom(clrType)) continue;
             if (clrType == typeof(User)) continue;
             var entity = builder.Entity(clrType);
             
+            // Create indexes for CreatedDate and CreatedById globally on BaseEntity implementing classes to speed up sorting and user lookups
+            entity.HasIndex(nameof(BaseEntity.CreatedDate));
+            entity.HasIndex(nameof(BaseEntity.CreatedById));
+
             entity.HasOne(typeof(User), nameof(BaseEntity.CreatedBy))
                 .WithMany()
                 .HasForeignKey(nameof(BaseEntity.CreatedById))
@@ -245,12 +276,12 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             if (!IsLockedProvider(entry.Entity.Provider))
                 continue;
 
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalNumber));
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.QIDExpiry));
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.BirthDate));
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.NationalityId));
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.GenderId));
-            ProtectProperty(entry, nameof(Tawtheef.Domain.Entities.Users.UserProfile.CandidateTypeId));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.NationalNumber));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.QIDExpiry));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.BirthDate));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.NationalityId));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.GenderId));
+            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
         }
     }
 
@@ -277,7 +308,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
                       (p.Provider == "qatarpass" || p.Provider == "qatarresidentotp"));
     }
 
-    private void ProtectProperty<TEntity>(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> entry, string propertyName)
+    private void ProtectProperty<TEntity>(EntityEntry<TEntity> entry, string propertyName)
         where TEntity : class
     {
         var property = entry.Property(propertyName);

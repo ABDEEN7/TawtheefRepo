@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -6,6 +7,9 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(Invitation), Schema = Schemas.Hr)]
+[Index(nameof(JobId))]
+[Index(nameof(ApplicantId))]
+[Index(nameof(InvitationStatusId))]
 public class Invitation : EventEntity
 {
     public Guid JobId { get; set; }

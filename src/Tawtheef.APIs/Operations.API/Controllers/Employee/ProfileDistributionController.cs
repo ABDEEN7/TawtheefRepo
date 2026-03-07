@@ -1,12 +1,12 @@
 ﻿using System.Security.Claims;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -29,6 +29,14 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
         var result = await mediator.Send(query with {UserId = UserId.Value} , ct);
+        return result.ToActionResult();
+    }
+    
+    [HttpGet("target-entities")]
+    [AuthorizePermission(PermissionKeys.Profile.View)]
+    public async Task<IActionResult> GetTargetEntities()
+    {
+        var result = await mediator.Send(new GetTargetEntitiesQuery());
         return result.ToActionResult();
     }
 

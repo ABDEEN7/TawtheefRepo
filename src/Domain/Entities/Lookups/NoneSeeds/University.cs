@@ -1,9 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 [Table(nameof(University), Schema = Schemas.Lookup)]
+[Index(nameof(CityId))]
+[Index(nameof(LogoEnId))]
+[Index(nameof(LogoArId))]
 public class University : LookupBase
 {
     public Guid CityId { get; set; }

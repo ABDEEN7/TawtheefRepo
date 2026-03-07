@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.User;
@@ -11,6 +12,7 @@ public enum ContactVerificationType
     Email = 2
 }
 
+[Index(nameof(UserId))]
 public class ContactVerification : EventEntity
 {
     public Guid UserId { get; init; }

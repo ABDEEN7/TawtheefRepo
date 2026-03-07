@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
@@ -6,6 +7,8 @@ namespace Tawtheef.Domain.Entities.Recruitment.JobDetails;
 
 [Table(nameof(JobSkill), Schema = Schemas.Hr)]
 
+[Index(nameof(JobId))]
+[Index(nameof(SkillId))]
 public class JobSkill: EventEntity
 {
     public Guid JobId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups;
@@ -10,6 +11,7 @@ public static class ManagementIds
 }
 
 [Table(nameof(Management), Schema = Schemas.Lookup)]
+[Index(nameof(SectorId))]
 public class Management : LookupBase
 {
     public Guid SectorId { get; set; }

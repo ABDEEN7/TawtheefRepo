@@ -1,10 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(AuditTrailEntry), Schema = Schemas.Hr)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(UserId))]
+[Index(nameof(EntityId))]
+[Index(nameof(AttachmentId))]
 public class AuditTrailEntry : EventEntity
 {
     public Guid UserProfileId { get; set; }

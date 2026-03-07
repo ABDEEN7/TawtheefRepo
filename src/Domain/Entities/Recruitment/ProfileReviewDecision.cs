@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(ProfileReviewDecision), Schema = Schemas.Hr)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(AttachmentResourceId))]
 public class ProfileReviewDecision : EventEntity
 {
     public Guid UserProfileId { get; set; }
