@@ -1,7 +1,6 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,7 @@ public class RequestPhoneVerificationCommandHandler(
     ISmsSender smsSender,
     TimeProvider timeProvider,
     UserManager<User> userManager)
-    : ICommandHandler<RequestPhoneVerificationCommand, IResult<Unit>>
+    : IRequestHandler<RequestPhoneVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestPhoneVerificationCommand request, CancellationToken cancellationToken)
     {
@@ -74,3 +73,4 @@ public class RequestPhoneVerificationCommandHandler(
         return new string(chars);
     }
 }
+

@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Operation.Features.Admin.HomeContent.SuccessStories.Handlers.Commands;
 
 public sealed class DeleteHomeSuccessStoryCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<DeleteHomeSuccessStoryCommand, IResult<Unit>>
+    : IRequestHandler<DeleteHomeSuccessStoryCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         DeleteHomeSuccessStoryCommand request,
@@ -28,3 +27,4 @@ public sealed class DeleteHomeSuccessStoryCommandHandler(IUnitOfWork unitOfWork)
         return Result.Ok(Unit.Value);
     }
 }
+

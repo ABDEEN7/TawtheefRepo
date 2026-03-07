@@ -1,8 +1,8 @@
-using Application.Recruitment.Common.Interfaces.Services;
+﻿using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Authenticator.Handlers.Utils;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -19,7 +19,7 @@ public class MoiService(IMediator mediator, IUnitOfWork uow, IAppLogger log) : I
         CancellationToken cancellationToken) {
         var qidMasked = MoiUtils.MaskQid(qid);
 
-        var request = await mediator.SendQueryAsync<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>(
+        var request = await mediator.Send(
             new GetPersonalInformationByQidQuery(new CheckProfileMOI(qid, expiryDate)),
             cancellationToken);
 
@@ -55,3 +55,5 @@ public class MoiService(IMediator mediator, IUnitOfWork uow, IAppLogger log) : I
         }
     }
 }
+
+

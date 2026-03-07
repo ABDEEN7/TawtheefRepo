@@ -1,5 +1,4 @@
-﻿using Cortex.Mediator.DependencyInjection;
-using Mapster;
+﻿using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
@@ -29,14 +28,12 @@ namespace Application.Recruitment
 
             private void RegisterMediator()
             {
-                services.AddCortexMediator(
-                    handlerAssemblyMarkerTypes:
-                    [
-                        typeof(ApplicationAssemblyMarker),
-                        typeof(RecruitmentAssemblyMarker)
-                    ],
-                    configure: o => o.AddDefaultBehaviors()
-                );
+                services.AddMediatR(cfg =>
+                {
+                    cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly);
+                    cfg.RegisterServicesFromAssembly(typeof(RecruitmentAssemblyMarker).Assembly);
+                    cfg.AddOpenBehavior(typeof(Tawtheef.Application.Common.Behaviours.ValidationBehaviour<,>));
+                });
             }
         }
     }

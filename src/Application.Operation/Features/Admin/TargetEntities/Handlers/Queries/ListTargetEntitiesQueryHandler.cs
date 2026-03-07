@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.TargetEntities.DTOs;
+﻿using Application.Operation.Features.Admin.TargetEntities.DTOs;
 using Application.Operation.Features.Admin.TargetEntities.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Admin.TargetEntities.Handlers.Queries;
 
 public sealed class ListTargetEntitiesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetListTargetEntitiesQuery, IResult<PaginatedResult<TargetEntityAdminDto>>>
+    : IRequestHandler<GetListTargetEntitiesQuery, IResult<PaginatedResult<TargetEntityAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<TargetEntityAdminDto>>> Handle(
         GetListTargetEntitiesQuery request,
@@ -36,3 +36,4 @@ public sealed class ListTargetEntitiesQueryHandler(IUnitOfWork unitOfWork, IMapp
         return Result.Ok(targetEntities);
     }
 }
+

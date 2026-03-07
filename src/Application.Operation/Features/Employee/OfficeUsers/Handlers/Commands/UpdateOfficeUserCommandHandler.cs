@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.OfficeUsers.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.OfficeUsers.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,7 @@ namespace Application.Operation.Features.Employee.OfficeUsers.Handlers.Commands;
 public sealed class UpdateOfficeUserCommandHandler(
     UserManager<User> userManager,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateOfficeUserCommand, IResult<Unit>>
+    : IRequestHandler<UpdateOfficeUserCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateOfficeUserCommand request,
@@ -77,3 +76,4 @@ public sealed class UpdateOfficeUserCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

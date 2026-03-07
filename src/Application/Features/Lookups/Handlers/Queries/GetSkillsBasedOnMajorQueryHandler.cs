@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetSkillsBasedOnMajorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetSkillsBasedOnMajorQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetSkillsBasedOnMajorQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillsBasedOnMajorQuery request,
         CancellationToken cancellationToken)
@@ -33,3 +33,4 @@ public sealed class GetSkillsBasedOnMajorQueryHandler(IUnitOfWork unitOfWork, IM
         return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
     }
 }
+

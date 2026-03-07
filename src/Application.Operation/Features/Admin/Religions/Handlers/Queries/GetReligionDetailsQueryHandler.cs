@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Religions.DTOs;
+﻿using Application.Operation.Features.Admin.Religions.DTOs;
 using Application.Operation.Features.Admin.Religions.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Admin.Religions.Handlers.Queries;
 
 public sealed class GetReligionDetailsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetReligionDetailsQuery, IResult<ReligionAdminDto>>
+    : IRequestHandler<GetReligionDetailsQuery, IResult<ReligionAdminDto>>
 {
     public async Task<IResult<ReligionAdminDto>> Handle(
         GetReligionDetailsQuery request,
@@ -30,3 +30,4 @@ public sealed class GetReligionDetailsQueryHandler(IUnitOfWork unitOfWork, IMapp
         return Result.Ok(dto);
     }
 }
+

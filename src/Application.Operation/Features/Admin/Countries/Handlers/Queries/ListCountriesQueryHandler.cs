@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Countries.DTOs;
+﻿using Application.Operation.Features.Admin.Countries.DTOs;
 using Application.Operation.Features.Admin.Countries.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace Application.Operation.Features.Admin.Countries.Handlers.Queries;
 public sealed class ListCountriesQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IQueryHandler<GetListCountriesQuery, IResult<PaginatedResult<CountryAdminDto>>>
+    : IRequestHandler<GetListCountriesQuery, IResult<PaginatedResult<CountryAdminDto>>>
 {
     public async Task<IResult<PaginatedResult<CountryAdminDto>>> Handle(
         GetListCountriesQuery request,
@@ -44,3 +44,4 @@ public sealed class ListCountriesQueryHandler(
         return Result.Ok(countries);
     }
 }
+

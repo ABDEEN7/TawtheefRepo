@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Roles.Commands;
+﻿using Application.Operation.Features.Admin.Roles.Commands;
 using Application.Operation.Features.Admin.Roles.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -70,3 +70,4 @@ public class RolesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +14,7 @@ public class SaveJobPointsConfigurationCommandHandler(
     IJobPointsConfigurationsRepository jobPointsRepository,
     IUnitOfWork uow,
     IMapper mapper
-) : ICommandHandler<SaveJobPointsConfigurationCommand, IResult<JobPointConfigurationResponseDto>>
+) : IRequestHandler<SaveJobPointsConfigurationCommand, IResult<JobPointConfigurationResponseDto>>
 {
    public async Task<IResult<JobPointConfigurationResponseDto>> Handle(
        SaveJobPointsConfigurationCommand request,
@@ -68,3 +68,4 @@ public class SaveJobPointsConfigurationCommandHandler(
     return Result.Ok(responseDto);
 }
 }
+

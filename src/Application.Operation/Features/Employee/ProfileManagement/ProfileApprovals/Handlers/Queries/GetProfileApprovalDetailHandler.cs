@@ -1,9 +1,9 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -21,7 +21,7 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileAppro
 
 public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, 
     IMediaUrlResolver media, ILocalizationService localization)
-    : IQueryHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
+    : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
         CancellationToken ct)
@@ -184,3 +184,4 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         }
     }
 }
+

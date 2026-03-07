@@ -1,8 +1,7 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -21,7 +20,7 @@ public sealed class RequestProfileAttachmentsChangeHandler(
     IMediator mediator,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService
-) : ICommandHandler<RequestProfileAttachmentsChangeCommand, IResult<Unit>>
+) : IRequestHandler<RequestProfileAttachmentsChangeCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -119,7 +118,7 @@ public sealed class RequestProfileAttachmentsChangeHandler(
                 return Result.Fail<UploadAttachmentRequest?>(invalidFileError);
 
             var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Additional, file, false, cancellationToken);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
             if (uploadResult.IsFailed)
@@ -136,3 +135,5 @@ file sealed record PendingAttachmentSnapshot
     public string? Title { get; init; }
     public string? FileName { get; init; }
 }
+
+

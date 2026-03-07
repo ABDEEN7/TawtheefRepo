@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.OrganizationStructures.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.OrganizationStructures.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Employee.OrganizationStructures.Handlers.Commands;
 
 public sealed class CreateManagementCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<CreateManagementCommand, IResult<Guid>>
+    : IRequestHandler<CreateManagementCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateManagementCommand request, CancellationToken cancellationToken)
     {
@@ -49,3 +49,4 @@ public sealed class CreateManagementCommandHandler(IUnitOfWork uow)
         return Result.Ok(management.Id);
     }
 }
+

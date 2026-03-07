@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateFaqStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateFaqStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateFaqStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateFaqStatusCommand request,
@@ -37,3 +36,4 @@ public sealed class UpdateFaqStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

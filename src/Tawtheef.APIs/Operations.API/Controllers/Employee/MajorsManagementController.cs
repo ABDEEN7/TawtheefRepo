@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Commands;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Infrastructure.Extensions;
@@ -47,3 +47,4 @@ public class MajorsManagementController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

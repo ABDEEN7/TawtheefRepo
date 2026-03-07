@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,7 @@ public sealed class ManualAssignProfilesHandler(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     IMapper mapper)
-    : ICommandHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
+    : IRequestHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ManualAssignProfilesCommand request, CancellationToken ct)
     {
@@ -115,3 +115,4 @@ public sealed class ManualAssignProfilesHandler(
         return Result.Ok(result);
     }
 }
+

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.CandidateUsers.DTOs;
+﻿using Application.Operation.Features.Employee.CandidateUsers.DTOs;
 using Application.Operation.Features.Employee.CandidateUsers.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.CandidateUsers.Handlers.Queries;
 
 public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager)
-    : IQueryHandler<GetCandidateUsersQuery, IResult<PaginatedResult<CandidateUserListItemDto>>>
+    : IRequestHandler<GetCandidateUsersQuery, IResult<PaginatedResult<CandidateUserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<CandidateUserListItemDto>>> Handle(
         GetCandidateUsersQuery request,
@@ -57,3 +57,4 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
         return Result.Ok(result);
     }
 }
+

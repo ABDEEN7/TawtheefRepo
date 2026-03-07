@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
@@ -6,7 +6,7 @@ using Tawtheef.Application.Features.Resources.Queries;
 
 namespace Tawtheef.Application.Features.Resources.Handlers.Queries;
 
-public sealed class GetPublicFileHandler(IFileStorageService storage) : IQueryHandler<GetPublicFileQuery, IActionResult>
+public sealed class GetPublicFileHandler(IFileStorageService storage) : IRequestHandler<GetPublicFileQuery, IActionResult>
 {
     public async Task<IActionResult> Handle(GetPublicFileQuery request, CancellationToken ct)
     {
@@ -26,3 +26,4 @@ public sealed class GetPublicFileHandler(IFileStorageService storage) : IQueryHa
         return result;
     }
 }
+

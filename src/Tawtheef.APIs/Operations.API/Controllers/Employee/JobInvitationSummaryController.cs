@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -76,3 +76,4 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     }
     #endregion
 }
+

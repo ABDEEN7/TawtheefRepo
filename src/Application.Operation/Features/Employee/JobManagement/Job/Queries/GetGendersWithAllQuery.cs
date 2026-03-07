@@ -1,8 +1,9 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Lookups.Queries;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Queries;
 
-public sealed record GetGendersWithAllQuery : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>;
+public sealed record GetGendersWithAllQuery : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>;
+

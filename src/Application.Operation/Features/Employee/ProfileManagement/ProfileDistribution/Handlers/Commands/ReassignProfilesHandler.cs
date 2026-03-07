@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,7 @@ public sealed class ReassignProfilesHandler(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     IMapper mapper)
-    : ICommandHandler<ReassignProfilesCommand, Result<DistributionResultDto>>
+    : IRequestHandler<ReassignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ReassignProfilesCommand request, CancellationToken ct)
     {
@@ -139,3 +139,4 @@ public sealed class ReassignProfilesHandler(
         return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionModeRequired);
     }
 }
+

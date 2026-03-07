@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 using Microsoft.AspNetCore.Http;
@@ -11,4 +11,5 @@ public sealed record UploadAttachmentCommand(
     Guid FileId,
     string BlobPath,
     string Hash,
-    IFormFile File) : ICommand<IResult<UploadAttachmentRequest>>;
+    IFormFile File) : IRequest<IResult<UploadAttachmentRequest>>;
+

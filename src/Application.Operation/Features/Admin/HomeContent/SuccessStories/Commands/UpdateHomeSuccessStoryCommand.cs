@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -19,4 +18,5 @@ public sealed record UpdateHomeSuccessStoryCommand(
     int DisplayOrder,
     bool IsActive,
     int? ImageFileIndex,
-    List<IFormFile>? Files) : ICommand<IResult<Unit>>;
+    List<IFormFile>? Files) : IRequest<IResult<Unit>>;
+

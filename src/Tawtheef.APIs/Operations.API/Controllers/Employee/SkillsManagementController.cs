@@ -1,5 +1,5 @@
 ﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
@@ -58,3 +58,4 @@ public class SkillsManagementController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

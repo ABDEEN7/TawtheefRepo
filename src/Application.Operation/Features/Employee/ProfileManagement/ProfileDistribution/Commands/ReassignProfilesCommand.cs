@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
@@ -12,4 +12,5 @@ public sealed record ReassignProfilesCommand(
     Guid? EmployeeId,
     IReadOnlyCollection<Guid> EmployeeIds,
     IReadOnlyCollection<Guid> ProfileIds,
-    int? PerEmployeeCount) : ICommand<Result<DistributionResultDto>>;
+    int? PerEmployeeCount) : IRequest<Result<DistributionResultDto>>;
+

@@ -41,6 +41,7 @@
         <PackageReference Include="Microsoft.FeatureManagement" />
         <PackageReference Include="Microsoft.Identity.Web" />
         <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" />
+        <PackageReference Include="MimeKit" />
         <PackageReference Include="Polly" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
         <PackageReference Include="System.Security.Permissions" />

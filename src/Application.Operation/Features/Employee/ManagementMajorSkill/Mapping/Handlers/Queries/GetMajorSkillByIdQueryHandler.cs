@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.DTOs;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.DTOs;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Handlers.Queries;
 
 public sealed class GetMajorSkillByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IQueryHandler<GetMajorSkillByIdQuery, IResult<MajorSkillDetailsDto>>
+    : IRequestHandler<GetMajorSkillByIdQuery, IResult<MajorSkillDetailsDto>>
 {
     public async Task<IResult<MajorSkillDetailsDto>> Handle(GetMajorSkillByIdQuery request, CancellationToken ct)
     {
@@ -29,3 +29,4 @@ public sealed class GetMajorSkillByIdQueryHandler(IUnitOfWork uow, IMapper mappe
         return Result.Ok(mapper.Map<MajorSkillDetailsDto>(link));
     }
 }
+

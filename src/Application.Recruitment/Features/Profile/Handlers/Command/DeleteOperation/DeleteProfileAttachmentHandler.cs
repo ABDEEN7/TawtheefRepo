@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.DeleteOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.DeleteOperation;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -12,7 +11,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.DeleteOperat
 
 
 public sealed class DeleteProfileAttachmentHandler(IUnitOfWork uow) :
-    ICommandHandler<DeleteProfileAttachmentCommand, IResult<Unit>>
+    IRequestHandler<DeleteProfileAttachmentCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DeleteProfileAttachmentCommand cmd, CancellationToken ct)
     {
@@ -36,3 +35,4 @@ public sealed class DeleteProfileAttachmentHandler(IUnitOfWork uow) :
         return Result.Ok(Unit.Value);
     }
 }
+

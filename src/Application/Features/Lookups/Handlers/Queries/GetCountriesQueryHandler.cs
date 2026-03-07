@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork, IMemoryCache cache)
-    : IQueryHandler<GetCountriesQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetCountriesQuery, IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups:countries";
 
@@ -55,3 +55,4 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork, IMemoryCach
         return Result.Ok(countries ?? new List<DropdownOptions>());
     }
 }
+

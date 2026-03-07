@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Handlers.Commands;
 
 public sealed class ChangeActiveStatusSkillCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<ChangeActiveStatusSkillCommand, IResult<Unit>>
+    : IRequestHandler<ChangeActiveStatusSkillCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ChangeActiveStatusSkillCommand request, CancellationToken ct)
     {
@@ -24,8 +23,8 @@ public sealed class ChangeActiveStatusSkillCommandHandler(IUnitOfWork uow)
 
         skill.ChangeActivation(request.IsActive);
 
-        // Deactivating main Skill: deactivate all unlink Major–Skill (no child confirmation required)
-        // Activating main Skill: activate all link Major–Skill (child confirmation required)
+        // Deactivating main Skill: deactivate all unlink Majorâ€“Skill (no child confirmation required)
+        // Activating main Skill: activate all link Majorâ€“Skill (child confirmation required)
         if (!request.IsActive || request.ApplyOnRelationship)
         {
             await uow.GetEntityRepository<MajorSkill>().DbSet.Where(ms => ms.SkillId == skill.Id)
@@ -36,3 +35,4 @@ public sealed class ChangeActiveStatusSkillCommandHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
+

@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.Utilities;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +14,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 public class ApproveJobPointsCommandHandler(
     IJobPointsRepository jobPointsRepository,
     IJobPointsConfigurationsRepository jobPointsConfigurationsRepository,
-    IUnitOfWork uow) : ICommandHandler<ApproveJobPointsCommand, IResult<bool>>
+    IUnitOfWork uow) : IRequestHandler<ApproveJobPointsCommand, IResult<bool>>
 {
     public async Task<IResult<bool>> Handle(ApproveJobPointsCommand request, CancellationToken cancellationToken)
     {
@@ -51,3 +51,4 @@ public class ApproveJobPointsCommandHandler(
         return Result.Ok(result > 0);
     }
 }
+

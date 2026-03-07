@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.Extensions.Caching.Memory;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetCitiesByCountryQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
-    : IQueryHandler<GetCitiesByCountryQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetCitiesByCountryQuery, IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups:cities";
 
@@ -46,3 +46,4 @@ public sealed class GetCitiesByCountryQueryHandler(IUnitOfWork unitOfWork, IMapp
         return Result.Ok(data ?? new List<DropdownOptions>());
     }
 }
+

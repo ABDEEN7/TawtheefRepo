@@ -1,5 +1,5 @@
-using System.Security.Claims;
-using Cortex.Mediator.Commands;
+﻿using System.Security.Claims;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ public class GoogleExternalCallbackLoginHandler(
     ILoginAuditService loginAudit,
     IAppLogger logger
 ) : BaseExternalCallbackLoginHandler(loginAudit),
-    ICommandHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
+    IRequestHandler<GoogleExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
     private readonly IAppLogger _log = logger.ForContext(typeof(GoogleExternalCallbackLoginHandler));
 
@@ -438,3 +438,4 @@ public class GoogleExternalCallbackLoginHandler(
         await userManager.UpdateAsync(user);
     }
 }
+

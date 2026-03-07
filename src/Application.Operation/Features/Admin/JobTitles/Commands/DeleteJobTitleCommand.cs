@@ -1,6 +1,7 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.JobTitles.Commands;
 
-public sealed record DeleteJobTitleCommand(Guid Id) : ICommand<IResult<bool>>;
+public sealed record DeleteJobTitleCommand(Guid Id) : IRequest<IResult<bool>>;
+

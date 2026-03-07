@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.OfficeUsers.Commands;
+﻿using Application.Operation.Features.Employee.OfficeUsers.Commands;
 using Application.Operation.Features.Employee.OfficeUsers.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -48,3 +48,4 @@ public class OfficeUsersController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

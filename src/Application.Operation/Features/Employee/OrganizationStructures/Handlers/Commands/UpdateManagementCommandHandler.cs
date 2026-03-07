@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.OrganizationStructures.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.OrganizationStructures.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Application.Operation.Features.Employee.OrganizationStructures.Handlers.Commands;
 
 public sealed class UpdateManagementCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<UpdateManagementCommand, IResult<Unit>>
+    : IRequestHandler<UpdateManagementCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateManagementCommand request, CancellationToken cancellationToken)
     {
@@ -51,3 +50,4 @@ public sealed class UpdateManagementCommandHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
+

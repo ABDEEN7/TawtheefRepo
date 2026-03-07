@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Que
 
 
 public sealed class GetManagementsBySectorQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetManagementsBySectorQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetManagementsBySectorQuery, IResult<List<DropdownOptions>>>
 {
 
     public async Task<IResult<List<DropdownOptions>>> Handle(GetManagementsBySectorQuery request, CancellationToken cancellationToken)
@@ -27,3 +27,4 @@ public sealed class GetManagementsBySectorQueryHandler(IUnitOfWork unitOfWork, I
         return Result.Ok(mapper.Map<List<DropdownOptions>>(entities));
     }
 }
+

@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.HomeContent.Queries;
-using Cortex.Mediator;
+﻿using Application.Recruitment.Features.HomeContent.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -20,3 +20,4 @@ public class HomeContentController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

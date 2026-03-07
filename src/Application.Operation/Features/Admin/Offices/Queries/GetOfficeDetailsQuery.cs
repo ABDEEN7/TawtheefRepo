@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.Offices.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.Offices.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Offices.Queries;
 
-public sealed record GetOfficeDetailsQuery(Guid Id) : IQuery<IResult<OfficeDetailsDto>>;
+public sealed record GetOfficeDetailsQuery(Guid Id) : IRequest<IResult<OfficeDetailsDto>>;
+

@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Tawtheef.Domain.Entities.Recruitment;
 
@@ -11,4 +10,5 @@ public sealed record DecideProfileSectionCommand(
     ProfileSection Section,
     ReviewStatus Status, // Approved ?? NeedsCorrection
     string? Note
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+

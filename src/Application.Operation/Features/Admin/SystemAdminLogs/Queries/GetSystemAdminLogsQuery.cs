@@ -1,11 +1,11 @@
-using Application.Operation.Features.Admin.SystemAdminLogs.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.SystemAdminLogs.DTOs;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
 
 namespace Application.Operation.Features.Admin.SystemAdminLogs.Queries;
 
-public sealed record GetSystemAdminLogsQuery : PaginatedRequest, IQuery<IResult<PaginatedResult<SystemAdminLogDto>>>
+public sealed record GetSystemAdminLogsQuery : PaginatedRequest, IRequest<IResult<PaginatedResult<SystemAdminLogDto>>>
 {
     public Guid? UserProfileId { get; init; }
     public Guid? UserId { get; init; }
@@ -14,3 +14,4 @@ public sealed record GetSystemAdminLogsQuery : PaginatedRequest, IQuery<IResult<
     public DateTimeOffset? To { get; init; }
     public string? Search { get; init; }
 }
+

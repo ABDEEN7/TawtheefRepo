@@ -1,9 +1,9 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -17,7 +17,7 @@ public sealed class GetJobCandidateProfileQueryHandler(
     IUserProfileRepository userProfileRepository,
     ILocalizationService localizationService,
     IAppLogger logger)
-    : IQueryHandler<GetJobCandidateProfileQuery, IResult<JobCandidateProfileDto>>
+    : IRequestHandler<GetJobCandidateProfileQuery, IResult<JobCandidateProfileDto>>
 {
     public async Task<IResult<JobCandidateProfileDto>> Handle(
         GetJobCandidateProfileQuery request,
@@ -83,3 +83,4 @@ public sealed class GetJobCandidateProfileQueryHandler(
         return Result.Ok(response);
     }
 }
+

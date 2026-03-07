@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.TargetEntities.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.TargetEntities.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +13,7 @@ public sealed class CreateTargetEntityCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<CreateTargetEntityCommand, IResult<Guid>>
+    : IRequestHandler<CreateTargetEntityCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateTargetEntityCommand request, CancellationToken cancellationToken)
     {
@@ -64,3 +64,4 @@ public sealed class CreateTargetEntityCommandHandler(
         return $"TARGET-{cleaned.Replace(' ', '-').ToUpperInvariant()}";
     }
 }
+

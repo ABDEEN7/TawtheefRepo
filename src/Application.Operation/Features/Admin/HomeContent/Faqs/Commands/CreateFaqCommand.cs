@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
@@ -9,4 +9,5 @@ public sealed record CreateFaqCommand(
     string AnswerAr,
     string AnswerEn,
     int DisplayOrder,
-    bool IsActive) : ICommand<IResult<Guid>>;
+    bool IsActive) : IRequest<IResult<Guid>>;
+

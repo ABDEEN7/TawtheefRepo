@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
 
-public record DeleteSkillCommand(Guid Id) : ICommand<IResult<Unit>>;
+public record DeleteSkillCommand(Guid Id) : IRequest<IResult<Unit>>;
+

@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Domain.Entities.Users;
@@ -11,4 +11,5 @@ public sealed record GetDistributionProfilesQuery(
     UserProfileStatus? Status = null,
     string? SearchTerm = null,
     Guid? TargetEntityId = null)
-    : PaginatedRequest, IQuery<Result<PaginatedResult<DistributionProfileDto>>>;
+    : PaginatedRequest, IRequest<Result<PaginatedResult<DistributionProfileDto>>>;
+

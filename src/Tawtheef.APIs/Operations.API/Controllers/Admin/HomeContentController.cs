@@ -1,8 +1,8 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
 using Application.Operation.Features.Admin.HomeContent.Faqs.Queries;
 using Application.Operation.Features.Admin.HomeContent.SuccessStories.Commands;
 using Application.Operation.Features.Admin.HomeContent.SuccessStories.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -113,3 +113,4 @@ public class HomeContentController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

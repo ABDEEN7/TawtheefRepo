@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.CandidateUsers.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.CandidateUsers.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.CandidateUsers.Handlers.Commands;
 
 public sealed class UpdateCandidateUserBlockStatusCommandHandler(UserManager<User> userManager)
-    : ICommandHandler<UpdateCandidateUserBlockStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateCandidateUserBlockStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateCandidateUserBlockStatusCommand request,
@@ -32,3 +31,4 @@ public sealed class UpdateCandidateUserBlockStatusCommandHandler(UserManager<Use
         return Result.Ok(Unit.Value);
     }
 }
+

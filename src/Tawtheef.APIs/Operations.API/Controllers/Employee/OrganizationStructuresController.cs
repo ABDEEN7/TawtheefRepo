@@ -1,7 +1,7 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using Application.Operation.Features.Employee.OrganizationStructures.Commands;
 using Application.Operation.Features.Employee.OrganizationStructures.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -143,3 +143,4 @@ public class OrganizationStructuresController(IMediator mediator) : ControllerBa
         return result.ToActionResult();
     }
 }
+

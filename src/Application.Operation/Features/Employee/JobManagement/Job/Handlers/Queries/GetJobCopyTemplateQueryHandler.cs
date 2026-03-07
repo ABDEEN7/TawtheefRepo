@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -14,7 +14,7 @@ public class GetJobCopyTemplateQueryHandler(
     IJobRepository jobRepository,
     IJobPointsRepository jobPointsRepository,
     IMapper mapper)
-    : IQueryHandler<GetJobCopyTemplateQuery, IResult<JobCopyTemplateDto>>
+    : IRequestHandler<GetJobCopyTemplateQuery, IResult<JobCopyTemplateDto>>
 {
     public async Task<IResult<JobCopyTemplateDto>> Handle(
         GetJobCopyTemplateQuery request,
@@ -42,3 +42,4 @@ public class GetJobCopyTemplateQueryHandler(
         return Result.Ok(template);
     }
 }
+

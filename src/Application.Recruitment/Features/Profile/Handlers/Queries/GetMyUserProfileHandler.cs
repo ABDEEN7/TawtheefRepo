@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.DTOs;
+﻿using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Constants;
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMediaUrlResolver media)
-    : IQueryHandler<GetMyUserProfileQuery, Result<UserProfileViewDto>>
+    : IRequestHandler<GetMyUserProfileQuery, Result<UserProfileViewDto>>
 {
     public async Task<Result<UserProfileViewDto>> Handle(GetMyUserProfileQuery request, CancellationToken ct)
     {
@@ -33,3 +33,4 @@ public sealed class GetMyUserProfileHandler(IUnitOfWork uow, IMapper mapper, IMe
         });
     }
 }
+

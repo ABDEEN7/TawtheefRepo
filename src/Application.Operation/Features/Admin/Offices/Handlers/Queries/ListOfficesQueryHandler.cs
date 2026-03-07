@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Offices.DTOs;
+﻿using Application.Operation.Features.Admin.Offices.DTOs;
 using Application.Operation.Features.Admin.Offices.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.Offices.Handlers.Queries;
 
 public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetListOfficesQuery, IResult<PaginatedResult<OfficeDto>>>
+    : IRequestHandler<GetListOfficesQuery, IResult<PaginatedResult<OfficeDto>>>
 {
     public async Task<IResult<PaginatedResult<OfficeDto>>> Handle(
         GetListOfficesQuery request,
@@ -32,3 +32,4 @@ public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapp
         return Result.Ok(offices);
     }
 }
+

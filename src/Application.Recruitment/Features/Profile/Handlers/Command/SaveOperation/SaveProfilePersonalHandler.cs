@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.SaveOperation;
+﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.Policies;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +21,7 @@ public sealed class SaveProfilePersonalHandler(
     IMediator mediator,
     UserManager<User> userManager,
     IProfileStepValidationService validationService
-    ) : ICommandHandler<SaveProfilePersonalCommand, IResult<Unit>>
+    ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
     {
@@ -132,7 +131,7 @@ public sealed class SaveProfilePersonalHandler(
                 return Result.Ok(existingId);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.SponsorCard, file, false, ct);
-            var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+            var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
             if (uploadResult.IsFailed)
@@ -142,3 +141,5 @@ public sealed class SaveProfilePersonalHandler(
         }
     }
 }
+
+

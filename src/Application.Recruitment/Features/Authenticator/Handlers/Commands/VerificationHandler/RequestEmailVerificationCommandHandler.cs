@@ -1,7 +1,6 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ public class RequestEmailVerificationCommandHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager,
     TimeProvider timeProvider)
-    : ICommandHandler<RequestEmailVerificationCommand, IResult<Unit>>
+    : IRequestHandler<RequestEmailVerificationCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestEmailVerificationCommand request, CancellationToken cancellationToken)
     {
@@ -58,3 +57,4 @@ public class RequestEmailVerificationCommandHandler(
         return new string(chars);
     }
 }
+

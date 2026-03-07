@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.Authenticator.Commands;
 
-public sealed record AgreeToTermsCommand(Guid UserId) : ICommand<IResult<Unit>>;
+public sealed record AgreeToTermsCommand(Guid UserId) : IRequest<IResult<Unit>>;
+

@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Users.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Users.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,7 @@ namespace Application.Operation.Features.Admin.Users.Handlers.Commands;
 public sealed class UpdateUserRolesCommandHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : ICommandHandler<UpdateUserRolesCommand, IResult<Unit>>
+    : IRequestHandler<UpdateUserRolesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
     {
@@ -97,3 +96,4 @@ public sealed class UpdateUserRolesCommandHandler(
     private static Result<Unit> FailureFromIdentity(IdentityResult res)
         => Result.Fail<Unit>(string.Join(", ", res.Errors.Select(e => e.Description)));
 }
+

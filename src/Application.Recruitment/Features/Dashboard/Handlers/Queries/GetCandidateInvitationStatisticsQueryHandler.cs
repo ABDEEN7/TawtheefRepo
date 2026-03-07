@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Dashboard.DTOs;
+﻿using Application.Recruitment.Features.Dashboard.DTOs;
 using Application.Recruitment.Features.Dashboard.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 namespace Application.Recruitment.Features.Dashboard.Handlers.Queries;
 
 public sealed class GetCandidateInvitationStatisticsQueryHandler(IUnitOfWork unitOfWork)
-    : IQueryHandler<GetCandidateInvitationStatisticsQuery, IResult<CandidateInvitationStatisticsDto>>
+    : IRequestHandler<GetCandidateInvitationStatisticsQuery, IResult<CandidateInvitationStatisticsDto>>
 {
     public async Task<IResult<CandidateInvitationStatisticsDto>> Handle(
         GetCandidateInvitationStatisticsQuery query,
@@ -31,3 +31,4 @@ public sealed class GetCandidateInvitationStatisticsQueryHandler(IUnitOfWork uni
         return Result.Ok(statistics);
     }
 }
+

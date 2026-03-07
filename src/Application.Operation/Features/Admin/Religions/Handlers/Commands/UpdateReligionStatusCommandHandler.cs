@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Religions.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Religions.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateReligionStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateReligionStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateReligionStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateReligionStatusCommand request,
@@ -39,3 +38,4 @@ public sealed class UpdateReligionStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

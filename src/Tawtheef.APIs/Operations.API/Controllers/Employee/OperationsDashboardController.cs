@@ -1,6 +1,6 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Operation.Features.Employee.Dashboard.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -46,3 +46,4 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return nameof(SystemRoleIds.Employee);
     }
 }
+

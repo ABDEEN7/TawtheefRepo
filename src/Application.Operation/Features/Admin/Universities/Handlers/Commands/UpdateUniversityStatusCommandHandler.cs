@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Universities.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Universities.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateUniversityStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateUniversityStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateUniversityStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateUniversityStatusCommand request,
@@ -39,3 +38,4 @@ public sealed class UpdateUniversityStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

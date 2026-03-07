@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Constants;
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobByIdQueryHandler(IJobRepository jobRepository, IMapper mapper)
-    : IQueryHandler<GetJobByIdQuery, IResult<JobResponseDto>>
+    : IRequestHandler<GetJobByIdQuery, IResult<JobResponseDto>>
 {
     public async Task<IResult<JobResponseDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
     {
@@ -27,3 +27,4 @@ public class GetJobByIdQueryHandler(IJobRepository jobRepository, IMapper mapper
         return Result.Ok(jobDto);
     }
 }
+

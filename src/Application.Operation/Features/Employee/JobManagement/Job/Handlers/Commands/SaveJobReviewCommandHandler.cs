@@ -1,9 +1,8 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ public sealed class SaveJobReviewCommandHandler(
     IUnitOfWork uow,
     IMediator mediator,
     TimeProvider timeProvider
-) : ICommandHandler<SaveJobReviewCommand, IResult<Unit>>
+) : IRequestHandler<SaveJobReviewCommand, IResult<Unit>>
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
@@ -105,7 +104,7 @@ public sealed class SaveJobReviewCommandHandler(
 
         var uploadPath = await JobReviewUploadPathFactory.CreateAsync(jobId, file, false, ct);
 
-        var result = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(new UploadAttachmentCommand(
+        var result = await mediator.Send(new UploadAttachmentCommand(
             Guid.Empty, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file), ct);
 
         return result.IsFailed
@@ -113,3 +112,5 @@ public sealed class SaveJobReviewCommandHandler(
             : Result.Ok<UploadAttachmentRequest?>(result.Value);
     }
 }
+
+

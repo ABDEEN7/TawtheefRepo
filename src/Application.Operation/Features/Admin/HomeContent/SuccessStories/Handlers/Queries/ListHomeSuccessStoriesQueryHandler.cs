@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.HomeContent.SuccessStories.DTOs;
+﻿using Application.Operation.Features.Admin.HomeContent.SuccessStories.DTOs;
 using Application.Operation.Features.Admin.HomeContent.SuccessStories.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Content;
 namespace Application.Operation.Features.Admin.HomeContent.SuccessStories.Handlers.Queries;
 
 public sealed class ListHomeSuccessStoriesQueryHandler(IUnitOfWork unitOfWork, IMediaUrlResolver media)
-    : IQueryHandler<ListHomeSuccessStoriesQuery, IResult<IReadOnlyCollection<HomeSuccessStoryAdminDto>>>
+    : IRequestHandler<ListHomeSuccessStoriesQuery, IResult<IReadOnlyCollection<HomeSuccessStoryAdminDto>>>
 {
     public async Task<IResult<IReadOnlyCollection<HomeSuccessStoryAdminDto>>> Handle(
         ListHomeSuccessStoriesQuery request,
@@ -85,3 +85,4 @@ public sealed class ListHomeSuccessStoriesQueryHandler(IUnitOfWork unitOfWork, I
         return media.ResolveAbsolute(raw);
     }
 }
+

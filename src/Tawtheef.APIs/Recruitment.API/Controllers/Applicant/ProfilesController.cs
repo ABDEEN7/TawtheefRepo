@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Profile.Command;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
@@ -9,7 +9,7 @@ using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.DTOs.ReviseOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -685,3 +685,4 @@ public class ProfilesController(IMediator mediator) : ControllerBase
 
     #endregion
 }
+

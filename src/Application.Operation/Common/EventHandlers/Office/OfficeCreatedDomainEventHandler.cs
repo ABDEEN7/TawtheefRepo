@@ -1,5 +1,5 @@
-using System.Text.Json;
-using Cortex.Mediator.Notifications;
+﻿using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -31,3 +31,4 @@ public sealed class OfficeCreatedDomainEventHandler(IUnitOfWork unitOfWork, User
         await repo.AddAsync(emailNotification, ct);
     }
 }
+

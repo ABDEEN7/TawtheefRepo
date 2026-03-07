@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOper
 
 
 public sealed class ReviseProfileAttachmentDeleteHandler(IUnitOfWork uow) :
-    ICommandHandler<ReviseProfileAttachmentDeleteCommand, IResult<Unit>>
+    IRequestHandler<ReviseProfileAttachmentDeleteCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileAttachmentDeleteCommand cmd, CancellationToken ct)
     {
@@ -39,3 +38,4 @@ public sealed class ReviseProfileAttachmentDeleteHandler(IUnitOfWork uow) :
         return Result.Ok(Unit.Value);
     }
 }
+

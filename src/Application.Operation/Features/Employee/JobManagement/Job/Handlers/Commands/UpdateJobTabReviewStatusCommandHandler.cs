@@ -1,7 +1,6 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
@@ -11,7 +10,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 public sealed class UpdateJobTabReviewStatusCommandHandler(
     IUnitOfWork uow,
     IJobTabReviewNoteRepository jobTabReviewNoteRepository
-) : ICommandHandler<UpdateJobTabReviewStatusCommand, IResult<Unit>>
+) : IRequestHandler<UpdateJobTabReviewStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateJobTabReviewStatusCommand cmd,
@@ -32,4 +31,5 @@ public sealed class UpdateJobTabReviewStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+
 

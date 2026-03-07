@@ -1,5 +1,5 @@
-using System.Text.Json;
-using Cortex.Mediator.Notifications;
+﻿using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -28,7 +28,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required – Your Profile Needs Updates",
+            isAccepted ? "Your Profile Has Been Approved" :"Action Required â€“ Your Profile Needs Updates",
             null,
             payload);        
         var notificationInApp = Notification.Create(
@@ -36,7 +36,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required – Your Profile Needs Updates",
+            isAccepted ? "Your Profile Has Been Approved" :"Action Required â€“ Your Profile Needs Updates",
             null,
             payload);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, cancellationToken);
@@ -44,3 +44,4 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
         await uow.SaveChangesAsync(cancellationToken);
     }
 }
+

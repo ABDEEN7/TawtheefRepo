@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
@@ -11,4 +10,5 @@ public sealed record UpdateFaqCommand(
     string AnswerAr,
     string AnswerEn,
     int DisplayOrder,
-    bool IsActive) : ICommand<IResult<Unit>>;
+    bool IsActive) : IRequest<IResult<Unit>>;
+

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.DTOs;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.DTOs;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Ha
 
 
 public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
-    : IQueryHandler<GetSkillsQuery, IResult<PaginatedResult<SkillDetailsDto>>>
+    : IRequestHandler<GetSkillsQuery, IResult<PaginatedResult<SkillDetailsDto>>>
 {
     public async Task<IResult<PaginatedResult<SkillDetailsDto>>> Handle(GetSkillsQuery request, CancellationToken ct)
     {
@@ -39,3 +39,4 @@ public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
         return Result.Ok(result);
     }
 }
+

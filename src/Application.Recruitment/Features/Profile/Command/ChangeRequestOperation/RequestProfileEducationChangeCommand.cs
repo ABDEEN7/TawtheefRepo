@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
@@ -8,5 +7,6 @@ namespace Application.Recruitment.Features.Profile.Command.ChangeRequestOperatio
 public sealed record RequestProfileEducationChangeCommand(
     Guid UserId,
     SaveProfileEducationRequest Request
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+
 

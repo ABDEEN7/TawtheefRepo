@@ -1,4 +1,4 @@
-using Cortex.Mediator.Notifications;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Register;
@@ -17,3 +17,4 @@ public class EmployeeRegisterEventHandler(UserManager<User> userManager) : INoti
         }
     }
 }
+

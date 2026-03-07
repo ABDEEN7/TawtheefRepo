@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -11,7 +11,7 @@ public sealed class CreateFaqCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<CreateFaqCommand, IResult<Guid>>
+    : IRequestHandler<CreateFaqCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateFaqCommand request,
@@ -39,3 +39,4 @@ public sealed class CreateFaqCommandHandler(
         return Result.Ok(newFaq.Id);
     }
 }
+

@@ -1,10 +1,10 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -26,7 +26,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IJobRequirementsService jobRequirementsService,
     IJobCandidatesQueryBuilderService jobCandidatesQueryBuilderService,
     IAppLogger logger)
-    : ICommandHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
+    : IRequestHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(
         SendJobCandidateInvitationsCommand request,
@@ -205,3 +205,4 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         UpdatedStatusCount = 0
     };
 }
+

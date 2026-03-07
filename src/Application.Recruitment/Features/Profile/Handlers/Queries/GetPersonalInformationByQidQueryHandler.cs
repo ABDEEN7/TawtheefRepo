@@ -1,13 +1,13 @@
-using Application.Recruitment.Common.Interfaces.Services.HttpClients;
+﻿using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 public class GetPersonalInformationByQidQueryHandler(IMoiClient client) :
-    IQueryHandler<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>
+    IRequestHandler<GetPersonalInformationByQidQuery, IResult<MOEPersonalInfo>>
 {
     public async Task<IResult<MOEPersonalInfo>> Handle(GetPersonalInformationByQidQuery query,
         CancellationToken cancellationToken)
@@ -19,3 +19,4 @@ public class GetPersonalInformationByQidQueryHandler(IMoiClient client) :
         return Result.Ok(result.Value);
     }
 }
+

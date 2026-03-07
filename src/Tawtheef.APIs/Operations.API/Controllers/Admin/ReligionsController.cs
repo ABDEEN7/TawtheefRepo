@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Religions.Commands;
+﻿using Application.Operation.Features.Admin.Religions.Commands;
 using Application.Operation.Features.Admin.Religions.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -54,3 +54,4 @@ public class ReligionsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

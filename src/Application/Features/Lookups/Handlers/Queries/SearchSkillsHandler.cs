@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.Extensions.Caching.Memory;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper, IMemoryCache cache)
-    : IQueryHandler<SearchSkillsQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<SearchSkillsQuery, IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups:skills:search";
 
@@ -58,3 +58,4 @@ public sealed class SearchSkillsHandler(IUnitOfWork uow, IMapper mapper, IMemory
         return Result.Ok(matches ?? new List<DropdownOptions>());
     }
 }
+

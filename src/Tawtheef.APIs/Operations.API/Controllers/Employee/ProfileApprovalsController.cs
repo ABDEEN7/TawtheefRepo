@@ -1,8 +1,8 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -81,7 +81,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        // في مرحلة Full Review نسمح Approved أو NeedsCorrection فقط
+        // ظپظٹ ظ…ط±ط­ظ„ط© Full Review ظ†ط³ظ…ط­ Approved ط£ظˆ NeedsCorrection ظپظ‚ط·
         if (body.Status == ReviewStatus.NeedsCorrection && string.IsNullOrWhiteSpace(body.Note))
             return BadRequest(Result.Fail(ErrorsCodes.NotesRequiredForCorrection).Errors);
 
@@ -142,3 +142,4 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

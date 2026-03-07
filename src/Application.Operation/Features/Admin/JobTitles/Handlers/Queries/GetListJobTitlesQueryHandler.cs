@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.JobTitles.DTOs;
+﻿using Application.Operation.Features.Admin.JobTitles.DTOs;
 using Application.Operation.Features.Admin.JobTitles.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.JobTitles.Handlers.Queries;
 
 public sealed class GetListJobTitlesQueryHandler(IUnitOfWork unitOfWork)
-    : IQueryHandler<GetListJobTitlesQuery, IResult<List<JobTitleAdminDto>>>
+    : IRequestHandler<GetListJobTitlesQuery, IResult<List<JobTitleAdminDto>>>
 {
     public async Task<IResult<List<JobTitleAdminDto>>> Handle(
         GetListJobTitlesQuery request,
@@ -31,3 +31,4 @@ public sealed class GetListJobTitlesQueryHandler(IUnitOfWork unitOfWork)
         return Result.Ok(data);
     }
 }
+

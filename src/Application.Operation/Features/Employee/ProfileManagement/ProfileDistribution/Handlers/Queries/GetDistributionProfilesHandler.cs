@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -15,7 +15,7 @@ public sealed class GetDistributionProfilesHandler(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     MapsterMapper.IMapper mapper)
-    : IQueryHandler<GetDistributionProfilesQuery, Result<PaginatedResult<DistributionProfileDto>>>
+    : IRequestHandler<GetDistributionProfilesQuery, Result<PaginatedResult<DistributionProfileDto>>>
 {
     public async Task<Result<PaginatedResult<DistributionProfileDto>>> Handle(
         GetDistributionProfilesQuery request,
@@ -32,3 +32,4 @@ public sealed class GetDistributionProfilesHandler(
         return Result.Ok(items);
     }
 }
+

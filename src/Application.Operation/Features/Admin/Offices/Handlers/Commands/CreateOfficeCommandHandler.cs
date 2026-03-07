@@ -1,6 +1,6 @@
-using Application.Operation.Common.Interfaces.Services.Office;
+﻿using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Features.Admin.Offices.Commands;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork,
     IOfficeUniquenessChecker uniquenessChecker,
     UserManager<User> userManager,
     IOfficeAdminProvisioner adminProvisioner)
-    : ICommandHandler<CreateOfficeCommand, IResult<Guid>>
+    : IRequestHandler<CreateOfficeCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         CreateOfficeCommand request,
@@ -85,3 +85,4 @@ public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork,
         return Result.Ok(office.Id);
     }
 }
+

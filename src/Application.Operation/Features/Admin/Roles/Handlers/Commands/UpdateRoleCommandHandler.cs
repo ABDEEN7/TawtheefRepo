@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Roles.Commands;
+﻿using Application.Operation.Features.Admin.Roles.Commands;
 using Application.Operation.Features.Admin.Roles.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +12,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Admin.Roles.Handlers.Commands;
 
 public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : ICommandHandler<UpdateRoleCommand, IResult<RoleDto>>
+    : IRequestHandler<UpdateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
     {
@@ -58,3 +58,4 @@ public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleMa
         return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, updatedClaims)));
     }
 }
+

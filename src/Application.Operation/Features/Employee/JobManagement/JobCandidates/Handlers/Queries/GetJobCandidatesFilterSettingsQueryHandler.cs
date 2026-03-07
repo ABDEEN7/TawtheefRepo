@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Queries;
 
 public sealed class GetJobCandidatesFilterSettingsQueryHandler(IUnitOfWork unitOfWork)
-    : IQueryHandler<GetJobCandidatesFilterSettingsQuery, IResult<JobCandidateFilterSettingsDto>>
+    : IRequestHandler<GetJobCandidatesFilterSettingsQuery, IResult<JobCandidateFilterSettingsDto>>
 {
     public async Task<IResult<JobCandidateFilterSettingsDto>> Handle(
         GetJobCandidatesFilterSettingsQuery request,
@@ -48,3 +48,4 @@ public sealed class GetJobCandidatesFilterSettingsQueryHandler(IUnitOfWork unitO
         return Result.Ok(dto ?? new JobCandidateFilterSettingsDto { JobId = request.JobId });
     }
 }
+

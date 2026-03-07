@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.Languages.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Languages.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +13,7 @@ public sealed class SaveLanguageCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<SaveLanguageCommand, IResult<Guid>>
+    : IRequestHandler<SaveLanguageCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(
         SaveLanguageCommand request,
@@ -85,3 +85,4 @@ public sealed class SaveLanguageCommandHandler(
         return $"LANG-{cleaned.Replace(' ', '-').ToUpperInvariant()}";
     }
 }
+

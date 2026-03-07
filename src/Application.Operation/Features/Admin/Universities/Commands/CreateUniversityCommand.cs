@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -19,4 +19,5 @@ public sealed record CreateUniversityCommand(
     bool IsActive,
     int? LogoArFileIndex,
     int? LogoEnFileIndex,
-    List<IFormFile> Files) : ICommand<IResult<Guid>>;
+    List<IFormFile> Files) : IRequest<IResult<Guid>>;
+

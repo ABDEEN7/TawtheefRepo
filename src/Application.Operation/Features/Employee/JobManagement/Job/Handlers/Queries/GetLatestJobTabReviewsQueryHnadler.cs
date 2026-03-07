@@ -1,14 +1,14 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobTabReviewRepository, IMapper mapper)
-    : IQueryHandler<GetLatestJobTabReviewsQuery, IResult<List<JobTabReviewNoteResponseDto>>>
+    : IRequestHandler<GetLatestJobTabReviewsQuery, IResult<List<JobTabReviewNoteResponseDto>>>
 {
     public async Task<IResult<List<JobTabReviewNoteResponseDto>>> Handle(GetLatestJobTabReviewsQuery request, CancellationToken cancellationToken)
     {
@@ -26,3 +26,4 @@ public class GetLatestJobTabReviewsQueryHandler(IJobTabReviewNoteRepository jobT
         return Result.Ok(jobDto);
     }
 }
+

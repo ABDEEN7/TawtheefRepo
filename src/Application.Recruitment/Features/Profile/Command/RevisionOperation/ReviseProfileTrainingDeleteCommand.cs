@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Recruitment.Features.Profile.Command.RevisionOperation;
 
-public sealed record ReviseProfileTrainingDeleteCommand(Guid UserId,Guid Id): ICommand<IResult<Unit>>;
+public sealed record ReviseProfileTrainingDeleteCommand(Guid UserId,Guid Id): IRequest<IResult<Unit>>;
+

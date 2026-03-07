@@ -1,5 +1,5 @@
 ﻿using Application.Recruitment.Features.Profile.DTOs.ReviseOperation;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +56,7 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
 
         var uploadPath = await UserProfileUploadPathFactory.CreateAsync(profile.UserId, folder, file, false, ct);
 
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(profile.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             ct);
 
@@ -82,3 +82,5 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
                 r.ResourceId == resourceId, ct);
     }
 }
+
+

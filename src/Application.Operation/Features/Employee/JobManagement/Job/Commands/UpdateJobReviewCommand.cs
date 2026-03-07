@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Commands;
@@ -8,4 +7,5 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Commands;
 public sealed record UpdateJobReviewCommand(
     Guid JobId,
     SaveJobReviewRequestDto Request
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+

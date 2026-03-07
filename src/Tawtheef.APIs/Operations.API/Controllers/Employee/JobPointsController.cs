@@ -1,6 +1,6 @@
 ﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -56,3 +56,4 @@ public class JobPointsController(IMediator mediator) : ControllerBase
     }
     #endregion
 }
+

@@ -1,4 +1,4 @@
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ public class RefreshTokenHandler(
     ITokenService tokenService,
     IUnitOfWork uow,
     TimeProvider time)
-    : ICommandHandler<RefreshTokenCommand, IResult<TokenResponse>>
+    : IRequestHandler<RefreshTokenCommand, IResult<TokenResponse>>
 {
     public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
@@ -89,3 +89,4 @@ public class RefreshTokenHandler(
             .WithMetadata("StatusCode", StatusCodes.Status403Forbidden);
     }
 }
+

@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.SystemAdminLogs.Queries;
-using Cortex.Mediator;
+﻿using Application.Operation.Features.Admin.SystemAdminLogs.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -21,3 +21,4 @@ public class SystemAdminLogsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

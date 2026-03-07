@@ -1,5 +1,4 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
@@ -7,4 +6,5 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileAppro
 public record StartUserProfileReviewCommand(
     Guid OfficerId,
     Guid UserProfileId
-) : ICommand<IResult<Unit>>;
+) : IRequest<IResult<Unit>>;
+

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Offices.DTOs;
+﻿using Application.Operation.Features.Admin.Offices.DTOs;
 using Application.Operation.Features.Admin.Offices.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace Application.Operation.Features.Admin.Offices.Handlers.Queries;
 public sealed class GetOfficeDetailsQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)
-    : IQueryHandler<GetOfficeDetailsQuery, IResult<OfficeDetailsDto>>
+    : IRequestHandler<GetOfficeDetailsQuery, IResult<OfficeDetailsDto>>
 {
     public async Task<IResult<OfficeDetailsDto>> Handle(GetOfficeDetailsQuery request, CancellationToken cancellationToken)
     {
@@ -35,3 +35,4 @@ public sealed class GetOfficeDetailsQueryHandler(
         return Result.Ok(details);
     }
 }
+

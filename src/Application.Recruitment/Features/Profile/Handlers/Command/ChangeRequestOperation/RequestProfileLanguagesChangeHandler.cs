@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
@@ -14,7 +13,7 @@ public sealed class RequestProfileLanguagesChangeHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService,
     IProfileReviewService reviewService
-) : ICommandHandler<RequestProfileLanguagesChangeCommand, IResult<Unit>>
+) : IRequestHandler<RequestProfileLanguagesChangeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RequestProfileLanguagesChangeCommand cmd, CancellationToken ct)
     {
@@ -41,3 +40,4 @@ public sealed class RequestProfileLanguagesChangeHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

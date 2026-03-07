@@ -1,8 +1,8 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Application.Recruitment.Features.Dashboard.Commands;
 using Application.Recruitment.Features.Dashboard.Queries;
 using Application.Recruitment.Features.JobDetails.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -117,3 +117,4 @@ public class DashboardController(IMediator mediator) : ControllerBase
     }
     #endregion
 }
+

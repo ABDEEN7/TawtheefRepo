@@ -1,10 +1,9 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Security.Claims;
 using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using Application.Recruitment.Features.Authenticator.Handlers.Utils;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
     IUnitOfWork uow, IMoiService moiService, UserManager<User> userManager,
     ITokenService tokenService, TimeProvider timeProvider, IAppLogger logger,
     IIdentityFieldProtectionContext identityFieldProtectionContext
-) : ICommandHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
+) : IRequestHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
 
     private readonly IAppLogger _log = logger.ForContext(typeof(VerifyQatarResidentOtpCommandHandler));
@@ -315,3 +314,4 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         return nationality?.Id;
     }
 }
+

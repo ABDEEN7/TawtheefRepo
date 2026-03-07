@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Offices.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Offices.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
 public sealed class ChangeOfficeAdminCommandHandler(
     UserManager<User> userManager)
-    : ICommandHandler<ChangeOfficeAdminCommand, IResult<Unit>>
+    : IRequestHandler<ChangeOfficeAdminCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         ChangeOfficeAdminCommand request,
@@ -107,3 +106,4 @@ public sealed class ChangeOfficeAdminCommandHandler(
         => Result.Fail<Unit>(
             result.Errors.Select(e => e.Description));
 }
+

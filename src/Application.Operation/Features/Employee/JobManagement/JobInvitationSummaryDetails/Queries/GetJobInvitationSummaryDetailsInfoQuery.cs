@@ -1,8 +1,9 @@
-using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 
 public sealed record GetJobInvitationSummaryDetailsInfoQuery(Guid JobId)
-    : IQuery<IResult<JobInvitationSummaryDetailsInfoDto>>;
+    : IRequest<IResult<JobInvitationSummaryDetailsInfoDto>>;
+

@@ -1,6 +1,6 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -11,7 +11,7 @@ using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetLatestJobReviewAttachmentQueryHandler(IJobReviewAttachmentRepository jobReviewAttachmentRepository, IMediaUrlResolver media, IMapper mapper)
-    : IQueryHandler<GetLatestJobReviewAttachmentQuery, IResult<FileRefDto?>>
+    : IRequestHandler<GetLatestJobReviewAttachmentQuery, IResult<FileRefDto?>>
 {
     public async Task<IResult<FileRefDto?>> Handle(GetLatestJobReviewAttachmentQuery request, CancellationToken cancellationToken)
     {
@@ -32,3 +32,4 @@ public class GetLatestJobReviewAttachmentQueryHandler(IJobReviewAttachmentReposi
         return Result.Ok(attachmentDto);
     }
 }
+

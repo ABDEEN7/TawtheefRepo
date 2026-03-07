@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Users.DTOs;
+﻿using Application.Operation.Features.Admin.Users.DTOs;
 using Application.Operation.Features.Admin.Users.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace Application.Operation.Features.Admin.Users.Handlers.Queries;
 public sealed class ListUsersQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager)
-    : IQueryHandler<GetListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
+    : IRequestHandler<GetListUsersQuery, IResult<PaginatedResult<UserListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<UserListItemDto>>> Handle(
         GetListUsersQuery request,
@@ -78,3 +78,4 @@ public sealed class ListUsersQueryHandler(
         return Result.Ok(result);
     }
 }
+

@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.CandidateUsers.Commands;
+﻿using Application.Operation.Features.Employee.CandidateUsers.Commands;
 using Application.Operation.Features.Employee.CandidateUsers.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -32,3 +32,4 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

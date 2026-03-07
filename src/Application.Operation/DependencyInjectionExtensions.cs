@@ -1,7 +1,6 @@
 ﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
-using Cortex.Mediator.DependencyInjection;
 using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -36,14 +35,12 @@ namespace Application.Operation
 
             private void RegisterMediator()
             {
-                services.AddCortexMediator(
-                    handlerAssemblyMarkerTypes:
-                    [
-                        typeof(ApplicationAssemblyMarker),
-                        typeof(OperationAssemblyMarker)
-                    ],
-                    configure: o => o.AddDefaultBehaviors()
-                );
+                services.AddMediatR(cfg =>
+                {
+                    cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly);
+                    cfg.RegisterServicesFromAssembly(typeof(OperationAssemblyMarker).Assembly);
+                    cfg.AddOpenBehavior(typeof(Tawtheef.Application.Common.Behaviours.ValidationBehaviour<,>));
+                });
             }
             
             private void RegisterRepositories()

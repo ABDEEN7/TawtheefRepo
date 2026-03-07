@@ -1,7 +1,8 @@
-using Application.Operation.Features.Admin.HomeContent.SuccessStories.DTOs;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Admin.HomeContent.SuccessStories.DTOs;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.HomeContent.SuccessStories.Queries;
 
-public sealed record ListHomeSuccessStoriesQuery : IQuery<IResult<IReadOnlyCollection<HomeSuccessStoryAdminDto>>>;
+public sealed record ListHomeSuccessStoriesQuery : IRequest<IResult<IReadOnlyCollection<HomeSuccessStoryAdminDto>>>;
+

@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +10,7 @@ namespace Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.H
 
 
 public sealed class CreateMajorSkillCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<CreateMajorSkillCommand, IResult<Unit>>
+    : IRequestHandler<CreateMajorSkillCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(CreateMajorSkillCommand request, CancellationToken ct)
     {
@@ -66,3 +65,4 @@ public sealed class CreateMajorSkillCommandHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
+

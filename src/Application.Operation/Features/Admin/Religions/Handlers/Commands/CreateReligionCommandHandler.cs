@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.Religions.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Religions.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +13,7 @@ public sealed class CreateReligionCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<CreateReligionCommand, IResult<Guid>>
+    : IRequestHandler<CreateReligionCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateReligionCommand request, CancellationToken cancellationToken)
     {
@@ -61,3 +61,4 @@ public sealed class CreateReligionCommandHandler(
         return $"REL-{cleaned.Replace(' ', '-').ToUpperInvariant()}";
     }
 }
+

@@ -1,5 +1,5 @@
-using Application.Operation.Features.Admin.JobTitles.Commands;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.JobTitles.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Admin.JobTitles.Handlers.Commands;
 
 public sealed class DeleteJobTitleCommandHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<DeleteJobTitleCommand, IResult<bool>>
+    : IRequestHandler<DeleteJobTitleCommand, IResult<bool>>
 {
     public async Task<IResult<bool>> Handle(DeleteJobTitleCommand request, CancellationToken cancellationToken)
     {
@@ -33,3 +33,4 @@ public sealed class DeleteJobTitleCommandHandler(IUnitOfWork unitOfWork)
         return Result.Ok(true);
     }
 }
+

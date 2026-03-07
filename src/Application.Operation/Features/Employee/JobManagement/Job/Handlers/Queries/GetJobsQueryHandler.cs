@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -9,7 +9,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobsQueryHandler(IJobRepository jobRepository,IMapper mapper)
-    : IQueryHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
+    : IRequestHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(
     GetJobsQuery request, CancellationToken cancellationToken)
@@ -37,3 +37,4 @@ public class GetJobsQueryHandler(IJobRepository jobRepository,IMapper mapper)
         return Result.Ok(paginatedDto);
     }
 }
+

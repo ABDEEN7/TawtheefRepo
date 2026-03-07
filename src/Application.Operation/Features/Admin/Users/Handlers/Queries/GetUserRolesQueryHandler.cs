@@ -1,7 +1,7 @@
-using Application.Operation.Features.Admin.Roles.DTOs;
+﻿using Application.Operation.Features.Admin.Roles.DTOs;
 using Application.Operation.Features.Admin.Users.DTOs;
 using Application.Operation.Features.Admin.Users.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +15,7 @@ public sealed class GetUserRolesQueryHandler(
     UserManager<User> userManager,
     RoleManager<ApplicationRole> roleManager,
     IMapper mapper)
-    : IQueryHandler<GetUserRolesQuery, IResult<UserRoleAssignmentDto>>
+    : IRequestHandler<GetUserRolesQuery, IResult<UserRoleAssignmentDto>>
 {
     public async Task<IResult<UserRoleAssignmentDto>> Handle(
         GetUserRolesQuery request,
@@ -49,3 +49,4 @@ public sealed class GetUserRolesQueryHandler(
         return Result.Ok(dto);
     }
 }
+

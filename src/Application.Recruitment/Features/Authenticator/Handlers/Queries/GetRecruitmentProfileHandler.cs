@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Authenticator.DTOs;
+﻿using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Authenticator.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Constants;
 namespace Application.Recruitment.Features.Authenticator.Handlers.Queries;
 
 public class GetRecruitmentProfileHandler(IUserRepository userRepository, IMediaUrlResolver generator)
-    : IQueryHandler<GetRecruitmentProfileQuery, IResult<GetRecruitmentProfileDto>>
+    : IRequestHandler<GetRecruitmentProfileQuery, IResult<GetRecruitmentProfileDto>>
 {
 
     public async Task<IResult<GetRecruitmentProfileDto>> Handle(GetRecruitmentProfileQuery request, CancellationToken cancellationToken)
@@ -33,3 +33,4 @@ public class GetRecruitmentProfileHandler(IUserRepository userRepository, IMedia
         });
     }
 }
+

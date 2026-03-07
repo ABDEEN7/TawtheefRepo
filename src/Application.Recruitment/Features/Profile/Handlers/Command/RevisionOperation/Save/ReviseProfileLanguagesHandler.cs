@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
@@ -16,7 +15,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOper
 public sealed class ReviseProfileLanguagesHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService
-) : ICommandHandler<ReviseProfileLanguagesCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfileLanguagesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileLanguagesCommand cmd, CancellationToken ct)
     {
@@ -91,3 +90,4 @@ public sealed class ReviseProfileLanguagesHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

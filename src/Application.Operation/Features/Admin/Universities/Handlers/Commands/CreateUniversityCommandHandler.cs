@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Universities.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Universities.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,7 @@ public sealed class CreateUniversityCommandHandler(
     TimeProvider timeProvider,
     ICurrentUserService currentUserService,
     IMediator mediator)
-    : ICommandHandler<CreateUniversityCommand, IResult<Guid>>
+    : IRequestHandler<CreateUniversityCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateUniversityCommand request, CancellationToken cancellationToken)
     {
@@ -115,7 +114,7 @@ public sealed class CreateUniversityCommandHandler(
 
         var uploadPath = await UniversityLogoUploadPathFactory.CreateAsync(universityId, logoType, file, false, ct);
 
-        var uploadResult = await mediator.SendCommandAsync<UploadAttachmentCommand, IResult<UploadAttachmentRequest>>(
+        var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(
                 Guid.TryParse(currentUserService.UserId, out var userId) ? userId : Guid.Empty,
                 uploadPath.FileId,
@@ -130,3 +129,5 @@ public sealed class CreateUniversityCommandHandler(
         return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 }
+
+

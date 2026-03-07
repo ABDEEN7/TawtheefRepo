@@ -1,6 +1,5 @@
-using Cortex.Mediator.Queries;
-using FluentResults;
-using MapsterMapper;
+﻿using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,11 +12,10 @@ namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
     IUnitOfWork unitOfWork,
-    IMapper mapper,
     IMemoryCache cache)
-    : IQueryHandler<TRequest, IResult<List<DropdownOptions>>>
+    : IRequestHandler<TRequest, IResult<List<DropdownOptions>>>
     where TLookup : LookupBase
-    where TRequest : BaseSearchQuery, IQuery<IResult<List<DropdownOptions>>>
+    where TRequest : BaseSearchQuery, IRequest<IResult<List<DropdownOptions>>>
 {
     private const string CacheKeyPrefix = "lookups";
 
@@ -50,26 +48,69 @@ public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
         var data = await cache.GetOrCreateAsync(cacheKey, async entry =>
         {
             entry.SetSlidingExpiration(TimeSpan.FromHours(1)); // Increased TTL for lookups
+            
+            var isArabic = languageToken == "ar";
+            var query = dbSet.Select(x => new 
+            {
+                 Id = x.Id,
+                 BackendName = x.BackendName,
+                 Name = isArabic ? x.NameAr : x.NameEn,
+                 Description = isArabic ? x.DescriptionAr : x.DescriptionEn,
+                 NameAr = x.NameAr,
+                 NameEn = x.NameEn
+            }).OrderBy(x => x.Name);
 
             if (isPaged && request.PaginatedRequest != null)
             {
-                    var entities = await dbSet.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
-                    return mapper.Map<List<DropdownOptions>>(entities.Items);
+                var entities = await query.ToPaginatedListAsync(request.PaginatedRequest, cancellationToken);
+                return entities.Items.Select(x => new DropdownOptions
+                {
+                     Id = x.Id,
+                     BackendName = x.BackendName,
+                     Name = x.Name,
+                     Description = x.Description,
+                     AdditionalData = new { x.NameAr, x.NameEn }
+                }).ToList();
             }
 
-            var allEntities = await dbSet.ToListAsync(cancellationToken);
-            return mapper.Map<List<DropdownOptions>>(allEntities).OrderBy(e => e.Name).ToList();
+            var allEntities = await query.ToListAsync(cancellationToken);
+            return allEntities.Select(x => new DropdownOptions
+            {
+                 Id = x.Id,
+                 BackendName = x.BackendName,
+                 Name = x.Name,
+                 Description = x.Description,
+                 AdditionalData = new { x.NameAr, x.NameEn }
+            }).ToList();
         });
 
         if (request is { Id: not null })
         {
-            var byId = await unitOfWork.GetEntityRepository<TLookup>().DbSet
+            var isArabic = languageToken == "ar";
+            var mappedById = await unitOfWork.GetEntityRepository<TLookup>().DbSet
                 .AsNoTracking()
                 .Where(x => x.IsActive && x.Id == request.Id.Value)
+                .Select(x => new 
+                {
+                     Id = x.Id,
+                     BackendName = x.BackendName,
+                     Name = isArabic ? x.NameAr : x.NameEn,
+                     Description = isArabic ? x.DescriptionAr : x.DescriptionEn,
+                     NameAr = x.NameAr,
+                     NameEn = x.NameEn
+                })
                 .ToListAsync(cancellationToken);
-            var mappedById = mapper.Map<List<DropdownOptions>>(byId);
+                
+            var mappedByIdList = mappedById.Select(x => new DropdownOptions
+            {
+                     Id = x.Id,
+                     BackendName = x.BackendName,
+                     Name = x.Name,
+                     Description = x.Description,
+                     AdditionalData = new { x.NameAr, x.NameEn }
+            }).ToList();
             var merged = data ?? new List<DropdownOptions>();
-            foreach (var item in mappedById.Where(item => merged.All(existing => existing.Id != item.Id)))
+            foreach (var item in mappedByIdList.Where(item => merged.All(existing => existing.Id != item.Id)))
             {
                 merged.Add(item);
             }
@@ -94,4 +135,5 @@ public static class LookupCacheKeyBuilder
         return Task.FromResult(prefix);
     }
 }
+
 

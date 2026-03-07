@@ -1,7 +1,6 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
@@ -15,7 +14,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService,
     IMediator mediator
-) : ICommandHandler<ReviseProfileContactAttachmentsCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfileContactAttachmentsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfileContactAttachmentsCommand cmd, CancellationToken ct)
     {
@@ -58,3 +57,4 @@ public sealed class ReviseProfileContactAttachmentsHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

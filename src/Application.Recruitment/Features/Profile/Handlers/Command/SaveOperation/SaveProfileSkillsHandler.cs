@@ -1,6 +1,5 @@
-using Application.Recruitment.Features.Profile.Command.SaveOperation;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
@@ -14,7 +13,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 public sealed class SaveProfileSkillsHandler(
     IUnitOfWork uow,
     IProfileStepValidationService validationService
-) : ICommandHandler<SaveProfileSkillsCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfileSkillsCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfileSkillsCommand cmd, CancellationToken ct)
     {
@@ -86,3 +85,4 @@ public sealed class SaveProfileSkillsHandler(
         return Result.Ok(Unit.Value);
     }
 }
+

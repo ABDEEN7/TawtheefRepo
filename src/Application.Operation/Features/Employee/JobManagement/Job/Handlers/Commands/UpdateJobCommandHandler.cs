@@ -1,8 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using FluentValidation;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -24,7 +23,7 @@ public class UpdateJobCommandHandler(
     IUnitOfWork unitOfWork,
     IValidator<UpdateJobCommand> validator
     )
-    : ICommandHandler<UpdateJobCommand, IResult<Unit>>
+    : IRequestHandler<UpdateJobCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
@@ -260,3 +259,4 @@ public class UpdateJobCommandHandler(
     }
 
 }
+

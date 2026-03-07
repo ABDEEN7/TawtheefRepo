@@ -1,13 +1,14 @@
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 
 public sealed record SendJobCandidateInvitationsCommand(Guid JobId)
-    : ICommand<IResult<SendJobCandidateInvitationsResult>>
+    : IRequest<IResult<SendJobCandidateInvitationsResult>>
 {
     public JobCandidatesFilter? Filter { get; init; }
     public IReadOnlyCollection<Guid>? ApplicantIds { get; init; }
 }
+

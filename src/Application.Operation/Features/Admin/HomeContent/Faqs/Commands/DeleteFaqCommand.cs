@@ -1,7 +1,7 @@
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.HomeContent.Faqs.Commands;
 
-public sealed record DeleteFaqCommand(Guid FaqId) : ICommand<IResult<Unit>>;
+public sealed record DeleteFaqCommand(Guid FaqId) : IRequest<IResult<Unit>>;
+

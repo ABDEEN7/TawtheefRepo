@@ -1,6 +1,6 @@
-using Application.Operation.Features.Authenticator.DTOs;
+﻿using Application.Operation.Features.Authenticator.DTOs;
 using Application.Operation.Features.Authenticator.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
@@ -10,7 +10,7 @@ using Tawtheef.Domain.Constants;
 namespace Application.Operation.Features.Authenticator.Handlers.Queries;
 
 public class GetOperationProfileHandler(IUserRepository userRepository, IMediaUrlResolver generator)
-    : IQueryHandler<GetOperationProfileQuery, IResult<GetOperationProfileDto>>
+    : IRequestHandler<GetOperationProfileQuery, IResult<GetOperationProfileDto>>
 {
 
     public async Task<IResult<GetOperationProfileDto>> Handle(GetOperationProfileQuery request, CancellationToken cancellationToken)
@@ -32,3 +32,4 @@ public class GetOperationProfileHandler(IUserRepository userRepository, IMediaUr
         });
     }
 }
+

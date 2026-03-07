@@ -1,5 +1,5 @@
-using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Recruitment.Features.Profile.Queries;
+using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -16,7 +16,7 @@ namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, UserManager<User> userManager, 
     IMapper mapper, IMediaUrlResolver media)
-    : IQueryHandler<GetMyProfileStatusQuery, Result<ProfileStatusDto>>
+    : IRequestHandler<GetMyProfileStatusQuery, Result<ProfileStatusDto>>
 {
     public async Task<Result<ProfileStatusDto>> Handle(GetMyProfileStatusQuery request, CancellationToken ct)
     {
@@ -46,3 +46,4 @@ public sealed class GetMyProfileStatusHandler(IUnitOfWork uow, UserManager<User>
     private IQueryable<UserProfile> BuildSectionQuery(ProfileSection? section)
         => UserProfileQueryFactory.CreateSectionQuery(uow, section);
 }
+

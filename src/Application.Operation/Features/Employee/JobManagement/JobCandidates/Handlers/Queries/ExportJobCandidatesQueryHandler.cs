@@ -1,11 +1,11 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using ClosedXML.Excel;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -26,7 +26,7 @@ public sealed class ExportJobCandidatesQueryHandler(
     IJobCandidatesQueryBuilderService  jobCandidatesQueryBuilderService,
     ILocalizationService localizationService,
     IAppLogger logger)
-    : IQueryHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
+    : IRequestHandler<ExportJobCandidatesQuery, IResult<JobCandidatesExportResult>>
 {
     public async Task<IResult<JobCandidatesExportResult>> Handle(
         ExportJobCandidatesQuery request,
@@ -166,3 +166,4 @@ public sealed class ExportJobCandidatesQueryHandler(
         };
     }
 }
+

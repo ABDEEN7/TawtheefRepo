@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Countries.Commands;
+﻿using Application.Operation.Features.Admin.Countries.Commands;
 using Application.Operation.Features.Admin.Countries.Queries;
-using Cortex.Mediator;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common;
@@ -30,3 +30,4 @@ public class CountryManagementController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 }
+

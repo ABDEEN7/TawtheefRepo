@@ -1,6 +1,6 @@
-using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using Tawtheef.Application.Extensions;
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Handlers;
 
 public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
-    : IQueryHandler<GetJobInvitationSummaryQuery, IResult<PaginatedResult<JobInvitationSummaryDto>>>
+    : IRequestHandler<GetJobInvitationSummaryQuery, IResult<PaginatedResult<JobInvitationSummaryDto>>>
 {
     public async Task<IResult<PaginatedResult<JobInvitationSummaryDto>>> Handle(GetJobInvitationSummaryQuery query, CancellationToken cancellationToken)
     {
@@ -29,3 +29,4 @@ public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, 
         return Result.Ok(invitations);
     }
 }
+

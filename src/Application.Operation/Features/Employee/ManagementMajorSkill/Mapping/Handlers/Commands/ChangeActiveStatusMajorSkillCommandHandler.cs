@@ -1,6 +1,5 @@
-using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Mapping.Handlers.Commands;
 
 public sealed class ChangeActiveStatusMajorSkillCommandHandler(IUnitOfWork uow)
-    : ICommandHandler<ChangeActiveStatusMajorSkillCommand, IResult<Unit>>
+    : IRequestHandler<ChangeActiveStatusMajorSkillCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ChangeActiveStatusMajorSkillCommand request, CancellationToken ct)
     {
@@ -94,3 +93,4 @@ public sealed class ChangeActiveStatusMajorSkillCommandHandler(IUnitOfWork uow)
     private static IResult<Unit> Fail(string code, string metaKey, object metaValue)
         => Result.Fail<Unit>(new Error(code).WithMetadata(metaKey, metaValue));
 }
+

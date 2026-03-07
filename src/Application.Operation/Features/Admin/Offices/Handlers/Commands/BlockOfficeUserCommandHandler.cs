@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Offices.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Offices.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
 public sealed class BlockOfficeUserCommandHandler(UserManager<User> userManager)
-    : ICommandHandler<BlockOfficeUserCommand, IResult<Unit>>
+    : IRequestHandler<BlockOfficeUserCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(BlockOfficeUserCommand request, CancellationToken cancellationToken)
     {
@@ -28,3 +27,4 @@ public sealed class BlockOfficeUserCommandHandler(UserManager<User> userManager)
         return Result.Ok(Unit.Value);
     }
 }
+

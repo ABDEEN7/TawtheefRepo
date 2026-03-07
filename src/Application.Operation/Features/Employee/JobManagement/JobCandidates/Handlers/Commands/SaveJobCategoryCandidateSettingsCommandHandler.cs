@@ -1,7 +1,7 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
-using Cortex.Mediator.Commands;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -13,7 +13,7 @@ public sealed class SaveJobCategoryCandidateSettingsCommandHandler(
     IJobCategoryCandidateSettingsRepository settingsRepository,
     IUnitOfWork uow,
     IMapper mapper)
-    : ICommandHandler<SaveJobCategoryCandidateSettingsCommand, IResult<JobCategoryCandidateSettingsResponseDto>>
+    : IRequestHandler<SaveJobCategoryCandidateSettingsCommand, IResult<JobCategoryCandidateSettingsResponseDto>>
 {
     public async Task<IResult<JobCategoryCandidateSettingsResponseDto>> Handle(
         SaveJobCategoryCandidateSettingsCommand request,
@@ -49,3 +49,4 @@ public sealed class SaveJobCategoryCandidateSettingsCommandHandler(
         return Result.Ok(responseDto);
     }
 }
+

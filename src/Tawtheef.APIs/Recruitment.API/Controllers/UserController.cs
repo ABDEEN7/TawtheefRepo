@@ -3,7 +3,7 @@ using Application.Recruitment.Features.Authenticator.Commands;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Application.Recruitment.Features.Authenticator.Queries;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -129,3 +129,4 @@ public class UserController(IMediator mediator) : ControllerBase
 
     #endregion
 }
+

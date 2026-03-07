@@ -1,14 +1,14 @@
-using Application.Operation.Common.Repositories;
+﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobPointsByJobIdQueryHandler(IJobPointsRepository jobPointsRepository, IMapper mapper)
-    : IQueryHandler<GetJobPointsByJobIdQuery, IResult<JobPointsMainResponseDto>>
+    : IRequestHandler<GetJobPointsByJobIdQuery, IResult<JobPointsMainResponseDto>>
 {
 
     public async Task<IResult<JobPointsMainResponseDto>> Handle(GetJobPointsByJobIdQuery request, CancellationToken cancellationToken)
@@ -24,3 +24,4 @@ public class GetJobPointsByJobIdQueryHandler(IJobPointsRepository jobPointsRepos
     }
 
 }
+

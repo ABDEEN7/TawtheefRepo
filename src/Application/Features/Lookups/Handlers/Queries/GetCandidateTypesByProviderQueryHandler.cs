@@ -1,4 +1,4 @@
-using Cortex.Mediator.Queries;
+﻿using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +15,7 @@ public sealed class GetCandidateTypesByProviderQueryHandler(
     IUnitOfWork unitOfWork,
     UserManager<User> userManager,
     IMapper mapper)
-    : IQueryHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
+    : IRequestHandler<GetCandidateTypesByProviderQuery, IResult<List<DropdownOptions>>>
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(
         GetCandidateTypesByProviderQuery request,
@@ -64,3 +64,4 @@ public sealed class GetCandidateTypesByProviderQueryHandler(
 
     private static string Normalize(string value) => value .Trim().ToLowerInvariant();
 }
+

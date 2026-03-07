@@ -1,6 +1,6 @@
-using Application.Operation.Features.Admin.Roles.DTOs;
+﻿using Application.Operation.Features.Admin.Roles.DTOs;
 using Application.Operation.Features.Admin.Roles.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Admin.Roles.Handlers.Queries;
 
 public sealed class GetRoleDetailsQueryHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
-    : IQueryHandler<GetRoleDetailsQuery, IResult<RoleDto>>
+    : IRequestHandler<GetRoleDetailsQuery, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(GetRoleDetailsQuery request, CancellationToken cancellationToken)
     {
@@ -24,3 +24,4 @@ public sealed class GetRoleDetailsQueryHandler(RoleManager<ApplicationRole> role
         return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, claims)));
     }
 }
+

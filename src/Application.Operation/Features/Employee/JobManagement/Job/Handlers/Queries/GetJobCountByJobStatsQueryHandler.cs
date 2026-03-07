@@ -1,5 +1,5 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
-using Cortex.Mediator.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -8,7 +8,7 @@ using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 
 public class GetJobCountByJobStatsQueryHandler(IUnitOfWork unitOfWork)
-    : IQueryHandler<GetJobCountByJobStatsQuery, IResult<int>>
+    : IRequestHandler<GetJobCountByJobStatsQuery, IResult<int>>
 {
     public async Task<IResult<int>> Handle(
         GetJobCountByJobStatsQuery request,
@@ -22,3 +22,4 @@ public class GetJobCountByJobStatsQueryHandler(IUnitOfWork unitOfWork)
 
     }
 }
+

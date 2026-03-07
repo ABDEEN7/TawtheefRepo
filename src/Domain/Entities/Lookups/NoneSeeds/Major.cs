@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using Cortex.Mediator;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using MediatR;
 using FluentResults;
 
 using Tawtheef.Domain.Common;
@@ -39,3 +39,4 @@ public class Major : LookupBase
         return Result.Ok(Unit.Value);
     }
 }
+

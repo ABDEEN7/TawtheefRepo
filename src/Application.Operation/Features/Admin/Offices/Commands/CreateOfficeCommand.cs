@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using Cortex.Mediator.Commands;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 using FluentResults;
 
 namespace Application.Operation.Features.Admin.Offices.Commands;
@@ -13,4 +13,5 @@ public sealed record CreateOfficeCommand(
     [Required] string AdminNameEn,
     [EmailAddress] string AdminEmail,
     [Required] string PhoneCountryCode,
-    [Required] string PhoneNumber) : ICommand<IResult<Guid>>;
+    [Required] string PhoneNumber) : IRequest<IResult<Guid>>;
+

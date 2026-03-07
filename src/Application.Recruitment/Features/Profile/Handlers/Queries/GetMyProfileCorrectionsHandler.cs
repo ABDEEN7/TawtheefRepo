@@ -1,6 +1,6 @@
-using Application.Recruitment.Features.Profile.DTOs;
+﻿using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
-using Cortex.Mediator.Queries;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 public sealed class GetMyProfileCorrectionsHandler(IUnitOfWork uow)
-    : IQueryHandler<GetMyProfileCorrectionsQuery, Result<ProfileCorrectionsDto>>
+    : IRequestHandler<GetMyProfileCorrectionsQuery, Result<ProfileCorrectionsDto>>
 {
     public async Task<Result<ProfileCorrectionsDto>> Handle(GetMyProfileCorrectionsQuery request, CancellationToken ct)
     {
@@ -52,3 +52,4 @@ public sealed class GetMyProfileCorrectionsHandler(IUnitOfWork uow)
         });
     }
 }
+

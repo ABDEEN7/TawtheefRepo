@@ -1,6 +1,5 @@
-using Application.Operation.Features.Admin.Countries.Commands;
-using Cortex.Mediator;
-using Cortex.Mediator.Commands;
+﻿using Application.Operation.Features.Admin.Countries.Commands;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +13,7 @@ public sealed class UpdateCountryStatusCommandHandler(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService)
-    : ICommandHandler<UpdateCountryStatusCommand, IResult<Unit>>
+    : IRequestHandler<UpdateCountryStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateCountryStatusCommand request,
@@ -40,3 +39,4 @@ public sealed class UpdateCountryStatusCommandHandler(
         return Result.Ok(Unit.Value);
     }
 }
+
