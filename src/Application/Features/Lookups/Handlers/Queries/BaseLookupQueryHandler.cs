@@ -13,7 +13,6 @@ namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public abstract class BaseLookupQueryHandler<TLookup, TRequest>(
     IUnitOfWork unitOfWork,
-    IMapper mapper,
     IMemoryCache cache)
     : IRequestHandler<TRequest, IResult<List<DropdownOptions>>>
     where TLookup : LookupBase
