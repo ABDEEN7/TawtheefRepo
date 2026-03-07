@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -36,6 +38,7 @@ public class TokenService(
     IUnitOfWork uow,
     ILoginAuditService loginAudit,
     IDistributedCache cache,
+    IAppLogger logger,
     TawtheefDbContext dbContext) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
@@ -63,6 +66,7 @@ public class TokenService(
 
         user.LastLoginDate = time.GetUtcNow().UtcDateTime;
         await userManager.UpdateSecurityStampAsync(user);
+        await ClearUserCacheAsync(user.Id, ct);
 
         var tokenResult = await BuildAuthResponseAsync(user, refreshToken, sid, ct);
         if (tokenResult.IsFailed)
@@ -84,21 +88,45 @@ public class TokenService(
         string? ipAddress,
         CancellationToken ct)
     {
+        var sw = Stopwatch.StartNew();
+        var timings = new Dictionary<string, long>();
+        
+        var setupSw = Stopwatch.StartNew();
         var now = time.GetUtcNow().UtcDateTime;
         var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
 
         currentToken.Revoke(now, ipAddress, "Rotated");
         currentToken.ReplacedByToken = replacement;
 
-        user.RefreshTokens.Add(replacement);
+        // Optimization: Use direct DbSet operations to avoid virtual collection access (prevent lazy-load SELECT)
+        dbContext.Set<RefreshToken>().Add(replacement);
+        
+        var entry = dbContext.Entry(currentToken);
+        if (entry.State == EntityState.Detached)
+        {
+            dbContext.Attach(currentToken);
+        }
+        entry.State = EntityState.Modified;
+        
+        timings["UpdateSetup"] = setupSw.ElapsedMilliseconds;
 
-        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken);
-
+        var buildSw = Stopwatch.StartNew();
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
-        if (result.IsFailed)
-            return result;
+        timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 
+        if (result.IsFailed)
+        {
+            logger.Information("RotateRefreshTokenAsync Performance Report (Failed): {@Timings}", timings);
+            return result;
+        }
+
+        var saveSw = Stopwatch.StartNew();
         await uow.SaveChangesAsync(ct);
+        timings["SaveChangesAsync"] = saveSw.ElapsedMilliseconds;
+        
+        sw.Stop();
+        timings["TotalRotation"] = sw.ElapsedMilliseconds;
+        logger.Information("RotateRefreshTokenAsync Performance Report: {@Timings}", timings);
         return result;
     }
 
@@ -120,7 +148,7 @@ public class TokenService(
         foreach (var token in tokens)
         {
             token.Revoke(now, ipAddress, reason);
-            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token, ct);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -150,9 +178,13 @@ public class TokenService(
         string sid,
         CancellationToken ct)
     {
+        var timings = new Dictionary<string, long>();
+        
+        var dbSw = Stopwatch.StartNew();
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking()
             .FirstAsync(t => t.Id == user.UserTypeId, ct);
+        timings["UserTypeQuery"] = dbSw.ElapsedMilliseconds;
 
         var profileComplete = true;
         var additionalClaims = new List<Claim>();
@@ -160,18 +192,28 @@ public class TokenService(
 
         if (user is ApplicantUser applicantUser)
         {
+            var pcsSw = Stopwatch.StartNew();
             prefill = !applicantUser.IsCompletedProfile ? await pcs.BuildPrefillAsync(user, ct) : null;
+            timings["BuildPrefill"] = pcsSw.ElapsedMilliseconds;
+            
             profileComplete = applicantUser.IsCompletedProfile;
             additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
         }
 
+        var genSw = Stopwatch.StartNew();
         var accessToken = await GenerateAccessTokenAsync(user, userType, [
             new Claim(JwtRegisteredClaimNames.Sid, sid),
             ..additionalClaims
         ], ct);
+        timings["GenerateAccessToken"] = genSw.ElapsedMilliseconds;
 
+        var loginSw = Stopwatch.StartNew();
         var logins = await userManager.GetLoginsAsync(user);
+        timings["GetLogins"] = loginSw.ElapsedMilliseconds;
+        
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
+
+        logger.Information("BuildAuthResponse Performance Report: {@Timings}", timings);
 
         return Result.Ok(new AuthResponse(
             !profileComplete,
@@ -192,8 +234,12 @@ public class TokenService(
         var rolesKey = $"roles:{user.Id}";
         var permsKey = $"perms:{user.Id}";
 
+        var timings = new Dictionary<string, long>();
+        
+        var cacheReadSw = Stopwatch.StartNew();
         var cachedRoles = await cache.GetStringAsync(rolesKey, ct);
         var cachedPerms = await cache.GetStringAsync(permsKey, ct);
+        timings["CacheRead"] = cacheReadSw.ElapsedMilliseconds;
 
         IList<string> roles;
         IReadOnlyCollection<string> permissions;
@@ -205,16 +251,22 @@ public class TokenService(
         }
         else
         {
+            var identitySw = Stopwatch.StartNew();
             roles = await userManager.GetRolesAsync(user);
             permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
+            timings["IdentityDbFetch"] = identitySw.ElapsedMilliseconds;
 
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(jwtSettings.Value.RefreshTokenExpirationHours ?? 3)
             };
+            var cacheWriteSw = Stopwatch.StartNew();
             await cache.SetStringAsync(rolesKey, JsonSerializer.Serialize(roles), cacheOptions, ct);
             await cache.SetStringAsync(permsKey, JsonSerializer.Serialize(permissions), cacheOptions, ct);
+            timings["CacheWrite"] = cacheWriteSw.ElapsedMilliseconds;
         }
+
+        logger.Information("GenerateAccessToken Performance Report: {@Timings}", timings);
 
         var claims = new List<Claim>
         {
@@ -274,7 +326,7 @@ public class TokenService(
         foreach (var token in refreshTokens)
         {
             token.Revoke(now, null, "Admin/explicit revoke-all");
-            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token);
+            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(token, ct);
         }
 
         await uow.SaveChangesAsync(ct);
@@ -305,17 +357,29 @@ public class TokenService(
         if (roles.Count == 0)
             return [];
 
+        var roleIds = await dbContext.Roles
+            .AsNoTracking()
+            .Where(r => roles.Contains(r.Name!))
+            .Select(r => r.Id)
+            .ToListAsync(ct);
+
+        if (roleIds.Count == 0)
+            return [];
+
         var perms = await dbContext.RoleClaims
             .AsNoTracking()
-            .Where(rc => rc.ClaimType == PermClaimType)
-            .Join(dbContext.Roles.Where(r => roles.Contains(r.Name!)),
-                rc => rc.RoleId,
-                r => r.Id,
-                (rc, r) => rc.ClaimValue)
+            .Where(rc => roleIds.Contains(rc.RoleId) && rc.ClaimType == PermClaimType)
+            .Select(rc => rc.ClaimValue)
             .Where(v => v != null)
             .Distinct()
             .ToListAsync(ct);
 
         return perms!;
+    }
+
+    public async Task ClearUserCacheAsync(Guid userId, CancellationToken ct)
+    {
+        await cache.RemoveAsync($"roles:{userId}", ct);
+        await cache.RemoveAsync($"perms:{userId}", ct);
     }
 }

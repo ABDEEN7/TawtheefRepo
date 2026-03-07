@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -9,6 +11,7 @@ using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
@@ -16,63 +19,90 @@ public class RefreshTokenHandler(
     IAppLogger logger,
     ITokenService tokenService,
     IUnitOfWork uow,
+    UserManager<User> userManager,
     TimeProvider time)
     : IRequestHandler<RefreshTokenCommand, IResult<TokenResponse>>
 {
     public async Task<IResult<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.RefreshToken))
-            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenRequired));
+        var totalSw = Stopwatch.StartNew();
+        var timings = new Dictionary<string, long>();
+        var metadata = new Dictionary<string, object> { ["RequestID"] = Guid.NewGuid().ToString() };
 
-        var incomingTokenHash = tokenService.HashRefreshToken(request.RefreshToken);
-        var storedToken = await uow.GetEntityRepository<RefreshToken>().DbSet
-            .Include(rt => rt.User)
-            .FirstOrDefaultAsync(rt => rt.TokenHash == incomingTokenHash, cancellationToken);
-
-        if (storedToken is null)
-            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenNotFound));
-
-        var user = storedToken.User;
-        if (user is null)
+        try
         {
-            logger.Warning("Refresh token has no associated user", new { storedToken.Id, storedToken.UserId });
-            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.UserNotFound));
-        }
+            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+                return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenRequired));
 
-        var now = time.GetUtcNow().UtcDateTime;
-        if (storedToken.IsRevoked)
+            var incomingTokenHash = tokenService.HashRefreshToken(request.RefreshToken);
+
+            var dbQuerySw = Stopwatch.StartNew();
+            var storedToken = await uow.GetEntityRepository<RefreshToken>().DbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(rt => rt.TokenHash == incomingTokenHash, cancellationToken);
+            timings["DbFetchStoredToken"] = dbQuerySw.ElapsedMilliseconds;
+
+            if (storedToken is null)
+                return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenNotFound));
+
+            metadata["UserId"] = storedToken.UserId;
+            metadata["Sid"] = storedToken.SecurityStamp;
+
+            var userFetchSw = Stopwatch.StartNew();
+            var user = await userManager.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == storedToken.UserId, cancellationToken);
+            timings["DbFetchUser"] = userFetchSw.ElapsedMilliseconds;
+            
+            if (user is null)
+            {
+                return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.UserNotFound));
+            }
+
+            var now = time.GetUtcNow().UtcDateTime;
+            if (storedToken.IsRevoked)
+            {
+                await tokenService.RevokeSessionFamilyAsync(storedToken.UserId, storedToken.SecurityStamp,
+                    request.IpAddress, "Refresh token replay detected", cancellationToken);
+                return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
+            }
+
+            if (storedToken.IsExpired)
+            {
+                storedToken.Revoke(now, request.IpAddress, "Refresh token expired");
+                await uow.GetEntityRepository<RefreshToken>().UpdateAsync(storedToken);
+                await uow.SaveChangesAsync(cancellationToken);
+                return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
+            }
+
+            var sessionCheckSw = Stopwatch.StartNew();
+            var isSessionActive = await tokenService.IsSessionActiveAsync(storedToken.UserId, storedToken.SecurityStamp, cancellationToken);
+            timings["SessionActiveCheck"] = sessionCheckSw.ElapsedMilliseconds;
+
+            if (!isSessionActive)
+            {
+                return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
+            }
+
+            var rotationSw = Stopwatch.StartNew();
+            var authResponseResult = await tokenService.RotateRefreshTokenAsync(
+                user,
+                storedToken,
+                request.IpAddress,
+                cancellationToken);
+            timings["TokenRotationTotal"] = rotationSw.ElapsedMilliseconds;
+
+            if (authResponseResult.IsFailed)
+                return Result.Fail<TokenResponse>(authResponseResult.Errors);
+
+            return Result.Ok(authResponseResult.Value.Token!);
+        }
+        finally
         {
-            await tokenService.RevokeSessionFamilyAsync(storedToken.UserId, storedToken.SecurityStamp,
-                request.IpAddress, "Refresh token replay detected", cancellationToken);
-            logger.Warning("Refresh token reuse detected", new { storedToken.UserId, storedToken.SecurityStamp });
-            return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
+            totalSw.Stop();
+            timings["TotalRequestDuration"] = totalSw.ElapsedMilliseconds;
+            logger.Information("RefreshToken Performance Report: {@Timings}, {@Context}", timings, metadata);
         }
-
-        if (storedToken.IsExpired)
-        {
-            storedToken.Revoke(now, request.IpAddress, "Refresh token expired");
-            await uow.GetEntityRepository<RefreshToken>().UpdateAsync(storedToken);
-            await uow.SaveChangesAsync(cancellationToken);
-            return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
-        }
-
-        if (!await tokenService.IsSessionActiveAsync(storedToken.UserId, storedToken.SecurityStamp, cancellationToken))
-        {
-            logger.Warning("Session revoked for user {UserId}. SID: {Sid}", 
-                storedToken.UserId, storedToken.SecurityStamp);
-            return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
-        }
-
-        var authResponseResult = await tokenService.RotateRefreshTokenAsync(
-            user,
-            storedToken,
-            request.IpAddress,
-            cancellationToken);
-
-        if (authResponseResult.IsFailed)
-            return Result.Fail<TokenResponse>(authResponseResult.Errors);
-
-        return Result.Ok(authResponseResult.Value.Token!);
     }
 
     private static Error UnauthorizedError(string errorCode)

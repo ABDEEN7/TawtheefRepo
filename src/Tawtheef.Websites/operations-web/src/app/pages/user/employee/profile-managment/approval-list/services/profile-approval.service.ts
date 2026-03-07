@@ -22,7 +22,7 @@ export class ProfileApprovalService {
   }
 
   getTargetEntities(): Observable<dropdownOptionsModel[]> {
-    return this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.targetEntities);
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.approvals.targetEntities);
   }
 
   getProfile(profileId: string): Observable<ProfileApprovalDetail> {

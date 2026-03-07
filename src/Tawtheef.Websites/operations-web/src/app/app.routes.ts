@@ -1,9 +1,7 @@
-import {Routes} from '@angular/router';
-import {Layout as AdminLayout} from './layouts/admin/layout/layout';
-import {Layout as EmployeeLayout} from './layouts/employee/layout/layout';
-import {loggedOutOnlyGuard} from './core/guards/route-guard/logged-out-only-guard';
-import {authGuard} from './core/guards/route-guard/auth-guard';
-import {SystemRoles} from './core/constants/systemRoles';
+import { Routes } from '@angular/router';
+import { loggedOutOnlyGuard } from './core/guards/route-guard/logged-out-only-guard';
+import { authGuard } from './core/guards/route-guard/auth-guard';
+import { SystemRoles } from './core/constants/systemRoles';
 export const routes: Routes = [
   {
     path: '',
@@ -31,7 +29,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    component: AdminLayout,
+    loadComponent: () => import('./layouts/admin/layout/layout').then(m => m.Layout),
     canActivate: [authGuard], // then make guard CanActivateFn
     data: { roles: [SystemRoles.SystemAdmin] },
     children: [
@@ -40,7 +38,7 @@ export const routes: Routes = [
   },
   {
     path: 'employee',
-    component: EmployeeLayout,
+    loadComponent: () => import('./layouts/employee/layout/layout').then(m => m.Layout),
     canActivate: [authGuard],
     data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser, SystemRoles.DepartmentManager, SystemRoles.HrManager] },
     children: [
@@ -48,5 +46,5 @@ export const routes: Routes = [
     ]
   },
   // Fallback
-  {path: '**', redirectTo: 'error/404'},
+  { path: '**', redirectTo: 'error/404' },
 ]

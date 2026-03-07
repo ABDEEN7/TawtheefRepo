@@ -2,12 +2,16 @@
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Roles.Handlers.Commands;
 
-public sealed class DeleteRoleCommandHandler(RoleManager<ApplicationRole> roleManager)
+public sealed class DeleteRoleCommandHandler(
+    RoleManager<ApplicationRole> roleManager,
+    UserManager<User> userManager,
+    ITokenService tokenService)
     : IRequestHandler<DeleteRoleCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
@@ -19,10 +23,24 @@ public sealed class DeleteRoleCommandHandler(RoleManager<ApplicationRole> roleMa
         if (role.IsSystemRole)
             return Result.Fail<Unit>(ErrorsCodes.SystemRoleModificationNotAllowed);
 
+        var users = await userManager.GetUsersInRoleAsync(role.Name!);
         var deleteResult = await roleManager.DeleteAsync(role);
-        return deleteResult.Succeeded
-            ? Result.Ok(Unit.Value)
-            : RoleClaimSync.FailureFromIdentity(deleteResult);
+
+        if (deleteResult.Succeeded)
+        {
+            foreach (var user in users)
+            {
+                await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
+            }
+            return Result.Ok(Unit.Value);
+        }
+
+        var result = RoleClaimSync.FailureFromIdentity(deleteResult);
+        if (result.IsFailed)
+        {
+            return Result.Fail<Unit>(result.Errors);
+        }
+        return Result.Ok(Unit.Value);
     }
 }
 

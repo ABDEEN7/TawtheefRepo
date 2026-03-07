@@ -14,4 +14,5 @@ public interface ITokenService
     Task<bool> IsSessionActiveAsync(Guid userId, string sessionId, CancellationToken ct);
     string HashRefreshToken(string refreshToken);
     Task RevokeAllAsync(Guid userId, CancellationToken ct);
+    Task ClearUserCacheAsync(Guid userId, CancellationToken ct);
 }

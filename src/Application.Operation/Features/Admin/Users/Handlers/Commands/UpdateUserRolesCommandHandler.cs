@@ -3,6 +3,7 @@ using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
@@ -11,7 +12,8 @@ namespace Application.Operation.Features.Admin.Users.Handlers.Commands;
 
 public sealed class UpdateUserRolesCommandHandler(
     UserManager<User> userManager,
-    RoleManager<ApplicationRole> roleManager)
+    RoleManager<ApplicationRole> roleManager,
+    ITokenService tokenService)
     : IRequestHandler<UpdateUserRolesCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
@@ -89,6 +91,8 @@ public sealed class UpdateUserRolesCommandHandler(
             if (!addResult.Succeeded)
                 return FailureFromIdentity(addResult);
         }
+
+        await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
 
         return Result.Ok(Unit.Value);
     }

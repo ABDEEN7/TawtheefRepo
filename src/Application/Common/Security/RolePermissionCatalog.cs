@@ -16,11 +16,9 @@ public static class RolePermissionCatalog
                 Permissions.Dashboard.View.Key
             ],
             [SystemRoleIds.Employee] = [
-                Permissions.Dashboard.View.Key
             ],
 
             [SystemRoleIds.OfficeAdmin] = [
-                Permissions.Dashboard.View.Key,
                 Permissions.OfficeUsers.View.Key,
                 Permissions.OfficeUsers.Manage.Key,
                 Permissions.Profile.View.Key,
@@ -30,7 +28,6 @@ public static class RolePermissionCatalog
             ],
 
             [SystemRoleIds.OfficeUser] = [
-                Permissions.Dashboard.View.Key,
                 Permissions.Profile.View.Key,
                 Permissions.Profile.Manage.Key,
                 Permissions.ProfileApproval.View.Key,
@@ -39,7 +36,6 @@ public static class RolePermissionCatalog
             ],
 
             [SystemRoleIds.EmployeeSuperAdmin] = [
-                Permissions.Dashboard.View.Key,
                 Permissions.Profile.View.Key,
                 Permissions.Profile.Manage.Key,
                 Permissions.ProfileDistribution.View.Key,

@@ -24,4 +24,7 @@
   get verifyAccount() {
     return this.auth + 'verify-account';
   },
+  get pendingApproval() {
+    return this.auth + 'pending-approval';
+  },
 }

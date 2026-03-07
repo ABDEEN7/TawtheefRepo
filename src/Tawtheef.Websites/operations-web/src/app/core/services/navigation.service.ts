@@ -1,14 +1,14 @@
-import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
-import {routes} from '../../routes/routes';
+import { Injectable, inject } from "@angular/core";
+import { Router } from "@angular/router";
+import { routes } from '../../routes/routes';
+import { PermissionService } from '../auth/permission.service';
+import { Permissions } from '../constants/permissions';
+import { SystemRoles } from '../constants/systemRoles';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class NavigationService {
-
-  constructor(
-    private router: Router
-  ) {
-  }
+  private router = inject(Router);
+  private permissionService = inject(PermissionService);
 
   navigateAfterLogin(mainUserRole: string): void {
     const returnUrl = this.getReturnUrl();
@@ -31,9 +31,34 @@ export class NavigationService {
     return !/^https?:\/\//i.test(url);
   }
 
-  redirectBasedOnRole(mainUserRole: string): void {
-    this.router.navigate([routes.dashboard(mainUserRole)], { replaceUrl: true });
+  redirectBasedOnRole(role: string): void {
+    if (!role) {
+      this.router.navigate([routes.accessDenied], { replaceUrl: true });
+      return;
+    }
+
+    // 1. Dashboard (High Priority for Management roles)
+    if (this.permissionService.hasPermission(Permissions.Dashboard.View)) {
+      this.router.navigate([routes.dashboard(role)], { replaceUrl: true });
+      return;
+    }
+
+    // 2. Jobs Management (Alternative for recruiters/staff)
+    if (this.permissionService.hasPermission(Permissions.Jobs.View)) {
+      this.router.navigate([routes.employee.JobList], { replaceUrl: true });
+      return;
+    }
+
+    // 3. Office Users (Alternative for admins)
+    if (this.permissionService.hasPermission(Permissions.OfficeUsers.View)) {
+      this.router.navigate([routes.employee.officeUsersManagement], { replaceUrl: true });
+      return;
+    }
+
+    // 4. Default Fallback for users with NO permissions yet (New Users)
+    this.router.navigate([routes.auth.pendingApproval], { replaceUrl: true });
   }
+
   private getReturnUrl(): string | null {
     const tree = this.router.parseUrl(this.router.url);
     return tree.queryParams['returnUrl'] || null;

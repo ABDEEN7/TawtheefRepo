@@ -1,13 +1,11 @@
 import { Routes } from '@angular/router';
-import {UserLayout} from './layouts/internal/user-layout/user-layout';
-import {PublicLayout} from './layouts/public/public-layout/public-layout';
-import {loggedOutOnlyGuard} from './core/guards/route-guard/logged-out-only-guard';
-import {authGuard} from './core/guards/route-guard/auth-guard';
+import { loggedOutOnlyGuard } from './core/guards/route-guard/logged-out-only-guard';
+import { authGuard } from './core/guards/route-guard/auth-guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: PublicLayout,
+    loadComponent: () => import('./layouts/public/public-layout/public-layout').then(m => m.PublicLayout),
     children: [
       {
         path: '',
@@ -35,7 +33,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: UserLayout,
+    loadComponent: () => import('./layouts/internal/user-layout/user-layout').then(m => m.UserLayout),
     canActivateChild: [authGuard],
     children: [
       {
