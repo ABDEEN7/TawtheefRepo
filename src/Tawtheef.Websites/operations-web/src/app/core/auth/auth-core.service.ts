@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TokenService } from './token.service';
 import { UserService } from './user.service';
@@ -14,16 +14,16 @@ import { NotificationService } from '../services/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthCoreService {
-  constructor(
-    private logger: LoggerService,
-    private notificationService: NotificationService,
-    private http: HttpClient,
-    private endpoints: EndpointsService,
-    private tokenService: TokenService,
-    private userService: UserService,
-    private authState: AuthStateService,
-    private navigation: NavigationService,
-  ) {}
+  private logger = inject(LoggerService);
+  private notificationService = inject(NotificationService);
+  private http = inject(HttpClient);
+  private endpoints = inject(EndpointsService);
+  private tokenService = inject(TokenService);
+  private userService = inject(UserService);
+  private authState = inject(AuthStateService);
+  private navigation = inject(NavigationService);
+
+  constructor() { }
 
   get getToken(): string | null {
     return this.tokenService.getToken();

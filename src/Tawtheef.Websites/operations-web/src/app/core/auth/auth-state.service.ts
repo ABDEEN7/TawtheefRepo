@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { Router, UrlTree } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
@@ -13,6 +13,12 @@ import { TokenModel } from '../models/token.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {
+  private readonly router = inject(Router);
+  private readonly http = inject(HttpService);
+  private readonly endpoints = inject(EndpointsService);
+  private readonly tokenService = inject(TokenService);
+  private readonly userService = inject(UserService);
+
   readonly routes = routes;
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -20,13 +26,7 @@ export class AuthStateService {
 
   private refreshInFlight$?: Observable<boolean> | null;
 
-  constructor(
-    private router: Router,
-    private http: HttpService,
-    private endpoints: EndpointsService,
-    private tokenService: TokenService,
-    private userService: UserService
-  ) {}
+  constructor() { }
 
   setAuthenticated(value: boolean): void {
     this.isAuthenticatedSubject.next(value);
@@ -50,7 +50,7 @@ export class AuthStateService {
       try {
         const user = JSON.parse(data);
         this.userService.updateCurrentUser(user, token);
-      } catch {}
+      } catch { }
       this.isAuthenticatedSubject.next(true);
     }
 
@@ -126,7 +126,7 @@ export class AuthStateService {
               try {
                 const user = JSON.parse(data);
                 this.userService.updateCurrentUser(user, tokens.accessToken);
-              } catch {}
+              } catch { }
             }
             this.isAuthenticatedSubject.next(true);
           } else {

@@ -36,6 +36,7 @@ public class TokenService(
     IUnitOfWork uow,
     ILoginAuditService loginAudit,
     IDistributedCache cache,
+    IAppLogger logger,
     TawtheefDbContext dbContext) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
@@ -85,6 +86,9 @@ public class TokenService(
         string? ipAddress,
         CancellationToken ct)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var timings = new Dictionary<string, long>();
+        
         var now = time.GetUtcNow().UtcDateTime;
         var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
 
@@ -95,11 +99,23 @@ public class TokenService(
 
         await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken);
 
+        var buildSw = System.Diagnostics.Stopwatch.StartNew();
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
-        if (result.IsFailed)
-            return result;
+        timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 
+        if (result.IsFailed)
+        {
+            logger.Information("RotateRefreshTokenAsync Performance Report (Failed): {@Timings}", timings);
+            return result;
+        }
+
+        var saveSw = System.Diagnostics.Stopwatch.StartNew();
         await uow.SaveChangesAsync(ct);
+        timings["SaveChangesAsync"] = saveSw.ElapsedMilliseconds;
+        
+        sw.Stop();
+        timings["TotalRotation"] = sw.ElapsedMilliseconds;
+        logger.Information("RotateRefreshTokenAsync Performance Report: {@Timings}", timings);
         return result;
     }
 
@@ -151,9 +167,13 @@ public class TokenService(
         string sid,
         CancellationToken ct)
     {
+        var timings = new Dictionary<string, long>();
+        
+        var dbSw = System.Diagnostics.Stopwatch.StartNew();
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking()
             .FirstAsync(t => t.Id == user.UserTypeId, ct);
+        timings["UserTypeQuery"] = dbSw.ElapsedMilliseconds;
 
         var profileComplete = true;
         var additionalClaims = new List<Claim>();
@@ -161,18 +181,28 @@ public class TokenService(
 
         if (user is ApplicantUser applicantUser)
         {
+            var pcsSw = System.Diagnostics.Stopwatch.StartNew();
             prefill = !applicantUser.IsCompletedProfile ? await pcs.BuildPrefillAsync(user, ct) : null;
+            timings["BuildPrefill"] = pcsSw.ElapsedMilliseconds;
+            
             profileComplete = applicantUser.IsCompletedProfile;
             additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
         }
 
+        var genSw = System.Diagnostics.Stopwatch.StartNew();
         var accessToken = await GenerateAccessTokenAsync(user, userType, [
             new Claim(JwtRegisteredClaimNames.Sid, sid),
             ..additionalClaims
         ], ct);
+        timings["GenerateAccessToken"] = genSw.ElapsedMilliseconds;
 
+        var loginSw = System.Diagnostics.Stopwatch.StartNew();
         var logins = await userManager.GetLoginsAsync(user);
+        timings["GetLogins"] = loginSw.ElapsedMilliseconds;
+        
         var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "");
+
+        logger.Information("BuildAuthResponse Performance Report: {@Timings}", timings);
 
         return Result.Ok(new AuthResponse(
             !profileComplete,
@@ -193,8 +223,12 @@ public class TokenService(
         var rolesKey = $"roles:{user.Id}";
         var permsKey = $"perms:{user.Id}";
 
+        var timings = new Dictionary<string, long>();
+        
+        var cacheReadSw = System.Diagnostics.Stopwatch.StartNew();
         var cachedRoles = await cache.GetStringAsync(rolesKey, ct);
         var cachedPerms = await cache.GetStringAsync(permsKey, ct);
+        timings["CacheRead"] = cacheReadSw.ElapsedMilliseconds;
 
         IList<string> roles;
         IReadOnlyCollection<string> permissions;
@@ -206,16 +240,22 @@ public class TokenService(
         }
         else
         {
+            var identitySw = System.Diagnostics.Stopwatch.StartNew();
             roles = await userManager.GetRolesAsync(user);
             permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
+            timings["IdentityDbFetch"] = identitySw.ElapsedMilliseconds;
 
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(jwtSettings.Value.RefreshTokenExpirationHours ?? 3)
             };
+            var cacheWriteSw = System.Diagnostics.Stopwatch.StartNew();
             await cache.SetStringAsync(rolesKey, JsonSerializer.Serialize(roles), cacheOptions, ct);
             await cache.SetStringAsync(permsKey, JsonSerializer.Serialize(permissions), cacheOptions, ct);
+            timings["CacheWrite"] = cacheWriteSw.ElapsedMilliseconds;
         }
+
+        logger.Information("GenerateAccessToken Performance Report: {@Timings}", timings);
 
         var claims = new List<Claim>
         {

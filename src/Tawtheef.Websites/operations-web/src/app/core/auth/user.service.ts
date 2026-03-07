@@ -1,19 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TokenService } from './token.service';
 import { UserInfoModel } from '../../shared/models/user-info.model';
-import {AUTH_PROVIDER} from '../constants/auth-providers.const';
-import {USER_DATA_KEY} from '../constants/user-storage.const';
+import { AUTH_PROVIDER } from '../constants/auth-providers.const';
+import { USER_DATA_KEY } from '../constants/user-storage.const';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  private tokenService = inject(TokenService);
   private currentUserSubject =
     new BehaviorSubject<UserInfoModel | null>(null);
 
   public currentUser$ =
     this.currentUserSubject.asObservable();
 
-  constructor(private tokenService: TokenService) {}
+  constructor() { }
 
   getCurrentUser(): UserInfoModel | null {
     return this.currentUserSubject.value;

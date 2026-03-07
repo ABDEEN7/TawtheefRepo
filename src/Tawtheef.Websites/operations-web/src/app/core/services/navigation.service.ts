@@ -1,14 +1,14 @@
 import { Injectable, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { routes } from '../../routes/routes';
-import { AuthService } from '../auth/auth.service';
+import { PermissionService } from '../auth/permission.service';
 import { Permissions } from '../constants/permissions';
 import { SystemRoles } from '../constants/systemRoles';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private permissionService = inject(PermissionService);
 
   navigateAfterLogin(mainUserRole: string): void {
     const returnUrl = this.getReturnUrl();
@@ -38,19 +38,19 @@ export class NavigationService {
     }
 
     // 1. Dashboard (High Priority for Management roles)
-    if (this.authService.hasPermission(Permissions.Dashboard.View)) {
+    if (this.permissionService.hasPermission(Permissions.Dashboard.View)) {
       this.router.navigate([routes.dashboard(role)], { replaceUrl: true });
       return;
     }
 
     // 2. Jobs Management (Alternative for recruiters/staff)
-    if (this.authService.hasPermission(Permissions.Jobs.View)) {
+    if (this.permissionService.hasPermission(Permissions.Jobs.View)) {
       this.router.navigate([routes.employee.JobList], { replaceUrl: true });
       return;
     }
 
     // 3. Office Users (Alternative for admins)
-    if (this.authService.hasPermission(Permissions.OfficeUsers.View)) {
+    if (this.permissionService.hasPermission(Permissions.OfficeUsers.View)) {
       this.router.navigate([routes.employee.officeUsersManagement], { replaceUrl: true });
       return;
     }
