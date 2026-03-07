@@ -2,6 +2,7 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -10,6 +11,7 @@ using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands;
 
@@ -17,6 +19,7 @@ public class RefreshTokenHandler(
     IAppLogger logger,
     ITokenService tokenService,
     IUnitOfWork uow,
+    UserManager<User> userManager,
     TimeProvider time)
     : IRequestHandler<RefreshTokenCommand, IResult<TokenResponse>>
 {
@@ -35,17 +38,22 @@ public class RefreshTokenHandler(
 
             var dbQuerySw = Stopwatch.StartNew();
             var storedToken = await uow.GetEntityRepository<RefreshToken>().DbSet
-                .Include(rt => rt.User)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(rt => rt.TokenHash == incomingTokenHash, cancellationToken);
             timings["DbFetchStoredToken"] = dbQuerySw.ElapsedMilliseconds;
 
             if (storedToken is null)
                 return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.RefreshTokenNotFound));
 
-            var user = storedToken.User;
             metadata["UserId"] = storedToken.UserId;
             metadata["Sid"] = storedToken.SecurityStamp;
 
+            var userFetchSw = Stopwatch.StartNew();
+            var user = await userManager.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == storedToken.UserId, cancellationToken);
+            timings["DbFetchUser"] = userFetchSw.ElapsedMilliseconds;
+            
             if (user is null)
             {
                 return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.UserNotFound));

@@ -348,13 +348,19 @@ public class TokenService(
         if (roles.Count == 0)
             return [];
 
+        var roleIds = await dbContext.Roles
+            .AsNoTracking()
+            .Where(r => roles.Contains(r.Name!))
+            .Select(r => r.Id)
+            .ToListAsync(ct);
+
+        if (roleIds.Count == 0)
+            return [];
+
         var perms = await dbContext.RoleClaims
             .AsNoTracking()
-            .Where(rc => rc.ClaimType == PermClaimType)
-            .Join(dbContext.Roles.Where(r => roles.Contains(r.Name!)),
-                rc => rc.RoleId,
-                r => r.Id,
-                (rc, r) => rc.ClaimValue)
+            .Where(rc => roleIds.Contains(rc.RoleId) && rc.ClaimType == PermClaimType)
+            .Select(rc => rc.ClaimValue)
             .Where(v => v != null)
             .Distinct()
             .ToListAsync(ct);
