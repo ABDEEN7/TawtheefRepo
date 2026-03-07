@@ -5,8 +5,12 @@
   "auth.login.google_cta": "Sign in with Google (Office)",
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.qatar.use": "For accredited offices",
-  "auth.welcome" : "Welcome to the Employment Portal",
-  "auth.detail" : "A unified platform for managing job applications",
-  "auth.or" : "Or",
-  "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department"
+  "auth.welcome": "Welcome to the Employment Portal",
+  "auth.detail": "A unified platform for managing job applications",
+  "auth.or": "Or",
+  "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department",
+  "pending.title": "Account Under Review",
+  "pending.subtitle": "Thank you! You have logged in successfully, but your account permissions need activation by an administrator.",
+  "pending.detail": "Please wait until you are assigned roles or permissions to access the internal systems. You will be able to log in and proceed once these actions are complete.",
+  "pending.logout": "Logout and try later"
 }

@@ -40,7 +40,7 @@ export class TokenService {
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem(OAUTH_STATE_KEY);
-    } catch {}
+    } catch { }
     this.mem = {};
   }
 
@@ -161,13 +161,13 @@ export class TokenService {
 
   public getMainUserRole(): string {
     const rawRoles = this.getRolesFromToken(this.getToken() || '');
-    return rawRoles.includes(SystemRoles.SystemAdmin) ? SystemRoles.SystemAdmin
-      : rawRoles.includes(SystemRoles.Employee) ? SystemRoles.Employee
-        : rawRoles.includes(SystemRoles.OfficeAdmin) ? SystemRoles.OfficeAdmin
-          : rawRoles.includes(SystemRoles.OfficeUser) ? SystemRoles.OfficeUser
-            : rawRoles.includes(SystemRoles.DepartmentManager) ? SystemRoles.DepartmentManager
-              : rawRoles.includes(SystemRoles.HrManager) ? SystemRoles.HrManager
-                : '';
+    if (rawRoles.includes(SystemRoles.SystemAdmin)) return SystemRoles.SystemAdmin;
+    if (rawRoles.includes(SystemRoles.HrManager)) return SystemRoles.HrManager;
+    if (rawRoles.includes(SystemRoles.DepartmentManager)) return SystemRoles.DepartmentManager;
+    if (rawRoles.includes(SystemRoles.OfficeAdmin)) return SystemRoles.OfficeAdmin;
+    if (rawRoles.includes(SystemRoles.OfficeUser)) return SystemRoles.OfficeUser;
+    if (rawRoles.includes(SystemRoles.Employee)) return SystemRoles.Employee;
+    return '';
   }
 
   getRolesFromToken(token: string): string[] {
