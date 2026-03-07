@@ -6,12 +6,17 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Roles.Handlers.Commands;
 
-public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleManager, IMapper mapper)
+public sealed class UpdateRoleCommandHandler(
+    RoleManager<ApplicationRole> roleManager,
+    UserManager<User> userManager,
+    ITokenService tokenService,
+    IMapper mapper)
     : IRequestHandler<UpdateRoleCommand, IResult<RoleDto>>
 {
     public async Task<IResult<RoleDto>> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
@@ -55,6 +60,13 @@ public sealed class UpdateRoleCommandHandler(RoleManager<ApplicationRole> roleMa
             return Result.Fail<RoleDto>(permissionResult.Errors);
 
         var updatedClaims = await roleManager.GetClaimsAsync(role);
+
+        var users = await userManager.GetUsersInRoleAsync(role.Name!);
+        foreach (var user in users)
+        {
+            await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
+        }
+
         return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, updatedClaims)));
     }
 }

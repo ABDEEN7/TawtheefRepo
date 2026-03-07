@@ -63,6 +63,7 @@ public class TokenService(
 
         user.LastLoginDate = time.GetUtcNow().UtcDateTime;
         await userManager.UpdateSecurityStampAsync(user);
+        await ClearUserCacheAsync(user.Id, ct);
 
         var tokenResult = await BuildAuthResponseAsync(user, refreshToken, sid, ct);
         if (tokenResult.IsFailed)
@@ -317,5 +318,11 @@ public class TokenService(
             .ToListAsync(ct);
 
         return perms!;
+    }
+
+    public async Task ClearUserCacheAsync(Guid userId, CancellationToken ct)
+    {
+        await cache.RemoveAsync($"roles:{userId}", ct);
+        await cache.RemoveAsync($"perms:{userId}", ct);
     }
 }
