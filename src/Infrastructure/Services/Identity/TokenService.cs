@@ -91,6 +91,7 @@ public class TokenService(
         var sw = Stopwatch.StartNew();
         var timings = new Dictionary<string, long>();
         
+        var setupSw = Stopwatch.StartNew();
         var now = time.GetUtcNow().UtcDateTime;
         var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
 
@@ -99,7 +100,15 @@ public class TokenService(
 
         user.RefreshTokens.Add(replacement);
 
-        await uow.GetEntityRepository<RefreshToken>().UpdateAsync(currentToken, ct);
+        // Optimization: Attach and mark as modified directly to avoid the FindAsync inside uow.UpdateAsync
+        var entry = dbContext.Entry(currentToken);
+        if (entry.State == EntityState.Detached)
+        {
+            dbContext.Attach(currentToken);
+        }
+        entry.State = EntityState.Modified;
+        
+        timings["UpdateSetup"] = setupSw.ElapsedMilliseconds;
 
         var buildSw = Stopwatch.StartNew();
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
