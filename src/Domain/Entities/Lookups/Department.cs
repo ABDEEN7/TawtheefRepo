@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups;
@@ -20,6 +21,7 @@ public static class DepartmentIds
 /// هي الجهة الطالبة للوظيفة
 /// </summary>
 [Table(nameof(Department), Schema = Schemas.Lookup)]
+[Index(nameof(ManagementId))]
 public class Department : LookupBase
 {
     public Guid ManagementId { get; set; }

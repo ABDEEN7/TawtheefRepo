@@ -1,8 +1,11 @@
-﻿using Tawtheef.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Logger;
 
+[Index(nameof(EntityId))]
+[Index(nameof(ChangedByUserId))]
 public class EntityLog : EventEntity
 {
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
 using Tawtheef.Domain.Constants;
@@ -13,6 +14,10 @@ using Tawtheef.Domain.ValueObjects.User;
 
 namespace Tawtheef.Domain.Entities.Users;
 
+[Index(nameof(UserTypeId))]
+[Index(nameof(CreatedById))]
+[Index(nameof(UpdatedById))]
+[Index(nameof(DeletedById))]
 public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalizedFullName
 {
     [Required, StringLength(100)]

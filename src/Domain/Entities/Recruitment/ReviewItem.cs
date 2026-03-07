@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
@@ -39,6 +40,12 @@ public enum ReviewTargetType {
 }
 
 [Table(nameof(ReviewItem), Schema = Schemas.Hr)]
+[Index(nameof(ProfileChangeId))]
+[Index(nameof(UserProfileId))]
+[Index(nameof(EntityId))]
+[Index(nameof(ResourceId))]
+[Index(nameof(ReviewedById))]
+[Index(nameof(Status))]
 public class ReviewItem : EventEntity
 {
     /// <summary>

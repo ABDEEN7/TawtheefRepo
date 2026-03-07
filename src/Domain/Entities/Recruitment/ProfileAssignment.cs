@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(ProfileAssignment), Schema = Schemas.Hr)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(EmployeeId))]
 public class ProfileAssignment : EventEntity
 {
     public Guid UserProfileId { get; init; }

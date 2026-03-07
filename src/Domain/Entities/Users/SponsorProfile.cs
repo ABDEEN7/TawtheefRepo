@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(SponsorProfile), Schema = Schemas.Applicant)]
+[Index(nameof(SponsorTypeId))]
+[Index(nameof(SponsorCardId))]
 public class SponsorProfile : EventEntity
 {
     public Guid SponsorTypeId { get; set; }

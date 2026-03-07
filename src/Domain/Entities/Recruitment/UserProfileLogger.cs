@@ -1,11 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
 
 [Table(nameof(UserProfileLogger), Schema = Schemas.Hr)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(PerformedById))]
+[Index(nameof(EntityId))]
+[Index(nameof(AttachmentId))]
 public class UserProfileLogger : EventEntity
 {
     public Guid UserProfileId { get; set; }

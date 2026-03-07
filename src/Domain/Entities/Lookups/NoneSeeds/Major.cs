@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using MediatR;
 using FluentResults;
-
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 [Table(nameof(Major), Schema = Schemas.Lookup)]
+[Index(nameof(ParentId))]
 public class Major : LookupBase
 {
     public Guid? ParentId { get; set; }

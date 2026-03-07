@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
@@ -7,6 +8,8 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(TrainingCourse), Schema = Schemas.Profile)]
+[Index(nameof(UserProfileId))]
+[Index(nameof(CertificateId))]
 public class TrainingCourse : EventEntity
 {
     public Guid UserProfileId { get; set; }

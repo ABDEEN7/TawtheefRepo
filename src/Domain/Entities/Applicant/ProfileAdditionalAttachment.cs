@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Applicant;
 
 [Table(nameof(ProfileAdditionalAttachment), Schema = Schemas.Profile)]
+[Index(nameof(AttachmentId))]
+[Index(nameof(UserProfileId))]
 public class ProfileAdditionalAttachment: EventEntity
 {
     [MaxLength(128)]

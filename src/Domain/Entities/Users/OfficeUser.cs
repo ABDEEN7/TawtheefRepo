@@ -1,9 +1,11 @@
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Tawtheef.Domain.Entities.Users;
 
+[Index(nameof(OfficeId))]
 public class OfficeUser : User
 {
     public Guid? OfficeId { get; set; }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
@@ -11,6 +12,24 @@ using Tawtheef.Domain.Utils;
 namespace Tawtheef.Domain.Entities.Users;
 
 [Table(nameof(UserProfile), Schema = Schemas.Applicant)]
+[Index(nameof(UserId))]
+[Index(nameof(CandidateTypeId))]
+[Index(nameof(TargetEntityId))]
+[Index(nameof(OfficeId))]
+[Index(nameof(ResumeAttachmentId))]
+[Index(nameof(NationalCardId))]
+[Index(nameof(NationalityId))]
+[Index(nameof(GenderId))]
+[Index(nameof(ReligionId))]
+[Index(nameof(MaritalStatusId))]
+[Index(nameof(ResidenceCountryId))]
+[Index(nameof(InterviewLocationId))]
+[Index(nameof(ResidenceAddressId))]
+[Index(nameof(SponsorProfileId))]
+[Index(nameof(BirthdayCertificateId))]
+[Index(nameof(MarriageCertificateId))]
+[Index(nameof(Provider))]
+[Index(nameof(Status))]
 public class UserProfile : EventEntity
 {
     public Guid UserId { get; init; }
