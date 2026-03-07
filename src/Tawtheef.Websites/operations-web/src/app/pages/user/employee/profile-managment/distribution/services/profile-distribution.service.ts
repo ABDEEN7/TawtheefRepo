@@ -9,10 +9,10 @@ import {
   ManualAssignRequest,
   ReassignRequest,
 } from '../models/profile-distribution.models';
-import {HttpService} from '../../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../../core/http/endpoints.service';
-import {PaginatedResult} from '../../../../../../core/models/paginated-result.model';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
+import { HttpService } from '../../../../../../core/http/http.service';
+import { EndpointsService } from '../../../../../../core/http/endpoints.service';
+import { PaginatedResult } from '../../../../../../core/models/paginated-result.model';
+import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileDistributionService {
@@ -28,7 +28,7 @@ export class ProfileDistributionService {
   }
 
   getTargetEntities(): Observable<dropdownOptionsModel[]> {
-    return this.http.get<dropdownOptionsModel[]>(this.endpoints.job.lookups.targetEntities);
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.distribution.targetEntities);
   }
 
   assignManually(request: ManualAssignRequest): Observable<DistributionResult> {
