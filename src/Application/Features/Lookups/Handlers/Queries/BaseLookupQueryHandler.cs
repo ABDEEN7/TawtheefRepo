@@ -1,6 +1,5 @@
-﻿using MediatR;
-using FluentResults;
-using MapsterMapper;
+﻿using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;

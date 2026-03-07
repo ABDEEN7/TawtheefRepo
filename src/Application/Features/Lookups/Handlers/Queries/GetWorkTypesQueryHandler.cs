@@ -1,4 +1,3 @@
-using MapsterMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Lookups.Queries;
@@ -7,5 +6,5 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Application.Features.Lookups.Handlers.Queries;
 
 public sealed class GetWorkTypesQueryHandler(
-    IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache cache)
-    : BaseLookupQueryHandler<WorkType, GetWorkTypesQuery>(unitOfWork, mapper, cache);
+    IUnitOfWork unitOfWork,  IMemoryCache cache)
+    : BaseLookupQueryHandler<WorkType, GetWorkTypesQuery>(unitOfWork, cache);
