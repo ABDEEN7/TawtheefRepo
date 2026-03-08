@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { HttpService } from '../../../../../core/http/http.service';
@@ -25,8 +26,19 @@ export class MajorsSkillsManagementService {
   private endpoints = inject(EndpointsService);
 
   // =============== Major-Skill Mapping ===============
-  getMajorSkills(filters: MajorSkillFiltersModel): Observable<PaginatedResult<MajorSkillListItemModel>> {
-    return this.http.get<PaginatedResult<MajorSkillListItemModel>>(this.endpoints.majorSkillsManagement.list, filters);
+  getMajorSkills(
+    filters: MajorSkillFiltersModel,
+    options?: { skipGlobalLoader?: boolean }
+  ): Observable<PaginatedResult<MajorSkillListItemModel>> {
+    const requestOptions = options?.skipGlobalLoader
+      ? { headers: new HttpHeaders({ 'X-Skip-Loading': 'true' }) }
+      : undefined;
+
+    return this.http.get<PaginatedResult<MajorSkillListItemModel>>(
+      this.endpoints.majorSkillsManagement.list,
+      filters,
+      requestOptions
+    );
   }
 
   getMajorSkillDetails(id: string): Observable<MajorSkillDetailsModel> {

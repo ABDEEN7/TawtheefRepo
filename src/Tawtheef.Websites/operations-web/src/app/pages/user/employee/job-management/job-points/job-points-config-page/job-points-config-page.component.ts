@@ -52,6 +52,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   systemMaxPoints: number = 0;
   isFinalApprovalAvailable: boolean = false;
   isLoading: boolean = false;
+  isReadOnlyMode = false;
 
   form!: FormGroup;
   isEditMode = false;
@@ -59,6 +60,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initForm();
+    this.isReadOnlyMode = this.route.snapshot.queryParamMap.get('mode') === 'view';
     this.handleMainTotal();
     this.handleExperienceTotal();
 
@@ -68,6 +70,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       this.loadJob();
     }
     this.lookupsService.loadJobStatus().subscribe();
+    this.applyReadOnlyMode();
   }
 
   ngOnDestroy(): void {
@@ -193,6 +196,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
               { emitEvent: true }
             );
             this.isLoading = false;
+            this.applyReadOnlyMode();
             this.cdr.detectChanges();
           }
         },
@@ -210,6 +214,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           this.isEditMode = true;
           this.isFinalApprovalAvailable = !response.isApproved && this.areAllCategoriesValid();
           this.isLoading = false;
+          this.applyReadOnlyMode();
           this.cdr.detectChanges();
         },
       });
@@ -379,6 +384,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           },
           error: () => {
             this.isLoading = false;
+            this.applyReadOnlyMode();
             this.cdr.detectChanges();
           },
         });
@@ -452,6 +458,18 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  private applyReadOnlyMode(): void {
+    if (this.isReadOnlyMode) {
+      this.form.disable({ emitEvent: false });
+      return;
+    }
+
+    this.form.enable({ emitEvent: false });
+    this.mainFormGroup.get('total')?.disable({ emitEvent: false });
+    this.detailsFormGroup.get('experience.total')?.disable({ emitEvent: false });
+  }
+
   goToDetails(): void {
     if (this.canAccessDetails()) {
       this.activeTab = '1';
@@ -463,10 +481,12 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   canApprovePoints(): boolean {
+    if (this.isReadOnlyMode) return false;
     return this.authService.hasPermission(Permissions.JobPoints.Approve);
   }
 
   canManagePoints(): boolean {
+    if (this.isReadOnlyMode) return false;
     return this.authService.hasPermission(Permissions.JobPoints.Manage);
   }
 }

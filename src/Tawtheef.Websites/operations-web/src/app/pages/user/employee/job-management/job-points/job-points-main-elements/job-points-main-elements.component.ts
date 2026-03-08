@@ -11,6 +11,7 @@ export class JobPointsMainElementsComponent {
   @Input() form!: FormGroup;
   @Input() keys: { key: string; initialValue: number }[] = [];
   @Input() systemMaxPoints = 0;
+  @Input() isReadOnlyMode = false;
 
   @Output() next = new EventEmitter<void>();
 
