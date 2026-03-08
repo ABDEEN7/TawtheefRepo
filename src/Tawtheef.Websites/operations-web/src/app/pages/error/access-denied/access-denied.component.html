@@ -1,17 +1,17 @@
 <div class="error-box access-denied-content">
   <!-- Decorative background -->
-      <div class="decorations">
-        <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="dec bg-01"/>
-        <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="dec bg-02"/>
-        <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="dec bg-03"/>
-        <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="dec bg-04"/>
-        <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="dec bg-05"/>
-        <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="dec bg-06"/>
-        </div>
+  <div class="decorations">
+    <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="dec bg-01" />
+    <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="dec bg-02" />
+    <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="dec bg-03" />
+    <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="dec bg-04" />
+    <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="dec bg-05" />
+    <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="dec bg-06" />
+  </div>
   <!-- Logo with home link -->
   <div class="error-logo">
     <a [routerLink]="routes.home">
-      <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate"/>
+      <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate" />
     </a>
   </div>
 
@@ -26,24 +26,23 @@
 
   <!-- Main illustration -->
   <div class="error-box-img access-denied-img">
-    <img src="assets/img/error/access-denied.gif" [alt]="'accessDeniedImage' | translate" class="img-fluid"/>
+    <img src="assets/img/error/access-denied.gif" [alt]="'accessDeniedImage' | translate" class="img-fluid" />
   </div>
 
   <!-- Action buttons -->
   <div class="d-flex justify-content-center gap-3 mt-4">
     <a [routerLink]="routes.home" class="btn btn-primary">
       <i class="fas fa-home me-2"></i>
-      {{ 'app.accessDenied.logout' | translate }}
-    </a>
-
-    <a *ngIf="authService.isLoggedIn()" (click)="logout()"
-       class="btn btn-secondary">
-      <i class="fas fa-tachometer-alt me-2"></i>
       {{ 'app.accessDenied.goDashboard' | translate }}
     </a>
 
+    <a *ngIf="authService.isLoggedIn()" (click)="logout()" class="btn btn-secondary">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      {{ 'app.accessDenied.logout' | translate }}
+    </a>
+
     <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
-       class="btn btn-outline-primary">
+      class="btn btn-outline-primary">
       <i class="fas fa-sign-in-alt me-2"></i>
       {{ 'app.accessDenied.login' | translate }}
     </a>

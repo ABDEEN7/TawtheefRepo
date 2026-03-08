@@ -3,7 +3,6 @@
   "app.underConstruction.websiteUnderConstruction2": "التطوير",
   "app.underConstruction.constructionMessage": "نحن نعمل على إصلاح المشكلة. سنعود قريباً",
   "app.underConstruction.backToHome": "العودة إلى الصفحة الرئيسية",
-
   "app.error500.decorativeElement": "عنصر زخرفي",
   "app.error500.logoAltText": "شعار الشركة",
   "app.error500.serverErrorImage": "صورة توضيحية لخطأ في الخادم",
@@ -11,14 +10,12 @@
   "app.error500.oops500Error2": "في الخادم",
   "app.error500.serverErrorMessage": "نعتذر ونعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى في وقت لاحق",
   "app.error500.backToHome": "العودة إلى الصفحة الرئيسية",
-
   "app.error404.decorativeElement": "عنصر زخرفي",
   "app.error404.logoAltText": "شعار الشركة",
   "app.error404.notFoundImage": "صورة توضيحية لصفحة غير موجودة",
   "app.error404.ohNoError": "أوه لا! خطأ",
   "app.error404.pageNotFoundMessage": "الصفحة التي طلبتها غير موجودة. ربما تكون القوة معك!",
   "app.error404.backToHome": "العودة للصفحة الرئيسية",
-
   "app.comeSoon.decorativeElement": "عنصر زخرفي",
   "app.comeSoon.logoAltText": "شعار الشركة",
   "app.comeSoon.comingSoon1": "سنصل",
@@ -32,7 +29,6 @@
   "app.comeSoon.notifyMeTitle": "أخبرني عند إطلاق الموقع",
   "app.comeSoon.enterEmailPlaceholder": "أدخل بريدك الإلكتروني",
   "app.comeSoon.notifyMeButton": "أخبرني!",
-
   "app.accessDenied.decorativeElement": "عنصر زخرفي",
   "app.accessDenied.logoAltText": "شعار الشركة",
   "app.accessDenied.accessDeniedImage": "صورة توضيحية للوصول المرفوض",
@@ -40,6 +36,7 @@
   "app.accessDenied.accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
   "app.accessDenied.goHome": "العودة إلى الصفحة الرئيسية",
   "app.accessDenied.goDashboard": "الذهاب إلى لوحة التحكم",
+  "app.accessDenied.logout": "تسجيل الخروج",
   "app.accessDenied.title1": "تم رفض الوصول",
   "app.accessDenied.title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
   "app.accessDenied.content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",

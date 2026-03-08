@@ -2,14 +2,14 @@ import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe} from '@ngx-translate/core';
-import {Tooltip} from 'primeng/tooltip';
-import {routes} from '../../../routes/routes';
-import {AuthService} from '../../../core/auth/auth.service';
-import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
-import {MenuItem} from '../../admin/sidebar/sidebar.models';
-import {Permissions} from '../../../core/constants/permissions';
-import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Tooltip } from 'primeng/tooltip';
+import { routes } from '../../../routes/routes';
+import { AuthService } from '../../../core/auth/auth.service';
+import { FaDirArrowDirective } from '../../../shared/directives/dir-arrow.directive';
+import { MenuItem } from '../../admin/sidebar/sidebar.models';
+import { Permissions } from '../../../core/constants/permissions';
+import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-sidebar',
@@ -33,11 +33,11 @@ export class SidebarComponent implements OnInit {
     { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'hgi-user-switch', route: routes.employee.candidateUsersManagement, permission: Permissions.CandidateUsers.View },
     { key: 'office-users', label: 'internal.sidebar.office-users', icon: 'hgi-file-star', route: routes.employee.officeUsersManagement, permission: Permissions.OfficeUsers.View },
     { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'hgi-structure-03', route: routes.employee.organizationStructures, permission: Permissions.OrganizationStructures.Manage },
-    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.employee.majorsSkillsManagement, permission: Permissions.Nominations.View },
+    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.employee.majorsSkillsManagement, permission: Permissions.MajorSkills.Manage },
     { key: 'kawader', label: 'internal.sidebar.kawader', icon: ' hgi-user-multiple', route: routes.employee.kawader, permission: Permissions.Kawader.Manage }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.highlightActive(this.router.url);
