@@ -27,6 +27,7 @@ export class JobPointsTabComponent implements OnInit {
   @Input() mainForm!: FormGroup;
   @Input() form!: FormGroup;
   @Input() job: JobResponse | null = null;
+  @Input() isReadOnlyMode = false;
 
   @Output() save = new EventEmitter<SaveJobPointsRequestDto>();
 

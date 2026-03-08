@@ -2,14 +2,11 @@
   "JOB_LIST_AVAILABLE_JOBS": "Available Jobs",
   "JOB_LIST_REVIEW_EDIT_JOBS": "Review and Edit Job List",
   "JOB_LIST_NO_JOBS_FOUND": "No Jobs Found",
-
   "JOB_LIST_FILTERS_TITLE": "Filters",
   "JOB_LIST_FILTERS_HINT": "Filter jobs by search, category, or status",
-
   "JOB_LIST_FILTERS_SEARCH_PLACEHOLDER": "Search jobs...",
   "JOB_LIST_FILTERS_JOB_CATEGORY": "Job Category",
   "JOB_LIST_FILTERS_STATUS": "Status",
-
   "JOB_LIST_COLUMNS_TITLE_AR": "Title (Arabic)",
   "JOB_LIST_COLUMNS_TITLE_EN": "Title (English)",
   "JOB_LIST_COLUMNS_JOB_CATEGORY": "Category",
@@ -17,7 +14,6 @@
   "JOB_LIST_COLUMNS_STATUS": "Status",
   "JOB_LIST_COLUMNS_DEADLINE": "Deadline",
   "JOB_LIST_COLUMNS_ACTIONS": "Actions",
-
   "JOB_LIST_BUTTONS_CREATE_JOB": "Create Job",
   "JOB_LIST_BUTTONS_CREATE_FIRST_JOB": "Create Your First Job",
   "JOB_LIST_BUTTONS_CLEAR_FILTERS": "Clear Filters",
@@ -32,16 +28,14 @@
   "JOB_LIST_BUTTONS_REOPEN": "Reopen",
   "JOB_LIST_BUTTONS_CANCEL": "Cancel",
   "JOB_LIST_BUTTONS_DELETE": "Delete",
-  "JOB_LIST_BUTTONS_VIEW_CANDIDATE":"View Candidates",
-  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"Send Invitations",
+  "JOB_LIST_BUTTONS_VIEW_CANDIDATE": "View Candidates",
+  "JOB_LIST_BUTTONS_SEND_INVITATIONS": "Send Invitations",
   "JOB_LIST_BUTTONS_COPY": "Create from Previous",
-
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB": "Are you sure you want to reject this job?",
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE": "The employer will be notified of the rejection and can edit the job and resubmit it for review.",
   "JOB_LIST_CONFIRMATIONS_CLOSE_JOB": "Are you sure you want to close this job? It will stop receiving applications.",
   "JOB_LIST_CONFIRMATIONS_CANCEL_JOB": "Are you sure you want to cancel this job?",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB": "Are you sure you want to delete this job? This action cannot be undone.",
-
   "JOB_LIST_MESSAGES_JOB_APPROVED": "Job approved successfully",
   "JOB_LIST_MESSAGES_JOB_REJECTED": "Job rejected successfully",
   "JOB_LIST_MESSAGES_JOB_PUBLISHED": "Job published successfully",
@@ -49,7 +43,6 @@
   "JOB_LIST_MESSAGES_JOB_REOPENED": "Job reopened successfully",
   "JOB_LIST_MESSAGES_JOB_CANCELLED": "Job cancelled successfully",
   "JOB_LIST_MESSAGES_JOB_DELETED": "Job deleted successfully",
-
   "JOB_LIST_ERRORS_LOAD_JOBS_FAILED": "Failed to load jobs. Please try again.",
   "JOB_LIST_ERRORS_APPROVE_FAILED": "Failed to approve the job. Please try again.",
   "JOB_LIST_ERRORS_REJECT_FAILED": "Failed to reject the job. Please try again.",
@@ -58,16 +51,15 @@
   "JOB_LIST_ERRORS_REOPEN_FAILED": "Failed to reopen the job. Please try again.",
   "JOB_LIST_ERRORS_CANCEL_FAILED": "Failed to cancel the job. Please try again.",
   "JOB_LIST_ERRORS_DELETE_FAILED": "Failed to delete the job. Please try again.",
-
   "JOB_LIST_STATISTICS": "Statistics",
   "JOB_LIST_JOB_LIST": "Job List",
-
-  "JOB_LIST_STATS_CANCELLED":"Cancelled",
-  "JOB_LIST_STATS_PENDING_APPROVAL":"Pending Approval",
-  "JOB_LIST_STATS_APPROVED":"Approved",
-  "JOB_LIST_STATS_DRAFTED":"Drafted",
+  "JOB_LIST_STATS_CANCELLED": "Cancelled",
+  "JOB_LIST_STATS_PENDING_APPROVAL": "Pending Approval",
+  "JOB_LIST_STATS_APPROVED": "Approved",
+  "JOB_LIST_STATS_DRAFTED": "Drafted",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "Are you sure you want to delete this job ?",
-  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE":"Are you sure you want to cancel this job ?",
+  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE": "Are you sure you want to cancel this job ?",
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB": "Reopen Job",
-  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "Are you sure you want to reopen this job?"
+  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "Are you sure you want to reopen this job?",
+  "JOB_LIST_BUTTONS_POINTS_VIEW": "View Points Allocation"
 }

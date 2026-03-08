@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ConfirmDialog} from 'primeng/confirmdialog';
@@ -20,6 +20,8 @@ import {finalize} from 'rxjs/operators';
 import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-offices-management',
@@ -40,6 +42,7 @@ import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 })
 export class OfficesManagement implements OnInit {
   private officesService = inject(OfficesService);
+  private destroyRef = inject(DestroyRef);
   private confirmationService = inject(ConfirmationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
@@ -69,6 +72,7 @@ export class OfficesManagement implements OnInit {
   isModalLoading = signal(false);
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadOffices();
     this.loadCountries();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
@@ -98,8 +102,20 @@ export class OfficesManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({...f, pageNumber: 1, search: this.searchTerm}));
-    this.loadOffices();
+    this.searchChanges$.next(this.searchTerm);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(term => {
+        this.filters.update(f => ({...f, pageNumber: 1, search: term}));
+        this.loadOffices();
+      });
   }
 
   onPageChange(page: number) {
@@ -282,3 +298,4 @@ export class OfficesManagement implements OnInit {
     });
   }
 }
+  private searchChanges$ = new Subject<string>();
