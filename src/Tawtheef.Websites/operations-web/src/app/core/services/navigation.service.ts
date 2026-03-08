@@ -32,31 +32,40 @@ export class NavigationService {
   }
 
   redirectBasedOnRole(role: string): void {
+    const commands = this.getRoleBasedRoute(role);
+    this.router.navigate(commands, { replaceUrl: true });
+  }
+
+  getRoleBasedRoute(role: string): string[] {
     if (!role) {
-      this.router.navigate([routes.accessDenied], { replaceUrl: true });
-      return;
+      return [routes.accessDenied];
     }
 
     // 1. Dashboard (High Priority for Management roles)
     if (this.permissionService.hasPermission(Permissions.Dashboard.View)) {
-      this.router.navigate([routes.dashboard(role)], { replaceUrl: true });
-      return;
+      return [routes.dashboard(role)];
     }
 
     // 2. Jobs Management (Alternative for recruiters/staff)
     if (this.permissionService.hasPermission(Permissions.Jobs.View)) {
-      this.router.navigate([routes.employee.JobList], { replaceUrl: true });
-      return;
+      return [routes.employee.JobList];
     }
 
     // 3. Office Users (Alternative for admins)
     if (this.permissionService.hasPermission(Permissions.OfficeUsers.View)) {
-      this.router.navigate([routes.employee.officeUsersManagement], { replaceUrl: true });
-      return;
+      return [routes.employee.officeUsersManagement];
+    }
+
+    if (this.permissionService.hasPermission(Permissions.ProfileDistribution.View)) {
+      return [routes.employee.profileDistribution];
+    }
+
+    if (this.permissionService.hasPermission(Permissions.ProfileApproval.View)) {
+      return [routes.employee.approvalProfile];
     }
 
     // 4. Default Fallback for users with NO permissions yet (New Users)
-    this.router.navigate([routes.auth.pendingApproval], { replaceUrl: true });
+    return [routes.auth.pendingApproval];
   }
 
   private getReturnUrl(): string | null {

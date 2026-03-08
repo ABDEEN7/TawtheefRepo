@@ -31,4 +31,8 @@ export class AccessDeniedComponent implements OnInit{
     // Get the previous URL from state or default home
     this.previousUrl = this.router.getCurrentNavigation()?.extras?.state?.['previousUrl'] || '/';
   }
+
+  logout(){
+    this.authService.logout(true);
+  }
 }

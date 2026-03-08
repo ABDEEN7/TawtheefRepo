@@ -139,13 +139,33 @@ internal sealed class ProfileDistributionProjection(
             profiles.Metadata.PageSize);
     }
 
-    public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(CancellationToken ct)
+    public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(Guid userId, CancellationToken ct)
     {
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        var employees = await userManager.Users.OfType<EmployeeUser>()
-            .Where(e => !e.IsDeleted)
-            .ToListAsync(ct);
+        var user = await userManager.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user is null) return [];
+
+        List<User> employees;
+
+        if (user is OfficeUser officeUser && officeUser.OfficeId is not null)
+        {
+            employees = await userManager.Users.OfType<OfficeUser>()
+                .Where(u => u.OfficeId == officeUser.OfficeId)
+                .AsNoTracking()
+                .Cast<User>()
+                .ToListAsync(ct);
+        }
+        else
+        {
+            employees = await userManager.Users.OfType<EmployeeUser>()
+                .AsNoTracking()
+                .Cast<User>()
+                .ToListAsync(ct);
+        }
 
         if (employees.Count == 0) return [];
 
@@ -190,11 +210,9 @@ internal sealed class ProfileDistributionProjection(
 
     public async Task<DistributionResultDto> BuildResultAsync(Guid userId, int assignedCount, CancellationToken ct)
     {
-        var employees = await LoadEmployeesAsync(ct);
-
-        // Note: this overload must exist in your codebase; keeping your original intent.
+        var employees = await LoadEmployeesAsync(userId, ct);
         var profiles = await LoadProfilesAsync(
-            userId: userId, // replace with actual current userId if needed by your workflow
+            userId: userId,
             paginatedRequest: new PaginatedRequest { PageSize = int.MaxValue },
             status: null,
             searchTerm: null,
@@ -231,7 +249,7 @@ internal sealed class ProfileDistributionProjection(
         };
     }
 
-    private static DistributionEmployeeAvailability ResolveAvailability(EmployeeUser employee)
+    private static DistributionEmployeeAvailability ResolveAvailability(User employee)
     {
         if (employee.IsBlocked) return DistributionEmployeeAvailability.Suspended;
         if (employee.IsDeleted) return DistributionEmployeeAvailability.Inactive;

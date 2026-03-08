@@ -44,7 +44,8 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Profile.View)]
     public async Task<IActionResult> GetEmployees(CancellationToken ct)
     {
-        var result = await mediator.Send(new GetDistributionEmployeesQuery(), ct);
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new GetDistributionEmployeesQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
 

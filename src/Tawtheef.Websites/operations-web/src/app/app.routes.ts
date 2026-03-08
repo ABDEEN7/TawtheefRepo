@@ -18,7 +18,6 @@ export const routes: Routes = [
       },
       {
         path: 'auth',
-        canMatch: [loggedOutOnlyGuard],
         loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthModule),
       },
       {

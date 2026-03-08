@@ -33,10 +33,10 @@
   <div class="d-flex justify-content-center gap-3 mt-4">
     <a [routerLink]="routes.home" class="btn btn-primary">
       <i class="fas fa-home me-2"></i>
-      {{ 'app.accessDenied.goHome' | translate }}
+      {{ 'app.accessDenied.logout' | translate }}
     </a>
 
-    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.dashboard(tokenService.getMainUserRole())"
+    <a *ngIf="authService.isLoggedIn()" (click)="logout()"
        class="btn btn-secondary">
       <i class="fas fa-tachometer-alt me-2"></i>
       {{ 'app.accessDenied.goDashboard' | translate }}

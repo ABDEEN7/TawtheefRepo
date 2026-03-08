@@ -40,6 +40,7 @@
   "app.accessDenied.accessDeniedMessage": "عذرًا، ليس لديك الإذن للوصول إلى هذه الصفحة.",
   "app.accessDenied.goHome": "العودة إلى الصفحة الرئيسية",
   "app.accessDenied.goDashboard": "الذهاب إلى لوحة التحكم",
+  "app.accessDenied.logout": "تسجيل الخروج",
   "app.accessDenied.title1": "تم رفض الوصول",
   "app.accessDenied.title2": "ليس لديك الإذن للوصول إلى هذه الصفحة.",
   "app.accessDenied.content": "إذا كنت تعتقد أن هذا خطأ، يرجى الاتصال بالمسؤول.",
