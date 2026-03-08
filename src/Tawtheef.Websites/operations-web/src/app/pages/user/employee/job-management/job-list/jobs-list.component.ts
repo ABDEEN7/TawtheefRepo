@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { JobLookupService } from '../services/job-lookup.service';
@@ -6,7 +6,8 @@ import { JobQueryFilter } from '../models/job-query-filter.model';
 import { JobResponse } from '../models/job-response-model';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {NotificationService} from '../../../../../core/services/notification.service';
 import {DialogHelperService} from '../../../../../core/services/dialog-helper.service';
 import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
@@ -30,6 +31,7 @@ export class JobListComponent implements OnInit {
   private translateService = inject(TranslateService);
   private dialogHelperService = inject(DialogHelperService);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
   lookupsService = inject(JobLookupService);
 
   jobs: PaginatedResult<JobResponse> | undefined;
@@ -47,9 +49,11 @@ export class JobListComponent implements OnInit {
   filterStatus = signal<GUID | null>(null);
 
   readonly jobStatus = JobStatus;
+  private searchChanges = new Subject<string>();
   protected readonly Permissions = Permissions;
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadJobsWithFilters();
     this.lookupsService.loadJobCategories().subscribe();
 
@@ -79,6 +83,18 @@ export class JobListComponent implements OnInit {
         this.paginationMetadata = paginatedData.metadata;
       },
     });
+  }
+
+
+  onSearchInputChange(value: string) {
+    this.searchQuery.set(value ?? '');
+    this.searchChanges.next(value ?? '');
+  }
+
+  private setupSearchListener() {
+    this.searchChanges
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.onFilterChange());
   }
 
   onFilterChange() {
@@ -115,6 +131,10 @@ export class JobListComponent implements OnInit {
     return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.JobPoints.Manage]);
   }
 
+  canViewJobPoints(): boolean {
+    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.JobPoints.View]);
+  }
+
   editJob(job: JobResponse) {
     if (!this.canManageJobs()) return;
     this.router.navigate([routes.employee.jobEdit(job.id)]).then();
@@ -130,9 +150,15 @@ export class JobListComponent implements OnInit {
     this.router.navigate([routes.employee.jobCreate]).then();
   }
 
-  openPointsModal(job: JobResponse) {
-    if (!this.canManageJobPoints()) return;
-    this.router.navigate([routes.employee.jobPoints(job.id)]).then();
+  openPointsModal(job: JobResponse, isReadOnly = false) {
+    if (!isReadOnly && !this.canManageJobPoints()) return;
+    if (isReadOnly && !this.canViewJobPoints()) return;
+
+    this.router
+      .navigate([routes.employee.jobPoints(job.id)], {
+        queryParams: isReadOnly ? { mode: 'view' } : undefined,
+      })
+      .then();
   }
 
   canCopyJob(job: JobResponse): boolean {

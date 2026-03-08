@@ -33,6 +33,7 @@
                           [form]="mainFormGroup"
                           [keys]="mainKeys"
                           [systemMaxPoints]="systemMaxPoints"
+                          [isReadOnlyMode]="isReadOnlyMode"
                           (next)="goToDetails()"
                         ></app-job-points-main-elements>
                       </p-tabpanel>
@@ -43,6 +44,7 @@
                             [mainForm]="mainFormGroup"
                             [form]="detailsFormGroup"
                             [job]="job"
+                            [isReadOnlyMode]="isReadOnlyMode"
                             (save)="save()"
                             (goPrevious)="goBack()"
                           ></app-job-points-tab>
@@ -52,7 +54,7 @@
                   </p-tabs>
                 }
 
-                @if (jobPoints?.id && isFinalApprovalAvailable && canApprovePoints()) {
+                @if (!isReadOnlyMode && jobPoints?.id && isFinalApprovalAvailable && canApprovePoints()) {
                   <div class="final-approval-section">
                     <div class="approval-info">
                       <i class="pi pi-check-circle mr-2"></i>
