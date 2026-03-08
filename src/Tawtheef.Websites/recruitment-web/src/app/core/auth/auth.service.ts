@@ -1,13 +1,13 @@
-import {Injectable} from "@angular/core";
-import {AuthCoreService} from "./auth-core.service";
-import {AuthStateService} from "./auth-state.service";
-import {UserService} from "./user.service";
+import { Injectable } from "@angular/core";
+import { AuthCoreService } from "./auth-core.service";
+import { AuthStateService } from "./auth-state.service";
+import { UserService } from "./user.service";
 import { Observable } from 'rxjs';
-import {UserInfoModel} from "../../shared/models/user-info.model";
-import {AuthBootstrap, AuthResponse, ProfileStatusDto} from "../models/auth/auth-response.model";
+import { UserInfoModel } from "../../shared/models/user-info.model";
+import { AuthBootstrap, AuthResponse, ProfileStatusDto } from "../models/auth/auth-response.model";
 import { map } from 'rxjs/operators';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private permissionsCache: Set<string> | null = null;
   constructor(
@@ -27,14 +27,14 @@ export class AuthService {
     return this.state.isAuthenticated$;
   }
 
-   get isAuthenticated(): boolean {
+  get isAuthenticated(): boolean {
     return this.state.isAuthenticated(true);
-   }
-   get isProfileCompleted(): boolean {
-    if(!this.token) return false;
+  }
+  get isProfileCompleted(): boolean {
+    if (!this.token) return false;
     const profile = this.decodeBootstrapFromJwt();
     return !profile.requiresProfileCompletion;
-   }
+  }
 
   get token(): string | null {
     return this.core.getToken;
@@ -57,8 +57,11 @@ export class AuthService {
   getCurrentUser(): UserInfoModel | null {
     return this.user.getCurrentUser();
   }
-  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>>{
+  getAuthBootstrap$(): Observable<Partial<ProfileStatusDto>> {
     return this.state.getAuthBootstrap$();
+  }
+  resetBootstrap(): void {
+    this.state.resetBootstrap();
   }
   isLoggedIn(): boolean {
     return this.state.checkAuthState(false);

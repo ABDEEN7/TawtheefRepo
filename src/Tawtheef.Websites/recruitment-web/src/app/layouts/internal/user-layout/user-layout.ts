@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit, inject} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {Navbar} from '../navbar/navbar';
-import {Footer} from '../footer/footer';
-import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
-import {AuthService} from '../../../core/auth/auth.service';
-import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
-import {TranslateService} from '@ngx-translate/core';
-import {TermsAgreementDialogComponent} from '../../../shared/dialogs/terms-agreement-dialog/terms-agreement-dialog.component';
-import {take} from 'rxjs/operators';
-import {Subscription} from 'rxjs';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Navbar } from '../navbar/navbar';
+import { Footer } from '../footer/footer';
+import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { AuthService } from '../../../core/auth/auth.service';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { TranslateService } from '@ngx-translate/core';
+import { TermsAgreementDialogComponent } from '../../../shared/dialogs/terms-agreement-dialog/terms-agreement-dialog.component';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-layout',
@@ -32,15 +32,10 @@ export class UserLayout implements OnInit, OnDestroy {
   private bootstrapSubscription: Subscription | null = null;
 
   ngOnInit(): void {
-    if (!this.auth.isAuthenticated) return;
-
-    this.bootstrapSubscription = this.auth.getAuthBootstrap$()
-      .pipe(take(1))
-      .subscribe(status => {
-        if (status?.agreedToTerms === false) {
-          this.openTermsDialog();
-        }
-      });
+    const user = this.auth.getCurrentUser();
+    if (user && user.agreedToTerms === false) {
+      this.openTermsDialog();
+    }
   }
 
   ngOnDestroy(): void {

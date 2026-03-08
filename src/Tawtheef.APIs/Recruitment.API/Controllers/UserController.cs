@@ -76,7 +76,7 @@ public class UserController(IMediator mediator) : ControllerBase
         var user = await userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
-        var profile = await pcs.EvaluateAsync(user.Id, ct);
+        var profile = await pcs.EvaluateAsync(user.Id, ct, user);
         return Ok(profile);
     }
     

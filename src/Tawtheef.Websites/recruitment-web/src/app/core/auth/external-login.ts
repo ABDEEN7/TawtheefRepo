@@ -313,18 +313,25 @@ export class ExternalLoginService implements OnDestroy {
   }
 
   private toast(severity: 'success' | 'info' | 'warn' | 'error', summary: string, detail: string) {
+    const fullKey = `server-error.${detail}`;
+    const translateValue = this.translate.instant(fullKey);
+    let detailMessage = detail;
+    if(fullKey != translateValue) {
+      detailMessage = translateValue;
+    }
+
     switch (severity) {
       case 'success':
-        this.notificationService.success(detail, summary);
+        this.notificationService.success(detailMessage, summary);
         break;
       case 'info':
-        this.notificationService.info(detail, summary);
+        this.notificationService.info(detailMessage, summary);
         break;
       case 'warn':
-        this.notificationService.warn(detail, summary);
+        this.notificationService.warn(detailMessage, summary);
         break;
       case 'error':
-        this.notificationService.error(detail, summary);
+        this.notificationService.error(detailMessage, summary);
         break;
     }
   }

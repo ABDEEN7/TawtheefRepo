@@ -44,7 +44,7 @@ public class TokenService(
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
         jwtSettings.Value.SigningKey ?? throw new ArgumentException("Jwt:Key is missing in configuration")));
     private const string PermClaimType = "permission";
-    private const string ProfileCompleteClaimType = "profile.complete";
+    private const string ProfileCompleteClaimType = "profile.completed";
     private const string UserTypeClaimType = "user_type";
 
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
@@ -98,7 +98,7 @@ public class TokenService(
 
         var swRevoke = Stopwatch.StartNew();
         currentToken.Revoke(now, ipAddress, "Rotated");
-        currentToken.ReplacedByTokenId = replacement.Id; // Use ID to avoid navigation fixup overhead
+        currentToken.ReplacedByToken = replacement;
         timings["RevokeLogic"] = swRevoke.ElapsedMilliseconds;
 
         var swAdd = Stopwatch.StartNew();

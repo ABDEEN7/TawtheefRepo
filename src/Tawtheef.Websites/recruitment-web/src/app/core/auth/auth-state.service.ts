@@ -171,6 +171,10 @@ export class AuthStateService {
     return this.bootstrap$;
   }
 
+  hydrateBootstrap(data: Partial<ProfileStatusDto>): void {
+    this.bootstrap$ = of(data as ProfileStatusDto).pipe(shareReplay(1));
+  }
+
   resetBootstrap(): void {
     this.bootstrap$ = null;
   }

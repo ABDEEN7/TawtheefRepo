@@ -214,6 +214,7 @@ public class ErrorsCodes
     public const string DegreeFileRequired = "DEGREE_FILE_REQUIRED";
     public const string ExperienceRequired = "EXPERIENCE_REQUIRED";
     public const string SkillOrLanguageRequired = "SKILL_OR_LANGUAGE_REQUIRED";
+    public const string UserUpdateFailed = "USER_UPDATE_FAILED";
     #endregion
 
     // =========================================================

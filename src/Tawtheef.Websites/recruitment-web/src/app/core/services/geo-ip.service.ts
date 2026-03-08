@@ -20,14 +20,9 @@ export class GeoIpService {
     // Emit a fallback object if all providers are slow
     const timeout$ = timer(1800).pipe(map(() => ({}) as GeoAny));
 
-    const skipHeaders = new HttpHeaders({
-      [HDR.SkipError]: 'true',
-      'X-Skip-Loading': 'true'
-    });
-
-    const ipapi$ = this.http.get<GeoAny>('https://ipapi.co/json/', undefined, { headers: skipHeaders }).pipe(
-      catchError(() => this.http.get<GeoAny>('https://ipwhois.app/json/', undefined, { headers: skipHeaders })),
-      catchError(() => this.http.get<GeoAny>('https://www.geoplugin.net/json.gp', undefined, { headers: skipHeaders })),
+    const ipapi$ = this.http.get<GeoAny>('https://ipapi.co/json/', undefined).pipe(
+      catchError(() => this.http.get<GeoAny>('https://ipwhois.app/json/', undefined)),
+      catchError(() => this.http.get<GeoAny>('https://www.geoplugin.net/json.gp', undefined)),
       catchError(() => of({} as GeoAny))
     );
 

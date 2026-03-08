@@ -13,6 +13,7 @@ import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
 import { UploadedFileRef } from '../../models/profile-state.model';
 import { routes } from '../../../../../../routes/routes';
+import { AuthService } from '../../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-step-review',
@@ -84,6 +85,8 @@ export class StepReviewComponent {
   }
 
 
+  private auth = inject(AuthService);
+
   submit() {
     if (!this.canSubmit()) return;
 
@@ -92,11 +95,23 @@ export class StepReviewComponent {
     this.errorText.set(null);
 
     this.profile.finalizeProfile().pipe(
-      tap(() => this.submitted.set(true)),
+      tap(() => {
+        this.submitted.set(true);
+        // ✅ clear bootstrap cache because status changed
+        this.auth.resetBootstrap();
+      }),
       finalize(() => this.submitting.set(false))
-    ).subscribe(() => {
-      // ✅ hard reload with fresh auth state
-      window.location.href = routes.user.dashboard;
+    ).subscribe({
+      next: () => {
+        // ✅ Refresh token to update "profile.completed" claim
+        this.auth.refreshToken().subscribe(() => {
+          // ✅ redirect to dashboard with fresh state
+          this.router.navigate([routes.user.dashboard], { replaceUrl: true });
+        });
+      },
+      error: (err: unknown) => {
+        this.errorText.set(typeof err === 'string' ? err : 'wizard.review.error');
+      }
     });
   }
 }
