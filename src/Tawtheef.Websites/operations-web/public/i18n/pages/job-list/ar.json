@@ -2,14 +2,11 @@
   "JOB_LIST_AVAILABLE_JOBS": "الوظائف المتاحة",
   "JOB_LIST_REVIEW_EDIT_JOBS": "مراجعة وتعديل قائمة الوظائف",
   "JOB_LIST_NO_JOBS_FOUND": "لم يتم العثور على وظائف",
-
   "JOB_LIST_FILTERS_TITLE": "الفلاتر",
   "JOB_LIST_FILTERS_HINT": "تصفية الوظائف حسب البحث أو التصنيف أو الحالة",
-
   "JOB_LIST_FILTERS_SEARCH_PLACEHOLDER": "بحث في الوظائف...",
   "JOB_LIST_FILTERS_JOB_CATEGORY": "تصنيف الوظيفة",
   "JOB_LIST_FILTERS_STATUS": "الحالة",
-
   "JOB_LIST_COLUMNS_TITLE_AR": "العنوان بالعربية",
   "JOB_LIST_COLUMNS_TITLE_EN": "العنوان بالإنجليزية",
   "JOB_LIST_COLUMNS_JOB_CATEGORY": "التصنيف",
@@ -17,7 +14,6 @@
   "JOB_LIST_COLUMNS_STATUS": "الحالة",
   "JOB_LIST_COLUMNS_DEADLINE": "تاريخ الإنتهاء",
   "JOB_LIST_COLUMNS_ACTIONS": "الإجراءات",
-
   "JOB_LIST_BUTTONS_CREATE_JOB": "إنشاء وظيفة",
   "JOB_LIST_BUTTONS_CREATE_FIRST_JOB": "أنشئ وظيفتك الأولى",
   "JOB_LIST_BUTTONS_CLEAR_FILTERS": "مسح الفلاتر",
@@ -33,13 +29,11 @@
   "JOB_LIST_BUTTONS_CANCEL": "إلغاء",
   "JOB_LIST_BUTTONS_DELETE": "حذف",
   "JOB_LIST_BUTTONS_COPY": "إنشاء من وظيفة سابقة",
-
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB": "هل أنت متأكد من رفض هذه الوظيفة؟",
   "JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE": "سيتم إبلاغ صاحب العمل بالرفض ويمكنه تعديل الوظيفة وإعادة تقديمها للمراجعة.",
   "JOB_LIST_CONFIRMATIONS_CLOSE_JOB": "هل أنت متأكد من إغلاق هذه الوظيفة؟ سيتوقف استقبال الطلبات.",
   "JOB_LIST_CONFIRMATIONS_CANCEL_JOB": "هل أنت متأكد من إلغاء هذه الوظيفة؟",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB": "هل أنت متأكد من حذف هذه الوظيفة؟ لا يمكن التراجع عن هذا الإجراء.",
-
   "JOB_LIST_MESSAGES_JOB_APPROVED": "تمت الموافقة على الوظيفة بنجاح",
   "JOB_LIST_MESSAGES_JOB_REJECTED": "تم رفض الوظيفة بنجاح",
   "JOB_LIST_MESSAGES_JOB_PUBLISHED": "تم نشر الوظيفة بنجاح",
@@ -47,7 +41,6 @@
   "JOB_LIST_MESSAGES_JOB_REOPENED": "تم إعادة فتح الوظيفة بنجاح",
   "JOB_LIST_MESSAGES_JOB_CANCELLED": "تم إلغاء الوظيفة بنجاح",
   "JOB_LIST_MESSAGES_JOB_DELETED": "تم حذف الوظيفة بنجاح",
-
   "JOB_LIST_ERRORS_LOAD_JOBS_FAILED": "فشل تحميل الوظائف. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_ERRORS_APPROVE_FAILED": "فشل الموافقة على الوظيفة. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_ERRORS_REJECT_FAILED": "فشل رفض الوظيفة. يرجى المحاولة مرة أخرى.",
@@ -56,16 +49,17 @@
   "JOB_LIST_ERRORS_REOPEN_FAILED": "فشل إعادة فتح الوظيفة. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_ERRORS_CANCEL_FAILED": "فشل إلغاء الوظيفة. يرجى المحاولة مرة أخرى.",
   "JOB_LIST_ERRORS_DELETE_FAILED": "فشل حذف الوظيفة. يرجى المحاولة مرة أخرى.",
-  "JOB_LIST_STATISTICS" :"الإحصائيات",
-  "JOB_LIST_JOB_LIST":"قائمة الوظائف",
-  "JOB_LIST_STATS_CANCELLED":"ملغاة",
-  "JOB_LIST_STATS_PENDING_APPROVAL":"قيد الأعتماد",
-  "JOB_LIST_STATS_APPROVED":"معتمدة",
-  "JOB_LIST_STATS_DRAFTED":"مسؤدة",
+  "JOB_LIST_STATISTICS": "الإحصائيات",
+  "JOB_LIST_JOB_LIST": "قائمة الوظائف",
+  "JOB_LIST_STATS_CANCELLED": "ملغاة",
+  "JOB_LIST_STATS_PENDING_APPROVAL": "قيد الأعتماد",
+  "JOB_LIST_STATS_APPROVED": "معتمدة",
+  "JOB_LIST_STATS_DRAFTED": "مسؤدة",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "هل أنت متأكد أنك تريد حذف هذه الوظيفة؟",
-  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB":"إعادة تفعيل الوظيفة",
+  "JOB_LIST_CONFIRMATIONS_REOPEN_JOB": "إعادة تفعيل الوظيفة",
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "هل أنت متأكد من إعادة تفعيل هذه الوظيفة ؟",
-  "JOB_LIST_BUTTONS_VIEW_CANDIDATE":"عرض المرشحين",
-  "JOB_LIST_BUTTONS_SEND_INVITATIONS":"إرسال الدعوات",
-  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE":"هل أنت متأكد أنك تريد إلغاء هذه المهمة ؟"
+  "JOB_LIST_BUTTONS_VIEW_CANDIDATE": "عرض المرشحين",
+  "JOB_LIST_BUTTONS_SEND_INVITATIONS": "إرسال الدعوات",
+  "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE": "هل أنت متأكد أنك تريد إلغاء هذه المهمة ؟",
+  "JOB_LIST_BUTTONS_POINTS_VIEW": "عرض توزيع النقاط"
 }

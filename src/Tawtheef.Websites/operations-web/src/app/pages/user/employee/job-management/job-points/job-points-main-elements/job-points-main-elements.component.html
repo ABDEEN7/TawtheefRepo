@@ -26,6 +26,7 @@
                 [max]="systemMaxPoints"
                 [showButtons]="true"
                 class="points-input"
+                [disabled]="isReadOnlyMode"
               />
             </div>
           </div>
@@ -58,7 +59,7 @@
       </div>
       }
       <div class="bottom-nav">
-      <button type="button" class="btn btn-outline-primary light d-flex align-items-center gap-2" (click)="next.emit()" [disabled]="!isTotalValid()">
+      <button type="button" class="btn btn-outline-primary light d-flex align-items-center gap-2" (click)="next.emit()" [disabled]="!isTotalValid() || isReadOnlyMode">
         
         {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }} <i class="fa fa-arrow-left" faDirArrow="end"></i>
       </button>

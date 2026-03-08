@@ -6,6 +6,7 @@ import {DialogService} from 'primeng/dynamicdialog';
 import {NotificationService} from '../../../../core/services/notification.service';
 import {LanguageService} from '../../../../core/services/language.service';
 import {ConfirmationService} from 'primeng/api';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 
 import {MajorsSkillsManagementService} from './services/majors-skills-management.service';
 import {MajorsSkillsManagementStore, MajorsSkillsTabKey} from './majors-skills-management.store';
@@ -33,6 +34,12 @@ export class MajorsSkillsManagementFacade {
   private dialog = inject(DialogService);
   private confirm = inject(ConfirmationService);
 
+
+  private majorSkillSearchChanges$ = new Subject<string>();
+  private mainMajorSearchChanges$ = new Subject<string>();
+  private subMajorSearchChanges$ = new Subject<string>();
+  private skillSearchChanges$ = new Subject<string>();
+
   private hierarchyMessages: Record<ActivationHierarchyEntity, string> = {
     major: 'MAJORS_SKILLS.APPLY_ON_MAPPING_MESSAGE_MAJOR',
     subMajor: 'MAJORS_SKILLS.APPLY_ON_MAPPING_MESSAGE_SUB_MAJOR',
@@ -45,6 +52,8 @@ export class MajorsSkillsManagementFacade {
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(lang => this.store.setCurrentLang(lang));
+
+    this.setupSearchListeners();
 
     // Shared lookup (used by mapping + skills)
     this.loadSkillTypes();
@@ -121,8 +130,8 @@ export class MajorsSkillsManagementFacade {
     });
   }
 
-  loadMajorSkills() {
-    this.api.getMajorSkills(this.store.majorSkillFilters()).subscribe({
+  loadMajorSkills(skipGlobalLoader = false) {
+    this.api.getMajorSkills(this.store.majorSkillFilters(), { skipGlobalLoader }).subscribe({
       next: res => this.store.setMajorSkills(res)
     });
   }
@@ -335,32 +344,32 @@ export class MajorsSkillsManagementFacade {
   }
 
   // ===================== Filter & Paging helpers =====================
-  setMajorSkillSearch(v: string) { this.store.updateMajorSkillFilters({ search: v, pageNumber: 1 }); this.loadMajorSkills(); }
+  setMajorSkillSearch(v: string) { this.majorSkillSearchChanges$.next(v ?? ''); }
   setMajorSkillType(v: string)   { this.store.updateMajorSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillSubMajor(v: string) { this.store.updateMajorSkillFilters({ subMajorId: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillParent(v: string | undefined) {
     this.store.updateMajorSkillFilters({ parentMajorId: v, subMajorId: '', pageNumber: 1 });
-    this.loadMajorSkills();
+    this.loadMajorSkills(true);
   }
   setMajorSkillActiveOnly(checked: boolean) {
     this.store.updateMajorSkillFilters({ isActive: checked ? true : null, pageNumber: 1 });
-    this.loadMajorSkills();
+    this.loadMajorSkills(true);
   }
 
-  setMainMajorSearch(v: string) { this.store.updateMainMajorFilters({ search: v, pageNumber: 1 }); this.loadMainMajors(); }
-  setSubMajorSearch(v: string)  { this.store.updateSubMajorFilters({ search: v, pageNumber: 1 }); this.loadSubMajors(); }
+  setMainMajorSearch(v: string) { this.mainMajorSearchChanges$.next(v ?? ''); }
+  setSubMajorSearch(v: string)  { this.subMajorSearchChanges$.next(v ?? ''); }
   setSubMajorParent(parent: MajorListItemModel | null) {
     this.store.selectedParentMajor.set(parent);
     this.store.updateSubMajorFilters({ parentMajorId: parent?.id ?? '', pageNumber: 1 });
     this.loadSubMajors();
   }
 
-  setSkillSearch(v: string) { this.store.updateSkillFilters({ search: v, pageNumber: 1 }); this.loadSkills(); }
+  setSkillSearch(v: string) { this.skillSearchChanges$.next(v ?? ''); }
   setSkillType(v: string)   { this.store.updateSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadSkills(); }
 
   onMappingLazy(first: number, rows: number) {
     this.store.updateMajorSkillFilters({ pageNumber: Math.floor(first / rows) + 1, pageSize: rows });
-    this.loadMajorSkills();
+    this.loadMajorSkills(true);
   }
   onMainMajorsLazy(first: number, rows: number) {
     this.store.updateMainMajorFilters({ pageNumber: Math.floor(first / rows) + 1, pageSize: rows });
@@ -386,7 +395,7 @@ export class MajorsSkillsManagementFacade {
   }
   onMajorSkillPageChange(page: number) {
     this.store.updateMajorSkillFilters({ pageNumber: page });
-    this.loadMajorSkills();
+    this.loadMajorSkills(true);
   }
 
   onSubMajorsPageChange(page: number) {
@@ -396,7 +405,7 @@ export class MajorsSkillsManagementFacade {
 
   onMajorSkillPageSizeChange(pageSize: number) {
     this.store.updateMajorSkillFilters({ pageSize, pageNumber: 1 });
-    this.loadMajorSkills();
+    this.loadMajorSkills(true);
   }
 
   onMainMajorsPageSizeChange(pageSize: number) {
@@ -410,6 +419,38 @@ export class MajorsSkillsManagementFacade {
   onSkillsPageSizeChange(pageSize: number) {
     this.store.updateSkillFilters({ pageSize, pageNumber: 1 });
     this.loadSkills();
+  }
+
+
+
+  private setupSearchListeners() {
+    this.majorSkillSearchChanges$
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => {
+        this.store.updateMajorSkillFilters({ search: value, pageNumber: 1 });
+        this.loadMajorSkills();
+      });
+
+    this.mainMajorSearchChanges$
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => {
+        this.store.updateMainMajorFilters({ search: value, pageNumber: 1 });
+        this.loadMainMajors();
+      });
+
+    this.subMajorSearchChanges$
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => {
+        this.store.updateSubMajorFilters({ search: value, pageNumber: 1 });
+        this.loadSubMajors();
+      });
+
+    this.skillSearchChanges$
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => {
+        this.store.updateSkillFilters({ search: value, pageNumber: 1 });
+        this.loadSkills();
+      });
   }
 
   private toast(key: string, isError = false) {
