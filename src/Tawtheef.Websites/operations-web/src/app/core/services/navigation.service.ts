@@ -55,6 +55,17 @@ export class NavigationService {
       return;
     }
 
+    if (this.permissionService.hasPermission(Permissions.ProfileDistribution.View)) {
+      this.router.navigate([routes.employee.profileDistribution], { replaceUrl: true });
+      return;
+    }
+
+
+    if (this.permissionService.hasPermission(Permissions.ProfileApproval.View)) {
+      this.router.navigate([routes.employee.approvalProfile], { replaceUrl: true });
+      return;
+    }
+
     // 4. Default Fallback for users with NO permissions yet (New Users)
     this.router.navigate([routes.auth.pendingApproval], { replaceUrl: true });
   }

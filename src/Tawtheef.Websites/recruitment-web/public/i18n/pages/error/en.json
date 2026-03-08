@@ -40,6 +40,7 @@
   "app.accessDenied.accessDeniedMessage": "Sorry, you don't have permission to access this page.",
   "app.accessDenied.goHome": "Go to Home",
   "app.accessDenied.goDashboard": "Go to Dashboard",
+  "app.accessDenied.logout": "Logout",
   "app.accessDenied.title1": "Access Denied",
   "app.accessDenied.title2": "You don't have permission to access this page.",
   "app.accessDenied.content": "If you think this is a mistake, please contact administrator.",

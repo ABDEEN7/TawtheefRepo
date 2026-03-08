@@ -59,6 +59,11 @@ public class RefreshTokenHandler(
                 return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.UserNotFound));
             }
 
+            // Diagnostic: Check if this user has thousands of tokens slowing things down
+            var tokenCount = await uow.GetEntityRepository<RefreshToken>().DbSet
+                .CountAsync(rt => rt.UserId == user.Id, cancellationToken);
+            metadata["UserTokenCount"] = tokenCount;
+
             var now = time.GetUtcNow().UtcDateTime;
             if (storedToken.IsRevoked)
             {
