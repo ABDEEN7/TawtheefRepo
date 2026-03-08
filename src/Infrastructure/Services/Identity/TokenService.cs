@@ -88,16 +88,20 @@ public class TokenService(
         string? ipAddress,
         CancellationToken ct)
     {
-        var sw = Stopwatch.StartNew();
+        var swTotal = Stopwatch.StartNew();
         var timings = new Dictionary<string, long>();
         
-        var setupSw = Stopwatch.StartNew();
+        var swSetup = Stopwatch.StartNew();
         var now = time.GetUtcNow().UtcDateTime;
         var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
+        timings["GenTokenObj"] = swSetup.ElapsedMilliseconds;
 
+        var swRevoke = Stopwatch.StartNew();
         currentToken.Revoke(now, ipAddress, "Rotated");
-        currentToken.ReplacedByToken = replacement;
+        currentToken.ReplacedByTokenId = replacement.Id; // Use ID to avoid navigation fixup overhead
+        timings["RevokeLogic"] = swRevoke.ElapsedMilliseconds;
 
+        var swAdd = Stopwatch.StartNew();
         // Optimization: Use direct DbSet operations to avoid virtual collection access (prevent lazy-load SELECT)
         dbContext.Set<RefreshToken>().Add(replacement);
         
@@ -107,8 +111,8 @@ public class TokenService(
             dbContext.Attach(currentToken);
         }
         entry.State = EntityState.Modified;
-        
-        timings["UpdateSetup"] = setupSw.ElapsedMilliseconds;
+        timings["AddAndAttach"] = swAdd.ElapsedMilliseconds;
+        timings["UpdateSetupTotal"] = swSetup.ElapsedMilliseconds;
 
         var buildSw = Stopwatch.StartNew();
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
@@ -124,8 +128,7 @@ public class TokenService(
         await uow.SaveChangesAsync(ct);
         timings["SaveChangesAsync"] = saveSw.ElapsedMilliseconds;
         
-        sw.Stop();
-        timings["TotalRotation"] = sw.ElapsedMilliseconds;
+        timings["TotalRotation"] = swTotal.ElapsedMilliseconds;
         logger.Information("RotateRefreshTokenAsync Performance Report: {@Timings}", timings);
         return result;
     }
@@ -241,7 +244,7 @@ public class TokenService(
         var cachedPerms = await cache.GetStringAsync(permsKey, ct);
         timings["CacheRead"] = cacheReadSw.ElapsedMilliseconds;
 
-        IList<string> roles;
+        List<string> roles;
         IReadOnlyCollection<string> permissions;
 
         if (cachedRoles != null && cachedPerms != null)
@@ -252,8 +255,23 @@ public class TokenService(
         else
         {
             var identitySw = Stopwatch.StartNew();
-            roles = await userManager.GetRolesAsync(user);
+            
+            // Bypass UserManager overhead by querying directly
+            var userData = await dbContext.Users
+                .AsNoTracking()
+                .Where(u => u.Id == user.Id)
+                .Select(u => new
+                {
+                    Roles = dbContext.UserRoles
+                        .Where(ur => ur.UserId == u.Id)
+                        .Join(dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
+                        .ToList()
+                })
+                .FirstOrDefaultAsync(ct);
+
+            roles = userData?.Roles ?? [];
             permissions = await GetUserPermissionsAsync(roles.AsReadOnly(), ct);
+            
             timings["IdentityDbFetch"] = identitySw.ElapsedMilliseconds;
 
             var cacheOptions = new DistributedCacheEntryOptions
