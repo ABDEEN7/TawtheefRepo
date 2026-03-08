@@ -138,6 +138,27 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
         builder.HasIndex(j => new { j.IsDeleted, j.ClosingDate })
             .HasDatabaseName("IX_Job_Deleted_ClosingDate");
 
+        builder.HasIndex(j => j.JobCategoryId)
+            .HasDatabaseName("IX_Job_JobCategoryId");
+
+        builder.HasIndex(j => j.WorkTypeId)
+            .HasDatabaseName("IX_Job_WorkTypeId");
+
+        builder.HasIndex(j => j.WorkLocationId)
+            .HasDatabaseName("IX_Job_WorkLocationId");
+
+        builder.HasIndex(j => j.GenderId)
+            .HasDatabaseName("IX_Job_GenderId");
+
+        builder.HasIndex(j => j.MajorId)
+            .HasDatabaseName("IX_Job_MajorId");
+
+        builder.HasIndex(j => j.SubMajorId)
+            .HasDatabaseName("IX_Job_SubMajorId");
+
+        builder.HasIndex(j => new { j.IsDeleted, j.CreatedDate })
+            .HasDatabaseName("IX_Job_Deleted_CreatedDate");
+
         builder.HasIndex(j => new { j.JobStatusId, j.ClosingDate, j.IsDeleted })
             .HasDatabaseName("IX_Job_Status_ClosingDate_Deleted");
     }

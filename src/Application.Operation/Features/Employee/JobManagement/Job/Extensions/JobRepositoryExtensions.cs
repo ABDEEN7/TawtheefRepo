@@ -12,24 +12,20 @@ public static class JobRepositoryExtensions
         public IQueryable<jobEntity> ApplySorting(PaginatedRequest? pagination)
         {
             if (pagination == null || string.IsNullOrWhiteSpace(pagination.SortBy))
+                return query.OrderByDescending(j => j.CreatedDate);
+
+            var sortBy = pagination.SortBy.Trim().ToLowerInvariant();
+            var isDescending = string.Equals(pagination.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+            return sortBy switch
             {
-                return query.OrderByDescending(j => j.CreatedDate)
-                    .ThenBy(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty);
-            }
-
-            var sort = pagination.SortBy.ToLower();
-            var desc = pagination.SortDirection?.ToLower() == "desc";
-
-            return sort switch
-            {
-                "title" => desc ? query.OrderByDescending(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty) : query.OrderBy(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty),
-                "deadline" => desc ? query.OrderByDescending(j => j.ClosingDate) : query.OrderBy(j => j.ClosingDate),
-                "vacancies" => desc ? query.OrderByDescending(j => j.NumberOfVacancies) : query.OrderBy(j => j.NumberOfVacancies),
-                "created" or "createddate"
-                    => desc ? query.OrderByDescending(j => j.CreatedDate) : query.OrderBy(j => j.CreatedDate),
-                "updated" or "updateddate"
-                    => desc ? query.OrderByDescending(j => j.UpdatedDate) : query.OrderBy(j => j.UpdatedDate),
-
+                "title" => isDescending 
+                    ? query.OrderByDescending(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty) 
+                    : query.OrderBy(j => j.JobTitle != null ? j.JobTitle.JobNameEn : string.Empty),
+                "deadline" => isDescending ? query.OrderByDescending(j => j.ClosingDate) : query.OrderBy(j => j.ClosingDate),
+                "vacancies" => isDescending ? query.OrderByDescending(j => j.NumberOfVacancies) : query.OrderBy(j => j.NumberOfVacancies),
+                "created" or "createddate" => isDescending ? query.OrderByDescending(j => j.CreatedDate) : query.OrderBy(j => j.CreatedDate),
+                "updated" or "updateddate" => isDescending ? query.OrderByDescending(j => j.UpdatedDate) : query.OrderBy(j => j.UpdatedDate),
                 _ => query.OrderByDescending(j => j.CreatedDate)
             };
         }

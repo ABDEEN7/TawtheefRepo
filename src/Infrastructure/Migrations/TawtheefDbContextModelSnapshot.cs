@@ -6665,16 +6665,19 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("DepartmentId")
                         .HasDatabaseName("IX_Job_DepartmentId");
 
-                    b.HasIndex("GenderId");
+                    b.HasIndex("GenderId")
+                        .HasDatabaseName("IX_Job_GenderId");
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("JobCategoryId");
+                    b.HasIndex("JobCategoryId")
+                        .HasDatabaseName("IX_Job_JobCategoryId");
 
                     b.HasIndex("JobStatusId")
                         .HasDatabaseName("IX_Job_JobStatusId");
 
-                    b.HasIndex("MajorId");
+                    b.HasIndex("MajorId")
+                        .HasDatabaseName("IX_Job_MajorId");
 
                     b.HasIndex("ManagementId")
                         .HasDatabaseName("IX_Job_ManagementId");
@@ -6682,16 +6685,22 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("SectorId")
                         .HasDatabaseName("IX_Job_SectorId");
 
-                    b.HasIndex("SubMajorId");
+                    b.HasIndex("SubMajorId")
+                        .HasDatabaseName("IX_Job_SubMajorId");
 
                     b.HasIndex("UpdatedById");
 
-                    b.HasIndex("WorkLocationId");
+                    b.HasIndex("WorkLocationId")
+                        .HasDatabaseName("IX_Job_WorkLocationId");
 
-                    b.HasIndex("WorkTypeId");
+                    b.HasIndex("WorkTypeId")
+                        .HasDatabaseName("IX_Job_WorkTypeId");
 
                     b.HasIndex("IsDeleted", "ClosingDate")
                         .HasDatabaseName("IX_Job_Deleted_ClosingDate");
+
+                    b.HasIndex("IsDeleted", "CreatedDate")
+                        .HasDatabaseName("IX_Job_Deleted_CreatedDate");
 
                     b.HasIndex("IsDeleted", "JobStatusId")
                         .HasDatabaseName("IX_Job_Deleted_Status");

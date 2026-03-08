@@ -21,7 +21,6 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var baseQuery = Repository.DbSet
             .AsNoTracking()
-            .AsSplitQuery()
             .Where(job => !job.IsDeleted)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)

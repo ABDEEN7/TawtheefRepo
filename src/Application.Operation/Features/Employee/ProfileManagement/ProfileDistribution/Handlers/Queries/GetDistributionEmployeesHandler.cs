@@ -22,7 +22,7 @@ public sealed class GetDistributionEmployeesHandler(
         CancellationToken ct)
     {
         var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
-        var employees = await projection.LoadEmployeesAsync(ct);
+        var employees = await projection.LoadEmployeesAsync(request.UserId, ct);
         return Result.Ok(employees);
     }
 }
