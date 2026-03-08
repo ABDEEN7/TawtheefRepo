@@ -1,8 +1,8 @@
 ﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -103,12 +103,12 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             .Select(g => new FullReviewSummary
             {
                 UserProfileId = g.Key,
-                PendingSections = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed),
+                PendingSections = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved),
                 FlaggedSections = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
                 ApprovedSections = g.Count(r => r.Status == ReviewStatus.Approved),
                 OverallStatus = g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
                     ? ReviewStatus.NeedsCorrection
-                    : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
+                    : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved)
                         ? ReviewStatus.Pending
                         : ReviewStatus.Approved,
                 LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)
@@ -133,14 +133,14 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             {
                 UserProfileId = g.Key,
                 Outstanding = g.Count(r => r.Status != ReviewStatus.Approved),
-                Pending = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed),
+                Pending = g.Count(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved),
                 Flagged = g.Count(r => r.Status == ReviewStatus.NeedsCorrection),
                 Rejected = g.Count(r => r.Status == ReviewStatus.Rejected),
                 OverallStatus = g.Any(r => r.Status == ReviewStatus.NeedsCorrection)
                     ? ReviewStatus.NeedsCorrection
                     : g.Any(r => r.Status == ReviewStatus.Rejected)
                         ? ReviewStatus.Rejected
-                        : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed)
+                        : g.Any(r => r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved)
                             ? ReviewStatus.Pending
                             : ReviewStatus.Approved,
                 LastUpdatedAtUtc = g.Max(r => r.UpdatedDate ?? r.CreatedDate)

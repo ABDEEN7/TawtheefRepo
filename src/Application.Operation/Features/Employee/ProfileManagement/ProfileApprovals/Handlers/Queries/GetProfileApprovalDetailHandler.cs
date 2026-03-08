@@ -3,10 +3,10 @@ using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
-using MediatR;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -169,7 +169,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
 
             if (source.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
             if (source.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
-            if (source.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed)) return ReviewStatus.Pending;
+            if (source.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed or ReviewStatus.Solved)) return ReviewStatus.Pending;
 
             return source.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
         }
