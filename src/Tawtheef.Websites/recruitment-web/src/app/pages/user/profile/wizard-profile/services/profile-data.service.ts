@@ -133,23 +133,23 @@ export class ProfileDataService {
     if (this.shouldLockCandidateType() && key === 'candidateType') return true;
 
     // Enforcement for review-edit mode
-    if (this.profileService.isRevisionMode()) {
-      // Rule 1: Prerequisites (Section 1) is SPECIAL.
-      // Based on user feedback, it should always be editable even if it was approved.
-      const section = this.MapKeyToSection(key);
-      if (section === 1) return false;
+    // if (this.profileService.isRevisionMode()) {
+    //   // Rule 1: Prerequisites (Section 1) is SPECIAL.
+    //   // Based on user feedback, it should always be editable even if it was approved.
+    //   const section = this.MapKeyToSection(key);
+    //   if (section === 1) return false;
 
-      // Rule 2: If there's a correction for the specific field, it's NOT locked
-      const hasFieldCorrection = this.corrections().some(n => n.fieldPath === key);
-      if (hasFieldCorrection) return false;
+    //   // Rule 2: If there's a correction for the specific field, it's NOT locked
+    //   const hasFieldCorrection = this.corrections().some(n => n.fieldPath === key);
+    //   if (hasFieldCorrection) return false;
 
-      // Rule 3: If the whole section is marked for correction, all its standard fields are NOT locked
-      const hasSectionCorrection = this.corrections().some(n => n.section === section && n.targetType === 1 /* Section */);
-      if (hasSectionCorrection) return false;
+    //   // Rule 3: If the whole section is marked for correction, all its standard fields are NOT locked
+    //   const hasSectionCorrection = this.corrections().some(n => n.section === section && n.targetType === 1 /* Section */);
+    //   if (hasSectionCorrection) return false;
 
-      // Otherwise, it's locked
-      return true;
-    }
+    //   // Otherwise, it's locked
+    //   return true;
+    // }
 
     return false;
   }
