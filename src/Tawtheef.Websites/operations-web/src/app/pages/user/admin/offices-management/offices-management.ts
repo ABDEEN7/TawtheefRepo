@@ -70,6 +70,7 @@ export class OfficesManagement implements OnInit {
   editingOffice = signal<OfficeDetailsDto | null>(null);
   modalMode = signal<'create' | 'edit' | 'view'>('create');
   isModalLoading = signal(false);
+  private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {
     this.setupSearchListener();
@@ -298,4 +299,3 @@ export class OfficesManagement implements OnInit {
     });
   }
 }
-  private searchChanges$ = new Subject<string>();

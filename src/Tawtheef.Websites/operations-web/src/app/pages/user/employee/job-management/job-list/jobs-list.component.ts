@@ -49,7 +49,7 @@ export class JobListComponent implements OnInit {
   filterStatus = signal<GUID | null>(null);
 
   readonly jobStatus = JobStatus;
-  private searchChanges$ = new Subject<string>();
+  private searchChanges = new Subject<string>();
   protected readonly Permissions = Permissions;
 
   ngOnInit(): void {
@@ -88,11 +88,11 @@ export class JobListComponent implements OnInit {
 
   onSearchInputChange(value: string) {
     this.searchQuery.set(value ?? '');
-    this.searchChanges$.next(value ?? '');
+    this.searchChanges.next(value ?? '');
   }
 
   private setupSearchListener() {
-    this.searchChanges$
+    this.searchChanges
       .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFilterChange());
   }
