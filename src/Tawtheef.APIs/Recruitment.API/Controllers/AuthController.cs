@@ -108,7 +108,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
         object message = result.IsFailed
-            ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors }
+            ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors[0].Message }
             : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
         var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
@@ -132,8 +132,8 @@ public class AuthController(IMediator mediator) : ControllerBase
         var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
         object message = result.IsFailed
-            ? new { type = "EXTERNAL_LOGIN_ERROR", message = result.Errors }
-            : new { type = "EXTERNAL_LOGIN_SUCCESS", userData = result.Value };
+            ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors[0].Message }
+            : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
         var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
         {

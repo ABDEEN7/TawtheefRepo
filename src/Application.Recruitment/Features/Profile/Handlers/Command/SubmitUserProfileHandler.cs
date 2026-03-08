@@ -56,22 +56,25 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
             }, ct);
         }
 
-        // 1ï¸ڈâƒ£ Section-level review items
         foreach (var sec in ProfileApprovalFlow.Sections)
         {
             var snapshot = ReviewItemSnapshotBuilder.GetSectionSnapshot(user, profile, sec); // shared helper
             await reviewRepo.AddAsync(NewSectionReviewItem(profile, sec, snapshot), ct);
         }
 
-        // 2ï¸ڈâƒ£ Profile-level attachments
         foreach (var item in BuildProfileFiles(profile))
             await reviewRepo.AddAsync(item, ct);
 
-        // 3ï¸ڈâƒ£ Row-level entities (ONLY rows)
         AddRows(reviewRepo, profile);
 
         profile.Status = UserProfileStatus.Submitted;
         user.IsCompletedProfile = true;
+        
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return Result.Fail<Unit>(ErrorsCodes.UserUpdateFailed);
+        }
         
         await uow.SaveChangesAsync(ct);
 

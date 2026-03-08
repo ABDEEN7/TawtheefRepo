@@ -5,9 +5,10 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { from, throwError } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../services/notification.service';
+import {externalUrls} from '../constants/external-urls.const';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.headers.get(HDR.SkipError) === 'true') return next(req);
+  if (req.headers.get(HDR.SkipError) || externalUrls.includes(req.url)) return next(req);
 
   const msg = inject(NotificationService);
   const zone = inject(NgZone);

@@ -51,6 +51,8 @@ export class AuthCoreService {
     return this.handleAuthResponse(data);
   }
 
+  private user$ = (res: AuthResponse) => res.user ? of(res.user) : this.loadCurrentUser();
+
   private handleAuthResponse(res: AuthResponse): Observable<boolean> {
     const accessToken = res.token?.accessToken;
     if (!accessToken) {
@@ -71,12 +73,10 @@ export class AuthCoreService {
       );
     }
 
-    const user$ = res.user ? of(res.user) : this.loadCurrentUser();
-
-    return user$.pipe(
+    return this.user$(res).pipe(
       map((user) => {
         this.updateAuthState(user as UserInfoModel, accessToken);
-        this.navigation.safeNavigateAfterLogin();
+        this.navigation.safeNavigateAfterLogin(res.requiresProfileCompletion);
         return true;
       }),
       catchError((err) => {

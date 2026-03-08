@@ -36,7 +36,7 @@ export class TokenService {
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem(OAUTH_STATE_KEY);
-    } catch {}
+    } catch { }
     this.mem = {};
   }
 
@@ -168,6 +168,19 @@ export class TokenService {
     const decoded = this.decodeToken(token);
     const v = decoded?.userType;
     return typeof v === 'string' ? v : '';
+  }
+
+  isProfileComplete(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    const decoded = this.decodeToken(token);
+    const val = decoded?.['profile.completed'];
+
+    if (typeof val === 'string') {
+      return val.toLowerCase() === 'true';
+    }
+    return !!val;
   }
 
   // -----------------------

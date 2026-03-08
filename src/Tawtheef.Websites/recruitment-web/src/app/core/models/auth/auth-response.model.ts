@@ -1,9 +1,10 @@
-import {UserInfoModel} from "../../../shared/models/user-info.model";
-import {TokenModel} from "./token.model";
-import {DropdownOptionVM} from '../../../shared/models/dropdown-options.model';
-import {GUID} from '../../../shared/types/guid.type';
+import { UserInfoModel } from "../../../shared/models/user-info.model";
+import { TokenModel } from "./token.model";
+import { DropdownOptionVM } from '../../../shared/models/dropdown-options.model';
+import { GUID } from '../../../shared/types/guid.type';
 
 export interface AuthResponse {
+  requiresProfileCompletion: boolean;
   user: UserInfoModel;
   token: TokenModel;
 }
@@ -11,11 +12,10 @@ export interface AuthResponse {
 export interface AuthBootstrap {
   requiresProfileCompletion: boolean;
   missingFields: string[];
-  prefill:  PrefillData | null;
+  prefill: PrefillData | null;
 }
 
-export interface PrefillData
-{
+export interface PrefillData {
   email?: string | null;
   emailVerified?: boolean | null;
   fullName?: string | null;
@@ -177,7 +177,7 @@ export interface FileRefDto {
   fileName: string;
   url?: string | null;
 }
-export interface AchievementDto{
+export interface AchievementDto {
   id: GUID;
   achievementTypeId: GUID;
   achievementType?: DropdownOptionVM | null;

@@ -20,9 +20,9 @@ public sealed class ProfileCompletenessService(
 ) : IProfileCompletenessService
 {
     
-    public async Task<ProfileStatusDto> EvaluateAsync(Guid userId, CancellationToken ct)
+    public async Task<ProfileStatusDto> EvaluateAsync(Guid userId, CancellationToken ct, User? user = null)
     {
-        var user = await userManager.FindByIdAsync(userId.ToString());
+        user ??= await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return new ProfileStatusDto();
         
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, userId, ct: ct) ?? new UserProfile {UserId = userId};
