@@ -11,7 +11,7 @@ import { JobInvitationSummaryService } from '../services/job-invitation-summary.
 import { routes } from '../../../../../routes/routes';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
-import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive'; 
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 @Component({
   selector: 'app-job-invitation-summary',
   templateUrl: './job-invitation-summary.html',
@@ -36,7 +36,7 @@ export class JobInvitationSummary implements OnInit {
 
   // Signals
   currentPage = signal(1);
-  itemsPerPage = signal(7);
+  itemsPerPage = signal(10);
   selectedCategory = signal<string>('');
   selectedDepartment = signal<string>('');
   selectedStatus = signal<string>('');
@@ -59,7 +59,6 @@ export class JobInvitationSummary implements OnInit {
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       jobStatusId: this.selectedStatus() || '',
-      searchText: this.searchText() || '',
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
       sortBy: 'title',
@@ -95,6 +94,12 @@ export class JobInvitationSummary implements OnInit {
 
   onPageChange(page: number) {
     this.currentPage.set(page);
+    this.loadSummaries();
+  }
+
+  onPageSizeChange(size: number) {
+    this.itemsPerPage.set(size);
+    this.currentPage.set(1);
     this.loadSummaries();
   }
 
