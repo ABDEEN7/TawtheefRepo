@@ -23,7 +23,7 @@ public sealed class NationalAddressDto
     public int Building { get; set; }
     public int Unit { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-\(\)]+$", ErrorMessage = "File name contains invalid characters.")]
+    [RegularExpression(@"^[^\\/:*?""<>|]+$", ErrorMessage = "File name contains invalid characters.")]
     public string? NationalAddressFileName { get; set; }
     public IFormFile? NationalAddress { get; set; }
 }

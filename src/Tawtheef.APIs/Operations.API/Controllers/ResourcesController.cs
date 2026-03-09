@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
@@ -41,7 +40,7 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     
     [HttpGet("dl")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> GetSigned([FromQuery] string b, [FromQuery] long exp, [FromQuery] string sig)
+    public async Task<IActionResult> GetSigned([FromQuery] string b, [FromQuery] long exp, [FromQuery] string sig, [FromServices] IFileStorageService storage)
     {
         var result = await mediator.Send(new GetSignedBlobQuery(b, exp, sig));
         if (result.IsFailed)
@@ -50,7 +49,12 @@ public class ResourcesController(IMediator mediator) : ControllerBase
         var file = result.Value;
 
         if (file.SourceKind == FileSourceKind.RedirectUrl)
-            return Ok(new { url = file.RedirectUrl });
+        {
+            var blobKey = Decode(b);
+            var storedFile = await storage.OpenReadAsync(blobKey, default);
+            if (storedFile == null) return NotFound();
+            return File(storedFile.Stream, storedFile.ContentType, file.DownloadName);
+        }
 
         // LocalPath
         var path = file.LocalPath!;
