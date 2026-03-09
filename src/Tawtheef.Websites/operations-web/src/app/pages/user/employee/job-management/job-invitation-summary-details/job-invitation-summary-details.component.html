@@ -16,9 +16,9 @@
           </div>
         </div>
         <div class="col-md-6 text-end">
-             <span class="pill soft">
-              {{ 'JOB_INVITES_DETAILS_TOTAL_INVITATIONS' | translate }}: {{ stats()?.total ?? 0 }}
-            </span>
+          <span class="pill soft">
+            {{ 'JOB_INVITES_DETAILS_TOTAL_INVITATIONS' | translate }}: {{ stats()?.total ?? 0 }}
+          </span>
         </div>
       </div>
       <div class="row mb-4">
@@ -109,49 +109,36 @@
         </div>
       </div>
       <div class="card card-table mb-4">
-           <div class="card-body">
-               <h5 class="fw-bold">{{ 'JOB_INVITES_DETAILS_FILES' | translate }}</h5>
-               <!-- Filters row (updated to match screenshot layout) -->
-               <div class="row gx-3 align-items-end">
-                 <!-- Search -->
-                 <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
-                   <input
-                     class="form-control"
-                     type="text"
-                     [ngModel]="searchText()"
-                     [placeholder]="'JOB_INVITES_DETAILS_SEARCH' | translate"
-                     (ngModelChange)="searchText.set($event); onFilterChange()"/>
-                 </div>
-                 <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                   <p-select
-                     [options]="statusOptions()"
-                     [showClear]="true"
-                     [ngModel]="selectedStatus()"
-                     optionLabel="name"
-                     optionValue="id"
-                     class="form-select p-0"
-                     [placeholder]="'JOB_INVITES_DETAILS_SEARCH_STATE' | translate"
-                     (ngModelChange)="selectedStatus.set($event); onFilterChange()"
-                   ></p-select>
-                 </div>
-                 <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                   <input
-                     class="form-control"
-                     type="text"
-                     [ngModel]="batchNumber()"
-                     [placeholder]="'JOB_INVITES_DETAILS_FILTER_BATCH' | translate"
-                     (ngModelChange)="batchNumber.set($event ?? ''); onFilterChange()"
-                   />
-                 </div>
-                 <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
-                     <!-- Clear filters -->
-                      <div class="action-buttons"><button class="btn-text" (click)="clearFilters()"><i class="fa fa-rotate-left mx-1"></i> {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}</button>
+        <div class="card-body">
+          <h5 class="fw-bold">{{ 'JOB_INVITES_DETAILS_FILES' | translate }}</h5>
+          <!-- Filters row (updated to match screenshot layout) -->
+          <div class="row gx-3 align-items-end">
+            <!-- Search -->
+            <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+              <input class="form-control" type="text" [ngModel]="searchText()"
+                [placeholder]="'JOB_INVITES_DETAILS_SEARCH' | translate"
+                (ngModelChange)="searchText.set($event); onFilterChange()" />
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <p-select [options]="statusOptions()" [showClear]="true" [ngModel]="selectedStatus()" optionLabel="name"
+                optionValue="id" class="form-select p-0" [placeholder]="'JOB_INVITES_DETAILS_SEARCH_STATE' | translate"
+                (ngModelChange)="selectedStatus.set($event); onFilterChange()"></p-select>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <input class="form-control" type="text" [ngModel]="batchNumber()"
+                [placeholder]="'JOB_INVITES_DETAILS_FILTER_BATCH' | translate"
+                (ngModelChange)="batchNumber.set($event ?? ''); onFilterChange()" />
+            </div>
+            <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
+              <!-- Clear filters -->
+              <div class="action-buttons"><button class="btn-text" (click)="clearFilters()"><i
+                    class="fa fa-rotate-left mx-1"></i> {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}</button>
 
-                      </div>
-                     
-                 </div><!-- Status dropdown -->
-               </div>
-           </div>
+              </div>
+
+            </div><!-- Status dropdown -->
+          </div>
+        </div>
       </div>
 
       <!-- Table Card -->
@@ -159,47 +146,47 @@
         <div class="table-responsive">
           <table class="table table-bordered table-hover align-middle w-100">
             <thead class="table-light">
-            <tr>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_NAME' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_NATIONALITY' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_PERSONAL_NUMBER' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_PHONE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_STATUS' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_SENT_DATE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_READ_DATE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_APPLIED_DATE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_DECLINED_DATE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_EXPIRED_DATE' | translate }}</th>
-              <th>{{ 'JOB_INVITES_DETAILS_COL_BATCH' | translate }}</th>
-            </tr>
+              <tr>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_NAME' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_NATIONALITY' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_PERSONAL_NUMBER' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_PHONE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_STATUS' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_SENT_DATE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_READ_DATE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_APPLIED_DATE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_DECLINED_DATE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_EXPIRED_DATE' | translate }}</th>
+                <th>{{ 'JOB_INVITES_DETAILS_COL_BATCH' | translate }}</th>
+              </tr>
             </thead>
             <tbody>
               @for (row of rows(); track row.inviteId) {
-                <tr>
-                  <td class="fw-bold">{{ row.fullName }}</td>
-                  <td>{{ row.nationality }}</td>
-                  <td>{{ row.personalNumber || '-' }}</td>
-                  <td dir="ltr">{{ row.phone }}</td>
-                  <td>
+              <tr>
+                <td class="fw-bold">{{ row.fullName }}</td>
+                <td>{{ row.nationality }}</td>
+                <td>{{ row.personalNumber || '-' }}</td>
+                <td dir="ltr">{{ row.phone }}</td>
+                <td>
                   <span [class]="getStatusPillClass(row.status.backendName)">
                     {{ row.status.name }}
                   </span>
-                  </td>
-                  <td>{{ row.sentDate | date: 'dd/MM/yyyy' }}</td>
-                  <td>{{ row.readDate ? (row.readDate | date: 'dd/MM/yyyy') : '-' }}</td>
-                  <td>{{ row.appliedDate ? (row.appliedDate | date: 'dd/MM/yyyy') : '-' }}</td>
-                  <td>{{ row.declinedDate ? (row.declinedDate | date: 'dd/MM/yyyy') : '-' }}</td>
-                  <td>{{ row.expiredDate ? (row.expiredDate | date: 'dd/MM/yyyy') : '-' }}</td>
-                  <td>{{ row.batchNumber }}</td>
-                </tr>
+                </td>
+                <td>{{ row.sentDate | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ row.readDate ? (row.readDate | date: 'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ row.appliedDate ? (row.appliedDate | date: 'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ row.declinedDate ? (row.declinedDate | date: 'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ row.expiredDate ? (row.expiredDate | date: 'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ row.batchNumber }}</td>
+              </tr>
               }
 
               @if (!rows().length) {
-                <tr>
-                  <td colspan="11" class="empty-state">
-                    {{ 'JOB_INVITES_DETAILS_EMPTY' | translate }}
-                  </td>
-                </tr>
+              <tr>
+                <td colspan="11" class="empty-state">
+                  {{ 'JOB_INVITES_DETAILS_EMPTY' | translate }}
+                </td>
+              </tr>
               }
             </tbody>
           </table>
@@ -207,12 +194,8 @@
 
         <!-- Pagination -->
         <div class="pagination-wrap">
-          <app-pagination
-            [currentPage]="currentPage()"
-            [totalItems]="totalItems()"
-            [itemsPerPage]="itemsPerPage()"
-            (pageChanged)="onPageChange($event)"
-          ></app-pagination>
+          <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
+            (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
         </div>
       </div>
     </div>

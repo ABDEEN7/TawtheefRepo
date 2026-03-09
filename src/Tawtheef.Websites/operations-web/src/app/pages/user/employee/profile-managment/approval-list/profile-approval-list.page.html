@@ -218,7 +218,8 @@
             </p-table>
 
             <app-pagination class="mt-3 d-block" [currentPage]="currentPage()" [itemsPerPage]="pageSize()"
-              [totalItems]="totalItems()" (pageChanged)="onPageChanged($event)">
+              [totalItems]="totalItems()" (pageChanged)="onPageChanged($event)"
+              (pageSizeChanged)="onPageSizeChanged($event)">
             </app-pagination>
 
           </div>

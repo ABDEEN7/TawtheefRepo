@@ -75,40 +75,24 @@
           </div>
           <div class="row mb-3 align-items-center">
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <input
-                class="form-control"
-                [ngModel]="searchQuery()"
-                (ngModelChange)="onSearchInputChange($event)"
-                [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate"
-              />
+              <input class="form-control" [ngModel]="searchQuery()" (ngModelChange)="onSearchInputChange($event)"
+                [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate" />
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <p-select
-                class="select w-100"
-                [options]="lookupsService.jobCategories()"
-                [ngModel]="filterType()"
-                (ngModelChange)="filterType.set($event); onFilterChange()"
-                optionLabel="name"
-                optionValue="id"
-                [showClear]="true"
-                [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"
-              ></p-select>
+              <p-select class="select w-100" [options]="lookupsService.jobCategories()" [ngModel]="filterType()"
+                (ngModelChange)="filterType.set($event); onFilterChange()" optionLabel="name" optionValue="id"
+                [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"></p-select>
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <p-select
-                class="select w-100"
-                [options]="lookupsService.jobStatus()"
-                [ngModel]="filterStatus()"
-                (ngModelChange)="filterStatus.set($event); onFilterChange()"
-                optionLabel="name"
-                optionValue="id"
-                [showClear]="true"
-                [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"
-              ></p-select>
+              <p-select class="select w-100" [options]="lookupsService.jobStatus()" [ngModel]="filterStatus()"
+                (ngModelChange)="filterStatus.set($event); onFilterChange()" optionLabel="name" optionValue="id"
+                [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"></p-select>
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                 <button class="btn btn-outline-primary light d-flex align-items-center gap-2" type="button" (click)="clearFilters()"><i class="hgi hgi-stroke hgi-filter"></i><span>{{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span></button>
-              
+              <button class="btn btn-outline-primary light d-flex align-items-center gap-2" type="button"
+                (click)="clearFilters()"><i class="hgi hgi-stroke hgi-filter"></i><span>{{
+                  'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span></button>
+
             </div>
           </div>
           <div class="table-card rounded overflow-hidden">
@@ -130,7 +114,7 @@
                 <ng-template pTemplate="body" let-job let-i="rowIndex">
                   <tr>
                     <td class="cell-alt col-index">
-                      {{ (currentPage() - 1) * itemsPerPage + i + 1 }}
+                      {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
                     </td>
                     <td>
                       <span class="fw-bold">{{ job.titleAr }}</span>
@@ -146,8 +130,7 @@
 
                     <td class="cell-alt">
                       <span class="" [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
-                        {{ job.jobStatus.name }}</span
-                      >
+                        {{ job.jobStatus.name }}</span>
                     </td>
 
                     <td class="col-vacancies">
@@ -161,154 +144,90 @@
                     <td class="col-actions">
                       <div class="action-buttons">
                         @if (job.jobStatus.backendName === jobStatus.Approved && canManageJobPoints()) {
-                        <button
-                          type="button"
-                          class="btn"
-                          (click)="openPointsModal(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate"
-                        >
+                        <button type="button" class="btn" (click)="openPointsModal(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate">
                           <i class="hgi hgi-stroke hgi-settings-01"></i>
                         </button>
                         }
                         @if (job.jobStatus.backendName === jobStatus.Published && canViewJobPoints()) {
-                        <button
-                          type="button"
-                          class="btn"
-                          (click)="openPointsModal(job, true)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_VIEW' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_VIEW' | translate"
-                        >
+                        <button type="button" class="btn" (click)="openPointsModal(job, true)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_VIEW' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_VIEW' | translate">
                           <i class="hgi hgi-stroke hgi-view"></i>
                         </button>
                         } @if(job.jobStatus.backendName !== jobStatus.Draft &&
                         job.jobStatus.backendName !== jobStatus.NeedUpdate && canViewJobs()){
                         @if (canCopyJob(job)) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="copyJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_COPY' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_COPY' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="copyJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_COPY' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_COPY' | translate">
                           <i class="hgi hgi-stroke hgi-copy-01"></i>
                         </button>
                         }
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="viewJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="viewJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW' | translate">
                           <i class="hgi hgi-stroke hgi-view"></i>
                         </button>
                         } @if ((job.jobStatus.backendName === jobStatus.Draft ||
                         job.jobStatus.backendName === jobStatus.NeedUpdate) && canManageJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="editJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_EDIT' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_EDIT' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="editJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_EDIT' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_EDIT' | translate">
                           <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
                         </button>
                         } @if (job.jobStatus.backendName === jobStatus.PendingApproval && canApproveJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="approveJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_APPROVE' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="approveJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_APPROVE' | translate">
                           <i class="hgi hgi-stroke hgi-tick-02"></i>
                         </button>
 
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="rejectJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_REJECT' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_REJECT' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="rejectJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_REJECT' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_REJECT' | translate">
                           <i class="hgi hgi-stroke hgi-cancel-01"></i>
                         </button>
                         } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement && canApproveJobs()) {
-                        <button
-                          class="btn"
-                          type="button"
-                          (click)="publishJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_PUBLISH' | translate"
-                        >
+                        <button class="btn" type="button" (click)="publishJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_PUBLISH' | translate">
                           <i class="hgi hgi-stroke hgi-upload-01"></i>
                         </button>
                         } @if (job.jobStatus.backendName === jobStatus.Published && canApproveJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="closeJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_CLOSE' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="closeJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_CLOSE' | translate">
                           <i class="hgi hgi-stroke hgi-square-lock-01"></i>
                         </button>
                         } @if ((job.jobStatus.backendName === jobStatus.Published ||
                         job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName
                         === jobStatus.ReadyForAnnouncement) && canManageJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="cancelJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_CANCEL' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="cancelJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_CANCEL' | translate">
                           <i class="hgi hgi-stroke hgi-unavailable"></i>
                         </button>
                         } @if (job.jobStatus.backendName === jobStatus.Rejected && canApproveJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="reopenJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_REOPEN' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="reopenJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_REOPEN' | translate">
                           <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
                         </button>
                         } @if (job.jobStatus.backendName !== jobStatus.Published &&
                         job.jobStatus.backendName !== jobStatus.Approved && canManageJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
-                          (click)="deleteJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_DELETE' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_DELETE' | translate"
-                        >
+                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="deleteJob(job)"
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_DELETE' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_DELETE' | translate">
                           <i class="hgi hgi-stroke hgi-delete-02"></i>
                         </button>
                         } @if(job.jobStatus.backendName === jobStatus.Published){
                         @if (canViewJobs()) {
-                        <button
-                          class="btn d-flex gap-1 align-items-center"
-                          type="button"
+                        <button class="btn d-flex gap-1 align-items-center" type="button"
                           (click)="viewJobCandidate(job.id)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate }}"
-                          tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate"
-                        >
+                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate">
                           <i class="hgi hgi-stroke hgi-user-multiple"></i>
                         </button>
                         }
@@ -325,8 +244,8 @@
                       <div class="empty__title">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</div>
                       @if (canManageJobs()) {
                       <button class="btn btn-outline-primary mt-3" (click)="createNewJob()">
-                        <i class="hgi hgi-stroke hgi-plus-sign me-1"></i
-                        ><span>{{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}</span>
+                        <i class="hgi hgi-stroke hgi-plus-sign me-1"></i><span>{{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' |
+                          translate }}</span>
                       </button>
                       }
                     </td>
@@ -339,12 +258,9 @@
             <div class="col-12">
               @if (paginationMetadata && paginationMetadata.totalCount > 0) {
               <div class="pagination-box">
-                <app-pagination
-                  [currentPage]="currentPage()"
-                  [totalItems]="paginationMetadata.totalCount"
-                  [itemsPerPage]="itemsPerPage"
-                  (pageChanged)="onPageChange($event)"
-                ></app-pagination>
+                <app-pagination [currentPage]="currentPage()" [totalItems]="paginationMetadata.totalCount"
+                  [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"
+                  (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
               </div>
               }
             </div>

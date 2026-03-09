@@ -1,8 +1,5 @@
-<div
-  class="candidate-users-container card shadow-sm p-4"
-  i18nNamespace="pages/employee/candidate-users-management"
-  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
-  [class.table-rtl]="isRtl()">
+<div class="candidate-users-container card shadow-sm p-4" i18nNamespace="pages/employee/candidate-users-management"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [class.table-rtl]="isRtl()">
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="fw-bold mb-0">{{ 'CANDIDATE_USERS.TITLE' | translate }}</h3>
   </div>
@@ -11,107 +8,81 @@
     <div class="row">
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_NAME' | translate }}</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="nameFilter"
-          (input)="onSearchChange()"
+        <input type="text" class="form-control" [(ngModel)]="nameFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_NAME_PLACEHOLDER' | translate" />
       </div>
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_EMAIL' | translate }}</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="emailFilter"
-          (input)="onSearchChange()"
+        <input type="text" class="form-control" [(ngModel)]="emailFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_EMAIL_PLACEHOLDER' | translate" />
       </div>
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_QID' | translate }}</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="qidFilter"
-          (input)="onSearchChange()"
+        <input type="text" class="form-control" [(ngModel)]="qidFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_QID_PLACEHOLDER' | translate" />
       </div>
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_MOBILE' | translate }}</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="mobileFilter"
-          (input)="onSearchChange()"
+        <input type="text" class="form-control" [(ngModel)]="mobileFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_MOBILE_PLACEHOLDER' | translate" />
       </div>
     </div>
   </div>
   <div class="table-card rounded overflow-hidden">
-       <div class="table-responsive">
-            <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>{{ 'CANDIDATE_USERS.NAME_EN' | translate }}</th>
-        <th>{{ 'CANDIDATE_USERS.NAME_AR' | translate }}</th>
-        <th>{{ 'CANDIDATE_USERS.EMAIL' | translate }}</th>
-        <th>{{ 'CANDIDATE_USERS.QID' | translate }}</th>
-        <th>{{ 'CANDIDATE_USERS.MOBILE' | translate }}</th>
-        <th>{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
-        <th>
-          {{ 'CANDIDATE_USERS.ACTIONS' | translate }}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-user>
-      <tr>
-        <td>{{ user.fullNameEn }}</td>
-        <td>{{ user.fullNameAr }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.qid || '-' }}</td>
-        <td>{{ user.mobileNumber }}</td>
-        <td>
-          <span
-            class="pill"
-            [class.soft]="user.isBlocked"
-            [class.success]="!user.isBlocked">
-            {{ user.isBlocked ? ('CANDIDATE_USERS.BLOCKED' | translate) : ('CANDIDATE_USERS.ACTIVE' | translate) }}
-          </span>
-        </td>
-        <td>
-          <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
-            
-            <button
-              type="button"
-              
-              class="btn btn-sm"
-              [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
-              (click)="toggleBlock(user)">
-              <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
-              <span class="ms-1">
-                {{ user.isBlocked ? ('CANDIDATE_USERS.UNBLOCK_USER' | translate) : ('CANDIDATE_USERS.BLOCK_USER' | translate) }}
+    <div class="table-responsive">
+      <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'CANDIDATE_USERS.NAME_EN' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.NAME_AR' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.EMAIL' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.QID' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.MOBILE' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
+            <th>
+              {{ 'CANDIDATE_USERS.ACTIONS' | translate }}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.fullNameEn }}</td>
+            <td>{{ user.fullNameAr }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.qid || '-' }}</td>
+            <td>{{ user.mobileNumber }}</td>
+            <td>
+              <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
+                {{ user.isBlocked ? ('CANDIDATE_USERS.BLOCKED' | translate) : ('CANDIDATE_USERS.ACTIVE' | translate) }}
               </span>
-            </button>
-          </ng-container>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
-          {{ 'NO_RECORDS' | translate }}
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-       </div>
+            </td>
+            <td>
+              <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
+
+                <button type="button" class="btn btn-sm"
+                  [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
+                  <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                  <span class="ms-1">
+                    {{ user.isBlocked ? ('CANDIDATE_USERS.UNBLOCK_USER' | translate) : ('CANDIDATE_USERS.BLOCK_USER' |
+                    translate) }}
+                  </span>
+                </button>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
-  
+
 </div>
 
-<app-pagination
-  [currentPage]="filters().pageNumber"
-  [totalItems]="totalItems()"
-  [itemsPerPage]="filters().pageSize"
-  (pageChanged)="onPageChange($event)"
-></app-pagination>
+<app-pagination [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
