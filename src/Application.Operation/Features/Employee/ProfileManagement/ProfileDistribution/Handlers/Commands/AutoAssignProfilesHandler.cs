@@ -1,8 +1,8 @@
 ﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using MediatR;
 using FluentResults;
 using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -30,9 +30,27 @@ public sealed class AutoAssignProfilesHandler(
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
         var targetEmployeeIds = request.EmployeeIds.ToList();
-        var employees = await userManager.Users.OfType<EmployeeUser>()
-            .Where(e => targetEmployeeIds.Contains(e.Id) && !e.IsDeleted && !e.IsBlocked)
-            .ToListAsync(ct);
+
+        var callerUser = await userManager.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == request.UserId, ct);
+
+        List<User> employees;
+
+        if (callerUser is OfficeUser callerOfficeUser && callerOfficeUser.OfficeId is not null)
+        {
+            employees = await userManager.Users.OfType<OfficeUser>()
+                .Where(e => targetEmployeeIds.Contains(e.Id) && e.OfficeId == callerOfficeUser.OfficeId && !e.IsDeleted && !e.IsBlocked)
+                .Cast<User>()
+                .ToListAsync(ct);
+        }
+        else
+        {
+            employees = await userManager.Users.OfType<EmployeeUser>()
+                .Where(e => targetEmployeeIds.Contains(e.Id) && !e.IsDeleted && !e.IsBlocked)
+                .Cast<User>()
+                .ToListAsync(ct);
+        }
 
         if (employees.Count == 0)
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionNoEligibleEmployees);
