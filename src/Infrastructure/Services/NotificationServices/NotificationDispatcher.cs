@@ -17,6 +17,7 @@ public sealed class NotificationDispatcher(
     : BackgroundService
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan StuckThreshold = TimeSpan.FromSeconds(60);
     private const int BatchSize = 25;
     private readonly IAppLogger _log = logger.ForContext(typeof(NotificationDispatcher));
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,20 +43,59 @@ public sealed class NotificationDispatcher(
             var repo = uow.GetEntityRepository<Notification>();
             var handlers = BuildHandlers(emailSender, smsSender, pushSender);
 
+            // Recover any notifications stuck in Queued state
+            await RecoverStuckQueued(repo, ct);
+
             var batch = await FetchPendingBatch(repo, ct);
             if (batch.Count == 0)
                 return;
 
             foreach (var n in batch)
             {
-                await ProcessOne(n, handlers, ct);
-                await uow.SaveChangesAsync(ct);
+                try
+                {
+                    await ProcessOne(n, handlers, ct);
+                    await uow.SaveChangesAsync(ct);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Failed to save notification {Id} after processing", n.Id);
+
+                    // Reload tracked entities to clear dirty state
+                    await uow.Rollback();
+
+                    // Reset to Pending directly in DB so it can be retried
+                    await repo.DbSet
+                        .Where(x => x.Id == n.Id && x.Status == NotificationStatus.Queued)
+                        .ExecuteUpdateAsync(s => s
+                            .SetProperty(p => p.Status, NotificationStatus.Pending)
+                            .SetProperty(p => p.ProviderMessageId, (string?)null), ct);
+
+                    // Break out — remaining batch items will be picked up next cycle
+                    break;
+                }
             }
         }
         catch (Exception ex)
         {
             _log.Error(ex, "Notification dispatcher cycle failed");
         }
+    }
+
+    private async Task RecoverStuckQueued(
+        IGenericRepository<Notification> repo,
+        CancellationToken ct)
+    {
+        var cutoff = time.GetUtcNow().DateTime - StuckThreshold;
+
+        var recovered = await repo.DbSet
+            .Where(n => n.Status == NotificationStatus.Queued && n.CreatedDate < cutoff)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(p => p.Status, NotificationStatus.Pending)
+                .SetProperty(p => p.ProviderMessageId, (string?)null), ct);
+
+        if (recovered > 0)
+            _log.Warning("Recovered {Count} stuck Queued notifications back to Pending", recovered);
     }
 
     private static async Task<List<Notification>> FetchPendingBatch(
@@ -115,7 +155,11 @@ public sealed class NotificationDispatcher(
     {
         if (result.Ok)
         {
-            n.MarkSent(result.ProviderId, time.GetUtcNow().DateTime);
+            // Truncate to match ProviderMessageId MaxLength(100)
+            var providerId = result.ProviderId?.Length > 100
+                ? result.ProviderId[..100]
+                : result.ProviderId;
+            n.MarkSent(providerId, time.GetUtcNow().DateTime);
             return;
         }
 

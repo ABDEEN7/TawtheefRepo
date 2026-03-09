@@ -10,44 +10,60 @@ namespace Application.Operation.Common.EventHandlers.JobCandidates;
 
 public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork unitOfWork)
     : INotificationHandler<JobCandidateInvitationSentDomainEvent>
-{
-    public async Task Handle(JobCandidateInvitationSentDomainEvent request, CancellationToken ct)
+{public async Task Handle(JobCandidateInvitationSentDomainEvent request, CancellationToken ct)
     {
-        var repo = unitOfWork.GetEntityRepository<Notification>();
+        var notificationRepository = unitOfWork.GetEntityRepository<Notification>();
         var jobTitle = request.JobTitle;
 
-        if (!string.IsNullOrWhiteSpace(request.Email))
-        {
-            var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
-            var emailNotification = Notification.Create( NotificationChannel.Email, 
-                JobCandidateInvitationSent.TemplateKey, request.ApplicantId, 
-                request.Email, "Careers Job Invitation", null, payload);
-            await repo.AddAsync(emailNotification, ct);
-        }
-        if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
-        {
-            var body = string.IsNullOrWhiteSpace(jobTitle)
-                ? JobCandidatesMessages.JobInvitationWithoutTitle
-                : string.Format(JobCandidatesMessages.JobInvitationWithTitle, jobTitle);
+        const string subject = "Careers Job Invitation";
 
-            var smsNotification = Notification.Create( NotificationChannel.Sms, 
-                JobCandidateInvitationSent.TemplateKey, request.ApplicantId, 
-                request.PhoneNumber, "Careers Job Invitation", body, null);
-            await repo.AddAsync(smsNotification, ct);
-        }
-        
-        var notificationInApp = Notification.Create(
+        // Email Notification
+        var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
+
+        // In-App Notification
+        var inAppNotification = Notification.Create(
             NotificationChannel.InApp,
             JobCandidateInvitationSent.TemplateKey,
             request.ApplicantId,
             request.Email,
-            "Careers Job Invitation",
-            string.IsNullOrWhiteSpace(jobTitle)
-                ? JobCandidatesMessages.JobInvitationWithoutTitle
-                : string.Format(JobCandidatesMessages.JobInvitationWithTitle, jobTitle),
-            null);
-        await repo.AddAsync(notificationInApp, ct);
+            subject,
+            null,
+            payload);
+
+        await notificationRepository.AddAsync(inAppNotification, ct);
         
+        if (!string.IsNullOrWhiteSpace(request.Email))
+        {
+            var emailNotification = Notification.Create(
+                NotificationChannel.Email,
+                JobCandidateInvitationSent.TemplateKey,
+                request.ApplicantId,
+                request.Email,
+                subject,
+                null,
+                payload);
+
+            await notificationRepository.AddAsync(emailNotification, ct);
+        }
+
+        // SMS Notification
+        if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            var messageBody = string.IsNullOrWhiteSpace(jobTitle)
+                ? JobCandidatesMessages.JobInvitationWithoutTitle
+                : string.Format(JobCandidatesMessages.JobInvitationWithTitle, jobTitle);
+
+            var smsNotification = Notification.Create(
+                NotificationChannel.Sms,
+                JobCandidateInvitationSent.TemplateKey,
+                request.ApplicantId,
+                request.PhoneNumber,
+                subject,
+                messageBody,
+                null);
+
+            await notificationRepository.AddAsync(smsNotification, ct);
+        }
 
         await unitOfWork.SaveChangesAsync(ct);
     }
