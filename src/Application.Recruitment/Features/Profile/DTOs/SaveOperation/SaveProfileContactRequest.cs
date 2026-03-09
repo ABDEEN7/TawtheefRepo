@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Application.Recruitment.Common.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
@@ -9,7 +10,7 @@ public sealed class SaveProfileContactRequest
 
     public Guid ResidenceCountryId { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Address contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Address contains invalid characters.")]
     public string? Address { get; set; }
     public Guid InterviewLocationId { get; set; }
 
