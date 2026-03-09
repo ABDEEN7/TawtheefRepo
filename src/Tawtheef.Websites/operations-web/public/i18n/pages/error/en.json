@@ -3,7 +3,6 @@
   "app.underConstruction.websiteUnderConstruction2": "Construction",
   "app.underConstruction.constructionMessage": "We are working on fixing the problem. We'll be back soon",
   "app.underConstruction.backToHome": "Back to Home",
-
   "app.error500.decorativeElement": "Decorative element",
   "app.error500.logoAltText": "Company Logo",
   "app.error500.serverErrorImage": "Server Error Illustration",
@@ -11,14 +10,12 @@
   "app.error500.oops500Error2": "Server Error",
   "app.error500.serverErrorMessage": "We apologize and are fixing the problem. Please try again at a later stage",
   "app.error500.backToHome": "Back to Home",
-
   "app.error404.decorativeElement": "Decorative element",
   "app.error404.logoAltText": "Company Logo",
   "app.error404.notFoundImage": "Page Not Found Illustration",
   "app.error404.ohNoError": "Oh No! Error",
   "app.error404.pageNotFoundMessage": "The page you requested could not be found. May the force be with you!",
   "app.error404.backToHome": "Back to Home",
-
   "app.comeSoon.decorativeElement": "Decorative element",
   "app.comeSoon.logoAltText": "Company Logo",
   "app.comeSoon.comingSoon1": "We are Coming",
@@ -32,7 +29,6 @@
   "app.comeSoon.notifyMeTitle": "Notify me when the website is launched",
   "app.comeSoon.enterEmailPlaceholder": "Enter your email",
   "app.comeSoon.notifyMeButton": "Notify Me!",
-
   "app.accessDenied.decorativeElement": "Decorative element",
   "app.accessDenied.logoAltText": "Company Logo",
   "app.accessDenied.accessDeniedImage": "Access denied illustration",
@@ -40,6 +36,7 @@
   "app.accessDenied.accessDeniedMessage": "Sorry, you don't have permission to access this page.",
   "app.accessDenied.goHome": "Go to Home",
   "app.accessDenied.goDashboard": "Go to Dashboard",
+  "app.accessDenied.logout": "Logout",
   "app.accessDenied.title1": "Access Denied",
   "app.accessDenied.title2": "You don't have permission to access this page.",
   "app.accessDenied.content": "If you think this is a mistake, please contact administrator.",
