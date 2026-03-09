@@ -8,15 +8,15 @@ import { GUID } from '../../../../../shared/types/guid.type';
 import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {DialogHelperService} from '../../../../../core/services/dialog-helper.service';
-import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
-import {AuthService} from '../../../../../core/auth/auth.service';
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
-import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
-import {JobStatus} from '../../../../../core/enums/lookups.enum';
-import {routes} from '../../../../../routes/routes';
-import {Permissions} from '../../../../../core/constants/permissions';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { DialogHelperService } from '../../../../../core/services/dialog-helper.service';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
+import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
+import { routes } from '../../../../../routes/routes';
+import { Permissions } from '../../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-list',
@@ -42,7 +42,7 @@ export class JobListComponent implements OnInit {
   approvedCount = 0;
   draftCount = 0;
   currentPage = signal(1);
-  itemsPerPage = 10;
+  itemsPerPage = signal(10);
 
   searchQuery = signal<string>('');
   filterType = signal<GUID | null>(null);
@@ -66,7 +66,7 @@ export class JobListComponent implements OnInit {
   loadJobsWithFilters() {
     const pagination: PaginatedRequest = {
       pageNumber: this.currentPage(),
-      pageSize: this.itemsPerPage,
+      pageSize: this.itemsPerPage(),
       sortBy: 'createdDate',
       sortDirection: 'desc',
     };
@@ -112,6 +112,12 @@ export class JobListComponent implements OnInit {
 
   onPageChange(page: number) {
     this.currentPage.set(page);
+    this.loadJobsWithFilters();
+  }
+
+  onPageSizeChange(size: number) {
+    this.itemsPerPage.set(size);
+    this.currentPage.set(1);
     this.loadJobsWithFilters();
   }
 
@@ -191,28 +197,28 @@ export class JobListComponent implements OnInit {
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Rejected);
 
-  if (rejectedStatus) {
-    const ref = this.dialogHelperService.openConfirmDialog({
-      type: 'submit',
-      title: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB',
-      description: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE',
-      cancelText: 'common.cancel',
-      confirmText: 'common.confirm',
-    });
-
-    ref?.onClose.subscribe((result) => {
-      if (!result) return;
-      this.jobService.changeStatus(job.id, rejectedStatus.id as GUID).subscribe({
-        next: () => {
-          this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_REJECTED')
-          );
-          this.loadJobsWithFilters();
-        },
+    if (rejectedStatus) {
+      const ref = this.dialogHelperService.openConfirmDialog({
+        type: 'submit',
+        title: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB',
+        description: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE',
+        cancelText: 'common.cancel',
+        confirmText: 'common.confirm',
       });
-    });
+
+      ref?.onClose.subscribe((result) => {
+        if (!result) return;
+        this.jobService.changeStatus(job.id, rejectedStatus.id as GUID).subscribe({
+          next: () => {
+            this.notificationService.success(
+              this.translateService.instant('JOB_LIST_MESSAGES_JOB_REJECTED')
+            );
+            this.loadJobsWithFilters();
+          },
+        });
+      });
+    }
   }
-}
 
   publishJob(job: JobResponse) {
     if (!this.canApproveJobs()) return;
@@ -238,28 +244,28 @@ export class JobListComponent implements OnInit {
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Closed);
 
-  if (closedStatus) {
-    const ref = this.dialogHelperService.openConfirmDialog({
-      type: 'submit',
-      title: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB',
-      description: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB_NOTE',
-      cancelText: 'common.cancel',
-      confirmText: 'common.confirm',
-    });
-
-    ref?.onClose.subscribe((result) => {
-      if (!result) return;
-      this.jobService.changeStatus(job.id, closedStatus.id as GUID).subscribe({
-        next: () => {
-          this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_CLOSED')
-          );
-          this.loadJobsWithFilters();
-        },
+    if (closedStatus) {
+      const ref = this.dialogHelperService.openConfirmDialog({
+        type: 'submit',
+        title: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB',
+        description: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB_NOTE',
+        cancelText: 'common.cancel',
+        confirmText: 'common.confirm',
       });
-    });
+
+      ref?.onClose.subscribe((result) => {
+        if (!result) return;
+        this.jobService.changeStatus(job.id, closedStatus.id as GUID).subscribe({
+          next: () => {
+            this.notificationService.success(
+              this.translateService.instant('JOB_LIST_MESSAGES_JOB_CLOSED')
+            );
+            this.loadJobsWithFilters();
+          },
+        });
+      });
+    }
   }
-}
 
   reopenJob(job: JobResponse) {
     const draftStatus = this.lookupsService.jobStatus().find(s =>
@@ -268,24 +274,24 @@ export class JobListComponent implements OnInit {
 
     if (draftStatus) {
       const ref = this.dialogHelperService.openConfirmDialog({
-      type: 'submit',
-      title: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB',
-      description: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE',
-      cancelText: 'common.cancel',
-      confirmText: 'common.confirm',
-    });
-
-    ref?.onClose.subscribe((result) => {
-      if (!result) return;
-      this.jobService.changeStatus(job.id, draftStatus.id as GUID).subscribe({
-        next: () => {
-          this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
-          );
-          this.loadJobsWithFilters();
-        },
+        type: 'submit',
+        title: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB',
+        description: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE',
+        cancelText: 'common.cancel',
+        confirmText: 'common.confirm',
       });
-    });
+
+      ref?.onClose.subscribe((result) => {
+        if (!result) return;
+        this.jobService.changeStatus(job.id, draftStatus.id as GUID).subscribe({
+          next: () => {
+            this.notificationService.success(
+              this.translateService.instant('JOB_LIST_MESSAGES_JOB_REOPENED')
+            );
+            this.loadJobsWithFilters();
+          },
+        });
+      });
     }
   }
 
@@ -295,51 +301,51 @@ export class JobListComponent implements OnInit {
       .jobStatus()
       .find((s) => s.backendName === this.jobStatus.Cancelled);
 
-  if (cancelledStatus) {
+    if (cancelledStatus) {
+      const ref = this.dialogHelperService.openConfirmDialog({
+        type: 'submit',
+        title: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB',
+        description: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE',
+        cancelText: 'common.cancel',
+        confirmText: 'common.confirm',
+      });
+
+      ref?.onClose.subscribe((result) => {
+        if (!result) return;
+        this.jobService.changeStatus(job.id, cancelledStatus.id as GUID).subscribe({
+          next: () => {
+            this.notificationService.success(
+              this.translateService.instant('JOB_LIST_MESSAGES_JOB_CANCELLED')
+            );
+            this.loadJobsWithFilters();
+          },
+        });
+      });
+    }
+  }
+
+  deleteJob(job: JobResponse) {
+    if (!this.canManageJobs()) return;
     const ref = this.dialogHelperService.openConfirmDialog({
       type: 'submit',
-      title: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB',
-      description: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE',
+      title: 'JOB_LIST_CONFIRMATIONS_DELETE_JOB',
+      description: 'JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE',
       cancelText: 'common.cancel',
       confirmText: 'common.confirm',
     });
 
     ref?.onClose.subscribe((result) => {
       if (!result) return;
-      this.jobService.changeStatus(job.id, cancelledStatus.id as GUID).subscribe({
+      this.jobService.delete(job.id).subscribe({
         next: () => {
           this.notificationService.success(
-            this.translateService.instant('JOB_LIST_MESSAGES_JOB_CANCELLED')
+            this.translateService.instant('JOB_LIST_MESSAGES_JOB_DELETED')
           );
           this.loadJobsWithFilters();
         },
       });
     });
   }
-}
-
-  deleteJob(job: JobResponse) {
-    if (!this.canManageJobs()) return;
-  const ref = this.dialogHelperService.openConfirmDialog({
-    type: 'submit',
-    title: 'JOB_LIST_CONFIRMATIONS_DELETE_JOB',
-    description: 'JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE',
-    cancelText: 'common.cancel',
-    confirmText: 'common.confirm',
-  });
-
-  ref?.onClose.subscribe((result) => {
-    if (!result) return;
-    this.jobService.delete(job.id).subscribe({
-      next: () => {
-        this.notificationService.success(
-          this.translateService.instant('JOB_LIST_MESSAGES_JOB_DELETED')
-        );
-        this.loadJobsWithFilters();
-      },
-    });
-  });
-}
 
   getStatusBadgeClass(statusName: string): string {
     const STATUS_BADGE_MAP: Record<string, string> = {

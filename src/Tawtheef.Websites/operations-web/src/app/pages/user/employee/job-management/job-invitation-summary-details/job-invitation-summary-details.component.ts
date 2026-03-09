@@ -18,8 +18,8 @@ import { GUID } from '../../../../../shared/types/guid.type';
 import { GuidUtils } from '../../../../../core/utils/guid-utils';
 import { routes } from '../../../../../routes/routes';
 import { TableModule } from 'primeng/table';
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
-import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive'; 
+import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 
 
 @Component({
@@ -111,6 +111,12 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
+    this.loadAll();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.itemsPerPage.set(size);
+    this.currentPage.set(1);
     this.loadAll();
   }
 

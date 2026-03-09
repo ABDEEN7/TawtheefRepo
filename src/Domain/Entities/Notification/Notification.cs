@@ -36,6 +36,9 @@ public class Notification : EventEntity
     [MaxLength(4000)]
     public string? Body { get; private set; }
 
+    [MaxLength(4000)]
+    public string? PlainTextBody { get; private set; }
+
     // Serialized payload (JSON metadata, variables, deep links, etc.)
     [MaxLength(4000)]
     public string? PayloadJson { get; private set; }
@@ -43,6 +46,14 @@ public class Notification : EventEntity
     // Provider-side ID (SendGrid, Twilio, Firebase, etc.)
     [MaxLength(100)]
     public string? ProviderMessageId { get; set; }
+
+    // Unique key to prevent duplicates
+    [MaxLength(100)]
+    public string? IdempotencyKey { get; private set; }
+
+    public int RetryCount { get; private set; } = 0;
+    public int MaxRetries { get; private set; } = 3; // Default to 3 retries
+    public DateTime? NextRetryAt { get; private set; }
 
     public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
 
@@ -54,7 +65,8 @@ public class Notification : EventEntity
 
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
-        string? toAddress, string? subject, string? body, string? payloadJson)
+        string? toAddress, string? subject, string? body, string? plainTextBody,
+        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3)
     {
         return new Notification
         {
@@ -64,8 +76,11 @@ public class Notification : EventEntity
             ToAddress = toAddress,
             Subject = subject, 
             Body = body, 
+            PlainTextBody = plainTextBody,
             PayloadJson = payloadJson,
-            Status = NotificationStatus.Pending
+            Status = NotificationStatus.Pending,
+            IdempotencyKey = idempotencyKey,
+            MaxRetries = maxRetries
         };
     }
 
@@ -77,9 +92,18 @@ public class Notification : EventEntity
         Error = null;
     }
 
-    public void MarkFailed(string error)
+    public void MarkFailed(string error, DateTime? nextRetry = null)
     {
-        Status = NotificationStatus.Failed;
+        if (nextRetry.HasValue && RetryCount < MaxRetries)
+        {
+            Status = NotificationStatus.Pending;
+            NextRetryAt = nextRetry;
+            RetryCount++;
+        }
+        else
+        {
+            Status = NotificationStatus.Failed;
+        }
         Error = error;
     }
 

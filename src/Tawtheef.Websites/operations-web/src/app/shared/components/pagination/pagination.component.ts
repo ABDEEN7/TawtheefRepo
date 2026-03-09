@@ -1,7 +1,7 @@
 import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {TranslatePipe} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 import { FaDirArrowDirective } from '../../directives/dir-arrow.directive';
 
 
@@ -68,8 +68,8 @@ export class PaginationComponent {
       this.pageChanged.emit(page);
     }
   }
-  changePageSize(size: number) {
-    this.pageSizeChanged.emit(size);
+  changePageSize(size: number | string) {
+    this.pageSizeChanged.emit(Number(size));
   }
 
   nextPage() {

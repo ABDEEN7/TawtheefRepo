@@ -1,16 +1,16 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {Select} from 'primeng/select';
-import {SystemAdminLogsService} from './services/system-admin-logs.service';
-import {SystemAdminLogDto} from './models/system-admin-log.dto';
-import {SystemAdminLogFilters} from './models/system-admin-log-filters.dto';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { SystemAdminLogsService } from './services/system-admin-logs.service';
+import { SystemAdminLogDto } from './models/system-admin-log.dto';
+import { SystemAdminLogFilters } from './models/system-admin-log-filters.dto';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 
 @Component({
   selector: 'app-system-admin-logs',
@@ -97,6 +97,11 @@ export class SystemAdminLogsComponent implements OnInit {
 
   onPageChange(page: number) {
     this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.loadLogs();
+  }
+
+  onPageSizeChange(size: number) {
+    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
     this.loadLogs();
   }
 

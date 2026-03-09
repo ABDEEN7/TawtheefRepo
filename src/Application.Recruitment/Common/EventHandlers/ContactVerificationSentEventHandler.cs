@@ -21,7 +21,7 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
             @event.UserId,
             @event.Destination,
             "Careers Verification Code",
-            null,
+            null,null, 
             payload);
         await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
