@@ -28,7 +28,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required â€“ Your Profile Needs Updates",
+            isAccepted ? "Your Profile Has Been Approved" :"Action Required - Your Profile Needs Updates",
             null,
             payload);        
         var notificationInApp = Notification.Create(
@@ -36,7 +36,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required â€“ Your Profile Needs Updates",
+            isAccepted ? "Your Profile Has Been Approved" :"Action Required - Your Profile Needs Updates",
             null,
             payload);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, cancellationToken);
