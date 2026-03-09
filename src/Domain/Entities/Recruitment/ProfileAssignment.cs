@@ -14,7 +14,7 @@ public class ProfileAssignment : EventEntity
     public UserProfile? UserProfile { get; init; }
 
     public Guid EmployeeId { get; init; }
-    public EmployeeUser? Employee { get; init; }
+    public User? Employee { get; init; }
 
     public bool IsActive { get; private set; } = true;
     public DateTimeOffset AssignedAtUtc { get; private set; } = DateTimeOffset.UtcNow;

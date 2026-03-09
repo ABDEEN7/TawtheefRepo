@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Common.Interfaces;
+using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
@@ -44,6 +45,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public virtual ICollection<Notification.Notification> Notifications { get; init; } = [];
     public virtual ICollection<RefreshToken> RefreshTokens { get; init; } = [];
     public ICollection<UserProfileLogger> UserProfileLoggers { get; set; } = [];
+    public ICollection<ProfileAssignment> ProfileAssignments { get; init; } = [];
     
     [MaxLength(450)]
     public string? CurrentAuthToken { get; set; }
@@ -76,6 +78,30 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     {
         OtpSendsInWindow++;
     }
+
+    public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit)
+    {
+        // Respect per-employee cap for this distribution run
+        if (assignedThisRound >= perEmployeeLimit)
+            return Result.Fail<ProfileAssignment>(ErrorsCodes.DistributionPerEmployeeLimitReached);
+
+        // Ensure profile is assignable (caller may have already filtered, but guard here as domain rule)
+        if (!ProfileDistributionRules.AssignableStatuses.Contains(profile.Status) &&
+            profile.Status != UserProfileStatus.Approved)
+            return Result.Fail<ProfileAssignment>(ErrorsCodes.ProfileNotAssignable);
+
+        // Apply domain changes
+        if (profile.Status != UserProfileStatus.Approved)
+            profile.Status = UserProfileStatus.UnderReview;
+
+        var assignment = ProfileAssignment.Assign(profile.Id, this.Id);
+
+        // keep aggregate consistency in memory
+        ProfileAssignments.Add(assignment);
+
+        return Result.Ok(assignment);
+    }
+
     public void SetOtpReference(string otpReference, DateTime expiryUtc)
     {
         OtpReference = otpReference;

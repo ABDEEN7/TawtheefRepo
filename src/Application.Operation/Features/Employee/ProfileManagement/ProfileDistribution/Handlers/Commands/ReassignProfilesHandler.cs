@@ -1,8 +1,8 @@
 ﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
-using MediatR;
 using FluentResults;
 using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -73,7 +73,7 @@ public sealed class ReassignProfilesHandler(
                 Notes = UserProfileLogConstants.Notes.AssignmentDeactivatedBeforeReassignment,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
-            });
+            }, ct);
         }
 
         foreach (var profile in profiles)
@@ -87,8 +87,21 @@ public sealed class ReassignProfilesHandler(
         var mode = ProfileDistributionModes.Normalize(request.Mode);
         if (mode == ProfileDistributionModes.ManualNormalized)
         {
-            var employee = await userManager.Users.OfType<EmployeeUser>()
-                .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted && !e.IsBlocked, ct);
+            var callerUser = await userManager.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, ct);
+
+            User? employee = null;
+            if (callerUser is OfficeUser callerOfficeUser && callerOfficeUser.OfficeId is not null)
+            {
+                employee = await userManager.Users.OfType<OfficeUser>()
+                    .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && e.OfficeId == callerOfficeUser.OfficeId && !e.IsDeleted && !e.IsBlocked, ct);
+            }
+            else
+            {
+                employee = await userManager.Users.OfType<EmployeeUser>()
+                    .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted && !e.IsBlocked, ct);
+            }
 
             if (employee is null)
                 return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionEmployeeNotActive);
@@ -107,7 +120,7 @@ public sealed class ReassignProfilesHandler(
                     ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
                     Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
                     Section = UserProfileLogConstants.Sections.Assignment
-                });
+                }, ct);
                 await loggerRepo.AddAsync(new UserProfileLogger
                 {
                     UserProfileId = profile.Id,
@@ -115,7 +128,7 @@ public sealed class ReassignProfilesHandler(
                     ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
                     Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
                     Section = UserProfileLogConstants.Sections.Assignment
-                });
+                }, ct);
             }
 
             await uow.SaveChangesAsync(ct);

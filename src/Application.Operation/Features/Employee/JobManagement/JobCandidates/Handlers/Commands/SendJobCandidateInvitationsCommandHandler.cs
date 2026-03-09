@@ -4,8 +4,8 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -22,9 +22,9 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IUnitOfWork unitOfWork,
     IJobRepository jobRepository,
     IUserProfileRepository userProfileRepository,
-    IJobTargetCandidateCalculatorService jobTargetCandidateCalculatorService,
+    IJobTargetCandidateCalculatorService targetCalculator,
     IJobRequirementsService jobRequirementsService,
-    IJobCandidatesQueryBuilderService jobCandidatesQueryBuilderService,
+    IJobCandidatesQueryBuilderService queryBuilder,
     IAppLogger logger)
     : IRequestHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
@@ -36,138 +36,211 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         if (job is null)
             return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobNotFound);
 
+        if (job.JobPoints is null)
+            return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobPointsNotFound);
+
         var jobTitle = job.JobTitle?.JobNameEn ?? job.JobTitle?.JobNameAr ?? string.Empty;
-        var targetCount = await jobTargetCandidateCalculatorService
+
+        var targetCount = await targetCalculator
             .GetTargetCountAsync(job.JobCategoryId, job.NumberOfVacancies);
 
-        var req = await jobRequirementsService.GetAsync(job.MajorId, job.SubMajorId);
+        var requirements = await jobRequirementsService
+            .GetAsync(job.MajorId, job.SubMajorId);
 
-        var baseQuery = jobCandidatesQueryBuilderService.BuildEligibleQuery(
-            job.Id, job.GenderId, job.MaximumAge, job.MinimumAge, req, request.Filter);
+        var eligibleQuery = BuildEligibleCandidatesQuery(job, request, requirements);
+
+        var alreadyInvited = await GetAlreadyInvitedApplicants(request.JobId, cancellationToken);
+
+        var candidateWindow = await LoadCandidateWindow(
+            eligibleQuery,
+            request,
+            targetCount,
+            alreadyInvited,
+            cancellationToken);
+
+        if (candidateWindow.Count == 0)
+            return Result.Ok(EmptyResult());
+
+        var scoredCandidates = await ScoreCandidates(
+            candidateWindow,
+            job,
+            request.Filter?.MinimumPoints,
+            cancellationToken);
+
+        if (scoredCandidates.Count == 0)
+            return Result.Ok(EmptyResult());
+
+        var finalCandidates = await SelectFinalCandidates(
+            scoredCandidates,
+            request,
+            targetCount,
+            cancellationToken);
+
+        if (finalCandidates.Count == 0)
+            return Result.Ok(EmptyResult());
+
+        return await CreateInvitations(
+            finalCandidates,
+            jobTitle,
+            request.JobId,
+            cancellationToken);
+    }
+
+    private IQueryable<JobCandidateRecord> BuildEligibleCandidatesQuery(
+        Tawtheef.Domain.Entities.Recruitment.Job job,
+        SendJobCandidateInvitationsCommand request,
+        JobRequirements req)
+    {
+        var query = queryBuilder.BuildEligibleQuery(
+            job.Id,
+            job.GenderId,
+            job.MaximumAge,
+            job.MinimumAge,
+            req,
+            request.Filter);
 
         if (request.ApplicantIds is { Count: > 0 })
-        {
-            baseQuery = baseQuery.Where(c => request.ApplicantIds.Contains(c.ApplicantId));
-        }
+            query = query.Where(c => request.ApplicantIds.Contains(c.ApplicantId));
 
-        // --------------------------------------------------------------------
-        // NEW: Do not invite again (exclude applicants who already have invitations for this job)
-        // --------------------------------------------------------------------
-        var invitationsRepo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
-        var activeInvitationStatuses = new[]
+        return query;
+    }
+
+    private async Task<HashSet<Guid>> GetAlreadyInvitedApplicants(
+        Guid jobId,
+        CancellationToken ct)
+    {
+        var repo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
+
+        var activeStatuses = new[]
         {
             InvitationStatusIds.NewInvitation,
             InvitationStatusIds.Read,
             InvitationStatusIds.Submitted
         };
 
-        // Any invitation for the job blocks re-inviting (all statuses & batches).
-        // If you want to block only certain statuses, add a predicate on InvitationStatusId here.
-        var alreadyInvitedApplicantIds = await invitationsRepo
+        var ids = await repo
             .AsNoTracking()
-            .Where(i => i.JobId == request.JobId && activeInvitationStatuses.AsEnumerable().Contains(i.InvitationStatusId))
+            .Where(i => i.JobId == jobId && activeStatuses.Contains(i.InvitationStatusId))
             .Select(i => i.ApplicantId)
             .Distinct()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
-        var alreadyInvitedSet = alreadyInvitedApplicantIds.ToHashSet();
-        // --------------------------------------------------------------------
+        return ids.ToHashSet();
+    }
 
+    private async Task<List<JobCandidateRecord>> LoadCandidateWindow(
+        IQueryable<JobCandidateRecord> query,
+        SendJobCandidateInvitationsCommand request,
+        int targetCount,
+        HashSet<Guid> alreadyInvited,
+        CancellationToken ct)
+    {
         var windowSize = request.ApplicantIds is { Count: > 0 }
             ? int.MaxValue
             : Math.Max(targetCount * 10, 500);
 
-        var window = await baseQuery
+        var window = await query
             .OrderByDescending(c => c.CreatedDate)
             .Take(windowSize)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
-        if (window.Count == 0)
-            return Result.Ok(EmptyResult());
-
-        // NEW: Filter out already invited candidates early (before scoring)
-        window = window
-            .Where(c => !alreadyInvitedSet.Contains(c.ApplicantId))
+        return window
+            .Where(c => !alreadyInvited.Contains(c.ApplicantId))
             .ToList();
+    }
 
-        if (window.Count == 0)
-            return Result.Ok(EmptyResult());
+    private async Task<List<JobCandidateRecord>> ScoreCandidates(
+        List<JobCandidateRecord> window,
+        Tawtheef.Domain.Entities.Recruitment.Job job,
+        int? minimumPoints,
+        CancellationToken ct)
+    {
+        var applicantIds = window.Select(c => c.ApplicantId).Distinct().ToList();
 
-        var ids = window.Select(x => x.ApplicantId).Distinct().ToList();
-        var profiles = await userProfileRepository.LoadForScoringAsync(ids,cancellationToken);
+        var profiles = await userProfileRepository
+            .LoadForScoringAsync(applicantIds, ct);
+
         var profileMap = profiles.ToDictionary(p => p.UserId);
 
         var scored = new List<JobCandidateRecord>(window.Count);
-        foreach (var c in window)
+
+        foreach (var candidate in window)
         {
-            if (!profileMap.TryGetValue(c.ApplicantId, out var p))
+            if (!profileMap.TryGetValue(candidate.ApplicantId, out var profile))
                 continue;
 
-            var major = p.Qualifications?
+            var major = profile.Qualifications?
                 .OrderByDescending(q => q.GraduationYear)
                 .Select(q => q.Major)
                 .FirstOrDefault();
 
-            var candidate = c with { Applicant = p.User, Profile = p, Major = major };
-            if (job.JobPoints == null) 
-                return Result.Fail<SendJobCandidateInvitationsResult>(JobMessages.JobPointsNotFound);
-            var points = JobCandidatePointsCalculator.Calculate(candidate, job.JobPoints,job.JobDegrees,job.MajorId,job.SubMajorId,logger);
+            var enriched = candidate with
+            {
+                Applicant = profile.User,
+                Profile = profile,
+                Major = major
+            };
 
-            scored.Add(candidate with { Points = points });
+            var points = JobCandidatePointsCalculator.Calculate(
+                enriched,
+                job.JobPoints!,
+                job.JobDegrees,
+                job.MajorId,
+                job.SubMajorId,
+                logger);
+
+            var scoredCandidate = enriched with { Points = points };
+
+            if (minimumPoints is null || scoredCandidate.Points >= minimumPoints)
+                scored.Add(scoredCandidate);
         }
 
-        if (request.Filter?.MinimumPoints is { } minPoints)
-            scored = scored.Where(c => c.Points >= minPoints).ToList();
-
-        if (scored.Count == 0)
-            return Result.Ok(EmptyResult());
-
-        var sorted = scored
+        return scored
             .OrderByDescending(c => c.Points)
             .ThenByDescending(c => c.CreatedDate)
             .ToList();
+    }
 
-        List<JobCandidateRecord> finalCandidates;
-
+    private async Task<List<JobCandidateRecord>> SelectFinalCandidates(
+        List<JobCandidateRecord> sorted,
+        SendJobCandidateInvitationsCommand request,
+        int targetCount,
+        CancellationToken ct)
+    {
         if (request.ApplicantIds is { Count: > 0 })
-        {
-            finalCandidates = sorted.Take(targetCount).ToList();
-        }
-        else
-        {
-            var settings = await unitOfWork.GetEntityRepository<JobCandidateFilterSetting>().DbSet
-                .AsNoTracking()
-                .Include(s => s.CandidateTypePercentages)
-                .Include(s => s.NationalityPercentages)
-                .FirstOrDefaultAsync(s => s.JobId == request.JobId, cancellationToken);
+            return sorted.Take(targetCount).ToList();
 
-            finalCandidates = JobCandidatesFilterUtility.ApplyPercentageFilters(sorted, settings, targetCount);
-        }
+        var settings = await unitOfWork
+            .GetEntityRepository<JobCandidateFilterSetting>()
+            .DbSet
+            .AsNoTracking()
+            .Include(s => s.CandidateTypePercentages)
+            .Include(s => s.NationalityPercentages)
+            .FirstOrDefaultAsync(s => s.JobId == request.JobId, ct);
 
-        if (finalCandidates.Count == 0)
-            return Result.Ok(EmptyResult());
+        return JobCandidatesFilterUtility
+            .ApplyPercentageFilters(sorted, settings, targetCount);
+    }
 
-        // NEW: Safety filter (in case any slip through)
-        finalCandidates = finalCandidates
-            .Where(c => !alreadyInvitedSet.Contains(c.ApplicantId))
-            .ToList();
+    private async Task<IResult<SendJobCandidateInvitationsResult>> CreateInvitations(
+        List<JobCandidateRecord> candidates,
+        string jobTitle,
+        Guid jobId,
+        CancellationToken ct)
+    {
+        var batch = Guid.NewGuid();
 
-        if (finalCandidates.Count == 0)
-            return Result.Ok(EmptyResult());
+        var repo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
 
-        // Keep batch numbering logic
-        var batchNumber = Guid.NewGuid();
-
-        var newInvitations = new List<Invitation>();
-        foreach (var candidate in finalCandidates)
+        var invitations = candidates.Select(candidate =>
         {
             var invitation = new Invitation
             {
                 Id = Guid.NewGuid(),
-                JobId = request.JobId,
+                JobId = jobId,
                 ApplicantId = candidate.ApplicantId,
                 InvitationStatusId = InvitationStatusIds.NewInvitation,
-                BatchNumber = batchNumber
+                BatchNumber = batch
             };
 
             invitation.AddDomainEvent(new JobCandidateInvitationSentDomainEvent(
@@ -175,25 +248,22 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 candidate.ApplicantId,
                 candidate.Applicant?.Email,
                 candidate.Applicant?.PhoneNumber,
-                jobTitle ?? string.Empty,
+                jobTitle,
                 DateTimeOffset.UtcNow));
 
-            newInvitations.Add(invitation);
-        }
+            return invitation;
+        }).ToList();
 
-        await invitationsRepo.AddRangeAsync(newInvitations, cancellationToken);
+        await repo.AddRangeAsync(invitations, ct);
 
-        var sentEmailCount = finalCandidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.Email));
-        var sentSmsCount = finalCandidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.PhoneNumber));
-
-        var updatedCount = await unitOfWork.SaveChangesAsync(cancellationToken);
+        var saved = await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Ok(new SendJobCandidateInvitationsResult
         {
-            TotalTargets = finalCandidates.Count,
-            SentEmailCount = sentEmailCount,
-            SentSmsCount = sentSmsCount,
-            UpdatedStatusCount = updatedCount
+            TotalTargets = candidates.Count,
+            SentEmailCount = candidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.Email)),
+            SentSmsCount = candidates.Count(c => !string.IsNullOrWhiteSpace(c.Applicant?.PhoneNumber)),
+            UpdatedStatusCount = saved
         });
     }
 
@@ -205,4 +275,3 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         UpdatedStatusCount = 0
     };
 }
-
