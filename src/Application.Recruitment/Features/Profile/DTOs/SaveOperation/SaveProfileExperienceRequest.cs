@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Application.Recruitment.Common.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
@@ -21,16 +22,17 @@ public sealed class ExperienceUpsertDto
 {
     public Guid? Id { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Employer name contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Employer name contains invalid characters.")]
     public required string EmployerName { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Job title contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Job title contains invalid characters.")]
     public required string JobTitle { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     public Guid CountryId { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Description contains invalid characters.")]
+    [StringLength(500)]
+    [RegularExpression(InputValidationPatterns.TextArea, ErrorMessage = "Description contains invalid characters.")]
     public string? Description { get; set; }
     public Guid? QualificationId { get; set; }
 
@@ -42,16 +44,17 @@ public sealed class TrainingCourseUpsertDto
 {
     public Guid? Id { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Provider contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Provider contains invalid characters.")]
     public required string Provider { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Title contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Title contains invalid characters.")]
     public required string Title { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     public Guid CountryId { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Description contains invalid characters.")]
+    [StringLength(500)]
+    [RegularExpression(InputValidationPatterns.TextArea, ErrorMessage = "Description contains invalid characters.")]
     public string? Description { get; set; }
     public Guid? CertificateId { get; set; }
     public int? CertificateFileIndex { get; set; }

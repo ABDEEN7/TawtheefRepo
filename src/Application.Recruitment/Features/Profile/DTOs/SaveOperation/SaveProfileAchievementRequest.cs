@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Application.Recruitment.Common.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
@@ -15,15 +16,16 @@ public sealed class AchievementUpsertDto
     public Guid? Id { get; set; }
     public Guid AchievementTypeId { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Title contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Title contains invalid characters.")]
     public string Title { get; set; } = string.Empty;
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Issuing authority contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Issuing authority contains invalid characters.")]
     public string IssuingAuthority { get; set; } = string.Empty;
     public Guid CountryId { get; set; }
     public DateOnly? IssueDate { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Description contains invalid characters.")]
+    [StringLength(500)]
+    [RegularExpression(InputValidationPatterns.TextArea, ErrorMessage = "Description contains invalid characters.")]
     public string? Description { get; set; }
     public bool? RelatedToSpecialization { get; set; }
     public Guid? AttachmentId { get; set; }
