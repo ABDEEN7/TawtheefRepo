@@ -1,212 +1,180 @@
 <section i18nNamespace="pages/job-invitation-summary">
   <div class="card card-table">
-      <div class="card-body">
-          <div class="row align-items-center mb-3">
-                <div class="col-md-12">
-                     <div class="d-flex gap-2">
-                         <a (click)="navigateTo()" aria-label="Back"><i class="hgi fs-32 " faDirArrow="start" ></i></a>
-                         <div>
-                             <h3 class="fw-bold m-0">
-                               {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
-                               <span class="title-sep">-</span>
-                             </h3>
-                             <p class="fs-16 m-0">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
-                         </div>
-
-                     </div>
-
-                </div>
-          </div>
-          <div class="card card-table mb-3">
-            <div class="card-body">
-              <div class="row align-items-end">
-
-                <!-- Search -->
-                <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
-                  <label class="form-label ">&nbsp; <i class="fa fa-search"></i></label>
-
-                    <input
-                      type="text"
-                      class="form-control"
-                      [placeholder]="'JOB_INVITATION_SUMMARY.SEARCH' | translate"
-                      [ngModel]="searchText()"
-                      (ngModelChange)="searchText.set($event); onFilterChange()"
-                    />
-                </div>
-
-                <!-- Job Type -->
-                <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
-                  <label class="form-label">
-                    {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
-                  </label>
-                  <p-select
-                    [options]="jobInvitationSummaryService.jobCategories()"
-                    [showClear]="true"
-                    [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-                    [filter]="true"
-                    filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                    optionLabel="name"
-                    optionValue="id"
-                    class="w-100"
-                    [ngModel]="selectedCategory()"
-                    (ngModelChange)="selectedCategory.set($event); onFilterChange()"
-                  ></p-select>
-                </div>
-
-                <!-- Department -->
-                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                  <label class="form-label">
-                    {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
-                  </label>
-                  <p-select
-                    [options]="jobInvitationSummaryService.departments()"
-                    [showClear]="true"
-                    [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-                    [filter]="true"
-                    filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                    optionLabel="name"
-                    optionValue="id"
-                    class="w-100"
-                    [ngModel]="selectedDepartment()"
-                    (ngModelChange)="selectedDepartment.set($event); onFilterChange()"
-                  ></p-select>
-                </div>
-
-                <!-- Status -->
-                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                  <label class="form-label">
-                    {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
-                  </label>
-
-                    <p-select
-                      [options]="jobInvitationSummaryService.jobStatuses()"
-                      [showClear]="true"
-                      [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate"
-                      [filter]="true"
-                      filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                      optionLabel="name"
-                      optionValue="id"
-                      class="w-100"
-                      [ngModel]="selectedStatus()"
-                      (ngModelChange)="selectedStatus.set($event); onFilterChange()"
-                    ></p-select>
-                    
-                    
-                </div>
-                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                          <button (click)="clearFilters()" class="btn btn-outline-primary light d-flex align-items-center gap-2">
-                      <i class="hgi hgi-stroke hgi-filter"></i>
-                      {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
-                    </button>
-                </div>
-
-              </div>
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-12">
+          <div class="d-flex gap-2">
+            <a (click)="navigateTo()" aria-label="Back"><i class="hgi fs-32 " faDirArrow="start"></i></a>
+            <div>
+              <h3 class="fw-bold m-0">
+                {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
+                <span class="title-sep">-</span>
+              </h3>
+              <p class="fs-16 m-0">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
             </div>
-          </div>
-          <!-- Table Card -->
-          <div class="table-card rounded overflow-hidden">
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover align-middle w-100">
-                <thead class="table-light">
-                <tr>
-                  <th>#</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.READ' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.EXPIRED' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.CANCELLED' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.PREVIOUS_BATCHES' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.LAST_BATCH' | translate }}</th>
-                  <th>{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
-                </tr>
-                </thead>
 
-                <tbody>
-                  @for (summary of pagedInvitation(); track summary.jobId; let i = $index) {
-                    <tr>
-                      <td>
-                        {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
-                      </td>
-
-                      <td>{{ summary.jobName }}</td>
-                      <td>{{ summary.departmentName }}</td>
-
-                      <td>
-                      <span [class]="'badge-soft ' + summary.jobCategory">
-                        {{ summary.jobCategory }}
-                      </span>
-                      </td>
-
-                      <td>
-                      <span class="status-pill" [ngClass]="getStatusPillClass(summary.jobStatus.backendName)">
-                        {{ summary.jobStatus.name }}
-                      </span>
-                      </td>
-
-                      <td class="text-center">
-                        <span class="pill pill-total">{{ summary.invitationCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-applied">{{ summary.applicantsCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-declined">{{ summary.refusedCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-unseen">{{ summary.notSeenCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-total">{{ summary.readCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-declined">{{ summary.expiredCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-declined">{{ summary.cancelledCount }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-total">{{ summary.previousBatchInvitations }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span class="pill pill-total">{{ summary.lastBatchNumber ?? '-' }}</span>
-                      </td>
-
-                      <td>
-                        @if (canViewInvitations()) {
-                         <div class="action-buttons">
-                           <a
-                             [routerLink]="routes.employee.jobInvitationSummaryDetails(summary.jobId)"
-                             class="btn-text d-flex gap-1 align-items-center "
-                           >
-                             <i class="hgi hgi-stroke hgi-view"></i>
-                             {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
-                           </a>
-                         </div>
-                        }
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
           </div>
 
-          <!-- Pagination -->
-          <div class="mt-3">
-          <app-pagination
-            [currentPage]="currentPage()"
-            [totalItems]="totalItems()"
-            [itemsPerPage]="itemsPerPage()"
-            (pageChanged)="onPageChange($event)"
-          ></app-pagination>
         </div>
       </div>
+      <div class="card card-table mb-3">
+        <div class="card-body">
+          <div class="row align-items-end">
+
+            <!-- Search -->
+            <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
+              <label class="form-label ">&nbsp; <i class="fa fa-search"></i></label>
+
+              <input type="text" class="form-control" [placeholder]="'JOB_INVITATION_SUMMARY.SEARCH' | translate"
+                [ngModel]="searchText()" (ngModelChange)="searchText.set($event); onFilterChange()" />
+            </div>
+
+            <!-- Job Type -->
+            <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
+              <label class="form-label">
+                {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
+              </label>
+              <p-select [options]="jobInvitationSummaryService.jobCategories()" [showClear]="true"
+                [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedCategory()"
+                (ngModelChange)="selectedCategory.set($event); onFilterChange()"></p-select>
+            </div>
+
+            <!-- Department -->
+            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+              <label class="form-label">
+                {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
+              </label>
+              <p-select [options]="jobInvitationSummaryService.departments()" [showClear]="true"
+                [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedDepartment()"
+                (ngModelChange)="selectedDepartment.set($event); onFilterChange()"></p-select>
+            </div>
+
+            <!-- Status -->
+            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+              <label class="form-label">
+                {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
+              </label>
+
+              <p-select [options]="jobInvitationSummaryService.jobStatuses()" [showClear]="true"
+                [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedStatus()"
+                (ngModelChange)="selectedStatus.set($event); onFilterChange()"></p-select>
+
+
+            </div>
+            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+              <button (click)="clearFilters()" class="btn btn-outline-primary light d-flex align-items-center gap-2">
+                <i class="hgi hgi-stroke hgi-filter"></i>
+                {{ 'JOB_INVITATION_SUMMARY.CLEAR_FILTERS' | translate }}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- Table Card -->
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle w-100">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.JOB_TITLE' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.ENTITY' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.TYPE' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.JOB_STATUS' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.INVITATIONS' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.APPLICANTS' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.DECLINED' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.UNSEEN' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.READ' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.EXPIRED' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.CANCELLED' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.PREVIOUS_BATCHES' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.LAST_BATCH' | translate }}</th>
+                <th>{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (summary of pagedInvitation(); track summary.jobId; let i = $index) {
+              <tr>
+                <td>
+                  {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
+                </td>
+
+                <td>{{ summary.jobName }}</td>
+                <td>{{ summary.departmentName }}</td>
+
+                <td>
+                  <span [class]="'badge-soft ' + summary.jobCategory">
+                    {{ summary.jobCategory }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="status-pill" [ngClass]="getStatusPillClass(summary.jobStatus.backendName)">
+                    {{ summary.jobStatus.name }}
+                  </span>
+                </td>
+
+                <td class="text-center">
+                  <span class="pill pill-total">{{ summary.invitationCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-applied">{{ summary.applicantsCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-declined">{{ summary.refusedCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-unseen">{{ summary.notSeenCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-total">{{ summary.readCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-declined">{{ summary.expiredCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-declined">{{ summary.cancelledCount }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-total">{{ summary.previousBatchInvitations }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="pill pill-total">{{ summary.lastBatchNumber ?? '-' }}</span>
+                </td>
+
+                <td>
+                  @if (canViewInvitations()) {
+                  <div class="action-buttons">
+                    <a [routerLink]="routes.employee.jobInvitationSummaryDetails(summary.jobId)"
+                      class="btn-text d-flex gap-1 align-items-center ">
+                      <i class="hgi hgi-stroke hgi-view"></i>
+                      {{ 'JOB_INVITATION_SUMMARY.VIEW_DETAILS' | translate }}
+                    </a>
+                  </div>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-3">
+        <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
+          (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+      </div>
+    </div>
   </div>
 
 </section>
