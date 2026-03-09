@@ -1,28 +1,22 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Common.Interfaces.Logging;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Notifications.Templates.ChangeJobStatusNotification;
 
 namespace Recruitment.API.Controllers;
 
@@ -36,43 +30,6 @@ public class AuthController(IMediator mediator) : ControllerBase
         var id when Guid.TryParse(id, out var guid) => Result.Ok(guid),
         _ => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier)
     };
-
-    #if DEBUG
-    [HttpGet("test-logger")]
-    public void TestLogger([FromServices] IAppLogger logger, [FromServices] ILogger<AuthController> logger2)
-    {
-        logger.Error("Serilog Sending notification log error test");
-        logger.Debug("Serilog Sending notification log debug test");
-        logger.Warning("Serilog Sending notification log warning test");
-        logger.Verbose("Serilog Sending notification log verbose test");
-        logger.Fatal("Serilog Sending notification log fatal test");
-        
-        logger2.LogError("Microsoft logger error log test");
-        logger2.LogDebug("Microsoft logger debug log test");
-        logger2.LogWarning("Microsoft logger warning log test");
-        logger2.LogInformation("Microsoft logger information log test");
-        logger2.LogCritical("Microsoft logger critical log test");
-        logger2.LogTrace("Microsoft logger trace log test");
-        
-        Trace.TraceInformation("Trace information log test");
-        Debug.WriteLine("Debug write line log test");
-        Console.WriteLine("Console write line log test");
-    }
-    
-    [HttpGet("send-notification-logger")]
-    public async Task<IActionResult> SendNotificationLogger([FromServices] IAppLogger logger,
-        [FromServices] IUnitOfWork uow, CancellationToken ct = default)
-    {
-        logger.Information("Sending notification log test");
-        var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel("Full Stack Developer"));
-        var notification = Notification.Create(NotificationChannel.Email, ChangeJobStatusNotification.TemplateKey,
-            Guid.Parse("0593ad82-e44e-4f55-aa08-c5c80764a873"),"alaa.s.jaber.97@gmail.com", 
-            "Job Status Review Required", null, payload);
-        await uow.GetEntityRepository<Notification>().AddAsync(notification, ct);
-        await uow.SaveChangesAsync(ct);
-        return Ok();
-    }
-    #endif
     
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)

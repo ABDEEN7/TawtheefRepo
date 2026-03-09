@@ -693,32 +693,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            UserId = new Guid("0593ad82-e44e-4f55-aa08-c5c80764a873"),
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            UserId = new Guid("42e0d563-7603-453c-81b1-6b2325622b40"),
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
                             UserId = new Guid("200c5018-fa8c-4ee7-a088-9077200b125c"),
                             RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
                         },
                         new
                         {
                             UserId = new Guid("781561c3-0175-4165-80c1-7c6a79130b25"),
-                            RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
-                        },
-                        new
-                        {
-                            UserId = new Guid("0593ad82-e44e-4f55-aa08-c5c80764a873"),
-                            RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
-                        },
-                        new
-                        {
-                            UserId = new Guid("42e0d563-7603-453c-81b1-6b2325622b40"),
                             RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
                         });
                 });
@@ -1450,7 +1430,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContactVerification", (string)null);
+                    b.ToTable("ContactVerification");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.LoginAttempt", b =>
@@ -1532,7 +1512,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserTypeId");
 
-                    b.ToTable("LoginAttempt", (string)null);
+                    b.ToTable("LoginAttempt");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.RefreshToken", b =>
@@ -1632,7 +1612,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "SecurityStamp");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Content.FAQ", b =>
@@ -2058,7 +2038,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EntityLog", (string)null);
+                    b.ToTable("EntityLog");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.AchievementType", b =>
@@ -6151,7 +6131,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailQueues", (string)null);
+                    b.ToTable("EmailQueues");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailTemplate", b =>
@@ -6218,7 +6198,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailTemplates", (string)null);
+                    b.ToTable("EmailTemplates");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.Notification", b =>
@@ -6258,17 +6238,34 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("IdempotencyKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
+                    b.Property<int>("MaxRetries")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PayloadJson")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("PlainTextBody")
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("ProviderMessageId")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("datetime2");
@@ -6308,7 +6305,13 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("DeletedById");
 
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique()
+                        .HasFilter("[IdempotencyKey] IS NOT NULL");
+
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("NextRetryAt");
 
                     b.HasIndex("Status");
 
@@ -6318,7 +6321,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("Status", "Channel");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.AuditTrailEntry", b =>
@@ -6463,7 +6466,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("HistoryInvitation", (string)null);
+                    b.ToTable("HistoryInvitation");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
@@ -8248,7 +8251,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Resources", (string)null);
+                    b.ToTable("Resources");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Security.Permission", b =>
@@ -9034,7 +9037,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmployeeProfile", (string)null);
+                    b.ToTable("EmployeeProfile");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -9526,7 +9529,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "SessionId");
 
-                    b.ToTable("UserSession", (string)null);
+                    b.ToTable("UserSession");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
@@ -9705,54 +9708,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "t-a.jaber@edu.gov.qa",
-                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
-                        },
-                        new
-                        {
-                            Id = new Guid("0593ad82-e44e-4f55-aa08-c5c80764a873"),
-                            AccessFailedCount = 0,
-                            AgreedToTerms = false,
-                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
-                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "t-m.khatatbeh@edu.gov.qa",
-                            EmailConfirmed = true,
-                            FullNameAr = "t-m.khatatbeh",
-                            FullNameEn = "t-m.khatatbeh",
-                            IsBlocked = false,
-                            IsDeleted = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "T-M.KHATATBEH@EDU.GOV.QA",
-                            NormalizedUserName = "T-M.KHATATBEH@EDU.GOV.QA",
-                            OtpAttempts = 0,
-                            OtpSendsInWindow = 0,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
-                            TwoFactorEnabled = false,
-                            UserName = "t-m.khatatbeh@edu.gov.qa",
-                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
-                        },
-                        new
-                        {
-                            Id = new Guid("42e0d563-7603-453c-81b1-6b2325622b40"),
-                            AccessFailedCount = 0,
-                            AgreedToTerms = false,
-                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
-                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "t-hu.ahmed@edu.gov.qa",
-                            EmailConfirmed = true,
-                            FullNameAr = "t-hu.ahmed",
-                            FullNameEn = "t-hu.ahmed",
-                            IsBlocked = false,
-                            IsDeleted = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "T-HU.AHMED@EDU.GOV.QA",
-                            NormalizedUserName = "T-HU.AHMED@EDU.GOV.QA",
-                            OtpAttempts = 0,
-                            OtpSendsInWindow = 0,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
-                            TwoFactorEnabled = false,
-                            UserName = "t-hu.ahmed@edu.gov.qa",
                             UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
                         });
                 });
@@ -12169,7 +12124,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeUser", "Employee")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "Employee")
                         .WithMany("ProfileAssignments")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -12710,6 +12665,8 @@ namespace Tawtheef.Infrastructure.Migrations
                 {
                     b.Navigation("Notifications");
 
+                    b.Navigation("ProfileAssignments");
+
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserProfileLoggers");
@@ -12743,11 +12700,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Invitations");
 
                     b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.EmployeeUser", b =>
-                {
-                    b.Navigation("ProfileAssignments");
                 });
 #pragma warning restore 612, 618
         }

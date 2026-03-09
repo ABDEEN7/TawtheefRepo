@@ -22,32 +22,12 @@ public class EmployeeRoleConfigurations : IEntityTypeConfiguration<IdentityUserR
             },
             new IdentityUserRole<Guid>
             {
-                UserId = EmployeeSuperAdminIds.EmployeeId3,
-                RoleId = SystemRoleIds.EmployeeSuperAdmin,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = EmployeeSuperAdminIds.EmployeeId4,
-                RoleId = SystemRoleIds.EmployeeSuperAdmin,
-            },
-            new IdentityUserRole<Guid>
-            {
                 UserId = EmployeeSuperAdminIds.EmployeeId1,
                 RoleId = SystemRoleIds.Employee,
             },
             new IdentityUserRole<Guid>
             {
                 UserId = EmployeeSuperAdminIds.EmployeeId2,
-                RoleId = SystemRoleIds.Employee,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = EmployeeSuperAdminIds.EmployeeId3,
-                RoleId = SystemRoleIds.Employee,
-            },
-            new IdentityUserRole<Guid>
-            {
-                UserId = EmployeeSuperAdminIds.EmployeeId4,
                 RoleId = SystemRoleIds.Employee,
             }
         );

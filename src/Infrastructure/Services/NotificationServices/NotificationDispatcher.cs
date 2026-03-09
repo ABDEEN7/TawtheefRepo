@@ -98,12 +98,13 @@ public sealed class NotificationDispatcher(
             _log.Warning("Recovered {Count} stuck Queued notifications back to Pending", recovered);
     }
 
-    private static async Task<List<Notification>> FetchPendingBatch(
+    private async Task<List<Notification>> FetchPendingBatch(
         IGenericRepository<Notification> repo,
         CancellationToken ct)
     {
+        var now = time.GetUtcNow().DateTime;
         var pendingIds = await repo.DbSet
-            .Where(n => n.Status == NotificationStatus.Pending)
+            .Where(n => n.Status == NotificationStatus.Pending && (n.NextRetryAt == null || n.NextRetryAt <= now))
             .OrderBy(n => n.CreatedDate)
             .Take(BatchSize)
             .Select(n => n.Id)
@@ -146,8 +147,8 @@ public sealed class NotificationDispatcher(
         }
         catch (Exception ex)
         {
-            n.MarkFailed(ex.Message);
-            _log.Error(ex, "Notification {Id} failed", n.Id);
+            ScheduleRetry(n, ex.Message);
+            _log.Error(ex, "Notification {Id} failed during processing", n.Id);
         }
     }
 
@@ -167,7 +168,25 @@ public sealed class NotificationDispatcher(
             ? string.Join(", ", result.Errors.Select(e => e.Message))
             : "UNKNOWN_ERROR";
 
-        n.MarkFailed(msg);
+        ScheduleRetry(n, msg);
+    }
+
+    private void ScheduleRetry(Notification n, string error)
+    {
+        // Exponential backoff: 1 min, 2 min, 4 min, 8 min...
+        var nextRetryDelay = TimeSpan.FromMinutes(Math.Pow(2, n.RetryCount));
+        var nextRetryAt = time.GetUtcNow().DateTime.Add(nextRetryDelay);
+
+        n.MarkFailed(error, nextRetryAt);
+
+        if (n.Status == NotificationStatus.Failed)
+        {
+            _log.Error("Notification {Id} failed permanently after {Retries} retries. Error: {Error}", n.Id, n.RetryCount, error);
+        }
+        else
+        {
+            _log.Warning("Notification {Id} failed attempt {Attempt}. Next retry scheduled at {NextRetry}. Error: {Error}", n.Id, n.RetryCount, nextRetryAt, error);
+        }
     }
 
     private static IReadOnlyDictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>> BuildHandlers(

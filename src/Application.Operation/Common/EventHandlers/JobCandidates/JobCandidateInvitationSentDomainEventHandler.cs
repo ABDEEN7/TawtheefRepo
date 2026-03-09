@@ -27,7 +27,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
             request.ApplicantId,
             request.Email,
             subject,
-            null,
+            null,null, 
             payload);
 
         await notificationRepository.AddAsync(inAppNotification, ct);
@@ -40,7 +40,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 request.ApplicantId,
                 request.Email,
                 subject,
-                null,
+                null,null, 
                 payload);
 
             await notificationRepository.AddAsync(emailNotification, ct);
@@ -59,7 +59,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 request.ApplicantId,
                 request.PhoneNumber,
                 subject,
-                messageBody,
+                messageBody,null, 
                 null);
 
             await notificationRepository.AddAsync(smsNotification, ct);
