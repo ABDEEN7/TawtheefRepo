@@ -13,7 +13,9 @@ type ExternalMessageType = 'EXTERNAL_LOGIN_SUCCESS' | 'EXTERNAL_LOGIN_ERROR' | '
 interface ExternalMessage {
   type: ExternalMessageType;
   userData?: any;
-  message?: { message: string }[];
+  message?: any;
+  content?: any;
+  error?: any;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -228,12 +230,35 @@ export class ExternalLoginService implements OnDestroy {
 
       case 'EXTERNAL_LOGIN_ERROR': {
         this.finishPopupFlow({ stopLoading: true, closePopup: true });
-        const errorList = msg.message;
+
+        let detail = '';
+        const msgVal = msg.message ?? msg.content ?? msg.error;
+
+        if (typeof msgVal === 'string') {
+          detail = this.i18nText(msgVal, 'server-error');
+        } else if (Array.isArray(msgVal)) {
+          detail = msgVal
+            .map((item) => {
+              const text = typeof item === 'string' ? item : item?.message ?? item?.error;
+              return text ? this.i18nText(text, 'server-error') : null;
+            })
+            .filter(Boolean)
+            .join('\n');
+        } else if (msgVal && typeof msgVal === 'object') {
+          const text = msgVal.message ?? msgVal.error ?? msgVal.content;
+          if (text) {
+            detail = this.i18nText(text, 'server-error');
+          }
+        }
+
+        if (!detail) {
+          detail = this.i18nText(this.i18n.externalAuthFailedDetailFallback);
+        }
+
         this.toast(
           'error',
           this.i18nText(this.i18n.loginFailedSummary),
-          errorList?.map((item) => this.i18nText(item.message, 'server-error')).join('\n')
-          ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback),
+          detail
         );
         break;
       }
@@ -337,7 +362,7 @@ export class ExternalLoginService implements OnDestroy {
     const fullKey = `server-error.${detail}`;
     const translateValue = this.translate.instant(fullKey);
     let detailMessage = detail;
-    if(fullKey != translateValue) {
+    if (fullKey != translateValue) {
       detailMessage = translateValue;
     }
 
