@@ -13,7 +13,7 @@ public sealed class SaveProfilePersonalRequest
     [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Full name contains invalid characters.")]
     public string? FullNameEn { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-\(\)]+$", ErrorMessage = "National number contains invalid characters.")]
+    [RegularExpression(@"^[^\\/:*?""<>|]+$", ErrorMessage = "National number contains invalid characters.")]
     public string? NationalNumber { get; set; }
     public DateOnly? QIDExpiry { get; set; }
     public DateOnly? BirthDate { get; set; }
@@ -39,7 +39,7 @@ public sealed class SaveProfilePersonalRequest
     public DateOnly? SponsorQidExpiry { get; set; }
     public IFormFile? SponsorCard { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\s\,\.\-\(\)]+$", ErrorMessage = "File name contains invalid characters.")]
+    [RegularExpression(@"^[^\\/:*?""<>|]+$", ErrorMessage = "File name contains invalid characters.")]
     public string? SponsorCardFileName { get; set; }
 }
 
