@@ -63,12 +63,14 @@ public class GetSignedBlobHandler(
                 logger.Error("Failed to generate SAS URL for blob: {BlobKey}. Errors: {Errors}", blobKey, sas.Errors);
                 return Result.Fail<FileResponse>(ErrorsCodes.UnExpectedError);
             }
+            
+            var contentType = TryGetMimeType(downloadName, out var mt) ? mt : "application/octet-stream";
 
             return Result.Ok(new FileResponse
             {
                 SourceKind = FileSourceKind.RedirectUrl,
                 RedirectUrl = sas.Value,
-                ContentType = "application/octet-stream",
+                ContentType = contentType,
                 DownloadName = downloadName,
                 EnableRangeProcessing = false
             });
@@ -83,14 +85,14 @@ public class GetSignedBlobHandler(
         }
 
         var path = map.Value!;
-        var contentType = TryGetMimeType(path, out var mt) ? mt : "application/octet-stream";
+        var contentTypeFile = TryGetMimeType(path, out var mtPath) ? mtPath : "application/octet-stream";
         var dlName = Path.GetFileName(path);
 
         return Result.Ok(new FileResponse
         {
             SourceKind = FileSourceKind.LocalPath,
             LocalPath = path,
-            ContentType = contentType,
+            ContentType = contentTypeFile,
             DownloadName = dlName,
             EnableRangeProcessing = true
         });
