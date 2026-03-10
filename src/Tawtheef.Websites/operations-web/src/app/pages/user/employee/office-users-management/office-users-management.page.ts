@@ -1,24 +1,24 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {TableModule} from 'primeng/table';
-import {ButtonModule} from 'primeng/button';
-import {DialogService} from 'primeng/dynamicdialog';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {HasPermissionDirective} from '../../../../shared/directives/has-permission.directive';
-import {OfficeUsersService} from './services/office-users.service';
-import {OfficeUserDto} from './models/office-user.dto';
-import {OfficeUserFilters} from './models/office-user-filters.dto';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {Permissions} from '../../../../core/constants/permissions';
-import {OfficeSummaryDto} from './models/office-summary.dto';
-import {OfficeUserDialogComponent} from './dialogs/office-user-dialog/office-user-dialog.component';
-import {AuthService} from '../../../../core/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { OfficeUsersService } from './services/office-users.service';
+import { OfficeUserDto } from './models/office-user.dto';
+import { OfficeUserFilters } from './models/office-user-filters.dto';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { Permissions } from '../../../../core/constants/permissions';
+import { OfficeSummaryDto } from './models/office-summary.dto';
+import { OfficeUserDialogComponent } from './dialogs/office-user-dialog/office-user-dialog.component';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-office-users-management',
@@ -122,7 +122,12 @@ export class OfficeUsersManagementPage implements OnInit {
   }
 
   onPageChange(page: number): void {
-    this.filters.update(f => ({...f, pageNumber: page}));
+    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.loadUsers();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
     this.loadUsers();
   }
 
@@ -163,7 +168,7 @@ export class OfficeUsersManagementPage implements OnInit {
     this.officeUsersService.updateBlockStatus(user.id, desiredState).subscribe({
       next: () => {
         this._users.update(users =>
-          users.map(item => (item.id === user.id ? {...item, isBlocked: desiredState} : item))
+          users.map(item => (item.id === user.id ? { ...item, isBlocked: desiredState } : item))
         );
         this.notification.success(
           this.translate.instant(

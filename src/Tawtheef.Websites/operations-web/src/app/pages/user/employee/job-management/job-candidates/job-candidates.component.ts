@@ -54,7 +54,7 @@ export class JobCandidatesComponent implements OnInit {
   abovePointsCandidatesCount = 0;
   pointsAverage = 0;
   currentPage = signal(1);
-  itemsPerPage = 10;
+  itemsPerPage = signal(10);
 
   candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];
@@ -99,7 +99,7 @@ export class JobCandidatesComponent implements OnInit {
     const filter = this.buildFilter();
     const pagination = {
       pageNumber: this.currentPage(),
-      pageSize: this.itemsPerPage,
+      pageSize: this.itemsPerPage(),
       sortBy: 'createdDate',
       sortDirection: 'desc',
     };
@@ -225,6 +225,13 @@ export class JobCandidatesComponent implements OnInit {
 
   onPageChange(page: number) {
     this.currentPage.set(page);
+    this.resetSelection();
+    this.loadCandidatesData();
+  }
+
+  onPageSizeChange(size: number) {
+    this.itemsPerPage.set(size);
+    this.currentPage.set(1);
     this.resetSelection();
     this.loadCandidatesData();
   }

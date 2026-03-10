@@ -147,6 +147,15 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
         // Apply configurations
         builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
         
+        // Notification table specific indexes
+        builder.Entity<Notification>()
+            .HasIndex(n => n.IdempotencyKey)
+            .IsUnique()
+            .HasFilter("[IdempotencyKey] IS NOT NULL");
+        
+        builder.Entity<Notification>()
+            .HasIndex(n => n.NextRetryAt);
+        
         // Automatically add indexes to common query/filtering fields on all models
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

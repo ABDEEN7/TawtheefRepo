@@ -85,7 +85,6 @@ export class StepAttachmentsComponent implements OnInit {
       this.rows.push(row);
       this.filesStore[idx] = att.file ?? null;
       this.fileRefs[idx] = att.fileRef ?? null;
-      row.disable({ emitEvent: false });
     });
 
     this.lastSubmittedSignature = null;

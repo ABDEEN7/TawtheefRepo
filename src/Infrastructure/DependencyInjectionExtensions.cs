@@ -173,7 +173,6 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 
                 // Background (Common) - keep only what truly runs in both
-                services.AddHostedService<EmailDispatcher>();
                 services.AddHostedService<NotificationDispatcher>();
                 
                 // Logging of request bodies (Common)
@@ -204,12 +203,11 @@ namespace Tawtheef.Infrastructure
             private void AddNotificationServicesCommon()
             {
                 services.AddSingleton<IEmailBranding, DefaultBranding>();
-                services.AddSingleton<IEmailQueue, EmailQueue>();
                 services.AddSingleton<IEmailTransport, GraphEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
-                services.AddScoped<IEmailSender, EmailSenderViaEmailService>();
+                services.AddScoped<IEmailSender, DurableEmailSender>();
                 services.AddScoped<IPushSender, NullPushSender>();
                 services.AddScoped<IEmailService, EmailService>();
             }

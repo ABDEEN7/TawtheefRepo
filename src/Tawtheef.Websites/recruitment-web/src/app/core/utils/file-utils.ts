@@ -76,19 +76,6 @@ export class FileUtilsService {
 
     const isDl = this.isApiSignedDl(fileUrl);
 
-    // لو Azure و الرابط هو /dl:
-    // ❗ لا تفتحيه مباشرة لأنه يحتاج JWT (لن يُرسل في window.open)
-    // الأفضل: fetch JSON url (إذا سويتي endpoint JSON)
-    if (this.isAzure && isDl) {
-      // إذا عندك endpoint JSON:
-      const r = await this.http.get<{ url: string }>(fileUrl, undefined, {
-        responseType: 'json',
-        observe: 'body'
-      }).toPromise();
-      window.open(r!.url, '_blank');
-      return;
-    }
-
     // Local (أو روابط عامة): إذا بدك
     if (!forceAuthFetch && !isDl) {
       window.open(fileUrl, '_blank');

@@ -218,14 +218,40 @@ export class ExternalLoginService implements OnDestroy {
           });
         break;
 
-      case 'EXTERNAL_LOGIN_ERROR':
+      case 'EXTERNAL_LOGIN_ERROR': {
         this.finishPopupFlow({ stopLoading: true, closePopup: true });
+
+        let detail = '';
+        const msgVal = msg.message ?? msg.content ?? msg.error;
+
+        if (typeof msgVal === 'string') {
+          detail = this.i18nText(msgVal);
+        } else if (Array.isArray(msgVal)) {
+          detail = msgVal
+            .map((item) => {
+              const text = typeof item === 'string' ? item : item?.message ?? item?.error;
+              return text ? this.i18nText(text) : null;
+            })
+            .filter(Boolean)
+            .join('\n');
+        } else if (msgVal && typeof msgVal === 'object') {
+          const text = msgVal.message ?? msgVal.error ?? msgVal.content;
+          if (text) {
+            detail = this.i18nText(text);
+          }
+        }
+
+        if (!detail) {
+          detail = this.i18nText(this.i18n.externalAuthFailedDetailFallback);
+        }
+
         this.toast(
           'error',
           this.i18nText(this.i18n.externalAuthFailedSummary),
-          msg.content ?? msg.message ?? this.i18nText(this.i18n.externalAuthFailedDetailFallback)
+          detail
         );
         break;
+      }
 
       case 'EXTERNAL_POPUP_CLOSED':
         this.finishPopupFlow({ stopLoading: true, closePopup: true });
@@ -316,7 +342,7 @@ export class ExternalLoginService implements OnDestroy {
     const fullKey = `server-error.${detail}`;
     const translateValue = this.translate.instant(fullKey);
     let detailMessage = detail;
-    if(fullKey != translateValue) {
+    if (fullKey != translateValue) {
       detailMessage = translateValue;
     }
 

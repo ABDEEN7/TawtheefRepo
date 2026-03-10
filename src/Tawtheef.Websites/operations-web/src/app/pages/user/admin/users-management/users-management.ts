@@ -1,22 +1,22 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {UsersService} from './services/users.service';
-import {UserDto} from './models/user.dto';
-import {UserFilters} from './models/user-filters.dto';
-import {Select} from 'primeng/select';
-import {RoleSummaryDto} from './models/role-summary.dto';
-import {Tooltip} from 'primeng/tooltip';
-import {DialogService} from 'primeng/dynamicdialog';
-import {ManageRolesDialogComponent} from './dialogs/manage-roles-dialog/manage-roles-dialog.component';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {SystemRoles} from '../../../../core/constants/systemRoles';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { UsersService } from './services/users.service';
+import { UserDto } from './models/user.dto';
+import { UserFilters } from './models/user-filters.dto';
+import { Select } from 'primeng/select';
+import { RoleSummaryDto } from './models/role-summary.dto';
+import { Tooltip } from 'primeng/tooltip';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ManageRolesDialogComponent } from './dialogs/manage-roles-dialog/manage-roles-dialog.component';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { SystemRoles } from '../../../../core/constants/systemRoles';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 
 @Component({
   selector: 'app-users-management',
@@ -108,7 +108,12 @@ export class UsersManagement implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.filters.update(f => ({...f, pageNumber: page}));
+    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.loadUsers();
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.filters.update(f => ({ ...f, pageSize, pageNumber: 1 }));
     this.loadUsers();
   }
 
@@ -118,7 +123,7 @@ export class UsersManagement implements OnInit {
       width: '900px',
       styleClass: 'manage-roles-dialog',
       draggable: false,   // ✅ disables dragging
-      data: { user, roleOptions: this.roleLookups()  }
+      data: { user, roleOptions: this.roleLookups() }
     });
     ref?.onClose.subscribe((updated: boolean) => {
       if (updated) {
@@ -134,7 +139,7 @@ export class UsersManagement implements OnInit {
         next: () => {
           // Update local state
           this._users.update(users =>
-            users.map(u => u.id === user.id ? {...u, isBlocked: desiredState} : u)
+            users.map(u => u.id === user.id ? { ...u, isBlocked: desiredState } : u)
           );
           this.notification.success(this.translate.instant(desiredState ? 'USERS.BLOCK_SUCCESS' : 'USERS.UNBLOCK_SUCCESS'));
         }
@@ -142,7 +147,7 @@ export class UsersManagement implements OnInit {
   }
 
   onBlockedFilterChange(value: boolean | null) {
-    this.filters.update(f => ({...f, isBlocked: value ?? null}));
+    this.filters.update(f => ({ ...f, isBlocked: value ?? null }));
     this.onSearchChange();
   }
 

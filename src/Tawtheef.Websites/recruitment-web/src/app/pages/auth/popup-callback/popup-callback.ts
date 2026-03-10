@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthResponse} from '../../../core/models/auth/auth-response.model';
+import { AuthResponse } from '../../../core/models/auth/auth-response.model';
 
 export type ExternalMsgType = 'EXTERNAL_LOGIN_SUCCESS' | 'EXTERNAL_LOGIN_ERROR' | 'EXTERNAL_POPUP_CLOSED';
 export interface ExternalMsg {
   type: ExternalMsgType;
   userData?: AuthResponse;
-  message?: string;
-  content?: string;
+  message?: any;
+  content?: any;
+  error?: any;
   state?: string;
 }
 

@@ -1,20 +1,20 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {TableModule} from 'primeng/table';
-import {ButtonModule} from 'primeng/button';
-import {CandidateUsersService} from './services/candidate-users.service';
-import {CandidateUserDto} from './models/candidate-user.dto';
-import {CandidateUserFilters} from './models/candidate-user-filters.dto';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {Permissions} from '../../../../core/constants/permissions';
-import {HasPermissionDirective} from '../../../../shared/directives/has-permission.directive';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { CandidateUsersService } from './services/candidate-users.service';
+import { CandidateUserDto } from './models/candidate-user.dto';
+import { CandidateUserFilters } from './models/candidate-user-filters.dto';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { Permissions } from '../../../../core/constants/permissions';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-candidate-users-management',
@@ -99,7 +99,12 @@ export class CandidateUsersManagementPage implements OnInit {
   }
 
   onPageChange(page: number): void {
-    this.filters.update(f => ({...f, pageNumber: page}));
+    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.loadUsers();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
     this.loadUsers();
   }
 
@@ -108,7 +113,7 @@ export class CandidateUsersManagementPage implements OnInit {
     this.candidateUsersService.updateBlockStatus(user.id, desiredState).subscribe({
       next: () => {
         this._users.update(users =>
-          users.map(item => (item.id === user.id ? {...item, isBlocked: desiredState} : item))
+          users.map(item => (item.id === user.id ? { ...item, isBlocked: desiredState } : item))
         );
         this.notification.success(
           this.translate.instant(

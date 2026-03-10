@@ -2,26 +2,21 @@
 using System.Text;
 using System.Text.Json;
 using Application.Operation.Features.Authenticator.Commands;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Constants;
-using Tawtheef.Application.Common.Interfaces.Logging;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Features.Authenticator.Commands;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Extensions;
-using Tawtheef.Notifications.Templates.ChangeJobStatusNotification;
 
 namespace Operations.API.Controllers
 {
@@ -35,33 +30,6 @@ namespace Operations.API.Controllers
             var id when Guid.TryParse(id, out var guid) => Result.Ok(guid),
             _ => Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier)
         };
-
-
-#if DEBUG
-        [HttpGet("test-logger")]
-        public void TestLogger([FromServices] IAppLogger logger)
-        {
-            logger.Error("Sending notification log error test");
-            logger.Debug("Sending notification log debug test");
-            logger.Warning("Sending notification log warning test");
-            logger.Verbose("Sending notification log verbose test");
-            logger.Fatal("Sending notification log fatal test");
-        }
-    
-        [HttpGet("send-notification-logger")]
-        public async Task<IActionResult> SendNotificationLogger([FromServices] IAppLogger logger,
-            [FromServices] IUnitOfWork uow, CancellationToken ct = default)
-        {
-            logger.Information("Sending notification log test");
-            var payload = JsonSerializer.Serialize(new ChangeJobStatusNotificationModel("Full Stack Developer"));
-            var notification = Notification.Create(NotificationChannel.Email, ChangeJobStatusNotification.TemplateKey,
-                Guid.Parse("0593ad82-e44e-4f55-aa08-c5c80764a873"),"alaa.s.jaber.97@gmail.com", 
-                "Job Status Review Required", null, payload);
-            await uow.GetEntityRepository<Notification>().AddAsync(notification, ct);
-            await uow.SaveChangesAsync(ct);
-            return Ok();
-        }
-#endif
         
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
@@ -104,7 +72,7 @@ namespace Operations.API.Controllers
             var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
             object message = result.IsFailed
-                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors[0].Message }
+                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors.Select(e => new { message = e.Message }) }
                 : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
             var json = JsonSerializer.Serialize(message,
@@ -127,7 +95,7 @@ namespace Operations.API.Controllers
             var spaCallback = $"{spaOrigin}/auth/popup-callback";
 
             object message = result.IsFailed
-                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors[0].Message }
+                ? new { type = ExternalLoginMessageTypes.Error, message = result.Errors.Select(e => new { message = e.Message }) }
                 : new { type = ExternalLoginMessageTypes.Success, userData = result.Value };
 
             var json = JsonSerializer.Serialize(message, new JsonSerializerOptions
