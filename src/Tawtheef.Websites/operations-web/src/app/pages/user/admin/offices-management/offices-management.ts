@@ -109,7 +109,7 @@ export class OfficesManagement implements OnInit {
   private setupSearchListener() {
     this.searchChanges$
       .pipe(
-        debounceTime(400),
+        debounceTime(1000),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       )
