@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Application.Recruitment.Common.Validation;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
@@ -22,7 +23,7 @@ public sealed class AdditionalAttachmentUpsertDto
 {
     public Guid? Id { get; set; }
 
-    [RegularExpression(@"^[a-zA-Z0-9\u0600-\u06FF\s\,\.\-]+$", ErrorMessage = "Title contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Title contains invalid characters.")]
     public string Title { get; set; } = default!;
 
     [RegularExpression(@"^[^\\/:*?""<>|]+$", ErrorMessage = "File name contains invalid characters.")]
