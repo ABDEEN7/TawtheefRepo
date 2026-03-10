@@ -22,7 +22,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         // Validate step (if your validator expects these props already set, do it after updates)
@@ -36,7 +36,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
-                section: ProfileSection.Personal,
+                section: ProfileSection.Prerequisites,
                 meta: cmd.Request.Resume,
                 file: cmd.Request.ResumeAttachment,
                 currentProfileResourceId: profile.ResumeAttachmentId,
@@ -45,8 +45,8 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResumeAttachmentId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, section: ProfileSection.Prerequisites, ct);
         }
 
         // National card
@@ -55,7 +55,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
-                section: ProfileSection.Personal,
+                section: ProfileSection.Prerequisites,
                 meta: cmd.Request.NationalCard,
                 file: cmd.Request.NationalCardAttachment,
                 currentProfileResourceId: profile.NationalCardId,
@@ -64,8 +64,8 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.NationalCardId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, section: ProfileSection.Prerequisites, ct);
         }
 
         // Sponsor card (nested)
@@ -88,7 +88,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.SponsorProfile.SponsorCardId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
                 await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
         }
 

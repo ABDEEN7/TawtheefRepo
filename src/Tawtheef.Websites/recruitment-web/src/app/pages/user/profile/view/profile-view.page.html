@@ -61,7 +61,7 @@
             <div class="profile-wrapper position-relative">
               <div id="profileImage" class="profile-image">
                 <img #userPictureRef class="avatar shadow-sm" [src]="avatar" alt="Avatar"
-                     (error)="userPictureRef.src = defaultAvatar"/>
+                  (error)="userPictureRef.src = defaultAvatar" />
               </div>
             </div>
             <div class="text-start">
@@ -233,21 +233,22 @@
             [profile]="sectionValue(active)" [visibility]="visibility()" [isProfileApproved]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
             [changesRequest]="changes(ProfileSectionEnum.Prerequisites)" [notes]="activeSectionNotes()"
-            (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)">
+            (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)"
+            (refresh)="reloadSection(ProfileSectionEnum.Prerequisites)">
           </app-profile-prerequisites-section>
 
           <app-profile-personal-section *ngSwitchCase="ProfileSectionEnum.Personal" [profile]="sectionValue(active)"
             [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
             [changesRequest]="changes(ProfileSectionEnum.Personal)" [notes]="activeSectionNotes()"
-            (edit)="openEditDialog(ProfileSectionEnum.Personal)">
+            (edit)="openEditDialog(ProfileSectionEnum.Personal)" (refresh)="reloadSection(ProfileSectionEnum.Personal)">
           </app-profile-personal-section>
 
           <app-profile-contact-section *ngSwitchCase="ProfileSectionEnum.Contact" [profile]="sectionValue(active)"
             [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
             [changesRequest]="changes(ProfileSectionEnum.Contact)" [notes]="activeSectionNotes()"
-            (edit)="openEditDialog(ProfileSectionEnum.Contact)">
+            (edit)="openEditDialog(ProfileSectionEnum.Contact)" (refresh)="reloadSection(ProfileSectionEnum.Contact)">
           </app-profile-contact-section>
 
           <app-profile-qualifications-section *ngSwitchCase="ProfileSectionEnum.Qualifications"

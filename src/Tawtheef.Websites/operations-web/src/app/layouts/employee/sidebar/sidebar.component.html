@@ -1,9 +1,8 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
 
   <div class="sidebar-top">
-    <button class="back-btn" (click)="toggle()" >
-      <i class="hgi lh-1 fs-18"
-         [faDirArrow]="isCollapsed ? 'end': 'start'"></i>
+    <button class="back-btn" (click)="toggle()">
+      <i class="hgi lh-1 fs-18" [faDirArrow]="isCollapsed ? 'end': 'start'"></i>
     </button>
   </div>
 
@@ -11,17 +10,12 @@
 
   <nav class="sidebar-nav">
     @for (item of menuItems; track item.key) {
-      <button
-        class="nav-item"
-        *hasPermission="item.permission"
-        [class.active]="activeItem === item.key"
-        (click)="navigateTo(item)"
-        [pTooltip]="isCollapsed ? (item.label | translate) : ''"
-        tooltipPosition="right"
-        [tooltipDisabled]="!isCollapsed">
-        <i class="icons hgi hgi-stroke " [ngClass]="item.icon"></i>
-        <span class="label">{{ item.label | translate }}</span>
-      </button>
+    <button class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
+      (click)="navigateTo(item)" [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right"
+      [tooltipDisabled]="!isCollapsed">
+      <i class="icons hgi hgi-stroke " [ngClass]="item.icon"></i>
+      <span class="label">{{ item.label | translate }}</span>
+    </button>
     }
 
   </nav>
@@ -29,22 +23,8 @@
   <div class="divider"></div>
 
   <div class="sidebar-bottom">
-    <button
-      class="action-item"
-      (click)="openSettings()"
-      [pTooltip]="isCollapsed ? ('common.sidebar.settings' | translate) : ''"
-      tooltipPosition="right"
-      [tooltipDisabled]="!isCollapsed">
-      <img class="icons" src="assets/img/icons/settings-icon.svg">
-      <span class="label">{{ 'common.sidebar.settings' | translate }}</span>
-    </button>
-
-    <button
-      class="action-item"
-      (click)="logout()"
-      [pTooltip]="isCollapsed ? ('common.sidebar.logout' | translate) : ''"
-      tooltipPosition="right"
-      [tooltipDisabled]="!isCollapsed">
+    <button class="action-item" (click)="logout()" [pTooltip]="isCollapsed ? ('common.sidebar.logout' | translate) : ''"
+      tooltipPosition="right" [tooltipDisabled]="!isCollapsed">
       <img class="icons" src="assets/img/icons/logout-icon.svg">
       <span class="label">{{ 'common.sidebar.logout' | translate }}</span>
     </button>

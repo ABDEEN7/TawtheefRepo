@@ -96,7 +96,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   });
   ngOnInit(): void {
     const state = this.ds.state();
-    this.lastSubmittedSignature = null;
+    this.lastSubmittedSignature = this.buildSignature(state.skills);
 
     this.sub = this.search$
       .pipe(
@@ -198,8 +198,11 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(skills);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(8)) {
+        const msg = this.ds.hasUnsolvedCorrections(8)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

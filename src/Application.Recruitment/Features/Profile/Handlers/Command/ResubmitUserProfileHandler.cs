@@ -62,22 +62,40 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
 
         foreach (var item in items)
         {
-            // Backfill empty hashes (your bug: section hashes were stored empty)
             var previousHash = item.CurrentHash;
 
             var currentValue = GetCurrentValue(profile, item);
             item.UpdateHash(currentValue);
 
+            // Important: update resource ID for attachments so they remain findable by the UI
+            if (item.TargetType == ReviewTargetType.Attachment)
+            {
+                item.ResourceId = GetAttachmentResourceId(profile, item);
+            }
+
             var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
+
+            if (item.TargetType == ReviewTargetType.Attachment)
+            {
+                var currentResourceId = GetAttachmentResourceId(profile, item);
+                if (currentResourceId.HasValue)
+                {
+                    item.ResourceId = currentResourceId;
+                }
+            }
+
+            // Required: convert Solved -> Pending (so it shows up for re-review after fixing correction)
+            if (item.Status == ReviewStatus.Solved)
+            {
+                Reopen(item);
+                continue;
+            }
 
             if (!valueChanged)
                 continue;
 
-            // Required: only convert Solved -> Pending (no new items)
-            if (item.Status == ReviewStatus.Solved)
-            {
-                Reopen(item);
-            }
+            // ... if it was approved and changed, move to Pending if needed (usually handled by IsOutdated)
+            // But for initial resubmit flow, we just mark as Outdated and reopen if it was solved.
         }
 
         // ---------------------------------------------------------
@@ -97,7 +115,7 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         // Clear review metadata because we reopened
         item.ReviewedAtUtc = null;
         item.ReviewedById  = null;
-        item.ReviewerNote  = null;
+        // Keep ReviewerNote so the reviewer remembers why they requested changes
     }
 
     // -----------------------

@@ -3,13 +3,13 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import {Tooltip} from 'primeng/tooltip';
-import {routes} from '../../../routes/routes';
-import {AuthService} from '../../../core/auth/auth.service';
-import {FaDirArrowDirective} from '../../../shared/directives/dir-arrow.directive';
-import {Permissions} from '../../../core/constants/permissions';
-import {HasPermissionDirective} from '../../../shared/directives/has-permission.directive';
-import {MenuItem} from './sidebar.models';
+import { Tooltip } from 'primeng/tooltip';
+import { routes } from '../../../routes/routes';
+import { AuthService } from '../../../core/auth/auth.service';
+import { FaDirArrowDirective } from '../../../shared/directives/dir-arrow.directive';
+import { Permissions } from '../../../core/constants/permissions';
+import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
+import { MenuItem } from './sidebar.models';
 
 @Component({
   selector: 'app-sidebar',
@@ -44,7 +44,7 @@ export class SidebarComponent implements OnInit {
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.highlightActive(this.router.url);
@@ -78,11 +78,6 @@ export class SidebarComponent implements OnInit {
   navigateTo(item: any) {
     this.activeItem = item.key;
     this.router.navigate([item.route]);
-  }
-
-  openSettings() {
-    this.activeItem = '';
-    this.router.navigate([routes.settings('admin')]);
   }
 
   logout() {

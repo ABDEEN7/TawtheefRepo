@@ -64,8 +64,7 @@ export class StepExperienceComponent implements OnInit {
 
   ngOnInit(): void {
     const state = this.ds.state();
-    const signature = this.buildSignature(state.experiences, state.courses);
-    this.lastSubmittedSignature = null;
+    this.lastSubmittedSignature = this.buildSignature(state.experiences, state.courses);
   }
   // ========== EXPERIENCES ==========
 
@@ -185,8 +184,12 @@ export class StepExperienceComponent implements OnInit {
     const signature = this.buildSignature(experiences, courses);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
+      const hasNotes = this.ds.hasUnsolvedCorrections(5) || this.ds.hasUnsolvedCorrections(6);
+      if (this.requireChanges() || hasNotes) {
+        const msg = hasNotes
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notify.error(msg);
         return;
       }
       this.notify.info(this.translate.instant('profileView.notifications.noChanges'));

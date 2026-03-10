@@ -139,8 +139,11 @@ export class StepAchievementsComponent implements OnInit {
     const signature = this.buildSignature(achievements);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(7)) {
+        const msg = this.ds.hasUnsolvedCorrections(7)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notify.error(msg);
         return;
       }
       this.notify.info(this.translate.instant('profileView.notifications.noChanges'));

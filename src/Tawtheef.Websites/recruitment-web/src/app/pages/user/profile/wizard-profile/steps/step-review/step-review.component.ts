@@ -49,15 +49,8 @@ export class StepReviewComponent {
   canSubmit = computed(() => this.missing().length === 0);
 
   get isResidentQatar(): boolean {
-    const type = this.ds.state().candidateType?.backendName as CandidateType | undefined;
-    if (!type) return false;
-
-    return [
-      CandidateType.ResidentQatar,
-      CandidateType.Qatari,
-      CandidateType.SonOfQatariMother,
-      CandidateType.WifeOfQatari
-    ].includes(type);
+    const provider = this.ds.state().provider;
+    return ['QatarPass', 'QatarResidentOtp'].includes(provider);
   }
 
   hasSponsor = computed(() => {

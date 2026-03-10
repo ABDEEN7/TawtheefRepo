@@ -57,7 +57,10 @@ export class BasicInfoSectionComponent {
   }
 
   hasValue(value: unknown): boolean {
-    return value !== null && value !== undefined && `${value}`.toString().trim() !== '';
+    return value !== null &&
+      value !== undefined &&
+      `${value}`.toString().trim() !== '' &&
+    value !== '0001-01-01';
   }
 
   hasBasicFiles(): boolean {

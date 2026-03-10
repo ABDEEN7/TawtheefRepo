@@ -68,8 +68,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const state = this.ds.state();
-    const signature = this.buildSignature(state.languages);
-    this.lastSubmittedSignature = null;
+    this.lastSubmittedSignature = this.buildSignature(state.languages);
   }
 
   addLang(): void {
@@ -125,8 +124,11 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(languages);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(9)) {
+        const msg = this.ds.hasUnsolvedCorrections(9)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

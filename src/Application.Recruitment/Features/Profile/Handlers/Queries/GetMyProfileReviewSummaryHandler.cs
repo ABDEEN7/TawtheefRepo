@@ -41,7 +41,9 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .Where(i => i.IsOutdated)
             .Max(i => i.UpdatedDate);
         
-        if (profile.Status is not UserProfileStatus.InCreation && profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status is not UserProfileStatus.InCreation && 
+            profile.Status is not UserProfileStatus.RequiresUpdate &&
+            profile.Status is not UserProfileStatus.Submitted)
             return Result.Ok(new MyProfileReviewSummaryDto()
             {
                 UserProfileId = profile.Id,

@@ -64,11 +64,6 @@ export class SidebarComponent implements OnInit {
     this.router.navigate([item.route]);
   }
 
-  openSettings() {
-    this.activeItem = '';
-    this.router.navigate([routes.settings('employee')]);
-  }
-
   logout() {
     this.authService.logout();
   }

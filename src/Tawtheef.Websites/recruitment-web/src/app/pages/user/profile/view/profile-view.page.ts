@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -57,7 +57,6 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   providers: [
     DialogService,
     ProfileService,
-    { provide: PROFILE_WRITE_MODE, useValue: 'review-edit' },
   ],
   imports: [
     CommonModule,
@@ -89,6 +88,7 @@ export class ProfileViewPage {
   private readonly dialogService = inject(DialogService);
   private readonly lookups = inject(ProfileLookupsService);
   protected readonly languageService = inject(LanguageService);
+  private readonly profileService = inject(ProfileService);
   private readonly authState = inject(AuthStateService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   private readonly emptyVisibility: ProfileOverviewVisibility = {
@@ -102,6 +102,17 @@ export class ProfileViewPage {
     showForeignAddress: true,
     showSponsorSection: false
   };
+
+  private readonly modeEffect = effect(() => {
+    const status = this.profileStatus();
+    if (status === UserProfileStatusEnum.Approved) {
+      this.profileService.setWriteMode('change-request');
+    } else if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) {
+      this.profileService.setWriteMode('review-edit');
+    } else {
+      this.profileService.setWriteMode('create');
+    }
+  });
 
   protected readonly cards: SectionCard[] = [
     { section: ProfileSectionEnum.Prerequisites, icon: 'pi pi-file', labelKey: 'profileOverview.sections.prerequisites' },
@@ -131,15 +142,12 @@ export class ProfileViewPage {
   }
   defaultAvatar = AvatarUtils.default;
   get canReplaceAttachment() {
-    return this.enableChangeMode;
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted;
   }
   get enableChangeMode() {
-    if (this.profileStatus() === UserProfileStatusEnum.Approved) {
-      //TODO: for this moment the user can not edit his profile after approval
-      // we need to change it in Phase. 2
-      return false;
-    }
-    return false;
+    const status = this.profileStatus();
+    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted;
   }
   private readonly basics = rxResource({
     params: () => true,
@@ -283,9 +291,9 @@ export class ProfileViewPage {
   }
   canEditSections(section: ProfileSectionEnum) {
     const status = this.profileStatus();
-    if (this.enableChangeMode)
+    if (status === UserProfileStatusEnum.Approved)
       return true;
-    if (status === UserProfileStatusEnum.RequiresUpdate) {
+    if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) {
       const indexSection = Math.min(Math.max(section - 1, 0), ((this.review.value()?.sections.length ?? 1) - 1));
       return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
     }
@@ -342,12 +350,12 @@ export class ProfileViewPage {
     const status = this.profileStatus();
     const mode = status === UserProfileStatusEnum.Approved
       ? 'change-request'
-      : status === UserProfileStatusEnum.RequiresUpdate
+      : (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted)
         ? 'review-edit'
         : 'create';
     this.dialogService.open(ProfileEditDialogComponent, {
       header: this.i18n.instant('profileView.editDialog.title'),
-      data: { section, mode },
+      data: { section, mode, notes: this.activeSectionNotes() },
       draggable: true,
       closable: true,
       styleClass: 'modal-dialog  modal-xl'

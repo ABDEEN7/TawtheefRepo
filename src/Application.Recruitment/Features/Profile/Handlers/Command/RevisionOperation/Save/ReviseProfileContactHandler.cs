@@ -40,7 +40,7 @@ public sealed class ReviseProfileContactHandler(
 
         var r = cmd.Request;
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var needsOffice = ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider);
