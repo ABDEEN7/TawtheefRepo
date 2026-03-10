@@ -25,6 +25,9 @@ public static class RolePermissionCatalog
                 Permissions.Profile.Manage.Key,
                 Permissions.ProfileDistribution.View.Key,
                 Permissions.ProfileDistribution.Manage.Key,
+                Permissions.ProfileApproval.View.Key,
+                Permissions.ProfileApproval.Review.Key,
+                Permissions.ProfileApproval.Changes.Key,
             ],
 
             [SystemRoleIds.OfficeUser] = [

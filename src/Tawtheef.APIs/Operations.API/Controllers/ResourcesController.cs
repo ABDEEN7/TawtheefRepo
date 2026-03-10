@@ -50,10 +50,16 @@ public class ResourcesController(IMediator mediator) : ControllerBase
 
         if (file.SourceKind == FileSourceKind.RedirectUrl)
         {
-            var blobKey = Decode(b);
-            var storedFile = await storage.OpenReadAsync(blobKey, default);
+            var blobKey = SafeDecode(b);
+            var storedFile = await storage.OpenReadAsync(blobKey, HttpContext.RequestAborted);
             if (storedFile == null) return NotFound();
-            return File(storedFile.Stream, storedFile.ContentType, file.DownloadName);
+
+            // Set Content-Disposition to inline to allow browser preview, but keep filename
+            var cd = new Microsoft.Net.Http.Headers.ContentDispositionHeaderValue("inline");
+            cd.SetHttpFileName(file.DownloadName);
+            Response.Headers.Append(Microsoft.Net.Http.Headers.HeaderNames.ContentDisposition, cd.ToString());
+
+            return File(storedFile.Stream, file.ContentType);
         }
 
         // LocalPath
@@ -73,7 +79,17 @@ public class ResourcesController(IMediator mediator) : ControllerBase
         return await mediator.Send(new GetPublicFileQuery(Uri.UnescapeDataString(path)));
     }
 
-    private static string Decode(string encoded)
-        => Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(encoded));
+    private static string SafeDecode(string encoded)
+    {
+        try
+        {
+            return Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(encoded));
+        }
+        catch
+        {
+            return encoded;
+        }
+    }
+    private static string Decode(string encoded) => SafeDecode(encoded);
 }
 

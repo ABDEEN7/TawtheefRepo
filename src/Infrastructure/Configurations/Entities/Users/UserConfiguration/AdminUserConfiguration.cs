@@ -13,8 +13,7 @@ public class AdminUserConfiguration : ApplicationUserConfiguration<AdminUser>
         builder.HasData(
             GenerateAdminUser(AdminUserIds.Admin1UserId, "t-m.abdin-dev@edu.gov.qa"),
             GenerateAdminUser(AdminUserIds.Admin2UserId, "t-a.jaber-dev@edu.gov.qa"),
-            GenerateAdminUser(AdminUserIds.Admin3UserId, "t-m.khatatbeh-dev@edu.gov.qa"),
-            GenerateAdminUser(AdminUserIds.Admin4UserId, "t-hu.ahmed-dev@edu.gov.qa")
+            GenerateAdminUser(AdminUserIds.Admin3UserId, "m.alhaddad@edu.gov.qa")
         );
         return;
 
