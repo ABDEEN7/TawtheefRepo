@@ -83,10 +83,25 @@ export class FileUtilsService {
     }
 
     // fallback: auth fetch as blob
-    const blob = await this.http.get<Blob>(fileUrl, undefined, { responseType: 'blob', observe: 'body' }).toPromise();
-    const url = URL.createObjectURL(blob!);
-    window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    try {
+      const blob = await this.http.get<Blob>(fileUrl, undefined, { responseType: 'blob', observe: 'body' }).toPromise();
+      const url = URL.createObjectURL(blob!);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    } catch (err: any) {
+      console.error('File preview failed', err);
+      // If the error body is a Blob, try to read it as text to see the JSON error
+      if (err.error instanceof Blob) {
+        const text = await err.error.text();
+        try {
+          const json = JSON.parse(text);
+          console.error('Server error details:', json);
+        } catch {
+          console.error('Server error text:', text);
+        }
+      }
+      throw err;
+    }
   }
 
   /**
