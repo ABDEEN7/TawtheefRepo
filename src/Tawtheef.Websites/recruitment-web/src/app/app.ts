@@ -40,7 +40,7 @@ export class App {
 
   private sanitizeValue(control: HTMLInputElement | HTMLTextAreaElement, value: string): string {
     if (control instanceof HTMLTextAreaElement) {
-      return value.replace(/[^A-Za-z0-9\s\-',.]/g, '').slice(0, 500);
+      return value.replace(/[^\p{L}\p{N}\s\-',.،]/gu, '').slice(0, 500);
     }
 
     if (control.type === 'email') {

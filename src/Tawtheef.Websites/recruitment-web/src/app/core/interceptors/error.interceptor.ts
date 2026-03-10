@@ -5,7 +5,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { from, throwError } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../services/notification.service';
-import {externalUrls} from '../constants/external-urls.const';
+import { externalUrls } from '../constants/external-urls.const';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.headers.get(HDR.SkipError) || externalUrls.includes(req.url)) return next(req);
@@ -13,6 +13,21 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const msg = inject(NotificationService);
   const zone = inject(NgZone);
   const translate = inject(TranslateService);
+
+  const serverMessageKeyMap: Record<string, string> = {
+    'full name contains invalid characters.': 'FULL_NAME_CONTAINS_INVALID_CHARACTERS'
+  };
+
+  const fieldNameI18nKeyMap: Record<string, string> = {
+    'full name': 'server-error.field.FULL_NAME',
+    'national number': 'server-error.field.NATIONAL_NUMBER',
+    'phone number': 'server-error.field.PHONE_NUMBER',
+    'first name': 'server-error.field.FIRST_NAME',
+    'last name': 'server-error.field.LAST_NAME',
+    email: 'server-error.field.EMAIL',
+    phone: 'server-error.field.PHONE',
+    name: 'server-error.field.NAME'
+  };
 
   return next(req).pipe(
     catchError((err: unknown) => {
@@ -85,8 +100,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return handlePartialProfileError(errorKey);
       }
 
-      const translated = translate.instant(`server-error.${errorKey}`, { ticket });
-      return (translated !== `server-error.${errorKey}`) ? translated : errorKey;
+      return tryLocalizedMessage(errorKey);
     }
 
     return translate.instant('server-error.UN_EXPECTED_ERROR', { ticket });
@@ -129,20 +143,74 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     return result;
   }
 
+
+  function toErrorCode(value: string): string {
+    return value
+      .trim()
+      .replace(/[^A-Za-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toUpperCase();
+  }
+
+  function translateFieldName(fieldName: string): string {
+    const normalizedFieldName = fieldName.trim().toLowerCase();
+    const mappedFieldKey = fieldNameI18nKeyMap[normalizedFieldName];
+
+    if (mappedFieldKey) {
+      const mappedTranslation = translate.instant(mappedFieldKey);
+      if (mappedTranslation !== mappedFieldKey) {
+        return mappedTranslation;
+      }
+    }
+
+    const fieldCode = toErrorCode(fieldName);
+    const generatedFieldKey = `server-error.field.${fieldCode}`;
+    const generatedFieldTranslation = translate.instant(generatedFieldKey);
+
+    if (generatedFieldTranslation !== generatedFieldKey) {
+      return generatedFieldTranslation;
+    }
+
+    return fieldName;
+  }
+
+  function tryTranslateInvalidCharactersMessage(message: string): string | null {
+    const match = message.match(/^\s*(.+?)\s+contains invalid characters\.?\s*$/i);
+    if (!match) return null;
+
+    const fieldName = match[1].trim();
+    const fieldCode = toErrorCode(fieldName);
+    const specificErrorKey = `server-error.${fieldCode}_CONTAINS_INVALID_CHARACTERS`;
+    const specificErrorTranslation = translate.instant(specificErrorKey);
+
+    if (specificErrorTranslation !== specificErrorKey) {
+      return specificErrorTranslation;
+    }
+
+    return translate.instant('server-error.FIELD_CONTAINS_INVALID_CHARACTERS', {
+      field: translateFieldName(fieldName)
+    });
+  }
+
   function tryLocalizedMessage(key: string): string {
-    if (typeof key === 'string' && key.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
+    if (key.startsWith('PREVIOUS_PROFILE_STEP_INCOMPLETE:')) {
       return handlePartialProfileError(key);
     }
 
-    const fullKey = `server-error.${key}`;
+    const invalidCharactersMessage = tryTranslateInvalidCharactersMessage(key);
+    if (invalidCharactersMessage) {
+      return invalidCharactersMessage;
+    }
+
+    const normalizedKey = key.trim().toLowerCase();
+    const mappedServerKey = serverMessageKeyMap[normalizedKey] ?? toErrorCode(key);
+    const fullKey = `server-error.${mappedServerKey}`;
     const translateValue = translate.instant(fullKey);
 
-    // إذا ما في ترجمة، ngx-translate بيرجع fullKey نفسه
     if (translateValue !== fullKey) {
       return translateValue;
     }
 
-    // fallback: رجّع رسالة السيرفر الأصلية
     return key;
   }
 

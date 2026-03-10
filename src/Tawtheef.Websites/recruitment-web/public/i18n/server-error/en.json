@@ -1,4 +1,4 @@
-﻿{
+{
   "server-error.UNAUTHORIZED_ACTION": "You are not authorized to perform this action.",
   "server-error.INVALID_RECAPTCHA": "Recaptcha verification failed.",
   "server-error.INVALID_DEVICE_ID": "Invalid device identifier.",
@@ -71,6 +71,7 @@
   "server-error.PROFILE_NOT_READY_FOR_REVIEW": "Profile is not ready for review.",
   "server-error.INVALID_GENDER": "Invalid gender.",
   "server-error.INVALID_NAME": "Invalid name.",
+  "server-error.FULL_NAME_CONTAINS_INVALID_CHARACTERS": "Full name contains invalid characters.",
   "server-error.INVALID_PASSWORD": "Invalid password.",
   "server-error.INCORRECT_OLD_PASSWORD": "Incorrect current password.",
   "server-error.PASSWORD_CHANGE_FAILED": "Password change failed.",
@@ -281,5 +282,14 @@
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE": "Cannot activate major-skill link because major is inactive.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "Cannot activate major-skill link because skill is inactive.",
   "server-error.USER_IS_OFFICER": "User is registered as an officer, cannot login as an applicant.",
-  "server-error.USER_IS_APPLICANT": "User is registered as an applicant, cannot be added as an officer."
+  "server-error.USER_IS_APPLICANT": "User is registered as an applicant, cannot be added as an officer.",
+  "server-error.FIELD_CONTAINS_INVALID_CHARACTERS": "{{field}} contains invalid characters.",
+  "server-error.field.FULL_NAME": "Full name",
+  "server-error.field.NATIONAL_NUMBER": "National number",
+  "server-error.field.PHONE_NUMBER": "Phone number",
+  "server-error.field.FIRST_NAME": "First name",
+  "server-error.field.LAST_NAME": "Last name",
+  "server-error.field.EMAIL": "Email",
+  "server-error.field.PHONE": "Phone",
+  "server-error.field.NAME": "Name"
 }
