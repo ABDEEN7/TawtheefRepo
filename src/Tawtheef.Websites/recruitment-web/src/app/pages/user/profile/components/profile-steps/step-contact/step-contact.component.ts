@@ -222,7 +222,8 @@ export class StepContactComponent implements OnInit, OnDestroy {
       this.email.update(s => ({ ...s, status: 'verified' }));
     }
     updateRemote(this.naLocalFile, state.naFile);
-    this.lastSubmittedSignature = null;
+    const dto = mapContactSection(state);
+    this.lastSubmittedSignature = this.buildSignature(dto, state);
   }
 
   ngOnDestroy(): void {
@@ -342,7 +343,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   onPhoneChange(value: PhoneNumber | null): void {
     if (!value || this.ds.isLocked('phone')) return;
 
-    this.phoneValue.set(value.e164Number.replace(value.dialCode,''));
+    this.phoneValue.set(value.e164Number.replace(value.dialCode, ''));
     const incomingIso2 = (value.countryCode ?? '').toLowerCase();
     if (incomingIso2) {
       const isAllowed =
@@ -666,8 +667,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const signature = this.buildSignature(dto, s);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(3)) {
+        const msg = this.ds.hasUnsolvedCorrections(3)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

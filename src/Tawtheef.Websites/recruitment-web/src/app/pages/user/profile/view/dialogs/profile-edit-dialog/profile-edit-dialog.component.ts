@@ -86,9 +86,11 @@ export class ProfileEditDialogComponent {
   constructor() {
     const dialogSection = this.config.data?.['section'] as ProfileSectionEnum | undefined;
     const dialogMode = this.config.data?.['mode'] as ProfileWriteMode | undefined;
+    const dialogNotes = this.config.data?.['notes'] as any[] | undefined;
     this.section.set(this.mapSection(dialogSection ?? ProfileSectionEnum.Personal));
     this.mode.set(dialogMode ?? 'create');
     this.profile.setWriteMode(this.mode());
+    if (dialogNotes) this.ds.setCorrections(dialogNotes);
 
     effect(() => {
       const res = this.data.value();
@@ -148,7 +150,7 @@ export class ProfileEditDialogComponent {
 
   private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
     if (status === UserProfileStatusEnum.Approved) return 'change-request';
-    if (status === UserProfileStatusEnum.RequiresUpdate) return 'review-edit';
+    if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) return 'review-edit';
     return 'create';
   }
 }

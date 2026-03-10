@@ -15,7 +15,7 @@ internal static class ReviewItemSaveHelper
         ProfileSection section,
         CancellationToken ct)
     {
-        if (profile.Status != UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
             return;
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
@@ -54,6 +54,10 @@ internal static class ReviewItemSaveHelper
             {
                 item.Status = ReviewStatus.Solved;
                 item.IsOutdated = false;
+                if (item.TargetType == ReviewTargetType.Attachment)
+                {
+                    item.ResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
+                }
             }
         }
 

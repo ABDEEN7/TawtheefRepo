@@ -115,6 +115,11 @@ export class ProfileDataService {
     return this.corrections().some(n => n.fieldPath === key);
   }
 
+  hasUnsolvedCorrections(section: number): boolean {
+    if (!this.profileService.isRevisionMode()) return false;
+    return this.corrections().some(n => n.section === section);
+  }
+
   isCorrectionRow(section: number, entityId: any): boolean {
     if (!this.profileService.isRevisionMode()) return false;
     return this.corrections().some(n =>

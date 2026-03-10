@@ -36,7 +36,7 @@ public async Task<IResult<Unit>> Handle(ReviseProfileAchievementCommand cmd, Can
     if (profile is null)
         return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateAchievements(profile);

@@ -1,20 +1,20 @@
 ﻿import { Injectable, inject } from '@angular/core';
 import { of } from 'rxjs';
-import {HttpService} from '../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {PROFILE_WRITE_MODE, ProfileWriteMode} from './profile-write-mode.token';
-import {SaveProfilePrereqRequestModel} from '../models/save-profile-prereq-request.model';
-import {SaveProfilePersonalRequestDto} from '../models/save-profile-personal-request.model';
-import {MoiPersonalInfo} from '../models/moi-personal-info.model';
-import {SaveProfileContactRequestDto} from '../models/save-user-contact-request.model';
-import {ProfileStatusDto} from '../../../../../core/models/auth/auth-response.model';
-import {GUID} from '../../../../../shared/types/guid.type';
-import {Experience, TrainingCourse} from '../models/experience.model';
-import {Achievement} from '../models/achievement.model';
-import {Skill} from '../models/skill.model';
-import {Attachment} from '../models/attachment.model';
-import {Degree} from '../models/degree.model';
-import {Language} from '../models/language.model';
+import { HttpService } from '../../../../../core/http/http.service';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { PROFILE_WRITE_MODE, ProfileWriteMode } from './profile-write-mode.token';
+import { SaveProfilePrereqRequestModel } from '../models/save-profile-prereq-request.model';
+import { SaveProfilePersonalRequestDto } from '../models/save-profile-personal-request.model';
+import { MoiPersonalInfo } from '../models/moi-personal-info.model';
+import { SaveProfileContactRequestDto } from '../models/save-user-contact-request.model';
+import { ProfileStatusDto } from '../../../../../core/models/auth/auth-response.model';
+import { GUID } from '../../../../../shared/types/guid.type';
+import { Experience, TrainingCourse } from '../models/experience.model';
+import { Achievement } from '../models/achievement.model';
+import { Skill } from '../models/skill.model';
+import { Attachment } from '../models/attachment.model';
+import { Degree } from '../models/degree.model';
+import { Language } from '../models/language.model';
 type FileLike = File | null | undefined;
 
 type SectionKey =
@@ -69,24 +69,35 @@ export class ProfileService {
 
     return this.http.post(this.url('prereq'), fd);
   }
-  savePereqAttachmentsSection(info:{birth:{id: string, title: string}, marriage:{id: string, title: string} },
-                                    files: { birth?: FileLike,
-                                      marriage?: FileLike,
-                                    }) {
+  savePereqAttachmentsSection(info: any, files: any) {
     const b = this.fd();
-    // keep your original field name
-    if (files.birth) {
-      b.rawAppend('BirthdayCertificate', files.birth);
-      b.scalar('Birth.Id', info.birth.id);
-      b.scalar('Birth.Title', info.birth.title);
-    }
-    if (files.marriage) {
-      b.rawAppend('MarriageCertificate', files.marriage);
-      b.scalar('Marriage.Id', info.marriage.id);
-      b.scalar('Marriage.Title', info.marriage.title);
+
+    if (this.isRevisionMode()) {
+      if (files.birth) {
+        b.scalar('Birthday.Id', info.birth?.id || info.birth?.attachmentId || info.birth?.resourceId || info.birthdayCertificate?.resourceId);
+        b.scalar('Birthday.Title', info.birth?.title || 'Birth Certificate');
+        b.rawAppend('BirthdayCertificate', files.birth);
+      }
+      if (files.marriage) {
+        b.scalar('Marriage.Id', info.marriage?.id || info.marriage?.attachmentId || info.marriage?.resourceId || info.marriageCertificate?.resourceId);
+        b.scalar('Marriage.Title', info.marriage?.title || 'Marriage Certificate');
+        b.rawAppend('MarriageCertificate', files.marriage);
+      }
+      return this.http.post(this.endpoints.user.profile.revisions.prereqAttachment, b.build());
     }
 
-    return this.http.post(this.url('prereq')+'/attachment', b.build());
+    // Change Request (Approved) Mode
+    b.scalar('CandidateTypeId', info.candidateTypeId || info.candidateType?.id);
+    b.scalar('TargetEntityId', info.targetEntityId || info.targetEntity?.id);
+    b.scalar('QIDExpiry', info.qidExpiry || info.qidExpiry);
+    b.scalar('Submit', false);
+
+    if (files.birth) b.rawAppend('BirthCertificateFile', files.birth);
+    if (files.marriage) b.rawAppend('MarriageCertificateFile', files.marriage);
+    if (files.resume) b.rawAppend('CvFile', files.resume);
+    if (files.nationalCard) b.rawAppend('IdFile', files.nationalCard);
+
+    return this.http.post(this.url('prereq'), b.build());
   }
 
   // ========== PERSONAL ==========
@@ -98,30 +109,54 @@ export class ProfileService {
 
     return this.http.post(this.url('personal'), fd);
   }
-  savePersonalAttachmentsSection(info:{sponsorCard:{id: string, title: string}, resume:{id: string, title: string} ,nationalCard:{id: string, title: string}},
-                                files: { sponsorCard?: FileLike,
-                                resume?: FileLike,
-                                  nationalCard?: FileLike,
-                                }) {
+  savePersonalAttachmentsSection(info: any, files: any) {
     const b = this.fd();
-    // keep your original field name
-    if (files.sponsorCard) {
-      b.rawAppend('SponsorCardAttachment', files.sponsorCard);
-      b.scalar('SponsorCard.Id', info.sponsorCard.id);
-      b.scalar('SponsorCard.Title', info.sponsorCard.title);
-    }
-    if (files.resume) {
-      b.rawAppend('ResumeAttachment', files.resume);
-      b.scalar('Resume.Id', info.resume.id);
-      b.scalar('Resume.Title', info.resume.title);
-    }
-    if (files.nationalCard) {
-      b.rawAppend('NationalCardAttachment', files.nationalCard);
-      b.scalar('NationalCard.Id', info.nationalCard.id);
-      b.scalar('NationalCard.Title', info.nationalCard.title);
+
+    if (this.isRevisionMode()) {
+      if (files.resume) {
+        b.scalar('Resume.Id', info.resume?.id || info.resume?.attachmentId || info.resume?.resourceId || info.resumeAttachment?.resourceId);
+        b.scalar('Resume.Title', info.resume?.title || 'Resume');
+        b.rawAppend('ResumeAttachment', files.resume);
+      }
+      if (files.nationalCard) {
+        b.scalar('NationalCard.Id', info.nationalCard?.id || info.nationalCard?.attachmentId || info.nationalCard?.resourceId || info.nationalCard?.resourceId);
+        b.scalar('NationalCard.Title', info.nationalCard?.title || 'National Card');
+        b.rawAppend('NationalCardAttachment', files.nationalCard);
+      }
+      if (files.sponsorCard) {
+        b.scalar('SponsorCard.Id', info.sponsorCard?.id || info.sponsorCard?.attachmentId || info.sponsorCard?.resourceId || info.sponsorCard?.resourceId);
+        b.scalar('SponsorCard.Title', info.sponsorCard?.title || 'Sponsor Card');
+        b.rawAppend('SponsorCardAttachment', files.sponsorCard);
+      }
+      return this.http.post(this.endpoints.user.profile.revisions.personalAttachment, b.build());
     }
 
-    return this.http.post(this.url('personal')+'/attachment', b.build());
+    // Change Request (Approved) Mode
+    // Resume and NationalCard MUST go to Prereq endpoint in Change Request mode
+    if (files.resume || files.nationalCard) {
+      return this.savePereqAttachmentsSection(info, files);
+    }
+
+    // Personal Metadata
+    b.scalar('NationalityId', info.nationalityId || info.nationality?.id);
+    b.scalar('GenderId', info.genderId || info.gender?.id);
+    b.scalar('ReligionId', info.religionId || info.religion?.id);
+    b.scalar('MaritalStatusId', info.maritalStatusId || info.maritalStatus?.id);
+    b.scalar('BirthDate', info.birthDate);
+    b.scalar('ChildrenCount', info.childrenCount);
+    b.scalar('HasDisability', info.hasDisability);
+    b.scalar('DisabilityDetails', info.disabilityDetails);
+
+    // Sponsor Metadata
+    b.scalar('SponsorTypeId', info.sponsorTypeId || info.sponsorType?.id);
+    b.scalar('SponsorEmployerName', info.sponsorEmployerName || info.sponsorName);
+    b.scalar('SponsorEmployerNumber', info.sponsorEmployerNumber || info.sponsorNumber);
+    b.scalar('SponsorQidExpiry', info.sponsorQidExpiry);
+
+    if (files.sponsorCard) b.rawAppend('SponsorCard', files.sponsorCard);
+    b.scalar('Submit', false);
+
+    return this.http.post(this.url('personal'), b.build());
   }
 
   checkProfile(qid: string, expiryDate: string) {
@@ -157,18 +192,32 @@ export class ProfileService {
 
     return this.http.post(this.url('contact'), b.build());
   }
-  saveContactAttachmentsSection(info:{nationalAddress:{id: string, title: string}},
-    files: { nationalAddress?: FileLike }) {
+  saveContactAttachmentsSection(info: any, files: any) {
     const b = this.fd();
-    // keep your original field name
-    if (files.nationalAddress) {
+
+    if (this.isRevisionMode() && files.nationalAddress) {
+      const meta = info.nationalAddress;
+      b.scalar('ResidenceAddress.Id', meta?.id || meta?.attachmentId || meta?.resourceId || info.residenceAddressCertificate?.resourceId);
+      b.scalar('ResidenceAddress.Title', meta?.title || 'Residence Address');
       b.rawAppend('ResidenceAddressCertificate', files.nationalAddress);
-      // send ResidenceAddress as object of properties not like json
-      b.scalar('ResidenceAddress.Id', info.nationalAddress.id);
-      b.scalar('ResidenceAddress.Title', info.nationalAddress.title);
+      return this.http.post(this.endpoints.user.profile.revisions.contactAttachment, b.build());
     }
 
-    return this.http.post(this.url('contact')+'/attachment', b.build());
+    // Change Request (Approved) Mode
+    b.scalar('ResidenceCountryId', info.residenceCountryId || info.residenceCountry?.id);
+    b.scalar('InterviewLocationId', info.interviewLocationId || info.interviewLocation?.id);
+    b.scalar('Address', info.address);
+    b.scalar('Submit', false);
+
+    if (files.nationalAddress) {
+      b.scalar('NationalAddress.Zone', info.naZone || info.residenceAddress?.zoneNo || 0);
+      b.scalar('NationalAddress.Street', info.naStreet || info.residenceAddress?.streetNo || 0);
+      b.scalar('NationalAddress.Building', info.naBuilding || info.residenceAddress?.buildingNo || 0);
+      b.scalar('NationalAddress.Unit', info.naUnit || info.residenceAddress?.unitNo || 0);
+      b.rawAppend('NationalAddress.NationalAddress', files.nationalAddress);
+    }
+
+    return this.http.post(this.url('contact'), b.build());
   }
 
   getProfileBasics() {
@@ -240,7 +289,7 @@ export class ProfileService {
         };
       });
 
-    if(payload.length === 0) return of(null);
+    if (payload.length === 0) return of(null);
 
     const fd = this.fd()
       .json({ degreesJson: payload })

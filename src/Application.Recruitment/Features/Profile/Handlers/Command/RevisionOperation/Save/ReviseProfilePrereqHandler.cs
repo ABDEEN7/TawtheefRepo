@@ -33,7 +33,7 @@ public sealed class ReviseProfilePrereqHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-        if (profile.Status != UserProfileStatus.RequiresUpdate)
+        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
