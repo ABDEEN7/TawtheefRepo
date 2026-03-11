@@ -15,8 +15,8 @@ import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../shared/mo
 export function mapPrereqSection(state: ProfileState): SaveProfilePrereqRequestModel {
   return {
     submit: false,
-    candidateTypeId: state.candidateType!.id,
-    targetEntityId: state.targetEntity!.id,
+    candidateTypeId: state.candidateType?.id,
+    targetEntityId: state.targetEntity?.id,
     qidExpiry: state.qidExpiry ?? null,
     cvFileName: state.cvName,
     idFileName: state.idName,
