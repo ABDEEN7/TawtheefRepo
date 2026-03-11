@@ -40,11 +40,11 @@ export interface ItemDialogResult {
     </div>
 
     <div class="dialog-footer">
-      <button class="btn ghost" type="button" (click)="onCancel()">
-        {{ 'common.cancel' | translate }}
+      <button class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" type="button" (click)="onCancel()">
+        <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i> {{ 'common.cancel' | translate }}
       </button>
-      <button class="btn primary" type="button" (click)="onSave()">
-        {{ 'common.save' | translate }}
+      <button class="btn btn-primary d-flex gap-2 justify-content-center align-items-center" type="button" (click)="onSave()">
+       <i class="hgi hgi-stroke hgi-floppy-disk fs-18"></i> {{ 'common.save' | translate }}
       </button>
     </div>
   `,

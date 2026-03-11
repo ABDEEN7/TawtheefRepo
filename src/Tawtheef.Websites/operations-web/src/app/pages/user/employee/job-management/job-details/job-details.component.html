@@ -3,7 +3,7 @@
   <div class="main-container" i18nNamespace="pages/job-details">
     @if (job) {
       <div class="card card-table">
-        <div class="card-body">
+        <div class="card-body pb-0">
           <div class="row mb-4">
             <div class="col-md-10">
               <h3 class="fw-bold mb-0">
@@ -87,9 +87,9 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-lg-8 col-md-12 mb-4">
               <div class="card card-table">
-                <div class="card-body">
+                <div class="card-body pb-0">
                   <h5 class="mb-4 text-primary">
                     <i class="fa" [ngClass]="getTabContent().icon"></i>
                     {{ getTabContent().title | translate }}
@@ -97,126 +97,191 @@
                   <div class="row">
                     <div class="col-md-12">
                       @if (activeTab === tabType.Overview) {
-                        @if (job.overViewAr || job.overViewEn) {
-                          <div class="dual-text-container m-0">
+                      @if (job.overViewAr || job.overViewEn) {
+                      <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.OVERVIEWAR' | translate }}</h6>
                               <div [innerHTML]="job.overViewAr"></div>
                             </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.OVERVIEWEN' | translate }}</h6>
                               <div [innerHTML]="job.overViewEn"></div>
                             </div>
                           </div>
-                        }
+                        </div>
+                      </div>
+
+                      }
                       }
                       @if (activeTab === tabType.Responsibilities) {
-                        @if (getResponsibilities().length > 0) {
-                          <ul class="m-0 p-0">
-                            @for (responsibility of getResponsibilities(); track $index) {
-                              <div class="dual-text-container">
-                                <div class="text-area">
-                                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                                  <div [innerHTML]="responsibility.textAr"></div>
-                                </div>
-                                <div class="text-area">
-                                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                                  <div [innerHTML]="responsibility.textEn"></div>
-                                </div>
+                      @if (getResponsibilities().length > 0) {
+                      <ul class="m-0 p-0">
+                        @for (responsibility of getResponsibilities(); track $index) {
+                        <div class="row">
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                                <div [innerHTML]="responsibility.textAr"></div>
                               </div>
-                            }
-                          </ul>
+
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                <div [innerHTML]="responsibility.textEn"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         }
+                      </ul>
+                      }
                       }
                       @if (activeTab === tabType.Qualifications) {
-                        <h5>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
-                        <p>{{ getDegreeRequirements() }}</p>
-                        @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
-                          <h5 class="mt-3">{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
-                          <div class="dual-text-container">
+                      <h5>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
+                      <p>{{ getDegreeRequirements() }}</p>
+                      @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
+                      <h5 class="mt-3">{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
+                      <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
                               <div [innerHTML]="job.qualificationDescriptionAr"></div>
                             </div>
+
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
+
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
                               <div [innerHTML]="job.qualificationDescriptionEn"></div>
                             </div>
                           </div>
-                        }
+                        </div>
+                      </div>
+
+                      }
                       }
                       @if (activeTab === tabType.Conditions) {
-                        @if (getJobConditions().length > 0) {
-                          <div class="basic-requirements">
-                            <h5>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h5>
-                            @for (condition of getJobConditions(); track $index) {
-                              <div class="dual-text-container">
-                                <div class="text-area">
-                                  <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                                  <div [innerHTML]="condition.textAr"></div>
-                                </div>
-                                <div class="text-area">
-                                  <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                                  <div [innerHTML]="condition.textEn"></div>
-                                </div>
+                      @if (getJobConditions().length > 0) {
+                      <div class="basic-requirements">
+                        <h5>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h5>
+                        @for (condition of getJobConditions(); track $index) {
+                        <div class="row">
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                                <div [innerHTML]="condition.textAr"></div>
                               </div>
-                            }
+                            </div>
                           </div>
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                <div [innerHTML]="condition.textEn"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                <div [innerHTML]="condition.textEn"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-md-12 mb-4">
+                            <div class="dual-text-container m-0 w-100 d-block">
+
+                              <div class="text-area">
+                                <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                                <div [innerHTML]="condition.textEn"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
                         }
+                      </div>
+                      }
                       }
                       @if (activeTab === tabType.Skills) {
-                        @if (getJobSkills().length > 0) {
-                          <ul>
-                            @for (skill of getJobSkills(); track $index) {
-                              <li>{{ skill }}</li>
-                            }
-                          </ul>
+                      @if (getJobSkills().length > 0) {
+                      <ul>
+                        @for (skill of getJobSkills(); track $index) {
+                        <li>{{ skill }}</li>
                         }
+                      </ul>
+                      }
                       }
                       @if (activeTab === tabType.Benefits) {
-                        @if (job.benefitsAr || job.benefitsEn) {
-                          <div class="dual-text-container">
+                      @if (job.benefitsAr || job.benefitsEn) {
+                      <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
                               <div [innerHTML]="job.benefitsAr"></div>
                             </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-4">
+                          <div class="dual-text-container m-0 w-100 d-block">
                             <div class="text-area">
                               <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
                               <div [innerHTML]="job.benefitsEn"></div>
                             </div>
                           </div>
-                        }
-                      }
-                      @if (activeTab === tabType.Attachments) {
-                        @if (job.requiredAttachments && job.requiredAttachments.length) {
-                          @for (attachment of job.requiredAttachments; track $index) {
-                            <div class="dual-text-container">
-                              <div class="attachmentAr">
-                                <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                                <div [innerHTML]="attachment.titleAr"></div>
-                              </div>
-                              <div class="attachmentEn">
-                                <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                                <div [innerHTML]="attachment.titleEn"></div>
-                              </div>
-                              <div class="form-check form-switch m-0">
-                                <input
-                                  class="form-check-input switch-lg"
-                                  disabled="true"
-                                  type="checkbox"
-                                  [(ngModel)]="attachment.isMandatory"
-                                />
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+
+                          
                           }
-                        }
-                      }
+                          }
+                          @if (activeTab === tabType.Attachments) {
+                          @if (job.requiredAttachments && job.requiredAttachments.length) {
+                          @for (attachment of job.requiredAttachments; track $index) {
+                          <div class="dual-text-container">
+                            <div class="attachmentAr">
+                              <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
+                              <div [innerHTML]="attachment.titleAr"></div>
+                            </div>
+                            <div class="attachmentEn">
+                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
+                              <div [innerHTML]="attachment.titleEn"></div>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                              <input class="form-check-input switch-lg"  disabled="true" type="checkbox"  [(ngModel)]="attachment.isMandatory" />
+                            </div>
+                          </div>
+                          }
+                          }
+                          }
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-12 mb-4">
               <div class="card card-table">
                 <div class="card-body">
                   <h5 class="mb-4 text-primary">
