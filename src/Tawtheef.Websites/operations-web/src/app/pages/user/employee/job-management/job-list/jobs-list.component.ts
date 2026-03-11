@@ -356,7 +356,7 @@ export class JobListComponent implements OnInit {
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
       [JobStatus.Cancelled]: 'pill secondary',
-      [JobStatus.ReadyForAnnouncement]: 'pill neutral',
+      [JobStatus.ReadyForAnnouncement]: 'pill info',
     };
     return STATUS_BADGE_MAP[statusName] || 'pill neutral';
   }
