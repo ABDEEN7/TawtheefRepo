@@ -8,6 +8,8 @@ public sealed class OperationsDashboardDto
     public required DashboardFiltersSnapshotDto Filters { get; init; }
     public required DashboardKpisDto Kpis { get; init; }
     public required ProfileBreakdownDto ProfileBreakdown { get; init; }
+    public required JobKpisDto JobKpis { get; init; }
+    public required JobBreakdownDto JobBreakdown { get; init; }
     public required TaskMonitoringDto TaskMonitoring { get; init; }
     public required TrendSeriesDto ProfileTrend { get; init; }
     public required TrendSeriesDto TaskCompletionTrend { get; init; }
@@ -51,6 +53,22 @@ public sealed class ProfileBreakdownDto
     public IReadOnlyList<GroupCountDto> ByDepartment { get; init; } = [];
     public IReadOnlyList<GroupCountDto> ByPriority { get; init; } = [];
     public IReadOnlyList<AgingBucketDto> Aging { get; init; } = [];
+}
+
+public sealed class JobKpisDto
+{
+    public int TotalJobs { get; init; }
+    public int ActiveJobs { get; init; }
+    public int PendingReviewJobs { get; init; }
+    public int ApprovedJobs { get; init; }
+    public int RejectedJobs { get; init; }
+    public int NewJobsToday { get; init; }
+}
+
+public sealed class JobBreakdownDto
+{
+    public IReadOnlyList<StatusCountDto> ByStatus { get; init; } = [];
+    public IReadOnlyList<GroupCountDto> ByDepartment { get; init; } = [];
 }
 
 public sealed class TaskMonitoringDto
