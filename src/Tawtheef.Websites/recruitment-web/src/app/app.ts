@@ -44,7 +44,7 @@ export class App {
     }
 
     if (control.type === 'email') {
-      return value.replace(/[^A-Za-z0-9_@.]/g, '');
+      return value.replace(/\s/g, '');
     }
 
     if (control.type === 'text' || !control.type) {
