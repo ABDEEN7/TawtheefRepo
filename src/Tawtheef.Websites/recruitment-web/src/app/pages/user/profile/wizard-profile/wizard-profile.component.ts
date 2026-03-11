@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -87,16 +87,16 @@ export class WizardProfileComponent implements OnInit {
   private forcedStep: number | null = null;
 
   stepLabels: { label: string, icon: string }[] = [
-    { label: 'wizard.steps.firstInfo', icon: '' },
+    { label: 'wizard.steps.firstInfo', icon: 'hgi-information-circle' },
     { label: 'wizard.steps.personal', icon: 'hgi-user' },
     { label: 'wizard.steps.contact', icon: 'hgi-house-02' },
     { label: 'wizard.steps.degrees', icon: 'hgi-school' },
     { label: 'wizard.steps.experience', icon: 'hgi-briefcase-05' },
-    { label: 'wizard.steps.achievements', icon: '' },
+    { label: 'wizard.steps.achievements', icon: 'hgi-target-02' },
     { label: 'wizard.steps.skills', icon: 'hgi-ai-user' },
     { label: 'wizard.steps.languages', icon: 'hgi-checkmark-circle-02' },
     { label: 'wizard.steps.attachments', icon: 'hgi-file-upload' },
-    { label: 'wizard.steps.review', icon: '' },
+    { label: 'wizard.steps.review', icon: 'hgi-tick-02' },
   ];
 
   private stepKeyMap: Record<number,
