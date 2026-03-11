@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,8 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { SystemRoles } from '../../../../core/constants/systemRoles';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-users-management',
@@ -40,6 +42,7 @@ export class UsersManagement implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   // Component now manages its own state
   private _users = signal<UserDto[]>([]);
@@ -59,6 +62,7 @@ export class UsersManagement implements OnInit {
   nameFilter = '';
   emailFilter = '';
   roleLookups = signal<RoleSummaryDto[]>([]);
+  private searchChanges$ = new Subject<string>();
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
 
@@ -69,6 +73,7 @@ export class UsersManagement implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadUsers();
     this.loadRoleLookups();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
@@ -98,6 +103,24 @@ export class UsersManagement implements OnInit {
   }
 
   onSearchChange() {
+    this.searchChanges$.next(`${this.nameFilter}|${this.emailFilter}`);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.filters.update(f => ({
+          ...f,
+          pageNumber: 1,
+          name: this.nameFilter,
+          email: this.emailFilter
+        }));
+        this.loadUsers();
+      });
+  }
+
+  private applySearchImmediately() {
     this.filters.update(f => ({
       ...f,
       pageNumber: 1,
@@ -148,7 +171,7 @@ export class UsersManagement implements OnInit {
 
   onBlockedFilterChange(value: boolean | null) {
     this.filters.update(f => ({ ...f, isBlocked: value ?? null }));
-    this.onSearchChange();
+    this.applySearchImmediately();
   }
 
   hasSystemAdminRole(user: UserDto) {

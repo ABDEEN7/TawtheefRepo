@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
@@ -15,6 +15,8 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-candidate-users-management',
@@ -37,6 +39,7 @@ export class CandidateUsersManagementPage implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   private _users = signal<CandidateUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -57,6 +60,7 @@ export class CandidateUsersManagementPage implements OnInit {
   emailFilter = '';
   qidFilter = '';
   mobileFilter = '';
+  private searchChanges$ = new Subject<string>();
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
@@ -65,6 +69,7 @@ export class CandidateUsersManagementPage implements OnInit {
   protected readonly Permissions = Permissions;
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadUsers();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -87,15 +92,23 @@ export class CandidateUsersManagementPage implements OnInit {
   }
 
   onSearchChange(): void {
-    this.filters.update(f => ({
-      ...f,
-      pageNumber: 1,
-      name: this.nameFilter,
-      email: this.emailFilter,
-      qid: this.qidFilter,
-      mobileNumber: this.mobileFilter
-    }));
-    this.loadUsers();
+    this.searchChanges$.next(`${this.nameFilter}|${this.emailFilter}|${this.qidFilter}|${this.mobileFilter}`);
+  }
+
+  private setupSearchListener(): void {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.filters.update(f => ({
+          ...f,
+          pageNumber: 1,
+          name: this.nameFilter,
+          email: this.emailFilter,
+          qid: this.qidFilter,
+          mobileNumber: this.mobileFilter
+        }));
+        this.loadUsers();
+      });
   }
 
   onPageChange(page: number): void {

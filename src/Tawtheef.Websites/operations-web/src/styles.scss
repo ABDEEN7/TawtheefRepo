@@ -29,3 +29,8 @@ body {
 .p-virtualscroller {
   min-height: 200px !important; /* Should match your scrollHeight */
 }
+
+.p-dialog .p-dialog-content {
+  max-height: 80vh;
+  overflow: auto;
+}
