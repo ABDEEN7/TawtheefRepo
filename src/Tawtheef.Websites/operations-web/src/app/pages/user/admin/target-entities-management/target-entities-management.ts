@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ToggleSwitchModule} from 'primeng/toggleswitch';
@@ -16,6 +16,8 @@ import {TargetEntityDto} from './models/target-entity.dto';
 import {TargetEntityFilters} from './models/target-entity-filters.dto';
 import {TargetEntityModalComponent} from './components/target-entity-modal/target-entity-modal.component';
 import {finalize} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-target-entities-management',
@@ -39,6 +41,7 @@ export class TargetEntitiesManagement implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   private _targetEntities = signal<TargetEntityDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -61,8 +64,10 @@ export class TargetEntitiesManagement implements OnInit {
   modalMode = signal<'create' | 'edit'>('create');
   isModalLoading = signal(false);
   editingTargetEntity = signal<TargetEntityDto | null>(null);
+  private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadTargetEntities();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -85,8 +90,16 @@ export class TargetEntitiesManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({...f, pageNumber: 1, search: this.searchTerm}));
-    this.loadTargetEntities();
+    this.searchChanges$.next(this.searchTerm);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.filters.update(f => ({...f, pageNumber: 1, search}));
+        this.loadTargetEntities();
+      });
   }
 
   onPageChange(page: number) {

@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
@@ -14,6 +14,8 @@ import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespa
 import {NotificationService} from '../../../../core/services/notification.service';
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-countries-management',
@@ -36,6 +38,7 @@ export class CountriesManagement implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   private _countries = signal<CountryVM[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -60,8 +63,10 @@ export class CountriesManagement implements OnInit {
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadCountries();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -99,12 +104,20 @@ export class CountriesManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({
-      ...f,
-      pageNumber: 1,
-      name: this.nameFilter
-    }));
-    this.loadCountries();
+    this.searchChanges$.next(this.nameFilter);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(name => {
+        this.filters.update(f => ({
+          ...f,
+          pageNumber: 1,
+          name
+        }));
+        this.loadCountries();
+      });
   }
 
   onStatusChange(value: boolean | null) {

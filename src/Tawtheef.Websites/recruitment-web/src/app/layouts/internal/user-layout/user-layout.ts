@@ -48,10 +48,10 @@ export class UserLayout implements OnInit, OnDestroy {
     this.dialog.open(TermsAgreementDialogComponent, {
       header: this.translate.instant('layout.internal.termsDialog.title'),
       width: '520px',
-      contentStyle: { 'border-radius': '12px' },
+      contentStyle: { 'border-radius': '12px', 'max-height': '80vh', overflow: 'auto' },
       dismissableMask: false,
       draggable: false,
-      closable: false
+      closable: true
     })?.onClose
       .pipe(take(1))
       .subscribe(() => {
