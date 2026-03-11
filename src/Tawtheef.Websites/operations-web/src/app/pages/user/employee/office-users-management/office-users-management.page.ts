@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
@@ -19,6 +19,8 @@ import { Permissions } from '../../../../core/constants/permissions';
 import { OfficeSummaryDto } from './models/office-summary.dto';
 import { OfficeUserDialogComponent } from './dialogs/office-user-dialog/office-user-dialog.component';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-office-users-management',
@@ -44,6 +46,7 @@ export class OfficeUsersManagementPage implements OnInit {
   private language = inject(LanguageService);
   private dialogService = inject(DialogService);
   private auth = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   private _users = signal<OfficeUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -62,6 +65,7 @@ export class OfficeUsersManagementPage implements OnInit {
   });
 
   nameFilter = '';
+  private searchChanges$ = new Subject<string>();
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
@@ -89,6 +93,7 @@ export class OfficeUsersManagementPage implements OnInit {
   protected readonly Permissions = Permissions;
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadUsers();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
     this.auth.currentUser$.subscribe(user => this._currentUserId.set(user?.userId ?? null));
@@ -113,12 +118,20 @@ export class OfficeUsersManagementPage implements OnInit {
   }
 
   onSearchChange(): void {
-    this.filters.update(f => ({
-      ...f,
-      pageNumber: 1,
-      name: this.nameFilter
-    }));
-    this.loadUsers();
+    this.searchChanges$.next(this.nameFilter);
+  }
+
+  private setupSearchListener(): void {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(name => {
+        this.filters.update(f => ({
+          ...f,
+          pageNumber: 1,
+          name
+        }));
+        this.loadUsers();
+      });
   }
 
   onPageChange(page: number): void {
@@ -136,6 +149,8 @@ export class OfficeUsersManagementPage implements OnInit {
       header: this.translate.instant('OFFICE_USERS.ADD_TITLE'),
       styleClass: 'office-user-dialog',
       width: '420px',
+      closable: true,
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       draggable: false,   // ✅ disables dragging
     });
 
@@ -151,6 +166,8 @@ export class OfficeUsersManagementPage implements OnInit {
       header: this.translate.instant('OFFICE_USERS.EDIT_TITLE'),
       styleClass: 'office-user-dialog',
       width: '420px',
+      closable: true,
+      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       draggable: false,   // ✅ disables dragging
       data: { user }
     });

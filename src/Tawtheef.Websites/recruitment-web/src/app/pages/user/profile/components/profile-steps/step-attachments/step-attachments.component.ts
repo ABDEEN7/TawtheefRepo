@@ -47,6 +47,7 @@ export class StepAttachmentsComponent implements OnInit {
   showBack = input<boolean>(true);
   requireChanges = input<boolean>(false);
   private readonly maxFileSizeBytes = 5 * 1024 * 1024; // 5MB
+  private readonly textPattern = /^[\p{L}\p{N}\s]*$/u;
   private readonly allowedMimeTypes = new Set<string>([
     'application/pdf',
     'image/jpeg',
@@ -100,7 +101,7 @@ export class StepAttachmentsComponent implements OnInit {
     return this.fb.group({
       id: [id ?? null],
       attachmentId: [attachmentId ?? null],
-      title: [title, Validators.required],
+      title: [title, [Validators.required, Validators.pattern(this.textPattern)]],
       file: [
         null,
         existing ? [] : [Validators.required],
@@ -110,6 +111,17 @@ export class StepAttachmentsComponent implements OnInit {
   }
 
   // ======== Row actions ========
+
+
+  sanitizeTitle(i: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const sanitized = (input.value ?? '').replace(/[^\p{L}\p{N}\s]/gu, '').slice(0, 150);
+    if (sanitized !== input.value) {
+      input.value = sanitized;
+      (this.rows.at(i) as FormGroup).get('title')?.setValue(sanitized, { emitEvent: false });
+    }
+  }
+
 
   addRow(): void {
     this.rows.push(this.createRow());

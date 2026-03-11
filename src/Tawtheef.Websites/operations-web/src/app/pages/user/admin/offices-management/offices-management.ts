@@ -226,6 +226,33 @@ export class OfficesManagement implements OnInit {
     this.isModalLoading.set(true);
     this.officesService.setOfficeAdmin(activeOffice.id, userId).subscribe({
       next: () => {
+        const selectedAdmin = activeOffice.users?.find(user => user.id === userId);
+
+        this.editingOffice.update(current => {
+          if (!current) {
+            return current;
+          }
+
+          return {
+            ...current,
+            adminEmail: selectedAdmin?.email || current.adminEmail,
+            users: (current.users || []).map(user => ({
+              ...user,
+              isAdmin: user.id === userId
+            }))
+          };
+        });
+
+        if (selectedAdmin?.email) {
+          this._offices.update(items =>
+            items.map(office =>
+              office.id === activeOffice.id
+                ? { ...office, adminEmail: selectedAdmin.email }
+                : office
+            )
+          );
+        }
+
         this.notification.success(this.translate.instant('OFFICES.ADMIN_CHANGED'));
         this.refreshActiveOffice();
       },

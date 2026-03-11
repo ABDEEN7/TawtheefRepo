@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ToggleSwitchModule} from 'primeng/toggleswitch';
@@ -16,6 +16,8 @@ import {PaginationMetadata} from '../../../../core/models/pagination-metadata.mo
 import {PaginatedResult} from '../../../../core/models/paginated-result.model';
 import {ReligionModalComponent} from './components/religion-modal/religion-modal.component';
 import {finalize} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-religions-management',
@@ -39,6 +41,7 @@ export class ReligionsManagement implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   private _religions = signal<ReligionDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -61,8 +64,10 @@ export class ReligionsManagement implements OnInit {
   modalMode = signal<'create' | 'edit'>('create');
   isModalLoading = signal(false);
   editingReligion = signal<ReligionDto | null>(null);
+  private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadReligions();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -85,8 +90,16 @@ export class ReligionsManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({...f, pageNumber: 1, search: this.searchTerm}));
-    this.loadReligions();
+    this.searchChanges$.next(this.searchTerm);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.filters.update(f => ({...f, pageNumber: 1, search}));
+        this.loadReligions();
+      });
   }
 
   onPageChange(page: number) {

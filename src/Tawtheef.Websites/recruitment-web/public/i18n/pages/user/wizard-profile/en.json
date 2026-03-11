@@ -1,4 +1,4 @@
-﻿{
+{
   "wizard.contact.googleProviderNonQatarOnly": "Google sign-in is only available for non-Qatari users. Please use another sign-in method.",
   "wizard.contact.phoneUpdateFailed": "Failed to update mobile number, please try again.",
   "wizard.courses.edit": "Edit course",
@@ -383,5 +383,6 @@
   "wizard.personal.sponsor.individual.qidHint11": "QID must be 11 digits.",
   "wizard.personal.sponsor.individual.qidInvalid11": "QID must be exactly 11 digits.",
   "wizard.personal.sponsor.company.numberHint8": "Establishment number must be 8 digits.",
-  "wizard.personal.sponsor.company.numberInvalid8": "Establishment number must be exactly 8 digits."
+  "wizard.personal.sponsor.company.numberInvalid8": "Establishment number must be exactly 8 digits.",
+  "wizard.validation.invalidCharacters": "Invalid characters are not allowed."
 }

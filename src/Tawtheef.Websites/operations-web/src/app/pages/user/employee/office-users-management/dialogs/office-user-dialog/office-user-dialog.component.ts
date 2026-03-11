@@ -28,6 +28,7 @@ import {AuthService} from '../../../../../../core/auth/auth.service';
   ]
 })
 export class OfficeUserDialogComponent implements OnInit {
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   private officeUsersService = inject(OfficeUsersService);
   private dialogRef = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
@@ -99,6 +100,10 @@ export class OfficeUserDialogComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return !!this.nameAr.trim() && !!this.nameEn.trim() && !!this.email.trim();
+    return !!this.nameAr.trim() && !!this.nameEn.trim() && this.isEmailValid();
+  }
+
+  isEmailValid(): boolean {
+    return this.emailPattern.test(this.email.trim());
   }
 }
