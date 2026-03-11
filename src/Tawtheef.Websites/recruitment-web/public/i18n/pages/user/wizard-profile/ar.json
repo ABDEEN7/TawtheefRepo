@@ -1,4 +1,4 @@
-﻿{
+{
   "wizard.contact.googleProviderNonQatarOnly": "يرجى استخدام تسجيل الدخول عبر جوجل إذا كنت غير قطري.",
   "wizard.contact.phoneUpdateFailed": "فشل تحديث رقم الجوال، يرجى المحاولة مرة أخرى.",
   "wizard.courses.edit": "تعديل الدورة",
@@ -384,5 +384,6 @@
   "wizard.personal.sponsor.individual.qidHint11": "رقم البطاقة الشخصية يجب أن يتكوّن من 11 رقمًا.",
   "wizard.personal.sponsor.individual.qidInvalid11": "رقم البطاقة الشخصية يجب أن يكون 11 رقمًا بالضبط.",
   "wizard.personal.sponsor.company.numberHint8": "رقم المنشأة يجب أن يتكوّن من 8 أرقام.",
-  "wizard.personal.sponsor.company.numberInvalid8": "رقم المنشأة يجب أن يكون 8 أرقام بالضبط."
+  "wizard.personal.sponsor.company.numberInvalid8": "رقم المنشأة يجب أن يكون 8 أرقام بالضبط.",
+  "wizard.validation.invalidCharacters": "الأحرف الخاصة غير مسموح بها."
 }
