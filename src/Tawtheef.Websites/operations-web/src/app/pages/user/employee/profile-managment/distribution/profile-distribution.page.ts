@@ -302,7 +302,7 @@ export class ProfileDistributionPage implements OnInit {
         map(v => (v ?? '').trim()),
         // optional: ignore very short terms (uncomment if you want)
         // map(v => (v.length < 2 ? '' : v)),
-        debounceTime(400),
+        debounceTime(1000),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       )

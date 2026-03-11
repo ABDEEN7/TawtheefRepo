@@ -32,6 +32,9 @@
       [(ngModel)]="email"
       [disabled]="isEditingSelf()"
       [placeholder]="'OFFICE_USERS.EMAIL_PLACEHOLDER' | translate" />
+    <small class="text-danger d-block mt-1" *ngIf="email.trim() && !isEmailValid()">
+      {{ 'validation.invalidEmail' | translate }}
+    </small>
   </div>
 
   <div class="d-flex justify-content-end gap-2 mt-4">

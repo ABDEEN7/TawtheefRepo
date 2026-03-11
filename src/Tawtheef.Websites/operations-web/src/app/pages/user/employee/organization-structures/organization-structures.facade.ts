@@ -1,5 +1,7 @@
 import {DestroyRef, inject, Injectable} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {DialogService} from 'primeng/dynamicdialog';
 
@@ -26,8 +28,12 @@ export class OrganizationStructuresFacade {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private language = inject(LanguageService);
+  private sectorSearchChanges$ = new Subject<string>();
+  private managementSearchChanges$ = new Subject<string>();
+  private departmentSearchChanges$ = new Subject<string>();
 
   init() {
+    this.setupSearchListeners();
     this.store.setCurrentLang(this.language.get());
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -144,8 +150,7 @@ export class OrganizationStructuresFacade {
 
   // ======== Filters / Pagination ========
   setSectorSearch(search: string) {
-    this.store.updateSectorFilters({ search, pageNumber: 1 });
-    this.loadSectors();
+    this.sectorSearchChanges$.next(search ?? '');
   }
 
   setSectorStatus(status: boolean | null) {
@@ -164,8 +169,7 @@ export class OrganizationStructuresFacade {
   }
 
   setManagementSearch(search: string) {
-    this.store.updateManagementFilters({ search, pageNumber: 1 });
-    this.loadManagements();
+    this.managementSearchChanges$.next(search ?? '');
   }
 
   setManagementStatus(status: boolean | null) {
@@ -192,8 +196,7 @@ export class OrganizationStructuresFacade {
   }
 
   setDepartmentSearch(search: string) {
-    this.store.updateDepartmentFilters({ search, pageNumber: 1 });
-    this.loadDepartments();
+    this.departmentSearchChanges$.next(search ?? '');
   }
 
   setDepartmentStatus(status: boolean | null) {
@@ -391,6 +394,29 @@ export class OrganizationStructuresFacade {
     if (shouldReload && !reloadList) {
       this.loadDepartments();
     }
+  }
+
+  private setupSearchListeners() {
+    this.sectorSearchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.store.updateSectorFilters({ search, pageNumber: 1 });
+        this.loadSectors();
+      });
+
+    this.managementSearchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.store.updateManagementFilters({ search, pageNumber: 1 });
+        this.loadManagements();
+      });
+
+    this.departmentSearchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.store.updateDepartmentFilters({ search, pageNumber: 1 });
+        this.loadDepartments();
+      });
   }
 
   private toast(key: string, isError = false) {

@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {Select} from 'primeng/select';
@@ -18,6 +18,8 @@ import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.m
 import {UniversityModalComponent} from './components/university-modal/university-modal.component';
 import {finalize} from 'rxjs/operators';
 import {UniversityFormPayload} from './models/university-form.payload';
+import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-universities-management',
@@ -41,6 +43,7 @@ export class UniversitiesManagement implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private destroyRef = inject(DestroyRef);
 
   private _universities = signal<UniversityDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -68,8 +71,10 @@ export class UniversitiesManagement implements OnInit {
   modalMode = signal<'create' | 'edit'>('create');
   isModalLoading = signal(false);
   editingUniversity = signal<UniversityDto | null>(null);
+  private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.loadUniversities();
     this.loadCountries();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
@@ -99,8 +104,16 @@ export class UniversitiesManagement implements OnInit {
   }
 
   onSearchChange() {
-    this.filters.update(f => ({...f, pageNumber: 1, search: this.searchTerm}));
-    this.loadUniversities();
+    this.searchChanges$.next(this.searchTerm);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
+        this.filters.update(f => ({...f, pageNumber: 1, search}));
+        this.loadUniversities();
+      });
   }
 
   onCountryFilterChange(value: string | null) {

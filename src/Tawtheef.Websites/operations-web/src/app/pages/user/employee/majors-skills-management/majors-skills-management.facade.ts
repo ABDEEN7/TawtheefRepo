@@ -425,28 +425,28 @@ export class MajorsSkillsManagementFacade {
 
   private setupSearchListeners() {
     this.majorSkillSearchChanges$
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
         this.store.updateMajorSkillFilters({ search: value, pageNumber: 1 });
         this.loadMajorSkills();
       });
 
     this.mainMajorSearchChanges$
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
         this.store.updateMainMajorFilters({ search: value, pageNumber: 1 });
         this.loadMainMajors();
       });
 
     this.subMajorSearchChanges$
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
         this.store.updateSubMajorFilters({ search: value, pageNumber: 1 });
         this.loadSubMajors();
       });
 
     this.skillSearchChanges$
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(value => {
         this.store.updateSkillFilters({ search: value, pageNumber: 1 });
         this.loadSkills();

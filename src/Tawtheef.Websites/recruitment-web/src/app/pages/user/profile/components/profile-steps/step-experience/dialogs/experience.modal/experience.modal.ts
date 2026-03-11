@@ -71,15 +71,18 @@ export class ExperienceModal implements OnInit {
 
   today = new Date();
 
+  private readonly textPattern = /^[\p{L}\p{N}\s]*$/u;
+  private readonly textAreaPattern = /^[\p{L}\p{N}\s\-',.،]*$/u;
+
   form: FormGroup = this.fb.group(
     {
-      org: ['', [Validators.required, Validators.maxLength(150)]],
-      name: ['', [Validators.required, Validators.maxLength(150)]],
+      org: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.textPattern)]],
+      name: ['', [Validators.required, Validators.maxLength(150), Validators.pattern(this.textPattern)]],
       country: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null],
       current: [false],
-      description: ['', [Validators.maxLength(this.limits.descriptionMaxLength)]],
+      description: ['', [Validators.maxLength(this.limits.descriptionMaxLength), Validators.pattern(this.textAreaPattern)]],
       fileName: [''],
       file: [null],
       hasQualification: [false],
@@ -207,6 +210,33 @@ export class ExperienceModal implements OnInit {
     this.f['from'].markAsTouched();
     this.f['to'].markAsTouched();
     this.form.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+  }
+
+
+  sanitizeTextControl(controlName: 'org' | 'name', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const sanitized = this.sanitizeTextValue(input.value, 150);
+    if (sanitized !== input.value) {
+      input.value = sanitized;
+      this.form.get(controlName)?.setValue(sanitized, { emitEvent: false });
+    }
+  }
+
+  sanitizeDescription(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    const sanitized = this.sanitizeTextAreaValue(textarea.value, this.limits.descriptionMaxLength);
+    if (sanitized !== textarea.value) {
+      textarea.value = sanitized;
+      this.form.get('description')?.setValue(sanitized, { emitEvent: false });
+    }
+  }
+
+  private sanitizeTextValue(value: string, maxLength: number): string {
+    return (value ?? '').replace(/[^\p{L}\p{N}\s]/gu, '').slice(0, maxLength);
+  }
+
+  private sanitizeTextAreaValue(value: string, maxLength: number): string {
+    return (value ?? '').replace(/[^\p{L}\p{N}\s\-',.،]/gu, '').slice(0, maxLength);
   }
 
   onSave() {

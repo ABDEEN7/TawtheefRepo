@@ -22,8 +22,9 @@ export class DialogHelperService {
     return this.dialogService.open(ConfirmationDialogComponent, {
       header: this.translateService.instant(options.title),
       width: '500px',
-       draggable: false,   // ✅ disables dragging
-      contentStyle: { 'border-radius': '12px' },
+      closable: true,
+      draggable: false,
+      contentStyle: { 'border-radius': '12px', 'max-height': '80vh', overflow: 'auto' },
       data: {
         ...options,
         showInputField: options.showInputField || false,

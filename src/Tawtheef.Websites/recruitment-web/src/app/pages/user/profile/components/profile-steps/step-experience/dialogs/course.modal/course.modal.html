@@ -7,7 +7,7 @@
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label required">{{ 'wizard.courses.provider' | translate }}
             </label>
-            <input pInputText class="form-control" formControlName="org"
+            <input pInputText class="form-control" formControlName="org" (input)="sanitizeTextControl('org', $event)"
               [ngClass]="{'p-invalid': f['org'].invalid && (f['org'].dirty || f['org'].touched)}">
             <small *ngIf="f['org'].hasError('required') && (f['org'].dirty || f['org'].touched)"
               class="text-danger mt-1 d-block">
@@ -17,13 +17,17 @@
               class="text-danger mt-1 d-block">
               {{ 'validation.maxLength' | translate:{max:150} }}
             </small>
+            <small *ngIf="f['org'].hasError('pattern') && (f['org'].dirty || f['org'].touched)"
+              class="text-danger mt-1 d-block">
+              {{ 'wizard.validation.invalidCharacters' | translate }}
+            </small>
           </div>
 
           <!-- Title -->
           <div class="col-12 col-md-6 mb-3">
             <label class="form-label  required">{{ 'wizard.courses.table.courseName' | translate }}
             </label>
-            <input pInputText class="form-control" formControlName="name"
+            <input pInputText class="form-control" formControlName="name" (input)="sanitizeTextControl('name', $event)"
               [ngClass]="{'p-invalid': f['name'].invalid && (f['name'].dirty || f['name'].touched)}">
             <small *ngIf="f['name'].hasError('required') && (f['name'].dirty || f['name'].touched)"
               class="text-danger mt-1 d-block">
@@ -32,6 +36,10 @@
             <small *ngIf="f['name'].hasError('maxlength') && (f['name'].dirty || f['name'].touched)"
               class="text-danger mt-1 d-block">
               {{ 'validation.maxLength' | translate:{max:150} }}
+            </small>
+            <small *ngIf="f['name'].hasError('pattern') && (f['name'].dirty || f['name'].touched)"
+              class="text-danger mt-1 d-block">
+              {{ 'wizard.validation.invalidCharacters' | translate }}
             </small>
           </div>
         </div>
@@ -79,12 +87,16 @@
         <div class="col-12  mb-3">
           <label class="form-label">{{ 'wizard.courses.notes' | translate }}
           </label>
-          <textarea class="form-control" pTextarea rows="4" formControlName="description"
+          <textarea class="form-control" pTextarea rows="4" formControlName="description" (input)="sanitizeDescription($event)"
             [attr.maxlength]="limits.descriptionMaxLength"
             [ngClass]="{'p-invalid': f['description'].invalid && (f['description'].dirty || f['description'].touched)}"></textarea>
           <small *ngIf="f['description'].hasError('maxlength') && (f['description'].dirty || f['description'].touched)"
             class="text-danger mt-1 d-block">
             {{ 'validation.maxLength' | translate:{max: limits.descriptionMaxLength} }}
+          </small>
+          <small *ngIf="f['description'].hasError('pattern') && (f['description'].dirty || f['description'].touched)"
+            class="text-danger mt-1 d-block">
+            {{ 'wizard.validation.invalidCharacters' | translate }}
           </small>
           <small class="char-counter">
             {{ 'common.charactersRemaining' | translate :{count: limits.descriptionMaxLength -

@@ -93,7 +93,7 @@ export class JobListComponent implements OnInit {
 
   private setupSearchListener() {
     this.searchChanges
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFilterChange());
   }
 

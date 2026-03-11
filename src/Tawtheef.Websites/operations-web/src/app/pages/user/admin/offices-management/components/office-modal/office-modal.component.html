@@ -193,14 +193,16 @@
                           {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
                         </button>
 
-                        <button
-                          type="button"
-                          class="btn-text"
-                          (click)="promoteToAdmin(user)"
-                          [disabled]="isOfficeAdmin(user) || loading"
-                          aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
-                          {{ isOfficeAdmin(user) ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.MAKE_ADMIN' | translate) }}
-                        </button>
+                        @if (!isOfficeAdmin(user)) {
+                          <button
+                            type="button"
+                            class="btn-text"
+                            (click)="promoteToAdmin(user)"
+                            [disabled]="loading"
+                            aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
+                            {{ 'OFFICES.MAKE_ADMIN' | translate }}
+                          </button>
+                        }
                       </div>
                     </td>
                   </tr>
