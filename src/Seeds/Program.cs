@@ -323,7 +323,6 @@ internal static class ImportCatalog
         new ImportStep { Code = "UNIV",    Title = "Import Universities (CSV)", RunAsync = (r, ct) => r.ImportUniversitiesAsync(ct) },
         new ImportStep { Code = "MAJOR",   Title = "Import Majors (CSV)",    RunAsync = (r, ct) => r.ImportMajorsAsync(ct) },
         new ImportStep { Code = "JTITLE",  Title = "Import Job Titles (CSV)", RunAsync = (r, ct) => r.ImportJobTitlesAsync(ct) },
-        new ImportStep { Code = "OFFICE",  Title = "Insert Offices (Code)",  RunAsync = (r, ct) => r.ImportOfficesAsync(ct) },
         new ImportStep { Code = "SKTYPE",  Title = "Insert SkillTypes (Code)", RunAsync = (r, ct) => r.ImportSkillTypesAsync(ct) },
         new ImportStep { Code = "SKILL",   Title = "Insert Skills (Code)",   RunAsync = (r, ct) => r.ImportSkillsAsync(ct) },
         new ImportStep { Code = "MSLINK",  Title = "Insert Major-Skill Links (Code)", RunAsync = (r, ct) => r.ImportMajorSkillsAsync(ct) },
@@ -393,12 +392,6 @@ internal sealed class ImportRunner
     public Task ImportJobTitlesAsync(CancellationToken ct)
     {
         ImportJobTitles(_db, _errors);
-        return Task.CompletedTask;
-    }
-
-    public Task ImportOfficesAsync(CancellationToken ct)
-    {
-        ImportOffices(_db, _errors);
         return Task.CompletedTask;
     }
 
@@ -856,60 +849,6 @@ internal sealed class ImportRunner
             {
                 errors.Add(new ImportError("JobTitlesData.csv", row, ex.GetBaseException().Message));
             }
-        }
-    }
-
-    // ================= Import Offices =================
-
-    private static void ImportOffices(TawtheefDbContext db, List<ImportError> errors)
-    {
-        try
-        {
-            var jordanId = Guid.Parse("b7f89fce-4f81-464a-9e99-7fc7c8bd1d54");
-            var syriaId = Guid.Parse("21d0a391-7e7f-4a3e-bd27-9c26345c7e09");
-            var ukId = Guid.Parse("cba347b0-123e-4eb1-91be-ca3a2725bbeb");
-
-            var offices = new (Guid CountryId, string Code, string BackendName, string Ar, string En, int Order)[]
-            {
-                (jordanId, "JO-AMM", "AMMAN_OFFICE", "مكتب عمّان", "Amman Office", 1),
-                (jordanId, "JO-IRB", "IRBID_OFFICE", "مكتب إربد", "Irbid Office", 2),
-                (jordanId, "JO-ZAR", "ZARQA_OFFICE", "مكتب الزرقاء", "Zarqa Office", 3),
-                (syriaId, "SY-DAM", "DAMASCUS_OFFICE", "مكتب دمشق", "Damascus Office", 4),
-                (syriaId, "SY-ALA", "ALEPPO_OFFICE", "مكتب حلب", "Aleppo Office", 5),
-                (syriaId, "SY-HOM", "HOMS_OFFICE", "مكتب حمص", "Homs Office", 6),
-                (ukId, "UK-LON", "LONDON_OFFICE", "مكتب لندن", "London Office", 7),
-                (ukId, "UK-MAN", "MANCHESTER_OFFICE", "مكتب مانشستر", "Manchester Office", 8),
-                (ukId, "UK-BIR", "BIRMINGHAM_OFFICE", "مكتب برمنغهام", "Birmingham Office", 9),
-                (ukId, "UK-LIV", "LIVERPOOL_OFFICE", "مكتب ليفربول", "Liverpool Office", 10),
-            };
-
-            var existing = new HashSet<string>(
-                db.Office.AsNoTracking().Select(x => x.BackendName),
-                StringComparer.OrdinalIgnoreCase);
-
-            foreach (var o in offices)
-            {
-                if (!existing.Add(o.BackendName))
-                    continue;
-
-                db.Office.Add(new Office
-                {
-                    Id = Guid.NewGuid(),
-                    CreatedDate = DateTime.UtcNow,
-                    IsDeleted = false,
-                    OfficeAdminId = AdminUserIds.Admin1UserId,
-                    CountryId = o.CountryId,
-                    Code = o.Code,
-                    BackendName = o.BackendName,
-                    NameAr = o.Ar,
-                    NameEn = o.En,
-                    DisplayOrder = o.Order
-                });
-            }
-        }
-        catch (Exception ex)
-        {
-            errors.Add(new ImportError("InsertOffices", null, ex.GetBaseException().Message));
         }
     }
 

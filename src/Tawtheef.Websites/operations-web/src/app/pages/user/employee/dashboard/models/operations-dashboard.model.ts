@@ -1,4 +1,4 @@
-import {PaginationMetadata} from '../../../../../core/models/pagination-metadata.model';
+import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 
 export interface OperationsDashboardFilters {
   fromDateUtc?: string;
@@ -14,6 +14,8 @@ export interface OperationsDashboardResponse {
   filters: OperationsDashboardFilterSnapshot;
   kpis: DashboardKpis;
   profileBreakdown: ProfileBreakdown;
+  jobKpis: JobKpis;
+  jobBreakdown: JobBreakdown;
   taskMonitoring: TaskMonitoring;
   profileTrend: TrendSeries;
   taskCompletionTrend: TrendSeries;
@@ -62,6 +64,20 @@ export interface ProfileBreakdown {
   byDepartment: GroupCount[];
   byPriority: GroupCount[];
   aging: AgingBucket[];
+}
+
+export interface JobKpis {
+  totalJobs: number;
+  activeJobs: number;
+  pendingReviewJobs: number;
+  approvedJobs: number;
+  rejectedJobs: number;
+  newJobsToday: number;
+}
+
+export interface JobBreakdown {
+  byStatus: StatusCount[];
+  byDepartment: GroupCount[];
 }
 
 export interface TaskMonitoring {
