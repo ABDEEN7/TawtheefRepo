@@ -28,7 +28,7 @@ import {AuthService} from '../../../../../../core/auth/auth.service';
   ]
 })
 export class OfficeUserDialogComponent implements OnInit {
-  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  private readonly emailPattern = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
   private officeUsersService = inject(OfficeUsersService);
   private dialogRef = inject(DynamicDialogRef);
   private config = inject(DynamicDialogConfig);
