@@ -23,4 +23,5 @@ export interface JobSummaryFilters extends PaginatedRequest {
   jobCategoryId?: string | null;
   departmentId?: string | null;
   jobStatusId?: string | null;
+  search?: string | null;
 }

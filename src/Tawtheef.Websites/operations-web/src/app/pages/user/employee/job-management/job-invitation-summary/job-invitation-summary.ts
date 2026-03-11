@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -12,6 +12,8 @@ import { routes } from '../../../../../routes/routes';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-job-invitation-summary',
   templateUrl: './job-invitation-summary.html',
@@ -31,8 +33,10 @@ import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.
 export class JobInvitationSummary implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   jobInvitationSummaryService = inject(JobInvitationSummaryService);
+  private searchChanges$ = new Subject<string>();
 
   // Signals
   currentPage = signal(1);
@@ -50,6 +54,7 @@ export class JobInvitationSummary implements OnInit {
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   ngOnInit(): void {
+    this.setupSearchListener();
     this.jobInvitationSummaryService.loadLookups();
     this.loadSummaries();
   }
@@ -59,6 +64,7 @@ export class JobInvitationSummary implements OnInit {
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       jobStatusId: this.selectedStatus() || '',
+      search: this.searchText() || '',
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
       sortBy: 'title',
@@ -71,6 +77,11 @@ export class JobInvitationSummary implements OnInit {
   onFilterChange() {
     this.currentPage.set(1);
     this.loadSummaries();
+  }
+
+  onSearchChange(search: string) {
+    this.searchText.set(search ?? '');
+    this.searchChanges$.next(this.searchText());
   }
 
   clearFilters(): void {
@@ -109,6 +120,15 @@ export class JobInvitationSummary implements OnInit {
 
   canViewInvitations(): boolean {
     return this.authService.hasPermission(Permissions.JobInvitations.View);
+  }
+
+  private setupSearchListener() {
+    this.searchChanges$
+      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.currentPage.set(1);
+        this.loadSummaries();
+      });
   }
 
   protected readonly routes = routes;
