@@ -23,7 +23,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var vr = validationService.ValidateAttachments(profile);
@@ -49,7 +49,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResidenceAddress.CertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
                 await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
         }
 

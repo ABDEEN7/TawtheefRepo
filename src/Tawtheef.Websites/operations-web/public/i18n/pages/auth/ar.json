@@ -1,7 +1,7 @@
 ﻿{
   "auth.azure.title": "تسجيل الدخول - Azure",
   "auth.azure.hint": "سيتم تحويلك لتسجيل الدخول باستخدام حساب العمل الرسمي",
-  "auth.azure.cta": "تسجيل الدخول باستخدام Azure (للموظفين)",
+  "auth.azure.cta": "تسجيل الدخول للموظفين",
   "auth.login.google_cta": "تسجيل الدخول بحساب Google (للمكاتب المعتمدة)",
   "auth.login.ministry_name": "وزارة التربية والتعليم والتعليم العالي",
   "auth.qatar.use": "للمكاتب المعتمدة",

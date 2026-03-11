@@ -2,15 +2,35 @@ using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
-public sealed class DurableEmailSender(IEmailTransport transport) : IEmailSender
+public sealed class DurableEmailSender(
+    IEmailTransport transport, 
+    IEmailTemplateRenderer renderer) : IEmailSender
 {
     public async Task<NotificationResponse> SendAsync(Notification notification, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(notification.ToAddress))
             return NotificationResponse.Failure("TO_ADDRESS_REQUIRED");
+
+        var body = notification.Body;
+        var plainText = notification.PlainTextBody;
+
+        // If body is missing but template key exists, render it on the fly
+        if (string.IsNullOrWhiteSpace(body) && !string.IsNullOrWhiteSpace(notification.TemplateKey))
+        {
+            try
+            {
+                body = await renderer.RenderHtmlAsync(notification.TemplateKey, notification.PayloadJson ?? "{}");
+                plainText = await renderer.RenderTextAsync(notification.TemplateKey, notification.PayloadJson ?? "{}");
+            }
+            catch (Exception ex)
+            {
+                return NotificationResponse.Failure($"TEMPLATE_RENDER_ERROR: {ex.Message}");
+            }
+        }
 
         var to = notification.ToAddress
             .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -24,8 +44,8 @@ public sealed class DurableEmailSender(IEmailTransport transport) : IEmailSender
             to,
             cc,
             notification.Subject ?? "Tawtheef",
-            notification.Body,
-            notification.PlainTextBody
+            body ?? string.Empty,
+            plainText
         );
 
         try

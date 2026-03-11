@@ -29,7 +29,7 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
             return Result.Fail<Guid>(ErrorsCodes.InvalidAttachmentId);
 
         // In RequiresUpdate, must match what's on profile (no tampering)
-        if (profile.Status == UserProfileStatus.RequiresUpdate)
+        if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
         {
             if (currentProfileResourceId is null || currentProfileResourceId.Value == Guid.Empty)
                 return Result.Fail<Guid>(ErrorsCodes.AttachmentNotFound);
@@ -37,7 +37,7 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
             if (currentProfileResourceId.Value != meta.Id)
                 return Result.Fail<Guid>(ErrorsCodes.AttachmentNotEditableInRevision);
 
-            // Must have NeedsCorrection review item
+            // Must have NeedsCorrection or Solved review item
             var allowed = await IsAllowedByReviewAsync(profile.Id, section, meta.Id, ct);
             if (!allowed)
                 return Result.Fail<Guid>(ErrorsCodes.AttachmentNotEditableInRevision);
@@ -78,7 +78,7 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
                 r.UserProfileId == userProfileId &&
                 r.Section == section &&
                 r.TargetType == ReviewTargetType.Attachment &&
-                r.Status == ReviewStatus.NeedsCorrection &&
+                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Solved) &&
                 r.ResourceId == resourceId, ct);
     }
 }

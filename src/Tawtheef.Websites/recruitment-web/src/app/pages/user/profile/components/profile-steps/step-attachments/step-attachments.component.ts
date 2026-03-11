@@ -88,7 +88,7 @@ export class StepAttachmentsComponent implements OnInit {
       this.fileRefs[idx] = att.fileRef ?? null;
     });
 
-    this.lastSubmittedSignature = null;
+    this.lastSubmittedSignature = this.buildSignature(attachments);
   }
 
   // ======== FormArray helper ========
@@ -252,8 +252,11 @@ export class StepAttachmentsComponent implements OnInit {
 
     const signature = this.buildSignature(attachments);
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(10)) {
+        const msg = this.ds.hasUnsolvedCorrections(10)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

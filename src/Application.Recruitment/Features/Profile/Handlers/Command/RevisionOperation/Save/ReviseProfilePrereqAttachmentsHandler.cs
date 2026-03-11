@@ -23,7 +23,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var vr = validationService.ValidateAttachments(profile);
@@ -44,7 +44,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.BirthdayCertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
                 await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
         }
 
@@ -62,7 +62,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.MarriageCertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate)
+            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
                 await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
         }
 

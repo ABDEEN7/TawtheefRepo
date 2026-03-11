@@ -149,10 +149,31 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
 
-  reviewStatusOptions = [
-    { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved },
-    { labelKey: 'profileApproval.status.needsCorrection', value: ReviewStatus.NeedsCorrection },
-  ];
+  isNeedsCorrectionDisabled = computed(() => {
+    const sectionId = this.activeSection();
+    if (sectionId == null) return false;
+
+    // Target sections: Qualifications (4), Experiences (5), Training (6), Certificates (7), Attachments (10)
+    const targetSections = [4, 5, 6, 7, 10];
+    if (!targetSections.includes(sectionId)) return false;
+
+    const info = this.detail();
+    if (!info) return false;
+
+    const sec = (info.sections ?? []).find(s => s.section === sectionId);
+    if (!sec || !sec.items?.length) return false;
+
+    return sec.items.every(item => item.status === ReviewStatus.Approved);
+  });
+
+  reviewStatusOptions = computed(() => [
+    { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved, disabled: false },
+    {
+      labelKey: 'profileApproval.status.needsCorrection',
+      value: ReviewStatus.NeedsCorrection,
+      disabled: this.isNeedsCorrectionDisabled()
+    },
+  ]);
 
   total = computed(() => this.orderedSections(this.detail()).length || this.flowSections.length);
   current = computed(() => {
@@ -409,7 +430,15 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   }
 
   sectionApprovalBlocked(section: number): boolean {
-    return this.draftStatus[section] === ReviewStatus.Approved && this.sectionHasCorrections(section);
+    const st = this.draftStatus[section];
+
+    // Block Approved if there are corrections
+    if (st === ReviewStatus.Approved && this.sectionHasCorrections(section)) return true;
+
+    // Block Needs Correction if all items are approved (for target sections)
+    if (st === ReviewStatus.NeedsCorrection && section === this.activeSection() && this.isNeedsCorrectionDisabled()) return true;
+
+    return false;
   }
 
   private markDirty(section: number) {

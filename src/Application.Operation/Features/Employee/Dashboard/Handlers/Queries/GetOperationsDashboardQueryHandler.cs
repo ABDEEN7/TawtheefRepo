@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -112,6 +113,34 @@ public sealed class GetOperationsDashboardQueryHandler(
             };
 
         var overdueCutoff = DateTimeOffset.UtcNow.AddDays(-OverdueAfterDays);
+
+        // Job Metrics
+        var jobRepo = repos.Job;
+        var jobsQuery = jobRepo.DbSet
+            .AsNoTracking()
+            .Where(x => !x.IsDeleted && x.CreatedDate >= range.From && x.CreatedDate <= range.To);
+
+        if (request.DepartmentId.HasValue)
+            jobsQuery = jobsQuery.Where(x => x.DepartmentId == request.DepartmentId);
+
+        var totalJobs = await jobsQuery.CountAsync(ct);
+        var activeJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Active || x.JobStatusId == JobStatusIds.Published, ct);
+        var pendingReviewJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingApproval, ct);
+        var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Approved, ct);
+        var rejectedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Rejected, ct);
+        var newJobsToday = await jobRepo.DbSet.CountAsync(x => !x.IsDeleted && x.CreatedDate >= todayStart, ct);
+
+        var jobByStatusRaw = await jobsQuery
+            .GroupBy(x => x.JobStatus != null ? x.JobStatus.NameEn : "N/A")
+            .Select(g => new StatusCountDto { Status = g.Key, Count = g.Count() })
+            .ToListAsync(ct);
+
+        var jobByDepartmentRaw = await jobsQuery
+            .GroupBy(x => x.Department != null ? x.Department.NameEn : "N/A")
+            .Select(g => new GroupCountDto { Label = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(MaxTopItems)
+            .ToListAsync(ct);
 
         var taskAgg = await latestAssignments
             .GroupBy(_ => 1)
@@ -231,6 +260,22 @@ public sealed class GetOperationsDashboardQueryHandler(
                 ByDepartment = byDepartment,
                 ByPriority = byPriority,
                 Aging = aging,
+            },
+
+            JobKpis = new JobKpisDto
+            {
+                TotalJobs = totalJobs,
+                ActiveJobs = activeJobs,
+                PendingReviewJobs = pendingReviewJobs,
+                ApprovedJobs = approvedJobs,
+                RejectedJobs = rejectedJobs,
+                NewJobsToday = newJobsToday
+            },
+
+            JobBreakdown = new JobBreakdownDto
+            {
+                ByStatus = jobByStatusRaw,
+                ByDepartment = jobByDepartmentRaw
             },
 
             TaskMonitoring = new TaskMonitoringDto
@@ -747,13 +792,14 @@ public sealed class GetOperationsDashboardQueryHandler(
         return todayStartUtc.AddDays(-(int)todayStartUtc.DayOfWeek);
     }
 
-    private static (IGenericRepository<UserProfile> Profile, IGenericRepository<ProfileAssignment> Assignment, IGenericRepository<ReviewItem> Review)
+    private static (IGenericRepository<UserProfile> Profile, IGenericRepository<ProfileAssignment> Assignment, IGenericRepository<ReviewItem> Review, IGenericRepository<Job> Job)
         GetRepos(IUnitOfWork uow)
     {
         return (
             uow.GetEntityRepository<UserProfile>(),
             uow.GetEntityRepository<ProfileAssignment>(),
-            uow.GetEntityRepository<ReviewItem>()
+            uow.GetEntityRepository<ReviewItem>(),
+            uow.GetEntityRepository<Job>()
         );
     }
 }

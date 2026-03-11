@@ -34,7 +34,7 @@ public class ConfirmEmailVerificationCommandHandler(
             .OrderByDescending(v => v.CreatedDate)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if ((verification is null  || !(string.Equals(verification.Code, request.Code, StringComparison.Ordinal) || string.Equals(request.Code,"1234",StringComparison.Ordinal))))
+        if ((verification is null  || !(string.Equals(verification.Code, request.Code, StringComparison.Ordinal))))
             return Result.Fail<Unit>(ErrorsCodes.InvalidVerificationCode);
 
         verification.UsedAt = now;

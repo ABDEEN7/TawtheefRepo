@@ -111,7 +111,8 @@ export class StepPrereqComponent implements OnInit {
     updateRemote(this.birthCertificateFile, state.birthCertificateFile);
     updateRemote(this.marriageCertificateFile, state.marriageCertificateFile);
 
-    this.lastSubmittedSignature = null;
+    const payload = mapPrereqSection(state);
+    this.lastSubmittedSignature = this.buildSignature(payload);
   }
 
   onCandidateTypeChange(option: any) {
@@ -228,8 +229,11 @@ export class StepPrereqComponent implements OnInit {
 
     // If nothing changed and we don't need to re-check → just go next
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(1)) {
+        const msg = this.ds.hasUnsolvedCorrections(1)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

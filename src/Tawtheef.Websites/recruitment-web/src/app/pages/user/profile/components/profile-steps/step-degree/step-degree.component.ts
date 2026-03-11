@@ -61,7 +61,8 @@ export class StepDegreeComponent implements OnInit {
   step = computed(() => this.ds.stepValidationDetailed().degrees);
 
   ngOnInit(): void {
-    this.lastSubmittedSignature = null;
+    const degrees = this.ds.state().degrees || [];
+    this.lastSubmittedSignature = this.buildSignature(degrees);
   }
 
   add() {
@@ -149,8 +150,11 @@ export class StepDegreeComponent implements OnInit {
     const signature = this.buildSignature(degrees);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notify.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(4)) {
+        const msg = this.ds.hasUnsolvedCorrections(4)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notify.error(msg);
         return;
       }
       this.notify.info(this.translate.instant('profileView.notifications.noChanges'));

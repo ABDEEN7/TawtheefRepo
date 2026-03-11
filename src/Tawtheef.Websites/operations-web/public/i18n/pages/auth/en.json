@@ -1,7 +1,7 @@
 ﻿{
   "auth.azure.title": "Sign in - Azure",
   "auth.azure.hint": "You will be redirected to log in using your official work account.",
-  "auth.azure.cta": "Sign in with Azure (Employee)",
+  "auth.azure.cta": "Sign in as Employee",
   "auth.login.google_cta": "Sign in with Google (Office)",
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.qatar.use": "For accredited offices",

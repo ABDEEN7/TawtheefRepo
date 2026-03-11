@@ -346,7 +346,7 @@ export class StepPersonalComponent implements OnInit {
     const state = this.ds.state();
     const dto = mapPersonalSection(state);
     updateRemote(this.sponsorCard, state.sponsorCard);
-    this.lastSubmittedSignature = null;
+    this.lastSubmittedSignature = this.buildSignature(dto);
   }
 
   get showDisabilityType(): boolean {
@@ -389,8 +389,11 @@ export class StepPersonalComponent implements OnInit {
     const signature = this.buildSignature(dto);
 
     if (signature && signature === this.lastSubmittedSignature) {
-      if (this.requireChanges()) {
-        this.notificationService.error(this.translate.instant('profileView.notifications.noChanges'));
+      if (this.requireChanges() || this.ds.hasUnsolvedCorrections(2)) {
+        const msg = this.ds.hasUnsolvedCorrections(2)
+          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          : this.translate.instant('profileView.notifications.noChanges');
+        this.notificationService.error(msg);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));

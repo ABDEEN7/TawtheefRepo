@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <div class="d-flex justify-content-between align-items-center">
-      <h5 class="text-primary mb-4">{{'wizard.prereq.titleStep' | translate}}</h5>
+      <h5 class="text-primary mb-4">{{'wizard.prereq.titleStep' | translate}} <span class="text-danger ms-1">*</span></h5>
     </div>
   </div>
 </div>
@@ -11,14 +11,14 @@
     <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType" [filter]="false"
       [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
       class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
-      (ngModelChange)="onCandidateTypeChange($event)"
+      (ngModelChange)="onCandidateTypeChange($event)" [appendTo]="'body'"
       [disabled]="ds.isCandidateTypeLocked || profile.isChangeRequestMode()" fluid></p-select>
   </div>
   <div class="col-md-6">
     <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
     <p-select [options]="lookups.targetEntities()" [(ngModel)]="ds.state().targetEntity" [filter]="false"
-      [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
-      class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
+      [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" [appendTo]="'body'"
+      optionLabel="name" class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
       (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
   </div>
 
@@ -35,6 +35,7 @@
   <div class="col-12">
     <hr>
   </div>
+  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
   <!-- CV -->
   <div class="col-md-6">
     <label class="form-label required d-flex align-items-center">
@@ -64,6 +65,8 @@
       {{ formatsLabel('cv') }} – Max 1MB
     </small>
   </div>
+  }
+  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
   <!-- ID -->
   @if (ds.state().candidateType) {
   <div class="col-md-6">
@@ -99,6 +102,8 @@
     </small>
   </div>
   }
+  }
+  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
   <!-- Birth Certificate -->
   @if (ds.isNeedBirthCertificate) {
   <div class="col-md-6">
@@ -131,7 +136,9 @@
     </small>
   </div>
   }
+  }
 
+  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
   <!-- Marriage Certificate -->
   @if (ds.isNeedMarriageCertificate) {
   <div class="col-md-6">
@@ -163,6 +170,7 @@
       {{ formatsLabel('marriage') }} – Max 1MB
     </small>
   </div>
+  }
   }
 </div>
 <div class="row text-end mt-4">

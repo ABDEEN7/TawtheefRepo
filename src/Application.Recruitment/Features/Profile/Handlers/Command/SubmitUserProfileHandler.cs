@@ -65,7 +65,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         foreach (var item in BuildProfileFiles(profile))
             await reviewRepo.AddAsync(item, ct);
 
-        AddRows(reviewRepo, profile);
+        await AddRowsAsync(reviewRepo, profile);
 
         profile.Status = UserProfileStatus.Submitted;
         user.IsCompletedProfile = true;
@@ -220,23 +220,23 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
     // -----------------------
     // Rows ONLY
     // -----------------------
-    private static void AddRows(IGenericRepository<ReviewItem> repo, UserProfile profile)
+    private static async Task AddRowsAsync(IGenericRepository<ReviewItem> repo, UserProfile profile)
     {
         if (profile.Qualifications is not null)
             foreach (var q in profile.Qualifications)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id, Snapshot(q)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id, Snapshot(q)));
 
         if (profile.Experiences is not null)
             foreach (var e in profile.Experiences)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id, Snapshot(e)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id, Snapshot(e)));
 
         if (profile.TrainingCourses is not null)
             foreach (var t in profile.TrainingCourses)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id, Snapshot(t)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id, Snapshot(t)));
 
         if (profile.Achievements is not null)
             foreach (var a in profile.Achievements)
-                repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id, Snapshot(a)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id, Snapshot(a)));
     }
 
     private static ReviewItem NewRow(

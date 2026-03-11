@@ -3,7 +3,7 @@
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
         <h5 class="text-primary mb-4 d-flex gap-1"><i class="hgi hgi-stroke hgi-user"></i>
-          <span>{{'wizard.personal.titleStep' | translate}}</span>
+          <span>{{'wizard.personal.titleStep' | translate}}</span> <span class="text-danger ms-1">*</span>
         </h5>
       </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.nationality' | translate }}</label>
       <p-select [options]="lookups.countries()" name="nationality" [ngModel]="ds.state().nationality"
-        (ngModelChange)="updateField('nationality', $event)" [filter]="true"
+        (ngModelChange)="updateField('nationality', $event)" [filter]="true" [appendTo]="'body'"
         filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectNationality' | translate" class="w-full md:w-56"
         [readonly]="ds.isLocked('nationality')" [ngClass]="{ 'locked-field': ds.isLocked('nationality') }"></p-select>
@@ -64,7 +64,7 @@
     <!-- Gender -->
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.gender' | translate }}</label>
-      <p-select [options]="lookups.genders()" name="gender" [ngModel]="ds.state().gender"
+      <p-select [options]="lookups.genders()" name="gender" [ngModel]="ds.state().gender" [appendTo]="'body'"
         (ngModelChange)="updateField('gender', $event)" [filter]="false" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectGender' | translate" class="w-full md:w-56"
         [readonly]="ds.isLocked('gender')" [ngClass]="{ 'locked-field': ds.isLocked('gender') }"></p-select>
@@ -74,7 +74,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.religion' | translate }}</label>
       <p-select [options]="lookups.religions()" name="religion" [ngModel]="ds.state().religion"
-        (ngModelChange)="updateField('religion', $event)" [filter]="true"
+        (ngModelChange)="updateField('religion', $event)" [filter]="true" [appendTo]="'body'"
         filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectReligion' | translate" class="w-full md:w-56"></p-select>
     </div>
@@ -83,7 +83,7 @@
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.marital' | translate }}</label>
       <p-select [options]="lookups.maritalStatuses()" name="marital" [ngModel]="ds.state().marital"
-        (ngModelChange)="updateField('marital', $event)" [filter]="true"
+        (ngModelChange)="updateField('marital', $event)" [filter]="true" [appendTo]="'body'"
         filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectMaritalStatus' | translate"
         class="w-full md:w-56 maritalstatus"></p-select>
@@ -132,7 +132,7 @@
         {{ 'wizard.personal.sponsorType' | translate }}
       </label>
       <p-select [options]="lookups.sponsorTypes()" name="sponsorType" [ngModel]="ds.state().sponsorType"
-        (ngModelChange)="onSponsorTypeChange($event)" [filter]="true"
+        (ngModelChange)="onSponsorTypeChange($event)" [filter]="true" [appendTo]="'body'"
         filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectSponsorType' | translate" class="w-full md:w-56"></p-select>
     </div>
@@ -197,6 +197,7 @@
     </div>
     }
     <!-- Establishment Registration Card -->
+    @if (!profileService.isChangeRequestMode() && !profileService.isRevisionMode()) {
     <div class="col-md-6">
       <label class="form-label required">
         {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}
@@ -221,6 +222,7 @@
           (change)="onSponsorCardSelected($event)" />
       </div>
     </div>
+    }
     }
   </div>
 </div>

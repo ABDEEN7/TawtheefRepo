@@ -8,7 +8,7 @@ import {
   signal, OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { debounceTime, finalize, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import 'chart.js/auto';
@@ -19,6 +19,8 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import {
   DashboardKpis,
+  JobBreakdown,
+  JobKpis,
   OperationsDashboardFilters,
   OperationsDashboardResponse,
   TeamPerformanceRow,
@@ -96,6 +98,17 @@ export class Dashboard implements OnInit {
     }
   );
 
+  readonly activeJobKpis = computed<JobKpis>(() =>
+    this.dashboard()?.jobKpis ?? {
+      totalJobs: 0,
+      activeJobs: 0,
+      pendingReviewJobs: 0,
+      approvedJobs: 0,
+      rejectedJobs: 0,
+      newJobsToday: 0,
+    }
+  );
+
   readonly tableRows = computed<TeamPerformanceRow[]>(() => this.dashboard()?.teamPerformance.items ?? []);
 
   readonly profileTrendChartData = computed<ChartData<'line'>>(() => ({
@@ -136,6 +149,28 @@ export class Dashboard implements OnInit {
       {
         data: this.dashboard()?.profileBreakdown.byStatus.map((item) => item.count) ?? [],
         backgroundColor: ['#2f65d6', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+      },
+    ],
+  }));
+
+  readonly jobStatusChartData = computed<ChartData<'doughnut'>>(() => ({
+    labels: this.dashboard()?.jobBreakdown.byStatus.map((item) => this.translate.instant(item.status)) ?? [],
+    datasets: [
+      {
+        data: this.dashboard()?.jobBreakdown.byStatus.map((item) => item.count) ?? [],
+        backgroundColor: ['#4e80ea', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+      },
+    ],
+  }));
+
+  readonly jobDepartmentChartData = computed<ChartData<'bar'>>(() => ({
+    labels: this.dashboard()?.jobBreakdown.byDepartment.map((item) => item.label) ?? [],
+    datasets: [
+      {
+        label: this.translate.instant('dashboard.jobs.title'),
+        data: this.dashboard()?.jobBreakdown.byDepartment.map((item) => item.count) ?? [],
+        backgroundColor: '#4e80ea',
+        borderRadius: 6,
       },
     ],
   }));

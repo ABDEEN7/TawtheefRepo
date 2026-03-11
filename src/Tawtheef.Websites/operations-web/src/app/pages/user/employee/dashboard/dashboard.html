@@ -1,185 +1,275 @@
 <section i18nNamespace="pages/employee/dashboard">
-      <div class="card card-table mb-4">
-           <div class="card-body">
-                <div class="row mb-4">
-                     <div class="col-lg-8 col-md-12 mb-3 mb-lg-0">
-                          <div>
-                              <h3 class="fw-bold mb-0">{{ (isHrDashboard() ? 'dashboard.hr.title' : 'dashboard.department.title') | translate }}</h3>
-                              <p class="text-muted mt-2 mb-0">{{ (isHrDashboard() ? 'dashboard.hr.subtitle' : 'dashboard.department.subtitle') | translate }}</p>
-                          </div>
-                     </div>
-                     <div class="col-lg-4 col-md-12">
-                          <div class="filters-row">
-                            <select class="form-select" [value]="searchStatus()" (change)="onStatusChange($any($event.target).value)">
-                              <option value="">{{ 'dashboard.filters.allStatuses' | translate }}</option>
-                              <option value="Submitted">{{ 'dashboard.status.submitted' | translate }}</option>
-                              <option value="UnderReview">{{ 'dashboard.status.underReview' | translate }}</option>
-                              <option value="Approved">{{ 'dashboard.status.approved' | translate }}</option>
-                              <option value="RequiresUpdate">{{ 'dashboard.status.returned' | translate }}</option>
-                            </select>
-                          </div>
-                     </div>
-                </div>
-                <div class="row">
-                     <div class="col-md-12">
-                          @if (loading()) {
-                            <div class="skeleton-grid">
-                              <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]"></div>
-                            </div>
-                          }
-                          @else {
-                                <div class="card card-table mb-4">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                              <h3 class="h2 fw-bold text-blue">{{ activeKpis().totalEmployees }}</h3>
-                                                              <p>{{ 'dashboard.kpi.totalEmployees' | translate }}</p>
-                                                          </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table bg-success-light" [pTooltip]="'dashboard.help.activeEmployees' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                                <h3 class="h2 fw-bold text-success">{{ activeKpis().activeEmployees }}</h3>
-                                                                <p>{{ 'dashboard.kpi.activeEmployees' | translate }}</p>
-                                                          </div>
-                                                  </div>
-                                            </div>
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table bg-alert-light" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                                <h3 class="h2 fw-bold text-warning">{{ activeKpis().totalProfiles }}</h3>
-                                                                <p>{{ 'dashboard.kpi.totalProfiles' | translate }}</p>
-                                                          </div>
-                                                  </div>
-                                            </div>
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table  bg-secondary bg-opacity-10" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                              <h3 class="h2 fw-bold text-secondary">{{ activeKpis().approvalRate }}%</h3>
-                                                              <p>{{ 'dashboard.kpi.approvalRate' | translate }}</p>
-                                                          </div>
-                                                  </div>
-                                            </div>
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table bg-warning-light" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                              <h3 class="h2 fw-bold text-danger">{{ activeKpis().remainingTasks }}</h3>
-                                                              <p>{{ 'dashboard.kpi.remainingTasks' | translate }}</p>
-                                                          </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
-                                                <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.overdueTasks' | translate" tooltipPosition="top">
-                                                          <div class="card-body d-flex justify-content-between p-3 flex-column">
-                                                              <h3 class="h2 fw-bold text-blue">{{ activeKpis().overdueTasks }}</h3>
-                                                              <p>{{ 'dashboard.kpi.overdueTasks' | translate }}</p>
-                                                          </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-8 mb-4">
-                                           <div class="card card-table h-100">
-                                                <div class="card-body">
-                                                     <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.profileTrend' | translate }}</h4>
-                                                      <div class="chart-host">
-                                                        <p-chart type="line" [data]="profileTrendChartData()" [options]="lineChartOptions"></p-chart>
-                                                      </div>
-                                                </div>
-                                           </div>
-                                     </div>
-                                     <div class="col-md-4 mb-4">
-                                          <div class="card card-table h-100">
-                                                <div class="card-body">
-                                                     <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h4>
-                                                     <div class="chart-host chart-host--sm"><p-chart type="doughnut" [data]="profileStatusChartData()" [options]="doughnutChartOptions"></p-chart></div>
-                                                </div>
-                                          </div>
-                                     </div>
-                                     <div class="col-lg-4 col-md-6 h-100 mb-4">
-                                           <div class="card card-table h-100">
-                                                <div class="card-body">
-                                                     <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.taskStacked' | translate }}</h4>
-                                                    <div class="chart-host chart-host--sm"><p-chart type="bar" [data]="taskStatusChartData()" [options]="barChartOptions"></p-chart></div>
-                                                </div>
-                                            </div>
-                                      </div>
-
-                                      <div class="col-lg-8 col-md-6 h-100 mb-4">
-                                          <div class="card card-table">
-                                                <div class="card-body">
-                                                      <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.employeePerformance' | translate }}</h4>
-                                                      <div class="chart-host">
-                                                        <p-chart type="bar" [data]="employeeComparisonChartData()" [options]="barChartOptions"></p-chart>
-                                                      </div>
-                                                </div>
-                                            </div>
-                                      </div>
-
-                                      <div class="col-lg-4 col-md-12 h-100 mb-4">
-                                          <div class="card card-table h-100">
-                                                <div class="card-body">
-                                                    <h4 class="mb-3 fw-bold">{{ 'dashboard.sections.smartInsights' | translate }}</h4>
-                                                    <div class="insight-row" *ngFor="let insight of smartInsights()" [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
-                                                          <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
-                                                          <span>{{ insight.key | translate }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                      </div>
-                                      <div class="col-lg-8 col-md-12 h-100 mb-4">
-                                          <div class="card card-table h-100">
-                                                <div class="card-body">
-                                                    <h4 class="mb-3 fw-bold">{{ 'dashboard.sections.teamPerformance' | translate }}</h4>
-                                                    <div class="table-card rounded overflow-hidden">
-                                                         <div class="table-responsive">
-                                                              <table class="table table-bordered table-hover align-middle w-100">
-                                                                <thead class="table-light">
-                                                                <tr>
-                                                                  <th>{{ 'dashboard.table.employee' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.activeTasks' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.completedTasks' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.remainingTasks' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.approval' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.responseTime' | translate }}</th>
-                                                                  <th>{{ 'dashboard.table.workload' | translate }}</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                  <tr *ngFor="let row of tableRows()">
-                                                                    <td>
-                                                                      <div class="fw-semibold">{{ row.name }}</div>
-                                                                      <small class="text-muted">{{ row.departmentName || '-' }}</small>
-                                                                    </td>
-                                                                    <td>{{ row.activeTasks }}</td>
-                                                                    <td>{{ row.completedTasks }}</td>
-                                                                    <td>{{ row.remainingTasks }}</td>
-                                                                    <td>{{ row.approvalRate }}%</td>
-                                                                    <td>{{ row.averageResponseHours }}h</td>
-                                                                    <td>
-                                                                      <span class="pill" [class.soft]="row.workloadBalanceIndicator === 'High'" [class.success]="row.workloadBalanceIndicator !== 'High'">
-                                                                        {{ ('dashboard.workload.' + row.workloadBalanceIndicator.toLowerCase()) | translate }}
-                                                                      </span>
-                                                                    </td>
-                                                                  </tr>
-                                                                </tbody>
-                                                              </table>
-                                                          </div>
-                                                    </div>
-                                                    
-                                                </div>
-                                          </div> 
-                                      </div>
-                                </div>
-
-                          }
-                     </div>
-                </div>
-           </div>
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-lg-8 col-md-12 mb-3 mb-lg-0">
+          <div>
+            <h3 class="fw-bold mb-0">{{ (isHrDashboard() ? 'dashboard.hr.title' : 'dashboard.department.title') |
+              translate }}</h3>
+            <p class="text-muted mt-2 mb-0">{{ (isHrDashboard() ? 'dashboard.hr.subtitle' :
+              'dashboard.department.subtitle') | translate }}</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+          <div class="filters-row">
+            <select class="form-select" [value]="searchStatus()" (change)="onStatusChange($any($event.target).value)">
+              <option value="">{{ 'dashboard.filters.allStatuses' | translate }}</option>
+              <option value="Submitted">{{ 'dashboard.status.submitted' | translate }}</option>
+              <option value="UnderReview">{{ 'dashboard.status.underReview' | translate }}</option>
+              <option value="Approved">{{ 'dashboard.status.approved' | translate }}</option>
+              <option value="RequiresUpdate">{{ 'dashboard.status.returned' | translate }}</option>
+            </select>
+          </div>
+        </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          @if (loading()) {
+          <div class="skeleton-grid">
+            <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]"></div>
+          </div>
+          }
+          @else {
+          <div class="card card-table mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.totalEmployees' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-blue">{{ activeKpis().totalEmployees }}</h3>
+                      <p>{{ 'dashboard.kpi.totalEmployees' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-success-light"
+                    [pTooltip]="'dashboard.help.activeEmployees' | translate" tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-success">{{ activeKpis().activeEmployees }}</h3>
+                      <p>{{ 'dashboard.kpi.activeEmployees' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-alert-light" [pTooltip]="'dashboard.help.totalProfiles' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-warning">{{ activeKpis().totalProfiles }}</h3>
+                      <p>{{ 'dashboard.kpi.totalProfiles' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table  bg-secondary bg-opacity-10"
+                    [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-secondary">{{ activeKpis().approvalRate }}%</h3>
+                      <p>{{ 'dashboard.kpi.approvalRate' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-warning-light" [pTooltip]="'dashboard.help.remainingTasks' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-danger">{{ activeKpis().remainingTasks }}</h3>
+                      <p>{{ 'dashboard.kpi.remainingTasks' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.overdueTasks' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-blue">{{ activeKpis().overdueTasks }}</h3>
+                      <p>{{ 'dashboard.kpi.overdueTasks' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-3 border-top mt-3">
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.totalJobs' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-blue">{{ activeJobKpis().totalJobs }}</h3>
+                      <p>{{ 'dashboard.kpi.totalJobs' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-success-light" [pTooltip]="'dashboard.help.activeJobs' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-success">{{ activeJobKpis().activeJobs }}</h3>
+                      <p>{{ 'dashboard.kpi.activeJobs' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-warning-light"
+                    [pTooltip]="'dashboard.help.pendingReviewJobs' | translate" tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-warning">{{ activeJobKpis().pendingReviewJobs }}</h3>
+                      <p>{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-success-light" [pTooltip]="'dashboard.help.approvedJobs' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-success">{{ activeJobKpis().approvedJobs }}</h3>
+                      <p>{{ 'dashboard.kpi.approvedJobs' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-alert-light" [pTooltip]="'dashboard.help.rejectedJobs' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-danger">{{ activeJobKpis().rejectedJobs }}</h3>
+                      <p>{{ 'dashboard.kpi.rejectedJobs' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.newJobsToday' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-blue">{{ activeJobKpis().newJobsToday }}</h3>
+                      <p>{{ 'dashboard.kpi.newJobsToday' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.jobStatusBreakdown' | translate }}</h4>
+                  <div class="chart-host chart-host--sm">
+                    <p-chart type="doughnut" [data]="jobStatusChartData()" [options]="doughnutChartOptions"></p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h4>
+                  <div class="chart-host chart-host--sm">
+                    <p-chart type="bar" [data]="jobDepartmentChartData()" [options]="barChartOptions"></p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.profileTrend' | translate }}</h4>
+                  <div class="chart-host">
+                    <p-chart type="line" [data]="profileTrendChartData()" [options]="lineChartOptions"></p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h4>
+                  <div class="chart-host chart-host--sm"><p-chart type="doughnut" [data]="profileStatusChartData()"
+                      [options]="doughnutChartOptions"></p-chart></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 h-100 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.taskStacked' | translate }}</h4>
+                  <div class="chart-host chart-host--sm"><p-chart type="bar" [data]="taskStatusChartData()"
+                      [options]="barChartOptions"></p-chart></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8 col-md-6 h-100 mb-4">
+              <div class="card card-table">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.charts.employeePerformance' | translate }}</h4>
+                  <div class="chart-host">
+                    <p-chart type="bar" [data]="employeeComparisonChartData()" [options]="barChartOptions"></p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 h-100 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.sections.smartInsights' | translate }}</h4>
+                  <div class="insight-row" *ngFor="let insight of smartInsights()"
+                    [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
+                    <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
+                    <span>{{ insight.key | translate }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-8 col-md-12 h-100 mb-4">
+              <div class="card card-table h-100">
+                <div class="card-body">
+                  <h4 class="mb-3 fw-bold">{{ 'dashboard.sections.teamPerformance' | translate }}</h4>
+                  <div class="table-card rounded overflow-hidden">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover align-middle w-100">
+                        <thead class="table-light">
+                          <tr>
+                            <th>{{ 'dashboard.table.employee' | translate }}</th>
+                            <th>{{ 'dashboard.table.activeTasks' | translate }}</th>
+                            <th>{{ 'dashboard.table.completedTasks' | translate }}</th>
+                            <th>{{ 'dashboard.table.remainingTasks' | translate }}</th>
+                            <th>{{ 'dashboard.table.approval' | translate }}</th>
+                            <th>{{ 'dashboard.table.responseTime' | translate }}</th>
+                            <th>{{ 'dashboard.table.workload' | translate }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of tableRows()">
+                            <td>
+                              <div class="fw-semibold">{{ row.name }}</div>
+                              <small class="text-muted">{{ row.departmentName || '-' }}</small>
+                            </td>
+                            <td>{{ row.activeTasks }}</td>
+                            <td>{{ row.completedTasks }}</td>
+                            <td>{{ row.remainingTasks }}</td>
+                            <td>{{ row.approvalRate }}%</td>
+                            <td>{{ row.averageResponseHours }}h</td>
+                            <td>
+                              <span class="pill" [class.soft]="row.workloadBalanceIndicator === 'High'"
+                                [class.success]="row.workloadBalanceIndicator !== 'High'">
+                                {{ ('dashboard.workload.' + row.workloadBalanceIndicator.toLowerCase()) | translate }}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          }
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

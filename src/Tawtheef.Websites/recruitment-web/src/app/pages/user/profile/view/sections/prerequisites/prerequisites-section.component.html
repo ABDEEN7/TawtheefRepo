@@ -1,84 +1,91 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="text-primary d-flex gap-2 align-items-center ">
+    <i class="pi pi-info-circle" aria-hidden="true"></i>
+    <span>{{ 'profileOverview.sections.basicRequirements' | translate }}</span>
+  </h5>
+  <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit"
+    (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
+</div>
 
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="text-primary d-flex gap-2 align-items-center ">
-          <i class="pi pi-info-circle" aria-hidden="true"></i>
-          <span>{{ 'profileOverview.sections.basicRequirements' | translate }}</span>
-        </h5>
-        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
+<!-- Top row: 3 KV cards -->
+<div class="row g-3">
+  <!-- Candidate type -->
+  <div class="col-12 col-lg-4">
+    <div class="card h-100 card-table">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+          <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.candidateType' | translate }}</label>
+          <div class="align-self-center" *ngIf="fieldUnderReview('candidateTypeId')"><span
+              class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span>
+          </div>
+        </div>
+        <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.candidateType?.name || '-' }}</label>
+      </div>
     </div>
+  </div>
 
-    <!-- Top row: 3 KV cards -->
-    <div class="row g-3">
-      <!-- Candidate type -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 card-table">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between gap-3">
-                 <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.candidateType' | translate }}</label>
-                 <div class="align-self-center" *ngIf="fieldUnderReview('candidateTypeId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
+  <!-- Target entity -->
+  <div class="col-12 col-lg-4">
+    <div class="card h-100 card-table">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+          <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.targetEntity' | translate }}</label>
+          <div class="align-self-center" *ngIf="fieldUnderReview('targetEntityId')"><span
+              class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span>
+          </div>
+        </div>
+        <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.targetEntity?.name || '-' }}</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attachments -->
+<div class="row g-3 mt-2">
+  @for (att of attachments(); track att.key) {
+  @let fileNote = noteForFile(att.file);
+  <div class="col-12 col-lg-6">
+    <div class="card h-100 attach-card" [ngClass]="{ 'attach-card--warn': fileNote }">
+      <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
+        <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
+          <i class="pi pi-external-link" aria-hidden="true"></i>
+        </div>
+
+        <div class="flex-grow-1 min-w-0">
+          <div class="text-muted small fw-semibold mb-1">
+            {{ att.titleKey | translate }}
+          </div>
+
+          <div class="min-w-0">
+            @if (att.file) {
+            <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
+              [ngClass]="{ 'attach-link--warn': fileNote }" (click)="open(att.file)">
+              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+              <span class="text-truncate d-inline-block">
+                {{ att.file.fileName }}
+              </span>
+              @if (fileNote) {
+              <i class="pi pi-exclamation-triangle text-warning" [pTooltip]="fileNote.note || fileNote.title"
+                tooltipPosition="top" aria-hidden="true"></i>
+              }
+            </a>
+            <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote || isProfileApproved">
+              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
+                (click)="replaceInput.click()">
+                {{ 'profileView.actions.replaceFile' | translate }}
+              </button>
+              <input #replaceInput type="file" class="d-none" accept=".pdf,.png,.jpeg,.jpg,.webp"
+                (change)="replaceAttachment(att, $event)" />
             </div>
-            <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.candidateType?.name || '-' }}</label>
+            } @else {
+            <span class="text-muted">
+              {{ 'common.none' | translate }}
+            </span>
+            }
           </div>
         </div>
       </div>
-
-      <!-- Target entity -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 card-table">
-          <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between gap-3">
-                  <label class="text-light w-100 fs-16">{{ 'profileOverview.fields.targetEntity' | translate }}</label>
-                  <div class="align-self-center" *ngIf="fieldUnderReview('targetEntityId')"><span class="badge status-pill status-pill--info"> {{ 'profileOverview.status.pending' | translate }}</span></div>
-              </div>
-              <label class="fw-semibold text-dark text-nowrap fs-16">{{ profile?.targetEntity?.name || '-' }}</label>
-          </div>
-        </div>
-      </div>
     </div>
-
-    <!-- Attachments -->
-    <div class="row g-3 mt-2">
-      @for (att of attachments(); track att.key) {
-        @let fileNote = noteForFile(att.file);
-        <div class="col-12 col-lg-6">
-          <div class="card h-100 attach-card" [ngClass]="{ 'attach-card--warn': fileNote }">
-            <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
-              <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
-                <i class="pi pi-external-link" aria-hidden="true"></i>
-              </div>
-
-              <div class="flex-grow-1 min-w-0">
-                <div class="text-muted small fw-semibold mb-1">
-                  {{ att.titleKey | translate }}
-                </div>
-
-                <div class="min-w-0">
-                  @if (att.file) {
-                    <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
-                       [ngClass]="{ 'attach-link--warn': fileNote }"
-                       (click)="open(att.file)">
-                      <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-                      <span class="text-truncate d-inline-block">
-                        {{ att.file.fileName }}
-                      </span>
-                      @if (fileNote) {
-                        <i
-                          class="pi pi-exclamation-triangle text-warning"
-                          [pTooltip]="fileNote.note || fileNote.title"
-                          tooltipPosition="top"
-                          aria-hidden="true"></i>
-                      }
-                    </a>
-                    
-                  } @else {
-                    <span class="text-muted">
-                      {{ 'common.none' | translate }}
-                    </span>
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
+  </div>
+  }
+</div>
