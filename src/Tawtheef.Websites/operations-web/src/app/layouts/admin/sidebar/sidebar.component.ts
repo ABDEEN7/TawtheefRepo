@@ -28,20 +28,9 @@ export class SidebarComponent implements OnInit {
 
   menuItems: MenuItem[] = [
     { key: 'home', label: 'admin.sidebar.home', icon: 'hgi-home-05', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
-    { key: 'roles', label: 'admin.sidebar.roles', icon: 'hgi-security-validation', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
-    { key: 'profileLogs', label: 'admin.sidebar.profileLogs', icon: 'hgi-mail-send-02', route: routes.admin.profileLogs, permission: Permissions.ProfileLogs.View },
-    { key: 'systemAdminLogs', label: 'admin.sidebar.systemAdminLogs', icon: 'hgi-audit-01', route: routes.admin.systemAdminLogs, permission: Permissions.ProfileLogs.View },
     { key: 'users', label: 'admin.sidebar.users', icon: ' hgi-file-star', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
-    { key: 'offices', label: 'admin.sidebar.offices', icon: 'hgi-mail-send-02', route: routes.admin.officesManagement, permission: Permissions.Offices.Manage },
-    { key: 'countries', label: 'admin.sidebar.countries', icon: 'hgi-globe-02', route: routes.admin.countriesManagement, permission: Permissions.Countries.Manage },
-    { key: 'languages', label: 'admin.sidebar.languages', icon: 'hgi-arrow-data-transfer-horizontal', route: routes.admin.languagesManagement, permission: Permissions.Languages.Manage },
-    { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'hgi-arrow-data-transfer-horizontal', route: routes.admin.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
-    { key: 'religions', label: 'admin.sidebar.religions', icon: 'hgi-structure-03', route: routes.admin.religionsManagement, permission: Permissions.Religions.Manage },
-    { key: 'universities', label: 'admin.sidebar.universities', icon: ' hgi-university', route: routes.admin.universitiesManagement, permission: Permissions.Universities.Manage },
-    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.admin.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
-    { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.admin.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
-    { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'hgi-license-draft', route: routes.admin.jobTitlesManagement, permission: Permissions.Jobs.Manage },
-    { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
+    { key: 'roles', label: 'admin.sidebar.roles', icon: 'hgi-security-validation', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
+    { key: 'systemAdminLogs', label: 'admin.sidebar.systemAdminLogs', icon: 'hgi-audit-01', route: routes.admin.systemAdminLogs, permission: Permissions.ProfileLogs.View },
   ];
 
   constructor(private router: Router) { }

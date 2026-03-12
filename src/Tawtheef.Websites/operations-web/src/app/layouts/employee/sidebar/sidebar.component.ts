@@ -26,6 +26,10 @@ export class SidebarComponent implements OnInit {
 
   menuItems: MenuItem[] = [
     { key: 'home', label: 'internal.sidebar.home', icon: 'hgi-home-05', route: routes.employee.dashboard, permission: Permissions.Dashboard.View },
+
+    { key: 'roles', label: 'admin.sidebar.roles', icon: 'hgi-security-validation', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
+    { key: 'users', label: 'admin.sidebar.users', icon: ' hgi-file-star', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
+
     { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'hgi-mail-send-02', route: routes.employee.profileDistribution, permission: Permissions.ProfileDistribution.View },
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'hgi-task-done-01', route: routes.employee.approvalProfile, permission: Permissions.ProfileApproval.View },
     { key: 'job', label: 'internal.sidebar.job', icon: 'hgi-ai-beautify', route: routes.employee.JobList, permission: Permissions.Jobs.View },
@@ -46,7 +50,8 @@ export class SidebarComponent implements OnInit {
     { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.admin.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
     { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'hgi-license-draft', route: routes.admin.jobTitlesManagement, permission: Permissions.Jobs.Manage },
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
-
+    { key: 'profileLogs', label: 'admin.sidebar.profileLogs', icon: 'hgi-mail-send-02', route: routes.admin.profileLogs, permission: Permissions.ProfileLogs.View },
+    { key: 'systemAdminLogs', label: 'admin.sidebar.systemAdminLogs', icon: 'hgi-audit-01', route: routes.admin.systemAdminLogs, permission: Permissions.ProfileLogs.View },
   ];
 
   constructor(private router: Router) { }
