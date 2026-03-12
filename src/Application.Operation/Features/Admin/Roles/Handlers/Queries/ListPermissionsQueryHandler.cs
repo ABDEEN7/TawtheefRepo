@@ -1,7 +1,7 @@
 ﻿using Application.Operation.Features.Admin.Roles.DTOs;
 using Application.Operation.Features.Admin.Roles.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -16,7 +16,7 @@ public sealed class ListPermissionsQueryHandler(IUnitOfWork uow, ILocalizationSe
     {
         var permissions = await uow.GetEntityRepository<Permission>().DbSet
             .AsNoTracking()
-            .Where(x => x.IsActive)
+            .Where(x => x.IsActive && x.IsAssignableToRole)
             .OrderBy(x => x.DisplayOrder)
             .ToListAsync(cancellationToken);
 

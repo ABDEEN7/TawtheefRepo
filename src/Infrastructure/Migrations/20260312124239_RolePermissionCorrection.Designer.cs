@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312124239_RolePermissionCorrection")]
+    partial class RolePermissionCorrection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8322,9 +8325,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsAssignableToRole")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
@@ -8374,7 +8374,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 1,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "لوحة التحكم - عرض",
                             NameEn = "Dashboard - View"
@@ -8386,7 +8385,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 2,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "الأدوار - عرض",
                             NameEn = "Roles - View"
@@ -8398,7 +8396,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 3,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "الأدوار - إدارة",
                             NameEn = "Roles - Manage"
@@ -8410,7 +8407,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 4,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "المستخدمون - عرض",
                             NameEn = "Users - View"
@@ -8422,7 +8418,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 5,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "المستخدمون - إدارة",
                             NameEn = "Users - Manage"
@@ -8434,7 +8429,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 18,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "مستخدمو المرشحين - عرض",
                             NameEn = "Candidate Users - View"
@@ -8446,7 +8440,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 19,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "مستخدمو المرشحين - إدارة",
                             NameEn = "Candidate Users - Manage"
@@ -8458,7 +8451,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 6,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "المكاتب - عرض",
                             NameEn = "Offices - View"
@@ -8470,7 +8462,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 7,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "المكاتب - إدارة",
                             NameEn = "Offices - Manage"
@@ -8482,7 +8473,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 8,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "اللغات - عرض",
                             NameEn = "Languages - View"
@@ -8494,7 +8484,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 9,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "اللغات - إدارة",
                             NameEn = "Languages - Manage"
@@ -8506,7 +8495,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 10,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الديانات - عرض",
                             NameEn = "Religions - View"
@@ -8518,7 +8506,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 11,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الديانات - إدارة",
                             NameEn = "Religions - Manage"
@@ -8530,7 +8517,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 12,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الدول - عرض",
                             NameEn = "Countries - View"
@@ -8542,7 +8528,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 13,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الدول - إدارة",
                             NameEn = "Countries - Manage"
@@ -8554,7 +8539,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 14,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الجامعات - عرض",
                             NameEn = "Universities - View"
@@ -8566,7 +8550,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 15,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الجامعات - إدارة",
                             NameEn = "Universities - Manage"
@@ -8578,7 +8561,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 16,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الجهات المستهدفة - عرض",
                             NameEn = "Target Entities - View"
@@ -8590,7 +8572,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 17,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الجهات المستهدفة - إدارة",
                             NameEn = "Target Entities - Manage"
@@ -8602,7 +8583,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 20,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "محتوى الصفحة الرئيسية - عرض",
                             NameEn = "Home Content - View"
@@ -8614,7 +8594,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 21,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "محتوى الصفحة الرئيسية - إدارة",
                             NameEn = "Home Content - Manage"
@@ -8626,7 +8605,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 14,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "سجل الملفات - عرض",
                             NameEn = "Profile Logs - View"
@@ -8638,7 +8616,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 20,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الملف الشخصي - عرض",
                             NameEn = "Profile - View"
@@ -8650,7 +8627,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 21,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الملف الشخصي - إدارة",
                             NameEn = "Profile - Manage"
@@ -8662,7 +8638,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 22,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "توزيع الملفات - عرض",
                             NameEn = "Profile Distribution - View"
@@ -8674,7 +8649,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 23,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "توزيع الملفات - إدارة",
                             NameEn = "Profile Distribution - Manage"
@@ -8686,7 +8660,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 24,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "اعتماد الملفات - عرض",
                             NameEn = "Profile Approval - View"
@@ -8698,7 +8671,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 25,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "اعتماد الملفات - مراجعة",
                             NameEn = "Profile Approval - Review"
@@ -8710,7 +8682,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 26,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "اعتماد الملفات - تعديلات",
                             NameEn = "Profile Approval - Changes"
@@ -8722,7 +8693,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 30,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الوظائف - عرض",
                             NameEn = "Jobs - View"
@@ -8734,7 +8704,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 31,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الوظائف - إدارة",
                             NameEn = "Jobs - Manage"
@@ -8746,7 +8715,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 32,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الوظائف - اعتماد",
                             NameEn = "Jobs - Approve"
@@ -8758,7 +8726,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 33,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "نقاط الوظائف - إدارة",
                             NameEn = "Jobs Points - Manage"
@@ -8770,7 +8737,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 33,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "نقاط الوظائف - عرض",
                             NameEn = "Jobs Points - View"
@@ -8782,7 +8748,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 33,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "نقاط الوظائف - إعتماد",
                             NameEn = "Jobs Points - Approve"
@@ -8794,7 +8759,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 34,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "دعوات الوظائف - عرض",
                             NameEn = "Jobs Invitations - View"
@@ -8806,7 +8770,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 40,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الترشيحات - عرض",
                             NameEn = "Nominations - View"
@@ -8818,7 +8781,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 41,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الترشيحات - إدارة",
                             NameEn = "Nominations - Manage"
@@ -8830,7 +8792,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 50,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الكوادر - إدارة",
                             NameEn = "Kawader - Manage"
@@ -8842,7 +8803,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 60,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "مستخدمو المكتب - عرض",
                             NameEn = "Office Users - View"
@@ -8854,7 +8814,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 61,
                             IsActive = true,
-                            IsAssignableToRole = false,
                             IsDeleted = false,
                             NameAr = "مستخدمو المكتب - إدارة",
                             NameEn = "Office Users - Manage"
@@ -8866,7 +8825,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 70,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "مهارات التخصص - إدارة",
                             NameEn = "Major Skills - Manage"
@@ -8878,7 +8836,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 80,
                             IsActive = true,
-                            IsAssignableToRole = true,
                             IsDeleted = false,
                             NameAr = "الهياكل التنظيمية - إدارة",
                             NameEn = "Organization Structures - Manage"

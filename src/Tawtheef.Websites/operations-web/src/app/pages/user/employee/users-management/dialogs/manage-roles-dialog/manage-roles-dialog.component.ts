@@ -13,6 +13,7 @@ import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-n
 import {Lang, LanguageService} from '../../../../../../core/services/language.service';
 import {NotificationService} from '../../../../../../core/services/notification.service';
 import {SystemRoles} from '../../../../../../core/constants/systemRoles';
+import {AuthService} from '../../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-manage-roles-dialog',
@@ -36,6 +37,7 @@ export class ManageRolesDialogComponent implements OnInit {
   private notification = inject(NotificationService);
   private translate = inject(TranslateService);
 
+  private authService = inject(AuthService);
   private readonly switchableSystemRoles: string[] = [
     SystemRoles.Employee,
     SystemRoles.HrManager,
@@ -46,6 +48,15 @@ export class ManageRolesDialogComponent implements OnInit {
     SystemRoles.OfficeAdmin,
     SystemRoles.OfficeUser
   ];
+
+  private readonly isCurrentUserSystemAdmin = this.authService.getCurrentUser()?.userRoles?.includes(SystemRoles.SystemAdmin) ?? false;
+
+  private get filteredSwitchableRoles(): string[] {
+    if (this.isCurrentUserSystemAdmin) {
+      return this.switchableSystemRoles;
+    }
+    return this.switchableSystemRoles.filter(role => role !== SystemRoles.HrManager);
+  }
 
   user: UserDto | undefined = this.config.data?.user as UserDto | undefined;
   allRoleOptions = signal<RoleSummaryDto[]>(this.config.data?.roleOptions as RoleSummaryDto[] ?? []);
@@ -85,14 +96,18 @@ export class ManageRolesDialogComponent implements OnInit {
           const assignedSystemRoleName = assignedSystemRole?.systemName ?? '';
           const isLockedSystemRole = this.lockedSystemRoles
             .some(role => role === assignedSystemRoleName);
-          const availableSystemRoles = isLockedSystemRole
+          const isHrManagerLock = !this.isCurrentUserSystemAdmin && assignedSystemRoleName === SystemRoles.HrManager;
+
+          const isLocked = isLockedSystemRole || isHrManagerLock;
+
+          const availableSystemRoles = isLocked
             ? assignedSystemRole ? [assignedSystemRole] : []
             : this.allSystemRoleOptions().filter(role =>
-              this.switchableSystemRoles.includes(role.systemName));
+              this.filteredSwitchableRoles.includes(role.systemName));
 
           this.systemRoleOptions.set(availableSystemRoles);
           this.selectedSystemRoleId.set(assignedSystemRole?.id ?? null);
-          this.isSystemRoleLocked.set(isLockedSystemRole);
+          this.isSystemRoleLocked.set(isLocked);
           this.selectedAssignableRoleIds.set(assignableRoles);
         },
         error: () => {
@@ -145,7 +160,7 @@ export class ManageRolesDialogComponent implements OnInit {
     this.allSystemRoleOptions.set(options.filter(role => role.isSystemRole));
     this.assignableRoleOptions.set(options.filter(role => !role.isSystemRole));
     this.systemRoleOptions.set(this.allSystemRoleOptions()
-      .filter(role => this.switchableSystemRoles.includes(role.systemName)));
+      .filter(role => this.filteredSwitchableRoles.includes(role.systemName)));
   }
 
   private getRoleById(roleId: string) {
