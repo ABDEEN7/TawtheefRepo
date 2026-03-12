@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   @Output() toggleSidebar = new EventEmitter<void>();
 
-  isCollapsed = true;
+  isCollapsed = false;
   activeItem = '';
 
   menuItems: MenuItem[] = [
