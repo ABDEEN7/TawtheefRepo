@@ -15,7 +15,7 @@ namespace Tawtheef.Infrastructure.Services;
 
 public class MoiService(IMediator mediator, IUnitOfWork uow, IAppLogger log) : IMoiService
 {
-    public async Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoAsync(string qid, DateOnly expiryDate,
+    public async Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoWithKawaderCheckAsync(string qid, DateOnly expiryDate,
         CancellationToken cancellationToken) {
         var qidMasked = MoiUtils.MaskQid(qid);
 

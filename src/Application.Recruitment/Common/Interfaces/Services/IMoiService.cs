@@ -5,6 +5,6 @@ namespace Application.Recruitment.Common.Interfaces.Services;
 
 public interface IMoiService
 {
-    Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoAsync(string qid, DateOnly expiryDate,
+    Task<IResult<MOEPersonalInfo>> GetMoiPersonalInfoWithKawaderCheckAsync(string qid, DateOnly expiryDate,
         CancellationToken cancellationToken);
 }
