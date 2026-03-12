@@ -30,6 +30,7 @@ export class SidebarComponent implements OnInit {
     { key: 'home', label: 'admin.sidebar.home', icon: 'hgi-home-05', route: routes.dashboard('admin'), permission: Permissions.Dashboard.View },
     { key: 'users', label: 'admin.sidebar.users', icon: ' hgi-file-star', route: routes.admin.usersManagement, permission: Permissions.Users.Manage },
     { key: 'roles', label: 'admin.sidebar.roles', icon: 'hgi-security-validation', route: routes.admin.roleManagement, permission: Permissions.Roles.Manage },
+    { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.admin.homeContentManagement, permission: Permissions.HomeContent.Manage },
     { key: 'systemAdminLogs', label: 'admin.sidebar.systemAdminLogs', icon: 'hgi-audit-01', route: routes.admin.systemAdminLogs, permission: Permissions.ProfileLogs.View },
   ];
 
