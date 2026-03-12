@@ -16,14 +16,14 @@ import { JobTabType } from '../../enums/job-tab-type';
 import { JobStatus } from '../../../../../../core/enums/lookups.enum';
 import { JobReviewResponse } from '../../models/job-review-response';
 import { JobResponse } from '../../models/job-response-model';
-import {routes} from '../../../../../../routes/routes';
+import { routes } from '../../../../../../routes/routes';
 import { JobTabStatus } from '../../enums/job-tab-status';
 
 @Component({
   selector: 'app-job-basic-modal',
   templateUrl: './job-basic-modal.component.html',
   styleUrls: ['./job-basic-modal.component.scss'],
-  standalone:false
+  standalone: false
 })
 export class JobBasicModalComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
@@ -59,9 +59,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     jobTitleId: ['', Validators.required],
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
-    genderId: ['',Validators.required],
+    genderId: ['', Validators.required],
     majorId: ['', Validators.required],
-    subMajorId: ['',Validators.required],
+    subMajorId: ['', Validators.required],
     workTypeId: ['', Validators.required],
     numberOfVacancies: [1, [Validators.required, Validators.min(1)]],
     closingDate: this.fb.control<Date | null>(null, [Validators.required]),
@@ -101,37 +101,37 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   private setupSequenceListeners(): void {
-  this.form.controls.managementId.disable({ emitEvent: false });
-  this.form.controls.departmentId.disable({ emitEvent: false });
+    this.form.controls.managementId.disable({ emitEvent: false });
+    this.form.controls.departmentId.disable({ emitEvent: false });
 
-  // this code should be resolve issue Cascading when change the parent control,
+    // this code should be resolve issue Cascading when change the parent control,
     // for example, when change sector should be clear management and department
-  this.form.controls.sectorId.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(sectorId => {
-      if (sectorId) {
-        this.lookupsService.loadManagementsBySector(sectorId as GUID);
-        this.form.controls.managementId.enable({ emitEvent: false });
-      } else {
-        this.lookupsService.resetManagements();
-        this.form.controls.managementId.disable({ emitEvent: false });
-        this.form.controls.departmentId.disable({ emitEvent: false });
-        this.lookupsService.resetDepartments();
-      }
-    });
+    this.form.controls.sectorId.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(sectorId => {
+        if (sectorId) {
+          this.lookupsService.loadManagementsBySector(sectorId as GUID);
+          this.form.controls.managementId.enable({ emitEvent: false });
+        } else {
+          this.lookupsService.resetManagements();
+          this.form.controls.managementId.disable({ emitEvent: false });
+          this.form.controls.departmentId.disable({ emitEvent: false });
+          this.lookupsService.resetDepartments();
+        }
+      });
 
-  this.form.controls.managementId.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(managementId => {
-      if (managementId) {
-        this.lookupsService.loadDepartmentsByManagement(managementId as GUID);
-        this.form.controls.departmentId.enable({ emitEvent: false });
-      } else {
-        this.lookupsService.resetDepartments();
-        this.form.controls.departmentId.disable({ emitEvent: false });
-      }
-    });
-}
+    this.form.controls.managementId.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(managementId => {
+        if (managementId) {
+          this.lookupsService.loadDepartmentsByManagement(managementId as GUID);
+          this.form.controls.departmentId.enable({ emitEvent: false });
+        } else {
+          this.lookupsService.resetDepartments();
+          this.form.controls.departmentId.disable({ emitEvent: false });
+        }
+      });
+  }
 
   private loadJobForEdit(): void {
     if (!this.jobId) return;
@@ -199,9 +199,9 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       next: (review: JobReviewResponse) => {
         this.reviewNote =
           review.tabNoteReviews.find((note) => note.tab === JobTabType.BasicData) ?? null;
-          if (this.reviewNote?.tabStatus === JobTabStatus.Approved) {
-              this.form.disable();
-          }
+        if (this.reviewNote?.tabStatus === JobTabStatus.Approved) {
+          this.form.disable();
+        }
       },
       error: () => {
         this.reviewNote = null;
@@ -287,7 +287,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
             });
           } else {
             this.ref.close({ success: true, jobId });
-            this.router.navigate([routes.employee.jobEdit(jobId)]);
+            this.router.navigate([routes.portal.jobEdit(jobId)]);
           }
         },
         error: () => {
@@ -311,7 +311,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           });
         } else {
           this.ref.close({ success: true, jobId });
-          this.router.navigate([routes.employee.JobDetails(jobId)]);
+          this.router.navigate([routes.portal.JobDetails(jobId)]);
         }
       },
       error: () => {
@@ -361,23 +361,23 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   cancel(): void {
-  if (this.isCreateMode && this.showInWizard) {
-    const ref = this.dialogHelperService.openConfirmDialog({
-      type: 'submit',
-      title: 'JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE',
-      description: 'JOB_BASIC_MODAL.CANCEL_CONFIRM',
-      cancelText: 'common.cancel',
-      confirmText: 'common.confirm',
-    });
+    if (this.isCreateMode && this.showInWizard) {
+      const ref = this.dialogHelperService.openConfirmDialog({
+        type: 'submit',
+        title: 'JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE',
+        description: 'JOB_BASIC_MODAL.CANCEL_CONFIRM',
+        cancelText: 'common.cancel',
+        confirmText: 'common.confirm',
+      });
 
-    ref?.onClose.subscribe((result) => {
-      if (!result) return;
+      ref?.onClose.subscribe((result) => {
+        if (!result) return;
+        this.ref.close({ success: false });
+      });
+    } else {
       this.ref.close({ success: false });
-    });
-  } else {
-    this.ref.close({ success: false });
+    }
   }
-}
 
   private markAllAsTouched(): void {
     Object.values(this.form.controls).forEach(control => {
@@ -408,15 +408,15 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   }
 
   private normalizeDate(d: Date | null): Date {
-    if(!d)
+    if (!d)
       return new Date();
 
-  const x = new Date(d);
-  x.setHours(12, 0, 0, 0); // noon local time
-  return x;
-}
+    const x = new Date(d);
+    x.setHours(12, 0, 0, 0); // noon local time
+    return x;
+  }
 
-private applyTemplateToForm(template: JobCopyTemplate): void {
+  private applyTemplateToForm(template: JobCopyTemplate): void {
     const closingDate = template.closingDate ? new Date(template.closingDate) : null;
 
     this.form.patchValue({
@@ -439,8 +439,8 @@ private applyTemplateToForm(template: JobCopyTemplate): void {
   }
 
   touchGender(): void {
-  const c = this.form.controls.genderId;
-  c.markAsTouched();
-  c.updateValueAndValidity({ onlySelf: true });
-}
+    const c = this.form.controls.genderId;
+    c.markAsTouched();
+    c.updateValueAndValidity({ onlySelf: true });
+  }
 }

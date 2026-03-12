@@ -1,5 +1,5 @@
-import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
-import {ReviewStatus} from '../../../employee/profile-managment/approval-list/models/profile-approval.models';
+import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
+import { ReviewStatus } from '../../profile-managment/approval-list/models/profile-approval.models';
 
 export interface ProfileLogFilters extends PaginatedRequest {
   userProfileId?: string | null;

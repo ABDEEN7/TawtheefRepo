@@ -14,6 +14,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
+import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -67,6 +68,7 @@ export class CandidateUsersManagementPage implements OnInit {
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   protected readonly Permissions = Permissions;
+  protected readonly ProfileStatus = ProfileStatusNumber;
 
   ngOnInit(): void {
     this.setupSearchListener();

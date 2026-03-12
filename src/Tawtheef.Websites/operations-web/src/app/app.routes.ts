@@ -27,19 +27,14 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'admin',
-    loadComponent: () => import('./layouts/admin/layout/layout').then(m => m.Layout),
-    canActivate: [authGuard], // then make guard CanActivateFn
-    data: { roles: [SystemRoles.SystemAdmin] },
-    children: [
-      { path: '', loadChildren: () => import('./pages/user/admin/admin.module').then(m => m.AdminModule) }
-    ]
-  },
-  {
-    path: 'employee',
+    path: 'portal',
     loadComponent: () => import('./layouts/employee/layout/layout').then(m => m.Layout),
     canActivate: [authGuard],
-    data: { roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin, SystemRoles.OfficeUser, SystemRoles.DepartmentManager, SystemRoles.HrManager] },
+    data: {
+      roles: [SystemRoles.Employee, SystemRoles.OfficeAdmin,
+      SystemRoles.OfficeUser, SystemRoles.DepartmentManager,
+      SystemRoles.HrManager, SystemRoles.SystemAdmin]
+    },
     children: [
       { path: '', loadChildren: () => import('./pages/user/employee/employee.module').then(m => m.EmployeeModule) }
     ]

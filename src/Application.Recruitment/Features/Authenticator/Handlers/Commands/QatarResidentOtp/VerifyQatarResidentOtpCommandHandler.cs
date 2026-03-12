@@ -114,7 +114,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             return FailureFromIdentity<AuthResponse>(update);
         }
 
-        var personalInfoResult = await moiService.GetMoiPersonalInfoAsync(
+        var personalInfoResult = await moiService.GetMoiPersonalInfoWithKawaderCheckAsync(
             normalizedQid,
             request.QidExpiry,
             cancellationToken);

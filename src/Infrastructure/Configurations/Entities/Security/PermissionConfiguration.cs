@@ -17,7 +17,8 @@ public class PermissionConfiguration : LookupBaseConfiguration<Permission>
             BackendName = p.Key.Value,
             NameEn = p.NameEn,
             NameAr = p.NameAr,
-            DisplayOrder = p.DisplayOrder
+            DisplayOrder = p.DisplayOrder,
+            IsAssignableToRole = p.CanBeAssignedToRole
         });
 
         builder.HasData(seed);

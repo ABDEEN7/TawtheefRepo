@@ -14,6 +14,8 @@
   "CANDIDATE_USERS.QID": "الرقم الشخصي",
   "CANDIDATE_USERS.MOBILE": "رقم الجوال",
   "CANDIDATE_USERS.STATUS": "الحالة",
+  "CANDIDATE_USERS.PROFILE_STATUS": "حالة الملف الشخصي",
+  "CANDIDATE_USERS.NO_PROFILE": "لم يتم انشاء ملف شخصي حتى الان",
   "CANDIDATE_USERS.ACTIONS": "الإجراءات",
   "CANDIDATE_USERS.BLOCK_USER": "حظر",
   "CANDIDATE_USERS.UNBLOCK_USER": "إلغاء الحظر",

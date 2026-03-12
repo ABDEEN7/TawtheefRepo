@@ -10,8 +10,9 @@ public static class Permissions
         PermissionAction action,
         string nameEn,
         string nameAr,
-        int order)
-        => new(new PermissionKey(key), module, action, nameEn, nameAr, order);
+        int order,
+        bool canBeAssignedToRole = true)
+        => new(new PermissionKey(key), module, action, nameEn, nameAr, order, canBeAssignedToRole);
 
     // =========================
     // Admin Console
@@ -38,7 +39,8 @@ public static class Permissions
                 PermissionAction.View,
                 "Roles - View",
                 "الأدوار - عرض",
-                2);
+                2,
+                false);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -47,7 +49,8 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Roles - Manage",
                 "الأدوار - إدارة",
-                3);
+                3,
+                false);
     }
 
     public static class Users
@@ -59,7 +62,8 @@ public static class Permissions
                 PermissionAction.View,
                 "Users - View",
                 "المستخدمون - عرض",
-                4);
+                4,
+                false);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -68,7 +72,8 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Users - Manage",
                 "المستخدمون - إدارة",
-                5);
+                5,
+                false);
     }
 
     public static class CandidateUsers
@@ -227,7 +232,8 @@ public static class Permissions
                 PermissionAction.View,
                 "Home Content - View",
                 "محتوى الصفحة الرئيسية - عرض",
-                20);
+                20,
+                false);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -236,7 +242,8 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Home Content - Manage",
                 "محتوى الصفحة الرئيسية - إدارة",
-                21);
+                21,
+                false);
     }
 
     public static class ProfileLogs
@@ -441,7 +448,8 @@ public static class Permissions
                 PermissionAction.View,
                 "Office Users - View",
                 "مستخدمو المكتب - عرض",
-                60);
+                60,
+                false);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -450,7 +458,8 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Office Users - Manage",
                 "مستخدمو المكتب - إدارة",
-                61);
+                61,
+                false);
     }
 
     public static class MajorSkills

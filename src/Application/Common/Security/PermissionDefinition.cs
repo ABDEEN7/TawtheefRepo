@@ -15,5 +15,6 @@ public sealed record PermissionDefinition(
     PermissionAction Action,
     string NameEn,
     string NameAr,
-    int DisplayOrder
+    int DisplayOrder,
+    bool CanBeAssignedToRole = true
 );

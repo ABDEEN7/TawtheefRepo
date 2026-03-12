@@ -1,6 +1,6 @@
-import {ReviewStatus} from '../../../employee/profile-managment/approval-list/models/profile-approval.models';
+import { ReviewStatus } from '../../profile-managment/approval-list/models/profile-approval.models';
 
-export interface SystemAdminLogDto {
+export interface ProfileLogDto {
   id: string;
   userProfileId: string;
   source: string;

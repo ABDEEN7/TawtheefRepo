@@ -93,7 +93,7 @@ export class JobsReadyApplicationComponent {
 
   viewJobCandidate(jobId: GUID) {
     if (!this.canViewJobs()) return;
-    const url = routes.employee.jobCandidates(jobId);
+    const url = routes.portal.jobCandidates(jobId);
     this.router.navigate([url]);
   }
 

@@ -11,7 +11,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
-import { ReviewStatus } from '../../employee/profile-managment/approval-list/models/profile-approval.models';
+import { ReviewStatus } from '../profile-managment/approval-list/models/profile-approval.models';
 
 @Component({
   selector: 'app-profile-logs',

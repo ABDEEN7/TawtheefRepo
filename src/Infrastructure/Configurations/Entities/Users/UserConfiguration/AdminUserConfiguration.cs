@@ -12,8 +12,7 @@ public class AdminUserConfiguration : ApplicationUserConfiguration<AdminUser>
         base.Configure(builder);
         builder.HasData(
             GenerateAdminUser(AdminUserIds.Admin1UserId, "t-m.abdin-dev@edu.gov.qa"),
-            GenerateAdminUser(AdminUserIds.Admin2UserId, "t-a.jaber-dev@edu.gov.qa"),
-            GenerateAdminUser(AdminUserIds.Admin3UserId, "m.alhaddad@edu.gov.qa")
+            GenerateAdminUser(AdminUserIds.Admin2UserId, "t-a.jaber-dev@edu.gov.qa")
         );
         return;
 
@@ -39,7 +38,7 @@ public class AdminUserConfiguration : ApplicationUserConfiguration<AdminUser>
                 PhoneNumberConfirmed = false,
                 SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                 TwoFactorEnabled = false,
-                UserTypeId = UserTypeIds.Admin
+                UserTypeId = UserTypeIds.Employee
             };
         }
     }

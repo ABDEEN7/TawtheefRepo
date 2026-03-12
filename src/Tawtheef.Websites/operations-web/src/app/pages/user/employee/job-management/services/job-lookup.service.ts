@@ -1,14 +1,14 @@
-import {inject, Injectable, signal} from '@angular/core';
-import {forkJoin, Observable, of} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
-import {GUID} from '../../../../../shared/types/guid.type';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
-import {TranslateService} from '@ngx-translate/core';
-import {HttpService} from "../../../../../core/http/http.service";
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {JobCategory, JobStatus} from '../../../../../core/enums/lookups.enum';
-import {CountryDto, CountryVM} from '../../../admin/countries-management/models/country.dto';
+import { inject, Injectable, signal } from '@angular/core';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { GUID } from '../../../../../shared/types/guid.type';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../shared/models/dropdown-options.model';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpService } from "../../../../../core/http/http.service";
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { JobCategory, JobStatus } from '../../../../../core/enums/lookups.enum';
+import { CountryDto, CountryVM } from '../../countries-management/models/country.dto';
 
 @Injectable({ providedIn: 'root' })
 export class JobLookupService {
@@ -75,7 +75,7 @@ export class JobLookupService {
     });
   }
 
-  getStatusIdByEnum(statusEnum: JobStatus): GUID  {
+  getStatusIdByEnum(statusEnum: JobStatus): GUID {
     const status = this.jobStatus().find(item => item.backendName === statusEnum);
     return status?.id as GUID;
   }
@@ -164,65 +164,64 @@ export class JobLookupService {
     });
   }
 
- loadJobStatus(): Observable<DropdownOptionVM[]> {
-  return this.http.get<DropdownOptionVM[]>(
-    this.endpoints.job.lookups.jobStatus
-  ).pipe(
-    tap(jobStatus => this.jobStatus.set(this.toVMs(jobStatus))),
-    catchError(() => {
-      this.jobStatus.set([]);
-      return of([]);
-    })
-  );
-}
-
-  loadJobCategories(): Observable<DropdownOptionVM[]>
-  {
+  loadJobStatus(): Observable<DropdownOptionVM[]> {
     return this.http.get<DropdownOptionVM[]>(
-    this.endpoints.job.lookups.jobCategories
-  ).pipe(
-    tap(jobCategories => this.jobCategories.set(this.toVMs(jobCategories))),
-    catchError(() => {
-      this.jobCategories.set([]);
-      return of([]);
-    })
-  );
+      this.endpoints.job.lookups.jobStatus
+    ).pipe(
+      tap(jobStatus => this.jobStatus.set(this.toVMs(jobStatus))),
+      catchError(() => {
+        this.jobStatus.set([]);
+        return of([]);
+      })
+    );
+  }
+
+  loadJobCategories(): Observable<DropdownOptionVM[]> {
+    return this.http.get<DropdownOptionVM[]>(
+      this.endpoints.job.lookups.jobCategories
+    ).pipe(
+      tap(jobCategories => this.jobCategories.set(this.toVMs(jobCategories))),
+      catchError(() => {
+        this.jobCategories.set([]);
+        return of([]);
+      })
+    );
   }
 
   loadCandidateTypes(): Observable<DropdownOptionVM[]> {
-   return this.http.get<DropdownOptionVM[]>(
-    this.endpoints.jobCandidates.lookups.candidateTypes
-  ).pipe(
-    tap(candidateTypes => this.candidateTypes.set(this.toVMs(candidateTypes))),
-    catchError(() => {
-      this.candidateTypes.set([]);
-      return of([]);
-    })
-  );
+    return this.http.get<DropdownOptionVM[]>(
+      this.endpoints.jobCandidates.lookups.candidateTypes
+    ).pipe(
+      tap(candidateTypes => this.candidateTypes.set(this.toVMs(candidateTypes))),
+      catchError(() => {
+        this.candidateTypes.set([]);
+        return of([]);
+      })
+    );
   }
 
   loadNationalities(): Observable<DropdownOptionVM[]> {
     return this.http.get<DropdownOptionVM[]>(
-    this.endpoints.job.lookups.nationalities
-  ).pipe(
-    tap(nationalities => this.nationalities.set(this.toVMs(nationalities))),
-    catchError(() => {
-      this.nationalities.set([]);
-      return of([]);
-    })
-  );
+      this.endpoints.job.lookups.nationalities
+    ).pipe(
+      tap(nationalities => this.nationalities.set(this.toVMs(nationalities))),
+      catchError(() => {
+        this.nationalities.set([]);
+        return of([]);
+      })
+    );
   }
 
-  loadGenders() : Observable<DropdownOptionVM[]>{
+  loadGenders(): Observable<DropdownOptionVM[]> {
     return this.http.get<DropdownOptionVM[]>(
-    this.endpoints.job.lookups.genders
-  ).pipe(
-    tap(genders => this.genders.set(this.toVMs(genders))),
-    catchError(() => {
-      this.genders.set([]);
-      return of([]);
-    })
-  );
+      this.endpoints.job.lookups.genders
+    ).pipe(
+      tap(genders => this.genders.set(this.toVMs(genders))),
+      catchError(() => {
+        this.genders.set([]);
+        return of([]);
+      })
+    );
   }
   resetSubMajors(): void {
     this.subMajors.set([]);

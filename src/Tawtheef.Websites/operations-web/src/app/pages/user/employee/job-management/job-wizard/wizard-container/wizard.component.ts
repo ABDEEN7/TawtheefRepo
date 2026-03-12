@@ -12,34 +12,34 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {DialogService} from 'primeng/dynamicdialog';
-import {TranslateService} from '@ngx-translate/core';
-import {EMPTY, map, of, Subject, switchMap, takeUntil} from 'rxjs';
-import {JobService} from '../../services/job.service';
-import {WizardStepComponent} from '../wizard-steps/base/wizard-step.component';
-import {ConditionsStepComponent} from '../wizard-steps/conditions-step.component/conditions-step.component';
-import {SkillsStepComponent} from '../wizard-steps/skills-step.component/skills-step.component';
-import {GUID} from '../../../../../../shared/types/guid.type';
-import {GuidUtils} from '../../../../../../core/utils/guid-utils';
-import {JobLookupService} from '../../services/job-lookup.service';
-import {QualificationsStepComponent} from '../wizard-steps/qualifications-step.component/qualifications-step.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DialogService } from 'primeng/dynamicdialog';
+import { TranslateService } from '@ngx-translate/core';
+import { EMPTY, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { JobService } from '../../services/job.service';
+import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
+import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
+import { SkillsStepComponent } from '../wizard-steps/skills-step.component/skills-step.component';
+import { GUID } from '../../../../../../shared/types/guid.type';
+import { GuidUtils } from '../../../../../../core/utils/guid-utils';
+import { JobLookupService } from '../../services/job-lookup.service';
+import { QualificationsStepComponent } from '../wizard-steps/qualifications-step.component/qualifications-step.component';
 import {
   ResponsibilitiesStepComponent
 } from '../wizard-steps/responsibilities-step.component/responsibilities-step.component';
-import {OverviewStepComponent} from '../wizard-steps/overview-step.component.ts/overview-step.component';
-import {BenefitsStepComponent} from '../wizard-steps/benefits-step.component/benefits-step.component';
-import {AttachmentStepComponent} from '../wizard-steps/attachment-step.component/attachment-step.component';
-import {ReviewStepComponent} from '../wizard-steps/review-step.component/review-step.component';
-import {JobBasicModalComponent} from '../../modals/basics-step-modal/job-basic-modal.component';
-import {JobTabType} from '../../enums/job-tab-type';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {JobReviewResponse} from '../../models/job-review-response';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {JobStatus} from '../../../../../../core/enums/lookups.enum';
-import {DialogHelperService} from '../../../../../../core/services/dialog-helper.service';
-import {JobCopyTemplate} from '../../models/job-copy-template.model';
-import {routes} from '../../../../../../routes/routes';
+import { OverviewStepComponent } from '../wizard-steps/overview-step.component.ts/overview-step.component';
+import { BenefitsStepComponent } from '../wizard-steps/benefits-step.component/benefits-step.component';
+import { AttachmentStepComponent } from '../wizard-steps/attachment-step.component/attachment-step.component';
+import { ReviewStepComponent } from '../wizard-steps/review-step.component/review-step.component';
+import { JobBasicModalComponent } from '../../modals/basics-step-modal/job-basic-modal.component';
+import { JobTabType } from '../../enums/job-tab-type';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { JobReviewResponse } from '../../models/job-review-response';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { JobStatus } from '../../../../../../core/enums/lookups.enum';
+import { DialogHelperService } from '../../../../../../core/services/dialog-helper.service';
+import { JobCopyTemplate } from '../../models/job-copy-template.model';
+import { routes } from '../../../../../../routes/routes';
 
 @Component({
   selector: 'app-wizard',
@@ -120,7 +120,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.lookupsService.loadAll();
 
-     if (!this.isEditMode && copyFrom) {
+    if (!this.isEditMode && copyFrom) {
       this.copySourceId = GuidUtils.asGuid(copyFrom);
       this.openCopyBasicDataPopup(this.copySourceId);
       return;
@@ -168,7 +168,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         return;
       }
       if (isCreateMode) {
-        this.router.navigate([routes.employee.JobList]);
+        this.router.navigate([routes.portal.JobList]);
         return;
       }
 
@@ -178,11 +178,11 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         return;
       }
 
-      this.router.navigate([routes.employee.JobList]);
+      this.router.navigate([routes.portal.JobList]);
     });
   }
 
-   private openCopyBasicDataPopup(sourceJobId: GUID): void {
+  private openCopyBasicDataPopup(sourceJobId: GUID): void {
     this.isLoading = true;
     this.jobService.getCopyTemplate(sourceJobId).subscribe({
       next: (template: JobCopyTemplate) => {
@@ -207,12 +207,12 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
             this.loadJobForWizard();
             return;
           }
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.portal.JobList]);
         });
       },
       error: () => {
         this.isLoading = false;
-        this.router.navigate([routes.employee.JobList]);
+        this.router.navigate([routes.portal.JobList]);
       },
     });
   }
@@ -232,7 +232,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
             this.notificationService.error(
               this.translateService.instant('JOB_WIZARD.ERRORS.LOAD_JOB_FAILED')
             );
-            this.router.navigate([routes.employee.JobList]);
+            this.router.navigate([routes.portal.JobList]);
             return EMPTY;
           }
 
@@ -260,7 +260,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         },
         error: () => {
           this.isLoading = false;
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.portal.JobList]);
         },
       });
   }
@@ -300,10 +300,10 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
           componentRef.instance.setJobData(currentJob, stepNotes);
         }
 
-         if (this.hasEditStep(componentRef.instance)) {
-        componentRef.instance.editStep.subscribe((stepNumber: number) => {
-        this.goTo(stepNumber);
-        });
+        if (this.hasEditStep(componentRef.instance)) {
+          componentRef.instance.editStep.subscribe((stepNumber: number) => {
+            this.goTo(stepNumber);
+          });
         }
 
         const element = componentRef.location.nativeElement as HTMLElement;
@@ -459,7 +459,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.showSuccessMessage('JOB_WIZARD.SUCCESS.JOB_SUBMITTED');
-          this.router.navigate([routes.employee.JobList]);
+          this.router.navigate([routes.portal.JobList]);
         },
         error: () => {
           this.isLoading = false;
@@ -468,19 +468,19 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   cancelWizard(): void {
-  const ref = this.dialogHelperService.openConfirmDialog({
-    type: 'submit',
-    title: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE',
-    description: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD',
-    cancelText: 'common.cancel',
-    confirmText: 'common.confirm',
-  })?.onClose.subscribe((result) => {
-    if (!result) return;
-    this.router.navigate([routes.employee.JobList]);
-  });
-}
+    const ref = this.dialogHelperService.openConfirmDialog({
+      type: 'submit',
+      title: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD_TITLE',
+      description: 'JOB_WIZARD.CONFIRMATIONS.CANCEL_WIZARD',
+      cancelText: 'common.cancel',
+      confirmText: 'common.confirm',
+    })?.onClose.subscribe((result) => {
+      if (!result) return;
+      this.router.navigate([routes.portal.JobList]);
+    });
+  }
 
-private saveDraft(): void {
+  private saveDraft(): void {
     if (!this.jobId) {
       return;
     }
@@ -528,7 +528,7 @@ private saveDraft(): void {
   }
 
   preview(file: any): void {
-    this.fileUtils.previewUrl(file.url).then(() => {});
+    this.fileUtils.previewUrl(file.url).then(() => { });
   }
 
   fileIcon(name?: string): string {
@@ -536,6 +536,6 @@ private saveDraft(): void {
   }
 
   private hasEditStep(instance: any): instance is { editStep: EventEmitter<number> } {
-  return instance && 'editStep' in instance && instance.editStep instanceof EventEmitter;
-}
+    return instance && 'editStep' in instance && instance.editStep instanceof EventEmitter;
+  }
 }

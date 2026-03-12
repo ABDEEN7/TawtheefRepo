@@ -134,7 +134,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   }
 
   navigateTo() {
-    this.router.navigate([routes.employee.jobInvitationSummary]);
+    this.router.navigate([routes.portal.jobInvitationSummary]);
   }
 
   private getValidBatchNumber(): string | null {

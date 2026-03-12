@@ -37,4 +37,5 @@ public static class PermissionIds
 [Table(nameof(Permission), Schema = Schemas.Lookup)]
 public class Permission : LookupBase
 {
+    public bool IsAssignableToRole { get; set; }
 }

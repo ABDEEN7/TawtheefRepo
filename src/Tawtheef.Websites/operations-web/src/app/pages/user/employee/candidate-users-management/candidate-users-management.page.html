@@ -39,6 +39,7 @@
             <th>{{ 'CANDIDATE_USERS.QID' | translate }}</th>
             <th>{{ 'CANDIDATE_USERS.MOBILE' | translate }}</th>
             <th>{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
+            <th>{{ 'CANDIDATE_USERS.PROFILE_STATUS' | translate }}</th>
             <th>
               {{ 'CANDIDATE_USERS.ACTIONS' | translate }}
             </th>
@@ -57,6 +58,25 @@
               </span>
             </td>
             <td>
+              <ng-container *ngIf="user.profileStatus; else noProfile">
+                <span class="pill" [ngClass]="{
+                  'info': user.profileStatus === ProfileStatus.InCreation,
+                  'warning': user.profileStatus === ProfileStatus.UnderReview || user.profileStatus === ProfileStatus.RequiresUpdate,
+                  'success': user.profileStatus === ProfileStatus.Approved,
+                  'danger': user.profileStatus === ProfileStatus.Rejected || user.profileStatus === ProfileStatus.Cancelled || user.profileStatus === ProfileStatus.AdminCancelled,
+                  'primary': user.profileStatus === ProfileStatus.Submitted
+                }">
+                  {{ 'common.' + ProfileStatus[user.profileStatus] | translate }}
+                </span>
+              </ng-container>
+              <ng-template #noProfile>
+                <span class="text-muted small">
+                  {{ 'CANDIDATE_USERS.NO_PROFILE' | translate }}
+                </span>
+              </ng-template>
+            </td>
+
+            <td>
               <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
 
                 <button type="button" class="btn btn-sm"
@@ -73,7 +93,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="7" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+            <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
               {{ 'NO_RECORDS' | translate }}
             </td>
           </tr>

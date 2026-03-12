@@ -181,8 +181,8 @@ export class ProfileApprovalListPage implements OnInit {
     if (!row?.userProfileId) return;
 
     const url = row.profileStatus === ProfileStatusNumber.Approved
-      ? routes.employee.approvalProfileChanges(row.userProfileId)
-      : routes.employee.approvalProfileReview(row.userProfileId);
+      ? routes.portal.approvalProfileChanges(row.userProfileId)
+      : routes.portal.approvalProfileReview(row.userProfileId);
 
     this.router.navigate([url]);
   }

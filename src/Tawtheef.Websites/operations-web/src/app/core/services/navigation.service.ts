@@ -48,20 +48,20 @@ export class NavigationService {
 
     // 2. Jobs Management (Alternative for recruiters/staff)
     if (this.permissionService.hasPermission(Permissions.Jobs.View)) {
-      return [routes.employee.JobList];
+      return [routes.portal.JobList];
     }
 
     // 3. Office Users (Alternative for admins)
     if (this.permissionService.hasPermission(Permissions.OfficeUsers.View)) {
-      return [routes.employee.officeUsersManagement];
+      return [routes.portal.officeUsersManagement];
     }
 
     if (this.permissionService.hasPermission(Permissions.ProfileDistribution.View)) {
-      return [routes.employee.profileDistribution];
+      return [routes.portal.profileDistribution];
     }
 
     if (this.permissionService.hasPermission(Permissions.ProfileApproval.View)) {
-      return [routes.employee.approvalProfile];
+      return [routes.portal.approvalProfile];
     }
 
     // 4. Default Fallback for users with NO permissions yet (New Users)
