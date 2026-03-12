@@ -5,52 +5,59 @@
 
 <div class="error-box access-denied-content">
   <!-- Decorative background -->
-      <div class="decorations">
-        <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="dec bg-01"/>
-        <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="dec bg-02"/>
-        <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="dec bg-03"/>
-        <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="dec bg-04"/>
-        <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="dec bg-05"/>
-        <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="dec bg-06"/>
-        </div>
+  <div class="decorations">
+    <img src="assets/img/error/img-01.svg" [alt]="'decorativeElement' | translate" class="dec bg-01" />
+    <img src="assets/img/error/img-02.svg" [alt]="'decorativeElement' | translate" class="dec bg-02" />
+    <img src="assets/img/error/img-03.svg" [alt]="'decorativeElement' | translate" class="dec bg-03" />
+    <img src="assets/img/error/img-04.svg" [alt]="'decorativeElement' | translate" class="dec bg-04" />
+    <img src="assets/img/error/img-05.svg" [alt]="'decorativeElement' | translate" class="dec bg-05" />
+    <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="dec bg-06" />
+  </div>
   <!-- Logo with home link -->
-  <div class="error-logo">
+  <!--<div class="error-logo">
     <a [routerLink]="routes.home">
       <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate"/>
     </a>
-  </div>
-
+  </div>-->
   <!-- Main content -->
-  <div class="access-denied-topic">
-    <h3 class="h2 mb-3">
-      {{ 'app.accessDenied.title1' | translate }}
-      <span class="text-danger ms-1">{{ 'app.accessDenied.title2' | translate }}</span>
-    </h3>
-    <p>{{ 'app.accessDenied.content' | translate }}</p>
-  </div>
-
   <!-- Main illustration -->
-  <div class="error-box-img access-denied-img">
-    <img src="assets/img/error/access-denied.gif" [alt]="'accessDeniedImage' | translate" class="img-fluid"/>
+  <div class="error-page d-flex align-items-center justify-content-center min-vh-100 flex-column">
+    <div class="error-card ">
+      <div class="illustration mb-4">
+        <i class="hgi hgi-stroke hgi-blocked"></i>
+        <div class="border"></div>
+
+      </div>
+      <div class="access-denied-topic">
+        <h3 class="h2 mb-3">
+          {{ 'app.accessDenied.title1' | translate }}
+          <span class="text-danger ms-1">{{ 'app.accessDenied.title2' | translate }}</span>
+        </h3>
+        <p>{{ 'app.accessDenied.content' | translate }}</p>
+      </div>
+
+
+
+      <!-- Action buttons -->
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <a [routerLink]="routes.home" class="btn btn-primary">
+          <i class="fas fa-home me-2"></i>
+          {{ 'app.accessDenied.goHome' | translate }}
+        </a>
+
+        <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.user.dashboard"
+           class="btn btn-secondary">
+          <i class="fas fa-tachometer-alt me-2"></i>
+          {{ 'app.accessDenied.goDashboard' | translate }}
+        </a>
+
+        <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
+           class="btn btn-outline-primary">
+          <i class="fas fa-sign-in-alt me-2"></i>
+          {{ 'app.accessDenied.login' | translate }}
+        </a>
+      </div>
+    </div>
   </div>
-
-  <!-- Action buttons -->
-  <div class="d-flex justify-content-center gap-3 mt-4">
-    <a [routerLink]="routes.home" class="btn btn-primary">
-      <i class="fas fa-home me-2"></i>
-      {{ 'app.accessDenied.goHome' | translate }}
-    </a>
-
-    <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.user.dashboard"
-       class="btn btn-secondary">
-      <i class="fas fa-tachometer-alt me-2"></i>
-      {{ 'app.accessDenied.goDashboard' | translate }}
-    </a>
-
-    <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
-       class="btn btn-outline-primary">
-      <i class="fas fa-sign-in-alt me-2"></i>
-      {{ 'app.accessDenied.login' | translate }}
-    </a>
-  </div>
-</div>
+      
+    </div>

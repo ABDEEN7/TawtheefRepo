@@ -63,3 +63,28 @@
   .bg-05 { top: 40%; left: 2%; width: 60px; animation-delay: -8s; }
   .bg-06 { top: 55%; right: 4%; width: 100px; animation-delay: -10s; }
 }
+.error-box .border {
+  background: #959595;
+  height: 5px;
+  margin: 0px auto;
+  width: 25%
+}
+
+.error-box .hgi {
+  color: #959595;
+  font-size: 80px
+}
+
+.error-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.error-card {
+  background: #fff;
+  border-radius: 1rem;
+  max-width: 560px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}

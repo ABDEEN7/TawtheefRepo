@@ -9,76 +9,74 @@
           <img src="assets/img/error/img-06.svg" [alt]="'decorativeElement' | translate" class="dec bg-06"/>
     </div>
     <!-- Content card -->
-  <div class="error-card text-center p-4 p-md-5 shadow-sm">
-      <a [routerLink]="routes.home" class="brand mb-4 d-inline-flex">
+  <div class="error-card text-center p-4 p-md-5">
+      <!--<a [routerLink]="routes.home" class="brand mb-4 d-inline-flex">
       <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate"/>
-      </a>
-       <div  class="illustration mb-4">
-          <img src="assets/img/error/coming-soon.svg" [alt]="'comingSoonImage' | translate" class="img-fluid"/>
-        </div>
-        <div class="coming-soon-topic">
-    <h3 class="h2 mb-3">
-      {{ 'app.comeSoon.comingSoon1' | translate }}<span
-      class="text-secondary ms-1">{{ 'app.comeSoon.comingSoon2' | translate }}</span>
-    </h3>
-    <p>{{ 'app.comeSoon.stayTunedMessage' | translate }}</p>
-  </div>
-  <ul class="coming-soon-timer">
-    <li>
-      <span class="days">{{ days }}</span>{{ 'app.comeSoon.daysAbbr' | translate }}
-    </li>
-    <li class="seperate-dot"></li>
-    <li>
-      <span class="hours">{{ hours }}</span>{{ 'app.comeSoon.hoursAbbr' | translate }}
-    </li>
-    <li class="seperate-dot"></li>
-    <li>
-      <span class="minutes">{{ minutes }}</span>{{ 'app.comeSoon.minutesAbbr' | translate }}
-    </li>
-    <li class="seperate-dot"></li>
-    <li>
-      <span class="seconds">{{ seconds }}</span>{{ 'app.comeSoon.secondsAbbr' | translate }}
-    </li>
-  </ul>
- 
-  <form class="mt-5">
-    <b>{{ 'app.comeSoon.notifyMeTitle' | translate }}</b>
-    <div class="bg-white border rounded-2 p-2 mt-2 mb-3">
-      <div class="input-group">
-        <input
-          class="form-control focus-shadow-none border-0 me-1"
-          type="email"
-          [placeholder]="'enterEmailPlaceholder' | translate"
-        />
-        <button type="button" class="btn btn-secondary rounded-2 mb-0">
-          {{ 'app.comeSoon.notifyMeButton' | translate }}
-        </button>
+      </a>-->
+    <div class="error-card ">
+      <div class="illustration mb-4">
+        <i class="hgi hgi-stroke hgi-blocked"></i>
+        <div class="border"></div>
       </div>
+      <div class="coming-soon-topic">
+        <h3 class="h2 mb-3">
+          {{ 'app.comeSoon.comingSoon1' | translate }}<span class="text-secondary ms-1">{{ 'app.comeSoon.comingSoon2' | translate }}</span>
+        </h3>
+        <p>{{ 'app.comeSoon.stayTunedMessage' | translate }}</p>
+      </div>
+      <ul class="coming-soon-timer">
+        <li>
+          <span class="days">{{ days }}</span>{{ 'app.comeSoon.daysAbbr' | translate }}
+        </li>
+        <li class="seperate-dot"></li>
+        <li>
+          <span class="hours">{{ hours }}</span>{{ 'app.comeSoon.hoursAbbr' | translate }}
+        </li>
+        <li class="seperate-dot"></li>
+        <li>
+          <span class="minutes">{{ minutes }}</span>{{ 'app.comeSoon.minutesAbbr' | translate }}
+        </li>
+        <li class="seperate-dot"></li>
+        <li>
+          <span class="seconds">{{ seconds }}</span>{{ 'app.comeSoon.secondsAbbr' | translate }}
+        </li>
+      </ul>
+
+      <form class="mt-5">
+        <b>{{ 'app.comeSoon.notifyMeTitle' | translate }}</b>
+        <div class="bg-white border rounded-2 p-2 mt-2 mb-3">
+          <div class="input-group">
+            <input class="form-control focus-shadow-none border-0 me-1"
+                   type="email"
+                   [placeholder]="'enterEmailPlaceholder' | translate" />
+            <button type="button" class="btn btn-secondary rounded-2 mb-0">
+              {{ 'app.comeSoon.notifyMeButton' | translate }}
+            </button>
+          </div>
+        </div>
+      </form>
+      <div class="d-flex align-items-center justify-content-center">
+        <a href="javascript:void(0);"
+           class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="javascript:void(0);"
+           class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="javascript:void(0);"
+           class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+        <a href="javascript:void(0);"
+           class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+      </div>
+
     </div>
-  </form>
-  <div class="d-flex align-items-center justify-content-center">
-    <a
-      href="javascript:void(0);"
-      class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-    ><i class="fa-brands fa-facebook-f"></i
-    ></a>
-    <a
-      href="javascript:void(0);"
-      class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-    ><i class="fa-brands fa-instagram"></i
-    ></a>
-    <a
-      href="javascript:void(0);"
-      class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-    ><i class="fa-brands fa-x-twitter"></i
-    ></a>
-    <a
-      href="javascript:void(0);"
-      class="coming-soon media-btn rounded-circle d-inline-flex align-items-center justify-content-center"
-    ><i class="fa-brands fa-linkedin-in"></i
-    ></a>
-  </div>
-  </div>
+      
+    </div>
 
 
 
