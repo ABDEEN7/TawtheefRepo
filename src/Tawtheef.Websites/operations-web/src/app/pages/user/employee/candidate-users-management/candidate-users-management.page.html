@@ -13,7 +13,7 @@
       </div>
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_EMAIL' | translate }}</label>
-        <input type="text" class="form-control" [(ngModel)]="emailFilter" (input)="onSearchChange()"
+        <input type="email" class="form-control" [(ngModel)]="emailFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_EMAIL_PLACEHOLDER' | translate" />
       </div>
       <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
