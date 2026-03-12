@@ -12,22 +12,20 @@
   <!-- Content card -->
   <div class="error-card text-center p-4 p-md-5 shadow-sm">
     <!-- Logo -->
-    <a [routerLink]="routes.home" class="brand mb-4 d-inline-flex">
+    <!--<a [routerLink]="routes.home" class="brand mb-4 d-inline-flex">
       <img
         src="assets/img/logo.svg"
         height="72"
         class="img-fluid"
         [alt]="'logoAltText' | translate"
       />
-    </a>
+    </a>-->
 
     <!-- Illustration -->
     <div class="illustration mb-4">
-      <img
-        src="assets/img/error/error-01.svg"
-        class="img-fluid"
-        [alt]="'notFoundImage' | translate"
-      />
+      <i class="hgi hgi-stroke hgi-blocked"></i>
+      <div class="border"></div>
+
     </div>
 
     <!-- Text -->
@@ -47,7 +45,7 @@
         {{ 'app.error404.backToHome' | translate }}
       </a>
 
-      <button type="button" class="btn btn-outline-secondary px-4" (click)="back()">
+      <button type="button" class="btn btn-primary-outline  text-primary" (click)="back()">
         {{ 'common.goBack' | translate }}
       </button>
     </div>

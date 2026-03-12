@@ -10,12 +10,14 @@
     </div>
       <!-- Content card -->
   <div class="error-card text-center p-4 p-md-5 shadow-sm">
-       <a [routerLink]="routes.home">
+       <!--<a [routerLink]="routes.home">
           <img src="assets/img/logo.svg" style="height: 200px" class="img-fluid" [alt]="'logoAltText' | translate"/>
-       </a>
-         <div class="illustration mb-4">
-             <img src="assets/img/error/error-02.svg" [alt]="'serverErrorImage' | translate" class="img-fluid"/>
-        </div>
+       </a>-->
+    <div class="illustration mb-4">
+      <i class="hgi hgi-stroke hgi-blocked"></i>
+      <div class="border"></div>
+
+    </div>
         <h3 class="display-6 fw-bold mb-2">
           {{ 'app.error500.oops500Error1' | translate }}<span
           class="text-secondary ms-1">{{ 'app.error500.oops500Error2' | translate }}</span>
@@ -23,7 +25,7 @@
         <p class="h4 font-weight-normal">
           {{ 'app.error500.serverErrorMessage' | translate }}
         </p>
-        <a [routerLink]="routes.home" class="btn back-to-home-btn d-inline-flex align-items-center"><i class="isax isax-arrow-left-2 me-1"></i> {{ 'app.error500.backToHome' | translate }}</a>
+        <a [routerLink]="routes.home" class="btn btn-primary-outline text-primary d-inline-flex align-items-center"><i class="isax isax-arrow-left-2 me-1"></i> {{ 'app.error500.backToHome' | translate }}</a>
   </div>
 
 </div>

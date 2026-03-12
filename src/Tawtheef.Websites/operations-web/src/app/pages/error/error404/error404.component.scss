@@ -1,6 +1,6 @@
 .error-page {
-  background: radial-gradient(1200px 600px at 10% 10%, #f6f7fb, transparent),
-  radial-gradient(800px 400px at 90% 90%, #f1f3f9, transparent);
+  /*background: radial-gradient(1200px 600px at 10% 10%, #f6f7fb, transparent),
+  radial-gradient(800px 400px at 90% 90%, #f1f3f9, transparent);*/
   position: relative;
   overflow: hidden;
 }
@@ -64,3 +64,15 @@
   .illustration img { max-height: 180px; }
   .actions .btn { min-width: 100%; }
 }
+.illustration .border {
+  background: #959595;
+  height: 5px;
+  margin: 0px auto;
+  width: 25%
+}
+
+.illustration .hgi {
+  color: #959595;
+  font-size: 80px
+}
+
