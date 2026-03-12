@@ -81,7 +81,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">{{ 'UNIVERSITIES.EMAIL' | translate }}</label>
-          <input class="form-control" formControlName="email"
+          <input type="email" class="form-control" formControlName="email"
             [class.is-invalid]="submitted && form.controls.email.invalid" />
           @if (submitted && form.controls.email.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError('email') }}</div>
