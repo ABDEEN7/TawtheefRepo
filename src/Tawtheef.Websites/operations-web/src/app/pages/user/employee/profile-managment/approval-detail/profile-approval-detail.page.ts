@@ -1,9 +1,9 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnDestroy, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import {combineLatest, finalize, Subscription} from 'rxjs';
-import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { combineLatest, finalize, Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ProfileApprovalStepperComponent,
   ProfileApprovalStepperSection,
@@ -17,25 +17,25 @@ import {
   ReviewTargetType,
   SectionReviewSummary
 } from '../approval-list/models/profile-approval.models';
-import {routes} from '../../../../../routes/routes';
-import {ProfileApprovalService} from '../approval-list/services/profile-approval.service';
-import {I18nNamespaceDirective} from '../../../../../shared/directives/i18n-namespace.directive';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {CardModule} from 'primeng/card';
-import {ButtonModule} from 'primeng/button';
-import {AvatarModule} from 'primeng/avatar';
-import {DialogService} from 'primeng/dynamicdialog';
-import {FileUtilsService} from '../../../../../core/utils/file-utils';
-import {LanguageService} from '../../../../../core/services/language.service';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {FaDirArrowDirective} from '../../../../../shared/directives/dir-arrow.directive';
-import {ReviewAction, ReviewItemsComponent} from './components/review-items/review-items.component';
+import { routes } from '../../../../../routes/routes';
+import { ProfileApprovalService } from '../approval-list/services/profile-approval.service';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
+import { DialogService } from 'primeng/dynamicdialog';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
+import { LanguageService } from '../../../../../core/services/language.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
+import { ReviewAction, ReviewItemsComponent } from './components/review-items/review-items.component';
 import {
   ItemDialogResult,
   ItemReviewDialogComponent,
 } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
-import {AvatarUtils} from '../../../../../core/utils/avatar-utils';
+import { AvatarUtils } from '../../../../../core/utils/avatar-utils';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -144,7 +144,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   backToList(): void {
     this.selectedProfileId.set(null);
     this.detail.set(null);
-    this.router.navigate([routes.employee.approvalProfile]);
+    this.router.navigate([routes.portal.approvalProfile]);
   }
 
   loadDetail(): void {
@@ -177,7 +177,7 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
 
   previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => {});
+    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => { });
   }
 
   onReviewItemAction(event: { item: ProfileApprovalItem; action: ReviewAction }): void {
@@ -194,11 +194,11 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null): void {
     this.api.decideReviewItem(reviewItemId, { status, note }).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
-          this.loadDetail();
-        }
-      });
+      next: () => {
+        this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
+        this.loadDetail();
+      }
+    });
   }
 
   private promptCorrection(reviewItemId: string, note?: string | null, item?: ProfileApprovalItem | null): void {
@@ -221,15 +221,15 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   sectionName(section: number): string {
     switch (section) {
-      case 1:  return 'profileOverview.sections.prerequisites';
-      case 2:  return 'profileOverview.sections.basicInfo';
-      case 3:  return 'profileOverview.sections.contactInfo';
-      case 4:  return 'profileOverview.sections.qualifications';
-      case 5:  return 'profileOverview.sections.experiences';
-      case 6:  return 'profileOverview.sections.training';
-      case 7:  return 'profileOverview.sections.certificates';
-      case 8:  return 'profileOverview.sections.skills';
-      case 9:  return 'profileOverview.sections.languages';
+      case 1: return 'profileOverview.sections.prerequisites';
+      case 2: return 'profileOverview.sections.basicInfo';
+      case 3: return 'profileOverview.sections.contactInfo';
+      case 4: return 'profileOverview.sections.qualifications';
+      case 5: return 'profileOverview.sections.experiences';
+      case 6: return 'profileOverview.sections.training';
+      case 7: return 'profileOverview.sections.certificates';
+      case 8: return 'profileOverview.sections.skills';
+      case 9: return 'profileOverview.sections.languages';
       case 10: return 'profileOverview.sections.attachments';
       default: return 'profileOverview.sections.attachments';
     }
@@ -362,15 +362,15 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
 
   sectionIcon(section: number): string {
     switch (section) {
-      case 1:  return 'pi pi-verified';
-      case 2:  return 'pi pi-id-card';
-      case 3:  return 'pi pi-address-book';
-      case 4:  return 'pi pi-graduation-cap';
-      case 5:  return 'pi pi-briefcase';
-      case 6:  return 'pi pi-folder-open';
-      case 7:  return 'pi pi-list';
-      case 8:  return 'pi pi-star';
-      case 9:  return 'pi pi-language';
+      case 1: return 'pi pi-verified';
+      case 2: return 'pi pi-id-card';
+      case 3: return 'pi pi-address-book';
+      case 4: return 'pi pi-graduation-cap';
+      case 5: return 'pi pi-briefcase';
+      case 6: return 'pi pi-folder-open';
+      case 7: return 'pi pi-list';
+      case 8: return 'pi pi-star';
+      case 9: return 'pi pi-language';
       case 10: return 'pi pi-paperclip';
       default: return 'pi pi-clipboard';
     }

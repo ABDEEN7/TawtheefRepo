@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
 import { HttpService } from '../../../../../core/http/http.service';
-import { JobPointConfiguration } from '../../../employee/job-management/models/job-points-config';
+import { JobPointConfiguration } from '../../job-management/models/job-points-config';
 
 @Injectable({ providedIn: 'root' })
 export class JobPointsConfigurationService {

@@ -124,44 +124,44 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   }
 
   saveCurrentTabReview(): void {
-  if (!this.canManageJobs() || !this.job) return;
+    if (!this.canManageJobs() || !this.job) return;
 
-  const index = this.tabNotes.findIndex(t => t.tab === this.activeTab);
-  if (index === -1) return;
+    const index = this.tabNotes.findIndex(t => t.tab === this.activeTab);
+    if (index === -1) return;
 
-  const tabControl = this.reviewForm.get(`tabStatus_${index}`) as FormControl;
-  const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
+    const tabControl = this.reviewForm.get(`tabStatus_${index}`) as FormControl;
+    const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
 
-  tabControl.markAsTouched();
-  noteControl.markAsTouched();
+    tabControl.markAsTouched();
+    noteControl.markAsTouched();
 
-  if (tabControl.value === JobTabStatus.Returned) {
-    noteControl.setValidators([Validators.required]);
-  } else {
-    noteControl.clearValidators();
-  }
-  noteControl.updateValueAndValidity();
-
-  if (tabControl.invalid || noteControl.invalid) {
-    this.notificationService.error(
-      this.transaltionService.instant('JOB_APPROVAL.VALIDATION_ERROR')
-    );
-    return;
-  }
-  this.tabNotes[index].tabStatus = tabControl.value;
-  this.tabNotes[index].note = noteControl.value || '';
-
-  const formData = this.buildSingleTabFormData(this.tabNotes[index], false);
-  if (!formData) return;
-
-  this.jobService.updateTabReview(formData).subscribe({
-    next: () => {
-      this.notificationService.success(
-        this.transaltionService.instant('common.savedSuccessfully') // replace with your key
-      );
+    if (tabControl.value === JobTabStatus.Returned) {
+      noteControl.setValidators([Validators.required]);
+    } else {
+      noteControl.clearValidators();
     }
-  });
-}
+    noteControl.updateValueAndValidity();
+
+    if (tabControl.invalid || noteControl.invalid) {
+      this.notificationService.error(
+        this.transaltionService.instant('JOB_APPROVAL.VALIDATION_ERROR')
+      );
+      return;
+    }
+    this.tabNotes[index].tabStatus = tabControl.value;
+    this.tabNotes[index].note = noteControl.value || '';
+
+    const formData = this.buildSingleTabFormData(this.tabNotes[index], false);
+    if (!formData) return;
+
+    this.jobService.updateTabReview(formData).subscribe({
+      next: () => {
+        this.notificationService.success(
+          this.transaltionService.instant('common.savedSuccessfully') // replace with your key
+        );
+      }
+    });
+  }
 
   private onTabStatusChange(index: number, status: JobTabStatus | null): void {
     const noteControl = this.reviewForm.get(`note_${index}`) as FormControl;
@@ -504,10 +504,10 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     const tabsPayload = this.tabNotes
       .filter((t) => t.tabStatus)
       .map((t) => ({
-      Tab: t.tab,
-      Status: t.tabStatus,
-      Note: t.note || '',
-    }));
+        Tab: t.tab,
+        Status: t.tabStatus,
+        Note: t.note || '',
+      }));
 
     tabsPayload.forEach((tab, index) => {
       formData.append(`Request.Tabs[${index}].Tab`, tab.Tab);
@@ -576,7 +576,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   }
 
   private handleSuccess(): void {
-    this.router.navigate([routes.employee.JobList]);
+    this.router.navigate([routes.portal.JobList]);
     if (this.isAllTabsApproved()) {
       this.notificationService.success(
         this.transaltionService.instant('JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS')
@@ -676,7 +676,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   }
 
   preview(file: any): void {
-    this.fileUtils.previewUrl(file.url).then(() => {});
+    this.fileUtils.previewUrl(file.url).then(() => { });
   }
 
   previewAttachment(attachment: JobReviewAttachment): void {

@@ -85,7 +85,7 @@ export enum JobStatus {
   Cancelled = "Cancelled",
   PendingApproval = "PendingApproval",
   Approved = "Approved",
-  ReadyForAnnouncement="ReadyForAnnouncement",
+  ReadyForAnnouncement = "ReadyForAnnouncement",
   Published = "Published",
   Rejected = "Rejected"
 }
@@ -194,16 +194,6 @@ export enum TargetEntity {
   Schools = "Schools",
   Ministry = "Ministry",
 }
-
-/* ---------------------------------------------
-   User Type
----------------------------------------------- */
-export enum UserType {
-  Employee = "Employee",
-  Applicant = "Applicant",
-  Admin = "Admin",
-}
-
 /* ---------------------------------------------
    Work Type
 ---------------------------------------------- */

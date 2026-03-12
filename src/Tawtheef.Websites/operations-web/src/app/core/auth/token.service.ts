@@ -151,12 +151,10 @@ export class TokenService {
     return decoded?.[claimName];
   }
 
-  /** Prefer roles claim; keep userType only if your backend really sets it */
   getRoleFromToken(token: string): string {
     const roles = this.getRolesFromToken(token);
     if (roles.length) return roles[0]; // or your own priority logic
-    const decoded = this.decodeToken(token);
-    return decoded?.userType ?? '';
+    return '';
   }
 
   public getMainUserRole(): string {

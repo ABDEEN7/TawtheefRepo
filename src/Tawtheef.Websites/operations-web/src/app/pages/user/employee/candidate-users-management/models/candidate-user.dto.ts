@@ -1,3 +1,5 @@
+import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
+
 export interface CandidateUserDto {
   id: string;
   fullNameEn: string;
@@ -6,4 +8,7 @@ export interface CandidateUserDto {
   mobileNumber: string;
   qid?: string | null;
   isBlocked: boolean;
+  profileStatus?: ProfileStatusNumber | null;
 }
+
+

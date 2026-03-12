@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InputNumber } from 'primeng/inputnumber';
 import { JobPointsConfigurationService } from './services/job-points-configuration.service';
-import { JobPointConfiguration } from '../../employee/job-management/models/job-points-config';
+import { JobPointConfiguration } from '../job-management/models/job-points-config';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';

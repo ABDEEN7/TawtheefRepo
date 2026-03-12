@@ -27,14 +27,6 @@ public class UserTypeConfiguration : LookupBaseConfiguration<UserType>
             },
             new UserType
             {
-                Id = UserTypeIds.Admin,
-                BackendName = nameof(UserTypeIds.Admin),
-                NameEn = "Administrator",
-                NameAr = "مسؤول النظام",
-                DisplayOrder = 3
-            },
-            new UserType
-            {
                 Id = UserTypeIds.OfficeUser,
                 BackendName = nameof(UserTypeIds.OfficeUser),
                 NameEn = "OfficeUser",

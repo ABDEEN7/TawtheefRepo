@@ -1,3 +1,5 @@
+using Tawtheef.Domain.Entities.Users;
+
 namespace Application.Operation.Features.Employee.CandidateUsers.DTOs;
 
 public sealed class CandidateUserListItemDto
@@ -9,4 +11,6 @@ public sealed class CandidateUserListItemDto
     public string MobileNumber { get; init; } = string.Empty;
     public string? Qid { get; init; }
     public bool IsBlocked { get; init; }
+    public UserProfileStatus? ProfileStatus { get; init; }
 }
+

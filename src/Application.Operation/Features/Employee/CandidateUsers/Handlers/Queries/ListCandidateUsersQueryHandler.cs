@@ -1,7 +1,7 @@
 ﻿using Application.Operation.Features.Employee.CandidateUsers.DTOs;
 using Application.Operation.Features.Employee.CandidateUsers.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -50,7 +50,8 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
                 Email = u.Email ?? string.Empty,
                 MobileNumber = u.PhoneNumber ?? string.Empty,
                 Qid = u.Profile != null ? u.Profile.NationalNumber : null,
-                IsBlocked = u.IsBlocked
+                IsBlocked = u.IsBlocked,
+                ProfileStatus = u.Profile != null ? u.Profile.Status : null
             })
             .ToPaginatedListAsync(request, cancellationToken);
 

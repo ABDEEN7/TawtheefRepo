@@ -92,9 +92,9 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       }),
 
       details: this.fb.group({
-        applicantCategory: this.fb.group({}), 
-        education: this.fb.group({}), 
-        skills: this.fb.group({}), 
+        applicantCategory: this.fb.group({}),
+        education: this.fb.group({}),
+        skills: this.fb.group({}),
 
         experience: this.fb.group({
           pointsPerYear: [0],
@@ -285,7 +285,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
         Id: isUpdate ? this.jobPoints!.id : GuidUtils.emptyGuid,
         jobId: this.jobId,
         ...this.getMainPoints(),
-        details: this.getDetails(), 
+        details: this.getDetails(),
         isApproved: false,
       },
     };
@@ -373,7 +373,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
                   this.isFinalApprovalAvailable = false;
                   this.isLoading = false;
 
-                  this.router.navigate([routes.employee.JobList]);
+                  this.router.navigate([routes.portal.JobList]);
                   this.cdr.detectChanges();
                 },
                 error: () => {
@@ -435,14 +435,14 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       if (typeof value === 'number') {
         if (value === null || value === undefined) return;
         if (!includeZero && value <= 0) return;
-        if (includeZero && value < 0) return; 
+        if (includeZero && value < 0) return;
 
         const ref =
           withRef && type === JobPointRuleTypeEnum.Education
             ? this.job?.degrees?.find((d) => d.degree.backendName === code)?.degree?.id
             : withRef && type === JobPointRuleTypeEnum.Skill
-            ? this.job?.skills?.find((s) => s.skill.backendName === code)?.skill?.id
-            : undefined;
+              ? this.job?.skills?.find((s) => s.skill.backendName === code)?.skill?.id
+              : undefined;
 
         target.push({
           type,

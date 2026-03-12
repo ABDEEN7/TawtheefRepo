@@ -115,7 +115,7 @@ export class JobInvitationSummary implements OnInit {
   }
 
   navigateTo() {
-    this.router.navigate([routes.employee.dashboard]);
+    this.router.navigate([routes.portal.dashboard]);
   }
 
   canViewInvitations(): boolean {

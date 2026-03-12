@@ -143,17 +143,17 @@ export class JobListComponent implements OnInit {
 
   editJob(job: JobResponse) {
     if (!this.canManageJobs()) return;
-    this.router.navigate([routes.employee.jobEdit(job.id)]).then();
+    this.router.navigate([routes.portal.jobEdit(job.id)]).then();
   }
 
   viewJob(job: JobResponse) {
     if (!this.canViewJobs()) return;
-    this.router.navigate([routes.employee.jobView(job.id)]).then();
+    this.router.navigate([routes.portal.jobView(job.id)]).then();
   }
 
   createNewJob() {
     if (!this.canManageJobs()) return;
-    this.router.navigate([routes.employee.jobCreate]).then();
+    this.router.navigate([routes.portal.jobCreate]).then();
   }
 
   openPointsModal(job: JobResponse, isReadOnly = false) {
@@ -161,7 +161,7 @@ export class JobListComponent implements OnInit {
     if (isReadOnly && !this.canViewJobPoints()) return;
 
     this.router
-      .navigate([routes.employee.jobPoints(job.id)], {
+      .navigate([routes.portal.jobPoints(job.id)], {
         queryParams: isReadOnly ? { mode: 'view' } : undefined,
       })
       .then();
@@ -181,14 +181,14 @@ export class JobListComponent implements OnInit {
 
   copyJob(job: JobResponse) {
     if (!this.canManageJobs() || !this.canCopyJob(job)) return;
-    this.router.navigate([routes.employee.jobCreate], {
+    this.router.navigate([routes.portal.jobCreate], {
       queryParams: { copyFrom: job.id },
     }).then();
   }
 
   approveJob(job: JobResponse) {
     if (!this.canApproveJobs()) return;
-    this.router.navigate([routes.employee.approvalJob(job.id)]).then();
+    this.router.navigate([routes.portal.approvalJob(job.id)]).then();
   }
 
   rejectJob(job: JobResponse) {
@@ -380,7 +380,7 @@ export class JobListComponent implements OnInit {
 
   viewJobCandidate(jobId: GUID) {
     if (!this.canViewJobs()) return;
-    const url = routes.employee.jobCandidates(jobId);
+    const url = routes.portal.jobCandidates(jobId);
     this.router.navigate([url]);
   }
   private loadStats(): void {

@@ -235,7 +235,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   backToList(): void {
     this.selectedProfileId.set(null);
     this.detail.set(null);
-    this.router.navigate([routes.employee.approvalProfile]);
+    this.router.navigate([routes.portal.approvalProfile]);
   }
 
   hasUnsavedCurrent(): boolean {
