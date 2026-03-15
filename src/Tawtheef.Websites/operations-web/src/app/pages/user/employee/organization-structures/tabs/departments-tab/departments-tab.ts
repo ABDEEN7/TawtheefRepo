@@ -11,6 +11,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { OrganizationStructuresStore } from '../../organization-structures.store';
 import { OrganizationStructuresFacade } from '../../organization-structures.facade';
 import {Select} from 'primeng/select';
+import {RemoteSelectComponent} from '../../../../../../shared/components/remote-select/remote-select';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 import {Tooltip} from 'primeng/tooltip';
 
@@ -27,6 +28,7 @@ import {Tooltip} from 'primeng/tooltip';
     ButtonModule,
     InputTextModule,
     PaginationComponent,
+    RemoteSelectComponent,
     Select,
     ToggleSwitchModule,
     Tooltip

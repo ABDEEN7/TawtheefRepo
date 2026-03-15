@@ -22,16 +22,15 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="store.sectorLookups()"
+            <app-remote-select
+              [searchUrl]="store.endpoints.organizationStructures.lookups.sectors"
               optionLabel="name"
               optionValue="id"
               [showClear]="true"
               [ngModel]="store.managementFilters().sectorId"
               (ngModelChange)="service.setManagementSector($event)"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
-            </p-select>
+            </app-remote-select>
           </div>
 
           <div class="col-lg-4 col-md-6">

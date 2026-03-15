@@ -175,6 +175,7 @@ export interface AdditionalAttachmentDto {
 export interface LanguageDto {
   id: GUID;
   languageId: string;
+  language?: dropdownOptionsModel | null;
   speakingLevelId: string;
   speakingLevel: dropdownOptionsModel;
   writingLevelId: string;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -12,6 +12,8 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { OrganizationStructuresService } from '../services/organization-structures.service';
 import {Select} from 'primeng/select';
+import {RemoteSelectComponent} from '../../../../../shared/components/remote-select/remote-select';
+import {EndpointsService} from '../../../../../core/http/endpoints.service';
 
 type DialogMode = 'create' | 'edit';
 
@@ -34,6 +36,7 @@ export interface UpsertDepartmentDialogData {
     ToggleSwitchModule,
     ButtonModule,
     Select,
+    RemoteSelectComponent,
   ],
   template: `
     <div class="modal-body">
@@ -41,35 +44,34 @@ export interface UpsertDepartmentDialogData {
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="data.sectors"
+            <app-remote-select
+              [searchUrl]="endpoints.organizationStructures.lookups.sectors"
               optionLabel="name"
               optionValue="id"
               [(ngModel)]="vm.sectorId"
               name="sectorId"
-              [filter]="true"
-              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
-              (onChange)="onSectorChange($event.value)">
-            </p-select>
+              (valueChange)="onSectorChange($event)"
+              [preloadedOptions]="data.sectors">
+            </app-remote-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="filteredManagements"
+            <app-remote-select
+              [searchUrl]="endpoints.organizationStructures.lookups.managements(vm.sectorId)"
               optionLabel="name"
               optionValue="id"
               [(ngModel)]="vm.managementId"
               name="managementId"
-              [filter]="true"
-              filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [showClear]="true"
-              [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
-            </p-select>
+              [requireParent]="true"
+              [parentId]="vm.sectorId"
+              parentParamName="sectorId"
+              [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate"
+              [preloadedOptions]="managementOptions">
+            </app-remote-select>
             <small class="text-muted" *ngIf="f.submitted && !vm.managementId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
           </div>
         </div>
@@ -137,20 +139,21 @@ export interface UpsertDepartmentDialogData {
     </div>
   `
 })
-export class UpsertDepartmentDialogComponent {
+export class UpsertDepartmentDialogComponent implements OnInit {
   ref = inject(DynamicDialogRef);
   config = inject(DynamicDialogConfig<UpsertDepartmentDialogData>);
   api = inject(OrganizationStructuresService);
+  endpoints = inject(EndpointsService);
 
   data = this.config?.data ?? { mode: 'create', sectors: [], managements: [] };
 
   vm = {
-    sectorId: this.data.model?.sector?.id ?? this.data.sectors[0]?.id ?? '',
-    managementId: this.data.model?.managementId ?? this.data.model?.management?.id ?? this.data.managements[0]?.id ?? '',
-    nameEn: this.data.model?.nameEn ?? this.data.model?.name ?? '',
-    nameAr: this.data.model?.nameAr ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? '',
+    sectorId: this.data.model?.sectorId ?? this.data.model?.sector?.id ?? this.data.sectors[0]?.id ?? '',
+    managementId: this.data.model?.managementId ?? this.data.model?.management?.id ?? '',
+    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name ?? '',
+    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? '',
+    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
+    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 
@@ -161,16 +164,31 @@ export class UpsertDepartmentDialogComponent {
 
   managementOptions: dropdownOptionsModel[] = this.data.managements ?? [];
 
+  ngOnInit() {
+    // If we're editing, or have a sector, reload managements to be sure they match the sector
+    if (this.vm.sectorId) {
+      this.api.getManagementLookups(this.vm.sectorId).subscribe(res => {
+        this.managementOptions = res;
+        // If managementId was not set (create mode with first sector), or NOT found in current options
+        if (!this.vm.managementId || !res.find(m => m.id === this.vm.managementId)) {
+          if (this.data.mode === 'create') {
+            this.vm.managementId = res[0]?.id ?? '';
+          }
+        }
+      });
+    }
+  }
+
   onSectorChange(sectorId: string) {
     if (!sectorId) {
       this.vm.managementId = '';
+      this.managementOptions = [];
       return;
     }
     this.api.getManagementLookups(sectorId).subscribe({
       next: res => {
         this.managementOptions = res;
-        const first = this.managementOptions[0]?.id;
-        this.vm.managementId = first ?? '';
+        this.vm.managementId = res[0]?.id ?? '';
       },
       error: () => {
         this.managementOptions = [];

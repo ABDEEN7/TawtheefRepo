@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { LanguageService, Lang } from '../../../../core/services/language.service';
+import { EndpointsService } from '../../../../core/http/endpoints.service';
 
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
@@ -18,6 +19,7 @@ export type OrganizationTabKey = 'sectors' | 'managements' | 'departments';
 @Injectable()
 export class OrganizationStructuresStore {
   private language = inject(LanguageService);
+  public endpoints = inject(EndpointsService);
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');

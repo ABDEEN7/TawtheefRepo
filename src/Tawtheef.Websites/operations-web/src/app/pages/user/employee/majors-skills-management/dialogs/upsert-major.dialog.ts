@@ -115,12 +115,12 @@ export class UpsertMajorDialogComponent {
   vm = {
     id: this.data.model?.id ?? null,
     parentId: this.data.mode === 'create' ? (this.data.parentId ?? null) : (this.data.model?.parentId ?? this.data.model?.parentMajorId ?? null),
-    parent: { name: this.data.parent ?? '' },
+    parent: { name: this.data.parent ?? this.data.model?.parent?.name ?? '' },
     // try common shapes:
-    nameEn: this.data.model?.nameEn ?? this.data.model?.name?.en ?? this.data.model?.name ?? '',
-    nameAr: this.data.model?.nameAr ?? this.data.model?.name?.ar ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? '',
+    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name?.en ?? this.data.model?.name ?? '',
+    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? this.data.model?.name?.ar ?? '',
+    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
+    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 

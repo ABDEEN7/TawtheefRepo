@@ -96,10 +96,10 @@ export class UpsertSectorDialogComponent {
   private data = this.config?.data ?? { mode: 'create' as const };
 
   vm = {
-    nameEn: this.data.model?.nameEn ?? this.data.model?.name ?? '',
-    nameAr: this.data.model?.nameAr ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? '',
+    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name ?? '',
+    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? '',
+    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
+    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 

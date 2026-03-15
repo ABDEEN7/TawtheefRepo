@@ -1,4 +1,4 @@
-﻿{
+{
   "auth.azure.title": "Sign in - Azure",
   "auth.azure.hint": "You will be redirected to log in using your official work account.",
   "auth.azure.cta": "Sign in as Employee",
@@ -12,5 +12,8 @@
   "pending.title": "Account Under Review",
   "pending.subtitle": "Thank you! You have logged in successfully, but your account permissions need activation by an administrator.",
   "pending.detail": "Please wait until you are assigned roles or permissions to access the internal systems. You will be able to log in and proceed once these actions are complete.",
-  "pending.logout": "Logout and try later"
-}
+  "pending.logout": "Logout and try later",
+  "pending.step1": "Login",
+  "pending.step2": "Review Permissions",
+  "pending.step3": "System Access"
+}

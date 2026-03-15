@@ -1,4 +1,4 @@
-﻿import { GUID } from "../shared/types/guid.type";
+import { GUID } from "../shared/types/guid.type";
 
 export const portalRoutes = {
   portal: '/portal',
@@ -67,6 +67,9 @@ export const portalRoutes = {
   },
   get candidateUsersManagement() {
     return this.portal + '/candidate-users-management';
+  },
+  candidateUserProfile(id: string) {
+    return this.candidateUsersManagement + `/${id}/view`;
   },
   get officeUsersManagement() {
     return this.portal + '/office-users-management';

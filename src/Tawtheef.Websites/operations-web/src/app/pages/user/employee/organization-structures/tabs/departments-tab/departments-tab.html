@@ -22,30 +22,31 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-3 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="store.sectorLookups()"
+            <app-remote-select
+              [searchUrl]="store.endpoints.organizationStructures.lookups.sectors"
               optionLabel="name"
               optionValue="id"
               [ngModel]="store.departmentFilters().sectorId"
               (ngModelChange)="service.setDepartmentSector($event)"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
-            </p-select>
+            </app-remote-select>
           </div>
 
           <div class="col-lg-3 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="store.managementLookups()"
+            <app-remote-select
+              [searchUrl]="store.endpoints.organizationStructures.lookups.managements(store.departmentFilters().sectorId)"
               optionLabel="name"
               optionValue="id"
+              [requireParent]="true"
+              [parentId]="store.departmentFilters().sectorId"
+              parentParamName="sectorId"
               [ngModel]="store.departmentFilters().managementId"
               (ngModelChange)="service.setDepartmentManagement($event)"
               [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
-            </p-select>
+            </app-remote-select>
           </div>
 
           <div class="col-lg-3 col-md-6">

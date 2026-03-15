@@ -76,11 +76,6 @@ export class OrganizationStructuresFacade {
 
   loadManagements() {
     const filters = this.store.managementFilters();
-    if (!filters.sectorId) {
-      this.store.setManagementsResult(this.emptyResult<ManagementListItemModel>(filters));
-      return;
-    }
-
     this.api.getManagements(filters).subscribe({
       next: res => this.store.setManagementsResult(res)
     });
@@ -88,11 +83,6 @@ export class OrganizationStructuresFacade {
 
   loadDepartments() {
     const filters = this.store.departmentFilters();
-    if (!filters.managementId) {
-      this.store.setDepartmentsResult(this.emptyResult<DepartmentListItemModel>(filters));
-      return;
-    }
-
     this.api.getDepartments(filters).subscribe({
       next: res => this.store.setDepartmentsResult(res)
     });
@@ -125,9 +115,11 @@ export class OrganizationStructuresFacade {
       if (updateDepartmentFilters) {
         this.store.updateDepartmentFilters({ managementId: '' });
       }
-      this.store.setManagementsResult(this.emptyResult<ManagementListItemModel>(this.store.managementFilters()));
+      
+      this.loadManagements();
+      
       if (updateDepartmentFilters) {
-        this.store.setDepartmentsResult(this.emptyResult<DepartmentListItemModel>(this.store.departmentFilters()));
+        this.loadDepartments();
       }
       return;
     }
@@ -376,10 +368,9 @@ export class OrganizationStructuresFacade {
   private prepareManagementDefaults(reloadList = false) {
     const sectorId = this.store.managementFilters().sectorId || this.store.sectorLookups()[0]?.id || '';
     if (sectorId) {
-      this.store.updateManagementFilters({ sectorId, pageNumber: 1 });
-      this.loadManagementLookups(sectorId, true, this.store.departmentsInitialized());
-      this.loadManagements();
+       this.loadManagementLookups(sectorId, true, this.store.departmentsInitialized());
     }
+    this.loadManagements();
   }
 
   private prepareDepartmentDefaults(reloadList = false) {

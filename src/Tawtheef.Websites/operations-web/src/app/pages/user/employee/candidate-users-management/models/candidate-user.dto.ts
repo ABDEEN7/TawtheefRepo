@@ -9,6 +9,8 @@ export interface CandidateUserDto {
   qid?: string | null;
   isBlocked: boolean;
   profileStatus?: ProfileStatusNumber | null;
+  candidateProfileId?: string | null;
+  userProfileId?: string | null;
 }
 
 
