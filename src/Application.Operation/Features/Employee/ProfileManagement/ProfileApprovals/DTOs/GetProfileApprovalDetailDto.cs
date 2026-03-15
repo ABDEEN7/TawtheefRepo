@@ -15,6 +15,6 @@ public class GetProfileApprovalDetailDto
     /// Snapshot being reviewed now (submitted/latest state)
     /// </summary>
     public ProfileApprovalDataDto Profile { get; set; } = default!;
-
+    public int? ProfileStatus { get; set; }
     public List<ProfileApprovalSectionDto> Sections { get; set; } = [];
 }

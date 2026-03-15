@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { permissionGuard } from '../../../core/guards/route-guard/permission-guards';
 import { Permissions } from '../../../core/constants/permissions';
 
@@ -79,6 +79,12 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.CandidateUsers.View] },
     loadComponent: () => import('./candidate-users-management/candidate-users-management.page').then(m => m.CandidateUsersManagementPage)
+  },
+  {
+    path: 'candidate-users-management/:profileId/view',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.CandidateUsers.View] },
+    loadComponent: () => import('./candidate-users-management/components/candidate-profile-summary/candidate-profile-summary.component').then(m => m.CandidateProfileSummaryComponent)
   },
   {
     path: 'office-users-management',

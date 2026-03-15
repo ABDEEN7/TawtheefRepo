@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.CandidateUsers.Commands;
+using Application.Operation.Features.Employee.CandidateUsers.Commands;
 using Application.Operation.Features.Employee.CandidateUsers.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,6 +29,14 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
         [FromBody] UpdateCandidateUserBlockStatusCommand command)
     {
         var result = await mediator.Send(command with { UserId = id });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("{id:guid}/profile")]
+    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
+    public async Task<IActionResult> GetCandidateUserProfile(Guid id)
+    {
+        var result = await mediator.Send(new GetCandidateUserProfileQuery(id));
         return result.ToActionResult();
     }
 }

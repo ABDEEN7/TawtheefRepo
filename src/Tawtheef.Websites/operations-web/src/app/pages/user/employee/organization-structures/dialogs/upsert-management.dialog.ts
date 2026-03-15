@@ -10,7 +10,9 @@ import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
-import {Select} from 'primeng/select';
+import { Select } from 'primeng/select';
+import { RemoteSelectComponent } from '../../../../../shared/components/remote-select/remote-select';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
 
 type DialogMode = 'create' | 'edit';
 
@@ -31,7 +33,7 @@ export interface UpsertManagementDialogData {
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
-    Select,
+    RemoteSelectComponent,
   ],
   template: `
   <div class="modal-body">
@@ -39,18 +41,16 @@ export interface UpsertManagementDialogData {
              <div class="row">
                   <div class="col-md-12 mb-3">
                     <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-                    <p-select
-                      class="w-100"
-                      [options]="data.sectors"
+                    <app-remote-select
+                      [searchUrl]="endpoints.organizationStructures.lookups.sectors"
                       optionLabel="name"
                       optionValue="id"
                       [(ngModel)]="vm.sectorId"
                       name="sectorId"
                       [showClear]="true"
-                      [filter]="true"
-                      filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                      [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
-                    </p-select>
+                      [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
+                      [preloadedOptions]="data.sectors">
+                    </app-remote-select>
                     <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
                   </div>
              </div>
@@ -129,15 +129,16 @@ export interface UpsertManagementDialogData {
 export class UpsertManagementDialogComponent {
   ref = inject(DynamicDialogRef);
   config = inject(DynamicDialogConfig<UpsertManagementDialogData>);
+  endpoints = inject(EndpointsService);
 
   data = this.config?.data ?? { mode: 'create', sectors: [] };
 
   vm = {
     sectorId: this.data.model?.sectorId ?? this.data.model?.sector?.id ?? this.data.sectors[0]?.id ?? '',
-    nameEn: this.data.model?.nameEn ?? this.data.model?.name ?? '',
-    nameAr: this.data.model?.nameAr ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? '',
+    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name ?? '',
+    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? '',
+    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
+    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 

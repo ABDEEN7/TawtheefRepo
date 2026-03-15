@@ -82,6 +82,9 @@ export interface UpsertSkillDialogData {
                     [(ngModel)]="vm.skillTypeId"
                     required
                     [placeholder]="'MAJORS_SKILLS.PLACEHOLDER_SELECT_SKILL_TYPE' | translate">
+                    <ng-template let-option pTemplate="item">
+                      {{ option.additionalData?.[('common.lang_abbr' | translate) === 'ar' ? 'nameAr' : 'nameEn'] || option.name }}
+                    </ng-template>
                   </p-select>
                   <small class="text-muted" *ngIf="f.submitted && !vm.skillTypeId">
                     {{ 'MAJORS_SKILLS.VALIDATION_REQUIRED' | translate }}
@@ -158,11 +161,11 @@ export class UpsertSkillDialogComponent {
   vm = {
     id: this.model?.id ?? null,
 
-    nameEn: this.model?.nameEn ?? this.model?.name ?? '',
-    nameAr: this.model?.nameAr ?? '',
+    nameEn: this.model?.nameEn ?? this.model?.additionalData?.nameEn ?? this.model?.name ?? '',
+    nameAr: this.model?.nameAr ?? this.model?.additionalData?.nameAr ?? '',
     skillTypeId: this.model?.skillTypeId ?? this.model?.skillType?.id ?? '',
-    descriptionEn: this.model?.descriptionEn ?? '',
-    descriptionAr: this.model?.descriptionAr ?? '',
+    descriptionEn: this.model?.descriptionEn ?? this.model?.additionalData?.descriptionEn ?? '',
+    descriptionAr: this.model?.descriptionAr ?? this.model?.additionalData?.descriptionAr ?? '',
     displayOrder: this.model?.displayOrder ?? null,
     isActive: (this.model?.isActive ?? true) !== false
   };

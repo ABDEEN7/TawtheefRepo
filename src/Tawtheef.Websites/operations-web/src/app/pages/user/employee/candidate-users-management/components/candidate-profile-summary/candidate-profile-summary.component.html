@@ -1,0 +1,297 @@
+<section class="summary-page" i18nNamespace="pages/profile-approval" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div class="container-fluid py-4" *ngIf="detail() as info; else loadingOrError">
+    <!-- Header -->
+    <div class="summary-header mb-4">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <button pButton type="button" class="p-button-text p-button-sm" (click)="back()">
+            <i pButtonIcon [faDirArrow]="'start'"></i>
+            <span pButtonLabel>{{ 'CANDIDATE_USERS.BACK' | translate }}</span>
+          </button>
+          <div class="header-info">
+            <h1 class="h3 mb-1 fw-bold text-primary">{{ info.fullName }}</h1>
+            <div class="d-flex gap-2">
+              <span class="pill primary small-pill" *ngIf="info.candidateType">{{ info.candidateType }}</span>
+              <span class="pill info small-pill" *ngIf="info.targetEntity">{{ info.targetEntity }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row g-4">
+      <!-- Left Column: All Sections -->
+      <div class="col-12">
+        <!-- Personal Information -->
+        <div class="card card-table mb-3" *ngIf="info.profile.basicInformation as basic">
+          <div class="card-body">
+            <div class="section-title mb-3">
+              <h6 class="fw-bold text-primary">
+                <i class="pi pi-user me-2"></i>
+                {{ 'profileApproval.sections.basicInfo' | translate }}
+              </h6>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.fullNameAr' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.fullNameAr || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.fullNameEn' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.fullNameEn || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.nationalNumber' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.nationalNumber || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.nationality' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.nationality || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.birthDate' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ (basic.birthDate | date:'dd/MM/yyyy') || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.gender' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.gender || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.maritalStatus' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.maritalStatus || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sponsor Information -->
+        <div class="card card-table mb-3" *ngIf="info.profile.basicInformation as basic">
+          <div class="card-body" *ngIf="basic.sponsorType">
+            <div class="section-title mb-3">
+              <h6 class="fw-bold text-primary">
+                <i class="pi pi-shield me-2"></i>
+                {{ 'profileApproval.detail.snapshot.sponsorType' | translate }}
+              </h6>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.sponsorType' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.sponsorType || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.sponsorEmployerName' |
+                  translate }}</label>
+                <span class="fw-semibold">{{ basic.sponsorEmployerName || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.sponsorEmployerNumber' |
+                  translate }}</label>
+                <span class="fw-semibold">{{ basic.sponsorEmployerNumber || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6" *ngIf="basic.sponsorCard">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.sponsorCard' | translate
+                  }}</label>
+                <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm"
+                  (click)="preview(basic.sponsorCard, $event)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="card card-table mb-3" *ngIf="info.profile.basicInformation as basic">
+          <div class="card-body">
+            <div class="section-title mb-3">
+              <h6 class="fw-bold text-primary">
+                <i class="pi pi-phone me-2"></i>
+                {{ 'profileOverview.sections.contactInfo' | translate }}
+              </h6>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.email' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.email || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.phoneNumber' | translate
+                  }}</label>
+                <span class="fw-semibold" dir="ltr">{{ basic.phoneNumber || '—' }}</span>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.residenceCountry' |
+                  translate }}</label>
+                <span class="fw-semibold">{{ basic.residenceCountry || '—' }}</span>
+              </div>
+              <div class="col-md-8">
+                <label class="text-muted d-block small">{{ 'profileApproval.detail.snapshot.address' | translate
+                  }}</label>
+                <span class="fw-semibold">{{ basic.address || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Qualifications -->
+        <div class="card card-table mb-3" *ngIf="info.profile.qualifications?.length">
+          <div class="card-body">
+            <div class="section-title mb-3">
+              <h6 class="fw-bold text-primary">
+                <i class="pi pi-graduation-cap me-2"></i>
+                {{ 'profileApproval.sections.qualifications' | translate }}
+              </h6>
+            </div>
+            <p-table [value]="info.profile.qualifications || []" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileApproval.detail.qualifications.level' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.qualifications.major' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.qualifications.university' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.qualifications.year' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.qualifications.grade' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.actions.view' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ displayOption(item.degree, item.degreeId) }}</td>
+                  <td>{{ displayOption(item.major, item.majorId) }}</td>
+                  <td>{{ displayOption(item.university, item.universityId) }}</td>
+                  <td>{{ item.graduationYear || '—' }}</td>
+                  <td>{{ displayOption(item.grade, item.gradeId) }} ({{ item.gpa || '0' }})</td>
+                  <td>
+                    <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text" *ngIf="item.attachment"
+                      (click)="preview(item.attachment, $event)">
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+
+        <!-- Experiences -->
+        <div class="card card-table mb-3" *ngIf="info.profile.experiences?.length">
+          <div class="card-body">
+            <div class="section-title mb-3">
+              <h6 class="fw-bold text-primary">
+                <i class="pi pi-briefcase me-2"></i>
+                {{ 'profileApproval.sections.experiences' | translate }}
+              </h6>
+            </div>
+            <p-table [value]="info.profile.experiences || []" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileApproval.detail.changeFields.employerName' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.changeFields.jobTitle' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.changeFields.startDate' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.changeFields.endDate' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.actions.view' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.employerName || '—' }}</td>
+                  <td>{{ item.jobTitle || '—' }}</td>
+                  <td>{{ (item.startDate | date:'MM/yyyy') || '—' }}</td>
+                  <td>{{ (item.isCurrent ? ('profileApproval.detail.snapshot.present' | translate) : (item.endDate |
+                    date:'MM/yyyy')) || '—' }}</td>
+                  <td>
+                    <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text" *ngIf="item.attachment"
+                      (click)="preview(item.attachment, $event)">
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+
+        <!-- Skills & Languages -->
+        <div class="row g-3">
+          <div class="col-md-6" *ngIf="info.profile.skills?.length">
+            <div class="card card-table h-100">
+              <div class="card-body">
+                <h6 class="fw-bold text-primary mb-3">
+                  <i class="pi pi-star me-2"></i>
+                  {{ 'profileOverview.sections.skills' | translate }}
+                </h6>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="pill primary" *ngFor="let s of info.profile.skills">
+                    {{ displayOption(s.skill, s.skillId) }} - {{ displayOption(s.level, s.levelId) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="info.profile.languages?.length">
+            <div class="card card-table h-100">
+              <div class="card-body">
+                <h6 class="fw-bold text-primary mb-3">
+                  <i class="pi pi-language me-2"></i>
+                  {{ 'profileOverview.sections.languages' | translate }}
+                </h6>
+                <div class="language-list">
+                  <div class="d-flex justify-content-between align-items-center mb-2"
+                    *ngFor="let l of info.profile.languages">
+                    <span class="fw-semibold">{{ displayOption(l.language, l.languageId) }}</span>
+                    <span class="badge bg-info-light" *ngIf="l.isNative">{{ 'profileApproval.detail.snapshot.native' |
+                      translate }}</span>
+                    <span class="text-muted small">
+                      {{ displayOption(l.speakingLevel, l.speakingLevelId) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attachments -->
+        <div class="card card-table mt-3" *ngIf="info.profile.attachments?.length">
+          <div class="card-body">
+            <h6 class="fw-bold text-primary mb-3">
+              <i class="pi pi-paperclip me-2"></i>
+              {{ 'profileApproval.sections.attachments' | translate }}
+            </h6>
+            <div class="row g-2">
+              <div class="col-md-4 col-sm-6" *ngFor="let att of info.profile.attachments">
+                <div class="file-box p-2 border rounded d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="pi pi-file text-primary"></i>
+                    <span class="text-truncate" style="max-width: 150px;" [title]="att.title">{{ att.title ||
+                      att.file.fileName }}</span>
+                  </div>
+                  <button pButton icon="pi pi-download" class="p-button-rounded p-button-text p-button-sm"
+                    (click)="preview(att.file, $event)"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <ng-template #loadingOrError>
+    <div class="vh-100 d-flex align-items-center justify-content-center flex-column gap-3" *ngIf="loading()">
+      <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+      <span class="text-muted">{{ 'common.loading' | translate }}</span>
+    </div>
+    <div class="vh-100 d-flex align-items-center justify-content-center flex-column gap-3" *ngIf="error()">
+      <i class="pi pi-exclamation-triangle text-danger fs-32"></i>
+      <span class="text-danger fw-bold">{{ error() }}</span>
+      <button pButton [label]="'common.back' | translate" (click)="back()"></button>
+    </div>
+  </ng-template>
+</section>

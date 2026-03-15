@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tawtheef.Domain.Configurations.Settings;
 
@@ -16,4 +16,5 @@ public sealed class AppConfigSettings
     [Required, MinLength(1)]
     public required string[] AdminEmails { get; init; }
     public required int DefaultSignedUrlMinutes { get; init; } = 3;
+    public bool EnableLookupsCaching { get; init; } = false;
 }

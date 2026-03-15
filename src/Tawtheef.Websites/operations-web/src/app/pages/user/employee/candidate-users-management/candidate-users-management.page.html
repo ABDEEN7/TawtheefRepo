@@ -58,7 +58,7 @@
               </span>
             </td>
             <td>
-              <ng-container *ngIf="user.profileStatus; else noProfile">
+              <ng-container *ngIf="user.profileStatus !== null && user.profileStatus !== undefined; else noProfile">
                 <span class="pill" [ngClass]="{
                   'info': user.profileStatus === ProfileStatus.InCreation,
                   'warning': user.profileStatus === ProfileStatus.UnderReview || user.profileStatus === ProfileStatus.RequiresUpdate,
@@ -77,17 +77,25 @@
             </td>
 
             <td>
-              <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
-
-                <button type="button" class="btn btn-sm"
-                  [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
-                  <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
-                  <span class="ms-1">
-                    {{ user.isBlocked ? ('CANDIDATE_USERS.UNBLOCK_USER' | translate) : ('CANDIDATE_USERS.BLOCK_USER' |
-                    translate) }}
-                  </span>
+              <div class="d-flex gap-2 align-items-center">
+                <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                  (click)="viewProfile(user)" *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                  <i class="hgi hgi-stroke hgi-view fs-18"></i>
+                  <span>{{ 'CANDIDATE_USERS.VIEW_PROFILE' | translate }}</span>
                 </button>
-              </ng-container>
+
+                <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
+
+                  <button type="button" class="btn btn-sm d-flex align-items-center gap-1"
+                    [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
+                    <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                    <span>
+                      {{ user.isBlocked ? ('CANDIDATE_USERS.UNBLOCK_USER' | translate) : ('CANDIDATE_USERS.BLOCK_USER' |
+                      translate) }}
+                    </span>
+                  </button>
+                </ng-container>
+              </div>
             </td>
           </tr>
         </ng-template>

@@ -1,4 +1,4 @@
-﻿import { inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '../services/api-config.service';
 import { CaseUtils } from '../utils/case-utils';
 import { ReviewStatus } from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
@@ -155,7 +155,8 @@ export class EndpointsService {
 
   candidateUsers = {
     list: this.getFullUrl('/candidateUsers'),
-    blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`)
+    blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`),
+    profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`)
   };
 
   officeUsers = {

@@ -22,5 +22,8 @@
   "CANDIDATE_USERS.BLOCKED": "محظور",
   "CANDIDATE_USERS.ACTIVE": "نشط",
   "CANDIDATE_USERS.BLOCK_SUCCESS": "تم حظر المستخدم بنجاح.",
-  "CANDIDATE_USERS.UNBLOCK_SUCCESS": "تم إلغاء حظر المستخدم بنجاح."
+  "CANDIDATE_USERS.UNBLOCK_SUCCESS": "تم إلغاء حظر المستخدم بنجاح.",
+  "CANDIDATE_USERS.VIEW_PROFILE": "عرض الملف الشخصي",
+  "CANDIDATE_USERS.PROFILE_NOT_FOUND": "الملف الشخصي للمرشح غير موجود أو لم يتم تقديمه بعد.",
+  "CANDIDATE_USERS.BACK": "رجوع"
 }

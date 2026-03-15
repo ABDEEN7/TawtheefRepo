@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -12,6 +13,7 @@ import { PaginationMetadata } from '../../../../core/models/pagination-metadata.
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { routes } from '../../../../routes/routes';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
@@ -41,6 +43,7 @@ export class CandidateUsersManagementPage implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   private _users = signal<CandidateUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -136,6 +139,15 @@ export class CandidateUsersManagementPage implements OnInit {
           )
         );
       }
+    });
+  }
+
+  viewProfile(user: CandidateUserDto): void {
+    const profileId = user.candidateProfileId || user.userProfileId || user.id;
+    if (!profileId) return;
+
+    this.router.navigate([routes.portal.candidateUserProfile(profileId)], {
+      queryParams: { email: user.email }
     });
   }
 }

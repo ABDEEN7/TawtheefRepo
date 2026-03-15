@@ -100,7 +100,7 @@ export class MajorsSkillsManagementService {
     return this.http.get<SkillListItemModel[]>(this.endpoints.majorSkillsManagement.lookups.skillTypes);
   }
 
-  getSubMajorsPaged(filters: MajorFiltersModel & { parentMajorId: string }): Observable<PaginatedResult<MajorListItemModel>>{
+  getSubMajorsPaged(filters: MajorFiltersModel & { parentMajorId?: string }): Observable<PaginatedResult<MajorListItemModel>>{
     return this.http.get<PaginatedResult<MajorListItemModel>>(this.endpoints.majorSkillsManagement.majors.sub_list, filters);
   }
 

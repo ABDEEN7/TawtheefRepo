@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
@@ -140,6 +140,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             CandidateType = localization.GetLocalizedName(profile.CandidateType),
             TargetEntity = localization.GetLocalizedName(profile.TargetEntity),
             Profile = profileData,
+            ProfileStatus = (int)profile.Status,
             Sections = sections
         };
 

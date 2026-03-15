@@ -143,12 +143,8 @@ export class MajorsSkillsManagementFacade {
 
   loadSubMajors() {
     const parentId = this.store.subMajorFilters().parentMajorId || this.store.majorSkillFilters().parentMajorId;
-    if (!parentId) {
-      this.store.setSubMajorsResult(null);
-      return;
-    }
 
-    this.api.getSubMajorsPaged({ ...this.store.subMajorFilters(), parentMajorId: parentId }).subscribe({
+    this.api.getSubMajorsPaged({ ...this.store.subMajorFilters(), parentMajorId: parentId || undefined }).subscribe({
       next: res => this.store.setSubMajorsResult(res)
     });
   }
