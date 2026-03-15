@@ -103,7 +103,7 @@ export class StepReviewComponent {
         });
       },
       error: (err: unknown) => {
-        this.errorText.set(typeof err === 'string' ? err : 'wizard.review.error');
+        this.errorText.set(typeof err === 'string' ? err : 'wizard.review.errorGeneric');
       }
     });
   }

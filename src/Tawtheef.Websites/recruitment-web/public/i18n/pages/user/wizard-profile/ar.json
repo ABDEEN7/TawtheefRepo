@@ -263,7 +263,7 @@
   "wizard.review.title": "المراجعة",
   "wizard.review.missingWarningTitle": "هناك بعض الحقول الناقصة قبل الحفظ النهائي:",
   "wizard.review.success": "تم حفظ ملفك بنجاح.",
-  "wizard.review.errorGeneric": "فشل الإرسال، حاول مرة أخرى.",
+  "wizard.review.errorGeneric": "حدث خطاء اثناء عملية الإرسال، حاول مرة أخرى.",
   "wizard.review.saving": "جاري الحفظ...",
   "wizard.table.actions": "الإجراءات",
   "wizard.table.noRows": "لا توجد بيانات للعرض.",

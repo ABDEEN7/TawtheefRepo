@@ -1,6 +1,7 @@
 using FluentResults;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
 
@@ -36,7 +37,7 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
 
     public Result ValidatePrerequisites(UserProfile profile, Guid candidateTypeId)
     {
-        var candidateTypeIntegrity = EnsureCandidateTypeIntegrity(profile.CandidateTypeId, candidateTypeId);
+        var candidateTypeIntegrity = EnsureCandidateTypeIntegrity(profile, candidateTypeId);
         if (candidateTypeIntegrity.IsFailed)
             return candidateTypeIntegrity;
 
@@ -142,9 +143,17 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
         return Result.Ok();
     }
 
-    private static Result EnsureCandidateTypeIntegrity(Guid? existingCandidateTypeId, Guid incomingCandidateTypeId)
+    private static Result EnsureCandidateTypeIntegrity(UserProfile profile, Guid incomingCandidateTypeId)
     {
-        if (existingCandidateTypeId != Guid.Empty && existingCandidateTypeId != incomingCandidateTypeId)
+        if (profile.CandidateTypeId == incomingCandidateTypeId)
+            return Result.Ok();
+
+        // Mirror the logic in SaveProfilePrereqHandler:
+        // Only block if it's a locked provider AND the type is Qatari.
+        var provider = profile.Provider?.ToLowerInvariant();
+        var isLockedProvider = provider == "qatarpass" || provider == "qatarresidentotp";
+
+        if (isLockedProvider && profile.CandidateTypeId == CandidateTypeIds.Qatari)
             return Result.Fail(ErrorsCodes.CandidateTypeChangeNotAllowed);
 
         return Result.Ok();

@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -290,7 +290,11 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.BirthDate));
             ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.NationalityId));
             ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.GenderId));
-            ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
+            var candidateTypeProperty = entry.Property(nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
+            if (candidateTypeProperty.OriginalValue is Guid originalId && originalId == CandidateTypeIds.Qatari)
+            {
+                ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
+            }
         }
     }
 
