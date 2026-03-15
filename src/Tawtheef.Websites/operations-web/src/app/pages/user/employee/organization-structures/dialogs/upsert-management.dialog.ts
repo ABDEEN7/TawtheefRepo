@@ -33,7 +33,6 @@ export interface UpsertManagementDialogData {
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
-    Select,
     RemoteSelectComponent,
   ],
   template: `

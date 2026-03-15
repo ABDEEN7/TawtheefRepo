@@ -11,9 +11,9 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { OrganizationStructuresService } from '../services/organization-structures.service';
-import {Select} from 'primeng/select';
-import {RemoteSelectComponent} from '../../../../../shared/components/remote-select/remote-select';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import { Select } from 'primeng/select';
+import { RemoteSelectComponent } from '../../../../../shared/components/remote-select/remote-select';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
 
 type DialogMode = 'create' | 'edit';
 
@@ -35,7 +35,6 @@ export interface UpsertDepartmentDialogData {
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
-    Select,
     RemoteSelectComponent,
   ],
   template: `
