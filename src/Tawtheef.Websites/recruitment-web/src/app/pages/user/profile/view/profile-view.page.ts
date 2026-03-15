@@ -146,8 +146,7 @@ export class ProfileViewPage {
     return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted;
   }
   get enableChangeMode() {
-    const status = this.profileStatus();
-    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted;
+    return false;
   }
   private readonly basics = rxResource({
     params: () => true,

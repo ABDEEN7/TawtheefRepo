@@ -1,4 +1,4 @@
-﻿using Application.Recruitment.Features.Profile.Policies;
+using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Utils;
@@ -38,7 +39,7 @@ public sealed class ReviseProfilePrereqHandler(
 
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
-        if (!isLockedProvider)
+        if (!isLockedProvider || profile.CandidateTypeId != CandidateTypeIds.Qatari)
             profile.CandidateTypeId = r.CandidateTypeId;
 
         profile.TargetEntityId  = r.TargetEntityId;
@@ -74,10 +75,6 @@ public sealed class ReviseProfilePrereqHandler(
             if (birthResult.IsFailed) return Result.Fail<Unit>(birthResult.Errors);
             profile.BirthdayCertificateId = birthResult.Value;
         }
-        else
-        {
-            profile.BirthdayCertificateId = null;
-        }
 
         // Marriage Certificate
         if (needsMarriageCertificate)
@@ -85,10 +82,6 @@ public sealed class ReviseProfilePrereqHandler(
             var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, ProfileFileCategories.MarriageCertificate);
             if (marriageResult.IsFailed) return Result.Fail<Unit>(marriageResult.Errors);
             profile.MarriageCertificateId = marriageResult.Value;
-        }
-        else
-        {
-            profile.MarriageCertificateId = null;
         }
 
         CleanCandidateTypeDependents();
@@ -99,6 +92,16 @@ public sealed class ReviseProfilePrereqHandler(
 
         void CleanCandidateTypeDependents()
         {
+            if (!needsBirthCertificate)
+            {
+                profile.BirthdayCertificateId = null;
+            }
+
+            if (!needsMarriageCertificate)
+            {
+                profile.MarriageCertificateId = null;
+            }
+
             if (!needsSponsor)
             {
                 profile.SponsorProfile = null;

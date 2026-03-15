@@ -1,4 +1,4 @@
-﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.Policies;
 using MediatR;
 using FluentResults;
@@ -24,9 +24,7 @@ public sealed class SaveProfilePrereqHandler(
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePrereqCommand cmd, CancellationToken ct)
     {
-        var profileResult = await UserProfileLoader.GetSummaryAsync(uow, cmd.UserId, ct);
-        if (profileResult.IsFailed) return Result.Fail<Unit>(profileResult.Errors);
-        var profile = profileResult.Value;
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
         {
             var user = await userManager.FindByIdAsync($"{cmd.UserId}");
@@ -86,10 +84,6 @@ public sealed class SaveProfilePrereqHandler(
             if (birthResult.IsFailed) return Result.Fail<Unit>(birthResult.Errors);
             profile.BirthdayCertificateId = birthResult.Value;
         }
-        else
-        {
-            profile.BirthdayCertificateId = null;
-        }
 
         // Marriage Certificate
         if (needsMarriageCertificate)
@@ -98,19 +92,24 @@ public sealed class SaveProfilePrereqHandler(
             if (marriageResult.IsFailed) return Result.Fail<Unit>(marriageResult.Errors);
             profile.MarriageCertificateId = marriageResult.Value;
         }
-        else
-        {
-            profile.MarriageCertificateId = null;
-        }
 
         CleanCandidateTypeDependents();
-
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 
         void CleanCandidateTypeDependents()
         {
+            if (!needsBirthCertificate)
+            {
+                profile.BirthdayCertificateId = null;
+            }
+
+            if (!needsMarriageCertificate)
+            {
+                profile.MarriageCertificateId = null;
+            }
+
             if (!needsSponsor)
             {
                 profile.SponsorProfile = null;

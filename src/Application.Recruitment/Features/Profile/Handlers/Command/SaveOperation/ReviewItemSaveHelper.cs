@@ -83,9 +83,6 @@ internal static class ReviewItemSaveHelper
     private static bool IsAttachmentReplaced(UserProfile profile, ReviewItem item)
     {
         var currentResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
-        if (item.ResourceId is null || currentResourceId is null)
-            return false;
-
-        return currentResourceId.Value != item.ResourceId.Value;
+        return currentResourceId != item.ResourceId;
     }
 }
