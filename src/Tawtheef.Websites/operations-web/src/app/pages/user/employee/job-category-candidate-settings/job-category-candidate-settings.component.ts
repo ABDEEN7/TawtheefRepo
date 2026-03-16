@@ -67,7 +67,7 @@ export class JobCategoryCandidateSettingsComponent implements OnInit {
     });
   }
 
-  private loadSettings(): void {
+  public loadSettings(): void {
     this.service.getSettings().subscribe({
       next: settings => {
         this.form.patchValue(

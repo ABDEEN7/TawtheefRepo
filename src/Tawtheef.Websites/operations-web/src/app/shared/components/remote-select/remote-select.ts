@@ -55,7 +55,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Output() valueChange = new EventEmitter<any>();
 
   @Input() searchUrl!: string;
-  @Input() minChars = 3;
+  @Input() minChars = 1;
   @Input() searchParamName = 'search';
   @Input() idParamName = 'id';
   @Input() pageSize = 10;

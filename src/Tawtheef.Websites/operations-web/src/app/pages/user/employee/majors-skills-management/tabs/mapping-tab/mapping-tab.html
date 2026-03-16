@@ -5,7 +5,15 @@
       <p class="fs-16 m-0">{{ 'MAJORS_SKILLS.MAPPING_HINT' | translate }}</p>
     </div>
 
-    <div class="col-md-6 text-end">
+    <div class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined"
+        icon="pi pi-refresh"
+        (click)="service.refreshMajorSkills()">
+        {{ 'common.refresh' | translate }}
+      </button>
       @if (store.showParentMajorInfoButton()) {
         <button
           pButton

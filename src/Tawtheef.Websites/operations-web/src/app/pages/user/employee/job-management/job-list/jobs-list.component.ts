@@ -102,6 +102,11 @@ export class JobListComponent implements OnInit {
     this.loadJobsWithFilters();
   }
 
+  refresh() {
+    this.loadJobsWithFilters();
+    this.loadStats();
+  }
+
   clearFilters() {
     this.searchQuery.set('');
     this.filterType.set(null);

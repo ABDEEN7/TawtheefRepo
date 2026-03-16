@@ -148,6 +148,10 @@ export class JobCandidatesComponent implements OnInit {
     this.loadCandidatesData();
   }
 
+  refresh() {
+    this.loadFilterSettings();
+  }
+
   viewDetails(candidateId: GUID) {
     if (!this.canViewJobs()) return;
     this.dialogService.open(JobCandidateProfileDialogComponent, {

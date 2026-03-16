@@ -4,6 +4,7 @@ import { routes } from '../../routes/routes';
 import { PermissionService } from '../auth/permission.service';
 import { Permissions } from '../constants/permissions';
 import { SystemRoles } from '../constants/systemRoles';
+import { Sidebar } from "../../layouts/admin/sidebar/sidebar.models";
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
@@ -41,27 +42,12 @@ export class NavigationService {
       return [routes.accessDenied];
     }
 
-    // 1. Dashboard (High Priority for Management roles)
-    if (this.permissionService.hasPermission(Permissions.Dashboard.View)) {
-      return [routes.dashboard(role)];
-    }
+    const item = Sidebar.menuItems.find(item =>
+      this.permissionService.hasPermission(item.permission)
+    );
 
-    // 2. Jobs Management (Alternative for recruiters/staff)
-    if (this.permissionService.hasPermission(Permissions.Jobs.View)) {
-      return [routes.portal.JobList];
-    }
-
-    // 3. Office Users (Alternative for admins)
-    if (this.permissionService.hasPermission(Permissions.OfficeUsers.View)) {
-      return [routes.portal.officeUsersManagement];
-    }
-
-    if (this.permissionService.hasPermission(Permissions.ProfileDistribution.View)) {
-      return [routes.portal.profileDistribution];
-    }
-
-    if (this.permissionService.hasPermission(Permissions.ProfileApproval.View)) {
-      return [routes.portal.approvalProfile];
+    if (item) {
+      return [item.route];
     }
 
     // 4. Default Fallback for users with NO permissions yet (New Users)

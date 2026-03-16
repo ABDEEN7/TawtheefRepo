@@ -4,7 +4,13 @@
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
   <div class="card-body">
-    <h3 class="fw-bold mb-4">{{ 'HOME_CONTENT.TITLE' | translate }}</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <h3 class="fw-bold mb-0">{{ 'HOME_CONTENT.TITLE' | translate }}</h3>
+      <button type="button" class="btn btn-outline-primary" (click)="refresh()">
+        <i class="pi pi-refresh me-1"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
 
     <section class="content-section mb-5">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">

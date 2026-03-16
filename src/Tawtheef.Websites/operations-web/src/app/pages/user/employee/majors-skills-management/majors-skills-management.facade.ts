@@ -161,6 +161,22 @@ export class MajorsSkillsManagementFacade {
     });
   }
 
+  refreshMajorSkills() {
+    this.loadMajorSkills();
+  }
+
+  refreshMainMajors() {
+    this.loadMainMajors();
+  }
+
+  refreshSubMajors() {
+    this.loadSubMajors();
+  }
+
+  refreshSkills() {
+    this.loadSkills();
+  }
+
   // ===================== Mapping Actions =====================
   toggleMajorSkillActive(id: string, isActive: boolean) {
     this.api.changeMajorSkillActivation(id, isActive).subscribe({

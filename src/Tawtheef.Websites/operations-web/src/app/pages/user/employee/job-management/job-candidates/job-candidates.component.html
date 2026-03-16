@@ -10,6 +10,16 @@
           </h3>
           <p class="fs-16 m-0">{{ 'JOB_CANDIDATE_SUBTITLE' | translate }}</p>
         </div>
+        <div class="col-md-4 text-end">
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined"
+            icon="pi pi-refresh"
+            (click)="refresh()">
+            {{ 'common.refresh' | translate }}
+          </button>
+        </div>
       </div>
       <div class="card card-table mb-4">
         <div class="card-body">

@@ -3,16 +3,21 @@
     <div class="card-body">
       <div class="row align-items-center mb-3">
         <div class="col-md-12">
-          <div class="d-flex gap-2">
-            <a (click)="navigateTo()" aria-label="Back"><i class="hgi fs-32 " faDirArrow="start"></i></a>
-            <div>
-              <h3 class="fw-bold m-0">
-                {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
-                <span class="title-sep">-</span>
-              </h3>
-              <p class="fs-16 m-0">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 w-100">
+            <div class="d-flex gap-2">
+              <a (click)="navigateTo()" aria-label="Back"><i class="hgi fs-32 " faDirArrow="start"></i></a>
+              <div>
+                <h3 class="fw-bold m-0">
+                  {{ 'JOB_INVITATION_SUMMARY.TITLE' | translate }}
+                  <span class="title-sep">-</span>
+                </h3>
+                <p class="fs-16 m-0">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
+              </div>
             </div>
-
+            <button type="button" class="btn btn-outline-primary" (click)="loadSummaries()">
+              <i class="pi pi-refresh me-1"></i>
+              {{ 'common.refresh' | translate }}
+            </button>
           </div>
 
         </div>

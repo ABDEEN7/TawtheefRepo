@@ -4,7 +4,15 @@
         <h3 class="fw-bold mb-0">{{ 'MAJORS_SKILLS.MAIN_TITLE' | translate }}</h3>
         <p class="fs-16 m-0">{{ 'MAJORS_SKILLS.MAIN_HINT' | translate }}</p>
      </div>
-     <div class="col-md-6 text-end">
+      <div class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined"
+          icon="pi pi-refresh"
+          (click)="service.refreshMainMajors()">
+          {{ 'common.refresh' | translate }}
+        </button>
         <button
           pButton
           type="button"
@@ -12,7 +20,7 @@
           (click)="service.openCreateMajor(null, null)">
           {{ 'MAJORS_SKILLS.CREATE' | translate }}
         </button>
-     </div>
+      </div>
 
 </div>
 <div class="row">

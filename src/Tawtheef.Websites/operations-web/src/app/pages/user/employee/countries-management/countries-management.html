@@ -6,6 +6,10 @@
       <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                  <h3 class="fw-bold">{{ 'COUNTRIES.TITLE' | translate }}</h3>
+                 <button type="button" class="btn btn-outline-primary" (click)="loadCountries()">
+                   <i class="pi pi-refresh me-1"></i>
+                   {{ 'common.refresh' | translate }}
+                 </button>
             </div>
         <div class="card card-table mb-3">
              <div class="card-body">

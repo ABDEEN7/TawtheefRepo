@@ -6,6 +6,10 @@
      <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
             <h3 class="fw-bold">{{ 'USERS.TITLE' | translate }}</h3>
+            <button type="button" class="btn btn-outline-primary" (click)="loadUsers()">
+              <i class="pi pi-refresh me-1"></i>
+              {{ 'common.refresh' | translate }}
+            </button>
           </div>
 
   <div class="card card-table bg-light mb-3">

@@ -1,23 +1,23 @@
-import {DestroyRef, inject, Injectable} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {TranslateService} from '@ngx-translate/core';
-import {DialogService} from 'primeng/dynamicdialog';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
 
-import {NotificationService} from '../../../../core/services/notification.service';
-import {LanguageService} from '../../../../core/services/language.service';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 
-import {OrganizationStructuresStore, OrganizationTabKey} from './organization-structures.store';
-import {OrganizationStructuresService} from './services/organization-structures.service';
-import {SectorListItemModel} from './models/sector-list-item.model';
-import {ManagementListItemModel} from './models/management-list-item.model';
-import {DepartmentListItemModel} from './models/department-list-item.model';
+import { OrganizationStructuresStore, OrganizationTabKey } from './organization-structures.store';
+import { OrganizationStructuresService } from './services/organization-structures.service';
+import { SectorListItemModel } from './models/sector-list-item.model';
+import { ManagementListItemModel } from './models/management-list-item.model';
+import { DepartmentListItemModel } from './models/department-list-item.model';
 
-import {UpsertSectorDialogComponent} from './dialogs/upsert-sector.dialog';
-import {UpsertManagementDialogComponent} from './dialogs/upsert-management.dialog';
-import {UpsertDepartmentDialogComponent} from './dialogs/upsert-department.dialog';
+import { UpsertSectorDialogComponent } from './dialogs/upsert-sector.dialog';
+import { UpsertManagementDialogComponent } from './dialogs/upsert-management.dialog';
+import { UpsertDepartmentDialogComponent } from './dialogs/upsert-department.dialog';
 
 @Injectable()
 export class OrganizationStructuresFacade {
@@ -92,13 +92,6 @@ export class OrganizationStructuresFacade {
     this.api.getSectorLookups().subscribe({
       next: res => {
         this.store.setSectorLookups(res);
-        const first = res[0]?.id ?? '';
-        if (!this.store.managementFilters().sectorId && first) {
-          this.store.updateManagementFilters({ sectorId: first });
-        }
-        if (!this.store.departmentFilters().sectorId && first) {
-          this.store.updateDepartmentFilters({ sectorId: first });
-        }
         if (this.store.managementsInitialized()) {
           this.prepareManagementDefaults(true);
         }
@@ -115,9 +108,9 @@ export class OrganizationStructuresFacade {
       if (updateDepartmentFilters) {
         this.store.updateDepartmentFilters({ managementId: '' });
       }
-      
+
       this.loadManagements();
-      
+
       if (updateDepartmentFilters) {
         this.loadDepartments();
       }
@@ -364,25 +357,27 @@ export class OrganizationStructuresFacade {
     });
   }
 
-  // ======== Helpers ========
-  private prepareManagementDefaults(reloadList = false) {
-    const sectorId = this.store.managementFilters().sectorId || this.store.sectorLookups()[0]?.id || '';
-    if (sectorId) {
-       this.loadManagementLookups(sectorId, true, this.store.departmentsInitialized());
-    }
+  refreshSectors() {
+    this.loadSectors();
+  }
+
+  refreshManagements() {
     this.loadManagements();
   }
 
-  private prepareDepartmentDefaults(reloadList = false) {
-    const sectorId = this.store.departmentFilters().sectorId || this.store.sectorLookups()[0]?.id || '';
-    this.store.updateDepartmentFilters({ sectorId });
+  refreshDepartments() {
+    this.loadDepartments();
+  }
 
-    if (sectorId) {
-      this.loadManagementLookups(sectorId, true, reloadList || this.store.departmentsInitialized());
+  // ======== Helpers ========
+  private prepareManagementDefaults(reloadList = false) {
+    if (reloadList || this.store.managementsInitialized()) {
+      this.loadManagements();
     }
+  }
 
-    const shouldReload = reloadList || this.store.departmentsInitialized();
-    if (shouldReload && !reloadList) {
+  private prepareDepartmentDefaults(reloadList = false) {
+    if (reloadList || this.store.departmentsInitialized()) {
       this.loadDepartments();
     }
   }
