@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.Users.Commands;
+using Application.Operation.Features.Admin.Users.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +20,7 @@ public sealed class UpdateUserRolesCommandHandler(
     {
         var user = await userManager.Users
             .FirstOrDefaultAsync(
-                u => u.Id == request.UserId && u.UserTypeId == UserTypeIds.Employee && !u.IsDeleted,
+                u => u.Id == request.UserId && !u.IsDeleted,
                 cancellationToken);
 
         if (user is null)
@@ -93,7 +93,8 @@ public sealed class UpdateUserRolesCommandHandler(
         }
 
         await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
-
+        await tokenService.RevokeAllAsync(user.Id, cancellationToken);
+        
         return Result.Ok(Unit.Value);
     }
 
