@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -115,6 +115,7 @@ public class TokenService(
         timings["UpdateSetupTotal"] = swSetup.ElapsedMilliseconds;
 
         var buildSw = Stopwatch.StartNew();
+        await ClearUserCacheAsync(user.Id, ct);
         var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
         timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 

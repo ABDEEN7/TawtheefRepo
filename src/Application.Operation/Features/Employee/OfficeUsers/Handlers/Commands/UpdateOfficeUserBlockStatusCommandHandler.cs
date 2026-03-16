@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.OfficeUsers.Commands;
+using Application.Operation.Features.Employee.OfficeUsers.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,8 @@ namespace Application.Operation.Features.Employee.OfficeUsers.Handlers.Commands;
 
 public sealed class UpdateOfficeUserBlockStatusCommandHandler(
     UserManager<User> userManager,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    ITokenService tokenService)
     : IRequestHandler<UpdateOfficeUserBlockStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
@@ -45,6 +46,15 @@ public sealed class UpdateOfficeUserBlockStatusCommandHandler(
         var updateResult = await userManager.UpdateAsync(officeUser);
         if (!updateResult.Succeeded)
             return Result.Fail<Unit>(ErrorsCodes.OfficeAdminCreationFailed);
+
+        if (officeUser.IsBlocked)
+        {
+            await tokenService.RevokeAllAsync(officeUser.Id, cancellationToken);
+        }
+        else
+        {
+            await tokenService.ClearUserCacheAsync(officeUser.Id, cancellationToken);
+        }
 
         return Result.Ok(Unit.Value);
     }
