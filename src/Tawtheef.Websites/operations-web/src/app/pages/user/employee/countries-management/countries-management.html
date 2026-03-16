@@ -1,112 +1,90 @@
-<div
-  class="card card-table"
-  i18nNamespace="pages/admin/countries-management"
-  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+<div class="card card-table" i18nNamespace="pages/admin/countries-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
   [class.table-rtl]="isRtl()">
-      <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                 <h3 class="fw-bold">{{ 'COUNTRIES.TITLE' | translate }}</h3>
-                 <button type="button" class="btn btn-outline-primary" (click)="loadCountries()">
-                   <i class="pi pi-refresh me-1"></i>
-                   {{ 'common.refresh' | translate }}
-                 </button>
-            </div>
-        <div class="card card-table mb-3">
-             <div class="card-body">
-                  <div class="row g-3">
-                      <div class="col-md-4">
-                        <label class="form-label">{{ 'COUNTRIES.SEARCH_NAME' | translate }}</label>
-                        <input type="text"
-                              class="form-control"
-                              [(ngModel)]="nameFilter"
-                              (input)="this.onSearchChange()"
-                              [placeholder]="'COUNTRIES.SEARCH_NAME_PLACEHOLDER' | translate"/>
-                      </div>
-                      <div class="col-md-4">
-                        <label class="form-label">{{ 'COUNTRIES.FILTER_STATUS' | translate }}</label>
-                        <p-select
-                          [options]="statusOptions"
-                          [showClear]="true"
-                          [placeholder]="'COUNTRIES.STATUS_ANY' | translate"
-                          name="statusOptions"
-                          (onChange)="onStatusChange($event.value)"
-                          (onClear)="onStatusChange(null)"
-                          [filter]="true"
-                          filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                          [ngModel]="filters().isActive"
-                          optionLabel="name"
-                          optionValue="id"
-                          class="form-select p-0"
-                        >
-                          <ng-template #selectedItem let-option>
-                            {{ option.name | translate }}
-                          </ng-template>
-                          <ng-template #item let-option>
-                            {{ option.name | translate }}
-                          </ng-template>
-                        </p-select>
-                      </div>
-                   </div>
-             </div>
-
-        </div>
-
-        <div class="table-responsive table-wrapper">
-          <table class="table table-bordered table-hover align-middle w-100">
-            <thead class="table-light">
-            <tr>
-              <th>{{ 'COUNTRIES.NAME' | translate }}</th>
-              <th>{{ 'COUNTRIES.ISO_CODE' | translate }}</th>
-              <th>{{ 'COUNTRIES.CODE_ALPHA' | translate }}</th>
-              <th>{{ 'COUNTRIES.DIAL_CODE' | translate }}</th>
-              <th>{{ 'COUNTRIES.STATUS' | translate }}</th>
-              <th>{{ 'COUNTRIES.ACTIONS' | translate }}</th>
-            </tr>
-            </thead>
-
-            <tbody>
-              @if (this.countries().length === 0) {
-                <tr>
-                  <td colspan="6" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
-                    {{ 'NO_RECORDS' | translate }}
-                  </td>
-                </tr>
-              } @else {
-                @for (country of this.countries(); track country.id; let i = $index) {
-                  <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-                    <td>{{ country.name }}</td>
-                    <td>{{ country.additionalData?.['isoCode'] }}</td>
-                    <td>{{ country.additionalData?.['codeAlpha'] }}</td>
-                    <td>+{{ country.code }}</td>
-                    <td>
-                      <span class="pill" [class.success]="country.isActive" [class.soft]="!country.isActive">
-                        {{ country.isActive ? ('COUNTRIES.ACTIVE' | translate) : ('COUNTRIES.INACTIVE' | translate) }}
-                      </span>
-                    </td>
-                    <td class="text-nowrap">
-                      <p-toggle-switch
-                        [ngModel]="country.isActive"
-                        (ngModelChange)="toggleStatus(country)"
-                        [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
-                        tooltipPosition="top"
-                        [attr.aria-label]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)">
-                      </p-toggle-switch>
-                    </td>
-                  </tr>
-                }
-              }
-            </tbody>
-          </table>
-        </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <h3 class="fw-bold">{{ 'COUNTRIES.TITLE' | translate }}</h3>
+      <button type="button" class="btn btn-outline-primary" (click)="loadCountries()">
+        <i class="pi pi-refresh me-1"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
     </div>
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'COUNTRIES.SEARCH_NAME' | translate }}</label>
+            <input type="text" class="form-control" [(ngModel)]="nameFilter" (input)="this.onSearchChange()"
+              [placeholder]="'COUNTRIES.SEARCH_NAME_PLACEHOLDER' | translate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'COUNTRIES.FILTER_STATUS' | translate }}</label>
+            <p-select [options]="statusOptions" [showClear]="true" [placeholder]="'COUNTRIES.STATUS_ANY' | translate"
+              name="statusOptions" (onChange)="onStatusChange($event.value)" (onClear)="onStatusChange(null)"
+              [filter]="true" filterBy="additionalData.nameAr,additionalData.nameEn,name" [ngModel]="filters().isActive"
+              optionLabel="name" optionValue="id" class="form-select p-0">
+              <ng-template #selectedItem let-option>
+                {{ option.name | translate }}
+              </ng-template>
+              <ng-template #item let-option>
+                {{ option.name | translate }}
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="table-responsive table-wrapper">
+      <table class="table table-bordered table-hover align-middle w-100">
+        <thead class="table-light">
+          <tr>
+            <th>{{ 'COUNTRIES.NAME' | translate }}</th>
+            <th>{{ 'COUNTRIES.ISO_CODE' | translate }}</th>
+            <th>{{ 'COUNTRIES.CODE_ALPHA' | translate }}</th>
+            <th>{{ 'COUNTRIES.NATIONAL_CODE' | translate }}</th>
+            <th>{{ 'COUNTRIES.STATUS' | translate }}</th>
+            <th>{{ 'COUNTRIES.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (this.countries().length === 0) {
+          <tr>
+            <td colspan="6" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+              {{ 'NO_RECORDS' | translate }}
+            </td>
+          </tr>
+          } @else {
+          @for (country of this.countries(); track country.id; let i = $index) {
+          <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
+            <td>{{ country.name }}</td>
+            <td>{{ country.additionalData?.['isoCode'] }}</td>
+            <td>{{ country.additionalData?.['codeAlpha'] }}</td>
+            <td>{{ country.code }}</td>
+            <td>
+              <span class="pill" [class.success]="country.isActive" [class.soft]="!country.isActive">
+                {{ country.isActive ? ('COUNTRIES.ACTIVE' | translate) : ('COUNTRIES.INACTIVE' | translate) }}
+              </span>
+            </td>
+            <td class="text-nowrap">
+              <p-toggle-switch [ngModel]="country.isActive" (ngModelChange)="toggleStatus(country)"
+                [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
+                tooltipPosition="top"
+                [attr.aria-label]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)">
+              </p-toggle-switch>
+            </td>
+          </tr>
+          }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-<div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3" [class.flex-row-reverse]="isRtl()">
-  <app-pagination
-    [currentPage]="filters().pageNumber"
-    [totalItems]="totalItems()"
-    [itemsPerPage]="filters().pageSize"
-    (pageChanged)="onPageChange($event)"
-    (pageSizeChanged)="onPageSizeChange($event)"
-  ></app-pagination>
+<div class="pagination-section d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3"
+  [class.flex-row-reverse]="isRtl()">
+  <app-pagination [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
+    (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
 </div>

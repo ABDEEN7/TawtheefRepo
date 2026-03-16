@@ -9,7 +9,7 @@
   "COUNTRIES.NAME": "Country",
   "COUNTRIES.ISO_CODE": "ISO Code",
   "COUNTRIES.CODE_ALPHA": "Alpha Code",
-  "COUNTRIES.DIAL_CODE": "Dial Code",
+  "COUNTRIES.NATIONAL_CODE": "National code",
   "COUNTRIES.STATUS": "Status",
   "COUNTRIES.ACTIONS": "Actions",
   "COUNTRIES.ACTIVATE": "Activate country",
