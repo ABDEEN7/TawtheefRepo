@@ -234,6 +234,10 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     });
   }
 
+  refresh() {
+    this.loadJobById();
+  }
+
   setActiveTab(tab: JobApprovalTab): void {
     this.activeTab = tab;
     this.cdr.detectChanges();

@@ -70,6 +70,10 @@ export class JobsReadyApplicationComponent {
     });
   }
 
+  refresh() {
+    this.loadJobsWithFilters();
+  }
+
   onFilterChange() {
     this.currentPage.set(1);
     this.loadJobsWithFilters();

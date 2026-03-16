@@ -58,9 +58,13 @@ export class HomeContentManagementComponent implements OnInit {
   isRtl = computed(() => this.currentLang() === 'ar');
 
   ngOnInit(): void {
+    this.refresh();
+    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+  }
+
+  refresh() {
     this.loadSuccessStories();
     this.loadFaqs();
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
 
   loadSuccessStories() {

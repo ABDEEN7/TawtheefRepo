@@ -5,6 +5,16 @@
       <h1 class="title">{{ 'JOB_READY_APPLICATION_AVAILABLE_JOBS' | translate }}</h1>
       <p class="subtitle">{{ 'JOB_READY_APPLICATION_REVIEW_EDIT_JOBS' | translate }}</p>
     </div>
+    <div class="page-header__actions">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined"
+        icon="pi pi-refresh"
+        (click)="refresh()">
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
   </div>
 
   <div class="panel">

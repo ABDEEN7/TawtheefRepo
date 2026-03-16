@@ -3,12 +3,18 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
       <h3 class="fw-bold mb-0">{{ 'OFFICE_USERS.TITLE' | translate }}</h3>
-      <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
-        <button type="button" class="btn btn-primary" (click)="openAddDialog()">
-          <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
-          {{ 'OFFICE_USERS.ADD_USER' | translate }}
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary" (click)="loadUsers()">
+          <i class="pi pi-refresh me-1"></i>
+          {{ 'common.refresh' | translate }}
         </button>
-      </ng-container>
+        <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
+          <button type="button" class="btn btn-primary" (click)="openAddDialog()">
+            <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+            {{ 'OFFICE_USERS.ADD_USER' | translate }}
+          </button>
+        </ng-container>
+      </div>
     </div>
 
     <div class="office-details card card-table mb-4">

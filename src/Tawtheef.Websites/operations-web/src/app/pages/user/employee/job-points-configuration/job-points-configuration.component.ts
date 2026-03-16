@@ -86,7 +86,7 @@ export class JobPointsConfigurationComponent implements OnInit {
     });
   }
 
-  private loadConfiguration(): void {
+  public loadConfiguration(): void {
     this.service.getConfiguration().subscribe({
       next: configuration => {
         this.patchForm(configuration);

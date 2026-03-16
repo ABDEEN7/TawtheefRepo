@@ -5,7 +5,13 @@
   [class.form-rtl]="isRtl()"
 >
     <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"><h3 class="fw-bold mb-0">{{ 'JOB_POINTS_CONFIG.TITLE' | translate }}</h3></div>
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h3 class="fw-bold mb-0">{{ 'JOB_POINTS_CONFIG.TITLE' | translate }}</h3>
+            <button type="button" class="btn btn-outline-primary" (click)="loadConfiguration()">
+              <i class="pi pi-refresh me-1"></i>
+              {{ 'common.refresh' | translate }}
+            </button>
+          </div>
    
           <form [formGroup]="form" class="row g-4">
             <div class="col-md-4">
