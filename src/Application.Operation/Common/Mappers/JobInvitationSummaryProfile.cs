@@ -12,8 +12,6 @@ public class JobInvitationSummaryProfile: IRegister
     {
         config.NewConfig<Job, JobInvitationSummaryDto>()
             .Map(dest => dest.JobId, src => src.Id)
-            .Map(dest => dest.JobName, src => src.JobTitle != null ? src.JobTitle.JobNameAr : string.Empty)
-            .Map(dest => dest.JobName, src => src.JobTitle != null ? src.JobTitle.JobNameEn : string.Empty)
             .Map(dest => dest.JobStatus, src => src.JobStatus!)
             .Map(dest => dest.InvitationCount, src => src.Invitations.Count)
             .Map(dest => dest.ApplicantsCount,
@@ -32,6 +30,7 @@ public class JobInvitationSummaryProfile: IRegister
             .AfterMapping((src, dest) =>
             {
                 var localized = MapContext.Current!.GetService<ILocalizationService>();
+                dest.JobName = (localized.GetCurrentLanguage() == "en" ? src.JobTitle?.JobNameEn : src.JobTitle?.JobNameAr)!;
                 dest.DepartmentName = localized.GetLocalizedName(src.Department);
                 dest.JobCategory = localized.GetLocalizedName(src.JobCategory);
                 var lastBatch = src.Invitations

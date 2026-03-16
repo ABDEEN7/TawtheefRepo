@@ -1,4 +1,4 @@
-﻿using Application.Recruitment.Features.Dashboard.Commands;
+using Application.Recruitment.Features.Dashboard.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;

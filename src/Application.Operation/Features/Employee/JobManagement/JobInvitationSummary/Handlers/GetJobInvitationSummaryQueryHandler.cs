@@ -2,31 +2,85 @@
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
 using MediatR;
 using FluentResults;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Handlers;
 
-public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+public sealed class GetJobInvitationSummaryQueryHandler(
+    IUnitOfWork unitOfWork,
+    ILocalizationService localizationService)
     : IRequestHandler<GetJobInvitationSummaryQuery, IResult<PaginatedResult<JobInvitationSummaryDto>>>
 {
-    public async Task<IResult<PaginatedResult<JobInvitationSummaryDto>>> Handle(GetJobInvitationSummaryQuery query, CancellationToken cancellationToken)
+    public async Task<IResult<PaginatedResult<JobInvitationSummaryDto>>> Handle(
+        GetJobInvitationSummaryQuery query,
+        CancellationToken cancellationToken)
     {
-        var invitations =  await unitOfWork.GetEntityRepository<Tawtheef.Domain.Entities.Recruitment.Job>().DbSet
+        var language = localizationService.GetCurrentLanguage();
+
+        var queryable = unitOfWork
+            .GetEntityRepository<Tawtheef.Domain.Entities.Recruitment.Job>()
+            .DbSet
             .AsNoTracking()
-            .Include(i => i.JobCategory)
-            .Include(i => i.Invitations)
-            .Include(i => i.Department)
-            .Include(i => i.JobStatus)
             .WhereIf(query.JobCategoryId is not null, i => i.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.DepartmentId == query.DepartmentId)
             .WhereIf(query.JobStatusId is not null, i => i.JobStatusId == query.JobStatusId)
-            .ToPaginatedListAsync<Tawtheef.Domain.Entities.Recruitment.Job, JobInvitationSummaryDto>(mapper, query, cancellationToken);
+            .Select(job => new JobInvitationSummaryDto
+            {
+                JobId = job.Id,
+                JobStatus = new DropdownOptions()
+                {
+                    Id = job.JobStatus!.Id,
+                    Name = language == "en"
+                        ? job.JobStatus.NameEn
+                        : job.JobStatus.NameAr,
+                    BackendName = job.JobStatus.BackendName
+                },
+                InvitationCount = job.Invitations.Count(),
+                ApplicantsCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted),
+                RefusedCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Rejected),
+                NotSeenCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation),
+                ReadCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Read),
+                ExpiredCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Closed),
+                CancelledCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Cancelled),
+                CreateDate = job.CreatedDate,
+                JobName = language == "en"
+                    ? job.JobTitle!.JobNameEn
+                    : job.JobTitle!.JobNameAr,
+                DepartmentName = language == "en"
+                    ? job.Department!.NameEn
+                    : job.Department!.NameAr,
+                JobCategory = language == "en"
+                    ? job.JobCategory!.NameEn
+                    : job.JobCategory!.NameAr,
+                LastBatchNumber = job.Invitations
+                    .OrderByDescending(i => i.CreatedDate)
+                    .Select(i => (Guid?)i.BatchNumber)
+                    .FirstOrDefault(),
+                PreviousBatchInvitations =
+                    job.Invitations
+                        .OrderByDescending(i => i.CreatedDate)
+                        .Select(i => i.BatchNumber)
+                        .Take(1)
+                        .Select(lastBatch =>
+                            job.Invitations.Count(i => i.BatchNumber != lastBatch))
+                        .FirstOrDefault()
+            });
 
-        return Result.Ok(invitations);
+        var result = await queryable.ToPaginatedListAsync(query, cancellationToken);
+
+        return Result.Ok(result);
     }
 }
 

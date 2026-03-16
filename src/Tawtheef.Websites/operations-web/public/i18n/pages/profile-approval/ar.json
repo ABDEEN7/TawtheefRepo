@@ -318,6 +318,7 @@
   "profileApproval.detail.unsavedChangesWarning": "لديك تغييرات غير محفوظة في القسم الحالي.",
   "profileApproval.errors.notesRequired": "الملاحظات مطلوبة لهذا القرار.",
   "profileApproval.detail.actions.title": "إجراءات المراجعة",
+  "profileApproval.detail.actions.view": "عرض",
   "profileApproval.detail.progress.title": "تقدم المراجعة",
   "profileApproval.detail.progress.reviewed": "تمت مراجعة {{ count }} من {{ total }}",
   "profileApproval.detail.progress.pending": "{{ count }} قيد المراجعة",

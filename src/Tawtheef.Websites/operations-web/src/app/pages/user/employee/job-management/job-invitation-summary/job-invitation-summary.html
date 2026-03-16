@@ -100,8 +100,6 @@
                 <th>{{ 'JOB_INVITATION_SUMMARY.READ' | translate }}</th>
                 <th>{{ 'JOB_INVITATION_SUMMARY.EXPIRED' | translate }}</th>
                 <th>{{ 'JOB_INVITATION_SUMMARY.CANCELLED' | translate }}</th>
-                <th>{{ 'JOB_INVITATION_SUMMARY.PREVIOUS_BATCHES' | translate }}</th>
-                <th>{{ 'JOB_INVITATION_SUMMARY.LAST_BATCH' | translate }}</th>
                 <th>{{ 'JOB_INVITATION_SUMMARY.ACTION' | translate }}</th>
               </tr>
             </thead>
@@ -148,12 +146,6 @@
                 </td>
                 <td class="text-center">
                   <span class="pill pill-declined">{{ summary.cancelledCount }}</span>
-                </td>
-                <td class="text-center">
-                  <span class="pill pill-total">{{ summary.previousBatchInvitations }}</span>
-                </td>
-                <td class="text-center">
-                  <span class="pill pill-total">{{ summary.lastBatchNumber ?? '-' }}</span>
                 </td>
 
                 <td>

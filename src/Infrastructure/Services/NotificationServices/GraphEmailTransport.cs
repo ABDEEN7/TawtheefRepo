@@ -77,7 +77,7 @@ public sealed class GraphEmailTransport : IEmailTransport
         {
             var baseUrl = _settings.FrontendBaseUrl ?? _appConfig.FrontendUrl;
             var logoUrl = CombineUrl(baseUrl, _settings.LogoUrl);
-            return html.Replace("logo@tawtheef", logoUrl);
+            return html.Replace("logo@careers", logoUrl);
         }
 
         return html;

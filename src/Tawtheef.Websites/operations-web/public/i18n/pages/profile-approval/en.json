@@ -318,6 +318,7 @@
   "profileApproval.detail.unsavedChangesWarning": "You have unsaved changes in the current section.",
   "profileApproval.errors.notesRequired": "Notes are required for this decision.",
   "profileApproval.detail.actions.title": "Review actions",
+  "profileApproval.detail.actions.view": "View",
   "profileApproval.detail.progress.title": "Review progress",
   "profileApproval.detail.progress.reviewed": "{{ count }} of {{ total }} reviewed",
   "profileApproval.detail.progress.pending": "{{ count }} pending",

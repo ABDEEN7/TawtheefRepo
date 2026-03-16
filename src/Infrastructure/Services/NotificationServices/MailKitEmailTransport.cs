@@ -210,7 +210,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     {
         var message = new MimeMessage();
 
-        message.From.Add(new MailboxAddress("Tawtheef", _settings.EmailUser));
+        message.From.Add(new MailboxAddress("Careers", _settings.EmailUser));
 
         foreach (var recipient in envelope.To)
             message.To.Add(MailboxAddress.Parse(recipient));
@@ -231,7 +231,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 
         AttachLogoSmart(bodyBuilder);
 
-        message.Headers.Add("X-Mailer", "Tawtheef");
+        message.Headers.Add("X-Mailer", "Careers");
         message.Headers.Add("X-Priority", "3");
 
         message.Body = bodyBuilder.ToMessageBody();
@@ -245,7 +245,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         // Try CID first
         if (!string.IsNullOrWhiteSpace(_settings.LogoPath) && File.Exists(_settings.LogoPath))
         {
-            var logoCid = MimeUtils.GenerateMessageId("Tawtheef");
+            var logoCid = MimeUtils.GenerateMessageId("Careers");
 
             var logo = new MimePart("image", "png")
             {
@@ -260,7 +260,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 
             bodyBuilder.LinkedResources.Add(logo);
 
-            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@tawtheef", $"cid:{logoCid}");
+            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@careers", $"cid:{logoCid}");
             return;
         }
 
@@ -268,7 +268,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
         if (!string.IsNullOrWhiteSpace(_settings.LogoUrl))
         {
             var logoUrl = CombineUrl(_appConfiguration.FrontendUrl, _settings.LogoUrl);
-            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@tawtheef", logoUrl);
+            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@careers", logoUrl);
         }
     }
     
