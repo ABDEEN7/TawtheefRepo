@@ -9,7 +9,7 @@
   "COUNTRIES.NAME": "الدولة",
   "COUNTRIES.ISO_CODE": "رمز ISO",
   "COUNTRIES.CODE_ALPHA": "رمز ألفا",
-  "COUNTRIES.DIAL_CODE": "رمز الاتصال",
+  "COUNTRIES.NATIONAL_CODE": "رمز الجنسية",
   "COUNTRIES.STATUS": "الحالة",
   "COUNTRIES.ACTIONS": "الإجراءات",
   "COUNTRIES.ACTIVATE": "تفعيل الدولة",

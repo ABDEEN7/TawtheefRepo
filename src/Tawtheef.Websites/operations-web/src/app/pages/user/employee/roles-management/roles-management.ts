@@ -1,21 +1,21 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {RolesService} from './services/roles.service';
-import {ConfirmDialog} from 'primeng/confirmdialog';
-import {ConfirmationService} from 'primeng/api';
-import {RoleDto} from './models/permission.model';
-import {PermissionDto} from './models/role.model';
-import {Tooltip} from 'primeng/tooltip';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {DialogService} from 'primeng/dynamicdialog';
-import {RoleDialogComponent} from './dialogs/role-dialog/role-dialog.component';
-import {TableModule} from 'primeng/table';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { RolesService } from './services/roles.service';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { RoleDto } from './models/permission.model';
+import { PermissionDto } from './models/role.model';
+import { Tooltip } from 'primeng/tooltip';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { DialogService } from 'primeng/dynamicdialog';
+import { RoleDialogComponent } from './dialogs/role-dialog/role-dialog.component';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-roles-management',
@@ -105,7 +105,7 @@ export class RolesManagement implements OnInit {
       acceptLabel: this.translate.instant('ROLES_DELETE'),
       rejectLabel: this.translate.instant('ROLES_CANCEL'),
       acceptButtonStyleClass: 'btn btn-danger',
-      rejectButtonStyleClass: 'btn btn-outline-secondary',
+      rejectButtonStyleClass: 'btn btn-secondary',
       defaultFocus: 'reject',
       accept: () => {
         this.rolesService.deleteRole(role.id).subscribe({
