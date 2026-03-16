@@ -1,18 +1,19 @@
-import {Component, OnInit, inject, signal, computed} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ButtonModule} from 'primeng/button';
-import {DialogService} from 'primeng/dynamicdialog';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
 
-import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
-import {JobDetailsService} from './services/job-details.service';
-import {NotificationService} from '../../../core/services/notification.service';
-import {routes} from '../../../routes/routes';
-import {JobTabType} from './enums/job-tab-type';
-import {JobApplyConfirmationDialogComponent} from './dialogs/job-apply-confirmation.dialog.component';
-import {CandidateInvitationDetailsService} from './services/candidate-invitation-details.service';
+import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { JobDetailsService } from './services/job-details.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { routes } from '../../../routes/routes';
+import { JobTabType } from './enums/job-tab-type';
+import { JobApplyConfirmationDialogComponent } from './dialogs/job-apply-confirmation.dialog.component';
+import { CandidateInvitationDetailsService } from './services/candidate-invitation-details.service';
+import { EMPTY, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-job-details',
@@ -52,12 +53,18 @@ export class JobDetails implements OnInit {
     if (!invitationId) return;
 
     this.invitationId.set(invitationId);
-    this.detailsService.loadJobDetails(invitationId).subscribe(resp=>{
-      if(resp)
-      {
-        this.detailsService.changeInvitationStatusRead(invitationId).subscribe();
-      }
-    });
+
+    this.detailsService.loadJobDetails(invitationId)
+      .pipe(
+        switchMap(resp => {
+          if (resp) {
+            return this.detailsService.changeInvitationStatusRead(invitationId);
+          }
+          return EMPTY;
+        })
+      )
+      .subscribe();
+
     this.invitationDetailsService.loadInvitation(invitationId);
   }
 
@@ -95,19 +102,19 @@ export class JobDetails implements OnInit {
     this.activeTab = tab;
   }
 
- getTabContent(): { id: string; title: string; icon: string } {
-  const tabsContent = [
-    { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
-    { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
-    { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap' },
-    { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list' },
-    { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
-    { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
-    { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
-  ];
+  getTabContent(): { id: string; title: string; icon: string } {
+    const tabsContent = [
+      { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
+      { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
+      { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap' },
+      { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list' },
+      { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
+      { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
+      { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
+    ];
 
-  return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
-}
+    return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
+  }
 
   canApply(): boolean {
     const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';

@@ -3,7 +3,7 @@
   "auth.login.qatarResidentDialog.otpHint": "Please enter the 6-digit code",
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.login.qatarResidentDialog.resent": "Verification code resent to {{phone}}. Please enter it below.",
-  "auth.login.tawtheef": "Tawtheef",
+  "auth.login.tawtheef": "Careers",
   "auth.login.choose_residency": "Please select your status:",
   "auth.login.mode_resident": "I reside in Qatar",
   "auth.login.mode_nonresident": "I am not residing in Qatar",
@@ -24,9 +24,9 @@
   "auth.login.qatarResidentDialog.errorTitle": "Verification failed",
   "auth.login.qatarResidentDialog.errorDescription": "We could not verify the provided code. Please try again.",
   "auth.login.google_cta": "Sign in with Google (Non-residents)",
-  "auth.login.non_qatar" : "For users not residing in the State of Qatar",
-  "auth.login.welcome" : "Welcome to the Employment Portal",
-  "auth.login.detail" : "A unified platform for managing job applications",
+  "auth.login.non_qatar": "For users not residing in the State of Qatar",
+  "auth.login.welcome": "Welcome to the Employment Portal",
+  "auth.login.detail": "A unified platform for managing job applications",
   "auth.login.footer_owner": "Ministry of Education and Higher Education – IT Department",
   "auth.otp.title": "OTP Verification",
   "auth.otp.subtitle": "Enter your Qatar ID and associated phone number to receive a verification code",
@@ -51,5 +51,5 @@
   "auth.otp.cancel": "Cancel",
   "auth.otp.securityNote": "For security reasons, do not share your verification code with anyone.",
   "auth.otp.footer": "© All rights reserved",
-  "auth.otp.hintPhoneNumber":"The Phone number must be registered under the QID number."
+  "auth.otp.hintPhoneNumber": "The Phone number must be registered under the QID number."
 }

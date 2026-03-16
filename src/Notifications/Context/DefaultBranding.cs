@@ -19,7 +19,7 @@ public sealed class DefaultBranding(
     public string SupportEmail => _emailConfig.DefaultReplyTo ?? _emailConfig.EmailUser;
 
     // Ensure this is a real URL reachable by email clients (https://...)
-    public string LogoUrl => "logo@tawtheef";
+    public string LogoUrl => "logo@careers";
 
     public string WebsiteUrl => _appConfig.FrontendUrl;
 }

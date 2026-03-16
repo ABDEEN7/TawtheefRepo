@@ -43,7 +43,7 @@ public sealed class DurableEmailSender(
         var envelope = new EmailEnvelope(
             to,
             cc,
-            notification.Subject ?? "Tawtheef",
+            notification.Subject ?? "Careers",
             body ?? string.Empty,
             plainText
         );

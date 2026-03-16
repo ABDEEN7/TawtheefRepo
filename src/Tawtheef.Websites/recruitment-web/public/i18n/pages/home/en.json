@@ -1,15 +1,12 @@
 ﻿{
-  "home.title": "Tawtheef",
-
+  "home.title": "Careers",
   "home.hero.kicker": "Qatar • Education Careers",
   "home.hero.title": "We attract talents to build Qatar’s educational future",
   "home.hero.subtitle": "The official recruitment platform of the Ministry of Education and Higher Education — a seamless digital experience.",
   "home.hero.cta1": "Explore Paths",
   "home.hero.cta2": "Login",
-
   "home.about.title": "About the Platform",
   "home.about.desc": "A unified gateway for recruiting educators and administrators — with fairness, transparency, and a smooth digital journey.",
-
   "home.tracks.title": "Career Paths",
   "home.tracks.desc": "Choose the path that fits your expertise — Schools or Ministry departments.",
   "home.tracks.cta": "Explore",
@@ -19,7 +16,6 @@
   "home.tracks.items.ministry.desc": "Specialized roles across MOEHE departments — IT, teacher affairs, planning & evaluation.",
   "home.tracks.mainImageAlt": "Educators meeting",
   "home.tracks.secondaryImageAlt": "Team discussion",
-
   "home.why.title": "Why Us",
   "home.why.desc": "A fair, transparent, fully digital hiring journey.",
   "home.why.items.fair.title": "Fair Selection",
@@ -30,7 +26,6 @@
   "home.why.items.transparent.desc": "Real-time status updates and accurate notifications.",
   "home.why.items.support.title": "Live Support",
   "home.why.items.support.desc": "Helpdesk ready to answer your questions.",
-
   "home.success.title": "Success Stories",
   "home.success.desc": "Tangible results that demonstrate the platform’s impact.",
   "home.success.placementRate": "Candidate placement rate",
@@ -45,7 +40,6 @@
   "home.success.desc1": "Educational Technology Specialist",
   "home.success.desc2": "School Operations Coordinator",
   "home.success.desc3": "Ministry Programs Analyst",
-
   "home.faq.title": "FAQ",
   "home.faq.desc": "Answers to common questions about registration and applications.",
   "home.faq.q1": "How do I create an account and start applying?",

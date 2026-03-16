@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using MediatR;
 using FluentResults;
