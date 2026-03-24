@@ -75,10 +75,10 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
             {
                 Id = JobStatusIds.Approved,
                 BackendName = nameof(JobStatusIds.Approved),
-                NameEn = "Approved",
-                NameAr = "معتمدة",
-                DescriptionEn = "Job was approved.",
-                DescriptionAr = "تم اعتماد الوظيفة.",
+                NameEn = "Pending Points Approval",
+                NameAr = "قيد اعتماد النقاط",
+                DescriptionEn = "Job is pending points approval.",
+                DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
                 DisplayOrder = 6
             },
             new JobStatus

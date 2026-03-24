@@ -1,10 +1,13 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 
 namespace Tawtheef.Infrastructure.Services.StorageServices;
 
@@ -121,7 +124,7 @@ public sealed class LocalStorageService : IFileStorageService
         if (!blobKey.StartsWith("public/", StringComparison.OrdinalIgnoreCase))
             return Result.Fail<string>(ErrorsCodes.NotPublicResource);
 
-        var url = _publicBaseUrl.TrimEnd('/') + "/" + blobKey["public/".Length..].Replace("\\", "/");
+        var url = _publicBaseUrl.TrimEnd('/') + "/" + Uri.EscapeDataString(blobKey["public/".Length..].Replace("\\", "/"));
         return Result.Ok(url);
     }
 

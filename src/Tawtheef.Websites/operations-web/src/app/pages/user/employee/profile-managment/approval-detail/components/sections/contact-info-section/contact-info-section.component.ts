@@ -8,20 +8,21 @@ import {
   ProfileApprovalItem,
   ReviewStatus,
 } from '../../../../approval-list/models/profile-approval.models';
-import {Ripple} from 'primeng/ripple';
-import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
+import { Ripple } from 'primeng/ripple';
+import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-profile-approval-contact-info-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
+  imports: [CommonModule, Tooltip, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
   templateUrl: './contact-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class ContactInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
   @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
 
   contactFields(): { label: string; value: unknown }[] {
@@ -31,6 +32,11 @@ export class ContactInfoSectionComponent {
       { label: 'profileApproval.detail.snapshot.interviewLocation', value: this.profile.basicInformation.interviewLocation },
       { label: 'profileApproval.detail.snapshot.residenceCountry', value: this.profile.basicInformation.residenceCountry },
       { label: 'profileApproval.detail.snapshot.address', value: this.profile.basicInformation.address },
+
+      { label: 'profileApproval.detail.snapshot.buildingNo', value: this.profile.basicInformation.residenceAddress?.naBuilding },
+      { label: 'profileApproval.detail.snapshot.streetNo', value: this.profile.basicInformation.residenceAddress?.naStreet },
+      { label: 'profileApproval.detail.snapshot.zoneNo', value: this.profile.basicInformation.residenceAddress?.naZone },
+      { label: 'profileApproval.detail.snapshot.unitNo', value: this.profile.basicInformation.residenceAddress?.naUnit },
     ];
 
     return fields.filter(field => this.hasValue(field.value));
@@ -47,9 +53,9 @@ export class ContactInfoSectionComponent {
     );
   }
 
-  preview(url?: string | null): void {
+  preview(url?: string | null, fileName?: string | null): void {
     if (url) {
-      this.viewFile.emit(url);
+      this.viewFile.emit({ url, fileName: fileName || '' });
     }
   }
 

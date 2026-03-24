@@ -40,7 +40,7 @@
                   </td>
                   <td class="text-muted">
                     <div class="d-flex align-items-center gap-2">
-                      <span>{{ r.oldValue || ('profileApproval.detail.notProvided' | translate) }}</span>
+                      <span class="text-truncate d-inline-block" [pTooltip]="r.oldValue" style="max-width: 150px;">{{ r.oldValue || ('profileApproval.detail.notProvided' | translate) }}</span>
                       <button
                         pButton
                         type="button"
@@ -53,7 +53,7 @@
                   </td>
                   <td>
                     <div class="d-flex align-items-center gap-2">
-                      <span>{{ r.newValue || ('profileApproval.detail.notProvided' | translate) }}</span>
+                      <span class="text-truncate d-inline-block" [pTooltip]="r.newValue" style="max-width: 150px;">{{ r.newValue || ('profileApproval.detail.notProvided' | translate) }}</span>
                       <button
                         pButton
                         type="button"

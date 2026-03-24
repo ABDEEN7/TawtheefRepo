@@ -14,10 +14,10 @@ public sealed class AdditionalAttachmentDto
 
 public sealed class ResidenceAddressDto
 {
-    public int BuildingNo { get; set; }
-    public int StreetNo { get; set; }
-    public int ZoneNo { get; set; }
-    public int UnitNo { get; set; }
+    public int naBuilding { get; set; }
+    public int naStreet { get; set; }
+    public int naZone { get; set; }
+    public int naUnit { get; set; }
 
     public Guid ResidenceAddressCertificateId { get; set; }
     public FileRefDto? ResidenceAddressCertificate { get; set; }

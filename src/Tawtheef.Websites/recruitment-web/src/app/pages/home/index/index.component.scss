@@ -1,4 +1,3 @@
-
 .brand-grad {
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
 }
@@ -10,61 +9,130 @@
   border-radius: 999px;
   padding: .7rem 1.25rem;
 
-  &:hover { opacity: .95; color: #fff; }
+  &:hover {
+    opacity: .95;
+    color: #fff;
+  }
 }
 
-.nav-link { color:#fff !important; opacity:.95; &:hover { opacity:1; } }
+.nav-link {
+  color: #fff !important;
+  opacity: .95;
+
+  &:hover {
+    opacity: 1;
+  }
+}
 
 .hero {
-  position: relative; min-height: 45vh; display: grid; place-items: center; color: #fff;
+  position: relative;
+  min-height: 45vh;
+  display: grid;
+  place-items: center;
+  color: #fff;
+
   &::before {
     content: '';
-    position: absolute; inset: 0;
+    position: absolute;
+    inset: 0;
     background: url('../../../../assets/img/home-banner.png?q=80&w=1800&auto=format&fit=crop') center/cover no-repeat;
   }
+
   // &::after {
   //   content: ''; position: absolute; inset: 0;
   //   background: linear-gradient(120deg, rgba(123,30,58,.72), rgba(123,30,58,.45));
   // }
-  .inner { position: relative; z-index: 2; text-align: center; }
-  .lead { opacity: .92; }
+  .inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .lead {
+    opacity: .92;
+  }
 }
 
-.logo-qa { height: 56px; @media (min-width: 992px) { height: 64px; } }
+.logo-qa {
+  height: 56px;
 
-.section { padding: 4rem 0; }
+  @media (min-width: 992px) {
+    height: 64px;
+  }
+}
+
+.section {
+  padding: 4rem 0;
+}
 
 .card-ghost {
   border: 1px solid var(--border);
   border-radius: 24px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 1px 0 rgba(0,0,0,.02);
-  img { display: block; }
-  p{color:rgba(102, 103, 102, 1);}
-   
-}
-.why .card-ghost{
-  &:hover{
-        background-color: var(--brand);
-        .icon-circle{
-          background-color: white;
-          i{color: var(--brand);}
-        }
-        p,h6{color: white;}
-   }
-}
-.icon-circle {
-  width: 54px; height: 54px; border-radius: 8px;
-  display: grid; place-items: center;
-  background: var(--brand); color:#fff;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
+
+  img {
+    display: block;
+  }
+
+  p {
+    color: rgba(102, 103, 102, 1);
+  }
+
 }
 
-.bg-light { background:#F6F6F3 !important; }
-.faq-q { text-decoration: none; color: var(--ink); font-size: 18px; font-weight: 600;}
-.faq-a { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
-.faq-a.open { max-height: 300px; }
-.faq-q .icon{
+.why .card-ghost {
+  &:hover {
+    background-color: var(--brand);
+
+    .icon-circle {
+      background-color: white;
+
+      i {
+        color: var(--brand);
+      }
+    }
+
+    p,
+    h6 {
+      color: white;
+    }
+  }
+}
+
+.icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--brand);
+  color: #fff;
+}
+
+.bg-light {
+  background: #F6F6F3 !important;
+}
+
+.faq-q {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+
+.faq-a.open {
+  max-height: 300px;
+}
+
+.faq-q .icon {
   width: 25px;
   height: 25px;
   background-color: rgba(241, 230, 229, 1);
@@ -77,28 +145,31 @@
 
 
 
-.success{
-  .card-ghost{
+.success {
+  .card-ghost {
     background-color: #F6EDF0;
     border: 0;
-    .icon-circle{
+
+    .icon-circle {
       border-radius: 50%;
     }
   }
+
   .success-story-avatar {
-    width: 76px;
-    height: 76px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 2px solid var(--border);
     object-fit: cover;
     background: #fff;
     display: block;
   }
-} 
+}
 
 .tracks {
   .image-wrapper {
     position: relative;
+
     @media (max-width: 992px) {
       padding-left: 0;
       margin-top: 0;
@@ -106,26 +177,33 @@
       flex-direction: column;
       gap: 2rem;
     }
-    .images{
-        @media (max-width: 992px) {
-           display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            justify-content: center;
-            align-items: center;
-        }
+
+    .images {
+      @media (max-width: 992px) {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        justify-content: center;
+        align-items: center;
+      }
     }
-    .main-image{
-      @media (max-width: 992px) {margin-left: 0; max-width: 50%;}
+
+    .main-image {
+      @media (max-width: 992px) {
+        margin-left: 0;
+        max-width: 50%;
+      }
     }
-    .small-image{
+
+    .small-image {
       position: absolute;
       top: 20%;
       left: 10%;
       border: 0;
+
       @media (max-width: 992px) {
-          width:50%;
-          border: 0;
+        width: 50%;
+        border: 0;
       }
     }
   }
@@ -136,13 +214,15 @@
 .tracks ::ng-deep .p-tablist-nav-button {
   display: none !important;
 }
+
 :host ::ng-deep .p-carousel-indicator-list {
   display: none !important;
 }
 
-:host ::ng-deep .p-carousel{
+:host ::ng-deep .p-carousel {
   position: relative;
 }
+
 :host ::ng-deep .p-carousel-prev-button,
 :host ::ng-deep .p-carousel-next-button {
   position: absolute;
@@ -151,13 +231,15 @@
   height: 40px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(203, 203, 203, 1);
   z-index: 9999;
 }
-:host ::ng-deep .p-carousel-content{
+
+:host ::ng-deep .p-carousel-content {
   margin-bottom: 20px;
 }
+
 :host ::ng-deep .p-carousel-prev-button {
   left: 45%;
 }
@@ -165,18 +247,21 @@
 :host ::ng-deep .p-carousel-next-button {
   left: 50%;
 }
-:host ::ng-deep .p-carousel-prev-button{
-  @media (max-width: 998px) {
-        left: 43%;
-    }
-    @media (max-width: 768px) {
-        left:39%;
-    }
-  
-}
-:host ::ng-deep .p-carousel-next-button{
-    @media (max-width: 1200px) {
-        left: 50%;
 
-    }
+:host ::ng-deep .p-carousel-prev-button {
+  @media (max-width: 998px) {
+    left: 43%;
+  }
+
+  @media (max-width: 768px) {
+    left: 39%;
+  }
+
+}
+
+:host ::ng-deep .p-carousel-next-button {
+  @media (max-width: 1200px) {
+    left: 50%;
+
+  }
 }

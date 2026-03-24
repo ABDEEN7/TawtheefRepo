@@ -12,12 +12,12 @@ import { JobLookupService } from './job-lookup.service';
 import { JobTabStatus } from '../enums/job-tab-status';
 import { JobReviewResponse } from '../models/job-review-response';
 import { JobCopyTemplate } from '../models/job-copy-template.model';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {HttpService} from '../../../../../core/http/http.service';
-import {NotificationService} from '../../../../../core/services/notification.service';
-import {PaginatedRequest} from '../../../../../core/models/paginated-request.model';
-import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
-import {JobStatus} from '../../../../../core/enums/lookups.enum';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { HttpService } from '../../../../../core/http/http.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -201,7 +201,7 @@ export class JobService {
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
     if (!job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
     if (!job.workTypeId) errors.push('VALIDATION.JOB.WORK_TYPE_REQUIRED');
-     if (job.numberOfVacancies <= 0) errors.push('JOB_WIZARD.VALIDATION.MIN_VACANCIES');
+    if (job.numberOfVacancies <= 0) errors.push('JOB_WIZARD.VALIDATION.MIN_VACANCIES');
     if (!job.closingDate || new Date(job.closingDate) <= new Date())
       errors.push('JOB_WIZARD.VALIDATION.FUTURE_DATE_REQUIRED');
     if (job.minimumAge <= 0 || job.maximumAge <= 0 || job.maximumAge <= job.minimumAge)
@@ -347,7 +347,7 @@ export class JobService {
           jobNumber: jobResponse.jobNumber,
           sectorId: jobResponse.sector.id as GUID,
           managementId: jobResponse.management.id as GUID,
-          departmentId: jobResponse.department.id as GUID,
+          departmentId: jobResponse.department?.id as GUID,
           yearsOfExperience: jobResponse.yearsOfExperience,
           jobCategoryId: jobResponse.jobCategory.id as GUID,
           workLocationId: jobResponse.workLocation.id as GUID,
@@ -395,10 +395,10 @@ export class JobService {
   }
 
   getLatestReview(jobId: GUID): Observable<JobReviewResponse> {
-  return this.httpService.get<JobReviewResponse>(this.endpoints.job.getLatestReview(jobId));
+    return this.httpService.get<JobReviewResponse>(this.endpoints.job.getLatestReview(jobId));
   }
   GetJobsCountByStatus(jobStatusId: GUID): Observable<number> {
     const url = `${this.endpoints.job.CountByStatus(jobStatusId)}`;
     return this.httpService.get<number>(url);
-}
+  }
 }

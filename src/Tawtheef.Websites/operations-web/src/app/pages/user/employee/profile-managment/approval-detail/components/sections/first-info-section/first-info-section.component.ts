@@ -8,20 +8,21 @@ import {
   ProfileApprovalItem,
   ReviewStatus
 } from '../../../../approval-list/models/profile-approval.models';
-import {Ripple} from 'primeng/ripple';
-import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
+import { Ripple } from 'primeng/ripple';
+import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-profile-approval-first-info-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
+  imports: [CommonModule, Tooltip, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
   templateUrl: './first-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class FirstInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
   @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
 
   firstInfoFields(): { label: string; value: unknown }[] {
@@ -47,9 +48,9 @@ export class FirstInfoSectionComponent {
     );
   }
 
-  preview(url?: string | null): void {
+  preview(url?: string | null, fileName?: string | null): void {
     if (url) {
-      this.viewFile.emit(url);
+      this.viewFile.emit({ url, fileName: fileName || '' });
     }
   }
 

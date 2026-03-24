@@ -1,0 +1,172 @@
+.file-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--surface-card, #ffffff);
+  border-left: 1px solid var(--surface-border, #e5e7eb);
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.05);
+
+  &.active {
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Toolbar */
+  .viewer-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: var(--surface-ground, #f9fafb);
+    border-bottom: 1px solid var(--surface-border, #e5e7eb);
+    z-index: 10;
+    
+    .toolbar-left {
+      flex: 1;
+      min-width: 0; // Needed for ellipsis in flex
+      .file-name {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-color, #374151);
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+    }
+
+    .toolbar-center {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      
+      .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--surface-card, #ffffff);
+        padding: 0.25rem 0.5rem;
+        border-radius: 2rem;
+        border: 1px solid var(--surface-border, #e5e7eb);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+
+        .zoom-value {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--text-color-secondary, #6b7280);
+          min-width: 45px;
+          text-align: center;
+        }
+
+        button {
+            width: 24px !important;
+            height: 24px !important;
+            padding: 0 !important;
+            i {
+                font-size: 0.75rem;
+            }
+        }
+      }
+    }
+
+    .toolbar-right {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Content Area */
+  .viewer-content {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background: #525659; // Contrast background
+    padding: 20px;
+    
+    .viewer-loading {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 10;
+    }
+    display: flex;
+    justify-content: center;
+
+    .zoom-wrapper {
+        width: 100%;
+        max-width: 900px;
+        transition: transform 0.2s ease-out;
+        will-change: transform;
+    }
+
+    .pdf-container, .image-container, .text-container {
+        width: 100%;
+        height: calc(100vh - 120px);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        
+        iframe {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+    }
+
+    .empty-state {
+        .empty-icon {
+            background: var(--primary-color-faint, #f0f7ff);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--primary-color, #3b82f6);
+            border: 2px dashed var(--primary-color, #3b82f6);
+        }
+        
+        h5 {
+            font-weight: 700;
+            color: var(--text-color, #374151);
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            max-width: 280px;
+            line-height: 1.5;
+        }
+    }
+  }
+}
+
+/* Scrollbar styling for a cleaner look */
+.viewer-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.viewer-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.viewer-content::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+.viewer-content::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}

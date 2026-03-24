@@ -14,7 +14,7 @@
             type="button"
             class="p-button-text"
             icon="pi pi-external-link"
-            (click)="preview(a.file?.url)"
+            (click)="preview(a.file?.url, a.file?.fileName)"
             [label]="'profileApproval.detail.viewFile' | translate"
             [disabled]="!a.file?.url"
           ></button>
@@ -23,7 +23,7 @@
       <div class="detail-grid">
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.attachments.fileName' | translate }}</div>
-          <div class="fw-semibold">{{ a.file?.fileName || '-' }}</div>
+          <div class="fw-semibold text-truncate" [pTooltip]="a.file?.fileName" tooltipPosition="top" style="max-width: 300px;">{{ a.file?.fileName || '-' }}</div>
         </div>
       </div>
       <app-item-inline-review

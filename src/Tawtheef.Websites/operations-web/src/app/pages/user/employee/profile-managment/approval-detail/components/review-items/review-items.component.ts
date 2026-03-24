@@ -18,10 +18,12 @@ type DiffRow = {
   newUrl?: string | null;
 };
 
+import { TooltipModule } from 'primeng/tooltip';
+
 @Component({
   selector: 'app-profile-review-items',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ButtonModule, TagModule],
+  imports: [CommonModule, TranslateModule, ButtonModule, TagModule, TooltipModule],
   templateUrl: './review-items.component.html',
   styleUrls: ['../../profile-approval-detail.page.scss'],
 })
@@ -32,7 +34,7 @@ export class ReviewItemsComponent {
   @Input() items: ProfileApprovalItem[] | null = [];
   @Input() titleKey = '';
   @Output() review = new EventEmitter<{ item: ProfileApprovalItem; action: ReviewAction }>();
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
 
   private readonly diffCache = new Map<string, { oldRaw?: string; newRaw?: string; rows: DiffRow[] | null }>();
 
@@ -151,7 +153,7 @@ export class ReviewItemsComponent {
 
   preview(item: ProfileApprovalItem): void {
     if (item.resourceUrl) {
-      this.viewFile.emit(item.resourceUrl);
+      this.viewFile.emit({ url: item.resourceUrl, fileName: item.title || 'file' });
     }
   }
 
@@ -189,7 +191,7 @@ export class ReviewItemsComponent {
 
   openUrl(url?: string | null): void {
     if (!url) return;
-    this.viewFile.emit(url);
+    this.viewFile.emit({ url, fileName: 'file' });
   }
 
   formatValue(raw?: string): string {

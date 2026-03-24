@@ -30,7 +30,7 @@ public class CreateJobCommandHandler(
         var job = request.Job.Adapt<JobEntity>();
         job.ChangeStatus(JobStatusIds.Draft);
         job.AddDomainEvent(new JobCreatedDomainEvent(job, DateTimeOffset.UtcNow));
-        var result = await jobRepository.Repository.AddAsync(job);
+        var result = await jobRepository.Repository.AddAsync(job, cancellationToken);
         if (result.IsFailed)
             return Result.Fail<Guid>(result.Errors);
 

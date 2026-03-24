@@ -5,19 +5,10 @@
     <p class="fs-16 m-0">{{ 'ORG_STRUCTURES.SECTORS_HINT' | translate }}</p>
   </div>
   <div class="col-md-6 text-end d-flex justify-content-end gap-2">
-    <button
-      pButton
-      type="button"
-      class="p-button-outlined"
-      icon="pi pi-refresh"
-      (click)="service.refreshSectors()">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshSectors()">
       {{ 'common.refresh' | translate }}
     </button>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      (click)="service.openCreateSector()">
+    <button pButton type="button" icon="pi pi-plus" (click)="service.openCreateSector()">
       {{ 'ORG_STRUCTURES.CREATE_SECTOR' | translate }}
     </button>
   </div>
@@ -30,25 +21,17 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.SEARCH_LABEL' | translate }}</label>
-            <input
-              class="form-control"
-              [placeholder]="'ORG_STRUCTURES.SEARCH_SECTORS' | translate"
-              [ngModel]="store.sectorFilters().search"
-              (ngModelChange)="service.setSectorSearch($event)" />
+            <input class="form-control" [placeholder]="'ORG_STRUCTURES.SEARCH_SECTORS' | translate"
+              [ngModel]="store.sectorFilters().search" (ngModelChange)="service.setSectorSearch($event)" />
           </div>
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="statusOptions"
-              optionLabel="label"
-              optionValue="value"
-              [showClear]="true"
-              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate"
-              [ngModel]="store.sectorFilters().isActive"
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate" [ngModel]="store.sectorFilters().isActive"
               (ngModelChange)="service.setSectorStatus($event)">
               <ng-template pTemplate="selectedItem" let-selected>
-                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate) }}</span>
+                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate)
+                  }}</span>
               </ng-template>
               <ng-template let-option pTemplate="item">
                 <span>{{ option.label | translate }}</span>
@@ -63,15 +46,11 @@
 
 <div class="table-card rounded overflow-hidden">
   <div class="table-responsive">
-    <p-table
-      [value]="store.sectors()"
-      [rowHover]="true"
-      responsiveLayout="scroll">
+    <p-table [value]="store.sectors()" [rowHover]="true" responsiveLayout="scroll">
 
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
-          <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
         </tr>
@@ -83,28 +62,21 @@
             <div class="fw-semibold">{{ sector.name }}</div>
             <small class="text-muted">{{ sector.description || '' }}</small>
           </td>
-          <td>{{ sector.displayOrder ?? 0 }}</td>
           <td>
-            <span class="pill"
-                  [class.success]="sector.isActive !== false"
-                  [class.warning]="sector.isActive === false">
-              {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
+            <span class="pill" [class.success]="sector.isActive !== false" [class.warning]="sector.isActive === false">
+              {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' |
+              translate) }}
             </span>
           </td>
           <td>
             <div class="action-buttons d-flex">
-              <button
-                type="button"
-                class="btn"
-                (click)="service.openEditSector(sector)"
-                [pTooltip]="'common.edit' | translate"
-                tooltipPosition="top"
+              <button type="button" class="btn" (click)="service.openEditSector(sector)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top"
                 [attr.aria-label]="'common.edit' | translate">
                 <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
               </button>
 
-              <p-toggle-switch
-                [ngModel]="sector.isActive !== false"
+              <p-toggle-switch [ngModel]="sector.isActive !== false"
                 (ngModelChange)="service.toggleSectorActive(sector, $event)"
                 [pTooltip]="(sector.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
                 tooltipPosition="top"
@@ -124,11 +96,7 @@
   </div>
 </div>
 
-<app-pagination
-  [currentPage]="store.sectorFilters().pageNumber"
-  [totalItems]="store.sectorMeta().totalCount"
-  [itemsPerPage]="store.sectorFilters().pageSize"
-  (pageChanged)="service.onSectorPageChange($event)"
-  (pageSizeChanged)="service.onSectorPageSizeChange($event)"
-  class="mt-4">
+<app-pagination [currentPage]="store.sectorFilters().pageNumber" [totalItems]="store.sectorMeta().totalCount"
+  [itemsPerPage]="store.sectorFilters().pageSize" (pageChanged)="service.onSectorPageChange($event)"
+  (pageSizeChanged)="service.onSectorPageSizeChange($event)" class="mt-4">
 </app-pagination>

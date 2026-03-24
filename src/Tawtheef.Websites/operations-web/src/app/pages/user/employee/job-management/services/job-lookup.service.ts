@@ -36,7 +36,7 @@ export class JobLookupService {
   skills = signal<DropdownOptionVM[]>([]);
 
   loadAll(): void {
-    if (this.loaded() || this.loading()) return;
+    if (this.loading()) return;
 
     this.loading.set(true);
 

@@ -36,6 +36,7 @@ import {
   ItemReviewDialogComponent,
 } from '../approval-list/dialogs/item-review-dialog/item-review-dialog';
 import { AvatarUtils } from '../../../../../core/utils/avatar-utils';
+import { FileViewerComponent } from '../../../../../shared/components/file-viewer/file-viewer.component';
 
 @Component({
   selector: 'app-profile-approval-detail-page',
@@ -54,6 +55,7 @@ import { AvatarUtils } from '../../../../../core/utils/avatar-utils';
     ProfileApprovalStepperComponent,
     FaDirArrowDirective,
     ReviewItemsComponent,
+    FileViewerComponent
   ],
   templateUrl: './profile-approval-detail.page.html',
   styleUrl: './profile-approval-detail.page.scss',
@@ -92,6 +94,8 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   draftDirty: Record<number, boolean> = {};
+  selectedFile = signal<{ url: string, name: string, mimeType?: string } | null>(null);
+  loadingFile = signal(false);
   draftInitialized = signal(false);
   imageError = false;
 
@@ -176,8 +180,31 @@ export class ProfileApprovalDetailPage implements OnInit, OnDestroy {
   }
 
 
-  previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => { });
+  async previewFile(event: string | { url: string; fileName: string }): Promise<void> {
+    const resourceUrl = typeof event === 'string' ? event : event.url;
+    const name = typeof event === 'string' 
+      ? (resourceUrl.split('/').pop()?.split('?')[0] || 'file') 
+      : event.fileName;
+    
+    this.closeFileViewer();
+    this.loadingFile.set(true);
+
+    try {
+      const { blobUrl, mimeType } = await this.fileUtils.getBlobUrl(resourceUrl);
+      this.selectedFile.set({ url: blobUrl, name, mimeType });
+    } catch (e) {
+      this.selectedFile.set({ url: resourceUrl, name });
+    } finally {
+      this.loadingFile.set(false);
+    }
+  }
+
+  closeFileViewer(): void {
+    const current = this.selectedFile();
+    if (current?.url && current.url.startsWith('blob:')) {
+      URL.revokeObjectURL(current.url);
+    }
+    this.selectedFile.set(null);
   }
 
   onReviewItemAction(event: { item: ProfileApprovalItem; action: ReviewAction }): void {

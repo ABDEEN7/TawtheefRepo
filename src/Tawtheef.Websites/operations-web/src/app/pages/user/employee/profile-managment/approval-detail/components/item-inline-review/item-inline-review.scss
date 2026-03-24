@@ -1,72 +1,135 @@
 .review-bar {
   margin-top: 1rem;
-  padding: 0.75rem 1rem 0.5rem;
-  border: 1px dashed #ddd;
-  border-radius: 0.75rem;
-  background: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border: 1px dashed #e2e8f0;
+  border-radius: 1rem;
+  background: #f8fafc;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-style: solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
 
   &.status-approved {
-    border-color: #198754;
-    background: #f4f8f5;
+    border-color: #10b981;
+    background: #f0fdf4;
+    border-style: solid;
   }
 
   &.status-rejected {
-    border-color: #dc3545;
-    background: #fdf3f3;
+    border-color: #ef4444;
+    background: #fef2f2;
+    border-style: solid;
   }
 
   &.status-changes {
-    border-color: #ffc107;
-    background: #fff8e6;
+    border-color: #f59e0b;
+    background: #fffbeb;
+    border-style: solid;
   }
 
   &.status-pending {
-    border-color: #b8c2cc;
+    border-color: #cbd5e1;
   }
 
   .review-row {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
     align-items: center;
   }
 
   .status-block {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: center;
+    flex: 1;
+    min-width: 280px;
 
     i {
-      font-size: 1.75rem;
+      font-size: 2rem;
+      flex-shrink: 0;
     }
 
     .status-content {
       display: flex;
       flex-direction: column;
-      gap: 0.1rem;
+      gap: 0.15rem;
+      min-width: 0; // for truncation inside
+
+      .fw-semibold {
+        font-size: 1rem;
+      }
 
       .note {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        color: #6c757d;
-        font-size: 0.9rem;
-        max-width: 420px;
-        word-break: break-word;
+        color: #64748b;
+        font-size: 0.875rem;
+        
+        i {
+          font-size: 0.9rem !important;
+        }
       }
     }
   }
 
   .action-block {
-    flex: 1;
-    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    
+    @media (min-width: 768px) {
+      align-items: flex-end;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
   }
 
   .actions {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    
+    button {
+      border-radius: 0.75rem !important;
+      font-weight: 600 !important;
+      padding: 0.5rem 1rem !important;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .review-bar {
+    padding: 0.75rem;
+    
+    .review-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .status-block {
+      min-width: 0;
+    }
+    
+    .action-block {
+      align-items: stretch;
+    }
+    
+    .actions {
+      button {
+        flex: 1;
+      }
+    }
   }
 }

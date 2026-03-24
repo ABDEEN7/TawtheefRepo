@@ -32,12 +32,20 @@ export class FileUtilsService {
     }
   }
 
-  private isApiSignedDl(url: string): boolean {
+  private isProtectedUrl(url: string): boolean {
+    const apiBase = environment.apiBaseUrl;
+    if (!apiBase || !url) return false;
+
+    // Check if it's a SAS URL (Azure); those should be opened directly as they have their own tokens
+    if (this.isSasUrl(url)) return false;
+
     try {
       const u = new URL(url, window.location.origin);
-      return u.pathname.toLowerCase().endsWith('/api/resources/dl');
+      const base = new URL(apiBase, window.location.origin);
+      // It's protected if it corresponds to our API origin and matches the base path
+      return u.origin === base.origin && u.pathname.startsWith(base.pathname);
     } catch {
-      return url.toLowerCase().includes('/api/resources/dl');
+      return url.toLowerCase().startsWith(apiBase.toLowerCase());
     }
   }
   /**
@@ -73,10 +81,10 @@ export class FileUtilsService {
   async previewUrl(fileUrl: string, fileName = '', forceAuthFetch = false): Promise<void> {
     if (!this.isBrowser) return;
 
-    const isDl = this.isApiSignedDl(fileUrl);
+    const isProtected = this.isProtectedUrl(fileUrl);
 
-    // Local (أو روابط عامة): إذا بدك
-    if (!forceAuthFetch && !isDl) {
+    // If it's a public/storage URL or forceAuthFetch is off (and not a specifically protected link)
+    if (!forceAuthFetch && !isProtected) {
       window.open(fileUrl, '_blank');
       return;
     }
@@ -101,6 +109,21 @@ export class FileUtilsService {
       }
       throw err;
     }
+  }
+
+  /**
+   * Fetches a file as a blob and returns an object URL and mimeType. 
+   * Memory management (revocation) should be handled by the caller.
+   */
+  async getBlobUrl(url: string): Promise<{ blobUrl: string, mimeType: string }> {
+    if (!this.isBrowser) return { blobUrl: '', mimeType: '' };
+    // We use observe: 'response' to potentially get headers, but blob.type is usually enough
+    const blob = await this.http.get<Blob>(url, undefined, { responseType: 'blob' }).toPromise();
+    if (!blob) throw new Error('Blob is null');
+    return {
+      blobUrl: URL.createObjectURL(blob),
+      mimeType: blob.type
+    };
   }
 
   /**

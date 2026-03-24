@@ -39,30 +39,19 @@
       </ng-template>
 
       <div class="file-stack">
-        <ng-container *ngIf="profile.basicInformation.residenceAddress!.residenceAddressCertificate as certificate">
+        <ng-container *ngIf="profile.basicInformation.residenceAddress?.residenceAddressCertificate as certificate">
           <div class="file-entry">
-            <button
-              type="button"
-              class="file-chip"
-              pButton
-              pRipple
-              [label]="
+            <button type="button" class="file-chip" pButton pRipple [label]="
                 ('profileApproval.detail.snapshot.residenceAddressCertificate' | translate) +
                 ': ' +
                 (certificate.fileName || '-')
-              "
-              (click)="preview(certificate.url)"
-              icon="pi pi-external-link"
-              iconPos="right"
-            ></button>
+              " [pTooltip]="('profileApproval.detail.snapshot.residenceAddressCertificate' | translate) + ': ' + (certificate.fileName || '-')"
+              tooltipPosition="top" (click)="preview(certificate.url, certificate.fileName)" icon="pi pi-external-link"
+              iconPos="right"></button>
 
-            <app-item-inline-review
-              *ngIf="reviewItemFor(certificate.resourceId) as review"
-              [reviewItemId]="review.reviewItemId"
-              [status]="review.status"
-              [note]="review.note"
-              (review)="reviewItem.emit($event)"
-            ></app-item-inline-review>
+            <app-item-inline-review *ngIf="reviewItemFor(certificate.resourceId) as review"
+              [reviewItemId]="review.reviewItemId" [status]="review.status" [note]="review.note"
+              (review)="reviewItem.emit($event)"></app-item-inline-review>
           </div>
         </ng-container>
       </div>

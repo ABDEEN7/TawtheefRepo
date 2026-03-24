@@ -356,7 +356,7 @@ export class JobListComponent implements OnInit {
     const STATUS_BADGE_MAP: Record<string, string> = {
       [JobStatus.Draft]: 'pill neutral',
       [JobStatus.PendingApproval]: 'pill warning',
-      [JobStatus.Approved]: 'pill success',
+      [JobStatus.Approved]: 'pill warning',
       [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
