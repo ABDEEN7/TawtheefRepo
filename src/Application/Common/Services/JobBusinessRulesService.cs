@@ -8,7 +8,7 @@ public static class JobBusinessRules
 {
     public static bool AreRequiredBasicFieldsCompleted(
         Guid jobTitleId,
-        Guid sectorId, Guid managementId, Guid departmentId,
+        Guid sectorId, Guid managementId,
         Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
         Guid majorId, int numberOfVacancies, DateTimeOffset closingDate,
         int minimumAge, int maximumAge, int yearsOfExperience)
@@ -16,7 +16,6 @@ public static class JobBusinessRules
         return jobTitleId != Guid.Empty &&
                sectorId != Guid.Empty &&
                managementId != Guid.Empty &&
-               departmentId != Guid.Empty &&
                jobCategoryId != Guid.Empty &&
                workLocationId != Guid.Empty &&
                workTypeId != Guid.Empty &&

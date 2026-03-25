@@ -59,9 +59,10 @@ import {
   LanguagesSectionComponent
 } from '../approval-detail/components/sections/languages-section/languages-section.component';
 import {
-  AttachmentsSectionComponent
+  AttachmentsSectionComponent,
 } from '../approval-detail/components/sections/attachments-section/attachments-section.component';
 
+import { FileViewerComponent } from '../../../../../shared/components/file-viewer/file-viewer.component';
 import { ReviewAction, ReviewItemsComponent } from '../approval-detail/components/review-items/review-items.component';
 import {
   ItemDialogResult,
@@ -100,6 +101,7 @@ import {
     LanguagesSectionComponent,
     AttachmentsSectionComponent,
     ReviewItemsComponent,
+    FileViewerComponent
   ],
   providers: [DialogService],
   templateUrl: './profile-approval-wizard.page.html',
@@ -145,6 +147,8 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   error = signal<string | null>(null);
 
   activeSection = signal<number | null>(null);
+  selectedFile = signal<{ url: string, name: string, mimeType?: string } | null>(null);
+  loadingFile = signal(false);
 
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
@@ -334,8 +338,31 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     }
   }
 
-  previewFile(resourceUrl: string): void {
-    this.fileUtils.previewUrl(resourceUrl, '', false).then(() => { });
+  async previewFile(event: string | { url: string; fileName: string }): Promise<void> {
+    const resourceUrl = typeof event === 'string' ? event : event.url;
+    const name = typeof event === 'string' 
+      ? (resourceUrl.split('/').pop()?.split('?')[0] || 'file') 
+      : event.fileName;
+    
+    this.closeFileViewer();
+    this.loadingFile.set(true);
+
+    try {
+      const { blobUrl, mimeType } = await this.fileUtils.getBlobUrl(resourceUrl);
+      this.selectedFile.set({ url: blobUrl, name, mimeType });
+    } catch (e) {
+      this.selectedFile.set({ url: resourceUrl, name });
+    } finally {
+      this.loadingFile.set(false);
+    }
+  }
+
+  closeFileViewer(): void {
+    const current = this.selectedFile();
+    if (current?.url && current.url.startsWith('blob:')) {
+      URL.revokeObjectURL(current.url);
+    }
+    this.selectedFile.set(null);
   }
 
   onInlineReview(event: { reviewItemId: string; status: ReviewStatus; note?: string | null; specializationRelation?: number | null }): void {

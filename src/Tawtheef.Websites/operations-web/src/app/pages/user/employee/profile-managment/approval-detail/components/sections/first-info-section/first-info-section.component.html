@@ -51,7 +51,9 @@
                 ': ' +
                 (nationalCard.fileName || '-')
               "
-              (click)="preview(nationalCard.url)"
+              (click)="preview(nationalCard.url, nationalCard.fileName)"
+              [pTooltip]="('profileApproval.detail.snapshot.nationalCard' | translate) + ': ' + (nationalCard.fileName || '-')"
+              tooltipPosition="top"
               icon="pi pi-external-link"
               iconPos="right"
             ></button>
@@ -77,7 +79,9 @@
                 ': ' +
                 (resume.fileName || '-')
               "
-              (click)="preview(resume.url)"
+              (click)="preview(resume.url, resume.fileName)"
+              [pTooltip]="('profileApproval.detail.snapshot.resumeAttachment' | translate) + ': ' + (resume.fileName || '-')"
+              tooltipPosition="top"
               icon="pi pi-external-link"
               iconPos="right"
             ></button>
@@ -102,7 +106,9 @@
                 ': ' +
                 (birthdayCertificate.fileName || '-')
               "
-              (click)="preview(birthdayCertificate.url)"
+              (click)="preview(birthdayCertificate.url, birthdayCertificate.fileName)"
+              [pTooltip]="('profileApproval.detail.snapshot.birthdayCertificate' | translate) + ': ' + (birthdayCertificate.fileName || '-')"
+              tooltipPosition="top"
               icon="pi pi-external-link"
               iconPos="right"
             ></button>
@@ -127,7 +133,9 @@
                 ': ' +
                 (marriageCertificate.fileName || '-')
               "
-              (click)="preview(marriageCertificate.url)"
+              (click)="preview(marriageCertificate.url, marriageCertificate.fileName)"
+              [pTooltip]="('profileApproval.detail.snapshot.marriageCertificate' | translate) + ': ' + (marriageCertificate.fileName || '-')"
+              tooltipPosition="top"
               icon="pi pi-external-link"
               iconPos="right"
             ></button>

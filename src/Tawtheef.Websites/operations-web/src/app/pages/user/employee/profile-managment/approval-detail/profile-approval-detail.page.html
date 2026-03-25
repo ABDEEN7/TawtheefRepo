@@ -1,105 +1,105 @@
 <section class="approval-page" i18nNamespace="pages/profile-approval" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
-  <div class="">
-    <div class="wizard-card" *ngIf="detail() as info">
-      <div class="wizard-head d-flex flex-wrap justify-content-between gap-3 align-items-start">
-        <div class="d-flex flex-wrap gap-3 align-items-center">
-          <button pButton type="button" class="p-button-text p-button-sm d-inline" (click)="backToList()">
-            <i pButtonIcon [faDirArrow]="'start'"></i>
-            <span pButtonLabel>{{ 'common.back' | translate }}</span>
-          </button>
+  <div class="main-layout-split" [class.viewer-open]="!!selectedFile()">
+    <div class="content-side flex-grow-1">
+      <div class="">
+        <div class="wizard-card" *ngIf="detail() as info">
+          <div class="wizard-head d-flex flex-wrap justify-content-between gap-3 align-items-start">
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+              <button pButton type="button" class="p-button-text p-button-sm d-inline" (click)="backToList()">
+                <i pButtonIcon [faDirArrow]="'start'"></i>
+                <span pButtonLabel>{{ 'common.back' | translate }}</span>
+              </button>
 
-          <div class="avatar-stack d-inline-flex align-items-center gap-3">
-            <span class="avatar-ring">
-            <p-avatar
-              size="xlarge"
-              shape="circle"
-              [image]="!imageError ? (info.profile.profilePhoto ?? AvatarUtils.build(info.fullName))  : undefined"
-              [label]="imageError || !info.profile.profilePhoto ? AvatarUtils.build(info.fullName) : undefined"
-              (onImageError)="handleImageError()">
-            </p-avatar>
-            </span>
-            <div class="head-title">
-              <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
-              <h2 class="name mb-1">{{ info.fullName || ('profileApproval.detail.placeholder' | translate) }}</h2>
-              <div class="meta d-flex flex-wrap gap-2">
-                <span class="pill" *ngIf="info.profile?.basicInformation?.email">
-                  <i class="pi pi-envelope"></i>
-                  <span>{{ info.profile.basicInformation.email }}</span>
+              <div class="avatar-stack d-inline-flex align-items-center gap-3">
+                <span class="avatar-ring">
+                  <p-avatar size="xlarge" shape="circle"
+                    [image]="!imageError ? (info.profile.profilePhoto ?? AvatarUtils.build(info.fullName))  : undefined"
+                    [label]="imageError || !info.profile.profilePhoto ? AvatarUtils.build(info.fullName) : undefined"
+                    (onImageError)="handleImageError()">
+                  </p-avatar>
                 </span>
-                <span class="pill" *ngIf="info.profile?.basicInformation?.phoneNumber">
-                  <i class="pi pi-phone"></i>
-                  <span>
-                    {{ info.profile.basicInformation.phoneNumber }}
-                  </span>
-                </span>
-                <span class="pill" *ngIf="info.profile?.basicInformation?.residenceCountry">
-                  <i class="pi pi-globe"></i>
-                  <span>
-                    {{ info.profile.basicInformation.residenceCountry }}
-                  </span>
-                </span>
+                <div class="head-title">
+                  <p class="title mb-1 text-uppercase">{{ 'profileApproval.detail.eyebrow' | translate }}</p>
+                  <h2 class="name mb-1">{{ info.fullName || ('profileApproval.detail.placeholder' | translate) }}</h2>
+                  <div class="meta d-flex flex-wrap gap-2">
+                    <span class="pill" *ngIf="info.profile?.basicInformation?.email">
+                      <i class="pi pi-envelope"></i>
+                      <span>{{ info.profile.basicInformation.email }}</span>
+                    </span>
+                    <span class="pill" *ngIf="info.profile?.basicInformation?.phoneNumber">
+                      <i class="pi pi-phone"></i>
+                      <span>
+                        {{ info.profile.basicInformation.phoneNumber }}
+                      </span>
+                    </span>
+                    <span class="pill" *ngIf="info.profile?.basicInformation?.residenceCountry">
+                      <i class="pi pi-globe"></i>
+                      <span>
+                        {{ info.profile.basicInformation.residenceCountry }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="alert alert-info mt-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <div class="flex-grow-1">
-          {{ 'profileApproval.detail.partialNotice' | translate }}
-        </div>
-      </div>
-
-      <app-profile-approval-stepper
-        class="d-block mt-3"
-        [sections]="stepperSections(info)"
-        [activeSection]="activeSection()"
-        (sectionChange)="onStepperChange($event)"
-      ></app-profile-approval-stepper>
-    </div>
-
-    <div class="state" *ngIf="loadingDetail()">
-      <p-progressSpinner strokeWidth="4"></p-progressSpinner>
-      <div class="hint">{{ 'profileApproval.tabs.loading' | translate }}</div>
-    </div>
-
-    <div class="state error" *ngIf="error() && !loadingDetail()">
-      {{ error() }}
-    </div>
-
-    <main class="page-body" *ngIf="detail() as info">
-        <ng-container *ngIf="info.profile as profile">
-          <ng-container *ngFor="let sec of orderedSections(info)">
-          <section class="section-wrap" *ngIf="activeSection() === sec.section">
-            <div class="section-title">
-              <i class="{{ sectionIcon(sec.section) }}"></i>
-              <h3>{{ sectionName(sec.section) | translate }}</h3>
+          <div class="alert alert-info mt-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div class="flex-grow-1">
+              {{ 'profileApproval.detail.partialNotice' | translate }}
             </div>
-            <div class="row g-3">
-              <div class="col-12">
-                <p-card class="approve-card h-100 p-3">
-                  <ng-template pTemplate="header">
-                    <div class="approve-head d-inline-flex align-items-center gap-2">
-                      <i class="pi pi-clipboard"></i>
-                      <h4 class="mb-0">{{ 'profileApproval.detail.reviewItems.title' | translate }}</h4>
-                    </div>
-                  </ng-template>
+          </div>
 
-                  <app-profile-review-items
-                    [items]="sec.items ?? []"
-                    (review)="onReviewItemAction($event)"
-                    (viewFile)="previewFile($event)"
-                  ></app-profile-review-items>
+          <app-profile-approval-stepper class="d-block mt-3" [sections]="stepperSections(info)"
+            [activeSection]="activeSection()" (sectionChange)="onStepperChange($event)"></app-profile-approval-stepper>
+        </div>
 
-                  <div class="text-muted text-center py-3" *ngIf="!sec.items?.length">
-                    {{ 'profileApproval.detail.noItems' | translate }}
+        <div class="state" *ngIf="loadingDetail()">
+          <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+          <div class="hint">{{ 'profileApproval.tabs.loading' | translate }}</div>
+        </div>
+
+        <div class="state error" *ngIf="error() && !loadingDetail()">
+          {{ error() }}
+        </div>
+
+        <main class="page-body" *ngIf="detail() as info">
+          <ng-container *ngIf="info.profile as profile">
+            <ng-container *ngFor="let sec of orderedSections(info)">
+              <section class="section-wrap" *ngIf="activeSection() === sec.section">
+                <div class="section-title">
+                  <i class="{{ sectionIcon(sec.section) }}"></i>
+                  <h3>{{ sectionName(sec.section) | translate }}</h3>
+                </div>
+                <div class="row g-3">
+                  <div class="col-12">
+                    <p-card class="approve-card h-100 p-3">
+                      <ng-template pTemplate="header">
+                        <div class="approve-head d-inline-flex align-items-center gap-2">
+                          <i class="pi pi-clipboard"></i>
+                          <h4 class="mb-0">{{ 'profileApproval.detail.reviewItems.title' | translate }}</h4>
+                        </div>
+                      </ng-template>
+
+                      <app-profile-review-items [items]="sec.items ?? []" (review)="onReviewItemAction($event)"
+                        (viewFile)="previewFile($event)"></app-profile-review-items>
+
+                      <div class="text-muted text-center py-3" *ngIf="!sec.items?.length">
+                        {{ 'profileApproval.detail.noItems' | translate }}
+                      </div>
+                    </p-card>
                   </div>
-                </p-card>
-              </div>
-            </div>
-          </section>
-        </ng-container>
-      </ng-container>
-    </main>
+                </div>
+              </section>
+            </ng-container>
+          </ng-container>
+        </main>
+      </div>
+
+      <div class="viewer-side" *ngIf="selectedFile() as file">
+        <app-file-viewer [url]="file.url" [fileName]="file.name" [loading]="loadingFile()" [mimeType]="file.mimeType || ''" (close)="closeFileViewer()">
+        </app-file-viewer>
+      </div>
+    </div>
   </div>
 </section>

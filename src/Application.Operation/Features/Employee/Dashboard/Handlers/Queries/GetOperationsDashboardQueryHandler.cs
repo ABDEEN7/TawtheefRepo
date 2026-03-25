@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -118,10 +119,8 @@ public sealed class GetOperationsDashboardQueryHandler(
         var jobRepo = repos.Job;
         var jobsQuery = jobRepo.DbSet
             .AsNoTracking()
-            .Where(x => !x.IsDeleted && x.CreatedDate >= range.From && x.CreatedDate <= range.To);
-
-        if (request.DepartmentId.HasValue)
-            jobsQuery = jobsQuery.Where(x => x.DepartmentId == request.DepartmentId);
+            .Where(x => !x.IsDeleted && x.CreatedDate >= range.From && x.CreatedDate <= range.To)
+            .WhereIf(request.DepartmentId.HasValue, x => x.DepartmentId == request.DepartmentId);
 
         var totalJobs = await jobsQuery.CountAsync(ct);
         var activeJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Active || x.JobStatusId == JobStatusIds.Published, ct);

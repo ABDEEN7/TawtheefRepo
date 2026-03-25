@@ -9,7 +9,9 @@
         </div>
         <div class="note" *ngIf="note">
           <i class="pi pi-comment text-body-secondary"></i>
-          <span [pTooltip]="note" tooltipPosition="top">{{ note }}</span>
+          <span [pTooltip]="note" tooltipPosition="top" class="text-truncate" style="max-width: 250px; display: inline-block; vertical-align: middle;">
+            {{ note }}
+          </span>
         </div>
       </div>
     </div>

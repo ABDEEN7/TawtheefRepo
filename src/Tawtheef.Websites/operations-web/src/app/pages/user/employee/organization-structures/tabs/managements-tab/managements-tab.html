@@ -5,19 +5,10 @@
     <p class="fs-16 m-0">{{ 'ORG_STRUCTURES.MANAGEMENTS_HINT' | translate }}</p>
   </div>
   <div class="col-md-6 text-end d-flex justify-content-end gap-2">
-    <button
-      pButton
-      type="button"
-      class="p-button-outlined"
-      icon="pi pi-refresh"
-      (click)="service.refreshManagements()">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshManagements()">
       {{ 'common.refresh' | translate }}
     </button>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      (click)="service.openCreateManagement()">
+    <button pButton type="button" icon="pi pi-plus" (click)="service.openCreateManagement()">
       {{ 'ORG_STRUCTURES.CREATE_MANAGEMENT' | translate }}
     </button>
   </div>
@@ -30,12 +21,8 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <app-remote-select
-              [searchUrl]="store.endpoints.organizationStructures.lookups.sectors"
-              optionLabel="name"
-              optionValue="id"
-              [showClear]="true"
-              [ngModel]="store.managementFilters().sectorId"
+            <app-remote-select [searchUrl]="store.endpoints.organizationStructures.lookups.sectors" optionLabel="name"
+              optionValue="id" [showClear]="true" [ngModel]="store.managementFilters().sectorId"
               (ngModelChange)="service.setManagementSector($event)"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
             </app-remote-select>
@@ -43,26 +30,18 @@
 
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.SEARCH_LABEL' | translate }}</label>
-            <input
-              class="form-control"
-              [placeholder]="'ORG_STRUCTURES.SEARCH_MANAGEMENTS' | translate"
-              [ngModel]="store.managementFilters().search"
-              (ngModelChange)="service.setManagementSearch($event)" />
+            <input class="form-control" [placeholder]="'ORG_STRUCTURES.SEARCH_MANAGEMENTS' | translate"
+              [ngModel]="store.managementFilters().search" (ngModelChange)="service.setManagementSearch($event)" />
           </div>
 
           <div class="col-lg-4 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="statusOptions"
-              optionLabel="label"
-              optionValue="value"
-              [showClear]="true"
-              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate"
-              [ngModel]="store.managementFilters().isActive"
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate" [ngModel]="store.managementFilters().isActive"
               (ngModelChange)="service.setManagementStatus($event)">
               <ng-template pTemplate="selectedItem" let-selected>
-                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate) }}</span>
+                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate)
+                  }}</span>
               </ng-template>
               <ng-template let-option pTemplate="item">
                 <span>{{ option.label | translate }}</span>
@@ -77,16 +56,12 @@
 
 <div class="table-card rounded overflow-hidden">
   <div class="table-responsive">
-    <p-table
-      [value]="store.managements()"
-      [rowHover]="true"
-      responsiveLayout="scroll">
+    <p-table [value]="store.managements()" [rowHover]="true" responsiveLayout="scroll">
 
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'ORG_STRUCTURES.MANAGEMENT_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
-          <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
         </tr>
@@ -99,28 +74,22 @@
             <small class="text-muted">{{ management.description || '' }}</small>
           </td>
           <td>{{ management.sector?.name || '-' }}</td>
-          <td>{{ management.displayOrder ?? 0 }}</td>
           <td>
-            <span class="badge"
-                  [class.success]="management.isActive !== false"
-                  [class.danger]="management.isActive === false">
-              {{ management.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
+            <span class="pill" [class.success]="management.isActive !== false"
+              [class.danger]="management.isActive === false">
+              {{ management.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' |
+              translate) }}
             </span>
           </td>
           <td>
             <div class="action-buttons">
-              <button
-                type="button"
-                class="btn"
-                (click)="service.openEditManagement(management)"
-                [pTooltip]="'common.edit' | translate"
-                tooltipPosition="top"
+              <button type="button" class="btn" (click)="service.openEditManagement(management)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top"
                 [attr.aria-label]="'common.edit' | translate">
                 <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
               </button>
 
-              <p-toggle-switch
-                [ngModel]="management.isActive !== false"
+              <p-toggle-switch [ngModel]="management.isActive !== false"
                 (ngModelChange)="service.toggleManagementActive(management, $event)"
                 [pTooltip]="(management.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
                 tooltipPosition="top"
@@ -140,11 +109,7 @@
   </div>
 </div>
 
-<app-pagination
-  [currentPage]="store.managementFilters().pageNumber"
-  [totalItems]="store.managementMeta().totalCount"
-  [itemsPerPage]="store.managementFilters().pageSize"
-  (pageChanged)="service.onManagementPageChange($event)"
-  (pageSizeChanged)="service.onManagementPageSizeChange($event)"
-  class="mt-4">
+<app-pagination [currentPage]="store.managementFilters().pageNumber" [totalItems]="store.managementMeta().totalCount"
+  [itemsPerPage]="store.managementFilters().pageSize" (pageChanged)="service.onManagementPageChange($event)"
+  (pageSizeChanged)="service.onManagementPageSizeChange($event)" class="mt-4">
 </app-pagination>

@@ -56,7 +56,6 @@
           <thead class="table-light">
             <tr>
               <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
-              <th>{{ 'PROFILE_LOGS.TABLE_SOURCE' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_USER' | translate }}</th>
@@ -75,11 +74,6 @@
             @for (log of logs(); track log.id; let i = $index) {
             <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
               <td>{{ log.createdDate | date:'short' }}</td>
-              <td>
-                <span class="pill neutral">
-                  {{ sourceLabel(log.source) }}
-                </span>
-              </td>
               <td class="text-break fw-semibold">{{ log.actionType }}</td>
               <td class="text-break">{{ log.section || '-' }}</td>
               <td class="text-break">

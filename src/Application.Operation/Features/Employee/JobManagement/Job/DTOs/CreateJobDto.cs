@@ -14,8 +14,7 @@ public class CreateJobDto
     [Required(ErrorMessage = JobMessages.ManagementRequired)]
     public Guid ManagementId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.DepartmentRequired)]
-    public Guid DepartmentId { get; set; }
+    public Guid? DepartmentId { get; set; }
 
     [Required(ErrorMessage = JobMessages.YearsExperienceRequired)]
     [Range(0, 100)]

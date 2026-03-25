@@ -23,7 +23,7 @@ import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-
 export class TrainingSectionComponent {
   @Input() trainingCourses?: any[] | null = null;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
   @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string; specializationRelation?: number | null }>();
 
   protected readonly relationOptions = [
@@ -36,9 +36,9 @@ export class TrainingSectionComponent {
 
   private translate = inject(TranslateService);
 
-  preview(url?: string | null): void {
+  preview(url?: string | null, fileName?: string | null): void {
     if (url) {
-      this.viewFile.emit(url);
+      this.viewFile.emit({ url, fileName: fileName || '' });
     }
   }
 

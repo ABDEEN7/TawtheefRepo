@@ -15,7 +15,7 @@ export interface Job {
   jobNumber?: string;
   sectorId: GUID;
   managementId: GUID;
-  departmentId: GUID;
+  departmentId?: GUID | null;
   yearsOfExperience: number;
   jobCategoryId: GUID;
   workLocationId: GUID;
@@ -33,7 +33,7 @@ export interface Job {
   benefitsEn?: string;
   qualificationsDescriptionAr?: string;
   qualificationsDescriptionEn?: string;
-  jobStatus?:dropdownOptionsModel;
+  jobStatus?: dropdownOptionsModel;
   degrees?: JobDegree[];
   conditions?: JobCondition[];
   responsibilities?: JobResponsibility[];

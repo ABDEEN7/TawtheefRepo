@@ -21,7 +21,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
             dto.JobTitleId,
-            dto.SectorId, dto.ManagementId, dto.DepartmentId,
+            dto.SectorId, dto.ManagementId,
             dto.JobCategoryId, dto.WorkLocationId, dto.WorkTypeId,
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
             dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience))
@@ -184,7 +184,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         {
             if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
                     job.JobTitleId,
-                    job.SectorId, job.ManagementId, job.DepartmentId,
+                    job.SectorId, job.ManagementId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
                     job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
@@ -210,7 +210,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         {
             if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
                     job.JobTitleId,
-                    job.SectorId, job.ManagementId, job.DepartmentId,
+                    job.SectorId, job.ManagementId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
                     job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
@@ -354,9 +354,9 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                     JobMessages.ManagementNotUnderSector));
         }
 
-        if (dto.ManagementId != Guid.Empty && dto.DepartmentId != Guid.Empty)
+        if (dto.ManagementId != Guid.Empty && dto.DepartmentId is not null)
         {
-            var isValid = await IsDepartmentUnderManagement(dto.DepartmentId, dto.ManagementId);
+            var isValid = await IsDepartmentUnderManagement(dto.DepartmentId!.Value, dto.ManagementId);
             if (!isValid)
                 failures.Add(new ValidationFailure(
                     nameof(dto.DepartmentId),

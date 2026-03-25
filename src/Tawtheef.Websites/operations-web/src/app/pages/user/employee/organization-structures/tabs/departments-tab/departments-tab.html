@@ -5,19 +5,10 @@
     <p class="fs-16 m-0">{{ 'ORG_STRUCTURES.DEPARTMENTS_HINT' | translate }}</p>
   </div>
   <div class="col-md-6 text-end d-flex justify-content-end gap-2">
-    <button
-      pButton
-      type="button"
-      class="p-button-outlined"
-      icon="pi pi-refresh"
-      (click)="service.refreshDepartments()">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshDepartments()">
       {{ 'common.refresh' | translate }}
     </button>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      (click)="service.openCreateDepartment()">
+    <button pButton type="button" icon="pi pi-plus" (click)="service.openCreateDepartment()">
       {{ 'ORG_STRUCTURES.CREATE_DEPARTMENT' | translate }}
     </button>
   </div>
@@ -30,13 +21,9 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-3 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-            <app-remote-select
-              [searchUrl]="store.endpoints.organizationStructures.lookups.sectors"
-              optionLabel="name"
-              optionValue="id"
-              [ngModel]="store.departmentFilters().sectorId"
-              (ngModelChange)="service.setDepartmentSector($event)"
-              [showClear]="true"
+            <app-remote-select [searchUrl]="store.endpoints.organizationStructures.lookups.sectors" optionLabel="name"
+              optionValue="id" [ngModel]="store.departmentFilters().sectorId"
+              (ngModelChange)="service.setDepartmentSector($event)" [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate">
             </app-remote-select>
           </div>
@@ -45,40 +32,27 @@
             <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate }}</label>
             <app-remote-select
               [searchUrl]="store.endpoints.organizationStructures.lookups.managements(store.departmentFilters().sectorId)"
-              optionLabel="name"
-              optionValue="id"
-              [requireParent]="true"
-              [parentId]="store.departmentFilters().sectorId"
-              parentParamName="sectorId"
-              [ngModel]="store.departmentFilters().managementId"
-              (ngModelChange)="service.setDepartmentManagement($event)"
-              [showClear]="true"
+              optionLabel="name" optionValue="id" [requireParent]="true" [parentId]="store.departmentFilters().sectorId"
+              parentParamName="sectorId" [ngModel]="store.departmentFilters().managementId"
+              (ngModelChange)="service.setDepartmentManagement($event)" [showClear]="true"
               [placeholder]="'ORG_STRUCTURES.FIELD_MANAGEMENT' | translate">
             </app-remote-select>
           </div>
 
           <div class="col-lg-3 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.SEARCH_LABEL' | translate }}</label>
-            <input
-              class="form-control"
-              [placeholder]="'ORG_STRUCTURES.SEARCH_DEPARTMENTS' | translate"
-              [ngModel]="store.departmentFilters().search"
-              (ngModelChange)="service.setDepartmentSearch($event)" />
+            <input class="form-control" [placeholder]="'ORG_STRUCTURES.SEARCH_DEPARTMENTS' | translate"
+              [ngModel]="store.departmentFilters().search" (ngModelChange)="service.setDepartmentSearch($event)" />
           </div>
 
           <div class="col-lg-3 col-md-6">
             <label class="form-label">{{ 'ORG_STRUCTURES.STATUS_FILTER' | translate }}</label>
-            <p-select
-              class="w-100"
-              [options]="statusOptions"
-              optionLabel="label"
-              optionValue="value"
-              [showClear]="true"
-              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate"
-              [ngModel]="store.departmentFilters().isActive"
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.STATUS_FILTER' | translate" [ngModel]="store.departmentFilters().isActive"
               (ngModelChange)="service.setDepartmentStatus($event)">
               <ng-template pTemplate="selectedItem" let-selected>
-                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate) }}</span>
+                <span>{{ selected?.label ? (selected.label | translate) : ('ORG_STRUCTURES.STATUS_FILTER' | translate)
+                  }}</span>
               </ng-template>
               <ng-template let-option pTemplate="item">
                 <span>{{ option.label | translate }}</span>
@@ -93,17 +67,13 @@
 
 <div class="table-card rounded overflow-hidden">
   <div class="table-responsive">
-    <p-table
-      [value]="store.departments()"
-      [rowHover]="true"
-      responsiveLayout="scroll">
+    <p-table [value]="store.departments()" [rowHover]="true" responsiveLayout="scroll">
 
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'ORG_STRUCTURES.DEPARTMENT_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.MANAGEMENT_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.SECTOR_COLUMN' | translate }}</th>
-          <th>{{ 'ORG_STRUCTURES.ORDER_COLUMN' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.STATUS' | translate }}</th>
           <th>{{ 'ORG_STRUCTURES.ACTIONS' | translate }}</th>
         </tr>
@@ -117,28 +87,22 @@
           </td>
           <td>{{ department.management?.name || '-' }}</td>
           <td>{{ department.sector?.name || '-' }}</td>
-          <td>{{ department.displayOrder ?? 0 }}</td>
           <td>
-            <span class="badge"
-                  [class.success]="department.isActive !== false"
-                  [class.danger]="department.isActive === false">
-              {{ department.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' | translate) }}
+            <span class="pill" [class.success]="department.isActive !== false"
+              [class.danger]="department.isActive === false">
+              {{ department.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' |
+              translate) }}
             </span>
           </td>
           <td>
             <div class="action-buttons">
-              <button
-                type="button"
-                class="btn"
-                (click)="service.openEditDepartment(department)"
-                [pTooltip]="'common.edit' | translate"
-                tooltipPosition="top"
+              <button type="button" class="btn" (click)="service.openEditDepartment(department)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top"
                 [attr.aria-label]="'common.edit' | translate">
                 <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
               </button>
 
-              <p-toggle-switch
-                [ngModel]="department.isActive !== false"
+              <p-toggle-switch [ngModel]="department.isActive !== false"
                 (ngModelChange)="service.toggleDepartmentActive(department, $event)"
                 [pTooltip]="(department.isActive !== false ? 'ORG_STRUCTURES.DEACTIVATE' : 'ORG_STRUCTURES.ACTIVATE') | translate"
                 tooltipPosition="top"
@@ -158,11 +122,7 @@
   </div>
 </div>
 
-<app-pagination
-  [currentPage]="store.departmentFilters().pageNumber"
-  [totalItems]="store.departmentMeta().totalCount"
-  [itemsPerPage]="store.departmentFilters().pageSize"
-  (pageChanged)="service.onDepartmentPageChange($event)"
-  (pageSizeChanged)="service.onDepartmentPageSizeChange($event)"
-  class="mt-4">
+<app-pagination [currentPage]="store.departmentFilters().pageNumber" [totalItems]="store.departmentMeta().totalCount"
+  [itemsPerPage]="store.departmentFilters().pageSize" (pageChanged)="service.onDepartmentPageChange($event)"
+  (pageSizeChanged)="service.onDepartmentPageSizeChange($event)" class="mt-4">
 </app-pagination>

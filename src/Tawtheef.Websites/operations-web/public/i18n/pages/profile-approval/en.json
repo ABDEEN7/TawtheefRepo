@@ -329,5 +329,20 @@
   "profileApproval.status.adminCancelled": "Cancelled by admin",
   "profileApproval.status.inCreation": "In creation",
   "profileApproval.status.unknown": "Unknown status",
-  "profileApproval.wizard.progressLabel": "Step {{current}} of {{total}}"
+  "profileApproval.wizard.progressLabel": "Step {{current}} of {{total}}",
+  "file_viewer.no_title": "File Preview",
+  "file_viewer.zoom_in": "Zoom In",
+  "file_viewer.zoom_out": "Zoom Out",
+  "file_viewer.reset_zoom": "Reset",
+  "file_viewer.download": "Download",
+  "file_viewer.loading_text": "Loading...",
+  "file_viewer.fetching": "Fetching file from server...",
+  "file_viewer.unsupported_preview": "Preview not available for this file type",
+  "file_viewer.select_file": "Select a file to preview",
+  "file_viewer.select_hint": "Click on the view icon next to any file to open it in this space.",
+  "common.close": "Close",
+  "profileApproval.detail.snapshot.buildingNo": "Building No",
+  "profileApproval.detail.snapshot.streetNo": "Street No",
+  "profileApproval.detail.snapshot.zoneNo": "Zone No",
+  "profileApproval.detail.snapshot.unitNo": "Unit No"
 }

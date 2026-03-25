@@ -284,6 +284,10 @@
   "profileApproval.detail.partialReview": "مراجعة جزئية",
   "profileApproval.detail.initialReview": "المراجعة الأولية",
   "profileApproval.detail.snapshot.candidateType": "فئة المرشح",
+  "profileApproval.detail.snapshot.buildingNo": "رقم المبنى",
+  "profileApproval.detail.snapshot.streetNo": "رقم الشارع",
+  "profileApproval.detail.snapshot.zoneNo": "رقم المنطقة",
+  "profileApproval.detail.snapshot.unitNo": "رقم الوحدة",
   "profileApproval.detail.mode.partialTitle": "مراجعة جزئية (التغييرات فقط)",
   "profileApproval.detail.mode.fullTitle": "مراجعة كاملة (الملف بالكامل)",
   "profileApproval.detail.mode.partialHint": "أنت تشاهد فقط العناصر التي تم تعديلها منذ آخر نسخة معتمدة.",
@@ -329,5 +333,16 @@
   "profileApproval.status.adminCancelled": "ملغى من الإدارة",
   "profileApproval.status.inCreation": "قيد الإنشاء",
   "profileApproval.status.unknown": "حالة غير معروفة",
-  "profileApproval.wizard.progressLabel": "الخطوة {{current}} من {{total}}"
+  "profileApproval.wizard.progressLabel": "الخطوة {{current}} من {{total}}",
+  "file_viewer.no_title": "معاينة الملف",
+  "file_viewer.zoom_in": "تكبير",
+  "file_viewer.zoom_out": "تصغير",
+  "file_viewer.reset_zoom": "إعادة ضبط",
+  "file_viewer.download": "تحميل",
+  "file_viewer.loading_text": "جاري التحميل...",
+  "file_viewer.unsupported_preview": "لا يتوفر عرض مسبق لهذا النوع من الملفات",
+  "file_viewer.fetching": "جاري جلب الملف من الخادم...",
+  "file_viewer.select_file": "اختر ملفاً للمعالجة",
+  "file_viewer.select_hint": "انقر على أيقونة العرض بجانب أي ملف لفتحه في هذه المساحة.",
+  "common.close": "إغلاق"
 }

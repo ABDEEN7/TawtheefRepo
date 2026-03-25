@@ -17,12 +17,12 @@ import { ProfileApprovalItem, ReviewStatus } from '../../../../approval-list/mod
 export class QualificationsSectionComponent {
   @Input() qualifications?: any[] | null = null;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
   @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
 
-  preview(url?: string | null): void {
+  preview(url?: string | null, fileName?: string | null): void {
     if (url) {
-      this.viewFile.emit(url);
+      this.viewFile.emit({ url, fileName: fileName || '' });
     }
   }
 

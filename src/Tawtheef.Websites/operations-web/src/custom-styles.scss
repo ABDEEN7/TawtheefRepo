@@ -733,6 +733,19 @@ body.ltr
   box-shadow: none !important;
 }
 
+/* Horizontal scroll for long names in PrimeNG selects */
+.p-select-list-container,
+.p-dropdown-items-wrapper,
+.p-multiselect-items-wrapper {
+  overflow-x: auto !important;
+}
+
+.p-select-option,
+.p-dropdown-item,
+.p-multiselect-item {
+  white-space: nowrap !important;
+}
+
 .form-control:focus,
 .form-select:focus {
   box-shadow: none;

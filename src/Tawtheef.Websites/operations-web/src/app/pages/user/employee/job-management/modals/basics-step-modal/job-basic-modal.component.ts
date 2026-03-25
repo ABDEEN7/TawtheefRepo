@@ -18,6 +18,7 @@ import { JobReviewResponse } from '../../models/job-review-response';
 import { JobResponse } from '../../models/job-response-model';
 import { routes } from '../../../../../../routes/routes';
 import { JobTabStatus } from '../../enums/job-tab-status';
+import { GuidUtils } from '../../../../../../core/utils/guid-utils';
 
 @Component({
   selector: 'app-job-basic-modal',
@@ -54,7 +55,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   form = this.fb.nonNullable.group({
     sectorId: ['', Validators.required],
     managementId: ['', Validators.required],
-    departmentId: ['', Validators.required],
+    departmentId: [GuidUtils.nullGuid],
     yearsOfExperience: [0, [Validators.required, Validators.min(0)]],
     jobTitleId: ['', Validators.required],
     jobCategoryId: ['', Validators.required],
@@ -144,7 +145,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
         this.form.patchValue({
           sectorId: jobResponse.sector.id || '',
           managementId: jobResponse.management.id || '',
-          departmentId: jobResponse.department.id || '',
+          departmentId: jobResponse.department?.id || null,
           yearsOfExperience: jobResponse.yearsOfExperience || 0,
           jobTitleId: jobResponse.jobTitleId || '',
           jobCategoryId: jobResponse.jobCategory.id || '',
@@ -422,7 +423,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     this.form.patchValue({
       sectorId: template.sectorId || '',
       managementId: template.managementId || '',
-      departmentId: template.departmentId || '',
+      departmentId: template.departmentId || null,
       yearsOfExperience: template.yearsOfExperience || 0,
       jobTitleId: template.jobTitleId || '',
       jobCategoryId: template.jobCategoryId || '',

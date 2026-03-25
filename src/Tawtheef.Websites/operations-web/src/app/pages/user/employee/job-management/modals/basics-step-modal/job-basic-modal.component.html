@@ -42,10 +42,6 @@
           formControlName="departmentId" optionLabel="name" optionValue="id" [showClear]="true" [filter]="true"
           filterBy="additionalData.nameAr,additionalData.nameEn,name"
           placeholder="{{ 'JOB_WIZARD.STEPS.BASICS.DEPARTMENT_PLACEHOLDER' | translate }}"></p-select>
-
-        @if (form.controls.departmentId.touched && form.controls.departmentId.invalid) {
-        <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
-        }
       </div>
 
       <!-- yearsOfExperience -->

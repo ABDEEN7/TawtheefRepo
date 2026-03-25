@@ -74,10 +74,10 @@ public sealed class ProfileApprovalMappingProfile : IRegister
         config.NewConfig<ResidenceAddress, ResidenceAddressDto>()
             .Map(dest => dest.ResidenceAddressCertificateId, src => src.CertificateId)
             .Map(dest => dest.ResidenceAddressCertificate, src => src.Certificate)
-            .Map(dest => dest.ZoneNo, src => src.ZoneNo)
-            .Map(dest => dest.StreetNo, src => src.StreetNo)
-            .Map(dest => dest.BuildingNo, src => src.BuildingNo)
-            .Map(dest => dest.UnitNo, src => src.UnitNo);
+            .Map(dest => dest.naZone, src => src.ZoneNo)
+            .Map(dest => dest.naStreet, src => src.StreetNo)
+            .Map(dest => dest.naBuilding, src => src.BuildingNo)
+            .Map(dest => dest.naUnit, src => src.UnitNo);
 
         config.NewConfig<UserProfile, BasicInformationSnapshot>()
             .Map(dest => dest.CandidateType, src => src.CandidateType)

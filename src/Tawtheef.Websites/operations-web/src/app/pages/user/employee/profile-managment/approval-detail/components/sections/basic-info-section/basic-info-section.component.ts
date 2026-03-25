@@ -8,20 +8,21 @@ import {
   ProfileApprovalItem,
   ReviewStatus,
 } from '../../../../approval-list/models/profile-approval.models';
-import {Ripple} from 'primeng/ripple';
-import {ItemInlineReviewComponent} from '../../item-inline-review/item-inline-review';
+import { Ripple } from 'primeng/ripple';
+import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-profile-approval-basic-info-section',
   standalone: true,
-  imports: [CommonModule, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
+  imports: [CommonModule, Tooltip, TranslateModule, CardModule, ButtonModule, Ripple, ItemInlineReviewComponent],
   templateUrl: './basic-info-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class BasicInfoSectionComponent {
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
-  @Output() viewFile = new EventEmitter<string>();
+  @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
   @Output() reviewItem = new EventEmitter<{ reviewItemId: string; status: ReviewStatus; note?: string }>();
   private translate = inject(TranslateService);
 
@@ -60,7 +61,7 @@ export class BasicInfoSectionComponent {
     return value !== null &&
       value !== undefined &&
       `${value}`.toString().trim() !== '' &&
-    value !== '0001-01-01';
+      value !== '0001-01-01';
   }
 
   hasBasicFiles(): boolean {
@@ -68,9 +69,9 @@ export class BasicInfoSectionComponent {
     return !!b?.sponsorCard;
   }
 
-  preview(url?: string | null): void {
+  preview(url?: string | null, fileName?: string | null): void {
     if (url) {
-      this.viewFile.emit(url);
+      this.viewFile.emit({ url, fileName: fileName || '' });
     }
   }
 

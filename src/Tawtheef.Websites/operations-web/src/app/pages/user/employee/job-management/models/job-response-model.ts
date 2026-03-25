@@ -32,10 +32,10 @@ export interface JobResponse {
   qualificationDescriptionAr?: string;
   qualificationDescriptionEn?: string;
   approveNote?: string;
-  rejectNote?:string;
+  rejectNote?: string;
   sector: dropdownOptionsModel;
   management: dropdownOptionsModel;
-  department: dropdownOptionsModel;
+  department?: dropdownOptionsModel;
   jobCategory: dropdownOptionsModel;
   gender?: dropdownOptionsModel;
   workLocation: dropdownOptionsModel;
@@ -43,7 +43,7 @@ export interface JobResponse {
   subMajor?: dropdownOptionsModel;
   workType: dropdownOptionsModel;
   jobStatus: dropdownOptionsModel;
-  jobPoints : JobPointsResponse;
+  jobPoints: JobPointsResponse;
   degrees: JobDegreeResponse[];
   conditions: JobConditionResponse[];
   skills: JobSkillResponse[];

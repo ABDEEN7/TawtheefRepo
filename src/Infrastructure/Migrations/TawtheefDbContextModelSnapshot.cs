@@ -3404,13 +3404,13 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("5c360b07-157c-630a-254a-9c01587d80a8"),
                             BackendName = "Approved",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "تم اعتماد الوظيفة.",
-                            DescriptionEn = "Job was approved.",
+                            DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
+                            DescriptionEn = "Job is pending points approval.",
                             DisplayOrder = 6,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "معتمدة",
-                            NameEn = "Approved"
+                            NameAr = "قيد اعتماد النقاط",
+                            NameEn = "Pending Points Approval"
                         },
                         new
                         {
@@ -6607,7 +6607,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
-                    b.Property<Guid>("DepartmentId")
+                    b.Property<Guid?>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("GenderId")
@@ -11606,8 +11606,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Gender", "Gender")
                         .WithMany()

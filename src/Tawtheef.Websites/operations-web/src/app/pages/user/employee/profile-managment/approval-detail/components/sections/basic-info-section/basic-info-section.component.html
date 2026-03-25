@@ -51,7 +51,9 @@
                 ': ' +
                 (sponsorCard.fileName || '-')
               "
-              (click)="preview(sponsorCard.url)"
+              [pTooltip]="('profileApproval.detail.snapshot.sponsorCard' | translate) + ': ' + (sponsorCard.fileName || '-')"
+              tooltipPosition="top"
+              (click)="preview(sponsorCard.url, sponsorCard.fileName)"
               icon="pi pi-external-link"
               iconPos="right"
             ></button>

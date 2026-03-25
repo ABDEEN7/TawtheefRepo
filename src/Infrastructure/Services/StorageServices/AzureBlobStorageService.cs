@@ -180,7 +180,7 @@ public sealed class AzureBlobStorageService : IFileStorageService
                 return Result.Fail<string>(ErrorsCodes.NotPublicResource);
 
             var relative = BuildBlobName(blobKey)[pubPrefix.Length..];
-            return Result.Ok($"{_publicBaseUrl}/{relative}");
+            return Result.Ok($"{_publicBaseUrl}/{Uri.EscapeDataString(relative)}");
         }
         catch (Exception ex)
         {
