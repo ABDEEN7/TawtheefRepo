@@ -736,14 +736,62 @@ body.ltr
 /* Horizontal scroll for long names in PrimeNG selects */
 .p-select-list-container,
 .p-dropdown-items-wrapper,
-.p-multiselect-items-wrapper {
+.p-multiselect-items-wrapper,
+.p-virtualscroller {
   overflow-x: auto !important;
+  max-width: 100% !important;
+  /* Prevent the container itself from spilling out */
+
+  /* Add explicit scrollbar to be visible */
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #b0b0b0;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #8a1538;
+  }
+}
+
+/* Force the wrapper UL to track the width of the wrapped LIs (except virtual scroller which breaks with max-content) */
+.p-select-list,
+.p-dropdown-items,
+.p-multiselect-items {
+  width: max-content !important;
+  min-width: 100% !important;
+}
+
+.p-virtualscroller-content {
+  width: 100% !important;
 }
 
 .p-select-option,
 .p-dropdown-item,
 .p-multiselect-item {
   white-space: nowrap !important;
+  display: flex !important;
+  align-items: center;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* CRITICAL: Fix for RTL where the rightmost part (the start of the text) is cut off
+   because appendTo="body" loses the dir="rtl" context */
+body.rtl .p-select-overlay,
+body.rtl .p-popover,
+body.rtl .p-dropdown-panel,
+body.rtl .p-multiselect-panel {
+  direction: rtl !important;
+  text-align: right !important;
 }
 
 .form-control:focus,

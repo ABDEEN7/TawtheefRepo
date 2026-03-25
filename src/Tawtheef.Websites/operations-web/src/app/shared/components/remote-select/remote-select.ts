@@ -410,10 +410,13 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       params = params.set(this.parentParamName, String(this.parentId));
     }
 
+    const lang = this.translate.currentLang || this.translate.defaultLang || 'ar';
+    const sortField = lang === 'ar' ? 'nameAr' : 'nameEn';
+
     params = params
       .set('PaginatedRequest.PageNumber', String(pageNumber + 1))
       .set('PaginatedRequest.PageSize', String(pageSize))
-      .set('PaginatedRequest.SortBy', 'name')
+      .set('PaginatedRequest.SortBy', sortField)
       .set('PaginatedRequest.SortDirection', 'asc');
 
     return this.appendExtraParams(params);
@@ -503,7 +506,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
   }
 
-  private getOptionLabelValue(option: any): string {
+  getOptionLabelValue(option: any): string {
     const key = (this.optionLabel ?? '').trim();
     const raw = key.includes('.') ? this.getByPath(option, key) : option?.[key];
     return (raw ?? '').toString().trim();
