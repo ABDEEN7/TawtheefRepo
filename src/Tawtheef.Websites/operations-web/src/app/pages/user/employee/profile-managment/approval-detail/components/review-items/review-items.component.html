@@ -7,14 +7,14 @@
   <div class="review-item-grid">
     <div class="review-card" *ngFor="let item of items">
       <div class="d-flex justify-content-between align-items-start gap-2">
-        <div class="d-flex flex-column gap-1">
-          <div class="fw-semibold">{{ displayTitle(item) }}</div>
-          <small class="text-muted" *ngIf="item.entityName && item.targetType !== ReviewTargetType.Row">
+        <div class="d-flex flex-column gap-1" style="min-width: 0; flex: 1;">
+          <div class="fw-semibold text-break">{{ displayTitle(item) }}</div>
+          <small class="text-muted text-truncate" *ngIf="item.entityName && item.targetType !== ReviewTargetType.Row" [pTooltip]="entityLabel(item.entityName)">
             {{ entityLabel(item.entityName) }}
           </small>
         </div>
 
-        <p-tag [value]="statusLabel(item.status) | translate" [severity]="statusSeverity(item.status)"></p-tag>
+        <p-tag [value]="statusLabel(item.status) | translate" [severity]="statusSeverity(item.status)" class="flex-shrink-0"></p-tag>
       </div>
 
       <div class="mt-2" *ngIf="item.note">
