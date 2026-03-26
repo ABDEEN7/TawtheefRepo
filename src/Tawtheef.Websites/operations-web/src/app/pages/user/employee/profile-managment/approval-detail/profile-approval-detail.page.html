@@ -95,11 +95,11 @@
           </ng-container>
         </main>
       </div>
+    </div>
 
-      <div class="viewer-side" *ngIf="selectedFile() as file">
-        <app-file-viewer [url]="file.url" [fileName]="file.name" [loading]="loadingFile()" [mimeType]="file.mimeType || ''" (close)="closeFileViewer()">
-        </app-file-viewer>
-      </div>
+    <div class="viewer-side" *ngIf="selectedFile() as file">
+      <app-file-viewer [url]="file.url" [fileName]="file.name" [loading]="loadingFile()" [mimeType]="file.mimeType || ''" (close)="closeFileViewer()">
+      </app-file-viewer>
     </div>
   </div>
 </section>
