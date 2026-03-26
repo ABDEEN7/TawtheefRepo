@@ -63,7 +63,7 @@
             <small class="text-muted">{{ sector.description || '' }}</small>
           </td>
           <td>
-            <span class="pill" [class.success]="sector.isActive !== false" [class.warning]="sector.isActive === false">
+            <span class="pill" [class.success]="sector.isActive !== false" [class.danger]="sector.isActive === false">
               {{ sector.isActive === false ? ('ORG_STRUCTURES.INACTIVE' | translate) : ('ORG_STRUCTURES.ACTIVE' |
               translate) }}
             </span>
