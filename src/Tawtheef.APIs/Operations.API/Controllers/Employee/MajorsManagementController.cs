@@ -2,7 +2,6 @@
 using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;

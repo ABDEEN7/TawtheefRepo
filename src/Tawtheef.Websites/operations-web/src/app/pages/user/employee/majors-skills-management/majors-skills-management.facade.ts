@@ -377,7 +377,8 @@ export class MajorsSkillsManagementFacade {
   }
 
   setSkillSearch(v: string) { this.skillSearchChanges$.next(v ?? ''); }
-  setSkillType(v: string)   { this.store.updateSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadSkills(); }
+  setSkillType(v: string) { this.store.updateSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadSkills(); }
+  setSkillGeneral(v: any) { this.store.updateSkillFilters({ isGeneral: !!v, pageNumber: 1 }); this.loadSkills(); }
 
   onMappingLazy(first: number, rows: number) {
     this.store.updateMajorSkillFilters({ pageNumber: Math.floor(first / rows) + 1, pageSize: rows });

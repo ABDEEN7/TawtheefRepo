@@ -1,4 +1,4 @@
-﻿using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Common.Models;
 
 namespace Application.Operation.Features.Employee.ManagementMajorSkill.Skills.DTOs;
 
@@ -8,6 +8,7 @@ public record SkillDetailsDto : DropdownOptions
     public DropdownOptions? SkillType { get; init; }
 
     public bool IsActive { get; init; }
+    public bool IsGeneral { get; init; }
 
     public int UsedInMappingsCount { get; set; }
 }

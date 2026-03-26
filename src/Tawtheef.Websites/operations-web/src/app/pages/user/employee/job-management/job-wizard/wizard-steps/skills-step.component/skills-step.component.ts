@@ -30,9 +30,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
 
   ngOnInit() {
     const currentJob = this.jobService.getCurrentJob();
-    if (currentJob?.subMajorId) {
-      this.lookupsService.loadSkillsByMajor(currentJob.subMajorId);
-    }
+    this.lookupsService.loadSkillsByMajor(currentJob?.subMajorId);
 
     this.form.valueChanges.subscribe(() => {
       this.updateJobData();
@@ -89,9 +87,6 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   // ✅ NEW RULE: valid ONLY if there is at least 1 skill (unless disabled)
   isValid(): boolean {
     if (this.form.disabled) return true;
-
-    if (this.jobSkillsArray.length === 0) return false;
-
     return this.form.valid;
   }
 

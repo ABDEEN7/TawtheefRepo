@@ -53,6 +53,16 @@
                 (ngModelChange)="service.setSkillType($event)">
               </p-select>
             </div>
+            <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+               <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_IS_GENERAL' | translate }}</label>
+               <div class="d-flex align-items-center gap-2">
+                 <p-toggle-switch
+                   [ngModel]="store.skillFilters().isGeneral"
+                   (ngModelChange)="setSkillGeneral($event)">
+                 </p-toggle-switch>
+                 <span class="fs-14">{{ 'MAJORS_SKILLS.FIELD_IS_GENERAL' | translate }}</span>
+               </div>
+            </div>
           </div>
         </div>
       </div>
@@ -78,7 +88,15 @@
 
         <ng-template pTemplate="body" let-skill>
           <tr>
-            <td>{{ skill.name }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span>{{ skill.name }}</span>
+                <span *ngIf="skill.isGeneral" class="pill warning fs-12 px-2 py-0">
+                  <i class="pi pi-star-fill text-warning fs-10 me-1"></i>
+                  {{ 'MAJORS_SKILLS.GENERAL' | translate }}
+                </span>
+              </div>
+            </td>
             <td>{{ skill.skillType?.name || ('MAJORS_SKILLS.NOT_AVAILABLE' | translate) }}</td>
 
             <td>{{ skill.usedInMappingsCount || 0 }}</td>
@@ -96,7 +114,7 @@
                 pButton
                 type="button"
                 class="p-button-outlined p-button-sm"
-                (click)="service.openEditSkill(skill.id)">
+                (click)="service.openEditSkill(skill)">
                 <i class="pi pi-pencil" pButtonIcon></i>
                 <span pButtonLabel>{{'common.edit' |translate}}</span>
               </button>

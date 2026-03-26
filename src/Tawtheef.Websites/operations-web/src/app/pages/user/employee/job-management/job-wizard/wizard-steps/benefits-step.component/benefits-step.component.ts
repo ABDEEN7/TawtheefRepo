@@ -22,8 +22,8 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   note: JobTabReviewNoteResponse | null = null;
 
   readonly form: FormGroup = this.fb.group({
-    benefitsAr: ['', [Validators.required, Validators.maxLength(2000)]],
-    benefitsEn: ['', [Validators.required,Validators.maxLength(2000)]]
+    benefitsAr: ['', [Validators.maxLength(2000)]],
+    benefitsEn: ['', [Validators.maxLength(2000)]]
   });
 
   ngOnInit(): void {
@@ -41,12 +41,12 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   }
 
   isValid(): boolean {
-      return this.form.disabled ? true : this.form.valid;
+    return this.form.disabled ? true : this.form.valid;
   }
 
- override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
-  this.jobData = job;
-  this.note = note;
+  override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
+    this.jobData = job;
+    this.note = note;
     this.form.patchValue({
       benefitsAr: job.benefitsAr || '',
       benefitsEn: job.benefitsEn || ''

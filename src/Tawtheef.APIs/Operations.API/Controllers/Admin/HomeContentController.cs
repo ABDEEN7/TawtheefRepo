@@ -5,7 +5,6 @@ using Application.Operation.Features.Admin.HomeContent.SuccessStories.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
 

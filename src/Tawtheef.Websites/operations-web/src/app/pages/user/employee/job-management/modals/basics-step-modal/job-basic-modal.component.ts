@@ -61,14 +61,21 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
     genderId: ['', Validators.required],
-    majorId: ['', Validators.required],
-    subMajorId: ['', Validators.required],
+    majorId: [GuidUtils.nullGuid],
+    subMajorId: [GuidUtils.nullGuid],
+    degrees: this.fb.control<any[]>([], Validators.required),
     workTypeId: ['', Validators.required],
     numberOfVacancies: [1, [Validators.required, Validators.min(1)]],
     closingDate: this.fb.control<Date | null>(null, [Validators.required]),
     minimumAge: [18, [Validators.required, Validators.min(18)]],
     maximumAge: [60, [Validators.required, Validators.min(18)]],
   });
+
+  private simplifiedDegrees = [
+    'ebf2faa1-5ce6-4a04-9472-2746bfbbd252', // Secondary
+    'f1a31fe6-ba80-46cb-b24b-f402bcb4fdec', // Preparatory
+    '6e453f48-5f2f-4f98-8b76-f416cdd4811b', // Primary
+  ];
 
   majorOptions: any[] = [];
   subMajorOptions: any[] = [];
@@ -90,6 +97,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     }
 
     this.setupSequenceListeners();
+    this.setupDegreeValidationListener();
     if (this.copyTemplate) {
       this.isCopyMode = true;
       this.applyTemplateToForm(this.copyTemplate);
@@ -134,6 +142,52 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       });
   }
 
+  private setupDegreeValidationListener(): void {
+    this.form.controls.degrees.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(degrees => {
+        const needsMajor = !degrees || degrees.length === 0 ||
+          degrees.some(d => !this.simplifiedDegrees.includes(d.degreeId || d)); // handle both {degreeId} and raw ID if any
+
+        if (needsMajor) {
+          this.form.controls.majorId.addValidators(Validators.required);
+          this.form.controls.subMajorId.addValidators(Validators.required);
+        } else {
+          this.form.controls.majorId.removeValidators(Validators.required);
+          this.form.controls.subMajorId.removeValidators(Validators.required);
+        }
+
+        this.form.controls.majorId.updateValueAndValidity({ emitEvent: false });
+        this.form.controls.subMajorId.updateValueAndValidity({ emitEvent: false });
+      });
+  }
+
+  toggleDegree(degreeId: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    const current = this.form.controls.degrees.value || [];
+
+    let updated: any[];
+    if (checked) {
+      updated = [...current, { degreeId: degreeId as GUID }];
+    } else {
+      updated = current.filter(d => (d.degreeId || d) !== degreeId as GUID);
+    }
+
+    this.form.controls.degrees.setValue(updated);
+    this.form.controls.degrees.markAsDirty();
+  }
+
+  isDegreeChecked(degreeId: string): boolean {
+    const degrees = this.form.controls.degrees.value ?? [];
+    return degrees.some(d => (d.degreeId || d) === degreeId);
+  }
+
+  touchDegrees(): void {
+    const c = this.form.controls.degrees;
+    c.markAsTouched();
+    c.updateValueAndValidity({ onlySelf: true });
+  }
+
   private loadJobForEdit(): void {
     if (!this.jobId) return;
 
@@ -151,14 +205,15 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           jobCategoryId: jobResponse.jobCategory.id || '',
           workLocationId: jobResponse.workLocation.id || '',
           genderId: jobResponse.gender?.id || '',
-          majorId: jobResponse.major.id || '',
-          subMajorId: jobResponse.subMajor?.id || '',
+          majorId: jobResponse.major?.id || null,
+          subMajorId: jobResponse.subMajor?.id || null,
           workTypeId: jobResponse.workType.id || '',
           numberOfVacancies: jobResponse.numberOfVacancies || 1,
           closingDate: deadline,
           minimumAge: jobResponse.minimumAge || 18,
-          maximumAge: jobResponse.maximumAge || 60
-        }, { emitEvent: false });
+          maximumAge: jobResponse.maximumAge || 60,
+          degrees: jobResponse.degrees || []
+        }, { emitEvent: true }); // emitEvent: true to trigger degree validation listener
 
 
         this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
@@ -242,7 +297,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       benefitsEn: '',
       qualificationsDescriptionAr: '',
       qualificationsDescriptionEn: '',
-      degrees: [],
+      degrees: formValue.degrees || [],
       conditions: [],
       responsibilities: [],
       skills: [],
@@ -345,7 +400,8 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       numberOfVacancies: formValue.numberOfVacancies,
       closingDate: this.normalizeDate(formValue.closingDate),
       minimumAge: formValue.minimumAge,
-      maximumAge: formValue.maximumAge
+      maximumAge: formValue.maximumAge,
+      degrees: formValue.degrees || []
     };
 
     this.jobService.updateCurrentJobBasics(updateData);
@@ -429,13 +485,14 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       jobCategoryId: template.jobCategoryId || '',
       workLocationId: template.workLocationId || '',
       genderId: template.genderId || '',
-      majorId: template.majorId || '',
-      subMajorId: template.subMajorId || '',
+      majorId: template.majorId || null,
+      subMajorId: template.subMajorId || null,
       workTypeId: template.workTypeId || '',
       numberOfVacancies: template.numberOfVacancies ?? 1,
       closingDate: closingDate,
       minimumAge: template.minimumAge || 18,
-      maximumAge: template.maximumAge || 60
+      maximumAge: template.maximumAge || 60,
+      degrees: template.degrees || []
     });
   }
 

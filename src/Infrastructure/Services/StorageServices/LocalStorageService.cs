@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
-using Microsoft.Graph;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Domain.Configurations.Settings;

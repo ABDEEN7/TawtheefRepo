@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +16,26 @@ public sealed class GetSkillsBasedOnMajorQueryHandler(IUnitOfWork unitOfWork, IM
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillsBasedOnMajorQuery request,
         CancellationToken cancellationToken)
     {
-        if (request.Majors.Count == 0) return Result.Ok(new List<DropdownOptions>());
+        IQueryable<Skill> entitiesQuery;
+        
+        if (request.Majors.Count == 0)
+        {
+            entitiesQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => s.IsActive && s.IsGeneral);
+        }
+        else
+        {
+            var majorSkillIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
+                .AsNoTracking()
+                .Where(s => s.IsActive && request.Majors.Contains(s.MajorId))
+                .Select(s => s.SkillId)
+                .ToListAsync(cancellationToken);
 
-        var entitiesQuery = unitOfWork.GetEntityRepository<MajorSkill>().DbSet
-            .AsNoTracking()
-            .Where(s => s.IsActive)
-            .Where(s => request.Majors.Contains(s.MajorId))
-            .Select(s => s.Skill!);
+            entitiesQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => s.IsActive && (s.IsGeneral || majorSkillIds.Contains(s.Id)));
+        }
 
         List<Skill> entities;
         if (request.PaginatedRequest is not null)

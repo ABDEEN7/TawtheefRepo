@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
+using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.DTOs;
 using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.DTOs;
 using Mapster;
 using Tawtheef.Application.Common.Models;
@@ -17,6 +17,7 @@ public class MajorSkillManagementProfile : IRegister
          TypeAdapterConfig<Skill, SkillDetailsDto>.NewConfig()
              .Map(d => d, s => s.Adapt<DropdownOptions>())
              .Map(d => d.IsActive, s => s.IsActive)
+             .Map(d => d.IsGeneral, s => s.IsGeneral)
              .Map(d => d.SkillType, s => s.SkillType == null ? null : s.SkillType.Adapt<DropdownOptions>());
      }
 }

@@ -143,7 +143,7 @@ export class ProfileViewPage {
   defaultAvatar = AvatarUtils.default;
   get canReplaceAttachment() {
     const status = this.profileStatus();
-    return status === UserProfileStatusEnum.Approved || status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted;
+    return status === UserProfileStatusEnum.RequiresUpdate;
   }
   get enableChangeMode() {
     return false;

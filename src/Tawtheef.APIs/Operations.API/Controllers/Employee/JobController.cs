@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
+using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using MediatR;
@@ -58,7 +58,7 @@ public class JobController(IMediator mediator) : ControllerBase
 
     [HttpGet("lookups/skills")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> GetSkills([FromQuery] Guid majorId)
+    public async Task<IActionResult> GetSkills([FromQuery] Guid? majorId)
     {
         var result = await mediator.Send(new GetSkillBySubMajorIdAndRelatedParentSkillQuery(majorId));
         return result.ToActionResult();

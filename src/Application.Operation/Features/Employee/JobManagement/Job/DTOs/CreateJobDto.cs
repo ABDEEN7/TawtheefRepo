@@ -28,8 +28,7 @@ public class CreateJobDto
 
     public Guid? GenderId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MajorRequired)]
-    public Guid MajorId { get; set; }
+    public Guid? MajorId { get; set; }
 
     public Guid? SubMajorId { get; set; }
 
@@ -48,4 +47,6 @@ public class CreateJobDto
 
     [Required(ErrorMessage = JobMessages.MaximumAgeRequired)]
     public int MaximumAge { get; set; }
+
+    public List<JobDegreeRequestDto>? Degrees { get; set; }
 }

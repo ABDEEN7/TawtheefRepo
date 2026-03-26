@@ -30,4 +30,8 @@ import {Select} from 'primeng/select';
 export class SkillsTabComponent {
   store = inject(MajorsSkillsManagementStore);
   service = inject(MajorsSkillsManagementFacade);
+
+  setSkillGeneral(v: any) {
+    this.service.setSkillGeneral(v);
+  }
 }

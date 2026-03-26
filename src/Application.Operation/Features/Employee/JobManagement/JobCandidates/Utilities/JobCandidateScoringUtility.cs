@@ -12,7 +12,7 @@ internal static class JobCandidateScoringUtility
         List<JobCandidateRecord> window,
         List<UserProfile> profiles,
         JobPointsMain jobPointsMain,
-        Guid jobMajorId,
+        Guid? jobMajorId,
         Guid? jobSubMajorId,
         List<JobDegree> jobDegrees,
         IAppLogger logger)

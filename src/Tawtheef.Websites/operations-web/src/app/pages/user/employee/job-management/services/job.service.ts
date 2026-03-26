@@ -199,7 +199,18 @@ export class JobService {
     if (!job.departmentId) errors.push('VALIDATION.JOB.DEPARTMENT_REQUIRED');
     if (!job.jobCategoryId) errors.push('VALIDATION.JOB.JOB_CATEGORY_REQUIRED');
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
-    if (!job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
+
+    const simplifiedDegrees = [
+      'ebf2faa1-5ce6-4a04-9472-2746bfbbd252', // Secondary
+      'f1a31fe6-ba80-46cb-b24b-f402bcb4fdec', // Preparatory
+      '6e453f48-5f2f-4f98-8b76-f416cdd4811b', // Primary
+    ];
+
+    const needsMajor = job.degrees && job.degrees.length > 0 ?
+      job.degrees.some(d => !simplifiedDegrees.includes(d.degreeId)) : true;
+
+    if (needsMajor && !job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
+
     if (!job.workTypeId) errors.push('VALIDATION.JOB.WORK_TYPE_REQUIRED');
     if (job.numberOfVacancies <= 0) errors.push('JOB_WIZARD.VALIDATION.MIN_VACANCIES');
     if (!job.closingDate || new Date(job.closingDate) <= new Date())
@@ -352,7 +363,7 @@ export class JobService {
           jobCategoryId: jobResponse.jobCategory.id as GUID,
           workLocationId: jobResponse.workLocation.id as GUID,
           genderId: jobResponse.gender?.id as GUID,
-          majorId: jobResponse.major.id as GUID,
+          majorId: jobResponse.major?.id as GUID,
           subMajorId: jobResponse.subMajor?.id as GUID,
           workTypeId: jobResponse.workType.id as GUID,
           numberOfVacancies: jobResponse.numberOfVacancies,

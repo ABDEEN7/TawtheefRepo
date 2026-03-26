@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Validations;
+using Application.Operation.Common.Validations;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +24,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             dto.SectorId, dto.ManagementId,
             dto.JobCategoryId, dto.WorkLocationId, dto.WorkTypeId,
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
-            dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience))
+            dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience,
+            dto.Degrees?.Select(d => d.DegreeId)))
         {
             failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
         }
@@ -51,37 +52,53 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
-
     private async Task<List<ValidationFailure>> ValidateSkillsByMajor(UpdateJobDto dto)
     {
         var failures = new List<ValidationFailure>();
 
-        if (dto.Skills?.Any() == true && dto.MajorId != Guid.Empty)
+        if (dto.Skills == null || !dto.Skills.Any() || dto.MajorId == null)
+            return failures;
+
+        var majorIds = new[] { dto.MajorId, dto.SubMajorId }
+            .Where(id => id != null)
+            .ToList();
+
+        // Get skills linked to major/submajor
+        var majorSkillIds = await unitOfWork
+            .GetEntityRepository<MajorSkill>()
+            .DbSet
+            .AsNoTracking()
+            .Where(ms => ms.IsActive && majorIds.Contains(ms.MajorId))
+            .Select(ms => ms.SkillId)
+            .ToListAsync();
+
+        // Get general skills (no major restriction)
+        var generalSkillIds = await unitOfWork
+            .GetEntityRepository<Skill>()
+            .DbSet
+            .AsNoTracking()
+            .Where(s => s.IsGeneral)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        // Merge both valid sets
+        var validSkillIds = majorSkillIds
+            .Concat(generalSkillIds)
+            .ToHashSet();
+
+        var hasInvalidSkills = dto.Skills
+            .Any(s => !validSkillIds.Contains(s.SkillId));
+
+        if (hasInvalidSkills)
         {
-            var majorSkillsIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
-                .AsNoTracking().Where(s => s.IsActive)
-                .Where(s => (s.MajorId == dto.MajorId) || (s.MajorId == dto.SubMajorId))
-                .Select(x=> x.SkillId)
-                .ToListAsync();
-
-
-            var validSkillIds = majorSkillsIds.ToHashSet();
-
-            var invalidSkillIds = dto.Skills
-                .Where(s => !validSkillIds.Contains(s.SkillId))
-                .Select(s => s.SkillId)
-                .ToList();
-
-            if (invalidSkillIds.Count != 0)
-            {
-                failures.Add(new ValidationFailure(
-                    nameof(dto.Skills),
-                    JobMessages.SkillNotInMajor));
-            }
+            failures.Add(new ValidationFailure(
+                nameof(dto.Skills),
+                JobMessages.SkillNotInMajor));
         }
 
         return failures;
     }
+    
     private async Task<bool> IsDuplicateJob(CreateJobDto jobDto)
     {
          return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
@@ -187,19 +204,18 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                     job.SectorId, job.ManagementId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
-                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
+                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
+                    job.JobDegrees?.Select(d => d.DegreeId)))
             {
                 failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
             }
 
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
-                job.JobDegrees.Any(),
+                job.JobDegrees?.Any() ?? false,
                 job.JobConditions.Any(),
                 job.JobResponsibilities.Any(),
-                job.JobSkills.Any(),
                 HasQualificationDescriptions(job),
-                HasOverview(job),
-                HasBenefits(job)
+                HasOverview(job)
             );
 
             if (!allTabsCompleted)
@@ -213,19 +229,18 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                     job.SectorId, job.ManagementId,
                     job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
                     job.MajorId, job.NumberOfVacancies, job.ClosingDate,
-                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience))
+                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
+                    job.JobDegrees?.Select(d => d.DegreeId)))
             {
                 failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
             }
 
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
-                job.JobDegrees.Any(),
+                job.JobDegrees?.Any() ?? false,
                 job.JobConditions.Any(),
                 job.JobResponsibilities.Any(),
-                job.JobSkills.Any(),
                 HasQualificationDescriptions(job),
-                HasOverview(job),
-                HasBenefits(job)
+                HasOverview(job)
             );
 
             if (!allTabsCompleted)
@@ -280,12 +295,6 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     {
         return !string.IsNullOrWhiteSpace(job.OverViewAr) &&
                !string.IsNullOrWhiteSpace(job.OverViewEn);
-    }
-
-    private static bool HasBenefits(JobEntity job)
-    {
-        return !string.IsNullOrWhiteSpace(job.BenefitsAr) &&
-               !string.IsNullOrWhiteSpace(job.BenefitsEn);
     }
 
     private static bool HasQualificationDescriptions(JobEntity job)
@@ -363,9 +372,9 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                     JobMessages.DepartmentNotUnderManagement));
         }
 
-        if (dto.MajorId != Guid.Empty && dto.SubMajorId.HasValue)
+        if (dto.MajorId is not null && dto.MajorId != Guid.Empty && dto.SubMajorId.HasValue)
         {
-            var isValid = await IsSubMajorUnderMajor(dto.SubMajorId.Value, dto.MajorId);
+            var isValid = await IsSubMajorUnderMajor(dto.SubMajorId.Value, dto.MajorId!.Value);
             if (!isValid)
                 failures.Add(new ValidationFailure(
                     nameof(dto.SubMajorId),

@@ -8,7 +8,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Resources.Commands;
-using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;

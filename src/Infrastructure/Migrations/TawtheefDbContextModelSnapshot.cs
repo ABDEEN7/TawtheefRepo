@@ -4493,6 +4493,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
+                    b.Property<bool>("IsGeneral")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NameAr")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -6626,7 +6629,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("JobTitleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MajorId")
+                    b.Property<Guid?>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ManagementId")
@@ -11634,8 +11637,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Management", "Management")
                         .WithMany()

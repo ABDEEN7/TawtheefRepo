@@ -25,9 +25,8 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
   jobData!: Job;
 
   readonly form = this.fb.group({
-    degrees: this.fb.control<JobDegree[]>([], Validators.required),
     qualificationsDescriptionAr: ['', Validators.required],
-    qualificationsDescriptionEn: ['',Validators.required]
+    qualificationsDescriptionEn: ['', Validators.required]
   });
   note: JobTabReviewNoteResponse | null = null;
 
@@ -41,10 +40,10 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
   }
 
   isValid(): boolean {
-      if (this.form.disabled) {
-    return true;
-  }
-    return this.form.valid && this.form.controls.degrees.value!.length > 0;
+    if (this.form.disabled) {
+      return true;
+    }
+    return this.form.valid;
   }
 
   override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
@@ -56,7 +55,6 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     })) || [];
 
     this.form.patchValue({
-      degrees: degrees,
       qualificationsDescriptionAr: job.qualificationsDescriptionAr || '',
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
@@ -66,44 +64,16 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     }
   }
 
-  toggleDegree(degreeId: string, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    const current = this.form.controls.degrees.value || [];
-
-    let updated: JobDegree[];
-
-    if (checked) {
-      updated = [...current, { degreeId: degreeId as GUID }];
-    } else {
-      updated = current.filter(d => d.degreeId !== degreeId as GUID);
-    }
-
-    this.form.controls.degrees.setValue(updated);
-    this.form.controls.degrees.markAsDirty();
-
-    this.updateJobData();
-  }
-
-  isDegreeChecked(degreeId: string): boolean {
-    const degrees = this.form.controls.degrees.value ?? [];
-    return degrees.some(d => d.degreeId === degreeId);
-  }
-
   private updateJobData(): void {
     if (this.form.valid) {
-      const { degrees, qualificationsDescriptionAr, qualificationsDescriptionEn } = this.form.value;
+      const { qualificationsDescriptionAr, qualificationsDescriptionEn } = this.form.value;
 
       this.jobService.updateCurrentJobQualifications(
-        degrees || [],
+        this.jobData?.degrees || [],
         qualificationsDescriptionAr || '',
         qualificationsDescriptionEn || ''
       );
     }
   }
 
-  touchDegrees(): void {
-  const c = this.form.controls.degrees;
-  c.markAsTouched();
-  c.updateValueAndValidity({ onlySelf: true });
-}
 }
