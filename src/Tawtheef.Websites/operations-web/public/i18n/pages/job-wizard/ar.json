@@ -268,5 +268,6 @@
   "JOB_WIZARD.VALIDATION.AT_LEAST_ONE_SKILL": "يجب ان إضافة مهارة واحدة على الأقل",
   "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "المسمى الوظيفي",
   "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "اختر المسمى الوظيفي",
-  "JOB_WIZARD.STEPS.BASICS.JOB_NUMBER": "رقم الوظيفة"
+  "JOB_WIZARD.STEPS.BASICS.JOB_NUMBER": "رقم الوظيفة",
+  "JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA": "تعديل البيانات الأساسية"
 }

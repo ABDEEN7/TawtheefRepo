@@ -85,7 +85,8 @@
         {{ 'wizard.achievements.attachment' | translate }}
         <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
       </label>
-      <div class="upload-field" (click)="naInput.click()">
+      <div class="upload-field" [ngClass]="{'is-invalid': f['file'].invalid && (f['file'].dirty || f['file'].touched)}"
+        (click)="naInput.click()">
 
         <div class="upload-field__icon">
           <img src="assets/img/icons/file-upload.svg" *ngIf="!f['fileName'].value" alt="upload" />
@@ -99,8 +100,7 @@
 
         <input #naInput type="file" class="d-none" accept=".pdf,.jpg,.jpeg,.png" (change)="onUpload($event)" />
       </div>
-      <small *ngIf="f['fileName'].invalid && (f['fileName'].dirty || f['fileName'].touched)"
-        class="text-danger mt-1 d-block">
+      <small *ngIf="f['file'].invalid && (f['file'].dirty || f['file'].touched)" class="text-danger mt-1 d-block">
         {{ 'validation.required' | translate }}
       </small>
 

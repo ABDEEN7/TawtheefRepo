@@ -47,6 +47,7 @@
   "JOB_APPROVAL.NEEDS_CHANGES": "يتطلب تعديلات",
   "JOB_APPROVAL.ARABIC": "العربية",
   "JOB_APPROVAL.ENGLISH": "الأنجليزية",
+  "JOB_APPROVAL.IS_MANDATORY": "إلزامي",
   "JOB_APPROVAL.JOB_APPROVAL": "اعتماد وظيفة",
   "JOB_APPROVAL.OVERVIEWAR": "نظرة عامة (العربية)",
   "JOB_APPROVAL.OVERVIEWEN": "نظرة عامة (الأنجليزية)",

@@ -137,7 +137,9 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (this.isEditMode && this.jobId) {
-      this.openBasicDataPopup(false, this.jobId);
+      // In edit mode, load the wizard directly without opening the dialog
+      this.hasBasicData = true;
+      this.loadJobForWizard();
     }
   }
 
@@ -537,5 +539,26 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private hasEditStep(instance: any): instance is { editStep: EventEmitter<number> } {
     return instance && 'editStep' in instance && instance.editStep instanceof EventEmitter;
+  }
+
+  openEditBasicData(): void {
+    if (!this.jobId) return;
+
+    this.dialogService.open(JobBasicModalComponent, {
+      width: 'min(920px, 96vw)',
+      modal: true,
+      header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
+      styleClass: 'custom-bootstrap-dialog',
+      draggable: false,
+      data: {
+        isCreateMode: false,
+        showInWizard: true,
+        jobId: this.jobId
+      },
+    })?.onClose.subscribe((result) => {
+      if (result?.success) {
+        this.loadJobForWizard();
+      }
+    });
   }
 }
