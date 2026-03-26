@@ -116,14 +116,11 @@ export class JobLookupService {
     });
   }
 
-  loadSkillsByMajor(majorId: GUID): void {
-    if (!majorId) {
-      this.resetSkills();
-      return;
-    }
+  loadSkillsByMajor(majorId?: GUID | null): void {
+    const query = majorId ? `?majorId=${majorId}` : '';
 
     this.http.get<DropdownOptionVM[]>(
-      `${this.endpoints.job.lookups.skills}?majorId=${majorId}`
+      `${this.endpoints.job.lookups.skills}${query}`
     ).subscribe({
       next: (skills) => this.skills.set(this.toVMs(skills)),
       error: () => {

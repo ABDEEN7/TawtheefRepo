@@ -3,6 +3,7 @@ import {GUID} from '../../../../../shared/types/guid.type';
 
 export interface SkillListItemModel extends dropdownOptionsModel {
   isActive?: boolean;
+  isGeneral?: boolean;
   skillTypeId?: GUID;
   skillType?: dropdownOptionsModel;
   additionalData?: any;

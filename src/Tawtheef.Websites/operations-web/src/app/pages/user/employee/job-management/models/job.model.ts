@@ -20,7 +20,7 @@ export interface Job {
   jobCategoryId: GUID;
   workLocationId: GUID;
   genderId?: GUID | null;
-  majorId: GUID;
+  majorId?: GUID | null;
   subMajorId?: GUID | null;
   workTypeId: GUID;
   numberOfVacancies: number;

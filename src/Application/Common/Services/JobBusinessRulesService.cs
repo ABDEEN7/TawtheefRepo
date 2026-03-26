@@ -6,12 +6,28 @@ namespace Tawtheef.Application.Common.Services;
 
 public static class JobBusinessRules
 {
+    private static readonly HashSet<Guid> SimplifiedDegrees = new()
+    {
+        DegreeIds.Secondary,
+        DegreeIds.Preparatory,
+        DegreeIds.Primary
+    };
+
+    public static bool RequiresMajor(IEnumerable<Guid>? degreeIds)
+    {
+        if (degreeIds == null || !degreeIds.Any()) 
+            return true;
+
+        return degreeIds.Any(id => !SimplifiedDegrees.Contains(id));
+    }
+
     public static bool AreRequiredBasicFieldsCompleted(
         Guid jobTitleId,
         Guid sectorId, Guid managementId,
         Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
-        Guid majorId, int numberOfVacancies, DateTimeOffset closingDate,
-        int minimumAge, int maximumAge, int yearsOfExperience)
+        Guid? majorId, int numberOfVacancies, DateTimeOffset closingDate,
+        int minimumAge, int maximumAge, int yearsOfExperience,
+        IEnumerable<Guid>? degreeIds = null)
     {
         return jobTitleId != Guid.Empty &&
                sectorId != Guid.Empty &&
@@ -19,7 +35,7 @@ public static class JobBusinessRules
                jobCategoryId != Guid.Empty &&
                workLocationId != Guid.Empty &&
                workTypeId != Guid.Empty &&
-               majorId != Guid.Empty &&
+               (!RequiresMajor(degreeIds) || (majorId.HasValue && majorId.Value != Guid.Empty)) &&
                numberOfVacancies > 0 &&
                closingDate > DateTimeOffset.Now &&
                minimumAge > 0 &&
@@ -87,18 +103,14 @@ public static class JobBusinessRules
         bool hasDegrees,
         bool hasConditions,
         bool hasResponsibilities,
-        bool hasSkills,
         bool hasQualifications,
-        bool hasOverview,
-        bool hasBenefits)
+        bool hasOverview)
     {
         return hasDegrees
                && hasConditions
                && hasResponsibilities
-               && hasSkills
                && hasQualifications
-               && hasOverview
-               && hasBenefits;
+               && hasOverview;
     }
 
     public static bool IsInApprovalProcess(Guid jobStatusId)

@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using MediatR;
 using FluentResults;
 using MapsterMapper;
@@ -14,28 +14,40 @@ public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork u
 {
     public async Task<IResult<List<DropdownOptions>>> Handle(GetSkillBySubMajorIdAndRelatedParentSkillQuery request, CancellationToken cancellationToken)
     {
-// 1) Load only ParentId (no Include)
-        var majorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
-            .AsNoTracking()
-            .Where(m => m.Id == request.SubMajorId)
-            .Select(m => new { m.Id, m.ParentId })
-            .FirstOrDefaultAsync(cancellationToken);
+        IQueryable<Skill> skillsQuery;
+        
+        if (request.SubMajorId is null || request.SubMajorId == Guid.Empty)
+        {
+            skillsQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => s.IsActive && s.IsGeneral);
+        }
+        else
+        {
+            var majorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
+                .AsNoTracking()
+                .Where(m => m.Id == request.SubMajorId)
+                .Select(m => new { m.Id, m.ParentId })
+                .FirstOrDefaultAsync(cancellationToken);
 
-        if (majorIds is null)
-            return Result.Fail<List<DropdownOptions>>(ErrorsCodes.MajorNotFound);
+            var filterIds = majorIds is null
+                ? new List<Guid>()
+                : majorIds.ParentId is null
+                    ? new List<Guid> { majorIds.Id }
+                    : new List<Guid> { majorIds.Id, majorIds.ParentId.Value };
 
-// 2) Build filter ids
-        var ids = majorIds.ParentId is null
-            ? new[] { majorIds.Id }
-            : new[] { majorIds.Id, majorIds.ParentId.Value };
+            var majorSkillIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
+                .AsNoTracking()
+                .Where(ms => ms.IsActive && filterIds.Contains(ms.MajorId))
+                .Select(ms => ms.SkillId)
+                .ToListAsync(cancellationToken);
 
-// 3) Query once with Contains
-        var skills = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
-            .AsNoTracking()
-            .Where(ms => ms.IsActive && ids.Contains(ms.MajorId))        
-            .Where(ms => ms.Skill != null)
-            .Select(ms => ms.Skill!)              // ensure FK is enforced
-            .Distinct()// optional, but recommended
+            skillsQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => s.IsActive && (s.IsGeneral || majorSkillIds.Contains(s.Id)));
+        }
+
+        var skills = await skillsQuery
             .OrderBy(s => s.DisplayOrder)
             .ToListAsync(cancellationToken);
 

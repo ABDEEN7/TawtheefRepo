@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
@@ -11,12 +11,14 @@ public class Skill : LookupBase
     public Guid SkillTypeId { get; set; }
     public SkillType? SkillType { get; init; }
     
+    public bool IsGeneral { get; set; }
+    
     public void ChangeActivation(bool isActive)
     {
         IsActive = isActive;
     }
     
-    public void UpdateDetails(string nameAr, string nameEn, string? descriptionAr, string? descriptionEn, Guid skillTypeId, bool isActive)
+    public void UpdateDetails(string nameAr, string nameEn, string? descriptionAr, string? descriptionEn, Guid skillTypeId, bool isActive, bool isGeneral)
     {
         NameAr = nameAr;
         NameEn = nameEn;
@@ -24,5 +26,6 @@ public class Skill : LookupBase
         DescriptionEn = descriptionEn;
         SkillTypeId = skillTypeId;
         IsActive = isActive;
+        IsGeneral = isGeneral;
     }
 }

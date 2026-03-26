@@ -35,9 +35,7 @@ public sealed class Job : EventEntity
 
     public Guid? GenderId { get; set; }
 
-    [Required(ErrorMessage = JobMessages.MajorRequired)]
-    public Guid MajorId { get; set; }
-
+    public Guid? MajorId { get; set; }
     public Guid? SubMajorId { get; set; }
 
     [Required(ErrorMessage = JobMessages.WorkTypeRequired)]

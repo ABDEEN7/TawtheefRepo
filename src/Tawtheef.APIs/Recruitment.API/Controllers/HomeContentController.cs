@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Recruitment.API.Controllers;

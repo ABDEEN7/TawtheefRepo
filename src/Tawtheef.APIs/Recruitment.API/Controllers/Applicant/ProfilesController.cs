@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;

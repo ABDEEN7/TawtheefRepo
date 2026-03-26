@@ -42,23 +42,6 @@
                 (ngModelChange)="updateFilter('search', $event)" name="search" />
             </div>
 
-            <!-- Specialization -->
-            <!-- <div class="col-md-2">
-              <label class="form-label">
-                {{ 'profileApproval.list.filter.specialization' | translate }}
-              </label>
-
-              <input
-                pInputText
-                type="text"
-                class="w-100 form-control"
-                [placeholder]="'profileApproval.list.filter.specializationPlaceholder' | translate"
-                [ngModel]="filters().specialization"
-                (ngModelChange)="updateFilter('specialization', $event)"
-                name="specialization"
-              />
-            </div> -->
-
             <!-- Target -->
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
               <label class="form-label">
@@ -74,40 +57,6 @@
                 </ng-template>
                 <ng-template let-item pTemplate="item">
                   <span>{{ item.name }}</span>
-                </ng-template>
-              </p-select>
-            </div>
-
-            <!-- Candidate Type -->
-            <!-- <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label fw-semibold">
-                {{ 'profileApproval.list.filter.candidateType' | translate }}
-              </label>
-
-              <input
-                pInputText
-                type="text"
-                class="w-100 form-control"
-                [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
-                [ngModel]="filters().candidateType"
-                (ngModelChange)="updateFilter('candidateType', $event)"
-                name="candidateType"
-              />
-            </div> -->
-
-            <!-- Status -->
-            <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
-              <label class="form-label">
-                {{ 'profileApproval.list.filter.status' | translate }}
-              </label>
-
-              <p-select class="w-100" [options]="statusOptions" [optionValue]="'value'" [ngModel]="filters().status"
-                [showClear]="true" (onChange)="updateFilter('status', $event.value ?? '')" name="status">
-                <ng-template pTemplate="selectedItem" let-item>
-                  <span>{{ item?.label | translate }}</span>
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                  <span>{{ item.label | translate }}</span>
                 </ng-template>
               </p-select>
             </div>

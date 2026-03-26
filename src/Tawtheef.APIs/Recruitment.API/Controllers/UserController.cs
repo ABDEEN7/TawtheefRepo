@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;

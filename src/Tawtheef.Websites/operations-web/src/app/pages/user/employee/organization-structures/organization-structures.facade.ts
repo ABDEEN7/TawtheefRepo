@@ -120,12 +120,7 @@ export class OrganizationStructuresFacade {
     this.api.getManagementLookups(sectorId).subscribe({
       next: res => {
         this.store.setManagementLookups(res);
-        if (updateDepartmentFilters && res.length > 0) {
-          const first = res[0]?.id ?? '';
-          this.store.updateDepartmentFilters({ managementId: first });
-        } else if (updateDepartmentFilters && res.length === 0) {
-          this.store.updateDepartmentFilters({ managementId: '' });
-        }
+        this.store.updateDepartmentFilters({ managementId: '' });
         if (reloadDepartments) {
           this.loadDepartments();
         }

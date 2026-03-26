@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
+using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ public sealed class UpdateSkillCommandHandler(IUnitOfWork uow)
 
         skill.UpdateDetails(request.NameAr, request.NameEn, 
             request.DescriptionAr, request.DescriptionEn, 
-            request.SkillTypeId, request.IsActive);
+            request.SkillTypeId, request.IsActive, request.IsGeneral);
         
         await skillRepo.UpdateAsync(skill);
         await uow.SaveChangesAsync(cancellationToken);

@@ -9,54 +9,6 @@
   </div>
   <div class="row mb-3">
     <div class="col-md-12">
-      <p class="d-flex">
-        <span class="text-danger">*</span>
-        <span class="form-label">{{
-          'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate
-        }}</span>
-      </p>
-      <div class="card card-table mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12">
-              @if (lookupsService.degrees().length === 0) {
-                <div class="alert alert-info">
-                  <i class="fa fa-info-circle me-2"></i>
-                  {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.LOADING_DEGREES' | translate }}
-                </div>
-              } @else {
-                <div
-                  class="d-flex flex-wrap gap-4"
-                  (click)="touchDegrees()"
-                  (focusin)="touchDegrees()"
-                >
-                  @for (degree of lookupsService.degrees(); track degree.id) {
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        [id]="'degree-' + degree.id"
-                        [checked]="isDegreeChecked(degree.id)"
-                        (change)="toggleDegree(degree.id, $event)"
-                      />
-                      <label class="form-check-label" [for]="'degree-' + degree.id">
-                        {{ degree.name }}
-                      </label>
-                    </div>
-                  }
-                </div>
-
-                @if (form.controls.degrees.touched && form.controls.degrees.invalid) {
-                  <div class="text-danger small mt-2">
-                    <i class="fa fa-exclamation-circle me-1"></i>
-                    {{ 'JOB_WIZARD.VALIDATION.DEGREES_REQUIRED' | translate }}
-                  </div>
-                }
-              }
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="row">
         <div class="col-12">

@@ -30,7 +30,7 @@ export class ProfilePrerequisitesSectionComponent {
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
-  @Input() isProfileApproved!: boolean;
+  @Input() canReplaceAttachment!: boolean;
   @Input() visibility: ProfileOverviewVisibility | null = null;
   attachments = computed(() => {
     const p = this.profile;

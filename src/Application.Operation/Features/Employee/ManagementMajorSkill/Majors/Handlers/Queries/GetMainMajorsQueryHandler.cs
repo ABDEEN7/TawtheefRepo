@@ -2,8 +2,6 @@
 using Application.Operation.Features.Employee.ManagementMajorSkill.Majors.Queries;
 using MediatR;
 using FluentResults;
-using MapsterMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;

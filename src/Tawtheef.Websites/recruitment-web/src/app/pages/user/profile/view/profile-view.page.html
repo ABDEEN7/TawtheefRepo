@@ -230,7 +230,7 @@
         @if (sectionStatus(active) === 'resolved') {
         <div [ngSwitch]="active">
           <app-profile-prerequisites-section *ngSwitchCase="ProfileSectionEnum.Prerequisites"
-            [profile]="sectionValue(active)" [visibility]="visibility()" [isProfileApproved]="canReplaceAttachment"
+            [profile]="sectionValue(active)" [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
             [changesRequest]="changes(ProfileSectionEnum.Prerequisites)" [notes]="activeSectionNotes()"
             (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)"

@@ -14,8 +14,8 @@ public class JobProfile : IRegister
     {
         config.NewConfig<CreateJobDto, Job>()
             .Map(dest => dest.Id, _ => Guid.NewGuid())
+            .Map(dest=> dest.JobDegrees, src=> src.Degrees)
             .Map(dest => dest.JobStatusId, _ => JobStatusIds.Draft)
-            .Ignore(dest => dest.JobDegrees)
             .Ignore(dest => dest.JobConditions)
             .Ignore(dest => dest.JobSkills)
             .Ignore(dest => dest.JobPoints!)

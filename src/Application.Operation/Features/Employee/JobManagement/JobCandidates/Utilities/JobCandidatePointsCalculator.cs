@@ -10,7 +10,7 @@ internal static class JobCandidatePointsCalculator
         JobCandidateRecord candidate,
         JobPointsMain jobPointsMain,
         List<JobDegree> jobDegrees,
-        Guid jobMajorId,
+        Guid? jobMajorId,
         Guid? jobSubMajorId,
         IAppLogger logger
         )
@@ -30,7 +30,7 @@ internal static class JobCandidatePointsCalculator
         JobCandidateRecord candidate,
         JobPointsMain jobPointsMain,
         List<JobDegree> jobDegrees,
-        Guid jobMajorId,
+        Guid? jobMajorId,
         Guid? jobSubMajorId,
         IAppLogger logger)
     {

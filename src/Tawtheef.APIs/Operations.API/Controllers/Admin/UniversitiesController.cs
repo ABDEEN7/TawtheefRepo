@@ -3,7 +3,6 @@ using Application.Operation.Features.Admin.Universities.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Tawtheef.Application.Common;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Infrastructure.Extensions;

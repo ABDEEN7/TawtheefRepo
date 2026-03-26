@@ -129,6 +129,7 @@ export class AchievementModal implements OnInit {
   onSave() {
     if (this.form.invalid || this.fileError) {
       this.form.markAllAsTouched();
+      this.form.get('file')?.markAsTouched();
       return;
     }
 

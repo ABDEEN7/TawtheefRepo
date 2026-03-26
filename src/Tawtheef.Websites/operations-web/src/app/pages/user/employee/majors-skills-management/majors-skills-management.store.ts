@@ -83,6 +83,7 @@ export class MajorsSkillsManagementStore {
   skillFilters = signal<SkillFiltersModel>({
     search: '',
     skillTypeId: '',
+    isGeneral: undefined,
     pageNumber: 1,
     pageSize: 10
   });

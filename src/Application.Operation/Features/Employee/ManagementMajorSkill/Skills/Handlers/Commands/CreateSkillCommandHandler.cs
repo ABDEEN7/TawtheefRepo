@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
+using Application.Operation.Features.Employee.ManagementMajorSkill.Skills.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +31,8 @@ public sealed class CreateSkillCommandHandler(IUnitOfWork uow)
             SkillTypeId = request.SkillTypeId,
             BackendName = code,
             DescriptionEn = request.DescriptionEn,
-            DescriptionAr = request.DescriptionAr
+            DescriptionAr = request.DescriptionAr,
+            IsGeneral = request.IsGeneral
         });
         await uow.SaveChangesAsync(ct);
 

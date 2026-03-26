@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
@@ -8,9 +8,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import {UpsertMajorDialogData} from './upsert-major.dialog';
-import {Textarea} from 'primeng/textarea';
-import {TranslatePipe} from '@ngx-translate/core';
+import { UpsertMajorDialogData } from './upsert-major.dialog';
+import { Textarea } from 'primeng/textarea';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface DropdownOption {
   id: string;
@@ -38,7 +38,7 @@ export interface UpsertSkillDialogData {
     ToggleSwitchModule,
     Textarea,
     TranslatePipe
-  ],template: `
+  ], template: `
     <div class="modal-body">
       <form (ngSubmit)="save()" #f="ngForm" class="d-flex flex-column gap-3">
 
@@ -114,17 +114,11 @@ export interface UpsertSkillDialogData {
 
         <div class="row">
           <div class="col-md-6">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_DISPLAY_ORDER' | translate }}</label>
-            <p-inputNumber
-              class="w-100"
-              name="displayOrder"
-              [(ngModel)]="vm.displayOrder"
-              [min]="1"
-              [useGrouping]="false"
-              [placeholder]="'MAJORS_SKILLS.PLACEHOLDER_OPTIONAL' | translate">
-            </p-inputNumber>
+            <div class="d-flex align-items-center gap-2">
+              <p-toggle-switch [(ngModel)]="vm.isGeneral" name="isGeneral"></p-toggle-switch>
+              <span class="fw-bold text-primary">{{ 'MAJORS_SKILLS.FIELD_IS_GENERAL' | translate }}</span>
+            </div>
           </div>
-
           <div class="col-md-6">
             <div class="d-flex align-items-center gap-2">
               <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
@@ -167,7 +161,8 @@ export class UpsertSkillDialogComponent {
     descriptionEn: this.model?.descriptionEn ?? this.model?.additionalData?.descriptionEn ?? '',
     descriptionAr: this.model?.descriptionAr ?? this.model?.additionalData?.descriptionAr ?? '',
     displayOrder: this.model?.displayOrder ?? null,
-    isActive: (this.model?.isActive ?? true) !== false
+    isActive: (this.model?.isActive ?? true) !== false,
+    isGeneral: !!this.model?.isGeneral
   };
 
   isValid(): boolean {
@@ -187,7 +182,8 @@ export class UpsertSkillDialogComponent {
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
       displayOrder: this.vm.displayOrder ?? undefined,
-      isActive: this.vm.isActive
+      isActive: this.vm.isActive,
+      isGeneral: this.vm.isGeneral
     };
 
     this.ref.close(payload);

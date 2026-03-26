@@ -8,16 +8,14 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsService
 {
-    public async Task<JobRequirements> GetAsync(Guid mainMajorId,Guid? subMajorId)
+    public async Task<JobRequirements> GetAsync(Guid? mainMajorId,Guid? subMajorId)
     {
-        var majorIds = new List<Guid>()
-        {
-            mainMajorId
-        };
-        
-        if(subMajorId != null)
+        var majorIds = new List<Guid>();
+        if (mainMajorId.HasValue && mainMajorId.Value != Guid.Empty)
+            majorIds.Add(mainMajorId.Value);
+
+        if (subMajorId.HasValue && subMajorId.Value != Guid.Empty)
             majorIds.Add(subMajorId.Value);
-        
 
         List<Guid> requiredSkillIds = [];
 

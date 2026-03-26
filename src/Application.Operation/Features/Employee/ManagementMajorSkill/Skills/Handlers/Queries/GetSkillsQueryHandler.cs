@@ -30,6 +30,7 @@ public sealed class GetSkillsQueryHandler(IUnitOfWork uow, IMapper mapper)
                 x.NameEn.Contains(request.Search!.Trim()) ||
                 x.BackendName.Contains(request.Search!.Trim()))
             .WhereIf(request.SkillTypeId.HasValue, x => x.SkillTypeId == request.SkillTypeId!.Value)
+            .WhereIf(request.IsGeneral == true, x => x.IsGeneral == request.IsGeneral!.Value)
             .ToPaginatedListAsync<Skill, SkillDetailsDto>(mapper, request, ct);
 
         foreach (var skill in result.Items)
