@@ -64,8 +64,7 @@
   max-width: 90vw;
   height: auto;
 
-  animation: loading-pulse 1.4s ease-in-out infinite;
-  will-change: transform, opacity, filter;
+  animation: loading-pulse 1.2s ease-in-out infinite;
 }
 
 /* Optional: make it a bit smaller on very short screens */
@@ -73,6 +72,43 @@
   .loading-content img {
     width: min(60vw, 320px);
   }
+}
+
+@keyframes loading-pulse {
+  0% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.55;
+  }
+}
+
+/* Accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .loading-content img {
+    animation: none;
+  }
+
+  .progress-line,
+  .loading-overlay,
+  .loading-content {
+    transition: none;
+  }
+}
+
+.loading-content img {
+  display: block;
+  width: min(70vw, 420px);
+  max-width: 90vw;
+  height: auto;
+
+  animation: loading-pulse 1.4s ease-in-out infinite;
+  will-change: transform, opacity, filter;
 }
 
 @keyframes loading-pulse {
@@ -92,18 +128,5 @@
     transform: scale(0.94);
     opacity: 0.65;
     filter: drop-shadow(0 0 0 rgba(255, 70, 103, 0.0));
-  }
-}
-
-/* Accessibility: respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .loading-content img {
-    animation: none;
-  }
-
-  .progress-line,
-  .loading-overlay,
-  .loading-content {
-    transition: none;
   }
 }
