@@ -1,5 +1,5 @@
 <section class="approval-page" i18nNamespace="pages/profile-approval" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
-  <div class="main-layout-split" [class.viewer-open]="!!selectedFile()">
+  <div class="main-layout-split" [class.viewer-open]="!!selectedFile() || loadingFile()">
     <div class="content-side flex-grow-1">
       <div class="">
         <div class="wizard-card" *ngIf="detail() as info">
@@ -97,8 +97,13 @@
       </div>
     </div>
 
-    <div class="viewer-side" *ngIf="selectedFile() as file">
-      <app-file-viewer [url]="file.url" [fileName]="file.name" [loading]="loadingFile()" [mimeType]="file.mimeType || ''" (close)="closeFileViewer()">
+    <div class="viewer-side" *ngIf="!!selectedFile() || loadingFile()">
+      <app-file-viewer 
+        [url]="selectedFile()?.url ?? ''" 
+        [fileName]="selectedFile()?.name ?? ''" 
+        [loading]="loadingFile()" 
+        [mimeType]="selectedFile()?.mimeType || ''" 
+        (close)="closeFileViewer()">
       </app-file-viewer>
     </div>
   </div>

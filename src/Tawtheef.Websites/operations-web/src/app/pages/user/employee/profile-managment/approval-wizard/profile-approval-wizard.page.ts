@@ -344,11 +344,15 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       ? (resourceUrl.split('/').pop()?.split('?')[0] || 'file') 
       : event.fileName;
     
-    this.closeFileViewer();
     this.loadingFile.set(true);
 
     try {
       const { blobUrl, mimeType } = await this.fileUtils.getBlobUrl(resourceUrl);
+      // Revoke old blob if exists
+      const current = this.selectedFile();
+      if (current?.url && current.url.startsWith('blob:')) {
+        URL.revokeObjectURL(current.url);
+      }
       this.selectedFile.set({ url: blobUrl, name, mimeType });
     } catch (e) {
       this.selectedFile.set({ url: resourceUrl, name });

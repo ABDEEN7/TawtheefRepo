@@ -95,8 +95,55 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.9);
-      z-index: 10;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 100;
+
+      .loading-pulse {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: rgba(138, 21, 56, 0.1); // Ministry primary color (approx)
+          animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+      }
+
+      .ministry-logo {
+        width: 120px;
+        height: auto;
+        position: relative;
+        z-index: 2;
+        animation: logo-pulse 1.5s ease-in-out infinite;
+      }
+
+      .pulsate-text {
+        animation: text-opacity-pulse 1.5s ease-in-out infinite;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px;
+        color: #8a1538 !important;
+      }
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    @keyframes logo-pulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.08); filter: brightness(1.1); }
+    }
+
+    @keyframes text-opacity-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
     display: flex;
     justify-content: center;

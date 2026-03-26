@@ -31,8 +31,10 @@
   <!-- Content Area -->
   <div class="viewer-content">
     <div class="viewer-loading" *ngIf="loading">
-      <p-progressSpinner styleClass="w-4rem h-4rem"></p-progressSpinner>
-      <p class="mt-3 text-muted">{{ 'file_viewer.fetching' | translate }}</p>
+      <div class="loading-pulse">
+        <img src="assets/img/logo.png" alt="Loading" class="ministry-logo">
+      </div>
+      <p class="mt-3 pulsate-text">{{ 'file_viewer.fetching' | translate }}</p>
     </div>
 
     <ng-container *ngIf="url && !loading; else noFile">
