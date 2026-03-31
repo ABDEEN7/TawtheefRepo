@@ -1,238 +1,261 @@
 <div class="step-content">
-     <div class="row mb-3"><div class="col-12"><h5 class="text-primary d-flex"> <i class="fa fa-check-circle"></i> {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW' | translate }}</h5></div></div>
-       @if (hasOverview()){
-          <div class="card card-table mb-4">
-              <div class="card-body">
-                   <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="text-primary d-flex">
-                          <i class="hgi hgi-stroke hgi-briefcase-01"></i>
-                          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW' | translate }}
-                        </h5>
-                        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" 
-                                [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW' | translate"
-                                (click)="goToStep(STEP_NUMBERS.OVERVIEW)">
-                                <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                                {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                        </button>
-                  </div>
-                  <div class="row">
-                       <div class="col-md-4">
-                            <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_AR' | translate }}:</label>
-                            <label class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewAr)"></label>
-                       </div>
-                       <div class="col-md-4">
-                             @if (jobService.getCurrentJob()?.overviewEn) {
-                            <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_EN' | translate }}:</label>
-                            <label class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewEn)"></label>
-                          }
-                       </div>
-                  </div>
-              </div>
-          </div>
-
-       }
-       @if (hasQualifications()){
-          <div class="card card-table mb-4">
-               <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="text-primary d-flex">
-                          <i class="hgi hgi-stroke hgi-school me-2"></i>
-                          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
-                        </h5>
-                        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"  [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_QUALIFICATIONS' | translate" (click)="goToStep(STEP_NUMBERS.QUALIFICATIONS)">
-                                <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i> {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                        </button>
-                  </div>
-                  <div class="row">
-                       <div class="col-md-4 mb-3">
-                            <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate }}:</label>
-                            <div class="fw-semibold text-dark">
-                              {{ getDegreeNames() }}
-                            </div>
-                          </div>
-                          
-                          @if (jobService.getCurrentJob()?.qualificationsDescriptionAr) {
-                            <div class="col-md-4 mb-3">
-                              <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate }}:</label>
-                              <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionAr)"></div>
-                            </div>
-                          }
-
-                          @if (jobService.getCurrentJob()?.qualificationsDescriptionEn) {
-                            <div class="col-md-4 mb-3">
-                              <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_EN' | translate }}:</label>
-                              <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionEn)"></div>
-                            </div>
-                          }
-                  </div>
-               </div>
-          </div>
-        }
-      @if (hasResponsibilities()){
-            <div class="card card-table mb-4">
-                 <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-primary d-flex">
-                              <i class="fa fa-clipboard-check me-2"></i>
-                              {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
-                            </h5>
-                            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"  [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_RESPONSIBILITIES' | translate" (click)="goToStep(STEP_NUMBERS.RESPONSIBILITIES)">
-                                    <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                                    {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                            </button>
-                      </div>
-                       <div class="row">
-                        @for (responsibility of jobService.getCurrentJob()?.responsibilities; track $index; let i = $index) {
-                          <div class="col-md-4 mb-3">
-                              <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY' | translate }} {{ i + 1 }}</label>
-                              <div class="mb-2">
-                                <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_AR' | translate }}:</small>
-                                <label class="fw-semibold text-dark">{{ responsibility.textAr }}</label>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                            <label class="fw-bold w-100"></label>
-                               @if (responsibility.textEn) {
-                                <div>
-                                  <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_EN' | translate }}:</small>
-                                  <label class="fw-semibold text-dark">{{ responsibility.textEn }}</label>
-                                </div>
-                              }
-                          </div>
-                          
-                        }
-                      </div>
-                 </div>
-            </div>
-      }
-        @if (hasConditions()){
-            <div class="card card-table mb-4">
-                  <div class="card-body">
-                       <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-primary d-flex">
-                              <i class="hgi hgi-briefcase-05 hgi-stroke me-2"></i>
-                              {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
-                            </h5>
-                            <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"   [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS' | translate" (click)="goToStep(STEP_NUMBERS.CONDITIONS)">
-                                    <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                                    {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                            </button>
-                      </div>
-                      <div class="row mb-3">
-                          @for (condition of jobService.getCurrentJob()?.conditions; track $index; let i = $index) {
-                            <div class="col-md-4">
-                                <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION' | translate }} {{ i + 1 }}</label>
-                                <div class="mb-2">
-                                  <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION_AR' | translate }}:</small>
-                                  <label class="fw-semibold text-dark">{{ condition.textAr }}</label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                  @if (condition.textEn) {
-                                    <label class="fw-bold w-100"></label>
-                                  <div>
-                                    <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION_EN' | translate }}:</small>
-                                    <label class="fw-semibold text-dark">{{ condition.textEn }}</label>
-                                  </div>
-                                }
-                            </div>
-                          }
-                      </div>
-                  </div>
-            </div>
-  }
- @if (hasSkills()){
-      <div class="card card-table mb-3">
-          <div class="card-body">
-               <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h5 class="text-primary d-flex">
-                        <i class="fw-normal hgi hgi-ai-user hgi-stroke me-2"></i>
-                        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS' | translate }}
-                      </h5>
-                      <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"   [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS' | translate"  (click)="goToStep(STEP_NUMBERS.SKILLS)">
-                              <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                              {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                      </button>
-                </div>
-                <div class="row">
-                  @for (skill of jobService.getCurrentJob()?.skills; track $index; let i = $index) {
-                    <div class="col-md-4 mb-3">
-                        <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.SKILL' | translate }} {{ i + 1 }}</label>
-                        <div class="mb-2">
-                          <p class="mb-1">{{ getSkillName(skill.skillId) }}</p>
-                          <span class="badge" [ngClass]="skill.showToApplicants ? 'bg-success' : 'bg-secondary'">
-                            {{ skill.showToApplicants ? ('JOB_WIZARD.STEPS.REVIEW.SKILL_SHOWN' | translate) : ('JOB_WIZARD.STEPS.REVIEW.SKILL_HIDDEN' | translate) }}
-                          </span>
-                        </div>
-                    </div>
-                  }
-                </div>
-          </div>
+  <div class="row mb-3">
+    <div class="col-12">
+      <h5 class="text-primary d-flex"> <i class="fa fa-check-circle"></i> {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW'
+        | translate }}</h5>
+    </div>
+  </div>
+  @if (hasOverview()){
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="hgi hgi-stroke hgi-briefcase-01"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.OVERVIEW' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_OVERVIEW' | translate" (click)="goToStep(STEP_NUMBERS.OVERVIEW)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
       </div>
-   
-    }
-         @if (hasAttachments()){
-            <div class="card card-table">
-                <div class="card-body">
-                     <div class="d-flex justify-content-between align-items-center mb-3">
-                          <h5 class="text-primary d-flex">
-                            <i class="fw-normal hgi hgi-file-upload hgi-stroke me-2"></i>
-                            {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS' | translate }}
-                          </h5>
-                          <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS' | translate" (click)="goToStep(STEP_NUMBERS.ATTACHMENTS)">
-                                  <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                                  {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                          </button>
-                    </div>
-                    <div class="row">
-                        @for (attachment of jobService.getCurrentJob()?.requiredAttachments; track $index; let i = $index) {
-                          <div class="col-md-6 mb-3">
-                              <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.ATTACHMENT' | translate }} {{ i + 1 }}</label>
-                              <div class="fw-semibold text-dark">
-                                <label class="mb-1">{{ attachment.titleAr }}</label>
-                                @if (attachment.titleEn) {
-                                  <small class="text-muted">({{ attachment.titleEn }})</small>
-                                }
-                              </div>
-                              <span class="badge" [ngClass]="attachment.isMandatory ? 'bg-danger' : 'bg-warning text-dark'">
-                                {{ attachment.isMandatory ? ('JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_MANDATORY' | translate) : ('JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_OPTIONAL' | translate) }}
-                              </span>
-                          </div>
-                        }
-                  </div>
-                </div>
-            </div>
-        }
-    @if (hasBenefits()){
-        <div class="card card-table">
-            <div class="card-body">
-                 <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h5 class="text-primary d-flex">
-                        <i class="hgi hgi-checkmark-badge-01 hgi-stroke me-2"></i>
-                        {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS' | translate }}
-                      </h5>
-                      <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_BENEFITS' | translate"  (click)="goToStep(STEP_NUMBERS.BENEFITS)">
-                              <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
-                             {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
-                      </button>
-                </div>
-                <div class="row">
-                      <div class="col-md-6 mb-3">
-                          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR' | translate }}:</label>
-                          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsAr)"></div>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                           @if (jobService.getCurrentJob()?.benefitsEn) {
-                              <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN' | translate }}:</label>
-                              <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsEn)"></div>
-                            }
-                      </div>
-          
-          
-                </div>
-            </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_AR' | translate }}:</label>
+          <label class="fw-semibold text-dark"
+            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewAr)"></label>
+        </div>
+        <div class="col-md-4">
+          @if (jobService.getCurrentJob()?.overviewEn) {
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_EN' | translate }}:</label>
+          <label class="fw-semibold text-dark"
+            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewEn)"></label>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  }
+  @if (hasQualifications()){
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="hgi hgi-stroke hgi-school me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.QUALIFICATIONS' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_QUALIFICATIONS' | translate"
+          (click)="goToStep(STEP_NUMBERS.QUALIFICATIONS)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i> {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
+            }}:</label>
+          <div class="fw-semibold text-dark">
+            {{ getDegreeNames() }}
+          </div>
         </div>
 
-    } 
-    
+        @if (jobService.getCurrentJob()?.qualificationsDescriptionAr) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
+            }}:</label>
+          <div class="fw-semibold text-dark"
+            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionAr)"></div>
+        </div>
+        }
+
+        @if (jobService.getCurrentJob()?.qualificationsDescriptionEn) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_EN' | translate
+            }}:</label>
+          <div class="fw-semibold text-dark"
+            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionEn)"></div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  @if (hasResponsibilities()){
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="fa fa-clipboard-check me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_RESPONSIBILITIES' | translate"
+          (click)="goToStep(STEP_NUMBERS.RESPONSIBILITIES)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row">
+        @for (responsibility of jobService.getCurrentJob()?.responsibilities; track $index; let i = $index) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY' | translate }} {{ i + 1 }}</label>
+          <div class="mb-2">
+            <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_AR' | translate }}:</small>
+            <label class="fw-semibold text-dark">{{ responsibility.textAr }}</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="fw-bold w-100"></label>
+          @if (responsibility.textEn) {
+          <div>
+            <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY_EN' | translate }}:</small>
+            <label class="fw-semibold text-dark">{{ responsibility.textEn }}</label>
+          </div>
+          }
+        </div>
+
+        }
+      </div>
+    </div>
+  </div>
+  }
+  @if (hasConditions()){
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="hgi hgi-briefcase-05 hgi-stroke me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.CONDITIONS' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_CONDITIONS' | translate" (click)="goToStep(STEP_NUMBERS.CONDITIONS)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row mb-3">
+        @for (condition of jobService.getCurrentJob()?.conditions; track $index; let i = $index) {
+        <div class="col-md-4">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION' | translate }} {{ i + 1 }}</label>
+          <div class="mb-2">
+            <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION_AR' | translate }}:</small>
+            <label class="fw-semibold text-dark">{{ condition.textAr }}</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          @if (condition.textEn) {
+          <label class="fw-bold w-100"></label>
+          <div>
+            <small class="text-muted">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION_EN' | translate }}:</small>
+            <label class="fw-semibold text-dark">{{ condition.textEn }}</label>
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  @if (hasSkills()){
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="fw-normal hgi hgi-ai-user hgi-stroke me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.SKILLS' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_SKILLS' | translate" (click)="goToStep(STEP_NUMBERS.SKILLS)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row">
+        @for (skill of jobService.getCurrentJob()?.skills; track $index; let i = $index) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.SKILL' | translate }} {{ i + 1 }}</label>
+          <div class="mb-2">
+            <p class="mb-1">{{ getSkillName(skill.skillId) }}</p>
+            <span class="badge" [ngClass]="skill.showToApplicants ? 'bg-success' : 'bg-secondary'">
+              {{ skill.showToApplicants ? ('JOB_WIZARD.STEPS.REVIEW.SKILL_SHOWN' | translate) :
+              ('JOB_WIZARD.STEPS.REVIEW.SKILL_HIDDEN' | translate) }}
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  }
+  @if (hasAttachments()){
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="fw-normal hgi hgi-file-upload hgi-stroke me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.ATTACHMENTS' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_ATTACHMENTS' | translate" (click)="goToStep(STEP_NUMBERS.ATTACHMENTS)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row">
+        @for (attachment of jobService.getCurrentJob()?.requiredAttachments; track $index; let i = $index) {
+        <div class="col-md-6 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.ATTACHMENT' | translate }} {{ i + 1 }}</label>
+          <div class="fw-semibold text-dark">
+            <label class="mb-1">{{ attachment.titleAr }}</label>
+            @if (attachment.titleEn) {
+            <small class="text-muted">({{ attachment.titleEn }})</small>
+            }
+          </div>
+          <span class="badge" [ngClass]="attachment.isMandatory ? 'bg-danger' : 'bg-warning text-dark'">
+            {{ attachment.isMandatory ? ('JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_MANDATORY' | translate) :
+            ('JOB_WIZARD.STEPS.REVIEW.ATTACHMENT_OPTIONAL' | translate) }}
+          </span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  @if (hasBenefits()){
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-primary d-flex">
+          <i class="hgi hgi-checkmark-badge-01 hgi-stroke me-2"></i>
+          {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.BENEFITS' | translate }}
+        </h5>
+        <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+          [title]="'JOB_WIZARD.STEPS.REVIEW.EDIT_BENEFITS' | translate" (click)="goToStep(STEP_NUMBERS.BENEFITS)">
+          <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-18"></i>
+          {{ 'JOB_WIZARD.STEPS.REVIEW.EDIT' | translate }}
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR' | translate }}:</label>
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsAr)">
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          @if (jobService.getCurrentJob()?.benefitsEn) {
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN' | translate }}:</label>
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsEn)">
+          </div>
+          }
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  }
+
 </div>

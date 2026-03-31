@@ -40,7 +40,7 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
     return true;
   }
 
-   goToStep(stepNumber: number): void {
+  goToStep(stepNumber: number): void {
     this.editStep.emit(stepNumber);
   }
 
@@ -54,7 +54,7 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
 
   hasQualifications(): boolean {
     return !!this.jobService.getCurrentJob()?.qualificationsDescriptionAr?.trim() ||
-           (this.jobService.getCurrentJob()?.degrees?.length || 0) > 0;
+      (this.jobService.getCurrentJob()?.degrees?.length || 0) > 0;
   }
 
   hasResponsibilities(): boolean {
@@ -87,7 +87,7 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
     return (degreeNames && degreeNames.length > 0) ? degreeNames.join(', ') : '';
   }
 
-  formatHtmlContent(text: string | undefined): string {
+  formatHtmlContent(text: string | null | undefined): string {
     if (!text) return '';
     return text.replace(/\n/g, '<br>');
   }
