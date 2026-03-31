@@ -269,5 +269,6 @@
   "JOB_WIZARD.STEPS.BASICS.JOB_TITLE": "المسمى الوظيفي",
   "JOB_WIZARD.STEPS.BASICS.JOB_TITLE_PLACEHOLDER": "اختر المسمى الوظيفي",
   "JOB_WIZARD.STEPS.BASICS.JOB_NUMBER": "رقم الوظيفة",
-  "JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA": "تعديل البيانات الأساسية"
+  "JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA": "تعديل البيانات الأساسية",
+  "JOB_WIZARD.BUTTONS.VIEW_BASIC_DATA": "عرض البيانات الأساسية"
 }

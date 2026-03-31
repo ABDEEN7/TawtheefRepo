@@ -404,6 +404,15 @@ public static class Permissions
                 "Jobs Invitations - View",
                 "دعوات الوظائف - عرض",
                 34);
+
+        public static readonly PermissionDefinition ManageAttachment =
+            Def(
+                PermissionKeys.JobsInvitations.ManageAttachment,
+                nameof(PermissionKeys.JobsInvitations),
+                PermissionAction.Manage,
+                "Jobs Invitations - Manage Attachment",
+                "دعوات الوظائف - إدارة المرفقات",
+                34);
     }
 
     public static class Nominations

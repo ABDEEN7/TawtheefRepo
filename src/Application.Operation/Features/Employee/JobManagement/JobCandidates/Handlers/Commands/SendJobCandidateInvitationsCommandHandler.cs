@@ -45,7 +45,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             .GetTargetCountAsync(job.JobCategoryId, job.NumberOfVacancies);
 
         var requirements = await jobRequirementsService
-            .GetAsync(job.MajorId, job.SubMajorId);
+            .GetAsync(job);
 
         var eligibleQuery = BuildEligibleCandidatesQuery(job, request, requirements);
 

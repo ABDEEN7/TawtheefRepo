@@ -58,6 +58,7 @@ public static class PermissionCatalog
 
 
         Permissions.JobsInvitations.View,
+        Permissions.JobsInvitations.ManageAttachment,
 
         Permissions.Nominations.View,
         Permissions.Nominations.Manage,

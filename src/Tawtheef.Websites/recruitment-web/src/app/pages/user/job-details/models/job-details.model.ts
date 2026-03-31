@@ -36,4 +36,7 @@ export interface JobDetailsModel {
   skills?: JobSkillResponse[];
   responsibilities?: JobResponsibilityResponse[];
   requiredAttachments?: JobRequiredAttachmentResponse[];
+  
+  invitationStatusId?: GUID;
+  invitationStatus?: DropdownOptionVM;
 }

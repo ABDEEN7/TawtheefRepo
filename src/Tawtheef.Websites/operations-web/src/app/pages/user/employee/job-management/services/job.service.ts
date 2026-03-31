@@ -17,7 +17,7 @@ import { HttpService } from '../../../../../core/http/http.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
-import { JobStatus } from '../../../../../core/enums/lookups.enum';
+import { JobStatus, Degree } from '../../../../../core/enums/lookups.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -201,13 +201,17 @@ export class JobService {
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
 
     const simplifiedDegrees = [
-      'ebf2faa1-5ce6-4a04-9472-2746bfbbd252', // Secondary
-      'f1a31fe6-ba80-46cb-b24b-f402bcb4fdec', // Preparatory
-      '6e453f48-5f2f-4f98-8b76-f416cdd4811b', // Primary
+      Degree.Secondary,
+      Degree.Preparatory,
+      Degree.Primary,
     ];
 
     const needsMajor = job.degrees && job.degrees.length > 0 ?
-      job.degrees.some(d => !simplifiedDegrees.includes(d.degreeId)) : true;
+      job.degrees.some(d => {
+        const degreeId = d.degreeId;
+        const degreeObj = this.lookupService.degrees().find(ld => ld.id === degreeId);
+        return !simplifiedDegrees.includes(degreeObj?.backendName as any);
+      }) : true;
 
     if (needsMajor && !job.majorId) errors.push('VALIDATION.JOB.MAJOR_REQUIRED');
 

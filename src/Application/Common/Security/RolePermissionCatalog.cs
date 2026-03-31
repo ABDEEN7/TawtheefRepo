@@ -44,6 +44,7 @@ public static class RolePermissionCatalog
                 Permissions.JobsPoints.Approve.Key,
 
                 Permissions.JobsInvitations.View.Key,
+                Permissions.JobsInvitations.ManageAttachment.Key,
 
                 Permissions.Nominations.View.Key,
                 Permissions.Nominations.Manage.Key,
@@ -114,6 +115,7 @@ public static class RolePermissionCatalog
                 Permissions.JobsPoints.Approve.Key,
 
                 Permissions.JobsInvitations.View.Key,
+                Permissions.JobsInvitations.ManageAttachment.Key,
 
                 Permissions.Nominations.View.Key,
                 Permissions.Nominations.Manage.Key,

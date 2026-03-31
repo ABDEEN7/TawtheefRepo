@@ -1,81 +1,87 @@
 <section i18nNamespace="pages/job-wizard">
-      <p-toast position="top-center" key="wizardToast"></p-toast>
-      <div class="card card-table">
-          <div class="card-body">
-               <div class="row align-items-center mb-3">
-                   <div class="col-lg-6 col-md-12">
-                         <h3 class="fw-bold mb-0">{{ getHeaderTitle() | translate }}</h3>
-                         <p class="text-muted mt-2 mb-0">{{ getHeaderSubtitle() | translate }}</p>
-                   </div>
-                   <div class="col-lg-6 col-md-12">
-                       @if (showWizardContent) {
-                         <div class="d-flex align-items-center gap-3 justify-content-end flex-wrap">
-                              <app-progress-bar [value]="progress"></app-progress-bar>
-                                <button class="btn btn-edit-basic d-flex align-items-center gap-1" (click)="openEditBasicData()" [disabled]="isLoading"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i> {{ 'JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA' | translate }} </button>
-                               <button class="btn btn-outline-primary btn-sm d-flex" (click)="cancelWizard()"><i class="hgi hgi-stroke hgi-cancel-01 me-1"></i> {{ 'JOB_WIZARD.BUTTONS.CANCEL' | translate }} </button>
-                         </div>
-                       }
-                   </div>
-            </div>
-                @if (showWizardContent) {
-                  <div class="wizard">
-                    @if (stepsLoaded) {
-                      <div class="card card-table mb-4"><div class="card-body"> <app-stepper [current]="step" (stepChange)="goTo($event)"> </app-stepper></div></div>
-                    }
-                    @if (showContainer) {
-                      <div class="card card-table">
-                          <div class="card-body">
-                            <div #stepsContainer></div>
-                            @if (jobService.getCurrentJob()?.ReviewAttachment) {
-                              <div class="alert alert-warning mb-3 p-3">
-                                <label class="form-label fw-semibold mb-2">
-                                  {{ 'JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS' | translate }}
-                                </label>
-
-                                <div class="d-flex flex-column gap-2">
-                                  <div class="attachment-row d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center gap-2">
-                                      <i [class]="fileIcon(jobService.getCurrentJob()?.ReviewAttachment?.fileName)"></i>
-                                      <span class="small">{{
-                                          jobService.getCurrentJob()?.ReviewAttachment?.fileName
-                                        }}</span>
-                                    </div>
-
-                                    <div class="d-flex gap-2">
-                                      <button
-                                        type="button"
-                                        class="btn btn-sm btn-outline-secondary"
-                                        (click)="preview(jobService.getCurrentJob()?.ReviewAttachment)"
-                                      >
-                                        <i class="fa fa-eye"></i>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            }
-                          </div>
-                      </div>
-
-                    }
-                    @if (stepsLoaded) {
-                      <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
-                        <button class="btn btn-link d-flex align-items-center gap-2" (click)="prev()" [disabled]="step === 1 || isLoading">
-                            <i class=" hgi" faDirArrow="start"></i>
-                            {{ 'JOB_WIZARD.BUTTONS.BACK' | translate }}
-                        </button>
-
-                        @if (step < total) {
-                          <button class="btn btn-outline-primary light d-flex align-items-center gap-2" (click)="next()"  [disabled]="!isCurrentStepValid() || isLoading">{{ 'JOB_WIZARD.BUTTONS.NEXT' | translate }} <i class="hgi" faDirArrow="end"></i></button>
-                        } @else {
-                          <button class="btn btn-success d-flex align-items-center gap-2" (click)="submitForApproval()" [disabled]="!canGoToReview() || isLoading">
-                              @if(isLoading){  <span class="spinner-border spinner-border-sm me-2"></span> } <i class="hgi hgi-stroke hgi-sent me-2"></i> {{ 'JOB_WIZARD.BUTTONS.SUBMIT_FOR_APPROVAL' | translate }}
-                          </button>
-                        }
-                      </div>
-                    }
-                  </div>
-                }
+  <p-toast position="top-center" key="wizardToast"></p-toast>
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+        <div class="col-lg-6 col-md-12">
+          <h3 class="fw-bold mb-0">{{ getHeaderTitle() | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ getHeaderSubtitle() | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          @if (showWizardContent) {
+          <div class="d-flex align-items-center gap-3 justify-content-end flex-wrap">
+            <app-progress-bar [value]="progress"></app-progress-bar>
+            <button class="btn btn-edit-basic d-flex align-items-center gap-1" (click)="openEditBasicData()"
+              [disabled]="isLoading"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i> {{
+              'JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA' | translate }} </button>
+            <button class="btn btn-outline-primary btn-sm d-flex" (click)="cancelWizard()"><i
+                class="hgi hgi-stroke hgi-cancel-01 me-1"></i> {{ 'JOB_WIZARD.BUTTONS.CANCEL' | translate }} </button>
           </div>
+          }
+        </div>
       </div>
+      @if (showWizardContent) {
+      <div class="wizard">
+        @if (stepsLoaded) {
+        <div class="card card-table mb-4">
+          <div class="card-body"> <app-stepper [current]="step" (stepChange)="goTo($event)"> </app-stepper></div>
+        </div>
+        }
+        @if (showContainer) {
+        <div class="card card-table">
+          <div class="card-body">
+            <div #stepsContainer></div>
+            @if (jobService.getCurrentJob()?.ReviewAttachment) {
+            <div class="alert alert-warning mb-3 p-3">
+              <label class="form-label fw-semibold mb-2">
+                {{ 'JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS' | translate }}
+              </label>
+
+              <div class="d-flex flex-column gap-2">
+                <div class="attachment-row d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-2">
+                    <i [class]="fileIcon(jobService.getCurrentJob()?.ReviewAttachment?.fileName)"></i>
+                    <span class="small">{{
+                      jobService.getCurrentJob()?.ReviewAttachment?.fileName
+                      }}</span>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                      (click)="preview(jobService.getCurrentJob()?.ReviewAttachment)">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        }
+        @if (stepsLoaded) {
+        <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
+          <button class="btn btn-link d-flex align-items-center gap-2" (click)="prev()"
+            [disabled]="step === 1 || isLoading">
+            <i class=" hgi" faDirArrow="start"></i>
+            {{ 'JOB_WIZARD.BUTTONS.BACK' | translate }}
+          </button>
+
+          @if (step < total) { <button class="btn btn-outline-primary light d-flex align-items-center gap-2"
+            (click)="next()" [disabled]="!isCurrentStepValid() || isLoading">{{ 'JOB_WIZARD.BUTTONS.NEXT' | translate }}
+            <i class="hgi" faDirArrow="end"></i></button>
+            } @else {
+            <button class="btn btn-success d-flex align-items-center gap-2" (click)="submitForApproval()"
+              [disabled]="!canGoToReview() || isLoading">
+              @if(isLoading){ <span class="spinner-border spinner-border-sm me-2"></span> } <i
+                class="hgi hgi-stroke hgi-sent me-2"></i> {{ 'JOB_WIZARD.BUTTONS.SUBMIT_FOR_APPROVAL' | translate }}
+            </button>
+            }
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
 </section>

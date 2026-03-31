@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, AfterViewInit, HostListener, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { JobService } from '../../services/job.service';
@@ -6,14 +7,14 @@ import { JobLookupService } from '../../services/job-lookup.service';
 import { GUID } from '../../../../../../shared/types/guid.type';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, filter } from 'rxjs';
 import { Router } from '@angular/router';
 import { EndpointsService } from '../../../../../../core/http/endpoints.service';
 import { DialogHelperService } from '../../../../../../core/services/dialog-helper.service';
 import { JobCopyTemplate } from '../../models/job-copy-template.model';
 import { JobTabReviewNoteResponse } from '../../models/job-tab-review-note-response';
 import { JobTabType } from '../../enums/job-tab-type';
-import { JobStatus } from '../../../../../../core/enums/lookups.enum';
+import { JobStatus, Degree } from '../../../../../../core/enums/lookups.enum';
 import { JobReviewResponse } from '../../models/job-review-response';
 import { JobResponse } from '../../models/job-response-model';
 import { routes } from '../../../../../../routes/routes';
@@ -44,6 +45,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   isLoading = false;
   isEditMode = false;
   isCreateMode = false;
+  isViewMode = false;
   showInWizard = false;
   jobId: GUID | null = null;
   currentDate: Date | undefined;
@@ -55,14 +57,14 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
   form = this.fb.nonNullable.group({
     sectorId: ['', Validators.required],
     managementId: ['', Validators.required],
-    departmentId: [GuidUtils.nullGuid],
+    departmentId: [null, GuidUtils.nullGuid],
     yearsOfExperience: [0, [Validators.required, Validators.min(0)]],
     jobTitleId: ['', Validators.required],
     jobCategoryId: ['', Validators.required],
     workLocationId: ['', Validators.required],
     genderId: ['', Validators.required],
-    majorId: [GuidUtils.nullGuid],
-    subMajorId: [GuidUtils.nullGuid],
+    majorId: [null, GuidUtils.nullGuid],
+    subMajorId: [null, GuidUtils.nullGuid],
     degrees: this.fb.control<any[]>([], Validators.required),
     workTypeId: ['', Validators.required],
     numberOfVacancies: [1, [Validators.required, Validators.min(1)]],
@@ -71,37 +73,114 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     maximumAge: [60, [Validators.required, Validators.min(18)]],
   });
 
-  private simplifiedDegrees = [
-    'ebf2faa1-5ce6-4a04-9472-2746bfbbd252', // Secondary
-    'f1a31fe6-ba80-46cb-b24b-f402bcb4fdec', // Preparatory
-    '6e453f48-5f2f-4f98-8b76-f416cdd4811b', // Primary
+  private simplifiedDegrees: (string | undefined)[] = [
+    Degree.Secondary,
+    Degree.Preparatory,
+    Degree.Primary,
   ];
 
   majorOptions: any[] = [];
   subMajorOptions: any[] = [];
 
+  private destroyRef = inject(DestroyRef);
+  private loaded$ = toObservable(this.lookupsService.loaded);
+
   ngOnInit(): void {
     const today = new Date();
     this.currentDate = today;
+
+    // Set modes based on input data
+    this.isViewMode = this.config.data?.isViewMode || false;
     this.isCreateMode = this.config.data?.isCreateMode || false;
     this.showInWizard = this.config.data?.showInWizard || false;
     this.copyTemplate = this.config.data?.copyTemplate || null;
     this.copySourceId = this.config.data?.copySourceId || null;
 
-    if (this.config.data?.jobId) {
-      this.isEditMode = true;
-      this.jobId = this.config.data.jobId;
-      this.loadJobForEdit();
-    } else if (!this.isCreateMode) {
+    if (this.config.data?.jobData || this.config.data?.jobId) {
+       // Wait for lookups if they are not loaded yet
+       if (!this.lookupsService.loaded()) {
+         this.lookupsService.loadAll();
+         this.loaded$
+           .pipe(
+             filter(loaded => loaded),
+             takeUntilDestroyed(this.destroyRef)
+           )
+           .subscribe(() => {
+             this.initializeModal();
+           });
+       } else {
+         this.initializeModal();
+       }
+    } else if (!this.isViewMode && !this.isCreateMode) {
       this.isCreateMode = true;
     }
 
-    this.setupSequenceListeners();
+    if (!this.isViewMode) {
+      this.setupSequenceListeners();
+    }
+    
     this.setupDegreeValidationListener();
     if (this.copyTemplate) {
       this.isCopyMode = true;
       this.applyTemplateToForm(this.copyTemplate);
     }
+  }
+
+  private initializeModal(): void {
+    if (this.config.data?.jobData) {
+      this.jobId = this.config.data.jobId;
+      this.populateForm(this.config.data.jobData);
+      if (this.isViewMode) {
+        this.form.disable();
+      }
+    } else if (this.config.data?.jobId) {
+      this.jobId = this.config.data.jobId;
+      if (!this.isViewMode) {
+        this.isEditMode = true;
+      }
+      this.loadJobForEdit();
+    }
+  }
+
+  private populateForm(jobResponse: JobResponse): void {
+    const deadline = jobResponse.closingDate ? new Date(jobResponse.closingDate) : null;
+
+    this.form.patchValue({
+      sectorId: jobResponse.sector.id || '',
+      managementId: jobResponse.management.id || '',
+      departmentId: jobResponse.department?.id || null,
+      yearsOfExperience: jobResponse.yearsOfExperience || 0,
+      jobTitleId: jobResponse.jobTitleId || '',
+      jobCategoryId: jobResponse.jobCategory.id || '',
+      workLocationId: jobResponse.workLocation.id || '',
+      genderId: jobResponse.gender?.id || '',
+      majorId: jobResponse.major?.id || null,
+      subMajorId: jobResponse.subMajor?.id || null,
+      workTypeId: jobResponse.workType.id || '',
+      numberOfVacancies: jobResponse.numberOfVacancies || 1,
+      closingDate: deadline,
+      minimumAge: jobResponse.minimumAge || 18,
+      maximumAge: jobResponse.maximumAge || 60,
+      degrees: jobResponse.degrees || []
+    }, { emitEvent: true });
+
+
+    this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
+    this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : [];
+
+    if (jobResponse.sector.id) {
+      this.lookupsService.loadManagementsBySector(jobResponse.sector.id as GUID);
+    }
+
+    if (jobResponse.management.id) {
+      this.lookupsService.loadDepartmentsByManagement(jobResponse.management.id as GUID);
+    }
+
+    if (jobResponse.major?.id) {
+      this.lookupsService.loadSubMajorsByMajor(jobResponse.major.id as GUID);
+    }
+
+    this.loadReviewNote(jobResponse);
   }
 
   ngOnDestroy(): void {
@@ -147,7 +226,11 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(degrees => {
         const needsMajor = !degrees || degrees.length === 0 ||
-          degrees.some(d => !this.simplifiedDegrees.includes(d.degreeId || d)); // handle both {degreeId} and raw ID if any
+          degrees.some(d => {
+            const degreeId = d.degreeId || d;
+            const degreeObj = this.lookupsService.degrees().find(ld => ld.id === degreeId);
+            return !this.simplifiedDegrees.includes(degreeObj?.backendName);
+          });
 
         if (needsMajor) {
           this.form.controls.majorId.addValidators(Validators.required);
@@ -194,45 +277,12 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.jobService.loadJobForEdit(this.jobId).subscribe({
       next: (jobResponse) => {
-        const deadline = jobResponse.closingDate ? new Date(jobResponse.closingDate) : null;
-
-        this.form.patchValue({
-          sectorId: jobResponse.sector.id || '',
-          managementId: jobResponse.management.id || '',
-          departmentId: jobResponse.department?.id || null,
-          yearsOfExperience: jobResponse.yearsOfExperience || 0,
-          jobTitleId: jobResponse.jobTitleId || '',
-          jobCategoryId: jobResponse.jobCategory.id || '',
-          workLocationId: jobResponse.workLocation.id || '',
-          genderId: jobResponse.gender?.id || '',
-          majorId: jobResponse.major?.id || null,
-          subMajorId: jobResponse.subMajor?.id || null,
-          workTypeId: jobResponse.workType.id || '',
-          numberOfVacancies: jobResponse.numberOfVacancies || 1,
-          closingDate: deadline,
-          minimumAge: jobResponse.minimumAge || 18,
-          maximumAge: jobResponse.maximumAge || 60,
-          degrees: jobResponse.degrees || []
-        }, { emitEvent: true }); // emitEvent: true to trigger degree validation listener
-
-
-        this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : [];
-        this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : [];
-
-        if (jobResponse.sector.id) {
-          this.lookupsService.loadManagementsBySector(jobResponse.sector.id as GUID);
-        }
-
-        if (jobResponse.management.id) {
-          this.lookupsService.loadDepartmentsByManagement(jobResponse.management.id as GUID);
-        }
-
-        if (jobResponse.major?.id) {
-          this.lookupsService.loadSubMajorsByMajor(jobResponse.major.id as GUID);
-        }
-
-        this.loadReviewNote(jobResponse);
+        this.populateForm(jobResponse);
         this.isLoading = false;
+
+        if (this.isViewMode) {
+          this.form.disable();
+        }
       },
       error: () => {
         this.isLoading = false;
@@ -279,24 +329,24 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       jobTitleId: formValue.jobTitleId as GUID,
       sectorId: formValue.sectorId as GUID,
       managementId: formValue.managementId as GUID,
-      departmentId: formValue.departmentId as GUID,
+      departmentId: formValue.departmentId as GUID | null,
       yearsOfExperience: formValue.yearsOfExperience,
       jobCategoryId: formValue.jobCategoryId as GUID,
       workLocationId: formValue.workLocationId as GUID,
       genderId: formValue.genderId as GUID,
-      majorId: formValue.majorId as GUID,
-      subMajorId: formValue.subMajorId as GUID,
+      majorId: formValue.majorId as GUID | null,
+      subMajorId: formValue.subMajorId as GUID | null,
       workTypeId: formValue.workTypeId as GUID,
       numberOfVacancies: formValue.numberOfVacancies,
       closingDate: normalizedClosingDate,
       minimumAge: formValue.minimumAge,
       maximumAge: formValue.maximumAge,
-      overviewAr: '',
-      overviewEn: '',
-      benefitsAr: '',
-      benefitsEn: '',
-      qualificationsDescriptionAr: '',
-      qualificationsDescriptionEn: '',
+      overviewAr: null,
+      overviewEn: null,
+      benefitsAr: null,
+      benefitsEn: null,
+      qualificationsDescriptionAr: null,
+      qualificationsDescriptionEn: null,
       degrees: formValue.degrees || [],
       conditions: [],
       responsibilities: [],

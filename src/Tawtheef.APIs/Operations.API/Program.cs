@@ -3,6 +3,7 @@ using Application.Operation;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Operations.API.Filters;
@@ -148,7 +149,7 @@ builder.Services.AddHsts(options =>
 
 
 if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) {
-builder.Services.AddSwagger();
+    builder.Services.AddSwagger();
 }
 
 var app = builder.Build();
@@ -189,25 +190,31 @@ app.UseSerilogRequestLogging(opts => {
 });
 
 app.UseMiddleware<ResponseLoggingMiddleware>();
-if (!builder.Environment.IsDevelopment())
+
+app.UseExceptionHandler(appBuilder =>
 {
-    app.UseExceptionHandler();
-    app.UseHsts();
-}
-else
-{
-    app.UseDeveloperExceptionPage();
-}
+    appBuilder.Run(async context =>
+    {
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        if (exceptionHandlerPathFeature?.Error != null)
+        {
+            var handler = context.RequestServices.GetRequiredService<CustomExceptionHandler>();
+            var handled = await handler.TryHandleAsync(context, exceptionHandlerPathFeature.Error, CancellationToken.None);
+            if (!handled)
+            {
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            }
+        }
+    });
+});
+app.UseHsts();
 
 if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
-{
     app.MapSwagger();
-}
 
 app.UseHttpsRedirection();
 
 app.UseCors(myCors);
-app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseCookiePolicy(); 
 app.UseAuthentication();
 app.UseAuthorization();

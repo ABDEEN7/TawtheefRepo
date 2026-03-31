@@ -1,12 +1,12 @@
 ﻿using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.DTOs;
-using Application.Recruitment.Features.Authenticator.Handlers.Utils;
 using Application.Recruitment.Features.Profile.Queries;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Utils;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;

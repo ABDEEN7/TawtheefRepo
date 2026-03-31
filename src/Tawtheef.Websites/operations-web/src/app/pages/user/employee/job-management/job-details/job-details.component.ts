@@ -6,6 +6,9 @@ import { JobLookupService } from '../services/job-lookup.service';
 import { JobResponse } from '../models/job-response-model';
 import { JobStatus } from '../../../../../core/enums/lookups.enum';
 import { JobTabType } from '../enums/job-tab-type';
+import { JobBasicModalComponent } from '../modals/basics-step-modal/job-basic-modal.component';
+import { DialogService } from 'primeng/dynamicdialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-job-details',
@@ -37,6 +40,8 @@ export class JobDetailsComponent implements OnInit {
   private jobService = inject(JobService);
   private route = inject(ActivatedRoute);
   lookupsService = inject(JobLookupService);
+  private dialogService = inject(DialogService);
+  private translateService = inject(TranslateService);
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as GUID;
@@ -56,7 +61,7 @@ export class JobDetailsComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  getTabContent(): { id: string, title: string, icon: string} {
+  getTabContent(): { id: string, title: string, icon: string } {
     return this.tabsContent.find(tab => tab.id === this.activeTab) || this.tabsContent[0];
   }
 
@@ -71,7 +76,7 @@ export class JobDetailsComponent implements OnInit {
   getStatusClass(): string {
     if (!this.job?.jobStatus?.backendName) return this.jobStatus.Closed;
 
-    switch(this.job.jobStatus.backendName) {
+    switch (this.job.jobStatus.backendName) {
       case JobStatus.Approved:
         return this.isJobOpen() ? this.jobStatus.Approved : this.jobStatus.Closed;
       case JobStatus.PendingApproval:
@@ -92,12 +97,12 @@ export class JobDetailsComponent implements OnInit {
   }
 
   getJobConditions(): { textAr: string; textEn: string }[] {
-  if (!this.job?.conditions?.length) return [];
-  return this.job.conditions.map(c => ({
-    textAr: c.textAr,
-    textEn: c.textEn
-  }));
-}
+    if (!this.job?.conditions?.length) return [];
+    return this.job.conditions.map(c => ({
+      textAr: c.textAr,
+      textEn: c.textEn
+    }));
+  }
 
   getJobSkills(): string[] {
     if (!this.job?.skills?.length) return [];
@@ -128,5 +133,26 @@ export class JobDetailsComponent implements OnInit {
     const closingDate = new Date(this.job.closingDate);
     const today = new Date();
     return closingDate >= today;
+  }
+
+  openViewBasicData() {
+    if (!this.job?.id) return;
+
+    this.dialogService.open(JobBasicModalComponent, {
+      width: 'min(920px, 96vw)',
+      modal: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+      header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
+      styleClass: 'custom-bootstrap-dialog',
+      draggable: false,
+      data: {
+        isViewMode: true,
+        jobId: this.job.id,
+        jobData: this.job
+      },
+    })?.onClose.subscribe((result) => {
+    });
   }
 }

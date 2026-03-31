@@ -33,4 +33,8 @@ public sealed class CandidateJobDetailsDto
     public List<JobSkillResponseDto>? Skills { get; set; }
     public List<CandidateJobResponsibilityDto>? Responsibilities { get; set; }
     public List<CandidateJobRequiredAttachmentDto>? RequiredAttachments { get; set; }
+    
+    // Invitation status
+    public Guid InvitationStatusId { get; set; }
+    public DropdownOptions? InvitationStatus { get; set; }
 }

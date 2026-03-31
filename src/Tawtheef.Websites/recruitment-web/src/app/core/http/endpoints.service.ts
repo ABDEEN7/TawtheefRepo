@@ -1,4 +1,4 @@
-﻿import {inject, Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {ApiConfigService} from '../services/api-config.service';
 import {CaseUtils} from '../utils/case-utils';
 
@@ -158,6 +158,10 @@ export class EndpointsService {
       this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/read`),
     changeStatusCandidateInvitationReject: (invitationId: string) =>
       this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/reject`),
+    uploadInvitationAttachment: (invitationId: string, jobRequiredAttachmentId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/attachments/${jobRequiredAttachmentId}`),
+    deleteInvitationAttachment: (invitationId: string, attachmentId: string) =>
+      this.getFullUrl(`/dashboard/candidate-invitations/${invitationId}/attachments/${attachmentId}`),
     lookups: {
       invitationStatuses: this.getFullUrl(`/dashboard/lookups/invitation-statuses`),
       jobCategories: this.getFullUrl(`/dashboard/lookups/job-categories`),

@@ -1,4 +1,5 @@
 {
+  "server-error.JOB_REQUIRED_ATTACHMENT_MISSING": "All required documents must be attached.",
   "server-error.UNAUTHORIZED_ACTION": "You are not authorized to perform this action.",
   "server-error.INVALID_RECAPTCHA": "Recaptcha verification failed.",
   "server-error.INVALID_DEVICE_ID": "Invalid device identifier.",

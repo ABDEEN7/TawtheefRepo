@@ -108,6 +108,14 @@
       <EmbeddedResource Include="Templates\ContactVerificationSent\ContactVerificationSent.txt.cshtml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.html.cshtml" />
+      <EmbeddedResource Include="Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.txt.cshtml" />
+      <EmbeddedResource Include="Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

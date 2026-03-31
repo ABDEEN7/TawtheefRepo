@@ -3,7 +3,11 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Select } from 'primeng/select';
+import { DrawerModule } from 'primeng/drawer';
+import { TextareaModule } from 'primeng/textarea';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
@@ -11,7 +15,8 @@ import {
   InviteRowVM,
   JobInfoVM,
   JobInvitesStatsVM,
-  LookupOption
+  LookupOption,
+  InvitationAttachmentVM
 } from '../models/job-invitation-summary-details.model';
 import { JobInvitationSummaryDetailsService } from '../services/job-invitation-summary-details.service';
 import { GUID } from '../../../../../shared/types/guid.type';
@@ -20,6 +25,7 @@ import { routes } from '../../../../../routes/routes';
 import { TableModule } from 'primeng/table';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
+import { LanguageService } from '../../../../../core/services/language.service';
 
 
 @Component({
@@ -34,7 +40,10 @@ import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.
     Select,
     PaginationComponent,
     TableModule,
-    FaDirArrowDirective
+    FaDirArrowDirective,
+    DrawerModule,
+    TextareaModule,
+    TooltipModule
   ],
   templateUrl: './job-invitation-summary-details.component.html',
   styleUrl: './job-invitation-summary-details.component.scss',
@@ -43,6 +52,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   detailsService = inject(JobInvitationSummaryDetailsService);
+  lang = inject(LanguageService);
 
   jobId = signal<GUID>(GuidUtils.emptyGuid);
 
@@ -60,6 +70,19 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   totalItems = computed(() => this.paginationMetadata()?.totalCount ?? 0);
 
   statusOptions = signal<LookupOption[]>([]);
+
+  // Attachment State
+  showAttachments = signal(false);
+  selectedInvitationId = signal<GUID>(GuidUtils.emptyGuid);
+  attachments = signal<InvitationAttachmentVM[]>([]);
+  isLoadingAttachments = signal(false);
+
+  showPreview = signal(false);
+  previewUrl = signal<SafeResourceUrl | null>(null);
+  previewTitle = signal('');
+  private currentBlobUrl: string | null = null;
+
+  private sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('jobId') ?? '';
@@ -96,6 +119,73 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
     });
   }
 
+  viewAttachments(invitationId: string): void {
+    this.selectedInvitationId.set(invitationId as GUID);
+    this.showAttachments.set(true);
+    this.loadAttachments();
+  }
+
+  previewAttachment(attachment: InvitationAttachmentVM): void {
+    if (!attachment.resourceUrl) return;
+    this.onPreviewHide();
+    this.showPreview.set(true);
+    this.previewTitle.set(attachment.resourceName);
+    this.previewUrl.set(null);
+    this.detailsService.getAttachmentBlob(attachment.resourceUrl).subscribe({
+      next: (blob) => {
+        this.currentBlobUrl = URL.createObjectURL(blob);
+        this.previewUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(this.currentBlobUrl));
+      },
+      error: (err) => {
+        console.error('File preview failed', err);
+        this.showPreview.set(false);
+      }
+    });
+  }
+
+  onPreviewHide(): void {
+    if (this.currentBlobUrl) {
+      URL.revokeObjectURL(this.currentBlobUrl);
+      this.currentBlobUrl = null;
+    }
+    this.previewUrl.set(null);
+  }
+
+  loadAttachments(): void {
+    this.isLoadingAttachments.set(true);
+    this.detailsService.getInvitationAttachments(this.selectedInvitationId()).subscribe({
+      next: (res) => {
+        this.attachments.set(res);
+        this.isLoadingAttachments.set(false);
+      },
+      error: () => this.isLoadingAttachments.set(false)
+    });
+  }
+
+  approveAttachment(attachmentId: string): void {
+    this.detailsService.reviewAttachment({
+      invitationId: this.selectedInvitationId(),
+      attachmentId: attachmentId as GUID,
+      isApproved: true
+    }).subscribe(() => {
+      this.loadAttachments();
+      this.loadAll();
+    });
+  }
+
+  returnAttachment(attachmentId: string, note: string): void {
+    if (!note) return;
+    this.detailsService.reviewAttachment({
+      invitationId: this.selectedInvitationId(),
+      attachmentId: attachmentId as GUID,
+      isApproved: false,
+      reviewNote: note
+    }).subscribe(() => {
+      this.loadAttachments();
+      this.loadAll();
+    });
+  }
+
   onFilterChange(): void {
     this.currentPage.set(1);
     this.loadAll();
@@ -124,7 +214,10 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   getStatusPillClass(backendName: string): string {
     const map: Record<string, string> = {
       Applied: 'pill success',
-      New: 'pill info',
+      Submitted: 'pill success',
+      NewInvitation: 'pill info',
+      PendingAttachmentApproval: 'pill warning',
+      ReturnedAttachment: 'pill danger',
       Cancelled: 'pill danger',
       Declined: 'pill warning',
       Refused: 'pill warning',

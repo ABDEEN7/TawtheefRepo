@@ -37,7 +37,7 @@ public sealed class ExportJobCandidatesQueryHandler(
             return Result.Fail<JobCandidatesExportResult>(JobMessages.JobNotFound);
 
         var targetCount = await jobTargetCandidateCalculatorService.GetTargetCountAsync(job.JobCategoryId,job.NumberOfVacancies);
-        var req = await jobRequirementsService.GetAsync(job.MajorId,job.SubMajorId);
+        var req = await jobRequirementsService.GetAsync(job);
 
         var baseQuery = jobCandidatesQueryBuilderService.BuildEligibleQuery(
             job.Id,job.GenderId,job.MaximumAge,job.MinimumAge, req, request.Filter);

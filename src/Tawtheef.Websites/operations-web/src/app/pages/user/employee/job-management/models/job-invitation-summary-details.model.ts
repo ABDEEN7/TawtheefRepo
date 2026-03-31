@@ -54,3 +54,17 @@ export interface JobInvitesRowsFilters {
   sortBy: string;
   sortDirection: SortDirection;
 }
+
+export interface InvitationAttachmentVM {
+  id: string; // AttachmentId (InvitationAttachment.Id)
+  jobRequiredAttachmentId: string;
+  titleEn: string;
+  titleAr: string;
+  isMandatory: boolean;
+  resourceId: string;
+  resourceUrl: string;
+  resourceName: string;
+  isApproved: boolean;
+  isReturned: boolean;
+  reviewNote: string;
+}

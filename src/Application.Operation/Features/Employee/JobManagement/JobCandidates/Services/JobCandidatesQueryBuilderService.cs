@@ -50,6 +50,12 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
             p.BirthDate!.Value >= minBirthDate &&
             p.BirthDate!.Value <= maxBirthDate);
 
+        profiles = profiles.Where(p =>
+            p.Qualifications != null &&
+            req.QualificationLevelIds.Any(jq=> 
+                p.Qualifications.Any(pq=> pq.DegreeId == jq))
+        );
+        
         // Latest Major MUST match job major/submajor
         if (req.JobMajorId.HasValue || req.JobSubMajorId.HasValue)
         {

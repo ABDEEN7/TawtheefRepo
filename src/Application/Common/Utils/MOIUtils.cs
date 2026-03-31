@@ -1,4 +1,4 @@
-namespace Application.Recruitment.Features.Authenticator.Handlers.Utils;
+namespace Tawtheef.Application.Common.Utils;
 
 public static class MoiUtils
 {

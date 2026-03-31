@@ -52,4 +52,14 @@ export class JobDetailsService {
         finalize(() => this.applying.set(false))
       );
   }
+
+  uploadInvitationAttachment(invitationId: string, jobRequiredAttachmentId: string, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(this.endpoints.dashboard.uploadInvitationAttachment(invitationId, jobRequiredAttachmentId), formData);
+  }
+
+  deleteInvitationAttachment(invitationId: string, attachmentId: string) {
+    return this.http.delete<void>(this.endpoints.dashboard.deleteInvitationAttachment(invitationId, attachmentId));
+  }
 }

@@ -126,7 +126,9 @@ export class EndpointsService {
     details: {
       jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
       stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
-      rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`)
+      rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`),
+      getAttachments: (invitationId: string) => this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments`),
+      reviewAttachment: (invitationId: string, attachmentId: string) => this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments/${attachmentId}/review`)
     },
     lookups: {
       jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),

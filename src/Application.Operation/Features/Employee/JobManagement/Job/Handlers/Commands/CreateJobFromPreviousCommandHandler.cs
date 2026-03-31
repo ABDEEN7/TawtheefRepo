@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using MediatR;
@@ -34,6 +34,7 @@ public class CreateJobFromPreviousCommandHandler(
                 validationResult.Errors.Select(e => e.ErrorMessage)
             );
         }
+        
         var sourceJobResult = await jobRepository.GetByIdWithDetailsAsync(request.SourceJobId);
         if (sourceJobResult.IsFailed || sourceJobResult.Value == null)
             return Result.Fail<Guid>(JobMessages.JobNotFound);
@@ -42,32 +43,95 @@ public class CreateJobFromPreviousCommandHandler(
         if (!JobBusinessRules.CanCopyFromPreviousJob(sourceJob.JobStatusId))
             return Result.Fail<Guid>(JobMessages.JobCannotBeCopied);
 
-        var job = request.Job.Adapt<JobEntity>();
-        
-        ApplyOverviewFields(job, request.Job, sourceJob);
-        job.JobDegrees = BuildDegrees(request.Job, sourceJob, job.Id);
-        job.JobConditions = BuildConditions(request.Job, sourceJob, job.Id);
-        job.JobResponsibilities = BuildResponsibilities(request.Job, sourceJob, job.Id);
-        job.JobSkills = BuildSkills(request.Job, sourceJob, job.Id);
-        job.JobRequiredAttachments = BuildRequiredAttachments(request.Job, sourceJob, job.Id);
+        return await unitOfWork.ExecuteInTransactionAsync(async ct =>
+        {
+            var job = request.Job.Adapt<JobEntity>();
+            ApplyOverviewFields(job, request.Job, sourceJob);
+            job.ChangeStatus(JobStatusIds.Draft);
 
-        var points = await BuildJobPointsAsync(
-            request.Job,
-            sourceJob.Id,
-            sourceJob.JobPoints != null,
-            job.Id);
-        if (points != null)
-            job.JobPoints = points;
+            var jobAddResult = await jobRepository.Repository.AddAsync(job, ct);
+            if (jobAddResult.IsFailed)
+                return Result.Fail<Guid>(jobAddResult.Errors);
 
-        job.ChangeStatus(JobStatusIds.Draft);
+            await unitOfWork.SaveChangesAsync(ct);
 
-        var result = await jobRepository.Repository.AddAsync(job);
-        if (result.IsFailed)
-            return Result.Fail<Guid>(result.Errors);
+            // Build and insert individual objects
+            var degrees = BuildDegrees(request.Job, sourceJob, job.Id);
+            foreach (var degree in degrees)
+            {
+                var result = await unitOfWork.GetEntityRepository<JobDegree>().AddAsync(degree, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+            var conditions = BuildConditions(request.Job, sourceJob, job.Id);
+            foreach (var condition in conditions)
+            {
+                var result = await unitOfWork.GetEntityRepository<JobCondition>().AddAsync(condition, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
 
-        return Result.Ok(job.Id);
+            var responsibilities = BuildResponsibilities(request.Job, sourceJob, job.Id);
+            foreach (var responsibility in responsibilities)
+            {
+                var result = await unitOfWork.GetEntityRepository<JobResponsibility>().AddAsync(responsibility, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
+
+            var skills = BuildSkills(request.Job, sourceJob, job.Id);
+            foreach (var skill in skills)
+            {
+                var result = await unitOfWork.GetEntityRepository<JobSkill>().AddAsync(skill, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
+
+            var attachments = BuildRequiredAttachments(request.Job, sourceJob, job.Id);
+            foreach (var a in attachments)
+            {
+                var result = await unitOfWork.GetEntityRepository<JobRequiredAttachment>().AddAsync(a, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
+
+            var points = await BuildJobPointsAsync(
+                request.Job,
+                sourceJob.Id,
+                sourceJob.JobPoints != null,
+                job.Id);
+
+            if (points != null)
+            {
+                var details = points.Details?.ToList();
+                points.Details = []; // Clear details to insert them individually
+
+                var pointsMainResult = await jobPointsRepository.Repository.AddAsync(points, ct);
+                if (pointsMainResult.IsFailed)
+                    return Result.Fail<Guid>(pointsMainResult.Errors);
+                await unitOfWork.SaveChangesAsync(ct);
+
+                if (details != null)
+                {
+                    foreach (var detail in details)
+                    {
+                        detail.JobPointsMainId = points.Id;
+                        var detailResult = await unitOfWork.GetEntityRepository<JobPointsDetail>().AddAsync(detail, ct);
+                        if (detailResult.IsFailed)
+                            return Result.Fail<Guid>(detailResult.Errors);
+                    }
+                    await unitOfWork.SaveChangesAsync(ct);
+                }
+            }
+
+            return Result.Ok(job.Id);
+        }, cancellationToken);
     }
 
     private static void ApplyOverviewFields(JobEntity job, CreateJobFromPreviousDto request, JobEntity source)

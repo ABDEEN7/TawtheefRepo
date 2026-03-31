@@ -1,16 +1,16 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
-import {I18nNamespaceDirective} from '../../../shared/directives/i18n-namespace.directive';
-import {Select} from 'primeng/select';
-import {CandidateInvitationFilters} from './models/candidate-invitation-filters';
-import {CandidateInvitationModel} from './models/candidate-invitation.model';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../shared/models/dropdown-options.model';
-import {PaginationComponent} from '../../../shared/components/pagination/pagination.component';
-import {TableModule} from 'primeng/table';
-import {routes} from '../../../routes/routes';
+import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { Select } from 'primeng/select';
+import { CandidateInvitationFilters } from './models/candidate-invitation-filters';
+import { CandidateInvitationModel } from './models/candidate-invitation.model';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../shared/models/dropdown-options.model';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { TableModule } from 'primeng/table';
+import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { GUID } from '../../../shared/types/guid.type';
 import { ActionConfig } from './types/action-config.type';
@@ -37,6 +37,7 @@ import { InvitationStatus } from './types/invitation-status.type';
 export class Dashboard implements OnInit {
   candidateService = inject(CandidateDashboardService);
   authService = inject(AuthService);
+  translate = inject(TranslateService);
   routes = routes;
 
   // Loading states
@@ -71,8 +72,8 @@ export class Dashboard implements OnInit {
   // Filter methods
 
   loadCandidateInvitations() {
-    const searchFilters: CandidateInvitationFilters =  {
-      userId : this.authService.getCurrentUser()?.userId as GUID,
+    const searchFilters: CandidateInvitationFilters = {
+      userId: this.authService.getCurrentUser()?.userId as GUID,
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       invitationStatusId: this.selectedInvitationStatus() || '',
@@ -107,6 +108,14 @@ export class Dashboard implements OnInit {
     const status = invitationStatus.backendName as InvitationStatus;
 
     return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
+  }
+
+  getStatus(invitationStatus: DropdownOptionVM): string {
+    const status = invitationStatus.backendName as InvitationStatus;
+    if (status == JOB_INVITATION_STATUSES.SUBMITTED) {
+      return this.translate.instant('JOB_INVITATION_STATUSES.SUBMITTED');
+    }
+    return invitationStatus.name;
   }
 
   // Statistics helpers

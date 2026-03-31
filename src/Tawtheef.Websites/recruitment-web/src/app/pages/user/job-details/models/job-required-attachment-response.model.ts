@@ -7,4 +7,12 @@ export interface JobRequiredAttachmentResponse {
   isMandatory: boolean;
   createdDate: Date;
   lastModifiedDate?: Date;
+  
+  attachmentId?: GUID;
+  resourceId?: GUID;
+  resourceUrl?: string;
+  resourceName?: string;
+  isApproved?: boolean;
+  isReturned?: boolean;
+  reviewNote?: string;
 }

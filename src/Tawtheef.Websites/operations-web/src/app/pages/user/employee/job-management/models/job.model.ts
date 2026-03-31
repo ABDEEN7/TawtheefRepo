@@ -27,12 +27,12 @@ export interface Job {
   closingDate: Date;
   minimumAge: number;
   maximumAge: number;
-  overviewAr?: string;
-  overviewEn?: string;
-  benefitsAr?: string;
-  benefitsEn?: string;
-  qualificationsDescriptionAr?: string;
-  qualificationsDescriptionEn?: string;
+  overviewAr?: string | null;
+  overviewEn?: string | null;
+  benefitsAr?: string | null;
+  benefitsEn?: string | null;
+  qualificationsDescriptionAr?: string | null;
+  qualificationsDescriptionEn?: string | null;
   jobStatus?: dropdownOptionsModel;
   degrees?: JobDegree[];
   conditions?: JobCondition[];

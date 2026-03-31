@@ -380,10 +380,13 @@ namespace Tawtheef.Infrastructure
             {
                 var cs = configuration.GetConnectionString(ConnectionStringSettings.SectionName);
 
-                options.UseSqlServer(cs, sql =>
+                options.UseSqlServer(cs, sqlOptions =>
                     {
-                        sql.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
-                        sql.EnableRetryOnFailure(5);
+                        sqlOptions.MigrationsAssembly(typeof(TawtheefDbContext).Assembly.FullName);
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 1,
+                            maxRetryDelay: TimeSpan.FromSeconds(15),
+                            errorNumbersToAdd: null);
                     })
                     .AddInterceptors(
                         sp.GetRequiredService<AuditableEntityInterceptor>(),

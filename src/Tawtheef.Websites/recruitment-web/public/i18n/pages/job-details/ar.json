@@ -56,5 +56,17 @@
   "JOB_DETAILS.APPLY_ERROR": "تعذر التقديم الآن. حاول مرة أخرى.",
   "JOB_DETAILS.REJECT": "رفض الدعوة",
   "JOB_DETAILS.REJECT_SUCCESS": "تم رفض الدعوة.",
-  "JOB_DETAILS.REJECT_ERROR": "تعذر رفض الدعوة. حاول مرة أخرى."
+  "JOB_DETAILS.REJECT_ERROR": "تعذر رفض الدعوة. حاول مرة أخرى.",
+  "JOB_DETAILS.UPLOAD_FILE": "تحميل ملف",
+  "JOB_DETAILS.FILE_SIZE_ERROR": "كحد أقصى حجم الملف 5 ميقابايت.",
+  "JOB_DETAILS.UPLOAD_SUCCESS": "تم تحميل الملف بنجاح.",
+  "JOB_DETAILS.UPLOAD_ERROR": "تعذر تحميل الملف. حاول مرة أخرى.",
+  "JOB_DETAILS.DELETE_SUCCESS": "تم حذف الملف بنجاح.",
+  "JOB_DETAILS.DELETE_ERROR": "تعذر حذف الملف.",
+  "JOB_DETAILS.APPROVED": "معتمد",
+  "JOB_DETAILS.RETURNED": "معاد للتعديل",
+  "JOB_DETAILS.REVIEW_NOTE": "ملاحظة الموظف",
+  "JOB_DETAILS.RE_SUBMIT": "إعادة تقديم الطلب",
+  "JOB_DETAILS.NO_REQUIRED_ATTACHMENTS": "لا توجد مرفقات مطلوبة لهذه الوظيفة.",
+  "JOB_DETAILS.MANDATORY_ATTACHMENTS_REQUIRED": "يجب تحميل جميع المستندات المطلوبة قبل التقديم."
 }

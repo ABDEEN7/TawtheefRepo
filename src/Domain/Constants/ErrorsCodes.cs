@@ -1,4 +1,4 @@
-﻿namespace Tawtheef.Domain.Constants;
+namespace Tawtheef.Domain.Constants;
 
 public class ErrorsCodes
 {
@@ -18,6 +18,7 @@ public class ErrorsCodes
     public const string SponsorProfileNotFound = "SPONSOR_PROFILE_NOT_FOUND";
     public const string NotSupported = "NOT_SUPPORTED";
     public const string RequestContainsInvalidOrUnsafeContent = "REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT";
+    public const string ValidationError = "VALIDATION_ERROR";
     #endregion
 
     // =========================================================
@@ -250,6 +251,8 @@ public class ErrorsCodes
     #region Job Management
     public const string InvitationNotFound = "INVITATION_NOT_FOUND";
     public const string InvitationStatusChangeNotAllowed = "INVITATION_STATUS_CHANGE_NOT_ALLOWED";
+    public const string JobRequiredAttachmentMissing = "JOB_REQUIRED_ATTACHMENT_MISSING";
+    public const string JobRequiredAttachmentUploadFailed = "JOB_REQUIRED_ATTACHMENT_UPLOAD_FAILED";
     #endregion
 
     // =========================================================
