@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="Common\Repositories\" />
       <Folder Include="Extensions\" />
+      <Folder Include="Features\Authenticator\Handlers\Utils\" />
       <Folder Include="Features\Website\" />
     </ItemGroup>
 

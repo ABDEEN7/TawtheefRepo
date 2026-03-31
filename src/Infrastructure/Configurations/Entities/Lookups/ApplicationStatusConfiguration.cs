@@ -46,7 +46,31 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DisplayOrder = 3
             },
 
-            // 4 — REJECTED
+            // 4 — PENDING_ATTACHMENT_APPROVAL
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.PendingAttachmentApproval,
+                BackendName = nameof(InvitationStatusIds.PendingAttachmentApproval),
+                NameEn = "Pending Attachment Approval",
+                NameAr = "بانتظار اعتماد المرفقات",
+                DescriptionEn = "The candidate successfully uploaded the mandatory attachments and is pending HR approval.",
+                DescriptionAr = "قام المرشح برفع المرفقات الإلزامية وهو بانتظار اعتماد الموارد البشرية.",
+                DisplayOrder = 4
+            },
+
+            // 6 — RETURNED_ATTACHMENT
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.ReturnedAttachment,
+                BackendName = nameof(InvitationStatusIds.ReturnedAttachment),
+                NameEn = "Returned Attachment",
+                NameAr = "مرفقات معادة",
+                DescriptionEn = "The HR returned an attachment to candidate for fix.",
+                DescriptionAr = "قامت الموارد البشرية بإعادة مرفق للمرشح للتعديل.",
+                DisplayOrder = 5
+            },
+
+            // 7 — REJECTED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Rejected,
@@ -55,10 +79,10 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 NameAr = "مرفوض",
                 DescriptionEn = "The application was not accepted for functional or organizational reasons.",
                 DescriptionAr = "الطلب لم يتم قبوله لأسباب وظيفية أو تنظيمية.",
-                DisplayOrder = 7
+                DisplayOrder = 6
             },
 
-            // 5 — CANCELLED
+            // 8 — CANCELLED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Cancelled,
@@ -67,10 +91,10 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 NameAr = "ملغي",
                 DescriptionEn = "The candidate cancelled the application or it was cancelled procedurally.",
                 DescriptionAr = "المرشح قام بإلغاء الطلب أو تم إلغاؤه وفق الإجراءات.",
-                DisplayOrder = 8
+                DisplayOrder = 7
             },
 
-            // 6 — CLOSED
+            // 9 — CLOSED
             new InvitationStatus
             {
                 Id = InvitationStatusIds.Closed,
@@ -79,7 +103,7 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 NameAr = "مغلق",
                 DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
                 DescriptionAr = "الوظيفة انتهت أو أُغلقت من قبل الموارد البشرية ولا يمكن اتخاذ أي إجراء عليها.",
-                DisplayOrder = 9
+                DisplayOrder = 8
             }
         );
     }

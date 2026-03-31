@@ -112,6 +112,7 @@ public static class PermissionKeys
     public static class JobsInvitations
     {
         public const string View = "jobs.invitations.view";
+        public const string ManageAttachment = "jobs.invitations.manage-attachment";
     }
 
     public static class Nominations

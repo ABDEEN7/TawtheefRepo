@@ -2,7 +2,6 @@
 using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
-using Application.Recruitment.Features.Authenticator.Handlers.Utils;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;

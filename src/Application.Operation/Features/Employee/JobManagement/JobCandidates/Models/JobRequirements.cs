@@ -3,4 +3,5 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Mo
 public sealed record JobRequirements(
     Guid? JobMajorId,
     Guid? JobSubMajorId,
+    IReadOnlyCollection<Guid> QualificationLevelIds,
     IReadOnlyCollection<Guid> RequiredSkillIds);

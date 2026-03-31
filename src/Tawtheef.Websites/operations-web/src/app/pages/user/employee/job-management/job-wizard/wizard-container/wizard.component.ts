@@ -152,7 +152,9 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private openBasicDataPopup(isCreateMode: boolean, jobId?: GUID): void {
     this.dialogService.open(JobBasicModalComponent, {
       width: 'min(920px, 96vw)',
-      modal: true,
+      closable: false,
+      closeOnEscape: false,
+      dismissableMask: false,
       header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
       styleClass: 'custom-bootstrap-dialog',
       draggable: false,   // ✅ disables dragging
@@ -192,6 +194,9 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         this.dialogService.open(JobBasicModalComponent, {
           width: 'min(920px, 96vw)',
           modal: true,
+          closable: false,
+          closeOnEscape: false,
+          dismissableMask: false,
           header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
           styleClass: 'custom-bootstrap-dialog',
           draggable: false,   // ✅ disables dragging
@@ -547,6 +552,9 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dialogService.open(JobBasicModalComponent, {
       width: 'min(920px, 96vw)',
       modal: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
       header: this.translateService.instant('JOB_BASIC_MODAL.TITLE'),
       styleClass: 'custom-bootstrap-dialog',
       draggable: false,

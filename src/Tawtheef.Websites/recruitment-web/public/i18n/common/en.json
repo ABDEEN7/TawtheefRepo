@@ -1,4 +1,5 @@
 {
+  "common.mandatory": "Mandatory",
   "common.error": "Error",
   "common.success": "Success",
   "common.info": "Info",

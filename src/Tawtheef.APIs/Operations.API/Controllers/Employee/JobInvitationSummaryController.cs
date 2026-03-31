@@ -1,4 +1,5 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -71,6 +72,27 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetInvitationRows([FromBody] GetJobInvitationSummaryDetailsRowsQuery query)
     {
         var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+    [HttpGet("{invitationId:guid}/attachments")]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.View)]
+    public async Task<IActionResult> GetInvitationAttachments(Guid invitationId)
+    {
+        var result = await mediator.Send(new GetInvitationAttachmentsQuery(invitationId));
+        return result.ToActionResult();
+    }
+
+    [HttpPost("{invitationId:guid}/attachments/{attachmentId:guid}/review")]
+    [AuthorizePermission(PermissionKeys.JobsInvitations.ManageAttachment)]
+    public async Task<IActionResult> ReviewInvitationAttachment(
+        Guid invitationId,
+        Guid attachmentId,
+        [FromBody] ReviewInvitationAttachmentCommand command)
+    {
+        if (command.InvitationId != invitationId || command.AttachmentId != attachmentId)
+            return BadRequest();
+
+        var result = await mediator.Send(command);
         return result.ToActionResult();
     }
     #endregion

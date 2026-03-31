@@ -1,0 +1,44 @@
+
+.attachment-card-review {
+  transition: all 0.2s ease-in-out;
+  border-left: 4px solid transparent;
+
+  &.border-success {
+    border-left-color: #198754;
+  }
+
+  &.border-warning {
+    border-left-color: #ffc107;
+  }
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.review-actions {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.pill {
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+
+  &.success { background: #d1e7dd; color: #0f5132; }
+  &.info { background: #cff4fc; color: #055160; }
+  &.warning { background: #fff3cd; color: #664d03; }
+  &.danger { background: #f8d7da; color: #842029; }
+  &.neutral { background: #e9ecef; color: #212529; }
+  &.soft { background: rgba(0, 0, 0, 0.03); color: #6c757d; }
+}
+
+:host ::ng-deep .p-drawer {
+    .p-drawer-content {
+        padding: 1.5rem;
+    }
+}

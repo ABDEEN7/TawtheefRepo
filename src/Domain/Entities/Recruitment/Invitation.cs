@@ -30,6 +30,7 @@ public class Invitation : EventEntity
     public DateTime? InvitationAt => CreatedDate;
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
+    public ICollection<InvitationAttachment> Attachments { get; set; } = [];
 
     public void ChangeInvitationStatus(Guid newInvitationStatusId) 
     {

@@ -1,5 +1,6 @@
 using Application.Operation.Common.Validations;
 using FluentValidation;
+using FluentValidation.Results;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;
@@ -11,7 +12,8 @@ public class CreateJobCommandValidator : AbstractValidator<CreateJobCommand>
     {
         RuleFor(x => x.Job)
             .NotNull()
-            .WithMessage(JobMessages.JobRequired);
+            .WithMessage("Job is required")
+            .WithErrorCode(JobMessages.JobRequired);
 
         RuleFor(x => x)
             .CustomAsync(async (command, context, _) =>
@@ -22,7 +24,14 @@ public class CreateJobCommandValidator : AbstractValidator<CreateJobCommand>
                 {
                     foreach (var error in validationResult.Errors)
                     {
-                        context.AddFailure(error);
+                        context.AddFailure(new FluentValidation.Results.ValidationFailure
+                        {
+                            PropertyName = error.PropertyName ?? "Job",
+                            ErrorMessage = error.ErrorMessage,
+                            ErrorCode = string.IsNullOrWhiteSpace(error.ErrorCode)
+                                ? ErrorsCodes.ValidationError
+                                : error.ErrorCode
+                        });
                     }
                 }
             });

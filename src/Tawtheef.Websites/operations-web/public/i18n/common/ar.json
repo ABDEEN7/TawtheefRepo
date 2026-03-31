@@ -1,5 +1,10 @@
 {
   "NO_RECORDS": "لا توجد سجلات",
+  "common.close": "إغلاق",
+  "common.approve": "اعتماد",
+  "common.return": "إرجاع",
+  "common.mandatory": "إلزامي",
+  "common.change": "تغيير",
   "common.info": "معلومات",
   "common.chart.profiles": "الملفات الشخصية",
   "common.chart.completedTasks": "المهام المكتملة",

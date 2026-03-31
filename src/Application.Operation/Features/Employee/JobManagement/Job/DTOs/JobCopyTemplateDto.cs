@@ -8,12 +8,12 @@ public class JobCopyTemplateDto
     public string? JobNumber { get; set; }
     public Guid SectorId { get; set; }
     public Guid ManagementId { get; set; }
-    public Guid DepartmentId { get; set; }
+    public Guid? DepartmentId { get; set; }
     public int YearsOfExperience { get; set; }
     public Guid JobCategoryId { get; set; }
     public Guid WorkLocationId { get; set; }
     public Guid? GenderId { get; set; }
-    public Guid MajorId { get; set; }
+    public Guid? MajorId { get; set; }
     public Guid? SubMajorId { get; set; }
     public Guid WorkTypeId { get; set; }
     public int? NumberOfVacancies { get; set; }

@@ -8,17 +8,20 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsService
 {
-    public async Task<JobRequirements> GetAsync(Guid? mainMajorId,Guid? subMajorId)
+    public async Task<JobRequirements> GetAsync(Tawtheef.Domain.Entities.Recruitment.Job job)
     {
         var majorIds = new List<Guid>();
-        if (mainMajorId.HasValue && mainMajorId.Value != Guid.Empty)
-            majorIds.Add(mainMajorId.Value);
+        if (job.MajorId.HasValue && job.MajorId.Value != Guid.Empty)
+            majorIds.Add(job.MajorId.Value);
 
-        if (subMajorId.HasValue && subMajorId.Value != Guid.Empty)
-            majorIds.Add(subMajorId.Value);
+        if (job.SubMajorId.HasValue && job.SubMajorId.Value != Guid.Empty)
+            majorIds.Add(job.SubMajorId.Value);
 
         List<Guid> requiredSkillIds = [];
 
+        var qualificationLevelIds = job.JobDegrees
+            .Select(jd => jd.DegreeId).ToList();
+        
         if (majorIds.Count > 0)
         {
             requiredSkillIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
@@ -29,6 +32,6 @@ public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsSe
                 .ToListAsync();
         }
 
-        return new JobRequirements(mainMajorId, subMajorId, requiredSkillIds);
+        return new JobRequirements(job.MajorId, job.SubMajorId, qualificationLevelIds, requiredSkillIds);
     }
 }

@@ -7,6 +7,9 @@ public static class LocalPathBuilder
     public static string UserProfile(Guid userId, string category, Guid fileId, string ext, string hash, bool isPublic)
         => Key(Scope(isPublic), "recruitment", "u", userId.ToString(), "profile", category, FileName(fileId, hash, ext));
 
+    public static string InvitationAttachment(Guid invitationId, Guid fileId, string ext, string hash, bool isPublic)
+        => Key(Scope(isPublic), "recruitment", "invitations", invitationId.ToString(), "attachments", FileName(fileId, hash, ext));
+
     #endregion
 
     #region Operation

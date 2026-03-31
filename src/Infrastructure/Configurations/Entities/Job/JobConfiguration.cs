@@ -106,17 +106,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
        .HasForeignKey<JobPointsMain>(p => p.JobId)
        .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(j => new
-        {
-            j.JobTitleId,
-            j.DepartmentId,
-            j.JobCategoryId,
-            j.SubMajorId
-        })
-        .IsUnique()
-        .HasFilter($"[{nameof(EventEntity.IsDeleted)}] = 0")
-        .HasDatabaseName("IX_Job_Unique_JobTitle_Department_Category_SubMajor");
-
         builder.HasIndex(j => j.SectorId)
             .HasDatabaseName("IX_Job_SectorId");
 

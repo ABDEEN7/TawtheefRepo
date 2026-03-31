@@ -42,5 +42,6 @@
   "JOB_DETAILS.OVERVIEWAR": "Overview in Arabic",
   "JOB_DETAILS.OVERVIEWEN": "Overview in English",
   "JOB_DETAILS.QUALIFICATIONS": "Qualifications",
-  "JOB_DETAILS.APPLY": "Apply for the job"
+  "JOB_DETAILS.APPLY": "Apply for the job",
+  "JOB_WIZARD.BUTTONS.VIEW_BASIC_DATA": "View Basic Data"
 }

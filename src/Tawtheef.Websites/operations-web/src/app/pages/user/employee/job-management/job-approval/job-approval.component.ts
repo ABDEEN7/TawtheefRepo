@@ -159,6 +159,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
         this.notificationService.success(
           this.transaltionService.instant('common.savedSuccessfully') // replace with your key
         );
+        this.moveToNextTab();
       }
     });
   }
@@ -241,6 +242,14 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   setActiveTab(tab: JobApprovalTab): void {
     this.activeTab = tab;
     this.cdr.detectChanges();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private moveToNextTab(): void {
+    const currentIndex = this.tabsContent.findIndex(t => t.id === this.activeTab);
+    if (currentIndex !== -1 && currentIndex < this.tabsContent.length - 1) {
+      this.setActiveTab(this.tabsContent[currentIndex + 1].id);
+    }
   }
 
   getTabContent(): { id: JobApprovalTab; title: string; icon: string } {
@@ -616,10 +625,8 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       !!this.job.titleEn?.trim() &&
       !!this.job.sector?.id &&
       !!this.job.management?.id &&
-      !!this.job.department?.id &&
       !!this.job.jobCategory?.id &&
       !!this.job.workLocation?.id &&
-      !!this.job.major?.id &&
       !!this.job.workType?.id &&
       this.job.numberOfVacancies > 0 &&
       !!this.job.closingDate &&
@@ -635,15 +642,13 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       (this.job.degrees?.length || 0) > 0;
     const hasResponsibilities = (this.job.responsibilities?.length || 0) > 0;
     const hasConditions = (this.job.conditions?.length || 0) > 0;
-    const hasSkills = (this.job.skills?.length || 0) > 0;
 
     if (
       !hasBasicInfo ||
       !hasOverview ||
       !hasQualifications ||
       !hasResponsibilities ||
-      !hasConditions ||
-      !hasSkills
+      !hasConditions
     ) {
       this.notificationService.error(
         this.transaltionService.instant('JOB_APPROVAL.MISSING_REQUIRED_DATA')

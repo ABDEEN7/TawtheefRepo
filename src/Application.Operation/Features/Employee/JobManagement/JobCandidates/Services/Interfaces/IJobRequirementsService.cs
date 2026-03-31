@@ -4,5 +4,5 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public interface IJobRequirementsService
 {
-    Task<JobRequirements> GetAsync(Guid? mainMajorId, Guid? subMajorId);
+    Task<JobRequirements> GetAsync(Tawtheef.Domain.Entities.Recruitment.Job job);
 }

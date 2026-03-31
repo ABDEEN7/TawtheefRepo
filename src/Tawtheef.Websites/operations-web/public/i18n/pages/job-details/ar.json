@@ -33,14 +33,15 @@
   "JOB_DETAILS.APPLICATION_SUBMITTED": "تم تقديم الطلب",
   "JOB_DETAILS.APPLY_JOB": "التقدم للوظيفة",
   "JOB_DETAILS.JOB_CATEGORY": "فئة الوظيفة",
-  "JOB_DETAILS.JOB_REVIEW_NOT" : "يرجى مراجعة تفاصيل الوظيفة قبل اتمام عملية التقديم",
-  "JOB_DETAILS.ARABIC" : "العربية",
-  "JOB_DETAILS.ENGLISH" : "الأنجليزية",
+  "JOB_DETAILS.JOB_REVIEW_NOT": "يرجى مراجعة تفاصيل الوظيفة قبل اتمام عملية التقديم",
+  "JOB_DETAILS.ARABIC": "العربية",
+  "JOB_DETAILS.ENGLISH": "الأنجليزية",
   "JOB_DETAILS.JOB_DETAILS": "تفاصيل الوظيفة",
   "JOB_DETAILS.CONDITIONS_RESPONSIBILITIES": "المؤهلات والشروط",
   "JOB_DETAILS.REVIEW": "المراجعة",
   "JOB_DETAILS.OVERVIEWAR": "نظرة عامة بالعربية",
   "JOB_DETAILS.OVERVIEWEN": "نظرة عامة بالإنجليزية",
   "JOB_DETAILS.QUALIFICATIONS": "المؤهلات",
-  "JOB_DETAILS.APPLY": "قدم على الوظيفة"
+  "JOB_DETAILS.APPLY": "قدم على الوظيفة",
+  "JOB_WIZARD.BUTTONS.VIEW_BASIC_DATA": "عرض البيانات الأساسية"
 }

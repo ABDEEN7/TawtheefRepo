@@ -18,12 +18,18 @@
           </div>
 
           <div class="header-right">
-            <button pButton type="button" class="btn btn-primary btn-pill" [disabled]="!canApply()"
-              (click)="openApplyDialog()">
-              <i class="fa fa-paper-plane"></i>
-              {{ getApplyButtonLabel() }}
-            </button>
-            <button pButton type="button" class="btn btn-outline-danger btn-pill" [disabled]="!canRejectInvitation()"
+            <div class="d-flex flex-column gap-2">
+              <button pButton [disabled]="!canApply()" [label]="getApplyButtonLabel()"
+                class="btn-primary w-100 py-3 rounded-pill fw-bold border-0" (click)="openApplyDialog()">
+              </button>
+              @if(isJobOpen() && !hasApplied() && !isReturned() && !isAllMandatoryUploaded()) {
+              <p class="text-danger small mb-0 px-2">
+                <i class="pi pi-exclamation-triangle me-1"></i>
+                {{ 'JOB_DETAILS.MANDATORY_ATTACHMENTS_REQUIRED' | translate }}
+              </p>
+              }
+            </div>
+            <button pButton type="button" class="btn btn-outline-danger btn-pill" [hidden]="!canRejectInvitation()"
               (click)="rejectInvitation()">
               <i class="fa fa-xmark"></i>
               {{ 'JOB_DETAILS.REJECT' | translate }}
@@ -35,42 +41,10 @@
             <div class="card card-table">
               <div class="card-body">
                 <div class="nav nav-pills flex-wrap stepper">
-                  <button class="nav-link" [class.active]="activeTab === tabType.Overview"
-                    (click)="setActiveTab(tabType.Overview)">
-                    <i class="fa fa-file-alt"></i>
-                    <span>{{ 'JOB_DETAILS.OVERVIEW' | translate }}</span>
-                  </button>
-                  <button class="nav-link" [class.active]="activeTab === tabType.Responsibilities"
-                    (click)="setActiveTab(tabType.Responsibilities)">
-                    <i class="fa fa-tasks"></i>
-                    <span>{{ 'JOB_DETAILS.RESPONSIBILITIES' | translate }}</span>
-                  </button>
-                  <button class="nav-link" [class.active]="activeTab === tabType.Qualifications"
-                    (click)="setActiveTab(tabType.Qualifications)">
-                    <i class="fa fa-graduation-cap"></i>
-                    <span>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</span>
-                  </button>
-
-                  <button class="nav-link" [class.active]="activeTab === tabType.Conditions"
-                    (click)="setActiveTab(tabType.Conditions)">
-                    <i class="fa fa-clipboard-list"></i>
-                    <span>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</span>
-                  </button>
-                  <button class="nav-link" [class.active]="activeTab === tabType.Skills"
-                    (click)="setActiveTab(tabType.Skills)">
-                    <i class="fa fa-tools"></i>
-                    <span>{{ 'JOB_DETAILS.SKILLS' | translate }}</span>
-                  </button>
-                  <button class="nav-link" [class.active]="activeTab === tabType.Benefits"
-                    (click)="setActiveTab(tabType.Benefits)">
-                    <i class="fa fa-gift"></i>
-                    <span>{{ 'JOB_DETAILS.BENEFITS' | translate }}</span>
-                  </button>
-                  @if(job()!.requiredAttachments?.length){
-                  <button class="nav-link" [class.active]="activeTab === tabType.Attachments"
-                    (click)="setActiveTab(tabType.Attachments)">
-                    <i class="fa fa-paperclip"></i>
-                    <span>{{ 'JOB_DETAILS.REQUIRED_ATTACHMENTS' | translate }}</span>
+                  @for (tab of visibleTabs(); track tab.id) {
+                  <button class="nav-link" [class.active]="activeTab === tab.id" (click)="setActiveTab(tab.id)">
+                    <i class="fa" [class]="tab.icon"></i>
+                    <span>{{ tab.title | translate }}</span>
                   </button>
                   }
                 </div>
@@ -88,89 +62,27 @@
                 </h5>
                 <div class="row">
                   <div class="col-md-12">
-                    @if (activeTab === tabType.Overview) {
-                    @if (job()!.overView) {
-                    <div class="text-area">
-                      <div [innerHTML]="job()!.overView"></div>
-                    </div>
+                    @switch (activeTab) {
+                    @case (tabType.Overview) {
+                    <app-job-overview />
                     }
+                    @case (tabType.Responsibilities) {
+                    <app-job-responsibilities />
                     }
-                    @if (activeTab === tabType.Responsibilities) {
-                    @if (getResponsibilities().length > 0) {
-                    <ul>
-                      @for (responsibility of getResponsibilities(); track $index) {
-                      <div class="text-area">
-                        <div [innerHTML]="responsibility"></div>
-                      </div>
-                      }
-                    </ul>
+                    @case (tabType.Qualifications) {
+                    <app-job-qualifications />
                     }
+                    @case (tabType.Conditions) {
+                    <app-job-conditions />
                     }
-                    @if (activeTab === tabType.Qualifications) {
-                    <div class="row">
-                      <div class="col-md-6">
-                        <h5>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
-                        <p>{{ getDegreeRequirements() }}</p>
-                      </div>
-                    </div>
-                    <div class="row mt-4">
-                      <div class="col-md-6">
-                        @if (job()!.qualificationDescription) {
-                        <h5>{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
-                        <div class="text-area">
-                          <div [innerHTML]="job()!.qualificationDescription"></div>
-                        </div>
-                        }
-                      </div>
-                    </div>
+                    @case (tabType.Skills) {
+                    <app-job-skills />
                     }
-
-                    @if (activeTab === tabType.Conditions) {
-                    @if (getJobConditions().length > 0) {
-                    <div class="basic-requirements">
-                      @for (condition of getJobConditions(); track $index) {
-                      <div class="text-area">
-                        <div [innerHTML]="condition"></div>
-                      </div>
-                      }
-                    </div>
-                    } @else {
-                    <p class="text-muted">{{ 'JOB_DETAILS.NOT_SPECIFIED' | translate }}</p>
+                    @case (tabType.Benefits) {
+                    <app-job-benefits />
                     }
-                    }
-                    @if (activeTab === tabType.Skills) {
-                    @if (getJobSkills().length > 0) {
-                    <ul>
-                      @for (skill of getJobSkills(); track $index) {
-                      <li>{{ skill }}</li>
-                      }
-                    </ul>
-                    }
-                    }
-                    @if (activeTab === tabType.Benefits) {
-                    @if (job()!.benefits) {
-                    <div class="text-area">
-                      <div [innerHTML]="job()!.benefits"></div>
-                    </div>
-                    }
-                    }
-                    @if (activeTab === tabType.Attachments) {
-                    @if (job()!.requiredAttachments && job()!.requiredAttachments!.length) {
-                    <ul>
-                      @for (attachment of job()!.requiredAttachments!; track $index) {
-                      <li>
-                        <div class="dual-text-container">
-                          <div class="text-area">
-                            <div [innerHTML]="attachment.title"></div>
-                          </div>
-                          <div class="form-check form-switch m-0">
-                            <input class="form-check-input switch-lg" disabled="true" type="checkbox"
-                              [(ngModel)]="attachment.isMandatory" />
-                          </div>
-                        </div>
-                      </li>
-                      }
-                    </ul>
+                    @case (tabType.Attachments) {
+                    <app-job-attachments [invitationId]="invitationId()" />
                     }
                     }
                   </div>
@@ -179,43 +91,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="card card-table">
-              <div class="card-body">
-                <h5 class="mb-4 text-primary">
-                  <i class="fa fa-info-circle"></i> {{ 'JOB_DETAILS.JOB_INFO' | translate }}
-                </h5>
-                <div class="">
-                  <div class="info-list-container">
-                    <div class="info-list-item">
-                      <span class="label">{{ 'JOB_DETAILS.JOB_CATEGORY' | translate }}</span>
-                      <span class="value">
-                        {{
-                        job()!.jobCategory?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate)
-                        }}
-                      </span>
-                    </div>
-                    <div class="info-list-item">
-                      <span class="label">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}</span>
-                      <span class="value">{{ job()!.closingDate | date: 'dd/MM/yyyy' }}</span>
-                    </div>
-                    <div class="info-list-item">
-                      <span class="label">{{ 'JOB_DETAILS.DEPARTMENT' | translate }}</span>
-                      <span class="value">
-                        {{ job()!.department?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
-                      </span>
-                    </div>
-                    <div class="info-list-item">
-                      <span class="label">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}</span>
-                      <span class="value">
-                        {{
-                        job()!.workLocation?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate)
-                        }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <app-job-side-info />
           </div>
         </div>
       </div>

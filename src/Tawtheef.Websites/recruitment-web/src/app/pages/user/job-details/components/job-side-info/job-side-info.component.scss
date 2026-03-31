@@ -1,0 +1,42 @@
+.job-info-card {
+    border: none;
+    border-radius: 12px;
+
+    .card-title {
+        font-weight: 600;
+        color: var(--bs-primary);
+        display: flex;
+        align-items: center;
+    }
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f1f1;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #212529;
+    text-align: right;
+}

@@ -1,6 +1,13 @@
 ﻿namespace Tawtheef.Application.Common.Exceptions;
 
-public class ValidationException(string message, IEnumerable<string> errors) : Exception(message)
+public class ValidationException(List<ValidationError> errors) : Exception
 {
-    public IEnumerable<string> Errors { get; } = errors;
+    public List<ValidationError> Errors { get; } = errors;
+}
+
+public class ValidationError
+{
+    public string Code { get; set; } = default!;
+    public string Message { get; set; } = default!;
+    public string? Field { get; set; }
 }

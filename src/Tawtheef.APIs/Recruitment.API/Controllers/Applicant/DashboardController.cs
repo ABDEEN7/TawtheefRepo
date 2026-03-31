@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Application.Recruitment.Features.Dashboard.Commands;
 using Application.Recruitment.Features.Dashboard.Queries;
 using Application.Recruitment.Features.JobDetails.Queries;
@@ -114,6 +114,31 @@ public class DashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetCandidateInvitationStatisticsQuery(UserId.Value));
         return result.ToActionResult();
     }
+    [HttpPost("candidate-invitations/{invitationId}/attachments/{jobRequiredAttachmentId}")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadCandidateInvitationAttachment(
+        Guid invitationId,
+        Guid jobRequiredAttachmentId,
+        IFormFile file)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new UploadInvitationAttachmentCommand(UserId.Value, invitationId, jobRequiredAttachmentId, file));
+        
+        return result.ToActionResult();
+    }
+
+    [HttpDelete("candidate-invitations/{invitationId}/attachments/{attachmentId}")]
+    public async Task<IActionResult> DeleteCandidateInvitationAttachment(
+        Guid invitationId,
+        Guid attachmentId)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(new DeleteInvitationAttachmentCommand(UserId.Value, invitationId, attachmentId));
+        return result.ToActionResult();
+    }
+
     #endregion
 }
 

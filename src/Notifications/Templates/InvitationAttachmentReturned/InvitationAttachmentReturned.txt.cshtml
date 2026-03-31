@@ -1,0 +1,17 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InvitationAttachmentReturned.InvitationAttachmentReturnedModel>
+Action Required: Attachment Returned
+
+Dear Candidate,
+
+One of your submitted attachments for your job application requires your attention.
+
+Attachment: @Model.Model.AttachmentTitle
+Review Note: @Model.Model.ReviewNote
+
+Please sign in to the recruitment portal to re-upload the corrected document and re-submit your application.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Best regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail

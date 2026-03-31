@@ -5,20 +5,46 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
 import { JobDetailsService } from './services/job-details.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { routes } from '../../../routes/routes';
 import { JobTabType } from './enums/job-tab-type';
+import { JOB_INVITATION_STATUSES } from '../dashboard/constants/constants';
 import { JobApplyConfirmationDialogComponent } from './dialogs/job-apply-confirmation.dialog.component';
 import { CandidateInvitationDetailsService } from './services/candidate-invitation-details.service';
-import { EMPTY, switchMap } from 'rxjs';
+import { EMPTY, map, startWith, switchMap } from 'rxjs';
+import { GUID } from '../../../shared/types/guid.type';
+import { JobOverviewComponent } from './components/job-overview.component';
+import { JobResponsibilitiesComponent } from './components/job-responsibilities.component';
+import { JobQualificationsComponent } from './components/job-qualifications.component';
+import { JobConditionsComponent } from './components/job-conditions.component';
+import { JobSkillsComponent } from './components/job-skills.component';
+import { JobBenefitsComponent } from './components/job-benefits.component';
+import { JobAttachmentsComponent } from './components/job-attachments.component';
+import { JobSideInfoComponent } from './components/job-side-info/job-side-info.component';
 
 @Component({
   selector: 'app-job-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, I18nNamespaceDirective, ButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    I18nNamespaceDirective,
+    ButtonModule,
+    TooltipModule,
+    JobOverviewComponent,
+    JobResponsibilitiesComponent,
+    JobQualificationsComponent,
+    JobConditionsComponent,
+    JobSkillsComponent,
+    JobBenefitsComponent,
+    JobAttachmentsComponent,
+    JobSideInfoComponent
+  ],
   templateUrl: './job-details.html',
   styleUrls: ['./job-details.scss']
 })
@@ -38,15 +64,39 @@ export class JobDetails implements OnInit {
 
   appliedOverride = signal(false);
   invitation = this.invitationDetailsService.invitation;
+
   hasApplied = computed(() => {
     if (this.appliedOverride()) return true;
-    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
-    return status.includes('approved') || status.includes('applied') || status.includes('submitted');
+    const status = this.job()?.invitationStatus?.backendName;
+    return status === JOB_INVITATION_STATUSES.SUBMITTED ||
+           status === JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL;
+  });
+
+  isReturned = computed(() => {
+    const status = this.job()?.invitationStatus?.backendName;
+    return status === JOB_INVITATION_STATUSES.REQUIRES_UPDATE;
   });
 
   routes = routes;
 
   invitationId = signal<string | null>(null);
+
+  visibleTabs = computed(() => {
+    const job = this.job();
+    if (!job) return [];
+
+    const tabs = [
+      { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt', visible: !!job.overView },
+      { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks', visible: !!job.responsibilities?.length },
+      { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap', visible: !!(job.degrees?.length || job.qualificationDescription) },
+      { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list', visible: !!job.conditions?.length },
+      { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools', visible: !!job.skills?.some(s => s.showToApplicants) },
+      { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift', visible: !!job.benefits },
+      { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip', visible: !!job.requiredAttachments?.length }
+    ];
+
+    return tabs.filter(tab => tab.visible);
+  });
 
   ngOnInit() {
     const invitationId = this.route.snapshot.paramMap.get('invitationId');
@@ -57,13 +107,23 @@ export class JobDetails implements OnInit {
     this.detailsService.loadJobDetails(invitationId)
       .pipe(
         switchMap(resp => {
-          if (resp) {
-            return this.detailsService.changeInvitationStatusRead(invitationId);
-          }
-          return EMPTY;
+          // Handle status update
+          const status$ =
+            resp?.invitationStatus?.backendName === JOB_INVITATION_STATUSES.NEW_INVITATION
+              ? this.detailsService.changeInvitationStatusRead(invitationId)
+              : EMPTY;
+
+          // Run status update, then pass original response forward
+          return status$.pipe(map(() => resp), startWith(resp));
         })
       )
-      .subscribe();
+      .subscribe(job => {
+        // Set active tab
+        const visible = this.visibleTabs();
+        if (visible.length > 0 && !visible.find(t => t.id === this.activeTab)) {
+          this.activeTab = visible[0].id;
+        }
+      });
 
     this.invitationDetailsService.loadInvitation(invitationId);
   }
@@ -85,14 +145,15 @@ export class JobDetails implements OnInit {
     const invitationId = this.invitationId();
     if (!invitationId) return;
 
+    //TODO: check if all required attachments are uploaded
+
     this.detailsService.applyInvitation(invitationId).subscribe({
       next: () => {
         this.appliedOverride.set(true);
-        this.invitationDetailsService.loadInvitation(invitationId);
         this.notifier.success(this.translate.instant('JOB_DETAILS.APPLY_SUCCESS'));
         this.navigateTo();
       },
-      error: () => {
+      error: (err) => {
         this.notifier.error(this.translate.instant('JOB_DETAILS.APPLY_ERROR'));
       }
     });
@@ -103,54 +164,33 @@ export class JobDetails implements OnInit {
   }
 
   getTabContent(): { id: string; title: string; icon: string } {
-    const tabsContent = [
-      { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt' },
-      { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks' },
-      { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap' },
-      { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list' },
-      { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools' },
-      { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift' },
-      { id: JobTabType.Attachments, title: 'JOB_DETAILS.REQUIRED_ATTACHMENTS', icon: 'fa-paperclip' }
-    ];
-
-    return tabsContent.find(tab => tab.id === this.activeTab) || tabsContent[0];
+    const visible = this.visibleTabs();
+    return visible.find(tab => tab.id === this.activeTab) || visible[0] || { id: '', title: '', icon: '' };
   }
 
+  isAllMandatoryUploaded = computed(() => {
+    const job = this.job();
+    if (!job || !job.requiredAttachments) return true;
+    return job.requiredAttachments
+      .filter(a => a.isMandatory)
+      .every(a => !!a.attachmentId && !a.isReturned);
+  });
+
   canApply(): boolean {
-    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
-    const isRejected = status.includes('reject');
-    const isClosed = status.includes('closed') || status.includes('cancel');
-    return this.isJobOpen() && !this.hasApplied() && !this.detailsService.applying()
+    const status = this.job()?.invitationStatus?.backendName;
+    const isRejected = status === JOB_INVITATION_STATUSES.REJECTED;
+    const isClosed = status === JOB_INVITATION_STATUSES.CLOSED || status === JOB_INVITATION_STATUSES.CANCELLED;
+    const isSubmitted = status === JOB_INVITATION_STATUSES.SUBMITTED || status === JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL;
+
+    return this.isJobOpen() && !isSubmitted && !this.detailsService.applying()
       && !isRejected
-      && !isClosed;
+      && !isClosed
+      && this.isAllMandatoryUploaded();
   }
 
   getStatusClass(): string {
     const status = this.job()?.jobStatus?.backendName;
     return status ?? 'Closed';
-  }
-
-  getResponsibilities(): string[] {
-    if (!this.job()?.responsibilities?.length) return [];
-    return this.job()!.responsibilities!.map((c) => c.text);
-  }
-
-  getJobConditions(): string[] {
-    if (!this.job()?.conditions?.length) return [];
-    return this.job()!.conditions!.map((c) => c.text);
-  }
-
-  getJobSkills(): string[] {
-    if (!this.job()?.skills?.length) return [];
-    return this.job()!.skills!
-      .filter(skill => skill.showToApplicants)
-      .map(skill => skill.skill.name);
-  }
-
-  getDegreeRequirements(): string {
-    if (!this.job()?.degrees?.length) return '';
-    const degreeNames = this.job()!.degrees!.map(degree => degree.degree.name);
-    return degreeNames.join(', ') || '';
   }
 
   isJobOpen(): boolean {
@@ -170,14 +210,17 @@ export class JobDetails implements OnInit {
 
   getApplyButtonLabel(): string {
     if (this.hasApplied()) return this.translate.instant('JOB_DETAILS.APPLICATION_SUBMITTED');
+    if (this.isReturned()) return this.translate.instant('JOB_DETAILS.RE_SUBMIT');
     if (!this.isJobOpen()) return this.translate.instant('JOB_DETAILS.APPLICATION_CLOSED');
     return this.translate.instant('JOB_DETAILS.APPLY');
   }
 
   canRejectInvitation(): boolean {
     if (this.hasApplied()) return false;
-    const status = this.invitation()?.invitationStatus?.backendName?.toLowerCase() ?? '';
-    const isPending = status.includes('new') || status.includes('read');
+    const status = this.job()?.invitationStatus?.backendName;
+    const isPending = status === JOB_INVITATION_STATUSES.NEW_INVITATION ||
+                      status === JOB_INVITATION_STATUSES.READ ||
+                      status === JOB_INVITATION_STATUSES.REQUIRES_UPDATE;
     return isPending;
   }
 
@@ -188,6 +231,7 @@ export class JobDetails implements OnInit {
 
     this.detailsService.changeInvitationStatusReject(invitationId).subscribe({
       next: () => {
+        this.detailsService.loadJobDetails(invitationId).subscribe();
         this.invitationDetailsService.loadInvitation(invitationId);
         this.notifier.success(this.translate.instant('JOB_DETAILS.REJECT_SUCCESS'));
         this.navigateTo();
