@@ -80,7 +80,7 @@ public class UpdateJobCommandHandler(
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
-        await jobRepository.Repository.UpdateAsync(existingJob);
+        await jobRepository.Repository.UpdateAsync(existingJob, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }

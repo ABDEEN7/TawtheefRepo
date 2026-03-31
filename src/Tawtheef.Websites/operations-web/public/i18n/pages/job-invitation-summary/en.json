@@ -1,4 +1,4 @@
-﻿{
+{
   "JOB_INVITATION_SUMMARY.TITLE": "Job Invitation Summary",
   "JOB_INVITATION_SUMMARY.SUBTITLE": "This page displays for each job: number of invitations sent, number of applicants, number of rejections, and number of unseen.",
   "JOB_INVITATION_SUMMARY.JOB_TITLE": "Job Title",
@@ -41,5 +41,11 @@
   "JOB_INVITATION_SUMMARY.NEXT": "Next",
   "JOB_INVITATION_SUMMARY.DASHBOARD_TITLE": "Department Staff Dashboard",
   "JOB_INVITATION_SUMMARY.filter_all": "All",
-  "JOB_INVITATION_SUMMARY.SEARCH":"Search"
+  "JOB_INVITATION_SUMMARY.SEARCH": "Search",
+  "JOB_INVITATION_SUMMARY.PIPELINE": "Pipeline",
+  "JOB_INVITATION_SUMMARY.PIPELINE_CHART": "Pipeline Chart",
+  "JOB_INVITATION_SUMMARY.VIEW_CHART": "View Chart",
+  "JOB_INVITATION_SUMMARY.MORE_OPTIONS": "More Options",
+  "JOB_INVITATION_SUMMARY.PENDING_ATTACHMENT": "Pending Attachment",
+  "JOB_INVITATION_SUMMARY.RETURNED_ATTACHMENT": "Returned Attachment"
 }

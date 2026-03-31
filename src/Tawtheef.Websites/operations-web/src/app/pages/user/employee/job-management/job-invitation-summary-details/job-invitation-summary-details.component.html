@@ -231,15 +231,23 @@
         <div class="review-actions">
           <div class="mb-2">
             <textarea pTextarea rows="2" class="form-control"
-              [placeholder]="'JOB_INVITES_DETAILS_REVIEW_NOTE_PLACEHOLDER' | translate" #noteRef></textarea>
+              [placeholder]="'JOB_INVITES_DETAILS_REVIEW_NOTE_PLACEHOLDER' | translate" 
+              [(ngModel)]="att.reviewNote"></textarea>
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-success btn-sm flex-grow-1" (click)="approveAttachment(att.id)">
               <i class="pi pi-check me-1"></i> {{ 'common.approve' | translate }}
             </button>
-            <button class="btn btn-warning btn-sm flex-grow-1" (click)="returnAttachment(att.id, noteRef.value)">
-              <i class="pi pi-refresh me-1"></i> {{ 'common.return' | translate }}
-            </button>
+            
+            <div class="flex-grow-1 d-flex" 
+                 [pTooltip]="(!att.reviewNote || att.reviewNote.trim() === '') ? ('JOB_INVITES_DETAILS_REVIEW_NOTE_REQUIRED' | translate) : ''" 
+                 tooltipPosition="top">
+              <button class="btn btn-warning btn-sm w-100" 
+                      [disabled]="!att.reviewNote || att.reviewNote.trim() === ''" 
+                      (click)="returnAttachment(att.id, att.reviewNote)">
+                <i class="pi pi-refresh me-1"></i> {{ 'common.return' | translate }}
+              </button>
+            </div>
           </div>
         </div>
         } @else {

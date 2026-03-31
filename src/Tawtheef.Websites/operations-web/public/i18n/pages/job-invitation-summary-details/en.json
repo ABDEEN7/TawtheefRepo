@@ -43,5 +43,6 @@
   "JOB_INVITES_DETAILS_VIEW_ATTACHMENTS": "Attachments",
   "JOB_INVITES_DETAILS_ATTACHMENTS_TITLE": "Candidate Attachments",
   "JOB_INVITES_DETAILS_REVIEW_NOTE_PLACEHOLDER": "Enter note for the candidate...",
+  "JOB_INVITES_DETAILS_REVIEW_NOTE_REQUIRED": "A review note is required to return the attachment.",
   "JOB_INVITES_DETAILS_NO_ATTACHMENTS_YET": "No attachments uploaded yet."
 }

@@ -11,4 +11,3 @@ public record GetJobsQuery : IRequest<IResult<PaginatedResult<JobResponseDto>>>
     public JobQueryFilter? Filter { get; init; }
     public PaginatedRequest Pagination { get; init; } = new PaginatedRequest();
 }
-

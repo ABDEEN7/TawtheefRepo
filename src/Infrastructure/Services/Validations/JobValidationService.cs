@@ -44,7 +44,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (!ageValidation.IsValid)
             failures.Add(new ValidationFailure("AgeRange", ageValidation.ErrorMessage));
 
-        if (await IsDuplicateJob(dto))
+        if (await IsDuplicateJob(dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId!.Value, dto.DepartmentId))
             failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
 
         var hierarchicalErrors = await ValidateHierarchicalRelationships(dto);
@@ -99,7 +99,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return failures;
     }
     
-    private async Task<bool> IsDuplicateJob(CreateJobDto jobDto)
+    public async Task<bool> IsDuplicateJob(Guid managementId, Guid sectorId, Guid jobTitleId, 
+        Guid genderId, Guid? departmentId = null)
     {
          return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
         .AnyAsync(j =>
@@ -107,13 +108,13 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             j.JobStatusId != JobStatusIds.Closed &&
             j.JobStatusId != JobStatusIds.Rejected &&
 
-            j.ManagementId == jobDto.ManagementId &&
-            j.SectorId == jobDto.SectorId &&
-            j.DepartmentId == jobDto.DepartmentId &&
+            j.ManagementId == managementId &&
+            j.SectorId == sectorId &&
+            j.DepartmentId == departmentId &&
             
-            j.JobTitleId == jobDto.JobTitleId &&
+            j.JobTitleId == jobTitleId &&
             
-            j.GenderId == jobDto.GenderId);
+            j.GenderId == genderId);
     }
 
     public async Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
