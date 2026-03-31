@@ -101,30 +101,19 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     
     private async Task<bool> IsDuplicateJob(CreateJobDto jobDto)
     {
-        var degreeIds = jobDto.Degrees?.Select(d => d.DegreeId).ToList() ?? [];
-
          return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
         .AnyAsync(j =>
+            j.JobStatusId != JobStatusIds.Cancelled &&
             j.JobStatusId != JobStatusIds.Closed &&
+            j.JobStatusId != JobStatusIds.Rejected &&
+
             j.ManagementId == jobDto.ManagementId &&
             j.SectorId == jobDto.SectorId &&
             j.DepartmentId == jobDto.DepartmentId &&
             
             j.JobTitleId == jobDto.JobTitleId &&
-            j.JobCategoryId == jobDto.JobCategoryId &&
-            j.WorkLocationId == jobDto.WorkLocationId &&
             
-            j.JobDegrees.Count == degreeIds.Count &&
-            j.JobDegrees.All(d => degreeIds.Contains(d.DegreeId)) &&
-            degreeIds.All(id => j.JobDegrees.Any(d => d.DegreeId == id)) &&
-            
-            j.MajorId == jobDto.MajorId &&
-            j.SubMajorId == jobDto.SubMajorId &&
-            j.GenderId == jobDto.GenderId &&
-            j.WorkTypeId == jobDto.WorkTypeId &&
-            j.ClosingDate == jobDto.ClosingDate &&
-            j.MinimumAge == jobDto.MinimumAge &&
-            j.MaximumAge == jobDto.MaximumAge);
+            j.GenderId == jobDto.GenderId);
     }
 
     public async Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
