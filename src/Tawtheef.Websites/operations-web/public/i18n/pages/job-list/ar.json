@@ -8,6 +8,7 @@
   "JOB_LIST_FILTERS_SEARCH_PLACEHOLDER": "بحث في الوظائف...",
   "JOB_LIST_FILTERS_JOB_CATEGORY": "تصنيف الوظيفة",
   "JOB_LIST_FILTERS_STATUS": "الحالة",
+  "JOB_LIST_COLUMNS_TITLE": "عنوان الوظيفة",
   "JOB_LIST_COLUMNS_TITLE_AR": "العنوان بالعربية",
   "JOB_LIST_COLUMNS_TITLE_EN": "العنوان بالإنجليزية",
   "JOB_LIST_COLUMNS_JOB_CATEGORY": "التصنيف",
@@ -62,5 +63,11 @@
   "JOB_LIST_BUTTONS_VIEW_CANDIDATE": "عرض المرشحين",
   "JOB_LIST_BUTTONS_SEND_INVITATIONS": "إرسال الدعوات",
   "JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE": "هل أنت متأكد أنك تريد إلغاء هذه المهمة ؟",
-  "JOB_LIST_BUTTONS_POINTS_VIEW": "عرض توزيع النقاط"
+  "JOB_LIST_BUTTONS_POINTS_VIEW": "عرض توزيع النقاط",
+  "JOB_LIST_BUTTONS_MORE_FILTERS": "المزيد من الفلاتر",
+  "JOB_LIST_TITLES_ADVANCED_FILTERS": "الفلاتر المتقدمة",
+  "JOB_LIST_FILTERS_GENDER": "الجنس",
+  "JOB_LIST_FILTERS_SECTOR": "القطاع",
+  "JOB_LIST_FILTERS_MANAGEMENT": "الإدارة",
+  "JOB_LIST_FILTERS_DEPARTMENT": "القسم"
 }

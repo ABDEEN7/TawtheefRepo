@@ -219,6 +219,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
       PendingAttachmentApproval: 'pill warning',
       ReturnedAttachment: 'pill danger',
       Cancelled: 'pill danger',
+      Closed: 'pill danger',
       Declined: 'pill warning',
       Refused: 'pill warning',
     };
