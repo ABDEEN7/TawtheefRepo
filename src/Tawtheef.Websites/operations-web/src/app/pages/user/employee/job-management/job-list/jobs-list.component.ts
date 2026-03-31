@@ -1,4 +1,5 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { JobLookupService } from '../services/job-lookup.service';
@@ -17,6 +18,14 @@ import { PaginatedRequest } from '../../../../../core/models/paginated-request.m
 import { JobStatus } from '../../../../../core/enums/lookups.enum';
 import { routes } from '../../../../../routes/routes';
 import { Permissions } from '../../../../../core/constants/permissions';
+
+export interface JobAction {
+  label: string;
+  icon: string;
+  command: () => void;
+  tooltip?: string;
+  danger?: boolean;
+}
 
 @Component({
   selector: 'app-job-list',
@@ -47,15 +56,32 @@ export class JobListComponent implements OnInit {
   searchQuery = signal<string>('');
   filterType = signal<GUID | null>(null);
   filterStatus = signal<GUID | null>(null);
+  filterGender = signal<GUID | null>(null);
+  filterManagement = signal<GUID | null>(null);
+  filterSector = signal<GUID | null>(null);
+  filterDepartment = signal<GUID | null>(null);
 
   readonly jobStatus = JobStatus;
   private searchChanges = new Subject<string>();
   protected readonly Permissions = Permissions;
+  activeActions: MenuItem[] = [];
+  showMoreFilters = signal(false);
+  
+  activeFiltersCount = computed(() => {
+    let count = 0;
+    if (this.filterGender()) count++;
+    if (this.filterSector()) count++;
+    if (this.filterManagement()) count++;
+    if (this.filterDepartment()) count++;
+    return count;
+  });
 
   ngOnInit(): void {
     this.setupSearchListener();
     this.loadJobsWithFilters();
     this.lookupsService.loadJobCategories().subscribe();
+    this.lookupsService.loadGenders().subscribe();
+    this.lookupsService.loadAll(); // Load all lookups for filters
 
     this.lookupsService
       .loadJobStatus()
@@ -75,6 +101,10 @@ export class JobListComponent implements OnInit {
       searchTerm: this.searchQuery() || undefined,
       jobCategoryId: this.filterType() || undefined,
       statusId: this.filterStatus() || undefined,
+      genderId: this.filterGender() || undefined,
+      managementId: this.filterManagement() || undefined,
+      sectorId: this.filterSector() || undefined,
+      departmentId: this.filterDepartment() || undefined,
     };
 
     this.jobService.getAll(pagination, filter).subscribe({
@@ -102,6 +132,30 @@ export class JobListComponent implements OnInit {
     this.loadJobsWithFilters();
   }
 
+  onSectorChange(sectorId: GUID | null) {
+    this.filterSector.set(sectorId);
+    this.filterManagement.set(null);
+    this.filterDepartment.set(null);
+    if (sectorId) {
+      this.lookupsService.loadManagementsBySector(sectorId);
+    } else {
+      this.lookupsService.resetManagements();
+      this.lookupsService.resetDepartments();
+    }
+    this.onFilterChange();
+  }
+
+  onManagementChange(managementId: GUID | null) {
+    this.filterManagement.set(managementId);
+    this.filterDepartment.set(null);
+    if (managementId) {
+      this.lookupsService.loadDepartmentsByManagement(managementId);
+    } else {
+      this.lookupsService.resetDepartments();
+    }
+    this.onFilterChange();
+  }
+
   refresh() {
     this.loadJobsWithFilters();
     this.loadStats();
@@ -111,6 +165,14 @@ export class JobListComponent implements OnInit {
     this.searchQuery.set('');
     this.filterType.set(null);
     this.filterStatus.set(null);
+    this.filterGender.set(null);
+    this.filterManagement.set(null);
+    this.filterSector.set(null);
+    this.filterDepartment.set(null);
+
+    this.lookupsService.resetManagements();
+    this.lookupsService.resetDepartments();
+
     this.currentPage.set(1);
     this.loadJobsWithFilters();
   }
@@ -355,13 +417,15 @@ export class JobListComponent implements OnInit {
   getStatusBadgeClass(statusName: string): string {
     const STATUS_BADGE_MAP: Record<string, string> = {
       [JobStatus.Draft]: 'pill neutral',
+      [JobStatus.NeedUpdate]: 'pill warning',
       [JobStatus.PendingApproval]: 'pill warning',
-      [JobStatus.Approved]: 'pill warning',
+      [JobStatus.Approved]: 'pill success',
       [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
       [JobStatus.Cancelled]: 'pill secondary',
       [JobStatus.ReadyForAnnouncement]: 'pill info',
+      [JobStatus.Active]: 'pill success',
     };
     return STATUS_BADGE_MAP[statusName] || 'pill neutral';
   }
@@ -377,6 +441,23 @@ export class JobListComponent implements OnInit {
       default:
         return 'bg-secondary';
     }
+  }
+
+  getGenderBadgeClass(genderName: string): string {
+    switch (genderName?.toLowerCase()) {
+      case 'male':
+      case 'ذكر':
+        return 'pill info';
+      case 'female':
+      case 'أنثى':
+        return 'pill danger';
+      default:
+        return 'pill secondary';
+    }
+  }
+
+  get currentLang(): string {
+    return this.translateService.currentLang || 'ar';
   }
 
   sendInvitation() {
@@ -400,5 +481,150 @@ export class JobListComponent implements OnInit {
     if (!statusId) return;
 
     this.jobService.GetJobsCountByStatus(statusId).subscribe(setter);
+  }
+
+  getJobActions(job: JobResponse): JobAction[] {
+    const actions: JobAction[] = [];
+
+    // 1. Point config
+    if (job.jobStatus?.backendName === this.jobStatus.Approved && this.canManageJobPoints()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_POINTS_CONFIG',
+        icon: 'hgi hgi-stroke hgi-settings-01',
+        command: () => this.openPointsModal(job),
+      });
+    }
+
+    // 2. Point view
+    if (job.jobStatus?.backendName === this.jobStatus.Published && this.canViewJobPoints()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_POINTS_VIEW',
+        icon: 'hgi hgi-stroke hgi-view',
+        command: () => this.openPointsModal(job, true),
+      });
+    }
+
+    // 3. Copy & View
+    const backendName = job.jobStatus?.backendName;
+    if (
+      backendName !== this.jobStatus.Draft &&
+      backendName !== this.jobStatus.NeedUpdate &&
+      this.canViewJobs()
+    ) {
+      if (this.canCopyJob(job)) {
+        actions.push({
+          label: 'JOB_LIST_BUTTONS_COPY',
+          icon: 'hgi hgi-stroke hgi-copy-01',
+          command: () => this.copyJob(job),
+        });
+      }
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_VIEW',
+        icon: 'hgi hgi-stroke hgi-view',
+        command: () => this.viewJob(job),
+      });
+    }
+
+    // 4. Edit
+    if (
+      (backendName === this.jobStatus.Draft || backendName === this.jobStatus.NeedUpdate) &&
+      this.canManageJobs()
+    ) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_EDIT',
+        icon: 'hgi hgi-stroke hgi-pencil-edit-02',
+        command: () => this.editJob(job),
+      });
+    }
+
+    // 5. Approve / Reject
+    if (backendName === this.jobStatus.PendingApproval && this.canApproveJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_APPROVE',
+        icon: 'hgi hgi-stroke hgi-tick-02',
+        command: () => this.approveJob(job),
+      });
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_REJECT',
+        icon: 'hgi hgi-stroke hgi-cancel-01',
+        command: () => this.rejectJob(job),
+      });
+    }
+
+    // 6. Publish
+    if (backendName === this.jobStatus.ReadyForAnnouncement && this.canApproveJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_PUBLISH',
+        icon: 'hgi hgi-stroke hgi-upload-01',
+        command: () => this.publishJob(job),
+      });
+    }
+
+    // 7. Close
+    if (backendName === this.jobStatus.Published && this.canApproveJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_CLOSE',
+        icon: 'hgi hgi-stroke hgi-square-lock-01',
+        command: () => this.closeJob(job),
+      });
+    }
+
+    // 8. Cancel
+    if (
+      (backendName === this.jobStatus.Published ||
+        backendName === this.jobStatus.Draft ||
+        backendName === this.jobStatus.ReadyForAnnouncement) &&
+      this.canManageJobs()
+    ) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_CANCEL',
+        icon: 'hgi hgi-stroke hgi-unavailable',
+        command: () => this.cancelJob(job),
+      });
+    }
+
+    // 9. Reopen
+    if (backendName === this.jobStatus.Rejected && this.canApproveJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_REOPEN',
+        icon: 'hgi hgi-stroke hgi-checkmark-circle-02',
+        command: () => this.reopenJob(job),
+      });
+    }
+
+    // 10. Delete
+    if (
+      backendName !== this.jobStatus.Published &&
+      backendName !== this.jobStatus.Approved &&
+      this.canManageJobs()
+    ) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_DELETE',
+        icon: 'hgi hgi-stroke hgi-delete-02',
+        command: () => this.deleteJob(job),
+        danger: true,
+      });
+    }
+
+    // 11. View Candidates
+    if (backendName === this.jobStatus.Published && this.canViewJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_VIEW_CANDIDATE',
+        icon: 'hgi hgi-stroke hgi-user-multiple',
+        command: () => this.viewJobCandidate(job.id),
+      });
+    }
+
+    return actions;
+  }
+
+  showMoreActions(event: Event, actions: JobAction[], menu: any) {
+    this.activeActions = actions.map((a) => ({
+      label: this.translateService.instant(a.label),
+      icon: a.icon,
+      command: () => a.command(),
+      styleClass: a.danger ? 'text-danger' : '',
+    }));
+    menu.toggle(event);
   }
 }

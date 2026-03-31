@@ -36,7 +36,16 @@ public class ChangeJobStatusCommandHandler(
 
         if (request.NewStatusId == JobStatusIds.Closed || request.NewStatusId == JobStatusIds.Cancelled)
         {
-            foreach (var invitation in job.Invitations)
+            var statusUsed = new List<Guid>
+            {
+                InvitationStatusIds.Submitted,
+                InvitationStatusIds.PendingAttachmentApproval,
+                InvitationStatusIds.ReturnedAttachment,
+                InvitationStatusIds.Rejected,
+                InvitationStatusIds.Closed,
+                InvitationStatusIds.Cancelled,
+            };
+            foreach (var invitation in job.Invitations.Where(i=> !statusUsed.Contains(i.InvitationStatusId)))
                 invitation.ChangeInvitationStatus(InvitationStatusIds.Closed);
         }
 

@@ -50,6 +50,8 @@ import { JobCandidatesNationalityFilterModalComponent } from './modals/job-candi
 import { JobCandidatesNationalityBreakdownDialogComponent } from './modals/job-candidates-nationality-breakdown/job-candidates-nationality-breakdown.dialog.component';
 import { JobCandidateProfileDialogComponent } from './modals/job-candidate-profile-dialog/job-candidate-profile.dialog.component';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { MenuModule } from 'primeng/menu';
+import { DrawerModule } from 'primeng/drawer';
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -105,7 +107,9 @@ import { ProgressBarModule } from 'primeng/progressbar';
         RadioButtonModule,
         ProgressBarModule,
         Tooltip,
-        RemoteSelectComponent
+        RemoteSelectComponent,
+        MenuModule,
+        DrawerModule
     ],
   exports: [
     JobDetailsComponent,

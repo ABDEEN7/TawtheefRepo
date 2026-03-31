@@ -78,35 +78,88 @@
             </div>
           </div>
           <div class="row mb-3 align-items-center">
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
               <input class="form-control" [ngModel]="searchQuery()" (ngModelChange)="onSearchInputChange($event)"
                 [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate" />
             </div>
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
               <p-select class="select w-100" [options]="lookupsService.jobCategories()" [ngModel]="filterType()"
                 (ngModelChange)="filterType.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                 [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"></p-select>
             </div>
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
               <p-select class="select w-100" [options]="lookupsService.jobStatus()" [ngModel]="filterStatus()"
                 (ngModelChange)="filterStatus.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                 [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"></p-select>
             </div>
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <button class="btn btn-outline-primary light d-flex align-items-center gap-2" type="button"
-                (click)="clearFilters()"><i class="hgi hgi-stroke hgi-filter"></i><span>{{
-                  'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span></button>
 
+            <div class="col-lg-5 col-md-12 mb-3 d-flex gap-2">
+              <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button"
+                (click)="showMoreFilters.set(true)">
+                <i class="hgi hgi-stroke hgi-filter-add"></i>
+                <span>{{ 'JOB_LIST_BUTTONS_MORE_FILTERS' | translate }}</span>
+                @if (activeFiltersCount() > 0) {
+                <span class="badge bg-primary rounded-circle px-2">{{ activeFiltersCount() }}</span>
+                }
+              </button>
+
+              <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button"
+                (click)="clearFilters()">
+                <i class="hgi hgi-stroke hgi-refresh"></i>
+                <span>{{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}</span>
+              </button>
             </div>
           </div>
+
+          <p-drawer [(visible)]="showMoreFilters" position="right"
+            [header]="'JOB_LIST_TITLES_ADVANCED_FILTERS' | translate" class="filter-drawer">
+            <div class="d-flex flex-column gap-4 p-2">
+              <div>
+                <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_GENDER' | translate }}</label>
+                <p-select class="select w-100" [options]="lookupsService.genders()" [ngModel]="filterGender()"
+                  (ngModelChange)="filterGender.set($event); onFilterChange()" optionLabel="name" optionValue="id"
+                  [showClear]="true"></p-select>
+              </div>
+
+              <div>
+                <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_SECTOR' | translate }}</label>
+                <p-select class="select w-100" [options]="lookupsService.sectors()" [ngModel]="filterSector()"
+                  (ngModelChange)="onSectorChange($event)" optionLabel="name" optionValue="id"
+                  [showClear]="true"></p-select>
+              </div>
+
+              <div>
+                <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_MANAGEMENT' | translate }}</label>
+                <p-select class="select w-100" [options]="lookupsService.managements()" [ngModel]="filterManagement()"
+                  (ngModelChange)="onManagementChange($event)" optionLabel="name" optionValue="id"
+                  [showClear]="true"></p-select>
+              </div>
+
+              <div>
+                <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_DEPARTMENT' | translate }}</label>
+                <p-select class="select w-100" [options]="lookupsService.departments()" [ngModel]="filterDepartment()"
+                  (ngModelChange)="filterDepartment.set($event); onFilterChange()" optionLabel="name" optionValue="id"
+                  [showClear]="true"></p-select>
+              </div>
+
+              <div class="mt-4 pt-3 border-top d-flex gap-2">
+                <button class="btn btn-primary w-100" (click)="showMoreFilters.set(false)">
+                  {{ 'common.close' | translate }}
+                </button>
+                <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+                  {{ 'JOB_LIST_BUTTONS_CLEAR_FILTERS' | translate }}
+                </button>
+              </div>
+            </div>
+          </p-drawer>
           <div class="table-card rounded overflow-hidden">
+            <p-menu #menu [model]="activeActions" [popup]="true" appendTo="body"></p-menu>
             <div class="table-responsive">
               <p-table class="distribution-table" [value]="jobs?.items ?? []">
                 <ng-template pTemplate="header">
                   <tr>
                     <th class="col-index">#</th>
-                    <th>{{ 'JOB_LIST_COLUMNS_TITLE_AR' | translate }}</th>
-                    <th>{{ 'JOB_LIST_COLUMNS_TITLE_EN' | translate }}</th>
+                    <th>{{ 'JOB_LIST_COLUMNS_TITLE' | translate }}</th>
                     <th>{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
                     <th>{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
                     <th class="col-vacancies">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
@@ -121,11 +174,14 @@
                       {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
                     </td>
                     <td>
-                      <span class="fw-bold">{{ job.titleAr }}</span>
-                    </td>
-
-                    <td class="cell-alt">
-                      <span class="fw-bold">{{ job.titleEn }}</span>
+                      <div class="d-flex flex-column gap-1">
+                        <span class="fw-bold">{{ currentLang === 'ar' ? job.titleAr : job.titleEn }}</span>
+                        @if(job.gender) {
+                        <div class="d-flex align-items-center gap-1">
+                          <span class="pill neutral">{{ job.gender.name }}</span>
+                        </div>
+                        }
+                      </div>
                     </td>
 
                     <td>
@@ -147,94 +203,23 @@
 
                     <td class="col-actions">
                       <div class="action-buttons">
-                        @if (job.jobStatus.backendName === jobStatus.Approved && canManageJobPoints()) {
-                        <button type="button" class="btn" (click)="openPointsModal(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_CONFIG' | translate">
-                          <i class="hgi hgi-stroke hgi-settings-01"></i>
-                        </button>
-                        }
-                        @if (job.jobStatus.backendName === jobStatus.Published && canViewJobPoints()) {
-                        <button type="button" class="btn" (click)="openPointsModal(job, true)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_POINTS_VIEW' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_POINTS_VIEW' | translate">
-                          <i class="hgi hgi-stroke hgi-view"></i>
-                        </button>
-                        } @if(job.jobStatus.backendName !== jobStatus.Draft &&
-                        job.jobStatus.backendName !== jobStatus.NeedUpdate && canViewJobs()){
-                        @if (canCopyJob(job)) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="copyJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_COPY' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_COPY' | translate">
-                          <i class="hgi hgi-stroke hgi-copy-01"></i>
-                        </button>
-                        }
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="viewJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW' | translate">
-                          <i class="hgi hgi-stroke hgi-view"></i>
-                        </button>
-                        } @if ((job.jobStatus.backendName === jobStatus.Draft ||
-                        job.jobStatus.backendName === jobStatus.NeedUpdate) && canManageJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="editJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_EDIT' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_EDIT' | translate">
-                          <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                        </button>
-                        } @if (job.jobStatus.backendName === jobStatus.PendingApproval && canApproveJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="approveJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_APPROVE' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_APPROVE' | translate">
-                          <i class="hgi hgi-stroke hgi-tick-02"></i>
-                        </button>
+                        @let actions = getJobActions(job);
 
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="rejectJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_REJECT' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_REJECT' | translate">
-                          <i class="hgi hgi-stroke hgi-cancel-01"></i>
-                        </button>
-                        } @if (job.jobStatus.backendName === jobStatus.ReadyForAnnouncement && canApproveJobs()) {
-                        <button class="btn" type="button" (click)="publishJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_PUBLISH' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_PUBLISH' | translate">
-                          <i class="hgi hgi-stroke hgi-upload-01"></i>
-                        </button>
-                        } @if (job.jobStatus.backendName === jobStatus.Published && canApproveJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="closeJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_CLOSE' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_CLOSE' | translate">
-                          <i class="hgi hgi-stroke hgi-square-lock-01"></i>
-                        </button>
-                        } @if ((job.jobStatus.backendName === jobStatus.Published ||
-                        job.jobStatus.backendName === jobStatus.Draft || job.jobStatus.backendName
-                        === jobStatus.ReadyForAnnouncement) && canManageJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="cancelJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_CANCEL' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_CANCEL' | translate">
-                          <i class="hgi hgi-stroke hgi-unavailable"></i>
-                        </button>
-                        } @if (job.jobStatus.backendName === jobStatus.Rejected && canApproveJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="reopenJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_REOPEN' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_REOPEN' | translate">
-                          <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
-                        </button>
-                        } @if (job.jobStatus.backendName !== jobStatus.Published &&
-                        job.jobStatus.backendName !== jobStatus.Approved && canManageJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button" (click)="deleteJob(job)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_DELETE' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_DELETE' | translate">
-                          <i class="hgi hgi-stroke hgi-delete-02"></i>
-                        </button>
-                        } @if(job.jobStatus.backendName === jobStatus.Published){
-                        @if (canViewJobs()) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button"
-                          (click)="viewJobCandidate(job.id)"
-                          pTooltip="{{ 'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'JOB_LIST_BUTTONS_VIEW_CANDIDATE' | translate">
-                          <i class="hgi hgi-stroke hgi-user-multiple"></i>
+                        @for (action of actions.slice(0, 3); track action.label) {
+                        <button type="button" class="btn" (click)="action.command()"
+                          pTooltip="{{ action.label | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="action.label | translate">
+                          <i [class]="action.icon"></i>
                         </button>
                         }
+
+                        @if (actions.length > 3) {
+                        <button class="btn d-flex gap-1 align-items-center" type="button"
+                          (click)="showMoreActions($event, actions.slice(3), menu)"
+                          pTooltip="{{ 'common.more' | translate }}" tooltipPosition="top"
+                          [attr.aria-label]="'common.more' | translate">
+                          <i class="hgi hgi-stroke hgi-more-01"></i>
+                        </button>
                         }
                       </div>
                     </td>
@@ -243,7 +228,7 @@
 
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="8" class="text-center">
+                    <td colspan="7" class="text-center">
                       <i class="hgi hgi-stroke hgi-briefcase-01 mb-3"></i>
                       <div class="empty__title">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</div>
                       @if (canManageJobs()) {
