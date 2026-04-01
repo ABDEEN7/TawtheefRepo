@@ -26,8 +26,8 @@ public static class LocalizedNameExtensions
     }
     public static string? GetLocalizedDescription(this object source,[AllowedValues("ar","en")] string language)
     {
-        if (source is ILocalizedName localized)
-            return localized.GetLocalizedName(language);
+        if (source is not ILocalizedDescription)
+            return string.Empty;
         
         // Reflection fallback (slower but flexible)
         var prop = source.GetType().GetProperty($"Description{language}");
