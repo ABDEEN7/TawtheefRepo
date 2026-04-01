@@ -196,7 +196,6 @@ export class JobService {
     if (!job.jobTitleId) errors.push('VALIDATION.REQUIRED_FIELD');
     if (!job.sectorId) errors.push('VALIDATION.JOB.SECTOR_REQUIRED');
     if (!job.managementId) errors.push('VALIDATION.JOB.MANAGEMENT_REQUIRED');
-    if (!job.departmentId) errors.push('VALIDATION.JOB.DEPARTMENT_REQUIRED');
     if (!job.jobCategoryId) errors.push('VALIDATION.JOB.JOB_CATEGORY_REQUIRED');
     if (!job.workLocationId) errors.push('VALIDATION.JOB.WORK_LOCATION_REQUIRED');
 
