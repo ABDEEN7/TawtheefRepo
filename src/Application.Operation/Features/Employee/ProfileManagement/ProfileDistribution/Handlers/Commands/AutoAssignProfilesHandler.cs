@@ -5,8 +5,10 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -17,12 +19,14 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 public sealed class AutoAssignProfilesHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
+    IUserRepository userRepository,
     ILocalizationService localizationService,
     IMapper mapper)
     : IRequestHandler<AutoAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(AutoAssignProfilesCommand request, CancellationToken ct)
     {
+        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
@@ -37,7 +41,7 @@ public sealed class AutoAssignProfilesHandler(
 
         List<User> employees;
 
-        if (callerUser is OfficeUser callerOfficeUser && callerOfficeUser.OfficeId is not null)
+        if (callerUser is OfficeUser { OfficeId: not null } callerOfficeUser)
         {
             employees = await userManager.Users.OfType<OfficeUser>()
                 .Where(e => targetEmployeeIds.Contains(e.Id) && e.OfficeId == callerOfficeUser.OfficeId && !e.IsDeleted && !e.IsBlocked)
@@ -51,6 +55,14 @@ public sealed class AutoAssignProfilesHandler(
                 .Cast<User>()
                 .ToListAsync(ct);
         }
+
+        if (employees.Count == 0)
+            return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionNoEligibleEmployees);
+
+        // Filter by permission: "profile.distribution.manage"
+        var permEmployees = await userRepository.GetUsersByPermissionAsync(PermissionKeys.ProfileDistribution.Manage, ct);
+        var permEmployeeIds = permEmployees.Select(u => u.Id).ToHashSet();
+        employees = employees.Where(e => permEmployeeIds.Contains(e.Id)).ToList();
 
         if (employees.Count == 0)
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionNoEligibleEmployees);
@@ -117,7 +129,7 @@ public sealed class AutoAssignProfilesHandler(
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
                 Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
                 Section = UserProfileLogConstants.Sections.Assignment
-            });
+            }, ct);
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = profile.Id,
@@ -126,14 +138,13 @@ public sealed class AutoAssignProfilesHandler(
                 Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignmentResult.Value.Id
-            });
+            }, ct);
             newlyAssigned[chosen.Employee.Id]++;
         }
 
         var assignedCount = newlyAssigned.Values.Sum();
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
         var result = await projection.BuildResultAsync(request.UserId, assignedCount, ct);
 
         return Result.Ok(result);

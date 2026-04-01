@@ -11,11 +11,15 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
+using Tawtheef.Application.Common.Interfaces.Repositories;
+using Tawtheef.Application.Common.Security;
+
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
 internal sealed class ProfileDistributionProjection(
     IUnitOfWork uow,
     UserManager<User> userManager,
+    IUserRepository userRepository,
     ILocalizationService localizationService,
     IMapper mapper)
 {
@@ -151,7 +155,7 @@ internal sealed class ProfileDistributionProjection(
 
         List<User> employees;
 
-        if (user is OfficeUser officeUser && officeUser.OfficeId is not null)
+        if (user is OfficeUser { OfficeId: not null } officeUser)
         {
             employees = await userManager.Users.OfType<OfficeUser>()
                 .Where(u => u.OfficeId == officeUser.OfficeId)
@@ -166,6 +170,14 @@ internal sealed class ProfileDistributionProjection(
                 .Cast<User>()
                 .ToListAsync(ct);
         }
+
+        if (employees.Count == 0) return [];
+
+        // Filter by permission: "profile.distribution.manage"
+        var permEmployees = await userRepository.GetUsersByPermissionAsync(PermissionKeys.ProfileDistribution.Manage, ct);
+        var permEmployeeIds = permEmployees.Select(u => u.Id).ToHashSet();
+        
+        employees = employees.Where(e => permEmployeeIds.Contains(e.Id)).ToList();
 
         if (employees.Count == 0) return [];
 
