@@ -34,6 +34,7 @@
               }
             </div>
             } @else {
+            @if(canModifiedAttachment()) {
             <div class="upload-container">
               <input type="file" #fileInput class="d-none" accept=".pdf,.png,.jpg,.jpeg"
                 (change)="onFileSelected($event, attachment.id)">
@@ -41,6 +42,7 @@
                 <i class="pi pi-upload me-1"></i> {{ 'JOB_DETAILS.UPLOAD_FILE' | translate }}
               </button>
             </div>
+            }
             }
           </div>
           @if (attachment.isReturned && attachment.reviewNote) {

@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { JobDetailsService } from '../services/job-details.service';
@@ -25,19 +25,23 @@ export class JobAttachmentsComponent {
   private sanitizer = inject(DomSanitizer);
 
   job = this.detailsService.job;
-  
+
   showPreview = signal(false);
   previewUrl = signal<SafeResourceUrl | null>(null);
   previewTitle = signal('');
-  canModifiedAttachment() {
-    const invitationStatus = this.job()?.invitationStatus?.backendName?.toLowerCase();
-    if (invitationStatus != JOB_INVITATION_STATUSES.NEW_INVITATION &&
-      invitationStatus != JOB_INVITATION_STATUSES.READ &&
-      invitationStatus != JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL &&
-      invitationStatus != JOB_INVITATION_STATUSES.REQUIRES_UPDATE)
-      return false;
-    return true;
-  }
+
+  canModifiedAttachment = computed(() => {
+    const status = this.job()?.invitationStatus?.backendName;
+    if (!status) return false;
+
+    const allowedStatuses: string[] = [
+      JOB_INVITATION_STATUSES.NEW_INVITATION,
+      JOB_INVITATION_STATUSES.READ,
+      JOB_INVITATION_STATUSES.REQUIRES_UPDATE
+    ];
+
+    return allowedStatuses.includes(status);
+  });
 
   onFileSelected(event: any, jobRequiredAttachmentId: GUID) {
     const file = event.target.files[0];
@@ -77,7 +81,7 @@ export class JobAttachmentsComponent {
 
     try {
       let blobToPreview: Blob;
-      
+
       if (attachment.file && (attachment.file instanceof File || attachment.file instanceof Blob)) {
         blobToPreview = attachment.file;
       } else if (attachment.resourceUrl) {

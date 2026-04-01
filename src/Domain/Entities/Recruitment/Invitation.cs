@@ -32,6 +32,11 @@ public class Invitation : EventEntity
     public ICollection<HistoryInvitation> History { get; init; } = [];
     public ICollection<InvitationAttachment> Attachments { get; set; } = [];
 
+    public bool CanModifyAttachments =>
+        InvitationStatusId == InvitationStatusIds.NewInvitation ||
+        InvitationStatusId == InvitationStatusIds.Read ||
+        InvitationStatusId == InvitationStatusIds.ReturnedAttachment;
+
     public void ChangeInvitationStatus(Guid newInvitationStatusId) 
     {
         this.InvitationStatusId = newInvitationStatusId;
