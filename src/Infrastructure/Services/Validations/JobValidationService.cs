@@ -18,25 +18,15 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     public async Task<ValidationResult> ValidateForCreation(CreateJobDto dto)
     {
         var failures = new List<ValidationFailure>();
-
-        if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
+        var degreeIds = dto.Degrees?.Select(d => d.DegreeId).ToList();
+        AddBasicFieldFailures(failures,
             dto.JobTitleId,
             dto.SectorId, dto.ManagementId,
             dto.JobCategoryId, dto.WorkLocationId, dto.WorkTypeId,
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
             dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience,
-            dto.Degrees?.Select(d => d.DegreeId)))
-        {
-            failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
-        }
-
-        if (!JobBusinessRules.IsValidVacancyCount(dto.NumberOfVacancies))
-            failures.Add(new ValidationFailure(nameof(dto.NumberOfVacancies),
-                JobMessages.VacanciesGreaterThanZero));
-
-        if (!JobBusinessRules.IsValidClosingDate(dto.ClosingDate))
-            failures.Add(new ValidationFailure(nameof(dto.ClosingDate),
-                JobMessages.ClosingDateFuture));
+            dto.GenderId,
+            degreeIds);
 
         var ageValidation = JobBusinessRules.ValidateAgeRange(
             dto.MinimumAge, dto.MaximumAge, 18, 65);
@@ -44,7 +34,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (!ageValidation.IsValid)
             failures.Add(new ValidationFailure("AgeRange", ageValidation.ErrorMessage));
 
-        if (await IsDuplicateJob(dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId!.Value, dto.DepartmentId))
+        if (dto.GenderId.HasValue && 
+            await IsDuplicateJob(dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId!.Value, dto.DepartmentId))
             failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
 
         var hierarchicalErrors = await ValidateHierarchicalRelationships(dto);
@@ -201,25 +192,23 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
     public async Task<ValidationResult> ValidateStatusChange(JobEntity job, Guid newStatusId)
     {
         var failures = new List<ValidationFailure>();
-
+        var degreeIds = job.JobDegrees.Select(d => d.DegreeId).ToList();
         if (newStatusId == JobStatusIds.PendingApproval &&
             (job.JobStatusId == JobStatusIds.Draft || job.JobStatusId == JobStatusIds.NeedUpdate))
         {
-            if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
-                    job.JobTitleId,
-                    job.SectorId, job.ManagementId,
-                    job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
-                    job.MajorId, job.NumberOfVacancies, job.ClosingDate,
-                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
-                    job.JobDegrees?.Select(d => d.DegreeId)))
-            {
-                failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
-            }
+            AddBasicFieldFailures(failures,
+                job.JobTitleId,
+                job.SectorId, job.ManagementId,
+                job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
+                job.MajorId, job.NumberOfVacancies, job.ClosingDate,
+                job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
+                job.GenderId,
+                degreeIds);
 
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
-                job.JobDegrees?.Any() ?? false,
-                job.JobConditions.Any(),
-                job.JobResponsibilities.Any(),
+                job.JobDegrees is {Count: > 0},
+                job.JobConditions is {Count: > 0},
+                job.JobResponsibilities is {Count: > 0},
                 HasQualificationDescriptions(job),
                 HasOverview(job)
             );
@@ -230,21 +219,19 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         if (newStatusId == JobStatusIds.Approved)
         {
-            if (!JobBusinessRules.AreRequiredBasicFieldsCompleted(
-                    job.JobTitleId,
-                    job.SectorId, job.ManagementId,
-                    job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
-                    job.MajorId, job.NumberOfVacancies, job.ClosingDate,
-                    job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
-                    job.JobDegrees?.Select(d => d.DegreeId)))
-            {
-                failures.Add(new ValidationFailure("BasicFields", JobMessages.FieldRequired));
-            }
+            AddBasicFieldFailures(failures,
+                job.JobTitleId,
+                job.SectorId, job.ManagementId,
+                job.JobCategoryId, job.WorkLocationId, job.WorkTypeId,
+                job.MajorId, job.NumberOfVacancies, job.ClosingDate,
+                job.MinimumAge, job.MaximumAge, job.YearsOfExperience,
+                job.GenderId,
+                degreeIds);
 
             var allTabsCompleted = JobBusinessRules.AreAllTabsCompleted(
-                job.JobDegrees?.Any() ?? false,
-                job.JobConditions.Any(),
-                job.JobResponsibilities.Any(),
+                job.JobDegrees is {Count: > 0},
+                job.JobConditions is {Count: > 0},
+                job.JobResponsibilities is {Count: > 0},
                 HasQualificationDescriptions(job),
                 HasOverview(job)
             );
@@ -418,5 +405,58 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             .FirstOrDefaultAsync(m => m.Id == subMajorId && m.ParentId == majorId);
 
         return subMajor != null;
+    }
+
+    private void AddBasicFieldFailures(
+        List<ValidationFailure> failures,
+        Guid jobTitleId,
+        Guid sectorId, Guid managementId,
+        Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
+        Guid? majorId, int numberOfVacancies, DateTimeOffset closingDate,
+        int minimumAge, int maximumAge, int yearsOfExperience,
+        Guid? genderId = null,
+        List<Guid>? degreeIds = null)
+    {
+        if (jobTitleId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(jobTitleId), JobMessages.JobTitleRequired));
+
+        if (sectorId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(sectorId), JobMessages.SectorRequired));
+
+        if (managementId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(managementId), JobMessages.ManagementRequired));
+
+        if (jobCategoryId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(jobCategoryId), JobMessages.JobCategoryRequired));
+
+        if (workLocationId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(workLocationId), JobMessages.WorkLocationRequired));
+
+        if (genderId == null || genderId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(genderId), JobMessages.GenderRequired));
+
+        if (workTypeId == Guid.Empty)
+            failures.Add(new ValidationFailure(nameof(workTypeId), JobMessages.WorkTypeRequired));
+
+        if (JobBusinessRules.RequiresMajor(degreeIds) && (majorId == null || majorId == Guid.Empty))
+            failures.Add(new ValidationFailure(nameof(majorId), JobMessages.MajorRequired));
+
+        if (numberOfVacancies <= 0)
+            failures.Add(new ValidationFailure(nameof(numberOfVacancies), JobMessages.VacanciesGreaterThanZero));
+
+        if (closingDate <= DateTimeOffset.Now)
+            failures.Add(new ValidationFailure(nameof(closingDate), JobMessages.ClosingDateFuture));
+
+        if (minimumAge <= 0)
+            failures.Add(new ValidationFailure(nameof(minimumAge), JobMessages.MinimumAgeRequired));
+
+        if (maximumAge <= 0)
+            failures.Add(new ValidationFailure(nameof(maximumAge), JobMessages.MaximumAgeRequired));
+
+        if (maximumAge <= minimumAge)
+            failures.Add(new ValidationFailure(nameof(maximumAge), JobMessages.AgeRangeInvalid));
+
+        if (yearsOfExperience < 0)
+            failures.Add(new ValidationFailure(nameof(yearsOfExperience), JobMessages.YearsExperienceRequired));
     }
 }

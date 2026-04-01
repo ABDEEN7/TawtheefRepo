@@ -5,7 +5,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 
 public class CreateJobDto
 {
-    [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
+    [Required(ErrorMessage = JobMessages.JobTitleRequired)]
     public Guid JobTitleId { get; set; }
 
     [Required(ErrorMessage = JobMessages.SectorRequired)]
@@ -26,6 +26,7 @@ public class CreateJobDto
     [Required(ErrorMessage = JobMessages.WorkLocationRequired)]
     public Guid WorkLocationId { get; set; }
 
+    [Required(ErrorMessage = JobMessages.GenderRequired)]
     public Guid? GenderId { get; set; }
 
     public Guid? MajorId { get; set; }

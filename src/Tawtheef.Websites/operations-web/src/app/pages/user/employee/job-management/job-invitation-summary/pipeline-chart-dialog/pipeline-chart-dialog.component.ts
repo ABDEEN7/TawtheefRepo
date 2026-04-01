@@ -17,7 +17,7 @@ export interface PipelineChartData {
   imports: [CommonModule, ChartModule],
   template: `
     <div class="pipeline-chart-dialog">
-      <div class="chart-container">
+      <div>
         <p-chart type="bar" [data]="chartData()" [options]="chartOptions"></p-chart>
       </div>
 
