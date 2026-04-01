@@ -24,6 +24,8 @@ public class CreateMajorCommandHandler(IUnitOfWork uow) : IRequestHandler<Create
         {
             NameAr = request.NameAr,
             NameEn = request.NameEn,
+            DescriptionAr = request.DescriptionAr,
+            DescriptionEn = request.DescriptionEn,
             IsActive = request.IsActive,
             ParentId = request.ParentMajorId,
             BackendName = code

@@ -155,11 +155,15 @@ export class UpsertSkillDialogComponent {
   vm = {
     id: this.model?.id ?? null,
 
-    nameEn: this.model?.nameEn ?? this.model?.additionalData?.nameEn ?? this.model?.name ?? '',
-    nameAr: this.model?.nameAr ?? this.model?.additionalData?.nameAr ?? '',
+    // Handle names/descriptions more robustly
+    nameEn: this.model?.nameEn ?? this.model?.additionalData?.nameEn ?? (typeof this.model?.name === 'object' ? this.model?.name?.en : (this.model?.name && !this.model?.additionalData?.nameAr ? this.model?.name : '')),
+    nameAr: this.model?.nameAr ?? this.model?.additionalData?.nameAr ?? (typeof this.model?.name === 'object' ? this.model?.name?.ar : ''),
+
     skillTypeId: this.model?.skillTypeId ?? this.model?.skillType?.id ?? '',
-    descriptionEn: this.model?.descriptionEn ?? this.model?.additionalData?.descriptionEn ?? '',
-    descriptionAr: this.model?.descriptionAr ?? this.model?.additionalData?.descriptionAr ?? '',
+
+    descriptionEn: this.model?.descriptionEn ?? this.model?.additionalData?.descriptionEn ?? (typeof this.model?.description === 'object' ? this.model?.description?.en : (this.model?.description && !this.model?.additionalData?.descriptionAr ? this.model?.description : '')),
+    descriptionAr: this.model?.descriptionAr ?? this.model?.additionalData?.descriptionAr ?? (typeof this.model?.description === 'object' ? this.model?.description?.ar : ''),
+
     displayOrder: this.model?.displayOrder ?? null,
     isActive: (this.model?.isActive ?? true) !== false,
     isGeneral: !!this.model?.isGeneral

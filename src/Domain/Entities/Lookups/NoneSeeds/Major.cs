@@ -21,7 +21,9 @@ public class Major : LookupBase
         IsActive = isActive;
     }
     
-    public IResult<Unit> UpdateDetails(string nameAr, string nameEn, bool isActive, Guid? parentId)
+    public IResult<Unit> UpdateDetails(string nameAr, string nameEn, 
+        string? descriptionAr, string? descriptionEn,
+        bool isActive, Guid? parentId)
     {
         // Keep the hierarchy type fixed:
         // Parent stays Parent, Child stays Child.
@@ -33,6 +35,8 @@ public class Major : LookupBase
         
         NameAr = nameAr;
         NameEn = nameEn;
+        DescriptionAr = descriptionAr;
+        DescriptionEn = descriptionEn;
         IsActive = isActive;
         // Allowed: either both are parent (null) or both are child (non-null).
         ParentId = parentId;

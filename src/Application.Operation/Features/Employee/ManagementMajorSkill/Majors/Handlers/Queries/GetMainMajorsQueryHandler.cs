@@ -17,9 +17,8 @@ public class GetMainMajorsQueryHandler(IUnitOfWork uow, ILocalizationService loc
     public async Task<IResult<PaginatedResult<MajorDetailsDto>>> Handle(
         GetMainMajorsQuery request, CancellationToken ct)
     {
-        var language = localized.GetCurrentLanguage() ?? "en";
+        var language = localized.GetCurrentLanguage();
         var majorsRepo = uow.GetEntityRepository<Major>().DbSet;
-        var majorSkills = uow.GetEntityRepository<MajorSkill>().DbSet;
 
         var search = request.Search?.Trim();
         var like = !string.IsNullOrWhiteSpace(search) ? $"%{search}%" : null;
@@ -27,20 +26,29 @@ public class GetMainMajorsQueryHandler(IUnitOfWork uow, ILocalizationService loc
         // Base query (main majors only? add ParentId == null if that's your definition)
         var query = majorsRepo
             .AsNoTracking()
-            .Where(m => m.IsActive /* && m.ParentId == null */)
+            .Where(m => m.ParentId == null)
             .WhereIf(!string.IsNullOrWhiteSpace(search), m =>
                 EF.Functions.Like(m.NameAr, like!) ||
                 EF.Functions.Like(m.NameEn, like!) ||
                 EF.Functions.Like(m.DescriptionAr ?? "", like!) ||
                 EF.Functions.Like(m.DescriptionEn ?? "", like!));
 
+        var majorSkills = uow.GetEntityRepository<MajorSkill>().DbSet;
         // Projection with correlated subqueries (translated to SQL)
         var projected = query.Select(m => new MajorDetailsDto
         {
             Id = m.Id,
+            BackendName = m.BackendName,
             Name = m.GetLocalizedName(language)!,
             Description = m.GetLocalizedDescription(language)!,
             IsActive = m.IsActive,
+            AdditionalData = new
+            {
+                m.NameAr,
+                m.NameEn,
+                m.DescriptionAr,
+                m.DescriptionEn,
+            },
 
             // direct usage for this major
             UsedInMappingsCount =
