@@ -209,6 +209,14 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
+
+    [HttpGet("check-duplication")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> CheckDuplication([FromQuery] CheckDuplicationQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
     #endregion
 
     #region Job Quireies

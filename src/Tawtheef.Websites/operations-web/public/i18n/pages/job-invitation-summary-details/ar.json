@@ -43,5 +43,6 @@
   "JOB_INVITES_DETAILS_VIEW_ATTACHMENTS": "المرفقات",
   "JOB_INVITES_DETAILS_ATTACHMENTS_TITLE": "مرفقات المرشح",
   "JOB_INVITES_DETAILS_REVIEW_NOTE_PLACEHOLDER": "أدخل ملاحظة للمرشح هنا...",
+  "JOB_INVITES_DETAILS_REVIEW_NOTE_REQUIRED": "ملاحظة الموظف مطلوبة لإرجاع المرفق.",
   "JOB_INVITES_DETAILS_NO_ATTACHMENTS_YET": "لم يتم تحميل أي مرفقات بعد."
 }

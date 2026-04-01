@@ -48,8 +48,12 @@ public sealed class GetJobInvitationSummaryQueryHandler(
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.Rejected),
                 NotSeenCount = job.Invitations
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation),
-                ReadCount = job.Invitations
-                    .Count(i => i.InvitationStatusId == InvitationStatusIds.Read),
+                ReadCount = job.Invitations.Count(i => 
+                    i.InvitationStatusId == InvitationStatusIds.Read ||
+                    i.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval ||
+                    i.InvitationStatusId == InvitationStatusIds.ReturnedAttachment ||
+                    i.InvitationStatusId == InvitationStatusIds.Submitted ||
+                    i.InvitationStatusId == InvitationStatusIds.Rejected),
                 ExpiredCount = job.Invitations
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.Closed),
                 CancelledCount = job.Invitations

@@ -1,8 +1,8 @@
-﻿import {HttpBackend, HttpClient} from '@angular/common/http';
+﻿import { HttpBackend, HttpClient } from '@angular/common/http';
 import { TranslateLoader } from '@ngx-translate/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
-import {inject} from '@angular/core';
+import { inject } from '@angular/core';
 
 export interface TranslationResource {
   prefix: string;
@@ -18,7 +18,9 @@ export class VersionedMultiTranslateLoader implements TranslateLoader {
 
   }
 
-  private readonly version$ = this.http.get<VersionJson>('./version.json').pipe(
+  private readonly version$ = this.http.get<VersionJson>('./version.json', {
+    headers: { 'X-Skip-Loading': 'true' }
+  }).pipe(
     map(v => String(v?.buildNo ?? v?.commit ?? v?.version ?? Date.now())),
     catchError(() => of(String(Date.now()))),
     shareReplay(1)
@@ -35,7 +37,9 @@ export class VersionedMultiTranslateLoader implements TranslateLoader {
           const suffix = res.suffix ?? '.json';
           const url = `${res.prefix}${lang}${suffix}?v=${encodeURIComponent(ver)}`;
 
-          return this.http.get<Record<string, any>>(url).pipe(
+          return this.http.get<Record<string, any>>(url, {
+            headers: { 'X-Skip-Loading': 'true' }
+          }).pipe(
             catchError((err) => (res.optional ? of({}) : (() => { throw err; })() as any))
           );
         });

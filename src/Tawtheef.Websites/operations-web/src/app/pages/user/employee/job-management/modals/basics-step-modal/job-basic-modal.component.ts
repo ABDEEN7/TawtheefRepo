@@ -87,7 +87,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const today = new Date();
-    this.currentDate = today;
+    this.currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
     // Set modes based on input data
     this.isViewMode = this.config.data?.isViewMode || false;
@@ -97,20 +97,20 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     this.copySourceId = this.config.data?.copySourceId || null;
 
     if (this.config.data?.jobData || this.config.data?.jobId) {
-       // Wait for lookups if they are not loaded yet
-       if (!this.lookupsService.loaded()) {
-         this.lookupsService.loadAll();
-         this.loaded$
-           .pipe(
-             filter(loaded => loaded),
-             takeUntilDestroyed(this.destroyRef)
-           )
-           .subscribe(() => {
-             this.initializeModal();
-           });
-       } else {
-         this.initializeModal();
-       }
+      // Wait for lookups if they are not loaded yet
+      if (!this.lookupsService.loaded()) {
+        this.lookupsService.loadAll();
+        this.loaded$
+          .pipe(
+            filter(loaded => loaded),
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => {
+            this.initializeModal();
+          });
+      } else {
+        this.initializeModal();
+      }
     } else if (!this.isViewMode && !this.isCreateMode) {
       this.isCreateMode = true;
     }
@@ -118,7 +118,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     if (!this.isViewMode) {
       this.setupSequenceListeners();
     }
-    
+
     this.setupDegreeValidationListener();
     if (this.copyTemplate) {
       this.isCopyMode = true;
@@ -204,8 +204,10 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.lookupsService.resetManagements();
           this.form.controls.managementId.disable({ emitEvent: false });
           this.form.controls.departmentId.disable({ emitEvent: false });
-          this.lookupsService.resetDepartments();
         }
+        this.form.controls.managementId.setValue('', { emitEvent: false });
+        this.form.controls.departmentId.setValue(null, { emitEvent: false });
+        this.lookupsService.resetDepartments();
       });
 
     this.form.controls.managementId.valueChanges
@@ -218,6 +220,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
           this.lookupsService.resetDepartments();
           this.form.controls.departmentId.disable({ emitEvent: false });
         }
+        this.form.controls.departmentId.setValue(null, { emitEvent: false });
       });
   }
 

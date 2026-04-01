@@ -22,7 +22,9 @@ export class I18nFeatureLoader {
     if (!this.cache.has(key)) {
       // ✅ firstValueFrom + catchError -> never undefined
       const p = firstValueFrom(
-        this.http.get<Record<string, any>>(url).pipe(
+        this.http.get<Record<string, any>>(url, {
+          headers: { 'X-Skip-Loading': 'true' }
+        }).pipe(
           catchError(() => of({} as Record<string, any>))
         )
       );

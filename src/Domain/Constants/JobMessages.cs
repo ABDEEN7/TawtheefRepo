@@ -7,11 +7,13 @@ public static class JobMessages
     public const string CannotCloseManuallyBeforeDeadline = "CANNOT_CLOSE_MANUALLY_BEFORE_DEADLINE";
     public const string JobTitleArRequired = "JOB_TITLE_AR_REQUIRED";
     public const string JobTitleEnRequired = "JOB_TITLE_EN_REQUIRED";
+    public const string JobTitleRequired = "JOB_TITLE_REQUIRED";
     public const string JobTitleArMaxLength = "JOB_TITLE_AR_MAX_LENGTH";
     public const string JobTitleEnMaxLength = "JOB_TITLE_EN_MAX_LENGTH";
     public const string SectorRequired = "SECTOR_REQUIRED";
     public const string ManagementRequired = "MANAGEMENT_REQUIRED";
     public const string DepartmentRequired = "DEPARTMENT_REQUIRED";
+    public const string GenderRequired = "GENDER_REQUIRED";
     public const string YearsExperienceRequired = "YEARS_EXPERIENCE_REQUIRED";
     public const string YearsExperienceRange = "YEARS_EXPERIENCE_RANGE";
     public const string JobCategoryRequired = "JOB_CATEGORY_REQUIRED";

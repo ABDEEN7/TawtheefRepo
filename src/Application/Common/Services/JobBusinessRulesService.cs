@@ -6,52 +6,19 @@ namespace Tawtheef.Application.Common.Services;
 
 public static class JobBusinessRules
 {
-    private static readonly HashSet<Guid> SimplifiedDegrees = new()
-    {
+    private static readonly HashSet<Guid> SimplifiedDegrees =
+    [
         DegreeIds.Secondary,
         DegreeIds.Preparatory,
         DegreeIds.Primary
-    };
+    ];
 
-    public static bool RequiresMajor(IEnumerable<Guid>? degreeIds)
+    public static bool RequiresMajor(List<Guid>? degreeIds)
     {
-        if (degreeIds == null || !degreeIds.Any()) 
+        if (degreeIds == null || degreeIds.Count == 0) 
             return true;
 
         return degreeIds.Any(id => !SimplifiedDegrees.Contains(id));
-    }
-
-    public static bool AreRequiredBasicFieldsCompleted(
-        Guid jobTitleId,
-        Guid sectorId, Guid managementId,
-        Guid jobCategoryId, Guid workLocationId, Guid workTypeId,
-        Guid? majorId, int numberOfVacancies, DateTimeOffset closingDate,
-        int minimumAge, int maximumAge, int yearsOfExperience,
-        IEnumerable<Guid>? degreeIds = null)
-    {
-        return jobTitleId != Guid.Empty &&
-               sectorId != Guid.Empty &&
-               managementId != Guid.Empty &&
-               jobCategoryId != Guid.Empty &&
-               workLocationId != Guid.Empty &&
-               workTypeId != Guid.Empty &&
-               (!RequiresMajor(degreeIds) || (majorId.HasValue && majorId.Value != Guid.Empty)) &&
-               numberOfVacancies > 0 &&
-               closingDate > DateTimeOffset.Now &&
-               minimumAge > 0 &&
-               maximumAge > 0 &&
-               maximumAge > minimumAge &&
-               yearsOfExperience >= 0;
-    }
-
-    public static bool IsValidVacancyCount(int numberOfVacancies)
-    {
-        return numberOfVacancies > 0;
-    }
-
-    public static bool IsValidClosingDate(DateTimeOffset closingDate)
-    {
-        return closingDate.Date > DateTimeOffset.Now;
     }
 
     public static (bool IsValid, string ErrorMessage) ValidateAgeRange(
@@ -72,26 +39,6 @@ public static class JobBusinessRules
     public static bool CanModifyAgeRange(Guid jobStatusId)
     {
         return jobStatusId == JobStatusIds.Draft;
-    }
-
-    public static bool HasDuplicatePointsSetup(Guid departmentId, Guid? subMajorId, ICollection<Job> existingJobs)
-    {
-        return existingJobs.Any(j =>
-            j.DepartmentId == departmentId &&
-            j.SubMajorId == subMajorId &&
-            j.JobStatusId == JobStatusIds.Approved &&
-            !j.IsDeleted);
-    }
-
-    public static bool IsDuplicateJob(
-        Guid jobTitleId, Guid departmentId, Guid jobCategoryId, Guid? subMajorId,
-        Guid existingJobTitleId, Guid existingDepartmentId,
-        Guid existingJobCategoryId, Guid? existingSubMajorId)
-    {
-        return jobTitleId == existingJobTitleId &&
-               departmentId == existingDepartmentId &&
-               jobCategoryId == existingJobCategoryId &&
-               subMajorId == existingSubMajorId;
     }
 
     public static bool CanEdit(Guid jobStatusId)
@@ -116,81 +63,6 @@ public static class JobBusinessRules
     public static bool IsInApprovalProcess(Guid jobStatusId)
     {
         return jobStatusId == JobStatusIds.PendingApproval;
-    }
-
-    public static bool CanPublish(Guid jobStatusId)
-    {
-        return jobStatusId == JobStatusIds.Approved;
-    }
-
-    public static bool IsValidTabItem(string text)
-    {
-        return !string.IsNullOrWhiteSpace(text);
-    }
-
-    public static bool IsDuplicateItem<T>(IEnumerable<T> items, T newItem, Func<T, string?> selector)
-    {
-        var newItemText = selector(newItem)?.Trim();
-        if (string.IsNullOrEmpty(newItemText))
-            return false;
-
-        return items.Any(item => selector(item)?.Trim().Equals(newItemText, StringComparison.OrdinalIgnoreCase) == true);
-    }
-
-    public static bool CanModifyTabItems(Guid jobStatusId)
-    {
-        return jobStatusId == JobStatusIds.Draft;
-    }
-
-    public static bool CanShowSkillToApplicants(bool showToApplicants, Guid jobStatusId)
-    {
-        return jobStatusId == JobStatusIds.Draft || showToApplicants;
-    }
-
-    public static bool CanChangeSkillVisibility(Guid jobStatusId)
-    {
-        return jobStatusId == JobStatusIds.Draft;
-    }
-
-    public static bool IsValidAttachmentTitle(string title)
-    {
-        return !string.IsNullOrWhiteSpace(title);
-    }
-
-    public static bool IsDuplicateAttachment(IEnumerable<string> existingTitles, string newTitle)
-    {
-        return existingTitles.Contains(newTitle.Trim(), StringComparer.OrdinalIgnoreCase);
-    }
-
-    public static bool CanConfigurePoints(Guid jobStatusId)
-    {
-        return jobStatusId == JobStatusIds.Approved;
-    }
-
-    public static bool CanSendInvitations(Job job)
-    {
-        return job.JobStatusId == JobStatusIds.ReadyForAnnouncement;
-    }
-
-    public static bool CanPublishWithPoints(Job job)
-    {
-        return job.JobStatusId == JobStatusIds.Approved;
-    }
-
-    public static bool ShouldAutoClose(DateTimeOffset closingDate)
-    {
-        return closingDate < DateTimeOffset.Now;
-    }
-
-    public static bool CanApply(Job job)
-    {
-        return job.ClosingDate >= DateTimeOffset.Now && job.JobStatusId == JobStatusIds.Published;
-    }
-
-    public static bool CanCancel(Job job)
-    {
-        var finalStates = new[] { JobStatusIds.Closed, JobStatusIds.Cancelled };
-        return job.ClosingDate > DateTimeOffset.Now && !finalStates.Contains(job.JobStatusId);
     }
 
     public static bool CanModifyTitle(Guid jobStatusId)
@@ -224,22 +96,6 @@ public static class JobBusinessRules
         };
 
         return allowedTransitions.ContainsKey(currentStatusId) && allowedTransitions[currentStatusId].Contains(newStatusId);
-    }
-
-    public static bool CanSubmitForApproval(Guid jobStatusId, bool allTabsCompleted)
-    {
-        return jobStatusId == JobStatusIds.Draft && allTabsCompleted;
-    }
-
-    public static bool HasDuplicatePendingApproval(Guid jobTitleId, Guid departmentId, Guid jobCategoryId, Guid? subMajorId, ICollection<Job> existingJobs)
-    {
-        return existingJobs.Any(j =>
-            j.JobTitleId == jobTitleId &&
-            j.DepartmentId == departmentId &&
-            j.JobCategoryId == jobCategoryId &&
-            j.SubMajorId == subMajorId &&
-            j.JobStatusId == JobStatusIds.PendingApproval &&
-            !j.IsDeleted);
     }
     
     public static bool CanCopyFromPreviousJob(Guid jobStatusId)
