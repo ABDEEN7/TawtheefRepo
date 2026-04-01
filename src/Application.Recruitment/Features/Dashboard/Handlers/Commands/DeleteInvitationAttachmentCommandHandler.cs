@@ -21,10 +21,7 @@ public class DeleteInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork)
         if (invitation == null)
             return Result.Fail(ErrorsCodes.InvitationNotFound);
 
-        if (invitation.InvitationStatusId != InvitationStatusIds.NewInvitation &&
-            invitation.InvitationStatusId != InvitationStatusIds.Read &&
-            invitation.InvitationStatusId != InvitationStatusIds.PendingAttachmentApproval &&
-            invitation.InvitationStatusId != InvitationStatusIds.ReturnedAttachment)
+        if (!invitation.CanModifyAttachments)
             return Result.Fail(ErrorsCodes.InvitationStatusChangeNotAllowed);
 
         var attachment = invitation.Attachments.FirstOrDefault(x => x.Id == request.AttachmentId);

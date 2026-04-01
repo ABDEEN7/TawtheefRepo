@@ -1,11 +1,12 @@
 {
+  "common.warning": "warning",
   "NO_RECORDS": "No Records",
   "common.close": "Close",
   "common.more": "More",
   "common.approve": "Approve",
   "common.return": "Return",
   "common.mandatory": "Mandatory",
-  "common.change":"Change",
+  "common.change": "Change",
   "common.info": "Info",
   "common.chart.profiles": "Profiles",
   "common.chart.completedTasks": "Completed tasks",

@@ -290,11 +290,13 @@ export class ProfileViewPage {
   }
   canEditSections(section: ProfileSectionEnum) {
     const status = this.profileStatus();
-    if (status === UserProfileStatusEnum.Approved)
-      return true;
-    if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) {
+    if (status === UserProfileStatusEnum.RequiresUpdate) {
       const indexSection = Math.min(Math.max(section - 1, 0), ((this.review.value()?.sections.length ?? 1) - 1));
       return (this.review.value()?.sections[indexSection]?.notesCount ?? 0) > 0;
+    }
+    if (status === UserProfileStatusEnum.Approved) {
+      // I will change it in future
+      return false;
     }
     return false;
   }

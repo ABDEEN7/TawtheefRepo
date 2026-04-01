@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using FluentResults;
 using MapsterMapper;
@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
@@ -17,6 +18,7 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 public sealed class ManualAssignProfilesHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
+    IUserRepository userRepository,
     ILocalizationService localizationService,
     IMapper mapper)
     : IRequestHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
@@ -122,7 +124,7 @@ public sealed class ManualAssignProfilesHandler(
 
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
+        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
         var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
 
         return Result.Ok(result);

@@ -21,7 +21,6 @@ public class GetSubMajorsQueryHandler(IUnitOfWork uow, IMapper mapper) : IReques
             .ToDictionaryAsync(x => x.MajorId, x => x.Count, cancellationToken);
 
         var majors = await uow.GetEntityRepository<Major>().DbSet.AsNoTracking()
-            .Where(x => x.IsActive)
             .Where(x => x.ParentId == request.ParentMajorId)
             .WhereIf(!string.IsNullOrEmpty(request.Search),
                 s =>

@@ -314,7 +314,11 @@ export class MajorsSkillsManagementFacade {
       modal: true,
       dismissableMask: true,
       draggable: false,
-      data: { mode: 'edit', model }
+      data: {
+        mode: 'edit',
+        model,
+        parent: (model.parentId || (model as any).parentMajorId) ? this.store.parentMajorName() : null
+      }
     })?.onClose.subscribe((payload?: any) => {
       if (!payload) return;
       this.api.updateMajor(payload).subscribe({

@@ -93,6 +93,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     {
         var query = queryBuilder.BuildEligibleQuery(
             job.Id,
+            job.WorkLocationId,
             job.GenderId,
             job.MaximumAge,
             job.MinimumAge,

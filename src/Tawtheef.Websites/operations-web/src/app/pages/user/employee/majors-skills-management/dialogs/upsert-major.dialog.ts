@@ -14,6 +14,7 @@ type DialogMode = 'create' | 'edit';
 export interface UpsertMajorDialogData {
   mode: DialogMode;
   parentId?: string | null;        // used for create sub-major
+  parent?: string | null;          // parent name
   model?: any;                     // your MajorListItemModel (or details) when edit
 }
 
@@ -114,13 +115,16 @@ export class UpsertMajorDialogComponent {
 
   vm = {
     id: this.data.model?.id ?? null,
-    parentId: this.data.mode === 'create' ? (this.data.parentId ?? null) : (this.data.model?.parentId ?? this.data.model?.parentMajorId ?? null),
+    parentId: (this.data.mode === 'create' ? (this.data.parentId ?? null) : (this.data.model?.parentId ?? this.data.model?.parentMajorId ?? null)) || null,
     parent: { name: this.data.parent ?? this.data.model?.parent?.name ?? '' },
-    // try common shapes:
-    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name?.en ?? this.data.model?.name ?? '',
-    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? this.data.model?.name?.ar ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
+
+    // Handle names/descriptions more robustly (check top-level, additionalData, and localized object)
+    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? (typeof this.data.model?.name === 'object' ? this.data.model?.name?.en : (this.data.model?.name && !this.data.model?.additionalData?.nameAr ? this.data.model?.name : '')),
+    nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? (typeof this.data.model?.name === 'object' ? this.data.model?.name?.ar : ''),
+
+    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? (typeof this.data.model?.description === 'object' ? this.data.model?.description?.en : (this.data.model?.description && !this.data.model?.additionalData?.descriptionAr ? this.data.model?.description : '')),
+    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? (typeof this.data.model?.description === 'object' ? this.data.model?.description?.ar : ''),
+
     isActive: (this.data.model?.isActive ?? true) !== false
   };
 

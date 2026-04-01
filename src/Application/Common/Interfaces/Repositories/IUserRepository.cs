@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Users;
@@ -12,4 +12,5 @@ public interface IUserRepository : IBaseRepository<User>
     Task<IResult<bool>> IsEmailUniqueAsync(string email);
     Task<IResult<bool>> IsUserNameUniqueAsync(string userName);
     Task<IResult<bool>> IsPhoneNumberUniqueAsync(string phoneNumber);
+    Task<IReadOnlyList<User>> GetUsersByPermissionAsync(string permission, CancellationToken ct);
 }

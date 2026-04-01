@@ -30,13 +30,8 @@ public class UploadInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork, IM
         if (requiredAttachment == null)
              return Result.Fail(ErrorsCodes.AttachmentNotFound);
 
-        if (invitation.InvitationStatusId != InvitationStatusIds.NewInvitation &&
-            invitation.InvitationStatusId != InvitationStatusIds.Read &&
-            invitation.InvitationStatusId != InvitationStatusIds.PendingAttachmentApproval &&
-            invitation.InvitationStatusId != InvitationStatusIds.ReturnedAttachment)
-        {
+        if (!invitation.CanModifyAttachments)
             return Result.Fail(ErrorsCodes.InvitationStatusChangeNotAllowed);
-        }
 
         var existingAttachment = await unitOfWork
             .GetEntityRepository<InvitationAttachment>()

@@ -5,8 +5,9 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -17,12 +18,14 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 public sealed class ReassignProfilesHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
+    IUserRepository userRepository,
     ILocalizationService localizationService,
     IMapper mapper)
     : IRequestHandler<ReassignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ReassignProfilesCommand request, CancellationToken ct)
     {
+        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
@@ -132,9 +135,8 @@ public sealed class ReassignProfilesHandler(
             }
 
             await uow.SaveChangesAsync(ct);
-            var projection = new ProfileDistributionProjection(uow, userManager, localizationService, mapper);
-            var manualResult = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
-            return Result.Ok(manualResult);
+            var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
+            return Result.Ok(result);
         }
 
         if (mode == ProfileDistributionModes.AutoNormalized)
@@ -145,7 +147,7 @@ public sealed class ReassignProfilesHandler(
                 request.ProfileIds,
                 request.PerEmployeeCount);
 
-            var handler = new AutoAssignProfilesHandler(uow, userManager, localizationService, mapper);
+            var handler = new AutoAssignProfilesHandler(uow, userManager, userRepository, localizationService, mapper);
             return await handler.Handle(autoRequest, ct);
         }
 

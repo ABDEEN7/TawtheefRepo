@@ -14,7 +14,6 @@
                 <span class="avatar-ring">
                   <p-avatar size="xlarge" shape="circle"
                     [image]="!imageError ? (info.profile.profilePhoto ?? AvatarUtils.build(info.fullName))  : undefined"
-                    [label]="imageError || !info.profile.profilePhoto ? AvatarUtils.build(info.fullName) : undefined"
                     (onImageError)="handleImageError()">
                   </p-avatar>
                 </span>
@@ -98,12 +97,8 @@
     </div>
 
     <div class="viewer-side" *ngIf="!!selectedFile() || loadingFile()">
-      <app-file-viewer 
-        [url]="selectedFile()?.url ?? ''" 
-        [fileName]="selectedFile()?.name ?? ''" 
-        [loading]="loadingFile()" 
-        [mimeType]="selectedFile()?.mimeType || ''" 
-        (close)="closeFileViewer()">
+      <app-file-viewer [url]="selectedFile()?.url ?? ''" [fileName]="selectedFile()?.name ?? ''"
+        [loading]="loadingFile()" [mimeType]="selectedFile()?.mimeType || ''" (close)="closeFileViewer()">
       </app-file-viewer>
     </div>
   </div>

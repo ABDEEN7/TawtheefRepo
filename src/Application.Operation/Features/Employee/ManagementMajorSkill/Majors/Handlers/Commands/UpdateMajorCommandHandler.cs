@@ -21,14 +21,17 @@ public class UpdateMajorCommandHandler(IUnitOfWork uow) : IRequestHandler<Update
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorNotFound).WithMetadata("MajorId", request.Id));
         
         //check if name ar or name en already exists
-        var isNameDuplicated = await uow.GetEntityRepository<Major>().DbSet.AnyAsync(x => x.Id != request.Id && (x.NameAr == request.NameAr || x.NameEn == request.NameEn), cancellationToken);
-        if(isNameDuplicated)
+        var isArabicDuplicate = await majorRepo.DbSet.AnyAsync(x => x.Id != request.Id && x.NameAr == request.NameAr, cancellationToken: cancellationToken);
+        var isEnglishDuplicate = await majorRepo.DbSet.AnyAsync(x => x.Id != request.Id && x.NameEn == request.NameEn, cancellationToken: cancellationToken);
+        if(isArabicDuplicate || isEnglishDuplicate)
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorNameAlreadyExists));
         
-        var result = major.UpdateDetails(request.NameAr, request.NameEn,request.IsActive, request.ParentMajorId);
+        var result = major.UpdateDetails(request.NameAr, request.NameEn, 
+            request.DescriptionAr, request.DescriptionEn,
+            request.IsActive, request.ParentMajorId);
         if (result.IsFailed) return result;
         
-        await majorRepo.UpdateAsync(major);
+        await majorRepo.UpdateAsync(major, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
 
         return Result.Ok(Unit.Value);
@@ -38,7 +41,8 @@ public class UpdateMajorCommandHandler(IUnitOfWork uow) : IRequestHandler<Update
     {
         var jobApplicationRepo = uow.GetEntityRepository<Tawtheef.Domain.Entities.Recruitment.Job>();
         
-        var majorUsedInJobApplications = await jobApplicationRepo.DbSet.AnyAsync(ja => ja.MajorId == majorId || ja.SubMajorId == majorId, cancellationToken);
+        var majorUsedInJobApplications = await jobApplicationRepo.DbSet
+            .AnyAsync(ja => ja.MajorId == majorId || ja.SubMajorId == majorId, cancellationToken);
         if (majorUsedInJobApplications)
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorAlreadyUsed).WithMetadata("MajorId", majorId));
         
