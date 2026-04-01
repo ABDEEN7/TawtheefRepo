@@ -10,7 +10,9 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCandidatesQueryBuilderService
 {
-    public IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId,Guid? jobGenderId,int jobMaximumAge,int jobMinimumAge,JobRequirements req,JobCandidatesFilter? filter)
+    public IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId, Guid jobTargetId,
+        Guid? jobGenderId, int jobMaximumAge,
+        int jobMinimumAge,JobRequirements req, JobCandidatesFilter? filter)
     {
 
         filter ??= new JobCandidatesFilter(null, null, null);
@@ -30,6 +32,7 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         var profiles = unitOfWork.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()
             .Where(p => p.Status == UserProfileStatus.Approved && p.AvailableForRecruitment)
+            .Where(p => p.TargetEntityId == jobTargetId)
             .Where(p => !invitationsForJob.Any(i => i.ApplicantId == p.UserId));
 
         // Gender (job + filter)

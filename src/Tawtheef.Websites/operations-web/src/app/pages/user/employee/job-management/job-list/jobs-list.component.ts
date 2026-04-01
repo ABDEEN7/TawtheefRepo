@@ -66,7 +66,7 @@ export class JobListComponent implements OnInit {
   protected readonly Permissions = Permissions;
   activeActions: MenuItem[] = [];
   showMoreFilters = signal(false);
-  
+
   activeFiltersCount = computed(() => {
     let count = 0;
     if (this.filterGender()) count++;

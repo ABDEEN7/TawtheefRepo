@@ -4,6 +4,6 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public interface IJobCandidatesQueryBuilderService
 {
-    IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId, Guid? jobGenderId, int jobMaximumAge,
+    IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId, Guid jobTargetId, Guid? jobGenderId, int jobMaximumAge,
         int jobMinimumAge, JobRequirements req, JobCandidatesFilter? filter);
 }

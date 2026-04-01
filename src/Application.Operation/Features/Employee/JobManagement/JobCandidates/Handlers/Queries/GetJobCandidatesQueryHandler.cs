@@ -39,7 +39,7 @@ public sealed class GetJobCandidatesQueryHandler(
         var req = await jobRequirementsService.GetAsync(job);
 
         var baseQuery = jobCandidatesQueryBuilderService.BuildEligibleQuery(
-            job.Id,job.GenderId,job.MaximumAge,job.MinimumAge, req, request.Filter);
+            job.Id,job.WorkLocationId, job.GenderId,job.MaximumAge,job.MinimumAge, req, request.Filter);
 
         var pageNumber = request.PageNumber;
         var pageSize = request.PageSize;
