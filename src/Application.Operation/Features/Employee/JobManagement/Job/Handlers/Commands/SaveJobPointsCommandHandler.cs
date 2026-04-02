@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.Utilities;
 using MediatR;
@@ -31,7 +31,7 @@ public sealed class SaveJobPointsCommandHandler(
         if (jobStatus == Guid.Empty)
             return Result.Fail<Unit>(JobMessages.JobNotFound);
 
-        if (jobStatus != JobStatusIds.Approved)
+        if (jobStatus != JobStatusIds.PendingPointConfiguration && jobStatus != JobStatusIds.PendingPointApproval)
             return Result.Fail<Unit>(JobMessages.JobPointsJobNotApproved);
 
         var configResult = await jobPointsConfigurationsRepository.GetAsync();
@@ -42,6 +42,13 @@ public sealed class SaveJobPointsCommandHandler(
         
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
+
+        // Fetch job to change status
+        var jobRepo = uow.GetEntityRepository<JobEntity>();
+        var jobResult = await jobRepo.GetByIdAsync(dto.JobId, ct);
+        if (jobResult.IsFailed || jobResult.Value is null) return Result.Fail<Unit>(JobMessages.JobNotFound);
+
+        var job = jobResult.Value;
         var repo = uow.GetEntityRepository<JobPointsMain>();
 
         var main = await repo.DbSet
@@ -111,6 +118,7 @@ public sealed class SaveJobPointsCommandHandler(
             }
         }
 
+        job.ChangeStatus(JobStatusIds.PendingPointApproval);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

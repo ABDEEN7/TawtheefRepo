@@ -1,4 +1,4 @@
-﻿using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
@@ -85,9 +85,10 @@ public static class JobBusinessRules
         var allowedTransitions = new Dictionary<Guid, List<Guid>>
         {
             [JobStatusIds.Draft] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.PendingApproval] = [JobStatusIds.NeedUpdate,JobStatusIds.Approved, JobStatusIds.Rejected, JobStatusIds.Cancelled],
-            [JobStatusIds.Approved] = [JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
-            [JobStatusIds.NeedUpdate]= [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
+            [JobStatusIds.PendingApproval] = [JobStatusIds.NeedUpdate, JobStatusIds.PendingPointConfiguration, JobStatusIds.Rejected, JobStatusIds.Cancelled],
+            [JobStatusIds.PendingPointConfiguration] = [JobStatusIds.PendingPointApproval, JobStatusIds.Cancelled],
+            [JobStatusIds.PendingPointApproval] = [JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled, JobStatusIds.NeedUpdate],
+            [JobStatusIds.NeedUpdate] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
             [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Published],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
             [JobStatusIds.Rejected] = [JobStatusIds.Draft],
@@ -97,10 +98,11 @@ public static class JobBusinessRules
 
         return allowedTransitions.ContainsKey(currentStatusId) && allowedTransitions[currentStatusId].Contains(newStatusId);
     }
-    
+
     public static bool CanCopyFromPreviousJob(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Approved ||
+        return jobStatusId == JobStatusIds.PendingPointConfiguration ||
+               jobStatusId == JobStatusIds.PendingPointApproval ||
                jobStatusId == JobStatusIds.ReadyForAnnouncement ||
                jobStatusId == JobStatusIds.Published ||
                jobStatusId == JobStatusIds.Closed ||

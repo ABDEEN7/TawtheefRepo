@@ -48,7 +48,8 @@ export class JobListComponent implements OnInit {
 
   cancelledCount = 0;
   pendingApprovalCount = 0;
-  approvedCount = 0;
+  pendingPointConfigurationCount = 0;
+  pendingPointApprovalCount = 0;
   draftCount = 0;
   currentPage = signal(1);
   itemsPerPage = signal(10);
@@ -236,7 +237,8 @@ export class JobListComponent implements OnInit {
 
   canCopyJob(job: JobResponse): boolean {
     const allowedStatuses = [
-      this.jobStatus.Approved,
+      this.jobStatus.PendingPointConfiguration,
+      this.jobStatus.PendingPointApproval,
       this.jobStatus.ReadyForAnnouncement,
       this.jobStatus.Published,
       this.jobStatus.Closed,
@@ -419,7 +421,8 @@ export class JobListComponent implements OnInit {
       [JobStatus.Draft]: 'pill neutral',
       [JobStatus.NeedUpdate]: 'pill warning',
       [JobStatus.PendingApproval]: 'pill warning',
-      [JobStatus.Approved]: 'pill success',
+      [JobStatus.PendingPointConfiguration]: 'pill info',
+      [JobStatus.PendingPointApproval]: 'pill warning',
       [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
@@ -472,7 +475,8 @@ export class JobListComponent implements OnInit {
   private loadStats(): void {
     this.loadCount(JobStatus.Cancelled, (v) => (this.cancelledCount = v));
     this.loadCount(JobStatus.PendingApproval, (v) => (this.pendingApprovalCount = v));
-    this.loadCount(JobStatus.Approved, (v) => (this.approvedCount = v));
+    this.loadCount(JobStatus.PendingPointConfiguration, (v) => (this.pendingPointConfigurationCount = v));
+    this.loadCount(JobStatus.PendingPointApproval, (v) => (this.pendingPointApprovalCount = v));
     this.loadCount(JobStatus.Draft, (v) => (this.draftCount = v));
   }
 
@@ -487,19 +491,31 @@ export class JobListComponent implements OnInit {
     const actions: JobAction[] = [];
 
     // 1. Point config
-    if (job.jobStatus?.backendName === this.jobStatus.Approved && this.canManageJobPoints()) {
+    if (job.jobStatus?.backendName === this.jobStatus.PendingPointConfiguration && this.canManageJobPoints()) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_CONFIG',
-        icon: 'hgi hgi-stroke hgi-settings-01',
+        icon: 'hgi hgi-stroke hgi-solar-system',
+        command: () => this.openPointsModal(job),
+      });
+    }
+
+    // Point approval (view for now)
+    if (job.jobStatus?.backendName === this.jobStatus.PendingPointApproval && this.canApproveJobs()) {
+      actions.push({
+        label: 'JOB_LIST_BUTTONS_POINTS_REVIEW',
+        icon: 'hgi hgi-stroke hgi-checkmark-badge-03',
         command: () => this.openPointsModal(job),
       });
     }
 
     // 2. Point view
-    if (job.jobStatus?.backendName === this.jobStatus.Published && this.canViewJobPoints()) {
+    if (
+      (job.jobStatus?.backendName === this.jobStatus.Published ||
+        job.jobStatus?.backendName === this.jobStatus.ReadyForAnnouncement) &&
+      this.canViewJobPoints()) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_VIEW',
-        icon: 'hgi hgi-stroke hgi-view',
+        icon: 'hgi hgi-stroke hgi-solar-system-01',
         command: () => this.openPointsModal(job, true),
       });
     }
@@ -595,7 +611,8 @@ export class JobListComponent implements OnInit {
     // 10. Delete
     if (
       backendName !== this.jobStatus.Published &&
-      backendName !== this.jobStatus.Approved &&
+      backendName !== this.jobStatus.PendingPointConfiguration &&
+      backendName !== this.jobStatus.PendingPointApproval &&
       this.canManageJobs()
     ) {
       actions.push({

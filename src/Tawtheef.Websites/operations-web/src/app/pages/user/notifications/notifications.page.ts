@@ -6,13 +6,12 @@ import { Subscription } from 'rxjs';
 import { InAppNotificationService, NotificationAction } from '../../../core/services/in-app-notification.service';
 import { NotificationModel } from '../../../shared/models/notification.model';
 import { RelativeTimePipe } from '../../../shared/pipes/relative-time.pipe';
-import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 import { NotificationDetailsDialogComponent } from '../../../shared/components/notification-details-dialog/notification-details-dialog.component';
 
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule, TranslateModule, RelativeTimePipe, StripHtmlPipe],
+  imports: [CommonModule, TranslateModule, RelativeTimePipe],
   templateUrl: './notifications.page.html',
   styleUrl: './notifications.page.scss'
 })

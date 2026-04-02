@@ -77,8 +77,8 @@ export class JobDetailsComponent implements OnInit {
     if (!this.job?.jobStatus?.backendName) return this.jobStatus.Closed;
 
     switch (this.job.jobStatus.backendName) {
-      case JobStatus.Approved:
-        return this.isJobOpen() ? this.jobStatus.Approved : this.jobStatus.Closed;
+      case JobStatus.PendingPointConfiguration:
+        return this.isJobOpen() ? this.jobStatus.PendingPointConfiguration : this.jobStatus.Closed;
       case JobStatus.PendingApproval:
         return this.jobStatus.PendingApproval;
       case JobStatus.Draft:

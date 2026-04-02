@@ -54,9 +54,10 @@
   "JOB_LIST_STATISTICS": "الإحصائيات",
   "JOB_LIST_JOB_LIST": "قائمة الوظائف",
   "JOB_LIST_STATS_CANCELLED": "ملغاة",
-  "JOB_LIST_STATS_PENDING_APPROVAL": "قيد الأعتماد",
-  "JOB_LIST_STATS_APPROVED": "معتمدة",
-  "JOB_LIST_STATS_DRAFTED": "مسؤدة",
+  "JOB_LIST_STATS_PENDING_APPROVAL": "قيد المراجعة",
+  "JOB_LIST_STATS_PENDING_POINT_CONFIG": "قيد إعداد النقاط",
+  "JOB_LIST_STATS_PENDING_POINT_APPROVAL": "قيد اعتماد النقاط",
+  "JOB_LIST_STATS_DRAFTED": "مسودة",
   "JOB_LIST_CONFIRMATIONS_DELETE_JOB_NOTE": "هل أنت متأكد أنك تريد حذف هذه الوظيفة؟",
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB": "إعادة تفعيل الوظيفة",
   "JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE": "هل أنت متأكد من إعادة تفعيل هذه الوظيفة ؟",
@@ -69,5 +70,6 @@
   "JOB_LIST_FILTERS_GENDER": "الجنس",
   "JOB_LIST_FILTERS_SECTOR": "القطاع",
   "JOB_LIST_FILTERS_MANAGEMENT": "الإدارة",
-  "JOB_LIST_FILTERS_DEPARTMENT": "القسم"
+  "JOB_LIST_FILTERS_DEPARTMENT": "القسم",
+  "JOB_LIST_BUTTONS_POINTS_REVIEW": "مراجعة النقاط"
 }

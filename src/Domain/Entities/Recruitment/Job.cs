@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
@@ -114,8 +114,10 @@ public sealed class Job : EventEntity
         JobStatusId = newStatusId;
         if (newStatusId == JobStatusIds.PendingApproval)
             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now));
-        else if (newStatusId == JobStatusIds.Approved )
+        else if (newStatusId == JobStatusIds.PendingPointConfiguration )
             AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.Now));
+        else if (newStatusId == JobStatusIds.PendingPointApproval)
+             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now)); // Reusing general notification for now or I could create a new one
         else if (newStatusId == JobStatusIds.Rejected)
             AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.Now));
         else if (newStatusId == JobStatusIds.NeedUpdate)

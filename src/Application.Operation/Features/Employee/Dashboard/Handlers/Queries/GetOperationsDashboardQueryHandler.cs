@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.Dashboard.DTOs;
+using Application.Operation.Features.Employee.Dashboard.DTOs;
 using Application.Operation.Features.Employee.Dashboard.Queries;
 using MediatR;
 using FluentResults;
@@ -125,7 +125,7 @@ public sealed class GetOperationsDashboardQueryHandler(
         var totalJobs = await jobsQuery.CountAsync(ct);
         var activeJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Active || x.JobStatusId == JobStatusIds.Published, ct);
         var pendingReviewJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingApproval, ct);
-        var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Approved, ct);
+        var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingPointConfiguration || x.JobStatusId == JobStatusIds.PendingPointApproval, ct);
         var rejectedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Rejected, ct);
         var newJobsToday = await jobRepo.DbSet.CountAsync(x => !x.IsDeleted && x.CreatedDate >= todayStart, ct);
 
