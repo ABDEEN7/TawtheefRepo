@@ -1,5 +1,8 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
+using System.IO;
+using System.Net.Http;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -20,6 +23,7 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     private readonly AsyncPolicy _resiliencePolicy;
     private readonly ConcurrentBag<SmtpClient> _clientPool = new();
     private readonly int _poolSize;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IAppLogger _log;
 
     private const int DefaultTimeoutMs = 60000;
@@ -29,11 +33,12 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
     private static readonly TimeSpan OperationTimeout = TimeSpan.FromSeconds(60);
 
     public MailKitEmailTransport(IOptions<AppConfigSettings> appConfiguration,
-        IOptions<EmailSettings> settings, IAppLogger log)
+        IOptions<EmailSettings> settings, IHttpClientFactory httpClientFactory, IAppLogger log)
     {
         _settings = settings.Value;
         _appConfiguration = appConfiguration.Value;
         _poolSize = Math.Max(1, _settings.MaxSmtpClients);
+        _httpClientFactory = httpClientFactory;
         _log = log.ForContext(typeof(MailKitEmailTransport));
 
         _resiliencePolicy = BuildResiliencePolicy();
@@ -49,7 +54,8 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
 
         try
         {
-            using var message = BuildMimeMessage(envelope);
+            using var message = new MimeMessage();
+            await BuildMimeMessageAsync(message, envelope, ct);
             await client.SendAsync(message, ct);
 
             _log.Information(
@@ -206,10 +212,8 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
                 onHalfOpen: () => _log.Information("SMTP circuit half-open, next call is a trial"));
     }
 
-    private MimeMessage BuildMimeMessage(EmailEnvelope envelope)
+    private async Task BuildMimeMessageAsync(MimeMessage message, EmailEnvelope envelope, CancellationToken ct)
     {
-        var message = new MimeMessage();
-
         message.From.Add(new MailboxAddress("Careers", _settings.EmailUser));
 
         foreach (var recipient in envelope.To)
@@ -229,43 +233,56 @@ public sealed class MailKitEmailTransport : IEmailTransport, IDisposable
             HtmlBody = envelope.HtmlBody
         };
 
-        AttachLogoSmart(bodyBuilder);
+        await AttachLogoSmartAsync(bodyBuilder, ct);
 
         message.Headers.Add("X-Mailer", "Careers");
         message.Headers.Add("X-Priority", "3");
 
         message.Body = bodyBuilder.ToMessageBody();
-        return message;
     }
-    private void AttachLogoSmart(BodyBuilder bodyBuilder)
+    private async Task AttachLogoSmartAsync(BodyBuilder bodyBuilder, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(bodyBuilder.HtmlBody))
             return;
 
-        // Try CID first
-        if (!string.IsNullOrWhiteSpace(_settings.LogoPath) && File.Exists(_settings.LogoPath))
+        // 1. Try local file (Attachment)
+        if (!string.IsNullOrEmpty(_settings.LogoPath))
         {
-            var logoCid = MimeUtils.GenerateMessageId("Careers");
+            var path = _settings.LogoPath;
+            var absolutePath = Path.IsPathRooted(path) ? path : Path.Combine(Directory.GetCurrentDirectory(), path);
 
-            var logo = new MimePart("image", "png")
+            if (!File.Exists(absolutePath))
+                absolutePath = Path.Combine(AppContext.BaseDirectory, path);
+
+            if (File.Exists(absolutePath))
             {
-                Content = new MimeContent(File.OpenRead(_settings.LogoPath)),
-                ContentId = logoCid,
-                ContentTransferEncoding = ContentEncoding.Base64,
-                ContentDisposition = new ContentDisposition(ContentDisposition.Inline)
-            };
-
-            logo.ContentType.Name = null;
-            logo.ContentDisposition.FileName = null;
-
-            bodyBuilder.LinkedResources.Add(logo);
-
-            bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@careers", $"cid:{logoCid}");
-            return;
+                try
+                {
+                    var logoCid = "logo_cid_" + Guid.NewGuid().ToString("N")[..6];
+                    
+                    var logo = new MimePart("image", "jpeg")
+                    {
+                        Content = new MimeContent(File.OpenRead(absolutePath)),
+                        ContentId = logoCid,
+                        ContentTransferEncoding = ContentEncoding.Base64,
+                        ContentDisposition = new ContentDisposition(ContentDisposition.Inline)
+                    };
+                    logo.ContentType.Name = null;
+                    logo.ContentDisposition.FileName = null;
+                    
+                    bodyBuilder.LinkedResources.Add(logo);
+                    bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@careers", $"cid:{logoCid}");
+                    return; // Successfully attached logo
+                }
+                catch (Exception ex)
+                {
+                    _log.Warning(ex, "Failed to read logo from {Path} for email insertion", absolutePath);
+                }
+            }
         }
 
-        // fallback to URL
-        if (!string.IsNullOrWhiteSpace(_settings.LogoUrl))
+        // 2. Fallback to URL
+        if (!string.IsNullOrEmpty(_settings.LogoUrl))
         {
             var logoUrl = CombineUrl(_appConfiguration.FrontendUrl, _settings.LogoUrl);
             bodyBuilder.HtmlBody = bodyBuilder.HtmlBody.Replace("logo@careers", logoUrl);
