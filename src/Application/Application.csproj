@@ -27,6 +27,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\Notifications\Notifications.csproj" />
     </ItemGroup>
 
     <ItemGroup>

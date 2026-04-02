@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { Dashboard } from './dashboard/dashboard';
 import { profileCompleteGuard } from '../../core/guards/profile-complete.guard';
 
@@ -19,6 +19,12 @@ export const userRoutes: Routes = [
     canActivate: [profileCompleteGuard],
     loadComponent: () =>
       import('./job-details/job-details').then(m => m.JobDetails)
+  },
+  {
+    path: 'notifications',
+    canActivate: [profileCompleteGuard],
+    loadComponent: () =>
+      import('./notifications/notifications.page').then(m => m.NotificationsPage)
   },
   {
     path: 'create-profile',

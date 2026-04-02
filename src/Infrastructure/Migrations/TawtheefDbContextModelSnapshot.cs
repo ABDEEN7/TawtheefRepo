@@ -6318,6 +6318,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
+                    b.Property<bool>("IsDismissed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
                     b.Property<int>("MaxRetries")
                         .HasColumnType("int");
 
@@ -6392,6 +6398,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("Status", "Channel");
+
+                    b.HasIndex("UserId", "IsRead", "IsDismissed");
 
                     b.ToTable("Notifications");
                 });

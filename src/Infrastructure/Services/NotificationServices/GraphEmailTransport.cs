@@ -14,6 +14,7 @@ public sealed class GraphEmailTransport : IEmailTransport
     private readonly IGraphMailer _graphMailer;
     private readonly GraphEmailSettings _settings;
     private readonly AppConfigSettings _appConfig;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IAppLogger _log;
 
     private readonly AsyncPolicy _resiliencePolicy;
@@ -22,11 +23,13 @@ public sealed class GraphEmailTransport : IEmailTransport
         IGraphMailer graphMailer,
         IOptions<GraphEmailSettings> settings,
         IOptions<AppConfigSettings> appConfig,
+        IHttpClientFactory httpClientFactory,
         IAppLogger log)
     {
         _graphMailer = graphMailer;
         _settings = settings.Value;
         _appConfig = appConfig.Value;
+        _httpClientFactory = httpClientFactory;
         _log = log.ForContext(typeof(GraphEmailTransport));
 
         _resiliencePolicy = BuildResiliencePolicy();
@@ -46,11 +49,16 @@ public sealed class GraphEmailTransport : IEmailTransport
             !string.IsNullOrWhiteSpace(envelope.HtmlBody),
             !string.IsNullOrWhiteSpace(envelope.PlainTextBody));
 #endif
+        var htmlBody = envelope.HtmlBody;
+        var attachments = new List<GraphMailAttachment>();
         var hasHtml = !string.IsNullOrWhiteSpace(envelope.HtmlBody);
 
-        var htmlBody = envelope.HtmlBody;
-        if (hasHtml)
-            htmlBody = AttachLogoSmart(htmlBody!);
+        if (hasHtml && htmlBody!.Contains("logo@careers"))
+        {
+            var result = await AttachLogoSmartAsync(htmlBody, ct);
+            htmlBody = result.html;
+            if (result.logo != null) attachments.Add(result.logo);
+        }
 
         var request = new GraphMailRequest
         {
@@ -58,7 +66,8 @@ public sealed class GraphEmailTransport : IEmailTransport
             HtmlBody = hasHtml ? htmlBody : null,
             TextBody = hasHtml ? null : envelope.PlainTextBody,
             To = envelope.To.ToArray(),
-            Cc = envelope.Cc?.ToArray()
+            Cc = envelope.Cc?.ToArray(),
+            Attachments = attachments.Any() ? attachments : null
         };
 
         await _graphMailer.SendAsync(request, ct);
@@ -68,19 +77,55 @@ public sealed class GraphEmailTransport : IEmailTransport
             Truncate(envelope.Subject, 100));
     }
 
-    private string AttachLogoSmart(string html)
+    private async Task<(string html, GraphMailAttachment? logo)> AttachLogoSmartAsync(string html, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(html))
-            return html;
+            return (html, null);
 
+        // 1. Try local file (Attachment)
+        if (!string.IsNullOrWhiteSpace(_settings.LogoPath))
+        {
+            var path = _settings.LogoPath;
+            var absolutePath = Path.IsPathRooted(path) ? path : Path.Combine(Directory.GetCurrentDirectory(), path);
+
+            if (!File.Exists(absolutePath))
+                absolutePath = Path.Combine(AppContext.BaseDirectory, path);
+
+            if (File.Exists(absolutePath))
+            {
+                try
+                {
+                    var bytes = await File.ReadAllBytesAsync(absolutePath, ct);
+                    var cid = "logo_cid_" + Guid.NewGuid().ToString("N")[..6];
+                    
+                    var logoAttachment = new GraphMailAttachment
+                    {
+                        Name = "logo.jpg",
+                        ContentType = "image/jpeg",
+                        ContentBytes = bytes,
+                        ContentId = cid,
+                        IsInline = true
+                    };
+
+                    html = html.Replace("logo@careers", $"cid:{cid}");
+                    return (html, logoAttachment);
+                }
+                catch (Exception ex)
+                {
+                    _log.Warning(ex, "Failed to read logo from {Path} for email insertion", absolutePath);
+                }
+            }
+        }
+
+        // 2. Fallback to URL
         if (!string.IsNullOrWhiteSpace(_settings.LogoUrl))
         {
             var baseUrl = _settings.FrontendBaseUrl ?? _appConfig.FrontendUrl;
             var logoUrl = CombineUrl(baseUrl, _settings.LogoUrl);
-            return html.Replace("logo@careers", logoUrl);
+            html = html.Replace("logo@careers", logoUrl);
         }
 
-        return html;
+        return (html, null);
     }
 
     private AsyncPolicy BuildResiliencePolicy()

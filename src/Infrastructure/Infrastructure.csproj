@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <RootNamespace>Tawtheef.Infrastructure</RootNamespace>
@@ -16,6 +16,12 @@
         <EmbeddedResource Include="Templates\**\*.cshtml">
             <LogicalName>Templates/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
+        <Content Include="Templates\Assets\**\*.jpg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Templates\Assets\**\*.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     
     <ItemGroup>

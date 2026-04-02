@@ -53,14 +53,11 @@ var aiCs =
 
 var aiEnabled = builder.Configuration.GetValue<bool>("ApplicationInsights:Enabled");
 
-// لو ما بدك flag، احذف الشرط وخليه دايمًا يتفعل لما aiCs موجود
 if (aiEnabled && !string.IsNullOrWhiteSpace(aiCs))
 {
     builder.Services.AddApplicationInsightsTelemetry(o =>
     {
         o.ConnectionString = aiCs;
-        // اختياري:
-        // o.EnableAdaptiveSampling = false;
     });
 }
 

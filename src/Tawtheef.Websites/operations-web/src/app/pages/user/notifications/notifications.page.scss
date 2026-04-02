@@ -1,0 +1,49 @@
+.notifications-page {
+  background: rgba(var(--bs-light-rgb), 0.5);
+  min-height: 100vh;
+  
+  .card {
+     transition: transform 0.2s ease, box-shadow 0.2s ease;
+     &:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+  }
+
+  .table {
+    thead th {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+    
+    tbody tr {
+      transition: background 0.15s ease;
+      cursor: pointer;
+      
+      &.table-active {
+        background-color: rgba(var(--bs-primary-rgb), 0.05) !important;
+        &:hover { background-color: rgba(var(--bs-primary-rgb), 0.08) !important; }
+      }
+      
+      &:hover { background-color: rgba(var(--bs-light-rgb), 0.82); }
+    }
+  }
+
+  .lines-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .spin {
+    animation: rotate 1s linear infinite;
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

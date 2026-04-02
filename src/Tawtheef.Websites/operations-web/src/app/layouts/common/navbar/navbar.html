@@ -25,17 +25,41 @@
             <div class="notification-menu shadow-sm" #notificationMenu [class.align-left]="alignLeft"
               [class.align-right]="alignRight" *ngIf="showNotificationMenu" (click)="$event.stopPropagation()">
 
-              <div class="notification-menu__header">
-                <span class="notification-menu__title">
-                  {{ 'internal.nav.notifications.title' | translate }}
-                </span>
+              <div class="notification-menu__header d-flex flex-column gap-2">
+                <div class="d-flex align-items-center justify-content-between">
+                  <span class="notification-menu__title mb-0">
+                    {{ 'internal.nav.notifications.title' | translate }}
+                  </span>
+                  <div>
+                    <button class="btn btn-sm btn-link text-decoration-none" (click)="markAllAsRead($event)"
+                      [disabled]="isLoadingNotifications" title="Mark all as read">
+                      <i class="hgi hgi-stroke hgi-tick-double"></i>
+                    </button>
+                    <button class="btn btn-sm btn-link text-decoration-none text-danger" (click)="dismissAll($event)"
+                      [disabled]="isLoadingNotifications" title="Dismiss all">
+                      <i class="hgi hgi-stroke hgi-delete-02"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-link text-decoration-none"
+                      (click)="refreshNotifications(true); $event.stopPropagation()" [disabled]="isLoadingNotifications"
+                      title="Refresh">
+                      <i class="hgi hgi-stroke hgi-refresh" [class.spin]="isLoadingNotifications"></i>
+                    </button>
+                  </div>
+                </div>
 
-                <button type="button" class="btn btn-outline-primary btn-sm notification-menu__refresh"
-                  (click)="refreshNotifications(true); $event.stopPropagation()" [disabled]="isLoadingNotifications">
-
-                  <i class="hgi hgi-stroke hgi-refresh-cw-02" [class.spin]="isLoadingNotifications"></i>
-                  <span class="ms-1">{{ 'internal.nav.notifications.refresh' | translate }}</span>
-                </button>
+                <ul class="nav nav-tabs nav-tabs-custom notification-tabs mb-0 border-0" role="tablist">
+                  <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'all'" (click)="setTab('all', $event)">
+                      {{ 'internal.nav.notifications.tabs.all' | translate }}
+                    </button>
+                  </li>
+                  <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'unread'" (click)="setTab('unread', $event)">
+                      {{ 'internal.nav.notifications.tabs.unread' | translate }}
+                      <span class="badge bg-danger ms-1" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+                    </button>
+                  </li>
+                </ul>
               </div>
 
               <div class="notification-menu__content position-relative">
@@ -49,33 +73,46 @@
                 </div>
 
                 <ng-container *ngIf="!isLoadingNotifications; else loadingSkeleton">
-                  <ng-container *ngIf="notifications.length > 0; else emptyState">
-                    <div class="notification-item"
-                      *ngFor="let notification of notifications; trackBy: notificationTrackBy">
+                  <ng-container *ngIf="filteredNotifications.length > 0; else emptyState">
+                    <div class="notification-item" [class.notification-item--unread]="!notification.isRead"
+                      *ngFor="let notification of filteredNotifications; trackBy: notificationTrackBy"
+                      (click)="openDetails(notification)" style="cursor: pointer;">
 
-                      <div class="notification-item__subject">
+                      <div class="notification-item__subject" [class.fw-bold]="!notification.isRead">
+                        <span class="unread-dot me-1" *ngIf="!notification.isRead"></span>
                         {{ notification.subject || ('internal.nav.notifications.defaultSubject' | translate) }}
                       </div>
 
-                      <div class="notification-item__body" *ngIf="notification.body">
-                        {{ notification.body }}
+                      <div class="notification-item__body text-muted small" *ngIf="notification.body">
+                        {{ notification.content }}
                       </div>
 
-                      <div class="notification-item__meta">
-                        <span class="badge text-bg-light notification-item__status"
-                          [class.status-error]="notification.status === 'Failed'">
-                          {{ notification.status }}
+                      <div class="notification-item__meta d-flex justify-content-between align-items-center mt-2">
+                        <span class="notification-item__timestamp text-muted small"
+                          [attr.aria-label]="notification.createdDate | date:'long'">
+                          {{ notification.createdDate | relativeTime }}
                         </span>
 
-                        <span class="notification-item__timestamp">
-                          {{ notification.createdDate | date:'short' }}
-                        </span>
+                        <div class="notification-item__actions">
+                          <button *ngIf="notification.isRead" class="btn btn-sm btn-link p-0 text-muted me-2"
+                            (click)="markAsUnread(notification.id, $event)" title="Mark as unread">
+                            <i class="hgi hgi-stroke hgi-mail-02"></i>
+                          </button>
+                          <button *ngIf="!notification.isRead" class="btn btn-sm btn-link p-0 text-muted me-2"
+                            (click)="markAsRead(notification.id, $event)" title="Mark as read">
+                            <i class="hgi hgi-stroke hgi-mail-open-02"></i>
+                          </button>
+                          <button class="btn btn-sm btn-link p-0 text-danger" (click)="dismiss(notification.id, $event)"
+                            title="Dismiss">
+                            <i class="hgi hgi-stroke hgi-delete-02"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </ng-container>
 
                   <ng-template #emptyState>
-                    <div class="notification-empty">
+                    <div class="notification-empty text-center p-4">
                       {{ 'internal.nav.notifications.empty' | translate }}
                     </div>
                   </ng-template>
@@ -90,6 +127,14 @@
                   </div>
                 </ng-template>
 
+              </div>
+
+              <!-- Footer -->
+              <div class="notification-menu__footer border-top p-2 text-center bg-light">
+                <a class="btn btn-sm btn-link text-decoration-none fw-semibold" [routerLink]="['/portal/notifications']"
+                  (click)="showNotificationMenu = false">
+                  {{ 'internal.nav.notifications.viewAll' | translate }}
+                </a>
               </div>
             </div>
           </div>

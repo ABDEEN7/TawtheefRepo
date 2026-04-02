@@ -7,6 +7,12 @@ import {NotificationModel} from '../../shared/models/notification.model';
 import {EndpointsService} from '../http/endpoints.service';
 import {NotificationService} from './notification.service';
 
+export enum NotificationAction {
+  MarkAsRead = 1,
+  MarkAsUnread = 2,
+  Dismiss = 3
+}
+
 @Injectable({providedIn: 'root'})
 export class InAppNotificationService {
   private readonly http = inject(HttpClient);
@@ -16,19 +22,35 @@ export class InAppNotificationService {
 
   private readonly notificationsSubject = new BehaviorSubject<NotificationModel[]>([]);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  private readonly unreadCountSubject = new BehaviorSubject<number>(0);
 
   readonly notifications$: Observable<NotificationModel[]> = this.notificationsSubject.asObservable();
   readonly isLoading$: Observable<boolean> = this.loadingSubject.asObservable();
+  readonly unreadCount$: Observable<number> = this.unreadCountSubject.asObservable();
 
-  refresh(limit = 10, notifyOnError = true): Observable<NotificationModel[]> {
-    const params = new HttpParams().set('limit', limit);
+  refresh(limit = 10, notifyOnError = true, unreadOnly = false, createdDateBefore?: string, append = false): Observable<NotificationModel[]> {
+    let params = new HttpParams()
+        .set('limit', limit)
+        .set('unreadOnly', unreadOnly);
+    
+    if (createdDateBefore) {
+        params = params.set('createdDateBefore', createdDateBefore);
+    }
+
     this.loadingSubject.next(true);
 
     return this.http.get<NotificationModel[]>(this.endpoints.notifications.list, {
       params,
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
-    },).pipe(
-      tap(notifications => this.notificationsSubject.next(notifications)),
+    }).pipe(
+      tap(notifications => {
+          if (append) {
+              this.notificationsSubject.next([...this.notificationsSubject.value, ...notifications]);
+          } else {
+              this.notificationsSubject.next(notifications);
+          }
+          this.refreshUnreadCount().subscribe();
+      }),
       catchError(() => {
         if (notifyOnError) {
           this.notifier.error(this.translate.instant('internal.nav.notifications.loadError'));
@@ -39,11 +61,34 @@ export class InAppNotificationService {
     );
   }
 
+  refreshUnreadCount(): Observable<number> {
+    return this.http.get<number>(this.endpoints.notifications.unreadCount, {
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    }).pipe(
+      tap(count => this.unreadCountSubject.next(count)),
+      catchError(() => of(0))
+    );
+  }
+
+  updateState(id: string, action: NotificationAction): Observable<any> {
+    const params = new HttpParams().set('action', action);
+    return this.http.put(this.endpoints.notifications.updateState(id), {}, { params }).pipe(
+      tap(() => this.refreshUnreadCount().subscribe())
+    );
+  }
+
+  updateManyState(action: NotificationAction, notificationIds?: string[]): Observable<any> {
+    const params = new HttpParams().set('action', action);
+    return this.http.put(this.endpoints.notifications.updateManyState, notificationIds || null, { params }).pipe(
+      tap(() => this.refreshUnreadCount().subscribe())
+    );
+  }
+
   refreshAfterToken(limit = 10): void {
     this.refresh(limit, false).pipe(take(1)).subscribe();
   }
 
   get currentCount(): number {
-    return this.notificationsSubject.value.length;
+    return this.unreadCountSubject.value;
   }
 }

@@ -40,6 +40,9 @@ export class EndpointsService {
 
   notifications = {
     list: this.getFullUrl('/notifications'),
+    unreadCount: this.getFullUrl('/notifications/unread-count'),
+    updateState: (id: string) => this.getFullUrl(`/notifications/${id}/state`),
+    updateManyState: this.getFullUrl('/notifications/state'),
   };
 
   files = {

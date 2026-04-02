@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
@@ -8,7 +8,7 @@ public enum NotificationChannel { Sms = 1, Email = 2, Push = 3, InApp = 4 }
 public enum NotificationStatus { Pending = 1, Queued = 2, Sent = 3, Failed = 4, Canceled = 5 }
 
 [Index(nameof(Status), nameof(Channel))]
-[Index(nameof(UserId))]
+[Index(nameof(UserId), nameof(IsRead), nameof(IsDismissed))]
 public class Notification : EventEntity
 {
     public Guid? UserId { get; private set; }
@@ -62,6 +62,13 @@ public class Notification : EventEntity
     public string? Error { get; private set; }
 
     public DateTime? SentAt { get; private set; }
+
+    public bool IsRead { get; private set; }
+    public bool IsDismissed { get; private set; }
+
+    public void MarkAsRead() => IsRead = true;
+    public void MarkAsUnread() => IsRead = false;
+    public void Dismiss() => IsDismissed = true;
 
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,

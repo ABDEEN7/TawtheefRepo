@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
@@ -146,7 +146,7 @@ namespace Tawtheef.Infrastructure
                 services.AddInfrastructureHttpClients(configuration);
 
                 // Notification (Common)
-                services.AddNotificationServicesCommon();
+                services.AddNotificationServicesCommon(configuration);
 
                 // Validators
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -200,10 +200,20 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IJobRepository, JobRepository>();
             }
 
-            private void AddNotificationServicesCommon()
+            private void AddNotificationServicesCommon(IConfiguration configuration)
             {
                 services.AddSingleton<IEmailBranding, DefaultBranding>();
-                services.AddSingleton<IEmailTransport, GraphEmailTransport>();
+
+                var emailSettings = configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>();
+                if (!string.IsNullOrWhiteSpace(emailSettings?.SmtpHost))
+                {
+                    services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
+                }
+                else
+                {
+                    services.AddSingleton<IEmailTransport, GraphEmailTransport>();
+                }
+
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();

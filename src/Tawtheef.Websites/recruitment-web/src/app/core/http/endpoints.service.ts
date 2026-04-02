@@ -12,7 +12,10 @@ export class EndpointsService {
 
   logger = this.getFullUrl(`/logger`);
   notifications = {
-    list: this.getFullUrl('/notifications')
+    list: this.getFullUrl('/notifications'),
+    unreadCount: this.getFullUrl('/notifications/unread-count'),
+    updateStateSingle: (id: string) => this.getFullUrl(`/notifications/${id}/state`),
+    updateStateMany: this.getFullUrl('/notifications/state')
   };
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),

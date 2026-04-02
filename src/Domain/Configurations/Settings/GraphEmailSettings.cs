@@ -11,6 +11,7 @@ public sealed class GraphEmailSettings
     public int TimeoutSeconds { get; set; } = 60;
 
     // optional: logo
+    public string? LogoPath { get; init; }
     public string? LogoUrl { get; init; }
     public string? FrontendBaseUrl { get; init; } // or reuse AppConfigSettings.FrontendUrl
 }

@@ -143,6 +143,16 @@ public sealed class GraphMailer : IGraphMailer
     {
         var isHtml = !string.IsNullOrWhiteSpace(request.HtmlBody);
 
+        var attachments = request.Attachments?.Select(a => new Dictionary<string, object?>
+        {
+            ["@odata.type"] = "#microsoft.graph.fileAttachment",
+            ["name"] = a.Name,
+            ["contentType"] = a.ContentType,
+            ["contentBytes"] = Convert.ToBase64String(a.ContentBytes),
+            ["contentId"] = a.ContentId,
+            ["isInline"] = a.IsInline
+        });
+
         return new
         {
             message = new
@@ -155,7 +165,8 @@ public sealed class GraphMailer : IGraphMailer
                 },
                 toRecipients = request.To.Select(x => new { emailAddress = new { address = x } }),
                 ccRecipients = (request.Cc ?? Array.Empty<string>())
-                    .Select(x => new { emailAddress = new { address = x } })
+                    .Select(x => new { emailAddress = new { address = x } }),
+                attachments = attachments
             },
             saveToSentItems = _settings.SaveToSentItems
         };
