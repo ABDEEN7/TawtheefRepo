@@ -1,6 +1,3 @@
-using System.IO;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -54,6 +51,7 @@ public sealed class GraphEmailTransport : IEmailTransport
 #endif
         var htmlBody = envelope.HtmlBody;
         var attachments = new List<GraphMailAttachment>();
+        var hasHtml = !string.IsNullOrWhiteSpace(envelope.HtmlBody);
 
         if (hasHtml && htmlBody!.Contains("logo@careers"))
         {
