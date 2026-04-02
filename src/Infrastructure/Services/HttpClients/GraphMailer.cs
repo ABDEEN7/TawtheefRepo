@@ -143,7 +143,7 @@ public sealed class GraphMailer : IGraphMailer
     {
         var isHtml = !string.IsNullOrWhiteSpace(request.HtmlBody);
 
-        var attachments = request.Attachments?.Select(a => new Dictionary<string, object>
+        var attachments = request.Attachments?.Select(a => new Dictionary<string, object?>
         {
             ["@odata.type"] = "#microsoft.graph.fileAttachment",
             ["name"] = a.Name,
