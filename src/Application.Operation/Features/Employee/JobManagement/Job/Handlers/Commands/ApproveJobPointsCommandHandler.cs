@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.Utilities;
 using MediatR;
@@ -18,18 +18,14 @@ public class ApproveJobPointsCommandHandler(
 {
     public async Task<IResult<bool>> Handle(ApproveJobPointsCommand request, CancellationToken cancellationToken)
     {
-        var jobStatus = await uow.GetEntityRepository<JobEntity>()
-            .DbSet
-            .AsNoTracking()
-            .Where(x => x.Id == request.JobId)
-            .Select(x => x.JobStatusId)
-            .FirstOrDefaultAsync(cancellationToken);
+        var jobRepo = uow.GetEntityRepository<JobEntity>();
+        var jobResult = await jobRepo.GetByIdAsync(request.JobId, cancellationToken);
+        if (jobResult.IsFailed || jobResult.Value is null) return Result.Fail<bool>(JobMessages.JobNotFound);
 
-        if (jobStatus == Guid.Empty)
-            return Result.Fail<bool>(JobMessages.JobNotFound);
-
-        if (jobStatus != JobStatusIds.Approved)
+        var job = jobResult.Value;
+        if (job.JobStatusId != JobStatusIds.PendingPointApproval)
             return Result.Fail<bool>(JobMessages.JobPointsJobNotApproved);
+
         var jobPoints = await jobPointsRepository.GetByJobIdAsync(request.JobId);
         if (jobPoints.IsFailed)
             return Result.Fail<bool>(JobMessages.JobPointsNotFound);
@@ -47,6 +43,7 @@ public class ApproveJobPointsCommandHandler(
             return Result.Fail<bool>(validationResult.Errors);
         points.IsApproved = true;
 
+        job.ChangeStatus(JobStatusIds.ReadyForAnnouncement);
         var result = await uow.SaveChangesAsync(cancellationToken);
         return Result.Ok(result > 0);
     }

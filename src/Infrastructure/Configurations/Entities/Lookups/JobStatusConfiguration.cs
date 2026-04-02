@@ -73,13 +73,23 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
             },
             new JobStatus
             {
-                Id = JobStatusIds.Approved,
-                BackendName = nameof(JobStatusIds.Approved),
-                NameEn = "Pending Points Approval",
-                NameAr = "قيد اعتماد النقاط",
-                DescriptionEn = "Job is pending points approval.",
-                DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
+                Id = JobStatusIds.PendingPointConfiguration,
+                BackendName = nameof(JobStatusIds.PendingPointConfiguration),
+                NameEn = "Pending Point Configuration",
+                NameAr = "قيد اعداد النقاط",
+                DescriptionEn = "Job is pending point configuration.",
+                DescriptionAr = "الوظيفة قيد اعداد النقاط.",
                 DisplayOrder = 6
+            },
+            new JobStatus
+            {
+                Id = JobStatusIds.PendingPointApproval,
+                BackendName = nameof(JobStatusIds.PendingPointApproval),
+                NameEn = "Pending Point Approval",
+                NameAr = "قيد اعتماد النقاط",
+                DescriptionEn = "Job is pending point approval.",
+                DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
+                DisplayOrder = 7
             },
             new JobStatus
             {
@@ -89,7 +99,7 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
                 NameAr = "جاهزة للإعلان",
                 DescriptionEn = "Job is ready to be announced.",
                 DescriptionAr = "الوظيفة جاهزة للإعلان.",
-                DisplayOrder = 7
+                DisplayOrder = 8
             },
             new JobStatus
             {
@@ -99,7 +109,7 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
                 NameAr = "منشورة",
                 DescriptionEn = "Job is published.",
                 DescriptionAr = "تم نشر الوظيفة.",
-                DisplayOrder = 8
+                DisplayOrder = 9
             },
             new JobStatus
             {
@@ -109,7 +119,7 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
                 NameAr = "مرفوضة",
                 DescriptionEn = "Job was rejected.",
                 DescriptionAr = "تم رفض الوظيفة.",
-                DisplayOrder = 9
+                DisplayOrder = 10
             }
         );
     }

@@ -217,7 +217,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                 failures.Add(new ValidationFailure("TabsCompletion", JobMessages.AllTabsRequired));
         }
 
-        if (newStatusId == JobStatusIds.Approved)
+        if (newStatusId == JobStatusIds.PendingPointConfiguration)
         {
             AddBasicFieldFailures(failures,
                 job.JobTitleId,
@@ -309,7 +309,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                 existing.MajorId == job.MajorId &&
                 existing.SubMajorId == job.SubMajorId &&
                 !existing.IsDeleted &&
-                (existing.JobStatusId == JobStatusIds.Approved ||
+                (existing.JobStatusId == JobStatusIds.PendingPointConfiguration ||
+                  existing.JobStatusId == JobStatusIds.PendingPointApproval ||
                  existing.JobStatusId == JobStatusIds.ReadyForAnnouncement ||
                  existing.JobStatusId == JobStatusIds.Published));
     }

@@ -25,12 +25,6 @@ import { JobDetailsService } from '../../services/job-details.service';
             <span class="value">{{ job()?.closingDate | date: 'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-list-item">
-            <span class="label me-3">{{ 'JOB_DETAILS.DEPARTMENT' | translate }}:</span>
-            <span class="value">
-              {{ job()?.department?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
-            </span>
-          </div>
-          <div class="info-list-item">
             <span class="label me-3">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}:</span>
             <span class="value">
               {{ job()?.workLocation?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}

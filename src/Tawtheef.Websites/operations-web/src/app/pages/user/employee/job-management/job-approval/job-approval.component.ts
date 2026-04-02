@@ -265,8 +265,8 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     if (!this.job?.jobStatus?.backendName) return this.jobStatus.Closed;
 
     switch (this.job.jobStatus.backendName) {
-      case JobStatus.Approved:
-        return this.jobStatus.Approved;
+      case JobStatus.PendingPointConfiguration:
+        return this.jobStatus.PendingPointConfiguration;
       case JobStatus.PendingApproval:
         return this.jobStatus.PendingApproval;
       case JobStatus.Draft:
@@ -455,7 +455,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
 
     ref?.onClose.subscribe((result) => {
       if (!result) return;
-      this.submitTabReview(this.lookupsService.getStatusIdByEnum(JobStatus.Approved));
+      this.submitTabReview(this.lookupsService.getStatusIdByEnum(JobStatus.PendingPointConfiguration));
     });
   }
 

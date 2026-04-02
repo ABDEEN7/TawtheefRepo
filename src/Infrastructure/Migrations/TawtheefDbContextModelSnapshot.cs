@@ -3442,15 +3442,28 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("5c360b07-157c-630a-254a-9c01587d80a8"),
-                            BackendName = "Approved",
+                            BackendName = "PendingPointConfiguration",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
-                            DescriptionEn = "Job is pending points approval.",
+                            DescriptionAr = "الوظيفة قيد اعداد النقاط.",
+                            DescriptionEn = "Job is pending point configuration.",
                             DisplayOrder = 6,
                             IsActive = true,
                             IsDeleted = false,
+                            NameAr = "قيد اعداد النقاط",
+                            NameEn = "Pending Point Configuration"
+                        },
+                        new
+                        {
+                            Id = new Guid("2c3f9a4e-7d1b-4e9a-8c3d-1f2b3c4d5e6f"),
+                            BackendName = "PendingPointApproval",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
+                            DescriptionEn = "Job is pending point approval.",
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
                             NameAr = "قيد اعتماد النقاط",
-                            NameEn = "Pending Points Approval"
+                            NameEn = "Pending Point Approval"
                         },
                         new
                         {
@@ -3459,7 +3472,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "الوظيفة جاهزة للإعلان.",
                             DescriptionEn = "Job is ready to be announced.",
-                            DisplayOrder = 7,
+                            DisplayOrder = 8,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "جاهزة للإعلان",
@@ -3472,7 +3485,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "تم نشر الوظيفة.",
                             DescriptionEn = "Job is published.",
-                            DisplayOrder = 8,
+                            DisplayOrder = 9,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "منشورة",
@@ -3485,7 +3498,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "تم رفض الوظيفة.",
                             DescriptionEn = "Job was rejected.",
-                            DisplayOrder = 9,
+                            DisplayOrder = 10,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "مرفوضة",
