@@ -9,4 +9,7 @@ public class UserNotificationDto
     public DateTimeOffset CreatedDate { get; set; }
     public DateTime? SentAtUtc { get; set; }
     public string? Error { get; set; }
+    public bool IsRead { get; set; }
+    public string? TemplateKey { get; set; }
+    public string? PayloadJson { get; set; }
 }

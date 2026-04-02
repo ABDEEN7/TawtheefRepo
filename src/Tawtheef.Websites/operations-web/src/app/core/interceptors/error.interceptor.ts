@@ -55,9 +55,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         if (Object.prototype.hasOwnProperty.call(apiError.errors, key)) {
           const errorValue = apiError.errors[key];
           if (Array.isArray(errorValue)) {
-            errorValue.forEach((msg: string) => items.push(`• ${tryLocalizedMessage(msg)}`));
+            errorValue.forEach((msg: string) => items.push(`• ${tryLocalizedMessage(msg, ticket)}`));
           } else if (typeof errorValue === 'string') {
-            items.push(`• ${tryLocalizedMessage(errorValue)}`);
+            items.push(`• ${tryLocalizedMessage(errorValue, ticket)}`);
           }
         }
       }
@@ -67,10 +67,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     if (items.length === 0 && Array.isArray(apiError.error)) {
       for (const err of apiError.error) {
         if (Array.isArray(err.reasons) && err.reasons.length > 0) {
-          err.reasons.forEach((r: string) => items.push(`• ${tryLocalizedMessage(r)}`));
+          err.reasons.forEach((r: string) => items.push(`• ${tryLocalizedMessage(r, ticket)}`));
         }
         else if (err.message) {
-          items.push(`• ${tryLocalizedMessage(err.message)}`);
+          items.push(`• ${tryLocalizedMessage(err.message, ticket)}`);
         }
       }
     }
@@ -87,9 +87,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     return translate.instant('server-error.UN_EXPECTED_ERROR', { ticket });
   }
 
-  function tryLocalizedMessage(key: string): string {
+  function tryLocalizedMessage(key: string, ticket: string): string {
     const fullKey = `server-error.${key}`;
-    const translateValue = translate.instant(fullKey);
+    const translateValue = translate.instant(fullKey, { ticket });
 
     if (translateValue !== fullKey) {
       return translateValue;

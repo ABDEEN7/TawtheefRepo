@@ -10,6 +10,10 @@ export const employeeRoutes: Routes = [
     loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard)
   },
   {
+    path: 'notifications',
+    loadComponent: () => import('../notifications/notifications.page').then(m => m.NotificationsPage)
+  },
+  {
     path: 'admin-dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },

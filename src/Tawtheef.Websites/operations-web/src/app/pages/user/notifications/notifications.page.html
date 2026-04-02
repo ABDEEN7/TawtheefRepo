@@ -1,0 +1,112 @@
+<div class="notifications-page p-4">
+  <div class="container-fluid">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <!-- Header -->
+      <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+        <h3 class="card-title mb-0 fw-bold text-dark h4">
+          <i class="hgi hgi-stroke hgi-notification-03 me-2 text-primary"></i>
+          {{ 'internal.nav.notifications.title' | translate }}
+        </h3>
+
+        <div class="d-flex align-items-center gap-2">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" [class.active]="!unreadOnly"
+              (click)="unreadOnly = false; refresh()">
+              {{ 'internal.nav.notifications.tabs.all' | translate }}
+            </button>
+            <button class="btn btn-outline-secondary" [class.active]="unreadOnly"
+              (click)="unreadOnly = true; refresh()">
+              {{ 'internal.nav.notifications.tabs.unread' | translate }}
+            </button>
+          </div>
+
+          <button class="btn btn-sm btn-outline-primary" (click)="refresh()" [disabled]="isLoading">
+            <i class="hgi hgi-stroke hgi-refresh" [class.spin]="isLoading"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk Actions Bar -->
+      <div class="bg-light-subtle px-4 py-2 border-top border-bottom d-flex align-items-center justify-content-between"
+        *ngIf="selectedIds.size > 0">
+        <span class="text-muted small fw-semibold">
+          {{ selectedIds.size }} {{ 'common.selected' | translate }}
+        </span>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-link text-decoration-none text-primary" (click)="bulkMarkAsRead()">
+            <i class="hgi hgi-stroke hgi-mail-open-02 me-1"></i> {{ 'common.markAsRead' | translate }}
+          </button>
+          <button class="btn btn-sm btn-link text-decoration-none text-danger" (click)="bulkDismiss()">
+            <i class="hgi hgi-stroke hgi-delete-02 me-1"></i> {{ 'common.dismiss' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light text-muted">
+            <tr>
+              <th scope="col" style="width: 50px;" class="ps-4">
+                <input type="checkbox" class="form-check-input" [checked]="isAllSelected()"
+                  (change)="toggleAll($event)">
+              </th>
+              <th scope="col">{{ 'common.notification' | translate }}</th>
+              <th scope="col" style="width: 180px;">{{ 'common.date' | translate }}</th>
+              <th scope="col" style="width: 120px;" class="text-end pe-4">{{ 'common.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let n of notifications; trackBy: notificationTrackBy" [class.table-active]="!n.isRead"
+              [class.opacity-75]="n.isRead">
+              <td class="ps-4">
+                <input type="checkbox" class="form-check-input" [checked]="selectedIds.has(n.id)"
+                  (change)="toggleSelection(n.id)">
+              </td>
+              <td>
+                <div class="d-flex flex-column" (click)="openDetails(n)" style="cursor: pointer;">
+                  <span class="fw-bold text-dark" [class.text-muted]="n.isRead">{{ n.subject ||
+                    ('internal.nav.notifications.defaultSubject' | translate) }}</span>
+                  <p class="text-muted small mb-0 mt-1 lines-2">{{ n.content }}</p>
+                </div>
+              </td>
+              <td class="text-muted small">
+                {{ n.createdDate | relativeTime }}
+              </td>
+              <td class="text-end pe-4">
+                <div class="d-flex justify-content-end gap-1">
+                  <button *ngIf="!n.isRead" class="btn btn-sm btn-light border-0 text-primary"
+                    (click)="markAsRead(n.id)" [title]="'common.markAsRead' | translate">
+                    <i class="hgi hgi-stroke hgi-mail-open-02"></i>
+                  </button>
+                  <button *ngIf="n.isRead" class="btn btn-sm btn-light border-0 text-muted" (click)="markAsUnread(n.id)"
+                    [title]="'common.markAsUnread' | translate">
+                    <i class="hgi hgi-stroke hgi-mail-02"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light border-0 text-danger" (click)="dismiss(n.id)"
+                    [title]="'common.dismiss' | translate">
+                    <i class="hgi hgi-stroke hgi-delete-02"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="notifications.length === 0 && !isLoading">
+              <td colspan="4" class="text-center py-5 text-muted">
+                <i class="hgi hgi-stroke hgi-notification-off-02 h1 d-block mb-3 opacity-25"></i>
+                {{ 'internal.nav.notifications.empty' | translate }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer/Pagination -->
+      <div class="card-footer bg-white border-0 py-3 text-center" *ngIf="hasMore && notifications.length > 0">
+        <button class="btn btn-outline-primary btn-sm px-4" (click)="loadMore()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">{{ 'common.loadMore' | translate }}</span>
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

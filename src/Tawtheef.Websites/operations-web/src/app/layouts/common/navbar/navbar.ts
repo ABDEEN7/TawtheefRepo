@@ -1,15 +1,19 @@
-import {Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {LanguageService} from '../../../core/services/language.service';
-import {Router, RouterLink} from '@angular/router';
-import {routes} from '../../../routes/routes';
-import {AuthService} from '../../../core/auth/auth.service';
-import {TranslatePipe} from '@ngx-translate/core';
-import {AvatarUtils} from '../../../core/utils/avatar-utils';
-import {InAppNotificationService} from '../../../core/services/in-app-notification.service';
-import {NotificationModel} from '../../../shared/models/notification.model';
-import {Subscription} from 'rxjs';
-import {take} from 'rxjs/operators';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import { Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { LanguageService } from '../../../core/services/language.service';
+import { Router, RouterLink } from '@angular/router';
+import { routes } from '../../../routes/routes';
+import { AuthService } from '../../../core/auth/auth.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AvatarUtils } from '../../../core/utils/avatar-utils';
+import { InAppNotificationService, NotificationAction } from '../../../core/services/in-app-notification.service';
+import { NotificationModel } from '../../../shared/models/notification.model';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { RelativeTimePipe } from '../../../shared/pipes/relative-time.pipe';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationDetailsDialogComponent } from '../../../shared/components/notification-details-dialog/notification-details-dialog.component';
 
 @Component({
   selector: 'app-nav',
@@ -18,10 +22,11 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
   imports: [
     TranslatePipe,
     DatePipe,
-    DatePipe,
     NgForOf,
     NgIf,
-    TranslatePipe
+    RouterLink,
+    RelativeTimePipe,
+    StripHtmlPipe
   ]
 })
 export class Navbar implements OnInit, OnDestroy {
@@ -29,13 +34,27 @@ export class Navbar implements OnInit, OnDestroy {
   language = inject(LanguageService);
   router = inject(Router);
   private readonly notificationsApi = inject(InAppNotificationService);
+  private readonly modalService = inject(NgbModal);
+
+  openDetails(notification: NotificationModel): void {
+    if (!notification.isRead) {
+      this.notificationsApi.updateState(notification.id, NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
+    }
+    const modalRef = this.modalService.open(NotificationDetailsDialogComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
+    modalRef.componentInstance.notification = notification;
+    this.showNotificationMenu = false;
+  }
 
   @ViewChild('notificationRoot', { static: false })
   notificationRoot?: ElementRef<HTMLElement>;
   @ViewChild('notificationMenu')
   notificationMenu?: ElementRef<HTMLElement>;
   isLoggedIn: boolean = false;
-  userName: string| null = null;
+  userName: string | null = null;
   userAvatar: string = 'assets/images/default-avatar.png';
   notificationCount: number = 0;
   showUserMenu: boolean = false;
@@ -62,14 +81,37 @@ export class Navbar implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.notificationsApi.notifications$.subscribe(list => {
-        this.notifications = list;
-        this.notificationCount = list.length;
+        this.notifications = list.map(n => ({
+          ...n,
+          content: this.getPreview(n.body ?? '')
+        }));
+      })
+    );
+
+    this.subscriptions.add(
+      this.notificationsApi.unreadCount$.subscribe(count => {
+        this.notificationCount = count;
       })
     );
 
     this.subscriptions.add(
       this.notificationsApi.isLoading$.subscribe(state => this.isLoadingNotifications = state)
     );
+  }
+
+  private getPreview(html: string, maxLength: number = 120): string {
+    const text = this.htmlToText(html)
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + '...'
+      : text;
+  }
+
+  private htmlToText(html: string): string {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
   }
 
   ngOnDestroy(): void {
@@ -146,11 +188,56 @@ export class Navbar implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  activeTab: 'all' | 'unread' = 'all';
+
+  get filteredNotifications(): NotificationModel[] {
+    if (this.activeTab === 'unread') {
+      return this.notifications.filter(n => !n.isRead);
+    }
+    return this.notifications;
+  }
+
+  setTab(tab: 'all' | 'unread', event: MouseEvent): void {
+    event.stopPropagation();
+    this.activeTab = tab;
+  }
+
+  markAsRead(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsApi.updateState(id, NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
+  }
+
+  markAsUnread(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsApi.updateState(id, NotificationAction.MarkAsUnread).subscribe(() => this.refreshNotifications(false));
+  }
+
+  dismiss(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsApi.updateState(id, NotificationAction.Dismiss).subscribe(() => {
+      this.notifications = this.notifications.filter(n => n.id !== id);
+      this.refreshNotifications(false);
+    });
+  }
+
+  markAllAsRead(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsApi.updateManyState(NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
+  }
+
+  dismissAll(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationsApi.updateManyState(NotificationAction.Dismiss).subscribe(() => {
+      this.notifications = [];
+      this.refreshNotifications(false);
+    });
+  }
+
   notificationTrackBy(index: number, notification: NotificationModel): string {
     return notification.id;
   }
 
-  // ✅ Close when clicking outside
+  // ✅ Close when clicking outside or pressing ESC
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.showNotificationMenu) return;
@@ -168,6 +255,14 @@ export class Navbar implements OnInit, OnDestroy {
       this.showNotificationMenu = false;
     }
   }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapePress(event: Event): void {
+    if (this.showNotificationMenu) {
+      this.showNotificationMenu = false;
+    }
+  }
+
   private repositionNotificationMenu(): void {
     const el = this.notificationMenu?.nativeElement;
     if (!el) return;

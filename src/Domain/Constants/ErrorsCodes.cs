@@ -19,6 +19,7 @@ public class ErrorsCodes
     public const string NotSupported = "NOT_SUPPORTED";
     public const string RequestContainsInvalidOrUnsafeContent = "REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT";
     public const string ValidationError = "VALIDATION_ERROR";
+    public const string ItemNotFound = "ITEM_NOT_FOUND";
     #endregion
 
     // =========================================================
