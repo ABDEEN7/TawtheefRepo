@@ -52,6 +52,7 @@ export class EndpointsService {
 
   job = {
     job: this.getFullUrl('/job'),
+    changeStatus: (jobId: GUID, statusId: GUID) => this.getFullUrl(`/job/${jobId}/status?statusId=${statusId}`),
     jobApproval: this.getFullUrl('/jobApproval'),
     getLatestReview: (jobId: GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
     jobPoints: this.getFullUrl('/jobPoints'),
@@ -98,6 +99,7 @@ export class EndpointsService {
 
   kawader = {
     upload: this.getFullUrl('/kawader/upload'),
+    list: this.getFullUrl('/kawader'),
   };
 
   approvals = {

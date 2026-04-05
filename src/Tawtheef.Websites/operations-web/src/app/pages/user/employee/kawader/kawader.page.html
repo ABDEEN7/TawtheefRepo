@@ -1,105 +1,134 @@
 <section i18nNamespace="pages/kawader">
   <div class="card card-table">
     <div class="card-body">
-        <div class="row align-items-center mb-3">
-             <div class="col-md-8">
-                <p class="fw-bold text-primary mb-0">{{ 'kawader.header.eyebrow' | translate }}</p>
-                <h3 class="fw-bold m-0">{{ 'kawader.header.title' | translate }}</h3>
-                <p class="fs-16 m-0">{{ 'kawader.header.subtitle' | translate }}</p>
-             </div>
-            <div class="col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
-              <button
-                pButton
-                type="button"
-                class="btn-text"
-                (click)="downloadTemplate()"
-                [disabled]="isUploading()">
-                <span pButtonLabel>{{ 'kawader.template.download' | translate }}</span>
-              </button>
-            </div>
+      <div class="row align-items-center mb-3">
+        <div class="col-md-8">
+          <p class="fw-bold text-primary mb-0">{{ 'kawader.header.eyebrow' | translate }}</p>
+          <h3 class="fw-bold m-0">{{ 'kawader.header.title' | translate }}</h3>
+          <p class="fs-16 m-0">{{ 'kawader.header.subtitle' | translate }}</p>
         </div>
-        <div class="card card-table mb-4">
-            <div class="card-body">
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row align-items-center mb-3">
-                  <div class="col-lg-8 col-md-7">
-                       <div class="form-group">
-                      <label class="form-label">{{ 'kawader.upload.label' | translate }}</label>
-                      <input #fileInput
-                             type="file" accept=".xlsx,.xls" class="form-control" (change)="onFileChange($event)"/>
-                      <small class="text-muted">{{ 'kawader.upload.helper' | translate }}</small>
-                      <div class="text-danger mt-1" *ngIf="form.controls.file.invalid && form.controls.file.touched">
-                        {{ 'kawader.upload.required' | translate }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-md-5">
-                       <div class="d-flex gap-2 flex-wrap mt-3 mt-md-0">
-                      <button
-                        pButton
-                        type="submit"
-                        [disabled]="isUploading()"
-                        [loading]="isUploading()">
-                        <span pButtonLabel>{{'kawader.upload.submit' | translate}}</span>
-                      </button>
-                      <div class="action-buttons"> <button
-                        pButton
-                        type="button"
-                        class="btn-text"
-                        (click)="reset()"
-                        [disabled]="isUploading()"
-                      >
-                        <span pButtonLabel>{{'kawader.upload.clear' | translate}}</span>
-                      </button></div>
-                    </div>
-                  </div>
-            </form>
-          </div>
+        <div class="col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
+          <button pButton type="button" class="btn-text" (click)="downloadTemplate()" [disabled]="isUploading()">
+            <span pButtonLabel>{{ 'kawader.template.download' | translate }}</span>
+          </button>
         </div>
-        <div *ngIf="lastResult()" class="row">
-             <div class="col-md-12">
-                <div class="d-flex flex-wrap align-items-center gap-3 mb-3 justify-content-between">
-                  <span class="pill " [class.success]="lastResult()?.success" [class.warning]="!lastResult()?.success">
-                        {{ (lastResult()?.success ? 'kawader.result.success' : 'kawader.result.partial') | translate }}
-                  </span>
-                  <p class="fs-16 m-0">{{ 'kawader.result.summary' | translate:{ imported: lastResult()?.importedCount, total: lastResult()?.processedRows } }} </p>
+      </div>
+      <div class="card card-table mb-4">
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row align-items-center mb-3">
+            <div class="col-lg-8 col-md-7">
+              <div class="form-group">
+                <label class="form-label">{{ 'kawader.upload.label' | translate }}</label>
+                <input #fileInput type="file" accept=".xlsx,.xls" class="form-control"
+                  (change)="onFileChange($event)" />
+                <small class="text-muted">{{ 'kawader.upload.helper' | translate }}</small>
+                <div class="text-danger mt-1" *ngIf="form.controls.file.invalid && form.controls.file.touched">
+                  {{ 'kawader.upload.required' | translate }}
                 </div>
-
-                <ng-container *ngIf="lastResult()?.errors?.length; else noErrors">
-                  <h6 class="fw-semibold mb-2">{{ 'kawader.result.errorsTitle' | translate }}</h6>
-                  <!-- Table Card -->
-                  <div class="table-card rounded overflow-hidden">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-hover align-middle w-100">
-                        <thead class="table-light">
-                        <tr>
-                          <th scope="col">{{ 'kawader.result.row' | translate }}</th>
-                          <th scope="col">{{ 'kawader.result.value' | translate }}</th>
-                          <th scope="col">{{ 'kawader.result.reason' | translate }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr *ngFor="let error of lastResult()?.errors">
-                          <td>{{ error.rowNumber }}</td>
-                          <td>{{ error.value }}</td>
-                          <td>{{ translateReason(error.reason) }}</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </ng-container>
-
-                <ng-template #noErrors>
-                  <p class="mb-0 text-success">{{ 'kawader.result.noErrors' | translate }}</p>
-                </ng-template>
               </div>
             </div>
+            <div class="col-lg-4 col-md-5">
+              <div class="d-flex gap-2 flex-wrap mt-3 mt-md-0">
+                <button pButton type="submit" [disabled]="isUploading()" [loading]="isUploading()">
+                  <span pButtonLabel>{{'kawader.upload.submit' | translate}}</span>
+                </button>
+                <div class="action-buttons"> <button pButton type="button" class="btn-text" (click)="reset()"
+                    [disabled]="isUploading()">
+                    <span pButtonLabel>{{'kawader.upload.clear' | translate}}</span>
+                  </button></div>
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
+      <div *ngIf="lastResult()" class="row">
+        <div class="col-md-12">
+          <div class="d-flex flex-wrap align-items-center gap-3 mb-3 justify-content-between">
+            <span class="pill " [class.success]="lastResult()?.success" [class.warning]="!lastResult()?.success">
+              {{ (lastResult()?.success ? 'kawader.result.success' : 'kawader.result.partial') | translate }}
+            </span>
+            <p class="fs-16 m-0">{{ 'kawader.result.summary' | translate:{ imported: lastResult()?.importedCount, total:
+              lastResult()?.processedRows } }} </p>
+          </div>
+
+          <ng-container *ngIf="lastResult()?.errors?.length; else noErrors">
+            <h6 class="fw-semibold mb-2">{{ 'kawader.result.errorsTitle' | translate }}</h6>
+            <!-- Table Card -->
+            <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle w-100">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col">{{ 'kawader.result.row' | translate }}</th>
+                      <th scope="col">{{ 'kawader.result.value' | translate }}</th>
+                      <th scope="col">{{ 'kawader.result.reason' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let error of lastResult()?.errors">
+                      <td>{{ error.rowNumber }}</td>
+                      <td>{{ error.value }}</td>
+                      <td>{{ translateReason(error.reason) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noErrors>
+            <p class="mb-0 text-success">{{ 'kawader.result.noErrors' | translate }}</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <div class="card card-table mt-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold m-0">{{ 'kawader.list.title' | translate }}</h4>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" [formControl]="searchControl"
+                [placeholder]="'kawader.list.search' | translate" />
+            </span>
+            <button pButton type="button" icon="pi pi-refresh" class="p-button-outlined" (click)="loadData()" [loading]="loading()"></button>
+        </div>
+      </div>
 
-
-
-
-
+      <p-table [value]="items()" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="pageSize"
+        [totalRecords]="totalRecords()" [loading]="loading()" [rowsPerPageOptions]="[10,25,50]"
+        responsiveLayout="scroll" styleClass="p-datatable-striped p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'kawader.list.qid' | translate }}</th>
+            <th>{{ 'kawader.list.name' | translate }}</th>
+            <th>{{ 'kawader.list.contact' | translate }}</th>
+            <th>{{ 'kawader.list.createdDate' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td class="fw-medium">{{ item.qid }}</td>
+            <td>{{ item.fullName || '-' }}</td>
+            <td>
+              <div *ngIf="item.email">{{ item.email }}</div>
+              <div *ngIf="item.phoneNumber" class="text-muted small">{{ item.phoneNumber }}</div>
+              <div *ngIf="!item.email && !item.phoneNumber">-</div>
+            </td>
+            <td>{{ item.createdDate | date:'mediumDate' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center p-4">
+              {{ 'kawader.list.empty' | translate }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </section>

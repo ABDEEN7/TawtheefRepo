@@ -5,5 +5,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Operation.Features.Employee.Kawader.Commands;
 
-public sealed record UploadKawaderQidsCommand(IFormFile File) : IRequest<IResult<KawaderUploadResultDto>>;
+public sealed record UploadKawaderUserCommand(IFormFile File) 
+    : IRequest<IResult<KawaderUploadResultDto>>;
 

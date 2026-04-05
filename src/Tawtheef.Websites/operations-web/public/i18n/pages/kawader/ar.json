@@ -23,5 +23,17 @@
 
   "kawader.errors.invalid": "رقم البطاقة غير صالح",
   "kawader.errors.duplicate": "مكرر داخل الملف",
-  "kawader.errors.exists": "موجود مسبقًا في كوادر"
+  "kawader.errors.exists": "موجود مسبقًا في كوادر",
+
+  "kawader.list.title": "قائمة الكوادر المستهدفة",
+  "kawader.list.search": "ابحث بالتفاصيل أو الرقم الشخصي...",
+  "kawader.list.qid": "الرقم الشخصي",
+  "kawader.list.name": "الاسم الكامل",
+  "kawader.list.contact": "التواصل",
+  "kawader.list.status": "حالة الاستهداف",
+  "kawader.list.invitedAt": "تاريخ الاستهداف",
+  "kawader.list.createdDate": "تاريخ الإنشاء",
+  "kawader.list.invited": "مستهدف",
+  "kawader.list.pending": "قيد الانتظار",
+  "kawader.list.empty": "لم يتم العثور على كوادر."
 }

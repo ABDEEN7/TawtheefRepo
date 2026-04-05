@@ -21,7 +21,6 @@ import { take } from 'rxjs/operators';
 
 
 import { RelativeTimePipe } from '../../../shared/pipes/relative-time.pipe';
-import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationDetailsDialogComponent } from '../../../shared/components/notification-details-dialog/notification-details-dialog.component';
 
@@ -29,7 +28,7 @@ import { NotificationDetailsDialogComponent } from '../../../shared/components/n
   selector: 'app-nav',
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
-  imports: [RouterLink, RouterLinkActive, NgIf, NgForOf, TranslatePipe, DatePipe, RelativeTimePipe, StripHtmlPipe]
+  imports: [RouterLink, RouterLinkActive, NgIf, NgForOf, TranslatePipe, DatePipe, RelativeTimePipe]
 })
 export class Navbar implements OnInit, OnDestroy {
   auth = inject(AuthService);

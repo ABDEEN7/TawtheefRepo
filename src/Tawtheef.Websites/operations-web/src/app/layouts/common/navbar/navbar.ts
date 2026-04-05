@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
 import { RelativeTimePipe } from '../../../shared/pipes/relative-time.pipe';
-import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationDetailsDialogComponent } from '../../../shared/components/notification-details-dialog/notification-details-dialog.component';
 
@@ -25,8 +24,7 @@ import { NotificationDetailsDialogComponent } from '../../../shared/components/n
     NgForOf,
     NgIf,
     RouterLink,
-    RelativeTimePipe,
-    StripHtmlPipe
+    RelativeTimePipe
   ]
 })
 export class Navbar implements OnInit, OnDestroy {

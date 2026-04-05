@@ -1890,9 +1890,24 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InvitedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
+
+                    b.Property<bool>("IsInvited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qid")
                         .IsRequired()

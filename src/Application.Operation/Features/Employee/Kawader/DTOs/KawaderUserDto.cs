@@ -1,13 +1,12 @@
-using Tawtheef.Domain.Common;
+namespace Application.Operation.Features.Employee.Kawader.DTOs;
 
-namespace Tawtheef.Domain.Entities.Kawader;
-
-public class KawaderQid : EventEntity
+public class KawaderUserDto
 {
-    public string Qid { get; set; } = default!;
+    public string Qid { get; set; } = string.Empty;
     public string? FullName { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public bool IsInvited { get; set; }
     public DateTime? InvitedAt { get; set; }
+    public DateTime CreatedDate { get; set; }
 }

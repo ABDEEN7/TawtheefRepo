@@ -23,5 +23,17 @@
 
   "kawader.errors.invalid": "Invalid Qatar ID number",
   "kawader.errors.duplicate": "Duplicate inside the file",
-  "kawader.errors.exists": "Already exists in Kawader"
+  "kawader.errors.exists": "Already exists in Kawader",
+
+  "kawader.list.title": "Invited Candidates List",
+  "kawader.list.search": "Search by details or QID...",
+  "kawader.list.qid": "QID",
+  "kawader.list.name": "Full Name",
+  "kawader.list.contact": "Contact",
+  "kawader.list.status": "Targeting Status",
+  "kawader.list.invitedAt": "Invited Date",
+  "kawader.list.createdDate": "Created Date",
+  "kawader.list.invited": "Targeted",
+  "kawader.list.pending": "Pending",
+  "kawader.list.empty": "No candidates found."
 }
