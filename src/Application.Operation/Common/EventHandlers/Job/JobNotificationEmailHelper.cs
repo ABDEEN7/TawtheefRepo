@@ -25,6 +25,7 @@ internal static class JobNotificationEmailHelper
                 user.Email, subject, null,null, payloadJson);
             await repo.AddAsync(notification, ct);
         }
+        await unitOfWork.SaveChangesAsync(ct);
     }
     
     internal static async Task QueueForEmployeeAsync(IUnitOfWork unitOfWork, UserManager<User> userManager, 
@@ -39,5 +40,6 @@ internal static class JobNotificationEmailHelper
         var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
             user.Email, subject, null, null, payloadJson);
         await repo.AddAsync(notification, ct);
+        await unitOfWork.SaveChangesAsync(ct);
     }
 }
