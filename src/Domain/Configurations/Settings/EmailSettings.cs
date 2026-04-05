@@ -26,5 +26,6 @@ public sealed class EmailSettings
     public required string ContactUsEmail { get; init; }
     public string? LogoPath { get; init; }
     public string? LogoUrl { get; init; }
+    public string? RedirectUrl { get; init; }
     public int MaxSmtpClients { get; init; } = 3;
 }

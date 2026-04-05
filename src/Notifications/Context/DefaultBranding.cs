@@ -21,5 +21,5 @@ public sealed class DefaultBranding(
     // Ensure this is a real URL reachable by email clients (https://...)
     public string LogoUrl => "logo@careers";
 
-    public string WebsiteUrl => _appConfig.FrontendUrl;
+    public string WebsiteUrl => _emailConfig.RedirectUrl ?? _appConfig.FrontendUrl;
 }
