@@ -1,4 +1,7 @@
 using System.Text;
+using Tawtheef.Application.Common.Interfaces.NotificationServices;
+using Tawtheef.Notifications.Interfaces;
+using Tawtheef.Notifications.Services;
 
 namespace Tawtheef.Notifications.TemplateTester;
 
@@ -9,8 +12,8 @@ internal static class Commands
         List<TemplateEntry> visible,
         List<TemplateEntry> templates,
         TesterState state,
-        dynamic renderer,
-        dynamic transport,
+        IEmailTemplateRenderer renderer,
+        IEmailTransport transport,
         ref string filter,
         ref bool onlyFav)
     {
