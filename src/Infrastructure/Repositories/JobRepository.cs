@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure.Repositories.Base;
 
@@ -123,8 +124,20 @@ public class JobRepository(IGenericRepository<Job> repository)
             ? Result.Fail<Job>(JobMessages.JobNotFound)
             : Result.Ok(job);
     }
-    
 
+
+    public async Task<List<Job>> GetJobsToAutoCloseBatchAsync(DateTimeOffset currentDate, int batchSize)
+    {
+        var jobs = await Repository.DbSet.AsNoTracking()
+            .Where(j => j.JobStatusId != JobStatusIds.Closed 
+                        && j.JobStatusId != JobStatusIds.Cancelled
+                        && j.ClosingDate <= currentDate)
+            .OrderBy(j => j.ClosingDate)
+            .Take(batchSize)
+            .ToListAsync();
+        return jobs;
+    }
+    
     public async Task<IList<Job>> GetJobsToAutoCloseAsync(DateTimeOffset currentDate)
     {
          var jobs = await Repository.DbSet
@@ -134,6 +147,8 @@ public class JobRepository(IGenericRepository<Job> repository)
 
         return jobs;
     }
+    
+    
     
     public async Task<Job?> LoadJobWithPointsAsync(Guid jobId)
     {

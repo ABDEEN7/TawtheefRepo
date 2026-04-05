@@ -1,3 +1,4 @@
+using FluentResults;
 using Serilog;
 using Serilog.Events;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -52,6 +53,14 @@ public sealed class SerilogAppLogger(ILogger logger) : IAppLogger
 
     public void Error(Exception exception, string messageTemplate, params object?[] propertyValues) =>
         logger.Error(exception, messageTemplate, propertyValues);
+    
+    public void Error(IEnumerable<IError> errors, string messageTemplate, params object?[] propertyValues)
+    {
+        var errorDetails = string.Join("; ", errors.Select(e => $"{e.Message}"));
+        var enrichedTemplate = $"{messageTemplate} | Errors: {{ErrorDetails}}";
+        var enrichedValues = propertyValues.Concat([errorDetails]).ToArray();
+        logger.Error(enrichedTemplate, enrichedValues);
+    }
 
     public void Fatal(string messageTemplate, params object?[] propertyValues) =>
         logger.Fatal(messageTemplate, propertyValues);

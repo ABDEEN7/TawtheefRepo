@@ -203,17 +203,7 @@ namespace Tawtheef.Infrastructure
             private void AddNotificationServicesCommon(IConfiguration configuration)
             {
                 services.AddSingleton<IEmailBranding, DefaultBranding>();
-
-                var emailSettings = configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>();
-                if (!string.IsNullOrWhiteSpace(emailSettings?.SmtpHost))
-                {
-                    services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
-                }
-                else
-                {
-                    services.AddSingleton<IEmailTransport, GraphEmailTransport>();
-                }
-
+                services.AddSingleton<IEmailTransport, GraphEmailTransport>();
                 services.AddSingleton<IEmailTemplateRenderer, RazorTemplateRenderer>();
 
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
