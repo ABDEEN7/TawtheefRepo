@@ -1,4 +1,4 @@
-@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InvitationAttachmentReturned.InvitationAttachmentReturnedModel>
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
 
 @{
     var b = Model.Branding;
@@ -9,6 +9,8 @@
     var support = b.SupportEmail;
     var website = b.WebsiteUrl;
     var logo = b.LogoUrl;
+    
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "User" : m.FullName;
 }
 
 <!DOCTYPE html>
@@ -16,7 +18,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@product - Attachment Returned</title>
+  <title>@product - Platform Invitation</title>
   <style>
     body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
     .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
@@ -24,9 +26,8 @@
     .content { padding:28px; }
     .title { font-size:22px; font-weight:700; margin:0 0 12px; }
     .text { font-size:15px; line-height:22px; margin:0 0 16px; }
-    .badge { display:inline-block; font-size:13px; font-weight:700; color:#d97706; background:#fffbeb; padding:6px 10px; border-radius:999px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
     .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
-    .notice { padding:14px; background:#f9fafb; border-radius:8px; border-left:4px solid #d97706; margin-bottom:16px; }
     .muted { font-size:12px; color:#6b7280; margin:0; }
     .footer { padding:0 28px 24px; }
     .logo { max-width:140px; height:auto; }
@@ -44,22 +45,18 @@
         </a>
         <br/>
       }
-      <p class="badge">Action Required</p>
-      <h1 class="title">Attention required for your application</h1>
-      <p class="text">Dear Candidate,</p>
+      <p class="badge">Invitation to Join</p>
+      <h1 class="title">Welcome to @product</h1>
+      <p class="text">Dear @fullName,</p>
       <p class="text">
-        One of the attachments submitted for your job application has been returned for correction. 
+        You are officially invited to join the <strong>@product</strong> platform.
       </p>
-      <div class="notice">
-        <p class="text" style="margin-bottom:4px; font-weight:bold;">Attachment:</p>
-        <p class="text" style="font-size:14px; color:#6b7280;">@m.AttachmentTitle</p>
-        <p class="text" style="margin-top:8px; margin-bottom:4px; font-weight:bold;">Review Note from HR:</p>
-        <p class="text" style="font-size:14px; color:#6b7280;">@(string.IsNullOrWhiteSpace(m.ReviewNote) ? "Please refer to the recruitment portal for details." : m.ReviewNote)</p>
-      </div>
       <p class="text">
-        Please sign in to the recruitment portal to re-upload the corrected document and re-submit your application.
+        Please sign in using your QID (<strong>@m.Qid</strong>) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
       </p>
-      <a class="cta" style="color: white;" href="@website">Access Recruitment Portal</a>
+      <p class="text" style="margin-top: 24px; text-align: center;">
+        <a class="cta" style="color: white;" href="@website">Login to @product</a>
+      </p>
       <div class="divider"></div>
       <p class="muted">
         If the button does not work, copy and paste this link into your browser: @website

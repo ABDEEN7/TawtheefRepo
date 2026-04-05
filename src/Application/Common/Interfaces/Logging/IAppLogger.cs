@@ -1,3 +1,5 @@
+using FluentResults;
+
 namespace Tawtheef.Application.Common.Interfaces.Logging;
 
 public enum AppLogLevel
@@ -33,6 +35,7 @@ public interface IAppLogger
 
     void Error(string messageTemplate, params object?[] propertyValues);
     void Error(Exception exception, string messageTemplate, params object?[] propertyValues);
+    void Error(IEnumerable<IError> errors, string messageTemplate, params object?[] propertyValues);
 
     void Fatal(string messageTemplate, params object?[] propertyValues);
     void Fatal(Exception exception, string messageTemplate, params object?[] propertyValues);

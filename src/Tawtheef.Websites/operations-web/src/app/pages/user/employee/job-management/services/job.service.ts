@@ -317,7 +317,7 @@ export class JobService {
 
   changeStatus(jobId: GUID, statusId: GUID): Observable<void> {
     return this.httpService.put<void>(
-      `${this.endpoints.job.job}/${jobId}/status?statusId=${statusId}`,
+      this.endpoints.job.changeStatus(jobId, statusId),
       null
     );
   }

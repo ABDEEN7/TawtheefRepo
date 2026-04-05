@@ -1,0 +1,22 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var support = b.SupportEmail;
+
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "User" : m.FullName;
+}
+Dear @fullName,
+
+You are officially invited to join the @product platform.
+
+Please sign in using your QID (@m.Qid) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
+
+Login here: @website
+
+---
+Support: @support
+© @(DateTime.UtcNow.Year) @product. All rights reserved.

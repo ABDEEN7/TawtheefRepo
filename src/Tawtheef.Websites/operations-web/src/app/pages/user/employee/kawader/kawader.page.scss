@@ -1,0 +1,33 @@
+/* Ensure consistent height */
+.p-inputtext {
+    height: 40px;
+}
+
+.p-button.p-button-icon-only {
+    height: 40px;
+    width: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Align icon perfectly */
+.p-button .p-button-icon {
+    font-size: 1rem;
+}
+
+/* Optional: better spacing + border harmony */
+.p-input-icon-left {
+    display: flex;
+    align-items: center;
+}
+
+.p-input-icon-left input {
+    border-radius: 6px;
+}
+
+/* Match outlined button style with input */
+.p-button-outlined {
+    border-radius: 6px;
+}

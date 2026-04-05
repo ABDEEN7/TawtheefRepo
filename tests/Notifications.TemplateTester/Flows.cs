@@ -1,5 +1,8 @@
 using System.Text;
+using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
+using Tawtheef.Notifications.Interfaces;
+using Tawtheef.Notifications.Services;
 
 namespace Tawtheef.Notifications.TemplateTester;
 
@@ -9,8 +12,8 @@ internal static class Flows
         TemplateEntry templateEntry,
         string actionDefault,
         TesterState state,
-        dynamic renderer,
-        dynamic transport)
+        IEmailTemplateRenderer renderer,
+        IEmailTransport transport)
     {
         var templateKey = templateEntry.Attribute.TemplateKey;
         var modelType = templateEntry.Type;

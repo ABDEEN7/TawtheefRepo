@@ -1,3 +1,4 @@
+using FluentResults;
 using Microsoft.Extensions.Logging;
 using Tawtheef.Application.Common.Interfaces.Logging;
 
@@ -53,6 +54,14 @@ public sealed class MsAppLogger(ILoggerFactory factory, string? categoryName = n
     public void Error(Exception exception, string messageTemplate, params object?[] propertyValues) =>
         _logger.Log(LogLevel.Error, exception, messageTemplate, propertyValues);
 
+    public void Error(IEnumerable<IError> errors, string messageTemplate, params object?[] propertyValues)
+    {
+        var errorDetails = string.Join("; ", errors.Select(e => $"{e.Message}"));
+        var enrichedTemplate = $"{messageTemplate} | Errors: {{ErrorDetails}}";
+        var enrichedValues = propertyValues.Concat([errorDetails]).ToArray();
+        _logger.Log(LogLevel.Error, enrichedTemplate, enrichedValues);
+    }
+    
     public void Fatal(string messageTemplate, params object?[] propertyValues) =>
         _logger.Log(LogLevel.Critical, messageTemplate, propertyValues);
 

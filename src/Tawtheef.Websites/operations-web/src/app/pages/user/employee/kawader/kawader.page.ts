@@ -1,23 +1,29 @@
-import {CommonModule} from '@angular/common';
-import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ButtonDirective, ButtonLabel} from 'primeng/button';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {KawaderService} from './services/kawader.service';
-import {KawaderUploadResult} from './models/kawader-upload.model';
-import {finalize} from 'rxjs/operators';
-import {HttpService} from '../../../../core/http/http.service';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, inject, signal, ViewChild, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ButtonDirective, ButtonLabel } from 'primeng/button';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { KawaderService } from './services/kawader.service';
+import { KawaderUploadResult } from './models/kawader-upload.model';
+import { finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { HttpService } from '../../../../core/http/http.service';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { GetKawaderQidsRequest, KawaderQidDto } from './models/kawader-list.model';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-kawader-page',
   standalone: true,
   templateUrl: './kawader.page.html',
   styleUrls: ['./kawader.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, ButtonDirective, ButtonLabel]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, ButtonDirective, ButtonLabel, TableModule, IconFieldModule, InputIconModule, InputTextModule, TagModule]
 })
-export class KawaderPage {
+export class KawaderPage implements OnInit {
   private service = inject(KawaderService);
   private notifications = inject(NotificationService);
   private translate = inject(TranslateService);
@@ -31,6 +37,63 @@ export class KawaderPage {
 
   isUploading = signal(false);
   lastResult = signal<KawaderUploadResult | null>(null);
+
+  // Table State
+  items = signal<KawaderQidDto[]>([]);
+  totalRecords = signal(0);
+  loading = signal(false);
+
+  // Search Control
+  searchControl = new FormControl('');
+
+  // Pagination State
+  currentPage = 1;
+  pageSize = 10;
+
+  ngOnInit() {
+    this.setupSearch();
+  }
+
+  private setupSearch() {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.currentPage = 1; // Reset to first page on search
+        this.loadData();
+      });
+  }
+
+  onLazyLoad(event: TableLazyLoadEvent) {
+    if (event.first !== undefined && event.rows) {
+      this.currentPage = Math.floor(event.first / event.rows) + 1;
+      this.pageSize = event.rows;
+    }
+    this.loadData();
+  }
+
+  loadData() {
+    this.loading.set(true);
+    const request: GetKawaderQidsRequest = {
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+      searchTerm: this.searchControl.value || undefined
+    };
+
+    this.service.getList(request)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.items.set(response.items);
+          this.totalRecords.set(response.metadata.totalCount);
+        },
+        error: (err) => {
+          console.error('Error loading kawader data', err);
+        }
+      });
+  }
 
   onFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -82,7 +145,6 @@ export class KawaderPage {
     }
   }
 
-
   private sanitizeForFileName(value: string): string {
     return value
       .trim()
@@ -129,8 +191,11 @@ export class KawaderPage {
           } else {
             this.notifications.warn(message);
           }
+
+          // Refresh list after upload
+          this.loadData();
         }
-    });
+      });
   }
 
   translateReason(reason: string): string {
