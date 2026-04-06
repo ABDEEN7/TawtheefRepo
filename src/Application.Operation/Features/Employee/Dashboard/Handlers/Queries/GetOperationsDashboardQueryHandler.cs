@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -17,14 +20,31 @@ namespace Application.Operation.Features.Employee.Dashboard.Handlers.Queries;
 public sealed class GetOperationsDashboardQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    ICurrentUserService currentUserService)
     : IRequestHandler<GetOperationsDashboardQuery, Result<OperationsDashboardDto>>
 {
+    
     private const int DefaultLookbackDays = 30;
     private const int OverdueAfterDays = 3;
     private const int TrendDays = 14;
     private const int MaxTopItems = 8;
     private const int MaxRanks = 5;
+
+    private async Task<List<string>> GetUserPermissionsAsync(Guid userId, CancellationToken ct)
+    {
+        var roles = await userManager.GetRolesAsync(new User { Id = userId });
+        if (!roles.Any()) return new List<string>();
+
+        // Get permissions from RoleClaims
+        var query = from rc in uow.Context.Set<IdentityRoleClaim<Guid>>().AsNoTracking()
+                    join r in uow.Context.Set<ApplicationRole>().AsNoTracking() on rc.RoleId equals r.Id
+                    where roles.Contains(r.Name!) && rc.ClaimType == "permission"
+                    select rc.ClaimValue;
+
+        return await query.Distinct().ToListAsync(ct) ?? new List<string>();
+    }
+
 
     public async Task<Result<OperationsDashboardDto>> Handle(GetOperationsDashboardQuery request, CancellationToken ct)
     {
@@ -35,47 +55,80 @@ public sealed class GetOperationsDashboardQueryHandler(
         var weekStart = GetWeekStart(todayStart);
         var monthStart = new DateTime(now.Year, now.Month, 1);
 
+        // ----------------------------
+        // Scoping & Queries
+        // ----------------------------
+        var currentUserIdStr = currentUserService.UserId;
+        if (string.IsNullOrEmpty(currentUserIdStr)) return Result.Fail("Unauthorized");
+        var currentUserId = Guid.Parse(currentUserIdStr);
+
+        var permissions = await GetUserPermissionsAsync(currentUserId, ct);
+
+        var canViewAllProfiles = permissions.Contains(PermissionKeys.ProfileDistribution.View);
+        var isDepartmentManager = permissions.Contains(PermissionKeys.ProfileApproval.Review);
+        var hasMinisterOfficePermission = permissions.Contains(PermissionKeys.MinisterOffice.View);
+
+
+
         var repos = GetRepos(uow);
+        
+        // Resolve Department for scoping
+        Guid? scopedDepartmentId = request.DepartmentId;
+        if (isDepartmentManager)
+        {
+             var mgr = await userManager.Users
+                .OfType<EmployeeUser>()
+                .AsNoTracking()
+                .Include(x => x.EmployeeProfile)
+                .FirstOrDefaultAsync(x => x.Id == currentUserId, ct);
+             
+             // If we can't find a GUID, we might need to find the TargetEntityId matching the department name
+             // However, for now let's assume we want to match whatever department they are in.
+        }
 
         var employeesQuery = BuildEmployeesQuery(userManager);
-        var profileQuery = BuildProfilesQuery(repos.Profile, request, range.From, range.To, repos.Assignment);
+        employeesQuery = await ApplyScopeToEmployeesQuery(employeesQuery, userManager, currentUserId, canViewAllProfiles, isDepartmentManager, ct);
 
-        employeesQuery = await ApplyDepartmentManagerScopeIfNeeded(
-            employeesQuery,
-            userManager,
-            request,
-            ct);
 
-        var isHrManager = string.Equals(
-            request.CurrentRole,
-            nameof(SystemRoleIds.HrManager),
-            StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(
-            request.CurrentRole,
-            nameof(SystemRoleIds.SystemAdmin),
-            StringComparison.OrdinalIgnoreCase);
         
+        var employeeIds = await employeesQuery.Select(x => x.Id).ToListAsync(ct);
+        var employeeList = await employeesQuery.ToListAsync(ct);
+
+        var profileQuery = BuildProfilesQuery(repos.Profile, request, repos.Assignment, employeeIds, canViewAllProfiles);
+        var jobsQuery = BuildJobsQuery(repos.Job, request, employeeIds, canViewAllProfiles);
+
+
+        // Trends (Still use the date range)
+        var timedProfileQuery = repos.Profile.DbSet
+            .AsNoTracking()
+            .Where(x => !x.IsDeleted && x.CreatedDate >= range.From && x.CreatedDate <= range.To);
+            
+        if (!canViewAllProfiles)
+        {
+            timedProfileQuery = timedProfileQuery.Where(x =>
+                repos.Assignment.DbSet.Any(a => a.UserProfileId == x.Id && employeeIds.Contains(a.EmployeeId)));
+        }
+
+
+        var totalEmployees = employeeList.Count;
+        var activeEmployees = employeeList.Count(x => !x.IsBlocked);
+
         var followedCandidatesCount = 0;
-        if (isHrManager)
+        if (hasMinisterOfficePermission)
         {
             followedCandidatesCount = await repos.MinisterOfficeCandidate.DbSet
                 .CountAsync(x => !x.IsDeleted && x.IsFollowUpActive, ct);
         }
 
-        // Employees
-        var employeeIds = await employeesQuery.Select(x => x.Id).ToListAsync(ct);
-        var employeeList = await employeesQuery.ToListAsync(ct);
 
-        var totalEmployees = employeeList.Count;
-        var activeEmployees = employeeList.Count(x => !x.IsBlocked);
-
-        // Profiles KPIs (within selected range)
+        // Profiles KPIs (Current Pool)
         var totalProfiles = await profileQuery.CountAsync(ct);
         var approvedProfiles = await profileQuery.CountAsync(x => x.Status == UserProfileStatus.Approved, ct);
         var pendingProfiles = await profileQuery.CountAsync(x =>
             x.Status == UserProfileStatus.Submitted || x.Status == UserProfileStatus.UnderReview, ct);
         var returnedProfiles = await profileQuery.CountAsync(x => x.Status == UserProfileStatus.RequiresUpdate, ct);
 
+        // For rejected profiles, we might still want to look at the review date or just the current count
         var rejectedProfiles = await CountRejectedProfilesAsync(repos.Review, range.From, range.To, ct);
 
         // New profiles (global, not range-filtered) â€” keep same behavior as original code
@@ -92,7 +145,6 @@ public sealed class GetOperationsDashboardQueryHandler(
             .AsNoTracking()
             .Where(a => !a.IsDeleted && employeeIds.Contains(a.EmployeeId));
 
-        // 1) ظ„ظƒظ„ Profile: ظ†ط¬ظٹط¨ ط¢ط®ط± AssignedAtUtc
         var latestAtPerProfile =
             from a in baseAssignments
             group a by a.UserProfileId into g
@@ -102,7 +154,6 @@ public sealed class GetOperationsDashboardQueryHandler(
                 MaxAssignedAt = g.Max(x => x.AssignedAtUtc)
             };
 
-        // 2) ظƒط³ط± ط§ظ„طھط¹ط§ط¯ظ„ ط¨ظ€ Max(Id) ط¶ظ…ظ† ظ†ظپط³ MaxAssignedAt
         var latestIdPerProfile =
             from a in baseAssignments
             join m in latestAtPerProfile
@@ -115,7 +166,6 @@ public sealed class GetOperationsDashboardQueryHandler(
                 AssignmentId = g.Max(x => x.Id)
             };
 
-        // 3) ط¬ظ„ط¨ ط¢ط®ط± Assignment + (Left Join) ط¹ظ„ظ‰ UserProfile ظ„ظ‚ط±ط§ط،ط© Status
         var latestAssignments =
             from lid in latestIdPerProfile
             join a in baseAssignments on lid.AssignmentId equals a.Id
@@ -131,28 +181,22 @@ public sealed class GetOperationsDashboardQueryHandler(
 
         var overdueCutoff = DateTimeOffset.UtcNow.AddDays(-OverdueAfterDays);
 
-        // Job Metrics
-        var jobRepo = repos.Job;
-        var jobsQuery = jobRepo.DbSet
-            .AsNoTracking()
-            .Where(x => !x.IsDeleted && x.CreatedDate >= range.From && x.CreatedDate <= range.To)
-            .WhereIf(request.DepartmentId.HasValue, x => x.DepartmentId == request.DepartmentId);
-
+        // Job Metrics (already built and filtered)
         var totalJobs = await jobsQuery.CountAsync(ct);
         var activeJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Active || x.JobStatusId == JobStatusIds.Published, ct);
         var pendingReviewJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingApproval, ct);
         var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingPointConfiguration || x.JobStatusId == JobStatusIds.PendingPointApproval, ct);
         var rejectedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Rejected, ct);
-        var newJobsToday = await jobRepo.DbSet.CountAsync(x => !x.IsDeleted && x.CreatedDate >= todayStart, ct);
+        var newJobsToday = await repos.Job.DbSet.CountAsync(x => !x.IsDeleted && x.CreatedDate >= todayStart, ct);
 
         var jobByStatusRaw = await jobsQuery
-            .GroupBy(x => x.JobStatus != null ? x.JobStatus.NameEn : "N/A")
+            .GroupBy(x => x.JobStatus != null ? x.JobStatus.BackendName : "N/A")
             .Select(g => new StatusCountDto { Status = g.Key, Count = g.Count() })
             .ToListAsync(ct);
 
-        var jobByDepartmentRaw = await jobsQuery
-            .GroupBy(x => x.Department != null ? x.Department.NameEn : "N/A")
-            .Select(g => new GroupCountDto { Label = g.Key, Count = g.Count() })
+        var jobByManagementRaw = await jobsQuery
+            .GroupBy(x => x.Management != null ? x.Management.NameEn : "N/A")
+            .Select(g => new GroupCountDto { Label = Truncate(g.Key), Count = g.Count() })
             .OrderByDescending(x => x.Count)
             .Take(MaxTopItems)
             .ToListAsync(ct);
@@ -182,7 +226,7 @@ public sealed class GetOperationsDashboardQueryHandler(
 
         // Breakdown
         var byStatus = await GetProfilesByStatusAsync(profileQuery, ct);
-        var byDepartment = await GetProfilesByDepartmentAsync(profileQuery, ct);
+        var byDepartment = await GetProfilesByTargetEntityAsync(profileQuery, ct);
         var byPriority = await GetProfilesByPriorityAsync(profileQuery, ct);
         var aging = await GetProfilesAgingAsync(profileQuery, now, ct);
 
@@ -233,7 +277,9 @@ public sealed class GetOperationsDashboardQueryHandler(
 
         var dto = new OperationsDashboardDto
         {
-            Role = request.CurrentRole ?? nameof(SystemRoleIds.Employee),
+            Role = canViewAllProfiles ? "HrManager" : isDepartmentManager ? "DepartmentManager" : "Employee",
+
+
 
             Filters = new DashboardFiltersSnapshotDto
             {
@@ -291,7 +337,7 @@ public sealed class GetOperationsDashboardQueryHandler(
             JobBreakdown = new JobBreakdownDto
             {
                 ByStatus = jobByStatusRaw,
-                ByDepartment = jobByDepartmentRaw
+                ByDepartment = jobByManagementRaw
             },
 
             TaskMonitoring = new TaskMonitoringDto
@@ -327,20 +373,25 @@ public sealed class GetOperationsDashboardQueryHandler(
         userManager.Users
             .OfType<EmployeeUser>()
             .AsNoTracking()
-            .Include(x => x.EmployeeProfile)
-            .Where(x => !x.IsDeleted);
+            .Include(x => x.EmployeeProfile);
 
     private static IQueryable<UserProfile> BuildProfilesQuery(
         IGenericRepository<UserProfile> profileRepo,
         GetOperationsDashboardQuery request,
-        DateTime from,
-        DateTime to,
-        IGenericRepository<ProfileAssignment> assignmentRepo)
+        IGenericRepository<ProfileAssignment> assignmentRepo,
+        IReadOnlyCollection<Guid> allowedEmployeeIds,
+        bool isHrManager)
     {
         var query = profileRepo.DbSet
             .AsNoTracking()
             .Include(x => x.TargetEntity)
-            .Where(x => !x.IsDeleted && x.CreatedDate >= from && x.CreatedDate <= to);
+            .Where(x => !x.IsDeleted);
+
+        // Only apply dates if explicitly sent from UI
+        if (request.FromDateUtc.HasValue)
+            query = query.Where(x => x.CreatedDate >= request.FromDateUtc.Value);
+        if (request.ToDateUtc.HasValue)
+            query = query.Where(x => x.CreatedDate <= request.ToDateUtc.Value);
 
         if (request.DepartmentId.HasValue)
             query = query.Where(x => x.TargetEntityId == request.DepartmentId);
@@ -351,11 +402,61 @@ public sealed class GetOperationsDashboardQueryHandler(
             query = query.Where(x => x.Status == status);
         }
 
-        if (request.EmployeeId.HasValue)
+        // Apply Scoping
+        if (!isHrManager)
+        {
+            query = query.Where(x =>
+                assignmentRepo.DbSet.Any(a => a.UserProfileId == x.Id && allowedEmployeeIds.Contains(a.EmployeeId)));
+        }
+        else if (request.EmployeeId.HasValue)
         {
             var employeeId = request.EmployeeId.Value;
             query = query.Where(x =>
                 assignmentRepo.DbSet.Any(a => a.UserProfileId == x.Id && a.EmployeeId == employeeId));
+        }
+
+        return query;
+    }
+
+    private static IQueryable<Job> BuildJobsQuery(
+        IGenericRepository<Job> jobRepo,
+        GetOperationsDashboardQuery request,
+        IReadOnlyCollection<Guid> allowedEmployeeIds,
+        bool isHrManager)
+    {
+        var query = jobRepo.DbSet
+            .AsNoTracking()
+            .Where(x => !x.IsDeleted);
+
+        if (request.FromDateUtc.HasValue)
+            query = query.Where(x => x.CreatedDate >= request.FromDateUtc.Value);
+        if (request.ToDateUtc.HasValue)
+            query = query.Where(x => x.CreatedDate <= request.ToDateUtc.Value);
+
+        if (request.DepartmentId.HasValue)
+            query = query.Where(x => x.DepartmentId == request.DepartmentId);
+
+        if (!string.IsNullOrWhiteSpace(request.Status))
+        {
+            if (string.Equals(request.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(x => x.JobStatusId == JobStatusIds.Active 
+                                                 || x.JobStatusId == JobStatusIds.Published 
+                                                 || x.JobStatusId == JobStatusIds.PendingPointConfiguration
+                                                 || x.JobStatusId == JobStatusIds.PendingPointApproval);
+            }
+            else if (string.Equals(request.Status, "Submitted", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(x => x.JobStatusId == JobStatusIds.PendingApproval);
+            }
+            else if (string.Equals(request.Status, "RequiresUpdate", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(x => x.JobStatusId == JobStatusIds.NeedUpdate);
+            }
+            else if (string.Equals(request.Status, "Rejected", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(x => x.JobStatusId == JobStatusIds.Rejected);
+            }
         }
 
         return query;
@@ -376,33 +477,39 @@ public sealed class GetOperationsDashboardQueryHandler(
     // Scoped behavior
     // ----------------------------
 
-    private static async Task<IQueryable<EmployeeUser>> ApplyDepartmentManagerScopeIfNeeded(
+    private static async Task<IQueryable<EmployeeUser>> ApplyScopeToEmployeesQuery(
         IQueryable<EmployeeUser> employeesQuery,
         UserManager<User> userManager,
-        GetOperationsDashboardQuery request,
+        Guid currentUserId,
+        bool canViewAllProfiles,
+        bool isDepartmentManager,
         CancellationToken ct)
     {
-        var isDepartmentManager = string.Equals(
-            request.CurrentRole,
-            nameof(SystemRoleIds.DepartmentManager),
-            StringComparison.OrdinalIgnoreCase);
-
-        if (!isDepartmentManager || !request.CurrentUserId.HasValue)
+        if (canViewAllProfiles)
             return employeesQuery;
 
-        var currentEmployee = await userManager.Users
-            .OfType<EmployeeUser>()
-            .AsNoTracking()
-            .Include(x => x.EmployeeProfile)
-            .FirstOrDefaultAsync(x => x.Id == request.CurrentUserId.Value, ct);
+        if (isDepartmentManager)
+        {
+            var currentEmployee = await userManager.Users
+                .OfType<EmployeeUser>()
+                .AsNoTracking()
+                .Include(x => x.EmployeeProfile)
+                .FirstOrDefaultAsync(x => x.Id == currentUserId, ct);
 
-        var currentDepartment = currentEmployee?.EmployeeProfile?.Department;
-        if (string.IsNullOrWhiteSpace(currentDepartment))
-            return employeesQuery;
 
-        return employeesQuery.Where(x =>
-            x.EmployeeProfile != null && x.EmployeeProfile.Department == currentDepartment);
+
+            var currentDepartment = currentEmployee?.EmployeeProfile?.Department;
+            if (!string.IsNullOrWhiteSpace(currentDepartment))
+            {
+                return employeesQuery.Where(x =>
+                    x.EmployeeProfile != null && x.EmployeeProfile.Department == currentDepartment);
+            }
+        }
+
+        // Default: If employee, only see self in the performance list
+        return employeesQuery.Where(x => x.Id == currentUserId);
     }
+
 
     // ----------------------------
     // Metrics helpers
@@ -475,11 +582,11 @@ public sealed class GetOperationsDashboardQueryHandler(
             .ToListAsync(ct);
 
         return raw
-            .Select(x => new StatusCountDto { Status = $"common.{x.Status}", Count = x.Count })
+            .Select(x => new StatusCountDto { Status = x.Status.ToString(), Count = x.Count })
             .ToList();
     }
 
-    private static Task<List<GroupCountDto>> GetProfilesByDepartmentAsync(
+    private static Task<List<GroupCountDto>> GetProfilesByTargetEntityAsync(
         IQueryable<UserProfile> profileQuery,
         CancellationToken ct)
     {
@@ -820,6 +927,15 @@ public sealed class GetOperationsDashboardQueryHandler(
             uow.GetEntityRepository<Job>(),
             uow.GetEntityRepository<Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate>()
         );
+    }
+    
+    public static string Truncate(string value, int maxLength = 20)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+
+        return value.Length <= maxLength
+            ? value
+            : value.Substring(0, maxLength) + "...";
     }
 }
 

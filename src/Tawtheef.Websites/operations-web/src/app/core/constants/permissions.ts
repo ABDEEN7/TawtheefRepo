@@ -81,10 +81,6 @@ export const Permissions = {
   OrganizationStructures: {
     Manage: 'organization-structures.manage',
   },
-  Nominations: {
-    View: 'nominations.view',
-    Manage: 'nominations.manage',
-  },
   Kawader: {
     Manage: 'kawader.manage',
   },

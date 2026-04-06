@@ -19,7 +19,7 @@ export class Sidebar {
     { key: 'distribution', label: 'internal.sidebar.distribution', icon: 'hgi-mail-send-02', route: routes.portal.profileDistribution, permission: Permissions.ProfileDistribution.View },
     { key: 'approve-profile', label: 'internal.sidebar.approve-profile', icon: 'hgi-task-done-01', route: routes.portal.approvalProfile, permission: Permissions.ProfileApproval.View },
     { key: 'job', label: 'internal.sidebar.job', icon: 'hgi-ai-beautify', route: routes.portal.JobList, permission: Permissions.Jobs.View },
-    { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'hgi-ai-setting', route: routes.portal.jobInvitationSummary, permission: Permissions.Nominations.View },
+    { key: 'invitation-summary', label: 'internal.sidebar.invitation-summary', icon: 'hgi-ai-setting', route: routes.portal.jobInvitationSummary, permission: Permissions.JobInvitations.View },
     { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'hgi-user-switch', route: routes.portal.candidateUsersManagement, permission: Permissions.CandidateUsers.View },
     { key: 'office-users', label: 'internal.sidebar.office-users', icon: 'hgi-file-star', route: routes.portal.officeUsersManagement, permission: Permissions.OfficeUsers.View },
     { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'hgi-structure-03', route: routes.portal.organizationStructures, permission: Permissions.OrganizationStructures.Manage },

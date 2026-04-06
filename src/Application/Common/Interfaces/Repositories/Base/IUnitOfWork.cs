@@ -1,10 +1,14 @@
-﻿using Tawtheef.Domain.Common;
+using Tawtheef.Application.Common.Interfaces;
+using Tawtheef.Domain.Common;
+
 
 namespace Tawtheef.Application.Common.Interfaces.Repositories.Base;
 
 public interface IUnitOfWork : IDisposable
 {
+    ITawtheefDbContext Context { get; }
     IGenericRepository<T> GetEntityRepository<T>() where T : EventEntity;
+
     void Remove<T>(T? entity) where T : EventEntity;
     void RemoveRange<T>(IList<T>? entities) where T : EventEntity;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

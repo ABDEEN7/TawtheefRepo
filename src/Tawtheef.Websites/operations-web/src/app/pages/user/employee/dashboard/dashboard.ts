@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,7 +15,10 @@ import 'chart.js/auto';
 import { ChartData, ChartOptions } from 'chart.js';
 import { ChartModule } from 'primeng/chart';
 import { Tooltip } from 'primeng/tooltip';
+import { DatePicker } from 'primeng/datepicker';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import {
   DashboardKpis,
@@ -29,7 +32,7 @@ import {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, I18nNamespaceDirective, ChartModule, Tooltip, TranslatePipe],
+  imports: [CommonModule, DecimalPipe, FormsModule, I18nNamespaceDirective, ChartModule, Tooltip, TranslatePipe, DatePicker],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,11 +41,20 @@ export class Dashboard implements OnInit {
   private dashboardService = inject(OperationsDashboardService);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
+  private authService = inject(AuthService);
 
   readonly loading = signal(false);
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
 
-  readonly filters = signal<OperationsDashboardFilters>({ pageNumber: 1, pageSize: 10 });
+  readonly fromDate = signal<Date | null>(null);
+  readonly toDate = signal<Date | null>(null);
+
+  readonly filters = signal<OperationsDashboardFilters>({
+    pageNumber: 1,
+    pageSize: 10,
+    fromDateUtc: this.fromDate()?.toISOString(),
+    toDateUtc: this.toDate()?.toISOString()
+  });
   readonly searchStatus = signal<string>('');
 
   private filterChanges$ = new Subject<void>();
@@ -76,6 +88,24 @@ export class Dashboard implements OnInit {
   };
 
   readonly isHrDashboard = computed(() => this.dashboard()?.role === 'HrManager');
+  readonly isDepartmentManager = computed(() => this.dashboard()?.role === 'DepartmentManager');
+
+  readonly hasMinisterOfficePermission = computed(() =>
+    this.authService.hasPermission(Permissions.MinisterOffice.View)
+  );
+
+  readonly canViewJobStats = computed(() =>
+    this.authService.hasPermission(Permissions.Jobs.View)
+  );
+
+  readonly canViewProfileStats = computed(() =>
+    this.authService.hasPermission(Permissions.ProfileDistribution.View) ||
+    this.authService.hasPermission(Permissions.ProfileApproval.Review)
+  );
+
+  readonly canViewTeamPerformance = computed(() =>
+    this.authService.hasPermission(Permissions.ProfileDistribution.Manage)
+  );
 
   readonly activeKpis = computed<DashboardKpis>(() =>
     this.dashboard()?.kpis ?? {
@@ -119,9 +149,29 @@ export class Dashboard implements OnInit {
         label: this.translate.instant('common.chart.profiles'),
         data: this.dashboard()?.profileTrend.points.map((point) => point.value) ?? [],
         borderColor: '#2f65d6',
-        backgroundColor: 'rgba(47,101,214,0.2)',
+        backgroundColor: 'rgba(47,101,214,0.1)',
+        borderWidth: 3,
         fill: true,
-        tension: 0.35,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#2f65d6',
+      },
+    ],
+  }));
+
+  readonly taskTrendChartData = computed<ChartData<'line'>>(() => ({
+    labels: this.dashboard()?.taskCompletionTrend.points.map((point) => this.translate.instant(point.label)) ?? [],
+    datasets: [
+      {
+        label: this.translate.instant('common.chart.tasks'),
+        data: this.dashboard()?.taskCompletionTrend.points.map((point) => point.value) ?? [],
+        borderColor: '#2b9d76',
+        backgroundColor: 'rgba(43,157,118,0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#2b9d76',
       },
     ],
   }));
@@ -145,7 +195,7 @@ export class Dashboard implements OnInit {
   }));
 
   readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => ({
-    labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => this.translate.instant(item.status)) ?? [],
+    labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => this.translate.instant('dashboard.status.' + item.status)) ?? [],
     datasets: [
       {
         data: this.dashboard()?.profileBreakdown.byStatus.map((item) => item.count) ?? [],
@@ -155,7 +205,7 @@ export class Dashboard implements OnInit {
   }));
 
   readonly jobStatusChartData = computed<ChartData<'doughnut'>>(() => ({
-    labels: this.dashboard()?.jobBreakdown.byStatus.map((item) => this.translate.instant(item.status)) ?? [],
+    labels: this.dashboard()?.jobBreakdown.byStatus.map((item) => this.translate.instant('dashboard.status.' + item.status)) ?? [],
     datasets: [
       {
         data: this.dashboard()?.jobBreakdown.byStatus.map((item) => item.count) ?? [],
@@ -190,14 +240,51 @@ export class Dashboard implements OnInit {
 
   readonly smartInsights = computed(() => {
     const kpis = this.activeKpis();
+    const jobKpis = this.activeJobKpis();
     const insights: { level: 'warning' | 'info' | 'success'; key: string }[] = [];
 
-    if (kpis.overdueTasks > 0) insights.push({ level: 'warning', key: 'dashboard.insights.overdue' });
-    if (kpis.approvalRate >= 75) insights.push({ level: 'success', key: 'dashboard.insights.approvalGood' });
-    if (kpis.pendingProfiles > kpis.approvedProfiles)
-      insights.push({ level: 'info', key: 'dashboard.insights.pipelinePressure' });
+    const canReviewProfiles = this.authService.hasPermission(Permissions.ProfileApproval.Review);
+    const canManageDistribution = this.authService.hasPermission(Permissions.ProfileDistribution.Manage);
+    const canViewMinisterOffice = this.authService.hasPermission(Permissions.MinisterOffice.View);
+    const canApproveJobs = this.authService.hasPermission(Permissions.Jobs.Approve);
+    const canManageJobs = this.authService.hasPermission(Permissions.Jobs.Manage);
 
-    if (insights.length === 0) insights.push({ level: 'info', key: 'dashboard.insights.healthy' });
+    if (canManageDistribution && kpis.overdueTasks > 0) {
+      insights.push({ level: 'warning', key: 'dashboard.insights.overdue' });
+    }
+
+    if (canReviewProfiles) {
+      if (kpis.rejectionRate > 20) {
+        insights.push({ level: 'warning', key: 'dashboard.insights.highRejectionRate' });
+      }
+      if (kpis.approvalRate >= 75) {
+        insights.push({ level: 'success', key: 'dashboard.insights.approvalGood' });
+      }
+
+      if (canManageDistribution && kpis.pendingProfiles > kpis.approvedProfiles) {
+        insights.push({ level: 'info', key: 'dashboard.insights.pipelinePressure' });
+      }
+    }
+
+    if (canViewMinisterOffice && kpis.followedMinisterOfficeCandidates > 0) {
+      insights.push({ level: 'info', key: 'dashboard.insights.ministerOfficeCandidates' });
+    }
+
+    if (canApproveJobs && jobKpis.pendingReviewJobs > 0) {
+      insights.push({ level: 'warning', key: 'dashboard.insights.jobsPendingApproval' });
+    }
+
+    if (canManageJobs && jobKpis.newJobsToday > 0) {
+      insights.push({ level: 'info', key: 'dashboard.insights.jobsNewToday' });
+    }
+
+    if (insights.length === 0) {
+      if (canManageDistribution) {
+        insights.push({ level: 'info', key: 'dashboard.insights.healthy' });
+      } else if (kpis.remainingTasks > 0 && kpis.overdueTasks === 0) {
+        insights.push({ level: 'success', key: 'dashboard.insights.tasksOnTrack' });
+      }
+    }
 
     return insights;
   });
@@ -232,6 +319,19 @@ export class Dashboard implements OnInit {
   onStatusChange(value: string): void {
     this.searchStatus.set(value);
     this.applyFilters();
+  }
+
+  onDateChange(): void {
+    const from = this.fromDate();
+    const to = this.toDate();
+
+    this.filters.update(v => ({
+      ...v,
+      fromDateUtc: from ? from.toISOString() : undefined,
+      toDateUtc: to ? to.toISOString() : undefined,
+      pageNumber: 1
+    }));
+    this.filterChanges$.next();
   }
 
 }

@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.Dashboard.DTOs;
+using Application.Operation.Features.Employee.Dashboard.DTOs;
 using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -6,8 +6,6 @@ using Tawtheef.Application.Common.Models.Pagination;
 namespace Application.Operation.Features.Employee.Dashboard.Queries;
 
 public sealed record GetOperationsDashboardQuery(
-    Guid? CurrentUserId = null,
-    string? CurrentRole = null,
     DateTime? FromDateUtc = null,
     DateTime? ToDateUtc = null,
     Guid? DepartmentId = null,

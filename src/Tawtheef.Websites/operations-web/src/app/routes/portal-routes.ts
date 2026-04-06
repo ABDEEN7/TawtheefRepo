@@ -50,9 +50,6 @@ export const portalRoutes = {
   jobEdit(jobId: GUID) {
     return this.portal + '/jobs/edit/' + jobId;
   },
-  get nominations() {
-    return this.portal + '/nominations';
-  },
   jobPoints(jobId: GUID) {
     return this.portal + '/jobs/job-points/' + jobId;
   },

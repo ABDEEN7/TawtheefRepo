@@ -37,27 +37,40 @@
       <p-table class="custom-table" [value]="users()" [rowHover]="true" responsiveLayout="scroll">
         <ng-template pTemplate="header">
           <tr>
-            <th>{{ 'CANDIDATE_USERS.NAME_EN' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.NAME_AR' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.EMAIL' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.QID' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.MOBILE' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
-            <th>{{ 'CANDIDATE_USERS.PROFILE_STATUS' | translate }}</th>
-            <th>
-              {{ 'CANDIDATE_USERS.ACTIONS' | translate }}
-            </th>
+            <th style="width: 30%">{{ 'CANDIDATE_USERS.CANDIDATE_INFO' | translate }}</th>
+            <th style="width: 25%">{{ 'CANDIDATE_USERS.CONTACT_IDENTIFICATION' | translate }}</th>
+            <th style="width: 15%">{{ 'CANDIDATE_USERS.STATUS' | translate }}</th>
+            <th style="width: 15%">{{ 'CANDIDATE_USERS.PROFILE_STATUS' | translate }}</th>
+            <th style="width: 15%">{{ 'CANDIDATE_USERS.ACTIONS' | translate }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-user>
           <tr>
-            <td>{{ user.fullNameEn }}</td>
-            <td>{{ user.fullNameAr }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.qid || '-' }}</td>
-            <td>{{ user.mobileNumber }}</td>
+            <td>
+              <div class="user-info-cell">
+                <span class="name-en">{{ user.fullNameEn }}</span>
+                <span class="name-ar">{{ user.fullNameAr }}</span>
+                <div class="email-info mt-1">
+                  <i class="fa fa-envelope-o small opacity-50"></i>
+                  <span>{{ user.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="contact-id-cell">
+                <div class="mb-1">
+                  <span class="qid-label">{{ 'CANDIDATE_USERS.QID' | translate }}:</span>
+                  <span class="qid-value">{{ user.qid || '-' }}</span>
+                </div>
+                <div class="mobile-info">
+                  <i class="fa fa-mobile small opacity-50"></i>
+                  <span>{{ user.mobileNumber }}</span>
+                </div>
+              </div>
+            </td>
             <td>
               <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
+                <span class="status-indicator" [class.active]="!user.isBlocked" [class.blocked]="user.isBlocked"></span>
                 {{ user.isBlocked ? ('CANDIDATE_USERS.BLOCKED' | translate) : ('CANDIDATE_USERS.ACTIVE' | translate) }}
               </span>
             </td>
@@ -74,29 +87,26 @@
                 </span>
               </ng-container>
               <ng-template #noProfile>
-                <span class="text-muted small">
+                <div class="text-muted small d-flex align-items-center gap-1">
+                  <i class="fa fa-exclamation-circle opacity-50"></i>
                   {{ 'CANDIDATE_USERS.NO_PROFILE' | translate }}
-                </span>
+                </div>
               </ng-template>
             </td>
 
             <td>
-              <div class="d-flex gap-2 align-items-center">
-                <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+              <div class="action-buttons">
+                <button type="button" class="btn btn-action btn-outline-primary"
+                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate"
                   (click)="viewProfile(user)" *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
                   <i class="hgi hgi-stroke hgi-view fs-18"></i>
-                  <span>{{ 'CANDIDATE_USERS.VIEW_PROFILE' | translate }}</span>
                 </button>
 
                 <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
-
-                  <button type="button" class="btn btn-sm d-flex align-items-center gap-1"
+                  <button type="button" class="btn btn-action"
+                    [title]="(user.isBlocked ? 'CANDIDATE_USERS.UNBLOCK_USER' : 'CANDIDATE_USERS.BLOCK_USER') | translate"
                     [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
                     <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
-                    <span>
-                      {{ user.isBlocked ? ('CANDIDATE_USERS.UNBLOCK_USER' | translate) : ('CANDIDATE_USERS.BLOCK_USER' |
-                      translate) }}
-                    </span>
                   </button>
                 </ng-container>
               </div>
@@ -105,8 +115,11 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
-              {{ 'NO_RECORDS' | translate }}
+            <td colspan="5" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+              <div class="p-4 d-flex flex-column align-items-center justify-content-center">
+                <i class="fa fa-folder-open-o fs-32 opacity-25 mb-2"></i>
+                <span>{{ 'NO_RECORDS' | translate }}</span>
+              </div>
             </td>
           </tr>
         </ng-template>
