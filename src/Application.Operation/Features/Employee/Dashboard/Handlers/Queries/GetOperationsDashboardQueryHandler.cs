@@ -46,6 +46,22 @@ public sealed class GetOperationsDashboardQueryHandler(
             request,
             ct);
 
+        var isHrManager = string.Equals(
+            request.CurrentRole,
+            nameof(SystemRoleIds.HrManager),
+            StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(
+            request.CurrentRole,
+            nameof(SystemRoleIds.SystemAdmin),
+            StringComparison.OrdinalIgnoreCase);
+        
+        var followedCandidatesCount = 0;
+        if (isHrManager)
+        {
+            followedCandidatesCount = await repos.MinisterOfficeCandidate.DbSet
+                .CountAsync(x => !x.IsDeleted && x.IsFollowUpActive, ct);
+        }
+
         // Employees
         var employeeIds = await employeesQuery.Select(x => x.Id).ToListAsync(ct);
         var employeeList = await employeesQuery.ToListAsync(ct);
@@ -251,6 +267,7 @@ public sealed class GetOperationsDashboardQueryHandler(
                 TotalAssignedTasks = totalAssignedTasks,
                 RemainingTasks = remainingTasks,
                 OverdueTasks = overdueTasks,
+                FollowedMinisterOfficeCandidates = followedCandidatesCount
             },
 
             ProfileBreakdown = new ProfileBreakdownDto
@@ -791,14 +808,17 @@ public sealed class GetOperationsDashboardQueryHandler(
         return todayStartUtc.AddDays(-(int)todayStartUtc.DayOfWeek);
     }
 
-    private static (IGenericRepository<UserProfile> Profile, IGenericRepository<ProfileAssignment> Assignment, IGenericRepository<ReviewItem> Review, IGenericRepository<Job> Job)
+    private static (IGenericRepository<UserProfile> Profile, IGenericRepository<ProfileAssignment> Assignment, 
+        IGenericRepository<ReviewItem> Review, IGenericRepository<Job> Job,
+        IGenericRepository<Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate> MinisterOfficeCandidate)
         GetRepos(IUnitOfWork uow)
     {
         return (
             uow.GetEntityRepository<UserProfile>(),
             uow.GetEntityRepository<ProfileAssignment>(),
             uow.GetEntityRepository<ReviewItem>(),
-            uow.GetEntityRepository<Job>()
+            uow.GetEntityRepository<Job>(),
+            uow.GetEntityRepository<Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate>()
         );
     }
 }

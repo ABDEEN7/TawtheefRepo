@@ -95,6 +95,7 @@ export class Dashboard implements OnInit {
       totalAssignedTasks: 0,
       remainingTasks: 0,
       overdueTasks: 0,
+      followedMinisterOfficeCandidates: 0,
     }
   );
 

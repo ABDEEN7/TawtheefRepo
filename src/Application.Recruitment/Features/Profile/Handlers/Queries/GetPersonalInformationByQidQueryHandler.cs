@@ -2,6 +2,7 @@
 using Application.Recruitment.Features.Profile.Queries;
 using MediatR;
 using FluentResults;
+using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;

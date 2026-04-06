@@ -88,4 +88,8 @@ export const Permissions = {
   Kawader: {
     Manage: 'kawader.manage',
   },
+  MinisterOffice: {
+    View: 'minister-office.view',
+    Manage: 'minister-office.manage',
+  }
 } as const;

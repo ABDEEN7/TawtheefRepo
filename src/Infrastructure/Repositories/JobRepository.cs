@@ -131,6 +131,8 @@ public class JobRepository(IGenericRepository<Job> repository)
         var jobs = await Repository.DbSet.AsNoTracking()
             .Where(j => j.JobStatusId != JobStatusIds.Closed 
                         && j.JobStatusId != JobStatusIds.Cancelled
+                        && j.JobStatusId != JobStatusIds.Draft
+                        && j.JobStatusId != JobStatusIds.NeedUpdate
                         && j.ClosingDate <= currentDate)
             .OrderBy(j => j.ClosingDate)
             .Take(batchSize)

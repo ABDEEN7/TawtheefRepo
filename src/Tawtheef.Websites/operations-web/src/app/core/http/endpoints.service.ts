@@ -298,4 +298,12 @@ export class EndpointsService {
     listCountries: this.getFullUrl('/countryManagement/list-countries'),
     updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
   };
+
+  ministerOffice = {
+    candidates: this.getFullUrl('/MinisterOffice/candidates'),
+    phone: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/phone`),
+    followUpStatus: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/follow-up-status`),
+    invitations: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/invitations`),
+    auditLog: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/audit-log`),
+  };
 }

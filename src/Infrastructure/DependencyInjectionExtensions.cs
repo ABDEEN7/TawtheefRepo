@@ -120,6 +120,8 @@ namespace Tawtheef.Infrastructure
                 // Feature flags (keep consistent with your JSON; using FeatureFlags here)
                 services.AddFeatureManagement(configuration.GetSection("FeatureFlags"));
 
+                services.AddScoped<IMoiService, MoiService>();
+                
                 // Options (Common)
                 AddValidatedOptions<JwtSettings>(services, configuration, JwtSettings.SectionName);
                 AddValidatedOptions<AppConfigSettings>(services, configuration, AppConfigSettings.SectionName);
@@ -249,6 +251,28 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
+                
+                // ===== MOI Client =====
+                AddValidatedOptions<MoiSettings>(services, configuration, MoiSettings.SectionName);
+                services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
+                    {
+                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+                        client.BaseAddress = new Uri(opt.BaseUrl);
+                        client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
+                    })
+                    .ConfigurePrimaryHttpMessageHandler(sp =>
+                    {
+                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
+
+                        return new HttpClientHandler
+                        {
+                            Credentials = new NetworkCredential(opt.Username, opt.Password),
+                            UseCookies = true,
+                            CookieContainer = new CookieContainer(),
+                            PreAuthenticate = false,
+                            UseDefaultCredentials = false
+                        };
+                    });
             }
         }
 
@@ -267,7 +291,6 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IVerificationService, VerificationService>();
                 services.AddScoped<IProfileStepValidationService, ProfileStepValidationService>();
                 services.AddScoped<IProfileReviewService, ProfileReviewService>();
-                services.AddScoped<IMoiService, MoiService>();
 
             }
 
@@ -290,28 +313,6 @@ namespace Tawtheef.Infrastructure
                     client.BaseAddress = new Uri(opt.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
                 });
-
-                // ===== MOI Client =====
-                AddValidatedOptions<MoiSettings>(services, configuration, MoiSettings.SectionName);
-                services.AddHttpClient<IMoiClient, MoiClient>((sp, client) =>
-                    {
-                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-                        client.BaseAddress = new Uri(opt.BaseUrl);
-                        client.Timeout = TimeSpan.FromSeconds(opt.TimeoutSeconds);
-                    })
-                    .ConfigurePrimaryHttpMessageHandler(sp =>
-                    {
-                        var opt = sp.GetRequiredService<IOptions<MoiSettings>>().Value;
-
-                        return new HttpClientHandler
-                        {
-                            Credentials = new NetworkCredential(opt.Username, opt.Password),
-                            UseCookies = true,
-                            CookieContainer = new CookieContainer(),
-                            PreAuthenticate = false,
-                            UseDefaultCredentials = false
-                        };
-                    });
             }
         }
 

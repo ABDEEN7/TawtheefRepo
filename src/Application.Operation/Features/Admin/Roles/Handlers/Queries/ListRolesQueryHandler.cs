@@ -25,12 +25,14 @@ public sealed class ListRolesQueryHandler(
     {
         var rolesPage = await roleManager.Roles
             .AsNoTracking()
+            .OrderBy(r => r.IsSystemRole)
             .ToPaginatedListAsync(request, cancellationToken);
 
         var permissionLookup = await uow.GetEntityRepository<Permission>().DbSet
             .AsNoTracking()
             .Where(x => x.IsActive)
-            .ToDictionaryAsync(p => p.BackendName, p => localizationService.GetLocalizedName(p), cancellationToken);
+            .ToDictionaryAsync(p => p.BackendName, 
+                localizationService.GetLocalizedName, cancellationToken);
 
         var mapped = new List<RoleDto>(rolesPage.Items.Count);
         foreach (var role in rolesPage.Items)

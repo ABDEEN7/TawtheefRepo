@@ -4,6 +4,7 @@ using System.Xml;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Constants;
 

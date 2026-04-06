@@ -45,6 +45,7 @@ public sealed class DashboardKpisDto
     public int TotalAssignedTasks { get; init; }
     public int RemainingTasks { get; init; }
     public int OverdueTasks { get; init; }
+    public int FollowedMinisterOfficeCandidates { get; init; }
 }
 
 public sealed class ProfileBreakdownDto

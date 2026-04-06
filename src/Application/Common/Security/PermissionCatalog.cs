@@ -70,6 +70,9 @@ public static class PermissionCatalog
 
         Permissions.MajorSkills.Manage,
         Permissions.OrganizationStructures.Manage,
+        
+        Permissions.MinisterOffice.View,
+        Permissions.MinisterOffice.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

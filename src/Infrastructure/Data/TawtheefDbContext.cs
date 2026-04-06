@@ -20,6 +20,7 @@ using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
@@ -133,6 +134,11 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Resource> Resources { get; set; }
     public DbSet<MajorSkill> MajorSkill { get; set; }
     public DbSet<KawaderQid> KawaderQids { get; set; }
+
+    // Minister Office Tables
+    public DbSet<MinisterOfficeCandidate> MinisterOfficeCandidates { get; set; }
+    public DbSet<MinisterOfficeCandidateAuditLog> MinisterOfficeCandidateAuditLogs { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // ensure client-side evaluation works properly

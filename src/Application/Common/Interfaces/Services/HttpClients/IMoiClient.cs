@@ -1,7 +1,7 @@
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 
-namespace Application.Recruitment.Common.Interfaces.Services.HttpClients;
+namespace Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 
 public interface IMoiClient
 {

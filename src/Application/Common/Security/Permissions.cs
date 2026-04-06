@@ -494,4 +494,25 @@ public static class Permissions
                 "الهياكل التنظيمية - إدارة",
                 80);
     }
+
+    public static class MinisterOffice
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.MinisterOffice.View,
+                nameof(PermissionKeys.MinisterOffice),
+                PermissionAction.View,
+                "Minister Office - View",
+                "مكتب الوزير - عرض",
+                90);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.MinisterOffice.Manage,
+                nameof(PermissionKeys.MinisterOffice),
+                PermissionAction.Manage,
+                "Minister Office - Manage",
+                "مكتب الوزير - إدارة",
+                91);
+    }
 }

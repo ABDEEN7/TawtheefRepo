@@ -60,6 +60,17 @@
                     </div>
                   </div>
                 </div>
+                @if (isHrDashboard()) {
+                <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
+                  <div class="card card-table bg-info-light" [pTooltip]="'dashboard.help.followedCandidates' | translate"
+                    tooltipPosition="top">
+                    <div class="card-body d-flex justify-content-between p-3 flex-column">
+                      <h3 class="h2 fw-bold text-blue">{{ activeKpis().followedMinisterOfficeCandidates }}</h3>
+                      <p>{{ 'dashboard.kpi.followedCandidates' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+                }
                 <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">
                   <div class="card card-table  bg-secondary bg-opacity-10"
                     [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">

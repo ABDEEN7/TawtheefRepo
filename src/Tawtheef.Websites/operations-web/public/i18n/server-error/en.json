@@ -263,8 +263,8 @@
   "server-error.MANAGEMENT_NAME_ALREADY_EXISTS": "Management name already exists.",
   "server-error.DEPARTMENT_NOT_FOUND": "Department not found.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "Department name already exists.",
-  "server-error.MOI_DATA_NOT_FOUND": "Occurred an error while fetching MOI data.",
-  "server-error.MOI_FAILED_REQUEST": "Occurred an error while fetching MOI data.",
+  "server-error.MOI_DATA_NOT_FOUND": "MOI data not found.",
+  "server-error.MOI_FAILED_REQUEST": "MOI request failed.",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "Employee directory request failed.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "Employee directory payload is invalid.",
   "server-error.EMPLOYEE_DIRECTORY_USER_NOT_FOUND": "Employee not found in employee directory.",
@@ -286,5 +286,11 @@
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE": "Cannot activate major-skill link because major is inactive.",
   "server-error.CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE": "Cannot activate major-skill link because skill is inactive.",
   "server-error.USER_IS_OFFICER": "User is registered as an officer, cannot login as an applicant.",
-  "server-error.USER_IS_APPLICANT": "User is registered as an applicant, cannot be added as an officer."
+  "server-error.USER_IS_APPLICANT": "User is registered as an applicant, cannot be added as an officer.",
+  "server-error.INVALID_QID_FORMAT": "Invalid QID format. Must be 11 digits.",
+  "server-error.INVALID_PHONE_FORMAT": "Invalid phone format. Must be +974 followed by 8 digits.",
+  "server-error.KAWADER_REGISTRATION_REQUIRED": "This candidate is a Qatari national and must be registered on the Kawader platform first.",
+  "server-error.MISSING_REQUIRED_FIELDS": "Please complete all required fields.",
+  "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "Minister Office candidate record not found.",
+  "server-error.QID_EXPIRY_DATE_REQUIRED": "QID expiry date is required for identity validation."
 }
