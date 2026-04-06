@@ -87,10 +87,6 @@ public sealed class GetOperationsDashboardQueryHandler(
         }
 
         var employeesQuery = BuildEmployeesQuery(userManager);
-        employeesQuery = await ApplyScopeToEmployeesQuery(employeesQuery, userManager, currentUserId, canViewAllProfiles, isDepartmentManager, ct);
-
-
-        
         var employeeIds = await employeesQuery.Select(x => x.Id).ToListAsync(ct);
         var employeeList = await employeesQuery.ToListAsync(ct);
 
@@ -213,16 +209,17 @@ public sealed class GetOperationsDashboardQueryHandler(
                 Overdue = g.Count(x =>
                     x.UnassignedAtUtc == null &&
                     x.AssignedAtUtc <= overdueCutoff &&
-                    (x.ProfileStatus == null ||
-                     (x.ProfileStatus != UserProfileStatus.Approved &&
-                      x.ProfileStatus != UserProfileStatus.RequiresUpdate)))
+                    x.ProfileStatus == UserProfileStatus.UnderReview),
+                Remaining = g.Count(x => 
+                    x.ProfileStatus == UserProfileStatus.UnderReview || x.ProfileStatus == UserProfileStatus.Submitted)
             })
+            .OrderBy(x => 1)
             .FirstOrDefaultAsync(ct);
 
         var totalAssignedTasks = taskAgg?.Total ?? 0;
         var completedTasks = taskAgg?.Completed ?? 0;
         var overdueTasks = taskAgg?.Overdue ?? 0;
-        var remainingTasks = totalAssignedTasks - completedTasks;
+        var remainingTasks = taskAgg?.Remaining ?? 0;
 
         // Breakdown
         var byStatus = await GetProfilesByStatusAsync(profileQuery, ct);
@@ -260,7 +257,7 @@ public sealed class GetOperationsDashboardQueryHandler(
             totalAssignedTasks,
             localizationService);
 
-        var (teamRows, teamCount) = Paginate(allRows, request.PageNumber, request.PageSize);
+        var (teamRows, teamCount) = (allRows, allRows.Count);
 
         var topPerformers = allRows
             .OrderByDescending(x => x.ProductivityScore)
@@ -357,7 +354,7 @@ public sealed class GetOperationsDashboardQueryHandler(
                 Points = BuildTrendPoints(trendLabels, taskTrendRaw)
             },
 
-            TeamPerformance = new PaginatedResult<TeamPerformanceRowDto>(teamRows, teamCount, request.PageNumber, request.PageSize),
+
             TopPerformers = topPerformers,
             UnderPerformers = underPerformers,
         };
@@ -471,43 +468,6 @@ public sealed class GetOperationsDashboardQueryHandler(
             .AsNoTracking()
             .Include(x => x.UserProfile)
             .Where(x => employeeIds.Contains(x.EmployeeId));
-    }
-
-    // ----------------------------
-    // Scoped behavior
-    // ----------------------------
-
-    private static async Task<IQueryable<EmployeeUser>> ApplyScopeToEmployeesQuery(
-        IQueryable<EmployeeUser> employeesQuery,
-        UserManager<User> userManager,
-        Guid currentUserId,
-        bool canViewAllProfiles,
-        bool isDepartmentManager,
-        CancellationToken ct)
-    {
-        if (canViewAllProfiles)
-            return employeesQuery;
-
-        if (isDepartmentManager)
-        {
-            var currentEmployee = await userManager.Users
-                .OfType<EmployeeUser>()
-                .AsNoTracking()
-                .Include(x => x.EmployeeProfile)
-                .FirstOrDefaultAsync(x => x.Id == currentUserId, ct);
-
-
-
-            var currentDepartment = currentEmployee?.EmployeeProfile?.Department;
-            if (!string.IsNullOrWhiteSpace(currentDepartment))
-            {
-                return employeesQuery.Where(x =>
-                    x.EmployeeProfile != null && x.EmployeeProfile.Department == currentDepartment);
-            }
-        }
-
-        // Default: If employee, only see self in the performance list
-        return employeesQuery.Where(x => x.Id == currentUserId);
     }
 
 
@@ -861,6 +821,7 @@ public sealed class GetOperationsDashboardQueryHandler(
             {
                 EmployeeId = employee.Id,
                 Name = localizationService.GetLocalizedFullName(employee),
+                EmployeeNumber = employee.EmployeeProfile?.EmployeeNumber,
                 DepartmentName = employee.EmployeeProfile?.Department,
 
                 AssignedTasks = assigned,

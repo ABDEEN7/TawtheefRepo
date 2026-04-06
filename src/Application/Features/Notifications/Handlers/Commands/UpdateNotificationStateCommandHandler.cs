@@ -15,7 +15,7 @@ public sealed class UpdateNotificationStateCommandHandler(IUnitOfWork unitOfWork
     {
         var repo = unitOfWork.GetEntityRepository<Notification>();
         
-        var notification = await repo.DbSet.FirstOrDefaultAsync(n => n.Id == request.NotificationId && n.UserId == request.UserId, cancellationToken);
+        var notification = await repo.DbSet.OrderBy(n => n.Id).FirstOrDefaultAsync(n => n.Id == request.NotificationId && n.UserId == request.UserId, cancellationToken);
         
         if (notification == null)
             return Result.Fail<Unit>(ErrorsCodes.ItemNotFound);

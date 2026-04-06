@@ -13,7 +13,7 @@ public sealed class OperationsDashboardDto
     public required TaskMonitoringDto TaskMonitoring { get; init; }
     public required TrendSeriesDto ProfileTrend { get; init; }
     public required TrendSeriesDto TaskCompletionTrend { get; init; }
-    public required PaginatedResult<TeamPerformanceRowDto> TeamPerformance { get; init; }
+
     public required IReadOnlyList<PerformanceRankDto> TopPerformers { get; init; }
     public required IReadOnlyList<PerformanceRankDto> UnderPerformers { get; init; }
 }
@@ -94,6 +94,7 @@ public sealed class TeamPerformanceRowDto
 {
     public Guid EmployeeId { get; init; }
     public required string Name { get; init; }
+    public string? EmployeeNumber { get; init; }
     public string? DepartmentName { get; init; }
     public int AssignedTasks { get; init; }
     public int ActiveTasks { get; init; }

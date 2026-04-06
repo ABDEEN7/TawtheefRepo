@@ -13,7 +13,7 @@ public class JobCategoryCandidateSettingsRepository(IGenericRepository<JobCatego
 {
     public async Task<IResult<JobCategoryCandidateSettings>> GetAsync()
     {
-        var settings = await Repository.DbSet.FirstOrDefaultAsync();
+        var settings = await Repository.DbSet.OrderBy(x => x.Id).FirstOrDefaultAsync();
 
         return settings == null
             ? Result.Fail<JobCategoryCandidateSettings>(JobCandidatesMessages.JobCategoryCandidateSettingsNotFound)

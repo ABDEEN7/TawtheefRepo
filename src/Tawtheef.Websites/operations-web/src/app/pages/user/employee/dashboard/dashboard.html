@@ -1,346 +1,365 @@
 <section i18nNamespace="pages/employee/dashboard">
-  <div class="card card-table mb-4">
-    <div class="card-body">
-      <div class="dashboard-filter-bar mb-4">
-        <div class="filter-group flex-grow-1">
-          <h3 class="dash-title">{{ (isHrDashboard() ? 'dashboard.hr.title' : 'dashboard.department.title') | translate
-            }}</h3>
-          <p class="dash-subtitle text-muted mt-1 mb-0">{{ (isHrDashboard() ? 'dashboard.hr.subtitle' :
-            'dashboard.department.subtitle') | translate }}</p>
+  <div class="dashboard-simple-header mb-4">
+    <div class="d-flex align-items-center gap-2">
+      <h1 class="h4 mb-0 fw-800 text-dark">{{ (isHrDashboard() ? 'dashboard.hr.title' :
+        'dashboard.department.title') | translate }}</h1>
+      <div class="badge badge-soft-primary px-3 rounded-pill">{{ 'dashboard.jobs.title' | translate }}</div>
+    </div>
+    <p class="text-muted small mb-0">{{ (isHrDashboard() ? 'dashboard.hr.subtitle' :
+      'dashboard.department.subtitle') | translate }}</p>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      @if (loading()) {
+      <div class="skeleton-grid">
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]"></div>
+      </div>
+      }
+      @else {
+
+      <!-- ═══════════ Employee Statistics Section ═══════════ -->
+      @if (canViewProfileStats()) {
+      <div class="kpi-section">
+        <div class="kpi-section__header">
+          <span class="kpi-section__accent"></span>
+          <h4 class="kpi-section__title">{{ 'dashboard.sections.employeeStats' | translate }}</h4>
+        </div>
+        <div class="kpi-section__grid">
+          <!-- KPI tiles here... (existing content) -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
+              <i class="hgi hgi-stroke hgi-user-group"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeKpis().totalEmployees }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalEmployees' | translate }}</div>
+          </div>
+          <!-- ... -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
+              <i class="hgi hgi-stroke hgi-file-02"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeKpis().totalProfiles }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
+          </div>
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
+              <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeKpis().approvalRate }}%</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.approvalRate' | translate }}</div>
+          </div>
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
+              <i class="hgi hgi-stroke hgi-clock-01"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeKpis().remainingTasks }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.remainingTasks' | translate }}</div>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          @if (loading()) {
-          <div class="skeleton-grid">
-            <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]"></div>
-          </div>
-          }
-          @else {
+      }
 
-          <!-- ═══════════ Employee Statistics Section ═══════════ -->
-          @if (canViewProfileStats()) {
-          <div class="kpi-section">
-            <div class="kpi-section__header">
-              <span class="kpi-section__accent"></span>
-              <h4 class="kpi-section__title">{{ 'dashboard.sections.employeeStats' | translate }}</h4>
+
+      <!-- ═══════════ Minister Office Candidates Section ═══════════ -->
+      @if (hasMinisterOfficePermission()) {
+      <div class="kpi-section kpi-section--minister">
+        <div class="kpi-section__header">
+          <span class="kpi-section__accent kpi-section__accent--minister"></span>
+          <h4 class="kpi-section__title">{{ 'dashboard.sections.ministerOffice' | translate }}</h4>
+        </div>
+        <div class="kpi-section__grid kpi-section__grid--compact">
+
+          <!-- Minister Office Followed Candidates -->
+          <div class="kpi-tile kpi-tile--minister" [pTooltip]="'dashboard.help.followedCandidates' | translate"
+            tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--minister">
+              <i class="hgi hgi-stroke hgi-user-star-01"></i>
             </div>
-            <div class="kpi-section__grid">
-              <!-- KPI tiles here... (existing content) -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
-                  <i class="hgi hgi-stroke hgi-user-group"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeKpis().totalEmployees }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.totalEmployees' | translate }}</div>
-              </div>
-              <!-- ... -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
-                  <i class="hgi hgi-stroke hgi-file-02"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeKpis().totalProfiles }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-              </div>
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
-                  <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeKpis().approvalRate }}%</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.approvalRate' | translate }}</div>
-              </div>
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
-                  <i class="hgi hgi-stroke hgi-clock-01"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeKpis().remainingTasks }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.remainingTasks' | translate }}</div>
-              </div>
-            </div>
-          </div>
-          }
-
-
-          <!-- ═══════════ Minister Office Candidates Section ═══════════ -->
-          @if (hasMinisterOfficePermission()) {
-          <div class="kpi-section kpi-section--minister">
-            <div class="kpi-section__header">
-              <span class="kpi-section__accent kpi-section__accent--minister"></span>
-              <h4 class="kpi-section__title">{{ 'dashboard.sections.ministerOffice' | translate }}</h4>
-            </div>
-            <div class="kpi-section__grid kpi-section__grid--compact">
-
-              <!-- Minister Office Followed Candidates -->
-              <div class="kpi-tile kpi-tile--minister" [pTooltip]="'dashboard.help.followedCandidates' | translate"
-                tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--minister">
-                  <i class="hgi hgi-stroke hgi-user-star-01"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeKpis().followedMinisterOfficeCandidates }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.followedCandidates' | translate }}</div>
-              </div>
-
-            </div>
-          </div>
-          }
-
-          @if (canViewJobStats()) {
-          <!-- ═══════════ Jobs Management Section ═══════════ -->
-          <div class="kpi-section">
-            <div class="kpi-section__header">
-              <span class="kpi-section__accent kpi-section__accent--jobs"></span>
-              <h4 class="kpi-section__title">{{ 'dashboard.sections.jobManagement' | translate }}</h4>
-            </div>
-            <div class="kpi-section__grid">
-
-              <!-- Total Jobs -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.totalJobs' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
-                  <i class="hgi hgi-stroke hgi-briefcase-01"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().totalJobs }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
-              </div>
-
-              <!-- Active Jobs -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.activeJobs' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--success">
-                  <i class="hgi hgi-stroke hgi-checkmark-badge-01"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().activeJobs }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.activeJobs' | translate }}</div>
-              </div>
-
-              <!-- Pending Review -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.pendingReviewJobs' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
-                  <i class="hgi hgi-stroke hgi-clock-02"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().pendingReviewJobs }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</div>
-              </div>
-
-              <!-- Approved Jobs -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.approvedJobs' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
-                  <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().approvedJobs }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
-              </div>
-
-              <!-- Rejected Jobs -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.rejectedJobs' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--danger">
-                  <i class="hgi hgi-stroke hgi-cancel-circle"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().rejectedJobs }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.rejectedJobs' | translate }}</div>
-              </div>
-
-              <!-- New Jobs Today -->
-              <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
-                <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
-                  <i class="hgi hgi-stroke hgi-calendar-01"></i>
-                </div>
-                <div class="kpi-tile__value">{{ activeJobKpis().newJobsToday }}</div>
-                <div class="kpi-tile__label">{{ 'dashboard.kpi.newJobsToday' | translate }}</div>
-              </div>
-
-            </div>
-          </div>
-          }
-
-          <!-- ═══════════ Charts Row 1 — Jobs ═══════════ -->
-          @if (canViewJobStats()) {
-          <div class="dash-grid dash-grid--2col">
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--primary"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.jobStatusBreakdown' | translate }}</h5>
-              </div>
-              <div class="chart-host chart-host--doughnut">
-                <p-chart type="doughnut" [data]="jobStatusChartData()" height="260px"
-                  [options]="doughnutChartOptions"></p-chart>
-              </div>
-            </div>
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--amber"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
-              </div>
-              <div class="chart-host chart-host--compact">
-                <p-chart type="bar" [data]="jobDepartmentChartData()" height="260px"
-                  [options]="barChartOptions"></p-chart>
-              </div>
-            </div>
-          </div>
-          }
-
-          <!-- ═══════════ Charts Row 2 — Trends (Profiles & Tasks) ═══════════ -->
-          @if (canViewProfileStats()) {
-          <div class="dash-grid dash-grid--2col">
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-chart-line-data-01 dash-panel__icon dash-panel__icon--teal"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.profileTrend' | translate }}</h5>
-              </div>
-              <div class="chart-host">
-                <p-chart type="line" [data]="profileTrendChartData()" height="260px"
-                  [options]="lineChartOptions"></p-chart>
-              </div>
-            </div>
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-chart-line-data-01 dash-panel__icon dash-panel__icon--primary"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.taskTrend' | translate }}</h5>
-              </div>
-              <div class="chart-host">
-                <p-chart type="line" [data]="taskTrendChartData()" height="260px"
-                  [options]="lineChartOptions"></p-chart>
-              </div>
-            </div>
-          </div>
-          }
-
-          <!-- ═══════════ Charts Row 3 — Breakdowns & Performance ═══════════ -->
-          <div class="dash-grid" 
-               [class.dash-grid--3col]="canViewProfileStats() && canViewTeamPerformance()" 
-               [class.dash-grid--2col]="canViewProfileStats() && !canViewTeamPerformance()">
-            
-            @if (canViewProfileStats()) {
-            <!-- Profile Status Breakdown -->
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--rose"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h5>
-              </div>
-              <div class="chart-host chart-host--doughnut">
-                <p-chart type="doughnut" [data]="profileStatusChartData()" height="260px"
-                  [options]="doughnutChartOptions"></p-chart>
-              </div>
-            </div>
-            <!-- Task Stacked Status -->
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--danger"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.taskStacked' | translate }}</h5>
-              </div>
-              <div class="chart-host chart-host--compact">
-                <p-chart type="bar" [data]="taskStatusChartData()" height="260px" [options]="barChartOptions"></p-chart>
-              </div>
-            </div>
-            }
-
-            @if (canViewTeamPerformance()) {
-            <!-- Employee Performance -->
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--success"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.charts.employeePerformance' | translate }}</h5>
-              </div>
-              <div class="chart-host">
-                <p-chart type="bar" [data]="employeeComparisonChartData()" height="260px"
-                  [options]="barChartOptions"></p-chart>
-              </div>
-            </div>
-            }
+            <div class="kpi-tile__value">{{ activeKpis().followedMinisterOfficeCandidates }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.followedCandidates' | translate }}</div>
           </div>
 
-          <!-- ═══════════ Smart Insights + Team Performance ═══════════ -->
-          @if (canViewProfileStats() || canViewTeamPerformance()) {
-          <div class="dash-grid" [class.dash-grid--4-8]="canViewProfileStats() && canViewTeamPerformance()">
-            
-            @if (canViewProfileStats()) {
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-ai-brain-03 dash-panel__icon dash-panel__icon--minister"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.sections.smartInsights' | translate }}</h5>
-              </div>
-              <div class="insight-list">
-                <div class="insight-row" *ngFor="let insight of smartInsights()"
-                  [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
-                  <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
-                  <span>{{ insight.key | translate }}</span>
-                </div>
-              </div>
-            </div>
-            }
-            
-            @if (canViewTeamPerformance()) {
-            <div class="dash-panel">
-              <div class="dash-panel__header">
-                <i class="hgi hgi-stroke hgi-user-group dash-panel__icon dash-panel__icon--primary"></i>
-                <h5 class="dash-panel__title">{{ 'dashboard.sections.teamPerformance' | translate }}</h5>
-              </div>
-              <div class="dash-table-wrap">
-                <table class="dash-table">
-                  <thead>
-                    <tr>
-                      <th [pTooltip]="'dashboard.help.tableEmployee' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.employee' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableAssignedTasks' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.assignedTasks' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableCompletedTasks' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.completedTasks' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableOverdueTasks' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.overdueTasks' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableApproval' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.approval' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableResponseTime' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.responseTime' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableProductivityScore' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.productivityScore' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                      <th [pTooltip]="'dashboard.help.tableWorkload' | translate" tooltipPosition="top">
-                        {{ 'dashboard.table.workload' | translate }} <i class="hgi hgi-stroke hgi-information-circle fs-sm text-muted ms-1"></i>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let row of tableRows()">
-                      <td>
-                        <div class="fw-semibold">{{ row.name }}</div>
-                        <small class="text-muted">{{ row.departmentName || '-' }}</small>
-                      </td>
-                      <td>{{ row.assignedTasks }}</td>
-                      <td>{{ row.completedTasks }}</td>
-                      <td>
-                        <span [class.text-danger]="row.overdueTasks > 0" [class.fw-bold]="row.overdueTasks > 0">
-                          {{ row.overdueTasks }}
-                        </span>
-                      </td>
-                      <td>
-                        <span class="dash-badge dash-badge--teal">{{ row.approvalRate }}%</span>
-                      </td>
-                      <td>{{ row.averageResponseHours }}h</td>
-                      <td>
-                        <span class="dash-badge dash-badge--primary">{{ row.productivityScore }}</span>
-                      </td>
-                      <td>
-                        <span class="dash-badge" [class.dash-badge--danger]="row.workloadBalanceIndicator === 'High'"
-                          [class.dash-badge--success]="row.workloadBalanceIndicator !== 'High'">
-                          {{ ('dashboard.workload.' + row.workloadBalanceIndicator.toLowerCase()) | translate }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            }
-          </div>
-          }
-
-          }
         </div>
       </div>
+      }
+
+      @if (canViewJobStats()) {
+      <!-- ═══════════ Jobs Management Section ═══════════ -->
+      <div class="kpi-section">
+        <div class="kpi-section__header">
+          <span class="kpi-section__accent kpi-section__accent--jobs"></span>
+          <h4 class="kpi-section__title">{{ 'dashboard.sections.jobManagement' | translate }}</h4>
+        </div>
+        <div class="kpi-section__grid">
+
+          <!-- Total Jobs -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalJobs' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
+              <i class="hgi hgi-stroke hgi-briefcase-01"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().totalJobs }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
+          </div>
+
+          <!-- Active Jobs -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.activeJobs' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--success">
+              <i class="hgi hgi-stroke hgi-checkmark-badge-01"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().activeJobs }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.activeJobs' | translate }}</div>
+          </div>
+
+          <!-- Pending Review -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.pendingReviewJobs' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
+              <i class="hgi hgi-stroke hgi-clock-02"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().pendingReviewJobs }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</div>
+          </div>
+
+          <!-- Approved Jobs -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.approvedJobs' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
+              <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().approvedJobs }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
+          </div>
+
+          <!-- Rejected Jobs -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.rejectedJobs' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--danger">
+              <i class="hgi hgi-stroke hgi-cancel-circle"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().rejectedJobs }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.rejectedJobs' | translate }}</div>
+          </div>
+
+          <!-- New Jobs Today -->
+          <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
+            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
+              <i class="hgi hgi-stroke hgi-calendar-01"></i>
+            </div>
+            <div class="kpi-tile__value">{{ activeJobKpis().newJobsToday }}</div>
+            <div class="kpi-tile__label">{{ 'dashboard.kpi.newJobsToday' | translate }}</div>
+          </div>
+
+        </div>
+      </div>
+      }
+
+      <!-- ═══════════ Charts Row 1 — Jobs ═══════════ -->
+      @if (canViewJobStats()) {
+      <div class="dash-grid dash-grid--2col">
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--primary"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.jobStatusBreakdown' | translate }}</h5>
+          </div>
+          <div class="chart-host chart-host--doughnut">
+            <p-chart type="doughnut" [data]="jobStatusChartData()" height="260px"
+              [options]="doughnutChartOptions"></p-chart>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--amber"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
+          </div>
+          <div class="chart-host chart-host--compact">
+            <p-chart type="bar" [data]="jobDepartmentChartData()" height="260px" [options]="barChartOptions"></p-chart>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- ═══════════ Charts Row 2 — Trends (Profiles & Tasks) ═══════════ -->
+      @if (canViewProfileStats()) {
+      <div class="dash-grid dash-grid--2col">
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-chart-line-data-01 dash-panel__icon dash-panel__icon--teal"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.profileTrend' | translate }}</h5>
+          </div>
+          <div class="chart-host">
+            <p-chart type="line" [data]="profileTrendChartData()" height="260px" [options]="lineChartOptions"></p-chart>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-chart-line-data-01 dash-panel__icon dash-panel__icon--primary"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.taskTrend' | translate }}</h5>
+          </div>
+          <div class="chart-host">
+            <p-chart type="line" [data]="taskTrendChartData()" height="260px" [options]="lineChartOptions"></p-chart>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- ═══════════ Charts Row 3 — Breakdowns & Performance ═══════════ -->
+      <div class="dash-grid dash-grid--2col">
+
+        @if (canViewProfileStats()) {
+        <!-- Profile Status Breakdown -->
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--rose"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h5>
+          </div>
+          <div class="chart-host chart-host--doughnut">
+            <p-chart type="doughnut" [data]="profileStatusChartData()" height="260px"
+              [options]="doughnutChartOptions"></p-chart>
+          </div>
+        </div>
+        <!-- Task Stacked Status -->
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--danger"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.taskStacked' | translate }}</h5>
+          </div>
+          <div class="chart-host chart-host--compact">
+            <p-chart type="bar" [data]="taskStatusChartData()" height="260px" [options]="barChartOptions"></p-chart>
+          </div>
+        </div>
+        }
+
+
+      </div>
+
+      <!-- ═══════════ Smart Insights + Team Performance ═══════════ -->
+      @if (canViewProfileStats() || canViewTeamPerformance()) {
+      <div class="dash-grid" [class.dash-grid--4-8]="canViewProfileStats() && canViewTeamPerformance()">
+
+        @if (canViewProfileStats()) {
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-ai-brain-03 dash-panel__icon dash-panel__icon--minister"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.sections.smartInsights' | translate }}</h5>
+          </div>
+          <div class="insight-list">
+            <div class="insight-row" *ngFor="let insight of smartInsights()"
+              [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
+              <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
+              <span>{{ insight.key | translate }}</span>
+            </div>
+          </div>
+        </div>
+        }
+
+        @if (canViewTeamPerformance()) {
+        <div class="dash-panel dash-panel--table mt-4 shadow-sm border-0">
+          <div class="dash-panel__header dash-panel__header--colorful">
+            <div class="d-flex align-items-center gap-3">
+              <div class="header-icon-wrap">
+                <i class="hgi hgi-stroke hgi-user-multiple"></i>
+              </div>
+              <div>
+                <h5 class="dash-panel__title text-white mb-0">{{ 'dashboard.sections.teamPerformance' | translate }}
+                </h5>
+                <small class="text-white-50">{{ 'dashboard.table.teamStatsSubtitle' | translate }}</small>
+              </div>
+            </div>
+
+            <div class="table-search-bar d-flex align-items-center gap-3">
+              <div class="search-input-wrap">
+                <i class="hgi hgi-stroke hgi-search-01 search-icon"></i>
+                <input type="text" pInputText [placeholder]="'dashboard.search.placeholder' | translate"
+                  [ngModel]="tableFilters().search" (ngModelChange)="onSearchChange($event)">
+              </div>
+              <button class="btn-refresh" (click)="loadTeamPerformance();"
+                [class.spinning]="loading() || tableLoading()" [pTooltip]="'common.refresh' | translate">
+                <i class="hgi hgi-stroke hgi-refresh"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="dashboard-table-container">
+            <p-table [value]="tableRows()" [lazy]="true" (onLazyLoad)="onTableLazyLoad($event)"
+              [loading]="tableLoading()" styleClass="p-datatable-modern" [responsiveLayout]="'scroll'">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="Name" style="min-width: 200px">{{ 'dashboard.table.employee' | translate }}
+                    <p-sortIcon field="Name"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="DepartmentName" style="min-width: 150px">{{ 'dashboard.table.department' |
+                    translate }} <p-sortIcon field="DepartmentName"></p-sortIcon></th>
+                  <th pSortableColumn="AssignedTasks" class="text-center" style="width: 100px">{{
+                    'dashboard.table.assignedTasks' | translate }} <p-sortIcon field="AssignedTasks"></p-sortIcon></th>
+                  <th pSortableColumn="CompletedTasks" class="text-center" style="width: 100px">{{
+                    'dashboard.table.completedTasks' | translate }} <p-sortIcon field="CompletedTasks"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="OverdueTasks" class="text-center" style="width: 100px">{{
+                    'dashboard.table.overdueTasks' | translate }} <p-sortIcon field="OverdueTasks"></p-sortIcon></th>
+                  <th pSortableColumn="ApprovalRate" style="width: 140px">{{ 'dashboard.table.approval' | translate }}
+                    <p-sortIcon field="ApprovalRate"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="AverageResponseHours" class="text-center" style="width: 120px">{{
+                    'dashboard.table.responseTime' | translate }} <p-sortIcon field="AverageResponseHours"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="ProductivityScore" class="text-center" style="width: 120px">{{
+                    'dashboard.table.productivityScore' | translate }} <p-sortIcon
+                      field="ProductivityScore"></p-sortIcon></th>
+                </tr>
+
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>
+                    <div class="emp-profile-cell">
+                      <div class="emp-profile-cell__content">
+                        <div class="emp-profile-cell__name">{{ row.name }}</div>
+                        <div class="emp-profile-cell__meta">
+                          <i class="hgi hgi-stroke hgi-user-id-card"></i> {{ row.employeeNumber || '-' }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ row.departmentName }}</td>
+                  <td class="text-center"><span class="badge badge-soft-primary">{{ row.assignedTasks }}</span></td>
+                  <td class="text-center"><span class="badge badge-soft-success">{{ row.completedTasks }}</span></td>
+                  <td class="text-center">
+                    <span class="badge" [class.badge-soft-danger]="row.overdueTasks > 0"
+                      [class.badge-soft-secondary]="row.overdueTasks === 0">
+                      {{ row.overdueTasks }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="progress-indicator">
+                      <div class="progress-indicator__bar-outer">
+                        <div class="progress-indicator__bar-inner" [style.width.%]="row.approvalRate"
+                          [class.bg-danger]="row.approvalRate < 40"
+                          [class.bg-warning]="row.approvalRate >= 40 && row.approvalRate < 70"
+                          [class.bg-success]="row.approvalRate >= 70"></div>
+                      </div>
+                      <span class="progress-indicator__text">{{ row.approvalRate }}%</span>
+                    </div>
+                  </td>
+                  <td class="text-center text-muted font-monospace">{{ row.averageResponseHours }}h</td>
+                  <td class="text-center">
+                    <div class="productivity-indicator"
+                      [attr.data-level]="row.productivityScore > 15 ? 'high' : row.productivityScore >= 10 ? 'medium' : 'low'">
+                      {{ row.productivityScore }}
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+            <div class="table-pagination-footer">
+              <app-pagination [currentPage]="tableFilters().pageNumber!" [itemsPerPage]="tableFilters().pageSize!"
+                [totalItems]="teamPerformance()?.metadata?.totalCount ?? 0" (pageChanged)="onPageChange($event)"
+                (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      }
     </div>
   </div>
 </section>

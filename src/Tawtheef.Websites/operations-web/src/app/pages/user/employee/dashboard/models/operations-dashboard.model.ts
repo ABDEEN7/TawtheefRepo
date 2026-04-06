@@ -7,6 +7,9 @@ export interface OperationsDashboardFilters {
   status?: string;
   pageNumber?: number;
   pageSize?: number;
+  search?: string;
+  sortBy?: string;
+  sortDirection?: string;
 }
 
 export interface OperationsDashboardResponse {
@@ -19,7 +22,6 @@ export interface OperationsDashboardResponse {
   taskMonitoring: TaskMonitoring;
   profileTrend: TrendSeries;
   taskCompletionTrend: TrendSeries;
-  teamPerformance: PaginatedTeamPerformance;
   topPerformers: PerformanceRank[];
   underPerformers: PerformanceRank[];
 }
@@ -105,6 +107,7 @@ export interface AgingBucket {
 export interface TeamPerformanceRow {
   employeeId: string;
   name: string;
+  employeeNumber?: string;
   departmentName?: string;
   assignedTasks: number;
   activeTasks: number;

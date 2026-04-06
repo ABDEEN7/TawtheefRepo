@@ -4,7 +4,6 @@
   "dashboard.department.title": "لوحة عمليات مدير الإدارة",
   "dashboard.department.subtitle": "متابعة مسار ملفات الإدارة، أداء الفريق حسب SLA، ومراقبة إنجاز المهام.",
   "dashboard.filters.employeeId": "تصفية برقم الموظف",
-  "dashboard.filters.allStatuses": "كل الحالات",
   "dashboard.filters.dateRange": "النطاق الزمني",
   "dashboard.filters.status": "حالة الملفات والمهام",
   "dashboard.charts.taskTrend": "تريند إنجاز المهام",
@@ -47,6 +46,7 @@
   "dashboard.sections.jobManagement": "إدارة الوظائف",
   "dashboard.sections.ministerOffice": "متابعة مكتب الوزيرة",
   "dashboard.table.employee": "الموظف",
+  "dashboard.table.department": "القسم",
   "dashboard.table.activeTasks": "المهام النشطة",
   "dashboard.table.completedTasks": "المهام المكتملة",
   "dashboard.table.remainingTasks": "المهام المتبقية",
@@ -116,5 +116,9 @@
   "dashboard.help.tableApproval": "نسبة القرارات المعتمدة إلى إجمالي القرارات المتخذة.",
   "dashboard.help.tableResponseTime": "متوسط الوقت المستغرق لإنجاز المهام بالكامل.",
   "dashboard.help.tableProductivityScore": "مؤشر ذكي لتقييم أداء الموظف التراكمي.",
-  "dashboard.help.tableWorkload": "مؤشر تحليلي لحالة توازن الأحمال على الموظف."
+  "dashboard.filters.allStatuses": "جميع الحالات",
+  "dashboard.table.teamStatsSubtitle": "مراقبة الأداء اليومي، توزيع المهام، ومؤشرات الإنتاجية للفريق.",
+  "dashboard.search.placeholder": "البحث بالاسم أو رقم الموظف أو القسم...",
+  "dashboard.help.tableWorkload": "مؤشر تحليلي لحالة توازن الأحمال على الموظف.",
+  "dashboard.table.noData": "لا توجد بيانات متاحة لهذا العرض."
 }

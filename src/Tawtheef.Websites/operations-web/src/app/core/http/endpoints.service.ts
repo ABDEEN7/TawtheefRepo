@@ -116,6 +116,7 @@ export class EndpointsService {
 
   operationsDashboard = {
     summary: this.getFullUrl('/operations-dashboard'),
+    teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
   };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),

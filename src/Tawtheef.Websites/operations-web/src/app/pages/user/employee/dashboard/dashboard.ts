@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,30 +9,32 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { debounceTime, finalize, Subject } from 'rxjs';
+import { debounceTime, finalize, Subject, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import 'chart.js/auto';
 import { ChartData, ChartOptions } from 'chart.js';
 import { ChartModule } from 'primeng/chart';
 import { Tooltip } from 'primeng/tooltip';
-import { DatePicker } from 'primeng/datepicker';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import {
   DashboardKpis,
-  JobBreakdown,
   JobKpis,
   OperationsDashboardFilters,
   OperationsDashboardResponse,
   TeamPerformanceRow,
 } from './models/operations-dashboard.model';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, FormsModule, I18nNamespaceDirective, ChartModule, Tooltip, TranslatePipe, DatePicker],
+  imports: [CommonModule, FormsModule, I18nNamespaceDirective, ChartModule, Tooltip, TranslatePipe, TableModule, InputTextModule, PaginationComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,19 +45,30 @@ export class Dashboard implements OnInit {
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
 
+  private readonly searchSubject = new Subject<string>();
+
   readonly loading = signal(false);
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
 
-  readonly fromDate = signal<Date | null>(null);
-  readonly toDate = signal<Date | null>(null);
+  readonly fromDate = signal<Date | null>(new Date(new Date().setDate(new Date().getDate() - 30)));
+  readonly toDate = signal<Date | null>(new Date());
 
-  readonly filters = signal<OperationsDashboardFilters>({
+  readonly dashboardFilters = signal<OperationsDashboardFilters>({
+    status: ''
+  });
+
+  readonly tableFilters = signal<OperationsDashboardFilters>({
     pageNumber: 1,
     pageSize: 10,
-    fromDateUtc: this.fromDate()?.toISOString(),
-    toDateUtc: this.toDate()?.toISOString()
+    search: '',
+    sortBy: '',
+    sortDirection: 'asc'
   });
+
   readonly searchStatus = signal<string>('');
+
+  readonly teamPerformance = signal<PaginatedResult<TeamPerformanceRow> | null>(null);
+  readonly tableLoading = signal(false);
 
   private filterChanges$ = new Subject<void>();
 
@@ -140,7 +153,7 @@ export class Dashboard implements OnInit {
     }
   );
 
-  readonly tableRows = computed<TeamPerformanceRow[]>(() => this.dashboard()?.teamPerformance.items ?? []);
+  readonly tableRows = computed<TeamPerformanceRow[]>(() => this.teamPerformance()?.items ?? []);
 
   readonly profileTrendChartData = computed<ChartData<'line'>>(() => ({
     labels: this.dashboard()?.profileTrend.points.map((point) => this.translate.instant(point.label)) ?? [],
@@ -176,23 +189,7 @@ export class Dashboard implements OnInit {
     ],
   }));
 
-  readonly employeeComparisonChartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.tableRows().slice(0, 8).map((row) => this.translate.instant(row.name)),
-    datasets: [
-      {
-        label: this.translate.instant('common.chart.completedTasks'),
-        data: this.tableRows().slice(0, 8).map((row) => row.completedTasks),
-        backgroundColor: '#2b9d76',
-        borderRadius: 6,
-      },
-      {
-        label: this.translate.instant('common.chart.remainingTasks'),
-        data: this.tableRows().slice(0, 8).map((row) => row.remainingTasks),
-        backgroundColor: '#df6d4e',
-        borderRadius: 6,
-      },
-    ],
-  }));
+
 
   readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => ({
     labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => this.translate.instant('dashboard.status.' + item.status)) ?? [],
@@ -292,26 +289,101 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.filterChanges$
       .pipe(debounceTime(350), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.loadDashboard());
+      .subscribe(() => {
+        this.loadDashboard();
+        this.loadTeamPerformance();
+      });
+
+    this.searchSubject
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((value) => {
+        this.tableFilters.update((v) => ({
+          ...v,
+          search: value,
+          pageNumber: 1,
+        }));
+        this.loadTeamPerformance();
+      });
 
     this.loadDashboard();
+    if (this.canViewTeamPerformance()) {
+      this.loadTeamPerformance();
+    }
   }
 
   loadDashboard(): void {
     this.loading.set(true);
     this.dashboardService
-      .getDashboard(this.filters())
+      .getDashboard(this.dashboardFilters())
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (response) => this.dashboard.set(response),
+        next: (response) => {
+          this.dashboard.set(response);
+        },
       });
   }
 
+  loadTeamPerformance(): void {
+    if (!this.canViewTeamPerformance()) return;
+    this.tableLoading.set(true);
+
+    // Merge common filters with table filters
+    const merged = { ...this.dashboardFilters(), ...this.tableFilters() };
+
+    this.dashboardService
+      .getTeamPerformance(merged)
+      .pipe(finalize(() => this.tableLoading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.teamPerformance.set(response);
+        },
+      });
+  }
+
+  onTableLazyLoad(event: TableLazyLoadEvent): void {
+    const sortBy = event.sortField as string || '';
+    const sortDirection = event.sortOrder === 1 ? 'asc' : 'desc';
+
+    const current = this.tableFilters();
+    if (current.sortBy === sortBy &&
+      current.sortDirection === sortDirection) {
+      return;
+    }
+
+    this.tableFilters.update((v) => ({
+      ...v,
+      sortBy: sortBy,
+      sortDirection: sortDirection,
+    }));
+
+    this.loadTeamPerformance();
+  }
+
+  onPageChange(page: number): void {
+    this.tableFilters.update(v => ({ ...v, pageNumber: page }));
+    this.loadTeamPerformance();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.tableFilters.update(v => ({ ...v, pageSize: size, pageNumber: 1 }));
+    this.loadTeamPerformance();
+  }
+
+  onSearchChange(value: string): void {
+    this.searchSubject.next(value);
+  }
+
   applyFilters(): void {
-    this.filters.update((value) => ({
+    const nextStatus = this.searchStatus() || undefined;
+    if (this.dashboardFilters().status === nextStatus) return;
+
+    this.dashboardFilters.update((value) => ({
       ...value,
-      status: this.searchStatus() || undefined,
-      pageNumber: 1,
+      status: nextStatus,
     }));
     this.filterChanges$.next();
   }
@@ -324,14 +396,29 @@ export class Dashboard implements OnInit {
   onDateChange(): void {
     const from = this.fromDate();
     const to = this.toDate();
+    const current = this.dashboardFilters();
 
-    this.filters.update(v => ({
+    const fromIso = from ? from.toISOString() : undefined;
+    const toIso = to ? to.toISOString() : undefined;
+
+    if (current.fromDateUtc === fromIso && current.toDateUtc === toIso) return;
+
+    this.dashboardFilters.update(v => ({
       ...v,
-      fromDateUtc: from ? from.toISOString() : undefined,
-      toDateUtc: to ? to.toISOString() : undefined,
-      pageNumber: 1
     }));
     this.filterChanges$.next();
+  }
+
+  onFromDateChange(value: string | null): void {
+    const nextDate = value ? new Date(value) : null;
+    this.fromDate.set(nextDate);
+    this.onDateChange();
+  }
+
+  onToDateChange(value: string | null): void {
+    const nextDate = value ? new Date(value) : null;
+    this.toDate.set(nextDate);
+    this.onDateChange();
   }
 
 }
