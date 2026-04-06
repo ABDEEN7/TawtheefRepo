@@ -9,7 +9,6 @@ public static class RolePermissionCatalog
         new Dictionary<Guid, IReadOnlyCollection<PermissionKey>>
         {
             [SystemRoleIds.SystemAdmin] = [
-                Permissions.Dashboard.View.Key,
                 Permissions.Users.View.Key,
                 Permissions.Users.Manage.Key,
                 Permissions.Roles.View.Key,
@@ -46,9 +45,6 @@ public static class RolePermissionCatalog
                 Permissions.JobsInvitations.View.Key,
                 Permissions.JobsInvitations.ManageAttachment.Key,
 
-                Permissions.Nominations.View.Key,
-                Permissions.Nominations.Manage.Key,
-
                 Permissions.Kawader.Manage.Key,
 
                 Permissions.OfficeUsers.View.Key,
@@ -72,7 +68,6 @@ public static class RolePermissionCatalog
                 Permissions.Jobs.Approve.Key,
                 Permissions.JobsPoints.View.Key,
                 Permissions.JobsPoints.Approve.Key,
-                Permissions.Nominations.View.Key,
                 Permissions.CandidateUsers.View.Key,
             ],
             [SystemRoleIds.Employee] = [
@@ -116,9 +111,6 @@ public static class RolePermissionCatalog
 
                 Permissions.JobsInvitations.View.Key,
                 Permissions.JobsInvitations.ManageAttachment.Key,
-
-                Permissions.Nominations.View.Key,
-                Permissions.Nominations.Manage.Key,
 
                 Permissions.Kawader.Manage.Key,
 

@@ -1,7 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Common;
 using Tawtheef.Infrastructure.Data;
@@ -11,7 +12,9 @@ namespace Tawtheef.Infrastructure.Repositories.Base;
 public class UnitOfWork(TawtheefDbContext dbContext) : IUnitOfWork, IAsyncDisposable
 {
     private readonly TawtheefDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    public ITawtheefDbContext Context => _dbContext;
     private Hashtable? _repositories;
+
     private IDbContextTransaction? _currentTransaction;
     public bool HasActiveTransaction => _currentTransaction is not null;
 

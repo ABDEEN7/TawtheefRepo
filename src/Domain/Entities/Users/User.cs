@@ -21,10 +21,9 @@ namespace Tawtheef.Domain.Entities.Users;
 [Index(nameof(DeletedById))]
 public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalizedFullName
 {
+    [Required, StringLength(100)] public string FullNameEn { get; set; } = null!;
     [Required, StringLength(100)]
-    public required string FullNameEn { get; set; }
-    [Required, StringLength(100)]
-    public required string FullNameAr { get; set; }
+    public string FullNameAr { get; set; } = null!;
     public bool IsBlocked { get; set; }
     public bool AgreedToTerms { get; set; }
     public DateTime? LastLoginDate { get; set; }

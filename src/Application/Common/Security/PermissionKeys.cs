@@ -115,12 +115,6 @@ public static class PermissionKeys
         public const string ManageAttachment = "jobs.invitations.manage-attachment";
     }
 
-    public static class Nominations
-    {
-        public const string View = "nominations.view";
-        public const string Manage = "nominations.manage";
-    }
-
     public static class Kawader
     {
         public const string Manage = "kawader.manage";

@@ -1,3 +1,22 @@
+/* ═══════════ DASHBOARD VARIABLES ═══════════ */
+$maroon-primary: #8a1538;
+$maroon-light: rgba(138, 21, 56, 0.08);
+$maroon-lighter: rgba(138, 21, 56, 0.04);
+
+$color-primary: #3b5998;
+$color-success: #16a34a;
+$color-amber: #d97706;
+$color-teal: #0d9488;
+$color-rose: #e11d48;
+$color-danger: #dc2626;
+$color-minister: $maroon-primary;
+
+$border-color: #e8edf4;
+$text-heading: #1e2f4f;
+$text-muted: #6a7890;
+$card-radius: 16px;
+
+/* ═══════════ BASE ═══════════ */
 .ops-dashboard {
   background: #f5f7fb;
   min-height: calc(100vh - 90px);
@@ -11,9 +30,9 @@
 
 .dashboard-header {
   background: #fff;
-  border-radius: 16px;
+  border-radius: $card-radius;
   padding: 1rem 1.25rem;
-  border: 1px solid #e8edf4;
+  border: 1px solid $border-color;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,113 +46,493 @@
   }
 }
 
+.dashboard-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba($border-color, 0.6);
+
+  .dash-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1a2b4b;
+    margin: 0;
+  }
+
+  .dash-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  .filter-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $text-muted;
+    letter-spacing: 0.03em;
+  }
+}
+
+.date-range-group {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 0.25rem 0.6rem;
+  
+  .date-sep {
+    color: $text-muted;
+    font-weight: 300;
+  }
+
+  ::v-deep .p-datepicker {
+    border: none;
+    background: transparent;
+    
+    input {
+      background: transparent;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      width: 100px;
+      padding: 0.2rem;
+      color: $text-heading;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.status-select {
+  min-width: 160px;
+  border-radius: 10px;
+  border-color: $border-color;
+  font-size: 0.85rem;
+  font-weight: 600;
+  height: 42px;
+  background-color: #f8fafc;
+}
+
 .filters-row {
   display: flex;
   gap: 0.75rem;
-/*  min-width: 360px;
-*/}
-
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
 }
 
-.kpi-card {
+/* ═══════════ KPI SECTION ═══════════ */
+.kpi-section {
+  margin-bottom: 1.25rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+  }
+
+  &__accent {
+    width: 4px;
+    height: 22px;
+    border-radius: 4px;
+    background: $maroon-primary;
+    flex-shrink: 0;
+
+    &--jobs {
+      background: $color-primary;
+    }
+
+    &--minister {
+      background: $color-minister;
+    }
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-heading;
+    margin: 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.75rem;
+
+    &--compact {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      max-width: 480px;
+    }
+  }
+}
+
+/* ═══════════ KPI TILE ═══════════ */
+.kpi-tile {
   background: #fff;
-  border: 1px solid #e8edf4;
-  border-radius: 14px;
-  padding: 0.9rem;
-  transition: transform 0.2s ease;
+  border: 1px solid $border-color;
+  border-radius: $card-radius;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.45rem;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+  position: relative;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(30, 47, 79, 0.08);
   }
 
-  span {
-    color: #6a7890;
-    font-size: 0.8rem;
+  &__icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    position: relative;
+
+    &--primary {
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+    }
+
+    &--success {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+
+    &--amber {
+      background: rgba($color-amber, 0.1);
+      color: $color-amber;
+    }
+
+    &--teal {
+      background: rgba($color-teal, 0.1);
+      color: $color-teal;
+    }
+
+    &--rose {
+      background: rgba($color-rose, 0.1);
+      color: $color-rose;
+    }
+
+    &--danger {
+      background: rgba($color-danger, 0.12);
+      color: $color-danger;
+    }
+
+    &--minister {
+      background: $maroon-light;
+      color: $maroon-primary;
+    }
   }
 
-  h3 {
-    margin: 0.35rem 0 0;
-    font-size: 1.45rem;
-    color: #1e2f4f;
+  &__badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    font-size: 0.6rem;
     font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
+
+    &--success {
+      background: rgba($color-success, 0.15);
+      color: $color-success;
+    }
   }
 
-  &--danger h3 {
-    color: #c53131;
+  &__value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: $text-heading;
+    line-height: 1.1;
+  }
+
+  &__unit {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-inline-start: 2px;
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    color: $text-muted;
+    line-height: 1.35;
+    font-weight: 500;
+  }
+
+  /* ── Minister theme ── */
+  &--minister {
+    border-color: rgba($maroon-primary, 0.18);
+    background: linear-gradient(135deg, #fff 0%, rgba($maroon-primary, 0.03) 100%);
+
+    .kpi-tile__value {
+      color: $maroon-primary;
+    }
   }
 }
 
-.content-grid {
+/* ═══════════ DASH GRID LAYOUT ═══════════ */
+.dash-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
   gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  &--2col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &--8-4 {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  &--4-8 {
+    grid-template-columns: 1fr 2fr;
+  }
+
+  &--3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.panel {
-  grid-column: span 4;
+/* ═══════════ DASH PANEL (Chart / Section Card) ═══════════ */
+.dash-panel {
   background: #fff;
-  border-radius: 14px;
-  border: 1px solid #e8edf4;
-  padding: 1rem;
+  border: 1px solid $border-color;
+  border-radius: $card-radius;
+  padding: 0.85rem 1rem;
+  transition: box-shadow 0.2s ease;
+  overflow: hidden;
+  min-height: 0;
 
-  h2 {
-    font-size: 1rem;
-    color: #1f2f4e;
-    margin-bottom: 0.75rem;
-    font-weight: 700;
+  &:hover {
+    box-shadow: 0 4px 16px rgba(30, 47, 79, 0.06);
   }
 
-  &--wide {
-    grid-column: span 8;
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+  }
+
+  &__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+
+    &--primary {
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+    }
+
+    &--success {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+
+    &--amber {
+      background: rgba($color-amber, 0.1);
+      color: $color-amber;
+    }
+
+    &--teal {
+      background: rgba($color-teal, 0.1);
+      color: $color-teal;
+    }
+
+    &--rose {
+      background: rgba($color-rose, 0.1);
+      color: $color-rose;
+    }
+
+    &--danger {
+      background: rgba($color-danger, 0.12);
+      color: $color-danger;
+    }
+
+    &--minister {
+      background: $maroon-light;
+      color: $maroon-primary;
+    }
+  }
+
+  &__title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-heading;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
+/* ═══════════ CHARTS ═══════════ */
 .chart-host {
   height: 260px;
+  position: relative;
+  overflow: hidden;
+}
 
-  &--sm {
-    height: 220px;
+/* ═══════════ DASH TABLE ═══════════ */
+.dash-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid $border-color;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  thead {
+    background: #f8fafd;
+
+    th {
+      padding: 0.55rem 0.7rem;
+      font-weight: 600;
+      color: $text-muted;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid $border-color;
+      white-space: nowrap;
+    }
   }
+
+  tbody {
+    tr {
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: rgba($color-primary, 0.025);
+      }
+
+      &:not(:last-child) td {
+        border-bottom: 1px solid #f0f3f8;
+      }
+    }
+
+    td {
+      padding: 0.55rem 0.7rem;
+      color: $text-heading;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* ═══════════ DASH BADGES ═══════════ */
+.dash-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  &--success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &--danger {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+
+  &--teal {
+    background: rgba($color-teal, 0.1);
+    color: $color-teal;
+  }
+
+  &--amber {
+    background: rgba($color-amber, 0.1);
+    color: $color-amber;
+  }
+
+  &--primary {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+}
+
+/* ═══════════ INSIGHTS ═══════════ */
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .insight-row {
   display: flex;
   gap: 0.55rem;
   align-items: flex-start;
-  border: 1px solid #e8edf4;
-  border-left: 4px solid #8a1538;
+  border: 1px solid $border-color;
+  border-inline-start: 4px solid $maroon-primary;
   border-radius: 10px;
-  padding: 0.6rem;
-  margin-bottom: 0.55rem;
+  padding: 0.55rem 0.65rem;
   color: #213454;
+  font-size: 0.82rem;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba($maroon-primary, 0.02);
+  }
 
   i {
-    color: #8a1538;
-    font-size: 1.4rem;
+    color: $maroon-primary;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
 
   &.warning {
-    border-left-color: #df6d4e;
+    border-inline-start-color: #df6d4e;
 
     i {
       color: #df6d4e;
-
     }
   }
 
   &.success {
-    border-left-color: #2b9d76;
+    border-inline-start-color: $color-success;
 
     i {
-      color: #2b9d76;
+      color: $color-success;
     }
   }
 }
 
+/* ═══════════ SKELETON ═══════════ */
 .skeleton-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -142,7 +541,7 @@
 
 .skeleton-card {
   height: 130px;
-  border-radius: 14px;
+  border-radius: $card-radius;
   background: linear-gradient(90deg, #eef2f8 25%, #f8faff 50%, #eef2f8 75%);
   background-size: 240% 100%;
   animation: shimmer 1.4s infinite linear;
@@ -158,10 +557,20 @@
   }
 }
 
+/* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 1199px) {
+
   .panel,
   .panel--wide {
     grid-column: span 12;
+  }
+
+  .dash-grid {
+
+    &--8-4,
+    &--4-8 {
+      grid-template-columns: 1fr;
+    }
   }
 
   .filters-row {
@@ -172,5 +581,21 @@
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .kpi-section__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-grid--2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-section__grid {
+    grid-template-columns: 1fr;
   }
 }

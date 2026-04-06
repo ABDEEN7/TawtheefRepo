@@ -415,27 +415,6 @@ public static class Permissions
                 34);
     }
 
-    public static class Nominations
-    {
-        public static readonly PermissionDefinition View =
-            Def(
-                PermissionKeys.Nominations.View,
-                nameof(PermissionKeys.Nominations),
-                PermissionAction.View,
-                "Nominations - View",
-                "الترشيحات - عرض",
-                40);
-
-        public static readonly PermissionDefinition Manage =
-            Def(
-                PermissionKeys.Nominations.Manage,
-                nameof(PermissionKeys.Nominations),
-                PermissionAction.Manage,
-                "Nominations - Manage",
-                "الترشيحات - إدارة",
-                41);
-    }
-
     public static class Kawader
     {
         public static readonly PermissionDefinition Manage =

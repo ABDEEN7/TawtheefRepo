@@ -1,4 +1,4 @@
-﻿import {inject} from '@angular/core';
+import {inject} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivateFn, Router} from '@angular/router';
 import {AuthStateService} from '../../auth/auth-state.service';
 import {routes} from '../../../routes/routes';
@@ -17,9 +17,8 @@ export const permissionGuard: CanActivateFn = (route: ActivatedRouteSnapshot, st
   const requiredPerms = collectPermissions(route);
   if (requiredPerms.length === 0) return true;
 
-  // You said you have: authService.hasPermission(requiredPerms)
-  // Clarify semantics: I assume "ANY of requiredPerms"
-  const ok = authService.hasPermission(requiredPerms);
+  // Require ALL permissions collected from the route and its parents
+  const ok = authService.hasPermission(requiredPerms, true);
   return ok ? true : router.createUrlTree([routes.accessDenied]);
 };
 
