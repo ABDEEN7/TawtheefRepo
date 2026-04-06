@@ -348,4 +348,14 @@ public class ErrorsCodes
     public const string SkillNotFound = "SKILL_NOT_FOUND";
     public const string SkillAlreadyUsed = "SKILL_ALREADY_USED";
     #endregion
+
+    #region Minister Office
+    public const string InvalidQidFormat = "INVALID_QID_FORMAT";
+    public const string InvalidPhoneFormat = "INVALID_PHONE_FORMAT";
+    public const string MoiValidationFailed = "MOI_FAILED_REQUEST";
+    public const string KawaderRegistrationRequired = "KAWADER_REGISTRATION_REQUIRED";
+    public const string MissingRequiredFields = "MISSING_REQUIRED_FIELDS";
+    public const string MinisterOfficeCandidateNotFound = "MINISTER_OFFICE_CANDIDATE_NOT_FOUND";
+    public const string QidExpiryDateRequired = "QID_EXPIRY_DATE_REQUIRED";
+    #endregion
 }

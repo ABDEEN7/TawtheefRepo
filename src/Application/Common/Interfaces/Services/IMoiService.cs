@@ -1,7 +1,7 @@
 using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 
-namespace Application.Recruitment.Common.Interfaces.Services;
+namespace Tawtheef.Application.Common.Interfaces.Services;
 
 public interface IMoiService
 {

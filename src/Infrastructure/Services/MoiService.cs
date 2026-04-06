@@ -6,6 +6,7 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Application.Features.Authenticator.DTOs;
 using Tawtheef.Domain.Constants;

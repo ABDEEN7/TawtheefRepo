@@ -141,4 +141,10 @@ public static class PermissionKeys
     {
         public const string Manage = "organization-structures.manage";
     }
+
+    public static class MinisterOffice
+    {
+        public const string View = "minister-office.view";
+        public const string Manage = "minister-office.manage";
+    }
 }

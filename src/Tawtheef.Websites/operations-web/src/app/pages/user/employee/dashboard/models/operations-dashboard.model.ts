@@ -48,6 +48,7 @@ export interface DashboardKpis {
   totalAssignedTasks: number;
   remainingTasks: number;
   overdueTasks: number;
+  followedMinisterOfficeCandidates: number;
 }
 
 export interface TrendSeries {

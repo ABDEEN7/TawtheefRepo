@@ -65,6 +65,9 @@ export const portalRoutes = {
   get kawader() {
     return this.portal + '/kawader';
   },
+  get ministerOfficeManagement() {
+    return this.portal + '/minister-office-management';
+  },
   get candidateUsersManagement() {
     return this.portal + '/candidate-users-management';
   },

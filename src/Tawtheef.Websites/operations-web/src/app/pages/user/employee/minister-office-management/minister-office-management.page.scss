@@ -1,0 +1,577 @@
+/* 
+ * DESIGN DIRECTION: Refined Government Luxury
+ * Theme: Qatar National Palette (Maroon/Burgundy) with Premium Enterprise Accents
+ * Features: Glass-morphism, Arabesque Patterns, Fluid Spacing, and Motion-Rich UI
+ */
+
+.follow-up-inactive {
+    background: var(--surface-100) !important;
+    color: var(--text-color-secondary) !important;
+    opacity: 0.8;
+    filter: grayscale(0.5);
+
+    .fw-bold,
+    .fw-medium {
+        color: var(--text-color-secondary) !important;
+    }
+}
+
+.custom-table {
+    .p-tag {
+        min-width: 140px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+}
+
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+
+    &[data-status="Pending"] {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    &[data-status="Accepted"] {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    &[data-status="Rejected"] {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    &[data-status="Closed"] {
+        background: #f3f4f6;
+        color: #374151;
+    }
+}
+
+.audit-timeline {
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.fs-12 {
+    font-size: 0.75rem;
+}
+
+.fs-32 {
+    font-size: 2rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// PREMIUM DIALOG STYLES
+::ng-deep .premium-dialog {
+    .p-dialog-header {
+        background-color: var(--primary-50);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid var(--primary-100);
+
+        .p-dialog-title {
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+            color: var(--primary-900);
+            font-weight: 700;
+        }
+    }
+
+    .p-dialog-content {
+        padding: 2rem !important;
+    }
+
+    .modern-input {
+        border: 2px solid var(--surface-200);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+
+        &:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 0.25rem var(--primary-50);
+            transform: translateY(-2px);
+        }
+    }
+
+    .p-float-label {
+        label {
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: var(--text-color-secondary);
+        }
+
+        input:focus+label,
+        input:not(:placeholder-shown)+label {
+            color: var(--primary-700);
+            font-weight: 700;
+            background: white;
+            padding: 0 0.5rem;
+        }
+    }
+
+    .p-inputgroup {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid var(--surface-200);
+        transition: border-color 0.2s;
+
+        &:focus-within {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 0.25rem var(--primary-50);
+        }
+
+        .p-inputgroup-addon {
+            background-color: var(--primary-50);
+            border: none;
+            border-right: 1px solid var(--surface-200);
+            color: var(--primary-700);
+            font-family: inherit;
+        }
+
+        input {
+            border: none;
+            padding: 0.75rem 1rem;
+
+            &:focus {
+                box-shadow: none;
+                transform: none;
+            }
+        }
+    }
+
+    .modern-picker {
+        .p-inputtext {
+            border: 2px solid var(--surface-200);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+
+            &:focus {
+                border-color: var(--primary-500);
+            }
+        }
+    }
+
+    .ripple {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.2s;
+
+        &:active {
+            transform: scale(0.95);
+            filter: brightness(1.1);
+        }
+    }
+}
+
+// PILL STYLE DIALOG OVERRIDES
+::ng-deep {
+  .modern-search {
+    height: 42px !important;
+    border-radius: 50px !important;
+    padding-left: 2.75rem !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff !important;
+    color: #1e293b !important;
+
+    &:focus {
+      border-color: #8a1538 !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 4px rgba(138, 21, 56, 0.1) !important;
+    }
+
+    &::placeholder {
+      color: #94a3b8 !important;
+      font-weight: 400;
+    }
+  }
+
+  .filter-dropdown {
+    height: 42px !important;
+    border-radius: 50px !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 0.75rem !important;
+    min-width: 140px;
+    background: #ffffff !important;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #8a1538 !important;
+    }
+
+    .p-select-label {
+      line-height: 24px !important; // 42 - padding
+      padding: 0 1.25rem !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .p-select-dropdown {
+      width: 2.5rem !important;
+      color: #8a1538 !important;
+    }
+
+    &.p-focus {
+      border-color: #8a1538 !important;
+      box-shadow: 0 0 0 4px rgba(138, 21, 56, 0.1) !important;
+    }
+  }
+
+  .p-iconfield .p-inputicon {
+     margin-top: -0.5rem;
+     color: #94a3b8;
+  }
+}
+
+  .action-btn {
+    height: 42px !important;
+    padding: 0 1.25rem !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+
+    &.p-button-outlined {
+        border-width: 1px !important;
+    }
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+  }
+
+  .toggle-container {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #8a1538;
+        background: #fffafa;
+    }
+
+    label {
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        color: #8a1538 !important;
+        margin-bottom: 0;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    ::ng-deep .p-toggleswitch {
+        width: 32px;
+        height: 18px;
+
+        .p-toggleswitch-slider {
+            background: #e2e8f0;
+
+            &:before {
+                width: 14px;
+                height: 14px;
+                left: 2px;
+                margin-top: -7px;
+            }
+        }
+
+        &.p-toggleswitch-checked .p-toggleswitch-slider {
+            background: #8a1538;
+
+            &:before {
+                transform: translateX(14px);
+            }
+        }
+    }
+  }
+
+  .gender-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+
+    &.male {
+      background-color: #e0f2ff;
+      color: #0066ff;
+      border: 1px solid rgba(0, 102, 255, 0.2);
+    }
+    &.female {
+      background-color: #ffe0f0;
+      color: #ff007f;
+      border: 1px solid rgba(255, 0, 127, 0.2);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .advanced-filters-panel {
+     .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+
+        label {
+            font-size: 0.7rem !important;
+            font-weight: 800 !important;
+            color: #64748b !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 0.75rem;
+        }
+     }
+
+     .bg-premium-light {
+        background-color: #fcfdfe !important;
+        border: 1px solid #eef2f6 !important;
+        background-image: radial-gradient(at 0% 0%, rgba(138, 21, 56, 0.02) 0, transparent 50%),
+                          radial-gradient(at 50% 0%, rgba(0, 102, 255, 0.01) 0, transparent 50%);
+     }
+  }
+
+::ng-deep .pill-dialog {
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    border: none !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1) !important;
+
+    .p-dialog-header {
+        background: white !important;
+        border: none !important;
+        padding: 2.5rem 2.5rem 1rem !important;
+
+        .p-dialog-title {
+            color: #4a4a4a;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .p-dialog-header-icons .p-dialog-header-icon {
+            background: #f5f5f5;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+
+            &:hover {
+                background: #eee;
+            }
+        }
+    }
+
+    .p-dialog-content {
+        padding: 1rem 2.5rem 2.5rem !important;
+        background: white !important;
+    }
+
+    .form-label-pill {
+        font-weight: 700;
+        color: #555;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.8rem;
+    }
+
+    .pill-container {
+        position: relative;
+        background: #f1f1f1;
+        border-radius: 50px;
+        padding: 0.4rem 1.75rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+
+        &:focus-within {
+            background: #fff;
+            border-color: #8a1538;
+            box-shadow: 0 8px 20px rgba(138, 21, 56, 0.08);
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            flex-grow: 1;
+            padding: 0.6rem 0.5rem;
+            color: #333;
+            font-weight: 700;
+            font-size: 0.75rem;
+            outline: none;
+            box-shadow: none !important;
+
+            &::placeholder {
+                color: #bbb;
+                font-weight: 500;
+            }
+        }
+
+        i {
+            color: #8a1538;
+            font-size: 0.8rem;
+            margin: 0 0.5rem;
+        }
+    }
+
+    .phone-group-pill {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+
+        .phone-input-pill {
+            flex: 2;
+        }
+
+        .prefix-pill-box {
+            flex: 1;
+            background: #f1f1f1;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: #4a4a4a;
+            letter-spacing: 0.5px;
+        }
+    }
+
+    .datepicker-pill {
+        .p-datepicker {
+            width: 100%;
+            background: transparent;
+            border: none;
+
+            input {
+                background: transparent;
+                border: none;
+                width: 100%;
+                font-weight: 700;
+                font-size: 0.75rem;
+                padding: 0.6rem 0;
+            }
+        }
+    }
+
+    .info-box-pill {
+        border-radius: 40px;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+
+        i {
+            color: #8a1538;
+            font-size: 0.8rem;
+            background: white;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        p {
+            margin: 0;
+            color: #666;
+            font-size: 0.65rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+    }
+
+    .footer-pill {
+        margin-top: 2rem;
+
+        .p-button {
+            border-radius: 50px;
+            padding: 0.65rem 2.5rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .btn-submit {
+            background: #8a1538 !important;
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(138, 21, 56, 0.2) !important;
+
+            &:hover {
+                transform: translateY(-2px);
+                filter: brightness(1.1);
+            }
+        }
+    }
+}
+
+// RTL Adjustments for Pills
+[dir="rtl"] {
+    .pill-dialog {
+        .phone-group-pill {
+            flex-direction: row-reverse; // So +974 stays on the right visually
+        }
+    }
+}
+
+.letter-spacing-1 {
+    letter-spacing: 0.05rem;
+}
+
+// RTL Support for Input Group
+[dir="rtl"] {
+    .premium-dialog {
+        .p-inputgroup {
+            .p-inputgroup-addon {
+                border-left: 1px solid var(--surface-200);
+                border-right: none;
+            }
+        }
+
+        .p-float-label label {
+            margin-left: 0;
+            margin-right: 0.5rem;
+        }
+    }
+}

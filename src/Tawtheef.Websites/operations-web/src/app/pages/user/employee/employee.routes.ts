@@ -85,6 +85,12 @@ export const employeeRoutes: Routes = [
     loadComponent: () => import('./candidate-users-management/candidate-users-management.page').then(m => m.CandidateUsersManagementPage)
   },
   {
+    path: 'minister-office-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.MinisterOffice.View] },
+    loadComponent: () => import('./minister-office-management/minister-office-management.page').then(m => m.MinisterOfficeManagementPage)
+  },
+  {
     path: 'candidate-users-management/:profileId/view',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.CandidateUsers.View] },
