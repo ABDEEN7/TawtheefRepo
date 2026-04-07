@@ -50,8 +50,8 @@
               <div class="user-info-cell">
                 <span class="name-en">{{ user.fullNameEn }}</span>
                 <span class="name-ar">{{ user.fullNameAr }}</span>
-                <div class="email-info mt-1">
-                  <i class="fa fa-envelope-o small opacity-50"></i>
+                <div class="email-info mt-1" style="direction: ltr;">
+                  <i class="fa fa-envelope small opacity-50"></i>
                   <span>{{ user.email }}</span>
                 </div>
               </div>
@@ -97,15 +97,16 @@
             <td>
               <div class="action-buttons">
                 <button type="button" class="btn btn-action btn-outline-primary"
-                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate"
-                  (click)="viewProfile(user)" *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate" (click)="viewProfile(user)"
+                  *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
                   <i class="hgi hgi-stroke hgi-view fs-18"></i>
                 </button>
 
                 <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
                   <button type="button" class="btn btn-action"
                     [title]="(user.isBlocked ? 'CANDIDATE_USERS.UNBLOCK_USER' : 'CANDIDATE_USERS.BLOCK_USER') | translate"
-                    [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
+                    [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
+                    (click)="toggleBlock(user)">
                     <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
                   </button>
                 </ng-container>
