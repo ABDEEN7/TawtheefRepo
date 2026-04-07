@@ -155,18 +155,18 @@
             </td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-2">
-                <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
-                  [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                  [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
-                  (click)="toggleFollowUp(item)"
-                  [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
-                </button>
                 <button pButton type="button" icon="pi pi-list" class="btn-table-action btn-list"
                   (click)="viewInvitations(item)" *ngIf="item.status === CandidateStatus.InvitationsReceived"
                   [pTooltip]="'ministerOffice.tooltips.viewInvitations' | translate">
                 </button>
                 <button pButton type="button" icon="pi pi-history" class="btn-table-action btn-history"
                   (click)="viewAuditLog(item)" [pTooltip]="'ministerOffice.tooltips.viewAudit' | translate">
+                </button>
+                <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
+                  [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'hgi hgi-stroke hgi-user-minus-02'"
+                  [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
+                  (click)="toggleFollowUp(item)"
+                  [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
                 </button>
               </div>
             </td>

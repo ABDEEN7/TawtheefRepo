@@ -305,10 +305,10 @@
                     <div class="emp-profile-cell">
                       <div class="emp-profile-cell__content">
                         <div class="emp-profile-cell__name">{{ row.name }}</div>
-                        <div class="emp-profile-cell__meta">
-                          <i class="hgi hgi-stroke hgi-user-id-card"></i> {{ row.employeeNumber || '-' }}
+                        <div class="emp-profile-cell__meta" *ngIf="row.employeeNumber">
+                          {{ row.employeeNumber || '-' }}
                         </div>
-                        <div class="emp-profile-cell__meta">
+                        <div class="emp-profile-cell__meta" *ngIf="row.jobDescription">
                           {{ row.jobDescription || '-' }}
                         </div>
                       </div>
