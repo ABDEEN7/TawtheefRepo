@@ -65,10 +65,10 @@
               [placeholder]="'ministerOffice.list.gender' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>
@@ -79,10 +79,10 @@
               [placeholder]="'ministerOffice.list.targetEntity' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>
@@ -93,10 +93,10 @@
               [placeholder]="'ministerOffice.list.candidateType' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>

@@ -96,6 +96,7 @@ public sealed class TeamPerformanceRowDto
     public required string Name { get; init; }
     public string? EmployeeNumber { get; init; }
     public string? DepartmentName { get; init; }
+    public string? JobDescription { get; init; }
     public int AssignedTasks { get; init; }
     public int ActiveTasks { get; init; }
     public int CompletedTasks { get; init; }

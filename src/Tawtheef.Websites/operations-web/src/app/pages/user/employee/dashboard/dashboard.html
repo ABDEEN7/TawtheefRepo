@@ -155,7 +155,7 @@
       <div class="dash-grid dash-grid--2col">
         <div class="dash-panel">
           <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--primary"></i>
+            <i class="hgi hgi-stroke hgi-pie-chart dash-panel__icon dash-panel__icon--primary"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.jobStatusBreakdown' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--doughnut">
@@ -165,7 +165,7 @@
         </div>
         <div class="dash-panel">
           <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--amber"></i>
+            <i class="hgi hgi-stroke hgi-chart-bar-line dash-panel__icon dash-panel__icon--amber"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--compact">
@@ -206,7 +206,7 @@
         <!-- Profile Status Breakdown -->
         <div class="dash-panel">
           <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-pie-chart-02 dash-panel__icon dash-panel__icon--rose"></i>
+            <i class="hgi hgi-stroke hgi-chart-ring dash-panel__icon dash-panel__icon--rose"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--doughnut">
@@ -217,7 +217,7 @@
         <!-- Task Stacked Status -->
         <div class="dash-panel">
           <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-bar-chart-03 dash-panel__icon dash-panel__icon--danger"></i>
+            <i class="hgi hgi-stroke hgi-chart-bar-line dash-panel__icon dash-panel__icon--danger"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.taskStacked' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--compact">
@@ -265,7 +265,6 @@
 
             <div class="table-search-bar d-flex align-items-center gap-3">
               <div class="search-input-wrap">
-                <i class="hgi hgi-stroke hgi-search-01 search-icon"></i>
                 <input type="text" pInputText [placeholder]="'dashboard.search.placeholder' | translate"
                   [ngModel]="tableFilters().search" (ngModelChange)="onSearchChange($event)">
               </div>
@@ -284,26 +283,19 @@
                   <th pSortableColumn="Name" style="min-width: 200px">{{ 'dashboard.table.employee' | translate }}
                     <p-sortIcon field="Name"></p-sortIcon>
                   </th>
-                  <th pSortableColumn="DepartmentName" style="min-width: 150px">{{ 'dashboard.table.department' |
-                    translate }} <p-sortIcon field="DepartmentName"></p-sortIcon></th>
                   <th pSortableColumn="AssignedTasks" class="text-center" style="width: 100px">{{
                     'dashboard.table.assignedTasks' | translate }} <p-sortIcon field="AssignedTasks"></p-sortIcon></th>
                   <th pSortableColumn="CompletedTasks" class="text-center" style="width: 100px">{{
                     'dashboard.table.completedTasks' | translate }} <p-sortIcon field="CompletedTasks"></p-sortIcon>
                   </th>
                   <th pSortableColumn="RemainingTasks" class="text-center" style="width: 100px">{{
-                    'dashboard.table.remainingTasks' | translate }} <p-sortIcon field="RemainingTasks"></p-sortIcon></th>
+                    'dashboard.table.remainingTasks' | translate }} <p-sortIcon field="RemainingTasks"></p-sortIcon>
+                  </th>
                   <th pSortableColumn="OverdueTasks" class="text-center" style="width: 100px">{{
                     'dashboard.table.overdueTasks' | translate }} <p-sortIcon field="OverdueTasks"></p-sortIcon></th>
                   <th pSortableColumn="ApprovalRate" style="width: 140px">{{ 'dashboard.table.approval' | translate }}
                     <p-sortIcon field="ApprovalRate"></p-sortIcon>
                   </th>
-                  <th pSortableColumn="AverageResponseHours" class="text-center" style="width: 120px">{{
-                    'dashboard.table.responseTime' | translate }} <p-sortIcon field="AverageResponseHours"></p-sortIcon>
-                  </th>
-                  <th pSortableColumn="ProductivityScore" class="text-center" style="width: 120px">{{
-                    'dashboard.table.productivityScore' | translate }} <p-sortIcon
-                      field="ProductivityScore"></p-sortIcon></th>
                 </tr>
 
               </ng-template>
@@ -316,10 +308,12 @@
                         <div class="emp-profile-cell__meta">
                           <i class="hgi hgi-stroke hgi-user-id-card"></i> {{ row.employeeNumber || '-' }}
                         </div>
+                        <div class="emp-profile-cell__meta">
+                          {{ row.jobDescription || '-' }}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td>{{ row.departmentName }}</td>
                   <td class="text-center"><span class="badge badge-soft-primary">{{ row.assignedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-success">{{ row.completedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-info">{{ row.remainingTasks }}</span></td>
@@ -338,13 +332,6 @@
                           [class.bg-success]="row.approvalRate >= 70"></div>
                       </div>
                       <span class="progress-indicator__text">{{ row.approvalRate }}%</span>
-                    </div>
-                  </td>
-                  <td class="text-center text-muted font-monospace">{{ row.averageResponseHours }}h</td>
-                  <td class="text-center">
-                    <div class="productivity-indicator"
-                      [attr.data-level]="row.productivityScore > 15 ? 'high' : row.productivityScore >= 10 ? 'medium' : 'low'">
-                      {{ row.productivityScore }}
                     </div>
                   </td>
                 </tr>

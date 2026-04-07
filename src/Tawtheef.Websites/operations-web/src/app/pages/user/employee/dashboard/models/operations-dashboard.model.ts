@@ -109,6 +109,7 @@ export interface TeamPerformanceRow {
   name: string;
   employeeNumber?: string;
   departmentName?: string;
+  jobDescription?: string;
   assignedTasks: number;
   activeTasks: number;
   completedTasks: number;

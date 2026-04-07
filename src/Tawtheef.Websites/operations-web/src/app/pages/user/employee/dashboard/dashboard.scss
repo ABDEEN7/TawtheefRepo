@@ -57,7 +57,7 @@ $card-radius: 16px;
 }
 
 .dash-panel__header--colorful {
-  background: linear-gradient(135deg, $maroon-primary 0%, #510b21 100%) !important;
+  background: $maroon-primary !important;
   padding: 1.5rem 1.75rem !important;
   display: flex !important;
   justify-content: space-between;
@@ -412,7 +412,6 @@ $card-radius: 16px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.65rem;
   }
 
   &__icon {
@@ -745,7 +744,7 @@ $card-radius: 16px;
 }
 
 ::v-deep .p-datatable-modern {
-  .p-datatable-thead > tr > th {
+  .p-datatable-thead>tr>th {
     background: #7a122e !important; // Deep Maroon from screenshot area
     color: #fff !important;
     font-size: 0.72rem;
@@ -754,12 +753,15 @@ $card-radius: 16px;
     letter-spacing: 0.05em;
     padding: 1rem 1.25rem;
     border: none;
-    border-inline-end: 1px solid rgba(255,255,255,0.1);
+    border-inline-end: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s;
     vertical-align: middle;
-    
-    &:first-child { border-top-left-radius: 8px; }
-    &:last-child { 
+
+    &:first-child {
+      border-top-left-radius: 8px;
+    }
+
+    &:last-child {
       border-top-right-radius: 8px;
       border-inline-end: none;
     }
@@ -781,7 +783,7 @@ $card-radius: 16px;
     display: table-cell;
   }
 
-  .p-datatable-tbody > tr {
+  .p-datatable-tbody>tr {
     background: #fff;
     transition: all 0.1s ease;
 
@@ -789,7 +791,7 @@ $card-radius: 16px;
       background-color: #f8fafc !important;
     }
 
-    > td {
+    >td {
       padding: 0.65rem 1.25rem;
       color: #334155;
       border-bottom: 1px solid #f1f5f9;

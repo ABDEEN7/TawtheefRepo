@@ -114,5 +114,8 @@
   "dashboard.help.tableApproval": "The percentage of approved profiles over total decisions.",
   "dashboard.help.tableResponseTime": "Average time taken by the employee to respond or complete tasks.",
   "dashboard.help.tableProductivityScore": "Overall evaluation of employee productivity based on completed tasks and accuracy.",
-  "dashboard.help.tableWorkload": "Indicator of the employee's current workload balance."
+  "dashboard.help.tableWorkload": "Indicator of the employee's current workload balance.",
+  "dashboard.table.teamStatsSubtitle": "Team performance in profile approvals",
+  "dashboard.search.placeholder": "Search by name, employee ID, or department...",
+  "dashboard.table.noData": "No data available for this view."
 }

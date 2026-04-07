@@ -117,7 +117,7 @@
   "dashboard.help.tableResponseTime": "متوسط الوقت المستغرق لإنجاز المهام بالكامل.",
   "dashboard.help.tableProductivityScore": "مؤشر ذكي لتقييم أداء الموظف التراكمي.",
   "dashboard.filters.allStatuses": "جميع الحالات",
-  "dashboard.table.teamStatsSubtitle": "مراقبة الأداء اليومي، توزيع المهام، ومؤشرات الإنتاجية للفريق.",
+  "dashboard.table.teamStatsSubtitle": "أداء الفريق في الموافقة على الملفات الشخصية",
   "dashboard.search.placeholder": "البحث بالاسم أو رقم الموظف أو القسم...",
   "dashboard.help.tableWorkload": "مؤشر تحليلي لحالة توازن الأحمال على الموظف.",
   "dashboard.table.noData": "لا توجد بيانات متاحة لهذا العرض."

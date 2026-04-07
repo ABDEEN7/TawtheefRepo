@@ -1,9 +1,12 @@
 using Application.Operation.Features.Employee.Dashboard.DTOs;
 using Application.Operation.Features.Employee.Dashboard.Queries;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 using MediatR;
 using FluentResults;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -20,6 +23,8 @@ namespace Application.Operation.Features.Employee.Dashboard.Handlers.Queries;
 public sealed class GetTeamPerformanceQueryHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
+    IUserRepository userRepository,
+    IMapper mapper,
     ILocalizationService localizationService,
     ICurrentUserService currentUserService)
     : IRequestHandler<GetTeamPerformanceQuery, Result<PaginatedResult<TeamPerformanceRowDto>>>
@@ -32,17 +37,17 @@ public sealed class GetTeamPerformanceQueryHandler(
         if (string.IsNullOrEmpty(currentUserIdStr)) return Result.Fail("Unauthorized");
         var currentUserId = Guid.Parse(currentUserIdStr);
 
-        var roles = await userManager.GetRolesAsync(new User { Id = currentUserId });
-        var permissions = await GetUserPermissionsAsync(roles.ToList(), ct);
+        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
+        var employees = await projection.LoadEmployeesAsync(currentUserId, ct);
+        var employeeIds = employees.Select(x => x.EmployeeId).ToList();
 
-        var employeesQuery = userManager.Users
+        var employeeList = await userManager.Users
             .OfType<EmployeeUser>()
             .AsNoTracking()
-            .Include(x => x.EmployeeProfile);
-
-        var employeeList = await employeesQuery.ToListAsync(ct);
-        var employeeIds = employeeList.Select(x => x.Id).ToList();
-
+            .Include(x => x.EmployeeProfile)
+            .Where(x => employeeIds.Contains(x.Id))
+            .ToListAsync(ct);
+        
         // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
         var allowedCountryId = await ResolveAllowedCountryIdAsync(currentUserId, ct);
         var assignmentsQuery = uow.GetEntityRepository<ProfileAssignment>().DbSet
@@ -73,7 +78,8 @@ public sealed class GetTeamPerformanceQueryHandler(
             allRows = allRows.Where(x =>
                 (x.Name != null && x.Name.ToLower().Contains(searchTerm)) ||
                 (x.EmployeeNumber != null && x.EmployeeNumber.ToLower().Contains(searchTerm)) ||
-                (x.DepartmentName != null && x.DepartmentName.ToLower().Contains(searchTerm))
+                (x.DepartmentName != null && x.DepartmentName.ToLower().Contains(searchTerm)) ||
+                (x.JobDescription != null && x.JobDescription.ToLower().Contains(searchTerm))
             ).ToList();
         }
 
@@ -85,7 +91,6 @@ public sealed class GetTeamPerformanceQueryHandler(
             {
                 nameof(TeamPerformanceRowDto.Name) => isDesc ? allRows.OrderByDescending(x => x.Name).ToList() : allRows.OrderBy(x => x.Name).ToList(),
                 nameof(TeamPerformanceRowDto.EmployeeNumber) => isDesc ? allRows.OrderByDescending(x => x.EmployeeNumber).ToList() : allRows.OrderBy(x => x.EmployeeNumber).ToList(),
-                nameof(TeamPerformanceRowDto.DepartmentName) => isDesc ? allRows.OrderByDescending(x => x.DepartmentName).ToList() : allRows.OrderBy(x => x.DepartmentName).ToList(),
                 nameof(TeamPerformanceRowDto.AssignedTasks) => isDesc ? allRows.OrderByDescending(x => x.AssignedTasks).ToList() : allRows.OrderBy(x => x.AssignedTasks).ToList(),
                 nameof(TeamPerformanceRowDto.CompletedTasks) => isDesc ? allRows.OrderByDescending(x => x.CompletedTasks).ToList() : allRows.OrderBy(x => x.CompletedTasks).ToList(),
                 nameof(TeamPerformanceRowDto.OverdueTasks) => isDesc ? allRows.OrderByDescending(x => x.OverdueTasks).ToList() : allRows.OrderBy(x => x.OverdueTasks).ToList(),
@@ -136,11 +141,11 @@ public sealed class GetTeamPerformanceQueryHandler(
             var completed = assign?.Completed ?? 0;
             var active = assign?.Active ?? 0;
             var overdue = assign?.Overdue ?? 0;
-            var avgHandling = assign?.AvgHandlingHours ?? 0;
+            //var avgHandling = assign?.AvgHandlingHours ?? 0;
 
             var reviewed = review?.Reviewed ?? 0;
             var approved = review?.Approved ?? 0;
-            var avgResponse = review?.AvgResponseHours ?? 0;
+            //var avgResponse = review?.AvgResponseHours ?? 0;
 
             var approvalRate = reviewed == 0 ? 0 : Math.Round(approved * 100m / reviewed, 2);
             var rejectionRate = reviewed == 0 ? 0 : Math.Round((reviewed - approved) * 100m / reviewed, 2);
@@ -149,7 +154,7 @@ public sealed class GetTeamPerformanceQueryHandler(
 
             var baseScore = (completed * 2) + (approved * 1);
             var penalty = (overdue * 3);
-            var productivityScore = Math.Max(0, baseScore - penalty);
+            //var productivityScore = Math.Max(0, baseScore - penalty);
 
             return new TeamPerformanceRowDto
             {
@@ -157,6 +162,7 @@ public sealed class GetTeamPerformanceQueryHandler(
                 Name = localizationService.GetLocalizedFullName(employee),
                 EmployeeNumber = employee.EmployeeProfile?.EmployeeNumber,
                 DepartmentName = employee.EmployeeProfile?.Department,
+                JobDescription = employee.EmployeeProfile?.JobTitle,
 
                 AssignedTasks = assigned,
                 ActiveTasks = active,
@@ -167,12 +173,12 @@ public sealed class GetTeamPerformanceQueryHandler(
                 ProfilesReviewed = reviewed,
                 ApprovalRate = approvalRate,
                 RejectionRate = rejectionRate,
-                AverageHandlingHours = Math.Round(avgHandling, 2),
-                AverageResponseHours = Math.Round(avgResponse, 2),
+                // AverageHandlingHours = Math.Round(avgHandling, 2),
+                // AverageResponseHours = Math.Round(avgResponse, 2),
 
                 WorkloadRatio = workloadRatio,
                 WorkloadBalanceIndicator = workloadRatio > 20 ? "High" : workloadRatio > 10 ? "Balanced" : "Low",
-                ProductivityScore = productivityScore
+                // ProductivityScore = productivityScore
             };
         }).ToList();
     }
@@ -222,9 +228,9 @@ public sealed class GetTeamPerformanceQueryHandler(
 
         var stats = raw.Select(x =>
         {
-            var avgHandling = x.Times.Count == 0
-                ? 0m
-                : (decimal)x.Times.Average(t => (t.UnassignedAtUtc!.Value - t.AssignedAtUtc).TotalHours);
+            // var avgHandling = x.Times.Count == 0
+            //     ? 0m
+            //     : (decimal)x.Times.Average(t => (t.UnassignedAtUtc!.Value - t.AssignedAtUtc).TotalHours);
 
             return new AssignmentStat(
                 x.EmployeeId,
@@ -233,7 +239,7 @@ public sealed class GetTeamPerformanceQueryHandler(
                 x.Completed,
                 x.Remaining,
                 x.Overdue,
-                avgHandling);
+                0);
         });
 
         return stats.ToDictionary(x => x.EmployeeId);
@@ -264,12 +270,12 @@ public sealed class GetTeamPerformanceQueryHandler(
 
         return raw.ToDictionary(x => x.EmployeeId, x =>
         {
-            var avgResponse = x.Times.Count == 0
-                ? 0m
-                : (decimal)x.Times.Average(t => 
-                    ((t.ReviewedAtUtcCreated ?? DateTime.UtcNow) - 
-                     t.ReviewItemCreatedDate).TotalHours);
-            return new ReviewStat(x.EmployeeId, x.Reviewed, x.Approved, x.Rejected, avgResponse);
+            // var avgResponse = x.Times.Count == 0
+            //     ? 0m
+            //     : (decimal)x.Times.Average(t => 
+            //         ((t.ReviewedAtUtcCreated ?? DateTime.UtcNow) - 
+            //          t.ReviewItemCreatedDate).TotalHours);
+            return new ReviewStat(x.EmployeeId, x.Reviewed, x.Approved, x.Rejected, 0);
         });
     }
     

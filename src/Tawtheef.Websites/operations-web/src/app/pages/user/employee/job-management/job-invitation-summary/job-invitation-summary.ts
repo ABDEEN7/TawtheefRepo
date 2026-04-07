@@ -22,6 +22,7 @@ import { PipelineChartDialogComponent, PipelineChartData } from './pipeline-char
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { Tooltip } from 'primeng/tooltip';
+import { Lang, LanguageService } from '../../../../../core/services/language.service';
 
 @Component({
   selector: 'app-job-invitation-summary',
@@ -51,10 +52,12 @@ export class JobInvitationSummary implements OnInit {
   private destroyRef = inject(DestroyRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
+  private language = inject(LanguageService);
 
   jobInvitationSummaryService = inject(JobInvitationSummaryService);
   private searchChanges$ = new Subject<string>();
 
+  currentLang = signal<Lang>(this.language.get());
   // Signals
   currentPage = signal(1);
   itemsPerPage = signal(10);

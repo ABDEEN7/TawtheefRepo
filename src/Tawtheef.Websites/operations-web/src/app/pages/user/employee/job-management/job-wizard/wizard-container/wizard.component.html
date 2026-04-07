@@ -12,7 +12,12 @@
           <div class="d-flex align-items-center gap-3 justify-content-end flex-wrap">
             <app-progress-bar [value]="progress"></app-progress-bar>
             <button class="btn btn-edit-basic d-flex align-items-center gap-1" (click)="openEditBasicData()"
-              [disabled]="isLoading"><i class="hgi hgi-stroke hgi-pencil-edit-02"></i> {{
+              [disabled]="isLoading">
+              @if (hasBasicDataNote()) {
+              <i class="pi pi-exclamation-triangle text-warning"
+                pTooltip="{{ 'JOB_WIZARD.REVIEW_NOTES.BASIC_DATA_NOTE' | translate }}" tooltipPosition="top"></i>
+              }
+              <i class="hgi hgi-stroke hgi-pencil-edit-02"></i> {{
               'JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA' | translate }} </button>
             <button class="btn btn-outline-primary btn-sm d-flex" (click)="cancelWizard()"><i
                 class="hgi hgi-stroke hgi-cancel-01 me-1"></i> {{ 'JOB_WIZARD.BUTTONS.CANCEL' | translate }} </button>
