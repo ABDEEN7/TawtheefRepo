@@ -883,6 +883,11 @@ $card-radius: 16px;
     background: #f1f5f9;
     color: #64748b;
   }
+
+  &-soft-info {
+    background: rgba(14, 165, 233, 0.1);
+    color: #0ea5e9;
+  }
 }
 
 .progress-indicator {

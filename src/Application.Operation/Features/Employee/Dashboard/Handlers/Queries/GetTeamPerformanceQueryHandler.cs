@@ -9,7 +9,9 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -33,8 +35,6 @@ public sealed class GetTeamPerformanceQueryHandler(
         var roles = await userManager.GetRolesAsync(new User { Id = currentUserId });
         var permissions = await GetUserPermissionsAsync(roles.ToList(), ct);
 
-        var canViewAllProfiles = permissions.Contains(PermissionKeys.ProfileDistribution.View);
-
         var employeesQuery = userManager.Users
             .OfType<EmployeeUser>()
             .AsNoTracking()
@@ -43,9 +43,12 @@ public sealed class GetTeamPerformanceQueryHandler(
         var employeeList = await employeesQuery.ToListAsync(ct);
         var employeeIds = employeeList.Select(x => x.Id).ToList();
 
+        // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
+        var allowedCountryId = await ResolveAllowedCountryIdAsync(currentUserId, ct);
         var assignmentsQuery = uow.GetEntityRepository<ProfileAssignment>().DbSet
             .AsNoTracking()
             .Include(x => x.UserProfile)
+            .WhereIf(allowedCountryId is not null, p=> p.UserProfile!.ResidenceCountryId == allowedCountryId)
             .Where(x => employeeIds.Contains(x.EmployeeId));
 
         var overdueCutoff = DateTimeOffset.UtcNow.AddDays(-OverdueAfterDays);
@@ -200,12 +203,12 @@ public sealed class GetTeamPerformanceQueryHandler(
             .Select(g => new
             {
                 EmployeeId = g.Key,
-                Assigned = g.Count(),
+                Assigned = g.Count(x=> x.UserProfile!.Status != UserProfileStatus.UnderReview || x.IsActive),
                 Active = g.Count(x => x.IsActive),
                 Completed = g.Count(x => x.UserProfile != null 
                                          && (x.UserProfile.Status == UserProfileStatus.Approved || x.UserProfile.Status == UserProfileStatus.RequiresUpdate)),
-                Remaining = g.Count(x => x.UserProfile == null 
-                                         || (x.UserProfile.Status == UserProfileStatus.UnderReview || x.UserProfile.Status == UserProfileStatus.Submitted)),
+                Remaining = g.Count(x =>  x.IsActive && (x.UserProfile == null 
+                                         || (x.UserProfile.Status == UserProfileStatus.UnderReview))),
                 Overdue = g.Count(x =>
                     x.IsActive
                     && x.UserProfile != null
@@ -263,5 +266,28 @@ public sealed class GetTeamPerformanceQueryHandler(
 
             return new ReviewStat(x.EmployeeId, x.Reviewed, x.Approved, x.Rejected, avgResponse);
         });
+    }
+    
+    
+    private async Task<Guid?> ResolveAllowedCountryIdAsync(Guid userId, CancellationToken ct)
+    {
+        // Load user + Office navigation safely for OfficeUser
+        var user = await userManager.Users
+            .Include(u => (u as OfficeUser)!.Office)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user is null)
+            return null;
+
+        return user switch
+        {
+            // EmployeeUser => Qatar only
+            EmployeeUser => CountryIds.Qatar,
+
+            // OfficeUser => Office.CountryId
+            OfficeUser { Office: not null } officeUser => officeUser.Office.CountryId,
+
+            _ => null
+        };
     }
 }

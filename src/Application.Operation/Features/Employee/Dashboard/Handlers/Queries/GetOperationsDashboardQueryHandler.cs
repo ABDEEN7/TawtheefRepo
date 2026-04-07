@@ -11,6 +11,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -71,26 +72,15 @@ public sealed class GetOperationsDashboardQueryHandler(
 
 
         var repos = GetRepos(uow);
-        
-        // Resolve Department for scoping
-        Guid? scopedDepartmentId = request.DepartmentId;
-        if (isDepartmentManager)
-        {
-             var mgr = await userManager.Users
-                .OfType<EmployeeUser>()
-                .AsNoTracking()
-                .Include(x => x.EmployeeProfile)
-                .FirstOrDefaultAsync(x => x.Id == currentUserId, ct);
-             
-             // If we can't find a GUID, we might need to find the TargetEntityId matching the department name
-             // However, for now let's assume we want to match whatever department they are in.
-        }
 
         var employeesQuery = BuildEmployeesQuery(userManager);
         var employeeIds = await employeesQuery.Select(x => x.Id).ToListAsync(ct);
         var employeeList = await employeesQuery.ToListAsync(ct);
 
-        var profileQuery = BuildProfilesQuery(repos.Profile, request, repos.Assignment, employeeIds, canViewAllProfiles);
+        // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
+        var allowedCountryId = await ResolveAllowedCountryIdAsync(currentUserId, ct);
+        var profileQuery = BuildProfilesQuery(repos.Profile, request, repos.Assignment,
+            employeeIds, canViewAllProfiles, allowedCountryId);
         var jobsQuery = BuildJobsQuery(repos.Job, request, employeeIds, canViewAllProfiles);
 
 
@@ -136,9 +126,10 @@ public sealed class GetOperationsDashboardQueryHandler(
         var avgApprovalHours = await CalculateAverageApprovalHoursAsync(repos.Profile, range.From, range.To, ct);
 
         // Assignments (scoped to employeeIds)
-        var assignmentsQuery = BuildAssignmentsQuery(repos.Assignment, employeeIds);
+        var assignmentsQuery = BuildAssignmentsQuery(repos.Assignment, employeeIds, allowedCountryId);
         var baseAssignments = repos.Assignment.DbSet
             .AsNoTracking()
+            .WhereIf(allowedCountryId is not null, a=> a.UserProfile!.ResidenceCountryId == allowedCountryId)
             .Where(a => !a.IsDeleted && employeeIds.Contains(a.EmployeeId));
 
         var latestAtPerProfile =
@@ -172,6 +163,7 @@ public sealed class GetOperationsDashboardQueryHandler(
             {
                 a.AssignedAtUtc,
                 a.UnassignedAtUtc,
+                a.IsActive,
                 ProfileStatus = (UserProfileStatus?)p.Status
             };
 
@@ -201,17 +193,19 @@ public sealed class GetOperationsDashboardQueryHandler(
             .GroupBy(_ => 1)
             .Select(g => new
             {
-                Total = g.Count(),
+                Total = g.Count(x=> x.ProfileStatus != UserProfileStatus.UnderReview || x.IsActive),
                 Completed = g.Count(x =>
                     x.UnassignedAtUtc != null ||
                     x.ProfileStatus == UserProfileStatus.Approved ||
                     x.ProfileStatus == UserProfileStatus.RequiresUpdate),
                 Overdue = g.Count(x =>
+                    x.IsActive &&
                     x.UnassignedAtUtc == null &&
                     x.AssignedAtUtc <= overdueCutoff &&
                     x.ProfileStatus == UserProfileStatus.UnderReview),
                 Remaining = g.Count(x => 
-                    x.ProfileStatus == UserProfileStatus.UnderReview || x.ProfileStatus == UserProfileStatus.Submitted)
+                    x.IsActive &&
+                    (x.ProfileStatus == UserProfileStatus.UnderReview || x.ProfileStatus == UserProfileStatus.Submitted))
             })
             .OrderBy(x => 1)
             .FirstOrDefaultAsync(ct);
@@ -377,11 +371,13 @@ public sealed class GetOperationsDashboardQueryHandler(
         GetOperationsDashboardQuery request,
         IGenericRepository<ProfileAssignment> assignmentRepo,
         IReadOnlyCollection<Guid> allowedEmployeeIds,
-        bool isHrManager)
+        bool isHrManager,
+        Guid? allowedCountryId)
     {
         var query = profileRepo.DbSet
             .AsNoTracking()
             .Include(x => x.TargetEntity)
+            .WhereIf(allowedCountryId is not null, x=> x.ResidenceCountryId == allowedCountryId)
             .Where(x => !x.IsDeleted);
 
         // Only apply dates if explicitly sent from UI
@@ -461,12 +457,14 @@ public sealed class GetOperationsDashboardQueryHandler(
 
     private static IQueryable<ProfileAssignment> BuildAssignmentsQuery(
         IGenericRepository<ProfileAssignment> assignmentRepo,
-        IReadOnlyCollection<Guid> employeeIds)
+        IReadOnlyCollection<Guid> employeeIds,
+        Guid? allowedCountryId)
     {
         // Keep original behavior (Include UserProfile) because later queries reference UserProfile.Status
         return assignmentRepo.DbSet
             .AsNoTracking()
             .Include(x => x.UserProfile)
+            .WhereIf(allowedCountryId is not null, x=> x.UserProfile!.ResidenceCountryId == allowedCountryId)
             .Where(x => employeeIds.Contains(x.EmployeeId));
     }
 
@@ -897,6 +895,28 @@ public sealed class GetOperationsDashboardQueryHandler(
         return value.Length <= maxLength
             ? value
             : value.Substring(0, maxLength) + "...";
+    }
+    
+    private async Task<Guid?> ResolveAllowedCountryIdAsync(Guid userId, CancellationToken ct)
+    {
+        // Load user + Office navigation safely for OfficeUser
+        var user = await userManager.Users
+            .Include(u => (u as OfficeUser)!.Office)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user is null)
+            return null;
+
+        return user switch
+        {
+            // EmployeeUser => Qatar only
+            EmployeeUser => CountryIds.Qatar,
+
+            // OfficeUser => Office.CountryId
+            OfficeUser { Office: not null } officeUser => officeUser.Office.CountryId,
+
+            _ => null
+        };
     }
 }
 
