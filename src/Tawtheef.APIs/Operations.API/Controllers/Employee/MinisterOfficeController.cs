@@ -57,8 +57,9 @@ public class MinisterOfficeController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.MinisterOffice.View)]
     public async Task<IActionResult> GetInvitations(Guid id)
     {
+        var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(
-            new GetMinisterOfficeCandidateInvitationsQuery(id));
+            new GetMinisterOfficeCandidateInvitationsQuery(id, language));
         return result.ToActionResult();
     }
 

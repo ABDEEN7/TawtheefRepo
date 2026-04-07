@@ -28,14 +28,11 @@
     "cancel": "إلغاء",
     "completed": "مكتمل",
     "pending": "قيد التنفيذ",
-
     "emptyMessage": "لا توجد بيانات",
     "emptyFilterMessage": "لا توجد نتائج مطابقة",
-
     "weekHeader": "أسبوع",
     "firstDayOfWeek": 0,
     "dateFormat": "dd/mm/yy",
-
     "dayNames": [
       "الأحد",
       "الإثنين",
@@ -45,9 +42,24 @@
       "الجمعة",
       "السبت"
     ],
-    "dayNamesShort": ["أحد", "إثن", "ثلث", "أرب", "خمي", "جمع", "سبت"],
-    "dayNamesMin": ["ح", "ن", "ث", "ر", "خ", "ج", "س"],
-
+    "dayNamesShort": [
+      "أحد",
+      "إثن",
+      "ثلث",
+      "أرب",
+      "خمي",
+      "جمع",
+      "سبت"
+    ],
+    "dayNamesMin": [
+      "ح",
+      "ن",
+      "ث",
+      "ر",
+      "خ",
+      "ج",
+      "س"
+    ],
     "monthNames": [
       "يناير",
       "فبراير",
@@ -76,13 +88,11 @@
       "نوفمبر",
       "ديسمبر"
     ],
-
     "today": "اليوم",
     "weak": "ضعيف",
     "medium": "متوسط",
     "strong": "قوي",
     "passwordPrompt": "أدخل كلمة المرور",
-
     "aria": {
       "trueLabel": "صحيح",
       "falseLabel": "خطأ",

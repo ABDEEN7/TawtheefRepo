@@ -43,6 +43,7 @@
   "ministerOffice.dialog.invitations.job": "المسمى الوظيفي",
   "ministerOffice.dialog.invitations.status": "الحالة",
   "ministerOffice.dialog.invitations.date": "تاريخ الدعوة",
+  "ministerOffice.dialog.invitations.organization": "الجهة",
   "ministerOffice.dialog.invitations.empty": "لا توجد دعوات مرسلة لهذا المرشح.",
   "ministerOffice.dialog.audit.title": "سجل العمليات والتدقيق",
   "ministerOffice.dialog.audit.action": "الإجراء",
@@ -51,5 +52,6 @@
   "ministerOffice.dialog.audit.date": "التاريخ",
   "ministerOffice.common.cancel": "إلغاء",
   "ministerOffice.common.submit": "تسجيل",
-  "ministerOffice.common.save": "حفظ"
+  "ministerOffice.common.save": "حفظ",
+  "JOB_INVITATION_STATUSES.SUBMITTED": "مرشح للاختبار"
 }

@@ -91,8 +91,8 @@ export class FileUtilsService {
 
     // fallback: auth fetch as blob
     try {
-      const blob = await this.http.get<Blob>(fileUrl, undefined, { 
-        responseType: 'blob', 
+      const blob = await this.http.get<Blob>(fileUrl, undefined, {
+        responseType: 'blob',
         observe: 'body',
         headers: { 'X-Skip-Loading': 'true' }
       }).toPromise();
@@ -122,7 +122,7 @@ export class FileUtilsService {
   async getBlobUrl(url: string): Promise<{ blobUrl: string, mimeType: string }> {
     if (!this.isBrowser) return { blobUrl: '', mimeType: '' };
     // We use observe: 'response' to potentially get headers, but blob.type is usually enough
-    const blob = await this.http.get<Blob>(url, undefined, { 
+    const blob = await this.http.get<Blob>(url, undefined, {
       responseType: 'blob',
       headers: { 'X-Skip-Loading': 'true' }
     }).toPromise();

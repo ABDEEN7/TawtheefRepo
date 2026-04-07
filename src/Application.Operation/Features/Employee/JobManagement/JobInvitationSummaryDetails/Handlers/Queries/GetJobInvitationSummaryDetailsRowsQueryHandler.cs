@@ -29,6 +29,7 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
         var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Include(invitation => invitation.InvitationStatus)
+            .Include(invitation => invitation.Attachments)
             .Include(invitation => invitation.Applicant).ThenInclude(applicant => applicant!.Profile)
             .ThenInclude(profile => profile!.Nationality)
             .Where(invitation => invitation.JobId == query.JobId)
@@ -80,6 +81,7 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
             item.ExpiredDate = invitation.InvitationStatusId == InvitationStatusIds.Closed
                 ? invitation.UpdatedDate
                 : null;
+            item.HasAttachments = invitation.Attachments.Any();
         }
 
         var result = new PaginatedResult<JobInvitationSummaryDetailsRowDto>(

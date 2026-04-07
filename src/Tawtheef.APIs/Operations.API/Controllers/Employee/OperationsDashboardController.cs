@@ -23,5 +23,13 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request, ct);
         return result.ToActionResult();
     }
+
+    [HttpGet("team-performance")]
+    [AuthorizePermission(PermissionKeys.Dashboard.View)]
+    public async Task<IActionResult> GetTeamPerformance([FromQuery] GetTeamPerformanceQuery request, CancellationToken ct)
+    {
+        var result = await mediator.Send(request, ct);
+        return result.ToActionResult();
+    }
 }
 

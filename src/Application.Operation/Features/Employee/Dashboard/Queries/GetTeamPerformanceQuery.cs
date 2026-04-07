@@ -5,11 +5,10 @@ using Tawtheef.Application.Common.Models.Pagination;
 
 namespace Application.Operation.Features.Employee.Dashboard.Queries;
 
-public sealed record GetOperationsDashboardQuery(
+public sealed record GetTeamPerformanceQuery(
     DateTime? FromDateUtc = null,
     DateTime? ToDateUtc = null,
     Guid? DepartmentId = null,
     Guid? EmployeeId = null,
-    string? Status = null
-) : IRequest<Result<OperationsDashboardDto>>;
-
+    string? Search = null
+) : PaginatedRequest, IRequest<Result<PaginatedResult<TeamPerformanceRowDto>>>;

@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -15,6 +15,7 @@ public class JobPointsConfigurationsRepository(IGenericRepository<JobPointConfig
     public async Task<IResult<JobPointConfiguration>> GetAsync()
     {
         var jobPointsConfiguration = await Repository.DbSet
+            .OrderBy(x => x.Id)
             .FirstOrDefaultAsync();
 
         return jobPointsConfiguration == null

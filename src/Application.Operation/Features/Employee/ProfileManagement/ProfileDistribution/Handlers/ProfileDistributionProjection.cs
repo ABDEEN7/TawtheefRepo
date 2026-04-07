@@ -46,9 +46,7 @@ internal sealed class ProfileDistributionProjection(
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            #if !DEBUG
             .Where(p=> p.ResidenceCountryId == allowedCountryId.Value)
-            #endif
             .Where(p =>
                 (
                     Enumerable.Contains(ProfileDistributionRules.AssignableStatuses, p.Status) ||

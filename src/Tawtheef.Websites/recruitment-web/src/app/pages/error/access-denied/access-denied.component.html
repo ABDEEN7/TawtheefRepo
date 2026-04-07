@@ -41,19 +41,19 @@
       <!-- Action buttons -->
       <div class="d-flex justify-content-center gap-3 mt-4">
         <a [routerLink]="routes.home" class="btn btn-primary">
-          <i class="fas fa-home me-2"></i>
+          <i class="hgi-stroke hgi-home-01 me-2"></i>
           {{ 'app.accessDenied.goHome' | translate }}
         </a>
 
         <a *ngIf="authService.isLoggedIn()" [routerLink]="routes.user.dashboard"
            class="btn btn-secondary">
-          <i class="fas fa-tachometer-alt me-2"></i>
+          <i class="hgi-stroke hgi-dashboard-square-01 me-2"></i>
           {{ 'app.accessDenied.goDashboard' | translate }}
         </a>
 
         <a *ngIf="!(authService.isLoggedIn())" [routerLink]="routes.auth.login" [queryParams]="{returnUrl: previousUrl}"
            class="btn btn-outline-primary">
-          <i class="fas fa-sign-in-alt me-2"></i>
+          <i class="hgi-stroke hgi-login-03 me-2"></i>
           {{ 'app.accessDenied.login' | translate }}
         </a>
       </div>

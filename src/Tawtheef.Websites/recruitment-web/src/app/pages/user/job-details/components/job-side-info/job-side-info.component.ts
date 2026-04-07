@@ -11,7 +11,7 @@ import { JobDetailsService } from '../../services/job-details.service';
     <div class="card card-table">
       <div class="card-body">
         <h5 class="mb-4 text-primary">
-          <i class="fa fa-info-circle"></i> {{ 'JOB_DETAILS.JOB_INFO' | translate }}
+          <i class="hgi-stroke hgi-information-circle"></i> {{ 'JOB_DETAILS.JOB_INFO' | translate }}
         </h5>
         <div class="info-list-container">
           <div class="info-list-item">

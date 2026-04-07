@@ -32,7 +32,7 @@
 
             <!-- Search -->
             <div class="col-lg-3 col-md-4 mb-3 mb-lg-0">
-              <label class="form-label">&nbsp; <i class="fa fa-search"></i></label>
+              <label class="form-label">&nbsp; <i class="hgi-stroke hgi-search-01"></i></label>
               <input type="text" class="form-control" [placeholder]="'JOB_INVITATION_SUMMARY.SEARCH' | translate"
                 [ngModel]="searchText()" (ngModelChange)="onSearchChange($event)" />
             </div>
@@ -44,9 +44,16 @@
               </label>
               <p-select [options]="jobInvitationSummaryService.jobCategories()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
-                class="w-100" [ngModel]="selectedCategory()"
-                (ngModelChange)="selectedCategory.set($event); onFilterChange()"></p-select>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
+                [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event); onFilterChange()">
+
+                <ng-template pTemplate="selectedItem" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template>
+                <ng-template pTemplate="item" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template>
+              </p-select>
             </div>
 
             <!-- Department -->
@@ -56,9 +63,15 @@
               </label>
               <p-select [options]="jobInvitationSummaryService.departments()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
-                class="w-100" [ngModel]="selectedDepartment()"
-                (ngModelChange)="selectedDepartment.set($event); onFilterChange()"></p-select>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
+                [ngModel]="selectedDepartment()" (ngModelChange)="selectedDepartment.set($event); onFilterChange()">
+
+                <ng-template pTemplate="selectedItem" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template>
+                <ng-template pTemplate="item" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template></p-select>
             </div>
 
             <!-- Status -->
@@ -68,9 +81,16 @@
               </label>
               <p-select [options]="jobInvitationSummaryService.jobStatuses()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
-                class="w-100" [ngModel]="selectedStatus()"
-                (ngModelChange)="selectedStatus.set($event); onFilterChange()"></p-select>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
+                [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); onFilterChange()">
+
+                <ng-template pTemplate="selectedItem" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template>
+                <ng-template pTemplate="item" let-item>
+                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
+                </ng-template>
+              </p-select>
             </div>
 
             <div class="col-lg-2 col-md-4 mb-3 mb-lg-0">

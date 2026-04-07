@@ -16,4 +16,5 @@ public sealed class JobInvitationSummaryDetailsRowDto
     public DateTimeOffset? AppliedDate { get; init; }
     public DateTimeOffset? DeclinedDate { get; set; }
     public DateTimeOffset? ExpiredDate { get; set; }
+    public bool HasAttachments { get; set; }
 }

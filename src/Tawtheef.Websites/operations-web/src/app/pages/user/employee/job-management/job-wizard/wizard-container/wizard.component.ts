@@ -546,6 +546,18 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     return instance && 'editStep' in instance && instance.editStep instanceof EventEmitter;
   }
 
+  hasBasicDataNote(): boolean {
+    const job = this.jobService.getCurrentJob();
+    if (!job || !job.tabReviewNotes) return false;
+
+    const isReturned = job.jobStatus?.backendName === JobStatus.NeedUpdate;
+    if (!isReturned) return false;
+
+    return job.tabReviewNotes.some(
+      (note) => note.tab === JobTabType.BasicData && note.note && !note.isResolved
+    );
+  }
+
   openEditBasicData(): void {
     if (!this.jobId) return;
 

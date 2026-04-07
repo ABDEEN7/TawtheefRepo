@@ -47,9 +47,6 @@ public static class RolePermissionCatalog
 
                 Permissions.Kawader.Manage.Key,
 
-                Permissions.OfficeUsers.View.Key,
-                Permissions.OfficeUsers.Manage.Key,
-
                 Permissions.CandidateUsers.View.Key,
                 Permissions.CandidateUsers.Manage.Key,
 
@@ -113,9 +110,6 @@ public static class RolePermissionCatalog
                 Permissions.JobsInvitations.ManageAttachment.Key,
 
                 Permissions.Kawader.Manage.Key,
-
-                Permissions.OfficeUsers.View.Key,
-                Permissions.OfficeUsers.Manage.Key,
 
                 Permissions.CandidateUsers.View.Key,
                 Permissions.CandidateUsers.Manage.Key,

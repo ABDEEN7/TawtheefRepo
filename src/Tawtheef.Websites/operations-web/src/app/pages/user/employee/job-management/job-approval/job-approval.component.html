@@ -306,7 +306,7 @@
           <!-- Job Info Card -->
           <div class="card card-table">
             <div class="card-body">
-              <h5 class="text-primary d-flex mb-3"><i class="fa fa-info-circle"></i> {{ 'JOB_APPROVAL.JOB_INFO' |
+              <h5 class="text-primary d-flex mb-3"><i class="hgi-stroke hgi-information-circle"></i> {{ 'JOB_APPROVAL.JOB_INFO' |
                 translate }} </h5>
 
               <div class="info-list-container">
@@ -369,7 +369,7 @@
 
             <div class="col-md-12 text-end">
               <button class="btn btn-primary" (click)="saveCurrentTabReview()"
-                [disabled]="!tabControls.tabControl.value"><i class="fa fa-save mx-1"></i> <span>{{ 'common.save' |
+                [disabled]="!tabControls.tabControl.value"><i class="hgi-stroke hgi-floppy-disk mx-1"></i> <span>{{ 'common.save' |
                   translate }}</span></button>
             </div>
           </div>
@@ -385,14 +385,14 @@
         @if(!isAllTabsApproved() && canManageJobs()) {
         <div class="job-btns">
           <button class="btn btn-primary" [disabled]="!isReviewComplete()" (click)="submitReview()">
-            <i class="fa fa-repeat"></i>
+            <i class="hgi-stroke hgi-refresh"></i>
             <span>{{ 'JOB_APPROVAL.BACK_TO_EDIT' | translate }}</span>
           </button>
         </div>
         } @if(isAllTabsApproved() && canManageJobs()) {
         <div class="approve-btn">
           <button class="btn btn-primary" [disabled]="!isReviewComplete()" (click)="confirm()">
-            <i class="fa fa-check"></i>
+            <i class="hgi-stroke hgi-tick-02"></i>
             <span>{{ 'JOB_APPROVAL.JOB_APPROVE' | translate }}</span>
           </button>
         </div>
@@ -404,7 +404,7 @@
       <div class="card card-table">
         <div class="card-body">
           <h5 class="text-primary d-flex mb-3">
-            <i class="fa fa-history"></i>
+            <i class="hgi-stroke hgi-clock-01"></i>
             {{ 'JOB_APPROVAL.REVIEW_HISTORY' | translate }}
           </h5>
 

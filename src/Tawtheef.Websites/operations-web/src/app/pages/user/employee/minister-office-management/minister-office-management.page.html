@@ -65,10 +65,10 @@
               [placeholder]="'ministerOffice.list.gender' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>
@@ -79,10 +79,10 @@
               [placeholder]="'ministerOffice.list.targetEntity' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>
@@ -93,10 +93,10 @@
               [placeholder]="'ministerOffice.list.candidateType' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
               <ng-template pTemplate="item" let-item>
-                {{ (currentLang() === 'ar' ? item.nameAr : item.nameEn) || item.name }}
+                {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
               </ng-template>
             </p-select>
           </div>
@@ -154,19 +154,19 @@
                 [value]="getStatusLabel(item.status) | translate"></p-tag>
             </td>
             <td class="text-center">
-              <div class="d-flex justify-content-center gap-1">
-                <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
-                  [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                  [class]="item.isFollowUpActive ? 'p-button-rounded p-button-text p-button-success' : 'p-button-rounded p-button-text p-button-secondary'"
-                  (click)="toggleFollowUp(item)"
-                  [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
-                </button>
-                <button pButton type="button" icon="pi pi-list" class="p-button-rounded p-button-text p-button-info"
+              <div class="d-flex justify-content-center gap-2">
+                <button pButton type="button" icon="pi pi-list" class="btn-table-action btn-list"
                   (click)="viewInvitations(item)" *ngIf="item.status === CandidateStatus.InvitationsReceived"
                   [pTooltip]="'ministerOffice.tooltips.viewInvitations' | translate">
                 </button>
-                <button pButton type="button" icon="pi pi-history" class="p-button-rounded p-button-text p-button-help"
+                <button pButton type="button" icon="pi pi-history" class="btn-table-action btn-history"
                   (click)="viewAuditLog(item)" [pTooltip]="'ministerOffice.tooltips.viewAudit' | translate">
+                </button>
+                <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
+                  [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'hgi hgi-stroke hgi-user-minus-02'"
+                  [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
+                  (click)="toggleFollowUp(item)"
+                  [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
                 </button>
               </div>
             </td>
@@ -263,6 +263,7 @@
         <ng-template pTemplate="header">
           <tr>
             <th>{{ 'ministerOffice.dialog.invitations.job' | translate }}</th>
+            <th>{{ 'ministerOffice.dialog.invitations.organization' | translate }}</th>
             <th class="text-center">{{ 'ministerOffice.dialog.invitations.status' | translate }}</th>
             <th class="text-center">{{ 'ministerOffice.dialog.invitations.date' | translate }}</th>
           </tr>
@@ -273,15 +274,21 @@
               <div class="fw-bold">{{ inv.jobTitleAr }}</div>
               <div class="text-muted small">{{ inv.jobTitleEn }}</div>
             </td>
+            <td>
+              <div class="fw-bold">{{ inv.organizationNameAr }}</div>
+              <div class="text-muted small">{{ inv.organizationNameEn }}</div>
+            </td>
             <td class="text-center">
-              <span class="status-badge" [attr.data-status]="inv.invitationStatus">{{ inv.invitationStatus }}</span>
+              <span class="status-badge" [attr.data-status]="inv.invitationStatus.backendName">
+                {{ getStatus(inv.invitationStatus) }}
+              </span>
             </td>
             <td class="text-center text-muted small">{{ inv.invitedAt | date:'mediumDate' }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="3" class="text-center py-4">{{ 'ministerOffice.dialog.invitations.empty' | translate }}</td>
+            <td colspan="4" class="text-center py-4">{{ 'ministerOffice.dialog.invitations.empty' | translate }}</td>
           </tr>
         </ng-template>
       </p-table>

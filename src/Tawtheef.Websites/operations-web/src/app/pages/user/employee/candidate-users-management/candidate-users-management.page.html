@@ -50,8 +50,8 @@
               <div class="user-info-cell">
                 <span class="name-en">{{ user.fullNameEn }}</span>
                 <span class="name-ar">{{ user.fullNameAr }}</span>
-                <div class="email-info mt-1">
-                  <i class="fa fa-envelope-o small opacity-50"></i>
+                <div class="email-info mt-1" style="direction: ltr;">
+                  <i class="hgi-stroke hgi-mail-01 small opacity-50"></i>
                   <span>{{ user.email }}</span>
                 </div>
               </div>
@@ -62,8 +62,8 @@
                   <span class="qid-label">{{ 'CANDIDATE_USERS.QID' | translate }}:</span>
                   <span class="qid-value">{{ user.qid || '-' }}</span>
                 </div>
-                <div class="mobile-info">
-                  <i class="fa fa-mobile small opacity-50"></i>
+                <div class="mobile-info" style="direction: ltr;">
+                  <i class="hgi-stroke hgi-smart-phone-01 small opacity-50"></i>
                   <span>{{ user.mobileNumber }}</span>
                 </div>
               </div>
@@ -88,7 +88,7 @@
               </ng-container>
               <ng-template #noProfile>
                 <div class="text-muted small d-flex align-items-center gap-1">
-                  <i class="fa fa-exclamation-circle opacity-50"></i>
+                  <i class="hgi-stroke hgi-alert-circle opacity-50"></i>
                   {{ 'CANDIDATE_USERS.NO_PROFILE' | translate }}
                 </div>
               </ng-template>
@@ -97,15 +97,16 @@
             <td>
               <div class="action-buttons">
                 <button type="button" class="btn btn-action btn-outline-primary"
-                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate"
-                  (click)="viewProfile(user)" *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate" (click)="viewProfile(user)"
+                  *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
                   <i class="hgi hgi-stroke hgi-view fs-18"></i>
                 </button>
 
                 <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
                   <button type="button" class="btn btn-action"
                     [title]="(user.isBlocked ? 'CANDIDATE_USERS.UNBLOCK_USER' : 'CANDIDATE_USERS.BLOCK_USER') | translate"
-                    [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'" (click)="toggleBlock(user)">
+                    [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
+                    (click)="toggleBlock(user)">
                     <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
                   </button>
                 </ng-container>
@@ -117,7 +118,7 @@
           <tr>
             <td colspan="5" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
               <div class="p-4 d-flex flex-column align-items-center justify-content-center">
-                <i class="fa fa-folder-open-o fs-32 opacity-25 mb-2"></i>
+                <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
                 <span>{{ 'NO_RECORDS' | translate }}</span>
               </div>
             </td>

@@ -30,6 +30,12 @@ import { HasPermissionDirective } from '../../../../shared/directives/has-permis
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SelectModule } from 'primeng/select';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { DropdownOptionVM } from '../../../../shared/models/dropdown-options.model';
+import { InvitationStatus } from '../../../../core/enums/lookups.enum';
+
+export const JOB_INVITATION_STATUSES = {
+  SUBMITTED: 'Submitted',
+} as const;
 
 @Component({
   selector: 'app-minister-office-management',
@@ -64,6 +70,7 @@ export class MinisterOfficeManagementPage implements OnInit {
   private service = inject(MinisterOfficeService);
   private notifications = inject(NotificationService);
   private language = inject(LanguageService);
+  private translate = inject(TranslateService);
 
   readonly Permissions = Permissions;
   readonly CandidateStatus = MinisterOfficeCandidateStatus;
@@ -273,8 +280,22 @@ export class MinisterOfficeManagementPage implements OnInit {
     this.service.getInvitations(item.id)
       .pipe(finalize(() => this.invitationsLoading.set(false)))
       .subscribe({
-        next: (res) => this.invitations.set(res)
+        next: (res) => {
+          const mapped = res.map(inv => ({
+            ...inv,
+            invitationStatus: new DropdownOptionVM(inv.invitationStatus)
+          }));
+          this.invitations.set(mapped);
+        }
       });
+  }
+
+  getStatus(invitationStatus: DropdownOptionVM): string {
+    const status = invitationStatus.backendName as InvitationStatus;
+    if (status == JOB_INVITATION_STATUSES.SUBMITTED) {
+      return this.translate.instant('JOB_INVITATION_STATUSES.SUBMITTED');
+    }
+    return invitationStatus.name;
   }
 
   viewAuditLog(item: MinisterOfficeCandidateDto) {

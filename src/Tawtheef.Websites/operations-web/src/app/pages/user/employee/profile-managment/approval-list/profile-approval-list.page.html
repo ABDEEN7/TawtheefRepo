@@ -20,7 +20,7 @@
 
         <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button" (click)="loadList()"
           [disabled]="loading()">
-          <i class="fa fa-rotate" [class.fa-spin]="loading()"></i>
+          <i class="hgi-stroke hgi-refresh" [class.fa-spin]="loading()"></i>
           {{ 'common.refresh' | translate }}
         </button>
       </div>
@@ -178,7 +178,7 @@
       </div>
       <ng-template #loadingTpl>
         <div class="text-center py-5 text-muted">
-          <i class="fa fa-spinner fa-spin me-2"></i>
+          <i class="hgi-stroke hgi-loading-01 fa-spin me-2"></i>
           {{ 'common.loading' | translate }}
         </div>
       </ng-template>

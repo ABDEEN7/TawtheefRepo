@@ -187,6 +187,7 @@ public class TokenService(
         var dbSw = Stopwatch.StartNew();
         var userType = await uow.GetEntityRepository<UserType>().DbSet
             .AsNoTracking()
+            .OrderBy(t => t.Id)
             .FirstAsync(t => t.Id == user.UserTypeId, ct);
         timings["UserTypeQuery"] = dbSw.ElapsedMilliseconds;
 
