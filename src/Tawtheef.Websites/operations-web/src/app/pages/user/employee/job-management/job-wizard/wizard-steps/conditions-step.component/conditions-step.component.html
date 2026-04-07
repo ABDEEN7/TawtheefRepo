@@ -58,7 +58,7 @@
             <div class="card-body" formArrayName="conditions">
                  @if (conditionsArray.length === 0) {
                   <div class="empty-card text-center py-5 border rounded">
-                    <i class="fa fa-tasks fa-3x text-muted mb-3"></i>
+                    <i class="hgi-stroke hgi-task-list-01 fa-3x text-muted mb-3"></i>
                     <h6 class="text-muted">
                       {{ 'JOB_WIZARD.STEPS.CONDITIONS.EMPTY_STATE_TITLE' | translate }}
                     </h6>
@@ -67,7 +67,7 @@
                     </p>
 
                     <div class="alert alert-info mt-3">
-                      <i class="fa fa-info-circle me-2"></i>
+                      <i class="hgi-stroke hgi-information-circle me-2"></i>
                       {{ 'JOB_WIZARD.STEPS.CONDITIONS.AT_LEAST_ONE' | translate }}
                     </div>
                   </div>
@@ -112,11 +112,11 @@
                                 @if (getConditionGroup(i).controls['textAr'].invalid && getConditionGroup(i).controls['textAr'].touched) {
                                 <div class="text-danger small mt-1">
                                   @if (getConditionGroup(i).controls['textAr'].errors?.['required']) {
-                                  <i class="fa fa-exclamation-circle me-1"></i>
+                                  <i class="hgi-stroke hgi-alert-circle me-1"></i>
                                   {{ 'JOB_WIZARD.VALIDATION.CONDITION_AR_REQUIRED' | translate }}
                                   }
                                   @if (getConditionGroup(i).controls['textAr'].errors?.['maxlength']) {
-                                  <i class="fa fa-exclamation-circle me-1"></i>
+                                  <i class="hgi-stroke hgi-alert-circle me-1"></i>
                                   {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
                                   }
                                 </div>
@@ -137,11 +137,11 @@
 
                                 @if (getConditionGroup(i).controls['textEn'].invalid && getConditionGroup(i).controls['textEn'].touched) {
                                  @if (getConditionGroup(i).controls['textEn'].errors?.['required']) {
-                                  <i class="fa fa-exclamation-circle me-1"></i>
+                                  <i class="hgi-stroke hgi-alert-circle me-1"></i>
                                   {{ 'JOB_WIZARD.VALIDATION.CONDITION_EN_REQUIRED' | translate }}
                                   }
                                   @if (getConditionGroup(i).controls['textEn'].errors?.['maxlength']) {
-                                  <i class="fa fa-exclamation-circle me-1"></i>
+                                  <i class="hgi-stroke hgi-alert-circle me-1"></i>
                                   {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate : { max: 500 } }}
                                   }
                                 }
@@ -159,7 +159,7 @@
 
       @if (!isValid() && form.touched) {
       <div class="alert alert-warning mt-4">
-        <i class="fa fa-exclamation-triangle me-2"></i>
+        <i class="hgi-stroke hgi-alert-triangle me-2"></i>
 
         @if (conditionsArray.length === 0) {
         {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_CONDITION' | translate }}

@@ -121,7 +121,7 @@
             <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
               <!-- Clear filters -->
               <div class="action-buttons"><button class="btn-text" (click)="clearFilters()"><i
-                    class="fa fa-rotate-left mx-1"></i> {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}</button>
+                    class="hgi-stroke hgi-refresh-back-01 mx-1"></i> {{ 'JOB_INVITES_DETAILS_CLEAR_FILTERS' | translate }}</button>
 
               </div>
 
@@ -212,7 +212,7 @@
 
   @if (isLoadingAttachments()) {
   <div class="text-center py-5">
-    <i class="fa fa-spinner fa-spin fa-2x"></i>
+    <i class="hgi-stroke hgi-loading-01 fa-spin fa-2x"></i>
   </div>
   } @else {
   <div class="d-flex flex-column gap-3">
@@ -299,7 +299,7 @@
   <iframe [src]="previewUrl()" width="100%" height="100%" class="rounded border-0" title="File Preview"></iframe>
   } @else {
   <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
-    <i class="fa fa-spinner fa-spin fa-3x text-primary mb-3"></i>
+    <i class="hgi-stroke hgi-loading-01 fa-spin fa-3x text-primary mb-3"></i>
     <p class="text-muted">{{ 'common.loading' | translate }}</p>
   </div>
   }

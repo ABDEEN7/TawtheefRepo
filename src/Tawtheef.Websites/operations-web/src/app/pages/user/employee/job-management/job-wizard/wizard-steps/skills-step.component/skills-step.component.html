@@ -22,7 +22,7 @@
               <!-- empty like screenshot (simple) -->
               <div class="skills-empty border rounded p-4 text-center">
                 <div class="mb-2">
-                  <i class="fa fa-info-circle text-muted"></i>
+                  <i class="hgi-stroke hgi-information-circle text-muted"></i>
                 </div>
                 <div class="text-muted">
                   {{ 'JOB_WIZARD.STEPS.SKILLS.EMPTY_STATE_DESC' | translate }}
@@ -47,7 +47,7 @@
 
                   @if (getSkillGroup(i).controls['skillId'].invalid && getSkillGroup(i).controls['skillId'].touched) {
                   <div class="text-danger small mt-1">
-                    <i class="fa fa-exclamation-circle me-1"></i>
+                    <i class="hgi-stroke hgi-alert-circle me-1"></i>
                     {{ 'JOB_WIZARD.VALIDATION.SKILL_REQUIRED' | translate }}
                   </div>
                   }
@@ -92,7 +92,7 @@
             <!-- validation: fields -->
             @if (!form.disabled && form.touched && jobSkillsArray.length > 0 && !form.valid) {
             <div class="alert alert-warning mt-4">
-              <i class="fa fa-exclamation-triangle me-2"></i>
+              <i class="hgi-stroke hgi-alert-triangle me-2"></i>
               {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_SKILLS' | translate }}
             </div>
             }

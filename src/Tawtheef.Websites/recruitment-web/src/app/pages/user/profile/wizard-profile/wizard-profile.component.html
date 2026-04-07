@@ -12,7 +12,7 @@
                     <img #userPictureRef [src]="ds.state().avatarUrl || avatarPreviewUrl()"
                       (error)="userPictureRef.src = defaultAvatar" class="candidate-avatar-pulse"
                       alt="{{ 'wizard.personal.avatar.alt' | translate }}" (click)="openAvatarDialog()" />
-                    <div class="edit-badge" (click)="openAvatarDialog()"><i class="fa fa-camera"></i></div>
+                    <div class="edit-badge" (click)="openAvatarDialog()"><i class="hgi-stroke hgi-camera-01"></i></div>
                   </div>
                   <div>
                     <h3 class="fw-bold"> {{ ds.state().fullNameEn || ('wizard.personal.nameAr' | translate) }}</h3>

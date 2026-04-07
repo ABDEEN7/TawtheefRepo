@@ -43,7 +43,7 @@
         ></p-select>
       </div>
       <button class="chip" type="button" (click)="clearFilters()">
-        <i class="fa fa-filter"></i>
+        <i class="hgi-stroke hgi-filter"></i>
         <span>{{ 'JOB_READY_APPLICATION_BUTTONS_CLEAR_FILTERS' | translate }}</span>
       </button>
     </div>
@@ -95,13 +95,13 @@
               <div class="row-actions">
                 @if (canManageJobs()) {
                 <button class="btn-pill btn-pill--outline btn-danger-outline" type="button" (click)="sendInvitation()">
-                  <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                  <i class="hgi-stroke hgi-sent-01" aria-hidden="true"></i>
                   <span>{{ 'JOB_READY_APPLICATION_BUTTONS_SEND_INVITATIONS' | translate }}</span>
                 </button>
                 }
                 @if (canViewJobs()) {
                 <button class="btn-pill btn-pill--outline" type="button" (click)="viewJobCandidate(job.id)">
-                  <i class="fa fa-eye"></i>
+                  <i class="hgi-stroke hgi-view"></i>
                   <span>{{ 'JOB_READY_APPLICATION_BUTTONS_VIEW' | translate }}</span>
                 </button>
                 }

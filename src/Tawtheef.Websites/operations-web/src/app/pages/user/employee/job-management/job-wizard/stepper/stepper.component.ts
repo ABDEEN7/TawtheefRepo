@@ -24,7 +24,7 @@ export class StepperComponent {
     {
       id: 3,
       label: 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES',
-      icon: 'fa fa-clipboard-check',
+      icon: 'hgi-stroke hgi-clipboard-check-01',
     },
     {
       id: 4,

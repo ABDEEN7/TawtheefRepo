@@ -2,7 +2,7 @@
   <form [formGroup]="form">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
       <h5 class="text-primary d-flex">
-        <i class="fa fa-clipboard-check"></i>
+        <i class="hgi-stroke hgi-clipboard-check-01"></i>
         {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.RESPONSIBILITIES' | translate }}
       </h5>
       <button
@@ -65,7 +65,7 @@
         <div formArrayName="responsibilities">
           @if (responsibilitiesArray.length === 0) {
             <div class="empty-card text-center py-5 border rounded">
-              <i class="fa fa-clipboard-check fa-3x text-muted mb-3"></i>
+              <i class="hgi-stroke hgi-clipboard-check-01 fa-3x text-muted mb-3"></i>
               <h6 class="text-muted">
                 {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_TITLE' | translate }}
               </h6>
@@ -73,7 +73,7 @@
                 {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.EMPTY_STATE_DESC' | translate }}
               </p>
               <div class="alert alert-info mt-3">
-                <i class="fa fa-info-circle me-2"></i>
+                <i class="hgi-stroke hgi-information-circle me-2"></i>
                 {{ 'JOB_WIZARD.STEPS.RESPONSIBILITIES.AT_LEAST_ONE' | translate }}
               </div>
             </div>
@@ -125,11 +125,11 @@
                     ) {
                       <div class="text-danger small mt-1">
                         @if (getResponsibilityGroup(i).controls['textAr'].errors?.['required']) {
-                          <i class="fa fa-exclamation-circle me-1"></i>
+                          <i class="hgi-stroke hgi-alert-circle me-1"></i>
                           {{ 'JOB_WIZARD.VALIDATION.RESPONSIBILITY_AR_REQUIRED' | translate }}
                         }
                         @if (getResponsibilityGroup(i).controls['textAr'].errors?.['maxlength']) {
-                        <i class="fa fa-exclamation-circle me-1"></i>
+                        <i class="hgi-stroke hgi-alert-circle me-1"></i>
                         {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: { max: 500 } }}
                       }
                       </div>
@@ -159,12 +159,12 @@
                     ) {
                        <div class="text-danger small mt-1">
                       @if (getResponsibilityGroup(i).controls['textEn'].errors?.['required']) {
-                        <i class="fa fa-exclamation-circle me-1"></i>
+                        <i class="hgi-stroke hgi-alert-circle me-1"></i>
                         {{ 'JOB_WIZARD.VALIDATION.RESPONSIBILITY_EN_REQUIRED' | translate }}
                       }
 
                       @if (getResponsibilityGroup(i).controls['textEn'].errors?.['maxlength']) {
-                        <i class="fa fa-exclamation-circle me-1"></i>
+                        <i class="hgi-stroke hgi-alert-circle me-1"></i>
                         {{ 'JOB_WIZARD.VALIDATION.MAX_LENGTH' | translate: { max: 500 } }}
                       }
                     </div>
@@ -178,7 +178,7 @@
 
         @if (!isValid() && form.touched) {
           <div class="alert alert-warning mt-4">
-            <i class="fa fa-exclamation-triangle me-2"></i>
+            <i class="hgi-stroke hgi-alert-triangle me-2"></i>
             @if (responsibilitiesArray.length === 0) {
               {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_RESPONSIBILITY' | translate }}
             } @else {
