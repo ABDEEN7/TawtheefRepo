@@ -267,7 +267,8 @@ public sealed class GetTeamPerformanceQueryHandler(
             var avgResponse = x.Times.Count == 0
                 ? 0m
                 : (decimal)x.Times.Average(t => 
-                    (t.ReviewItemCreatedDate - (t.ReviewedAtUtcCreated ?? DateTime.UtcNow)).TotalHours);
+                    ((t.ReviewedAtUtcCreated ?? DateTime.UtcNow) - 
+                     t.ReviewItemCreatedDate).TotalHours);
             return new ReviewStat(x.EmployeeId, x.Reviewed, x.Approved, x.Rejected, avgResponse);
         });
     }
