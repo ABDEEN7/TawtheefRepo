@@ -254,7 +254,11 @@ public sealed class GetTeamPerformanceQueryHandler(
                 Reviewed = g.Count(),
                 Approved = g.Count(x => x.Status == ReviewStatus.Approved),
                 Rejected = g.Count(x => x.Status == ReviewStatus.Rejected),
-                Times = g.Select(x => new { x.CreatedDate, UserProfileCreated = x.UserProfile!.CreatedDate }).ToList()
+                Times = g.Select(x => new
+                {
+                    ReviewItemCreatedDate = x.CreatedDate, 
+                    ReviewedAtUtcCreated = x.ReviewedAtUtc
+                }).ToList()
             })
             .ToListAsync(ct);
 
@@ -262,8 +266,8 @@ public sealed class GetTeamPerformanceQueryHandler(
         {
             var avgResponse = x.Times.Count == 0
                 ? 0m
-                : (decimal)x.Times.Average(t => (t.CreatedDate - t.CreatedDate).TotalHours);
-
+                : (decimal)x.Times.Average(t => 
+                    (t.ReviewItemCreatedDate - (t.ReviewedAtUtcCreated ?? DateTime.UtcNow)).TotalHours);
             return new ReviewStat(x.EmployeeId, x.Reviewed, x.Approved, x.Rejected, avgResponse);
         });
     }
