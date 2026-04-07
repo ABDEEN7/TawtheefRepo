@@ -165,10 +165,17 @@
                 <td>{{ row.appliedDate ? (row.appliedDate | date: 'dd/MM/yyyy') : '-' }}</td>
                 <td>{{ row.expiredDate ? (row.expiredDate | date: 'dd/MM/yyyy') : '-' }}</td>
                 <td>
+                  @if (row.hasAttachments) {
                   <button class="btn btn-outline-primary btn-sm rounded-pill" (click)="viewAttachments(row.inviteId)">
                     <i class="hgi hgi-stroke hgi-attachment-square me-1"></i> {{ 'JOB_INVITES_DETAILS_VIEW_ATTACHMENTS'
                     | translate }}
                   </button>
+                  } @else {
+                  <div class="no-attachments-msg">
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                    <span>{{ 'JOB_INVITES_DETAILS_NO_ATTACHMENTS_YET' | translate }}</span>
+                  </div>
+                  }
                 </td>
               </tr>
               }

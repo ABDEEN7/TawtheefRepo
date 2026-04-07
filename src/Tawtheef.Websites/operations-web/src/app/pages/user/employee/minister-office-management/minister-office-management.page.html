@@ -154,18 +154,18 @@
                 [value]="getStatusLabel(item.status) | translate"></p-tag>
             </td>
             <td class="text-center">
-              <div class="d-flex justify-content-center gap-1">
+              <div class="d-flex justify-content-center gap-2">
                 <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
                   [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                  [class]="item.isFollowUpActive ? 'p-button-rounded p-button-text p-button-success' : 'p-button-rounded p-button-text p-button-secondary'"
+                  [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
                   (click)="toggleFollowUp(item)"
                   [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
                 </button>
-                <button pButton type="button" icon="pi pi-list" class="p-button-rounded p-button-text p-button-info"
+                <button pButton type="button" icon="pi pi-list" class="btn-table-action btn-list"
                   (click)="viewInvitations(item)" *ngIf="item.status === CandidateStatus.InvitationsReceived"
                   [pTooltip]="'ministerOffice.tooltips.viewInvitations' | translate">
                 </button>
-                <button pButton type="button" icon="pi pi-history" class="p-button-rounded p-button-text p-button-help"
+                <button pButton type="button" icon="pi pi-history" class="btn-table-action btn-history"
                   (click)="viewAuditLog(item)" [pTooltip]="'ministerOffice.tooltips.viewAudit' | translate">
                 </button>
               </div>

@@ -32,6 +32,7 @@ export interface InviteRowVM {
   appliedDate?: string | null;
   declinedDate?: string | null;
   expiredDate?: string | null;
+  hasAttachments: boolean;
 }
 
 export interface JobInvitesStatsVM {
