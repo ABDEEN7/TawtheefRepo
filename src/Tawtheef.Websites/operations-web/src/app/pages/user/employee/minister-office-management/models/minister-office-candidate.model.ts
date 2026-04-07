@@ -51,7 +51,9 @@ export interface MinisterOfficeCandidateInvitationDto {
   invitationId: string;
   jobTitleEn: string;
   jobTitleAr: string;
-  invitationStatus: string;
+  organizationNameEn: string;
+  organizationNameAr: string;
+  invitationStatus: any; 
   invitedAt: string;
 }
 

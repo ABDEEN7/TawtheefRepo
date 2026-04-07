@@ -43,6 +43,7 @@
   "ministerOffice.dialog.invitations.job": "Job Title",
   "ministerOffice.dialog.invitations.status": "Status",
   "ministerOffice.dialog.invitations.date": "Date Invited",
+  "ministerOffice.dialog.invitations.organization": "Organization",
   "ministerOffice.dialog.invitations.empty": "No active invitations for this candidate.",
   "ministerOffice.dialog.audit.title": "Candidate Audit Log",
   "ministerOffice.dialog.audit.action": "Action",
@@ -51,5 +52,6 @@
   "ministerOffice.dialog.audit.date": "Timestamp",
   "ministerOffice.common.cancel": "Cancel",
   "ministerOffice.common.submit": "Register",
-  "ministerOffice.common.save": "Save Changes"
+  "ministerOffice.common.save": "Save Changes",
+  "JOB_INVITATION_STATUSES.SUBMITTED": "Submitted"
 }

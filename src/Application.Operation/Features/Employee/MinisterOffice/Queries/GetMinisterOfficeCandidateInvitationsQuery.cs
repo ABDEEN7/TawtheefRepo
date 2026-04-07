@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Operation.Features.Employee.MinisterOffice.Queries;
 
-public record GetMinisterOfficeCandidateInvitationsQuery(Guid CandidateId)
+public record GetMinisterOfficeCandidateInvitationsQuery(Guid CandidateId, string Language = "en")
     : IRequest<IResult<IReadOnlyList<MinisterOfficeCandidateInvitationDto>>>;

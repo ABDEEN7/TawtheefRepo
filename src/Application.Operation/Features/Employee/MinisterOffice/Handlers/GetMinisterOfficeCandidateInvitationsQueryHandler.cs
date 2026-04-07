@@ -4,8 +4,9 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -46,7 +47,9 @@ public sealed class GetMinisterOfficeCandidateInvitationsQueryHandler(IUnitOfWor
         var invRepo = uow.GetEntityRepository<Invitation>();
         var invitations = await invRepo.DbSet
             .AsNoTracking()
-            .Include(i => i.Job)
+            .Include(i => i.Job) // Existing include
+            .ThenInclude(j => j!.WorkLocation) // Plus this
+            .Include(i => i.InvitationStatus)
             .Where(i => i.ApplicantId == profile.UserId)
             .OrderByDescending(i => i.CreatedDate)
             .Select(i => new MinisterOfficeCandidateInvitationDto
@@ -54,31 +57,23 @@ public sealed class GetMinisterOfficeCandidateInvitationsQueryHandler(IUnitOfWor
                 InvitationId = i.Id,
                 JobTitleEn = i.Job != null ? i.Job.JobTitle!.JobNameEn : string.Empty,
                 JobTitleAr = i.Job != null ? i.Job.JobTitle!.JobNameAr : string.Empty,
-                InvitationStatus = MapInvitationStatus(i.InvitationStatusId),
+                OrganizationNameEn = (i.Job != null && i.Job.WorkLocation != null) ? i.Job.WorkLocation.NameEn : string.Empty,
+                OrganizationNameAr = (i.Job != null && i.Job.WorkLocation != null) ? i.Job.WorkLocation.NameAr : string.Empty,
+                InvitationStatus = new DropdownOptions
+                {
+                    Id = i.InvitationStatusId,
+                    BackendName = i.InvitationStatus!.BackendName,
+                    Name = i.InvitationStatus!.GetLocalizedName(request.Language),
+                    AdditionalData = new
+                    {
+                        i.InvitationStatus!.NameAr,
+                        i.InvitationStatus!.NameEn,
+                    }
+                },
                 InvitedAt = i.CreatedDate
             })
             .ToListAsync(ct);
 
         return Result.Ok<IReadOnlyList<MinisterOfficeCandidateInvitationDto>>(invitations);
-    }
-
-    private static string MapInvitationStatus(Guid statusId)
-    {
-        if (statusId == InvitationStatusIds.NewInvitation ||
-            statusId == InvitationStatusIds.Read)
-            return "Pending";
-
-        if (statusId == InvitationStatusIds.Submitted ||
-            statusId == InvitationStatusIds.PendingAttachmentApproval)
-            return "Accepted";
-
-        if (statusId == InvitationStatusIds.Rejected ||
-            statusId == InvitationStatusIds.Cancelled)
-            return "Rejected";
-
-        if (statusId == InvitationStatusIds.Closed)
-            return "Closed";
-
-        return "Unknown";
     }
 }

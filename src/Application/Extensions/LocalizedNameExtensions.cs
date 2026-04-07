@@ -6,12 +6,12 @@ namespace Tawtheef.Application.Extensions;
 // For classes that can't implement ILocalizedName but have the right properties
 public static class LocalizedNameExtensions
 {
-    public static string? GetLocalizedName(this object? source,[AllowedValues("ar","en")] string language)
+    public static string GetLocalizedName(this object? source,[AllowedValues("ar","en")] string language)
     {
         switch (source)
         {
             case null:
-                return null;
+                return string.Empty;
             case ILocalizedName localized:
                 return localized.GetLocalizedName(language);
             case ILocalizedFullName localized:
@@ -20,7 +20,7 @@ public static class LocalizedNameExtensions
             {
                 // Reflection fallback (slower but flexible)
                 var prop = source.GetType().GetProperty($"Name{language}");
-                return prop?.GetValue(source) as string ?? source.GetType().GetProperty("NameEn")?.GetValue(source) as string;
+                return prop?.GetValue(source) as string ?? source.GetType().GetProperty("NameEn")?.GetValue(source) as string ?? string.Empty;
             }
         }
     }
