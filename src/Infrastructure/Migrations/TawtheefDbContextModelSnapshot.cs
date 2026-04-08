@@ -1911,8 +1911,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Section")
                         .HasMaxLength(200)

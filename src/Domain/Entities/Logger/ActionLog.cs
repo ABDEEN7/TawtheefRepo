@@ -20,10 +20,9 @@ public class ActionLog : EventEntity
 
     [Required]
     public ActionLogType LogType { get; set; }
-
-    [StringLength(1024)]
+ 
     public string? Notes { get; set; }
-
+ 
     [StringLength(200)]
     public string? Section { get; set; }
 
