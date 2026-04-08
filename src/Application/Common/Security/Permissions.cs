@@ -482,7 +482,7 @@ public static class Permissions
                 nameof(PermissionKeys.MinisterOffice),
                 PermissionAction.View,
                 "Minister Office - View",
-                "مكتب الوزير - عرض",
+                "مكتب سعادة الوزير - عرض",
                 90);
 
         public static readonly PermissionDefinition Manage =
@@ -491,7 +491,7 @@ public static class Permissions
                 nameof(PermissionKeys.MinisterOffice),
                 PermissionAction.Manage,
                 "Minister Office - Manage",
-                "مكتب الوزير - إدارة",
+                "مكتب سعادة الوزير - إدارة",
                 91);
     }
 }
