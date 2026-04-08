@@ -7,6 +7,8 @@ import { RESIDENCY_CHOSEN_MANUALLY_KEY, RESIDENCY_MODE_KEY } from '../../../core
 import { DialogService } from 'primeng/dynamicdialog';
 import { QatarResidentOtpDialogComponent } from './components/qatar-resident-otp-dialog/qatar-resident-otp-dialog.component';
 import { GeoIpService } from '../../../core/services/geo-ip.service';
+import { Router } from '@angular/router';
+import { routes } from '../../../routes/routes';
 
 type ResidencyMode = 'resident' | 'nonresident';
 
@@ -17,6 +19,7 @@ type ResidencyMode = 'resident' | 'nonresident';
   standalone: false
 })
 export class Login implements OnInit, OnDestroy {
+  router = inject(Router);
   private lang = inject(LanguageService);
   readonly auth = inject(ExternalLoginService);
   private dialog = inject(DialogService);
@@ -26,6 +29,7 @@ export class Login implements OnInit, OnDestroy {
   currentLang: 'ar' | 'en' = 'ar';
   residencyMode: ResidencyMode = (localStorage.getItem(RESIDENCY_MODE_KEY) as ResidencyMode) || 'resident';
 
+  protected readonly routes = routes;
   private subs: Subscription[] = [];
 
   ngOnInit(): void {
@@ -42,6 +46,11 @@ export class Login implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+  }
+
+  navigateToHome(event?: Event): void {
+    event?.preventDefault();
+    this.router.navigateByUrl(this.routes.home).finally(() => window.location.reload());
   }
 
   toggleLang(): void {
