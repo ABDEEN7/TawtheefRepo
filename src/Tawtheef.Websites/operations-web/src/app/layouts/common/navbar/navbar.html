@@ -139,6 +139,19 @@
             </div>
           </div>
 
+          <!-- Font Size Control -->
+          <div class="font-scale-control d-flex align-items-center gap-1 me-2 border-end pe-3">
+            <button class="btn btn-sm btn-icon" (click)="decreaseFont()" [title]="'common.fontScale.decrease' | translate">
+              <i class="hgi hgi-stroke hgi-minus-sign"></i>
+            </button>
+            <button class="btn btn-sm btn-icon" (click)="resetFont()" [title]="'common.fontScale.reset' | translate">
+              <i class="hgi hgi-stroke hgi-text-smallcaps"></i>
+            </button>
+            <button class="btn btn-sm btn-icon" (click)="increaseFont()" [title]="'common.fontScale.increase' | translate">
+              <i class="hgi hgi-stroke hgi-add-01"></i>
+            </button>
+          </div>
+
           <!-- Language Switcher -->
           <button class="language-toggle language" (click)="toggleLanguage()">
             <span>{{`common.${language.getPrev()}` | translate }}</span>

@@ -25,9 +25,9 @@ import { CommonModule } from '@angular/common';
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 12px;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
       font-weight: 500;
       white-space: nowrap;
       transition: transform 0.15s ease;
@@ -38,12 +38,12 @@ import { CommonModule } from '@angular/common';
     }
 
     .metric-icon {
-      font-size: 13px;
+      font-size: 0.8125rem;
     }
 
     .metric-value {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
 
     .metric-label {

@@ -45,13 +45,13 @@ export interface PipelineSegment {
   `,
   styles: [`
     .pipeline-bar-wrapper {
-      min-width: 180px;
+      min-width: 11.25rem;
     }
 
     .pipeline-track {
       display: flex;
-      height: 8px;
-      border-radius: 4px;
+      height: 0.5rem;
+      border-radius: 0.25rem;
       overflow: hidden;
       background: #e9ecef;
       gap: 1px;
@@ -59,35 +59,35 @@ export interface PipelineSegment {
 
     .pipeline-segment {
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      min-width: 3px;
+      min-width: 0.1875rem;
     }
 
     .pipeline-segment:first-child {
-      border-radius: 4px 0 0 4px;
+      border-radius: 0.25rem 0 0 0.25rem;
     }
 
     .pipeline-segment:last-child {
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 0.25rem 0.25rem 0;
     }
 
     .pipeline-legend {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 12px;
-      margin-top: 6px;
+      gap: 0.375rem 0.75rem;
+      margin-top: 0.375rem;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 11px;
+      gap: 0.25rem;
+      font-size: 0.6875rem;
       color: #6c757d;
     }
 
     .legend-dot {
-      width: 6px;
-      height: 6px;
+      width: 0.375rem;
+      height: 0.375rem;
       border-radius: 50%;
       flex-shrink: 0;
     }

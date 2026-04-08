@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LanguageService } from '../../../core/services/language.service';
+import { FontSizeService } from '../../../core/services/font-size.service';
 import { Router, RouterLink } from '@angular/router';
 import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -30,9 +31,22 @@ import { NotificationDetailsDialogComponent } from '../../../shared/components/n
 export class Navbar implements OnInit, OnDestroy {
   auth = inject(AuthService);
   language = inject(LanguageService);
+  fontSize = inject(FontSizeService);
   router = inject(Router);
   private readonly notificationsApi = inject(InAppNotificationService);
   private readonly modalService = inject(NgbModal);
+
+  increaseFont(): void {
+    this.fontSize.increase();
+  }
+
+  decreaseFont(): void {
+    this.fontSize.decrease();
+  }
+
+  resetFont(): void {
+    this.fontSize.reset();
+  }
 
   openDetails(notification: NotificationModel): void {
     if (!notification.isRead) {
