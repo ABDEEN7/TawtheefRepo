@@ -1,8 +1,8 @@
 /* brand + neutrals to match your screenshot */
 $brand-start: #8a1538;
-$brand-end:   #8a1538;
-$border:      #8a1538;
-$muted:       #8a94a3;
+$brand-end: #8a1538;
+$border: #8a1538;
+$muted: #8a94a3;
 
 /* dialog header look (keep if you control <p-dialog>) */
 :host ::ng-deep .p-dialog .p-dialog-header {
@@ -42,4 +42,8 @@ $muted:       #8a94a3;
   border-radius: 999px;
   font-weight: 800;
 }
-:host ::ng-deep .no-borders .p-inputnumber-input{border: 0 !important;padding: 0 !important;}
+
+:host ::ng-deep .no-borders .p-inputnumber-input {
+  border: 0 !important;
+  padding: 0 !important;
+}

@@ -66,7 +66,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 2.25rem;
   padding: 0.5rem 0.875rem;
   border: 1px solid #dee2e6;
   background-color: white;
@@ -106,8 +106,8 @@
 }
 
 .pagination-number {
-  width: 36px;
-  height: 36px;;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   padding: 0.5rem 0.625rem;
 }
 
@@ -126,8 +126,8 @@
   user-select: none;
   font-size: 1rem;
   line-height: 1.5;
-  min-height: 36px;
-  min-width: 36px;
+  min-height: 2.25rem;
+  min-width: 2.25rem;
 }
 
 // RTL Support

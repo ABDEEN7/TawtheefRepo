@@ -16,6 +16,7 @@ import {MessageService} from 'primeng/api';
 import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {LanguageService} from './core/services/language.service';
+import {FontSizeService} from './core/services/font-size.service';
 import {authInterceptor} from './core/interceptors/auth.interceptor';
 import {errorInterceptor} from './core/interceptors/error.interceptor';
 import {loadingInterceptor} from './core/interceptors/loading.interceptor';
@@ -54,7 +55,8 @@ export const appConfig: ApplicationConfig = {
     { provide: TranslateLoader, useFactory: rootLoaderFactory, deps: [HttpBackend] },
     provideAppInitializer(() => {
       const langSvc = inject(LanguageService);
-      return langSvc.init();
+      const fontSvc = inject(FontSizeService);
+      return Promise.all([langSvc.init(), fontSvc.setup()]);
     }),
     provideHttpClient(
       withInterceptors([

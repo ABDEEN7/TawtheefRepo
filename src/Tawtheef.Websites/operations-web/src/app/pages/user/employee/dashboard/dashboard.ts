@@ -7,6 +7,7 @@ import {
   inject,
   signal, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { debounceTime, finalize, Subject, distinctUntilChanged } from 'rxjs';
@@ -30,6 +31,7 @@ import {
   TeamPerformanceRow,
 } from './models/operations-dashboard.model';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { FontSizeService } from '../../../../core/services/font-size.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -44,6 +46,9 @@ export class Dashboard implements OnInit {
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
+  private fontSizeService = inject(FontSizeService);
+
+  readonly fontScale = toSignal(this.fontSizeService.scale$, { initialValue: 1 as number });
 
   private readonly searchSubject = new Subject<string>();
 
@@ -72,33 +77,76 @@ export class Dashboard implements OnInit {
 
   private filterChanges$ = new Subject<void>();
 
-  readonly lineChartOptions: ChartOptions<'line'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, ticks: { precision: 0 } },
-    },
-  };
+  readonly lineChartOptions = computed<ChartOptions<'line'>>(() => {
+    const scale = this.fontScale();
+    const fontSize = 12 * scale;
 
-  readonly barChartOptions: ChartOptions<'bar'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, ticks: { precision: 0 } },
-    },
-  };
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: fontSize } }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0,
+            font: { size: fontSize }
+          }
+        },
+      },
+    };
+  });
 
-  readonly doughnutChartOptions: ChartOptions<'doughnut'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom' },
-    },
-  };
+  readonly barChartOptions = computed<ChartOptions<'bar'>>(() => {
+    const scale = this.fontScale();
+    const fontSize = 12 * scale;
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: fontSize } }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0,
+            font: { size: fontSize }
+          }
+        },
+      },
+    };
+  });
+
+  readonly doughnutChartOptions = computed<ChartOptions<'doughnut'>>(() => {
+    const scale = this.fontScale();
+    const fontSize = 11 * scale;
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: fontSize },
+            padding: Math.round(15 * scale)
+          }
+        },
+      },
+    };
+  });
 
   readonly isHrDashboard = computed(() => this.dashboard()?.role === 'HrManager');
   readonly isDepartmentManager = computed(() => this.dashboard()?.role === 'DepartmentManager');

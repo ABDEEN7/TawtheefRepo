@@ -20,27 +20,27 @@
       <div class="d-flex flex-wrap align-items-center mb-3 gap-3">
         <!-- Text Search -->
         <div class="flex-grow-1" style="min-width: 250px;">
-          <p-iconField iconPosition="left">
-            <p-inputIcon class="pi pi-search"></p-inputIcon>
-            <input pInputText type="text" [formControl]="searchControl" class="w-100 modern-search"
-              [placeholder]="'ministerOffice.list.search' | translate" />
-          </p-iconField>
+
+          <input class="w-100 form-control input-icon" type="text" [formControl]="searchControl"
+            [placeholder]="'ministerOffice.list.search' | translate" />
         </div>
 
         <!-- Filters Toggle & Reset -->
         <div class="d-flex gap-2">
-          <button pButton type="button" [icon]="showMoreFilters() ? 'pi pi-chevron-up' : 'pi pi-filter'"
-            class="p-button-outlined p-button-info action-btn" (click)="showMoreFilters.set(!showMoreFilters())"
+          <button type="button" class="p-button-outlined p-button-info action-btn"
+            (click)="showMoreFilters.set(!showMoreFilters())"
             [pTooltip]="'ministerOffice.list.moreFilters' | translate">
-            <span pButtonLabel class="d-none d-sm-inline ms-1">{{'ministerOffice.list.moreFilters' | translate}}</span>
+            <i [class]="showMoreFilters() ? 'pi pi-chevron-up' : 'pi pi-filter'"></i>
+            <span class="d-none d-sm-inline ms-1">{{'ministerOffice.list.moreFilters' | translate}}</span>
           </button>
 
-          <button pButton type="button" icon="pi pi-filter-slash" class="p-button-outlined p-button-danger action-btn"
-            (click)="clearFilters()" [pTooltip]="'ministerOffice.list.clearFilters' | translate">
+          <button type="button" class="p-button-outlined p-button-danger action-btn" (click)="clearFilters()"
+            [pTooltip]="'ministerOffice.list.clearFilters' | translate">
+            <i class="pi pi-filter-slash"></i>
           </button>
 
-          <button pButton type="button" icon="pi pi-refresh" class="p-button-outlined p-button-secondary action-btn"
-            (click)="loadData()" [loading]="loading()">
+          <button type="button" class="p-button-outlined p-button-secondary action-btn" (click)="loadData()">
+            <i class="pi pi-refresh"></i>
           </button>
         </div>
       </div>
@@ -155,18 +155,20 @@
             </td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-2">
-                <button pButton type="button" icon="pi pi-list" class="btn-table-action btn-list"
-                  (click)="viewInvitations(item)" *ngIf="item.status === CandidateStatus.InvitationsReceived"
+                <button type="button" class="btn-table-action btn-list" (click)="viewInvitations(item)"
+                  *ngIf="item.status === CandidateStatus.InvitationsReceived"
                   [pTooltip]="'ministerOffice.tooltips.viewInvitations' | translate">
+                  <i class="pi pi-list"></i>
                 </button>
-                <button pButton type="button" icon="pi pi-history" class="btn-table-action btn-history"
-                  (click)="viewAuditLog(item)" [pTooltip]="'ministerOffice.tooltips.viewAudit' | translate">
+                <button type="button" class="btn-table-action btn-history" (click)="viewAuditLog(item)"
+                  [pTooltip]="'ministerOffice.tooltips.viewAudit' | translate">
+                  <i class="pi pi-history"></i>
                 </button>
-                <button *hasPermission="[Permissions.MinisterOffice.Manage]" pButton type="button"
-                  [icon]="item.isFollowUpActive ? 'pi pi-eye' : 'hgi hgi-stroke hgi-user-minus-02'"
+                <button *hasPermission="[Permissions.MinisterOffice.Manage]" type="button"
                   [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
                   (click)="toggleFollowUp(item)"
                   [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
+                  <i [class]="item.isFollowUpActive ? 'pi pi-eye' : 'hgi hgi-stroke hgi-user-minus-02'"></i>
                 </button>
               </div>
             </td>

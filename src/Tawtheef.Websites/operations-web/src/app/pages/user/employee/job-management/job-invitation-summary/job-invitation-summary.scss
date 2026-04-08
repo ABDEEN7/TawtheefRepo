@@ -51,8 +51,8 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     th {
       background: $header-bg;
       border-bottom: 2px solid darken($header-bg, 5%);
-      padding: 14px 16px;
-      font-size: 12px;
+      padding: 0.875rem 1rem;
+      font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.05em;
       color: $header-text;
@@ -64,10 +64,10 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   tbody {
     td {
-      padding: 14px 16px;
+      padding: 0.875rem 1rem;
       border-bottom: 1px solid #f1f5f9;
       vertical-align: middle;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
   }
 }
@@ -82,8 +82,8 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .sort-icon {
-    margin-inline-start: 6px;
-    font-size: 11px;
+    margin-inline-start: 0.375rem;
+    font-size: 0.6875rem;
     opacity: 0.7;
     transition: opacity $transition-fast;
     color: $header-text;
@@ -96,7 +96,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
 // ── Column widths ─────────────────────────────────
 .col-expand {
-  width: 40px;
+  width: 2.5rem;
   text-align: center;
 }
 
@@ -128,7 +128,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sticky-col--job {
-  left: 40px; // after expand col
+  left: 2.5rem; // after expand col
 
   thead & {
     background: $header-bg;
@@ -136,7 +136,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sticky-col--status {
-  left: 280px; // 40px expand + 240px job
+  left: 17.5rem; // 40px expand + 240px job (converted)
 
   thead & {
     background: $header-bg;
@@ -193,8 +193,9 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0.35rem;
   border-radius: 6px;
   border: none;
   background: transparent;
@@ -208,7 +209,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   i {
-    font-size: 11px;
+    font-size: 0.6875rem;
     transition: transform $transition-fast;
   }
 }
@@ -223,7 +224,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 .job-title {
   font-weight: 600;
   color: #1e293b;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.3;
 }
 
@@ -237,7 +238,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -257,12 +258,12 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  height: 30px;
-  padding: 0 10px;
+  min-width: 2.25rem;
+  height: 1.875rem;
+  padding: 0 0.625rem;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .metric-number--primary {
@@ -280,8 +281,9 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  min-width: 1.875rem;
+  min-height: 1.875rem;
+  padding: 0.35rem;
   border-radius: 8px;
   border: 1px solid $border-color;
   background: #fff;
@@ -299,7 +301,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   i {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 
@@ -308,8 +310,9 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.35rem;
   border-radius: 8px;
   border: none;
   background: transparent;
@@ -323,7 +326,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   i {
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 
@@ -331,8 +334,9 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.25rem;
   border-radius: 8px;
   color: $color-primary;
   cursor: pointer;
@@ -345,7 +349,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   i {
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 
@@ -407,13 +411,13 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 @media (max-width: 768px) {
   .pipeline-table {
     thead th {
-      padding: 10px 12px;
-      font-size: 11px;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.6875rem;
     }
 
     tbody td {
-      padding: 10px 12px;
-      font-size: 13px;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.8125rem;
     }
   }
 
@@ -426,11 +430,11 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .job-title {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 
   .meta-tag {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
 
   .col-pipeline {
@@ -441,11 +445,11 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 // ── Dialog styling (global override for the chart dialog) ──
 :host ::ng-deep .pipeline-chart-dialog {
   .p-dialog-header {
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid $border-color;
   }
 
   .p-dialog-content {
-    padding: 24px;
+    padding: 1.5rem;
   }
 }

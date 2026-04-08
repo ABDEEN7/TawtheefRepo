@@ -94,5 +94,8 @@
   "auth.externalLogin.timeout.summary": "Login timed out",
   "auth.externalLogin.timeout.detail": "Completing external login took too long. Please try again.",
   "auth.externalLogin.loadingOpening": "Opening login window…",
-  "auth.externalLogin.loadingCompleting": "Completing login…"
+  "auth.externalLogin.loadingCompleting": "Completing login…",
+  "common.fontScale.increase": "Increase Font",
+  "common.fontScale.decrease": "Decrease Font",
+  "common.fontScale.reset": "Reset Font"
 }

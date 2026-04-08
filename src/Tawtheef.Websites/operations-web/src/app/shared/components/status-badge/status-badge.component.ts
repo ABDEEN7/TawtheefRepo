@@ -21,10 +21,10 @@ import { CommonModule } from '@angular/common';
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
+      gap: 0.375rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1.25rem;
+      font-size: 0.75rem;
       font-weight: 600;
       line-height: 1.4;
       white-space: nowrap;
@@ -33,8 +33,8 @@ import { CommonModule } from '@angular/common';
 
     .status-badge::before {
       content: '';
-      width: 7px;
-      height: 7px;
+      width: 0.4375rem;
+      height: 0.4375rem;
       border-radius: 50%;
       flex-shrink: 0;
     }

@@ -94,5 +94,8 @@
   "auth.externalLogin.timeout.summary": "انتهت مهلة تسجيل الدخول",
   "auth.externalLogin.timeout.detail": "استغرق إكمال تسجيل الدخول الخارجي وقتًا أطول من المتوقع. يرجى المحاولة مرة أخرى.",
   "auth.externalLogin.loadingOpening": "جارٍ فتح نافذة تسجيل الدخول…",
-  "auth.externalLogin.loadingCompleting": "جارٍ إكمال تسجيل الدخول…"
+  "auth.externalLogin.loadingCompleting": "جارٍ إكمال تسجيل الدخول…",
+  "common.fontScale.increase": "تكبير الخط",
+  "common.fontScale.decrease": "تصغير الخط",
+  "common.fontScale.reset": "إعادة تعيين الخط"
 }
