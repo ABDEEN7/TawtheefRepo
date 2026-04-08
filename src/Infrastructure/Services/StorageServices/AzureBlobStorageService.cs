@@ -220,11 +220,15 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
     public async Task<StoredFileStream?> OpenReadAsync(string pathOrBlobName, CancellationToken ct)
     {
-        var blobName = BuildBlobName(pathOrBlobName);
+        var path = Path.Combine("public", pathOrBlobName);
+        var blobName = BuildBlobName(path);
         var blob = _container.GetBlobClient(blobName);
 
         if (!await blob.ExistsAsync(ct).ConfigureAwait(false))
+        {
+            _logger.Warning("Blob {BlobName} does not exist, received path: {PathOrBlobName}", blobName, pathOrBlobName);
             return null;
+        }
 
         var resp = await blob.DownloadStreamingAsync(cancellationToken: ct).ConfigureAwait(false);
         var d = resp.Value.Details;
