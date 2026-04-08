@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
@@ -220,8 +220,7 @@ public sealed class AzureBlobStorageService : IFileStorageService
 
     public async Task<StoredFileStream?> OpenReadAsync(string pathOrBlobName, CancellationToken ct)
     {
-        var path = Path.Combine("public", pathOrBlobName);
-        var blobName = BuildBlobName(path);
+        var blobName = BuildBlobName(pathOrBlobName);
         var blob = _container.GetBlobClient(blobName);
 
         if (!await blob.ExistsAsync(ct).ConfigureAwait(false))

@@ -76,7 +76,8 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     [HttpGet("/files/{*path}")]
     public async Task<IActionResult> GetFile(string path)
     {
-        return await mediator.Send(new GetPublicFileQuery(Uri.UnescapeDataString(path)));
+        var publicPath = "public/" + Uri.UnescapeDataString(path);
+        return await mediator.Send(new GetPublicFileQuery(publicPath));
     }
 
     private static string SafeDecode(string encoded)
