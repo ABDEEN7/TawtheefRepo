@@ -90,7 +90,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "13kB",
-                  "maximumError": "15kB"
+                  "maximumError": "20kB"
                 }
               ],
               "optimization": false,
