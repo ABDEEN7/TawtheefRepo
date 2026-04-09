@@ -18,8 +18,8 @@ public class Office : LookupBase
 {
     public required Guid CountryId { get; init; }
     public Country? Country { get; init; }
-    public required Guid OfficeAdminId { get; init; }
-    public OfficeUser? OfficeAdmin { get; init; }
+    public required Guid OfficeAdminId { get; set; }
+    public OfficeUser? OfficeAdmin { get; set; }
     /// <summary>
     /// this property add to be used to mapping with an external system and the old system.
     /// </summary>

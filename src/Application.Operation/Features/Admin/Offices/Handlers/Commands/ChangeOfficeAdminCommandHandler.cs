@@ -1,39 +1,55 @@
-﻿using Application.Operation.Features.Admin.Offices.Commands;
+using Application.Operation.Features.Admin.Offices.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
 public sealed class ChangeOfficeAdminCommandHandler(
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<ChangeOfficeAdminCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         ChangeOfficeAdminCommand request,
         CancellationToken cancellationToken)
     {
-        var targetUser = await GetOfficeUserAsync(request.UserId, request.OfficeId,cancellationToken);
-
-        if (targetUser is null)
-            return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
-
-        var currentAdmins = await GetOfficeAdminsAsync(request.OfficeId);
-        foreach (var admin in currentAdmins.Where(a => a.Id != targetUser.Id))
+        return await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
-            var demoteResult = await DemoteAdminAsync(admin);
-            if (demoteResult.IsFailed)
-                return demoteResult;
-        }
+            var targetUser = await GetOfficeUserAsync(request.UserId, request.OfficeId, ct);
 
-        var promoteResult = await PromoteToAdminAsync(targetUser);
-        if (promoteResult.IsFailed)
-            return promoteResult;
+            if (targetUser is null)
+                return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
 
-        return Result.Ok(Unit.Value);
+            var officeRepo = unitOfWork.GetEntityRepository<Office>();
+            var office = await officeRepo.DbSet
+                .FirstOrDefaultAsync(o => o.Id == request.OfficeId, ct);
+
+            if (office is null)
+                return Result.Fail<Unit>(ErrorsCodes.OfficeNotFound);
+
+            var currentAdmins = await GetOfficeAdminsAsync(request.OfficeId);
+            foreach (var admin in currentAdmins.Where(a => a.Id != targetUser.Id))
+            {
+                var demoteResult = await DemoteAdminAsync(admin);
+                if (demoteResult.IsFailed)
+                    return demoteResult;
+            }
+
+            var promoteResult = await PromoteToAdminAsync(targetUser);
+            if (promoteResult.IsFailed)
+                return promoteResult;
+
+            office.OfficeAdminId = targetUser.Id;
+            await unitOfWork.SaveChangesAsync(ct);
+
+            return Result.Ok(Unit.Value);
+        }, cancellationToken);
     }
 
 
@@ -52,6 +68,11 @@ public sealed class ChangeOfficeAdminCommandHandler(
             .Where(u => u.OfficeId == officeId).ToList();
     }
 
+    /// <summary>
+    /// remove role from old admin and add office user role to he
+    /// </summary>
+    /// <param name="admin"></param>
+    /// <returns></returns>
     private async Task<Result<Unit>> DemoteAdminAsync(OfficeUser admin)
     {
         var removeAdmin = await userManager.RemoveFromRoleAsync(admin,

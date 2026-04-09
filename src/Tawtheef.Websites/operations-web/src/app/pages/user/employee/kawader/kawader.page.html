@@ -21,7 +21,7 @@
                 <label class="form-label">{{ 'kawader.upload.label' | translate }}</label>
                 <input #fileInput type="file" accept=".xlsx,.xls" class="form-control"
                   (change)="onFileChange($event)" />
-                <small class="text-muted">{{ 'kawader.upload.helper' | translate }}</small>
+
                 <div class="text-danger mt-1" *ngIf="form.controls.file.invalid && form.controls.file.touched">
                   {{ 'kawader.upload.required' | translate }}
                 </div>
