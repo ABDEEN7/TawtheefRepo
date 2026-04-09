@@ -1,16 +1,21 @@
-﻿using Application.Operation.Features.Admin.Offices.Commands;
+using Application.Operation.Features.Admin.Offices.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
-public sealed class DeleteOfficeCommandHandler(UserManager<User> userManager, IUnitOfWork unitOfWork, TimeProvider time)
+public sealed class DeleteOfficeCommandHandler(
+    UserManager<User> userManager,
+    IUnitOfWork unitOfWork,
+    ITokenService tokenService,
+    TimeProvider time)
     : IRequestHandler<DeleteOfficeCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
@@ -40,6 +45,11 @@ public sealed class DeleteOfficeCommandHandler(UserManager<User> userManager, IU
                         .SetProperty(u => u.IsDeleted, true)
                         .SetProperty(u => u.DeletedDate, time.GetUtcNow().UtcDateTime)
                         .SetProperty(u => u.DeletedById, request.UserId), cancellationToken);
+
+            foreach (var userId in userIds)
+            {
+                await tokenService.RevokeAllAsync(userId, cancellationToken);
+            }
         }
         unitOfWork.Remove(office);
         
