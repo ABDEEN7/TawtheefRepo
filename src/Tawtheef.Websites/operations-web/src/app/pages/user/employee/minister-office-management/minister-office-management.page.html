@@ -171,7 +171,8 @@
                   [class]="'btn-table-action ' + (item.isFollowUpActive ? 'btn-activate' : 'btn-deactivate')"
                   (click)="toggleFollowUp(item)"
                   [pTooltip]="(item.isFollowUpActive ? 'ministerOffice.tooltips.deactivate' : 'ministerOffice.tooltips.activate') | translate">
-                  <i [class]="item.isFollowUpActive ? 'pi pi-eye' : 'hgi hgi-stroke hgi-user-minus-02'"></i>
+                  <i
+                    [class]="item.isFollowUpActive ? 'hgi hgi-stroke hgi-user-minus-02' : 'hgi hgi-stroke hgi-user-add-02'"></i>
                 </button>
               </div>
             </td>
