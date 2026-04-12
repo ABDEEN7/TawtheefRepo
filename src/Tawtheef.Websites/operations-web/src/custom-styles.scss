@@ -795,6 +795,14 @@ body.rtl .p-multiselect-panel {
   text-align: right !important;
 }
 
+/* Datepicker RTL fixes */
+body.rtl .p-datepicker-prev-button,
+body.rtl .p-datepicker-next-button,
+body.rtl .p-datepicker-year-prev-button,
+body.rtl .p-datepicker-year-next-button {
+  transform: rotate(180deg);
+}
+
 .form-control:focus,
 .form-select:focus {
   box-shadow: none;
