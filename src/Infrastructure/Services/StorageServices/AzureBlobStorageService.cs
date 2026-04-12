@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
@@ -224,7 +224,10 @@ public sealed class AzureBlobStorageService : IFileStorageService
         var blob = _container.GetBlobClient(blobName);
 
         if (!await blob.ExistsAsync(ct).ConfigureAwait(false))
+        {
+            _logger.Warning("Blob {BlobName} does not exist, received path: {PathOrBlobName}", blobName, pathOrBlobName);
             return null;
+        }
 
         var resp = await blob.DownloadStreamingAsync(cancellationToken: ct).ConfigureAwait(false);
         var d = resp.Value.Details;

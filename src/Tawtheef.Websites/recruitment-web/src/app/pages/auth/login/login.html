@@ -16,7 +16,10 @@
         <div class="col-lg-6 col-md-12 col-sm-12">
           <div class="row align-items-center mb-3">
             <div class="col-md-8">
-              <div><img class="logo" src="assets/img/logo-black.png" alt="{{ 'auth.login.ministry_name' | translate }}">
+              <div>
+                <a href="" (click)="navigateToHome($event)">
+                  <img class="logo" src="assets/img/logo-black.png" alt="{{ 'auth.login.ministry_name' | translate }}">
+                </a>
               </div>
               <div class="fw-bold fs-4 ">{{ 'auth.login.tawtheef' | translate }}</div>
             </div>

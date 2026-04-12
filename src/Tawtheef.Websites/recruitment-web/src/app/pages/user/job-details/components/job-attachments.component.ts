@@ -46,6 +46,12 @@ export class JobAttachmentsComponent {
   onFileSelected(event: any, jobRequiredAttachmentId: GUID) {
     const file = event.target.files[0];
     if (file) {
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        this.notifier.error(this.translate.instant('JOB_DETAILS.FILE_TYPE_ERROR'));
+        return;
+      }
+
       if (file.size > 5 * 1024 * 1024) {
         this.notifier.error(this.translate.instant('JOB_DETAILS.FILE_SIZE_ERROR'));
         return;

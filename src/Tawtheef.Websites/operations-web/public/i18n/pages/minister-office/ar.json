@@ -1,7 +1,7 @@
 {
-  "ministerOffice.header.eyebrow": "مكتب الوزير",
-  "ministerOffice.header.title": "طلبات مرشحي مكتب الوزير",
-  "ministerOffice.header.subtitle": "إدارة وتسجيل مرشحي مكتب الوزير والتحقق من هويتهم ومتابعة حالة ملفاتهم.",
+  "ministerOffice.header.eyebrow": "مكتب سعادة الوزير",
+  "ministerOffice.header.title": "طلبات مرشحي مكتب سعادة الوزير",
+  "ministerOffice.header.subtitle": "إدارة وتسجيل مرشحي مكتب سعادة الوزير والتحقق من هويتهم ومتابعة حالة ملفاتهم.",
   "ministerOffice.header.add": "إضافة مرشح جديد",
   "ministerOffice.list.search": "ابحث بالرقم الشخصي، الاسم الإنجليزي أو العربي...",
   "ministerOffice.list.showInactive": "عرض المرشحين المتوقفين عن المتابعة",
@@ -53,5 +53,7 @@
   "ministerOffice.common.cancel": "إلغاء",
   "ministerOffice.common.submit": "تسجيل",
   "ministerOffice.common.save": "حفظ",
-  "JOB_INVITATION_STATUSES.SUBMITTED": "مرشح للاختبار"
+  "JOB_INVITATION_STATUSES.SUBMITTED": "مرشح للاختبار",
+  "ministerOffice.CANDIDATE_FOLLOW_UP_ACTIVATED": "تم تفعيل المتابعة",
+  "ministerOffice.CANDIDATE_FOLLOW_UP_DEACTIVATED": "تم إلغاء تفعيل المتابعة"
 }

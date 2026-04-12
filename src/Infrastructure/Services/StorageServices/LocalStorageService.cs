@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -191,7 +191,7 @@ public sealed class LocalStorageService : IFileStorageService
     private string GetFullPath(string path)
     {
         path = path.Replace('\\', '/').TrimStart('/');
-        var full = Path.GetFullPath(Path.Combine(_rootFull,"public", path));
+        var full = Path.GetFullPath(Path.Combine(_rootFull, path));
         if (!full.StartsWith(_rootFull, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("Invalid path traversal.");
 

@@ -85,7 +85,7 @@
       </div>
     </div>
   </section>
-  <section id="success" class="section success">
+  <section id="success" class="section success" *ngIf="successStoriesView().length > 0 || pageLoading()">
     <div class="container">
       <div class="text-center mb-4">
         <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.success.title' | translate }}</h2>
@@ -145,7 +145,7 @@
       }
     </div>
   </section>
-  <section id="faq" class="section bg-light">
+  <section id="faq" class="section bg-light" *ngIf="faqItemsView().length > 0 || pageLoading()">
     <div class="container">
       <div class="text-center mb-4">
         <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.faq.title' | translate }}</h2>

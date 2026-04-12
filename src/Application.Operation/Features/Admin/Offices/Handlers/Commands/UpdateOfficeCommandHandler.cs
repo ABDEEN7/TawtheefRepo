@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.Offices.Commands;
+using Application.Operation.Features.Admin.Offices.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -30,6 +30,7 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
         var officeRepo = unitOfWork.GetEntityRepository<Office>();
 
         var office = await officeRepo.DbSet
+            .IgnoreQueryFilters()
             .Include(o => o.OfficeUsers)
             .Include(o => o.SupportedCountries)
             .FirstOrDefaultAsync(o => o.Id == request.Id, ct);
@@ -80,11 +81,9 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
         if (officeUserIds.Count == 0)
             return Result.Fail(ErrorsCodes.OfficeAdminNotFound);
 
-        var officeAdmins = await userManager
-            .GetUsersInRoleAsync(nameof(SystemRoleIds.OfficeAdmin));
-
-        var officeAdmin = officeAdmins
-            .FirstOrDefault(u => officeUserIds.Contains(u.Id));
+        var officeAdmin = await userManager.Users
+            .OfType<OfficeUser>()
+            .FirstOrDefaultAsync(u => u.Id == office.OfficeAdminId);
 
         if (officeAdmin is null)
             return Result.Fail(ErrorsCodes.OfficeAdminNotFound);
@@ -130,20 +129,26 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
         var existing = office.SupportedCountries
             .ToDictionary(sc => sc.CountryId);
 
-        // Soft-delete removed countries
-        foreach (var supportedCountry in office.SupportedCountries
-                     .Where(sc => !requestedIds.Contains(sc.CountryId)))
+        // Process all requested countries
+        foreach (var countryId in requestedIds)
         {
-            supportedCountry.IsDeleted = true;
+            if (existing.TryGetValue(countryId, out var existingSC))
+            {
+                existingSC.IsDeleted = false;
+            }
+            else
+            {
+                office.SupportedCountries.Add(new OfficeSupportedCountry
+                {
+                    CountryId = countryId
+                });
+            }
         }
 
-        // Add new ones
-        foreach (var countryId in requestedIds.Where(countryId => !existing.ContainsKey(countryId)))
+        // Soft-delete those not in the request
+        foreach (var sc in office.SupportedCountries.Where(sc => !requestedIds.Contains(sc.CountryId)))
         {
-            office.SupportedCountries.Add(new OfficeSupportedCountry
-            {
-                CountryId = countryId
-            });
+            sc.IsDeleted = true;
         }
     }
 }

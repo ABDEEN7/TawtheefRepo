@@ -8,5 +8,5 @@ public sealed class MinisterOfficeCandidateAuditLogDto
     public string? Qid { get; init; }
     public string OperatorNameEn { get; init; } = default!;
     public string OperatorNameAr { get; init; } = default!;
-    public DateTime CreatedDate { get; init; }
+    public DateTimeOffset CreatedDate { get; init; }
 }

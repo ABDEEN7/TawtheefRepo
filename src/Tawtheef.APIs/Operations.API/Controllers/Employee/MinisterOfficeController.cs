@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers.Employee;
@@ -72,6 +73,33 @@ public class MinisterOfficeController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query with { CandidateId = id });
         return result.ToActionResult();
     }
+
+    #region Lookups
+
+    [HttpGet("lookups/genders")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetGenders()
+    {
+        var result = await mediator.Send(new GetGendersQuery());
+        return result.ToActionResult();
+    }
+    
+    [HttpGet("lookups/target-entities")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetTargetEntities()
+    {
+        var result = await mediator.Send(new GetTargetEntitiesQuery());
+        return result.ToActionResult();
+    }
+    
+    [HttpGet("lookups/candidate-types")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> GetCandidateTypes()
+    {
+        var result = await mediator.Send(new GetCandidateTypesQuery());
+        return result.ToActionResult();
+    }
+    #endregion
 }
 
 public record UpdateFollowUpStatusRequest(bool IsActive);

@@ -375,7 +375,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
         closingDate: normalizedClosingDate,
         minimumAge: jobData.minimumAge,
         maximumAge: jobData.maximumAge,
-        degrees: this.copyTemplate.degrees ?? [],
+        degrees: jobData.degrees,
         conditions: this.copyTemplate.conditions ?? [],
         responsibilities: this.copyTemplate.responsibilities ?? [],
         skills: this.copyTemplate.skills ?? [],
