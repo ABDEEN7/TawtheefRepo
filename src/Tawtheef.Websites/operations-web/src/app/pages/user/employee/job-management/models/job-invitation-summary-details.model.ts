@@ -43,6 +43,8 @@ export interface JobInvitesStatsVM {
   declined: number;
   cancelled: number;
   expired: number;
+  pendingAttachmentApproval: number;
+  returnedAttachment: number;
 }
 
 export interface JobInvitesRowsFilters {

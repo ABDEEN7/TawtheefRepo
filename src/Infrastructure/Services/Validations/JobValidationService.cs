@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -35,7 +36,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             failures.Add(new ValidationFailure("AgeRange", ageValidation.ErrorMessage));
 
         if (dto.GenderId.HasValue && 
-            await IsDuplicateJob(dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId!.Value, dto.DepartmentId))
+            await IsDuplicateJob(null, dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId!.Value, dto.DepartmentId))
             failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
 
         var hierarchicalErrors = await ValidateHierarchicalRelationships(dto);
@@ -89,23 +90,24 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         return failures;
     }
-    
-    public async Task<bool> IsDuplicateJob(Guid managementId, Guid sectorId, Guid jobTitleId, 
+
+    public async Task<bool> IsDuplicateJob(Guid? jobId, Guid managementId, Guid sectorId, Guid jobTitleId,
         Guid genderId, Guid? departmentId = null)
     {
-         return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
-        .AnyAsync(j =>
-            j.JobStatusId != JobStatusIds.Cancelled &&
-            j.JobStatusId != JobStatusIds.Closed &&
-            j.JobStatusId != JobStatusIds.Rejected &&
+        return await unitOfWork.GetEntityRepository<JobEntity>().DbSet
+            .WhereIf(jobId is not null, j => j.Id != jobId)
+            .AnyAsync(j =>
+                j.JobStatusId != JobStatusIds.Cancelled &&
+                j.JobStatusId != JobStatusIds.Closed &&
+                j.JobStatusId != JobStatusIds.Rejected &&
 
-            j.ManagementId == managementId &&
-            j.SectorId == sectorId &&
-            j.DepartmentId == departmentId &&
-            
-            j.JobTitleId == jobTitleId &&
-            
-            j.GenderId == genderId);
+                j.ManagementId == managementId &&
+                j.SectorId == sectorId &&
+                j.DepartmentId == departmentId &&
+
+                j.JobTitleId == jobTitleId &&
+
+                j.GenderId == genderId);
     }
 
     public async Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
@@ -239,7 +241,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             if (!allTabsCompleted)
                 failures.Add(new ValidationFailure("TabsCompletion", JobMessages.AllTabsRequired));
 
-            if (await HasDuplicateApprovedJob(job))
+            if (await IsDuplicateJob(job.Id, job.ManagementId, job.SectorId, job.JobTitleId, job.GenderId!.Value, job.DepartmentId))
                 failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
         }
 
@@ -295,26 +297,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return !string.IsNullOrWhiteSpace(job.QualificationDescriptionAr) &&
                !string.IsNullOrWhiteSpace(job.QualificationDescriptionEn);
     }
-
-    private async Task<bool> HasDuplicateApprovedJob(JobEntity job)
-    {
-        var jobRepo = unitOfWork.GetEntityRepository<JobEntity>();
-        return await jobRepo.DbSet
-            .AsNoTracking()
-            .AnyAsync(existing =>
-                existing.Id != job.Id &&
-                existing.JobTitleId == job.JobTitleId &&
-                existing.DepartmentId == job.DepartmentId &&
-                existing.JobCategoryId == job.JobCategoryId &&
-                existing.MajorId == job.MajorId &&
-                existing.SubMajorId == job.SubMajorId &&
-                !existing.IsDeleted &&
-                (existing.JobStatusId == JobStatusIds.PendingPointConfiguration ||
-                  existing.JobStatusId == JobStatusIds.PendingPointApproval ||
-                 existing.JobStatusId == JobStatusIds.ReadyForAnnouncement ||
-                 existing.JobStatusId == JobStatusIds.Published));
-    }
-
+    
     private bool HasDuplicates<T>(IEnumerable<T> items, Func<T, string> selector)
     {
         var texts = items.Select(selector).Where(t => !string.IsNullOrWhiteSpace(t));

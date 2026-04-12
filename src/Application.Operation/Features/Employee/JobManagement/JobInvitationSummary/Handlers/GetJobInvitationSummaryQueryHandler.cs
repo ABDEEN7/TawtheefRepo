@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Queries;
 using MediatR;
 using FluentResults;
@@ -58,6 +58,10 @@ public sealed class GetJobInvitationSummaryQueryHandler(
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.Closed),
                 CancelledCount = job.Invitations
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.Cancelled),
+                PendingAttachmentApprovalCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval),
+                ReturnedAttachmentCount = job.Invitations
+                    .Count(i => i.InvitationStatusId == InvitationStatusIds.ReturnedAttachment),
                 CreateDate = job.CreatedDate,
                 JobName = language == "en"
                     ? job.JobTitle!.JobNameEn

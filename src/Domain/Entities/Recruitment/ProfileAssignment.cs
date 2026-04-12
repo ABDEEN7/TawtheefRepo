@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Events.Operation.Employee.Profile;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
@@ -22,13 +23,15 @@ public class ProfileAssignment : EventEntity
 
     public static ProfileAssignment Assign(Guid userProfileId, Guid employeeId)
     {
-        return new ProfileAssignment
+        var assignment = new ProfileAssignment
         {
             UserProfileId = userProfileId,
             EmployeeId = employeeId,
             IsActive = true,
             AssignedAtUtc = DateTimeOffset.UtcNow
         };
+        assignment.AddDomainEvent(new ProfileAssignedEvent(userProfileId, employeeId, DateTimeOffset.UtcNow));
+        return assignment;
     }
 
     public void Deactivate()

@@ -205,7 +205,7 @@
                   <td style="vertical-align:middle;">
                     @if (!string.IsNullOrWhiteSpace(logo))
                     {
-                      <a href="@website" style="display:inline-block;">
+                      <a href="@website" style="display:inline-block;" target="_blank">
                         <img src="@logo" alt="@product" width="140" style="max-width:140px; height:auto;">
                       </a>
                     }
@@ -281,7 +281,7 @@
 
               @if (profileUrl != null)
               {
-                  <a href="@profileUrl" class="btn">Open Profile</a>
+                  <a href="@profileUrl" class="btn" target="_blank">Open Profile</a>
               }
 
               <p class="text" style="margin-top:16px; margin-bottom:0;">
@@ -301,7 +301,7 @@
             <td class="px py" style="padding-top:18px; padding-bottom:12px;">
               <p class="muted">
                 Need help? Contact us at
-                <a href="mailto:@support" style="color:@primary; font-weight:700;">@support</a>.
+                <a href="mailto:@support" style="color:@primary; font-weight:700;" target="_blank">@support</a>.
               </p>
             </td>
           </tr>

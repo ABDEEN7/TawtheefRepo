@@ -124,6 +124,14 @@
       <EmbeddedResource Include="Templates\KawaderInvitation\KawaderInvitation.txt.cshtml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Remove="Templates\ProfileAssigned\ProfileAssigned.html.cshtml" />
+      <EmbeddedResource Include="Templates\ProfileAssigned\ProfileAssigned.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Templates\ProfileAssigned\ProfileAssigned.txt.cshtml" />
+      <EmbeddedResource Include="Templates\ProfileAssigned\ProfileAssigned.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

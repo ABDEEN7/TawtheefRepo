@@ -1,27 +1,27 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ConfirmDialog} from 'primeng/confirmdialog';
-import {ConfirmationService} from 'primeng/api';
-import {Tooltip} from 'primeng/tooltip';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {OfficesService} from './services/offices.service';
-import {OfficeDto} from './models/office.dto';
-import {OfficeFilters} from './models/office-filters.dto';
-import {UpdateOfficeRequest} from './models/update-office-request.dto';
-import {CreateOfficeRequest} from './models/create-office-request.dto';
-import {OfficeModalComponent} from './components/office-modal/office-modal.component';
-import {OfficeDetailsDto} from './models/office-details.dto';
-import {finalize} from 'rxjs/operators';
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { Tooltip } from 'primeng/tooltip';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { OfficesService } from './services/offices.service';
+import { OfficeDto } from './models/office.dto';
+import { OfficeFilters } from './models/office-filters.dto';
+import { UpdateOfficeRequest } from './models/update-office-request.dto';
+import { CreateOfficeRequest } from './models/create-office-request.dto';
+import { OfficeModalComponent } from './components/office-modal/office-modal.component';
+import { OfficeDetailsDto } from './models/office-details.dto';
+import { finalize } from 'rxjs/operators';
+import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-offices-management',
@@ -114,13 +114,13 @@ export class OfficesManagement implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(term => {
-        this.filters.update(f => ({...f, pageNumber: 1, search: term}));
+        this.filters.update(f => ({ ...f, pageNumber: 1, search: term }));
         this.loadOffices();
       });
   }
 
   onPageChange(page: number) {
-    this.filters.update(f => ({...f, pageNumber: page}));
+    this.filters.update(f => ({ ...f, pageNumber: page }));
     this.loadOffices();
   }
 

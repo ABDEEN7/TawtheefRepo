@@ -9,4 +9,6 @@ public sealed class JobInvitationSummaryDetailsStatsDto
     public int Cancelled { get; init; }
     public int Read { get; init; }
     public int Expired { get; init; }
+    public int PendingAttachmentApproval { get; init; }
+    public int ReturnedAttachment { get; init; }
 }

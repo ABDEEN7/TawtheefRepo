@@ -42,7 +42,7 @@
                   (click)="selectedStatus.set('6608F560-4DC0-4F2A-A190-6743A9A8C5CB'); onFilterChange()"
                   style="cursor: pointer;">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold text-warning">{{ stats()?.new ?? 0 }}</div>
+                    <div class="h2 fw-bold text-warning">{{ stats()?.pendingAttachmentApproval ?? 0 }}</div>
                     <!-- Use correct stat if possible -->
                     <p class="m-0">{{ 'JOB_INVITES_DETAILS_STAT_PENDING_APPROVAL' | translate }}</p>
                   </div>
@@ -57,7 +57,7 @@
                   (click)="selectedStatus.set('9B86FA2C-D295-46D7-9092-23AD8AB7B10C'); onFilterChange()"
                   style="cursor: pointer;">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold text-danger">{{ stats()?.cancelled ?? 0 }}</div>
+                    <div class="h2 fw-bold text-danger">{{ stats()?.returnedAttachment ?? 0 }}</div>
                     <!-- Use correct stat if possible -->
                     <p class="m-0">{{ 'JOB_INVITES_DETAILS_STAT_RETURNED' | translate }}</p>
                   </div>

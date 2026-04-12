@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using FluentResults;
 using MapsterMapper;
@@ -13,6 +13,7 @@ using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using System.Text.Json;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
@@ -139,6 +140,7 @@ public sealed class AutoAssignProfilesHandler(
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignmentResult.Value.Id
             }, ct);
+
             newlyAssigned[chosen.Employee.Id]++;
         }
 

@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using MediatR;
 using FluentResults;
@@ -43,6 +43,12 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
                 cancellationToken),
             Expired = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Closed,
+                cancellationToken),
+            PendingAttachmentApproval = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval,
+                cancellationToken),
+            ReturnedAttachment = await invitations.CountAsync(
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.ReturnedAttachment,
                 cancellationToken),
         };
 

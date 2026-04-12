@@ -293,11 +293,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
     if (this.isGoogleProvider()) {
       this.onlyPhoneCountries.set(Object.values(CountryISO)
-        .filter(c => c !== CountryISO.Qatar) as CountryISO[]);
+        .filter(c => c !== CountryISO.Qatar && c !== CountryISO.Israel) as CountryISO[]);
       return;
     }
 
-    this.onlyPhoneCountries.set([]);
+    this.onlyPhoneCountries.set(Object.values(CountryISO)
+      .filter(c => c !== CountryISO.Israel) as CountryISO[]);
   }
 
   private setCountryFromIso(iso2: string): void {

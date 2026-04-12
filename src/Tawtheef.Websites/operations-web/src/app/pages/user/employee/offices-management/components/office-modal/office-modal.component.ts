@@ -1,4 +1,4 @@
-import {CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -11,17 +11,17 @@ import {
   signal,
   SimpleChanges
 } from '@angular/core';
-import {AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {Lang, LanguageService} from '../../../../../../core/services/language.service';
-import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
-import {CreateOfficeRequest} from '../../models/create-office-request.dto';
-import {UpdateOfficeRequest} from '../../models/update-office-request.dto';
-import {OfficeUserDto} from '../../models/office-user.dto';
-import {Select} from 'primeng/select';
-import {dropdownOptionsModel} from '../../../../../../shared/models/dropdown-options.model';
-import {OfficeDetailsDto} from '../../models/office-details.dto';
-import {CountryISO, NgxIntlTelInputModule, SearchCountryField} from 'ngx-intl-tel-input';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Lang, LanguageService } from '../../../../../../core/services/language.service';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
+import { CreateOfficeRequest } from '../../models/create-office-request.dto';
+import { UpdateOfficeRequest } from '../../models/update-office-request.dto';
+import { OfficeUserDto } from '../../models/office-user.dto';
+import { Select } from 'primeng/select';
+import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
+import { OfficeDetailsDto } from '../../models/office-details.dto';
+import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
 
 type PhoneNumberValue = {
   number: string;
@@ -61,6 +61,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
   searchCountryFields = [SearchCountryField.Iso2, SearchCountryField.Name];
   selectedCountryIso = signal<CountryISO>(CountryISO.Qatar);
+  allowedCountries = Object.values(CountryISO).filter(c => c !== CountryISO.Israel);
 
   availableCountries = computed(() => {
     const assigned = new Set(this.assignedCountryIds);
@@ -117,7 +118,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
   private patchForm() {
     this.submitted = false;
-    this.form.enable({emitEvent: false});
+    this.form.enable({ emitEvent: false });
     this.form.reset({
       nameAr: '',
       nameEn: '',
@@ -145,11 +146,11 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     this.syncCountryFields(this.form.controls.countryId.value);
 
     if (this.mode !== 'create') {
-      this.form.controls.countryId.disable({emitEvent: false});
+      this.form.controls.countryId.disable({ emitEvent: false });
     }
 
     if (this.isViewMode()) {
-      this.form.disable({emitEvent: false});
+      this.form.disable({ emitEvent: false });
     }
   }
 
@@ -189,7 +190,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   toggleUserBlock(user: OfficeUserDto) {
-    this.toggleBlock.emit({userId: user.id, isBlocked: !user.isBlocked});
+    this.toggleBlock.emit({ userId: user.id, isBlocked: !user.isBlocked });
   }
 
   promoteToAdmin(user: OfficeUserDto) {
@@ -202,11 +203,11 @@ export class OfficeModalComponent implements OnInit, OnChanges {
 
   private syncCountryFields(countryId: string) {
     if (!countryId) {
-      this.form.controls.supportedCountryIds.setValue([], {emitEvent: false});
+      this.form.controls.supportedCountryIds.setValue([], { emitEvent: false });
       return;
     }
 
-    this.form.controls.supportedCountryIds.setValue([countryId], {emitEvent: false});
+    this.form.controls.supportedCountryIds.setValue([countryId], { emitEvent: false });
 
     const selectedCountry = this.availableCountries().find(country => country.id === countryId);
     this.selectedCountryIso.set(this.getCountryIso(selectedCountry));
@@ -267,7 +268,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
     const selectedCountry = this.availableCountries().find(country => country.id === selectedCountryId);
 
     if (!selectedCountry) {
-      this.form.controls.countryId.setErrors({required: true});
+      this.form.controls.countryId.setErrors({ required: true });
       return;
     }
 

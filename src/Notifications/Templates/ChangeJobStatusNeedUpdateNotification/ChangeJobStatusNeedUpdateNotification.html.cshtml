@@ -40,7 +40,7 @@
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
       {
-        <a href="@website">
+        <a href="@website" target="_blank">
           <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
         </a>
         <br/>
@@ -54,7 +54,7 @@
       <p class="text">
         Please sign in to @product, review the requested changes, and resubmit the posting.
       </p>
-      <a class="cta" style="color: white;" href="@website">Update in @product</a>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Update in @product</a>
       <div class="divider"></div>
       <p class="muted">
         If the button does not work, copy and paste this link into your browser: @website
@@ -62,7 +62,7 @@
     </div>
     <div class="footer">
       <p class="muted">Regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;">@support</a></p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

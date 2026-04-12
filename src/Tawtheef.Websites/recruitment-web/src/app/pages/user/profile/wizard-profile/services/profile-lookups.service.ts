@@ -1,4 +1,4 @@
-﻿import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {forkJoin, Observable} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import {EndpointsService} from '../../../../../core/http/endpoints.service';

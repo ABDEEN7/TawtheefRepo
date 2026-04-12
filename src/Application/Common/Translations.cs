@@ -13,7 +13,8 @@ public static class Translations
         new ("CANDIDATE_CATEGORY", "Candidate Category"),
         new ("MAJOR", "Major"),
         new ("GENDER", "Gender"),
-        new ("POINTS", "Points")
+        new ("POINTS", "Points"),
+        new ("Notification.ProfileAssigned.Subject", "New Profile Assigned")
     ];
 
     private static readonly HashSet<Translation> Arabic =
@@ -25,7 +26,8 @@ public static class Translations
         new("CANDIDATE_CATEGORY", "فئة المرشح"),
         new("MAJOR", "التخصص"),
         new("GENDER", "الجنس"),
-        new("POINTS", "النقاط")
+        new("POINTS", "النقاط"),
+        new ("Notification.ProfileAssigned.Subject", "تم تعيين ملف تعريف جديد")
     ];
 
     public static string Get(string key, string language)
