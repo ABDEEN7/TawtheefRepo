@@ -1,3 +1,7 @@
+::ng-deep .p-inputtext {
+  border-radius: 0 !important;
+}
+
 .header-section {
   display: flex;
   justify-content: space-between;
@@ -32,17 +36,18 @@
     display: flex;
     gap: 12px;
     background: #fff;
-    border: 1px solid #8a1538 ; 
-    border-radius: 999px; 
+    border: 1px solid #8a1538;
+    border-radius: 999px;
     padding: 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
+
   .p-tab {
     flex: 1;
     text-align: center;
     padding: 12px 20px;
     font-weight: 700;
-    color: #8a1538 ;
+    color: #8a1538;
     background: transparent;
     border-radius: 999px;
     cursor: pointer;
@@ -50,11 +55,13 @@
     border: 1px solid transparent;
     font-weight: normal;
     font-size: 1rem;
-    &.p-tab-active{
-      background-color: #8a1538 ;
+
+    &.p-tab-active {
+      background-color: #8a1538;
       color: white;
     }
-    &:hover{
+
+    &:hover {
       background-color: #fde7ee !important;
       color: #fde7ee;
     }
@@ -63,14 +70,14 @@
 
   .p-tab:not(.p-highlight):hover {
     background: rgba(169, 68, 95, 0.1);
-    border-color: rgba(169, 68, 95, 0.1) ;
-    color:#8a1538 ;
+    border-color: rgba(169, 68, 95, 0.1);
+    color: #8a1538;
   }
 
   .p-tab.p-highlight {
-    background-color: #8a1538  !important; 
+    background-color: #8a1538 !important;
     color: #fff !important;
-    border-color: #8a1538  !important;
+    border-color: #8a1538 !important;
     box-shadow: 0 4px 8px rgba(169, 68, 95, 0.4);
   }
 
@@ -142,7 +149,8 @@
   display: flex;
   align-items: center;
   font-size: 1rem;
-  color: #198754; /* dark green for ready/approval state */
+  color: #198754;
+  /* dark green for ready/approval state */
 }
 
 .approve-button {
@@ -155,13 +163,15 @@
   font-weight: 500;
 
   border: none;
-  border-radius: 50px; /* pill shape */
+  border-radius: 50px;
+  /* pill shape */
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .approve-button.primary-pill {
-  background-color: #198754; /* bootstrap green */
+  background-color: #198754;
+  /* bootstrap green */
   color: #fff;
 }
 
@@ -177,9 +187,11 @@
   margin-top: 1rem;
 
   font-size: 1rem;
-  color: #198754; /* green for approved state */
+  color: #198754;
+  /* green for approved state */
   font-weight: 500;
-}    
-:host ::ng-deep .p-tablist-tab-list{
+}
+
+:host ::ng-deep .p-tablist-tab-list {
   border: 0 !important;
 }

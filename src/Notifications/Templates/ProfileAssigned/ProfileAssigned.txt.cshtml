@@ -1,0 +1,20 @@
+@using Tawtheef.Notifications.Templates.ProfileAssigned
+@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+
+@{
+    var m = Model.Model;
+    var product = Model.Branding.ProductName;
+    var profileUrl = $"{Model.Branding.WebsiteUrl}/profiles/review/{m.ProfileId}";
+}
+
+Hello,
+
+You have been assigned a new profile for review in @product.
+
+Candidate Name: @m.CandidateName
+
+Please visit the following link to review the profile:
+@profileUrl
+
+Regards,
+The @product Team

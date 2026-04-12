@@ -12,7 +12,7 @@ public class CheckDuplicationQueryHandler(IJobValidationService jobValidationSer
         if(request.ManagementId == Guid.Empty || request.SectorId == Guid.Empty || request.JobTitleId == Guid.Empty || request.GenderId == Guid.Empty)
             return Result.Fail<bool>("Invalid input parameters.");
         
-        var isDuplicated = await jobValidationService.IsDuplicateJob(
+        var isDuplicated = await jobValidationService.IsDuplicateJob(null,
             request.ManagementId, request.SectorId, 
             request.JobTitleId, request.GenderId, request.DepartmentId);
         return Result.Ok(isDuplicated);

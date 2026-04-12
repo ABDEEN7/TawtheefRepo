@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using FluentResults;
 using MapsterMapper;
@@ -12,6 +12,7 @@ using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using System.Text.Json;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
@@ -120,14 +121,6 @@ public sealed class ReassignProfilesHandler(
                 {
                     UserProfileId = profile.Id,
                     UserId = employee.Id,
-                    ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
-                    Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
-                    Section = UserProfileLogConstants.Sections.Assignment
-                }, ct);
-                await loggerRepo.AddAsync(new UserProfileLogger
-                {
-                    UserProfileId = profile.Id,
-                    PerformedById = employee.Id,
                     ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
                     Notes = UserProfileLogConstants.Notes.ProfileReassignedManually,
                     Section = UserProfileLogConstants.Sections.Assignment

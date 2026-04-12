@@ -1,0 +1,60 @@
+@using Tawtheef.Notifications.Templates.ProfileAssigned
+@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var profileUrl = $"{website}/profiles/review/{m.ProfileId}";
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>New Profile Assigned</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid @primary; }
+        .header { padding: 20px; text-align: center; background: #fafafa; border-bottom: 1px solid #eee; }
+        .content { padding: 30px; line-height: 1.6; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #777; background: #fafafa; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: @primary; color: #fff !important; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .highlight { color: @primary; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="120">
+            }
+            else
+            {
+                <h1 style="color: @primary; margin: 0;">@product</h1>
+            }
+        </div>
+        <div class="content">
+            <h2>Hello!</h2>
+            <p>You have been assigned a new profile for review.</p>
+            <p><strong>Candidate Name:</strong> <span class="highlight">@m.CandidateName</span></p>
+            <p>Please log in to the portal to review the details and take the necessary action.</p>
+            
+            <a href="@profileUrl" class="btn" target="_blank">View Profile Details</a>
+            
+            <p style="margin-top: 25px;">Regards,<br><strong>The @product Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>© @DateTime.UtcNow.Year @product. All rights reserved.</p>
+            <p>If you have any questions, contact us at <a href="mailto:@support" target="_blank">@support</a></p>
+        </div>
+    </div>
+</body>
+</html>

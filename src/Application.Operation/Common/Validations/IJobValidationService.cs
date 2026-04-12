@@ -10,6 +10,6 @@ public interface IJobValidationService
     Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, Job existingJob);
     Task<ValidationResult> ValidateStatusChange(Job job, Guid newStatusId);
 
-    public Task<bool> IsDuplicateJob(Guid managementId, Guid sectorId, Guid jobTitleId,
+    public Task<bool> IsDuplicateJob(Guid? jobId, Guid managementId, Guid sectorId, Guid jobTitleId,
         Guid genderId, Guid? departmentId = null);
 }

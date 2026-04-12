@@ -40,7 +40,7 @@
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
       {
-        <a href="@website">
+        <a href="@website" target="_blank">
           <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
         </a>
         <br/>
@@ -55,7 +55,7 @@
         Please sign in using your QID (<strong>@m.Qid</strong>) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
       </p>
       <p class="text" style="margin-top: 24px; text-align: center;">
-        <a class="cta" style="color: white;" href="@website">Login to @product</a>
+        <a class="cta" style="color: white;" href="@website" target="_blank">Login to @product</a>
       </p>
       <div class="divider"></div>
       <p class="muted">
@@ -64,7 +64,7 @@
     </div>
     <div class="footer">
       <p class="muted">Best regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;">@support</a></p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

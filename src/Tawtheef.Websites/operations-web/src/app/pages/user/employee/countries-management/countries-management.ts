@@ -1,21 +1,21 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {Select} from 'primeng/select';
-import {ToggleSwitchModule} from 'primeng/toggleswitch';
-import {Tooltip} from 'primeng/tooltip';
-import {CountriesService} from './services/countries.service';
-import {CountryDto, CountryVM} from './models/country.dto';
-import {CountryFilters} from './models/country-filters.dto';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {PaginationComponent} from '../../../../shared/components/pagination/pagination.component';
-import {I18nNamespaceDirective} from '../../../../shared/directives/i18n-namespace.directive';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {PaginatedResult} from '../../../../core/models/paginated-result.model';
-import {PaginationMetadata} from '../../../../core/models/pagination-metadata.model';
-import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { Tooltip } from 'primeng/tooltip';
+import { CountriesService } from './services/countries.service';
+import { CountryDto, CountryVM } from './models/country.dto';
+import { CountryFilters } from './models/country-filters.dto';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { PaginatedResult } from '../../../../core/models/paginated-result.model';
+import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-countries-management',
@@ -74,20 +74,22 @@ export class CountriesManagement implements OnInit {
   loadCountries() {
     this.countriesService.getCountries(this.filters()).subscribe({
       next: (response: PaginatedResult<CountryDto>) => {
-        const items = (response.items ?? []).map((c: any) => new CountryVM({
-          id: c.id,
-          backendName: c.nameEn,     // required by DropdownOptionVM
-          description: '',           // required by DropdownOptionVM
-          name: c.nameEn,            // baseName in DropdownOptionVM
-          additionalData: {
-            nameAr: c.nameAr,
-            nameEn: c.nameEn,
-            isoCode: c.isoCode,
-            codeAlpha: c.codeAlpha
-          },
-          isActive: c.isActive,
-          code: c.code
-        }));
+        const items = (response.items ?? [])
+          .filter((c: any) => c.isoCode?.toUpperCase() !== 'IL' && c.codeAlpha?.toUpperCase() !== 'IL')
+          .map((c: any) => new CountryVM({
+            id: c.id,
+            backendName: c.nameEn,     // required by DropdownOptionVM
+            description: '',           // required by DropdownOptionVM
+            name: c.nameEn,            // baseName in DropdownOptionVM
+            additionalData: {
+              nameAr: c.nameAr,
+              nameEn: c.nameEn,
+              isoCode: c.isoCode,
+              codeAlpha: c.codeAlpha
+            },
+            isActive: c.isActive,
+            code: c.code
+          }));
 
         this._countries.set(items);
         this._paginationMetadata.set(response.metadata);
@@ -130,7 +132,7 @@ export class CountriesManagement implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.filters.update(f => ({...f, pageNumber: page}));
+    this.filters.update(f => ({ ...f, pageNumber: page }));
     this.loadCountries();
   }
 

@@ -5,13 +5,14 @@ using Application.Operation.Features.Employee.MinisterOffice.DTOs;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Utils;
+using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -22,6 +23,7 @@ namespace Application.Operation.Features.Employee.MinisterOffice.Handlers;
 public sealed class CreateMinisterOfficeCandidateCommandHandler(
     IUnitOfWork uow,
     IMoiClient moiClient,
+    IOptions<AppConfigSettings> appConfiguration,
     IAppLogger logger)
     : IRequestHandler<CreateMinisterOfficeCandidateCommand, IResult<MinisterOfficeCandidateDto>>
 {
@@ -122,7 +124,7 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
         // ── 6. SEND SMS (skip for Kawader users) ───────────────
         if (!isKawaderUser)
         {
-            var smsBody = $"Dear {moi.EnglishFullName}, you have been registered in the Minister Office Recruitment System.";
+            var smsBody = $"Dear {moi.EnglishFullName}, please log in to the Careers Platform and create your profile: {appConfiguration.Value.FrontendUrl}";
 
             var notification = Notification.Create(
                 NotificationChannel.Sms,

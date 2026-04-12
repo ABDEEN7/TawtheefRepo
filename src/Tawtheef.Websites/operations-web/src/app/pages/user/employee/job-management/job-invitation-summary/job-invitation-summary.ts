@@ -167,6 +167,8 @@ export class JobInvitationSummary implements OnInit {
       { label: this.translate.instant('JOB_INVITATION_SUMMARY.APPLICANTS'), value: summary.applicantsCount, color: '#2b9d76' },
       { label: this.translate.instant('JOB_INVITATION_SUMMARY.READ'), value: summary.readCount, color: '#f5b342' },
       { label: this.translate.instant('JOB_INVITATION_SUMMARY.DECLINED'), value: summary.refusedCount, color: '#df6d4e' },
+      { label: this.translate.instant('JOB_INVITATION_SUMMARY.PENDING_ATTACHMENT'), value: summary.pendingAttachmentApprovalCount, color: '#e67e22' },
+      { label: this.translate.instant('JOB_INVITATION_SUMMARY.RETURNED_ATTACHMENT'), value: summary.returnedAttachmentCount, color: '#c0392b' },
     ];
   }
 
