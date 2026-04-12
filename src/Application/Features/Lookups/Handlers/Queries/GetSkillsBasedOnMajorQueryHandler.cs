@@ -18,7 +18,7 @@ public sealed class GetSkillsBasedOnMajorQueryHandler(IUnitOfWork unitOfWork, IM
     {
         IQueryable<Skill> entitiesQuery;
         
-        if (request.Majors.Count == 0)
+        if (request.Majors == null || request.Majors.Count == 0)
         {
             entitiesQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
                 .AsNoTracking()
