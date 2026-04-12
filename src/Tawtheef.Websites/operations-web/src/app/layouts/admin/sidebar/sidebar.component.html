@@ -8,8 +8,17 @@
 
   <div class="divider"></div>
 
+  @if (menuItems.length > 7 && !isCollapsed) {
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <i class="hgi hgi-stroke hgi-search-01"></i>
+      <input type="text" [(ngModel)]="searchTerm" [placeholder]="'common.search' | translate">
+    </div>
+  </div>
+  }
+
   <nav class="sidebar-nav">
-    @for (item of menuItems; track item.key) {
+    @for (item of filteredMenuItems; track item.key) {
     <button class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
       (click)="navigateTo(item)" [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right"
       [tooltipDisabled]="!isCollapsed">

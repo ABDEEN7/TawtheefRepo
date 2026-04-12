@@ -306,5 +306,8 @@ export class EndpointsService {
     followUpStatus: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/follow-up-status`),
     invitations: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/invitations`),
     auditLog: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/audit-log`),
+    genders: this.getFullUrl('/MinisterOffice/lookups/genders'),
+    targetEntities: this.getFullUrl('/MinisterOffice/lookups/target-entities'),
+    candidateTypes: this.getFullUrl('/MinisterOffice/lookups/candidate-types'),
   };
 }

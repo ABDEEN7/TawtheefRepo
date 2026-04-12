@@ -53,5 +53,7 @@
   "ministerOffice.common.cancel": "Cancel",
   "ministerOffice.common.submit": "Register",
   "ministerOffice.common.save": "Save Changes",
-  "JOB_INVITATION_STATUSES.SUBMITTED": "Exam Eligible"
+  "ministerOffice.JOB_INVITATION_STATUSES.SUBMITTED": "Exam Eligible",
+  "ministerOffice.CANDIDATE_FOLLOW_UP_ACTIVATED": "Follow-up activated",
+  "ministerOffice.CANDIDATE_FOLLOW_UP_DEACTIVATED": "Follow-up deactivated"
 }

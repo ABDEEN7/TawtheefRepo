@@ -2,8 +2,9 @@ import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Tooltip } from 'primeng/tooltip';
+import { FormsModule } from '@angular/forms';
 import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { FaDirArrowDirective } from '../../../shared/directives/dir-arrow.directive';
@@ -15,16 +16,26 @@ import { HasPermissionDirective } from '../../../shared/directives/has-permissio
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
   @Output() toggleSidebar = new EventEmitter<void>();
 
   isCollapsed = false;
   activeItem = '';
 
   menuItems: MenuItem[] = Sidebar.menuItems;
+  searchTerm: string = '';
+
+  get filteredMenuItems(): MenuItem[] {
+    if (!this.searchTerm) return this.menuItems;
+    const term = this.searchTerm.toLowerCase();
+    return this.menuItems.filter(item =>
+      this.translate.instant(item.label).toLowerCase().includes(term)
+    );
+  }
 
   constructor(private router: Router) { }
 
@@ -45,6 +56,7 @@ export class SidebarComponent implements OnInit {
 
   toggle() {
     this.isCollapsed = !this.isCollapsed;
+    this.searchTerm = '';
     this.toggleSidebar.emit();
   }
 

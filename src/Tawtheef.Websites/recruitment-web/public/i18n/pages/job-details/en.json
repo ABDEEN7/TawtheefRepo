@@ -59,6 +59,7 @@
   "JOB_DETAILS.REJECT_ERROR": "Unable to reject the invitation. Please try again.",
   "JOB_DETAILS.UPLOAD_FILE": "Upload File",
   "JOB_DETAILS.FILE_SIZE_ERROR": "Maximum file size is 5MB.",
+  "JOB_DETAILS.FILE_TYPE_ERROR": "File must be an image or PDF.",
   "JOB_DETAILS.UPLOAD_SUCCESS": "File uploaded successfully.",
   "JOB_DETAILS.UPLOAD_ERROR": "Unable to upload file. Please try again.",
   "JOB_DETAILS.DELETE_SUCCESS": "File deleted successfully.",

@@ -45,6 +45,53 @@
     }
   }
 
+  .search-container {
+    padding: 0 16px;
+    width: 100%;
+    margin-bottom: 8px;
+    transition: opacity 0.3s ease;
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #F8F8F8;
+      border: 1px solid #E0E0E0;
+      border-radius: 100px;
+      padding: 0 12px;
+      height: 40px;
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        border-color: #8a1538;
+        background: #fff;
+        box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.1);
+      }
+
+      i {
+        color: #999;
+        font-size: 1.1rem;
+        margin-inline-end: 8px;
+        display: flex;
+        align-items: center;
+      }
+
+      input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        font-size: 0.875rem;
+        color: #333;
+        padding: 0;
+
+        &::placeholder {
+          color: #999;
+        }
+      }
+    }
+  }
+
   .divider {
     width: 70%;
     border-bottom: 1px solid #F6F6F3;

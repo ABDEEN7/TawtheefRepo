@@ -42,14 +42,14 @@ export class MinisterOfficeService {
   }
 
   getGenders(): Observable<any[]> {
-    return this.http.get<any[]>(this.endpoints.job.lookups.genders);
+    return this.http.get<any[]>(this.endpoints.ministerOffice.genders);
   }
 
   getTargetEntities(): Observable<any[]> {
-    return this.http.get<any[]>(this.endpoints.job.lookups.targetEntities);
+    return this.http.get<any[]>(this.endpoints.ministerOffice.targetEntities);
   }
 
   getCandidateTypes(): Observable<any[]> {
-    return this.http.get<any[]>(this.endpoints.jobCandidates.lookups.candidateTypes);
+    return this.http.get<any[]>(this.endpoints.ministerOffice.candidateTypes);
   }
 }

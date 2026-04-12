@@ -243,7 +243,8 @@ export class MinisterOfficeManagementPage implements OnInit {
     this.service.updateFollowUpStatus(item.id, nextState).subscribe({
       next: () => {
         item.isFollowUpActive = nextState;
-        this.notifications.success(`Candidate follow-up ${nextState ? 'activated' : 'deactivated'}`);
+        //this.notifications.success(`Candidate follow-up ${nextState ? 'activated' : 'deactivated'}`);
+        this.notifications.success(this.translate.instant(nextState ? 'ministerOffice.CANDIDATE_FOLLOW_UP_ACTIVATED' : 'ministerOffice.CANDIDATE_FOLLOW_UP_DEACTIVATED'));
       }
     });
   }
@@ -293,7 +294,7 @@ export class MinisterOfficeManagementPage implements OnInit {
   getStatus(invitationStatus: DropdownOptionVM): string {
     const status = invitationStatus.backendName as InvitationStatus;
     if (status == JOB_INVITATION_STATUSES.SUBMITTED) {
-      return this.translate.instant('JOB_INVITATION_STATUSES.SUBMITTED');
+      return this.translate.instant('ministerOffice.JOB_INVITATION_STATUSES.SUBMITTED');
     }
     return invitationStatus.name;
   }
