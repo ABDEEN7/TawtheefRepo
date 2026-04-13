@@ -3,10 +3,17 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
       <h3 class="fw-bold">{{ 'COUNTRIES.TITLE' | translate }}</h3>
-      <button type="button" class="btn btn-outline-primary" (click)="loadCountries()">
-        <i class="pi pi-refresh me-1"></i>
-        {{ 'common.refresh' | translate }}
-      </button>
+      <div class="d-flex gap-2">
+        <button type="button" *hasPermission="Permissions.Countries.Manage" class="btn btn-primary"
+          (click)="openAddCountry()">
+          <i class="pi pi-plus me-1"></i>
+          {{ 'COUNTRIES.ADD_NEW' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="loadCountries()">
+          <i class="pi pi-refresh me-1"></i>
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
     </div>
     <div class="card card-table mb-3">
       <div class="card-body">
@@ -68,11 +75,22 @@
               </span>
             </td>
             <td class="text-nowrap">
-              <p-toggle-switch [ngModel]="country.isActive" (ngModelChange)="toggleStatus(country)"
-                [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
-                tooltipPosition="top"
-                [attr.aria-label]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)">
-              </p-toggle-switch>
+              <div class="d-flex align-items-center gap-2">
+                <button type="button" *hasPermission="Permissions.Countries.Manage" class="btn btn-icon btn-light-info"
+                  (click)="openEditCountry(country)" [pTooltip]="'common.edit' | translate" tooltipPosition="top">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-light-primary" (click)="openCitiesManagement(country)"
+                  *hasPermission="Permissions.Cities.View" [pTooltip]="'COUNTRIES.MANAGE_CITIES' | translate"
+                  tooltipPosition="top">
+                  <i class="pi pi-building"></i>
+                </button>
+                <p-toggle-switch [ngModel]="country.isActive" (ngModelChange)="toggleStatus(country)"
+                  [pTooltip]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
+                  tooltipPosition="top"
+                  [attr.aria-label]="country.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)">
+                </p-toggle-switch>
+              </div>
             </td>
           </tr>
           }
@@ -88,3 +106,143 @@
   <app-pagination [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
     (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
 </div>
+
+<!-- Country Add/Edit Dialog -->
+<p-dialog [header]="(editingCountry() ? 'COUNTRIES.EDIT_TITLE' : 'COUNTRIES.ADD_TITLE') | translate"
+  [(visible)]="showCountryForm" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false"
+  (onHide)="showCountryForm.set(false)">
+  <div class="row g-3 mt-1">
+    <div class="col-12">
+      <label class="form-label required">{{ 'COUNTRIES.NAME_AR' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="countryForm.nameAr" />
+    </div>
+    <div class="col-12">
+      <label class="form-label required">{{ 'COUNTRIES.NAME_EN' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="countryForm.nameEn" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'COUNTRIES.NATIONAL_CODE' | translate }}</label>
+      <input type="number" class="form-control" [(ngModel)]="countryForm.code" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'COUNTRIES.ISO_CODE' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="countryForm.isoCode" maxlength="3" />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'COUNTRIES.CODE_ALPHA' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="countryForm.codeAlpha" maxlength="3" />
+    </div>
+    <div class="col-12 mt-3">
+      <div class="d-flex align-items-center gap-2">
+        <p-toggle-switch [(ngModel)]="countryForm.isActive"></p-toggle-switch>
+        <span class="form-label m-0">{{ 'COUNTRIES.IS_ACTIVE' | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="d-flex justify-content-end gap-2 p-3">
+      <button type="button" class="btn btn-outline-secondary" (click)="showCountryForm.set(false)">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveCountry()">
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Cities Management Dialog -->
+<p-dialog [header]="('COUNTRIES.CITIES.TITLE_FOR' | translate) + ' ' + (selectedCountryForCities()?.name || '')"
+  [(visible)]="showCitiesDialog" [modal]="true" [style]="{ width: '70vw' }" [draggable]="false" [resizable]="false">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="m-0">{{ 'COUNTRIES.CITIES.LIST_TITLE' | translate }}</h5>
+    <button type="button" *hasPermission="Permissions.Cities.Manage" class="btn btn-primary" (click)="openAddCity()">
+      <i class="pi pi-plus me-1"></i>
+      {{ 'COUNTRIES.CITIES.ADD_NEW' | translate }}
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'COUNTRIES.CITIES.NAME' | translate }}</th>
+          <th>{{ 'COUNTRIES.CITIES.STATUS' | translate }}</th>
+          <th>{{ 'COUNTRIES.CITIES.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loadingCities()) {
+        <tr>
+          <td colspan="3" class="text-center p-4">
+            <i class="pi pi-spin pi-spinner fs-3"></i>
+          </td>
+        </tr>
+        } @else if (cities().length === 0) {
+        <tr>
+          <td colspan="3" class="text-center text-muted p-4">
+            {{ 'NO_RECORDS' | translate }}
+          </td>
+        </tr>
+        } @else {
+        @for (city of cities(); track city.id) {
+        <tr>
+          <td>
+            {{ city.name }}
+          </td>
+          <td>
+            <span class="pill" [class.success]="city.isActive" [class.soft]="!city.isActive">
+              {{ city.isActive ? ('COUNTRIES.ACTIVE' | translate) : ('COUNTRIES.INACTIVE' | translate) }}
+            </span>
+          </td>
+          <td class="text-nowrap">
+            <div class="d-flex align-items-center gap-2" *hasPermission="Permissions.Cities.Manage">
+              <button type="button" class="btn btn-icon btn-light-info" (click)="openEditCity(city)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top">
+                <i class="pi pi-pencil"></i>
+              </button>
+              <p-toggle-switch [ngModel]="city.isActive" (ngModelChange)="toggleCityStatus(city)"
+                [pTooltip]="city.isActive ? ('COUNTRIES.DEACTIVATE' | translate) : ('COUNTRIES.ACTIVATE' | translate)"
+                tooltipPosition="top">
+              </p-toggle-switch>
+            </div>
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+</p-dialog>
+
+<!-- Add/Edit City Dialog -->
+<p-dialog [header]="(editingCity() ? 'COUNTRIES.CITIES.EDIT_TITLE' : 'COUNTRIES.CITIES.ADD_TITLE') | translate"
+  [(visible)]="showCityForm" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false"
+  (onHide)="showCityForm.set(false)">
+  <div class="row g-3 mt-1">
+    <div class="col-12">
+      <label class="form-label required">{{ 'COUNTRIES.CITIES.NAME_AR' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="cityForm.nameAr" />
+    </div>
+    <div class="col-12">
+      <label class="form-label required">{{ 'COUNTRIES.CITIES.NAME_EN' | translate }}</label>
+      <input type="text" class="form-control" [(ngModel)]="cityForm.nameEn" />
+    </div>
+    <div class="col-12 mt-3">
+      <div class="d-flex align-items-center gap-2">
+        <p-toggle-switch [(ngModel)]="cityForm.isActive"></p-toggle-switch>
+        <span class="form-label m-0">{{ 'COUNTRIES.CITIES.IS_ACTIVE' | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="d-flex justify-content-end gap-2 p-3">
+      <button type="button" class="btn btn-outline-secondary" (click)="showCityForm.set(false)">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveCity()">
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

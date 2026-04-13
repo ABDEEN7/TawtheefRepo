@@ -9,8 +9,8 @@ namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 [Index(nameof(CountryId))]
 public class City : LookupBase
 {
-    public Guid CountryId { get; init; }
+    public Guid CountryId { get; set; }
     public Country? Country { get; init; }
     [MaxLength(50)]
-    public required string Code { get; init; }
+    public required string Code { get; set; }
 }

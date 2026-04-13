@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.Countries.Commands;
+using Application.Operation.Features.Admin.Countries.Commands;
 using Application.Operation.Features.Admin.Countries.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +26,22 @@ public class CountryManagementController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateCountryStatusCommand command)
     {
         var result = await mediator.Send(command with { CountryId = id });
+        return result.ToActionResult();
+    }
+
+    [HttpPost("create-country")]
+    [AuthorizePermission(PermissionKeys.Countries.Manage)]
+    public async Task<IActionResult> CreateCountry([FromBody] CreateCountryCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("update-country/{id:guid}")]
+    [AuthorizePermission(PermissionKeys.Countries.Manage)]
+    public async Task<IActionResult> UpdateCountry(Guid id, [FromBody] UpdateCountryCommand command)
+    {
+        var result = await mediator.Send(command with { Id = id });
         return result.ToActionResult();
     }
 }

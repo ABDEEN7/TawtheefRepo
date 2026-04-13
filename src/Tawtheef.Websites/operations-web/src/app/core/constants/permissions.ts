@@ -87,5 +87,9 @@ export const Permissions = {
   MinisterOffice: {
     View: 'minister-office.view',
     Manage: 'minister-office.manage',
+  },
+  Cities: {
+    View: 'cities.view',
+    Manage: 'cities.manage',
   }
 } as const;

@@ -15,6 +15,14 @@ export class CountriesService {
     return this.http.get<PaginatedResult<CountryDto>>(this.endpoints.countries.listCountries, filters);
   }
 
+  createCountry(country: any): Observable<string> {
+    return this.http.post<string>(this.endpoints.countries.createCountry, country);
+  }
+
+  updateCountry(id: string, country: any): Observable<void> {
+    return this.http.put<void>(this.endpoints.countries.updateCountry(id), country);
+  }
+
   updateStatus(countryId: string, isActive: boolean): Observable<void> {
     return this.http.put<void>(this.endpoints.countries.updateStatus(countryId), { isActive });
   }
