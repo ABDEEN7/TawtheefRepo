@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InputNumber } from 'primeng/inputnumber';
@@ -9,6 +10,7 @@ import { JobPointConfiguration } from '../job-management/models/job-points-confi
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { routes } from '../../../../routes/routes';
 
 @Component({
   selector: 'app-job-points-configuration',
@@ -30,6 +32,7 @@ export class JobPointsConfigurationComponent implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   readonly currentLang = signal<Lang>(this.language.get());
   readonly isRtl = computed(() => this.currentLang() === 'ar');
@@ -82,6 +85,7 @@ export class JobPointsConfigurationComponent implements OnInit {
     this.service.saveConfiguration(payload).subscribe({
       next: () => {
         this.notification.success(this.translate.instant('common.savedSuccessfully'));
+        this.router.navigate([routes.portal.JobList]);
       },
     });
   }

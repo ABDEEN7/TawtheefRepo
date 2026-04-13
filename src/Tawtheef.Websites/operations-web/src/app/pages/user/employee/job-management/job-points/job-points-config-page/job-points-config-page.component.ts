@@ -311,6 +311,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
             this.translationService.instant('JOB_POINTS.SAVE.SUCCESS')
           );
           this.updateFinalApprovalAvailability();
+          this.router.navigate([routes.portal.JobList]);
           this.cdr.detectChanges();
         },
       });
@@ -353,10 +354,16 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
               this.jobPoints.isApproved = true;
             }
 
+            this.updateFinalApprovalAvailability();
+
             const statusId = this.lookupsService.getStatusIdByEnum(JobStatus.ReadyForAnnouncement);
 
             if (!statusId) {
+              this.notificationService.success(
+                this.translationService.instant('JOB_POINTS.APPROVE.SUCCESS')
+              );
               this.isLoading = false;
+              this.router.navigate([routes.portal.JobList]);
               this.cdr.detectChanges();
               return;
             }
