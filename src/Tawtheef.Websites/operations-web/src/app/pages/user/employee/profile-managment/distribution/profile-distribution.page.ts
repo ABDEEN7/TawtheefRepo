@@ -105,6 +105,7 @@ export class ProfileDistributionPage implements OnInit {
   statusFilter = signal<ProfileStatusNumber | 'all'>('all');
   search = signal('');
   targetEntityId = signal<string>('');
+  hasOtherFilter = signal<'all' | 'yes' | 'no'>('all');
   selectedIds = signal<Set<string>>(new Set());
   pageNumber = signal(1);
   pageSize = signal(10);
@@ -147,6 +148,12 @@ export class ProfileDistributionPage implements OnInit {
     { value: ProfileStatusNumber.Submitted, label: 'distribution.filters.statusSubmitted' },
     { value: ProfileStatusNumber.UnderReview, label: 'distribution.filters.statusUnderReview' },
     { value: ProfileStatusNumber.RequiresUpdate, label: 'distribution.filters.statusNeedsChanges' },
+  ];
+
+  readonly yesNoOptions: { value: 'all' | 'yes' | 'no'; label: string }[] = [
+    { value: 'all', label: 'distribution.filters.statusAll' },
+    { value: 'yes', label: 'common.yes' },
+    { value: 'no', label: 'common.no' }
   ];
 
   readonly rowsPerPageOptions = [10, 20, 50];
@@ -203,6 +210,9 @@ export class ProfileDistributionPage implements OnInit {
       filters.sortDirection = sortDir;
     }
 
+    const hasOther = this.hasOtherFilter();
+    if (hasOther !== 'all') filters.hasOtherSpecialization = hasOther === 'yes';
+
     return filters;
   }
 
@@ -214,6 +224,7 @@ export class ProfileDistributionPage implements OnInit {
       f.status ?? 'all',
       f.searchTerm ?? '',
       f.targetEntityId ?? '',
+      f.hasOtherSpecialization?.toString() ?? 'all',
       f.sortBy ?? '',
       f.sortDirection ?? '',
     ].join('|');
@@ -289,6 +300,11 @@ export class ProfileDistributionPage implements OnInit {
     this.applySearch();
   }
 
+  onHasOtherChange(value: 'all' | 'yes' | 'no'): void {
+    this.hasOtherFilter.set(value);
+    this.applySearch();
+  }
+
   // search input
   onSearchChange(value: string): void {
     // keep raw input for UI binding, but the listener will normalize
@@ -325,6 +341,7 @@ export class ProfileDistributionPage implements OnInit {
     this.search.set('');
     this.statusFilter.set('all');
     this.targetEntityId.set('');
+    this.hasOtherFilter.set('all');
     this.applySearch();
   }
 

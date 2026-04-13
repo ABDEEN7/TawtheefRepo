@@ -7,6 +7,11 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
+public static class MajorIds
+{
+    public static readonly Guid Other = Guid.Parse("7044ac66-706b-4384-bb79-75c71801da8b");
+    public static readonly Guid SubOther = Guid.Parse("60705656-fe6c-4f16-8bef-c61dfeca3cb2");
+}
 [Table(nameof(Major), Schema = Schemas.Lookup)]
 [Index(nameof(ParentId))]
 public class Major : LookupBase

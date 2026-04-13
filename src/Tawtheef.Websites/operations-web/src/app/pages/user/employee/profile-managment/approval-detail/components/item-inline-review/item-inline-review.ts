@@ -22,6 +22,7 @@ export class ItemInlineReviewComponent {
   @Input({ required: true }) reviewItemId!: string;
   @Input() status?: ReviewStatus | null;
   @Input() note?: string | null;
+  @Input() blockApprove?: boolean;
 
   @Output() review = new EventEmitter<{
     reviewItemId: string;

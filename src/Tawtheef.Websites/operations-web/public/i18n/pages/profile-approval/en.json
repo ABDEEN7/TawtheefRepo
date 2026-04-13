@@ -158,6 +158,8 @@
   "profileApproval.detail.qualifications.grade": "Grade",
   "profileApproval.detail.qualifications.studySystem": "Study System",
   "profileApproval.detail.qualifications.attachment": "Attachment",
+  "profileApproval.detail.qualifications.otherMajorWarningTitle": "Warning: 'Other' specialization is not accepted",
+  "profileApproval.detail.qualifications.otherMajorWarning": "Candidate is required to update qualification data and select the correct specialization from the list.",
   "profileApproval.detail.experiences.country": "Country",
   "profileApproval.detail.experiences.period": "Experience Period",
   "profileApproval.detail.experiences.qualification": "Related Qualification",

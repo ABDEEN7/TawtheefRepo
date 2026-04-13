@@ -79,14 +79,15 @@ public sealed class ProfileCompletenessProfile : IRegister
             .Map(dest => dest.naUnit, src => src.Profile.ResidenceAddress == null ? null : (int?)src.Profile.ResidenceAddress.UnitNo)
             .Map(dest => dest.ResidenceAddressCertificate, src => src.Profile.ResidenceAddress == null ? null : src.Profile.ResidenceAddress.Certificate)
             
-            .Map(dest => dest.Qualifications, src => src.Profile.Qualifications == null ? null : src.Profile.Qualifications.OrderBy(q=> q.GraduationYear))
+            .Map(dest => dest.Qualifications, src => src.Profile.Qualifications == null ? new List<Qualification>() : src.Profile.Qualifications
+                .OrderBy(q=> q.GraduationYear).ToList())
             .Map(dest => dest.Experiences, src => src.Profile.Experiences)
             .Map(dest => dest.TrainingCourses, src => src.Profile.TrainingCourses)
             .Map(dest => dest.Achievements, src => src.Profile.Achievements)
             .Map(dest => dest.Skills, src => src.Profile.Skills)
             .Map(dest => dest.Languages, src => src.Profile.Languages)
             
-            .Map(dest => dest.AdditionalAttachments, src =>   src.Profile.AdditionalAttachments == null ? null : src.Profile.AdditionalAttachments.Where(a => a.Attachment != null))
+            .Map(dest => dest.AdditionalAttachments, src =>   src.Profile.AdditionalAttachments == null ? new List<ProfileAdditionalAttachment>() : src.Profile.AdditionalAttachments.Where(a => a.Attachment != null))
 ;
     }
 }

@@ -42,8 +42,7 @@ public class ApproveJobPointsCommandHandler(
         if (validationResult.IsFailed)
             return Result.Fail<bool>(validationResult.Errors);
         points.IsApproved = true;
-
-        job.ChangeStatus(JobStatusIds.ReadyForAnnouncement);
+        
         var result = await uow.SaveChangesAsync(cancellationToken);
         return Result.Ok(result > 0);
     }

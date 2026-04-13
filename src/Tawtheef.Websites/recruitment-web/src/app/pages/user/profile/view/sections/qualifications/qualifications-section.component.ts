@@ -17,6 +17,7 @@ import { ProfileLookupsService } from '../../../wizard-profile/services/profile-
 import { DegreeModal } from '../../../components/profile-steps/step-degree/dialogs/degree.modal/degree.modal';
 import { Degree } from '../../../wizard-profile/models/degree.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { GUID } from '../../../../../../shared/types/guid.type';
 
 @Component({
   selector: 'app-profile-qualifications-section',
@@ -71,18 +72,18 @@ export class ProfileQualificationsSectionComponent {
     if (!qua) return null;
     const rowNote = qua.id
       ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Row &&
-            note.entityId?.toLowerCase() === qua.id.toLowerCase()
-        ) ?? null
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Row &&
+          note.entityId?.toLowerCase() === qua.id.toLowerCase()
+      ) ?? null
       : null;
 
     const attachmentNote = qua.attachment?.resourceId
       ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Attachment &&
-            note.resourceId?.toLowerCase() === qua.attachment?.resourceId.toLowerCase()
-        ) ?? null
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Attachment &&
+          note.resourceId?.toLowerCase() === qua.attachment?.resourceId.toLowerCase()
+      ) ?? null
       : null;
 
     return rowNote ?? attachmentNote ?? null;
@@ -98,14 +99,14 @@ export class ProfileQualificationsSectionComponent {
         closable: true,
       })
       ?.onClose.subscribe((degree: Degree | null) => {
-      if (!degree) return;
-      this.profileService.saveEducationSection([degree]).subscribe({
-        next: () => {
-          this.notify.success(this.translate.instant('profileView.notifications.saved'));
-          this.refresh.emit();
-        }
+        if (!degree) return;
+        this.profileService.saveEducationSection([degree]).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          }
+        });
       });
-    });
   }
 
   protected editQualification(qualification: QualificationDto) {
@@ -119,14 +120,14 @@ export class ProfileQualificationsSectionComponent {
         closable: true,
         data: { initialValue: mapped, disableFileUpload: true },
       })?.onClose.subscribe((degree: Degree | null) => {
-      if (!degree) return;
-      this.profileService.saveEducationSection([degree]).subscribe({
-        next: () => {
-          this.notify.success(this.translate.instant('profileView.notifications.saved'));
-          this.refresh.emit();
-        }
+        if (!degree) return;
+        this.profileService.saveEducationSection([degree]).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          }
+        });
       });
-    });
   }
 
   private mapQualificationToDegree(qualification: QualificationDto): Degree {
@@ -150,10 +151,10 @@ export class ProfileQualificationsSectionComponent {
       grade: qualification.grade ?? null,
       certificate: qualification.attachment
         ? {
-            resourceId: qualification.attachment.resourceId,
-            resourceName: qualification.attachment.fileName,
-            url: qualification.attachment.url ?? null,
-          }
+          resourceId: qualification.attachment.resourceId,
+          resourceName: qualification.attachment.fileName,
+          url: qualification.attachment.url ?? null,
+        }
         : null,
       attachmentId: qualification.attachment?.resourceId ?? null,
       fileName: qualification.attachment?.fileName ?? null,
@@ -164,6 +165,13 @@ export class ProfileQualificationsSectionComponent {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');
   }
+
+  isOtherSpec(majorId?: GUID | null, subMajorId?: GUID | null): boolean {
+    const list = [majorId?.toLowerCase(), subMajorId?.toLowerCase()];
+    return list.some(id => id === '7044ac66-706b-4384-bb79-75c71801da8b' || id === '60705656-fe6c-4f16-8bef-c61dfeca3cb2');
+  }
+
+  isOtherItem = (q: QualificationDto): boolean => this.isOtherSpec(q.majorId, q.subMajorId);
 
   private normalizePendingItems(): any[] {
     const items = this.changesRequest.map(change => change.newValue).flatMap(value => {

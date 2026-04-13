@@ -31,6 +31,7 @@ public sealed class GetDistributionProfilesHandler(
             request.Status,
             request.SearchTerm,
             request.TargetEntityId,
+            request.HasOtherSpecialization,
             ct);
         return Result.Ok(items);
     }

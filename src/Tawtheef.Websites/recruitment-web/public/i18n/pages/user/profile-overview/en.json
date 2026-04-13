@@ -214,6 +214,8 @@
   "profileOverview.sub.nationalAddress": "National address",
   "profileOverview.table.degree": "Degree",
   "profileOverview.table.major": "Major",
+  "profileOverview.qualifications.otherMajorWarningTitle": "Warning: 'Other' specialization is not accepted",
+  "profileOverview.qualifications.otherMajorWarning": "You are required to update your qualification data and select the correct specialization from the list.",
   "profileOverview.table.university": "University",
   "profileOverview.table.country": "Country",
   "profileOverview.table.year": "Year",

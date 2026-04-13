@@ -54,6 +54,18 @@
             </small>
           </div>
         </div>
+        <!-- Hint for other major -->
+        <div class="row mb-3" *ngIf="isQualification">
+          <div class="col-12">
+            <div class="alert alert-info d-flex align-items-start gap-2 mb-0 p-2">
+              <i class="pi pi-info-circle mt-1 text-info"></i>
+              <div class="small">
+                <strong>ملاحظة هامة:</strong> في حال لم تجد تخصصك الرئيسي في القائمة، يرجى اختيار <strong>"أخرى"</strong> لكل من التخصص الرئيسي والفرعي، وفي حال لم تجد تخصصك الفرعي فقط يمكنك اختيار <strong>"أخرى"</strong> للتخصص الفرعي. سيتم لاحقاً تدقيق المرفقات وتحديث بيانات المؤهل الخاص بك.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ROW 2: 2 fields -->
         <div class="row align-items-start" *ngIf="isQualification">
           <!-- main-major -->

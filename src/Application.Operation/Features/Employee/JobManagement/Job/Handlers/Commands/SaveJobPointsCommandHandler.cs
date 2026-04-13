@@ -31,7 +31,8 @@ public sealed class SaveJobPointsCommandHandler(
         if (jobStatus == Guid.Empty)
             return Result.Fail<Unit>(JobMessages.JobNotFound);
 
-        if (jobStatus != JobStatusIds.PendingPointConfiguration && jobStatus != JobStatusIds.PendingPointApproval)
+        if (jobStatus != JobStatusIds.PendingPointConfiguration &&
+         jobStatus != JobStatusIds.PendingPointApproval)
             return Result.Fail<Unit>(JobMessages.JobPointsJobNotApproved);
 
         var configResult = await jobPointsConfigurationsRepository.GetAsync();

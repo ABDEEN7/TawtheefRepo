@@ -111,5 +111,7 @@
   "distribution.errors.generic": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
   "distribution.errors.noProfilesSelected": "يرجى اختيار ملفات للتوزيع",
   "distribution.errors.loadEmployeesFailed": "تعذر تحميل بيانات الموظفين",
-  "distribution.errors.loadFilesFailed": "تعذر تحميل الملفات القابلة للتوزيع"
+  "distribution.errors.loadFilesFailed": "تعذر تحميل الملفات القابلة للتوزيع",
+  "distribution.filters.hasOther": "وجود تخصص أخرى",
+  "distribution.table.hasOtherTooltip": "تحتوي أحد مؤهلاته على تخصص رئيسي أو فرعي 'أخرى'"
 }

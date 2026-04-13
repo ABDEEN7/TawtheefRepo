@@ -46,6 +46,7 @@ public class TokenService(
     private const string PermClaimType = "permission";
     private const string ProfileCompleteClaimType = "profile.completed";
     private const string UserTypeClaimType = "user_type";
+    private const string LoginProviderClaimType = "login_provider";
 
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
@@ -68,7 +69,7 @@ public class TokenService(
         await userManager.UpdateSecurityStampAsync(user);
         await ClearUserCacheAsync(user.Id, ct);
 
-        var tokenResult = await BuildAuthResponseAsync(user, refreshToken, sid, ct);
+        var tokenResult = await BuildAuthResponseAsync(user, refreshToken, sid, loginSource, ct);
         if (tokenResult.IsFailed)
             return tokenResult;
 
@@ -116,7 +117,8 @@ public class TokenService(
 
         var buildSw = Stopwatch.StartNew();
         await ClearUserCacheAsync(user.Id, ct);
-        var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, ct);
+        var loginProvider = (await userManager.GetLoginsAsync(user)).FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Password";
+        var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, loginProvider, ct);
         timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 
         if (result.IsFailed)
@@ -180,6 +182,7 @@ public class TokenService(
         User user,
         RefreshToken refreshToken,
         string sid,
+        string loginSource,
         CancellationToken ct)
     {
         var timings = new Dictionary<string, long>();
@@ -204,6 +207,8 @@ public class TokenService(
             profileComplete = applicantUser.IsCompletedProfile;
             additionalClaims.Add(new Claim(ProfileCompleteClaimType, applicantUser.IsCompletedProfile ? "true" : "false"));
         }
+
+        additionalClaims.Add(new Claim(LoginProviderClaimType, loginSource));
 
         var genSw = Stopwatch.StartNew();
         var accessToken = await GenerateAccessTokenAsync(user, userType, [

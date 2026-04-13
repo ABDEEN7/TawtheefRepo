@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Profile.Command;
 using Application.Recruitment.Features.Profile.Command.ChangeRequestOperation;
@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
@@ -599,6 +600,27 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         //get language from header
         var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(new GetCountriesQuery { Language = language });
+
+        if (result.IsSuccess && User.HasClaim("login_provider", "Google"))
+        {
+            result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);
+        }
+
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/nationalities")]
+    public async Task<IActionResult> Nationalities()
+    {
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery { Language = language });
+
+        if (result.IsSuccess && User.HasClaim("login_provider", "Google"))
+        {
+            result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);
+        }
+
         return result.ToActionResult();
     }
 
