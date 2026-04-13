@@ -10,7 +10,7 @@
   "ministerOffice.list.status": "الحالة",
   "ministerOffice.list.gender": "الجنس",
   "ministerOffice.list.targetEntity": "الجهة المستهدفة",
-  "ministerOffice.list.candidateType": "نوع المرشح",
+  "ministerOffice.list.candidateType": "فئة المرشح",
   "ministerOffice.list.name": "اسم المرشح",
   "ministerOffice.list.qid": "الرقم الشخصي",
   "ministerOffice.list.contact": "بيانات التواصل",
@@ -53,7 +53,7 @@
   "ministerOffice.common.cancel": "إلغاء",
   "ministerOffice.common.submit": "تسجيل",
   "ministerOffice.common.save": "حفظ",
-  "JOB_INVITATION_STATUSES.SUBMITTED": "مرشح للاختبار",
+  "ministerOffice.JOB_INVITATION_STATUSES.SUBMITTED": "مرشح للاختبار",
   "ministerOffice.CANDIDATE_FOLLOW_UP_ACTIVATED": "تم تفعيل المتابعة",
   "ministerOffice.CANDIDATE_FOLLOW_UP_DEACTIVATED": "تم إلغاء تفعيل المتابعة"
 }

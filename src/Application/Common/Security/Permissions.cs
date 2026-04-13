@@ -494,4 +494,25 @@ public static class Permissions
                 "مكتب سعادة الوزير - إدارة",
                 91);
     }
+
+    public static class Cities
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Cities.View,
+                nameof(PermissionKeys.Cities),
+                PermissionAction.View,
+                "Cities - View",
+                "المدن - عرض",
+                92);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.Cities.Manage,
+                nameof(PermissionKeys.Cities),
+                PermissionAction.Manage,
+                "Cities - Manage",
+                "المدن - إدارة",
+                93);
+    }
 }

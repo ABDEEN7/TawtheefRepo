@@ -297,7 +297,15 @@ export class EndpointsService {
 
   countries = {
     listCountries: this.getFullUrl('/countryManagement/list-countries'),
+    createCountry: this.getFullUrl('/countryManagement/create-country'),
+    updateCountry: (id: string) => this.getFullUrl(`/countryManagement/update-country/${id}`),
     updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
+  };
+  cities = {
+    listCities: this.getFullUrl('/cityManagement/list-cities'),
+    createCity: this.getFullUrl('/cityManagement/create-city'),
+    updateCity: (id: string) => this.getFullUrl(`/cityManagement/update-city/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/cityManagement/${id}/status`)
   };
 
   ministerOffice = {

@@ -11,10 +11,10 @@ public static class CountryIds
 [Table(nameof(Country), Schema = Schemas.Lookup)]
 public class Country : LookupBase
 {
-    public int Code { get; init; }
+    public int Code { get; set; }
     [MaxLength(3)]
-    public required string ISOCode { get; init; }
+    public required string ISOCode { get; set; }
     [MaxLength(3)]
-    public required string CodeAlpha { get; init; }
+    public required string CodeAlpha { get; set; }
     
 }

@@ -59,6 +59,12 @@ public static class PermissionKeys
         public const string Manage = "universities.manage";
     }
 
+    public static class Cities
+    {
+        public const string View = "cities.view";
+        public const string Manage = "cities.manage";
+    }
+
     public static class ProfileLogs
     {
         public const string View = "profile.logs.view";
