@@ -396,7 +396,7 @@ namespace Tawtheef.Infrastructure
                 if (env.IsDevelopment())
                 {
                     options
-                        .EnableSensitiveDataLogging()
+                        // .EnableSensitiveDataLogging()
                         .EnableDetailedErrors();
                 }
             });

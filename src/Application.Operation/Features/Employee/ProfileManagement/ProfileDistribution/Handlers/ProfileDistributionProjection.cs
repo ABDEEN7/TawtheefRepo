@@ -29,6 +29,7 @@ internal sealed class ProfileDistributionProjection(
         UserProfileStatus? status,
         string? searchTerm,
         Guid? targetEntityId,
+        bool? hasOtherSpecialization,
         CancellationToken ct)
     {
         var profileRepo    = uow.GetEntityRepository<UserProfile>();
@@ -57,6 +58,8 @@ internal sealed class ProfileDistributionProjection(
                        c.Status == ProfileChangeRequestStatus.UnderReview)))
                 )
             )
+            .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
+            .Include(p => p.Qualifications!).ThenInclude(q => q.SubMajor)
             .WhereIf(status is not null, p => p.Status == status);
 
         // 4) Optional search filter
@@ -97,6 +100,20 @@ internal sealed class ProfileDistributionProjection(
             profilesQuery = profilesQuery.Where(p => p.TargetEntityId == targetEntityId.Value);
         }
 
+        if (hasOtherSpecialization.HasValue)
+        {
+            if (hasOtherSpecialization.Value)
+            {
+                profilesQuery = profilesQuery.Where(p => p.Qualifications!.Any(q => 
+                    q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther));
+            }
+            else
+            {
+                profilesQuery = profilesQuery.Where(p => !p.Qualifications!.Any(q => 
+                    q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther));
+            }
+        }
+
         // 5) Paginate
         var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
         if (profiles.Metadata.TotalCount == 0)
@@ -129,6 +146,10 @@ internal sealed class ProfileDistributionProjection(
                 dto.AssignedEmployeeName = assignment?.Employee == null
                     ? null
                     : localizationService.GetLocalizedFullName(assignment.Employee);
+                
+                dto.HasOtherSpecialization = profile.Qualifications?.Any(q =>
+                    q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther) ?? false;
+                
                 return dto;
             })
             .OrderByDescending(p => p.SubmittedAtUtc)
@@ -227,6 +248,7 @@ internal sealed class ProfileDistributionProjection(
             status: null,
             searchTerm: null,
             targetEntityId: null,
+            hasOtherSpecialization: null,
             ct: ct);
 
         return new DistributionResultDto

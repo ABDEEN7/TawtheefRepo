@@ -27,6 +27,7 @@
           class="p-button-sm p-button-outlined"
           icon="pi pi-check"
           (click)="approve()"
+          [disabled]="blockApprove"
         >
           {{ 'profileApproval.status.approved' | translate }}
         </button>

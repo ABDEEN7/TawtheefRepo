@@ -39,11 +39,17 @@
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.major' | translate }}</div>
-          <div class="fw-semibold">{{ q.major?.name || q.majorId || '-' }}</div>
+          <div class="fw-semibold" [ngClass]="{'text-danger': isOtherSpec(q.major)}">
+            {{ q.major?.name || q.majorId || '-' }}
+            <i class="pi pi-exclamation-triangle ms-1" *ngIf="isOtherSpec(q.major)"></i>
+          </div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.subMajor' | translate }}</div>
-          <div class="fw-semibold">{{ q.subMajor?.name || q.subMajorId || '-' }}</div>
+          <div class="fw-semibold" [ngClass]="{'text-danger': isOtherSpec(q.subMajor)}">
+            {{ q.subMajor?.name || q.subMajorId || '-' }}
+            <i class="pi pi-exclamation-triangle ms-1" *ngIf="isOtherSpec(q.subMajor)"></i>
+          </div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.year' | translate }}</div>
@@ -70,11 +76,20 @@
         </div>
       </div>
 
+      <div class="alert alert-warning mx-3 mb-3 d-flex align-items-start gap-2" *ngIf="isOtherSpec(q.major) || isOtherSpec(q.subMajor)">
+        <i class="pi pi-exclamation-triangle mt-1"></i>
+        <div>
+          <strong>{{ 'profileApproval.detail.qualifications.otherMajorWarningTitle' | translate }}</strong>
+          <p class="mb-0 small">{{ 'profileApproval.detail.qualifications.otherMajorWarning' | translate }}</p>
+        </div>
+      </div>
+
       <app-item-inline-review
         *ngIf="reviewItemFor(q.id) as review"
         [reviewItemId]="review.reviewItemId"
         [status]="review.status"
         [note]="review.note"
+        [blockApprove]="isOtherSpec(q.major) || isOtherSpec(q.subMajor)"
         (review)="reviewItem.emit($event)"
       ></app-item-inline-review>
     </p-card>

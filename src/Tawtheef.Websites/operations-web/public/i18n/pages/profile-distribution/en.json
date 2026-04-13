@@ -111,5 +111,7 @@
   "distribution.errors.generic": "An unexpected error occurred. Please try again.",
   "distribution.errors.noProfilesSelected": "Please select profiles for distribution",
   "distribution.errors.loadEmployeesFailed": "Failed to load employee data",
-  "distribution.errors.loadFilesFailed": "Failed to load distributable profiles"
+  "distribution.errors.loadFilesFailed": "Failed to load distributable profiles",
+  "distribution.filters.hasOther": "Has 'Other' Specialization",
+  "distribution.table.hasOtherTooltip": "One of their qualifications contains a 'Other' major or sub-major"
 }

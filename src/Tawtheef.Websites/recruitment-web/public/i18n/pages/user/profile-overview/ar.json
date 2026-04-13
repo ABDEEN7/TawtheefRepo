@@ -216,6 +216,8 @@
   "profileOverview.sub.nationalAddress": "العنوان الوطني",
   "profileOverview.table.degree": "الدرجة العلمية",
   "profileOverview.table.major": "التخصص",
+  "profileOverview.qualifications.otherMajorWarningTitle": "تنبيه: تخصص 'أخرى' غير مقبول",
+  "profileOverview.qualifications.otherMajorWarning": "يطلب منك تحديث بيانات المؤهل واختيار التخصص الصحيح من القائمة.",
   "profileOverview.table.university": "الجامعة",
   "profileOverview.table.country": "البلد",
   "profileOverview.table.year": "السنة",

@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Models.Pagination;
@@ -10,6 +10,7 @@ public sealed record GetDistributionProfilesQuery(
     Guid? UserId,
     UserProfileStatus? Status = null,
     string? SearchTerm = null,
-    Guid? TargetEntityId = null)
+    Guid? TargetEntityId = null,
+    bool? HasOtherSpecialization = null)
     : PaginatedRequest, IRequest<Result<PaginatedResult<DistributionProfileDto>>>;
 

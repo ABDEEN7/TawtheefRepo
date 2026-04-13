@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ public sealed class GetSubMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper map
         var baseQuery = dbSet
             .AsNoTracking()
             .Where(s => s.IsActive && !s.IsDeleted)
-            .Where(x => x.ParentId == request.ParentId);
+            .Where(x => x.ParentId == request.ParentId || x.Id == MajorIds.SubOther);
         var normalizedSearch = request.Search?.Trim();
         var isPaged = request.PaginatedRequest is not  null;
         

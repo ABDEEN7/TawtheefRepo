@@ -16,6 +16,7 @@ export interface DistributionFile {
   status: ProfileStatusNumber;
   assignedEmployeeId?: string;
   assignedEmployeeName?: string;
+  hasOtherSpecialization: boolean;
   submittedAtUtc: string;
 }
 
@@ -58,4 +59,5 @@ export interface DistributionProfilesFilters extends PaginatedRequest {
   status?: ProfileStatusNumber;
   searchTerm?: string;
   targetEntityId?: string;
+  hasOtherSpecialization?: boolean;
 }

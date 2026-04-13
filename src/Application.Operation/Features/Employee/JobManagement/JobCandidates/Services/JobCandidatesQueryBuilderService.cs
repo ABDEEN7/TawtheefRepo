@@ -54,17 +54,15 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
             p.BirthDate!.Value <= maxBirthDate);
 
         profiles = profiles.Where(p =>
-            p.Qualifications != null &&
             req.QualificationLevelIds.Any(jq=> 
-                p.Qualifications.Any(pq=> pq.DegreeId == jq))
+                p.Qualifications!.Any(pq=> pq.DegreeId == jq))
         );
         
         // Latest Major MUST match job major/submajor
         if (req.JobMajorId.HasValue || req.JobSubMajorId.HasValue)
         {
             profiles = profiles.Where(p =>
-                p.Qualifications != null &&
-                p.Qualifications.Any(q =>
+                p.Qualifications!.Any(q =>
                     q.MajorId == req.JobMajorId ||
                     q.MajorId == req.JobSubMajorId
                 )
@@ -75,8 +73,7 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         if (req.RequiredSkillIds.Count > 0)
         {
             profiles = profiles.Where(p =>
-                p.Skills != null &&
-                p.Skills
+                p.Skills!
                     .Where(s => req.RequiredSkillIds.Contains(s.SkillId))
                     .Select(s => s.SkillId)
                     .Distinct()

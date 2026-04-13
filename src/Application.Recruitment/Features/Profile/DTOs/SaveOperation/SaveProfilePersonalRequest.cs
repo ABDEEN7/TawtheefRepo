@@ -14,7 +14,7 @@ public sealed class SaveProfilePersonalRequest
     [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Full name contains invalid characters.")]
     public string? FullNameEn { get; set; }
 
-    [RegularExpression(@"^[^\\/:*?""<>|]+$", ErrorMessage = "National number contains invalid characters.")]
+    [RegularExpression(InputValidationPatterns.NationalNumber, ErrorMessage = "National number contains invalid characters.")]
     public string? NationalNumber { get; set; }
     public DateOnly? QIDExpiry { get; set; }
     public DateOnly? BirthDate { get; set; }

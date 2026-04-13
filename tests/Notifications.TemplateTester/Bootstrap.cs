@@ -27,11 +27,11 @@ internal static class Bootstrap
         {
             SmtpHost = "smtp.edu.gov.qa",
             SmtpPort = 25,
-            EmailUser = "tawtheef@edu.gov.qa",
+            EmailUser = "careers@edu.gov.qa",
             EmailPass = "Taw@Theef", // Keep as-is or load from secrets
-            ManagerEmails = "manager@tawtheef.local",
-            ContactUsEmail = "contact@tawtheef.local",
-            ProductName = "Tawtheef"
+            ManagerEmails = "manager@careers.local",
+            ContactUsEmail = "contact@careers.local",
+            ProductName = "Careers"
         };
 
         var appConfig = new AppConfigSettings
@@ -39,8 +39,8 @@ internal static class Bootstrap
             FrontendUrl = "https://localhost",
             BackendUrl = "https://localhost",
             BlobSignKey = "dev",
-            AdminEmail = "admin@tawtheef.local",
-            AdminEmails = ["admin@tawtheef.local"],
+            AdminEmail = "admin@careers.local",
+            AdminEmails = ["admin@careers.local"],
             DefaultSignedUrlMinutes = 3
         };
 

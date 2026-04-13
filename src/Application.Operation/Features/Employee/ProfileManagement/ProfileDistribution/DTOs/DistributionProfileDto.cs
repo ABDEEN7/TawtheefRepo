@@ -11,5 +11,6 @@ public sealed class DistributionProfileDto
     public UserProfileStatus Status { get; set; }
     public Guid? AssignedEmployeeId { get; set; } = Guid.Empty;
     public string? AssignedEmployeeName { get; set; } = string.Empty;
+    public bool HasOtherSpecialization { get; set; }
     public DateTimeOffset SubmittedAtUtc { get; set; }
 }

@@ -1,41 +1,45 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-graduation-cap" aria-hidden="true"></i>
+    <span>{{ 'profileOverview.sections.qualifications' | translate }}</span>
+  </h5>
 
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-graduation-cap"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.qualifications' | translate }}</span></h5>
+  <div class="d-flex align-items-center gap-2" *ngIf="canAddAttachment"><button
+      class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"
+      (click)="addQualification()"><i class="pi pi-plus" aria-hidden="true"></i><span>{{
+        'profileView.actions.addQualification' | translate }}</span></button></div>
+</div>
 
-      <div class="d-flex align-items-center gap-2" *ngIf="canAddAttachment"><button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="addQualification()"><i class="pi pi-plus" aria-hidden="true"></i><span>{{ 'profileView.actions.addQualification' | translate }}</span></button></div>
-   </div>
+@if (profile?.qualifications?.length || qualificationsUnderReview().length) {
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'profileOverview.fields.degree' | translate }}</th>
+          <th>{{ 'profileOverview.fields.university' | translate }}</th>
+          <th>{{ 'profileOverview.fields.major' | translate }}</th>
+          <th>{{ 'profileOverview.fields.gradCountry' | translate }}</th>
+          <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
+          <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
+          <th>{{ 'profileOverview.table.attachment' | translate }}</th>
+          <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (q of profile?.qualifications; track q.id) {
+        <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
+        }
+        @for (q of qualificationsUnderReview(); track q.id) {
+        <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 
-    @if (profile?.qualifications?.length || qualificationsUnderReview().length) {
-       <div class="table-card rounded overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle w-100">
-                  <thead class="table-light">
-                    <tr>
-                      <th>{{ 'profileOverview.fields.degree' | translate }}</th>
-                      <th>{{ 'profileOverview.fields.university' | translate }}</th>
-                      <th>{{ 'profileOverview.fields.major' | translate }}</th>
-                      <th>{{ 'profileOverview.fields.gradCountry' | translate }}</th>
-                      <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
-                      <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
-                      <th>{{ 'profileOverview.table.attachment' | translate }}</th>
-                      <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (q of profile?.qualifications; track q.id) {
-                      <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
-                    }
-                    @for (q of qualificationsUnderReview(); track q.id) {
-                      <ng-container *ngTemplateOutlet="qualificationTemplate; context: { $implicit: q }"></ng-container>
-                    }
-                  </tbody>
-                </table>
-            </div>
-       </div>
-
-    } @else {
-      <div class="text-muted">{{ 'common.none' | translate }}</div>
-    }
+} @else {
+<div class="text-muted">{{ 'common.none' | translate }}</div>
+}
 
 <ng-template #qualificationTemplate let-q>
   @let noteRecord = noteForRaw(q);
@@ -49,39 +53,46 @@
       </div>
     </td>
     <td>{{ q.university?.name || '-' }}</td>
-    <td>{{ q.major?.name || '-' }}/{{q.subMajor?.name || '-'}}</td>
+    <td>
+      <div class="d-flex align-items-center gap-2">
+        <i class="pi pi-exclamation-triangle text-danger" *ngIf="isOtherSpec(q.majorId, q.subMajorId)"
+          [pTooltip]="'profileOverview.qualifications.otherMajorWarningTitle' | translate"></i>
+        <span [ngClass]="{'text-danger fw-bold': isOtherSpec(q.majorId, q.subMajorId)}">{{ q.major?.name || '-'
+          }}/{{q.subMajor?.name || '-'}}</span>
+      </div>
+    </td>
     <td>{{ q.gradCountry?.name || '-' }}</td>
     <td>{{ q.graduationYear || '-' }}</td>
     <td>{{ q.studyType?.name || '-' }}</td>
     <td>
       @if (q.attachment) {
-        <a
-          class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
-          [ngClass]="{ 'attach-link--warn': noteRecord }"
-          (click)="open(q.attachment)">
-          <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-          <span class="text-truncate d-inline-block">
-                        {{ q.attachment.fileName }}
-                      </span>
-          @if (noteRecord) {
-            <i
-              class="pi pi-exclamation-triangle text-warning"
-              [pTooltip]="noteRecord.note || noteRecord.title"
-              tooltipPosition="top"
-              aria-hidden="true"></i>
-          }
-        </a>
+      <a class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
+        [ngClass]="{ 'attach-link--warn': noteRecord }" (click)="open(q.attachment)">
+        <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
+        <span class="text-truncate d-inline-block">
+          {{ q.attachment.fileName }}
+        </span>
+        @if (noteRecord) {
+        <i class="pi pi-exclamation-triangle text-warning" [pTooltip]="noteRecord.note || noteRecord.title"
+          tooltipPosition="top" aria-hidden="true"></i>
+        }
+      </a>
       } @else {
-        <span class="text-muted">{{ 'common.none' | translate }}</span>
+      <span class="text-muted">{{ 'common.none' | translate }}</span>
       }
     </td>
     <td *ngIf="noteRecord">
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-secondary rounded-pill"
-        (click)="editQualification(q)">
+      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="editQualification(q)">
         <i class="pi pi-pencil" aria-hidden="true"></i>
       </button>
     </td>
   </tr>
 </ng-template>
+
+<div class="alert alert-warning mt-3 d-flex align-items-start gap-2" *ngIf="profile?.qualifications?.some(isOtherItem)">
+  <i class="pi pi-exclamation-triangle mt-1"></i>
+  <div>
+    <strong>{{ 'profileOverview.qualifications.otherMajorWarningTitle' | translate }}</strong>
+    <p class="mb-0 small">{{ 'profileOverview.qualifications.otherMajorWarning' | translate }}</p>
+  </div>
+</div>
