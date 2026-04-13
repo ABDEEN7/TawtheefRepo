@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Application.Operation.Features.Authenticator.Commands;
 using Application.Operation.Features.Authenticator.DTOs;
 using MediatR;
@@ -12,6 +12,7 @@ using Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHand
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Operation.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
@@ -20,9 +21,9 @@ public sealed class AzureExternalCallbackLoginHandler(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService,
-    IEmployeeProfileService employeeProfileService,
     ILoginAuditService loginAudit,
-    IAppLogger logger
+    IAppLogger logger,
+    IServiceScopeFactory serviceScopeFactory
 ) : BaseExternalCallbackLoginHandler(loginAudit),
     IRequestHandler<AzureExternalCallbackLoginCommand, IResult<AuthResponse>>
 {
@@ -109,7 +110,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         // 5) Upsert provider claims + sync employee profile (if applicable)
         await UpsertProviderClaimsAsync(userManager, user, Provider, principal);
 
-        var syncResult = await SyncEmployeeProfileAsync(user, ct);
+        var syncResult = SyncEmployeeProfileAsync(user);
         if (syncResult.IsFailed)
         {
             _log.Warning(
@@ -259,15 +260,38 @@ public sealed class AzureExternalCallbackLoginHandler(
         return Result.Ok<User>(newUser);
     }
 
-    private async Task<Result> SyncEmployeeProfileAsync(User user, CancellationToken ct)
+    private Result SyncEmployeeProfileAsync(User user)
     {
         if (user is AdminUser)
             return Result.Ok();
 
-        if (user is not EmployeeUser employeeUser)
+        if (user is not EmployeeUser)
             return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
 
-        await employeeProfileService.SyncFromDirectoryAsync(employeeUser, ct);
+        var userId = user.Id.ToString();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                using var scope = serviceScopeFactory.CreateScope();
+                var scopedProfileService = scope.ServiceProvider.GetRequiredService<IEmployeeProfileService>();
+                var scopedUserManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1)); // Don't hang indefinitely
+
+                var scopedUser = await scopedUserManager.FindByIdAsync(userId);
+                if (scopedUser is EmployeeUser scopedEmployee)
+                {
+                    await scopedProfileService.SyncFromDirectoryAsync(scopedEmployee, cts.Token);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Background employee profile sync failed for user {UserId}", userId);
+            }
+        });
+
         return Result.Ok();
     }
 

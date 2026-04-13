@@ -55,9 +55,7 @@
     <td>{{ q.university?.name || '-' }}</td>
     <td>
       <div class="d-flex align-items-center gap-2">
-        <i class="pi pi-exclamation-triangle text-danger" *ngIf="isOtherSpec(q.majorId, q.subMajorId)"
-          [pTooltip]="'profileOverview.qualifications.otherMajorWarningTitle' | translate"></i>
-        <span [ngClass]="{'text-danger fw-bold': isOtherSpec(q.majorId, q.subMajorId)}">{{ q.major?.name || '-'
+        <span>{{ q.major?.name || '-'
           }}/{{q.subMajor?.name || '-'}}</span>
       </div>
     </td>
@@ -88,11 +86,3 @@
     </td>
   </tr>
 </ng-template>
-
-<div class="alert alert-warning mt-3 d-flex align-items-start gap-2" *ngIf="profile?.qualifications?.some(isOtherItem)">
-  <i class="pi pi-exclamation-triangle mt-1"></i>
-  <div>
-    <strong>{{ 'profileOverview.qualifications.otherMajorWarningTitle' | translate }}</strong>
-    <p class="mb-0 small">{{ 'profileOverview.qualifications.otherMajorWarning' | translate }}</p>
-  </div>
-</div>
