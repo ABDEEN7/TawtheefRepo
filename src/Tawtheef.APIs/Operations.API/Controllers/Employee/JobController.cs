@@ -199,6 +199,14 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpDelete("specialization/{specializationId:guid}")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> DeleteJobSpecialization(Guid specializationId)
+    {
+        var result = await mediator.Send(new DeleteJobSpecializationCommand(specializationId));
+        return result.ToActionResult();
+    }
+
     [HttpPut("{id:guid}/status")]
     [AuthorizePermission(PermissionKeys.Jobs.Approve)]
     public async Task<IActionResult> ChangeJobStatus(

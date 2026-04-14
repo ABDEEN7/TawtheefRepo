@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
-import { debounceTime, filter } from "rxjs";
+import { Component, OnInit, inject, DestroyRef, OnDestroy } from "@angular/core";
+import { FormBuilder, Validators, FormArray, FormGroup } from "@angular/forms";
+import { debounceTime, filter, Subject, takeUntil } from "rxjs";
 import { GUID } from "../../../../../../../shared/types/guid.type";
 import { Job } from "../../../models/job.model";
 import { JobLookupService } from "../../../services/job-lookup.service";
@@ -9,34 +9,73 @@ import { WizardStepComponent } from "../base/wizard-step.component";
 import { JobDegree } from "../../../models/job-degree.model";
 import { JobTabReviewNoteResponse } from "../../../models/job-tab-review-note-response";
 import { JobTabStatus } from "../../../enums/job-tab-status";
-import { JobStatus } from "../../../../../../../core/enums/lookups.enum";
+import { JobStatus, Degree } from "../../../../../../../core/enums/lookups.enum";
+import { EndpointsService } from "../../../../../../../core/http/endpoints.service";
+import { GuidUtils } from "../../../../../../../core/utils/guid-utils";
+import { ConfirmationService } from "primeng/api";
+import { NotificationService } from "../../../../../../../core/services/notification.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-qualifications-step',
-  standalone : false,
+  standalone: false,
   templateUrl: './qualifications-step.component.html',
   styleUrl: './qualifications-step.component.scss',
 })
-export class QualificationsStepComponent extends WizardStepComponent implements OnInit {
+export class QualificationsStepComponent extends WizardStepComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   protected jobService = inject(JobService);
   protected lookupsService = inject(JobLookupService);
+  protected endpoints = inject(EndpointsService);
+  private notificationService = inject(NotificationService);
+  private confirmationService = inject(ConfirmationService);
+  private translate = inject(TranslateService);
 
   jobData!: Job;
 
   readonly form = this.fb.group({
+    majorId: [null as GUID | null],
+    subMajorId: [null as GUID | null],
+    degrees: this.fb.control<any[]>([], Validators.required),
+    jobSpecializations: this.fb.array([]),
     qualificationsDescriptionAr: ['', Validators.required],
     qualificationsDescriptionEn: ['', Validators.required]
   });
   note: JobTabReviewNoteResponse | null = null;
+  majorOptions: any[] = [];
+  subMajorOptions: any[] = [];
+
+  // Track selected object names for review step
+  majorName: string = '';
+  subMajorName: string = '';
+
+  private destroy$ = new Subject<void>();
+
+  private simplifiedDegrees: (string | undefined)[] = [
+    Degree.Secondary,
+    Degree.Preparatory,
+    Degree.Primary,
+  ];
+
+  get jobSpecializationsFormArray() {
+    return this.form.controls.jobSpecializations as FormArray;
+  }
 
   ngOnInit(): void {
+    this.setupDegreeValidationListener();
+
     this.form.valueChanges.pipe(
+      takeUntil(this.destroy$),
       debounceTime(300),
       filter(() => this.form.valid)
     ).subscribe(_ => {
       this.updateJobData();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   isValid(): boolean {
@@ -46,18 +85,152 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     return this.form.valid;
   }
 
+  isDegreeChecked(degreeId: string): boolean {
+    const degrees = this.form.controls.degrees.value ?? [];
+    return degrees.some(d => (d.degreeId || d) === degreeId);
+  }
+
+  toggleDegree(degreeId: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    const current = this.form.controls.degrees.value || [];
+
+    let updated: any[];
+    if (checked) {
+      updated = [...current, { degreeId: degreeId as GUID }];
+    } else {
+      updated = current.filter(d => (d.degreeId || d) !== degreeId as GUID);
+    }
+
+    this.form.controls.degrees.setValue(updated);
+    this.form.controls.degrees.markAsDirty();
+  }
+
+  touchDegrees(): void {
+    const c = this.form.controls.degrees;
+    c.markAsTouched();
+    c.updateValueAndValidity({ onlySelf: true });
+  }
+
+  isFieldRequired(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return control ? control.hasValidator(Validators.required) : false;
+  }
+
+  canSelectSubMajor(): boolean {
+    return !!this.form.controls.majorId.value;
+  }
+
+  canSelectAdditionalSubMajor(index: number): boolean {
+    const group = this.jobSpecializationsFormArray.at(index) as FormGroup;
+    return !!group.controls['majorId'].value;
+  }
+
+  addSpecialization(id: GUID | null = null, majorId: GUID | null = null, subMajorId: GUID | null = null, majorOption: any = null, subMajorOption: any = null): void {
+    if (majorId) {
+      const exists = this.jobSpecializationsFormArray.controls.some((c: any) =>
+        c.value.majorId === majorId && c.value.subMajorId === subMajorId
+      );
+      if (exists) {
+        this.notificationService.warn(this.translate.instant('JOB_WIZARD.VALIDATION.SPECIALIZATION_EXISTS'));
+        return;
+      }
+    }
+
+    const group = this.fb.group({
+      id: [id],
+      majorId: [majorId, Validators.required],
+      subMajorId: [subMajorId],
+      majorOptions: [majorOption ? [majorOption] : []],
+      subMajorOptions: [subMajorOption ? [subMajorOption] : []],
+      majorName: [majorOption?.name || ''],
+      subMajorName: [subMajorOption?.name || '']
+    });
+    this.jobSpecializationsFormArray.push(group);
+  }
+
+  removeSpecialization(index: number): void {
+    const spec = this.jobSpecializationsFormArray.at(index).value;
+    if (spec.id) {
+      this.confirmationService.confirm({
+        message: this.translate.instant('JOB_WIZARD.CONFIRM.DELETE_SPECIALIZATION'),
+        header: this.translate.instant('JOB_BASIC_MODAL.CANCEL_CONFIRM_TITLE'),
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.jobService.deleteSpecialization(spec.id).subscribe(() => {
+            this.jobSpecializationsFormArray.removeAt(index);
+            this.updateJobData();
+            this.notificationService.success(this.translate.instant('JOB_WIZARD.MESSAGES.SPECIALIZATION_DELETED'));
+          });
+        }
+      });
+    } else {
+      this.jobSpecializationsFormArray.removeAt(index);
+      this.updateJobData();
+    }
+  }
+
+  private setupDegreeValidationListener(): void {
+    this.form.controls.degrees.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(degrees => {
+        const needsMajor = !degrees || degrees.length === 0 ||
+          degrees.some(d => {
+            const degreeId = d.degreeId || d;
+            const degreeObj = this.lookupsService.degrees().find(ld => ld.id === degreeId);
+            return !this.simplifiedDegrees.includes(degreeObj?.backendName);
+          });
+
+        if (needsMajor) {
+          this.form.controls.majorId.addValidators(Validators.required);
+        } else {
+          this.form.controls.majorId.removeValidators(Validators.required);
+          this.form.controls.subMajorId.removeValidators(Validators.required);
+        }
+
+        this.form.controls.majorId.updateValueAndValidity({ emitEvent: false });
+        this.form.controls.subMajorId.updateValueAndValidity({ emitEvent: false });
+      });
+  }
+
   override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
-     this.jobData = job;
-     this.note = note;
+    this.jobData = job;
+    this.note = note;
 
     const degrees = job.degrees?.map(degree => ({
       degreeId: degree.degreeId
     })) || [];
 
+    while (this.jobSpecializationsFormArray.length !== 0) {
+      this.jobSpecializationsFormArray.removeAt(0);
+    }
+
+    const jobResponse = job as any;
+
+    if (job.majorId) {
+      this.majorOptions = jobResponse.major?.id ? [jobResponse.major] : jobResponse.majorOptions ? jobResponse.majorOptions : [];
+    }
+    if (job.subMajorId) {
+      this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : jobResponse.subMajorOptions ? jobResponse.subMajorOptions : [];
+    }
+
+    if (job.jobSpecializations && job.jobSpecializations.length > 0) {
+      job.jobSpecializations.forEach((spec: any) => {
+        const majorInfo = spec.major ? spec.major : null;
+        const subMajorInfo = spec.subMajor ? spec.subMajor : null;
+        this.addSpecialization(spec.id, spec.majorId, spec.subMajorId, majorInfo, subMajorInfo);
+      });
+    }
+
     this.form.patchValue({
+      majorId: job.majorId || null,
+      subMajorId: job.subMajorId || null,
+      degrees: degrees,
       qualificationsDescriptionAr: job.qualificationsDescriptionAr || '',
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
+
+    this.majorName = job.majorName || '';
+    this.subMajorName = job.subMajorName || '';
 
     if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
       this.form.disable();
@@ -66,12 +239,39 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
 
   private updateJobData(): void {
     if (this.form.valid) {
-      const { qualificationsDescriptionAr, qualificationsDescriptionEn } = this.form.value;
+      const { qualificationsDescriptionAr, qualificationsDescriptionEn, majorId, subMajorId, degrees, jobSpecializations } = this.form.getRawValue();
+
+      // Deduplicate specializations to prevent UI issues
+      const seen = new Set<string>();
+      const uniqueSpecs: any[] = [];
+      const uniqueSpecsData: any[] = [];
+
+      (jobSpecializations as any[]).forEach((s, index) => {
+        const key = `${s.majorId}_${s.subMajorId || ''}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueSpecs.push({
+            id: s.id as GUID,
+            majorId: s.majorId as GUID,
+            subMajorId: s.subMajorId as GUID | null
+          });
+
+          if (jobSpecializations && jobSpecializations[index]) {
+            uniqueSpecsData.push(jobSpecializations[index]);
+          }
+        }
+      });
 
       this.jobService.updateCurrentJobQualifications(
-        this.jobData?.degrees || [],
+        degrees || [],
+        majorId as GUID | null,
+        subMajorId as GUID | null,
+        uniqueSpecs,
         qualificationsDescriptionAr || '',
-        qualificationsDescriptionEn || ''
+        qualificationsDescriptionEn || '',
+        this.majorName,
+        this.subMajorName,
+        uniqueSpecsData
       );
     }
   }

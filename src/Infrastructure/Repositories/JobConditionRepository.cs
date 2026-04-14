@@ -6,6 +6,4 @@ using Tawtheef.Infrastructure.Repositories.Base;
 namespace Tawtheef.Infrastructure.Repositories;
 
 public class JobConditionRepository(IGenericRepository<JobCondition> repository)
-    : BaseRepository<JobCondition>(repository), IJobConditionRepository
-{
-}
+    : BaseRepository<JobCondition>(repository), IJobConditionRepository;

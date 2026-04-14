@@ -7,9 +7,11 @@ import { JobRequiredAttachment } from './required-attachment.model';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { JobTabReviewNoteResponse } from './job-tab-review-note-response';
 import { JobReviewAttachmentResponse } from './job-review-attachment-response';
+import { JobSpecialization } from './job-specialization.model';
 
 export interface Job {
   jobTitleId: GUID;
+  rowVersion?: string;
   titleAr?: string;
   titleEn?: string;
   jobNumber?: string;
@@ -41,4 +43,8 @@ export interface Job {
   requiredAttachments?: JobRequiredAttachment[];
   tabReviewNotes?: JobTabReviewNoteResponse[];
   ReviewAttachment?: JobReviewAttachmentResponse;
+  jobSpecializations?: JobSpecialization[];
+  majorName?: string;
+  subMajorName?: string;
+  jobSpecializationsData?: { majorName: string; subMajorName?: string }[];
 }

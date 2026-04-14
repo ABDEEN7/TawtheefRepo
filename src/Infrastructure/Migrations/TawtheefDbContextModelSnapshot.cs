@@ -6913,6 +6913,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasMaxLength(3000)
                         .HasColumnType("nvarchar(3000)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<Guid>("SectorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -7894,6 +7900,76 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("JobSkill", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobSpecialization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MajorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SubMajorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("MajorId");
+
+                    b.HasIndex("SubMajorId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("JobId", "MajorId")
+                        .IsUnique()
+                        .HasFilter("[SubMajorId] IS NULL AND [IsDeleted] = 0");
+
+                    b.HasIndex("JobId", "MajorId", "SubMajorId")
+                        .IsUnique()
+                        .HasFilter("[SubMajorId] IS NOT NULL AND [IsDeleted] = 0");
+
+                    b.ToTable("JobSpecialization", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobTabReviewNote", b =>
@@ -12543,6 +12619,53 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobSpecialization", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
+                        .WithMany("JobSpecializations")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
+                        .WithMany()
+                        .HasForeignKey("SubMajorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Major");
+
+                    b.Navigation("SubMajor");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobTabReviewNote", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -13108,6 +13231,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("JobResponsibilities");
 
                     b.Navigation("JobSkills");
+
+                    b.Navigation("JobSpecializations");
 
                     b.Navigation("ReviewAttachment");
 

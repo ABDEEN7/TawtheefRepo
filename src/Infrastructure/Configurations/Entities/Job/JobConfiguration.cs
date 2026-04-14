@@ -11,6 +11,10 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
     {
         builder.HasQueryFilter(j => !j.IsDeleted);
 
+        // Optimistic concurrency: SQL Server rowversion
+        builder.Property(j => j.RowVersion)
+            .IsRowVersion();
+
         builder.HasOne(j => j.Sector)
             .WithMany()
             .HasForeignKey(j => j.SectorId)
@@ -99,6 +103,11 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
         builder.HasMany(j => j.TabReviewNotes)
                .WithOne(n => n.Job)
                .HasForeignKey(n => n.JobId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(j => j.JobSpecializations)
+               .WithOne(s => s.Job)
+               .HasForeignKey(s => s.JobId)
                .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(j => j.JobPoints)

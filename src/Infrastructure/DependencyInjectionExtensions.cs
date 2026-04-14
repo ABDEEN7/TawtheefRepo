@@ -345,6 +345,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IJobSkillRepository, JobSkillRepository>();
                 services.AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>();
                 services.AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
+                services.AddScoped<IJobSpecializationRepository, JobSpecializationRepository>();
                 
                 services.AddScoped<IJobValidationService, JobValidationService>();
                 

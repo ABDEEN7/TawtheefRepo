@@ -10,6 +10,126 @@
   <div class="row mb-3">
     <div class="col-md-12">
 
+      <!-- Degrees -->
+      <div class="col-12 mb-3 px-0">
+        <label class="form-label">
+          <span class="req">*</span> {{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}
+        </label>
+
+        <div class="card card-table mb-2">
+          <div class="card-body py-2">
+            <div class="d-flex flex-wrap gap-4" (click)="touchDegrees()" (focusin)="touchDegrees()">
+              @for (degree of lookupsService.degrees(); track degree.id) {
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" [id]="'step-degree-' + degree.id"
+                  [checked]="isDegreeChecked(degree.id)" (change)="toggleDegree(degree.id, $event)" />
+                <label class="form-check-label" [for]="'step-degree-' + degree.id">
+                  {{ degree.name }}
+                </label>
+              </div>
+              }
+            </div>
+
+            @if (form.controls.degrees.touched && form.controls.degrees.invalid) {
+            <div class="text-danger small mt-2">
+              <i class="hgi-stroke hgi-alert-circle me-1"></i>
+              {{ 'JOB_WIZARD.VALIDATION.DEGREES_REQUIRED' | translate }}
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Specialization -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">
+            @if (isFieldRequired('majorId')) { <span class="req">*</span> }
+            {{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }} ({{ 'JOB_WIZARD.STEPS.BASICS.PRIMARY' | translate }})
+          </label>
+
+          <app-remote-select class="jb-remote" formControlName="majorId" [searchUrl]="endpoints.job.lookups.majors"
+            [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate" optionLabel="name" optionValue="id"
+            [preloadedOptions]="majorOptions" [appendTo]="'body'" (onObjectChange)="majorName = $event?.name || ''" [invalid]="
+              form.controls.majorId.invalid &&
+              (form.controls.majorId.dirty || form.controls.majorId.touched)
+            " [showClear]="true"></app-remote-select>
+
+          @if (form.controls.majorId.touched && form.controls.majorId.invalid) {
+          <div class="text-danger">{{ 'VALIDATION.REQUIRED_FIELD' | translate }}</div>
+          }
+        </div>
+
+        <div class="col-md-6 mb-3">
+          @if (canSelectSubMajor()) {
+          <label class="form-label">
+            @if (isFieldRequired('subMajorId')) { <span class="req">*</span> }
+            {{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR' | translate }} ({{ 'JOB_WIZARD.STEPS.BASICS.SECONDARY' | translate
+            }})
+          </label>
+
+          <app-remote-select class="jb-remote" formControlName="subMajorId" [minChars]="1"
+            [parentId]="form.controls.majorId.value" parentParamName="parentId" [requireParent]="true"
+            [searchUrl]="endpoints.job.lookups.subMajors"
+            [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate" optionLabel="name"
+            optionValue="id" [preloadedOptions]="subMajorOptions" [appendTo]="'body'" (onObjectChange)="subMajorName = $event?.name || ''" [invalid]="
+              form.controls.subMajorId.invalid &&
+              (form.controls.subMajorId.dirty || form.controls.subMajorId.touched)
+            " [showClear]="true"></app-remote-select>
+          }
+        </div>
+      </div>
+
+      <!-- Additional Specializations -->
+      <div class="row mb-3" formArrayName="jobSpecializations">
+        <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+          <label class="form-label mb-0 fw-bold">
+            {{ 'JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATIONS' | translate }}
+          </label>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSpecialization()">
+            <i class="hgi-stroke hgi-plus"></i> {{ 'JOB_WIZARD.STEPS.BASICS.ADD_SPECIALIZATION' | translate }}
+          </button>
+        </div>
+
+        @for (spec of jobSpecializationsFormArray.controls; track spec; let i = $index) {
+        <div class="col-12 mb-3" [formGroupName]="i">
+          <div class="card p-3 shadow-sm border-light">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold text-muted">{{ 'JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATION' | translate }} #{{
+                i + 1 }}</span>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeSpecialization(i)">
+                <i class="hgi-stroke hgi-delete-02"></i>
+              </button>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="form-label col-12"><span class="req">*</span> {{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' |
+                  translate }}</label>
+                <app-remote-select class="jb-remote col-12" formControlName="majorId"
+                  [searchUrl]="endpoints.job.lookups.majors"
+                  [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate" optionLabel="name"
+                  optionValue="id" [preloadedOptions]="spec.value.majorOptions" [appendTo]="'body'"
+                  (onObjectChange)="spec.get('majorName')?.setValue($event?.name || '')"
+                  [showClear]="true"></app-remote-select>
+              </div>
+              <div class="col-md-6 mb-2">
+                @if (canSelectAdditionalSubMajor(i)) {
+                <label class="form-label col-12">{{ 'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR' | translate }}</label>
+                <app-remote-select class="jb-remote col-12" formControlName="subMajorId" [minChars]="1"
+                  [parentId]="spec.value.majorId" parentParamName="parentId" [requireParent]="true"
+                  [searchUrl]="endpoints.job.lookups.subMajors"
+                  [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate" optionLabel="name"
+                  optionValue="id" [preloadedOptions]="spec.value.subMajorOptions" [appendTo]="'body'"
+                  (onObjectChange)="spec.get('subMajorName')?.setValue($event?.name || '')"
+                  [showClear]="true"></app-remote-select>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+
       <div class="row">
         <div class="col-12">
           <div class="custom-textarea-container">
@@ -21,19 +141,13 @@
             </p>
 
             <div class="custom-textarea-wrapper">
-              <textarea
-                formControlName="qualificationsDescriptionAr"
-                class="custom-textarea"
-                dir="rtl"
-                rows="8"
+              <textarea formControlName="qualificationsDescriptionAr" class="custom-textarea" dir="rtl" rows="8"
                 placeholder="{{
                   'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ARABIC_PLACEHOLDER' | translate
-                }}"
-                [class.is-invalid]="
+                }}" [class.is-invalid]="
                   form.controls.qualificationsDescriptionAr.touched &&
                   form.controls.qualificationsDescriptionAr.invalid
-                "
-              ></textarea>
+                "></textarea>
 
               <div class="custom-scrollbar">
                 <div class="scroll-bar"></div>
@@ -41,12 +155,12 @@
             </div>
 
             @if (
-              form.controls.qualificationsDescriptionAr.touched &&
-              form.controls.qualificationsDescriptionAr.invalid
+            form.controls.qualificationsDescriptionAr.touched &&
+            form.controls.qualificationsDescriptionAr.invalid
             ) {
-              <div class="text-danger small mt-1">
-                {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
-              </div>
+            <div class="text-danger small mt-1">
+              {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+            </div>
             }
           </div>
         </div>
@@ -63,15 +177,10 @@
             </p>
 
             <div class="custom-textarea-wrapper">
-              <textarea
-                formControlName="qualificationsDescriptionEn"
-                class="custom-textarea"
-                dir="ltr"
-                rows="8"
+              <textarea formControlName="qualificationsDescriptionEn" class="custom-textarea" dir="ltr" rows="8"
                 placeholder="{{
                   'JOB_WIZARD.STEPS.QUALIFICATIONS.DESCRIPTION_ENGLISH_PLACEHOLDER' | translate
-                }}"
-              >
+                }}">
               </textarea>
 
               <div class="custom-scrollbar">
@@ -84,12 +193,12 @@
       <div class="row">
         <div class="col-12">
           @if (
-            form.controls.qualificationsDescriptionEn.touched &&
-            form.controls.qualificationsDescriptionEn.invalid
+          form.controls.qualificationsDescriptionEn.touched &&
+          form.controls.qualificationsDescriptionEn.invalid
           ) {
-            <div class="text-danger small mt-1">
-              {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
-            </div>
+          <div class="text-danger small mt-1">
+            {{ 'JOB_WIZARD.VALIDATION.OVERVIEW_REQUIRED' | translate }}
+          </div>
           }
         </div>
       </div>

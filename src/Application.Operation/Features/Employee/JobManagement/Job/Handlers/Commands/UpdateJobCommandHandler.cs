@@ -1,9 +1,9 @@
-﻿using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using MediatR;
 using FluentResults;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
@@ -15,11 +15,6 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Com
 
 public class UpdateJobCommandHandler(
     IJobRepository jobRepository,
-    IJobSkillRepository jobSkillRepository,
-    IJobConditionRepository jobConditionRepository,
-    IJobDegreeRepository jobDegreeRepository,
-    IJobResponsibilityRepository jobResponsibilityRepository,
-    IJobRequiredAttachmentRepository jobRequiredAttachmentRepository,
     IUnitOfWork unitOfWork,
     IValidator<UpdateJobCommand> validator
     )
@@ -27,6 +22,7 @@ public class UpdateJobCommandHandler(
 {
     public async Task<IResult<Unit>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
+        // 1. Validate command (business rules + referential integrity via IJobValidationService)
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -35,30 +31,44 @@ public class UpdateJobCommandHandler(
                 validationResult.Errors.Select(e => e.ErrorMessage)
             );
         }
+
+        // 2. Load the aggregate root with all child collections (tracked by EF)
         var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
         if (existingJobResult.IsFailed || existingJobResult.Value == null)
             return Result.Fail<Unit>(JobMessages.JobNotFound);
 
         var existingJob = existingJobResult.Value;
 
+        // 3. Enforce business rule: can only edit in Draft / NeedUpdate
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
             return Result.Fail<Unit>(JobMessages.CanOnlyEditInDraft);
 
+        // 4. Handle Concurrency: Map RowVersion from DTO to tracked entity
+        if (request.Job.RowVersion is { Length: > 0 })
+        {
+            unitOfWork.Context.Entry(existingJob).Property(j => j.RowVersion).OriginalValue = request.Job.RowVersion;
+        }
+
+        // 5. Sync child collections via EF change tracking only (no double-writes)
         if (request.Job.Skills != null)
-            await UpdateSkillsAsync(existingJob, request.Job.Skills);
+            SyncSkills(existingJob, request.Job.Skills);
 
         if (request.Job.Conditions != null)
-            await UpdateConditionsAsync(existingJob, request.Job.Conditions);
+            SyncConditions(existingJob, request.Job.Conditions);
 
         if (request.Job.Degrees != null)
-            await UpdateDegreesAsync(existingJob, request.Job.Degrees.Select(d => d.DegreeId).ToList());
+            SyncDegrees(existingJob, request.Job.Degrees.Select(d => d.DegreeId).ToList());
 
         if (request.Job.Responsibilities != null)
-            await UpdateResponsibilitiesAsync(existingJob, request.Job.Responsibilities);
+            SyncResponsibilities(existingJob, request.Job.Responsibilities);
 
         if (request.Job.RequiredAttachments != null)
-            await UpdateRequiredAttachmentsAsync(existingJob, request.Job.RequiredAttachments);
+            SyncRequiredAttachments(existingJob, request.Job.RequiredAttachments);
 
+        if (request.Job.JobSpecializations != null)
+            SyncSpecializations(existingJob, request.Job.JobSpecializations);
+
+        // 5. Update scalar properties
         existingJob.JobTitleId = request.Job.JobTitleId;
         existingJob.SectorId = request.Job.SectorId;
         existingJob.ManagementId = request.Job.ManagementId;
@@ -80,183 +90,243 @@ public class UpdateJobCommandHandler(
         existingJob.BenefitsEn = request.Job.BenefitsEn;
         existingJob.QualificationDescriptionAr = request.Job.QualificationsDescriptionAr;
         existingJob.QualificationDescriptionEn = request.Job.QualificationsDescriptionEn;
-        await jobRepository.Repository.UpdateAsync(existingJob, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // 6. Persist all changes in a single SaveChanges call (single transaction boundary)
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Result.Fail<Unit>(JobMessages.ConcurrencyConflict);
+        }
+
         return Result.Ok(Unit.Value);
     }
 
-    private async Task UpdateSkillsAsync(JobEntity job, List<JobSkillRequestDto> newSkills)
+    // ──────────────────────────────────────────────
+    //  Collection Sync Methods
+    //  - Rely purely on EF change tracking (no explicit repository Add/Delete calls)
+    //  - Deduplicate input upfront
+    //  - Use HashSet for O(1) lookups instead of O(n²) Any()
+    // ──────────────────────────────────────────────
+
+    private static void SyncSkills(JobEntity job, List<JobSkillRequestDto> newSkills)
     {
-        var existingSkills = job.JobSkills.ToList();
-
-        var toRemove = existingSkills
-            .Where(s => newSkills.All(ns => ns.SkillId != s.SkillId))
+        // Deduplicate input by SkillId (keep first occurrence)
+        var distinctNew = newSkills
+            .GroupBy(s => s.SkillId)
+            .Select(g => g.First())
             .ToList();
 
-        var existingIds = existingSkills.Select(s => s.SkillId).ToHashSet();
+        var desiredIds = distinctNew.Select(s => s.SkillId).ToHashSet();
+        var existingIds = job.JobSkills.Select(s => s.SkillId).ToHashSet();
 
-        var toAdd = newSkills
-            .Where(ns => !existingIds.Contains(ns.SkillId))
-            .Select(ns => new JobSkill
-            {
-                Id = Guid.NewGuid(),
-                JobId = job.Id,
-                SkillId = ns.SkillId,
-                ShowToApplicants = ns.ShowToApplicants
-            })
-            .ToList();
-
+        // Remove items not in the new set
+        var toRemove = job.JobSkills.Where(s => !desiredIds.Contains(s.SkillId)).ToList();
         foreach (var item in toRemove)
             job.JobSkills.Remove(item);
 
-        foreach (var item in toAdd)
-            job.JobSkills.Add(item);
+        // Update ShowToApplicants for existing items
+        var newLookup = distinctNew.ToDictionary(s => s.SkillId);
+        foreach (var existing in job.JobSkills)
+        {
+            if (newLookup.TryGetValue(existing.SkillId, out var dto))
+                existing.ShowToApplicants = dto.ShowToApplicants;
+        }
 
-        if (toRemove.Count != 0)
-            await jobSkillRepository.Repository.DeleteRangeAsync(toRemove);
-
-        if (toAdd.Count != 0)
-            await jobSkillRepository.Repository.AddRangeAsync(toAdd);
-    }
-
-    private async Task UpdateConditionsAsync(JobEntity job, List<JobConditionRequestDto> newConditions)
-    {
-        var existing = job.JobConditions.ToList();
-
-        var toRemove = existing
-            .Where(c => newConditions.All(n => n.TextAr != c.TextAr))
-            .ToList();
-
-        var existingTexts = existing.Select(c => c.TextAr).ToHashSet();
-
-        var toAdd = newConditions
-            .Where(nc => !existingTexts.Contains(nc.TextAr))
-            .Select(nc => new JobCondition
+        // Add new items
+        foreach (var dto in distinctNew.Where(s => !existingIds.Contains(s.SkillId)))
+        {
+            job.JobSkills.Add(new JobSkill
             {
                 Id = Guid.NewGuid(),
                 JobId = job.Id,
-                TextAr = nc.TextAr,
-                TextEn = nc.TextEn
-            })
-            .ToList();
-
-        foreach (var rm in toRemove)
-            job.JobConditions.Remove(rm);
-
-        foreach (var add in toAdd)
-            job.JobConditions.Add(add);
-
-        if (toRemove.Count != 0)
-            await jobConditionRepository.Repository.DeleteRangeAsync(toRemove);
-
-        if (toAdd.Count != 0)
-            await jobConditionRepository.Repository.AddRangeAsync(toAdd);
+                SkillId = dto.SkillId,
+                ShowToApplicants = dto.ShowToApplicants
+            });
+        }
     }
 
-    private async Task UpdateDegreesAsync(JobEntity job, List<Guid> newDegreeIds)
+    private static void SyncConditions(JobEntity job, List<JobConditionRequestDto> newConditions)
     {
-        var existing = job.JobDegrees.ToList();
+        // Deduplicate by TextAr (case-insensitive)
+        var distinctNew = newConditions
+            .GroupBy(c => c.TextAr, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .ToList();
 
-        var toRemove = existing.Where(d => !newDegreeIds.Contains(d.DegreeId)).ToList();
+        var desiredKeys = distinctNew.Select(c => c.TextAr).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existingKeys = job.JobConditions.Select(c => c.TextAr).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var existingIds = existing.Select(d => d.DegreeId).ToHashSet();
+        // Remove items not in the new set
+        var toRemove = job.JobConditions.Where(c => !desiredKeys.Contains(c.TextAr)).ToList();
+        foreach (var item in toRemove)
+            job.JobConditions.Remove(item);
 
-        var toAdd = newDegreeIds
-            .Where(id => !existingIds.Contains(id))
-            .Select(id => new JobDegree
+        // Update TextEn for existing items
+        var newLookup = distinctNew.ToDictionary(c => c.TextAr, c => c, StringComparer.OrdinalIgnoreCase);
+        foreach (var existing in job.JobConditions)
+        {
+            if (newLookup.TryGetValue(existing.TextAr, out var dto))
+                existing.TextEn = dto.TextEn;
+        }
+
+        // Add new items
+        foreach (var dto in distinctNew.Where(c => !existingKeys.Contains(c.TextAr)))
+        {
+            job.JobConditions.Add(new JobCondition
+            {
+                Id = Guid.NewGuid(),
+                JobId = job.Id,
+                TextAr = dto.TextAr,
+                TextEn = dto.TextEn
+            });
+        }
+    }
+
+    private static void SyncDegrees(JobEntity job, List<Guid> newDegreeIds)
+    {
+        // Deduplicate
+        var desiredIds = newDegreeIds.Distinct().ToHashSet();
+        var existingIds = job.JobDegrees.Select(d => d.DegreeId).ToHashSet();
+
+        // Remove items not in the new set
+        var toRemove = job.JobDegrees.Where(d => !desiredIds.Contains(d.DegreeId)).ToList();
+        foreach (var item in toRemove)
+            job.JobDegrees.Remove(item);
+
+        // Add new items
+        foreach (var id in desiredIds.Where(id => !existingIds.Contains(id)))
+        {
+            job.JobDegrees.Add(new JobDegree
             {
                 Id = Guid.NewGuid(),
                 JobId = job.Id,
                 DegreeId = id
-            })
-            .ToList();
-
-        foreach (var rm in toRemove)
-            job.JobDegrees.Remove(rm);
-
-        foreach (var add in toAdd)
-            job.JobDegrees.Add(add);
-
-        if (toRemove.Count != 0)
-            await jobDegreeRepository.Repository.DeleteRangeAsync(toRemove);
-
-        if (toAdd.Count != 0)
-            await jobDegreeRepository.Repository.AddRangeAsync(toAdd);
+            });
+        }
     }
 
-
-    private async Task UpdateResponsibilitiesAsync(JobEntity job, List<JobResponsibilityRequestDto> newResponsibilities)
+    private static void SyncResponsibilities(JobEntity job, List<JobResponsibilityRequestDto> newResponsibilities)
     {
-        var existing = job.JobResponsibilities.ToList();
-
-        var toRemove = existing
-            .Where(r => newResponsibilities.All(nr => nr.TextAr != r.TextAr))
+        // Deduplicate by TextAr (case-insensitive)
+        var distinctNew = newResponsibilities
+            .GroupBy(r => r.TextAr, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
             .ToList();
 
-        var existingTitles = existing.Select(r => r.TextAr).ToHashSet();
+        var desiredKeys = distinctNew.Select(r => r.TextAr).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existingKeys = job.JobResponsibilities.Select(r => r.TextAr).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var toAdd = newResponsibilities
-            .Where(r => !existingTitles.Contains(r.TextAr))
-            .Select(r => new JobResponsibility
+        // Remove items not in the new set
+        var toRemove = job.JobResponsibilities.Where(r => !desiredKeys.Contains(r.TextAr)).ToList();
+        foreach (var item in toRemove)
+            job.JobResponsibilities.Remove(item);
+
+        // Update TextEn for existing items
+        var newLookup = distinctNew.ToDictionary(r => r.TextAr, r => r, StringComparer.OrdinalIgnoreCase);
+        foreach (var existing in job.JobResponsibilities)
+        {
+            if (newLookup.TryGetValue(existing.TextAr, out var dto))
+                existing.TextEn = dto.TextEn;
+        }
+
+        // Add new items
+        foreach (var dto in distinctNew.Where(r => !existingKeys.Contains(r.TextAr)))
+        {
+            job.JobResponsibilities.Add(new JobResponsibility
             {
                 Id = Guid.NewGuid(),
                 JobId = job.Id,
-                TextAr = r.TextAr,
-                TextEn = r.TextEn
-            })
-            .ToList();
-
-        foreach (var rm in toRemove)
-            job.JobResponsibilities.Remove(rm);
-
-        foreach (var add in toAdd)
-            job.JobResponsibilities.Add(add);
-
-        if (toRemove.Count != 0)
-            await jobResponsibilityRepository.Repository.DeleteRangeAsync(toRemove);
-
-        if (toAdd.Count != 0)
-            await jobResponsibilityRepository.Repository.AddRangeAsync(toAdd);
+                TextAr = dto.TextAr,
+                TextEn = dto.TextEn
+            });
+        }
     }
 
-
-    private async Task UpdateRequiredAttachmentsAsync(JobEntity job, List<JobRequiredAttachmentRequestDto> newAttachments)
+    private static void SyncRequiredAttachments(JobEntity job, List<JobRequiredAttachmentRequestDto> newAttachments)
     {
-        var existing = job.JobRequiredAttachments.ToList();
-
-        var toRemove = existing
-            .Where(a => !newAttachments.Any(na =>
-                na.TitleAr == a.TitleAr && na.TitleEn == a.TitleEn))
+        // Deduplicate by (TitleAr, TitleEn) composite key
+        var distinctNew = newAttachments
+            .GroupBy(a => (a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant()))
+            .Select(g => g.First())
             .ToList();
 
-        var existingKeys = existing
-            .Select(a => (a.TitleAr, a.TitleEn))
+        var desiredKeys = distinctNew
+            .Select(a => (a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant()))
             .ToHashSet();
 
-        var toAdd = newAttachments
-            .Where(a => !existingKeys.Contains((a.TitleAr, a.TitleEn)))
-            .Select(a => new JobRequiredAttachment
+        // Remove items not in the new set
+        var toRemove = job.JobRequiredAttachments
+            .Where(a => !desiredKeys.Contains((a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant())))
+            .ToList();
+        foreach (var item in toRemove)
+            job.JobRequiredAttachments.Remove(item);
+
+        // Update IsMandatory for existing items
+        var newLookup = distinctNew.ToDictionary(
+            a => (a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant()));
+        foreach (var existing in job.JobRequiredAttachments)
+        {
+            var key = (existing.TitleAr.ToUpperInvariant(), existing.TitleEn.ToUpperInvariant());
+            if (newLookup.TryGetValue(key, out var dto))
+                existing.IsMandatory = dto.IsMandatory;
+        }
+
+        // Track existing keys for Add check
+        var existingKeys = job.JobRequiredAttachments
+            .Select(a => (a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant()))
+            .ToHashSet();
+
+        // Add new items
+        foreach (var dto in distinctNew.Where(a =>
+            !existingKeys.Contains((a.TitleAr.ToUpperInvariant(), a.TitleEn.ToUpperInvariant()))))
+        {
+            job.JobRequiredAttachments.Add(new JobRequiredAttachment
             {
                 Id = Guid.NewGuid(),
                 JobId = job.Id,
-                TitleAr = a.TitleAr,
-                TitleEn = a.TitleEn,
-                IsMandatory = a.IsMandatory
-            })
-            .ToList();
-
-        foreach (var rm in toRemove)
-            job.JobRequiredAttachments.Remove(rm);
-
-        foreach (var add in toAdd)
-            job.JobRequiredAttachments.Add(add);
-
-        if (toRemove.Count != 0)
-            await jobRequiredAttachmentRepository.Repository.DeleteRangeAsync(toRemove);
-
-        if (toAdd.Count != 0)
-            await jobRequiredAttachmentRepository.Repository.AddRangeAsync(toAdd);
+                TitleAr = dto.TitleAr,
+                TitleEn = dto.TitleEn,
+                IsMandatory = dto.IsMandatory
+            });
+        }
     }
 
-}
+    private static void SyncSpecializations(JobEntity job, List<JobSpecializationRequestDto> newSpecs)
+    {
+        // Deduplicate by (MajorId, SubMajorId) composite key
+        var distinctNew = newSpecs
+            .GroupBy(s => (s.MajorId, s.SubMajorId))
+            .Select(g => g.First())
+            .ToList();
 
+        var desiredKeys = distinctNew
+            .Select(s => (s.MajorId, s.SubMajorId))
+            .ToHashSet();
+
+        var existingKeys = job.JobSpecializations
+            .Select(s => (s.MajorId, s.SubMajorId))
+            .ToHashSet();
+
+        // Remove items not in the new set
+        var toRemove = job.JobSpecializations
+            .Where(s => !desiredKeys.Contains((s.MajorId, s.SubMajorId)))
+            .ToList();
+        foreach (var item in toRemove)
+            job.JobSpecializations.Remove(item);
+
+        // Add new items
+        foreach (var dto in distinctNew.Where(s => !existingKeys.Contains((s.MajorId, s.SubMajorId))))
+        {
+            job.JobSpecializations.Add(new JobSpecialization
+            {
+                Id = Guid.NewGuid(),
+                JobId = job.Id,
+                MajorId = dto.MajorId,
+                SubMajorId = dto.SubMajorId
+            });
+        }
+    }
+}

@@ -27,7 +27,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             dto.MajorId, dto.NumberOfVacancies, dto.ClosingDate,
             dto.MinimumAge, dto.MaximumAge, dto.YearsOfExperience,
             dto.GenderId,
-            degreeIds);
+            degreeIds,
+            isCreation: true);
 
         var ageValidation = JobBusinessRules.ValidateAgeRange(
             dto.MinimumAge, dto.MaximumAge, 18, 65);
@@ -188,6 +189,10 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         var skillMajorErrors = await ValidateSkillsByMajor(dto);
         failures.AddRange(skillMajorErrors);
 
+        // Referential integrity: verify that all provided IDs exist in the DB
+        var referentialErrors = await ValidateReferentialIntegrity(dto);
+        failures.AddRange(referentialErrors);
+
         return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
 
@@ -297,6 +302,63 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         return !string.IsNullOrWhiteSpace(job.QualificationDescriptionAr) &&
                !string.IsNullOrWhiteSpace(job.QualificationDescriptionEn);
     }
+
+    private async Task<List<ValidationFailure>> ValidateReferentialIntegrity(UpdateJobDto dto)
+    {
+        var failures = new List<ValidationFailure>();
+
+        // Validate SkillIds exist
+        if (dto.Skills is { Count: > 0 })
+        {
+            var requestedSkillIds = dto.Skills.Select(s => s.SkillId).Distinct().ToList();
+            var existingSkillIds = await unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => requestedSkillIds.Contains(s.Id))
+                .Select(s => s.Id)
+                .ToListAsync();
+
+            if (existingSkillIds.Count != requestedSkillIds.Count)
+                failures.Add(new ValidationFailure(nameof(dto.Skills), JobMessages.InvalidSkillReference));
+        }
+
+        // Validate DegreeIds exist
+        if (dto.Degrees is { Count: > 0 })
+        {
+            var requestedDegreeIds = dto.Degrees.Select(d => d.DegreeId).Distinct().ToList();
+            var existingDegreeIds = await unitOfWork.GetEntityRepository<Degree>().DbSet
+                .AsNoTracking()
+                .Where(d => requestedDegreeIds.Contains(d.Id))
+                .Select(d => d.Id)
+                .ToListAsync();
+
+            if (existingDegreeIds.Count != requestedDegreeIds.Count)
+                failures.Add(new ValidationFailure(nameof(dto.Degrees), JobMessages.InvalidDegreeReference));
+        }
+
+        // Validate Specialization MajorIds / SubMajorIds exist
+        if (dto.JobSpecializations is { Count: > 0 })
+        {
+            var allMajorIds = dto.JobSpecializations
+                .Select(s => s.MajorId)
+                .Concat(dto.JobSpecializations
+                    .Where(s => s.SubMajorId.HasValue)
+                    .Select(s => s.SubMajorId!.Value))
+                .Distinct()
+                .ToList();
+
+            var existingMajorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
+                .AsNoTracking()
+                .Where(m => allMajorIds.Contains(m.Id))
+                .Select(m => m.Id)
+                .ToListAsync();
+
+            if (existingMajorIds.Count != allMajorIds.Count)
+                failures.Add(new ValidationFailure(nameof(dto.JobSpecializations), JobMessages.InvalidSpecializationMajorReference));
+        }
+
+        return failures;
+    }
+
     
     private bool HasDuplicates<T>(IEnumerable<T> items, Func<T, string> selector)
     {
@@ -399,7 +461,8 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         Guid? majorId, int numberOfVacancies, DateTimeOffset closingDate,
         int minimumAge, int maximumAge, int yearsOfExperience,
         Guid? genderId = null,
-        List<Guid>? degreeIds = null)
+        List<Guid>? degreeIds = null,
+        bool isCreation = false)
     {
         if (jobTitleId == Guid.Empty)
             failures.Add(new ValidationFailure(nameof(jobTitleId), JobMessages.JobTitleRequired));
@@ -422,7 +485,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (workTypeId == Guid.Empty)
             failures.Add(new ValidationFailure(nameof(workTypeId), JobMessages.WorkTypeRequired));
 
-        if (JobBusinessRules.RequiresMajor(degreeIds) && (majorId == null || majorId == Guid.Empty))
+        if (!isCreation && JobBusinessRules.RequiresMajor(degreeIds) && (majorId == null || majorId == Guid.Empty))
             failures.Add(new ValidationFailure(nameof(majorId), JobMessages.MajorRequired));
 
         if (numberOfVacancies <= 0)

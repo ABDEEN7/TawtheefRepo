@@ -3,6 +3,7 @@ namespace Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 public class UpdateJobDto : CreateJobDto
 {
     public Guid Id { get; set; }
+    public byte[] RowVersion { get; set; } = [];
     public Guid JobStatusId { get; set; }
     public DateTimeOffset? PublishAt { get; set; }
     public DateTimeOffset? CancelledAt { get; set; }

@@ -56,7 +56,8 @@ public class JobProfile : IRegister
             .Map(dest => dest.Responsibilities, src => src.JobResponsibilities)
             .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
             .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes)
-            .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment);
+            .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment)
+            .Map(dest => dest.RowVersion, src => src.RowVersion);
         
         config.NewConfig<Job, JobCopyTemplateDto>()
             .Map(dest => dest.JobTitleAr, src => src.JobTitle != null ? src.JobTitle.JobNameAr : string.Empty)

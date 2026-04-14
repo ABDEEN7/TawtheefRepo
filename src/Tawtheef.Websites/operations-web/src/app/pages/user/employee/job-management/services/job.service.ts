@@ -65,6 +65,7 @@ export class JobService {
       qualificationsDescriptionAr: '',
       qualificationsDescriptionEn: '',
 
+      jobSpecializations: [],
       degrees: [],
       conditions: [],
       responsibilities: [],
@@ -93,8 +94,6 @@ export class JobService {
     jobCategoryId: GUID;
     workLocationId: GUID;
     genderId: GUID | null;
-    majorId: GUID;
-    subMajorId: GUID | null;
     workTypeId: GUID;
     numberOfVacancies: number;
     closingDate: Date;
@@ -123,16 +122,28 @@ export class JobService {
 
   updateCurrentJobQualifications(
     degrees: { degreeId: GUID }[],
+    majorId: GUID | null,
+    subMajorId: GUID | null,
+    jobSpecializations: { majorId: GUID, subMajorId?: GUID | null }[],
     descriptionAr: string,
-    descriptionEn: string = ''
+    descriptionEn: string = '',
+    majorName?: string,
+    subMajorName?: string,
+    jobSpecializationsData?: { majorName: string; subMajorName?: string }[]
   ): void {
     const current = this.currentJob();
     if (current) {
       this.currentJob.set({
         ...current,
         degrees,
+        majorId,
+        subMajorId,
+        jobSpecializations,
         qualificationsDescriptionAr: descriptionAr,
         qualificationsDescriptionEn: descriptionEn,
+        majorName,
+        subMajorName,
+        jobSpecializationsData
       });
     }
   }
@@ -315,6 +326,10 @@ export class JobService {
     return this.httpService.delete<void>(`${this.endpoints.job.job}/${jobId}`);
   }
 
+  deleteSpecialization(id: GUID): Observable<void> {
+    return this.httpService.delete<void>(this.endpoints.job.deleteJobSpecialization(id));
+  }
+
   changeStatus(jobId: GUID, statusId: GUID): Observable<void> {
     return this.httpService.put<void>(
       this.endpoints.job.changeStatus(jobId, statusId),
@@ -356,6 +371,7 @@ export class JobService {
       tap((jobResponse) => {
         const job: Job = {
           jobTitleId: jobResponse.jobTitleId,
+          rowVersion: jobResponse.rowVersion,
           titleAr: jobResponse.titleAr,
           titleEn: jobResponse.titleEn,
           jobNumber: jobResponse.jobNumber,
@@ -380,6 +396,17 @@ export class JobService {
           jobStatus: jobResponse.jobStatus || undefined,
           qualificationsDescriptionAr: jobResponse.qualificationDescriptionAr || '',
           qualificationsDescriptionEn: jobResponse.qualificationDescriptionEn || '',
+          jobSpecializations: jobResponse.jobSpecializations?.map((s) => ({
+            id: s.id as GUID,
+            majorId: s.major.id as GUID,
+            subMajorId: s.subMajor?.id as GUID,
+          })) || [],
+          majorName: jobResponse.major?.name || jobResponse.major?.additionalData?.nameAr || '',
+          subMajorName: jobResponse.subMajor?.name || jobResponse.subMajor?.additionalData?.nameAr || '',
+          jobSpecializationsData: jobResponse.jobSpecializations?.map((s) => ({
+            majorName: s.major?.name || s.major?.additionalData?.nameAr || '',
+            subMajorName: s.subMajor?.name || s.subMajor?.additionalData?.nameAr || ''
+          })) || [],
           degrees: jobResponse.degrees.map((d) => ({ degreeId: d.degreeId })),
           conditions: jobResponse.conditions.map((c) => ({
             textAr: c.textAr,

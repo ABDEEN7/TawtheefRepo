@@ -65,4 +65,8 @@ public static class JobMessages
     public const string JobTabReviewNotFound = "JOB_TAB_REVIEW_NOT_FOUND";
     public const string JobPointsConfigurationNotFound = "JOB_POINTS_CONFIGURATION_NOT_FOUND";
     public const string JobCannotBeCopied = "JOB_CANNOT_BE_COPIED";
+    public const string ConcurrencyConflict = "JOB_CONCURRENCY_CONFLICT";
+    public const string InvalidSkillReference = "INVALID_SKILL_REFERENCE";
+    public const string InvalidDegreeReference = "INVALID_DEGREE_REFERENCE";
+    public const string InvalidSpecializationMajorReference = "INVALID_SPECIALIZATION_MAJOR_REFERENCE";
 }

@@ -53,12 +53,35 @@
       </div>
       <div class="row">
         <div class="col-md-4 mb-3">
-          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
-            }}:</label>
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}:</label>
           <div class="fw-semibold text-dark">
             {{ getDegreeNames() }}
           </div>
         </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }} ({{ 'JOB_WIZARD.STEPS.BASICS.PRIMARY' | translate }}):</label>
+          <div class="fw-semibold text-dark">
+            {{ jobService.getCurrentJob()?.majorName || '-' }}
+            @if (jobService.getCurrentJob()?.subMajorName) {
+              / {{ jobService.getCurrentJob()?.subMajorName }}
+            }
+          </div>
+        </div>
+
+        @if (jobService.getCurrentJob()?.jobSpecializationsData?.length) {
+          <div class="col-md-4 mb-3">
+             <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATIONS' | translate }}:</label>
+             @for (spec of jobService.getCurrentJob()?.jobSpecializationsData; track $index) {
+                <div class="fw-semibold text-dark">
+                  {{ spec.majorName }}
+                  @if (spec.subMajorName) {
+                    / {{ spec.subMajorName }}
+                  }
+                </div>
+             }
+          </div>
+        }
 
         @if (jobService.getCurrentJob()?.qualificationsDescriptionAr) {
         <div class="col-md-4 mb-3">

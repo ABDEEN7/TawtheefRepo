@@ -54,7 +54,8 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
 
   hasQualifications(): boolean {
     return !!this.jobService.getCurrentJob()?.qualificationsDescriptionAr?.trim() ||
-      (this.jobService.getCurrentJob()?.degrees?.length || 0) > 0;
+      (this.jobService.getCurrentJob()?.degrees?.length || 0) > 0 ||
+      (this.jobService.getCurrentJob()?.jobSpecializationsData?.length || 0) > 0;
   }
 
   hasResponsibilities(): boolean {

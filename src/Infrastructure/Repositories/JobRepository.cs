@@ -49,7 +49,6 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var job = await Repository.DbSet
             .Where(job=> !job.IsDeleted)
-            .AsSplitQuery()
             .Include(j => j.JobDegrees)
                 .ThenInclude(d => d.Degree)
             .Include(j => j.Department)
@@ -78,6 +77,10 @@ public class JobRepository(IGenericRepository<Job> repository)
                 .ThenInclude(c => c!.CandidateTypePercentages)
             .Include(j => j.CandidateFilterSetting)
                 .ThenInclude(c => c!.NationalityPercentages)
+            .Include(j => j.JobSpecializations)
+                .ThenInclude(s => s.Major)
+            .Include(j => j.JobSpecializations)
+                .ThenInclude(s => s.SubMajor)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
@@ -118,6 +121,10 @@ public class JobRepository(IGenericRepository<Job> repository)
                 .ThenInclude(c => c!.CandidateTypePercentages)
             .Include(j => j.CandidateFilterSetting)
                 .ThenInclude(c => c!.NationalityPercentages)
+            .Include(j => j.JobSpecializations)
+                .ThenInclude(s => s.Major)
+            .Include(j => j.JobSpecializations)
+                .ThenInclude(s => s.SubMajor)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         return job is null
