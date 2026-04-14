@@ -248,9 +248,11 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   }
 
   onStepperChange(nextSection: number) {
+    if (this.savingSection() != null) return;
+
     const current = this.activeSection();
     if (current != null && this.draftDirty[current]) {
-      this.notifications.warn(this.translate.instant('profileApproval.detail.unsavedChangesWarning'));
+      this.saveSectionDecision(current, nextSection);
       return;
     }
     this.activeSection.set(nextSection);
@@ -499,7 +501,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     }
   }
 
-  saveSectionDecision(section: number) {
+  saveSectionDecision(section: number, targetStep?: number) {
     const info = this.detail();
     if (!info) return;
 
@@ -513,7 +515,12 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       return;
     }
 
-    if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) return;
+    if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) {
+       if (targetStep != null) {
+          this.notifications.warn(this.translate.instant('profileApproval.detail.unsavedChangesWarning'));
+       }
+       return;
+    }
 
     if (this.sectionHasUndecidedItems(section)) {
       this.notifications.error(
@@ -547,10 +554,14 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
           this.loadDetail();
 
-          //move to next section
-          const current = this.activeSection();
-          if (current === section) {
-            this.next();
+          if (targetStep != null) {
+            this.activeSection.set(targetStep);
+          } else {
+             //move to next section
+            const current = this.activeSection();
+            if (current === section) {
+              this.next();
+            }
           }
         }
       });

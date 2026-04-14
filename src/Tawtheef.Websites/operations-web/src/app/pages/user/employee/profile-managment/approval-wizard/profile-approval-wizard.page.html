@@ -104,8 +104,8 @@
                   <ul class="nav nav-pills flex-wrap stepper">
                     <li class="nav-item" *ngFor="let item of stepperSections(info); trackBy: trackBySection">
                       <a class="nav-link step-link" [class.active]="activeSection()===item.section"
-                        [class.disabled]="!canGoTo(item.section) || hasUnsavedCurrent()"
-                        [attr.aria-disabled]="!canGoTo(item.section) || hasUnsavedCurrent()"
+                        [class.disabled]="!canGoTo(item.section)"
+                        [attr.aria-disabled]="!canGoTo(item.section)"
                         [attr.aria-current]="activeSection()===item.section ? 'step' : null" href
                         (click)="$event.preventDefault(); go(item.section)">
 
