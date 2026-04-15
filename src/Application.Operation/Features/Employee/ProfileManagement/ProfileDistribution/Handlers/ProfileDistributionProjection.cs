@@ -72,9 +72,7 @@ internal sealed class ProfileDistributionProjection(
         {
             var allowedCountry = office.Office?.CountryId;
             profilesQuery = profilesQuery
-                .Where(p => p.ResidenceCountryId == allowedCountry &&
-                            !(p.Provider == nameof(ProviderLoginIds.QatarPass) ||
-                              p.Provider == nameof(ProviderLoginIds.QatarResidentOtp)));
+                .Where(p => p.ResidenceCountryId == allowedCountry && p.Provider == nameof(ProviderLoginIds.Google));
         }          
 
         // 4) Optional search filter

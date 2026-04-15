@@ -15,114 +15,117 @@ namespace Application.Operation.Features.Employee.MinisterOffice.Handlers;
 public sealed class GetMinisterOfficeCandidatesQueryHandler(IUnitOfWork uow)
     : IRequestHandler<GetMinisterOfficeCandidatesQuery, IResult<PaginatedResult<MinisterOfficeCandidateDto>>>
 {
-    public async Task<IResult<PaginatedResult<MinisterOfficeCandidateDto>>> Handle(
-        GetMinisterOfficeCandidatesQuery request,
-        CancellationToken ct)
-    {
-        var repo = uow.GetEntityRepository<MinisterOfficeCandidate>();
-        var profileDb = uow.GetEntityRepository<UserProfile>().DbSet.AsNoTracking();
-        var search = request.SearchTerm?.Trim();
+public async Task<IResult<PaginatedResult<MinisterOfficeCandidateDto>>> Handle(
+    GetMinisterOfficeCandidatesQuery request,
+    CancellationToken ct)
+{
+    var candidateRepo = uow.GetEntityRepository<MinisterOfficeCandidate>();
+    var profileRepo   = uow.GetEntityRepository<UserProfile>();
+    var search        = request.SearchTerm?.Trim();
 
-        var query = repo.DbSet
-            .AsNoTracking()
-            .Where(c => !c.IsDeleted)
-            .WhereIf(!request.IncludeInactive, c => c.IsFollowUpActive)
-            .WhereIf(!string.IsNullOrWhiteSpace(search),
-                c => EF.Functions.Like(c.Qid, $"%{search}%") ||
-                     EF.Functions.Like(c.FullNameEn, $"%{search}%") ||
-                     EF.Functions.Like(c.FullNameAr, $"%{search}%"))
-            .OrderByDescending(c => c.CreatedDate);
-
-        var enrichedQuery = query.Select(c => new
-        {
-            Candidate = c,
-            Profile = profileDb
-                .Where(p => p.NationalNumber == c.Qid)
-                .OrderByDescending(p => p.CreatedDate)
-                .Select(p => new
-                {
-                    p.UserId,
-                    p.Status,
-                    p.GenderId,
-                    p.CandidateTypeId,
-                    p.TargetEntityId,
-                    GenderEn = p.Gender!.NameEn,
-                    GenderAr = p.Gender!.NameAr,
-                    CandidateEn = p.CandidateType!.NameEn,
-                    CandidateAr = p.CandidateType!.NameAr,
-                    TargetEn = p.TargetEntity!.NameEn,
-                    TargetAr = p.TargetEntity!.NameAr,
-                    PhoneNumber = p.User!.PhoneNumber
-                })
-                .FirstOrDefault()
-        });
-
-        // Apply filters on enriching data
-        if (request.GenderId.HasValue)
-            enrichedQuery = enrichedQuery.Where(x => x.Profile != null && x.Profile.GenderId == request.GenderId);
-
-        if (request.CandidateTypeId.HasValue)
-            enrichedQuery = enrichedQuery.Where(x => x.Profile != null && x.Profile.CandidateTypeId == request.CandidateTypeId);
-
-        if (request.TargetEntityId.HasValue)
-            enrichedQuery = enrichedQuery.Where(x => x.Profile != null && x.Profile.TargetEntityId == request.TargetEntityId);
-
-        var paginated = await enrichedQuery.ToPaginatedListAsync(request, ct);
-
-        // Check invitations for approved profiles in the page
-        var approvedUserIds = paginated.Items
-            .Where(x => x.Profile?.Status == UserProfileStatus.Approved)
-            .Select(x => x.Profile!.UserId)
-            .ToList();
-
-        var invRepo = uow.GetEntityRepository<Invitation>();
-        var profilesWithInvitations = approvedUserIds.Any()
-            ? (await invRepo.DbSet
-                .AsNoTracking()
-                .Where(i => approvedUserIds.Contains(i.ApplicantId))
-                .Select(i => i.ApplicantId)
-                .Distinct()
-                .ToListAsync(ct))
-                .ToHashSet()
-            : new HashSet<Guid>();
-
-        var dtoItems = paginated.Items.Select(x =>
-        {
-            var c = x.Candidate;
-            var p = x.Profile;
-
-            var status = ComputeStatus(p?.Status, p?.UserId, profilesWithInvitations);
-
-            return new MinisterOfficeCandidateDto
+    // ── 1. Build the base candidate query ─────────────────────────────────
+    var candidates = candidateRepo.DbSet
+        .AsNoTracking()
+        .Where(c => !c.IsDeleted)
+        .WhereIf(!request.IncludeInactive, c => c.IsFollowUpActive)
+        .WhereIf(!string.IsNullOrWhiteSpace(search),
+            c => EF.Functions.Like(c.Qid,        $"%{search}%") ||
+                 EF.Functions.Like(c.FullNameEn,  $"%{search}%") ||
+                 EF.Functions.Like(c.FullNameAr,  $"%{search}%"));
+    
+    // ── 3. Left-join candidates → latest profile ───────────────────────────
+    var joined = candidates
+        .GroupJoin(
+            profileRepo.DbSet.AsNoTracking(),
+            c => c.Qid,
+            p => p.NationalNumber,
+            (c, profiles) => new { Candidate = c, Profiles = profiles })
+        .SelectMany(
+            x => x.Profiles.DefaultIfEmpty(),
+            (x, p) => new
             {
-                Id = c.Id,
-                Qid = c.Qid,
-                FullNameEn = c.FullNameEn,
-                FullNameAr = c.FullNameAr,
-                NationalityEn = c.NationalityEn,
-                NationalityAr = c.NationalityAr,
-                IsFollowUpActive = c.IsFollowUpActive,
-                Status = status,
-                GenderEn = p?.GenderEn,
-                GenderAr = p?.GenderAr,
-                CandidateTypeEn = p?.CandidateEn,
-                CandidateTypeAr = p?.CandidateAr,
-                TargetEntityEn = p?.TargetEn,
-                TargetEntityAr = p?.TargetAr,
-                PhoneNumber = p?.PhoneNumber ?? c.PhoneNumber,
-                IsPhoneNumberFromProfile = !string.IsNullOrWhiteSpace(p?.PhoneNumber),
-                CreatedDate = c.CreatedDate
-            };
-        }).ToList();
+                x.Candidate,
+                UserId          = p != null ? (Guid?)p.UserId : null,
+                Status          = p != null ? (UserProfileStatus?)p.Status : null,
+                GenderId        = p != null ? p.GenderId : null,
+                CandidateTypeId = p != null ? p.CandidateTypeId : null,
+                TargetEntityId  = p != null ? p.TargetEntityId : null,
 
-        var result = new PaginatedResult<MinisterOfficeCandidateDto>(
-            dtoItems,
-            paginated.Metadata.TotalCount,
-            paginated.Metadata.CurrentPage,
-            paginated.Metadata.PageSize);
+                GenderEn        = p != null ? p.Gender!.NameEn : null,
+                GenderAr        = p != null ? p.Gender!.NameAr : null,
+                CandidateEn     = p != null ? p.CandidateType!.NameEn : null,
+                CandidateAr     = p != null ? p.CandidateType!.NameAr : null,
+                TargetEn        = p != null ? p.TargetEntity!.NameEn : null,
+                TargetAr        = p != null ? p.TargetEntity!.NameAr : null,
 
-        return Result.Ok(result);
+                PhoneNumber     = p != null ? p.User!.PhoneNumber : null
+            });
+
+    // ── 4. Apply profile-column filters BEFORE pagination ─────────────────
+    joined = joined
+        .WhereIf(request.GenderId.HasValue,
+            x => x.GenderId == request.GenderId)
+        .WhereIf(request.CandidateTypeId.HasValue,
+            x => x.CandidateTypeId == request.CandidateTypeId)
+        .WhereIf(request.TargetEntityId.HasValue,
+            x => x.TargetEntityId == request.TargetEntityId);
+
+    joined = joined.OrderByDescending(x => x.Candidate.CreatedDate);
+
+    var paginated = await joined.ToPaginatedListAsync(request, ct);
+
+    // ── 5. Single pass: collect approved user-IDs + build DTOs ────────────
+    var approvedUserIds = new HashSet<Guid>();
+    foreach (var row in paginated.Items.Where(row => row.Status == UserProfileStatus.Approved && row.UserId.HasValue))
+        approvedUserIds.Add(row.UserId!.Value);
+
+    HashSet<Guid> profilesWithInvitations = [];
+    if (approvedUserIds.Count > 0)
+    {
+        var ids = approvedUserIds.ToList();
+        profilesWithInvitations = (await uow
+            .GetEntityRepository<Invitation>().DbSet
+            .AsNoTracking()
+            .Where(i => ids.Contains(i.ApplicantId))
+            .Select(i => i.ApplicantId)
+            .Distinct()
+            .ToListAsync(ct))
+            .ToHashSet();
     }
+
+    var dtoItems = paginated.Items.Select(x =>
+    {
+        var c      = x.Candidate;
+        var status = ComputeStatus(x.Status, x.UserId, profilesWithInvitations);
+
+        return new MinisterOfficeCandidateDto
+        {
+            Id              = c.Id,
+            Qid             = c.Qid,
+            FullNameEn      = c.FullNameEn,
+            FullNameAr      = c.FullNameAr,
+            NationalityEn   = c.NationalityEn,
+            NationalityAr   = c.NationalityAr,
+            IsFollowUpActive = c.IsFollowUpActive,
+            Status          = status,
+            GenderEn        = x.GenderEn,
+            GenderAr        = x.GenderAr,
+            CandidateTypeEn = x.CandidateEn,
+            CandidateTypeAr = x.CandidateAr,
+            TargetEntityEn  = x.TargetEn,
+            TargetEntityAr  = x.TargetAr,
+            PhoneNumber     = x.PhoneNumber ?? c.PhoneNumber,
+            IsPhoneNumberFromProfile = !string.IsNullOrWhiteSpace(x.PhoneNumber),
+            CreatedDate     = c.CreatedDate
+        };
+    }).ToList();
+
+    return Result.Ok(new PaginatedResult<MinisterOfficeCandidateDto>(
+        dtoItems,
+        paginated.Metadata.TotalCount,
+        paginated.Metadata.CurrentPage,
+        paginated.Metadata.PageSize));
+}
 
     private static MinisterOfficeCandidateStatus ComputeStatus(
         UserProfileStatus? profileStatus,
