@@ -183,14 +183,6 @@ public class JobController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPut]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
-    public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.ToActionResult();
-    }
-
     [HttpDelete("{id:guid}")]
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> DeleteJob(Guid id)
@@ -225,6 +217,74 @@ public class JobController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return result.ToActionResult();
     }
+    #endregion
+
+    #region Job Section Updates
+
+    [HttpPut("{id:guid}/basics")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobBasics(Guid id, [FromBody] UpdateJobBasicsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobBasicsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/overview")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobOverview(Guid id, [FromBody] UpdateJobOverviewDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobOverviewCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/qualifications")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobQualifications(Guid id, [FromBody] UpdateJobQualificationsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobQualificationsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/responsibilities")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobResponsibilities(Guid id, [FromBody] UpdateJobResponsibilitiesDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobResponsibilitiesCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/conditions")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobConditions(Guid id, [FromBody] UpdateJobConditionsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobConditionsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/skills")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobSkills(Guid id, [FromBody] UpdateJobSkillsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobSkillsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/attachments")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobAttachments(Guid id, [FromBody] UpdateJobAttachmentsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobAttachmentsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/benefits")]
+    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    public async Task<IActionResult> UpdateJobBenefits(Guid id, [FromBody] UpdateJobBenefitsDto dto)
+    {
+        var result = await mediator.Send(new UpdateJobBenefitsCommand(id, dto));
+        return result.ToActionResult();
+    }
+
     #endregion
 
     #region Job Quireies

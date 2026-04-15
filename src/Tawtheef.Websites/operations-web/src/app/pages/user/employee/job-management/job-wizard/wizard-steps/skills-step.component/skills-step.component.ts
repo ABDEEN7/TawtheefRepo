@@ -61,6 +61,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     this.jobSkillsArray.removeAt(i);
     this.form.markAsDirty();
     this.form.updateValueAndValidity();
+    this.updateJobData();
   }
 
   override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {

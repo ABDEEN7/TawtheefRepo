@@ -11,10 +11,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Domain.Entities.Recruit
     {
         builder.HasQueryFilter(j => !j.IsDeleted);
 
-        // Optimistic concurrency: SQL Server rowversion
-        builder.Property(j => j.RowVersion)
-            .IsRowVersion();
-
         builder.HasOne(j => j.Sector)
             .WithMany()
             .HasForeignKey(j => j.SectorId)

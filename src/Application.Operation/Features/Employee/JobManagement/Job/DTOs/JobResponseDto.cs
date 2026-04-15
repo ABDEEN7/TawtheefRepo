@@ -38,7 +38,6 @@ public class JobResponseDto
     public DropdownOptions? SubMajor { get; set; } 
     public DropdownOptions? WorkType { get; set; } 
     public DropdownOptions? JobStatus { get; set; }
-    public byte[] RowVersion { get; set; } = [];
     public List<JobDegreeResponseDto>? Degrees { get; set; }
     public List<JobSpecializationResponseDto>? JobSpecializations { get; set; }
     public List<JobConditionResponseDto>? Conditions { get; set; }

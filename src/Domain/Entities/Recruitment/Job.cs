@@ -12,12 +12,6 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 [Table(nameof(Job), Schema = Schemas.Hr)]
 public sealed class Job : EventEntity
 {
-    /// <summary>
-    /// Optimistic concurrency token — automatically managed by EF Core / SQL Server.
-    /// </summary>
-    [Timestamp]
-    public byte[] RowVersion { get; set; } = [];
-
     [Required(ErrorMessage = JobMessages.JobTitleArRequired)]
     public Guid JobTitleId { get; set; }
 

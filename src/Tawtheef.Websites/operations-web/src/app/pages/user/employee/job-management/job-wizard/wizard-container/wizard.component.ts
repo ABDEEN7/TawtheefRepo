@@ -15,7 +15,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { EMPTY, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { JobService } from '../../services/job.service';
 import { WizardStepComponent } from '../wizard-steps/base/wizard-step.component';
 import { ConditionsStepComponent } from '../wizard-steps/conditions-step.component/conditions-step.component';
@@ -349,6 +349,10 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
       const element = ref.location.nativeElement as HTMLElement;
       const isActive = index === this.step - 1;
       element.style.display = isActive ? 'block' : 'none';
+
+      if (isActive && ref.instance.onActivate) {
+        ref.instance.onActivate();
+      }
     });
 
     this.cdr.detectChanges();
@@ -358,12 +362,15 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     const currentStep = this.stepRefs[this.step - 1]?.instance;
 
     if (currentStep && currentStep.isValid()) {
-      this.saveDraft();
-      if (this.step < this.total) {
-        this.step++;
-        this.showActive();
-        this.scrollToActive();
-      }
+      this.saveDraft().subscribe({
+        next: () => {
+          if (this.step < this.total) {
+            this.step++;
+            this.showActive();
+            this.scrollToActive();
+          }
+        },
+      });
     } else {
       this.showWarnMessage('JOB_WIZARD.WARNINGS.COMPLETE_REQUIRED_FIELDS');
     }
@@ -371,10 +378,13 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   prev(): void {
     if (this.step > 1) {
-      this.saveDraft();
-      this.step--;
-      this.showActive();
-      this.scrollToActive();
+      this.saveDraft().subscribe({
+        next: () => {
+          this.step--;
+          this.showActive();
+          this.scrollToActive();
+        },
+      });
     }
   }
 
@@ -396,12 +406,15 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         this.showWarnMessage('JOB_WIZARD.WARNINGS.COMPLETE_PREVIOUS_STEPS');
         return;
       }
-      this.saveDraft();
     }
 
-    this.step = stepNumber;
-    this.showActive();
-    this.scrollToActive();
+    this.saveDraft().subscribe({
+      next: () => {
+        this.step = stepNumber;
+        this.showActive();
+        this.scrollToActive();
+      },
+    });
   }
 
   isCurrentStepValid(): boolean {
@@ -458,10 +471,16 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.jobService
-      .update(this.jobId)
-      .pipe(switchMap(() => this.jobService.changeStatus(this.jobId, pendingStatusId)))
-      .pipe(takeUntil(this.destroy$))
+
+    // Save the current step first, then change status
+    const currentSave = this.getSaveMethodForStep(this.step);
+    const save$ = currentSave ? currentSave : of(void 0);
+
+    save$
+      .pipe(
+        switchMap(() => this.jobService.changeStatus(this.jobId, pendingStatusId)),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
         next: () => {
           this.isLoading = false;
@@ -487,15 +506,40 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  private saveDraft(): void {
+  private saveDraft(): Observable<void> {
     if (!this.jobId) {
-      return;
+      return of(void 0);
     }
 
-    this.jobService
-      .update(this.jobId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+    const saveMethod = this.getSaveMethodForStep(this.step);
+    if (saveMethod) {
+      this.isLoading = true;
+      return saveMethod.pipe(
+        tap({
+          next: () => {
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        }),
+        takeUntil(this.destroy$)
+      );
+    }
+    return of(void 0);
+  }
+
+  private getSaveMethodForStep(step: number): Observable<void> | null {
+    switch (step) {
+      case 1: return this.jobService.updateOverview(this.jobId);
+      case 2: return this.jobService.updateQualifications(this.jobId);
+      case 3: return this.jobService.updateResponsibilities(this.jobId);
+      case 4: return this.jobService.updateConditions(this.jobId);
+      case 5: return this.jobService.updateSkills(this.jobId);
+      case 6: return this.jobService.updateAttachments(this.jobId);
+      case 7: return this.jobService.updateBenefits(this.jobId);
+      default: return null;
+    }
   }
   private getTabByStepIndex(stepIndex: number): JobTabType | undefined {
     return (Object.keys(this.tabToStepIndex) as JobTabType[]).find(

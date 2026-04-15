@@ -35,7 +35,7 @@ public class CreateJobFromPreviousCommandHandler(
             );
         }
         
-        var sourceJobResult = await jobRepository.GetByIdWithDetailsAsync(request.SourceJobId);
+        var sourceJobResult = await jobRepository.GetByIdWithDetailsAsync(request.SourceJobId, cancellationToken);
         if (sourceJobResult.IsFailed || sourceJobResult.Value == null)
             return Result.Fail<Guid>(JobMessages.JobNotFound);
 

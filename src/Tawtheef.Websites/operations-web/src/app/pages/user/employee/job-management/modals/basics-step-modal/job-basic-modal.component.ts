@@ -384,7 +384,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
     };
 
     this.jobService.updateCurrentJobBasics(updateData);
-    this.jobService.update(this.jobId).subscribe({
+    this.jobService.updateBasics(this.jobId, updateData).subscribe({
       next: () => {
         this.isLoading = false;
         this.notificationService.success(this.translationService.instant('JOB_BASIC_MODAL.SUCCESS.UPDATED'));

@@ -15,6 +15,7 @@ import { GuidUtils } from "../../../../../../../core/utils/guid-utils";
 import { ConfirmationService } from "primeng/api";
 import { NotificationService } from "../../../../../../../core/services/notification.service";
 import { TranslateService } from "@ngx-translate/core";
+import { JobSpecialization } from "../../../models/job-specialization.model";
 
 @Component({
   selector: 'app-qualifications-step',
@@ -46,8 +47,11 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
   subMajorOptions: any[] = [];
 
   // Track selected object names for review step
+  selectedMajor: any = null;
+  selectedSubMajor: any = null;
   majorName: string = '';
   subMajorName: string = '';
+  private selectionRegistry = new Map<GUID, any>();
 
   private destroy$ = new Subject<void>();
 
@@ -66,8 +70,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
 
     this.form.valueChanges.pipe(
       takeUntil(this.destroy$),
-      debounceTime(300),
-      filter(() => this.form.valid)
+      debounceTime(300)
     ).subscribe(_ => {
       this.updateJobData();
     });
@@ -141,9 +144,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       majorId: [majorId, Validators.required],
       subMajorId: [subMajorId],
       majorOptions: [majorOption ? [majorOption] : []],
-      subMajorOptions: [subMajorOption ? [subMajorOption] : []],
-      majorName: [majorOption?.name || ''],
-      subMajorName: [subMajorOption?.name || '']
+      subMajorOptions: [subMajorOption ? [subMajorOption] : []]
     });
     this.jobSpecializationsFormArray.push(group);
   }
@@ -192,6 +193,12 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       });
   }
 
+  onObjectSelected(obj: any): void {
+    if (obj?.id) {
+      this.selectionRegistry.set(obj.id, obj);
+    }
+  }
+
   override setJobData(job: Job, note: JobTabReviewNoteResponse | null = null): void {
     this.jobData = job;
     this.note = note;
@@ -213,11 +220,18 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       this.subMajorOptions = jobResponse.subMajor?.id ? [jobResponse.subMajor] : jobResponse.subMajorOptions ? jobResponse.subMajorOptions : [];
     }
 
+    this.majorName = job.majorName || '';
+    this.subMajorName = job.subMajorName || '';
+
+    if (job.majorId && jobResponse.major) this.onObjectSelected(jobResponse.major);
+    if (job.subMajorId && jobResponse.subMajor) this.onObjectSelected(jobResponse.subMajor);
+
     if (job.jobSpecializations && job.jobSpecializations.length > 0) {
       job.jobSpecializations.forEach((spec: any) => {
-        const majorInfo = spec.major ? spec.major : null;
-        const subMajorInfo = spec.subMajor ? spec.subMajor : null;
-        this.addSpecialization(spec.id, spec.majorId, spec.subMajorId, majorInfo, subMajorInfo);
+        if (spec.major) this.onObjectSelected(spec.major);
+        if (spec.subMajor) this.onObjectSelected(spec.subMajor);
+
+        this.addSpecialization(spec.id, spec.majorId, spec.subMajorId);
       });
     }
 
@@ -229,6 +243,8 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       qualificationsDescriptionEn: job.qualificationsDescriptionEn || ''
     }, { emitEvent: false });
 
+    this.selectedMajor = jobResponse.major || null;
+    this.selectedSubMajor = jobResponse.subMajor || null;
     this.majorName = job.majorName || '';
     this.subMajorName = job.subMajorName || '';
 
@@ -237,43 +253,49 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     }
   }
 
-  private updateJobData(): void {
-    if (this.form.valid) {
-      const { qualificationsDescriptionAr, qualificationsDescriptionEn, majorId, subMajorId, degrees, jobSpecializations } = this.form.getRawValue();
+  protected extractName(option: any): string {
+    if (!option) return '';
+    const isAr = this.translate.currentLang === 'ar';
+    const nameFromAttr = isAr ? option.additionalData?.nameAr : option.additionalData?.nameEn;
+    return nameFromAttr || option.name || '';
+  }
 
-      // Deduplicate specializations to prevent UI issues
-      const seen = new Set<string>();
-      const uniqueSpecs: any[] = [];
-      const uniqueSpecsData: any[] = [];
+  protected updateJobData(): void {
+    const formValue = this.form.getRawValue();
+    const specializations = this.prepareSpecializations(formValue.jobSpecializations);
 
-      (jobSpecializations as any[]).forEach((s, index) => {
-        const key = `${s.majorId}_${s.subMajorId || ''}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          uniqueSpecs.push({
-            id: s.id as GUID,
-            majorId: s.majorId as GUID,
-            subMajorId: s.subMajorId as GUID | null
-          });
+    this.jobService.updateCurrentJobQualifications(
+      formValue.degrees || [],
+      formValue.majorId as GUID | null,
+      formValue.subMajorId as GUID | null,
+      specializations,
+      formValue.qualificationsDescriptionAr || '',
+      formValue.qualificationsDescriptionEn || '',
+      formValue.majorId ? this.extractName(this.selectionRegistry.get(formValue.majorId)) : '',
+      formValue.subMajorId ? this.extractName(this.selectionRegistry.get(formValue.subMajorId)) : ''
+    );
+  }
 
-          if (jobSpecializations && jobSpecializations[index]) {
-            uniqueSpecsData.push(jobSpecializations[index]);
-          }
-        }
-      });
+  private prepareSpecializations(rawSpecs: any[]): JobSpecialization[] {
+    const seen = new Set<string>();
+    const result: JobSpecialization[] = [];
 
-      this.jobService.updateCurrentJobQualifications(
-        degrees || [],
-        majorId as GUID | null,
-        subMajorId as GUID | null,
-        uniqueSpecs,
-        qualificationsDescriptionAr || '',
-        qualificationsDescriptionEn || '',
-        this.majorName,
-        this.subMajorName,
-        uniqueSpecsData
-      );
-    }
+    (rawSpecs || []).forEach((s) => {
+      if (!s.majorId) return;
+
+      const key = `${s.majorId}_${s.subMajorId || ''}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+
+        result.push({
+          id: s.id as GUID,
+          majorId: s.majorId as GUID,
+          subMajorId: s.subMajorId as GUID
+        });
+      }
+    });
+
+    return result;
   }
 
 }

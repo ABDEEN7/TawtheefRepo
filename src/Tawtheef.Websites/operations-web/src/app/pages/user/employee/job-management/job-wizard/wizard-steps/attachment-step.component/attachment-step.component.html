@@ -69,7 +69,7 @@
                                     <span class="badge bg-brand ms-2">{{ attachmentsArray.length }}</span>
                                   </h5>
 
-                                  @for (attachmentGroup of attachmentsArray.controls; track $index; let i = $index) {
+                                  @for (attachmentGroup of attachmentsArray.controls; track attachmentGroup; let i = $index) {
                                     <div [formGroupName]="i" class="rounded-card mb-3 shadow-sm-sm">
                                       <div class="card-header bg-white d-flex justify-content-between align-items-center">
                                         <span class="fw-bold brand-text">

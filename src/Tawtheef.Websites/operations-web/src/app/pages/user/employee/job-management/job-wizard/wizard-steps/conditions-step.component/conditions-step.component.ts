@@ -35,7 +35,6 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   ngOnInit(): void {
     this.form.valueChanges.pipe(
       debounceTime(300),
-      filter(() => this.form.valid),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.updateJobData();
@@ -98,6 +97,7 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   removeCondition(index: number): void {
     if (this.conditionsArray.length > 1) {
       this.conditionsArray.removeAt(index);
+      this.updateJobData();
     }
   }
 
@@ -118,16 +118,14 @@ export class ConditionsStepComponent extends WizardStepComponent implements OnIn
   }
 
   private updateJobData(): void {
-    if (this.form.valid) {
-      const conditions = this.conditionsArray.controls.map(control => {
-        const group = control as FormGroup;
-        return {
-          textAr: group.get('textAr')?.value || '',
-          textEn: group.get('textEn')?.value || ''
-        };
-      });
+    const conditions = this.conditionsArray.controls.map(control => {
+      const group = control as FormGroup;
+      return {
+        textAr: group.get('textAr')?.value || '',
+        textEn: group.get('textEn')?.value || ''
+      };
+    });
 
-      this.jobService.updateCurrentJobConditions(conditions);
-    }
+    this.jobService.updateCurrentJobConditions(conditions);
   }
 }

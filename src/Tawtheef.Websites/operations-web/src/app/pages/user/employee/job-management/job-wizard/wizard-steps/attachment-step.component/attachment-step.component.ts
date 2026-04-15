@@ -40,7 +40,6 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     this.form.valueChanges
       .pipe(
         debounceTime(300),
-        filter(() => this.form.valid),
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
@@ -154,18 +153,16 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   }
 
   private updateJobData(): void {
-    if (this.form.valid) {
-      const attachments = this.attachmentsArray.controls.map((control) => {
-        const group = control as FormGroup;
-        return {
-          titleAr: group.get('titleAr')?.value || '',
-          titleEn: group.get('titleEn')?.value || '',
-          isMandatory: group.get('isMandatory')?.value || false,
-        };
-      });
+    const attachments = this.attachmentsArray.controls.map((control) => {
+      const group = control as FormGroup;
+      return {
+        titleAr: group.get('titleAr')?.value || '',
+        titleEn: group.get('titleEn')?.value || '',
+        isMandatory: group.get('isMandatory')?.value || false,
+      };
+    });
 
-      this.jobService.updateCurrentJobAttachments(attachments);
-    }
+    this.jobService.updateCurrentJobAttachments(attachments);
   }
 
   hasArabicTitle(index: number): boolean {

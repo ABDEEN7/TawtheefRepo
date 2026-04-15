@@ -12,7 +12,7 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
 {
     public async Task<IResult<Unit>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
-        var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId);
+        var existingJobResult = await jobRepository.GetByIdWithDetailsAsync(request.JobId, cancellationToken);
         if (existingJobResult.IsFailed)
             return Result.Fail<Unit>(existingJobResult.Errors);
 

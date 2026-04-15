@@ -45,14 +45,15 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
 
         return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
     }
-    private async Task<List<ValidationFailure>> ValidateSkillsByMajor(UpdateJobDto dto)
+
+    private async Task<List<ValidationFailure>> ValidateSkillsMatchMajor(Guid majorId, Guid? subMajorId, List<JobSkillRequestDto> skills)
     {
         var failures = new List<ValidationFailure>();
 
-        if (dto.Skills == null || !dto.Skills.Any() || dto.MajorId == null)
+        if (skills == null || !skills.Any())
             return failures;
 
-        var majorIds = new[] { dto.MajorId, dto.SubMajorId }
+        var majorIds = new[] { majorId, subMajorId }
             .Where(id => id != null)
             .ToList();
 
@@ -79,14 +80,12 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
             .Concat(generalSkillIds)
             .ToHashSet();
 
-        var hasInvalidSkills = dto.Skills
+        var hasInvalidSkills = skills
             .Any(s => !validSkillIds.Contains(s.SkillId));
 
         if (hasInvalidSkills)
         {
-            failures.Add(new ValidationFailure(
-                nameof(dto.Skills),
-                JobMessages.SkillNotInMajor));
+            failures.Add(new ValidationFailure("Skills", JobMessages.SkillNotInMajor));
         }
 
         return failures;
@@ -111,32 +110,89 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                 j.GenderId == genderId);
     }
 
-    public async Task<ValidationResult> ValidateForUpdate(UpdateJobDto dto, JobEntity existingJob)
+    public async Task<ValidationResult> ValidateBasicsUpdate(UpdateJobBasicsDto dto, JobEntity existingJob)
     {
         var failures = new List<ValidationFailure>();
 
-        if ((dto.MinimumAge != existingJob.MinimumAge ||
-             dto.MaximumAge != existingJob.MaximumAge) &&
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
+
+        if ((dto.MinimumAge != existingJob.MinimumAge || dto.MaximumAge != existingJob.MaximumAge) &&
             !JobBusinessRules.CanModifyAgeRange(existingJob.JobStatusId))
-        {
             failures.Add(new ValidationFailure("AgeRange", JobMessages.CannotModifyAgeRange));
-        }
+
+        if (dto.JobTitleId != existingJob.JobTitleId && !JobBusinessRules.CanModifyTitle(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("Title", JobMessages.CannotModifyTitle));
+
+        if (dto.GenderId.HasValue && await IsDuplicateJob(existingJob.Id, dto.ManagementId, dto.SectorId, dto.JobTitleId, dto.GenderId.Value, dto.DepartmentId))
+            failures.Add(new ValidationFailure("Duplicate", JobMessages.DuplicateJob));
+
+        return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
+    }
+
+    public Task<ValidationResult> ValidateOverviewUpdate(UpdateJobOverviewDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
+
+        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
+    }
+
+    public async Task<ValidationResult> ValidateQualificationsUpdate(UpdateJobQualificationsDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
 
         if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
-        {
             failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
-        }
 
-        if (JobBusinessRules.IsInApprovalProcess(existingJob.JobStatusId))
+        if (HaveDegreesChanged(dto.Degrees, existingJob.JobDegrees) &&
+            !JobBusinessRules.CanModifyQualifications(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("Degrees", JobMessages.CannotModifyQualifications));
+
+        // Referential integrity
+        if (dto.Degrees is { Count: > 0 })
         {
-            failures.Add(new ValidationFailure("ApprovalStatus", JobMessages.CannotEditInApproval));
+            var requestedDegreeIds = dto.Degrees.Select(d => d.DegreeId).Distinct().ToList();
+            var existingDegreeIds = await unitOfWork.GetEntityRepository<Degree>().DbSet
+                .AsNoTracking()
+                .Where(d => requestedDegreeIds.Contains(d.Id))
+                .Select(d => d.Id)
+                .ToListAsync();
+
+            if (existingDegreeIds.Count != requestedDegreeIds.Count)
+                failures.Add(new ValidationFailure("Degrees", JobMessages.InvalidDegreeReference));
         }
 
-        if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextAr)) == true)
-            failures.Add(new ValidationFailure("Condition.TextAr", JobMessages.ConditionTextRequired));
+        if (dto.JobSpecializations is { Count: > 0 })
+        {
+            var allMajorIds = dto.JobSpecializations
+                .Select(s => s.MajorId)
+                .Concat(dto.JobSpecializations
+                    .Where(s => s.SubMajorId.HasValue)
+                    .Select(s => s.SubMajorId!.Value))
+                .Distinct()
+                .ToList();
 
-        if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextEn)) == true)
-            failures.Add(new ValidationFailure("Condition.TextEn", JobMessages.ConditionTextRequired));
+            var existingMajorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
+                .AsNoTracking()
+                .Where(m => allMajorIds.Contains(m.Id))
+                .Select(m => m.Id)
+                .ToListAsync();
+
+            if (existingMajorIds.Count != allMajorIds.Count)
+                failures.Add(new ValidationFailure("JobSpecializations", JobMessages.InvalidSpecializationMajorReference));
+        }
+
+        return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
+    }
+
+    public Task<ValidationResult> ValidateResponsibilitiesUpdate(UpdateJobResponsibilitiesDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
+
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
 
         if (dto.Responsibilities?.Any(r => string.IsNullOrWhiteSpace(r.TextAr)) == true)
             failures.Add(new ValidationFailure("Responsibility.TextAr", JobMessages.ResponsibilityTextRequired));
@@ -144,23 +200,73 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (dto.Responsibilities?.Any(r => string.IsNullOrWhiteSpace(r.TextEn)) == true)
             failures.Add(new ValidationFailure("Responsibility.TextEn", JobMessages.ResponsibilityTextRequired));
 
-        if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextAr))
-            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
-
-        if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextEn))
-            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
-
         if (dto.Responsibilities != null && HasDuplicates(dto.Responsibilities, r => r.TextAr))
             failures.Add(new ValidationFailure("Responsibilities", JobMessages.DuplicateResponsibility));
 
         if (dto.Responsibilities != null && HasDuplicates(dto.Responsibilities, r => r.TextEn))
             failures.Add(new ValidationFailure("Responsibilities", JobMessages.DuplicateResponsibility));
 
-        if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleAr))
-            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
+        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
+    }
 
-        if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleEn))
-            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
+    public Task<ValidationResult> ValidateConditionsUpdate(UpdateJobConditionsDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
+
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
+
+        if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextAr)) == true)
+            failures.Add(new ValidationFailure("Condition.TextAr", JobMessages.ConditionTextRequired));
+
+        if (dto.Conditions?.Any(c => string.IsNullOrWhiteSpace(c.TextEn)) == true)
+            failures.Add(new ValidationFailure("Condition.TextEn", JobMessages.ConditionTextRequired));
+
+        if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextAr))
+            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
+
+        if (dto.Conditions != null && HasDuplicates(dto.Conditions, c => c.TextEn))
+            failures.Add(new ValidationFailure("Conditions", JobMessages.DuplicateCondition));
+
+        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
+    }
+
+    public async Task<ValidationResult> ValidateSkillsUpdate(UpdateJobSkillsDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
+
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
+
+        if (HaveSkillsChanged(dto.Skills, existingJob.JobSkills) &&
+            !JobBusinessRules.CanModifySkills(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("Skills", JobMessages.CannotModifySkills));
+
+        if (dto.Skills is { Count: > 0 })
+        {
+            var requestedSkillIds = dto.Skills.Select(s => s.SkillId).Distinct().ToList();
+            var existingSkillIds = await unitOfWork.GetEntityRepository<Skill>().DbSet
+                .AsNoTracking()
+                .Where(s => requestedSkillIds.Contains(s.Id))
+                .Select(s => s.Id)
+                .ToListAsync();
+
+            if (existingSkillIds.Count != requestedSkillIds.Count)
+                failures.Add(new ValidationFailure("Skills", JobMessages.InvalidSkillReference));
+
+            var skillMajorErrors = await ValidateSkillsMatchMajor(existingJob.MajorId!.Value, existingJob.SubMajorId, dto.Skills);
+            failures.AddRange(skillMajorErrors);
+        }
+
+        return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
+    }
+
+    public Task<ValidationResult> ValidateAttachmentsUpdate(UpdateJobAttachmentsDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
+
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
 
         if (dto.RequiredAttachments?.Any(a => string.IsNullOrWhiteSpace(a.TitleAr)) == true)
             failures.Add(new ValidationFailure("Attachment.TitleAr", JobMessages.AttachmentTitleRequired));
@@ -168,32 +274,23 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         if (dto.RequiredAttachments?.Any(a => string.IsNullOrWhiteSpace(a.TitleEn)) == true)
             failures.Add(new ValidationFailure("Attachment.TitleEn", JobMessages.AttachmentTitleRequired));
 
-        if ((dto.JobTitleId != existingJob.JobTitleId) &&
-            !JobBusinessRules.CanModifyTitle(existingJob.JobStatusId))
-        {
-            failures.Add(new ValidationFailure("Title", JobMessages.CannotModifyTitle));
-        }
+        if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleAr))
+            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
 
-        if (HaveDegreesChanged(dto.Degrees, existingJob.JobDegrees) &&
-            !JobBusinessRules.CanModifyQualifications(existingJob.JobStatusId))
-        {
-            failures.Add(new ValidationFailure("Degrees", JobMessages.CannotModifyQualifications));
-        }
+        if (dto.RequiredAttachments != null && HasDuplicates(dto.RequiredAttachments, a => a.TitleEn))
+            failures.Add(new ValidationFailure("RequiredAttachments", JobMessages.DuplicateAttachment));
 
-        if (HaveSkillsChanged(dto.Skills, existingJob.JobSkills) &&
-            !JobBusinessRules.CanModifySkills(existingJob.JobStatusId))
-        {
-            failures.Add(new ValidationFailure("Skills", JobMessages.CannotModifySkills));
-        }
+        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
+    }
 
-        var skillMajorErrors = await ValidateSkillsByMajor(dto);
-        failures.AddRange(skillMajorErrors);
+    public Task<ValidationResult> ValidateBenefitsUpdate(UpdateJobBenefitsDto dto, JobEntity existingJob)
+    {
+        var failures = new List<ValidationFailure>();
 
-        // Referential integrity: verify that all provided IDs exist in the DB
-        var referentialErrors = await ValidateReferentialIntegrity(dto);
-        failures.AddRange(referentialErrors);
+        if (!JobBusinessRules.CanEdit(existingJob.JobStatusId))
+            failures.Add(new ValidationFailure("EditMode", JobMessages.CanOnlyEditInDraft));
 
-        return failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult();
+        return Task.FromResult(failures.Count != 0 ? new ValidationResult(failures) : new ValidationResult());
     }
 
     public async Task<ValidationResult> ValidateStatusChange(JobEntity job, Guid newStatusId)
@@ -303,63 +400,6 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
                !string.IsNullOrWhiteSpace(job.QualificationDescriptionEn);
     }
 
-    private async Task<List<ValidationFailure>> ValidateReferentialIntegrity(UpdateJobDto dto)
-    {
-        var failures = new List<ValidationFailure>();
-
-        // Validate SkillIds exist
-        if (dto.Skills is { Count: > 0 })
-        {
-            var requestedSkillIds = dto.Skills.Select(s => s.SkillId).Distinct().ToList();
-            var existingSkillIds = await unitOfWork.GetEntityRepository<Skill>().DbSet
-                .AsNoTracking()
-                .Where(s => requestedSkillIds.Contains(s.Id))
-                .Select(s => s.Id)
-                .ToListAsync();
-
-            if (existingSkillIds.Count != requestedSkillIds.Count)
-                failures.Add(new ValidationFailure(nameof(dto.Skills), JobMessages.InvalidSkillReference));
-        }
-
-        // Validate DegreeIds exist
-        if (dto.Degrees is { Count: > 0 })
-        {
-            var requestedDegreeIds = dto.Degrees.Select(d => d.DegreeId).Distinct().ToList();
-            var existingDegreeIds = await unitOfWork.GetEntityRepository<Degree>().DbSet
-                .AsNoTracking()
-                .Where(d => requestedDegreeIds.Contains(d.Id))
-                .Select(d => d.Id)
-                .ToListAsync();
-
-            if (existingDegreeIds.Count != requestedDegreeIds.Count)
-                failures.Add(new ValidationFailure(nameof(dto.Degrees), JobMessages.InvalidDegreeReference));
-        }
-
-        // Validate Specialization MajorIds / SubMajorIds exist
-        if (dto.JobSpecializations is { Count: > 0 })
-        {
-            var allMajorIds = dto.JobSpecializations
-                .Select(s => s.MajorId)
-                .Concat(dto.JobSpecializations
-                    .Where(s => s.SubMajorId.HasValue)
-                    .Select(s => s.SubMajorId!.Value))
-                .Distinct()
-                .ToList();
-
-            var existingMajorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
-                .AsNoTracking()
-                .Where(m => allMajorIds.Contains(m.Id))
-                .Select(m => m.Id)
-                .ToListAsync();
-
-            if (existingMajorIds.Count != allMajorIds.Count)
-                failures.Add(new ValidationFailure(nameof(dto.JobSpecializations), JobMessages.InvalidSpecializationMajorReference));
-        }
-
-        return failures;
-    }
-
-    
     private bool HasDuplicates<T>(IEnumerable<T> items, Func<T, string> selector)
     {
         var texts = items.Select(selector).Where(t => !string.IsNullOrWhiteSpace(t));

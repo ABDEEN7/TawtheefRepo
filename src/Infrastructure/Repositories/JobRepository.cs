@@ -22,7 +22,6 @@ public class JobRepository(IGenericRepository<Job> repository)
     {
         var baseQuery = Repository.DbSet
             .AsNoTracking()
-            .Where(job => !job.IsDeleted)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.JobTitle)
@@ -45,12 +44,12 @@ public class JobRepository(IGenericRepository<Job> repository)
     }
 
 
-    public async Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id)
+    public async Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id, CancellationToken ct)
     {
         var job = await Repository.DbSet
-            .Where(job=> !job.IsDeleted)
+            .AsSplitQuery()
             .Include(j => j.JobDegrees)
-                .ThenInclude(d => d.Degree)
+            .ThenInclude(d => d.Degree)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.JobTitle)
@@ -64,24 +63,24 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.WorkLocation)
             .Include(j => j.JobConditions)
             .Include(j => j.JobPoints)
-                .ThenInclude(p => p!.Details)
+            .ThenInclude(p => p!.Details)
             .Include(j => j.JobSkills)
-                   .ThenInclude(s=>s.Skill)
+            .ThenInclude(s=>s.Skill)
             .Include(j => j.JobResponsibilities)
             .Include(j => j.JobRequiredAttachments)
             .Include(j => j.Invitations)
-                .ThenInclude(i => i.History)
+            .ThenInclude(i => i.History)
             .Include(j => j.TabReviewNotes)
             .Include(j => j.ReviewAttachment)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c!.CandidateTypePercentages)
+            .ThenInclude(c => c!.CandidateTypePercentages)
             .Include(j => j.CandidateFilterSetting)
-                .ThenInclude(c => c!.NationalityPercentages)
+            .ThenInclude(c => c!.NationalityPercentages)
             .Include(j => j.JobSpecializations)
-                .ThenInclude(s => s.Major)
+            .ThenInclude(s => s.Major)
             .Include(j => j.JobSpecializations)
-                .ThenInclude(s => s.SubMajor)
-            .FirstOrDefaultAsync(j => j.Id == id);
+            .ThenInclude(s => s.SubMajor)
+            .FirstOrDefaultAsync(j => j.Id == id, ct);
 
         return job is null
             ? Result.Fail<Job>(JobMessages.JobNotFound)

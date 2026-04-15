@@ -6,4 +6,5 @@ export abstract class WizardStepComponent {
   abstract readonly form: FormGroup;
   abstract isValid(): boolean;
   setJobData?(job: Job, notes?: JobTabReviewNoteResponse | null): void;
+  onActivate?(): void;
 }

@@ -1,12 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, map } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { Job } from '../models/job.model';
-import { UpdateJobRequest } from '../models/update-job-request.model';
 import { JobQueryFilter } from '../models/job-query-filter.model';
 import { JobResponse } from '../models/job-response-model';
-import { UpdateJobCommand } from '../models/update-job-command.model';
 import { TranslateService } from '@ngx-translate/core';
 import { JobLookupService } from './job-lookup.service';
 import { JobTabStatus } from '../enums/job-tab-status';
@@ -18,6 +16,7 @@ import { NotificationService } from '../../../../../core/services/notification.s
 import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { JobStatus, Degree } from '../../../../../core/enums/lookups.enum';
+import { JobSpecialization } from '../models/job-specialization.model';
 
 @Injectable({
   providedIn: 'root',
@@ -124,12 +123,11 @@ export class JobService {
     degrees: { degreeId: GUID }[],
     majorId: GUID | null,
     subMajorId: GUID | null,
-    jobSpecializations: { majorId: GUID, subMajorId?: GUID | null }[],
+    jobSpecializations: JobSpecialization[],
     descriptionAr: string,
     descriptionEn: string = '',
     majorName?: string,
-    subMajorName?: string,
-    jobSpecializationsData?: { majorName: string; subMajorName?: string }[]
+    subMajorName?: string
   ): void {
     const current = this.currentJob();
     if (current) {
@@ -143,7 +141,6 @@ export class JobService {
         qualificationsDescriptionEn: descriptionEn,
         majorName,
         subMajorName,
-        jobSpecializationsData
       });
     }
   }
@@ -314,12 +311,86 @@ export class JobService {
     return this.httpService.get<JobResponse>(`${this.endpoints.job.job}/${jobId}`);
   }
 
-  update(jobId: GUID): Observable<void> {
-    const updateCommand: UpdateJobCommand = {
-      jobId: jobId,
-      job: this.currentJob() as UpdateJobRequest,
-    };
-    return this.httpService.put<void>(`${this.endpoints.job.job}`, updateCommand);
+  // ──────────────────────────────────────────────
+  //  Section-Specific Update Methods
+  // ──────────────────────────────────────────────
+
+  updateBasics(jobId: GUID, data: any): Observable<void> {
+    const job = this.currentJob();
+    return this.httpService.put<void>(this.endpoints.job.updateBasics(jobId), {
+      ...data,
+      rowVersion: job?.rowVersion
+    });
+  }
+
+  updateOverview(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateOverview(jobId), {
+      overviewAr: job.overviewAr,
+      overviewEn: job.overviewEn,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateQualifications(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateQualifications(jobId), {
+      majorId: job.majorId,
+      subMajorId: job.subMajorId,
+      qualificationsDescriptionAr: job.qualificationsDescriptionAr,
+      qualificationsDescriptionEn: job.qualificationsDescriptionEn,
+      degrees: job.degrees,
+      jobSpecializations: job.jobSpecializations,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateResponsibilities(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateResponsibilities(jobId), {
+      responsibilities: job.responsibilities,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateConditions(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateConditions(jobId), {
+      conditions: job.conditions,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateSkills(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateSkills(jobId), {
+      skills: job.skills,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateAttachments(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateAttachments(jobId), {
+      requiredAttachments: job.requiredAttachments,
+      rowVersion: job.rowVersion
+    });
+  }
+
+  updateBenefits(jobId: GUID): Observable<void> {
+    const job = this.currentJob();
+    if (!job) return of(void 0);
+    return this.httpService.put<void>(this.endpoints.job.updateBenefits(jobId), {
+      benefitsAr: job.benefitsAr,
+      benefitsEn: job.benefitsEn,
+      rowVersion: job.rowVersion
+    });
   }
 
   delete(jobId: GUID): Observable<void> {
@@ -366,68 +437,75 @@ export class JobService {
     return this.currentJobId;
   }
 
+  mapResponseToJob(jobResponse: JobResponse): Job {
+    return {
+      jobTitleId: jobResponse.jobTitleId,
+      rowVersion: jobResponse.rowVersion,
+      titleAr: jobResponse.titleAr,
+      titleEn: jobResponse.titleEn,
+      jobNumber: jobResponse.jobNumber,
+      sectorId: jobResponse.sector.id as GUID,
+      managementId: jobResponse.management.id as GUID,
+      departmentId: jobResponse.department?.id as GUID,
+      yearsOfExperience: jobResponse.yearsOfExperience,
+      jobCategoryId: jobResponse.jobCategory.id as GUID,
+      workLocationId: jobResponse.workLocation.id as GUID,
+      genderId: jobResponse.gender?.id as GUID,
+      majorId: jobResponse.major?.id as GUID,
+      subMajorId: jobResponse.subMajor?.id as GUID,
+      workTypeId: jobResponse.workType.id as GUID,
+      numberOfVacancies: jobResponse.numberOfVacancies,
+      closingDate: new Date(jobResponse.closingDate),
+      minimumAge: jobResponse.minimumAge,
+      maximumAge: jobResponse.maximumAge,
+      overviewAr: jobResponse.overViewAr || '',
+      overviewEn: jobResponse.overViewEn || '',
+      benefitsAr: jobResponse.benefitsAr || '',
+      benefitsEn: jobResponse.benefitsEn || '',
+      jobStatus: jobResponse.jobStatus || undefined,
+      qualificationsDescriptionAr: jobResponse.qualificationDescriptionAr || '',
+      qualificationsDescriptionEn: jobResponse.qualificationDescriptionEn || '',
+      jobSpecializations: jobResponse.jobSpecializations?.map((s) => ({
+        id: s.id as GUID,
+        majorId: s.major.id as GUID,
+        subMajorId: s.subMajor?.id as GUID,
+        major: s.major,
+        subMajor: s.subMajor
+      })) || [],
+      majorName: jobResponse.major?.name || jobResponse.major?.additionalData?.nameAr || '',
+      subMajorName: jobResponse.subMajor?.name || jobResponse.subMajor?.additionalData?.nameAr || '',
+      degrees: jobResponse.degrees.map((d) => ({ degreeId: d.degreeId })),
+      conditions: jobResponse.conditions.map((c) => ({
+        textAr: c.textAr,
+        textEn: c.textEn,
+      })),
+      responsibilities: jobResponse.responsibilities.map((r) => ({
+        textAr: r.textAr,
+        textEn: r.textEn,
+      })),
+      skills: jobResponse.skills.map((s) => ({
+        skillId: s.skillId,
+        showToApplicants: s.showToApplicants,
+      })),
+      requiredAttachments: jobResponse.requiredAttachments.map((a) => ({
+        titleAr: a.titleAr,
+        titleEn: a.titleEn,
+        isMandatory: a.isMandatory,
+      })),
+      tabReviewNotes: jobResponse.tabReviewNotes || undefined,
+    };
+  }
+
+  getJobById(jobId: GUID): Observable<Job> {
+    return this.getById(jobId).pipe(
+      map(response => this.mapResponseToJob(response))
+    );
+  }
+
   loadJobForEdit(jobId: GUID): Observable<JobResponse> {
     return this.getById(jobId).pipe(
       tap((jobResponse) => {
-        const job: Job = {
-          jobTitleId: jobResponse.jobTitleId,
-          rowVersion: jobResponse.rowVersion,
-          titleAr: jobResponse.titleAr,
-          titleEn: jobResponse.titleEn,
-          jobNumber: jobResponse.jobNumber,
-          sectorId: jobResponse.sector.id as GUID,
-          managementId: jobResponse.management.id as GUID,
-          departmentId: jobResponse.department?.id as GUID,
-          yearsOfExperience: jobResponse.yearsOfExperience,
-          jobCategoryId: jobResponse.jobCategory.id as GUID,
-          workLocationId: jobResponse.workLocation.id as GUID,
-          genderId: jobResponse.gender?.id as GUID,
-          majorId: jobResponse.major?.id as GUID,
-          subMajorId: jobResponse.subMajor?.id as GUID,
-          workTypeId: jobResponse.workType.id as GUID,
-          numberOfVacancies: jobResponse.numberOfVacancies,
-          closingDate: new Date(jobResponse.closingDate),
-          minimumAge: jobResponse.minimumAge,
-          maximumAge: jobResponse.maximumAge,
-          overviewAr: jobResponse.overViewAr || '',
-          overviewEn: jobResponse.overViewEn || '',
-          benefitsAr: jobResponse.benefitsAr || '',
-          benefitsEn: jobResponse.benefitsEn || '',
-          jobStatus: jobResponse.jobStatus || undefined,
-          qualificationsDescriptionAr: jobResponse.qualificationDescriptionAr || '',
-          qualificationsDescriptionEn: jobResponse.qualificationDescriptionEn || '',
-          jobSpecializations: jobResponse.jobSpecializations?.map((s) => ({
-            id: s.id as GUID,
-            majorId: s.major.id as GUID,
-            subMajorId: s.subMajor?.id as GUID,
-          })) || [],
-          majorName: jobResponse.major?.name || jobResponse.major?.additionalData?.nameAr || '',
-          subMajorName: jobResponse.subMajor?.name || jobResponse.subMajor?.additionalData?.nameAr || '',
-          jobSpecializationsData: jobResponse.jobSpecializations?.map((s) => ({
-            majorName: s.major?.name || s.major?.additionalData?.nameAr || '',
-            subMajorName: s.subMajor?.name || s.subMajor?.additionalData?.nameAr || ''
-          })) || [],
-          degrees: jobResponse.degrees.map((d) => ({ degreeId: d.degreeId })),
-          conditions: jobResponse.conditions.map((c) => ({
-            textAr: c.textAr,
-            textEn: c.textEn,
-          })),
-          responsibilities: jobResponse.responsibilities.map((r) => ({
-            textAr: r.textAr,
-            textEn: r.textEn,
-          })),
-          skills: jobResponse.skills.map((s) => ({
-            skillId: s.skillId,
-            showToApplicants: s.showToApplicants,
-          })),
-          requiredAttachments: jobResponse.requiredAttachments.map((a) => ({
-            titleAr: a.titleAr,
-            titleEn: a.titleEn,
-            isMandatory: a.isMandatory,
-          })),
-          tabReviewNotes: jobResponse.tabReviewNotes || undefined,
-        };
-
+        const job = this.mapResponseToJob(jobResponse);
         this.currentJob.set(job);
         this.currentJobId = jobId;
         this.jobStatus.set(jobResponse.jobStatus.backendName);

@@ -50,7 +50,7 @@
 
           <app-remote-select class="jb-remote" formControlName="majorId" [searchUrl]="endpoints.job.lookups.majors"
             [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate" optionLabel="name" optionValue="id"
-            [preloadedOptions]="majorOptions" [appendTo]="'body'" (onObjectChange)="majorName = $event?.name || ''" [invalid]="
+            [preloadedOptions]="majorOptions" [appendTo]="'body'" (onObjectChange)="onObjectSelected($event)" [invalid]="
               form.controls.majorId.invalid &&
               (form.controls.majorId.dirty || form.controls.majorId.touched)
             " [showClear]="true"></app-remote-select>
@@ -72,7 +72,7 @@
             [parentId]="form.controls.majorId.value" parentParamName="parentId" [requireParent]="true"
             [searchUrl]="endpoints.job.lookups.subMajors"
             [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate" optionLabel="name"
-            optionValue="id" [preloadedOptions]="subMajorOptions" [appendTo]="'body'" (onObjectChange)="subMajorName = $event?.name || ''" [invalid]="
+            optionValue="id" [preloadedOptions]="subMajorOptions" [appendTo]="'body'" (onObjectChange)="onObjectSelected($event)" [invalid]="
               form.controls.subMajorId.invalid &&
               (form.controls.subMajorId.dirty || form.controls.subMajorId.touched)
             " [showClear]="true"></app-remote-select>
@@ -108,8 +108,8 @@
                 <app-remote-select class="jb-remote col-12" formControlName="majorId"
                   [searchUrl]="endpoints.job.lookups.majors"
                   [placeholder]="'JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER' | translate" optionLabel="name"
-                  optionValue="id" [preloadedOptions]="spec.value.majorOptions" [appendTo]="'body'"
-                  (onObjectChange)="spec.get('majorName')?.setValue($event?.name || '')"
+                  optionValue="id" [preloadedOptions]="spec.get('majorOptions')?.value" [appendTo]="'body'"
+                  (onObjectChange)="onObjectSelected($event)"
                   [showClear]="true"></app-remote-select>
               </div>
               <div class="col-md-6 mb-2">
@@ -119,8 +119,8 @@
                   [parentId]="spec.value.majorId" parentParamName="parentId" [requireParent]="true"
                   [searchUrl]="endpoints.job.lookups.subMajors"
                   [placeholder]="'JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER' | translate" optionLabel="name"
-                  optionValue="id" [preloadedOptions]="spec.value.subMajorOptions" [appendTo]="'body'"
-                  (onObjectChange)="spec.get('subMajorName')?.setValue($event?.name || '')"
+                  optionValue="id" [preloadedOptions]="spec.get('subMajorOptions')?.value" [appendTo]="'body'"
+                  (onObjectChange)="onObjectSelected($event)"
                   [showClear]="true"></app-remote-select>
                 }
               </div>
