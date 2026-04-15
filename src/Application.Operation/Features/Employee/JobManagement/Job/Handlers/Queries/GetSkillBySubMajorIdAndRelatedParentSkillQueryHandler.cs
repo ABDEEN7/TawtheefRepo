@@ -16,7 +16,7 @@ public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork u
     {
         IQueryable<Skill> skillsQuery;
         
-        if (request.SubMajorId is null || request.SubMajorId == Guid.Empty)
+        if (request.SubMajorIds is null || !request.SubMajorIds.Any())
         {
             skillsQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
                 .AsNoTracking()
@@ -26,15 +26,16 @@ public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork u
         {
             var majorIds = await unitOfWork.GetEntityRepository<Major>().DbSet
                 .AsNoTracking()
-                .Where(m => m.Id == request.SubMajorId)
+                .Where(m => request.SubMajorIds.Contains(m.Id))
                 .Select(m => new { m.Id, m.ParentId })
-                .FirstOrDefaultAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            var filterIds = majorIds is null
-                ? new List<Guid>()
-                : majorIds.ParentId is null
-                    ? new List<Guid> { majorIds.Id }
-                    : new List<Guid> { majorIds.Id, majorIds.ParentId.Value };
+            var filterIds = majorIds
+                .SelectMany(m => m.ParentId is null
+                    ? new[] { m.Id }
+                    : new[] { m.Id, m.ParentId.Value })
+                .Distinct()
+                .ToList();
 
             var majorSkillIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
                 .AsNoTracking()

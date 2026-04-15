@@ -46,14 +46,14 @@ internal sealed class ProfileDistributionProjection(
             return new PaginatedResult<DistributionProfileDto>([], 0, paginatedRequest.PageNumber, paginatedRequest.PageSize);
 
 
-        var allowedCountryOffice = ((OfficeUser?)user)?.Office?.CountryId;
         // 2) Base profiles query with eligibility rules + country filter
         var profilesQuery = profileRepo.DbSet
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            .WhereIf(user is EmployeeUser,p=> p.Provider == nameof(ProviderLoginIds.QatarPass) || p.Provider == nameof(ProviderLoginIds.QatarResidentOtp))
-            .WhereIf(user is OfficeUser,p=> p.ResidenceCountryId == allowedCountryOffice && !(p.Provider == nameof(ProviderLoginIds.QatarPass) || p.Provider == nameof(ProviderLoginIds.QatarResidentOtp)))
+            .WhereIf(user is EmployeeUser,p=> 
+                p.Provider == nameof(ProviderLoginIds.QatarPass) || 
+                                              p.Provider == nameof(ProviderLoginIds.QatarResidentOtp))
             .Where(p =>
                 (
                     Enumerable.Contains(ProfileDistributionRules.AssignableStatuses, p.Status) ||
@@ -67,6 +67,15 @@ internal sealed class ProfileDistributionProjection(
             .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
             .Include(p => p.Qualifications!).ThenInclude(q => q.SubMajor)
             .WhereIf(status is not null, p => p.Status == status);
+
+        if (user is OfficeUser office)
+        {
+            var allowedCountry = office.Office?.CountryId;
+            profilesQuery = profilesQuery
+                .Where(p => p.ResidenceCountryId == allowedCountry &&
+                            !(p.Provider == nameof(ProviderLoginIds.QatarPass) ||
+                              p.Provider == nameof(ProviderLoginIds.QatarResidentOtp)));
+        }          
 
         // 4) Optional search filter
         if (!string.IsNullOrWhiteSpace(searchTerm))

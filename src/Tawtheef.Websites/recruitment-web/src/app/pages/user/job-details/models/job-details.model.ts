@@ -5,6 +5,7 @@ import {JobDegreeResponse} from './job-degree-response.model';
 import {JobRequiredAttachmentResponse} from './job-required-attachment-response.model';
 import {JobResponsibilityResponse} from './job-responsibility-response.model';
 import {JobSkillResponse} from './job-skill-response.model';
+import {JobSpecializationResponse} from './job-specialization-response.model';
 
 export interface JobDetailsModel {
   id: GUID;
@@ -36,6 +37,7 @@ export interface JobDetailsModel {
   skills?: JobSkillResponse[];
   responsibilities?: JobResponsibilityResponse[];
   requiredAttachments?: JobRequiredAttachmentResponse[];
+  jobSpecializations?: JobSpecializationResponse[];
   
   invitationStatusId?: GUID;
   invitationStatus?: DropdownOptionVM;

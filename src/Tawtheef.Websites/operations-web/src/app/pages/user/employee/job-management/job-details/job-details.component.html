@@ -132,10 +132,58 @@
                     }
                     }
                     @if (activeTab === tabType.Qualifications) {
-                    <h5>{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
-                    <p>{{ getDegreeRequirements() }}</p>
+                    <div class="row g-3 mb-4">
+                      @if (getDegreeRequirements()) {
+                      <div class="col-md-4">
+                        <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="hgi-stroke hgi-graduation-cap-01 text-primary"></i>
+                            <span class="label mb-0">{{ 'JOB_DETAILS.QUALIFICATION_REQUIREMENTS' | translate }}</span>
+                          </div>
+                          <span class="value d-block ps-4 fw-bold text-dark">{{ getDegreeRequirements() }}</span>
+                        </div>
+                      </div>
+                      }
+
+                      @if (job.major) {
+                      <div class="col-md-4">
+                        <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="hgi-stroke hgi-book-01 text-primary"></i>
+                            <span class="label mb-0">{{ 'JOB_DETAILS.MAJOR' | translate }}</span>
+                          </div>
+                          <span class="value d-block ps-4 fw-bold text-dark">{{ job.major.name }}</span>
+                        </div>
+                      </div>
+                      }
+
+                      @if (job.subMajor) {
+                      <div class="col-md-4">
+                        <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="hgi-stroke hgi-book-02 text-primary"></i>
+                            <span class="label mb-0">{{ 'JOB_DETAILS.SUB_MAJOR' | translate }}</span>
+                          </div>
+                          <span class="value d-block ps-4 fw-bold text-dark">{{ job.subMajor.name }}</span>
+                        </div>
+                      </div>
+                      }
+
+                      @if (getSpecializationRequirements()) {
+                      <div class="col-12">
+                        <div class="basic-data-item p-3 shadow-sm border-0 bg-light rounded-3">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="hgi-stroke hgi-star text-primary"></i>
+                            <span class="label mb-0">{{ 'JOB_DETAILS.SPECIALIZATIONS' | translate }}</span>
+                          </div>
+                          <span class="value d-block ps-4 fw-bold text-dark">{{ getSpecializationRequirements() }}</span>
+                        </div>
+                      </div>
+                      }
+                    </div>
+
                     @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
-                    <h5 class="mt-3">{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
+                    <h5 class="mt-3 text-primary fw-bold">{{ 'JOB_DETAILS.QUALIFICATIONS' | translate }}</h5>
                     <div class="row">
                       <div class="col-lg-6 col-md-12 mb-4">
                         <div class="dual-text-container m-0 w-100 d-block">

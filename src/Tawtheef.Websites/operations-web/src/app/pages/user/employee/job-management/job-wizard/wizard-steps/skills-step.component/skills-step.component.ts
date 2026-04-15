@@ -29,12 +29,32 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
   }) as FormGroup;
 
   ngOnInit() {
-    const currentJob = this.jobService.getCurrentJob();
-    this.lookupsService.loadSkillsByMajor(currentJob?.subMajorId);
-
     this.form.valueChanges.subscribe(() => {
       this.updateJobData();
     });
+  }
+
+  override onActivate(): void {
+    const currentJob = this.jobService.getCurrentJob();
+    const subMajorIds: GUID[] = [];
+
+    if (currentJob?.subMajorId) {
+      subMajorIds.push(currentJob.subMajorId);
+    } else if (currentJob?.majorId) {
+      subMajorIds.push(currentJob.majorId);
+    }
+
+    if (currentJob?.jobSpecializations) {
+      currentJob.jobSpecializations.forEach(spec => {
+        if (spec.subMajorId) {
+          subMajorIds.push(spec.subMajorId);
+        } else if (spec.majorId) {
+          subMajorIds.push(spec.majorId);
+        }
+      });
+    }
+
+    this.lookupsService.loadSkillsByMajor(subMajorIds);
   }
 
   get jobSkillsArray(): FormArray {

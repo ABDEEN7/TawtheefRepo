@@ -116,8 +116,11 @@ export class JobLookupService {
     });
   }
 
-  loadSkillsByMajor(majorId?: GUID | null): void {
-    const query = majorId ? `?majorId=${majorId}` : '';
+  loadSkillsByMajor(majorIds: GUID[]): void {
+    let query = '';
+    if (majorIds && majorIds.length > 0) {
+      query = '?' + majorIds.map(id => `majorIds=${id}`).join('&');
+    }
 
     this.http.get<DropdownOptionVM[]>(
       `${this.endpoints.job.lookups.skills}${query}`
