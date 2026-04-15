@@ -124,7 +124,7 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
         // ── 6. SEND SMS (skip for Kawader users) ───────────────
         if (!isKawaderUser)
         {
-            var smsBody = $"Dear {moi.EnglishFullName}, please log in to the Careers Platform and create your profile: {appConfiguration.Value.FrontendUrl}";
+            var smsBody = $"Dear {moi.EnglishFullName}, please log in to the Careers Platform and create your profile: {appConfiguration.Value.ClientUrl}";
 
             var notification = Notification.Create(
                 NotificationChannel.Sms,
