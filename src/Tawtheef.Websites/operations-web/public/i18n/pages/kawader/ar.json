@@ -10,7 +10,6 @@
   "kawader.upload.success": "تم حفظ جميع السجلات بنجاح.",
   "kawader.upload.partial": "تمت معالجة الملف مع وجود بعض الملاحظات.",
   "kawader.upload.failed": "فشل رفع الملف، الرجاء المحاولة مرة أخرى.",
-
   "kawader.result.success": "تم الحفظ بدون أخطاء",
   "kawader.result.partial": "تم الحفظ مع وجود حالات مرفوضة",
   "kawader.result.summary": "تم استيراد {{imported}} من أصل {{total}} صف",
@@ -19,14 +18,12 @@
   "kawader.result.value": "القيمة",
   "kawader.result.reason": "سبب الرفض",
   "kawader.result.noErrors": "تمت إضافة جميع الصفوف بنجاح.",
-
   "kawader.errors.invalid": "رقم البطاقة غير صالح",
   "kawader.errors.duplicate": "مكرر داخل الملف",
   "kawader.errors.exists": "موجود مسبقًا في كوادر",
-
   "kawader.list.title": "قائمة الكوادر المستهدفة",
-  "kawader.list.search": "ابحث بالتفاصيل أو الرقم الشخصي...",
-  "kawader.list.qid": "الرقم الشخصي",
+  "kawader.list.search": "ابحث بالتفاصيل أو الرقم الوطني...",
+  "kawader.list.qid": "الرقم الوطني",
   "kawader.list.name": "الاسم الكامل",
   "kawader.list.contact": "التواصل",
   "kawader.list.status": "حالة الاستهداف",
