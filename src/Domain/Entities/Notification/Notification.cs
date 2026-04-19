@@ -66,6 +66,9 @@ public class Notification : EventEntity
     public bool IsRead { get; private set; }
     public bool IsDismissed { get; private set; }
 
+    [MaxLength(10)]
+    public string Language { get; private set; } = "ar";
+
     public void MarkAsRead() => IsRead = true;
     public void MarkAsUnread() => IsRead = false;
     public void Dismiss() => IsDismissed = true;
@@ -73,7 +76,7 @@ public class Notification : EventEntity
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
         string? toAddress, string? subject, string? body, string? plainTextBody,
-        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3)
+        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3, string language = "ar")
     {
         return new Notification
         {
@@ -87,7 +90,8 @@ public class Notification : EventEntity
             PayloadJson = payloadJson,
             Status = NotificationStatus.Pending,
             IdempotencyKey = idempotencyKey,
-            MaxRetries = maxRetries
+            MaxRetries = maxRetries,
+            Language = language
         };
     }
 

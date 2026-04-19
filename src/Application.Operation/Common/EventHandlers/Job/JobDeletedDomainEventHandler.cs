@@ -23,7 +23,6 @@ public sealed class JobDeletedDomainEventHandler(
             unitOfWork,
             userManager,
             JobDeletedNotification.TemplateKey,
-            "Job Posting Removed",
             payload,
             ct);
     }

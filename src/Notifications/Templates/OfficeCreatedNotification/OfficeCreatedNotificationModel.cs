@@ -7,5 +7,5 @@ public static class OfficeCreatedNotification
     public const string TemplateKey = nameof(OfficeCreatedNotification);
 }
 
-[NotificationTemplate(OfficeCreatedNotification.TemplateKey)]
-public sealed record OfficeCreatedNotificationModel(string OfficeName, string OfficeCode, string AdminEmail);
+[NotificationTemplate(OfficeCreatedNotification.TemplateKey, "تم إنشاء مكتب جديد", "New Recruitment Office Created")]
+public sealed record OfficeCreatedNotificationModel(string OfficeNameAr, string OfficeNameEn, string OfficeCode, string AdminEmail);

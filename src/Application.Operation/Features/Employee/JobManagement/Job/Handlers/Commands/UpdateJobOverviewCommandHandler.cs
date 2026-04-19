@@ -4,7 +4,6 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Constants;
 
 using Application.Operation.Common.Validations;

@@ -21,24 +21,26 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             _log.Error("User with id {UserId} not found for FinalizeReviewProfileEvent", @event.UserId);
             return;
         }
-        var isAccepted = @event.Status == UserProfileStatus.Approved;
         var payload = JsonSerializer.Serialize(new FinalizeReviewProfileModel(@event.Status));
+        var lang = user.PreferredLanguage;
         var notificationEmail = Notification.Create(
             NotificationChannel.Email,
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required - Your Profile Needs Updates",
+            null,
             null,null, 
-            payload);        
+            payload,
+            null, 3, lang);        
         var notificationInApp = Notification.Create(
             NotificationChannel.InApp,
             FinalizeReviewProfile.TemplateKey,
             @event.UserId,
             user.Email,
-            isAccepted ? "Your Profile Has Been Approved" :"Action Required - Your Profile Needs Updates",
+            null,
             null,null, 
-            payload);
+            payload,
+            null, 3, lang);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, cancellationToken);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationInApp, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);

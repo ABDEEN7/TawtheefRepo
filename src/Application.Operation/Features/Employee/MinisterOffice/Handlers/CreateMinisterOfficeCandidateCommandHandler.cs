@@ -15,12 +15,12 @@ using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr;
+using Tawtheef.Notifications.Templates.MinisterOfficeRegistration;
 
 namespace Application.Operation.Features.Employee.MinisterOffice.Handlers;
 
@@ -128,7 +128,7 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
             NationalityEn = moi.NationalityNameEnglish,
             NationalityAr = moi.NationalityNameArabic,
             NationalityCode = moi.NationalityCode,
-            IsFollowUpActive = true
+            IsFollowUpActive = true,
         };
 
         await candidateRepo.AddAsync(candidate, ct);
@@ -138,17 +138,17 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
             .AnyAsync(u => u.Profile != null && u.Profile.NationalNumber == normalizedQid, ct);
         if (!isUserExists)
         {
-            var smsBody = $"Dear {moi.EnglishFullName}, please log in to the Careers Platform and create your profile: {appConfiguration.Value.ClientUrl}";
+            var payload = JsonSerializer.Serialize(new MinisterOfficeRegistrationModel(moi.EnglishFullName, appConfiguration.Value.ClientUrl ?? string.Empty));
 
             var notification = Notification.Create(
                 NotificationChannel.Sms,
-                "MinisterOfficeRegistration",
+                MinisterOfficeRegistration.TemplateKey,
                 null,
                 phone,
-                "Minister Office Registration",
-                smsBody,
-                smsBody,
-                JsonSerializer.Serialize(new { Qid = MoiUtils.MaskQid(normalizedQid) }),
+                null,
+                null,
+                null,
+                payload,
                 $"minister-office-reg-{normalizedQid}-{DateTime.UtcNow:yyyyMMddHHmmss}");
 
             var notifRepo = uow.GetEntityRepository<Notification>();
@@ -232,27 +232,29 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
 
         foreach (var hr in hrManagers)
         {
-            var subject = $"New candidate added to the Minister's Office - {nameEn}";
-
             var emailNotification = Notification.Create(
                 NotificationChannel.Email,
                 MinisterOfficeNewCandidateHr.TemplateKey,
                 hr.Id,
                 hr.Email,
-                subject,
+                null,
                 null, null,
                 payload,
-                $"minister-office-hr-email-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}");
+                $"minister-office-hr-email-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
+                3,
+                hr.PreferredLanguage);
 
             var inAppNotification = Notification.Create(
                 NotificationChannel.InApp,
                 MinisterOfficeNewCandidateHr.TemplateKey,
                 hr.Id,
                 hr.Email,
-                subject,
+                null,
                 null, null,
                 payload,
-                $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}");
+                $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
+                3,
+                hr.PreferredLanguage);
 
             await notifRepo.AddAsync(emailNotification, ct);
             await notifRepo.AddAsync(inAppNotification, ct);

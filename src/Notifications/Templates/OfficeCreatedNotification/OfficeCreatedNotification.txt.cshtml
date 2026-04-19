@@ -8,31 +8,28 @@
     var support = b.SupportEmail;
     var website = b.WebsiteUrl;
 
-    // Model fields (adjust names to match your model)
-    var officeName = string.IsNullOrWhiteSpace(m.OfficeName) ? "New Office" : m.OfficeName;
+    var officeName = string.IsNullOrWhiteSpace(m.OfficeNameEn) ? "New Office" : m.OfficeNameEn;
     var officeCode = string.IsNullOrWhiteSpace(m.OfficeCode) ? "-" : m.OfficeCode;
-    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your Google account" : m.AdminEmail;
+    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your account" : m.AdminEmail;
 }
 
-@($"{product} - Office Created")
+Subject: @($"{product} - Recruitment Office Created")
 
-Dear Admin,
+Dear Administrator,
 
-The office @officeName has been successfully created in @product.
+A new recruitment office has been successfully created in @product.
 
 Office Details:
 - Office Name: @officeName
 - Office Code: @officeCode
-- Admin Login Email: @adminEmail
+- Administrator Email: @adminEmail
 
 Access Instructions:
-1) Connect using VPN in Qatar
-2) Open the portal: @website
-3) Login using your Google account with this email: @adminEmail
+1) Ensure you are connected to the corporate VPN (if required)
+2) Visit the platform: @website
+3) Login using your assigned email: @adminEmail
 
-If you need help, please contact support:
-@support
+If you need assistance, please contact support: @support
 
 Regards,
-@product} Team
-© @DateTime.UtcNow.Year @product. All rights reserved.
+The @product Team

@@ -7,5 +7,5 @@ public static class ChangeJobStatusNeedUpdateNotification
     public const string TemplateKey = nameof(ChangeJobStatusNeedUpdateNotification);
 }
 
-[NotificationTemplate(ChangeJobStatusNeedUpdateNotification.TemplateKey)]
+[NotificationTemplate(ChangeJobStatusNeedUpdateNotification.TemplateKey, "طلب الوظيفة بحاجة لتحديث", "Job Application Needs Updates")]
 public sealed record ChangeJobStatusNeedUpdateNotificationModel(string JobTitle);

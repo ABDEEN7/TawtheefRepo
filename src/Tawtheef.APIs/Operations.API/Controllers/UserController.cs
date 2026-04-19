@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Application.Operation.Features.Authenticator.Queries;
 using MediatR;
 using FluentResults;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Application.Features.UserSettings.Commands;
 using Tawtheef.Infrastructure.Extensions;
 
 namespace Operations.API.Controllers;
@@ -31,5 +32,15 @@ public class UserController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetOperationProfileQuery { UserId = UserId.Value, Language = language});
         return result.ToActionResult();
     }
+
+    [HttpPut("language")]
+    public async Task<IActionResult> UpdatePreferredLanguage([FromBody] UpdateLanguageRequest request)
+    {
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        var result = await mediator.Send(new UpdatePreferredLanguageCommand(UserId.Value, request.Language));
+        return result.ToActionResult();
+    }
 }
+
+public record UpdateLanguageRequest(string Language);
 

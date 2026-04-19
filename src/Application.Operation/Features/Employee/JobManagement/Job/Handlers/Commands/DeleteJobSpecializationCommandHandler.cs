@@ -2,7 +2,6 @@ using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.Job.Commands;
 using MediatR;
 using FluentResults;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Commands;

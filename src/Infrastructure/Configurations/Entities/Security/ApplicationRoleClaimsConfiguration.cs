@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Domain.Entities.Security;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Security;
 

@@ -3,7 +3,7 @@ Job Status Review Required
 
 Dear Colleague,
 
-A request has been submitted to change the status of "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)".
+A request has been submitted to change the status of @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
 
 Please sign in to @Model.Branding.ProductName to review the request and proceed with the appropriate action.
 

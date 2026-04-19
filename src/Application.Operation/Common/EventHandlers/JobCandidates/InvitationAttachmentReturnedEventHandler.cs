@@ -1,7 +1,6 @@
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Notification;
-using Tawtheef.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Entities.Users;
 using System.Text.Json;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Events.Operation;
+using Tawtheef.Notifications.Templates.InvitationAttachmentReturned;
 
 namespace Application.Operation.Common.EventHandlers.JobCandidates;
 
@@ -39,24 +39,28 @@ public class InvitationAttachmentReturnedEventHandler(
         {
             var emailNotif = Notification.Create(
                 NotificationChannel.Email,
-                "InvitationAttachmentReturned",
+                InvitationAttachmentReturned.TemplateKey,
                 user.Id,
                 user.Email,
-                "Action Required: Job Application Attachment Returned",
-                null, null,
-                payload);
+                null,
+                null,
+                null,
+                payload,
+                null, 3, user.PreferredLanguage);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(emailNotif, cancellationToken);
         }
 
         // In-App
         var inAppNotif = Notification.Create(
                 NotificationChannel.InApp,
-                "InvitationAttachmentReturned",
+                InvitationAttachmentReturned.TemplateKey,
                 user.Id,
                 user.Email,
-                "Action Required: Job Application Attachment Returned",
-                null, null,
-                payload);
+                null,
+                null,
+                null,
+                payload,
+                null, 3, user.PreferredLanguage);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(inAppNotif, cancellationToken);
 
 
@@ -65,12 +69,14 @@ public class InvitationAttachmentReturnedEventHandler(
         {
             var smsNotif = Notification.Create(
                 NotificationChannel.Sms,
-                "InvitationAttachmentReturned",
+                InvitationAttachmentReturned.TemplateKey,
                 user.Id,
                 user.PhoneNumber,
-                "Attachment Returned",
-                null, null,
-                payload);
+                null,
+                null,
+                null,
+                payload,
+                null, 3, user.PreferredLanguage);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(smsNotif, cancellationToken);
         }
 

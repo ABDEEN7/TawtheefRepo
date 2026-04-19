@@ -5,7 +5,6 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;

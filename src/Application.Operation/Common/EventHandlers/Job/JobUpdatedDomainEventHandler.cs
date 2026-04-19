@@ -23,7 +23,6 @@ public sealed class JobUpdatedDomainEventHandler(
             unitOfWork,
             userManager,
             JobUpdatedNotification.TemplateKey,
-            "Job Posting Updated",
             payload,
             ct);
     }

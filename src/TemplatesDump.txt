@@ -1,0 +1,2669 @@
+﻿C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
+طھظ…طھ ط§ظ„ظ…ظˆط§ظپظ‚ط© ط¹ظ„ظ‰ ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط©
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+
+طھظ…طھ ط§ظ„ظ…ظˆط§ظپظ‚ط© ط¹ظ„ظ‰ ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط© "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط©" : Model.Model.JobTitle)".
+
+ظٹظ…ظƒظ†ظƒ ط§ظ„ط¢ظ† ط§ظ„ظ…طھط§ط¨ط¹ط© ظپظٹ ظ†ط´ط± ط§ظ„ظˆط¸ظٹظپط© ط£ظˆ ط§طھط®ط§ط° ط§ظ„ط®ط·ظˆط§طھ ط§ظ„طھط§ظ„ظٹط© ظپظٹ @Model.Branding.ProductName.
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Posting Approved</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Approved</p>
+      <h1 class="title">Your job posting has been approved</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The job posting <strong>@jobTitle</strong> has been approved.
+      </p>
+      <p class="text">
+        You may proceed with publishing the role or taking the next steps in @product.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">View in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusApprovedNotification\ChangeJobStatusApprovedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
+Job Posting Approved
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been approved.
+
+You may proceed with publishing the role or taking the next steps in @Model.Branding.ProductName.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNeedUpdateNotification.ChangeJobStatusNeedUpdateNotificationModel>
+ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط© ط¨ط­ط§ط¬ط© ظ„طھط­ط¯ظٹط«
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+
+ظٹطھط·ظ„ط¨ ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط© "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط©" : Model.Model.JobTitle)" طھط­ط¯ظٹط«ط§طھ ط¥ط¶ط§ظپظٹط© ظ‚ط¨ظ„ ط§ظ„ظ…طھط§ط¨ط¹ط©.
+
+ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ط§ظ„ظ…ظ„ط§ط­ط¸ط§طھ ط¹ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظˆط¥ط¬ط±ط§ط، ط§ظ„طھط¹ط¯ظٹظ„ط§طھ ط§ظ„ظ…ط·ظ„ظˆط¨ط©.
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNeedUpdateNotification.ChangeJobStatusNeedUpdateNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Posting Needs Updates</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Updates required</p>
+      <h1 class="title">Updates are required for your job posting</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The job posting <strong>@jobTitle</strong> requires updates before it can be approved.
+      </p>
+      <p class="text">
+        Please sign in to @product, review the requested changes, and resubmit the posting.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Update in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusNeedUpdateNotification\ChangeJobStatusNeedUpdateNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNeedUpdateNotification.ChangeJobStatusNeedUpdateNotificationModel>
+Job Posting Requires Updates
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" requires updates before it can be approved.
+
+Please sign in to @Model.Branding.ProductName, review the requested changes, and resubmit the posting.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNotification.ChangeJobStatusNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Status Review Required</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Review required</p>
+      <h1 class="title">Job status change requires review</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        A request has been submitted to change the status of <strong>@jobTitle</strong>.
+      </p>
+      <p class="text">
+        Please sign in to @product to review the request and proceed with the appropriate action.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Review request in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusNotification\ChangeJobStatusNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNotification.ChangeJobStatusNotificationModel>
+Job Status Review Required
+
+Dear Colleague,
+
+A request has been submitted to change the status of "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)".
+
+Please sign in to @Model.Branding.ProductName to review the request and proceed with the appropriate action.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusRejectedNotification.ChangeJobStatusRejectedNotificationModel>
+طھظ… ط±ظپط¶ ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط©
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+
+طھظ… ط±ظپط¶ ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط© "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "ط·ظ„ط¨ ط§ظ„ظˆط¸ظٹظپط©" : Model.Model.JobTitle)".
+
+ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ط§ظ„ظ…ظ†طµط© ظ„ظ„ط§ط·ظ„ط§ط¹ ط¹ظ„ظ‰ ط§ظ„ط£ط³ط¨ط§ط¨ ط£ظˆ ط§ظ„ظ…ظ„ط§ط­ط¸ط§طھ.
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusRejectedNotification.ChangeJobStatusRejectedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Posting Rejected</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Rejected</p>
+      <h1 class="title">Your job posting was not approved</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The request for <strong>@jobTitle</strong> has been rejected.
+      </p>
+      <p class="text">
+        Please review the feedback in @product, update the posting as needed, and resubmit.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Review feedback in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ChangeJobStatusRejectedNotification\ChangeJobStatusRejectedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusRejectedNotification.ChangeJobStatusRejectedNotificationModel>
+Job Posting Rejected
+
+Dear Colleague,
+
+The request for "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been rejected.
+
+Please review the feedback in @Model.Branding.ProductName, update the posting as needed, and resubmit.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ContactVerificationSent\ContactVerificationSent.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ContactVerificationSent.ContactVerificationSentModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    var verficationCode = m.Code;
+    var logo = b.LogoUrl;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط±ظ…ط² ط§ظ„طھط­ظ‚ظ‚</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 14px; overflow: hidden; border: 1px solid #efe7eb; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .brand-bar { background: @primary; height: 8px; }
+        .content { padding: 40px; text-align: center; }
+        .h2 { font-size: 24px; color: #111827; margin-bottom: 20px; font-weight: 800; }
+        .text { font-size: 16px; line-height: 24px; color: #374151; margin-bottom: 30px; }
+        .code-box { font-size: 32px; letter-spacing: 8px; color: @primary; background: #fbf6f8; border: 2px solid #efe7eb; padding: 15px 25px; border-radius: 10px; display: inline-block; font-weight: 700; margin: 20px 0; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="140" style="margin-bottom: 30px;">
+            }
+            <h2 class="h2">ط±ظ…ط² ط§ظ„طھط­ظ‚ظ‚ ظ…ظ† ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ</h2>
+            <p class="text">
+                ظٹط±ط¬ظ‰ ط§ط³طھط®ط¯ط§ظ… ط§ظ„ط±ظ…ط² ط§ظ„طھط§ظ„ظٹ ظ„طھط£ظƒظٹط¯ ط¹ظ†ظˆط§ظ† ط¨ط±ظٹط¯ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظپظٹ ظ…ظ†طµط© @product:
+            </p>
+            <div class="code-box">@verficationCode</div>
+            <p class="text">
+                ط¥ط°ط§ ظ„ظ… طھط·ظ„ط¨ ظ‡ط°ط§ ط§ظ„ط±ظ…ط²طŒ ظٹط±ط¬ظ‰ طھط¬ط§ظ‡ظ„ ظ‡ط°ظ‡ ط§ظ„ط±ط³ط§ظ„ط©.
+            </p>
+        </div>
+        <div class="footer">
+            <p>طھظ… ط§ظ„ط¥ط±ط³ط§ظ„ ط¨ظˆط§ط³ط·ط© ظ…ظ†طµط© @product</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ContactVerificationSent\ContactVerificationSent.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ContactVerificationSent.ContactVerificationSentModel>
+ط±ظ…ط² ط§ظ„طھط­ظ‚ظ‚ ظ…ظ† ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ
+
+ظٹط±ط¬ظ‰ ط§ط³طھط®ط¯ط§ظ… ط§ظ„ط±ظ…ط² ط§ظ„طھط§ظ„ظٹ ظ„طھط£ظƒظٹط¯ ط¨ط±ظٹط¯ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظپظٹ @Model.Branding.ProductName:
+@Model.Model.Code
+
+ط¥ط°ط§ ظ„ظ… طھط·ظ„ط¨ ظ‡ط°ط§ ط§ظ„ط±ظ…ط²طŒ ظٹط±ط¬ظ‰ طھط¬ط§ظ‡ظ„ ظ‡ط°ظ‡ ط§ظ„ط±ط³ط§ظ„ط©.
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ContactVerificationSent\ContactVerificationSent.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ContactVerificationSent.ContactVerificationSentModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;     // should be #881038 to match the logo
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    var verficationCode = m.Code;
+    var logo = b.LogoUrl;          // must be a real https URL for email clients
+}
+
+<!DOCTYPE  html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Verification Code</title>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+
+  <style>
+    /* Base resets */
+    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-collapse:collapse !important; }
+    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+    a { text-decoration:none; }
+
+    /* Page background */
+    .email-wrap { width:100%; background:#f7f4f6; }
+
+    /* Card container */
+    .container {
+      width:100%;
+      max-width:600px;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid #efe7eb;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Brand strip */
+    .brand-bar { background:@primary; height:8px; line-height:8px; font-size:0; }
+
+    /* Spacing helpers */
+    .px { padding-left:24px; padding-right:24px; }
+    .py { padding-top:24px; padding-bottom:24px; }
+
+    /* Typography */
+    .h2 {
+      font-family: Arial, sans-serif;
+      font-size:22px;
+      line-height:28px;
+      color:#111827;
+      margin:0 0 8px 0;
+      font-weight:800;
+    }
+    .text {
+      font-family: Arial, sans-serif;
+      font-size:16px;
+      line-height:24px;
+      color:#111827;
+      margin:0 0 16px 0;
+    }
+    .muted {
+      font-family: Arial, sans-serif;
+      font-size:12px;
+      line-height:18px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .accent { color:@primary; }
+    .divider { height:1px; background:#efe7eb; }
+
+    /* OTP code box */
+    .code-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:22px;
+      letter-spacing:6px;
+      color:@primary;
+      background:#fbf6f8;
+      border:1px solid #efe7eb;
+      padding:14px 16px;
+      border-radius:10px;
+      display:inline-block;
+      font-weight:700;
+    }
+
+    /* Preheader */
+    .preheader { display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
+
+    /* Mobile */
+    @@media (max-width: 600px) {
+      .px { padding-left:16px !important; padding-right:16px !important; }
+      .py { padding-top:20px !important; padding-bottom:20px !important; }
+      .h2 { font-size:20px !important; line-height:26px !important; }
+      .text { font-size:15px !important; line-height:22px !important; }
+      .code-box { font-size:20px !important; letter-spacing:5px !important; }
+    }
+
+    /* Dark mode */
+    @@media (prefers-color-scheme: dark) {
+      .email-wrap { background:#0b0b0b !important; }
+      .container { background:#111214 !important; border-color:#2a2a2a !important; }
+      .h2 { color:#f3f4f6 !important; }
+      .text { color:#e5e7eb !important; }
+      .muted { color:#9ca3af !important; }
+      .divider { background:#2a2a2a !important; }
+      .code-box { background:#17181a !important; border-color:#2a2a2a !important; }
+    }
+  </style>
+</head>
+
+<body class="email-wrap" style="background:#f7f4f6; margin:0; padding:20px;">
+  <!-- Preheader text -->
+  <div class="preheader">
+    Your verification code is: @verficationCode
+  </div>
+
+  <table role="presentation"  style="background:#f7f4f6;">
+    <tr>
+      <td  style="padding:20px;">
+        <table role="presentation" class="container"  >
+
+          <!-- Brand bar -->
+          <tr>
+            <td class="brand-bar" aria-hidden="true">&nbsp;</td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td class="px" style="padding-top:18px; padding-bottom:12px;">
+              <table role="presentation" >
+                <tr>
+                  <td  style="vertical-align:middle;">
+                    @if (!string.IsNullOrWhiteSpace(logo))
+                    {
+                      <a href="@website" style="display:inline-block;" target="_blank">
+                        <img src="@logo" alt="@product" width="140" style="max-width:140px; height:auto;">
+                      </a>
+                    }
+                    else
+                    {
+                      <div style="font-family:Arial, sans-serif; font-weight:800; font-size:18px; color:@primary;">
+                        @product
+                      </div>
+                    }
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td class="px py">
+              <h2 class="h2">Email verification code</h2>
+
+              <p class="text">
+                Please use the following code to confirm your email address for @product:
+              </p>
+
+              <div class="code-box">@verficationCode</div>
+
+              <p class="text" style="margin-top:16px; margin-bottom:0;">
+                If you did not request this code, please disregard this message.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Help / Support -->
+          @* <tr>
+            <td class="px py" style="padding-top:18px; padding-bottom:12px;">
+              <p class="muted">
+                Need help? Contact us at
+                <a href="mailto:@support" style="color:@primary; font-weight:700;" target="_blank">@support</a>.
+              </p>
+            </td>
+          </tr> *@
+
+          <!-- Footer -->
+          <tr>
+            <td class="px" style="padding-bottom:22px;">
+              <p class="muted">
+                Sent by <span class="accent" style="color:@primary; font-weight:700;">@product</span>
+              </p>
+              <p class="muted" style="margin-top:6px;">
+                © @(DateTime.UtcNow.Year) @product. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ContactVerificationSent\ContactVerificationSent.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ContactVerificationSent.ContactVerificationSentModel>
+Email Verification Code
+
+Please use the following code to confirm your email address for @Model.Branding.ProductName:
+@Model.Model.Code
+
+If you did not request this code, please disregard this message.
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\FinalizeReviewProfile\FinalizeReviewProfile.ar.txt.cshtml
+---
+@using Tawtheef.Domain.Entities.Users
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.FinalizeReviewProfile.FinalizeReviewProfileModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var isAccepted = m.Status == UserProfileStatus.Approved;
+    
+    string? notes = null; // Mapping logic usually goes here in actual template
+    IEnumerable<string>? reasons = null;
+    var profileUrl = website;
+}
+
+@if (isAccepted)
+{
+    @:ط§ظ„ط¹ظ†ظˆط§ظ†: طھظ…طھ ط§ظ„ظ…ظˆط§ظپظ‚ط© ط¹ظ„ظ‰ ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ - @product
+    @:
+    @:ظ…ط±ط­ط¨ط§ظ‹طŒ
+    @:
+    @:ظٹط³ط±ظ†ط§ ط¥ط¨ظ„ط§ط؛ظƒظ… ط¨ط£ظ†ظ‡ طھظ…طھ ط§ظ„ظ…ظˆط§ظپظ‚ط© ط¹ظ„ظ‰ ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ ظپظٹ ظ…ظ†طµط© @product.
+    @:
+    @:ظٹظ…ظƒظ†ظƒظ… ط§ظ„ط¢ظ† ط§ظ„ط§ط³طھظ…ط±ط§ط± ظپظٹ ط§ط³طھط®ط¯ط§ظ… ط§ظ„ظ…ظ†طµط© ظˆط§ظ„ظˆطµظˆظ„ ط¥ظ„ظ‰ ظƒط§ظپط© ط§ظ„ظ…ظٹط²ط§طھ ط§ظ„ظ…طھط§ط­ط©.
+    @:
+    @:ط±ط§ط¨ط· ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ:
+    @:@profileUrl
+    @:
+    @:ط¥ط°ط§ ظƒط§ظ† ظ„ط¯ظٹظƒظ… ط£ظٹ ط§ط³طھظپط³ط§ط±ط§طھطŒ ظٹط³ط¹ط¯ظ†ط§ طھظˆط§طµظ„ظƒظ… ظ…ط¹ظ†ط§ ط¹ط¨ط±:
+    @:@support
+    @:
+    @:ظ…ط¹ ط£ط·ظٹط¨ ط§ظ„طھط­ظٹط§طھطŒ
+    @:ظپط±ظٹظ‚ ط¹ظ…ظ„ @product
+    @:
+    @:آ© @(DateTime.UtcNow.Year) @product. ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.
+}
+else
+{
+    @:ط§ظ„ط¹ظ†ظˆط§ظ†: ظ…ط·ظ„ظˆط¨ ط¥ط¬ط±ط§ط، â€“ ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ ط¨ط­ط§ط¬ط© ظ„طھط­ط¯ظٹط«ط§طھ - @product
+    @:
+    @:ظ…ط±ط­ط¨ط§ظ‹طŒ
+    @:
+    @:طھظ…طھ ط¥ط¹ط§ط¯ط© ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ ظ„ط¥ط¬ط±ط§ط، ط¨ط¹ط¶ ط§ظ„طھط­ط¯ظٹط«ط§طھ ط§ظ„ظ…ط·ظ„ظˆط¨ط©.
+    @:ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ط§ظ„ظ…ظ„ط§ط­ط¸ط§طھ ط£ط¯ظ†ط§ظ‡طŒ ظˆط¥ط¬ط±ط§ط، ط§ظ„طھطµط­ظٹط­ط§طھ ط§ظ„ظ„ط§ط²ظ…ط©طŒ ط«ظ… ط¥ط¹ط§ط¯ط© طھظ‚ط¯ظٹظ… ط§ظ„ظ…ظ„ظپ.
+    @:
+    @if (!string.IsNullOrWhiteSpace(notes))
+    {
+        @:ظ…ظ„ط§ط­ط¸ط§طھ ط§ظ„ظ…ط±ط§ط¬ط¹:
+        @:@notes
+        @:
+    }
+    @:ظٹط±ط¬ظ‰ طھط­ط¯ظٹط« ظ…ظ„ظپظƒظ… ط¹ط¨ط± ط§ظ„ط±ط§ط¨ط· ط§ظ„طھط§ظ„ظٹ:
+    @:@profileUrl
+    @:
+    @:ط¥ط°ط§ ظƒظ†طھظ… ط¨ط­ط§ط¬ط© ظ„ظ„ظ…ط³ط§ط¹ط¯ط©طŒ ظٹط³ط¹ط¯ظ†ط§ طھظˆط§طµظ„ظƒظ… ط¹ط¨ط±:
+    @:@support
+    @:
+    @:ظ…ط¹ ط£ط·ظٹط¨ ط§ظ„طھط­ظٹط§طھطŒ
+    @:ظپط±ظٹظ‚ ط¹ظ…ظ„ @product
+    @:
+    @:آ© @(DateTime.UtcNow.Year) @product. ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.
+}
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\FinalizeReviewProfile\FinalizeReviewProfile.html.cshtml
+---
+@using Tawtheef.Domain.Entities.Users
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.FinalizeReviewProfile.FinalizeReviewProfileModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;     // should be #881038 to match the logo
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    // ---- Profile review fields (adjust to your actual model) ----
+    // Expected: "Accepted" or "Returned" (or use an enum)
+    var isAccepted = m.Status == UserProfileStatus.Approved;
+
+    // Optional: a single note string or list of reasons
+    string? notes = null; // string? (optional)
+    IEnumerable<string>? reasons = null; // IEnumerable<string>? (optional)
+
+    // Optional: link to profile/review page
+    var profileUrl = website;
+
+    var logo = b.LogoUrl;          // must be a real https URL for email clients
+
+    // Text based on status
+    var title = isAccepted ? "Your profile has been approved" : "Your profile requires updates";
+    var preheader = isAccepted
+        ? $"Your {product} profile has been approved."
+        : $"Your {product} profile was returned for updates. Please review the notes.";
+    var badgeText = isAccepted ? "Approved" : "Action Required";
+    var badgeBg = isAccepted ? "#ECFDF3" : "#FFF7ED";
+    var badgeTextColor = isAccepted ? "#027A48" : "#9A3412";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Profile Review Result</title>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+
+  <style>
+    /* Base resets */
+    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-collapse:collapse !important; }
+    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+    a { text-decoration:none; }
+
+    /* Page background */
+    .email-wrap { width:100%; background:#f7f4f6; }
+
+    /* Card container */
+    .container {
+      width:100%;
+      max-width:600px;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid #efe7eb;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Brand strip */
+    .brand-bar { background:@primary; height:8px; line-height:8px; font-size:0; }
+
+    /* Spacing helpers */
+    .px { padding-left:24px; padding-right:24px; }
+    .py { padding-top:24px; padding-bottom:24px; }
+
+    /* Typography */
+    .h2 {
+      font-family: Arial, sans-serif;
+      font-size:22px;
+      line-height:28px;
+      color:#111827;
+      margin:0 0 8px 0;
+      font-weight:800;
+    }
+    .text {
+      font-family: Arial, sans-serif;
+      font-size:16px;
+      line-height:24px;
+      color:#111827;
+      margin:0 0 16px 0;
+    }
+    .muted {
+      font-family: Arial, sans-serif;
+      font-size:12px;
+      line-height:18px;
+      color:#6B7280;
+      margin:0;
+    }
+
+    .accent { color:@primary; }
+    .divider { height:1px; background:#efe7eb; }
+
+    /* Status badge */
+    .badge {
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-family: Arial, sans-serif;
+      font-size:12px;
+      font-weight:800;
+      background:@badgeBg;
+      color:@badgeTextColor;
+      border:1px solid rgba(17,24,39,0.06);
+    }
+
+    /* Notes box */
+    .notes-box{
+      background:#fbf6f8;
+      border:1px solid #efe7eb;
+      padding:14px 16px;
+      border-radius:10px;
+    }
+    .notes-title{
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      font-weight:800;
+      color:#111827;
+      margin:0 0 8px 0;
+    }
+    .notes-item{
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      line-height:20px;
+      color:#111827;
+      margin:0 0 6px 0;
+    }
+
+    /* Button */
+    .btn {
+      display:inline-block;
+      background:@primary;
+      color:#ffffff !important;
+      padding:12px 16px;
+      border-radius:10px;
+      font-family: Arial, sans-serif;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    /* Preheader */
+    .preheader { display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
+
+    /* Mobile */
+    @@media (max-width: 600px) {
+      .px { padding-left:16px !important; padding-right:16px !important; }
+      .py { padding-top:20px !important; padding-bottom:20px !important; }
+      .h2 { font-size:20px !important; line-height:26px !important; }
+      .text { font-size:15px !important; line-height:22px !important; }
+    }
+
+    /* Dark mode */
+    @@media (prefers-color-scheme: dark) {
+      .email-wrap { background:#0b0b0b !important; }
+      .container { background:#111214 !important; border-color:#2a2a2a !important; }
+      .h2 { color:#f3f4f6 !important; }
+      .text { color:#e5e7eb !important; }
+      .muted { color:#9ca3af !important; }
+      .divider { background:#2a2a2a !important; }
+      .notes-box { background:#17181a !important; border-color:#2a2a2a !important; }
+      .notes-title, .notes-item { color:#e5e7eb !important; }
+    }
+  </style>
+</head>
+
+<body class="email-wrap" style="background:#f7f4f6; margin:0; padding:20px;">
+  <!-- Preheader text -->
+  <div class="preheader">
+    @preheader
+  </div>
+
+  <table role="presentation" style="background:#f7f4f6;">
+    <tr>
+      <td style="padding:20px;">
+        <table role="presentation" class="container">
+
+          <!-- Brand bar -->
+          <tr>
+            <td class="brand-bar" aria-hidden="true">&nbsp;</td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td class="px" style="padding-top:18px; padding-bottom:12px;">
+              <table role="presentation" style="width:100%;">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    @if (!string.IsNullOrWhiteSpace(logo))
+                    {
+                      <a href="@website" style="display:inline-block;" target="_blank">
+                        <img src="@logo" alt="@product" width="140" style="max-width:140px; height:auto;">
+                      </a>
+                    }
+                    else
+                    {
+                      <div style="font-family:Arial, sans-serif; font-weight:800; font-size:18px; color:@primary;">
+                        @product
+                      </div>
+                    }
+                  </td>
+                  <td style="vertical-align:middle; text-align:right;">
+                    <span class="badge">@badgeText</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td class="px py">
+              <h2 class="h2">@title</h2>
+
+              @if (isAccepted)
+              {
+                <p class="text">
+                  Weâ€™re pleased to inform you that your profile has been <strong>approved</strong> on
+                  <span class="accent" style="color:@primary; font-weight:800;">@product</span>.
+                </p>
+
+                <p class="text" style="margin-bottom:18px;">
+                  You can now continue using the platform normally.
+                </p>
+              }
+              else
+              {
+                <p class="text">
+                  Your profile has been <strong>returned for updates</strong>.
+                  Please review the notes below, make the required changes, then resubmit your profile.
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
+                {
+                  <div class="notes-box" style="margin-top:10px; margin-bottom:16px;">
+                    <div class="notes-title">Review Notes</div>
+
+                    @if (!string.IsNullOrWhiteSpace(notes))
+                    {
+                      <p class="notes-item" style="margin-bottom:0;">@notes</p>
+                    }
+
+                    @if (reasons != null && reasons.Any())
+                    {
+                      <ul style="padding-left:18px; margin:10px 0 0 0;">
+                        @foreach (var r in reasons)
+                        {
+                          if (!string.IsNullOrWhiteSpace(r))
+                          {
+                            <li class="notes-item">@r</li>
+                          }
+                        }
+                      </ul>
+                    }
+                  </div>
+                }
+              }
+
+              @if (profileUrl != null)
+              {
+                  <a href="@profileUrl" class="btn" target="_blank">Open Profile</a>
+              }
+
+              <p class="text" style="margin-top:16px; margin-bottom:0;">
+                If you need assistance, contact our support team and weâ€™ll be happy to help.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="px">
+              <div class="divider"></div>
+            </td>
+          </tr>
+
+          <!-- Help / Support -->
+          @* <tr>
+            <td class="px py" style="padding-top:18px; padding-bottom:12px;">
+              <p class="muted">
+                Need help? Contact us at
+                <a href="mailto:@support" style="color:@primary; font-weight:700;" target="_blank">@support</a>.
+              </p>
+            </td>
+          </tr> *@
+
+          <!-- Footer -->
+          <tr>
+            <td class="px" style="padding-bottom:22px;">
+              <p class="muted">
+                Sent by <span class="accent" style="color:@primary; font-weight:700;">@product</span>
+              </p>
+              <p class="muted" style="margin-top:6px;">
+                آ© @(DateTime.UtcNow.Year) @product. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\FinalizeReviewProfile\FinalizeReviewProfile.txt.cshtml
+---
+@using Tawtheef.Domain.Entities.Users
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.FinalizeReviewProfile.FinalizeReviewProfileModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var isAccepted = m.Status == UserProfileStatus.Approved;
+    
+    string? notes = null;
+    IEnumerable<string>? reasons = null;
+    var profileUrl = website;
+}
+
+@if (isAccepted)
+{
+    @:Subject: Your Profile Has Been Approved - @product
+    @:
+    @:Hello,
+    @:
+    @:Weâ€™re pleased to inform you that your profile has been APPROVED on @product.
+    @:
+    @:You can now continue using the platform and access all available features.
+    @:
+    @:Access your profile here:
+    @:@profileUrl
+    @:
+    @:If you have any questions, feel free to contact us at:
+    @:@support
+    @:
+    @:Best regards,
+    @:@product Team
+    @:
+    @:آ© @(DateTime.UtcNow.Year) @product. All rights reserved.
+}
+else
+{
+    @:Subject: Action Required â€“ Your Profile Needs Updates - @product
+    @:
+    @:Hello,
+    @:
+    @:Your profile has been returned for updates.
+    @:Please review the notes below, make the necessary corrections, and resubmit your profile.
+    @:
+    @if (!string.IsNullOrWhiteSpace(notes))
+    {
+        @:Review Notes:
+        @:@notes
+        @:
+    }
+    @if (reasons != null && reasons.Any())
+    {
+        @:Detailed Notes:
+        @foreach (var r in reasons)
+        {
+            @: - @r
+        }
+        @:
+    }
+    @:Update your profile here:
+    @:@profileUrl
+    @:
+    @:If you need assistance, contact us at:
+    @:@support
+    @:
+    @:Best regards,
+    @:@product Team
+    @:
+    @:آ© @(DateTime.UtcNow.Year) @product. All rights reserved.
+}
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InvitationAttachmentReturned.InvitationAttachmentReturnedModel>
+ط¥ط¹ط§ط¯ط© ط§ظ„ظ…ط±ظپظ‚ ظ„ظ„ظ…ط±ط§ط¬ط¹ط©
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط±ط´ط­طŒ
+
+طھظ…طھ ط¥ط¹ط§ط¯ط© ط§ظ„ظ…ط±ظپظ‚ "@Model.Model.AttachmentTitle" ظ„ظ„ظ…ط±ط§ط¬ط¹ط© ظ…ظ† ظ‚ط¨ظ„ ط§ظ„ط³ظ„ط·ط© ط§ظ„ظ…ط®طھطµط©.
+
+ظ…ظ„ط§ط­ط¸ط© ط§ظ„ظ…ط±ط§ط¬ط¹: @Model.Model.ReviewNote
+
+ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظˆط¥ط¬ط±ط§ط، ط§ظ„طھط¹ط¯ظٹظ„ط§طھ ط§ظ„ظ…ط·ظ„ظˆط¨ط©.
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InvitationAttachmentReturned.InvitationAttachmentReturnedModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Attachment Returned</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:#d97706; background:#fffbeb; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .notice { padding:14px; background:#f9fafb; border-radius:8px; border-left:4px solid #d97706; margin-bottom:16px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Action Required</p>
+      <h1 class="title">Attention required for your application</h1>
+      <p class="text">Dear Candidate,</p>
+      <p class="text">
+        One of the attachments submitted for your job application has been returned for correction. 
+      </p>
+      <div class="notice">
+        <p class="text" style="margin-bottom:4px; font-weight:bold;">Attachment:</p>
+        <p class="text" style="font-size:14px; color:#6b7280;">@m.AttachmentTitle</p>
+        <p class="text" style="margin-top:8px; margin-bottom:4px; font-weight:bold;">Review Note from HR:</p>
+        <p class="text" style="font-size:14px; color:#6b7280;">@(string.IsNullOrWhiteSpace(m.ReviewNote) ? "Please refer to the recruitment portal for details." : m.ReviewNote)</p>
+      </div>
+      <p class="text">
+        Please sign in to the recruitment portal to re-upload the corrected document and re-submit your application.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Access Recruitment Portal</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Best regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\InvitationAttachmentReturned\InvitationAttachmentReturned.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InvitationAttachmentReturned.InvitationAttachmentReturnedModel>
+Action Required: Attachment Returned
+
+Dear Candidate,
+
+One of your submitted attachments for your job application requires your attention.
+
+Attachment: @Model.Model.AttachmentTitle
+Review Note: @Model.Model.ReviewNote
+
+Please sign in to the recruitment portal to re-upload the corrected document and re-submit your application.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Best regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط¯ط¹ظˆط© ظ„ظ„طھظ‚ط¯ظٹظ…</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #efe7eb; }
+        .brand-bar { background: @primary; height: 10px; }
+        .content { padding: 40px; }
+        .h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #881038; display: inline-block; padding-bottom: 5px; }
+        .text { font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 25px; }
+        .btn { display: inline-block; background-color: @primary; color: #ffffff !important; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-top: 20px; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="130" style="margin-bottom: 30px;">
+            }
+            <h2 class="h2">ط¯ط¹ظˆط© ظ„ظ„طھظ‚ط¯ظٹظ… ط¹ظ„ظ‰ ظˆط¸ظٹظپط©</h2>
+            <p class="text">
+                ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط±ط´ط­طŒ
+                <br><br>
+                ظٹط³ط±ظ†ط§ ط¥ط¨ظ„ط§ط؛ظƒظ… ط¨ط£ظ†ظ‡ طھظ…طھ ط¯ط¹ظˆطھظƒظ… ظ…ظ† ظ‚ط¨ظ„ <strong>ظ…ظ†طµط© @product</strong> ظ„ظ„طھظ‚ط¯ظٹظ… ط¹ظ„ظ‰ ط§ظ„ظˆط¸ظٹظپط© ط§ظ„طھط§ظ„ظٹط©:
+                <br>
+                <strong>"@m.JobTitle"</strong>
+            </p>
+            <p class="text">
+                ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظ„ظ…ط±ط§ط¬ط¹ط© طھظپط§طµظٹظ„ ط§ظ„ظˆط¸ظٹظپط© ظˆطھظ‚ط¯ظٹظ… ط·ظ„ط¨ظƒظ… ط¨ط´ظƒظ„ ط±ط³ظ…ظٹ.
+            </p>
+            <a href="@website" class="btn">ط¹ط±ط¶ ط§ظ„ظˆط¸ظٹظپط© ظˆط§ظ„طھظ‚ط¯ظٹظ…</a>
+        </div>
+        <div class="footer">
+            <p>ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ ظ…ظ†طµط© @product</p>
+            <p>ظ„ط²ظٹط§ط±ط© ط§ظ„ظ…ظ†طµط©: @website</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
+ط¯ط¹ظˆط© ظ„طھظ‚ط¯ظٹظ… ط·ظ„ط¨ ظ„ظˆط¸ظٹظپط©
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط±ط´ط­طŒ
+
+طھظ…طھ ط¯ط¹ظˆطھظƒظ… ظ…ظ† ظ‚ط¨ظ„ @Model.Branding.ProductName ظ„ظ„طھظ‚ط¯ظٹظ… ط¹ظ„ظ‰ ظˆط¸ظٹظپط©: "@Model.Model.JobTitle".
+
+ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظ„ظ…ط±ط§ط¬ط¹ط© طھظپط§طµظٹظ„ ط§ظ„ظˆط¸ظٹظپط© ظˆطھظ‚ط¯ظٹظ… ط·ظ„ط¨ظƒظ….
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "a role on our platform" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Invitation</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Invitation to apply</p>
+      <h1 class="title">You are invited to apply</h1>
+      <p class="text">Dear Candidate,</p>
+      <p class="text">
+        You have been invited to apply for <strong>@jobTitle</strong> on @product.
+      </p>
+      <p class="text">
+        Please sign in to review the opportunity and submit your application.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">View invitation</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Best regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCandidateInvitationSent\JobCandidateInvitationSent.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
+Job Invitation
+
+Dear Candidate,
+
+You have been invited to apply for "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "a role on our platform" : Model.Model.JobTitle)" on @Model.Branding.ProductName.
+
+Please sign in to review the opportunity and submit your application.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Best regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCreatedNotification\JobCreatedNotification.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط¥ط´ط¹ط§ط± ظˆط¸ظٹظپط© ط¬ط¯ظٹط¯ط©</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #efe7eb; }
+        .brand-bar { background: @primary; height: 10px; }
+        .content { padding: 40px; }
+        .h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #881038; display: inline-block; padding-bottom: 5px; }
+        .text { font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 25px; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            <h2 class="h2">طھظ… ط¥ظ†ط´ط§ط، ظˆط¸ظٹظپط© ط¬ط¯ظٹط¯ط©</h2>
+            <p class="text">
+                ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+                <br><br>
+                طھظ… ط¥ظ†ط´ط§ط، ط¹ط±ط¶ ظˆط¸ظٹظپظٹ ط¬ط¯ظٹط¯ ظپظٹ ظ†ط¸ط§ظ… <strong>@product</strong> ط¨ط§ظ†طھط¸ط§ط± ط§ظ„ظ…ط±ط§ط¬ط¹ط© ظˆط§ظ„ط§ط¹طھظ…ط§ط¯.
+                <br><br>
+                <strong>ظ…ط³ظ…ظ‰ ط§ظ„ظˆط¸ظٹظپط©:</strong> "@m.JobTitle"
+            </p>
+            <p class="text">
+                ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظ„ظ…ط±ط§ط¬ط¹ط© ط§ظ„ط·ظ„ط¨ ظˆط§طھط®ط§ط° ط§ظ„ط¥ط¬ط±ط§ط، ط§ظ„ظ„ط§ط²ظ….
+                <br>
+                ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: <a href="@website">@website</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ ظ…ظ†طµط© @product</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCreatedNotification\JobCreatedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„طŒ طھظ… ط¥ظ†ط´ط§ط، ط¹ط±ط¶ ظˆط¸ظٹظپظٹ ط¬ط¯ظٹط¯ "@Model.Model.JobTitle" ظˆظ‡ظˆ ط¨ط§ظ†طھط¸ط§ط± ط§ظ„ظ…ط±ط§ط¬ط¹ط©.
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCreatedNotification\JobCreatedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the new job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - New Job Posting Created</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">New job posting</p>
+      <h1 class="title">A new job posting has been created</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The job posting <strong>@jobTitle</strong> has been created and is ready for review.
+      </p>
+      <p class="text">
+        Please sign in to @product to review the details and proceed with the approval process.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Review in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobCreatedNotification\JobCreatedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCreatedNotification.JobCreatedNotificationModel>
+New Job Posting Created
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the new job posting" : Model.Model.JobTitle)" has been created and is ready for review.
+
+Please sign in to @Model.Branding.ProductName to review the details and proceed with the approval process.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobDeletedNotification\JobDeletedNotification.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط¥ط´ط¹ط§ط± ط­ط°ظپ ظˆط¸ظٹظپط©</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #efe7eb; }
+        .brand-bar { background: @primary; height: 10px; }
+        .content { padding: 40px; }
+        .h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #881038; display: inline-block; padding-bottom: 5px; }
+        .text { font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 25px; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            <h2 class="h2">طھظ… ط­ط°ظپ ط¹ط±ط¶ ظˆط¸ظٹظپظٹ</h2>
+            <p class="text">
+                ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+                <br><br>
+                ظ†ظˆط¯ ط¥ط¨ظ„ط§ط؛ظƒظ… ط¨ط£ظ†ظ‡ طھظ… ط­ط°ظپ ط¹ط±ط¶ ط§ظ„ظˆط¸ظٹظپط© ط§ظ„طھط§ظ„ظٹ ظ…ظ† ط§ظ„ظ†ط¸ط§ظ…:
+                <br><br>
+                <strong>"@m.JobTitle"</strong>
+                <br><br>
+                ظٹط±ط¬ظ‰ ط§ظ„ط¹ظ„ظ… ط¨ط£ظ†ظ‡ طھظ… ط¥ظٹظ‚ط§ظپ ط¬ظ…ظٹط¹ ط§ظ„ط¹ظ…ظ„ظٹط§طھ ظˆط§ظ„ط·ظ„ط¨ط§طھ ط§ظ„ظ…ط±طھط¨ط·ط© ط¨ظ‡ط°ط§ ط§ظ„ط¹ط±ط¶ ط¨ط´ظƒظ„ ظپظˆط±ظٹ.
+            </p>
+        </div>
+        <div class="footer">
+            <p>ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ ظ…ظ†طµط© @product</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobDeletedNotification\JobDeletedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„طŒ طھظ… ط­ط°ظپ ط¹ط±ط¶ ط§ظ„ظˆط¸ظٹظپط© ط§ظ„طھط§ظ„ظٹ ظ…ظ† ط§ظ„ظ†ط¸ط§ظ…: "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "ط§ظ„ظˆط¸ظٹظپط©" : Model.Model.JobTitle)". ظٹط±ط¬ظ‰ ط§ظ„ط¹ظ„ظ… ط¨ط£ظ†ظ‡ طھظ… ط¥ظٹظ‚ط§ظپ ط¬ظ…ظٹط¹ ط§ظ„ط¹ظ…ظ„ظٹط§طھ ط§ظ„ظ…ط±طھط¨ط·ط© ط¨ظ‡ط°ط§ ط§ظ„ط¹ط±ط¶.
+ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobDeletedNotification\JobDeletedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Posting Removed</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Job posting removed</p>
+      <h1 class="title">A job posting has been removed</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The job posting <strong>@jobTitle</strong> has been removed from the system.
+      </p>
+      <p class="text">
+        Please sign in to @product if you need to review historical details or take follow-up actions.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">View in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobDeletedNotification\JobDeletedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobDeletedNotification.JobDeletedNotificationModel>
+Job Posting Removed
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been removed from the system.
+
+Please sign in to @Model.Branding.ProductName if you need to review historical details or take follow-up actions.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobUpdatedNotification\JobUpdatedNotification.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط¥ط´ط¹ط§ط± طھط­ط¯ظٹط« ظˆط¸ظٹظپط©</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #efe7eb; }
+        .brand-bar { background: @primary; height: 10px; }
+        .content { padding: 40px; }
+        .h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #881038; display: inline-block; padding-bottom: 5px; }
+        .text { font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 25px; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            <h2 class="h2">طھظ… طھط­ط¯ظٹط« ط¨ظٹط§ظ†ط§طھ ظˆط¸ظٹظپط©</h2>
+            <p class="text">
+                ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„/ط§ظ„ط²ظ…ظٹظ„ط©طŒ
+                <br><br>
+                ظ†ظˆط¯ ط¥ط¨ظ„ط§ط؛ظƒظ… ط¨ط£ظ†ظ‡ طھظ… ط¥ط¬ط±ط§ط، طھط­ط¯ظٹط«ط§طھ ط¹ظ„ظ‰ ط¨ظٹط§ظ†ط§طھ ط§ظ„ظˆط¸ظٹظپط© ط§ظ„طھط§ظ„ظٹط©:
+                <br><br>
+                <strong>"@m.JobTitle"</strong>
+            </p>
+            <p class="text">
+                ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ط§ظ„طھط؛ظٹظٹط±ط§طھ ط¹ط¨ط± ط§ظ„ط±ط§ط¨ط· ط£ط¯ظ†ط§ظ‡ ظ„ط¶ظ…ط§ظ† طھظˆط§ظپظ‚ظ‡ط§ ظ…ط¹ ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ ط§ظ„طھط´ط؛ظٹظ„ظٹط©.
+                <br>
+                ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: <a href="@website">@website</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ ظ…ظ†طµط© @product</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobUpdatedNotification\JobUpdatedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
+ط¹ط²ظٹط²ظٹ ط§ظ„ط²ظ…ظٹظ„طŒ طھظ… طھط­ط¯ظٹط« ط¨ظٹط§ظ†ط§طھ ط§ظ„ظˆط¸ظٹظپط©: "@Model.Model.JobTitle". ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ط§ظ„طھط¹ط¯ظٹظ„ط§طھ ط§ظ„ط¬ط¯ظٹط¯ط© ظ„ظ„طھط£ظƒط¯ ظ…ظ† طھظˆط§ظپظ‚ظ‡ط§ ظ…ط¹ ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ ط§ظ„ظ…ط·ظ„ظˆط¨ط©.
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobUpdatedNotification\JobUpdatedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Job Posting Updated</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Job posting updated</p>
+      <h1 class="title">A job posting has been updated</h1>
+      <p class="text">Dear Colleague,</p>
+      <p class="text">
+        The job posting <strong>@jobTitle</strong> has been updated.
+      </p>
+      <p class="text">
+        Please sign in to @product to review the updated details and confirm any required actions.
+      </p>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Review updates in @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\JobUpdatedNotification\JobUpdatedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
+Job Posting Updated
+
+Dear Colleague,
+
+The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been updated.
+
+Please sign in to @Model.Branding.ProductName to review the updated details and confirm any required actions.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\KawaderInvitation\KawaderInvitation.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+    
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط³طھط®ط¯ظ…" : m.FullName;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - ظ…ظ†طµط© ط§ظ„طھظˆط¸ظٹظپ</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; text-align: right; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">ط¯ط¹ظˆط© ظ„ظ„ط§ظ†ط¶ظ…ط§ظ…</p>
+      <h1 class="title">ظ…ط±ط­ط¨ط§ظ‹ ط¨ظƒظ… ظپظٹ @product</h1>
+      <p class="text">ط¹ط²ظٹط²ظٹ @fullNameطŒ</p>
+      <p class="text">
+        ظٹط³ط±ظ†ط§ ط¯ط¹ظˆطھظƒظ… ط±ط³ظ…ظٹط§ظ‹ ظ„ظ„ط§ظ†ط¶ظ…ط§ظ… ط¥ظ„ظ‰ ظ…ظ†طµط© <strong>@product</strong> ظ„ظ„طھظˆط¸ظٹظپ.
+      </p>
+      <p class="text">
+        ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¨ط§ط³طھط®ط¯ط§ظ… ط§ظ„ط±ظ‚ظ… ط§ظ„ط´ط®طµظٹ ط§ظ„ط®ط§طµ ط¨ظƒظ… (<strong>@m.Qid</strong>) ظ„ط¥ظƒظ…ط§ظ„ ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ ظˆطھط­ظ…ظٹظ„ ط³ظٹط±طھظƒظ… ط§ظ„ط°ط§طھظٹط© ط­طھظ‰ ظ†طھظ…ظƒظ† ظ…ظ† ط§ظ„ظ…ط¶ظٹ ظ‚ط¯ظ…ط§ظ‹ ظپظٹ ط§ظ„ظ†ط¸ط± ظپظٹ ط§ظ„ظپط±طµ ط§ظ„ظ…ط³طھظ‚ط¨ظ„ظٹط© ط§ظ„ظ…طھط§ط­ط©.
+      </p>
+      <p class="text" style="margin-top: 24px; text-align: center;">
+        <a class="cta" style="color: white;" href="@website" target="_blank">طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ @product</a>
+      </p>
+      <div class="divider"></div>
+      <p class="muted">
+        ط¥ط°ط§ ظƒط§ظ† ط§ظ„ط²ط± ظ„ط§ ظٹط¹ظ…ظ„طŒ ظٹط±ط¬ظ‰ ظ†ط³ط® ظ‡ط°ط§ ط§ظ„ط±ط§ط¨ط· ظˆظ„طµظ‚ظ‡ ظپظٹ ظ…طھطµظپط­ظƒ: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">ظ…ط¹ ط£ط·ظٹط¨ ط§ظ„طھط­ظٹط§طھطŒ<br>ظپط±ظٹظ‚ ط¹ظ…ظ„ @product</p>
+      <p class="muted">ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\KawaderInvitation\KawaderInvitation.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var support = b.SupportEmail;
+
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط³طھط®ط¯ظ…" : m.FullName;
+}
+ط¹ط²ظٹط²ظٹ @fullNameطŒ
+
+ظٹط³ط±ظ†ط§ ط¯ط¹ظˆطھظƒظ… ظ„ظ„ط§ظ†ط¶ظ…ط§ظ… ط¥ظ„ظ‰ ظ…ظ†طµط© @product.
+
+ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¨ط§ط³طھط®ط¯ط§ظ… ط§ظ„ط±ظ‚ظ… ط§ظ„ط´ط®طµظٹ ط§ظ„ط®ط§طµ ط¨ظƒظ… (@m.Qid) ظ„ط¥ظƒظ…ط§ظ„ ظ…ظ„ظپظƒظ… ط§ظ„ط´ط®طµظٹ ظˆطھط­ظ…ظٹظ„ ط§ظ„ط³ظٹط±ط© ط§ظ„ط°ط§طھظٹط© ط­طھظ‰ ظ†طھظ…ظƒظ† ظ…ظ† ط§ظ„ط¨ط¯ط، ظپظٹ ط§ظ„ظ†ط¸ط± ظپظٹ ظپط±طµ ط§ظ„طھظˆط¸ظٹظپ ط§ظ„ظ…ط³طھظ‚ط¨ظ„ظٹط© ط§ظ„ط®ط§طµط© ط¨ظƒظ….
+
+ظٹظ…ظƒظ†ظƒظ… طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¹ط¨ط± ط§ظ„ط±ط§ط¨ط·: @website
+
+---
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @support
+آ© @(DateTime.UtcNow.Year) @product. ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\KawaderInvitation\KawaderInvitation.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+    
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "User" : m.FullName;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Platform Invitation</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Invitation to Join</p>
+      <h1 class="title">Welcome to @product</h1>
+      <p class="text">Dear @fullName,</p>
+      <p class="text">
+        You are officially invited to join the <strong>@product</strong> platform.
+      </p>
+      <p class="text">
+        Please sign in using your QID (<strong>@m.Qid</strong>) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
+      </p>
+      <p class="text" style="margin-top: 24px; text-align: center;">
+        <a class="cta" style="color: white;" href="@website" target="_blank">Login to @product</a>
+      </p>
+      <div class="divider"></div>
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Best regards,<br>@product Team</p>
+      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\KawaderInvitation\KawaderInvitation.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var support = b.SupportEmail;
+
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "User" : m.FullName;
+}
+Dear @fullName,
+
+You are officially invited to join the @product platform.
+
+Please sign in using your QID (@m.Qid) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
+
+Login here: @website
+
+---
+Support: @support
+آ© @(DateTime.UtcNow.Year) @product. All rights reserved.
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.html.cshtml
+---
+@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
+@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var distributionUrl = $"{website}/portal/profile-distribution";
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>New Minister's Office Candidate</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid @primary; }
+        .header { padding: 20px; text-align: center; background: #fafafa; border-bottom: 1px solid #eee; }
+        .content { padding: 30px; line-height: 1.6; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #777; background: #fafafa; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: @primary; color: #fff !important; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .highlight { color: @primary; font-weight: bold; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin-bottom: 20px; border-bottom: 1px dashed #eee; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="120">
+            }
+            else
+            {
+                <h1 style="color: @primary; margin: 0;">@product</h1>
+            }
+        </div>
+        <div class="content">
+            <div class="arabic">
+                <h2>ظ…ط±ط­ط¨ط§ظ‹!</h2>
+                <p>طھظ… ط¥ط¶ط§ظپط© ظ…ط±ط´ط­ ط¬ط¯ظٹط¯ ظپظٹ ظ…ظƒطھط¨ ط³ط¹ط§ط¯ط© ط§ظ„ظˆط²ظٹط± ط¨ط§ظ†طھط¸ط§ط± ط§ظ„طھظˆط²ظٹط¹.</p>
+                <p><strong>ط§ط³ظ… ط§ظ„ظ…ط±ط´ط­:</strong> <span class="highlight">@m.NameAr</span></p>
+                <p>ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظ„ط§طھط®ط§ط° ط§ظ„ط¥ط¬ط±ط§ط، ط§ظ„ظ„ط§ط²ظ….</p>
+            </div>
+
+            <h2>Hello!</h2>
+            <p>A new candidate has been added to the Minister's Office and is awaiting distribution.</p>
+            <p><strong>Candidate Name:</strong> <span class="highlight">@m.NameEn</span></p>
+            <p>Please log in to the portal to take the necessary action.</p>
+            
+            <a href="@distributionUrl" class="btn" target="_blank">View Distribution List</a>
+            
+            <p style="margin-top: 25px;">Regards,<br><strong>The @product Team</strong></p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.txt.cshtml
+---
+@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
+@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+
+@{
+    var product = Model.Branding.ProductName;
+    var website = Model.Branding.WebsiteUrl;
+    var m = Model.Model;
+    var distributionUrl = $"{website}/user/employee/profile-managment/distribution";
+}
+
+طھظ… ط¥ط¶ط§ظپط© ظ…ط±ط´ط­ ط¬ط¯ظٹط¯ ظپظٹ ظ…ظƒطھط¨ ط³ط¹ط§ط¯ط© ط§ظ„ظˆط²ظٹط±: @m.NameAr
+ظٹط±ط¬ظ‰ ظ…ط±ط§ط¬ط¹ط© ظ‚ط§ط¦ظ…ط© ط§ظ„طھظˆط²ظٹط¹: @distributionUrl
+
+A new candidate has been added to the Minister's Office: @m.NameEn
+Please check the distribution list: @distributionUrl
+
+Regards,
+The @product Team
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\MinisterOfficeRegistration\MinisterOfficeRegistration.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.MinisterOfficeRegistration.MinisterOfficeRegistrationModel>
+@{
+    var m = Model.Model;
+}
+ط¹ط²ظٹط²ظٹ @m.FullNameطŒ ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ظ…ظ†طµط© ط§ظ„طھظˆط¸ظٹظپ ظˆط¥ظ†ط´ط§ط، ظ…ظ„ظپظƒ ط§ظ„ط´ط®طµظٹ ط¹ط¨ط± ط§ظ„ط±ط§ط¨ط· ط§ظ„طھط§ظ„ظٹ: @m.ClientUrl
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\MinisterOfficeRegistration\MinisterOfficeRegistration.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.MinisterOfficeRegistration.MinisterOfficeRegistrationModel>
+@{
+    var m = Model.Model;
+}
+Dear @m.FullName, please log in to the Careers Platform and create your profile: @m.ClientUrl
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\OfficeCreatedNotification\OfficeCreatedNotification.ar.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@product - ط¥ط´ط¹ط§ط± ط¥ظ†ط´ط§ط، ظ…ظƒطھط¨</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #efe7eb; }
+        .brand-bar { background: @primary; height: 10px; }
+        .content { padding: 40px; }
+        .h2 { font-size: 22px; color: #111827; margin-bottom: 20px; font-weight: 800; border-bottom: 2px solid #881038; display: inline-block; padding-bottom: 5px; }
+        .text { font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 25px; }
+        .data-box { background: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .data-item { margin-bottom: 10px; font-size: 15px; }
+        .label { font-weight: 700; color: #111827; margin-left: 10px; }
+        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 13px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-bar"></div>
+        <div class="content">
+            <h2 class="h2">طھظ… ط¥ظ†ط´ط§ط، ظ…ظƒطھط¨ طھظˆط¸ظٹظپ ط¬ط¯ظٹط¯</h2>
+            <p class="text">
+                ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط³ط¤ظˆظ„طŒ
+                <br><br>
+                طھظ… ط¥ظ†ط´ط§ط، ظ…ظƒطھط¨ ط¬ط¯ظٹط¯ ظ„ظ„طھظˆط¸ظٹظپ ط¨ظ†ط¬ط§ط­ ظپظٹ ظ†ط¸ط§ظ… <strong>@product</strong>. ظپظٹظ…ط§ ظٹظ„ظٹ طھظپط§طµظٹظ„ ط§ظ„ظ…ظƒطھط¨:
+            </p>
+            <div class="data-box">
+                <div class="data-item"><span class="label">ط§ط³ظ… ط§ظ„ظ…ظƒطھط¨:</span> @m.OfficeName</div>
+                <div class="data-item"><span class="label">ظƒظˆط¯ ط§ظ„ظ…ظƒطھط¨:</span> @m.OfficeCode</div>
+                <div class="data-item"><span class="label">ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظ„ظ„ظ…ط³ط¤ظˆظ„:</span> @m.AdminEmail</div>
+            </div>
+            <p class="text">
+                ظٹظ…ظƒظ†ظƒظ… ط§ظ„ط¢ظ† ط§ظ„ط¨ط¯ط، ظپظٹ ط¥ط¯ط§ط±ط© ط§ظ„ط¹ظ…ظ„ظٹط§طھ ط§ظ„ظ…ط±طھط¨ط·ط© ط¨ظ‡ط°ط§ ط§ظ„ظ…ظƒطھط¨ ط¹ط¨ط± ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ….
+            </p>
+        </div>
+        <div class="footer">
+            <p>ظ…ط¹ طھط­ظٹط§طھطŒ ظپط±ظٹظ‚ ط¹ظ…ظ„ ظ…ظ†طµط© @product</p>
+            <p>آ© @(DateTime.UtcNow.Year) ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\OfficeCreatedNotification\OfficeCreatedNotification.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+طھظ… ط¥ظ†ط´ط§ط، ظ…ظƒطھط¨ ط¬ط¯ظٹط¯
+
+ط¹ط²ظٹط²ظٹ ط§ظ„ظ…ط³ط¤ظˆظ„طŒ
+
+طھظ… ط¥ظ†ط´ط§ط، ظ…ظƒطھط¨ ط¬ط¯ظٹط¯ ظ„ظ„طھظˆط¸ظٹظپ ط¨ظ†ط¬ط§ط­ ظپظٹ ط§ظ„ظ†ط¸ط§ظ….
+
+ط§ط³ظ… ط§ظ„ظ…ظƒطھط¨: @Model.Model.OfficeName
+ظƒظˆط¯ ط§ظ„ظ…ظƒطھط¨: @Model.Model.OfficeCode
+ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ظ…ط³ط¤ظˆظ„: @Model.Model.AdminEmail
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\OfficeCreatedNotification\OfficeCreatedNotification.html.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    // Model fields (adjust names to match your model)
+    var officeName = string.IsNullOrWhiteSpace(m.OfficeName) ? "New Office" : m.OfficeName;
+    var officeCode = string.IsNullOrWhiteSpace(m.OfficeCode) ? "-" : m.OfficeCode;
+    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your Google account" : m.AdminEmail;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Office Created</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff !important; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+    .card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; margin:0 0 16px; }
+    .row { margin:0 0 8px; font-size:14px; }
+    .label { color:#6b7280; }
+    .value { font-weight:700; }
+    code { font-family: Consolas, Monaco, monospace; font-size: 13px; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+
+      <p class="badge">Office Created</p>
+
+      <h1 class="title">A new office has been created</h1>
+
+      <p class="text">Dear Admin,</p>
+
+      <p class="text">
+        The office <strong>@officeName</strong> has been successfully created in <strong>@product</strong>.
+      </p>
+
+      <div class="card">
+        <p class="row">
+          <span class="label">Office Name:</span>
+          <span class="value">@officeName</span>
+        </p>
+        <p class="row">
+          <span class="label">Office Code:</span>
+          <span class="value"><code>@officeCode</code></span>
+        </p>
+        <p class="row" style="margin:0;">
+          <span class="label">Admin Login Email:</span>
+          <span class="value">@adminEmail</span>
+        </p>
+      </div>
+
+      <p class="text">
+        To access the system, please connect using <strong>VPN in Qatar</strong>, then open the portal and sign in using your
+        <strong>Google account</strong> with the email: <strong>@adminEmail</strong>.
+      </p>
+
+      <a class="cta" style="color: white;" href="@website" target="_blank">Open @product</a>
+
+      <div class="divider"></div>
+
+      <p class="muted">
+        If the button does not work, copy and paste this link into your browser: @website
+      </p>
+      <p class="muted">
+        Login method: Google Sign-In (@adminEmail)
+      </p>
+    </div>
+
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">
+        Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a>
+      </p>
+      <p class="muted">آ© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\OfficeCreatedNotification\OfficeCreatedNotification.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    // Model fields (adjust names to match your model)
+    var officeName = string.IsNullOrWhiteSpace(m.OfficeName) ? "New Office" : m.OfficeName;
+    var officeCode = string.IsNullOrWhiteSpace(m.OfficeCode) ? "-" : m.OfficeCode;
+    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your Google account" : m.AdminEmail;
+}
+
+@($"{product} - Office Created")
+
+Dear Admin,
+
+The office @officeName has been successfully created in @product.
+
+Office Details:
+- Office Name: @officeName
+- Office Code: @officeCode
+- Admin Login Email: @adminEmail
+
+Access Instructions:
+1) Connect using VPN in Qatar
+2) Open the portal: @website
+3) Login using your Google account with this email: @adminEmail
+
+If you need help, please contact support:
+@support
+
+Regards,
+@product} Team
+آ© @DateTime.UtcNow.Year @product. All rights reserved.
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ProfileAssigned\ProfileAssigned.ar.txt.cshtml
+---
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ProfileAssigned.ProfileAssignedModel>
+طھظ… ط¥ط³ظ†ط§ط¯ ظ…ظ„ظپ ط¬ط¯ظٹط¯ ظ„ظ„ظ…ط±ط§ط¬ط¹ط©
+
+ظ…ط±ط­ط¨ط§ظ‹طŒ
+
+طھظ… ط¥ط³ظ†ط§ط¯ ظ…ظ„ظپ ظ…ط±ط´ط­ ط¬ط¯ظٹط¯ طھط­طھ ظ…ط±ط§ط¬ط¹طھظƒ ظپظٹ @Model.Branding.ProductName.
+
+ط§ط³ظ… ط§ظ„ظ…ط±ط´ط­: @Model.Model.CandidateName
+
+ظٹط±ط¬ظ‰ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¥ظ„ظ‰ ط§ظ„ظ…ظ†طµط© ظ„ظ„ط¨ط¯ط، ظپظٹ ظ…ط±ط§ط¬ط¹ط© ط§ظ„ظ…ظ„ظپ.
+
+ط±ط§ط¨ط· ط§ظ„ظ…ظ†طµط©: @Model.Branding.WebsiteUrl
+
+ظ…ط¹ طھط­ظٹط§طھطŒ
+ظپط±ظٹظ‚ ط¹ظ…ظ„ @Model.Branding.ProductName
+ظ„ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ: @Model.Branding.SupportEmail
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ProfileAssigned\ProfileAssigned.html.cshtml
+---
+@using Tawtheef.Notifications.Templates.ProfileAssigned
+@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var profileUrl = $"{website}/profiles/review/{m.ProfileId}";
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>New Profile Assigned</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid @primary; }
+        .header { padding: 20px; text-align: center; background: #fafafa; border-bottom: 1px solid #eee; }
+        .content { padding: 30px; line-height: 1.6; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #777; background: #fafafa; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: @primary; color: #fff !important; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .highlight { color: @primary; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="120">
+            }
+            else
+            {
+                <h1 style="color: @primary; margin: 0;">@product</h1>
+            }
+        </div>
+        <div class="content">
+            <h2>Hello!</h2>
+            <p>You have been assigned a new profile for review.</p>
+            <p><strong>Candidate Name:</strong> <span class="highlight">@m.CandidateName</span></p>
+            <p>Please log in to the portal to review the details and take the necessary action.</p>
+            
+            <a href="@profileUrl" class="btn" target="_blank">View Profile Details</a>
+            
+            <p style="margin-top: 25px;">Regards,<br><strong>The @product Team</strong></p>
+        </div>
+        @* <div class="footer">
+            <p>آ© @DateTime.UtcNow.Year @product. All rights reserved.</p>
+            <p>If you have any questions, contact us at <a href="mailto:@support" target="_blank">@support</a></p>
+        </div> *@
+    </div>
+</body>
+</html>
+
+===
+
+C:\Users\t-a.jaber\RiderProjects\Tawtheef\src\Notifications\Templates\ProfileAssigned\ProfileAssigned.txt.cshtml
+---
+@using Tawtheef.Notifications.Templates.ProfileAssigned
+@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+
+@{
+    var m = Model.Model;
+    var product = Model.Branding.ProductName;
+    var profileUrl = $"{Model.Branding.WebsiteUrl}/profiles/review/{m.ProfileId}";
+}
+
+Subject: New Profile Assigned for Review
+
+Hello,
+
+You have been assigned a new profile for review in @product.
+
+Candidate Name: @m.CandidateName
+
+Please visit the following link to review the profile:
+@profileUrl
+
+Regards,
+The @product Team
+
+===
+

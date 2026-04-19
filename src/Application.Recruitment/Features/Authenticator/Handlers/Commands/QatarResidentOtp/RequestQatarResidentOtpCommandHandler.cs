@@ -1,25 +1,27 @@
-﻿using System.Security.Cryptography;
-using Application.Recruitment.Common.Interfaces.Services;
+using System.Security.Cryptography;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.TestData;
+using Tawtheef.Notifications.Templates.QatarResidentOtp;
 
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp
 {
     public sealed class RequestQatarResidentOtpCommandHandler(
+        IUnitOfWork uow,
         IQatarResidentVerificationClient verificationClient,
         UserManager<User> userManager, IMoiService moiService,
-        ISmsSender smsSender, TimeProvider timeProvider, IAppLogger logger
+        TimeProvider timeProvider, IAppLogger logger
     ) : IRequestHandler<RequestQatarResidentOtpCommand, IResult<Unit>>
     {
         private readonly IAppLogger _log = logger.ForContext(typeof(RequestQatarResidentOtpCommandHandler));
@@ -205,8 +207,26 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                     return FailureFromIdentity<Unit>(update);
                 }
 
+                var model = new QatarResidentOtpModel
+                {
+                    Otp = otp,
+                    ExpiryMinutes = QatarResidentOtpConstants.OtpExpiryMinutes
+                };
+
                 // DO NOT log OTP content. (Even in dev.)
-                _ = await smsSender.SendAsync(normalizedPhone, $"Your verification code is: {otp}", cancellationToken);
+                var notification = Notification.Create(
+                    NotificationChannel.Sms,
+                    QatarResidentOtpModel.TemplateKey,
+                    user.Id,
+                    normalizedPhone,
+                    null,
+                    null,
+                    null,
+                    payloadJson: System.Text.Json.JsonSerializer.Serialize(model),
+                    idempotencyKey: $"qatar-otp-{user.Id}-{Guid.NewGuid()}",
+                    maxRetries: 3);
+                await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
+                await uow.SaveChangesAsync(cancellationToken);
 
 #if DEBUG
                 Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");

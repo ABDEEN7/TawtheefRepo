@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Profile;
@@ -14,9 +13,8 @@ using Notification = Tawtheef.Domain.Entities.Notification.Notification;
 namespace Application.Operation.Common.EventHandlers.Profile;
 
 public class ProfileAssignedEventHandler(
-    IUnitOfWork uow, 
-    UserManager<User> userManager, 
-    ILocalizationService localizationService,
+    IUnitOfWork uow,
+    UserManager<User> userManager,
     IAppLogger logger)
     : INotificationHandler<ProfileAssignedEvent>
 {
@@ -46,25 +44,25 @@ public class ProfileAssignedEventHandler(
         }
 
         var payload = JsonSerializer.Serialize(new ProfileAssignedModel(profile.Id, profile.User?.FullNameEn ?? "Candidate"));
-        var subject = localizationService.GetLocalizedValue("Notification.ProfileAssigned.Subject");
-
         var notificationEmail = Notification.Create(
             NotificationChannel.Email,
             ProfileAssigned.TemplateKey,
             employee.Id,
             employee.Email,
-            subject,
+            null,
             null, null,
-            payload);
+            payload,
+            null, 3, employee.PreferredLanguage);
 
         var notificationInApp = Notification.Create(
             NotificationChannel.InApp,
             ProfileAssigned.TemplateKey,
             employee.Id,
             employee.Email,
-            subject,
+            null,
             null, null,
-            payload);
+            payload,
+            null, 3, employee.PreferredLanguage);
 
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, ct);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationInApp, ct);

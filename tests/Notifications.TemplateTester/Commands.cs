@@ -1,7 +1,6 @@
 using System.Text;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Notifications.Interfaces;
-using Tawtheef.Notifications.Services;
 
 namespace Tawtheef.Notifications.TemplateTester;
 

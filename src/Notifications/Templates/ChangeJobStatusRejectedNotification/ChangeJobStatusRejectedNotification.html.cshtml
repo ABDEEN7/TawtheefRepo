@@ -10,7 +10,7 @@
     var website = b.WebsiteUrl;
     var logo = b.LogoUrl;
 
-    var jobTitle = string.IsNullOrWhiteSpace(m.JobTitle) ? "the job posting" : m.JobTitle;
+    var jobTitle = m.JobTitle;
 }
 
 <!DOCTYPE html>
@@ -49,7 +49,7 @@
       <h1 class="title">Your job posting was not approved</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The request for <strong>@jobTitle</strong> has been rejected.
+        The request for @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been rejected.
       </p>
       <p class="text">
         Please review the feedback in @product, update the posting as needed, and resubmit.

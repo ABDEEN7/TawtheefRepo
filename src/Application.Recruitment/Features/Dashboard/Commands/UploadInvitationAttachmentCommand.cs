@@ -1,7 +1,6 @@
 using Application.Recruitment.Features.Dashboard.DTOs;
 using FluentResults;
 using MediatR;
-using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Recruitment.Features.Dashboard.Commands;
 

@@ -23,7 +23,6 @@ public sealed class ChangeJobStatusNotificationDomainEventHandler(
             unitOfWork,
             userManager,
             ChangeJobStatusNotification.TemplateKey,
-            "Job Status Review Required",
             payload,
             ct);
     }

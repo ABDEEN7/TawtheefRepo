@@ -3,7 +3,7 @@ Job Posting Requires Updates
 
 Dear Colleague,
 
-The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" requires updates before it can be approved.
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") requires updates before it can be approved.
 
 Please sign in to @Model.Branding.ProductName, review the requested changes, and resubmit the posting.
 

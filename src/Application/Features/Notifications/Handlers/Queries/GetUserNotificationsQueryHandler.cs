@@ -1,7 +1,7 @@
-using MediatR;
+﻿using MediatR;
 using FluentResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Features.Notifications.DTOs;
 using Tawtheef.Application.Features.Notifications.Queries;
@@ -10,7 +10,9 @@ using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Application.Features.Notifications.Handlers.Queries;
 
-public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, IEmailTemplateRenderer renderer)
+public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, 
+    UserManager<Domain.Entities.Users.User> userManager,
+    IEmailTemplateRenderer renderer)
     : IRequestHandler<GetUserNotificationsQuery, IResult<IReadOnlyList<UserNotificationDto>>>
 {
     private const int DefaultLimit = 3;
@@ -21,6 +23,8 @@ public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, IEm
         CancellationToken cancellationToken)
     {
         var safeLimit = Math.Clamp(request.Limit <= 0 ? DefaultLimit : request.Limit, 1, MaxLimit);
+        var user = await userManager.Users.AsNoTracking()
+            .SingleAsync(x => x.Id == request.UserId, cancellationToken);
 
         var notifications = await unitOfWork
             .GetEntityRepository<Notification>()
@@ -53,7 +57,7 @@ public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, IEm
             {
                 try
                 {
-                    n.Body = await renderer.RenderHtmlAsync(n.TemplateKey!, n.PayloadJson!);
+                    n.Body = await renderer.RenderHtmlAsync(n.TemplateKey!, n.PayloadJson!, user.PreferredLanguage ?? "ar");
                 }
                 catch (Exception)
                 {

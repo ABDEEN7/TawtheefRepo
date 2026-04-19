@@ -33,6 +33,7 @@ export class EndpointsService {
   };
 
   user = {
+    changePersonalLanguage: this.getFullUrl(`/user/profile/language`),
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
     },

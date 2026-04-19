@@ -1,13 +1,9 @@
 using System.Collections.Concurrent;
-using System.IO;
-using System.Net.Http;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using MimeKit.Utils;
 using Polly;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;

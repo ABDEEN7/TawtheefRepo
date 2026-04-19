@@ -1,5 +1,4 @@
-﻿using Application.Recruitment.Common.Interfaces.Services.HttpClients;
-using Application.Recruitment.Features.Profile.Queries;
+﻿using Application.Recruitment.Features.Profile.Queries;
 using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;

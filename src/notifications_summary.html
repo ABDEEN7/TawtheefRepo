@@ -1,0 +1,772 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ملخص إشعارات النظام (Notification.Create)</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #2c3e50; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
+    .card-header { border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 15px; }
+    .card-header h2 { margin: 0; color: #2980b9; font-size: 20px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; font-size: 14px; background: #ecf0f1; padding: 10px; border-radius: 5px; }
+    .meta div { flex: 1; min-width: 250px; }
+    .meta strong { color: #2c3e50; }
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .lang-section { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; }
+    .lang-title { font-weight: bold; margin-bottom: 10px; color: #16a085; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    pre { background: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px solid #ccc; white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 14px; line-height: 1.5; color: #444; margin: 0;}
+    .subject { font-weight: bold; margin-bottom: 10px; display: block; color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <h1>ملخص استخدامات إشعارات النظام (Notification.Create)</h1>
+  <div class="card">
+    <div class="card-header">
+      <h2>1. طلب تحديث حالة الوظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ChangeJobStatusNeedUpdateNotificationDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">طلب الوظيفة بحاجة لتحديث
+
+عزيزي الزميل/الزميلة،
+
+يتطلب طلب الوظيفة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") تحديثات إضافية قبل المتابعة.
+
+يرجى مراجعة الملاحظات على المنصة وإجراء التعديلات المطلوبة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Posting Requires Updates
+
+Dear Colleague,
+
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") requires updates before it can be approved.
+
+Please sign in to @Model.Branding.ProductName, review the requested changes, and resubmit the posting.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>2. إنشاء مكتب جديد</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> OfficeCreatedDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        <span class="subject">العنوان: @($"{product} - تم إنشاء مكتب توظيف جديد")</span>
+        <pre dir="rtl">عزيزي المسؤول،
+
+تم إنشاء مكتب توظيف جديد بنجاح في @product.
+
+تفاصيل المكتب:
+- اسم المكتب: @officeName
+- كود المكتب: @officeCode
+- بريد المسؤول: @adminEmail
+
+تعليمات الدخول:
+1) تأكد من الاتصال بشبكة (VPN) إذا كنت خارج المكتب
+2) قم بزيارة المنصة: @website
+3) سجل الدخول باستخدام بريدك الإلكتروني: @adminEmail
+
+إذا كنت بحاجة للمساعدة، يرجى التواصل مع الدعم الفني: @support
+
+مع تحيات،
+فريق عمل @product</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        <span class="subject">Subject: @($"{product} - Recruitment Office Created")</span>
+        <pre dir="ltr">Dear Administrator,
+
+A new recruitment office has been successfully created in @product.
+
+Office Details:
+- Office Name: @officeName
+- Office Code: @officeCode
+- Administrator Email: @adminEmail
+
+Access Instructions:
+1) Ensure you are connected to the corporate VPN (if required)
+2) Visit the platform: @website
+3) Login using your assigned email: @adminEmail
+
+If you need assistance, please contact support: @support
+
+Regards,
+The @product Team</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>3. تحديث بيانات وظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> JobUpdatedDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">تم تحديث عرض الوظيفة
+
+عزيزي الزميل/الزميلة،
+
+تم تحديث بيانات الوظيفة: @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName لمراجعة التعديلات الجديدة والتأكد من توافقها مع الإجراءات المطلوبة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Posting Updated
+
+Dear Colleague,
+
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been updated.
+
+Please sign in to @Model.Branding.ProductName to review the updated details and confirm any required actions.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>4. إرسال دعوة لمرشح للوظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> JobCandidateInvitationSentDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, InApp, SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">دعوة لتقديم طلب لوظيفة
+
+عزيزي المرشح،
+
+تمت دعوتكم من قبل @Model.Branding.ProductName للتقديم على وظيفة: "@Model.Model.JobTitle".
+
+يرجى تسجيل الدخول إلى المنصة لمراجعة تفاصيل الوظيفة وتقديم طلبكم.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Invitation
+
+Dear Candidate,
+
+You have been invited to apply for @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") on @Model.Branding.ProductName.
+
+Please sign in to review the opportunity and submit your application.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Best regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>5. تسجيل مرشح جديد لمكتب الوزير</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> CreateMinisterOfficeCandidateCommandHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">عزيزي @m.FullName، يرجى تسجيل الدخول إلى منصة التوظيف وإنشاء ملفك الشخصي عبر الرابط التالي: @m.ClientUrl</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Dear @m.FullName, please log in to the Careers Platform and create your profile: @m.ClientUrl</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>6. الانتهاء من مراجعة الملف الشخصي (قبول أو طلب تحديث)</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> FinalizeReviewProfileEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, InApp</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">حالة الموافقة:
+العنوان: تمت الموافقة على ملفكم الشخصي - @product
+مرحباً،
+يسرنا إبلاغكم بأنه تمت الموافقة على ملفكم الشخصي في منصة @product.
+يمكنكم الآن الاستمرار في استخدام المنصة والوصول إلى كافة الميزات المتاحة.
+رابط الملف الشخصي:
+@profileUrl
+إذا كان لديكم أي استفسارات، يسعدنا تواصلكم معنا عبر:
+@support
+مع أطيب التحيات،
+فريق عمل @product
+
+حالة طلب تحديث:
+العنوان: مطلوب إجراء – ملفكم الشخصي بحاجة لتحديثات - @product
+مرحباً،
+تمت إعادة ملفكم الشخصي لإجراء بعض التحديثات المطلوبة.
+يرجى مراجعة الملاحظات أدناه، وإجراء التصحيحات اللازمة، ثم إعادة تقديم الملف.
+ملاحظات المراجع: @notes
+يرجى تحديث ملفكم عبر الرابط التالي: @profileUrl
+إذا كنتم بحاجة للمساعدة، يسعدنا تواصلكم عبر:
+@support
+مع أطيب التحيات،
+فريق عمل @product</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Approval Case:
+Subject: Profile Approved - @product
+Dear Candidate,
+We are pleased to inform you that your profile has been approved on @product.
+You can now continue using the platform and access all available features.
+Profile Link:
+@profileUrl
+If you have any questions, we are happy to assist you at:
+@support
+Best regards,
+@product Team
+
+Update Required Case:
+Subject: Action Required – Profile Needs Updates - @product
+Dear Candidate,
+Your profile has been returned for requested updates.
+Please review the notes below, make the necessary corrections, and resubmit.
+Reviewer Notes: @notes
+Please update your profile using the following link: @profileUrl
+If you need assistance, we are happy to help at:
+@support
+Best regards,
+@product Team</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>7. دعوة مستخدمي كوادر</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> UploadKawaderUserCommandHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">عزيزي @fullName،
+
+يسرنا دعوتكم للانضمام إلى منصة @product.
+
+يرجى تسجيل الدخول باستخدام الرقم الشخصي الخاص بكم (@m.Qid) لإكمال ملفكم الشخصي وتحميل السيرة الذاتية حتى نتمكن من البدء في النظر في فرص التوظيف المستقبلية الخاصة بكم.
+
+يمكنكم تسجيل الدخول عبر الرابط: @website
+
+---
+للدعم الفني: @support
+© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Dear @fullName,
+
+You are officially invited to join the @product platform.
+
+Please sign in using your QID (@m.Qid) to complete your personal profile and upload your CV so we can proceed with considering you for future opportunities.
+
+Login here: @website
+
+---
+Support: @support
+© @(DateTime.UtcNow.Year) @product. All rights reserved.</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>8. إرسال رمز التحقق (لجهات الاتصال عبر البريد والإس إم إس)</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ContactVerificationSentEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">رمز التحقق من البريد الإلكتروني
+
+يرجى استخدام الرمز التالي لتأكيد بريدك الإلكتروني في @Model.Branding.ProductName:
+@Model.Model.Code
+
+إذا لم تطلب هذا الرمز، يرجى تجاهل هذه الرسالة.
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Email Verification Code
+
+Please use the following code to confirm your email address for @Model.Branding.ProductName:
+@Model.Model.Code
+
+If you did not request this code, please disregard this message.
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>9. إشعار بتغيير حالة الوظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ChangeJobStatusNotificationDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        <span class="subject">العنوان: تغيير حالة الوظيفة بانتظار المراجعة</span>
+        <pre dir="rtl">عزيزي الزميل/الزميلة،
+
+تم تقديم طلب لتغيير حالة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName لمراجعة الطلب والمتابعة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Status Review Required
+
+Dear Colleague,
+
+A request has been submitted to change the status of @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+Please sign in to @Model.Branding.ProductName to review the request and proceed with the appropriate action.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>10. إشعار الموارد البشرية بمرشح جديد لمكتب الوزير</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> CreateMinisterOfficeCandidateCommandHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, InApp</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        <span class="subject">العنوان: مرشح جديد في مكتب الوزير</span>
+        <pre dir="rtl">تم إضافة مرشح جديد في مكتب سعادة الوزير: @m.NameAr
+يرجى مراجعة قائمة التوزيع: @distributionUrl
+
+مع تحيات،
+فريق عمل @product</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        <span class="subject">Subject: New Minister's Office Candidate</span>
+        <pre dir="ltr">A new candidate has been added to the Minister's Office: @m.NameEn
+Please check the distribution list: @distributionUrl
+
+Regards,
+The @product Team</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>11. إنشاء وظيفة جديدة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> JobCreatedDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">إشعار وظيفة جديدة
+
+عزيزي الزميل/الزميلة،
+
+تم إنشاء عرض وظيفي جديد @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") وهو بانتظار المراجعة.
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName لمراجعة التفاصيل والمتابعة في عملية الاعتماد.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">New Job Posting Created
+
+Dear Colleague,
+
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been created and is ready for review.
+
+Please sign in to @Model.Branding.ProductName to review the details and proceed with the approval process.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>12. رفض تغيير حالة الوظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ChangeJobStatusRejectedNotificationDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">تم رفض طلب الوظيفة
+
+عزيزي الزميل/الزميلة،
+
+تم رفض طلب الوظيفة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يرجى مراجعة المنصة للاطلاع على الأسباب أو الملاحظات.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Posting Rejected
+
+Dear Colleague,
+
+The request for @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been rejected.
+
+Please review the feedback in @Model.Branding.ProductName, update the posting as needed, and resubmit.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>13. تعيين ملف شخصي لموظف</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ProfileAssignedEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, InApp</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        <span class="subject">العنوان: تم إسناد ملف جديد للمراجعة</span>
+        <pre dir="rtl">مرحباً،
+
+تم إسناد ملف مرشح جديد تحت مراجعتك في @product.
+
+اسم المرشح: @m.CandidateName
+
+يرجى زيارة الرابط التالي لمراجعة الملف:
+@profileUrl
+
+مع تحيات،
+فريق عمل @product
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        <span class="subject">Subject: New Profile Assigned for Review</span>
+        <pre dir="ltr">Hello,
+
+You have been assigned a new profile for review in @product.
+
+Candidate Name: @m.CandidateName
+
+Please visit the following link to review the profile:
+@profileUrl
+
+Regards,
+The @product Team</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>14. حذف وظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> JobDeletedDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">تم حذف عرض الوظيفة
+
+عزيزي الزميل/الزميلة،
+
+تم حذف عرض الوظيفة التالي من النظام: @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\""). يرجى العلم بأنه تم إيقاف جميع العمليات المرتبطة بهذا العرض.
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName إذا كنت بحاجة لمراجعة التفاصيل التاريخية أو اتخاذ إجراءات لاحقة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Posting Removed
+
+Dear Colleague,
+
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been removed from the system.
+
+Please sign in to @Model.Branding.ProductName if you need to review historical details or take follow-up actions.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>15. تأكيد رقم الهاتف (Phone Verification OTP)</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> RequestPhoneVerificationCommandHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">رمز التحقق الخاص بك هو: @Model.Model.Code لتأكيد رقم الهاتف الخاص بك
+سينتهي هذا الرمز خلال @Model.Model.ExpiryMinutes دقيقة.
+إذا لم تطلب هذا الرمز، يرجى تجاهل هذه الرسالة.</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Your verification code is: @Model.Model.Code to verify your phone number
+This code will expire in @Model.Model.ExpiryMinutes minutes.
+If you did not request this code, please ignore this message.</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>16. الموافقة على تغيير حالة الوظيفة</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> ChangeJobStatusApprovedNotificationDomainEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">تمت الموافقة على طلب الوظيفة
+
+عزيزي الزميل/الزميلة،
+
+تمت الموافقة على طلب الوظيفة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يمكنك الآن المتابعة في نشر الوظيفة أو اتخاذ الخطوات التالية في @Model.Branding.ProductName.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Job Posting Approved
+
+Dear Colleague,
+
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been approved.
+
+You may proceed with publishing the role or taking the next steps in @Model.Branding.ProductName.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>17. تسجيل الدخول للمقيم (Qatar Resident OTP)</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> RequestQatarResidentOtpCommandHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">رمز التحقق الخاص بك هو: @Model.Model.Otp لتسجيل الدخول
+سينتهي هذا الرمز خلال @Model.Model.ExpiryMinutes دقيقة.
+إذا لم تطلب هذا الرمز، يرجى تجاهل هذه الرسالة.</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Your verification code is: @Model.Model.Otp to login
+This code will expire in @Model.Model.ExpiryMinutes minutes.
+If you did not request this code, please ignore this message.</pre>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>18. إرجاع مرفق الدعوة للمرشح</h2>
+    </div>
+    <div class="meta">
+      <div><strong>مكان الاستخدام:</strong> InvitationAttachmentReturnedEventHandler.cs</div>
+      <div><strong>قناة الإرسال:</strong> Email, InApp, SMS</div>
+    </div>
+    <div class="content-grid">
+      <div class="lang-section">
+        <div class="lang-title">الرسالة باللغة العربية</div>
+        
+        <pre dir="rtl">إعادة المرفق للمراجعة
+
+عزيزي المرشح،
+
+تمت إعادة المرفق "@Model.Model.AttachmentTitle" للمراجعة من قبل السلطة المختصة.
+
+ملاحظة المراجع: @Model.Model.ReviewNote
+
+يرجى تسجيل الدخول وإجراء التعديلات المطلوبة.
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail</pre>
+      </div>
+      <div class="lang-section" dir="ltr">
+        <div class="lang-title">الرسالة باللغة الإنجليزية</div>
+        
+        <pre dir="ltr">Action Required: Attachment Returned
+
+Dear Candidate,
+
+One of your submitted attachments for your job application requires your attention.
+
+Attachment: @Model.Model.AttachmentTitle
+Review Note: @Model.Model.ReviewNote
+
+Please sign in to the recruitment portal to re-upload the corrected document and re-submit your application.
+
+Access the portal: @Model.Branding.WebsiteUrl
+
+Best regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail</pre>
+      </div>
+    </div>
+  </div></body></html>

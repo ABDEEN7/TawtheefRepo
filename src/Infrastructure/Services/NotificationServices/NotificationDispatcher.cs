@@ -8,6 +8,8 @@ using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Entities.Notification;
 
+using Tawtheef.Notifications.Interfaces;
+
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
 
 public sealed class NotificationDispatcher(
@@ -41,6 +43,7 @@ public sealed class NotificationDispatcher(
             var pushSender = scope.ServiceProvider.GetRequiredService<IPushSender>();
 
             var repo = uow.GetEntityRepository<Notification>();
+            var renderer = scope.ServiceProvider.GetRequiredService<IEmailTemplateRenderer>();
             var handlers = BuildHandlers(emailSender, smsSender, pushSender);
 
             // Recover any notifications stuck in Queued state
@@ -54,7 +57,7 @@ public sealed class NotificationDispatcher(
             {
                 try
                 {
-                    await ProcessOne(n, handlers, ct);
+                    await ProcessOne(n, handlers, renderer, ct);
                     await uow.SaveChangesAsync(ct);
                 }
                 catch (Exception ex)
@@ -132,10 +135,13 @@ public sealed class NotificationDispatcher(
     private async Task ProcessOne(
         Notification n,
         IReadOnlyDictionary<NotificationChannel, Func<Notification, CancellationToken, Task<NotificationResponse>>> handlers,
+        IEmailTemplateRenderer renderer,
         CancellationToken ct)
     {
         try
         {
+            await EnsureRendered(n, renderer);
+
             if (!handlers.TryGetValue(n.Channel, out var handler))
             {
                 n.MarkFailed("UNSUPPORTED_NOTIFICATION_CHANNEL");
@@ -149,6 +155,53 @@ public sealed class NotificationDispatcher(
         {
             ScheduleRetry(n, ex.Message);
             _log.Error(ex, "Notification {Id} failed during processing", n.Id);
+        }
+    }
+
+    private async Task EnsureRendered(Notification n, IEmailTemplateRenderer renderer)
+    {
+        if (string.IsNullOrWhiteSpace(n.TemplateKey)) return;
+
+        // 1. Default Subject from Template Metadata if missing
+        if (string.IsNullOrWhiteSpace(n.Subject))
+        {
+            var defaultSubject = renderer.GetDefaultSubject(n.TemplateKey, n.Language);
+            if (!string.IsNullOrWhiteSpace(defaultSubject))
+            {
+                typeof(Notification).GetProperty(nameof(Notification.Subject))?
+                    .SetValue(n, defaultSubject);
+            }
+        }
+
+        // 2. Render Body if missing
+        if (string.IsNullOrWhiteSpace(n.Body))
+        {
+            try
+            {
+                var content = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
+                content = content.Trim();
+                
+                // If content starts with "Subject:", extract it and remove from body
+                if (content.StartsWith("Subject:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var lines = content.Split(['\r', '\n'], 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length > 0)
+                    {
+                        var subjectLine = lines[0][8..].Trim();
+                        typeof(Notification).GetProperty(nameof(Notification.Subject))?
+                            .SetValue(n, subjectLine);
+                        
+                        content = lines.Length > 1 ? lines[1].TrimStart() : string.Empty;
+                    }
+                }
+
+                typeof(Notification).GetProperty(nameof(Notification.Body))?
+                    .SetValue(n, content);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Failed to render template {Key} for notification {Id}", n.TemplateKey, n.Id);
+            }
         }
     }
 

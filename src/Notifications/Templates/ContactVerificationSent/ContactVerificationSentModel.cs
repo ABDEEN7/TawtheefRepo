@@ -7,5 +7,5 @@ public static class ContactVerificationSent
     public const string TemplateKey = nameof(ContactVerificationSent);
 }
 
-[NotificationTemplate(ContactVerificationSent.TemplateKey)]
+[NotificationTemplate(ContactVerificationSent.TemplateKey, "رمز التحقق - منصة التوظيف", "Careers Verification Code")]
 public sealed record ContactVerificationSentModel(string Code);

@@ -3,7 +3,7 @@ Job Posting Removed
 
 Dear Colleague,
 
-The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been removed from the system.
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been removed from the system.
 
 Please sign in to @Model.Branding.ProductName if you need to review historical details or take follow-up actions.
 

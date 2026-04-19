@@ -1,21 +1,28 @@
 ﻿using System.Text.Json;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 using Tawtheef.Notifications.Templates.JobCandidateInvitationSent;
 
+using Tawtheef.Domain.Entities.Users;
+
 namespace Application.Operation.Common.EventHandlers.JobCandidates;
 
-public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork unitOfWork)
+public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork unitOfWork, UserManager<User> userManager)
     : INotificationHandler<JobCandidateInvitationSentDomainEvent>
-{public async Task Handle(JobCandidateInvitationSentDomainEvent request, CancellationToken ct)
+{
+    public async Task Handle(JobCandidateInvitationSentDomainEvent request, CancellationToken ct)
     {
+        var user = await userManager.Users.OfType<ApplicantUser>()
+            .FirstOrDefaultAsync(u => u.Id == request.ApplicantId, ct);
+        var lang = user?.PreferredLanguage ?? "ar";
+
         var notificationRepository = unitOfWork.GetEntityRepository<Notification>();
         var jobTitle = request.JobTitle;
 
-        const string subject = "Careers Job Invitation";
 
         // Email Notification
         var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
@@ -26,9 +33,13 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
             JobCandidateInvitationSent.TemplateKey,
             request.ApplicantId,
             request.Email,
-            subject,
-            null,null, 
-            payload);
+            null,
+            null,
+            null,
+            payload,
+            null,
+            3,
+            lang);
 
         await notificationRepository.AddAsync(inAppNotification, ct);
         
@@ -39,9 +50,11 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 JobCandidateInvitationSent.TemplateKey,
                 request.ApplicantId,
                 request.Email,
-                subject,
-                null,null, 
-                payload);
+                null,
+                null,
+                null,
+                payload,
+                null, 3, lang);
 
             await notificationRepository.AddAsync(emailNotification, ct);
         }
@@ -49,18 +62,17 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
         // SMS Notification
         if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
         {
-            var messageBody = string.IsNullOrWhiteSpace(jobTitle)
-                ? JobCandidatesMessages.JobInvitationWithoutTitle
-                : string.Format(JobCandidatesMessages.JobInvitationWithTitle, jobTitle);
 
             var smsNotification = Notification.Create(
                 NotificationChannel.Sms,
                 JobCandidateInvitationSent.TemplateKey,
                 request.ApplicantId,
                 request.PhoneNumber,
-                subject,
-                messageBody,null, 
-                null);
+                null,
+                null,
+                null,
+                payload,
+                null, 3, lang);
 
             await notificationRepository.AddAsync(smsNotification, ct);
         }

@@ -10,7 +10,6 @@ using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Recruitment.Features.JobDetails.Handlers.Queries;

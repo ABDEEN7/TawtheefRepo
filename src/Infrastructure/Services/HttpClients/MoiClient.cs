@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Xml;
-using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;

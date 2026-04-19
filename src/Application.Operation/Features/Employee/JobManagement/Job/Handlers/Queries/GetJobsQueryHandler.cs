@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
-using Tawtheef.Application.Extensions;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Handlers.Queries;
 

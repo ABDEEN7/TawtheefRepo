@@ -24,7 +24,6 @@ public sealed class ChangeJobStatusRejectedNotificationDomainEventHandler(
             userManager,
             notification.Job.CreatedById.ToString()!,
             ChangeJobStatusRejectedNotification.TemplateKey,
-            "Job Request Rejected",
             payload,
             ct);
     }

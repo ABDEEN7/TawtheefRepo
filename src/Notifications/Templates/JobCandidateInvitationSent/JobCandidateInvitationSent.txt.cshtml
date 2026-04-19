@@ -3,7 +3,7 @@ Job Invitation
 
 Dear Candidate,
 
-You have been invited to apply for "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "a role on our platform" : Model.Model.JobTitle)" on @Model.Branding.ProductName.
+You have been invited to apply for @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") on @Model.Branding.ProductName.
 
 Please sign in to review the opportunity and submit your application.
 

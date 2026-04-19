@@ -16,8 +16,8 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public class GoogleExternalCallbackLoginHandler(
-    UserManager<User> userManager,
-    SignInManager<User> signInManager,
+    UserManager<Domain.Entities.Users.User> userManager,
+    SignInManager<Domain.Entities.Users.User> signInManager,
     ITokenService tokenService,
     IUnitOfWork uow,
     ILoginAuditService loginAudit,
@@ -286,7 +286,7 @@ public class GoogleExternalCallbackLoginHandler(
     }
 
     private async Task<IResult<AuthResponse>> AttachProviderToExistingApplicantAsync(
-        User existingUser,
+        Domain.Entities.Users.User existingUser,
         ExternalLoginInfo info,
         CancellationToken ct)
     {

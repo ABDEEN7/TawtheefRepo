@@ -1,6 +1,5 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 

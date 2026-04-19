@@ -31,11 +31,15 @@ public class ContactVerification : EventEntity
     public DateTime ExpiresAt { get; init; }
     public DateTime? UsedAt { get; set; }
 
+    [MaxLength(10)]
+    public string Language { get; set; } = "en";
+
     public bool IsUsed => UsedAt.HasValue;
     public bool IsExpired => DateTime.UtcNow > ExpiresAt;
 
-    public void Send()
+    public void Send(string? language = null)
     {
-        AddDomainEvent(new ContactVerificationSentEvent(UserId, Type, Destination, Code));
+        if (language != null) Language = language;
+        AddDomainEvent(new ContactVerificationSentEvent(UserId, Type, Destination, Code, Language));
     }
 }

@@ -8,7 +8,7 @@ namespace Application.Operation.Common.EventHandlers.Job;
 internal static class JobNotificationEmailHelper
 {
     internal static async Task QueueForDepartmentManagerAsync(IUnitOfWork unitOfWork, UserManager<User> userManager, 
-        string templateKey, string subject, string payloadJson, CancellationToken ct)
+        string templateKey, string payloadJson, CancellationToken ct)
     {
         var users = await userManager.GetUsersInRoleAsync(nameof(SystemRoleIds.DepartmentManager));
         if (users.Count == 0)
@@ -22,14 +22,14 @@ internal static class JobNotificationEmailHelper
                 continue;
 
             var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-                user.Email, subject, null,null, payloadJson);
+                user.Email, null, null, null, payloadJson, null, 3, user.PreferredLanguage);
             await repo.AddAsync(notification, ct);
         }
         await unitOfWork.SaveChangesAsync(ct);
     }
     
     internal static async Task QueueForEmployeeAsync(IUnitOfWork unitOfWork, UserManager<User> userManager, 
-        string userId, string templateKey, string subject, string payloadJson, CancellationToken ct)
+        string userId, string templateKey, string payloadJson, CancellationToken ct)
     {
         var user = await userManager.FindByIdAsync(userId);
 
@@ -38,7 +38,7 @@ internal static class JobNotificationEmailHelper
 
         var repo = unitOfWork.GetEntityRepository<Notification>();
         var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-            user.Email, subject, null, null, payloadJson);
+            user.Email, null, null, null, payloadJson, null, 3, user.PreferredLanguage);
         await repo.AddAsync(notification, ct);
         await unitOfWork.SaveChangesAsync(ct);
     }

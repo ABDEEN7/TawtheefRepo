@@ -3,13 +3,10 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services;
-using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Events;
 using Tawtheef.Domain.Events.Operation;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Handlers.Commands;

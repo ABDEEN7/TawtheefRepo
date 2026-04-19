@@ -1,0 +1,22 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.KawaderInvitation.KawaderInvitationModel>
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var support = b.SupportEmail;
+
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "عزيزي المستخدم" : m.FullName;
+}
+عزيزي @fullName،
+
+يسرنا دعوتكم للانضمام إلى منصة @product.
+
+يرجى تسجيل الدخول باستخدام الرقم الشخصي الخاص بكم (@m.Qid) لإكمال ملفكم الشخصي وتحميل السيرة الذاتية حتى نتمكن من البدء في النظر في فرص التوظيف المستقبلية الخاصة بكم.
+
+يمكنكم تسجيل الدخول عبر الرابط: @website
+
+---
+للدعم الفني: @support
+© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.

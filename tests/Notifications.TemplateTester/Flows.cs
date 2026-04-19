@@ -2,7 +2,6 @@ using System.Text;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Notifications.Interfaces;
-using Tawtheef.Notifications.Services;
 
 namespace Tawtheef.Notifications.TemplateTester;
 
@@ -27,7 +26,14 @@ internal static class Flows
 
         var profile = GetActiveProfile(state);
 
-        var subjectDefault = $"{(profile?.SubjectPrefix ?? "")}{templateKey} - {DateTime.Now:yyyy-MM-dd HH:mm}";
+        var language = Prompting.Prompt("Language (ar/en)", "ar", required: true).ToLowerInvariant();
+        if (language is not ("ar" or "en")) language = "ar";
+
+        var subjectDefaultValue = language == "ar" 
+            ? templateEntry.Attribute.SubjectAr 
+            : templateEntry.Attribute.SubjectEn;
+
+        var subjectDefault = $"{(profile?.SubjectPrefix ?? "")}{subjectDefaultValue}";
         var subject = Prompting.Prompt("Subject", subjectDefault, required: true);
 
         var to = Prompting.PromptEmailList("To (comma-separated)", profile?.To, required: true);
@@ -36,11 +42,12 @@ internal static class Flows
         var model = ModelBuilder.BuildModelFast(templateKey, modelType, state);
 
         Console.WriteLine("Rendering...");
-        var html = await renderer.RenderHtmlAsync(templateKey, (dynamic)model);
-        var text = await renderer.RenderTextAsync(templateKey, (dynamic)model);
+        var html = await renderer.RenderHtmlAsync(templateKey, (dynamic)model, language);
+        var text = await renderer.RenderTextAsync(templateKey, (dynamic)model, language);
 
         Console.WriteLine();
         Console.WriteLine("Summary:");
+        Console.WriteLine($"  Language: {language}");
         Console.WriteLine($"  To      : {string.Join(", ", to)}");
         Console.WriteLine($"  Cc      : {(cc.Count == 0 ? "-" : string.Join(", ", cc))}");
         Console.WriteLine($"  Subject : {subject}");
@@ -53,8 +60,8 @@ internal static class Flows
 
         if (action is "preview" or "dry")
         {
-            var (htmlPath, txtPath) = SavePreview(templateKey, (string)html, (string)text);
-            Console.WriteLine($"Preview saved:");
+            var (htmlPath, txtPath) = SavePreview(templateKey, (string)html, (string)text, language);
+             Console.WriteLine($"Preview saved ({language}):");
             Console.WriteLine($"  {htmlPath}");
             Console.WriteLine($"  {txtPath}");
             if (action == "dry")
@@ -80,13 +87,13 @@ internal static class Flows
         Console.WriteLine();
     }
 
-    private static (string HtmlPath, string TextPath) SavePreview(string templateKey, string html, string text)
+    private static (string HtmlPath, string TextPath) SavePreview(string templateKey, string html, string text, string language)
     {
         Directory.CreateDirectory("out");
         var safe = SanitizeFileName(templateKey);
         var ts = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        var htmlPath = Path.Combine("out", $"{safe}_{ts}.html");
-        var txtPath = Path.Combine("out", $"{safe}_{ts}.txt");
+        var htmlPath = Path.Combine("out", $"{safe}_{language}_{ts}.html");
+        var txtPath = Path.Combine("out", $"{safe}_{language}_{ts}.txt");
 
         File.WriteAllText(htmlPath, html, Encoding.UTF8);
         File.WriteAllText(txtPath, text, Encoding.UTF8);

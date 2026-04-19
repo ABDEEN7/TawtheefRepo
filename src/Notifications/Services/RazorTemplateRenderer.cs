@@ -36,50 +36,75 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
 
     private static string Normalize(string k) => k.Replace('/', '.');
 
-    private Task<string> RenderAsync<T>(string templateKey, string kind, T model)
+    private Task<string> RenderAsync<T>(string templateKey, string kind, string language, T model)
     {
         if (string.IsNullOrWhiteSpace(templateKey))
             throw new ArgumentException("Template key is required.", nameof(templateKey));
 
-        var logical = Normalize($"Tawtheef/Notifications/Templates/{templateKey}/{templateKey}.{kind}.cshtml");
-
-        if (!_keyMap.TryGetValue(logical, out var actual))
+        // Try language-specific template first: Template.ar.html.cshtml
+        var logicalLang = Normalize($"Tawtheef/Notifications/Templates/{templateKey}/{templateKey}.{language}.{kind}.cshtml");
+        
+        if (!_keyMap.TryGetValue(logicalLang, out var actual))
         {
-            var available = string.Join("\n", _keyMap.Keys.OrderBy(x => x));
-            throw new InvalidOperationException(
-                $"Template '{logical}' not found. Embedded templates:\n{available}");
+            // Fallback to default template: Template.html.cshtml
+            var logicalDefault = Normalize($"Tawtheef/Notifications/Templates/{templateKey}/{templateKey}.{kind}.cshtml");
+            if (!_keyMap.TryGetValue(logicalDefault, out actual))
+            {
+                var available = string.Join("\n", _keyMap.Keys.OrderBy(x => x));
+                throw new InvalidOperationException(
+                    $"Template '{logicalDefault}' (or language '{language}') not found. Embedded templates:\n{available}");
+            }
         }
 
         return _engine.CompileRenderAsync(
             actual,
-            new TemplateContext<T> { Branding = _branding, Model = model });
+            new TemplateContext<T> { Branding = _branding, Model = model, Language = language });
     }
 
     public Task<string> RenderHtmlAsync<T>(string templateKey, T model)
-        => RenderAsync(templateKey, "html", model);
+        => RenderAsync(templateKey, "html", "ar", model);
 
     public Task<string> RenderTextAsync<T>(string templateKey, T model)
-        => RenderAsync(templateKey, "txt", model);
+        => RenderAsync(templateKey, "txt", "ar", model);
 
-    public async Task<string> RenderHtmlAsync(string templateKey, string payloadJson)
+    public async Task<string> RenderHtmlAsync(string templateKey, string payloadJson, string language = "ar")
     {
         var model = DeserializePayload(templateKey, payloadJson);
         var method = GetGenericRenderMethod(nameof(RenderHtmlAsync), model.GetType());
-        return await (Task<string>)method.Invoke(this, [templateKey, model])!;
+        return await (Task<string>)method.Invoke(this, [templateKey, model, language])!;
     }
 
-    public async Task<string> RenderTextAsync(string templateKey, string payloadJson)
+    public async Task<string> RenderTextAsync(string templateKey, string payloadJson, string language = "ar")
     {
         var model = DeserializePayload(templateKey, payloadJson);
         var method = GetGenericRenderMethod(nameof(RenderTextAsync), model.GetType());
-        return await (Task<string>)method.Invoke(this, [templateKey, model])!;
+        return await (Task<string>)method.Invoke(this, [templateKey, model, language])!;
+    }
+
+    public Task<string> RenderHtmlAsync<T>(string templateKey, T model, string language)
+        => RenderAsync(templateKey, "html", language, model);
+
+    public Task<string> RenderTextAsync<T>(string templateKey, T model, string language)
+        => RenderAsync(templateKey, "txt", language, model);
+    
+    public string GetDefaultSubject(string templateKey, string language = "ar")
+    {
+        if (_modelTypeMap.TryGetValue(templateKey, out var type))
+        {
+            var attr = type.GetCustomAttribute<NotificationTemplateAttribute>();
+            if (attr == null) return string.Empty;
+            return language.Equals("ar", StringComparison.OrdinalIgnoreCase) 
+                ? attr.SubjectAr 
+                : attr.SubjectEn;
+        }
+        return string.Empty;
     }
 
     private MethodInfo GetGenericRenderMethod(string name, Type modelType)
     {
         return typeof(RazorTemplateRenderer)
             .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            .First(m => m.Name == name && m.IsGenericMethod)
+            .First(m => m.Name == name && m.IsGenericMethod && m.GetParameters().Length == 3)
             .MakeGenericMethod(modelType);
     }
 
