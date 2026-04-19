@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Users;
 
@@ -19,5 +19,10 @@ public class ApplicationUserConfiguration<T> : IEntityTypeConfiguration<T> where
             .HasForeignKey(u => u.UserTypeId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(u => u.UserRoles)
+            .WithOne()
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
     }
 }

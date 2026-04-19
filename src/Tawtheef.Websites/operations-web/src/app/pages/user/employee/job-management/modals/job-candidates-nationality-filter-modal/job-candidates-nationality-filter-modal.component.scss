@@ -1,28 +1,40 @@
 .jc-dialog {
   display: flex;
   flex-direction: column;
-  max-height: min(78vh, 820px);
+  max-height: 85vh;
+  min-height: 400px;
+  background: #f8f9fa;
 }
 
 .jc-dialog__body {
-  padding: 1rem;
-  overflow: auto;
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+  }
 }
 
 .jc-dialog__footer {
-  padding: 0.75rem 1rem;
-  position: sticky;
-  bottom: 0;
+  padding: 1rem 1.5rem;
+  background: white;
 }
 
-.jc-card {
-  border-radius: 0.75rem;
-}
-
-/* Optional: add a subtle hover */
-.jc-card:hover {
-  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.15s ease;
+.jc-row {
+  border: 1px solid #edf2f7;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+  }
 }
 
 /* Prime input inside bootstrap layout */
@@ -31,47 +43,33 @@
   width: 100%;
 }
 
-
 .points-control {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   border: 1px solid #e6dde1;
-  border-radius: 999px;
+  border-radius: 10px;
   overflow: hidden;
   background: #ffffff;
-  height: 44px;
+  height: 42px;
 }
 
-:host ::ng-deep .points-input.p-inputnumber {
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-:host ::ng-deep .points-input .p-inputnumber-input {
-  border: 0;
-  background: transparent;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(102, 103, 102, 1);
-  padding: 0 10px;
-}
 .points-chip {
   display: flex;
   align-items: center;
-  padding: 0 0.9rem;
+  padding: 0 0.75rem;
   background: #fde7ee;
   color: #a0153e;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
-  max-width: 120px;
-  min-width: 120px;
-  justify-content: center;
+  height: 100%;
+  border-inline-end: 1px solid #e6dde1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 :host ::ng-deep .points-input.p-inputnumber {
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
 }
@@ -79,12 +77,24 @@
 :host ::ng-deep .points-input .p-inputnumber-input {
   border: 0;
   background: transparent;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(102, 103, 102, 1);
-  padding: 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  padding: 0 0.75rem;
+  text-align: center;
+
+  &:focus {
+    box-shadow: none;
+  }
 }
 
-:host ::ng-deep .points-input .p-inputnumber-input:focus {
-  box-shadow: none;
+.text-primary-dark {
+  color: #2d3748;
+}
+
+.fs-15 { font-size: 0.9375rem; }
+.fs-13 { font-size: 0.8125rem; }
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
 }

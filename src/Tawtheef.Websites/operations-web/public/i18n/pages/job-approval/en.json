@@ -1,5 +1,7 @@
 {
     "JOB_APPROVAL.NOT_SPECIFIED": "Not Specified",
+    "JOB_APPROVAL.CREATED_BY": "Created By",
+    "JOB_APPROVAL.SYSTEM": "System",
     "JOB_APPROVAL.POSTED_DATE": "Posted Date",
     "JOB_APPROVAL.EXPIRED": "Expired",
     "JOB_APPROVAL.BASIC_DATA": "Basic Job Data",

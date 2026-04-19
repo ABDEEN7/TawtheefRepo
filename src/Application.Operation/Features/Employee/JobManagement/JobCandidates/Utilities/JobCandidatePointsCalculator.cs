@@ -9,7 +9,7 @@ internal static class JobCandidatePointsCalculator
     public static int Calculate(
         JobCandidateRecord candidate,
         JobPointsMain jobPointsMain,
-        List<JobDegree> jobDegrees,
+        ICollection<JobDegree> jobDegrees,
         Guid? jobMajorId,
         Guid? jobSubMajorId,
         IAppLogger logger
@@ -29,7 +29,7 @@ internal static class JobCandidatePointsCalculator
     public static JobCandidatePointsBreakdown CalculateBreakdown(
         JobCandidateRecord candidate,
         JobPointsMain jobPointsMain,
-        List<JobDegree> jobDegrees,
+        ICollection<JobDegree> jobDegrees,
         Guid? jobMajorId,
         Guid? jobSubMajorId,
         IAppLogger logger)

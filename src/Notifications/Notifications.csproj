@@ -134,4 +134,15 @@
       </EmbeddedResource>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.html.cshtml" />
+      <EmbeddedResource Include="Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.html.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.txt.cshtml" />
+      <EmbeddedResource Include="Templates\MinisterOfficeNewCandidateHr\MinisterOfficeNewCandidateHr.txt.cshtml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

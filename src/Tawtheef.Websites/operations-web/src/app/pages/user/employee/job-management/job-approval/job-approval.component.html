@@ -370,6 +370,11 @@
                   <span class="label">{{ 'JOB_APPROVAL.WORK_LOCATION' | translate }}</span>
                   <span class="value">{{ job.workLocation.name | translate }}</span>
                 </div>
+
+                <div class="info-list-item">
+                  <span class="label">{{ 'JOB_APPROVAL.CREATED_BY' | translate }}</span>
+                  <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_APPROVAL.SYSTEM' | translate) }}</span>
+                </div>
               </div>
             </div>
 

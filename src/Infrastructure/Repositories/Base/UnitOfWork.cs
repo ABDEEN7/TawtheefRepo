@@ -39,9 +39,9 @@ public class UnitOfWork(TawtheefDbContext dbContext) : IUnitOfWork, IAsyncDispos
         if (entity is null) return;
         _dbContext.Remove(entity);
     }
-    public void RemoveRange<T>(IList<T>? entities) where T : EventEntity
+    public void RemoveRange<T>(IEnumerable<T>? entities) where T : EventEntity
     {
-        if (entities is null or {Count: <= 0}) return;
+        if (entities is null || entities.Count() == 0) return;
         _dbContext.RemoveRange(entities);
     }
 

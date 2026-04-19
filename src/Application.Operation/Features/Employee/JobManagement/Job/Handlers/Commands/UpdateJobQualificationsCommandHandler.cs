@@ -52,7 +52,7 @@ public class UpdateJobQualificationsCommandHandler(
 
         return Result.Ok(Unit.Value);
     }
-    private async Task SyncDegrees(IUnitOfWork uow,Guid jobId, List<JobDegree> existsDegrees, List<Guid> newDegreeIds, CancellationToken ct)
+    private async Task SyncDegrees(IUnitOfWork uow,Guid jobId, ICollection<JobDegree> existsDegrees, ICollection<Guid> newDegreeIds, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobDegree>();
         // Deduplicate
@@ -74,7 +74,7 @@ public class UpdateJobQualificationsCommandHandler(
             }, ct);
         }
     }
-    private async Task SyncSpecializations(IUnitOfWork uow,Guid jobId, List<JobSpecialization> existsSpecs, List<JobSpecializationRequestDto> newSpecs, CancellationToken ct)
+    private async Task SyncSpecializations(IUnitOfWork uow,Guid jobId, ICollection<JobSpecialization> existsSpecs, ICollection<JobSpecializationRequestDto> newSpecs, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobSpecialization>();
         // Deduplicate by (MajorId, SubMajorId) composite key

@@ -40,7 +40,7 @@ public class UpdateJobResponsibilitiesCommandHandler(
         return Result.Ok(Unit.Value);
     }
 
-    private async Task SyncResponsibilities(IUnitOfWork uow,Guid jobId, List<JobResponsibility> existsResponsibilities, List<JobResponsibilityRequestDto> newResponsibilities, CancellationToken ct)
+    private async Task SyncResponsibilities(IUnitOfWork uow,Guid jobId, ICollection<JobResponsibility> existsResponsibilities, ICollection<JobResponsibilityRequestDto> newResponsibilities, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobResponsibility>();
         // Deduplicate by TextAr (case-insensitive)

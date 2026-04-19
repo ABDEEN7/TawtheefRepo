@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
@@ -13,8 +13,8 @@ namespace Tawtheef.Application.Features.Notifications.Handlers.Queries;
 public sealed class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, IEmailTemplateRenderer renderer)
     : IRequestHandler<GetUserNotificationsQuery, IResult<IReadOnlyList<UserNotificationDto>>>
 {
-    private const int DefaultLimit = 10;
-    private const int MaxLimit = 50;
+    private const int DefaultLimit = 3;
+    private const int MaxLimit = 10;
 
     public async Task<IResult<IReadOnlyList<UserNotificationDto>>> Handle(
         GetUserNotificationsQuery request,

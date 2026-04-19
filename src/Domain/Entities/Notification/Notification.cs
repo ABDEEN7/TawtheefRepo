@@ -8,7 +8,7 @@ public enum NotificationChannel { Sms = 1, Email = 2, Push = 3, InApp = 4 }
 public enum NotificationStatus { Pending = 1, Queued = 2, Sent = 3, Failed = 4, Canceled = 5 }
 
 [Index(nameof(Status), nameof(Channel))]
-[Index(nameof(UserId), nameof(IsRead), nameof(IsDismissed))]
+[Index(nameof(UserId), nameof(Channel), nameof(IsDismissed), nameof(IsRead))]
 public class Notification : EventEntity
 {
     public Guid? UserId { get; private set; }

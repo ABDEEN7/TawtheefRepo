@@ -41,7 +41,7 @@ public class UpdateJobSkillsCommandHandler(
         return Result.Ok(Unit.Value);
     }
 
-    private async Task SyncSkills(IUnitOfWork uow,Guid jobId, List<JobSkill> existsSkills, List<JobSkillRequestDto> newSkills, CancellationToken ct)
+    private async Task SyncSkills(IUnitOfWork uow,Guid jobId, ICollection<JobSkill> existsSkills, ICollection<JobSkillRequestDto> newSkills, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobSkill>();
         // Deduplicate input by SkillId (keep first occurrence)

@@ -13,5 +13,7 @@ public interface IJobRepository : IBaseRepository<Job>
     Task<List<Job>> GetJobsToAutoCloseBatchAsync(DateTimeOffset currentDate, int batchSize);
     Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
         JobQueryFilter filter,
-        PaginatedRequest pagination);
+        PaginatedRequest pagination,
+        Guid? currentUserId,
+        bool isHRManager);
 }

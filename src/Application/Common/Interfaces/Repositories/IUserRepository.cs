@@ -13,4 +13,5 @@ public interface IUserRepository : IBaseRepository<User>
     Task<IResult<bool>> IsUserNameUniqueAsync(string userName);
     Task<IResult<bool>> IsPhoneNumberUniqueAsync(string phoneNumber);
     Task<IReadOnlyList<User>> GetUsersByPermissionAsync(string permission, CancellationToken ct);
+    Task<IReadOnlyList<User>> GetUsersByRoleAsync(string role, CancellationToken ct);
 }

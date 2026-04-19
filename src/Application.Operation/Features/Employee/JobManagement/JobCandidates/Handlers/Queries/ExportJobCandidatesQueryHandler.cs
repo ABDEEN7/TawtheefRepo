@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
@@ -85,6 +85,7 @@ public sealed class ExportJobCandidatesQueryHandler(
 
         var settings = await unitOfWork.GetEntityRepository<JobCandidateFilterSetting>().DbSet
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(s => s.CandidateTypePercentages)
             .Include(s => s.NationalityPercentages)
             .FirstOrDefaultAsync(s => s.JobId == request.JobId, cancellationToken);

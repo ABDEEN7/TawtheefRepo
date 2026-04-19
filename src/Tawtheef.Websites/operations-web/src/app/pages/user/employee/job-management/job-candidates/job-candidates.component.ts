@@ -25,6 +25,7 @@ import { JobCandidateProfileDialogComponent } from '../modals/job-candidate-prof
 import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
+import { JobCandidatesSpecializationFilterModalComponent } from '../modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -45,6 +46,7 @@ export class JobCandidatesComponent implements OnInit {
   lookupsService = inject(JobLookupService);
 
   paginationMetadata: PaginationMetadata | undefined;
+  isLoading = signal(false);
 
   jobId!: GUID;
   jobInfo?: JobResponse;
@@ -64,7 +66,20 @@ export class JobCandidatesComponent implements OnInit {
 
   candidateTypePercentages: JobCandidateTypePercentage[] = [];
   nationalityPercentages: JobCandidateNationalityPercentage[] = [];
+  selectedSpecializations: { majorId: GUID; subMajorId: GUID }[] = [];
   filterSettingsLoaded = false;
+
+  get activeSpecializationsCount(): number {
+    return this.selectedSpecializations.length;
+  }
+
+  get activeNationalitiesCount(): number {
+    return this.nationalityPercentages.length;
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!this.searchQuery() || !!this.minimumPoints() || !!this.filterGender() || this.selectedSpecializations.length > 0 || this.nationalityPercentages.length > 0;
+  }
 
   ngOnInit() {
     this.jobId = this.route.snapshot.paramMap.get('id') as GUID;
@@ -84,6 +99,7 @@ export class JobCandidatesComponent implements OnInit {
         this.minimumPoints.set(settings.minimumPoints ?? null);
         this.candidateTypePercentages = settings.candidateTypePercentages ?? [];
         this.nationalityPercentages = settings.nationalityPercentages ?? [];
+        this.selectedSpecializations = settings.selectedSpecializations ?? [];
         this.filterSettingsLoaded = true;
         this.loadCandidatesData();
       },
@@ -95,6 +111,7 @@ export class JobCandidatesComponent implements OnInit {
 
   private loadCandidatesData(): void {
     if (!this.filterSettingsLoaded) return;
+    this.isLoading.set(true);
 
     const filter = this.buildFilter();
     const pagination = {
@@ -117,7 +134,9 @@ export class JobCandidatesComponent implements OnInit {
 
           this.candidates = list;
           this.paginationMetadata = list.metadata;
+          this.isLoading.set(false);
         },
+        error: () => this.isLoading.set(false),
       });
   }
 
@@ -126,6 +145,7 @@ export class JobCandidatesComponent implements OnInit {
       searchTerm: this.searchQuery() || undefined,
       minimumPoints: this.minimumPoints() || undefined,
       genderId: this.filterGender() || undefined,
+      selectedSpecializations: this.selectedSpecializations.length > 0 ? this.selectedSpecializations : undefined,
     };
   }
 
@@ -255,6 +275,27 @@ export class JobCandidatesComponent implements OnInit {
       if (!result) return;
       this.candidateTypePercentages = result.candidateTypePercentages ?? [];
       this.nationalityPercentages = result.nationalityPercentages ?? [];
+      this.saveFilterSettings();
+    });
+  }
+  
+  openSpecializationFilter(): void {
+    const ref = this.dialogService.open(JobCandidatesSpecializationFilterModalComponent, {
+      header: this.translationService.instant('JOB_CANDIDATE_FILTERS_SPECIALIZATION_TITLE'),
+      width: '40rem',
+      draggable: false,   // ✅ disables dragging
+      data: {
+        mainMajor: this.jobInfo?.major,
+        mainSubMajor: this.jobInfo?.subMajor,
+        specializations: this.jobInfo?.jobSpecializations,
+        selectedSpecializations: this.selectedSpecializations,
+      },
+    });
+
+    ref?.onClose.subscribe((result) => {
+      if (!result) return;
+      this.selectedSpecializations = result;
+      this.saveFilterSettings();
     });
   }
 
@@ -289,6 +330,7 @@ export class JobCandidatesComponent implements OnInit {
       minimumPoints: this.minimumPoints() ?? undefined,
       candidateTypePercentages: this.candidateTypePercentages.filter((item) => item.percentage > 0),
       nationalityPercentages: this.nationalityPercentages.filter((item) => item.percentage > 0),
+      selectedSpecializations: this.selectedSpecializations,
     };
   }
 

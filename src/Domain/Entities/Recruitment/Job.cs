@@ -101,14 +101,14 @@ public sealed class Job : EventEntity
     public JobCandidateFilterSetting? CandidateFilterSetting { get; init; }
     public JobReviewAttachment? ReviewAttachment { get; init; }
 
-    public List<JobDegree> JobDegrees { get; set; } = [];
-    public List<JobCondition> JobConditions { get; set; } = [];
-    public List<JobSkill> JobSkills { get; set; } = [];
-    public List<JobResponsibility> JobResponsibilities { get; set; } = [];
-    public List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
-    public List<Invitation> Invitations { get; init; } = [];
-    public List<JobTabReviewNote> TabReviewNotes { get; init; } = [];
-    public List<JobSpecialization> JobSpecializations { get; set; } = [];
+    public ICollection<JobDegree> JobDegrees { get; init; } = [];
+    public ICollection<JobCondition> JobConditions { get; init; } = [];
+    public ICollection<JobSkill> JobSkills { get; init; } = [];
+    public ICollection<JobResponsibility> JobResponsibilities { get; init; } = [];
+    public ICollection<JobRequiredAttachment> JobRequiredAttachments { get; init; } = [];
+    public ICollection<Invitation> Invitations { get; init; } = [];
+    public ICollection<JobTabReviewNote> TabReviewNotes { get; init; } = [];
+    public ICollection<JobSpecialization> JobSpecializations { get; init; } = [];
 
     public void ChangeStatus(Guid newStatusId)
     {

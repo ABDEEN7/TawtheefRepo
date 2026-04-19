@@ -1,4 +1,6 @@
 {
+  "JOB_APPROVAL.CREATED_BY": "تم الإنشاء بواسطة",
+  "JOB_APPROVAL.SYSTEM": "النظام",
   "JOB_APPROVAL.NOT_SPECIFIED": "غير محدد",
   "JOB_APPROVAL.POSTED_DATE": "تاريخ النشر",
   "JOB_APPROVAL.EXPIRED": "منتهية",

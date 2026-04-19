@@ -14,6 +14,7 @@ using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.MinisterOffice;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
@@ -148,7 +149,15 @@ internal sealed class ProfileDistributionProjection(
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
-        // 7) Map DTOs
+        // 7.1) Load Minister Office Candidates for identifying them (batched)
+        var qids = profiles.Items.Select(p => p.NationalNumber).Where(q => q != null).ToList();
+        var ministerOfficeQids = await uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet
+            .Where(c => qids.Contains(c.Qid))
+            .Select(c => c.Qid)
+            .ToListAsync(ct);
+        var ministerOfficeLookup = ministerOfficeQids.ToHashSet();
+
+        // 8) Map DTOs
         var items = profiles.Items
             .Select(profile =>
             {
@@ -162,6 +171,8 @@ internal sealed class ProfileDistributionProjection(
                 
                 dto.HasOtherSpecialization = profile.Qualifications?.Any(q =>
                     q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther) ?? false;
+
+                dto.IsMinisterOfficeCandidate = profile.NationalNumber != null && ministerOfficeLookup.Contains(profile.NationalNumber);
                 
                 return dto;
             })

@@ -66,6 +66,7 @@ export const Permissions = {
     View: 'jobs.view',
     Manage: 'jobs.manage',
     Approve: 'jobs.approve',
+    SendInvitation: 'jobs.send-invitation',
   },
   JobPoints: {
     View: 'jobs.points.view',

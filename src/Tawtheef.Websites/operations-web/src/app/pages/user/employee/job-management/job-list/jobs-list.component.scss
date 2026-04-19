@@ -1,26 +1,133 @@
 .filter-drawer {
   :host ::v-deep .p-drawer {
-    width: 350px !important;
-    
+    width: 380px !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.05);
+
     @media (max-width: 768px) {
       width: 100% !important;
+    }
+
+    .p-drawer-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #f1f1f1;
+
+      .p-drawer-title {
+        font-weight: 700;
+        color: var(--primary-color);
+      }
     }
   }
 
   .form-label {
-    font-size: 14px;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.6rem;
   }
 }
 
-.badge {
-  font-size: 11px;
-  font-weight: 600;
-  min-width: 18px;
-  height: 18px;
-  display: inline-flex;
+.table-card {
+  transition: all 0.3s ease;
+
+  &.loading-shimmer {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.text-primary-dark {
+  color: #2c3e50;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.empty-state-container {
+  padding: 3rem 0;
+
+  i {
+    opacity: 0.3;
+  }
+}
+
+.avatar-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-color, #3498db);
+  color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.avatar-extra-small {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--secondary-color, #6c757d);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dot-separator {
+  width: 4px;
+  height: 4px;
+  background-color: #dee2e6;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.cell-alt {
+  background-color: rgba(var(--primary-color-rgb, 0, 123, 255), 0.02);
+}
+
+.col-index {
+  width: 45px;
+  text-align: center;
+}
+
+.col-actions {
+  width: 155px;
+  text-align: center;
+}
+
+// Optimization for compact view
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.75rem 0.5rem;
 }

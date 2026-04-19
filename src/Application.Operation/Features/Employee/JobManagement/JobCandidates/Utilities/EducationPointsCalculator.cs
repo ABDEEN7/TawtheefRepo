@@ -8,14 +8,14 @@ internal static class EducationPointsCalculator
     public static int Calculate(
         ICollection<Qualification>? qualifications,
         JobPointsMain jobPoints,
-        List<JobDegree> jobDegrees,
+        ICollection<JobDegree> jobDegrees,
         Guid? jobMajorId,
         Guid? jobSubMajorId)
     {
         if (qualifications == null || qualifications.Count == 0)
             return 0;
 
-        if (jobDegrees.Count == 0)
+        if (jobDegrees.Count() == 0)
             return 0;
 
         var details = jobPoints.Details

@@ -17,4 +17,5 @@ export interface JobCandidatesFilterSettings {
   minimumPoints?: number;
   candidateTypePercentages: JobCandidateTypePercentage[];
   nationalityPercentages: JobCandidateNationalityPercentage[];
+  selectedSpecializations?: { majorId: GUID; subMajorId: GUID }[];
 }

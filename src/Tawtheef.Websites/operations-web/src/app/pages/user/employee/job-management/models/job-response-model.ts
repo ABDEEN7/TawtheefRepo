@@ -22,11 +22,9 @@ export interface JobResponse {
   maximumAge: number;
   yearsOfExperience: number;
   createdDate: Date;
-  modifiedDate?: Date;
-  publishAt?: Date;
-  cancelledAt?: Date;
-  createdBy?: GUID;
-  modifiedBy?: GUID;
+  updatedDate?: Date;
+  createdByName: string;
+  lastActionDate: Date;
   overViewAr?: string;
   overViewEn?: string;
   benefitsAr?: string;

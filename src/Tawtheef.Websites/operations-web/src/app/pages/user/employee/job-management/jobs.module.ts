@@ -52,6 +52,9 @@ import { JobCandidateProfileDialogComponent } from './modals/job-candidate-profi
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MenuModule } from 'primeng/menu';
 import { DrawerModule } from 'primeng/drawer';
+import { CheckboxModule } from 'primeng/checkbox';
+import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
+
 @NgModule({
   declarations: [
     JobDetailsComponent,
@@ -77,6 +80,7 @@ import { DrawerModule } from 'primeng/drawer';
     JobCandidateProfileDialogComponent,
     JobCandidatesNationalityFilterModalComponent,
     JobCandidatesNationalityBreakdownDialogComponent,
+    JobCandidatesSpecializationFilterModalComponent,
   ],
     imports: [
         RouterModule.forChild(jobRoutes),
@@ -109,7 +113,8 @@ import { DrawerModule } from 'primeng/drawer';
         Tooltip,
         RemoteSelectComponent,
         MenuModule,
-        DrawerModule
+        DrawerModule,
+        CheckboxModule
     ],
   exports: [
     JobDetailsComponent,

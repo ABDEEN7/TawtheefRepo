@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260416074445_AddSendInvitationPermission")]
+    partial class AddSendInvitationPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7061,70 +7064,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("JobCandidateFilterSetting", "hr");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSpecialization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<Guid>("JobCandidateFilterSettingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubMajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("JobCandidateFilterSettingId");
-
-                    b.HasIndex("MajorId");
-
-                    b.HasIndex("SubMajorId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("JobCandidateFilterSpecialization", "hr");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateNationalityPercentage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7992,7 +7931,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SubMajorId")
+                    b.Property<Guid?>("SubMajorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
@@ -12273,54 +12212,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSpecialization", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", "JobCandidateFilterSetting")
-                        .WithMany("SelectedSpecializations")
-                        .HasForeignKey("JobCandidateFilterSettingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
-                        .WithMany()
-                        .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
-                        .WithMany()
-                        .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("JobCandidateFilterSetting");
-
-                    b.Navigation("Major");
-
-                    b.Navigation("SubMajor");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateNationalityPercentage", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.CandidateType", "CandidateType")
@@ -12764,8 +12655,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
                         .WithMany()
                         .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
@@ -13363,8 +13253,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CandidateTypePercentages");
 
                     b.Navigation("NationalityPercentages");
-
-                    b.Navigation("SelectedSpecializations");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", b =>

@@ -23,7 +23,7 @@ public class NotificationsController(IMediator mediator) : ControllerBase
     };
 
     [HttpGet]
-    public async Task<IActionResult> GetUserNotifications([FromQuery] bool unreadOnly = false, [FromQuery] int limit = 10, [FromQuery] DateTimeOffset? createdDateBefore = null)
+    public async Task<IActionResult> GetUserNotifications([FromQuery] bool unreadOnly = false, [FromQuery] int limit = 3, [FromQuery] DateTimeOffset? createdDateBefore = null)
     {
         if (UserId.IsFailed)
         {

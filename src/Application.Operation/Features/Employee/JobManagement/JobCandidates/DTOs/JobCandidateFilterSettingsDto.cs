@@ -1,3 +1,5 @@
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 
 public sealed class JobCandidateFilterSettingsDto
@@ -7,6 +9,7 @@ public sealed class JobCandidateFilterSettingsDto
     public int? MinimumPoints { get; init; }
     public List<JobCandidateTypePercentageDto> CandidateTypePercentages { get; init; } = [];
     public List<JobCandidateNationalityPercentageDto> NationalityPercentages { get; init; } = [];
+    public List<JobSpecialization>? SelectedSpecializations { get; init; }
 }
 
 public sealed class JobCandidateTypePercentageDto

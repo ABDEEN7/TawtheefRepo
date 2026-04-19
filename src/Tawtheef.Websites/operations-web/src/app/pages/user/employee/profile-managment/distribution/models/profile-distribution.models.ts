@@ -17,6 +17,7 @@ export interface DistributionFile {
   assignedEmployeeId?: string;
   assignedEmployeeName?: string;
   hasOtherSpecialization: boolean;
+  isMinisterOfficeCandidate: boolean;
   submittedAtUtc: string;
 }
 

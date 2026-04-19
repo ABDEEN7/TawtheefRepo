@@ -1,4 +1,6 @@
 {
+  "JOB_DETAILS.CREATED_BY":"تم الإنشاء بواسطة",
+  "JOB_DETAILS.SYSTEM":"النظام",
   "JOB_DETAILS.NOT_SPECIFIED": "غير محدد",
   "JOB_DETAILS.POSTED_DATE": "تاريخ النشر",
   "JOB_DETAILS.EXPIRED": "منتهية",

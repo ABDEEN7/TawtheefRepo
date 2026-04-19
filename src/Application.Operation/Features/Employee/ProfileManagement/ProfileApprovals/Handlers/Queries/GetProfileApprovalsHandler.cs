@@ -23,26 +23,45 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         if (request.OfficerId == Guid.Empty)
             return Result.Fail<PaginatedResult<ProfileApprovalListItemDto>>(ErrorsCodes.InvalidUserIdentifier);
 
-        // 1) Active assignments -> profile ids
-        var assignedProfileIds = await GetAssignedProfileIdsAsync(request.OfficerId, ct);
-        if (assignedProfileIds.Count == 0)
-            return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
+        // 1) Build optimized DB query
+        var profileRepo = uow.GetEntityRepository<UserProfile>();
+        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
 
-        // 2) Load profiles (only relevant statuses) + apply DB pagination
-        var profilesPage = await GetProfilesPageAsync(assignedProfileIds, request, ct);
+        var query = profileRepo.DbSet
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(p => p.User)
+            .Include(p => p.CandidateType)
+            .Include(p => p.TargetEntity)
+            .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
+            .Where(p => assignmentRepo.DbSet.Any(a => a.IsActive && a.EmployeeId == request.OfficerId && a.UserProfileId == p.Id))
+            .Where(p =>
+                p.Status == UserProfileStatus.Submitted ||
+                p.Status == UserProfileStatus.UnderReview ||
+                p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending));
+
+        // 2) Apply DB-level filters
+        query = ApplyDatabaseFilters(query, request);
+
+        // 3) DB Pagination
+        var profilesPage = await query.ToPaginatedListAsync(request, ct);
         if (profilesPage.Metadata.TotalCount == 0)
             return Result.Ok(PaginatedResult<ProfileApprovalListItemDto>.Empty);
 
         var profileIds = profilesPage.Items.Select(p => p.Id).ToList();
 
-        // 3) Review summaries
-        var fullReviewMap = await GetFullReviewSummariesAsync(profileIds, ct);
-        var changeReviewMap = await GetChangeRequestSummariesAsync(profileIds, ct);
+        // 4) Fetch summaries in parallel
+        var fullReviewTask = GetFullReviewSummariesAsync(profileIds, ct);
+        var changeReviewTask = GetChangeRequestSummariesAsync(profileIds, ct);
+        
+        await Task.WhenAll(fullReviewTask, changeReviewTask);
+        
+        var fullReviewMap = fullReviewTask.Result;
+        var changeReviewMap = changeReviewTask.Result;
 
-        // 4) Build DTOs
+        // 5) Build DTOs
         var dtoList = BuildDtos(localization, profilesPage.Items, fullReviewMap, changeReviewMap);
 
-        // 5) Apply in-memory filters (search + dropdown filters) + in-memory pagination
         return Result.Ok(new PaginatedResult<ProfileApprovalListItemDto>(
             dtoList,
             profilesPage.Metadata.TotalCount,
@@ -51,43 +70,51 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         ));
     }
 
-    // ----------------------------
-    // Data access helpers
-    // ----------------------------
-
-    private async Task<List<Guid>> GetAssignedProfileIdsAsync(Guid officerId, CancellationToken ct)
+    private static IQueryable<UserProfile> ApplyDatabaseFilters(IQueryable<UserProfile> query, GetProfileApprovalsQuery request)
     {
-        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        if (request.TargetEntityId.HasValue)
+            query = query.Where(p => p.TargetEntityId == request.TargetEntityId);
 
-        return await assignmentRepo.DbSet
-            .AsNoTracking()
-            .Where(a => a.IsActive && a.EmployeeId == officerId)
-            .Select(a => a.UserProfileId)
-            .Distinct()
-            .ToListAsync(ct);
-    }
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search.Trim();
+            query = query.Where(p =>
+                p.User!.FullNameAr.Contains(search) ||
+                p.User.FullNameEn.Contains(search) ||
+                (p.TargetEntity != null && (p.TargetEntity.NameAr.Contains(search) || p.TargetEntity.NameEn.Contains(search))) ||
+                (p.CandidateType != null && (p.CandidateType.NameAr.Contains(search) || p.CandidateType.NameEn.Contains(search))));
+        }
 
-    private async Task<PaginatedResult<UserProfile>> GetProfilesPageAsync(
-        List<Guid> assignedProfileIds,
-        GetProfileApprovalsQuery request,
-        CancellationToken ct)
-    {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
+        if (!string.IsNullOrWhiteSpace(request.CandidateType))
+        {
+            var ctValue = request.CandidateType.Trim();
+            query = query.Where(p => p.CandidateType != null &&  (p.CandidateType.NameAr.Contains(ctValue) || p.CandidateType.NameEn.Contains(ctValue)));
+        }
 
-        return await profileRepo.DbSet
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(p => p.User)
-            .Include(p => p.CandidateType)
-            .Include(p => p.TargetEntity)
-            .Include(p => p.Qualifications)!.ThenInclude(q => q.Major)
-            .Where(p => assignedProfileIds.Contains(p.Id))
-            .Where(p =>
-                p.Status == UserProfileStatus.Submitted ||
-                p.Status == UserProfileStatus.UnderReview ||
-                p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending))
-            .WhereIf(request.TargetEntityId.HasValue, p => p.TargetEntityId == request.TargetEntityId)
-            .ToPaginatedListAsync(request, ct);
+        if (!string.IsNullOrWhiteSpace(request.Specialization))
+        {
+            var specValue = request.Specialization.Trim();
+            query = query.Where(p => p.Qualifications!.Any(q => q.Major!.NameAr.Contains(specValue) || q.Major.NameEn.Contains(specValue)));
+        }
+
+        if (request.Status.HasValue)
+        {
+            query = request.Status switch
+            {
+                ReviewStatus.NeedsCorrection => query.Where(p =>
+                    p.ReviewItems.Any(r => r.Status == ReviewStatus.NeedsCorrection)),
+                ReviewStatus.Pending => query.Where(p =>
+                    p.ReviewItems.All(r => r.Status != ReviewStatus.NeedsCorrection) && p.ReviewItems.Any(r =>
+                        r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed ||
+                        r.Status == ReviewStatus.Solved)),
+                ReviewStatus.Approved => query.Where(p => !p.ReviewItems.Any(r =>
+                    r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Pending ||
+                    r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved)),
+                _ => query
+            };
+        }
+
+        return query;
     }
 
     private async Task<Dictionary<Guid, FullReviewSummary>> GetFullReviewSummariesAsync(List<Guid> profileIds, CancellationToken ct)
@@ -244,29 +271,6 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
 
             AllowedOperations = ResolveAllowedOperations(profile.Status)
         };
-    }
-
-    private static PaginatedResult<ProfileApprovalListItemDto> ApplyFiltersAndPagination(
-        List<ProfileApprovalListItemDto> list,
-        GetProfileApprovalsQuery request)
-    {
-        var filtered = list
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Search), p =>
-                p.FullName.Contains(request.Search!, StringComparison.OrdinalIgnoreCase) ||
-                (!string.IsNullOrWhiteSpace(p.TargetEntity) &&
-                 p.TargetEntity.Contains(request.Search!, StringComparison.OrdinalIgnoreCase)) ||
-                (!string.IsNullOrWhiteSpace(p.CandidateType) &&
-                 p.CandidateType.Contains(request.Search!, StringComparison.OrdinalIgnoreCase)))
-            .WhereIf(!string.IsNullOrWhiteSpace(request.CandidateType), p =>
-                !string.IsNullOrWhiteSpace(p.CandidateType) &&
-                p.CandidateType.Contains(request.CandidateType!, StringComparison.OrdinalIgnoreCase))
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Specialization), p =>
-                !string.IsNullOrWhiteSpace(p.Specialization) &&
-                p.Specialization.Contains(request.Specialization!, StringComparison.OrdinalIgnoreCase))
-            .WhereIf(request.Status is not null, p => p.OverallStatus == request.Status)
-            .ToPaginatedList(request);
-
-        return filtered;
     }
 
     private static IReadOnlyList<string> ResolveAllowedOperations(UserProfileStatus status)

@@ -18,7 +18,9 @@ public class JobRepository(IGenericRepository<Job> repository)
 
     public async Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
     JobQueryFilter filter,
-    PaginatedRequest pagination)
+    PaginatedRequest pagination,
+    Guid? currentUserId,
+    bool isHRManager)
     {
         var baseQuery = Repository.DbSet
             .AsNoTracking()
@@ -31,8 +33,10 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.Major)
             .Include(j => j.SubMajor)
             .Include(j => j.Sector)
+            .Include(j => j.CreatedBy)
             .Include(j => j.Management)
-            .Include(j => j.WorkLocation);
+            .Include(j => j.WorkLocation)
+            .WhereIf(!isHRManager && currentUserId is not null, j => j.CreatedById == currentUserId);
 
         var filteredQuery = baseQuery.ApplyJobFilter(filter);
 

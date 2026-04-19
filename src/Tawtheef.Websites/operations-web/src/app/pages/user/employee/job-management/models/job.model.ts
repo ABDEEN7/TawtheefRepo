@@ -46,4 +46,5 @@ export interface Job {
   jobSpecializations?: JobSpecialization[];
   majorName?: string;
   subMajorName?: string;
+  createdByName?: string;
 }

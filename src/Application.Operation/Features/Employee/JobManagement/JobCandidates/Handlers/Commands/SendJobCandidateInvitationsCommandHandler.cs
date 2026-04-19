@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
@@ -215,6 +215,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
             .GetEntityRepository<JobCandidateFilterSetting>()
             .DbSet
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(s => s.CandidateTypePercentages)
             .Include(s => s.NationalityPercentages)
             .FirstOrDefaultAsync(s => s.JobId == request.JobId, ct);

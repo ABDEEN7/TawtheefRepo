@@ -41,7 +41,7 @@ public class UpdateJobConditionsCommandHandler(
         return Result.Ok(Unit.Value);
     }
 
-    private async Task SyncConditions(IUnitOfWork uow,Guid jobId, List<JobCondition> existsConditions, List<JobConditionRequestDto> newConditions, CancellationToken ct)
+    private async Task SyncConditions(IUnitOfWork uow,Guid jobId, ICollection<JobCondition> existsConditions, ICollection<JobConditionRequestDto> newConditions, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobCondition>();
         // Deduplicate by TextAr (case-insensitive)

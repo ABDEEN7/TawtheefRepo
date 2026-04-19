@@ -20,4 +20,5 @@ public class JobCandidateFilterSetting : EventEntity
 
     public ICollection<JobCandidateTypePercentage> CandidateTypePercentages { get; set; } = [];
     public ICollection<JobCandidateNationalityPercentage> NationalityPercentages { get; set; } = [];
+    public ICollection<JobCandidateFilterSpecialization> SelectedSpecializations { get; set; } = [];
 }

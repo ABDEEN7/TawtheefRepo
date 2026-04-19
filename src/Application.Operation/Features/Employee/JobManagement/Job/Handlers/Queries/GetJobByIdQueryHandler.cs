@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
 using Application.Operation.Features.Employee.JobManagement.Job.Queries;
 using MediatR;
 using FluentResults;
@@ -41,12 +41,16 @@ public class GetJobByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
             .Include(j => j.CandidateFilterSetting).ThenInclude(c => c!.NationalityPercentages)
             .Include(j => j.JobSpecializations).ThenInclude(s => s.Major)
             .Include(j => j.JobSpecializations).ThenInclude(s => s.SubMajor)
+            .Include(j => j.CreatedBy)
             .FirstOrDefaultAsync(j => j.Id == request.JobId, cancellationToken);
 
         if (job is null)
             return Result.Fail<JobResponseDto>(JobMessages.JobNotFound);
 
         var jobDto = mapper.Map<JobResponseDto>(job);
+        jobDto.CreatedByName = job.CreatedBy?.FullNameEn ?? "System";
+        jobDto.LastActionDate = job.UpdatedDate ?? job.CreatedDate;
+        
         return Result.Ok(jobDto);
     }
 }

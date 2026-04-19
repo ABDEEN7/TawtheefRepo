@@ -168,9 +168,7 @@ public class JobValidationService(IUnitOfWork unitOfWork) : IJobValidationServic
         {
             var allMajorIds = dto.JobSpecializations
                 .Select(s => s.MajorId)
-                .Concat(dto.JobSpecializations
-                    .Where(s => s.SubMajorId.HasValue)
-                    .Select(s => s.SubMajorId!.Value))
+                .Concat(dto.JobSpecializations.Select(s => s.SubMajorId))
                 .Distinct()
                 .ToList();
 

@@ -8,13 +8,31 @@ using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
+using Tawtheef.Application.Common.Interfaces.Repositories;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
+
 namespace Operations.API.Controllers.Employee;
 
 [ApiController]
 [Route("api/[controller]")]
 [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class JobController(IMediator mediator) : ControllerBase
+public class JobController(
+    IMediator mediator,
+    ICurrentUserService currentUserService,
+    IJobRepository jobRepository) : ControllerBase
 {
+    private async Task<bool> IsCreatorOrHRManager(Guid jobId)
+    {
+        if (User.IsInRole("HrManager")) return true;
+
+        var currentUserIdStr = currentUserService.UserId;
+        if (!Guid.TryParse(currentUserIdStr, out var currentUserId)) return false;
+
+        var jobResult = await jobRepository.Repository.GetByIdAsync(jobId);
+        if (jobResult.IsFailed || jobResult.Value == null) return false;
+
+        return jobResult.Value.CreatedById == currentUserId;
+    }
     #region Lookups
     [HttpGet("lookups/sectors")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
@@ -167,7 +185,7 @@ public class JobController(IMediator mediator) : ControllerBase
      }
 
      [HttpGet("{id:guid}/copy-template")]
-     [AuthorizePermission(PermissionKeys.Jobs.View)]
+     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
      public async Task<IActionResult> GetJobCopyTemplate(Guid id)
      {
          var result = await mediator.Send(new GetJobCopyTemplateQuery(id));
@@ -187,6 +205,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> DeleteJob(Guid id)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new DeleteJobCommand(id));
         return result.ToActionResult();
     }
@@ -225,6 +244,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobBasics(Guid id, [FromBody] UpdateJobBasicsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobBasicsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -233,6 +253,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobOverview(Guid id, [FromBody] UpdateJobOverviewDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobOverviewCommand(id, dto));
         return result.ToActionResult();
     }
@@ -241,6 +262,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobQualifications(Guid id, [FromBody] UpdateJobQualificationsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobQualificationsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -249,6 +271,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobResponsibilities(Guid id, [FromBody] UpdateJobResponsibilitiesDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobResponsibilitiesCommand(id, dto));
         return result.ToActionResult();
     }
@@ -257,6 +280,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobConditions(Guid id, [FromBody] UpdateJobConditionsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobConditionsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -265,6 +289,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobSkills(Guid id, [FromBody] UpdateJobSkillsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobSkillsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -273,6 +298,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobAttachments(Guid id, [FromBody] UpdateJobAttachmentsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobAttachmentsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -281,6 +307,7 @@ public class JobController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.Jobs.Manage)]
     public async Task<IActionResult> UpdateJobBenefits(Guid id, [FromBody] UpdateJobBenefitsDto dto)
     {
+        if (!await IsCreatorOrHRManager(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobBenefitsCommand(id, dto));
         return result.ToActionResult();
     }

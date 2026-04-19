@@ -21,9 +21,9 @@ public class JobResponseDto
     public string? QualificationDescriptionEn { get; set; } 
     public DateTimeOffset? PublishAt { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset? ModifiedDate { get; set; }
-    public User? CreatedBy { get; set; }
-    public User? ModifiedBy { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
+    public string? CreatedByName { get; set; }
+    public DateTimeOffset LastActionDate { get; set; }
     public int YearsOfExperience { get; set; }
     public int MinimumAge { get; set; }
     public int MaximumAge { get; set; }

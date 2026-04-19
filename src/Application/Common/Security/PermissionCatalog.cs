@@ -51,6 +51,7 @@ public static class PermissionCatalog
         Permissions.Jobs.View,
         Permissions.Jobs.Manage,
         Permissions.Jobs.Approve,
+        Permissions.Jobs.SendInvitation,
 
         Permissions.JobsPoints.Manage,
         Permissions.JobsPoints.View,

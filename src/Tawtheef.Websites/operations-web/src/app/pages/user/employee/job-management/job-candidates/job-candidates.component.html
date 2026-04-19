@@ -1,199 +1,320 @@
-<section class="candidates-container" i18nNamespace="pages/job-candidates">
-  <!-- Header Section -->
-  <header class="page-header">
-    <div class="header-content">
-      <div class="title-wrapper">
-        <i class="hgi hgi-stroke hgi-user-search"></i>
-        <h3>
-          {{ 'JOB_CANDIDATE_TITLE' | translate }}
-          <span class="title-sep">-</span>
-          <span class="job-name">{{ jobInfo?.titleAr }}/{{ jobInfo?.titleEn }}</span>
-        </h3>
+<section i18nNamespace="pages/job-candidates" class="page-shell">
+  <div class="card card-table">
+    <div class="card-body">
+      <!-- Header Section -->
+      <div class="row mb-4 align-items-center">
+        <div class="col-md-9">
+          <div class="d-flex align-items-center gap-3">
+            <i class="hgi hgi-stroke hgi-user-search fs-32 text-primary"></i>
+            <div>
+              <h3 class="fw-bold mb-0">
+                {{ 'JOB_CANDIDATE_TITLE' | translate }}
+                <span class="text-muted mx-2">-</span>
+                <span class="text-primary">{{ jobInfo?.titleAr }}/{{ jobInfo?.titleEn }}</span>
+              </h3>
+              <p class="fs-16 m-0 text-muted">{{ 'JOB_CANDIDATE_SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 text-end d-flex justify-content-end gap-2 align-items-center">
+          <button class="btn btn-outline-primary" type="button" (click)="refresh()">
+            <i class="pi pi-refresh me-1"></i>
+            <span>{{ 'common.refresh' | translate }}</span>
+          </button>
+        </div>
       </div>
-      <p class="subtitle">{{ 'JOB_CANDIDATE_SUBTITLE' | translate }}</p>
-    </div>
-    <div class="header-actions">
-      <button class="refresh-btn" type="button" (click)="refresh()">
-        <i class="pi pi-refresh"></i>
-        {{ 'common.refresh' | translate }}
-      </button>
-    </div>
-  </header>
 
-  <!-- Statistics Grid -->
-  <div class="stats-grid">
-    <div class="stat-card total">
-      <div class="stat-icon">
-        <i class="hgi hgi-stroke hgi-users-group"></i>
-      </div>
-      <div class="stat-content">
-        <div class="stat-value">{{ totalCandidatesCount }}</div>
-        <p class="stat-label">{{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}</p>
-      </div>
-    </div>
+      <!-- Statistics Grid -->
+      <div class="card card-table mb-4 border-light shadow-sm">
+        <div class="card-body">
+          <h4 class="mb-3 fw-bold">{{ 'JOB_CANDIDATE_STATISTICS' | translate }}</h4>
+          <div class="row">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <div class="card card-table bg-info-light border-0">
+                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex flex-column">
+                    <div class="h2 fw-bold">{{ totalCandidatesCount }}</div>
+                    <p class="m-0">{{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}</p>
+                  </div>
+                  <div><i class="hgi hgi-stroke hgi-users-group text-blue h2"></i></div>
+                </div>
+              </div>
+            </div>
 
-    <div class="stat-card high-points">
-      <div class="stat-icon">
-        <i class="hgi hgi-stroke hgi-star-round"></i>
-      </div>
-      <div class="stat-content">
-        <div class="stat-value">{{ abovePointsCandidatesCount }}</div>
-        <p class="stat-label">{{ 'JOB_CANDIDATE_STATS_ABOVE_800_POINT' | translate }}</p>
-      </div>
-    </div>
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <div class="card card-table bg-success-light border-0">
+                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex flex-column">
+                    <div class="h2 fw-bold">{{ abovePointsCandidatesCount }}</div>
+                    <p class="m-0">{{ 'JOB_CANDIDATE_STATS_ABOVE_800_POINT' | translate }}</p>
+                  </div>
+                  <div><i class="hgi hgi-stroke hgi-star-round text-success h2"></i></div>
+                </div>
+              </div>
+            </div>
 
-    <div class="stat-card available">
-      <div class="stat-icon">
-        <i class="hgi hgi-stroke hgi-user-check"></i>
-      </div>
-      <div class="stat-content">
-        <div class="stat-value">{{ availableCandidatesCount }}</div>
-        <p class="stat-label">{{ 'JOB_CANDIDATE_AVAILABLE_CANDIDATES' | translate }}</p>
-      </div>
-    </div>
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <div class="card card-table bg-alert-light border-0">
+                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex flex-column">
+                    <div class="h2 fw-bold">{{ availableCandidatesCount }}</div>
+                    <p class="m-0">{{ 'JOB_CANDIDATE_AVAILABLE_CANDIDATES' | translate }}</p>
+                  </div>
+                  <div><i class="hgi hgi-stroke hgi-user-check text-warning h2"></i></div>
+                </div>
+              </div>
+            </div>
 
-    <div class="stat-card average">
-      <div class="stat-icon">
-        <i class="hgi hgi-stroke hgi-chart-line-up"></i>
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <div class="card card-table bg-secondary bg-opacity-10 border-0">
+                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex flex-column">
+                    <div class="h2 fw-bold">{{ pointsAverage }}</div>
+                    <p class="m-0">{{ 'JOB_CANDIDATE_POINTS_AVERAGE' | translate }}</p>
+                  </div>
+                  <div><i class="hgi hgi-stroke hgi-chart-line-up text-secondary h2"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="stat-content">
-        <div class="stat-value">{{ pointsAverage }}</div>
-        <p class="stat-label">{{ 'JOB_CANDIDATE_POINTS_AVERAGE' | translate }}</p>
+
+      <!-- Main Content Card -->
+      <div class="card card-table mb-4">
+        <div class="card-body">
+          <div class="row align-items-center mb-4">
+            <div class="col-md-12">
+              <h4 class="fw-bold mb-0">
+                <i class="hgi hgi-stroke hgi-filter me-2"></i>
+                {{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}
+              </h4>
+            </div>
+          </div>
+
+          <!-- Filter Section -->
+          <div class="filter-card">
+            <div class="row g-3">
+              <!-- Basic Search & Apply -->
+              <div class="col-lg-5">
+                <span class="filter-label">{{ 'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate }}</span>
+                <div class="d-flex gap-2">
+                  <div class="position-relative flex-grow-1 search-input-group">
+                    <i class="hgi hgi-stroke hgi-search-01 search-icon"></i>
+                    <input class="form-control" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+                      [placeholder]="'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate" />
+                  </div>
+                  <button class="btn btn-primary btn-filter d-flex align-items-center gap-2" type="button" (click)="applyFilters()" [disabled]="isLoading()">
+                    <i class="hgi hgi-stroke" [class.hgi-search-01]="!isLoading()" [class.hgi-loading-01]="isLoading()"></i>
+                    <span>{{ 'common.search' | translate }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Secondary Filters -->
+              <div class="col-lg-3 col-md-6">
+                <span class="filter-label">{{ 'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate }}</span>
+                <p-inputNumber [ngModel]="minimumPoints()" (ngModelChange)="minimumPoints.set($event)"
+                  [showButtons]="false" [min]="0"
+                  [placeholder]="'0'"></p-inputNumber>
+              </div>
+
+              <div class="col-lg-4 col-md-6">
+                <span class="filter-label">{{ 'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate }}</span>
+                <p-select class="w-100" [options]="lookupsService.genders()" [ngModel]="filterGender()"
+                  (ngModelChange)="filterGender.set($event)" optionLabel="name" optionValue="id" [showClear]="true"
+                  [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate"></p-select>
+              </div>
+
+              <!-- Advanced Filters Row -->
+              <div class="col-12 mt-4 pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-primary btn-filter d-flex align-items-center gap-2 position-relative" type="button"
+                    (click)="openSpecializationFilter()">
+                    <i class="hgi hgi-stroke hgi-educational-study"></i>
+                    <span>{{ 'JOB_CANDIDATE_BUTTONS_SPECIALIZATION_FILTERS' | translate }}</span>
+                    @if (activeSpecializationsCount > 0) {
+                      <span class="badge rounded-pill bg-danger border border-light badge-pill-status">
+                        {{ activeSpecializationsCount }}
+                      </span>
+                    }
+                  </button>
+                  <button class="btn btn-outline-primary btn-filter d-flex align-items-center gap-2 position-relative" type="button"
+                    (click)="openNationalityFilter()">
+                    <i class="hgi hgi-stroke hgi-globe"></i>
+                    <span>{{ 'JOB_CANDIDATE_BUTTONS_NATIONALITY_FILTERS' | translate }}</span>
+                    @if (activeNationalitiesCount > 0) {
+                      <span class="badge rounded-pill bg-danger border border-light badge-pill-status">
+                        {{ activeNationalitiesCount }}
+                      </span>
+                    }
+                  </button>
+                </div>
+
+                @if (hasActiveFilters) {
+                  <button class="btn btn-link text-danger text-decoration-none d-flex align-items-center gap-2" type="button" (click)="clearFilters()" [disabled]="isLoading()">
+                    <i class="hgi hgi-stroke hgi-cancel-01"></i>
+                    <span class="fw-bold">{{ 'JOB_CANDIDATE_FILTERS_CLEAR_ALL' | translate }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Active Filter Summary -->
+            @if (hasActiveFilters) {
+              <div class="active-filters-container animate__animated animate__fadeIn">
+                <span class="text-muted fs-13 fw-bold flex-shrink-0">
+                  <i class="hgi hgi-stroke hgi-filter me-1"></i>
+                  {{ 'JOB_CANDIDATE_FILTERS_ACTIVE_FILTERS' | translate }}:
+                </span>
+                <div class="d-flex flex-wrap gap-2">
+                  @if (searchQuery()) {
+                    <div class="filter-chip">
+                      <i class="hgi hgi-stroke hgi-search-01"></i>
+                      <span>{{ searchQuery() }}</span>
+                    </div>
+                  }
+                  @if (minimumPoints()) {
+                    <div class="filter-chip">
+                      <i class="hgi hgi-stroke hgi-star-round"></i>
+                      <span>{{ 'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate }}: {{ minimumPoints() }}</span>
+                    </div>
+                  }
+                  @if (filterGender()) {
+                    <div class="filter-chip">
+                      <i class="hgi hgi-stroke hgi-user"></i>
+                      <span>{{ 'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate }}</span>
+                    </div>
+                  }
+                  @if (activeSpecializationsCount > 0) {
+                    <div class="filter-chip">
+                      <i class="hgi hgi-stroke hgi-educational-study"></i>
+                      <span>{{ activeSpecializationsCount }} {{ 'JOB_CANDIDATE_FILTERS_SPECIALIZATION_TITLE' | translate }}</span>
+                    </div>
+                  }
+                  @if (activeNationalitiesCount > 0) {
+                    <div class="filter-chip">
+                      <i class="hgi hgi-stroke hgi-globe"></i>
+                      <span>{{ activeNationalitiesCount }} {{ 'JOB_CANDIDATE_FILTERS_NATIONALITY_TITLE' | translate }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Table Content -->
+          <div class="table-card rounded overflow-hidden">
+            <div class="table-responsive">
+              <p-table class="distribution-table" [value]="candidates?.items ?? []" dataKey="candidateId"
+                [(selection)]="selectedCandidates" [loading]="isLoading()">
+                <ng-template pTemplate="header">
+                  <tr>
+                    @if (canSelectCandidates()) {
+                    <th class="col-select" style="width: 3rem">
+                      <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    }
+                    <th class="col-index" style="width: 4rem">#</th>
+                    <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_NAME' | translate }}</th>
+                    <th>{{ 'JOB_CANDIDATE_COLUMNS_DEPARTMENT' | translate }}</th>
+                    <th>{{ 'JOB_CANDIDATE_COLUMNS_JOB_CATEGORY' | translate }}</th>
+                    <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_GENDER' | translate }}</th>
+                    <th class="col-points">{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_POINTS' | translate }}</th>
+                    <th class="col-actions text-center">{{ 'JOB_CANDIDATE_COLUMNS_ACTIONS' | translate }}</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-candidate let-i="rowIndex">
+                  <tr>
+                    @if (canSelectCandidates()) {
+                    <td class="col-select">
+                      <p-tableCheckbox [value]="candidate"></p-tableCheckbox>
+                    </td>
+                    }
+                    <td class="col-index">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
+
+                    <td>
+                      <div class="d-flex flex-column">
+                        <span class="fw-bold text-primary-dark">{{ candidate.candidateName }}</span>
+                        <span class="text-muted fs-12">{{ candidate.candidateCategory }}</span>
+                      </div>
+                    </td>
+                    <td>{{ candidate.department }}</td>
+                    <td>{{ candidate.jobCategory }}</td>
+                    <td>
+                      <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">{{
+                        candidate.candidateGender }}</span>
+                    </td>
+                    <td class="col-points text-primary fw-bold">{{ candidate.points }}</td>
+
+                    <td class="col-actions">
+                      <div class="d-flex justify-content-center">
+                        @if (canViewJobs()) {
+                        <button class="btn btn-action-icon" type="button" (click)="viewDetails(candidate.candidateId)"
+                          pTooltip="{{ 'JOB_CANDIDATE_BUTTONS_VIEW' | translate }}" tooltipPosition="top">
+                          <i class="hgi hgi-stroke hgi-view fs-18"></i>
+                        </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td [attr.colspan]="canSelectCandidates() ? 8 : 7" class="text-center py-5">
+                      <div class="empty-state-container">
+                        <i class="hgi hgi-stroke hgi-user-search mb-3 text-muted display-4"></i>
+                        <div class="empty__title h5 fw-bold text-muted">{{ 'JOB_CANDIDATE_NO_CANDIDATES_FOUND' | translate
+                          }}</div>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="row mt-4">
+            <div class="col-12">
+              @if (paginationMetadata && paginationMetadata.totalCount > 0) {
+              <div class="pagination-box">
+                <app-pagination [currentPage]="currentPage()" [totalItems]="paginationMetadata.totalCount"
+                  [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"
+                  (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="row mt-4 border-top pt-3 align-items-center" *ngIf="canManageJobs()">
+            <div class="col-md-6">
+              <p class="m-0 text-muted" *ngIf="selectedCandidates.length > 0">
+                <i class="hgi hgi-stroke hgi-checkmark-circle-02 me-1 text-success"></i>
+                {{ selectedCandidates.length }} {{ 'JOB_CANDIDATE_SELECTED' | translate }}
+              </p>
+            </div>
+            <div class="col-md-6 text-end">
+              <div class="d-flex gap-2 justify-content-end">
+                <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button"
+                  (click)="exportToExcel()">
+                  <i class="hgi hgi-stroke hgi-file-download"></i>
+                  <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
+                </button>
+
+                <button class="btn btn-primary d-flex align-items-center gap-2" type="button" (click)="sendInvitations()"
+                  [disabled]="availableCandidatesCount === 0">
+                  <i class="hgi hgi-stroke hgi-sent"></i>
+                  <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- Main Content Card -->
-  <main class="content-wrapper">
-    <h4 class="section-title">
-      <i class="hgi hgi-stroke hgi-filter"></i>
-      {{ 'JOB_CANDIDATE_JOB_CANDIDATE' | translate }}
-    </h4>
-
-    <!-- Filters Section -->
-    <div class="filters-container">
-      <div class="filter-row">
-        <div class="filter-group">
-          <label>{{ 'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate }}</label>
-          <input class="form-control" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
-            [placeholder]="'JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER' | translate" />
-        </div>
-
-        <div class="filter-group">
-          <label>{{ 'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate }}</label>
-          <p-inputNumber class="w-100" [ngModel]="minimumPoints()" (ngModelChange)="minimumPoints.set($event)"
-            [showButtons]="false" [min]="0"
-            [placeholder]="'JOB_CANDIDATE_FILTERS_MINIMUM_POINTS' | translate"></p-inputNumber>
-        </div>
-
-        <div class="filter-group">
-          <label>{{ 'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate }}</label>
-          <p-select class="form-select p-0" [options]="lookupsService.genders()" [ngModel]="filterGender()"
-            (ngModelChange)="filterGender.set($event)" optionLabel="name" optionValue="id" [showClear]="true"
-            [placeholder]="'JOB_CANDIDATE_FILTERS_CANDIDATE_GENDER' | translate"></p-select>
-        </div>
-
-        <div class="filter-actions">
-          <button class="apply-btn" type="button" (click)="applyFilters()">
-            <i class="hgi hgi-stroke hgi-tick-01"></i>
-            <span>{{ 'common.apply' | translate }}</span>
-          </button>
-          <button class="nationality-btn" type="button" (click)="openNationalityFilter()">
-            <i class="hgi hgi-stroke hgi-globe"></i>
-            <span>{{ 'JOB_CANDIDATE_BUTTONS_NATIONALITY_FILTERS' | translate }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Table Section -->
-    <div class="table-wrapper rounded overflow-hidden">
-      <div class="table-responsive">
-        <p-table class="ptable-reset" [value]="candidates?.items ?? []" dataKey="candidateId"
-          [(selection)]="selectedCandidates">
-          <ng-template pTemplate="header">
-            <tr>
-              @if (canSelectCandidates()) {
-              <th class="col-select" style="width: 3rem">
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              }
-              <th class="col-index" style="width: 4rem">#</th>
-              <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_NAME' | translate }}</th>
-              <th>{{ 'JOB_CANDIDATE_COLUMNS_DEPARTMENT' | translate }}</th>
-              <th>{{ 'JOB_CANDIDATE_COLUMNS_JOB_CATEGORY' | translate }}</th>
-              <th>{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_GENDER' | translate }}</th>
-              <th class="col-points">{{ 'JOB_CANDIDATE_COLUMNS_CANDIDATE_POINTS' | translate }}</th>
-              <th class="col-actions text-center">{{ 'JOB_CANDIDATE_COLUMNS_ACTIONS' | translate }}</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-candidate let-i="rowIndex">
-            <tr>
-              @if (canSelectCandidates()) {
-              <td class="col-select">
-                <p-tableCheckbox [value]="candidate"></p-tableCheckbox>
-              </td>
-              }
-              <td class="col-index">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
-
-              <td>
-                <div class="candidate-name-cell">
-                  <span class="name">{{ candidate.candidateName }}</span>
-                  <span class="category">{{ candidate.candidateCategory }}</span>
-                </div>
-              </td>
-              <td>{{ candidate.department }}</td>
-              <td>{{ candidate.jobCategory }}</td>
-              <td>
-                <span class="gender-tag">{{ candidate.candidateGender }}</span>
-              </td>
-              <td class="col-points text-primary fw-bold">{{ candidate.points }}</td>
-
-              <td class="col-actions">
-                <div class="d-flex justify-content-center">
-                  @if (canViewJobs()) {
-                  <button class="action-btn" type="button" (click)="viewDetails(candidate.candidateId)"
-                    [title]="'JOB_CANDIDATE_BUTTONS_VIEW' | translate">
-                    <i class="hgi hgi-stroke hgi-view fs-18"></i>
-                  </button>
-                  }
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    @if (paginationMetadata && paginationMetadata.totalCount > 0) {
-    <div class="pagination-container">
-      <app-pagination [currentPage]="currentPage()" [totalItems]="paginationMetadata.totalCount"
-        [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"
-        (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
-    </div>
-    }
-
-    <!-- Footer Actions -->
-    <footer class="footer-actions" *ngIf="canManageJobs()">
-      <div class="helper-text">
-        <p class="m-0 text-muted" *ngIf="selectedCandidates.length > 0">
-          {{ selectedCandidates.length }} {{ 'JOB_CANDIDATE_SELECTED' | translate }}
-        </p>
-      </div>
-      <div class="action-group">
-        <button class="export-btn" type="button" (click)="exportToExcel()">
-          <i class="hgi hgi-stroke hgi-file-download"></i>
-          <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
-        </button>
-
-        <button class="invite-btn" type="button" (click)="sendInvitations()"
-          [disabled]="availableCandidatesCount === 0">
-          <i class="hgi hgi-stroke hgi-sent"></i>
-          <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>
-        </button>
-      </div>
-    </footer>
-  </main>
-</section>
+</section>

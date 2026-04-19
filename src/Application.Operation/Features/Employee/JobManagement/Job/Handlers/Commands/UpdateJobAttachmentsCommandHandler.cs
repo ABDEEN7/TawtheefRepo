@@ -40,7 +40,7 @@ public class UpdateJobAttachmentsCommandHandler(
 
         return Result.Ok(Unit.Value);
     }
-    private async Task SyncRequiredAttachments(IUnitOfWork uow,Guid jobId, List<JobRequiredAttachment> existsAttachments, List<JobRequiredAttachmentRequestDto> newAttachments, CancellationToken ct)
+    private async Task SyncRequiredAttachments(IUnitOfWork uow,Guid jobId, ICollection<JobRequiredAttachment> existsAttachments, ICollection<JobRequiredAttachmentRequestDto> newAttachments, CancellationToken ct)
     {
         var repo = uow.GetEntityRepository<JobRequiredAttachment>();
         // Deduplicate by (TitleAr, TitleEn) composite key

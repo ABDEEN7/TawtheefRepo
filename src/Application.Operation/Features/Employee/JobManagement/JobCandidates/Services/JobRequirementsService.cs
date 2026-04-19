@@ -16,6 +16,17 @@ public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsSe
 
         if (job.SubMajorId.HasValue && job.SubMajorId.Value != Guid.Empty)
             majorIds.Add(job.SubMajorId.Value);
+        
+        var jobSpecializations = job.JobSpecializations?.Select(js =>
+                new JobSpecialization(js.MajorId, js.SubMajorId))
+            .ToList() ?? [];
+        jobSpecializations.ForEach(js =>
+        {
+            if (js.MajorId != Guid.Empty && !majorIds.Contains(js.MajorId))
+                majorIds.Add(js.MajorId);
+            if (js.SubMajorId != Guid.Empty && !majorIds.Contains(js.SubMajorId))
+                majorIds.Add(js.SubMajorId);
+        });
 
         List<Guid> requiredSkillIds = [];
 
@@ -32,6 +43,7 @@ public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsSe
                 .ToListAsync();
         }
 
-        return new JobRequirements(job.MajorId, job.SubMajorId, qualificationLevelIds, requiredSkillIds);
+        return new JobRequirements(job.MajorId, job.SubMajorId, 
+            jobSpecializations, qualificationLevelIds, requiredSkillIds);
     }
 }

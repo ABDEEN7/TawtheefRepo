@@ -1,0 +1,18 @@
+@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
+@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+
+@{
+    var product = Model.Branding.ProductName;
+    var website = Model.Branding.WebsiteUrl;
+    var m = Model.Model;
+    var distributionUrl = $"{website}/user/employee/profile-managment/distribution";
+}
+
+تم إضافة مرشح جديد في مكتب سعادة الوزير: @m.NameAr
+يرجى مراجعة قائمة التوزيع: @distributionUrl
+
+A new candidate has been added to the Minister's Office: @m.NameEn
+Please check the distribution list: @distributionUrl
+
+Regards,
+The @product Team
