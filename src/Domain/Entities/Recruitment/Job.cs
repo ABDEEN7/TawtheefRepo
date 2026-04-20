@@ -48,8 +48,8 @@ public sealed class Job : EventEntity
     [Required(ErrorMessage = JobMessages.ClosingDateRequired)]
     public DateTime ClosingDate { get; set; }
 
-    public DateTime? PublishAt { get; init; }
-    public DateTime? CancelledAt { get; init; }
+    public DateTime? PublishAt { get; private set; }
+    public DateTime? CancelledAt { get; private set; }
 
     [Required(ErrorMessage = JobMessages.MinimumAgeRequired)]
     public int MinimumAge { get; set; }
@@ -97,30 +97,49 @@ public sealed class Job : EventEntity
     public Major? SubMajor { get; init; }
     public WorkType? WorkType { get; init; }
     public JobStatus? JobStatus { get; init; }
-    public JobPointsMain? JobPoints { get; set; }
+    public JobPointsMain? JobPoints { get; init; }
     public JobCandidateFilterSetting? CandidateFilterSetting { get; init; }
     public JobReviewAttachment? ReviewAttachment { get; init; }
 
-    public List<JobDegree> JobDegrees { get; set; } = [];
-    public List<JobCondition> JobConditions { get; set; } = [];
-    public List<JobSkill> JobSkills { get; set; } = [];
-    public List<JobResponsibility> JobResponsibilities { get; set; } = [];
-    public List<JobRequiredAttachment> JobRequiredAttachments { get; set; } = [];
-    public List<Invitation> Invitations { get; init; } = [];
-    public List<JobTabReviewNote> TabReviewNotes { get; init; } = [];
+    public ICollection<JobDegree> JobDegrees { get; init; } = [];
+    public ICollection<JobCondition> JobConditions { get; init; } = [];
+    public ICollection<JobSkill> JobSkills { get; init; } = [];
+    public ICollection<JobResponsibility> JobResponsibilities { get; init; } = [];
+    public ICollection<JobRequiredAttachment> JobRequiredAttachments { get; init; } = [];
+    public ICollection<Invitation> Invitations { get; init; } = [];
+    public ICollection<JobTabReviewNote> TabReviewNotes { get; init; } = [];
+    public ICollection<JobSpecialization> JobSpecializations { get; init; } = [];
 
     public void ChangeStatus(Guid newStatusId)
     {
         JobStatusId = newStatusId;
-        if (newStatusId == JobStatusIds.PendingApproval)
+        if (newStatusId == JobStatusIds.Published)
+        {
+            PublishAt = DateTime.UtcNow;
+        }
+        else if (newStatusId == JobStatusIds.Cancelled)
+        {
+            CancelledAt = DateTime.UtcNow;
+        }
+        else if (newStatusId == JobStatusIds.PendingApproval)
+        {
             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now));
-        else if (newStatusId == JobStatusIds.PendingPointConfiguration )
+        }
+        else if (newStatusId == JobStatusIds.PendingPointConfiguration)
+        {
             AddDomainEvent(new ChangeJobStatusApprovedNotificationDomainEvent(this, DateTimeOffset.Now));
+        }
         else if (newStatusId == JobStatusIds.PendingPointApproval)
-             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now)); // Reusing general notification for now or I could create a new one
+        {
+            AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now));
+        }
         else if (newStatusId == JobStatusIds.Rejected)
+        {
             AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.Now));
+        }
         else if (newStatusId == JobStatusIds.NeedUpdate)
+        {
             AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.Now));
+        }
     }
 }

@@ -6,6 +6,4 @@ using Tawtheef.Infrastructure.Repositories.Base;
 namespace Tawtheef.Infrastructure.Repositories;
 
 internal class JobRequiredAttachmentRepository(IGenericRepository<JobRequiredAttachment> repository)
-    : BaseRepository<JobRequiredAttachment>(repository), IJobRequiredAttachmentRepository
-{
-}
+    : BaseRepository<JobRequiredAttachment>(repository), IJobRequiredAttachmentRepository;

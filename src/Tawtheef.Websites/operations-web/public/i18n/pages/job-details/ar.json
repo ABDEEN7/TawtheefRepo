@@ -1,4 +1,6 @@
 {
+  "JOB_DETAILS.CREATED_BY":"تم الإنشاء بواسطة",
+  "JOB_DETAILS.SYSTEM":"النظام",
   "JOB_DETAILS.NOT_SPECIFIED": "غير محدد",
   "JOB_DETAILS.POSTED_DATE": "تاريخ النشر",
   "JOB_DETAILS.EXPIRED": "منتهية",
@@ -11,6 +13,9 @@
   "JOB_DETAILS.NO_OVERVIEW": "لا توجد نظرة عامة للوظيفة",
   "JOB_DETAILS.NO_RESPONSIBILITIES": "لا توجد مسؤوليات مسجلة لهذه الوظيفة",
   "JOB_DETAILS.QUALIFICATION_REQUIREMENTS": "متطلبات المؤهل",
+  "JOB_DETAILS.SPECIALIZATIONS": "التخصصات",
+  "JOB_DETAILS.MAJOR": "التخصص الرئيسي",
+  "JOB_DETAILS.SUB_MAJOR": "التخصص الفرعي",
   "JOB_DETAILS.YEARS_OF_EXPERIENCE": "سنوات الخبرة",
   "JOB_DETAILS.YEARS": "سنوات",
   "JOB_DETAILS.AGE_RANGE": "الفئة العمرية",

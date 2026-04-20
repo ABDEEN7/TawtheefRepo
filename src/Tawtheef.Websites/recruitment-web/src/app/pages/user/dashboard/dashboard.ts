@@ -119,20 +119,16 @@ export class Dashboard implements OnInit {
   }
 
   // Statistics helpers
-  getNewInvitationCount(): number {
-    return this.candidateService.invitationStatistics()?.newInvitations || 0;
+  getReceivedCount(): number {
+    return this.candidateService.invitationStatistics()?.received || 0;
   }
 
-  getSubmittedCount(): number {
-    return this.candidateService.invitationStatistics()?.applied || 0;
+  getAcceptedCount(): number {
+    return this.candidateService.invitationStatistics()?.accepted || 0;
   }
 
-  getWithdrawnCount(): number {
-    return this.candidateService.invitationStatistics()?.withdrawn || 0;
-  }
-
-  getAppliedCount(): number {
-    return this.candidateService.invitationStatistics()?.applied || 0;
+  getRejectedCount(): number {
+    return this.candidateService.invitationStatistics()?.rejected || 0;
   }
 
   // Retry loading data

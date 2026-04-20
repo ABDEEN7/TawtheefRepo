@@ -8,22 +8,20 @@ using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
-using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Notifications.Templates.KawaderInvitation;
 
 namespace Application.Operation.Features.Employee.Kawader.Handlers;
 
 public sealed class UploadKawaderUserCommandHandler(
     IUnitOfWork uow,
-    IEmailService emailService,
     IAppLogger logger)
     : IRequestHandler<UploadKawaderUserCommand, IResult<KawaderUploadResultDto>>
 {
-    private const string Template = "KawaderInvitation";
     private static readonly HashSet<string> AllowedExtensions =
         new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
 
@@ -174,20 +172,22 @@ public sealed class UploadKawaderUserCommandHandler(
     {
         if (string.IsNullOrWhiteSpace(row.Email)) return;
 
-        var model = new Tawtheef.Notifications.Templates
-            .KawaderInvitation.KawaderInvitationModel
+        var model = new KawaderInvitationModel
         {
             FullName = row.Name ?? "User",
             Qid = row.Qid
         };
 
-        await emailService.SendTemplateAsync(
-            Template,
-            "Invitation to Join Careers Platform",
-            [row.Email],
-            model,
-            ct: ct,
-            idempotencyKey: $"KawaderInvite_Email_{row.Qid}");
+        var notification = Notification.Create(
+            NotificationChannel.Email,
+            KawaderInvitation.TemplateKey,
+            null,
+            row.Email,
+            null,
+            null, null, JsonSerializer.Serialize(model),
+            $"KawaderInvite_Email_{row.Qid}");
+        await uow.GetEntityRepository<Notification>().AddAsync(notification, ct);
+        await uow.SaveChangesAsync(ct);
     }
 
     private async Task QueueSms(RowEntry row, CancellationToken ct)
@@ -216,14 +216,16 @@ public sealed class UploadKawaderUserCommandHandler(
 
         var sms = Notification.Create(
             NotificationChannel.Sms,
-            Template,
+            KawaderInvitation.TemplateKey,
             null,
             phone,
-            "Careers Invitation",
             null,
-            $"Dear {row.Name ?? "User"}, you are invited to join the Careers platform. QID: {row.Qid}",
+            null,
+            null,
             payload,
-            $"KawaderInvite_Sms_{row.Qid}");
+            $"KawaderInvite_Sms_{row.Qid}",
+            3,
+            "ar");
 
         await uow.GetEntityRepository<Notification>().AddAsync(sms, ct);
     }

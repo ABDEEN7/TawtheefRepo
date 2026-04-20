@@ -3,7 +3,7 @@ Job Posting Rejected
 
 Dear Colleague,
 
-The request for "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been rejected.
+The request for @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been rejected.
 
 Please review the feedback in @Model.Branding.ProductName, update the posting as needed, and resubmit.
 

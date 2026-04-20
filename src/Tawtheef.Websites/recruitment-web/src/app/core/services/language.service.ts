@@ -1,9 +1,12 @@
-﻿import {Injectable, Inject, inject} from '@angular/core';
+import { Injectable, Inject, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { DOCUMENT } from '@angular/common';
-import {PRIME_NG_CONFIG, PrimeNG} from 'primeng/config';
-import {APP_LANGUAGE_KEY} from '../constants/website-storage.const';
+import { PRIME_NG_CONFIG, PrimeNG } from 'primeng/config';
+import { APP_LANGUAGE_KEY } from '../constants/website-storage.const';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth/auth.service';
+import { EndpointsService } from '../http/endpoints.service';
 
 export type Lang = 'ar' | 'en';
 
@@ -13,6 +16,9 @@ const SUPPORTED_LANGS: Lang[] = ['ar', 'en'];
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private primengConfig = inject(PrimeNG);
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
+  private endpoints = inject(EndpointsService);
   /** Emits current language immediately and on every change */
   readonly current$ = new BehaviorSubject<Lang>(DEFAULT_LANG);
 
@@ -108,7 +114,10 @@ export class LanguageService {
       }
     }
 
-    if (opts.persist) this.safeSet(APP_LANGUAGE_KEY, lang);
+    if (opts.persist) {
+      this.safeSet(APP_LANGUAGE_KEY, lang);
+      this.syncWithServer(lang);
+    }
 
     this.isRtlSubj.next(isRtl);
     if (opts.emit) this.current$.next(lang);
@@ -119,5 +128,11 @@ export class LanguageService {
   }
   private safeSet(key: string, val: string): void {
     try { localStorage.setItem(key, val); } catch { /* ignore */ }
+  }
+
+  private syncWithServer(lang: Lang): void {
+    if (this.auth.isAuthenticated) {
+      this.http.put(this.endpoints.user.changePersonalLanguage, { language: lang }).subscribe();
+    }
   }
 }

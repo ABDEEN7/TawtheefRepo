@@ -1,4 +1,4 @@
-﻿import { computed, Signal } from '@angular/core';
+import { computed, Signal } from '@angular/core';
 import { VALIDATION_KEYS } from '../constants/profile-validation-keys';
 import {
   FieldError, StepValidationResult,

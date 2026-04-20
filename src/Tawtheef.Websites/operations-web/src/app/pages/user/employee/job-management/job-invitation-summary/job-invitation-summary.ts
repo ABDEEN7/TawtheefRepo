@@ -67,8 +67,8 @@ export class JobInvitationSummary implements OnInit {
   searchText = signal<string>('');
 
   // Sorting
-  sortColumn = signal<string>('title');
-  sortDirection = signal<'asc' | 'desc'>('asc');
+  sortColumn = signal<string>('CreateDate');
+  sortDirection = signal<'asc' | 'desc'>('desc');
 
   // Expandable rows
   expandedRows = signal<Set<string>>(new Set());
@@ -82,6 +82,20 @@ export class JobInvitationSummary implements OnInit {
   pagedInvitation = computed(() => this.jobInvitationSummary());
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+
+  // Localized Lookups
+  jobCategories = computed(() => this.localizeOptions(this.jobInvitationSummaryService.jobCategories()));
+  departments = computed(() => this.localizeOptions(this.jobInvitationSummaryService.departments()));
+  jobStatuses = computed(() => this.localizeOptions(this.jobInvitationSummaryService.jobStatuses()));
+
+  private localizeOptions(options: any[]) {
+    return options.map(opt => ({
+      ...opt,
+      name: (this.currentLang() === 'ar' 
+        ? opt.additionalData?.nameAr 
+        : opt.additionalData?.nameEn) || opt.name
+    }));
+  }
 
   ngOnInit(): void {
     this.setupSearchListener();

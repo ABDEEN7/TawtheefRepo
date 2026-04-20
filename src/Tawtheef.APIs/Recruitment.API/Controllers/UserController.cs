@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Application.Recruitment.Features.Authenticator.Commands;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Application.Recruitment.Features.Authenticator.Queries;
@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Features.UserSettings.Commands;
 using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -53,6 +54,14 @@ public class UserController(IMediator mediator) : ControllerBase
             return Unauthorized(UserId.Errors);
 
         var result = await mediator.Send(new GetMyProfileReviewSummaryQuery(UserId.Value), ct);
+        return result.ToActionResult();
+    }
+
+    [HttpPut("profile/language")]
+    public async Task<IActionResult> UpdatePreferredLanguage([FromBody] UpdateLanguageRequest request)
+    {
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        var result = await mediator.Send(new UpdatePreferredLanguageCommand(UserId.Value, request.Language));
         return result.ToActionResult();
     }
 
@@ -128,4 +137,6 @@ public class UserController(IMediator mediator) : ControllerBase
 
     #endregion
 }
+
+public record UpdateLanguageRequest(string Language);
 

@@ -224,7 +224,8 @@ export class MinisterOfficeManagementPage implements OnInit {
     const request = {
       qid: formVal.qid!,
       phoneNumber: '+974' + formVal.phoneNumber!,
-      qidExpiryDate: expiryDate.toISOString().split('T')[0]
+      qidExpiryDate: expiryDate.toISOString().split('T')[0],
+      preferredLanguage: this.language.get()
     };
 
     this.service.createCandidate(request)

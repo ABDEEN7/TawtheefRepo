@@ -1,21 +1,22 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
+using Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Notifications.Templates.PhoneVerificationCode;
 
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.VerificationHandler;
 
 
 public class RequestPhoneVerificationCommandHandler(
     IUnitOfWork unitOfWork,
-    ISmsSender smsSender,
     TimeProvider timeProvider,
     UserManager<User> userManager)
     : IRequestHandler<RequestPhoneVerificationCommand, IResult<Unit>>
@@ -49,15 +50,28 @@ public class RequestPhoneVerificationCommandHandler(
             Type = ContactVerificationType.Phone,
             Destination = request.PhoneE164,
             Code = code,
-            ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(10)
+            ExpiresAt = timeProvider.GetUtcNow().UtcDateTime.AddMinutes(QatarResidentOtpConstants.OtpExpiryMinutes)
         };
 
         await unitOfWork.GetEntityRepository<ContactVerification>().AddAsync(entity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var message = $"Your verification code is: {code}";
-        _ = smsSender.SendAsync(request.PhoneE164, message, cancellationToken);
+        var model = new PhoneVerificationCodeModel
+        {
+            Code = code,
+            ExpiryMinutes = QatarResidentOtpConstants.OtpExpiryMinutes
+        };
 
+        var notification = Notification.Create(NotificationChannel.Sms, 
+            PhoneVerificationCodeModel.TemplateKey, 
+            request.UserId.Value, request.PhoneE164, 
+            null, 
+            null, 
+            null, System.Text.Json.JsonSerializer.Serialize(model), 
+            null, 0, 
+            user.PreferredLanguage);
+        await unitOfWork.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }
 

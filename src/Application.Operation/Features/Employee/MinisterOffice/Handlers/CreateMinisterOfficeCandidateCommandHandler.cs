@@ -4,6 +4,7 @@ using Application.Operation.Features.Employee.MinisterOffice.Commands;
 using Application.Operation.Features.Employee.MinisterOffice.DTOs;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -13,16 +14,21 @@ using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr;
+using Tawtheef.Notifications.Templates.MinisterOfficeRegistration;
 
 namespace Application.Operation.Features.Employee.MinisterOffice.Handlers;
 
 public sealed class CreateMinisterOfficeCandidateCommandHandler(
     IUnitOfWork uow,
     IMoiClient moiClient,
+    UserManager<User> userManager,
+    IUserRepository userRepository,
     IOptions<AppConfigSettings> appConfiguration,
     IAppLogger logger)
     : IRequestHandler<CreateMinisterOfficeCandidateCommand, IResult<MinisterOfficeCandidateDto>>
@@ -72,6 +78,12 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
 
             // Write audit and save
             await WriteAuditLogAsync(existing.Id, normalizedQid, auditAction, details);
+
+            if (auditAction == MinisterOfficeCandidateAuditActions.FollowUpReactivated)
+            {
+                await NotifyHrManagersAsync(existing.FullNameAr, existing.FullNameEn, ct);
+            }
+
             await uow.SaveChangesAsync(ct);
 
             var status = await ComputeStatusAsync(normalizedQid, ct);
@@ -116,37 +128,41 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
             NationalityEn = moi.NationalityNameEnglish,
             NationalityAr = moi.NationalityNameArabic,
             NationalityCode = moi.NationalityCode,
-            IsFollowUpActive = true
+            IsFollowUpActive = true,
         };
 
         await candidateRepo.AddAsync(candidate, ct);
 
-        // ── 6. SEND SMS (skip for Kawader users) ───────────────
-        if (!isKawaderUser)
+        // ── 6. SEND SMS (skip for existing users) ───────────────
+        var isUserExists = await userManager.Users.OfType<ApplicantUser>()
+            .AnyAsync(u => u.Profile != null && u.Profile.NationalNumber == normalizedQid, ct);
+        if (!isUserExists)
         {
-            var smsBody = $"Dear {moi.EnglishFullName}, please log in to the Careers Platform and create your profile: {appConfiguration.Value.FrontendUrl}";
+            var payload = JsonSerializer.Serialize(new MinisterOfficeRegistrationModel(moi.EnglishFullName, appConfiguration.Value.ClientUrl ?? string.Empty));
 
             var notification = Notification.Create(
                 NotificationChannel.Sms,
-                "MinisterOfficeRegistration",
+                MinisterOfficeRegistration.TemplateKey,
                 null,
                 phone,
-                "Minister Office Registration",
-                smsBody,
-                smsBody,
-                JsonSerializer.Serialize(new { Qid = MoiUtils.MaskQid(normalizedQid) }),
-                $"minister-office-reg-{normalizedQid}");
+                null,
+                null,
+                null,
+                payload,
+                $"minister-office-reg-{normalizedQid}-{DateTime.UtcNow:yyyyMMddHHmmss}");
 
             var notifRepo = uow.GetEntityRepository<Notification>();
             await notifRepo.AddAsync(notification, ct);
         }
 
-        // ── 7. AUDIT LOG ───────────────────────────────────────
         await WriteAuditLogAsync(candidate.Id, normalizedQid,
             MinisterOfficeCandidateAuditActions.Created,
             $"Created with MOI data. Kawader={isKawaderUser}. Nationality={moi.NationalityNameEnglish}");
 
-        // ── 8. SAVE CHANGES ────────────────────────────────────
+        // ── 8. NOTIFY HR MANAGERS ──────────────────────────────
+        await NotifyHrManagersAsync(moi.ArabicFullName, moi.EnglishFullName, ct);
+
+        // ── 9. SAVE CHANGES ────────────────────────────────────
         await uow.SaveChangesAsync(ct);
 
         // ── 9. COMPUTE STATUS + RETURN ─────────────────────────
@@ -201,6 +217,35 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
             Action = action,
             Details = details
         });
+    }
+
+    private async Task NotifyHrManagersAsync(string nameAr, string nameEn, CancellationToken ct)
+    {
+        var hrManagers = await userRepository.GetUsersByRoleAsync(nameof(SystemRoleIds.HrManager), ct);
+        var notifRepo = uow.GetEntityRepository<Notification>();
+
+        var payload = JsonSerializer.Serialize(new MinisterOfficeNewCandidateHrModel
+        {
+            NameAr = nameAr,
+            NameEn = nameEn
+        });
+
+        foreach (var hr in hrManagers)
+        {
+            var inAppNotification = Notification.Create(
+                NotificationChannel.InApp,
+                MinisterOfficeNewCandidateHr.TemplateKey,
+                hr.Id,
+                hr.Email,
+                null,
+                null, null,
+                payload,
+                $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
+                3,
+                hr.PreferredLanguage);
+            
+            await notifRepo.AddAsync(inAppNotification, ct);
+        }
     }
 
     private static MinisterOfficeCandidateDto MapToDto(

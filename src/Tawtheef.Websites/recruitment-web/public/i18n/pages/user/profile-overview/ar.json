@@ -1,7 +1,6 @@
 {
   "profile.title": "ملخص الملف الشخصي",
   "profile.subtitle": "مراجعة وإدارة معلوماتك الشخصية",
-
   "profile.section.personal": "المعلومات الشخصية",
   "profile.section.contact": "معلومات التواصل",
   "profile.section.skills": "المهارات",
@@ -12,7 +11,6 @@
   "profile.section.attachments": "المرفقات",
   "profile.section.achievements": "الإنجازات",
   "profile.section.prerequisites": "المتطلبات",
-
   "profile.action.edit": "تعديل",
   "profile.action.save": "حفظ",
   "profile.action.cancel": "إلغاء",
@@ -20,30 +18,24 @@
   "profile.action.delete": "حذف",
   "profile.action.upload": "رفع",
   "profile.action.view": "عرض",
-
   "profile.field.firstName": "الاسم الأول",
   "profile.field.lastName": "اسم العائلة",
   "profile.field.gender": "الجنس",
   "profile.field.birthDate": "تاريخ الميلاد",
   "profile.field.nationality": "الجنسية",
-
   "profile.field.email": "البريد الإلكتروني",
   "profile.field.phone": "رقم الهاتف",
   "profile.field.address": "العنوان",
-
   "profile.field.skill": "المهارة",
   "profile.field.skillLevel": "مستوى المهارة",
-
   "profile.field.company": "الشركة",
   "profile.field.jobTitle": "المسمى الوظيفي",
   "profile.field.startDate": "تاريخ البدء",
   "profile.field.endDate": "تاريخ الانتهاء",
   "profile.field.currentJob": "العمل الحالي",
-
   "profile.field.degree": "الدرجة العلمية",
   "profile.field.institution": "المؤسسة التعليمية",
   "profile.field.graduationYear": "سنة التخرج",
-
   "profile.field.courseName": "اسم الدورة",
   "profile.field.provider": "الجهة المقدمة",
   "profileOverview.fields.speakingLevel": "مستوى المحادثة",
@@ -58,19 +50,15 @@
   "profileOverview.table.actions": "الإجراءات",
   "profile.field.language": "اللغة",
   "profile.field.languageLevel": "مستوى الإتقان",
-
   "profileOverview.fields.current": "حالياً",
-
   "profile.field.file": "الملف",
   "profile.field.description": "الوصف",
-
   "profileOverview.attachments.nationalCard": "البطاقة الشخصية",
   "profileOverview.attachments.sponsorCard": "بطاقة الكفيل",
   "profileOverview.attachments.resume": "السيرة الذاتية",
   "profileOverview.attachments.marriageCertificate": "عقد الزواج",
   "profileOverview.attachments.birthdayCertificate": "شهادة الميلاد",
   "profileOverview.attachments.residenceAddressCertificate": "شهادة عنوان السكن",
-
   "profile.empty.noData": "لا توجد بيانات",
   "profile.validation.required": "هذا الحقل مطلوب",
   "profileOverview.eyebrow": "ملفي الشخصي",
@@ -192,7 +180,7 @@
   "profileOverview.sections.basicRequirements": "المتطلبات الأساسية",
   "profileOverview.fields.targetEntity": "الجهة المستهدفة",
   "profileOverview.fields.office": "المكتب",
-  "profileOverview.fields.nationalNumber": "الرقم الوطني",
+  "profileOverview.fields.nationalNumber": "الرقم الشخصي",
   "profileOverview.fields.qidExpiry": "تاريخ انتهاء البطاقة الشخصية",
   "profileOverview.fields.birthDate": "تاريخ الميلاد",
   "profileOverview.fields.nationality": "الجنسية",
@@ -247,7 +235,6 @@
   "profileOverview.empty.skills": "لا توجد مهارات متاحة",
   "profileOverview.empty.attachments": "لا توجد مرفقات متاحة",
   "profileOverview.sections.title": "الأقسام",
-
   "profileOverview.status.inCreation": "قيد الإنشاء",
   "profileOverview.status.submitted": "تم الإرسال",
   "profileOverview.status.underReview": "قيد المراجعة",
@@ -255,7 +242,6 @@
   "profileOverview.status.approved": "تمت الموافقة",
   "profileOverview.status.rejected": "مرفوض",
   "profileOverview.status.adminCancelled": "ملغي",
-
   "profileOverview.statusHint.inCreation": "ملفك الشخصي ما زال قيد الإعداد.",
   "profileOverview.statusHint.submitted": "تم إرسال ملفك وبانتظار المراجعة.",
   "profileOverview.statusHint.underReview": "ملفك قيد المراجعة حالياً، ولا يمكن إجراء تعديلات حتى صدور القرار.",
@@ -263,7 +249,6 @@
   "profileOverview.statusHint.approved": "تمت الموافقة على ملفك. يمكنك تحديث البيانات الأساسية وإضافة عناصر جديدة أو استبدال المستندات، لكن لا يمكنك حذف العناصر المعتمدة.",
   "profileOverview.statusHint.rejected": "تم رفض الملف. عالج ملاحظات التصحيح المطلوبة بينما تبقى العناصر المعتمدة للقراءة فقط.",
   "profileOverview.statusHint.adminCancelled": "تم إلغاء الطلب من قبل الإدارة.",
-
   "profileOverview.review.title": "ملاحظات المراجع",
   "profileOverview.review.subtitle": "يرجى معالجة الملاحظات التالية وتعديل الأقسام المرتبطة بها.",
   "profileOverview.review.total": "إجمالي الملاحظات",

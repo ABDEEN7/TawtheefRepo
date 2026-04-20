@@ -1,17 +1,18 @@
 <section i18nNamespace="pages/job-list" class="page-shell">
   <div class="card card-table">
     <div class="card-body">
+      <!-- Header -->
       <div class="row mb-4">
         <div class="col-md-9">
           <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
-          <p class="fs-16 m-0">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
+          <p class="fs-16 m-0 text-muted">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
         </div>
         <div class="col-md-3 text-end d-flex justify-content-end gap-2 align-items-center">
-          <button class="btn btn-outline-primary" (click)="refresh()">
-            <i class="pi pi-refresh me-1"></i>
+          <button class="btn btn-outline-primary" (click)="refresh()" [disabled]="isLoading()">
+            <i class="pi pi-refresh me-1" [class.pi-spin]="isLoading()"></i>
             <span>{{ 'common.refresh' | translate }}</span>
           </button>
-          @if (canManageJobs()) {
+          @if (canManage()) {
           <button class="btn btn-primary" (click)="createNewJob()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
             <span>{{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}</span>
@@ -19,15 +20,17 @@
           }
         </div>
       </div>
-      <div class="card card-table mb-4">
+
+      <!-- Statistics -->
+      <div class="card card-table mb-4 border-light shadow-sm">
         <div class="card-body">
           <h4 class="mb-3 fw-bold">{{ 'JOB_LIST_STATISTICS' | translate }}</h4>
           <div class="row">
-            <div class="col-lg-3 col-md-6  mb-3 mb-lg-0">
-              <div class="card card-table bg-info-light ">
+            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+              <div class="card card-table bg-info-light border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ paginationMetadata?.totalCount || 0 }}</div>
+                    <div class="h2 fw-bold">{{ jobs()?.metadata?.totalCount || 0 }}</div>
                     <p class="m-0">{{ 'JOB_LIST_JOB_LIST' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-star text-blue h2"></i></div>
@@ -35,10 +38,10 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <div class="card card-table bg-success-light">
+              <div class="card card-table bg-success-light border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ pendingPointConfigurationCount }}</div>
+                    <div class="h2 fw-bold">{{ stats().pendingPointConfiguration }}</div>
                     <p class="m-0">{{ 'JOB_LIST_STATS_PENDING_POINT_CONFIG' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-solar-system-01 text-success h2"></i></div>
@@ -46,10 +49,10 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <div class="card card-table bg-alert-light">
+              <div class="card card-table bg-alert-light border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ pendingPointApprovalCount }}</div>
+                    <div class="h2 fw-bold">{{ stats().pendingPointApproval }}</div>
                     <p class="m-0">{{ 'JOB_LIST_STATS_PENDING_POINT_APPROVAL' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-warning h2"></i></div>
@@ -57,10 +60,10 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <div class="card card-table bg-secondary bg-opacity-10">
+              <div class="card card-table bg-secondary bg-opacity-10 border-0">
                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                   <div class="d-flex flex-column">
-                    <div class="h2 fw-bold">{{ draftCount }}</div>
+                    <div class="h2 fw-bold">{{ stats().draft }}</div>
                     <p class="m-0">{{ 'JOB_LIST_STATS_DRAFTED' | translate }}</p>
                   </div>
                   <div><i class="hgi hgi-stroke hgi-edit-02 text-secondary h2"></i></div>
@@ -70,30 +73,37 @@
           </div>
         </div>
       </div>
+
+      <!-- Main Content Card -->
       <div class="card card-table mb-4">
         <div class="card-body">
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <h4 class="fw-bold">{{ 'JOB_LIST_JOB_LIST' | translate }}</h4>
+          <div class="row align-items-center mb-4">
+            <div class="col-md-12">
+              <h4 class="fw-bold mb-0">{{ 'JOB_LIST_JOB_LIST' | translate }}</h4>
             </div>
           </div>
+
+          <!-- Filters Bar -->
           <div class="row mb-3 align-items-center">
             <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
-              <input class="form-control" [ngModel]="searchQuery()" (ngModelChange)="onSearchInputChange($event)"
-                [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate" />
+              <div class="input-group">
+                <input class="form-control border-start-0 ps-0" [ngModel]="searchQuery()"
+                  (ngModelChange)="onSearchChange($event)"
+                  [placeholder]="'JOB_LIST_FILTERS_SEARCH_PLACEHOLDER' | translate" />
+              </div>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-              <p-select class="select w-100" [options]="lookupsService.jobCategories()" [ngModel]="filterType()"
+              <p-select class="select w-100" [options]="lookupService.jobCategories()" [ngModel]="filterType()"
                 (ngModelChange)="filterType.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                 [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_JOB_CATEGORY' | translate"></p-select>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-              <p-select class="select w-100" [options]="lookupsService.jobStatus()" [ngModel]="filterStatus()"
+              <p-select class="select w-100" [options]="lookupService.jobStatus()" [ngModel]="filterStatus()"
                 (ngModelChange)="filterStatus.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                 [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"></p-select>
             </div>
 
-            <div class="col-lg-5 col-md-12 mb-3 d-flex gap-2">
+            <div class="col-lg-5 col-md-12 mb-3 d-flex gap-2 justify-content-lg-end">
               <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button"
                 (click)="showMoreFilters.set(true)">
                 <i class="hgi hgi-stroke hgi-filter-add"></i>
@@ -111,33 +121,34 @@
             </div>
           </div>
 
+          <!-- Advanced Filters Drawer -->
           <p-drawer [(visible)]="showMoreFilters" position="right"
             [header]="'JOB_LIST_TITLES_ADVANCED_FILTERS' | translate" class="filter-drawer">
             <div class="d-flex flex-column gap-4 p-2">
               <div>
                 <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_GENDER' | translate }}</label>
-                <p-select class="select w-100" [options]="lookupsService.genders()" [ngModel]="filterGender()"
+                <p-select class="select w-100" [options]="lookupService.genders()" [ngModel]="filterGender()"
                   (ngModelChange)="filterGender.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                   [showClear]="true"></p-select>
               </div>
 
               <div>
                 <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_SECTOR' | translate }}</label>
-                <p-select class="select w-100" [options]="lookupsService.sectors()" [ngModel]="filterSector()"
+                <p-select class="select w-100" [options]="lookupService.sectors()" [ngModel]="filterSector()"
                   (ngModelChange)="onSectorChange($event)" optionLabel="name" optionValue="id"
                   [showClear]="true"></p-select>
               </div>
 
               <div>
                 <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_MANAGEMENT' | translate }}</label>
-                <p-select class="select w-100" [options]="lookupsService.managements()" [ngModel]="filterManagement()"
+                <p-select class="select w-100" [options]="lookupService.managements()" [ngModel]="filterManagement()"
                   (ngModelChange)="onManagementChange($event)" optionLabel="name" optionValue="id"
                   [showClear]="true"></p-select>
               </div>
 
               <div>
                 <label class="form-label fw-bold">{{ 'JOB_LIST_FILTERS_DEPARTMENT' | translate }}</label>
-                <p-select class="select w-100" [options]="lookupsService.departments()" [ngModel]="filterDepartment()"
+                <p-select class="select w-100" [options]="lookupService.departments()" [ngModel]="filterDepartment()"
                   (ngModelChange)="filterDepartment.set($event); onFilterChange()" optionLabel="name" optionValue="id"
                   [showClear]="true"></p-select>
               </div>
@@ -152,53 +163,70 @@
               </div>
             </div>
           </p-drawer>
-          <div class="table-card rounded overflow-hidden">
+
+          <!-- Table Content -->
+          <div class="table-card rounded overflow-hidden" [class.loading-shimmer]="isLoading()">
             <p-menu #menu [model]="activeActions" [popup]="true" appendTo="body"></p-menu>
             <div class="table-responsive">
-              <p-table class="distribution-table" [value]="jobs?.items ?? []">
+              <p-table class="distribution-table" [value]="jobs()?.items ?? []" [loading]="isLoading()">
                 <ng-template pTemplate="header">
                   <tr>
                     <th class="col-index">#</th>
-                    <th>{{ 'JOB_LIST_COLUMNS_TITLE' | translate }}</th>
-                    <th>{{ 'JOB_LIST_COLUMNS_JOB_CATEGORY' | translate }}</th>
+                    <th style="min-width: 300px;">{{ 'JOB_LIST_COLUMNS_TITLE' | translate }}</th>
                     <th>{{ 'JOB_LIST_COLUMNS_STATUS' | translate }}</th>
-                    <th class="col-vacancies">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</th>
-                    <th class="col-date">{{ 'JOB_LIST_COLUMNS_DEADLINE' | translate }}</th>
-                    <th class="col-actions">{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
+                    <th>{{ 'JOB_LIST_COLUMNS_RECRUITMENT_DETAILS' | translate }}</th>
+                    <th style="min-width: 180px;">{{ 'JOB_LIST_COLUMNS_AUDIT_HISTORY' | translate }}</th>
+                    <th class="col-actions text-center">{{ 'JOB_LIST_COLUMNS_ACTIONS' | translate }}</th>
                   </tr>
                 </ng-template>
 
                 <ng-template pTemplate="body" let-job let-i="rowIndex">
                   <tr>
-                    <td class="cell-alt col-index">
+                    <td class="col-index">
                       {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
                     </td>
                     <td>
                       <div class="d-flex flex-column gap-1">
-                        <span class="fw-bold">{{ currentLang === 'ar' ? job.titleAr : job.titleEn }}</span>
-                        @if(job.gender) {
-                        <div class="d-flex align-items-center gap-1">
-                          <span class="pill neutral">{{ job.gender.name }}</span>
+                        <span class="fw-bold fs-15 text-primary-dark">
+                          {{ currentLang === 'ar' ? job.titleAr : job.titleEn }}
+                        </span>
+                        <div class="d-flex align-items-center gap-2 fs-12 text-muted">
+                          <span>{{ job.jobCategory?.name }}</span>
+                          <span class="dot-separator"></span>
+                          <span>{{ job.gender?.name }}</span>
                         </div>
-                        }
                       </div>
                     </td>
 
-                    <td>
-                      <span class="muted">{{ job.jobCategory?.name }}</span>
-                    </td>
-
-                    <td class="cell-alt">
-                      <span class="" [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
+                    <td class="">
+                      <span [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
                         {{ job.jobStatus.name }}</span>
                     </td>
 
-                    <td class="col-vacancies">
-                      <span class="muted">{{ job.numberOfVacancies }}</span>
+                    <td>
+                      <div class="d-flex flex-column gap-1">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="hgi hgi-stroke hgi-user-multiple text-primary fs-14"></i>
+                          <span class="fw-semibold text-dark">{{ job.numberOfVacancies }}</span>
+                          <span class="text-muted fs-12">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 text-muted fs-12">
+                          <i class="pi pi-calendar fs-11"></i>
+                          <span>{{ job.closingDate | date : 'yyyy/MM/dd' }}</span>
+                        </div>
+                      </div>
                     </td>
 
-                    <td class="cell-alt col-date">
-                      <span class="muted">{{ job.closingDate | date : 'yyyy/MM/dd' }}</span>
+                    <td class="">
+                      <div class="d-flex flex-column gap-1">
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="fw-medium text-dark fs-13">{{ job.createdByName || 'System' }}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1 text-muted fs-11 ps-4">
+                          <i class="pi pi-history fs-10"></i>
+                          <span>{{ job.lastActionDate | date : 'yyyy/MM/dd HH:mm' }}</span>
+                        </div>
+                      </div>
                     </td>
 
                     <td class="col-actions">
@@ -206,18 +234,16 @@
                         @let actions = getJobActions(job);
 
                         @for (action of actions.slice(0, 3); track action.label) {
-                        <button type="button" class="btn" (click)="action.command()"
-                          pTooltip="{{ action.label | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="action.label | translate">
+                        <button type="button" class="btn btn-action-icon" (click)="action.command()"
+                          pTooltip="{{ action.label | translate }}" tooltipPosition="top">
                           <i [class]="action.icon"></i>
                         </button>
                         }
 
                         @if (actions.length > 3) {
-                        <button class="btn d-flex gap-1 align-items-center" type="button"
+                        <button class="btn btn-action-icon" type="button"
                           (click)="showMoreActions($event, actions.slice(3), menu)"
-                          pTooltip="{{ 'common.more' | translate }}" tooltipPosition="top"
-                          [attr.aria-label]="'common.more' | translate">
+                          pTooltip="{{ 'common.more' | translate }}" tooltipPosition="top">
                           <i class="hgi hgi-stroke hgi-more-01"></i>
                         </button>
                         }
@@ -228,26 +254,30 @@
 
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="7" class="text-center">
-                      <i class="hgi hgi-stroke hgi-briefcase-01 mb-3"></i>
-                      <div class="empty__title">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</div>
-                      @if (canManageJobs()) {
-                      <button class="btn btn-outline-primary mt-3" (click)="createNewJob()">
-                        <i class="hgi hgi-stroke hgi-plus-sign me-1"></i><span>{{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' |
-                          translate }}</span>
-                      </button>
-                      }
+                    <td colspan="6" class="text-center py-5">
+                      <div class="empty-state-container">
+                        <i class="hgi hgi-stroke hgi-briefcase-01 mb-3 text-muted display-4"></i>
+                        <div class="empty__title h5 fw-bold text-muted">{{ 'JOB_LIST_NO_JOBS_FOUND' | translate }}</div>
+                        @if (canManage()) {
+                        <button class="btn btn-outline-primary mt-3" (click)="createNewJob()">
+                          <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
+                          <span>{{ 'JOB_LIST_BUTTONS_CREATE_FIRST_JOB' | translate }}</span>
+                        </button>
+                        }
+                      </div>
                     </td>
                   </tr>
                 </ng-template>
               </p-table>
             </div>
           </div>
-          <div class="row">
+
+          <!-- Pagination -->
+          <div class="row mt-4">
             <div class="col-12">
-              @if (paginationMetadata && paginationMetadata.totalCount > 0) {
+              @if (jobs()?.metadata && jobs()!.metadata.totalCount > 0) {
               <div class="pagination-box">
-                <app-pagination [currentPage]="currentPage()" [totalItems]="paginationMetadata.totalCount"
+                <app-pagination [currentPage]="currentPage()" [totalItems]="jobs()!.metadata.totalCount"
                   [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"
                   (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
               </div>

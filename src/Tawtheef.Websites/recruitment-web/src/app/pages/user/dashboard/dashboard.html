@@ -22,21 +22,19 @@
                   <div class="card card-table bg-info-light ">
                     <div class="card-body d-flex justify-content-between align-items-center p-3">
                       <div class="d-flex flex-column">
-                        <div class="h2 fw-bold">{{ getNewInvitationCount() }}</div>
-                        <p class="m-0">{{ 'candidate_dashboard.kpi_new_invites' | translate }}</p>
+                        <div class="h2 fw-bold">{{ getReceivedCount() }}</div>
+                        <p class="m-0">{{ 'candidate_dashboard.kpi_received' | translate }}</p>
                       </div>
-                      <div><i class="hgi hgi-stroke hgi-star text-blue h2"></i></div>
+                      <div><i class="hgi hgi-stroke hgi-mail-01 text-blue h2"></i></div>
                     </div>
-
                   </div>
-
                 </div>
                 <div class="col-md-4">
                   <div class="card card-table bg-success-light">
                     <div class="card-body d-flex justify-content-between align-items-center p-3">
                       <div class="d-flex flex-column">
-                        <div class="h2 fw-bold text-dark">{{ getSubmittedCount() }}</div>
-                        <p class="m-0">{{ 'candidate_dashboard.kpi_applied' | translate }}</p>
+                        <div class="h2 fw-bold text-dark">{{ getAcceptedCount() }}</div>
+                        <p class="m-0">{{ 'candidate_dashboard.kpi_accepted' | translate }}</p>
                       </div>
                       <div><i class="hgi hgi-stroke hgi-checkmark-circle-02 text-success h2"></i></div>
                     </div>
@@ -46,12 +44,11 @@
                   <div class="card card-table bg-alert-light">
                     <div class="card-body d-flex justify-content-between align-items-center p-3">
                       <div class="d-flex flex-column">
-                        <div class="h2 fw-bold">{{ getWithdrawnCount() }}</div>
-                        <p class="m-0">{{ 'candidate_dashboard.kpi_withdrawn' | translate }}</p>
+                        <div class="h2 fw-bold text-danger">{{ getRejectedCount() }}</div>
+                        <p class="m-0">{{ 'candidate_dashboard.kpi_rejected' | translate }}</p>
                       </div>
-                      <div><i class="hgi hgi-stroke hgi-comment-01 text-warning h2"></i></div>
+                      <div><i class="hgi hgi-stroke hgi-cancel-01 text-danger h2"></i></div>
                     </div>
-
                   </div>
                 </div>
               </div>

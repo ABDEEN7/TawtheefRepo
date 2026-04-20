@@ -9,6 +9,7 @@ public sealed class AppConfigSettings
     public required string FrontendUrl { get; init; }
     [Required]
     public required string BackendUrl { get; init; }
+    public string? ClientUrl { get; init; }
     [Required]
     public required string BlobSignKey { get; init; }
     [Required]

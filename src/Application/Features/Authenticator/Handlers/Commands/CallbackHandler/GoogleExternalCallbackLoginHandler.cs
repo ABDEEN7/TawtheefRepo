@@ -16,8 +16,8 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public class GoogleExternalCallbackLoginHandler(
-    UserManager<User> userManager,
-    SignInManager<User> signInManager,
+    UserManager<Domain.Entities.Users.User> userManager,
+    SignInManager<Domain.Entities.Users.User> signInManager,
     ITokenService tokenService,
     IUnitOfWork uow,
     ILoginAuditService loginAudit,
@@ -70,7 +70,7 @@ public class GoogleExternalCallbackLoginHandler(
             return await HandleAlreadyLinkedAsync(request, info, ct);
         }
 
-        // 2) Not linked yet => branch by requested user type
+// 3) Not linked yet => branch by requested user type
         _log.Information(
             "Google external sign-in not linked yet. DefaultUserType={DefaultUserType}",
             request.DefaultUserType);
@@ -239,6 +239,26 @@ public class GoogleExternalCallbackLoginHandler(
         var create = await userManager.CreateAsync(newApplicant);
         if (!create.Succeeded)
         {
+            // Check if it's a duplicate — another request just created this user
+            var duplicate = create.Errors.Any(e => e.Code is "DuplicateEmail" or "DuplicateUserName");
+            if (duplicate)
+            {
+                var raceWinner = await userManager.FindByEmailAsync(email);
+                if (raceWinner is not null)
+                {
+                    _log.Warning(
+                        "Applicant-not-linked: CreateAsync failed due to duplicate email, likely a race condition. Email={Email} Errors={Errors}",
+                        email,
+                        JoinIdentityErrors(create));
+                    return await AttachProviderToExistingApplicantAsync(raceWinner, info, ct);
+                }
+
+                _log.Warning(
+                    "Applicant-not-linked: CreateAsync failed due to duplicate email, but user not found on retry. Email={Email} Errors={Errors}",
+                    email,
+                    JoinIdentityErrors(create));
+            }
+            
             _log.Warning(
                 "Applicant-not-linked: CreateAsync failed. Email={Email} Errors={Errors}",
                 email,
@@ -266,7 +286,7 @@ public class GoogleExternalCallbackLoginHandler(
     }
 
     private async Task<IResult<AuthResponse>> AttachProviderToExistingApplicantAsync(
-        User existingUser,
+        Domain.Entities.Users.User existingUser,
         ExternalLoginInfo info,
         CancellationToken ct)
     {

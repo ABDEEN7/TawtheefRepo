@@ -3,7 +3,7 @@ Job Posting Updated
 
 Dear Colleague,
 
-The job posting "@(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "the job posting" : Model.Model.JobTitle)" has been updated.
+The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been updated.
 
 Please sign in to @Model.Branding.ProductName to review the updated details and confirm any required actions.
 

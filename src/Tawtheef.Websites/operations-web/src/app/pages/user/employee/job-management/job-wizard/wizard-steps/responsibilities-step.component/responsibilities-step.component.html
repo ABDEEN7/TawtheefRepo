@@ -83,7 +83,7 @@
               <span class="badge bg-brand ms-2">{{ responsibilitiesArray.length }}</span>
             </h5>
 
-            @for (responsibility of responsibilitiesArray.controls; track $index; let i = $index) {
+            @for (responsibility of responsibilitiesArray.controls; track responsibility; let i = $index) {
               <div class="row" [formGroupName]="i">
                 <div class="col-md-6">
                   <h6 class="text-primary">

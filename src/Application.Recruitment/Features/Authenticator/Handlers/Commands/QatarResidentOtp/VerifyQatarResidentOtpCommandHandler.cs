@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using MediatR;
 using FluentResults;

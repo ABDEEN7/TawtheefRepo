@@ -1,0 +1,40 @@
+.specialization-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+  }
+}
+
+.specialization-item {
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  &.selected {
+    border-color: var(--primary-color) !important;
+    background-color: rgba(var(--primary-color-rgb), 0.02);
+  }
+
+  &.main-specialization {
+    border-left: 4px solid var(--primary-color);
+  }
+}
+
+:host ::v-deep {
+  .p-checkbox .p-checkbox-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+}

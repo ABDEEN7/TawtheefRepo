@@ -1,0 +1,14 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
+تم تحديث عرض الوظيفة
+
+عزيزي الزميل/الزميلة،
+
+تم تحديث بيانات الوظيفة: @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName لمراجعة التعديلات الجديدة والتأكد من توافقها مع الإجراءات المطلوبة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail

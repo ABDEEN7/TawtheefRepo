@@ -35,7 +35,6 @@ export class ResponsibilitiesStepComponent extends WizardStepComponent implement
   ngOnInit(): void {
     this.form.valueChanges.pipe(
       debounceTime(300),
-      filter(() => this.form.valid),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.updateJobData();
@@ -97,6 +96,7 @@ addResponsibility(): void {
   removeResponsibility(index: number): void {
     if (this.responsibilitiesArray.length > 1) {
       this.responsibilitiesArray.removeAt(index);
+      this.updateJobData();
     }
   }
 
@@ -117,16 +117,14 @@ addResponsibility(): void {
   }
 
   private updateJobData(): void {
-    if (this.form.valid) {
-      const responsibilities = this.responsibilitiesArray.controls.map(control => {
-        const group = control as FormGroup;
-        return {
-          textAr: group.get('textAr')?.value || '',
-          textEn: group.get('textEn')?.value || ''
-        };
-      });
+    const responsibilities = this.responsibilitiesArray.controls.map(control => {
+      const group = control as FormGroup;
+      return {
+        textAr: group.get('textAr')?.value || '',
+        textEn: group.get('textEn')?.value || ''
+      };
+    });
 
-      this.jobService.updateCurrentJobResponsibilities(responsibilities);
-    }
+    this.jobService.updateCurrentJobResponsibilities(responsibilities);
   }
 }

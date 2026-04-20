@@ -67,6 +67,11 @@
   "JOB_WIZARD.STEPS.BASICS.MAJOR_PLACEHOLDER": "Select main major",
   "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR": "Sub Major",
   "JOB_WIZARD.STEPS.BASICS.SUB_MAJOR_PLACEHOLDER": "Select sub major",
+  "JOB_WIZARD.STEPS.BASICS.PRIMARY": "Primary",
+  "JOB_WIZARD.STEPS.BASICS.SECONDARY": "Secondary",
+  "JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATIONS": "Additional Specializations",
+  "JOB_WIZARD.STEPS.BASICS.ADD_SPECIALIZATION": "Add Specialization",
+  "JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATION": "Additional Specialization",
   "JOB_WIZARD.STEPS.BASICS.GENDER": "Gender",
   "JOB_WIZARD.STEPS.BASICS.GENDER_PLACEHOLDER": "Select gender",
   "JOB_WIZARD.STEPS.BASICS.WORK_TYPE": "Work Type",
@@ -271,5 +276,9 @@
   "JOB_WIZARD.STEPS.BASICS.JOB_NUMBER": "Job Number",
   "JOB_WIZARD.BUTTONS.EDIT_BASIC_DATA": "Edit Basic Data",
   "JOB_WIZARD.BUTTONS.VIEW_BASIC_DATA": "View Basic Data",
-  "JOB_WIZARD.REVIEW_NOTES.BASIC_DATA_NOTE": "Basic Information contains a note"
+  "JOB_WIZARD.REVIEW_NOTES.BASIC_DATA_NOTE": "Basic Information contains a note",
+  "JOB_WIZARD.VALIDATION.SPECIALIZATION_EXISTS": "This specialization combination already exists.",
+  "JOB_WIZARD.VALIDATION.DUPLICATE_SPECIALIZATION": "Duplicate specialization combination found.",
+  "JOB_WIZARD.MESSAGES.SPECIALIZATION_DELETED": "Specialization deleted successfully from server.",
+  "JOB_WIZARD.CONFIRM.DELETE_SPECIALIZATION": "Are you sure you want to delete this specialization? This action will immediately remove it from the server and cannot be undone."
 }

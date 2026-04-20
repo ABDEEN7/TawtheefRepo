@@ -13,6 +13,8 @@ using Tawtheef.Domain.Entities.Users;
 
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.MinisterOffice;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
@@ -36,9 +38,12 @@ internal sealed class ProfileDistributionProjection(
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo     = uow.GetEntityRepository<ProfileChangeRequest>();
 
-        // 1) Resolve allowed country for current user (EmployeeUser => Qatar, OfficeUser => Office.CountryId)
-        var allowedCountryId = await ResolveAllowedCountryIdAsync(userId, ct);
-        if (allowedCountryId is null)            
+        // Load user + Office navigation safely for OfficeUser
+        var user = await userManager.Users
+            .Include(u => (u as OfficeUser)!.Office)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user is null)        
             return new PaginatedResult<DistributionProfileDto>([], 0, paginatedRequest.PageNumber, paginatedRequest.PageSize);
 
 
@@ -47,7 +52,9 @@ internal sealed class ProfileDistributionProjection(
             .Include(p => p.User)
             .Include(p => p.CandidateType)
             .Include(p => p.TargetEntity)
-            .Where(p=> p.ResidenceCountryId == allowedCountryId.Value)
+            .WhereIf(user is EmployeeUser,p=> 
+                p.Provider == nameof(ProviderLoginIds.QatarPass) || 
+                                              p.Provider == nameof(ProviderLoginIds.QatarResidentOtp))
             .Where(p =>
                 (
                     Enumerable.Contains(ProfileDistributionRules.AssignableStatuses, p.Status) ||
@@ -61,6 +68,13 @@ internal sealed class ProfileDistributionProjection(
             .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
             .Include(p => p.Qualifications!).ThenInclude(q => q.SubMajor)
             .WhereIf(status is not null, p => p.Status == status);
+
+        if (user is OfficeUser office)
+        {
+            var allowedCountry = office.Office?.CountryId;
+            profilesQuery = profilesQuery
+                .Where(p => p.ResidenceCountryId == allowedCountry && p.Provider == nameof(ProviderLoginIds.Google));
+        }          
 
         // 4) Optional search filter
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -135,7 +149,15 @@ internal sealed class ProfileDistributionProjection(
 
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
-        // 7) Map DTOs
+        // 7.1) Load Minister Office Candidates for identifying them (batched)
+        var qids = profiles.Items.Select(p => p.NationalNumber).Where(q => q != null).ToList();
+        var ministerOfficeQids = await uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet
+            .Where(c => qids.Contains(c.Qid))
+            .Select(c => c.Qid)
+            .ToListAsync(ct);
+        var ministerOfficeLookup = ministerOfficeQids.ToHashSet();
+
+        // 8) Map DTOs
         var items = profiles.Items
             .Select(profile =>
             {
@@ -149,6 +171,8 @@ internal sealed class ProfileDistributionProjection(
                 
                 dto.HasOtherSpecialization = profile.Qualifications?.Any(q =>
                     q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther) ?? false;
+
+                dto.IsMinisterOfficeCandidate = profile.NationalNumber != null && ministerOfficeLookup.Contains(profile.NationalNumber);
                 
                 return dto;
             })
@@ -193,7 +217,8 @@ internal sealed class ProfileDistributionProjection(
         if (employees.Count == 0) return [];
 
         // Filter by permission: "profile.distribution.manage"
-        var permEmployees = await userRepository.GetUsersByPermissionAsync(PermissionKeys.ProfileDistribution.Manage, ct);
+        var permEmployees = await userRepository
+            .GetUsersByPermissionAsync(PermissionKeys.ProfileApproval.Review, ct);
         var permEmployeeIds = permEmployees.Select(u => u.Id).ToHashSet();
         
         employees = employees.Where(e => permEmployeeIds.Contains(e.Id)).ToList();
@@ -258,29 +283,7 @@ internal sealed class ProfileDistributionProjection(
             Profiles = profiles.Items
         };
     }
-
-    private async Task<Guid?> ResolveAllowedCountryIdAsync(Guid userId, CancellationToken ct)
-    {
-        // Load user + Office navigation safely for OfficeUser
-        var user = await userManager.Users
-            .Include(u => (u as OfficeUser)!.Office)
-            .FirstOrDefaultAsync(u => u.Id == userId, ct);
-
-        if (user is null)
-            return null;
-
-        return user switch
-        {
-            // EmployeeUser => Qatar only
-            EmployeeUser => CountryIds.Qatar,
-
-            // OfficeUser => Office.CountryId
-            OfficeUser { Office: not null } officeUser => officeUser.Office.CountryId,
-
-            _ => null
-        };
-    }
-
+    
     private static DistributionEmployeeAvailability ResolveAvailability(User employee)
     {
         if (employee.IsBlocked) return DistributionEmployeeAvailability.Suspended;

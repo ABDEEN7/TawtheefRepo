@@ -1,4 +1,3 @@
-using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Domain.Common;
 
 
@@ -10,7 +9,7 @@ public interface IUnitOfWork : IDisposable
     IGenericRepository<T> GetEntityRepository<T>() where T : EventEntity;
 
     void Remove<T>(T? entity) where T : EventEntity;
-    void RemoveRange<T>(IList<T>? entities) where T : EventEntity;
+    void RemoveRange<T>(IEnumerable<T>? entities) where T : EventEntity;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     Task Rollback();
     

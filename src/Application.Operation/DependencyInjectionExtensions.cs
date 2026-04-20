@@ -54,7 +54,6 @@ namespace Application.Operation
             {
                 services.AddValidatorsFromAssembly(typeof(CreateJobFromPreviousCommandValidator).Assembly);
                 services.AddValidatorsFromAssembly(typeof(CreateJobCommandValidator).Assembly);
-                services.AddValidatorsFromAssembly(typeof(UpdateJobCommandValidator).Assembly);
             }
         }
     }

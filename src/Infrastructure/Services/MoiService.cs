@@ -1,5 +1,4 @@
-﻿using Application.Recruitment.Common.Interfaces.Services;
-using Application.Recruitment.Features.Authenticator.DTOs;
+﻿using Application.Recruitment.Features.Authenticator.DTOs;
 using Application.Recruitment.Features.Profile.Queries;
 using MediatR;
 using FluentResults;

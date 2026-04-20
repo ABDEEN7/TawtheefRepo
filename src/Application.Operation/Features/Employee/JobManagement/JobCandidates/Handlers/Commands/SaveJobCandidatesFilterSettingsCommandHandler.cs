@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using JobSpecialization = Application.Operation.Features.Employee.JobManagement.JobCandidates.Models.JobSpecialization;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Commands;
 
@@ -32,6 +33,7 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
         var settings = await repo.DbSet
             .Include(setting => setting.CandidateTypePercentages)
             .Include(setting => setting.NationalityPercentages)
+            .Include(setting => setting.SelectedSpecializations)
             .FirstOrDefaultAsync(setting => setting.JobId == dto.JobId, cancellationToken);
 
         if (settings is null)
@@ -58,6 +60,12 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
             settings.NationalityPercentages.Clear();
         }
 
+        if (settings.SelectedSpecializations.Count > 0)
+        {
+            unitOfWork.RemoveRange(settings.SelectedSpecializations);
+            settings.SelectedSpecializations.Clear();
+        }
+
         settings.CandidateTypePercentages = dto.CandidateTypePercentages
             .Select(item => new JobCandidateTypePercentage
             {
@@ -74,6 +82,17 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
                 Percentage = item.Percentage
             })
             .ToList();
+
+        if (dto.SelectedSpecializations != null)
+        {
+            settings.SelectedSpecializations = dto.SelectedSpecializations
+                .Select(item => new JobCandidateFilterSpecialization
+                {
+                    MajorId = item.MajorId,
+                    SubMajorId = item.SubMajorId
+                })
+                .ToList();
+        }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -96,6 +115,9 @@ public sealed class SaveJobCandidatesFilterSettingsCommandHandler(IUnitOfWork un
                     NationalityId = item.NationalityId,
                     Percentage = item.Percentage
                 })
+                .ToList(),
+            SelectedSpecializations = settings.SelectedSpecializations
+                .Select(item => new JobSpecialization(item.MajorId, item.SubMajorId))
                 .ToList()
         };
 

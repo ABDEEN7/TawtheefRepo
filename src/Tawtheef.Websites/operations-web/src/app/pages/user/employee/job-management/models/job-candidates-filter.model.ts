@@ -6,4 +6,5 @@ export interface JobCandidatesFilter {
   candidateTypeId?: GUID;
   genderId?: GUID;
   minimumPoints?: number;
+  selectedSpecializations?: { majorId: GUID; subMajorId: GUID }[];
 }

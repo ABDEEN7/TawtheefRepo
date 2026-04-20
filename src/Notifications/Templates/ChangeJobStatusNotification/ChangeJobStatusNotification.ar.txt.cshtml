@@ -1,0 +1,15 @@
+﻿@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNotification.ChangeJobStatusNotificationModel>
+
+العنوان: تغيير حالة الوظيفة بانتظار المراجعة
+
+عزيزي الزميل/الزميلة،
+
+تم تقديم طلب لتغيير حالة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
+
+يرجى تسجيل الدخول إلى @Model.Branding.ProductName لمراجعة الطلب والمتابعة.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail

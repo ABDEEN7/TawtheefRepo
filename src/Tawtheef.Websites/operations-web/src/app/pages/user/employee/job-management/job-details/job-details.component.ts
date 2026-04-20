@@ -121,11 +121,16 @@ export class JobDetailsComponent implements OnInit {
 
   getDegreeRequirements(): string {
     if (!this.job?.degrees?.length) return '';
-
-    const degreeNames = this.job.degrees.map(degree => degree.degree.name)
-
-
+    const degreeNames = this.job.degrees.map(degree => degree.degree.name);
     return degreeNames.join(',') || '';
+  }
+
+  getSpecializationRequirements(): string {
+    if (!this.job?.jobSpecializations?.length) return '';
+    return this.job.jobSpecializations
+      .map((spec) => `${spec.major?.name || ''} - ${spec.subMajor?.name || ''}`)
+      .filter((s) => s !== ' - ')
+      .join(', ') || '';
   }
 
   isJobOpen(): boolean {

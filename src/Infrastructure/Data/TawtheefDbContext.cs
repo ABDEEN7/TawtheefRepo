@@ -124,6 +124,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobCandidateFilterSetting> JobCandidateFilterSettings { get; set; }
     public DbSet<JobCandidateTypePercentage> JobCandidateTypePercentages { get; set; }
     public DbSet<JobCandidateNationalityPercentage> JobCandidateNationalityPercentages { get; set; }
+    public DbSet<JobCandidateFilterSpecialization> JobCandidateFilterSpecializations { get; set; }
     public DbSet<HomeSuccessStory> HomeSuccessStories { get; set; }
     public DbSet<FAQ> Faqs { get; set; }
     // Notification Tables

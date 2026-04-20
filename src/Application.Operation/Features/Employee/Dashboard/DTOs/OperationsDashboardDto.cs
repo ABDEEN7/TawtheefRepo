@@ -1,5 +1,3 @@
-using Tawtheef.Application.Common.Models.Pagination;
-
 namespace Application.Operation.Features.Employee.Dashboard.DTOs;
 
 public sealed class OperationsDashboardDto

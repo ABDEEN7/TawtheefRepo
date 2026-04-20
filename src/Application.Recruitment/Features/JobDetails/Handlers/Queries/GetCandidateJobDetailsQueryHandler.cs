@@ -10,7 +10,6 @@ using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Recruitment.Features.JobDetails.Handlers.Queries;
@@ -33,7 +32,7 @@ public sealed class GetCandidateJobDetailsQueryHandler(
         if (invitation is null)
             return Result.Fail<CandidateJobDetailsDto>(ErrorsCodes.InvitationNotFound);
 
-        var jobResult = await jobRepository.GetByIdWithDetailsAsync(invitation.JobId);
+        var jobResult = await jobRepository.GetByIdWithDetailsAsync(invitation.JobId, cancellationToken);
 
         if (jobResult.IsFailed)
             return Result.Fail<CandidateJobDetailsDto>(jobResult.Errors);

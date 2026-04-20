@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +29,9 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public bool AgreedToTerms { get; set; }
     public DateTime? LastLoginDate { get; set; }
     
+    [MaxLength(10)]
+    public string PreferredLanguage { get; set; } = "ar";
+    
     [StringLength(2048)]
     public string? Avatar { get; set; }
     public Guid UserTypeId { get; set; }
@@ -44,8 +47,10 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     
     public virtual ICollection<Notification.Notification> Notifications { get; init; } = [];
     public virtual ICollection<RefreshToken> RefreshTokens { get; init; } = [];
-    public ICollection<UserProfileLogger> UserProfileLoggers { get; set; } = [];
-    public ICollection<ProfileAssignment> ProfileAssignments { get; init; } = [];
+    public virtual ICollection<UserProfileLogger> UserProfileLoggers { get; init; } = [];
+    public virtual ICollection<ProfileAssignment> ProfileAssignments { get; init; } = [];
+    
+    public virtual ICollection<IdentityUserRole<Guid>> UserRoles { get; set; } = [];
     
     [MaxLength(450)]
     public string? CurrentAuthToken { get; set; }

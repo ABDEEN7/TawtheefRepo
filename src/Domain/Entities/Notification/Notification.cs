@@ -8,7 +8,7 @@ public enum NotificationChannel { Sms = 1, Email = 2, Push = 3, InApp = 4 }
 public enum NotificationStatus { Pending = 1, Queued = 2, Sent = 3, Failed = 4, Canceled = 5 }
 
 [Index(nameof(Status), nameof(Channel))]
-[Index(nameof(UserId), nameof(IsRead), nameof(IsDismissed))]
+[Index(nameof(UserId), nameof(Channel), nameof(IsDismissed), nameof(IsRead))]
 public class Notification : EventEntity
 {
     public Guid? UserId { get; private set; }
@@ -66,6 +66,9 @@ public class Notification : EventEntity
     public bool IsRead { get; private set; }
     public bool IsDismissed { get; private set; }
 
+    [MaxLength(10)]
+    public string Language { get; private set; } = "ar";
+
     public void MarkAsRead() => IsRead = true;
     public void MarkAsUnread() => IsRead = false;
     public void Dismiss() => IsDismissed = true;
@@ -73,7 +76,7 @@ public class Notification : EventEntity
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
         string? toAddress, string? subject, string? body, string? plainTextBody,
-        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3)
+        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3, string language = "ar")
     {
         return new Notification
         {
@@ -87,7 +90,8 @@ public class Notification : EventEntity
             PayloadJson = payloadJson,
             Status = NotificationStatus.Pending,
             IdempotencyKey = idempotencyKey,
-            MaxRetries = maxRetries
+            MaxRetries = maxRetries,
+            Language = language
         };
     }
 

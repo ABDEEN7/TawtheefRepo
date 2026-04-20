@@ -1,0 +1,35 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.OfficeCreatedNotification.OfficeCreatedNotificationModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var product = b.ProductName;
+    var support = b.SupportEmail;
+    var website = b.WebsiteUrl;
+
+    var officeName = string.IsNullOrWhiteSpace(m.OfficeNameAr) ? "مكتب جديد" : m.OfficeNameAr;
+    var officeCode = string.IsNullOrWhiteSpace(m.OfficeCode) ? "-" : m.OfficeCode;
+    var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "بريدك الإلكتروني" : m.AdminEmail;
+}
+
+العنوان: @($"{product} - تم إنشاء مكتب توظيف جديد")
+
+عزيزي المسؤول،
+
+تم إنشاء مكتب توظيف جديد بنجاح في @product.
+
+تفاصيل المكتب:
+- اسم المكتب: @officeName
+- كود المكتب: @officeCode
+- بريد المسؤول: @adminEmail
+
+تعليمات الدخول:
+1) تأكد من الاتصال بشبكة (VPN) إذا كنت خارج المكتب
+2) قم بزيارة المنصة: @website
+3) سجل الدخول باستخدام بريدك الإلكتروني: @adminEmail
+
+إذا كنت بحاجة للمساعدة، يرجى التواصل مع الدعم الفني: @support
+
+مع تحيات،
+فريق عمل @product

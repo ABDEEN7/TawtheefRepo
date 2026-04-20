@@ -7,5 +7,5 @@ public static class JobDeletedNotification
     public const string TemplateKey = nameof(JobDeletedNotification);
 }
 
-[NotificationTemplate(JobDeletedNotification.TemplateKey)]
+[NotificationTemplate(JobDeletedNotification.TemplateKey, "تم حذف الوظيفة", "Job Posting Removed")]
 public sealed record JobDeletedNotificationModel(string JobTitle);

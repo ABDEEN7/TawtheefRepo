@@ -17,6 +17,8 @@ import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
+import { HasPermissionDirective } from '../../../../../shared/directives/has-permission.directive';
+import { Permissions } from '../../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-profile-approval-list-page',
@@ -25,7 +27,8 @@ import { PaginationMetadata } from '../../../../../core/models/pagination-metada
     CommonModule, FormsModule,
     RouterModule, TranslateModule,
     I18nNamespaceDirective, TableModule,
-    Select, InputTextModule, PaginationComponent
+    Select, InputTextModule, PaginationComponent,
+    HasPermissionDirective
   ],
   templateUrl: './profile-approval-list.page.html',
   styleUrl: './profile-approval-list.page.scss',
@@ -33,6 +36,7 @@ import { PaginationMetadata } from '../../../../../core/models/pagination-metada
 export class ProfileApprovalListPage implements OnInit {
   private api = inject(ProfileApprovalService);
   private router = inject(Router);
+  readonly Permissions = Permissions;
 
   items = signal<ProfileApprovalListItem[]>([]);
   meta = signal<PaginationMetadata>({

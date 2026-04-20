@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using MediatR;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Auth;
@@ -20,9 +20,11 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
             ContactVerificationSent.TemplateKey,
             @event.UserId,
             @event.Destination,
-            "Careers Verification Code",
-            null,null, 
-            payload);
+            null,
+            null,
+            null,
+            payload,
+            null, 3, @event.Language);
         await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
     }

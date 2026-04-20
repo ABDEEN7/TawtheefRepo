@@ -33,8 +33,7 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
     }
 
     this.form.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.form.valid)
+      debounceTime(300)
     ).subscribe(() => {
       this.updateJobData();
     });
@@ -57,12 +56,10 @@ export class BenefitsStepComponent extends WizardStepComponent implements OnInit
   }
 
   private updateJobData(): void {
-    if (this.form.valid) {
-      const { benefitsAr, benefitsEn } = this.form.value;
-      this.jobService.updateCurrentJobBenefits(
-        benefitsAr || '',
-        benefitsEn || ''
-      );
-    }
+    const { benefitsAr, benefitsEn } = this.form.value;
+    this.jobService.updateCurrentJobBenefits(
+      benefitsAr || '',
+      benefitsEn || ''
+    );
   }
 }

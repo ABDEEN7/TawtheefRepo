@@ -14,7 +14,7 @@ internal static class JobCandidateScoringUtility
         JobPointsMain jobPointsMain,
         Guid? jobMajorId,
         Guid? jobSubMajorId,
-        List<JobDegree> jobDegrees,
+        ICollection<JobDegree> jobDegrees,
         IAppLogger logger)
     {
         var map = profiles.ToDictionary(p => p.UserId);

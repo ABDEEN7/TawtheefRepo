@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
@@ -89,6 +89,7 @@ public sealed class GetJobCandidatesQueryHandler(
         // Load percentage filter settings (used for the list)
         var settings = await unitOfWork.GetEntityRepository<JobCandidateFilterSetting>().DbSet
             .AsNoTracking()
+            .AsSplitQuery()
             .Include(s => s.CandidateTypePercentages)
             .Include(s => s.NationalityPercentages)
             .FirstOrDefaultAsync(s => s.JobId == request.JobId, ct);

@@ -1,6 +1,6 @@
-import {inject, Injectable} from '@angular/core';
-import {ApiConfigService} from '../services/api-config.service';
-import {CaseUtils} from '../utils/case-utils';
+import { inject, Injectable } from '@angular/core';
+import { ApiConfigService } from '../services/api-config.service';
+import { CaseUtils } from '../utils/case-utils';
 
 @Injectable({ providedIn: 'root' })
 export class EndpointsService {
@@ -35,7 +35,8 @@ export class EndpointsService {
       verifyOtp: this.getFullUrl('/auth/qatar-resident/verify-otp')
     }
   };
-  user= {
+  user = {
+    changePersonalLanguage: this.getFullUrl(`/user/profile/language`),
     bootstrap: this.getFullUrl(`/me/bootstrap`),
     agreeToTerms: this.getFullUrl('/user/agree-terms'),
     profile: {
@@ -107,13 +108,13 @@ export class EndpointsService {
         attachments: this.getFullUrl(`/profiles/references`),
       },
     },
-    verify:{
-      phone:{
+    verify: {
+      phone: {
         request: this.getFullUrl(`/user/verify/phone/request`),
         confirm: this.getFullUrl(`/user/verify/phone/confirm`),
         update: this.getFullUrl(`/user/update/phone`),
       },
-      email:{
+      email: {
         request: this.getFullUrl(`/user/verify/email/request`),
         confirm: this.getFullUrl(`/user/verify/email/confirm`),
       }

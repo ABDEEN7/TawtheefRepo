@@ -5,6 +5,7 @@ public enum PermissionAction
     View,
     Manage,
     Approve,
+    SendInvitation,
     Review,
     Changes
 }

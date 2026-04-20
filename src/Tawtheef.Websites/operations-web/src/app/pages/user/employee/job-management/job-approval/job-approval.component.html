@@ -119,12 +119,56 @@
 
                   @if (activeTab === tabType.Qualifications) {
                   @if (getDegreeRequirements() || job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
-                  @if (getDegreeRequirements()) {
-                  <div class="mb-3">
-                    <h5>{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</h5>
-                    <p>{{ getDegreeRequirements() }}</p>
-                  </div>
+                  @if (getDegreeRequirements() || job.major || job.subMajor || getSpecializationRequirements()) {
+                  <div class="row g-3 mb-4">
+                    @if (getDegreeRequirements()) {
+                    <div class="col-md-4">
+                      <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <i class="hgi-stroke hgi-graduation-cap-01 text-primary"></i>
+                          <span class="label mb-0">{{ 'JOB_APPROVAL.QUALIFICATION_REQUIREMENTS' | translate }}</span>
+                        </div>
+                        <span class="value d-block ps-4 fw-bold text-dark">{{ getDegreeRequirements() }}</span>
+                      </div>
+                    </div>
+                    }
 
+                    @if (job.major) {
+                    <div class="col-md-4">
+                      <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <i class="hgi-stroke hgi-book-01 text-primary"></i>
+                          <span class="label mb-0">{{ 'JOB_APPROVAL.MAJOR' | translate }}</span>
+                        </div>
+                        <span class="value d-block ps-4 fw-bold text-dark">{{ job.major.name }}</span>
+                      </div>
+                    </div>
+                    }
+
+                    @if (job.subMajor) {
+                    <div class="col-md-4">
+                      <div class="basic-data-item h-100 p-3 shadow-sm border-0 bg-light rounded-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <i class="hgi-stroke hgi-book-02 text-primary"></i>
+                          <span class="label mb-0">{{ 'JOB_APPROVAL.SUB_MAJOR' | translate }}</span>
+                        </div>
+                        <span class="value d-block ps-4 fw-bold text-dark">{{ job.subMajor.name }}</span>
+                      </div>
+                    </div>
+                    }
+
+                    @if (getSpecializationRequirements()) {
+                    <div class="col-12">
+                      <div class="basic-data-item p-3 shadow-sm border-0 bg-light rounded-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <i class="hgi-stroke hgi-star text-primary"></i>
+                          <span class="label mb-0">{{ 'JOB_APPROVAL.SPECIALIZATIONS' | translate }}</span>
+                        </div>
+                        <span class="value d-block ps-4 fw-bold text-dark">{{ getSpecializationRequirements() }}</span>
+                      </div>
+                    </div>
+                    }
+                  </div>
                   }
                   @if (job.qualificationDescriptionAr || job.qualificationDescriptionEn) {
                   <h5>{{ 'JOB_APPROVAL.QUALIFICATIONS' | translate }}</h5>
@@ -325,6 +369,11 @@
                 <div class="info-list-item">
                   <span class="label">{{ 'JOB_APPROVAL.WORK_LOCATION' | translate }}</span>
                   <span class="value">{{ job.workLocation.name | translate }}</span>
+                </div>
+
+                <div class="info-list-item">
+                  <span class="label">{{ 'JOB_APPROVAL.CREATED_BY' | translate }}</span>
+                  <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_APPROVAL.SYSTEM' | translate) }}</span>
                 </div>
               </div>
             </div>

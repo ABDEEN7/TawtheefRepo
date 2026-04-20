@@ -1,4 +1,4 @@
-﻿export const VALIDATION_KEYS = {
+export const VALIDATION_KEYS = {
   basic: {
     candidateType: 'wizard.profile.basic.candidateType.required',
     targetEntity: 'wizard.profile.basic.targetEntity.required',

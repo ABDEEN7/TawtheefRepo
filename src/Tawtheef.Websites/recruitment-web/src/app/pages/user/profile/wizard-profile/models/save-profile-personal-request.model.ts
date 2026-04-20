@@ -1,4 +1,4 @@
-﻿export interface SaveProfilePersonalRequestDto {
+export interface SaveProfilePersonalRequestDto {
   submit: boolean;
 
   fullNameAr: string | null;

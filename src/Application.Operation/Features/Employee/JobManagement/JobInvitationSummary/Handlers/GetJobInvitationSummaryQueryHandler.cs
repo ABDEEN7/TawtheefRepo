@@ -12,13 +12,10 @@ using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Handlers;
 
-public sealed class GetJobInvitationSummaryQueryHandler(
-    IUnitOfWork unitOfWork,
-    ILocalizationService localizationService)
+public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, ILocalizationService localizationService)
     : IRequestHandler<GetJobInvitationSummaryQuery, IResult<PaginatedResult<JobInvitationSummaryDto>>>
 {
-    public async Task<IResult<PaginatedResult<JobInvitationSummaryDto>>> Handle(
-        GetJobInvitationSummaryQuery query,
+    public async Task<IResult<PaginatedResult<JobInvitationSummaryDto>>> Handle(GetJobInvitationSummaryQuery query,
         CancellationToken cancellationToken)
     {
         var language = localizationService.GetCurrentLanguage();
@@ -30,10 +27,9 @@ public sealed class GetJobInvitationSummaryQueryHandler(
             .WhereIf(query.JobCategoryId is not null, i => i.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.DepartmentId == query.DepartmentId)
             .WhereIf(query.JobStatusId is not null, i => i.JobStatusId == query.JobStatusId)
-            .Select(job => new JobInvitationSummaryDto
-            {
+            .Select(job => new JobInvitationSummaryDto {
                 JobId = job.Id,
-                JobStatus = new DropdownOptions()
+                JobStatus = new DropdownOptions
                 {
                     Id = job.JobStatus!.Id,
                     Name = language == "en"
@@ -41,7 +37,7 @@ public sealed class GetJobInvitationSummaryQueryHandler(
                         : job.JobStatus.NameAr,
                     BackendName = job.JobStatus.BackendName
                 },
-                InvitationCount = job.Invitations.Count(),
+                InvitationCount = job.Invitations.Count,
                 ApplicantsCount = job.Invitations
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted),
                 RefusedCount = job.Invitations
@@ -62,16 +58,10 @@ public sealed class GetJobInvitationSummaryQueryHandler(
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval),
                 ReturnedAttachmentCount = job.Invitations
                     .Count(i => i.InvitationStatusId == InvitationStatusIds.ReturnedAttachment),
-                CreateDate = job.CreatedDate,
-                JobName = language == "en"
-                    ? job.JobTitle!.JobNameEn
-                    : job.JobTitle!.JobNameAr,
-                DepartmentName = language == "en"
-                    ? job.Department!.NameEn
-                    : job.Department!.NameAr,
-                JobCategory = language == "en"
-                    ? job.JobCategory!.NameEn
-                    : job.JobCategory!.NameAr,
+                CreateDate = job.PublishAt ?? job.UpdatedDate ?? job.CreatedDate,
+                JobName = language == "en" ? job.JobTitle!.JobNameEn : job.JobTitle!.JobNameAr,
+                DepartmentName = language == "en" ? job.Department!.NameEn : job.Department!.NameAr,
+                JobCategory = language == "en" ? job.JobCategory!.NameEn : job.JobCategory!.NameAr,
                 LastBatchNumber = job.Invitations
                     .OrderByDescending(i => i.CreatedDate)
                     .Select(i => (Guid?)i.BatchNumber)
@@ -84,7 +74,8 @@ public sealed class GetJobInvitationSummaryQueryHandler(
                         .Select(lastBatch =>
                             job.Invitations.Count(i => i.BatchNumber != lastBatch))
                         .FirstOrDefault()
-            });
+            })
+            .OrderByDescending(i=> i.CreateDate);
 
         var result = await queryable.ToPaginatedListAsync(query, cancellationToken);
 

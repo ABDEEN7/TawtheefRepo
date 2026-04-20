@@ -50,4 +50,5 @@ public class CreateJobDto
     public int MaximumAge { get; set; }
 
     public List<JobDegreeRequestDto>? Degrees { get; set; }
+    public List<JobSpecializationRequestDto>? JobSpecializations { get; set; }
 }

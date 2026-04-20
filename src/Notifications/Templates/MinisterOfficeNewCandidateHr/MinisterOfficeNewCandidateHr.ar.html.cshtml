@@ -1,0 +1,55 @@
+@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
+@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductName;
+    var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
+
+    var distributionUrl = $"{website}/portal/profile-distribution";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <title>مرشح جديد في مكتب الوزير</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid @primary; }
+        .header { padding: 20px; text-align: center; background: #fafafa; border-bottom: 1px solid #eee; }
+        .content { padding: 30px; line-height: 1.6; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #777; background: #fafafa; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: @primary; color: #fff !important; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .highlight { color: @primary; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            @if (!string.IsNullOrWhiteSpace(logo))
+            {
+                <img src="@logo" alt="@product" width="120">
+            }
+            else
+            {
+                <h1 style="color: @primary; margin: 0;">@product</h1>
+            }
+        </div>
+        <div class="content">
+            <h2>مرحباً!</h2>
+            <p>تم إضافة مرشح جديد في مكتب سعادة الوزير بانتظار التوزيع.</p>
+            <p><strong>اسم المرشح:</strong> <span class="highlight">@m.NameAr</span></p>
+            <p>يرجى تسجيل الدخول إلى المنصة لاتخاذ الإجراء اللازم.</p>
+            
+            <a href="@distributionUrl" class="btn" target="_blank">عرض قائمة التوزيع</a>
+            
+            <p style="margin-top: 25px;">مع تحيات،<br><strong>فريق عمل @product</strong></p>
+        </div>
+    </div>
+</body>
+</html>

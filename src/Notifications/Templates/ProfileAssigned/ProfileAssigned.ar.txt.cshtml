@@ -1,0 +1,23 @@
+@using Tawtheef.Notifications.Templates.ProfileAssigned
+@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+
+@{
+    var m = Model.Model;
+    var product = Model.Branding.ProductName;
+    var profileUrl = $"{Model.Branding.WebsiteUrl}/profiles/review/{m.ProfileId}";
+}
+
+العنوان: تم إسناد ملف جديد للمراجعة
+
+مرحباً،
+
+تم إسناد ملف مرشح جديد تحت مراجعتك في @product.
+
+اسم المرشح: @m.CandidateName
+
+يرجى زيارة الرابط التالي لمراجعة الملف:
+@profileUrl
+
+مع تحيات،
+فريق عمل @product
+للدعم الفني: @Model.Branding.SupportEmail

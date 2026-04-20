@@ -1,6 +1,5 @@
 using Application.Operation.Common.Validations;
 using FluentValidation;
-using FluentValidation.Results;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;

@@ -313,6 +313,14 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     return degreeNames.join(',') || '';
   }
 
+  getSpecializationRequirements(): string {
+    if (!this.job?.jobSpecializations?.length) return '';
+    return this.job.jobSpecializations
+      .map((spec) => `${spec.major?.name || ''} - ${spec.subMajor?.name || ''}`)
+      .filter((s) => s !== ' - ')
+      .join(', ') || '';
+  }
+
   get reviewedTabsCount(): number {
     return this.tabNotes.filter((note) => note.tabStatus !== null).length;
   }

@@ -1,4 +1,4 @@
-﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.Policies;
 using MediatR;
 using FluentResults;

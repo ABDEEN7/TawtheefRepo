@@ -362,6 +362,15 @@ public static class Permissions
                 "Jobs - Approve",
                 "الوظائف - اعتماد",
                 32);
+
+        public static readonly PermissionDefinition SendInvitation =
+            Def(
+                PermissionKeys.Jobs.SendInvitation,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.SendInvitation,
+                "Jobs - Send Invitation",
+                "الوظائف - ارسال الدعوات",
+                32);
     }
 
     public static class JobsPoints

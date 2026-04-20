@@ -6,6 +6,4 @@ using Tawtheef.Infrastructure.Repositories.Base;
 namespace Tawtheef.Infrastructure.Repositories;
 
 public class JobSkillRepository(IGenericRepository<JobSkill> repository)
-    : BaseRepository<JobSkill>(repository), IJobSkillRepository
-{
-}
+    : BaseRepository<JobSkill>(repository), IJobSkillRepository;

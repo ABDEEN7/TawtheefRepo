@@ -50,6 +50,7 @@
         <PackageReference Include="MimeKit" />
         <PackageReference Include="Polly" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="System.Security.Cryptography.Xml" />
         <PackageReference Include="System.Security.Permissions" />
     </ItemGroup>
 

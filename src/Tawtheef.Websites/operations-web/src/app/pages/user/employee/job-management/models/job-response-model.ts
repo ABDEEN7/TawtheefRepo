@@ -7,10 +7,12 @@ import { JobRequiredAttachmentResponse } from "./job-required-attachment-respons
 import { JobResponsibilityResponse } from "./job-responsibility-response.model";
 import { JobSkillResponse } from "./job-skill-response.model";
 import { JobTabReviewNoteResponse } from "./job-tab-review-note-response";
+import { JobSpecializationResponse } from "./job-specialization-response.model";
 
 export interface JobResponse {
   id: GUID;
   jobTitleId: GUID;
+  rowVersion: string;
   titleAr?: string;
   titleEn?: string;
   jobNumber?: string;
@@ -20,11 +22,9 @@ export interface JobResponse {
   maximumAge: number;
   yearsOfExperience: number;
   createdDate: Date;
-  modifiedDate?: Date;
-  publishAt?: Date;
-  cancelledAt?: Date;
-  createdBy?: GUID;
-  modifiedBy?: GUID;
+  updatedDate?: Date;
+  createdByName: string;
+  lastActionDate: Date;
   overViewAr?: string;
   overViewEn?: string;
   benefitsAr?: string;
@@ -45,6 +45,7 @@ export interface JobResponse {
   jobStatus: dropdownOptionsModel;
   jobPoints: JobPointsResponse;
   degrees: JobDegreeResponse[];
+  jobSpecializations?: JobSpecializationResponse[];
   conditions: JobConditionResponse[];
   skills: JobSkillResponse[];
   responsibilities: JobResponsibilityResponse[];

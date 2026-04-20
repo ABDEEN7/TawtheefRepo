@@ -1,12 +1,12 @@
-﻿{
+{
   "candidate_dashboard.title": "لوحة الباحث",
   "candidate_dashboard.profile": "الملف الشخصي",
   "candidate_dashboard.subtitle": "وظائفك ودعواتك",
   "candidate_dashboard.description": "هذه اللوحة تعرض الدعوات الواردة والوظائف التي قدّمت عليها وحالتها.",
   "candidate_dashboard.total_records": "إجمالي السجلات",
-  "candidate_dashboard.kpi_new_invites": "دعوات جديدة",
-  "candidate_dashboard.kpi_withdrawn": "طلبات معلّقة/ملغاة",
-  "candidate_dashboard.kpi_applied": "طلبات معتمدة",
+  "candidate_dashboard.kpi_received": "دعوات مستقبلة",
+  "candidate_dashboard.kpi_rejected": "دعوات مرفوضة",
+  "candidate_dashboard.kpi_accepted": "دعوات مقبولة",
   "candidate_dashboard.filter_status": "الحالة",
   "candidate_dashboard.filter_type": "النوع",
   "candidate_dashboard.filter_entity": "الجهة الطالبة",

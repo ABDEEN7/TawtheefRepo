@@ -1,9 +1,11 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { JobLookupService } from '../../../services/job-lookup.service';
 import { GUID } from '../../../../../../../shared/types/guid.type';
+import { Job } from '../../../models/job.model';
+import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-response';
 
 @Component({
   selector: 'app-review-step',
@@ -18,8 +20,9 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
   protected lookupService = inject(JobLookupService);
   private fb = inject(FormBuilder);
 
-
   readonly form: FormGroup = this.fb.group({});
+  job = signal<Job | null>(null);
+  isLoading = signal(false);
 
   readonly STEP_NUMBERS = {
     OVERVIEW: 1,
@@ -31,9 +34,25 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
     BENEFITS: 7
   };
 
-
-
   ngOnInit(): void {
+  }
+
+  override onActivate(): void {
+    this.loadJob();
+  }
+
+  loadJob(): void {
+    const jobId = this.jobService.getCurrentJobId();
+    if (jobId) {
+      this.isLoading.set(true);
+      this.jobService.getJobById(jobId).subscribe({
+        next: (data) => {
+          this.job.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => this.isLoading.set(false)
+      });
+    }
   }
 
   isValid(): boolean {
@@ -49,38 +68,39 @@ export class ReviewStepComponent extends WizardStepComponent implements OnInit {
   }
 
   hasOverview(): boolean {
-    return !!this.jobService.getCurrentJob()?.overviewAr?.trim();
+    return !!this.job()?.overviewAr?.trim();
   }
 
   hasQualifications(): boolean {
-    return !!this.jobService.getCurrentJob()?.qualificationsDescriptionAr?.trim() ||
-      (this.jobService.getCurrentJob()?.degrees?.length || 0) > 0;
+    return !!this.job()?.qualificationsDescriptionAr?.trim() ||
+      (this.job()?.degrees?.length || 0) > 0 ||
+      (this.job()?.jobSpecializations?.length || 0) > 0;
   }
 
   hasResponsibilities(): boolean {
-    return (this.jobService.getCurrentJob()?.responsibilities?.length || 0) > 0;
+    return (this.job()?.responsibilities?.length || 0) > 0;
   }
 
   hasConditions(): boolean {
-    return (this.jobService.getCurrentJob()?.conditions?.length || 0) > 0;
+    return (this.job()?.conditions?.length || 0) > 0;
   }
 
   hasSkills(): boolean {
-    return (this.jobService.getCurrentJob()?.skills?.length || 0) > 0;
+    return (this.job()?.skills?.length || 0) > 0;
   }
 
   hasAttachments(): boolean {
-    return (this.jobService.getCurrentJob()?.requiredAttachments?.length || 0) > 0;
+    return (this.job()?.requiredAttachments?.length || 0) > 0;
   }
 
   hasBenefits(): boolean {
-    return !!this.jobService.getCurrentJob()?.benefitsAr?.trim();
+    return !!this.job()?.benefitsAr?.trim();
   }
 
   getDegreeNames(): string {
-    if (!this.jobService.getCurrentJob()?.degrees?.length) return '';
+    if (!this.job()?.degrees?.length) return '';
 
-    const degreeNames = this.jobService.getCurrentJob()?.degrees?.map(degree =>
+    const degreeNames = this.job()?.degrees?.map(degree =>
       this.lookupService.degrees().find(d => d.id === degree.degreeId)?.name || ''
     ).filter(name => name);
 

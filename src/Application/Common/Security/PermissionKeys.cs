@@ -106,6 +106,7 @@ public static class PermissionKeys
         public const string View = "jobs.view";
         public const string Manage = "jobs.manage";
         public const string Approve = "jobs.approve";
+        public const string SendInvitation = "jobs.send-invitation";
     }
 
     public static class JobsPoints

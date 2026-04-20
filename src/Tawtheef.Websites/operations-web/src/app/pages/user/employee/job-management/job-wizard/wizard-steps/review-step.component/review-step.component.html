@@ -1,7 +1,15 @@
 <div class="step-content">
+  @if (isLoading()) {
+  <div class="d-flex justify-content-center align-items-center p-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  } @else {
   <div class="row mb-3">
     <div class="col-12">
-      <h5 class="text-primary d-flex"> <i class="hgi-stroke hgi-tick-circle"></i> {{ 'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW'
+      <h5 class="text-primary d-flex"> <i class="hgi-stroke hgi-tick-circle"></i> {{
+        'JOB_WIZARD.NAVIGATION.WIZARD_STEPS.REVIEW'
         | translate }}</h5>
     </div>
   </div>
@@ -22,14 +30,12 @@
       <div class="row">
         <div class="col-md-4">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_AR' | translate }}:</label>
-          <label class="fw-semibold text-dark"
-            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewAr)"></label>
+          <label class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.overviewAr)"></label>
         </div>
         <div class="col-md-4">
-          @if (jobService.getCurrentJob()?.overviewEn) {
+          @if (job()?.overviewEn) {
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.OVERVIEW_EN' | translate }}:</label>
-          <label class="fw-semibold text-dark"
-            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.overviewEn)"></label>
+          <label class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.overviewEn)"></label>
           }
         </div>
       </div>
@@ -53,28 +59,47 @@
       </div>
       <div class="row">
         <div class="col-md-4 mb-3">
-          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
-            }}:</label>
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.QUALIFICATIONS.ACADEMIC_LEVELS' | translate }}:</label>
           <div class="fw-semibold text-dark">
             {{ getDegreeNames() }}
           </div>
         </div>
 
-        @if (jobService.getCurrentJob()?.qualificationsDescriptionAr) {
         <div class="col-md-4 mb-3">
-          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
-            }}:</label>
-          <div class="fw-semibold text-dark"
-            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionAr)"></div>
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.BASICS.MAJOR' | translate }} ({{
+            'JOB_WIZARD.STEPS.BASICS.PRIMARY' | translate }}):</label>
+          <div class="fw-semibold text-dark">
+            {{ job()?.majorName || '-' }}
+            @if (job()?.subMajorName) {
+            / {{ job()?.subMajorName }}
+            }
+          </div>
+        </div>
+
+        @if (job()?.jobSpecializations?.length) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.BASICS.ADDITIONAL_SPECIALIZATIONS' | translate }}:</label>
+          @for (spec of job()?.jobSpecializations; track $index) {
+          <div class="fw-semibold text-dark">
+            {{ spec.major?.name }}/ {{ spec.subMajor?.name }}
+          </div>
+          }
         </div>
         }
 
-        @if (jobService.getCurrentJob()?.qualificationsDescriptionEn) {
+        @if (job()?.qualificationsDescriptionAr) {
+        <div class="col-md-4 mb-3">
+          <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_AR' | translate
+            }}:</label>
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.qualificationsDescriptionAr)"></div>
+        </div>
+        }
+
+        @if (job()?.qualificationsDescriptionEn) {
         <div class="col-md-4 mb-3">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.QUALIFICATIONS_DESCRIPTION_EN' | translate
             }}:</label>
-          <div class="fw-semibold text-dark"
-            [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.qualificationsDescriptionEn)"></div>
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.qualificationsDescriptionEn)"></div>
         </div>
         }
       </div>
@@ -97,7 +122,7 @@
         </button>
       </div>
       <div class="row">
-        @for (responsibility of jobService.getCurrentJob()?.responsibilities; track $index; let i = $index) {
+        @for (responsibility of job()?.responsibilities; track $index; let i = $index) {
         <div class="col-md-4 mb-3">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.RESPONSIBILITY' | translate }} {{ i + 1 }}</label>
           <div class="mb-2">
@@ -135,7 +160,7 @@
         </button>
       </div>
       <div class="row mb-3">
-        @for (condition of jobService.getCurrentJob()?.conditions; track $index; let i = $index) {
+        @for (condition of job()?.conditions; track $index; let i = $index) {
         <div class="col-md-4">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.CONDITION' | translate }} {{ i + 1 }}</label>
           <div class="mb-2">
@@ -172,7 +197,7 @@
         </button>
       </div>
       <div class="row">
-        @for (skill of jobService.getCurrentJob()?.skills; track $index; let i = $index) {
+        @for (skill of job()?.skills; track $index; let i = $index) {
         <div class="col-md-4 mb-3">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.SKILL' | translate }} {{ i + 1 }}</label>
           <div class="mb-2">
@@ -204,7 +229,7 @@
         </button>
       </div>
       <div class="row">
-        @for (attachment of jobService.getCurrentJob()?.requiredAttachments; track $index; let i = $index) {
+        @for (attachment of job()?.requiredAttachments; track $index; let i = $index) {
         <div class="col-md-6 mb-3">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.ATTACHMENT' | translate }} {{ i + 1 }}</label>
           <div class="fw-semibold text-dark">
@@ -240,22 +265,20 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR' | translate }}:</label>
-          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsAr)">
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.benefitsAr)">
           </div>
         </div>
         <div class="col-md-6 mb-3">
-          @if (jobService.getCurrentJob()?.benefitsEn) {
+          @if (job()?.benefitsEn) {
           <label class="fw-bold w-100">{{ 'JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN' | translate }}:</label>
-          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(jobService.getCurrentJob()?.benefitsEn)">
+          <div class="fw-semibold text-dark" [innerHTML]="formatHtmlContent(job()?.benefitsEn)">
           </div>
           }
         </div>
-
-
       </div>
     </div>
   </div>
 
   }
-
+  }
 </div>

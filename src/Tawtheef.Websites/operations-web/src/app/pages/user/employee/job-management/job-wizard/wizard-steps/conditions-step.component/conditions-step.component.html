@@ -79,7 +79,7 @@
                     <span class="badge bg-brand ms-2">{{ conditionsArray.length }}</span>
                   </h5>
 
-                 @for (condition of conditionsArray.controls; track $index; let i = $index) {
+                 @for (condition of conditionsArray.controls; track condition; let i = $index) {
 
                     <div [formGroupName]="i">
                           <div class="row">

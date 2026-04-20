@@ -1,5 +1,5 @@
 export interface CandidateInvitationStatistics {
-  newInvitations: number;
-  withdrawn: number;
-  applied: number;
+  received: number;
+  accepted: number;
+  rejected: number;
 }

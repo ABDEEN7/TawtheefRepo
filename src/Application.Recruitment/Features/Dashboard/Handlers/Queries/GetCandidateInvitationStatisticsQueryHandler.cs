@@ -1,4 +1,4 @@
-﻿using Application.Recruitment.Features.Dashboard.DTOs;
+using Application.Recruitment.Features.Dashboard.DTOs;
 using Application.Recruitment.Features.Dashboard.Queries;
 using MediatR;
 using FluentResults;
@@ -22,9 +22,9 @@ public sealed class GetCandidateInvitationStatisticsQueryHandler(IUnitOfWork uni
             .GroupBy(_ => 1)
             .Select(g => new CandidateInvitationStatisticsDto
             {
-                NewInvitations = g.Count(i => i.InvitationStatusId == InvitationStatusIds.NewInvitation),
-                Withdrawn = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Cancelled),
-                Applied =  g.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted),
+                Received = g.Count(),
+                Accepted = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted),
+                Rejected = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Rejected),
             })
             .FirstOrDefaultAsync(cancellationToken) ?? new CandidateInvitationStatisticsDto();
 

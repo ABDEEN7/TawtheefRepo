@@ -1,4 +1,6 @@
 {
+  "JOB_DETAILS.CREATED_BY": "Created By",
+  "JOB_DETAILS.SYSTEM": "System",
   "JOB_DETAILS.NOT_SPECIFIED": "Not Specified",
   "JOB_DETAILS.POSTED_DATE": "Posted Date",
   "JOB_DETAILS.EXPIRED": "Expired",
@@ -11,6 +13,9 @@
   "JOB_DETAILS.NO_OVERVIEW": "No job overview available",
   "JOB_DETAILS.NO_RESPONSIBILITIES": "No responsibilities recorded for this job",
   "JOB_DETAILS.QUALIFICATION_REQUIREMENTS": "Qualification Requirements",
+  "JOB_DETAILS.SPECIALIZATIONS": "Specializations",
+  "JOB_DETAILS.MAJOR": "Main Major",
+  "JOB_DETAILS.SUB_MAJOR": "Sub Major",
   "JOB_DETAILS.YEARS_OF_EXPERIENCE": "Years of Experience",
   "JOB_DETAILS.YEARS": "Years",
   "JOB_DETAILS.AGE_RANGE": "Age Range",

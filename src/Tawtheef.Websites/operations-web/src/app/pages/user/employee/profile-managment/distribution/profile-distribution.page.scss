@@ -6,6 +6,14 @@
   color: #2c142f;
 }
 
+.candidate-name {
+
+  p-tag,
+  i {
+    font-size: 0.7rem;
+  }
+}
+
 .page-header {
   background: linear-gradient(90deg, #fff4f7 0%, #ffffff 100%);
   border-radius: 18px;
@@ -61,7 +69,11 @@
   color: #3a103b;
 }
 
-
+.candidate-status {
+  p-tag {
+    font-size: 0.8rem;
+  }
+}
 
 
 .count {

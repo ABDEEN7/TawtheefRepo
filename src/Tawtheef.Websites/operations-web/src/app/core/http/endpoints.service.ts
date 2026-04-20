@@ -33,6 +33,7 @@ export class EndpointsService {
   };
 
   user = {
+    changePersonalLanguage: this.getFullUrl(`/user/profile/language`),
     profile: {
       socialAccounts: this.getFullUrl(`/user/profile/social-accounts`),
     },
@@ -64,6 +65,15 @@ export class EndpointsService {
     CountByStatus: (jobStatusId: GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
     copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
     copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
+    deleteJobSpecialization: (id: GUID) => this.getFullUrl(`/job/specialization/${id}`),
+    updateBasics: (id: GUID) => this.getFullUrl(`/job/${id}/basics`),
+    updateOverview: (id: GUID) => this.getFullUrl(`/job/${id}/overview`),
+    updateQualifications: (id: GUID) => this.getFullUrl(`/job/${id}/qualifications`),
+    updateResponsibilities: (id: GUID) => this.getFullUrl(`/job/${id}/responsibilities`),
+    updateConditions: (id: GUID) => this.getFullUrl(`/job/${id}/conditions`),
+    updateSkills: (id: GUID) => this.getFullUrl(`/job/${id}/skills`),
+    updateAttachments: (id: GUID) => this.getFullUrl(`/job/${id}/attachments`),
+    updateBenefits: (id: GUID) => this.getFullUrl(`/job/${id}/benefits`),
     lookups: {
       sectors: this.getFullUrl('/job/lookups/sectors'),
       skills: this.getFullUrl('/job/lookups/skills'),

@@ -6,6 +6,4 @@ using Tawtheef.Infrastructure.Repositories.Base;
 namespace Tawtheef.Infrastructure.Repositories;
 
 public class JobDegreeRepository(IGenericRepository<JobDegree> repository)
-    : BaseRepository<JobDegree>(repository), IJobDegreeRepository
-{
-}
+    : BaseRepository<JobDegree>(repository), IJobDegreeRepository;

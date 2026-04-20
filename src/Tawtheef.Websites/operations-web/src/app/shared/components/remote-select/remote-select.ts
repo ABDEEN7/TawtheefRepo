@@ -53,6 +53,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   /** Optional: keep if you still want external listeners */
   @Output() valueChange = new EventEmitter<any>();
+  @Output() onObjectChange = new EventEmitter<any>();
 
   @Input() searchUrl!: string;
   @Input() minChars = 1;
@@ -333,6 +334,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.onChange(newVal);
     this.onTouched();
     this.valueChange.emit(newVal);
+    this.onObjectChange.emit(event?.originalEvent ? event.value : this.findSelectedOption());
 
     // ✅ lock out future parent writes (one-way)
     this.hasAcceptedInitialWrite = true;

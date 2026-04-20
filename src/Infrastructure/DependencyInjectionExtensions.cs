@@ -6,7 +6,6 @@ using Application.Operation.Common.Interfaces.Services.HttpClients;
 using Application.Operation.Common.Interfaces.Services.Office;
 using Application.Operation.Common.Repositories;
 using Application.Operation.Common.Validations;
-using Application.Recruitment.Common.Interfaces.Services;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Azure.Storage.Blobs;
 using FluentValidation;
@@ -211,7 +210,6 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<ISmsSender, HodhodSmsSender>();
                 services.AddScoped<IEmailSender, DurableEmailSender>();
                 services.AddScoped<IPushSender, NullPushSender>();
-                services.AddScoped<IEmailService, EmailService>();
             }
 
             private void AddStorageCommon(IConfiguration configuration)
@@ -345,6 +343,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IJobSkillRepository, JobSkillRepository>();
                 services.AddScoped<IJobResponsibilityRepository, JobResponsibilityRepository>();
                 services.AddScoped<IJobRequiredAttachmentRepository, JobRequiredAttachmentRepository>();
+                services.AddScoped<IJobSpecializationRepository, JobSpecializationRepository>();
                 
                 services.AddScoped<IJobValidationService, JobValidationService>();
                 

@@ -39,7 +39,6 @@ export interface ProfileState {
   religion?: DropdownOptionVM;
   marital?: DropdownOptionVM;
   dob?: string;
-
   hasDisability: boolean;
   disabilityDetails?: string | null;
   sponsorType?: DropdownOptionVM | null;

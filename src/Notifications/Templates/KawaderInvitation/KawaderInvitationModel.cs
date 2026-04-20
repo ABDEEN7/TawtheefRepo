@@ -2,7 +2,13 @@ using Tawtheef.Notifications.Attributes;
 
 namespace Tawtheef.Notifications.Templates.KawaderInvitation;
 
-[NotificationTemplate("KawaderInvitation")]
+public static class KawaderInvitation
+{
+    public const string TemplateKey = nameof(KawaderInvitation);
+}
+
+
+[NotificationTemplate(KawaderInvitation.TemplateKey, "دعوة للانضمام إلى منصة التوظيف", "Invitation to Join Careers Platform")]
 public class KawaderInvitationModel
 {
     public string FullName { get; set; } = string.Empty;
