@@ -14,19 +14,19 @@ import { JobDetailsService } from '../../services/job-details.service';
           <i class="hgi-stroke hgi-information-circle"></i> {{ 'JOB_DETAILS.JOB_INFO' | translate }}
         </h5>
         <div class="info-list-container">
-          <div class="info-list-item">
-            <span class="label me-3">{{ 'JOB_DETAILS.JOB_CATEGORY' | translate }}:</span>
-            <span class="value">
+          <div class="info-list-item d-flex align-items-center justify-content-between min-w-0">
+            <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.JOB_CATEGORY' | translate }}:</span>
+            <span class="value text-truncate" [title]="job()?.jobCategory?.name || ''">
               {{ job()?.jobCategory?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
             </span>
           </div>
-          <div class="info-list-item">
-            <span class="label me-3">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}:</span>
+          <div class="info-list-item d-flex align-items-center justify-content-between min-w-0">
+            <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}:</span>
             <span class="value">{{ job()?.closingDate | date: 'dd/MM/yyyy' }}</span>
           </div>
-          <div class="info-list-item">
-            <span class="label me-3">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}:</span>
-            <span class="value">
+          <div class="info-list-item d-flex align-items-center justify-content-between min-w-0">
+            <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}:</span>
+            <span class="value text-truncate" [title]="job()?.workLocation?.name || ''">
               {{ job()?.workLocation?.name || ('JOB_DETAILS.NOT_SPECIFIED' | translate) }}
             </span>
           </div>

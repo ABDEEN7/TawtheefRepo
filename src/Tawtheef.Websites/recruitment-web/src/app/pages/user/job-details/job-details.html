@@ -10,7 +10,7 @@
             </a>
 
             <div class="job-details-title-group">
-              <h3 class="job-title">
+              <h3 class="job-title" [title]="('JOB_DETAILS.JOB_DETAILS' | translate) + ' - ' + job()!.title">
                 {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job()!.title }}
               </h3>
               <p class="job-subtitle">{{ 'JOB_DETAILS.JOB_REVIEW_NOT' | translate }}</p>

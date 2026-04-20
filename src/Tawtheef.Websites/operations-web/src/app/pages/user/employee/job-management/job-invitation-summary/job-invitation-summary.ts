@@ -83,6 +83,20 @@ export class JobInvitationSummary implements OnInit {
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
+  // Localized Lookups
+  jobCategories = computed(() => this.localizeOptions(this.jobInvitationSummaryService.jobCategories()));
+  departments = computed(() => this.localizeOptions(this.jobInvitationSummaryService.departments()));
+  jobStatuses = computed(() => this.localizeOptions(this.jobInvitationSummaryService.jobStatuses()));
+
+  private localizeOptions(options: any[]) {
+    return options.map(opt => ({
+      ...opt,
+      name: (this.currentLang() === 'ar' 
+        ? opt.additionalData?.nameAr 
+        : opt.additionalData?.nameEn) || opt.name
+    }));
+  }
+
   ngOnInit(): void {
     this.setupSearchListener();
     this.jobInvitationSummaryService.loadLookups();

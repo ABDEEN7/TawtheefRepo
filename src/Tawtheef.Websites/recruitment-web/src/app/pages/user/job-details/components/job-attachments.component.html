@@ -9,22 +9,22 @@
         </div>
         <div class="flex-grow-1 min-w-0">
           <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-            <div class="text-muted small fw-semibold">
+            <div class="text-muted small fw-semibold text-truncate" [title]="attachment.title">
               {{ attachment.title }}
             </div>
             @if (attachment.isMandatory) {
-            <span class="badge bg-danger-subtle text-danger border-danger-subtle small ms-1">
+            <span class="badge bg-danger-subtle text-danger border-danger-subtle small ms-1 flex-shrink-0">
               {{ 'common.mandatory' | translate }}
             </span>
             }
           </div>
           <div class="min-w-0">
             @if (attachment.resourceUrl) {
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 min-w-0">
               <button type="button" (click)="previewAttachment(attachment)"
                 class="btn btn-link p-0 d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-primary min-w-0 attach-link text-truncate">
-                <i class="pi pi-file" aria-hidden="true"></i>
-                <span class="text-truncate d-inline-block">{{ attachment.resourceName }}</span>
+                <i class="pi pi-file flex-shrink-0" aria-hidden="true"></i>
+                <span class="text-truncate d-inline-block" [title]="attachment.resourceName">{{ attachment.resourceName }}</span>
               </button>
               @if (!attachment.isApproved && canModifiedAttachment()) {
               <button type="button" class="btn btn-link text-danger p-0"

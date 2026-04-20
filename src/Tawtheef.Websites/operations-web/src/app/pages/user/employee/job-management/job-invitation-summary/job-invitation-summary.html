@@ -42,17 +42,11 @@
               <label class="form-label">
                 {{ 'JOB_INVITATION_SUMMARY.JOB_TYPE' | translate }}
               </label>
-              <p-select [options]="jobInvitationSummaryService.jobCategories()" [showClear]="true"
+              <p-select [options]="jobCategories()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
-                [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event); onFilterChange()">
-
-                <ng-template pTemplate="selectedItem" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template>
-                <ng-template pTemplate="item" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedCategory()"
+                (ngModelChange)="selectedCategory.set($event); onFilterChange()">
               </p-select>
             </div>
 
@@ -61,17 +55,12 @@
               <label class="form-label">
                 {{ 'JOB_INVITATION_SUMMARY.REQUESTING_ENTITY' | translate }}
               </label>
-              <p-select [options]="jobInvitationSummaryService.departments()" [showClear]="true"
+              <p-select [options]="departments()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
-                [ngModel]="selectedDepartment()" (ngModelChange)="selectedDepartment.set($event); onFilterChange()">
-
-                <ng-template pTemplate="selectedItem" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template>
-                <ng-template pTemplate="item" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template></p-select>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedDepartment()"
+                (ngModelChange)="selectedDepartment.set($event); onFilterChange()">
+              </p-select>
             </div>
 
             <!-- Status -->
@@ -79,17 +68,11 @@
               <label class="form-label">
                 {{ 'JOB_INVITATION_SUMMARY.STATUS' | translate }}
               </label>
-              <p-select [options]="jobInvitationSummaryService.jobStatuses()" [showClear]="true"
+              <p-select [options]="jobStatuses()" [showClear]="true"
                 [placeholder]="'JOB_INVITATION_SUMMARY.filter_all' | translate" [filter]="true"
-                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionValue="id" class="w-100"
-                [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event); onFilterChange()">
-
-                <ng-template pTemplate="selectedItem" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template>
-                <ng-template pTemplate="item" let-item>
-                  {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
-                </ng-template>
+                filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name" optionValue="id"
+                class="w-100" [ngModel]="selectedStatus()"
+                (ngModelChange)="selectedStatus.set($event); onFilterChange()">
               </p-select>
             </div>
 
