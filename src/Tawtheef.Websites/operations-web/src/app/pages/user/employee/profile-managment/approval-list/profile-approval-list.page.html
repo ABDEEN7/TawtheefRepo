@@ -137,10 +137,6 @@
                       <span class="pill" [ngClass]="statusClass(row.overallStatus)">
                         {{ statusLabel(row.overallStatus) | translate }}
                       </span>
-
-                      <span class="pill warning" *ngIf="row.pendingCount > 0">
-                        {{ row.pendingCount }} {{ 'profileApproval.list.pending' | translate }}
-                      </span>
                     </div>
                   </td>
 
@@ -153,7 +149,8 @@
                   <!-- ✅ View Button -->
                   <td>
                     <div class="action-buttons">
-                      <button class="btn-text d-flex gap-1 align-items-center" type="button"
+                      <button *hasPermission="[Permissions.ProfileApproval.Review, Permissions.ProfileApproval.Changes]"
+                        class="btn-text d-flex gap-1 align-items-center" type="button"
                         (click)="openProfile(row); $event.stopPropagation()">
                         <i class="hgi hgi-stroke hgi-view"></i>
                         {{ 'common.view' | translate }}

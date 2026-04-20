@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -24,7 +24,6 @@ public sealed class ChangeJobStatusNeedUpdateNotificationDomainEventHandler(
             userManager,
             notification.Job.CreatedById.ToString()!,
             ChangeJobStatusNeedUpdateNotification.TemplateKey,
-            "Job Update Required",
             payload,
             ct);
     }

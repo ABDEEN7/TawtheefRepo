@@ -218,7 +218,7 @@ internal sealed class ProfileDistributionProjection(
 
         // Filter by permission: "profile.distribution.manage"
         var permEmployees = await userRepository
-            .GetUsersByPermissionAsync(PermissionKeys.ProfileDistribution.Manage, ct);
+            .GetUsersByPermissionAsync(PermissionKeys.ProfileApproval.Review, ct);
         var permEmployeeIds = permEmployees.Select(u => u.Id).ToHashSet();
         
         employees = employees.Where(e => permEmployeeIds.Contains(e.Id)).ToList();

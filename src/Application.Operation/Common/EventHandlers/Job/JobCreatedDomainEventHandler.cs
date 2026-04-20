@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -23,7 +23,6 @@ public sealed class JobCreatedDomainEventHandler(
             unitOfWork,
             userManager,
             JobCreatedNotification.TemplateKey,
-            "New Job Posting Created",
             payload,
             ct);
     }

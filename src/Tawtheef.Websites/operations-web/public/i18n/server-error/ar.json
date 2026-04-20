@@ -244,7 +244,7 @@
   "server-error.ATTACHMENT_NOT_EDITABLE_IN_REVISION": "لا يمكن تعديل المرفق أثناء المراجعة.",
   "server-error.INVALID_ATTACHMENT_ID": "معرّف المرفق غير صالح.",
   "server-error.PREVIOUS_PROFILE_STEP_INCOMPLETE": "يجب إكمال خطوة '{{step}}' قبل المتابعة.",
-  "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير نوع المرشح.",
+  "server-error.CANDIDATE_TYPE_CHANGE_NOT_ALLOWED": "لا يمكن تغيير فئة المرشح.",
   "server-error.NATIONAL_ADDRESS_NOT_ALLOWED": "العنوان الوطني غير مسموح.",
   "server-error.DISTRIBUTION_EMPLOYEE_NOT_ACTIVE": "الموظف غير نشط للتوزيع.",
   "server-error.DISTRIBUTION_PROFILES_NOT_FOUND": "لم يتم العثور على ملفات للتوزيع.",

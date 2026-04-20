@@ -232,18 +232,6 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
 
         foreach (var hr in hrManagers)
         {
-            var emailNotification = Notification.Create(
-                NotificationChannel.Email,
-                MinisterOfficeNewCandidateHr.TemplateKey,
-                hr.Id,
-                hr.Email,
-                null,
-                null, null,
-                payload,
-                $"minister-office-hr-email-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
-                3,
-                hr.PreferredLanguage);
-
             var inAppNotification = Notification.Create(
                 NotificationChannel.InApp,
                 MinisterOfficeNewCandidateHr.TemplateKey,
@@ -255,8 +243,7 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
                 $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
                 3,
                 hr.PreferredLanguage);
-
-            await notifRepo.AddAsync(emailNotification, ct);
+            
             await notifRepo.AddAsync(inAppNotification, ct);
         }
     }
