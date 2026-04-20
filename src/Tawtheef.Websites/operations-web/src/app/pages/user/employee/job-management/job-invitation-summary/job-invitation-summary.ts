@@ -67,8 +67,8 @@ export class JobInvitationSummary implements OnInit {
   searchText = signal<string>('');
 
   // Sorting
-  sortColumn = signal<string>('title');
-  sortDirection = signal<'asc' | 'desc'>('asc');
+  sortColumn = signal<string>('CreateDate');
+  sortDirection = signal<'asc' | 'desc'>('desc');
 
   // Expandable rows
   expandedRows = signal<Set<string>>(new Set());

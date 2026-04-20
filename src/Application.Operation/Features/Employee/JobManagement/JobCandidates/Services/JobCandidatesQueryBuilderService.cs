@@ -22,7 +22,10 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         {
             InvitationStatusIds.NewInvitation,
             InvitationStatusIds.Read,
-            InvitationStatusIds.Submitted
+            InvitationStatusIds.PendingAttachmentApproval,
+            InvitationStatusIds.ReturnedAttachment,
+            InvitationStatusIds.Submitted,
+            InvitationStatusIds.Rejected
         };
 
         var invitationsForJob = unitOfWork.GetEntityRepository<Invitation>().DbSet
