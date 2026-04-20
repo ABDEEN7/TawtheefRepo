@@ -29,7 +29,7 @@
 .jc-row {
   border: 1px solid #edf2f7;
   transition: all 0.2s ease;
-  
+
   &:hover {
     border-color: #cbd5e0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -75,13 +75,16 @@
 }
 
 :host ::ng-deep .points-input .p-inputnumber-input {
+  width: 100% !important;
   border: 0;
-  background: transparent;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #2d3748;
-  padding: 0 0.75rem;
+  background-color: white !important;
   text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(102, 103, 102);
+  padding: 0 10px;
+  height: 100%;
+  box-shadow: none !important;
 
   &:focus {
     box-shadow: none;
@@ -92,8 +95,13 @@
   color: #2d3748;
 }
 
-.fs-15 { font-size: 0.9375rem; }
-.fs-13 { font-size: 0.8125rem; }
+.fs-15 {
+  font-size: 0.9375rem;
+}
+
+.fs-13 {
+  font-size: 0.8125rem;
+}
 
 .transition-all {
   transition: all 0.2s ease-in-out;
