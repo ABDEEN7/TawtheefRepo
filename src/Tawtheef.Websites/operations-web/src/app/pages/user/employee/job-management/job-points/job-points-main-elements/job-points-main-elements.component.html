@@ -23,6 +23,13 @@
               <p-inputNumber [formControlName]="key.key" [min]="0" [max]="systemMaxPoints" [showButtons]="true"
                 class="points-input" [disabled]="isReadOnlyMode" />
             </div>
+
+            @if (!isReadOnlyMode && isSectionEmpty(key.key) && hasSectionPoints(key.key)) {
+            <div class="empty-section-alert mt-2">
+              <i class="pi pi-info-circle me-1"></i>
+              {{ 'JOB_POINTS.MAIN_ELEMENTS.EMPTY_SECTION_ALERT' | translate }}
+            </div>
+            }
           </div>
         </div>
         }

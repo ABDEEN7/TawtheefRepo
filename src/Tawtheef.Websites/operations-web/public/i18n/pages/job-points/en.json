@@ -24,8 +24,10 @@
   "JOB_POINTS.MAIN_ELEMENTS.POINTS_PER_YEAR": "Points Per Year of Experience",
   "JOB_POINTS.MAIN_ELEMENTS.MAX_YEARS": "Maximum Counted Years",
   "JOB_POINTS.MAIN_ELEMENTS.ESTIMATED_TOTAL_EX": "Estimated Total Points",
+  "JOB_POINTS.MAIN_ELEMENTS.EMPTY_SECTION_ALERT": "This section is empty, please redistribute points to other sections",
   "JOB_POINTS.POINTS_TAB.SAVE_POINTS": "Save Points",
   "JOB_POINTS.POINTS_TAB.PREVIOUS": "Previous",
+  "JOB_POINTS.POINTS_TAB.NO_ITEMS": "No items added for this category",
   "JOB_POINTS.MAIN_ELEMENTS.POINT": "Point",
   "JOB_POINTS.MAIN_ELEMENTS.TOTAL_POINTS": "Total Points",
 

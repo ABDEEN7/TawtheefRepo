@@ -14,6 +14,11 @@
               [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
+        </div>
         }
         <div class="section-footer" [ngClass]="{
             'valid-total':
@@ -38,6 +43,11 @@
               class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
+        </div>
         }
         <div class="section-footer" [ngClass]="{
             'valid-total': educationSum() === (mainForm.get('education')?.value ?? 0),
@@ -60,6 +70,11 @@
               class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
+        </div>
         }
         <div class="section-footer" [ngClass]="{
             'valid-total': trainingSum() === (mainForm.get('training')?.value ?? 0),
@@ -81,6 +96,11 @@
             <p-inputNumber [formControlName]="item.key" [min]="0" [showButtons]="true" class="points-input"
               [disabled]="isReadOnlyMode" />
           </div>
+        </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
         </div>
         }
         <div class="row gx-0">
@@ -112,6 +132,11 @@
               class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
+        </div>
         }
         <div class="section-footer" [ngClass]="{
             'valid-total': skillsSum() === (mainForm.get('skills')?.value ?? 0),
@@ -134,6 +159,11 @@
               class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
+        } @empty {
+        <div class="empty-section">
+          <i class="hgi hgi-stroke hgi-folder-empty"></i>
+          <p>{{ 'JOB_POINTS.POINTS_TAB.NO_ITEMS' | translate }}</p>
+        </div>
         }
         <div class="section-footer" [ngClass]="{
             'valid-total': certificatesSum() === (mainForm.get('certificates')?.value ?? 0),
@@ -155,34 +185,32 @@
               {{ 'JOB_POINTS.LANGUAGE_ABILITY.SPEAKING' | translate }}
             </div>
 
-            <div class="points-control points-control--details points-control--max">
-              <span class="points-chip points-chip--max">
-                {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
-              </span>
-              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+            <div class="ability-max-box mb-3">
+              <div class="max-label">{{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}</div>
+              <div class="max-input-wrapper">
+                <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                  class="points-input points-input--dark" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-                }}</span>
-              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('speaking')"
-                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+            <div class="ability-levels">
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate }}</span>
+                <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('speaking')"
+                  [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-                }}</span>
-              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate }}</span>
+                <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
+                <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
             <div>
@@ -200,34 +228,32 @@
               {{ 'JOB_POINTS.LANGUAGE_ABILITY.READING' | translate }}
             </div>
 
-            <div class="points-control points-control--details points-control--max">
-              <span class="points-chip points-chip--max">
-                {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
-              </span>
-              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+            <div class="ability-max-box mb-3">
+              <div class="max-label">{{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}</div>
+              <div class="max-input-wrapper">
+                <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                  class="points-input points-input--dark" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-                }}</span>
-              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+            <div class="ability-levels">
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate }}</span>
+                <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-                }}</span>
-              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate }}</span>
+                <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
+                <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
             <div>
@@ -245,34 +271,32 @@
               {{ 'JOB_POINTS.LANGUAGE_ABILITY.CONVERSATION' | translate }}
             </div>
 
-            <div class="points-control points-control--details points-control--max">
-              <span class="points-chip points-chip--max">
-                {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
-              </span>
-              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+            <div class="ability-max-box mb-3">
+              <div class="max-label">{{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}</div>
+              <div class="max-input-wrapper">
+                <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                  class="points-input points-input--dark" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-                }}</span>
-              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('conversation')"
-                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+            <div class="ability-levels">
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate }}</span>
+                <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('conversation')"
+                  [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{
-                'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-                }}</span>
-              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('conversation')"
-                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
-            </div>
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate }}</span>
+                <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('conversation')"
+                  [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
 
-            <div class="points-control points-control--details">
-              <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('conversation')" [showButtons]="true"
-                class="points-input" [disabled]="isReadOnlyMode" />
+              <div class="points-control points-control--details">
+                <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
+                <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('conversation')" [showButtons]="true"
+                  class="points-input" [disabled]="isReadOnlyMode" />
+              </div>
             </div>
 
             <div>

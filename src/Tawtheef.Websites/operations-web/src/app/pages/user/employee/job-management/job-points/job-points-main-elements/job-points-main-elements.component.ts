@@ -12,6 +12,7 @@ export class JobPointsMainElementsComponent {
   @Input() keys: { key: string; initialValue: number }[] = [];
   @Input() systemMaxPoints = 0;
   @Input() isReadOnlyMode = false;
+  @Input() emptyKeys: string[] = [];
 
   @Output() next = new EventEmitter<void>();
 
@@ -22,5 +23,13 @@ export class JobPointsMainElementsComponent {
   isTotalValid(): boolean {
     const total = this.form.get('total')?.value || 0;
     return total === this.systemMaxPoints;
+  }
+
+  isSectionEmpty(key: string): boolean {
+    return this.emptyKeys.includes(key);
+  }
+
+  hasSectionPoints(key: string): boolean {
+    return (this.form.get(key)?.value || 0) > 0;
   }
 }

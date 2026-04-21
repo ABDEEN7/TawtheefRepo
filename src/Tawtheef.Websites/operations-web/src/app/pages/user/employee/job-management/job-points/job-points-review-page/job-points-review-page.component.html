@@ -31,7 +31,7 @@
         <p-tabpanels>
           <p-tabpanel value="0">
             <app-job-points-main-elements [form]="mainFormGroup" [keys]="mainKeys" [systemMaxPoints]="systemMaxPoints"
-              [isReadOnlyMode]="true" (next)="goToDetails()"></app-job-points-main-elements>
+              [isReadOnlyMode]="true" [emptyKeys]="emptyKeys" (next)="goToDetails()"></app-job-points-main-elements>
           </p-tabpanel>
 
           <p-tabpanel value="1">

@@ -56,6 +56,7 @@ export class JobPointsReviewPageComponent implements OnInit, OnDestroy {
   isInitialLoading: boolean = false;
   isSubmitting: boolean = false;
   isReadOnlyMode = true; // Always read-only in review mode
+  emptyKeys: string[] = [];
 
   form!: FormGroup;
   activeTab = '0';
@@ -126,6 +127,9 @@ export class JobPointsReviewPageComponent implements OnInit, OnDestroy {
     this.jobService.getById(this.jobId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (job) => {
         this.job = job;
+        this.emptyKeys = [];
+        if (!job.degrees?.length) this.emptyKeys.push('education');
+        if (!job.skills?.length) this.emptyKeys.push('skills');
         this.loadJobPointsConfig();
       },
     });

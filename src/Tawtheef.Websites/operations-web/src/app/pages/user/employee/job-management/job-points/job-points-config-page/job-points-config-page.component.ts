@@ -52,6 +52,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   systemMaxPoints: number = 0;
   isLoading: boolean = false;
   isReadOnlyMode = false;
+  emptyKeys: string[] = [];
 
   form!: FormGroup;
   isEditMode = false;
@@ -157,6 +158,9 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (job) => {
           this.job = job;
+          this.emptyKeys = [];
+          if (!job.degrees?.length) this.emptyKeys.push('education');
+          if (!job.skills?.length) this.emptyKeys.push('skills');
           this.loadJobPointsConfig();
         },
       });
