@@ -1,0 +1,71 @@
+<section i18nNamespace="pages/job-points">
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="header-section">
+        <div class="job-details-title-group">
+          <div class="title-wrapper gap-3 d-flex align-items-center">
+             <button type="button" class="btn btn-icon btn-outline-secondary close-btn" (click)="onClose()">
+                <i class="pi pi-arrow-right" *ngIf="isRtl()"></i>
+                <i class="pi pi-arrow-left" *ngIf="!isRtl()"></i>
+            </button>
+            <h1 class="job-title">
+              {{ 'JOB_POINTS.REVIEW_POINTS_SETTINGS' | translate }}
+              -
+              {{ job?.titleAr || '' }}/{{ job?.titleEn || '' }}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      @if (!isInitialLoading) {
+      <p-tabs [(value)]="activeTab" class="tabs-shell">
+        <p-tablist>
+          <p-tab value="0">
+            {{ 'JOB_POINTS.CONFIG.TABS.MAIN' | translate }}
+          </p-tab>
+          <p-tab value="1" [disabled]="!canAccessDetails()">
+            {{ 'JOB_POINTS.CONFIG.TABS.DETAILS' | translate }}
+          </p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <p-tabpanel value="0">
+            <app-job-points-main-elements [form]="mainFormGroup" [keys]="mainKeys" [systemMaxPoints]="systemMaxPoints"
+              [isReadOnlyMode]="true" [emptyKeys]="emptyKeys" (next)="goToDetails()"></app-job-points-main-elements>
+          </p-tabpanel>
+
+          <p-tabpanel value="1">
+            @if (canAccessDetails()) {
+            <app-job-points-tab [mainForm]="mainFormGroup" [form]="detailsFormGroup" [job]="job" [isReadOnlyMode]="true"
+              (goPrevious)="goBack()"></app-job-points-tab>
+            }
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+      }
+
+      @if (jobPoints?.id && isFinalApprovalAvailable && canApprovePoints()) {
+      <div class="final-approval-section float-end">
+        <div class="d-flex gap-2">
+          <button type="button" class="reject-button danger-pill" (click)="rejectPoints()" [disabled]="isSubmitting">
+            @if (isSubmitting) { <i class="pi pi-spin pi-spinner mr-2"></i> }
+            @else { <i class="pi pi-times mr-2"></i> }
+            {{ 'JOB_POINTS.REJECT.BUTTON' | translate }}
+          </button>
+          <button type="button" class="approve-button primary-pill" (click)="approvePoints()" [disabled]="isSubmitting">
+            @if (isSubmitting) { <i class="pi pi-spin pi-spinner mr-2"></i> }
+            @else { <i class="pi pi-check mr-2"></i> }
+            {{ 'JOB_POINTS.APPROVE.BUTTON' | translate }}
+          </button>
+        </div>
+      </div>
+      }
+      @if (jobPoints?.isApproved) {
+      <div class="already-approved">
+        <i class="pi pi-check-circle mr-2"></i>
+        {{ 'JOB_POINTS.APPROVE.ALREADY_APPROVED' | translate }}
+      </div>
+      }
+    </div>
+  </div>
+</section>

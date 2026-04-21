@@ -53,6 +53,9 @@ export const portalRoutes = {
   jobPoints(jobId: GUID) {
     return this.portal + '/jobs/job-points/' + jobId;
   },
+  jobPointsReview(jobId: GUID) {
+    return this.portal + '/jobs/job-points-review/' + jobId;
+  },
   get majorsSkillsManagement() {
     return this.portal + '/majors-skills-management'
   },

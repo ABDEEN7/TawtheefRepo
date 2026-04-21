@@ -14,5 +14,6 @@ export interface JobPointsResponse {
   languages: number;
   total: number;
   isApproved:boolean;
+  createdById?: GUID;
   details: JobPointsDetailResponse[];
 }

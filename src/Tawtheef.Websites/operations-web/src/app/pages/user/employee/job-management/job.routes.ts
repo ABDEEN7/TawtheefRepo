@@ -4,6 +4,7 @@ import { JobListComponent } from "./job-list/jobs-list.component";
 import { JobDetailsComponent } from "./job-details/job-details.component";
 import { JobApprovalComponent } from "./job-approval/job-approval.component";
 import { JobPointsConfigPageComponent } from "./job-points/job-points-config-page/job-points-config-page.component";
+import { JobPointsReviewPageComponent } from "./job-points/job-points-review-page/job-points-review-page.component";
 import { JobsReadyApplicationComponent } from "./jobs-ready-application/jobs-ready-application.component";
 import { permissionGuard } from "../../../../core/guards/route-guard/permission-guards";
 import { Permissions } from "../../../../core/constants/permissions";
@@ -20,13 +21,13 @@ export const jobRoutes: Routes = [
     path: "create",
     component: JobWizardComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.Jobs.Edit] },
   },
   {
     path: "edit/:id",
     component: JobWizardComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.Jobs.Edit] },
   },
   {
     path: "view/:id",
@@ -44,7 +45,13 @@ export const jobRoutes: Routes = [
     path: "job-points/:id",
     component: JobPointsConfigPageComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.JobPoints.View, Permissions.JobPoints.Manage, Permissions.JobPoints.Approve] },
+    data: { permissions: [Permissions.JobPoints.View, Permissions.JobPoints.Edit], requiredAll: false },
+  },
+  {
+    path: "job-points-review/:id",
+    component: JobPointsReviewPageComponent,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.JobPoints.Approve] },
   },
   {
     path: "view/:id/candidates",
@@ -56,6 +63,6 @@ export const jobRoutes: Routes = [
     path: "ready",
     component: JobsReadyApplicationComponent,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage, Permissions.Jobs.View] },
+    data: { permissions: [Permissions.Jobs.Edit, Permissions.Jobs.View] },
   },
 ];

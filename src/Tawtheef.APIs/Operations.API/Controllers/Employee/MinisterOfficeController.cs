@@ -77,7 +77,7 @@ public class MinisterOfficeController(IMediator mediator) : ControllerBase
     #region Lookups
 
     [HttpGet("lookups/genders")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> GetGenders()
     {
         var result = await mediator.Send(new GetGendersQuery());
@@ -85,7 +85,7 @@ public class MinisterOfficeController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/target-entities")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());
@@ -93,7 +93,7 @@ public class MinisterOfficeController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("lookups/candidate-types")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> GetCandidateTypes()
     {
         var result = await mediator.Send(new GetCandidateTypesQuery());

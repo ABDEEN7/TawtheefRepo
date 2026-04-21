@@ -1,0 +1,26 @@
+@import "../job-points-config-page/job-points-config-page.component.scss";
+
+.reject-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: #dc3545;
+  /* bootstrap danger */
+  color: #fff;
+
+  &:disabled {
+    background-color: #f8d7da;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #bb2d3b;
+  }
+}

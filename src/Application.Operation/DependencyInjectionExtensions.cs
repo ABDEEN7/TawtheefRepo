@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands.Validators;
+﻿using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using FluentValidation;

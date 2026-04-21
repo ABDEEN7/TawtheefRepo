@@ -1,5 +1,5 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.Commands;
-using Application.Operation.Features.Employee.JobManagement.Job.Queries;
+﻿using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +14,7 @@ namespace Operations.API.Controllers.Employee;
 public class JobApprovalController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Edit, PermissionKeys.Jobs.Approve)]
     public async Task<IActionResult> AddReviewJob([FromForm] SaveJobReviewCommand command)
     {
         var result = await mediator.Send(command);
@@ -22,7 +22,7 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.Edit, PermissionKeys.Jobs.Approve)]
     public async Task<IActionResult> UpdateReviewJob([FromForm] UpdateJobReviewCommand command)
     {
         var result = await mediator.Send(command);
@@ -30,7 +30,7 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{jobId:guid}")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Approve)]
     public async Task<IActionResult> GetJobTabReviews(Guid jobId)
     {
         var result = await mediator.Send(new GetJobTabReviewsQuery(jobId));
@@ -38,7 +38,7 @@ public class JobApprovalController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{jobId:guid}/latest")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Approve)]
     public async Task<IActionResult> GetLatestJobTabReviews(Guid jobId)
     {
         var result = await mediator.Send(new GetLatestReviewQuery(jobId));

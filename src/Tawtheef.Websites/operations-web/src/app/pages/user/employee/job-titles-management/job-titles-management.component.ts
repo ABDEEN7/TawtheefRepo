@@ -16,6 +16,8 @@ import {JobTitleModalComponent} from './components/job-title-modal/job-title-mod
 import {JobTitlesService} from './services/job-titles.service';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-titles-management',
@@ -41,6 +43,7 @@ export class JobTitlesManagementComponent implements OnInit {
   private language = inject(LanguageService);
   private confirmationService = inject(ConfirmationService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   private _allJobTitles = signal<JobTitleDto[]>([]);
   private _jobTitles = signal<JobTitleDto[]>([]);
@@ -63,6 +66,9 @@ export class JobTitlesManagementComponent implements OnInit {
   isModalOpen = signal(false);
   modalMode = signal<'create' | 'edit'>('create');
   editingJobTitle = signal<JobTitleDto | null>(null);
+  
+  public readonly canManage = computed(() => this.authService.hasPermission(Permissions.JobTitles.Manage));
+
   private searchChanges$ = new Subject<string>();
 
   ngOnInit(): void {

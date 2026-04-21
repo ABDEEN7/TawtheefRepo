@@ -9,6 +9,8 @@ import { JobCategoryCandidateSettings } from './models/job-category-candidate-se
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-category-candidate-settings',
@@ -30,6 +32,7 @@ export class JobCategoryCandidateSettingsComponent implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   readonly currentLang = signal<Lang>(this.language.get());
   readonly isRtl = computed(() => this.currentLang() === 'ar');
@@ -40,12 +43,18 @@ export class JobCategoryCandidateSettingsComponent implements OnInit {
     administrativeJobVacancies: [0, [Validators.required, Validators.min(0)]],
   });
 
+  readonly canManage = computed(() => this.authService.hasPermission(Permissions.JobCategoryCandidateSettings.Manage));
+
   ngOnInit(): void {
     this.language.current$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lang => {
       this.currentLang.set(lang);
     });
 
     this.loadSettings();
+
+    if (!this.canManage()) {
+      this.form.disable();
+    }
   }
 
   preventPaste(event: ClipboardEvent): void {

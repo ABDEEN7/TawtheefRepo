@@ -49,11 +49,16 @@ public static class PermissionCatalog
         Permissions.ProfileApproval.Changes,
 
         Permissions.Jobs.View,
-        Permissions.Jobs.Manage,
+        Permissions.Jobs.Edit,
         Permissions.Jobs.Approve,
         Permissions.Jobs.SendInvitation,
+        Permissions.Jobs.Cancel,
+        Permissions.Jobs.Create,
+        Permissions.Jobs.Publish,
+        Permissions.Jobs.Delete,
+        Permissions.Jobs.Clone,
 
-        Permissions.JobsPoints.Manage,
+        Permissions.JobsPoints.Edit,
         Permissions.JobsPoints.View,
         Permissions.JobsPoints.Approve,
 
@@ -74,6 +79,15 @@ public static class PermissionCatalog
         
         Permissions.Cities.View,
         Permissions.Cities.Manage,
+
+        Permissions.JobTitles.View,
+        Permissions.JobTitles.Manage,
+
+        Permissions.JobCategoryCandidateSettings.View,
+        Permissions.JobCategoryCandidateSettings.Manage,
+
+        Permissions.JobPointsConfiguration.View,
+        Permissions.JobPointsConfiguration.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

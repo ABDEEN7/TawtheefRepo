@@ -83,14 +83,14 @@ public static class JobBusinessRules
     {
         var allowedTransitions = new Dictionary<Guid, List<Guid>>
         {
-            [JobStatusIds.Draft] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.PendingApproval] = [JobStatusIds.Closed,JobStatusIds.NeedUpdate, JobStatusIds.PendingPointConfiguration, JobStatusIds.Rejected, JobStatusIds.Cancelled],
+            [JobStatusIds.Draft] = [JobStatusIds.Closed, JobStatusIds.PendingApproval],
+            [JobStatusIds.PendingApproval] = [JobStatusIds.Closed,JobStatusIds.NeedUpdate, JobStatusIds.PendingPointConfiguration, JobStatusIds.Rejected],
             [JobStatusIds.PendingPointConfiguration] = [JobStatusIds.Closed,JobStatusIds.PendingPointApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.PendingPointApproval] = [JobStatusIds.Closed,JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled, JobStatusIds.NeedUpdate],
-            [JobStatusIds.NeedUpdate] = [JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Closed,JobStatusIds.Published],
+            [JobStatusIds.PendingPointApproval] = [JobStatusIds.Closed,JobStatusIds.PendingPointConfiguration,JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
+            [JobStatusIds.NeedUpdate] = [JobStatusIds.Closed,JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
+            [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Closed, JobStatusIds.Cancelled,JobStatusIds.Published],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
-            [JobStatusIds.Rejected] = [JobStatusIds.Closed, JobStatusIds.Draft],
+            [JobStatusIds.Rejected] = [JobStatusIds.Closed],
             [JobStatusIds.Closed] = [],
             [JobStatusIds.Cancelled] = []
         };

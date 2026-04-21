@@ -11,10 +11,12 @@
           <i class="pi pi-refresh me-1"></i>
           {{ 'common.refresh' | translate }}
         </button>
+        @if (canManage()) {
         <button type="button" class="btn btn-primary" (click)="openAdd()">
           <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
           {{ 'JOB_TITLES.ADD_JOB_TITLE' | translate }}
         </button>
+        }
       </div>
     </div>
 
@@ -44,7 +46,9 @@
               <th>{{ 'JOB_TITLES.JOB_NUMBER' | translate }}</th>
               <th>{{ 'JOB_TITLES.NAME_AR' | translate }}</th>
               <th>{{ 'JOB_TITLES.NAME_EN' | translate }}</th>
+              @if (canManage()) {
               <th>{{ 'JOB_TITLES.ACTIONS' | translate }}</th>
+              }
             </tr>
           </thead>
 
@@ -60,31 +64,33 @@
                 <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
                   <td>{{ jobTitle.jobNumber }}</td>
                   <td>{{ jobTitle.jobNameAr }}</td>
-                  <td>{{ jobTitle.jobNameEn }}</td>
-                  <td class="text-nowrap">
-                    <div class="action-buttons">
-                      <button
-                        type="button"
-                        class="btn"
-                        (click)="openEdit(jobTitle)"
-                        [pTooltip]="'JOB_TITLES.EDIT' | translate"
-                        tooltipPosition="top"
-                        aria-label="{{ 'JOB_TITLES.EDIT' | translate }}">
-                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn"
-                        (click)="confirmDelete(jobTitle)"
-                        [pTooltip]="'JOB_TITLES.DELETE' | translate"
-                        tooltipPosition="top"
-                        aria-label="{{ 'JOB_TITLES.DELETE' | translate }}">
-                        <i class="hgi hgi-stroke hgi-delete-02"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                   <td>{{ jobTitle.jobNameEn }}</td>
+                   @if (canManage()) {
+                   <td class="text-nowrap">
+                     <div class="action-buttons">
+                       <button
+                         type="button"
+                         class="btn"
+                         (click)="openEdit(jobTitle)"
+                         [pTooltip]="'JOB_TITLES.EDIT' | translate"
+                         tooltipPosition="top"
+                         aria-label="{{ 'JOB_TITLES.EDIT' | translate }}">
+                         <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                       </button>
+ 
+                       <button
+                         type="button"
+                         class="btn"
+                         (click)="confirmDelete(jobTitle)"
+                         [pTooltip]="'JOB_TITLES.DELETE' | translate"
+                         tooltipPosition="top"
+                         aria-label="{{ 'JOB_TITLES.DELETE' | translate }}">
+                         <i class="hgi hgi-stroke hgi-delete-02"></i>
+                       </button>
+                     </div>
+                   </td>
+                   }
+                 </tr>
               }
             }
           </tbody>

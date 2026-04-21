@@ -7,5 +7,10 @@ public enum PermissionAction
     Approve,
     SendInvitation,
     Review,
-    Changes
+    Changes,
+    Cancel,
+    Create,
+    Publish,
+    Delete,
+    Clone
 }

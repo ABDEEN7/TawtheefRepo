@@ -292,7 +292,7 @@ export class Dashboard implements OnInit {
     const canManageDistribution = this.authService.hasPermission(Permissions.ProfileDistribution.Manage);
     const canViewMinisterOffice = this.authService.hasPermission(Permissions.MinisterOffice.View);
     const canApproveJobs = this.authService.hasPermission(Permissions.Jobs.Approve);
-    const canManageJobs = this.authService.hasPermission(Permissions.Jobs.Manage);
+    const canManageJobs = this.authService.hasPermission(Permissions.Jobs.Edit);
 
     if (canManageDistribution && kpis.overdueTasks > 0) {
       insights.push({ level: 'warning', key: 'dashboard.insights.overdue' });

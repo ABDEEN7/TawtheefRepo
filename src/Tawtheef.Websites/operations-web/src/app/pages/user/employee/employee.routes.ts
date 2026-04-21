@@ -160,19 +160,19 @@ export const employeeRoutes: Routes = [
     path: "job-points-configuration",
     loadComponent: () => import('./job-points-configuration/job-points-configuration.component').then(m => m.JobPointsConfigurationComponent),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.JobPoints.Manage] },
+    data: { permissions: [Permissions.JobPointsConfiguration.View, Permissions.JobPointsConfiguration.Manage], requiredAll: false },
   },
   {
     path: "job-category-candidate-settings",
     loadComponent: () => import('./job-category-candidate-settings/job-category-candidate-settings.component').then(m => m.JobCategoryCandidateSettingsComponent),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.JobCategoryCandidateSettings.View] },
   },
   {
     path: "job-titles-management",
     loadComponent: () => import('./job-titles-management/job-titles-management.component').then(m => m.JobTitlesManagementComponent),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Jobs.Manage] },
+    data: { permissions: [Permissions.JobTitles.View] },
   },
   {
     path: "system-admin-logs",

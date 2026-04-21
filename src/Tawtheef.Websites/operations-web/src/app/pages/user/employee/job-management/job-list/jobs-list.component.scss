@@ -131,3 +131,29 @@
 ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   padding: 0.75rem 0.5rem;
 }
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  i {
+    font-size: 0.8rem;
+    margin-left: 0.4rem;
+    opacity: 0.5;
+    transition: all 0.2s;
+  }
+
+  &:hover i {
+    opacity: 1;
+  }
+}
+
+[dir="rtl"] .sortable i {
+  margin-left: 0;
+  margin-right: 0.4rem;
+}

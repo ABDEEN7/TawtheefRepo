@@ -1,0 +1,17 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobPointsRejectedNotification.JobPointsRejectedNotificationModel>
+إرجاع نقاط الوظيفة للتعديل
+
+عزيزي الزميل/الزميلة،
+
+لقد تمت مراجعة نقاط الوظيفة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") وتم إرجاعها للتعديل.
+
+سبب الإرجاع:
+@Model.Model.Reason
+
+يرجى مراجعة النقاط وإعادة إرسالها للاعتماد.
+
+رابط المنصة: @Model.Branding.WebsiteUrl
+
+مع تحيات،
+فريق عمل @Model.Branding.ProductName
+للدعم الفني: @Model.Branding.SupportEmail

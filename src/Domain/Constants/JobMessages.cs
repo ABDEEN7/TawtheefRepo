@@ -69,4 +69,5 @@ public static class JobMessages
     public const string InvalidSkillReference = "INVALID_SKILL_REFERENCE";
     public const string InvalidDegreeReference = "INVALID_DEGREE_REFERENCE";
     public const string InvalidSpecializationMajorReference = "INVALID_SPECIALIZATION_MAJOR_REFERENCE";
+    public const string JobPointsNotPendingApproval = "JOB_POINTS_NOT_PENDING_APPROVAL";
 }

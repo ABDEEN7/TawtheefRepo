@@ -20,15 +20,16 @@
                 {{ form.get(key.key)?.value ?? 0 }}
               </span>
 
-              <p-inputNumber
-                [formControlName]="key.key"
-                [min]="0"
-                [max]="systemMaxPoints"
-                [showButtons]="true"
-                class="points-input"
-                [disabled]="isReadOnlyMode"
-              />
+              <p-inputNumber [formControlName]="key.key" [min]="0" [max]="systemMaxPoints" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
+
+            @if (!isReadOnlyMode && isSectionEmpty(key.key) && hasSectionPoints(key.key)) {
+            <div class="empty-section-alert mt-2">
+              <i class="pi pi-info-circle me-1"></i>
+              {{ 'JOB_POINTS.MAIN_ELEMENTS.EMPTY_SECTION_ALERT' | translate }}
+            </div>
+            }
           </div>
         </div>
         }
@@ -38,13 +39,10 @@
         <div class="total-label">
           {{ 'JOB_POINTS.MAIN_ELEMENTS.TOTAL_POINTS' | translate }}
         </div>
-        <div
-          class="total-pill"
-          [ngClass]="{
+        <div class="total-pill" [ngClass]="{
             'total-valid': isTotalValid(),
             'total-invalid': !isTotalValid()
-          }"
-        >
+          }">
           {{ form.get('total')?.value ?? 0 }}/{{ systemMaxPoints }}
           {{ 'JOB_POINTS.MAIN_ELEMENTS.POINT' | translate }}
         </div>
@@ -54,18 +52,19 @@
       <div class="validation-message error">
         <i class="pi pi-exclamation-triangle mr-2"></i>
         {{
-          'JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX' | translate : { required: systemMaxPoints }
+        'JOB_POINTS.VALIDATION.TOTAL_MUST_EQUAL_MAX' | translate : { required: systemMaxPoints }
         }}
       </div>
       }
-      <div class="bottom-nav">
-      <button type="button" class="btn btn-outline-primary light d-flex align-items-center gap-2" (click)="next.emit()" [disabled]="!isTotalValid() || isReadOnlyMode">
-        
-        {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }} <i class="hgi-stroke hgi-arrow-left-01" faDirArrow="end"></i>
-      </button>
-    </div>
+      <div class="bottom-nav" *ngIf="!isReadOnlyMode">
+        <button type="button" class="btn btn-outline-primary light d-flex align-items-center gap-2"
+          (click)="next.emit()" [disabled]="!isTotalValid()">
+          {{ 'JOB_POINTS.MAIN_ELEMENTS.NEXT' | translate }} <i class="hgi-stroke hgi-arrow-left-01"
+            faDirArrow="end"></i>
+        </button>
+      </div>
     </div>
 
-    
+
   </div>
 </form>

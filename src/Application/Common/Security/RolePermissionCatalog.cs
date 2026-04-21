@@ -36,9 +36,15 @@ public static class RolePermissionCatalog
                 Permissions.ProfileApproval.Changes.Key,
 
                 Permissions.Jobs.View.Key,
-                Permissions.Jobs.Manage.Key,
+                Permissions.Jobs.Edit.Key,
                 Permissions.Jobs.Approve.Key,
-                Permissions.JobsPoints.Manage.Key,
+                Permissions.Jobs.SendInvitation.Key,
+                Permissions.Jobs.Cancel.Key,
+                Permissions.Jobs.Create.Key,
+                Permissions.Jobs.Publish.Key,
+                Permissions.Jobs.Delete.Key,
+                Permissions.Jobs.Clone.Key,
+                Permissions.JobsPoints.Edit.Key,
                 Permissions.JobsPoints.View.Key,
                 Permissions.JobsPoints.Approve.Key,
 
@@ -54,7 +60,16 @@ public static class RolePermissionCatalog
 
                 Permissions.MajorSkills.Manage.Key,
                 
-                Permissions.ProfileLogs.View.Key
+                Permissions.ProfileLogs.View.Key,
+
+                Permissions.JobTitles.View.Key,
+                Permissions.JobTitles.Manage.Key,
+                Permissions.JobCategoryCandidateSettings.View.Key,
+                Permissions.JobCategoryCandidateSettings.Manage.Key,
+                Permissions.MinisterOffice.View.Key,
+                Permissions.MinisterOffice.Manage.Key,
+                Permissions.Cities.View.Key,
+                Permissions.Cities.Manage.Key
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,
@@ -100,9 +115,15 @@ public static class RolePermissionCatalog
                 Permissions.ProfileApproval.Changes.Key,
 
                 Permissions.Jobs.View.Key,
-                Permissions.Jobs.Manage.Key,
+                Permissions.Jobs.Edit.Key,
                 Permissions.Jobs.Approve.Key,
-                Permissions.JobsPoints.Manage.Key,
+                Permissions.Jobs.SendInvitation.Key,
+                Permissions.Jobs.Cancel.Key,
+                Permissions.Jobs.Create.Key,
+                Permissions.Jobs.Publish.Key,
+                Permissions.Jobs.Delete.Key,
+                Permissions.Jobs.Clone.Key,
+                Permissions.JobsPoints.Edit.Key,
                 Permissions.JobsPoints.View.Key,
                 Permissions.JobsPoints.Approve.Key,
 
@@ -116,7 +137,16 @@ public static class RolePermissionCatalog
 
                 Permissions.OrganizationStructures.Manage.Key,
 
-                Permissions.MajorSkills.Manage.Key
+                Permissions.MajorSkills.Manage.Key,
+
+                Permissions.JobTitles.View.Key,
+                Permissions.JobTitles.Manage.Key,
+                Permissions.JobCategoryCandidateSettings.View.Key,
+                Permissions.JobCategoryCandidateSettings.Manage.Key,
+                Permissions.MinisterOffice.View.Key,
+                Permissions.MinisterOffice.Manage.Key,
+                Permissions.Cities.View.Key,
+                Permissions.Cities.Manage.Key
             ]
         };
 }

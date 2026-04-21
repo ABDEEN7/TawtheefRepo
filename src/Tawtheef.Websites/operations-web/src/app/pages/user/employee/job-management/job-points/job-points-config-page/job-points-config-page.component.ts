@@ -50,9 +50,9 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   mainKeys: { key: string; initialValue: number }[] = [];
 
   systemMaxPoints: number = 0;
-  isFinalApprovalAvailable: boolean = false;
   isLoading: boolean = false;
   isReadOnlyMode = false;
+  emptyKeys: string[] = [];
 
   form!: FormGroup;
   isEditMode = false;
@@ -158,6 +158,9 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (job) => {
           this.job = job;
+          this.emptyKeys = [];
+          if (!job.degrees?.length) this.emptyKeys.push('education');
+          if (!job.skills?.length) this.emptyKeys.push('skills');
           this.loadJobPointsConfig();
         },
       });
@@ -212,7 +215,6 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           this.jobPoints = response;
           this.mapper.mapResponseToForm(response, this.mainFormGroup, this.detailsFormGroup);
           this.isEditMode = true;
-          this.isFinalApprovalAvailable = !response.isApproved && this.areAllCategoriesValid();
           this.isLoading = false;
           this.applyReadOnlyMode();
           this.cdr.detectChanges();
@@ -224,8 +226,6 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     this.mainFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((main) => {
       const total = this.mainKeys.reduce((sum, k) => sum + (main[k.key] || 0), 0);
       this.mainFormGroup.get('total')?.setValue(total, { emitEvent: false });
-
-      this.updateFinalApprovalAvailability();
     });
   }
 
@@ -234,17 +234,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     exp.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const total = this.pointsCalculationService.experienceTotal(exp);
       exp.get('total')?.setValue(total, { emitEvent: false });
-      this.updateFinalApprovalAvailability();
     });
-  }
-
-  private updateFinalApprovalAvailability(): void {
-    const mainTotal = this.mainFormGroup.get('total')?.value || 0;
-    const isMainValid = mainTotal === this.systemMaxPoints;
-    const areDetailsValid = this.areAllCategoriesValid();
-
-    this.isFinalApprovalAvailable =
-      isMainValid && areDetailsValid && (!this.jobPoints || !this.jobPoints.isApproved);
   }
 
   canAccessDetails(): boolean {
@@ -261,7 +251,7 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    if (!this.canManagePoints()) return;
+    if (!this.canEditPoints()) return;
     if (!this.areAllCategoriesValid()) {
       this.notificationService.warn(
         this.translationService.instant('JOB_POINTS.VALIDATION.DETAILS_EXCEED_MAIN')
@@ -310,93 +300,13 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
           this.notificationService.success(
             this.translationService.instant('JOB_POINTS.SAVE.SUCCESS')
           );
-          this.updateFinalApprovalAvailability();
           this.router.navigate([routes.portal.JobList]);
           this.cdr.detectChanges();
         },
       });
   }
 
-  approvePoints(): void {
-    if (!this.canApprovePoints()) return;
-    if (!this.isFinalApprovalAvailable) {
-      this.notificationService.warn(
-        this.translationService.instant('JOB_POINTS.VALIDATION.CANNOT_APPROVE')
-      );
-      return;
-    }
 
-    const ref = this.dialogHelperService.openConfirmDialog({
-      type: 'submit',
-      title: 'JOB_POINTS.APPROVE.CONFIRMATION_TITLE',
-      description: 'JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION',
-      cancelText: 'common.cancel',
-      confirmText: 'common.confirm',
-    });
-
-    ref?.onClose.pipe(takeUntil(this.destroy$)).subscribe((result) => {
-      if (!result) return;
-
-      this.isLoading = true;
-
-      this.jobPointsService
-        .approveJobPoints(this.jobId)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (resp) => {
-            if (!resp) {
-              this.isLoading = false;
-              this.cdr.detectChanges();
-              return;
-            }
-
-            if (this.jobPoints) {
-              this.jobPoints.isApproved = true;
-            }
-
-            this.updateFinalApprovalAvailability();
-
-            const statusId = this.lookupsService.getStatusIdByEnum(JobStatus.ReadyForAnnouncement);
-
-            if (!statusId) {
-              this.notificationService.success(
-                this.translationService.instant('JOB_POINTS.APPROVE.SUCCESS')
-              );
-              this.isLoading = false;
-              this.router.navigate([routes.portal.JobList]);
-              this.cdr.detectChanges();
-              return;
-            }
-
-            this.jobService
-              .changeStatus(this.jobId, statusId)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: () => {
-                  this.notificationService.success(
-                    this.translationService.instant('JOB_POINTS.APPROVE.SUCCESS')
-                  );
-
-                  this.isFinalApprovalAvailable = false;
-                  this.isLoading = false;
-
-                  this.router.navigate([routes.portal.JobList]);
-                  this.cdr.detectChanges();
-                },
-                error: () => {
-                  this.isLoading = false;
-                  this.cdr.detectChanges();
-                },
-              });
-          },
-          error: () => {
-            this.isLoading = false;
-            this.applyReadOnlyMode();
-            this.cdr.detectChanges();
-          },
-        });
-    });
-  }
 
   private getMainPoints(): Omit<JobPointsResponse, 'id' | 'jobId' | 'details' | 'isApproved'> {
     const main = this.mainFormGroup.getRawValue();
@@ -487,13 +397,10 @@ export class JobPointsConfigPageComponent implements OnInit, OnDestroy {
     this.activeTab = '0';
   }
 
-  canApprovePoints(): boolean {
-    if (this.isReadOnlyMode) return false;
-    return this.authService.hasPermission(Permissions.JobPoints.Approve);
-  }
 
-  canManagePoints(): boolean {
+
+  canEditPoints(): boolean {
     if (this.isReadOnlyMode) return false;
-    return this.authService.hasPermission(Permissions.JobPoints.Manage);
+    return this.authService.hasPermission(Permissions.JobPoints.Edit);
   }
 }
