@@ -104,15 +104,20 @@ public static class PermissionKeys
     public static class Jobs
     {
         public const string View = "jobs.view";
-        public const string Manage = "jobs.manage";
+        public const string Edit = "jobs.edit";
         public const string Approve = "jobs.approve";
         public const string SendInvitation = "jobs.send-invitation";
+        public const string Cancel = "jobs.cancel";
+        public const string Create = "jobs.create";
+        public const string Publish = "jobs.publish";
+        public const string Delete = "jobs.delete";
+        public const string Clone = "jobs.clone";
     }
 
     public static class JobsPoints
     {
         public const string View = "jobs.points.view";
-        public const string Manage = "jobs.points.manage";
+        public const string Edit = "jobs.points.edit";
         public const string Approve = "jobs.points.approve";
     }
 
@@ -147,5 +152,23 @@ public static class PermissionKeys
     {
         public const string View = "minister-office.view";
         public const string Manage = "minister-office.manage";
+    }
+
+    public static class JobTitles
+    {
+        public const string View = "job-titles.view";
+        public const string Manage = "job-titles.manage";
+    }
+
+    public static class JobCategoryCandidateSettings
+    {
+        public const string View = "job-category-candidate-settings.view";
+        public const string Manage = "job-category-candidate-settings.manage";
+    }
+
+    public static class JobPointsConfiguration
+    {
+        public const string View = "job-points-configuration.view";
+        public const string Manage = "job-points-configuration.manage";
     }
 }

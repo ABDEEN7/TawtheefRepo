@@ -33,9 +33,9 @@ export class Sidebar {
     { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'hgi-arrow-data-transfer-horizontal', route: routes.portal.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
     { key: 'religions', label: 'admin.sidebar.religions', icon: 'hgi-structure-03', route: routes.portal.religionsManagement, permission: Permissions.Religions.Manage },
     { key: 'universities', label: 'admin.sidebar.universities', icon: ' hgi-university', route: routes.portal.universitiesManagement, permission: Permissions.Universities.Manage },
-    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.portal.jobPointsConfiguration, permission: Permissions.JobPoints.Manage },
-    { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.portal.jobCategoryCandidateSettings, permission: Permissions.Jobs.Manage },
-    { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'hgi-license-draft', route: routes.portal.jobTitlesManagement, permission: Permissions.Jobs.Manage },
+    { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.portal.jobPointsConfiguration, permission: Permissions.JobPointsConfiguration.View },
+    { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.portal.jobCategoryCandidateSettings, permission: Permissions.JobCategoryCandidateSettings.View },
+    { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'hgi-license-draft', route: routes.portal.jobTitlesManagement, permission: Permissions.JobTitles.View },
 
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.portal.homeContentManagement, permission: Permissions.HomeContent.Manage },
 

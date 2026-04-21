@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { JobLookupService } from '../services/job-lookup.service';
+import { JobInvitationSummaryDetailsService } from '../services/job-invitation-summary-details.service';
 import { JobQueryFilter } from '../models/job-query-filter.model';
 import { JobResponse } from '../models/job-response-model';
 import { GUID } from '../../../../../shared/types/guid.type';
@@ -18,6 +19,7 @@ import { PaginatedRequest } from '../../../../../core/models/paginated-request.m
 import { JobStatus } from '../../../../../core/enums/lookups.enum';
 import { routes } from '../../../../../routes/routes';
 import { Permissions } from '../../../../../core/constants/permissions';
+import { SystemRoles } from '../../../../../core/constants/systemRoles';
 
 export interface JobAction {
   label: string;
@@ -41,6 +43,7 @@ export class JobListComponent implements OnInit {
   private readonly dialogHelperService = inject(DialogHelperService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly invitationDetailsService = inject(JobInvitationSummaryDetailsService);
   protected readonly lookupService = inject(JobLookupService);
 
   // --- State Signals ---
@@ -49,6 +52,8 @@ export class JobListComponent implements OnInit {
   readonly currentPage = signal(1);
   readonly itemsPerPage = signal(10);
   readonly showMoreFilters = signal(false);
+  readonly sortBy = signal<string>('createdDate');
+  readonly sortDirection = signal<'asc' | 'desc'>('desc');
 
   // --- Filter Signals ---
   readonly searchQuery = signal<string>('');
@@ -69,13 +74,20 @@ export class JobListComponent implements OnInit {
   });
 
   // --- Computed Permissions ---
-  readonly canManage = computed(() => this.authService.hasPermission(Permissions.Jobs.Manage));
+  readonly canEdit = computed(() => this.authService.hasPermission(Permissions.Jobs.Edit));
   readonly canApprove = computed(() => this.authService.hasPermission(Permissions.Jobs.Approve));
-  readonly canView = computed(() => this.authService.hasPermission(Permissions.Jobs.View) || this.canManage());
+  readonly canView = computed(() => this.authService.hasPermission(Permissions.Jobs.View) || this.canEdit());
   readonly canInvite = computed(() => this.authService.hasPermission(Permissions.Jobs.SendInvitation));
-  readonly canManagePoints = computed(() => this.authService.hasPermission(Permissions.JobPoints.Manage));
+  readonly canCancel = computed(() => this.authService.hasPermission(Permissions.Jobs.Cancel));
+  readonly canEditPoints = computed(() => this.authService.hasPermission(Permissions.JobPoints.Edit));
   readonly canViewPoints = computed(() => this.authService.hasPermission(Permissions.JobPoints.View));
   readonly canApprovePoints = computed(() => this.authService.hasPermission(Permissions.JobPoints.Approve));
+  readonly canCreate = computed(() => this.authService.hasPermission(Permissions.Jobs.Create));
+  readonly canPublish = computed(() => this.authService.hasPermission(Permissions.Jobs.Publish));
+  readonly canDelete = computed(() => this.authService.hasPermission(Permissions.Jobs.Delete));
+  readonly canClone = computed(() => this.authService.hasPermission(Permissions.Jobs.Clone));
+  readonly isHrManager = computed(() => this.authService.getCurrentUser()?.userRoles.includes(SystemRoles.HrManager) ?? false);
+  readonly currentUserId = computed(() => this.authService.getCurrentUser()?.userId);
 
   readonly activeFiltersCount = computed(() => {
     let count = 0;
@@ -115,8 +127,8 @@ export class JobListComponent implements OnInit {
     const pagination: PaginatedRequest = {
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
-      sortBy: 'createdDate',
-      sortDirection: 'desc',
+      sortBy: this.sortBy(),
+      sortDirection: this.sortDirection(),
     };
 
     const filter: JobQueryFilter = {
@@ -200,6 +212,16 @@ export class JobListComponent implements OnInit {
     this.onFilterChange();
   }
 
+  onSort(column: string): void {
+    if (this.sortBy() === column) {
+      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(column);
+      this.sortDirection.set('asc');
+    }
+    this.onFilterChange();
+  }
+
   onPageChange(page: number): void {
     this.currentPage.set(page);
     this.loadData();
@@ -240,9 +262,13 @@ export class JobListComponent implements OnInit {
   }
 
   openPoints(id: GUID, mode: 'view' | 'edit' | 'approve' = 'edit'): void {
-    this.router.navigate([routes.portal.jobPoints(id)], {
-      queryParams: mode !== 'edit' ? { mode } : undefined
-    });
+    if (mode === 'approve') {
+      this.router.navigate([routes.portal.jobPointsReview(id)]);
+    } else {
+      this.router.navigate([routes.portal.jobPoints(id)], {
+        queryParams: mode !== 'edit' ? { mode } : undefined
+      });
+    }
   }
 
   changeStatus(jobId: GUID, statusEnum: JobStatus, successMsg: string, confirmOptions?: any): void {
@@ -270,6 +296,19 @@ export class JobListComponent implements OnInit {
     }
   }
 
+  onCancelJob(job: JobResponse): void {
+    this.jobService.checkJobInvitations(job.id).subscribe((hasInvitations) => {
+      const confirmOptions = {
+        title: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_TITLE',
+        description: hasInvitations
+          ? 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_WITH_INVITES_NOTE'
+          : 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE',
+      };
+
+      this.changeStatus(job.id, JobStatus.Cancelled, 'JOB_LIST_MESSAGES_JOB_CANCELLED', confirmOptions);
+    });
+  }
+
   deleteJob(id: GUID): void {
     this.dialogHelperService.openConfirmDialog({
       type: 'submit',
@@ -294,13 +333,21 @@ export class JobListComponent implements OnInit {
     const status = job.jobStatus?.backendName as JobStatus;
 
     // Cache permissions for speed
-    const canManage = this.canManage();
+    const canEdit = this.canEdit() && job.allowedEdit;
     const canApprove = this.canApprove();
     const canView = this.canView();
     const canInvite = this.canInvite();
+    const canCancel = this.canCancel();
+    const canDelete = this.canDelete() && job.allowedEdit;
+    const canPublish = this.canPublish();
+    const canClone = this.canClone();
+
+    // Ownership logic: is Creator or HR Manager (Provided by backend)
+    const canAccessEditPoints = job.allowedEditPoints;
+    const canAccessViewPoints = job.allowedViewPoints;
 
     // 1. Basic View/Edit
-    if (canView && status !== JobStatus.Draft) {
+    if (canView) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_VIEW',
         icon: 'hgi hgi-stroke hgi-view',
@@ -308,7 +355,7 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (canManage && (status === JobStatus.Draft || status === JobStatus.NeedUpdate)) {
+    if (canEdit && (status === JobStatus.Draft || status === JobStatus.NeedUpdate)) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_EDIT',
         icon: 'hgi hgi-stroke hgi-pencil-edit-02',
@@ -323,6 +370,7 @@ export class JobListComponent implements OnInit {
         icon: 'hgi hgi-stroke hgi-tick-02',
         command: () => this.approveJob(job.id)
       });
+
       actions.push({
         label: 'JOB_LIST_BUTTONS_REJECT',
         icon: 'hgi hgi-stroke hgi-cancel-01',
@@ -334,7 +382,7 @@ export class JobListComponent implements OnInit {
     }
 
     // 3. Points Management
-    if (status === JobStatus.PendingPointConfiguration && this.canManagePoints()) {
+    if (status === JobStatus.PendingPointConfiguration && this.canEditPoints() && canAccessEditPoints) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_CONFIG',
         icon: 'hgi hgi-stroke hgi-solar-system',
@@ -342,7 +390,7 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (status === JobStatus.PendingPointApproval && (this.canApprovePoints() || canApprove)) {
+    if (status === JobStatus.PendingPointApproval && (this.canApprovePoints())) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_REVIEW',
         icon: 'hgi hgi-stroke hgi-checkmark-badge-03',
@@ -350,7 +398,7 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (this.canViewPoints() && (status === JobStatus.Published || status === JobStatus.ReadyForAnnouncement)) {
+    if (this.canViewPoints() && (status === JobStatus.Published || status === JobStatus.ReadyForAnnouncement) && canAccessViewPoints) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_VIEW',
         icon: 'hgi hgi-stroke hgi-solar-system-01',
@@ -359,7 +407,7 @@ export class JobListComponent implements OnInit {
     }
 
     // 4. Lifecycle Actions
-    if (canApprove && status === JobStatus.ReadyForAnnouncement) {
+    if (canPublish && status === JobStatus.ReadyForAnnouncement) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_PUBLISH',
         icon: 'hgi hgi-stroke hgi-upload-01',
@@ -375,25 +423,18 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (canApprove && status === JobStatus.Published) {
-      actions.push({
-        label: 'JOB_LIST_BUTTONS_CLOSE',
-        icon: 'hgi hgi-stroke hgi-square-lock-01',
-        command: () => this.changeStatus(job.id, JobStatus.Closed, 'JOB_LIST_MESSAGES_JOB_CLOSED', {
-          title: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB',
-          description: 'JOB_LIST_CONFIRMATIONS_CLOSE_JOB_NOTE'
-        })
-      });
-    }
-
-    if (canManage && (status === JobStatus.Published || status === JobStatus.Draft || status === JobStatus.ReadyForAnnouncement)) {
+    if (canCancel &&
+      [
+        JobStatus.Active,
+        JobStatus.PendingPointApproval,
+        JobStatus.PendingPointConfiguration,
+        JobStatus.ReadyForAnnouncement,
+        JobStatus.Published,
+      ].includes(status)) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_CANCEL',
         icon: 'hgi hgi-stroke hgi-unavailable',
-        command: () => this.changeStatus(job.id, JobStatus.Cancelled, 'JOB_LIST_MESSAGES_JOB_CANCELLED', {
-          title: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB',
-          description: 'JOB_LIST_CONFIRMATIONS_CANCEL_JOB_NOTE'
-        })
+        command: () => this.onCancelJob(job)
       });
     }
 
@@ -409,7 +450,7 @@ export class JobListComponent implements OnInit {
     }
 
     // 5. Utility Actions
-    if (canManage && this.isStatusCopyable(status)) {
+    if (canClone) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_COPY',
         icon: 'hgi hgi-stroke hgi-copy-01',
@@ -417,7 +458,7 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (canManage && ![JobStatus.Published, JobStatus.PendingPointConfiguration, JobStatus.PendingPointApproval].includes(status)) {
+    if (canDelete && status === JobStatus.Draft) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_DELETE',
         icon: 'hgi hgi-stroke hgi-delete-02',
@@ -427,17 +468,6 @@ export class JobListComponent implements OnInit {
     }
 
     return actions;
-  }
-
-  private isStatusCopyable(status: JobStatus): boolean {
-    return [
-      JobStatus.PendingPointConfiguration,
-      JobStatus.PendingPointApproval,
-      JobStatus.ReadyForAnnouncement,
-      JobStatus.Published,
-      JobStatus.Closed,
-      JobStatus.Cancelled
-    ].includes(status);
   }
 
   showMoreActions(event: Event, actions: JobAction[], menu: any): void {

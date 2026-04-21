@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.JobTitles.Commands;
+using Application.Operation.Features.Admin.JobTitles.Commands;
 using Application.Operation.Features.Admin.JobTitles.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +14,7 @@ namespace Operations.API.Controllers.Admin;
 public class JobTitlesController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.JobTitles.View)]
     public async Task<IActionResult> List()
     {
         var result = await mediator.Send(new GetListJobTitlesQuery());
@@ -22,7 +22,7 @@ public class JobTitlesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.JobTitles.Manage)]
     public async Task<IActionResult> Create([FromBody] UpsertJobTitleRequest request)
     {
         var result = await mediator.Send(new InsertJobTitleCommand(
@@ -34,7 +34,7 @@ public class JobTitlesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.JobTitles.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpsertJobTitleRequest request)
     {
         var result = await mediator.Send(new UpdateJobTitleCommand(
@@ -47,7 +47,7 @@ public class JobTitlesController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [AuthorizePermission(PermissionKeys.Jobs.Manage)]
+    [AuthorizePermission(PermissionKeys.JobTitles.Manage)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteJobTitleCommand(id));

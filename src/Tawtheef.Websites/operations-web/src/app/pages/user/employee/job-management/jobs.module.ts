@@ -39,6 +39,7 @@ import { FaDirArrowDirective } from '../../../../shared/directives/dir-arrow.dir
 import { JobPointsConfigPageComponent } from './job-points/job-points-config-page/job-points-config-page.component';
 import { JobPointsMainElementsComponent } from './job-points/job-points-main-elements/job-points-main-elements.component';
 import { JobPointsTabComponent } from './job-points/job-points-points-tab/job-points-tab.component';
+import { JobPointsReviewPageComponent } from './job-points/job-points-review-page/job-points-review-page.component';
 import { TabsModule } from 'primeng/tabs';
 import { RemoteSelectComponent } from '../../../../shared/components/remote-select/remote-select';
 import { JobsReadyApplicationComponent } from './jobs-ready-application/jobs-ready-application.component';
@@ -80,6 +81,7 @@ import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-ca
     JobCandidateProfileDialogComponent,
     JobCandidatesNationalityFilterModalComponent,
     JobCandidatesNationalityBreakdownDialogComponent,
+    JobPointsReviewPageComponent,
     JobCandidatesSpecializationFilterModalComponent,
   ],
     imports: [
@@ -124,6 +126,7 @@ import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-ca
     ConfirmApplyModalComponent,
     JobPointsMainElementsComponent,
     JobPointsTabComponent,
+    JobPointsReviewPageComponent,
     ProgressBarComponent
   ],
   providers: [

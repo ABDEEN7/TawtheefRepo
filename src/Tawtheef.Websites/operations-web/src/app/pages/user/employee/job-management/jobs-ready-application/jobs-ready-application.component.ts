@@ -115,10 +115,10 @@ export class JobsReadyApplicationComponent {
   }
 
   canManageJobs(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Manage);
+    return this.authService.hasPermission(Permissions.Jobs.Edit);
   }
 
   canViewJobs(): boolean {
-    return this.authService.hasPermission([Permissions.Jobs.Manage, Permissions.Jobs.View]);
+    return this.authService.hasPermission([Permissions.Jobs.Edit, Permissions.Jobs.View]);
   }
 }

@@ -54,29 +54,7 @@
                   </p-tabs>
                 }
 
-                @if (!isReadOnlyMode && jobPoints?.id && isFinalApprovalAvailable && canApprovePoints()) {
-                  <div class="final-approval-section">
-                    <div class="approval-info">
-                      <i class="pi pi-check-circle mr-2"></i>
-                      {{ 'JOB_POINTS.APPROVE.READY_FOR_APPROVAL' | translate }}
-                    </div>
-                    <button
-                      type="button"
-                      class="approve-button primary-pill"
-                      (click)="approvePoints()"
-                      [disabled]="isLoading"
-                    >
-                      <i class="pi pi-check mr-2"></i>
-                      {{ 'JOB_POINTS.APPROVE.BUTTON' | translate }}
-                    </button>
-                  </div>
-                }
-                @if (jobPoints?.isApproved) {
-                  <div class="already-approved">
-                    <i class="pi pi-check-circle mr-2"></i>
-                    {{ 'JOB_POINTS.APPROVE.ALREADY_APPROVED' | translate }}
-                  </div>
-                }
+
           </div>
       </div>
 </section>

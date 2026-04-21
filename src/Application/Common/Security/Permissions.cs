@@ -345,13 +345,13 @@ public static class Permissions
                 "الوظائف - عرض",
                 30);
 
-        public static readonly PermissionDefinition Manage =
+        public static readonly PermissionDefinition Edit =
             Def(
-                PermissionKeys.Jobs.Manage,
+                PermissionKeys.Jobs.Edit,
                 nameof(PermissionKeys.Jobs),
                 PermissionAction.Manage,
-                "Jobs - Manage",
-                "الوظائف - إدارة",
+                "Jobs - Edit",
+                "الوظائف - تعديل",
                 31);
 
         public static readonly PermissionDefinition Approve =
@@ -371,19 +371,64 @@ public static class Permissions
                 "Jobs - Send Invitation",
                 "الوظائف - ارسال الدعوات",
                 32);
+
+        public static readonly PermissionDefinition Cancel =
+            Def(
+                PermissionKeys.Jobs.Cancel,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.Cancel,
+                "Jobs - Cancel",
+                "الوظائف - إلغاء",
+                33);
+
+        public static readonly PermissionDefinition Create =
+            Def(
+                PermissionKeys.Jobs.Create,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.Create,
+                "Jobs - Create",
+                "الوظائف - إنشاء",
+                34);
+
+        public static readonly PermissionDefinition Publish =
+            Def(
+                PermissionKeys.Jobs.Publish,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.Publish,
+                "Jobs - Publish",
+                "الوظائف - نشر",
+                35);
+
+        public static readonly PermissionDefinition Delete =
+            Def(
+                PermissionKeys.Jobs.Delete,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.Delete,
+                "Jobs - Delete",
+                "الوظائف - حذف",
+                36);
+
+        public static readonly PermissionDefinition Clone =
+            Def(
+                PermissionKeys.Jobs.Clone,
+                nameof(PermissionKeys.Jobs),
+                PermissionAction.Clone,
+                "Jobs - Clone",
+                "الوظائف - استنساخ",
+                37);
     }
 
     public static class JobsPoints
     {
-        public static readonly PermissionDefinition Manage =
+        public static readonly PermissionDefinition Edit =
             Def(
-                PermissionKeys.JobsPoints.Manage,
+                PermissionKeys.JobsPoints.Edit,
                 nameof(PermissionKeys.JobsPoints),
                 PermissionAction.Manage,
-                "Jobs Points - Manage",
-                "نقاط الوظائف - إدارة",
-                33);
-        
+                "Jobs - Points Edit",
+                "نقاط الوظائف - تعديل",
+                41);
+
         public static readonly PermissionDefinition View =
             Def(
                 PermissionKeys.JobsPoints.View,
@@ -392,7 +437,7 @@ public static class Permissions
                 "Jobs Points - View",
                 "نقاط الوظائف - عرض",
                 33);
-        
+
         public static readonly PermissionDefinition Approve =
             Def(
                 PermissionKeys.JobsPoints.Approve,
@@ -523,5 +568,69 @@ public static class Permissions
                 "Cities - Manage",
                 "المدن - إدارة",
                 93);
+    }
+
+    public static class JobTitles
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.JobTitles.View,
+                nameof(PermissionKeys.JobTitles),
+                PermissionAction.View,
+                "Job Titles - View",
+                "المسميات الوظيفية - عرض",
+                94);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.JobTitles.Manage,
+                nameof(PermissionKeys.JobTitles),
+                PermissionAction.Manage,
+                "Job Titles - Manage",
+                "المسميات الوظيفية - إدارة",
+                95);
+    }
+
+    public static class JobCategoryCandidateSettings
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.JobCategoryCandidateSettings.View,
+                nameof(PermissionKeys.JobCategoryCandidateSettings),
+                PermissionAction.View,
+                "Job Category Candidate Settings - View",
+                "إعدادات المرشحين حسب تصنيف الوظيفة - عرض",
+                96);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.JobCategoryCandidateSettings.Manage,
+                nameof(PermissionKeys.JobCategoryCandidateSettings),
+                PermissionAction.Manage,
+                "Job Category Candidate Settings - Manage",
+                "إعدادات المرشحين حسب تصنيف الوظيفة - إدارة",
+                97);
+
+    }
+
+    public static class JobPointsConfiguration
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.JobPointsConfiguration.View,
+                nameof(PermissionKeys.JobPointsConfiguration),
+                PermissionAction.View,
+                "Job Points Configuration - View",
+                "إعدادات نقاط الوظيفة - عرض",
+                98);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.JobPointsConfiguration.Manage,
+                nameof(PermissionKeys.JobPointsConfiguration),
+                PermissionAction.Manage,
+                "Job Points Configuration - Manage",
+                "إعدادات نقاط الوظيفة - إدارة",
+                99);
     }
 }

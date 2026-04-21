@@ -610,7 +610,7 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
   }
 
   canManageJobs(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Manage);
+    return this.authService.hasPermission(Permissions.Jobs.Edit);
   }
 
   isReviewComplete(): boolean {

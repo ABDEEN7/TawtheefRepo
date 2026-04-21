@@ -292,5 +292,6 @@
   "server-error.KAWADER_REGISTRATION_REQUIRED": "هذا المرشح قطري الجنسية ويجب أن يكون مسجلاً في منصة كوادر أولاً.",
   "server-error.MISSING_REQUIRED_FIELDS": "يرجى استكمال جميع الحقول المطلوبة.",
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "سجل مرشح مكتب سعادة الوزير غير موجود.",
-  "server-error.QID_EXPIRY_DATE_REQUIRED": "تاريخ انتهاء البطاقة الشخصية مطلوب للتحقق من الهوية."
+  "server-error.QID_EXPIRY_DATE_REQUIRED": "تاريخ انتهاء البطاقة الشخصية مطلوب للتحقق من الهوية.",
+  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "نقاط الوظيفة ليست في حالة انتظار الموافقة."
 }

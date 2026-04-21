@@ -408,6 +408,10 @@ export class JobService {
     );
   }
 
+  checkJobInvitations(jobId: GUID): Observable<boolean> {
+    return this.httpService.get<boolean>(this.endpoints.job.checkJobInvitations(jobId));
+  }
+
   submitForApproval(jobId: GUID, statusId: GUID): Observable<void> {
     return this.changeStatus(jobId, statusId);
   }

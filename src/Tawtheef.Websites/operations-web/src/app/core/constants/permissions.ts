@@ -64,13 +64,18 @@ export const Permissions = {
   },
   Jobs: {
     View: 'jobs.view',
-    Manage: 'jobs.manage',
+    Edit: 'jobs.edit',
     Approve: 'jobs.approve',
     SendInvitation: 'jobs.send-invitation',
+    Cancel: 'jobs.cancel',
+    Create: 'jobs.create',
+    Publish: 'jobs.publish',
+    Delete: 'jobs.delete',
+    Clone: 'jobs.clone',
   },
   JobPoints: {
     View: 'jobs.points.view',
-    Manage: 'jobs.points.manage',
+    Edit: 'jobs.points.edit',
     Approve: 'jobs.points.approve',
   },
   JobInvitations: {
@@ -92,5 +97,17 @@ export const Permissions = {
   Cities: {
     View: 'cities.view',
     Manage: 'cities.manage',
+  },
+  JobTitles: {
+    View: 'job-titles.view',
+    Manage: 'job-titles.manage',
+  },
+  JobCategoryCandidateSettings: {
+    View: 'job-category-candidate-settings.view',
+    Manage: 'job-category-candidate-settings.manage',
+  },
+  JobPointsConfiguration: {
+    View: 'job-points-configuration.view',
+    Manage: 'job-points-configuration.manage',
   }
 } as const;

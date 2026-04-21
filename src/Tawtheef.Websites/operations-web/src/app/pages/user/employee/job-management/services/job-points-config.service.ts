@@ -14,7 +14,7 @@ export class JobPointsConfigService {
   private endpoints = inject(EndpointsService);
 
   saveJobPoints(payload: any): Observable<GUID> {
-    return this.httpService.post<GUID>(this.endpoints.job.jobPoints, payload, {
+    return this.httpService.post<GUID>(this.endpoints.job.jobPoints, payload, {}, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
@@ -31,5 +31,11 @@ export class JobPointsConfigService {
 
   approveJobPoints(jobId: GUID): Observable<boolean> {
     return this.httpService.post<boolean>(this.endpoints.job.approveJobPoints(jobId), {});
+  }
+
+  rejectJobPoints(jobId: GUID, reason: string): Observable<boolean> {
+    return this.httpService.post<boolean>(this.endpoints.job.rejectJobPoints(jobId), JSON.stringify(reason), {}, {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

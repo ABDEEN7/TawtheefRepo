@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+﻿using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Mapster;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;

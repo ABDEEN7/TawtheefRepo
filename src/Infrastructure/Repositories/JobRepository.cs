@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.JobManagement.Job.Extensions;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.Extensions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -36,7 +36,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.CreatedBy)
             .Include(j => j.Management)
             .Include(j => j.WorkLocation)
-            .WhereIf(!isHRManager && currentUserId is not null, j => j.CreatedById == currentUserId);
+            .Include(j => j.JobPoints);
 
         var filteredQuery = baseQuery.ApplyJobFilter(filter);
 

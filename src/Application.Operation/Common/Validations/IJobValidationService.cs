@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using FluentValidation.Results;
 using Tawtheef.Domain.Entities.Recruitment;
 

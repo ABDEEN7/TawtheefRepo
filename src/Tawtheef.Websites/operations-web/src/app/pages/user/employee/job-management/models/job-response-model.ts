@@ -51,4 +51,8 @@ export interface JobResponse {
   responsibilities: JobResponsibilityResponse[];
   requiredAttachments: JobRequiredAttachmentResponse[];
   tabReviewNotes?: JobTabReviewNoteResponse[];
+  allowedEdit: boolean;
+  allowedEditPoints: boolean;
+  allowedViewPoints: boolean;
+  createdById?: GUID;
 }

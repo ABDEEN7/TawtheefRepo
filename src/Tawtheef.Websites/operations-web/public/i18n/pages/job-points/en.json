@@ -14,6 +14,7 @@
   "JOB_POINTS.MAIN_ELEMENTS.PREVIOUS": "Previous",
   "JOB_POINTS.MAIN_ELEMENTS.NEXT": "Next",
   "JOB_POINTS.MAIN_POINTS_SETTINGS": "Points Settings",
+  "JOB_POINTS.REVIEW_POINTS_SETTINGS": "Review Points Settings",
   "JOB_POINTS.MAIN_ELEMENTS.APPLICANT_CATEGORY_POINTS": "Applicant Category Points",
   "JOB_POINTS.MAIN_ELEMENTS.LANGUAGES": "Language Points",
   "JOB_POINTS.MAIN_ELEMENTS.SKILLS": "Skill Points",
@@ -65,5 +66,14 @@
   "JOB_POINTS.APPROVE.CONFIRMATION_DESCRIPTION": "Are you sure you want to approve the job points? This action cannot be undone.",
   "JOB_POINTS.APPROVE.SUCCESS": "Points approved successfully",
 
-  "JOB_POINTS.SAVE.SUCCESS": "Points saved successfully"
+  "JOB_POINTS.SAVE.SUCCESS": "Points saved successfully",
+  "JOB_POINTS.REJECT.BUTTON": "Return for Updates",
+  "JOB_POINTS.REJECT.CONFIRMATION_TITLE": "Confirm Return",
+  "JOB_POINTS.REJECT.CONFIRMATION_DESCRIPTION": "Are you sure you want to return these points for updates?",
+  "JOB_POINTS.REJECT.REASON_LABEL": "Reason for Return",
+  "JOB_POINTS.REJECT.REASON_PLACEHOLDER": "Please enter the reason here...",
+  "JOB_POINTS.REJECT.REASON_REQUIRED": "Reason for return is required",
+  "JOB_POINTS.REJECT.SUCCESS": "Points returned for updates successfully",
+  "common.confirm": "Confirm",
+  "common.cancel": "Cancel"
 }

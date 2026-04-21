@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.JobManagement.Job.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
@@ -56,7 +56,20 @@ public class JobProfile : IRegister
             .Map(dest => dest.Responsibilities, src => src.JobResponsibilities)
             .Map(dest => dest.RequiredAttachments, src => src.JobRequiredAttachments)
             .Map(dest => dest.TabReviewNotes, src => src.TabReviewNotes)
-            .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment);
+            .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment)
+            .Map(dest => dest.CreatedByName, src => src.CreatedBy != null ? src.CreatedBy.FullNameEn : string.Empty)
+            .Map(dest => dest.LastActionDate, src => src.UpdatedDate ?? src.CreatedDate)
+            .Map(dest => dest.AllowedEdit, src => 
+                (((bool)MapContext.Current!.Parameters.GetValueOrDefault("IsHrManager", false)) 
+                 || src.CreatedById == ((Guid)MapContext.Current!.Parameters.GetValueOrDefault("CurrentUserId", Guid.Empty))))
+            .Map(dest => dest.AllowedEditPoints, src => 
+                (((bool)MapContext.Current!.Parameters.GetValueOrDefault("IsHrManager", false)) 
+                 || (src.JobPoints == null 
+                     || src.JobPoints.CreatedById == ((Guid)MapContext.Current!.Parameters.GetValueOrDefault("CurrentUserId", Guid.Empty)))))
+            .Map(dest => dest.AllowedViewPoints, src => 
+                (((bool)MapContext.Current!.Parameters.GetValueOrDefault("IsHrManager", false)) 
+                 || (src.JobPoints == null 
+                     || src.JobPoints.CreatedById == ((Guid)MapContext.Current!.Parameters.GetValueOrDefault("CurrentUserId", Guid.Empty)))));
         
         config.NewConfig<Job, JobCopyTemplateDto>()
             .Map(dest => dest.JobTitleAr, src => src.JobTitle != null ? src.JobTitle.JobNameAr : string.Empty)

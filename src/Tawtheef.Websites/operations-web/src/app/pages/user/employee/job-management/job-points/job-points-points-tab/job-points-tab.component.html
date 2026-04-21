@@ -10,26 +10,17 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label | translate }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [max]="maxValue('applicantCategory')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [max]="maxValue('applicantCategory')"
+              [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total':
               applicantCategorySum() === (mainForm.get('applicantCategory')?.value ?? 0),
             'invalid-total':
               applicantCategorySum() !== (mainForm.get('applicantCategory')?.value ?? 0)
-          }"
-        >
+          }">
           {{ applicantCategorySum() }}/{{ mainForm.get('applicantCategory')?.value ?? 0 }}
         </div>
       </section>
@@ -43,24 +34,15 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [max]="maxValue('education')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [max]="maxValue('education')" [showButtons]="true"
+              class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': educationSum() === (mainForm.get('education')?.value ?? 0),
             'invalid-total': educationSum() !== (mainForm.get('education')?.value ?? 0)
-          }"
-        >
+          }">
           {{ educationSum() }}/{{ mainForm.get('education')?.value ?? 0 }}
         </div>
       </section>
@@ -74,24 +56,15 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label | translate }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [max]="maxValue('training')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [max]="maxValue('training')" [showButtons]="true"
+              class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': trainingSum() === (mainForm.get('training')?.value ?? 0),
             'invalid-total': trainingSum() !== (mainForm.get('training')?.value ?? 0)
-          }"
-        >
+          }">
           {{ trainingSum() }}/{{ mainForm.get('training')?.value ?? 0 }}
         </div>
       </section>
@@ -105,13 +78,8 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label | translate }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [showButtons]="true" class="points-input"
+              [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
@@ -120,21 +88,13 @@
             <span class="points-chip">
               {{ 'JOB_POINTS.MAIN_ELEMENTS.ESTIMATED_TOTAL_EX' | translate }}
             </span>
-            <input
-              type="text"
-              [value]="experienceTotal"
-              readonly
-              class="form-control readonly-input"
-            />
+            <input type="text" [value]="experienceTotal" readonly class="form-control readonly-input" />
           </div>
         </div>
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': experienceTotal === (mainForm.get('experience')?.value ?? 0),
             'invalid-total': experienceTotal !== (mainForm.get('experience')?.value ?? 0)
-          }"
-        >
+          }">
           {{ experienceTotal }}/{{ mainForm.get('experience')?.value ?? 0 }}
         </div>
       </section>
@@ -148,24 +108,15 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [max]="maxValue('skills')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [max]="maxValue('skills')" [showButtons]="true"
+              class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': skillsSum() === (mainForm.get('skills')?.value ?? 0),
             'invalid-total': skillsSum() !== (mainForm.get('skills')?.value ?? 0)
-          }"
-        >
+          }">
           {{ skillsSum() }}/{{ mainForm.get('skills')?.value ?? 0 }}
         </div>
       </section>
@@ -179,24 +130,15 @@
         <div class="row gx-0">
           <div class="points-control points-control--details">
             <span class="points-chip">{{ item.label | translate }}</span>
-            <p-inputNumber
-              [formControlName]="item.key"
-              [min]="0"
-              [max]="maxValue('certificates')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber [formControlName]="item.key" [min]="0" [max]="maxValue('certificates')" [showButtons]="true"
+              class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
         }
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': certificatesSum() === (mainForm.get('certificates')?.value ?? 0),
             'invalid-total': certificatesSum() !== (mainForm.get('certificates')?.value ?? 0)
-          }"
-        >
+          }">
           {{ certificatesSum() }}/{{ mainForm.get('certificates')?.value ?? 0 }}
         </div>
       </section>
@@ -217,61 +159,40 @@
               <span class="points-chip points-chip--max">
                 {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
               </span>
-              <p-inputNumber
-                formControlName="max"
-                [min]="0"
-                [max]="maxValue('languages')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="excellent"
-                [min]="0"
-                [max]="getAbilityMax('speaking')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('speaking')"
+                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="veryGood"
-                [min]="0"
-                [max]="getAbilityMax('speaking')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber
-                formControlName="good"
-                [min]="0"
-                [max]="getAbilityMax('speaking')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('speaking')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
-            <div><div
-              class="ability-footer"
-              [ngClass]="{
+            <div>
+              <div class="ability-footer" [ngClass]="{
                 'valid-total': isAbilityValid('speaking'),
                 'invalid-total': !isAbilityValid('speaking')
-              }"
-            >
-              {{ getAbilitySum('speaking') }}/{{ getAbilityMax('speaking') }}
-            </div></div>
+              }">
+                {{ getAbilitySum('speaking') }}/{{ getAbilityMax('speaking') }}
+              </div>
+            </div>
           </div>
 
           <div class="language-column" formGroupName="reading">
@@ -283,61 +204,40 @@
               <span class="points-chip points-chip--max">
                 {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
               </span>
-              <p-inputNumber
-                formControlName="max"
-                [min]="0"
-                [max]="maxValue('languages')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="excellent"
-                [min]="0"
-                [max]="getAbilityMax('reading')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="veryGood"
-                [min]="0"
-                [max]="getAbilityMax('reading')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber
-                formControlName="good"
-                [min]="0"
-                [max]="getAbilityMax('reading')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('reading')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
-            <div><div
-              class="ability-footer"
-              [ngClass]="{
+            <div>
+              <div class="ability-footer" [ngClass]="{
                 'valid-total': isAbilityValid('reading'),
                 'invalid-total': !isAbilityValid('reading')
-              }"
-            >
-              {{ getAbilitySum('reading') }}/{{ getAbilityMax('reading') }}
-            </div></div>
+              }">
+                {{ getAbilitySum('reading') }}/{{ getAbilityMax('reading') }}
+              </div>
+            </div>
           </div>
 
           <div class="language-column" formGroupName="conversation">
@@ -349,61 +249,40 @@
               <span class="points-chip points-chip--max">
                 {{ 'JOB_POINTS.LANGUAGE_ABILITY.MAX_POINTS' | translate }}
               </span>
-              <p-inputNumber
-                formControlName="max"
-                [min]="0"
-                [max]="maxValue('languages')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="max" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.EXCELLENT' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="excellent"
-                [min]="0"
-                [max]="getAbilityMax('conversation')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="excellent" [min]="0" [max]="getAbilityMax('conversation')"
+                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{
                 'JOB_POINTS.LANGUAGE_LEVEL.VERY_GOOD' | translate
-              }}</span>
-              <p-inputNumber
-                formControlName="veryGood"
-                [min]="0"
-                [max]="getAbilityMax('conversation')"
-                [showButtons]="true"
-                class="points-input"
-              />
+                }}</span>
+              <p-inputNumber formControlName="veryGood" [min]="0" [max]="getAbilityMax('conversation')"
+                [showButtons]="true" class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
             <div class="points-control points-control--details">
               <span class="points-chip">{{ 'JOB_POINTS.LANGUAGE_LEVEL.GOOD' | translate }}</span>
-              <p-inputNumber
-                formControlName="good"
-                [min]="0"
-                [max]="getAbilityMax('conversation')"
-                [showButtons]="true"
-                class="points-input"
-              />
+              <p-inputNumber formControlName="good" [min]="0" [max]="getAbilityMax('conversation')" [showButtons]="true"
+                class="points-input" [disabled]="isReadOnlyMode" />
             </div>
 
-           <div> <div
-              class="ability-footer"
-              [ngClass]="{
+            <div>
+              <div class="ability-footer" [ngClass]="{
                 'valid-total': isAbilityValid('conversation'),
                 'invalid-total': !isAbilityValid('conversation')
-              }"
-            >
-              {{ getAbilitySum('conversation') }}/{{ getAbilityMax('conversation') }}
-            </div></div>
+              }">
+                {{ getAbilitySum('conversation') }}/{{ getAbilityMax('conversation') }}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -412,43 +291,30 @@
             <span class="points-chip">
               {{ 'JOB_POINTS.LANGUAGE_LEVEL.NATIVE' | translate }}
             </span>
-            <p-inputNumber
-              formControlName="native"
-              [min]="0"
-              [max]="maxValue('languages')"
-              [showButtons]="true"
-              class="points-input"
-              [disabled]="isReadOnlyMode"
-            />
+            <p-inputNumber formControlName="native" [min]="0" [max]="maxValue('languages')" [showButtons]="true"
+              class="points-input" [disabled]="isReadOnlyMode" />
           </div>
         </div>
 
-        <div
-          class="section-footer"
-          [ngClass]="{
+        <div class="section-footer" [ngClass]="{
             'valid-total': languagesSum() === (mainForm.get('languages')?.value ?? 0),
             'invalid-total': languagesSum() !== (mainForm.get('languages')?.value ?? 0)
-          }"
-        >
+          }">
           {{ languagesSum() }}/{{ mainForm.get('languages')?.value ?? 0 }}
         </div>
       </section>
     </div>
-    <div class="bottom-nav">
+    <div class="bottom-nav" *ngIf="!isReadOnlyMode">
       <button type="button" class="btn btn-link d-flex align-items-center gap-2" (click)="goPrevious.emit()">
-         <i class="hgi-stroke hgi-arrow-right-01" faDirArrow="start"></i>
+        <i class="hgi-stroke hgi-arrow-right-01" faDirArrow="start"></i>
         {{ 'JOB_POINTS.MAIN_ELEMENTS.PREVIOUS' | translate }}
       </button>
       @if(!job?.jobPoints?.isApproved){
-      <button
-        type="button"
-        class="btn btn-primary  d-flex align-items-center gap-2"
-        [disabled]="!areAllCategoriesValid() || isReadOnlyMode"
-        (click)="saveDetails()"
-      ><i class="hgi hgi-stroke hgi-floppy-disk"></i>
-        {{ 'JOB_POINTS.POINTS_TAB.SAVE_POINTS' | translate }} 
+      <button type="button" class="btn btn-primary  d-flex align-items-center gap-2"
+        [disabled]="!areAllCategoriesValid()" (click)="saveDetails()"><i class="hgi hgi-stroke hgi-floppy-disk"></i>
+        {{ 'JOB_POINTS.POINTS_TAB.SAVE_POINTS' | translate }}
       </button>
-    }
+      }
     </div>
   </form>
 </div>

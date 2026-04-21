@@ -11,6 +11,8 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { routes } from '../../../../routes/routes';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-job-points-configuration',
@@ -33,6 +35,10 @@ export class JobPointsConfigurationComponent implements OnInit {
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private authService = inject(AuthService);
+  protected readonly Permissions = Permissions;
+
+  readonly canManage = computed(() => this.authService.hasPermission(Permissions.JobPointsConfiguration.Manage));
 
   readonly currentLang = signal<Lang>(this.language.get());
   readonly isRtl = computed(() => this.currentLang() === 'ar');
@@ -94,6 +100,9 @@ export class JobPointsConfigurationComponent implements OnInit {
     this.service.getConfiguration().subscribe({
       next: configuration => {
         this.patchForm(configuration);
+        if (!this.canManage()) {
+          this.form.disable();
+        }
       },
       error: () => {
         this.notification.error(this.translate.instant('common.loadFailed'));

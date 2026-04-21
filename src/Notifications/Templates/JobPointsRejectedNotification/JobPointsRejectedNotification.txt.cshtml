@@ -1,0 +1,17 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobPointsRejectedNotification.JobPointsRejectedNotificationModel>
+Job Points Returned for Updates
+
+Dear Colleague,
+
+The job points for the position @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") have been reviewed and returned for updates.
+
+Reason:
+@Model.Model.Reason
+
+Please review the points and resubmit for approval.
+
+Platform Link: @Model.Branding.WebsiteUrl
+
+Best Regards,
+@Model.Branding.ProductName Team
+Support: @Model.Branding.SupportEmail

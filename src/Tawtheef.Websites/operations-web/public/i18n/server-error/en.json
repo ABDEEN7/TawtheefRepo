@@ -292,5 +292,6 @@
   "server-error.KAWADER_REGISTRATION_REQUIRED": "This candidate is a Qatari national and must be registered on the Kawader platform first.",
   "server-error.MISSING_REQUIRED_FIELDS": "Please complete all required fields.",
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "Minister Office candidate record not found.",
-  "server-error.QID_EXPIRY_DATE_REQUIRED": "QID expiry date is required for identity validation."
+  "server-error.QID_EXPIRY_DATE_REQUIRED": "QID expiry date is required for identity validation.",
+  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "Job points are not pending approval."
 }
