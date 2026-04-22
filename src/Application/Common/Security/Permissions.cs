@@ -425,8 +425,8 @@ public static class Permissions
                 PermissionKeys.JobsPoints.Edit,
                 nameof(PermissionKeys.JobsPoints),
                 PermissionAction.Manage,
-                "Jobs - Points Edit",
-                "نقاط الوظائف - تعديل",
+                "Jobs Points - Manage",
+                "نقاط الوظائف - إدارة",
                 41);
 
         public static readonly PermissionDefinition View =
