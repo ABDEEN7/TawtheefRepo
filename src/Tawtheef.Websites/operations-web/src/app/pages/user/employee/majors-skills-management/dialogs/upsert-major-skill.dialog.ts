@@ -58,7 +58,7 @@ type Vm = {
 
         <div class="row">
           <div class="col-12 col-md-6 mb-3">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_PARENT_MAJOR' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_PARENT_MAJOR' | translate }} <span class="text-danger">*</span></label>
 
             <app-remote-select
               [searchUrl]="selectCfg.parentMajor.searchUrl"
@@ -99,7 +99,7 @@ type Vm = {
           </div>
 
           <div class="col-12 mb-4">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL' | translate }} <span class="text-danger">*</span></label>
 
             <app-remote-select
               [searchUrl]="selectCfg.skill.searchUrl"

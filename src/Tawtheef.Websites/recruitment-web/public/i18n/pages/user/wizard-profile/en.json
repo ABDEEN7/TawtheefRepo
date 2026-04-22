@@ -166,6 +166,7 @@
   "wizard.degrees.choiceStudySystem": "Select study system",
   "wizard.degrees.choiceGrade": "Select grade",
   "wizard.degrees.choiceDegreeFile": "Select degree certificate file",
+  "wizard.degrees.majorNote": "Note: If you did not find your major or minor, select \"Other\".",
   "wizard.degrees.add": "Add qualification",
   "wizard.degrees.edit": "Edit qualification",
   "wizard.degrees.deleteLinkedError": "Cannot delete this degree because it is linked to an experience.",

@@ -44,7 +44,7 @@ export interface UpsertSkillDialogData {
 
         <div class="row">
           <div class="col-md-6">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_EN' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <input pInputText class="w-100"
                    name="nameEn"
                    [(ngModel)]="vm.nameEn"
@@ -56,7 +56,7 @@ export interface UpsertSkillDialogData {
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_AR' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <input pInputText class="w-100"
                    name="nameAr"
                    [(ngModel)]="vm.nameAr"
@@ -70,7 +70,7 @@ export interface UpsertSkillDialogData {
 
         <div class="row">
              <div class="col-12">
-                  <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL_TYPE' | translate }}</label>
+                  <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_SKILL_TYPE' | translate }} <span class="text-danger">*</span></label>
                   <p-select
                     class="w-100"
                     [options]="skillTypes"
@@ -183,8 +183,8 @@ export class UpsertSkillDialogComponent {
       nameEn: this.vm.nameEn.trim(),
       nameAr: this.vm.nameAr.trim(),
       skillTypeId: this.vm.skillTypeId,
-      descriptionEn: this.vm.descriptionEn?.trim() || null,
-      descriptionAr: this.vm.descriptionAr?.trim() || null,
+      descriptionEn: this.vm.descriptionEn?.trim() || '',
+      descriptionAr: this.vm.descriptionAr?.trim() || '',
       displayOrder: this.vm.displayOrder ?? undefined,
       isActive: this.vm.isActive,
       isGeneral: this.vm.isGeneral
