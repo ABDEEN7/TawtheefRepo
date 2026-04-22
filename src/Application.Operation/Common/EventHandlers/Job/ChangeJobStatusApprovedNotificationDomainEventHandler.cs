@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Job;
 using Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification;
@@ -15,17 +16,20 @@ public sealed class ChangeJobStatusApprovedNotificationDomainEventHandler(
     IUnitOfWork unitOfWork)
     : INotificationHandler<ChangeJobStatusApprovedNotificationDomainEvent>
 {
-    public async Task Handle(ChangeJobStatusApprovedNotificationDomainEvent notification, CancellationToken ct)
+    public async Task Handle(ChangeJobStatusApprovedNotificationDomainEvent eventData, CancellationToken ct)
     {
-        var jobTitle = localizationService.GetLocalizedValue(notification.Job.JobTitle?.JobNameAr ?? string.Empty, notification.Job.JobTitle?.JobNameEn ?? string.Empty);
+        var jobTitle = localizationService.GetLocalizedValue(eventData.Job.JobTitle?.JobNameAr ?? string.Empty, eventData.Job.JobTitle?.JobNameEn ?? string.Empty);
         var payload = JsonSerializer.Serialize(new ChangeJobStatusApprovedNotificationModel(jobTitle));
-        await JobNotificationEmailHelper.QueueForEmployeeAsync(
-            unitOfWork,
-            userManager,
-            notification.Job.CreatedById.ToString()!, 
-            ChangeJobStatusApprovedNotification.TemplateKey,
-            payload,
-            ct);
+
+        var user = await userManager.FindByIdAsync(eventData.Job.CreatedById.ToString()!);
+        if (user == null || string.IsNullOrWhiteSpace(user.Email))
+            return;
+
+        var repo = unitOfWork.GetEntityRepository<Notification>();
+        var notification = Notification.Create(NotificationChannel.InApp, ChangeJobStatusApprovedNotification.TemplateKey, user.Id, 
+            user.Email, null, null, null, payload, null, 3, user.PreferredLanguage);
+        await repo.AddAsync(notification, ct);
+        await unitOfWork.SaveChangesAsync(ct);
     }
 }
 
