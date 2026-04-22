@@ -256,7 +256,7 @@ export class JobWizardComponent implements AfterViewInit, OnInit, OnDestroy {
         next: ({ job, review }) => {
           if (review) {
             job.tabReviewNotes = review.tabNoteReviews;
-            job.ReviewAttachments = review.reviewAttachments;
+            job.reviewAttachments = review.reviewAttachments;
           }
 
           this.hasBasicData = true;

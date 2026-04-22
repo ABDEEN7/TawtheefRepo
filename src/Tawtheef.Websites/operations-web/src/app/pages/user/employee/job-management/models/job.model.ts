@@ -42,7 +42,7 @@ export interface Job {
   skills?: JobSkill[];
   requiredAttachments?: JobRequiredAttachment[];
   tabReviewNotes?: JobTabReviewNoteResponse[];
-  ReviewAttachment?: JobReviewAttachmentResponse;
+  reviewAttachments?: JobReviewAttachmentResponse[];
   jobSpecializations?: JobSpecialization[];
   majorName?: string;
   subMajorName?: string;

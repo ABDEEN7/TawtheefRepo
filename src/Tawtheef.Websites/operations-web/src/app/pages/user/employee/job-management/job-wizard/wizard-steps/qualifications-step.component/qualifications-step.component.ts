@@ -185,7 +185,7 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
       });
   }
 
-  private updateNeedsMajor(degrees: any[]): void {
+  private updateNeedsMajor(degrees: any[] | null): void {
     const needs = !degrees || degrees.length === 0 ||
       degrees.some(d => {
         const degreeId = d.degreeId || d;

@@ -13,6 +13,7 @@ public class JobProfile : IRegister
     {
         config.NewConfig<JobDegree, JobDegreeResponseDto>();
         config.NewConfig<JobSkill, JobSkillResponseDto>();
+        config.NewConfig<JobSpecialization, JobSpecializationResponseDto>();
         config.NewConfig<JobReviewAttachment, FileRefDto>()
             .Map(dest => dest.ResourceId, src => src.AttachmentId)
             .Map(dest => dest.FileName, src => src.FileName)
@@ -45,7 +46,8 @@ public class JobProfile : IRegister
             // Localized nested collections (manual per-item mapping but still inside Mapster)
             .Map(d => d.Conditions, s => s.JobConditions)
             .Map(d => d.Responsibilities, s => s.JobResponsibilities)
-            .Map(d => d.RequiredAttachments, s => s.JobRequiredAttachments);
+            .Map(d => d.RequiredAttachments, s => s.JobRequiredAttachments)
+            .Map(d => d.JobSpecializations, s => s.JobSpecializations);
 
         config.NewConfig<JobCondition, CandidateJobConditionDto>()
             .Map(d => d.Text, s => Localize(s.TextAr, s.TextEn));

@@ -88,7 +88,7 @@ export class JobDetails implements OnInit {
     const tabs = [
       { id: JobTabType.Overview, title: 'JOB_DETAILS.OVERVIEW', icon: 'fa-file-alt', visible: !!job.overView },
       { id: JobTabType.Responsibilities, title: 'JOB_DETAILS.RESPONSIBILITIES', icon: 'fa-tasks', visible: !!job.responsibilities?.length },
-      { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap', visible: !!(job.degrees?.length || job.qualificationDescription) },
+      { id: JobTabType.Qualifications, title: 'JOB_DETAILS.QUALIFICATIONS', icon: 'fa-graduation-cap', visible: !!(job.degrees?.length || job.qualificationDescription || job.jobSpecializations?.length) },
       { id: JobTabType.Conditions, title: 'JOB_DETAILS.CONDITIONS', icon: 'fa-clipboard-list', visible: !!job.conditions?.length },
       { id: JobTabType.Skills, title: 'JOB_DETAILS.SKILLS', icon: 'fa-tools', visible: !!job.skills?.some(s => s.showToApplicants) },
       { id: JobTabType.Benefits, title: 'JOB_DETAILS.BENEFITS', icon: 'fa-gift', visible: !!job.benefits },
