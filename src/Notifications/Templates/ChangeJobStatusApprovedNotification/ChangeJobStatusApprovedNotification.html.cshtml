@@ -49,7 +49,7 @@
       <h1 class="title">Your job posting has been approved</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been approved.
+        The job posting @Html.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been approved.
       </p>
       <p class="text">
         You may proceed with publishing the role or taking the next steps in @product.
@@ -62,7 +62,6 @@
     </div>
     <div class="footer">
       <p class="muted">Regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

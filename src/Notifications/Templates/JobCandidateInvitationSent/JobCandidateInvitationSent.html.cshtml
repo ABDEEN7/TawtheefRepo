@@ -49,7 +49,7 @@
       <h1 class="title">You are invited to apply</h1>
       <p class="text">Dear Candidate,</p>
       <p class="text">
-        You have been invited to apply for @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") on @product.
+        You have been invited to apply for @Html.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") on @product.
       </p>
       <p class="text">
         Please sign in to review the opportunity and submit your application.
@@ -62,7 +62,6 @@
     </div>
     <div class="footer">
       <p class="muted">Best regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

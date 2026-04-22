@@ -89,8 +89,15 @@ internal static class Commands
                     if (action is not ("send" or "preview" or "dry"))
                         action = "dry";
 
-                    foreach (var t in visible)
-                        Flows.SendFlow(t, action, state, renderer, transport).GetAwaiter().GetResult();
+                    if (action == "send")
+                    {
+                        Flows.SendBatchFlow(visible, state, renderer, transport).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        foreach (var t in visible)
+                            Flows.SendFlow(t, action, state, renderer, transport).GetAwaiter().GetResult();
+                    }
 
                     return true;
                 }

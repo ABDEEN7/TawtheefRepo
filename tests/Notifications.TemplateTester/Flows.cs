@@ -87,6 +87,69 @@ internal static class Flows
         Console.WriteLine();
     }
 
+    public static async Task SendBatchFlow(
+        List<TemplateEntry> templates,
+        TesterState state,
+        IEmailTemplateRenderer renderer,
+        IEmailTransport transport)
+    {
+        if (templates.Count == 0)
+        {
+            Console.WriteLine("No templates in the current view to send.");
+            return;
+        }
+
+        Console.WriteLine($"Batch Send: {templates.Count} templates");
+        var profile = GetActiveProfile(state);
+
+        var language = Prompting.Prompt("Language (ar/en)", "ar", required: true).ToLowerInvariant();
+        if (language is not ("ar" or "en")) language = "ar";
+
+        var to = Prompting.PromptEmailList("To (comma-separated)", profile?.To, required: true);
+        var cc = Prompting.PromptEmailList("CC (comma-separated)", profile?.Cc, required: false);
+
+        Console.WriteLine();
+        Console.WriteLine("Summary:");
+        Console.WriteLine($"  Language: {language}");
+        Console.WriteLine($"  To      : {string.Join(", ", to)}");
+        Console.WriteLine($"  Cc      : {(cc.Count == 0 ? "-" : string.Join(", ", cc))}");
+        Console.WriteLine($"  Count   : {templates.Count}");
+        Console.WriteLine();
+
+        var confirm = Prompting.Prompt($"Send all {templates.Count} templates now? (y/n)", "n", required: true).ToLowerInvariant();
+        if (confirm is not ("y" or "yes"))
+        {
+            Console.WriteLine("Cancelled.");
+            return;
+        }
+
+        foreach (var t in templates)
+        {
+            var key = t.Attribute.TemplateKey;
+            Console.Write($"Sending {key}... ");
+            try
+            {
+                var model = ModelBuilder.BuildModelFast(key, t.Type, state);
+                var html = await renderer.RenderHtmlAsync(key, (dynamic)model, language);
+                var text = await renderer.RenderTextAsync(key, (dynamic)model, language);
+
+                var subjectBase = language == "ar" ? t.Attribute.SubjectAr : t.Attribute.SubjectEn;
+                var subject = $"{(profile?.SubjectPrefix ?? "")}{subjectBase}";
+
+                var envelope = new EmailEnvelope(to, cc, subject, html, text);
+                await transport.SendAsync(envelope);
+                Console.WriteLine("OK");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FAILED: {ex.Message}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Batch send completed.");
+    }
+
     private static (string HtmlPath, string TextPath) SavePreview(string templateKey, string html, string text, string language)
     {
         Directory.CreateDirectory("out");

@@ -34,7 +34,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="direction: rtl;">
     <div class="brand-bar"></div>
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
@@ -45,7 +45,7 @@
         <br/>
       }
       <p class="badge">مطلوب إجراء</p>
-      <h1 class="title">مطلوب اهتمام لطلبك الوظيفي</h1>
+      <h1 class="title">مطلوب تعديل لطلبك الوظيفي</h1>
       <p class="text">عزيزي المرشح،</p>
       <p class="text">
         تمت إعادة أحد المرفقات التي قدمتها لطلبك الوظيفي من أجل التصحيح.
@@ -67,7 +67,6 @@
     </div>
     <div class="footer">
       <p class="muted">مع تحيات،<br>فريق عمل @product</p>
-      <p class="muted">للدعم الفني: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
     </div>
   </div>

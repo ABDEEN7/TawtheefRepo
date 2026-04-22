@@ -49,7 +49,7 @@
       <h1 class="title">Job status change requires review</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        A request has been submitted to change the status of @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
+        A request has been submitted to change the status of @Html.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
       </p>
       <p class="text">
         Please sign in to @product to review the request and proceed with the appropriate action.
@@ -62,7 +62,6 @@
     </div>
     <div class="footer">
       <p class="muted">Regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

@@ -219,7 +219,15 @@ public class JobController(
     }
 
     [HttpPut("{id:guid}/status")]
-    [AuthorizePermission(PermissionKeys.Jobs.Approve)]
+    [AuthorizePermission(
+        PermissionKeys.Jobs.Edit, 
+        PermissionKeys.Jobs.Delete,
+        PermissionKeys.Jobs.Approve,
+        PermissionKeys.Jobs.Cancel,
+        PermissionKeys.JobsPoints.Edit,
+        PermissionKeys.JobsPoints.Approve,
+        PermissionKeys.Jobs.Publish,
+        PermissionKeys.Jobs.Clone)]
     public async Task<IActionResult> ChangeJobStatus(
     Guid id,
     [FromQuery] Guid statusId)

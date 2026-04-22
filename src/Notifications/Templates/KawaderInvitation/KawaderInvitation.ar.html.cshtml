@@ -10,7 +10,7 @@
     var website = b.WebsiteUrl;
     var logo = b.LogoUrl;
     
-    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "عزيزي المستخدم" : m.FullName;
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "المستخدم" : m.FullName;
 }
 
 <!DOCTYPE html>
@@ -35,7 +35,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="direction: rtl;">
     <div class="brand-bar"></div>
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
@@ -49,7 +49,7 @@
       <h1 class="title">مرحباً بكم في @product</h1>
       <p class="text">عزيزي @fullName،</p>
       <p class="text">
-        يسرنا دعوتكم رسمياً للانضمام إلى منصة <strong>@product</strong> للتوظيف.
+        يسرنا دعوتكم للانضمام إلى منصة <strong>@product</strong>.
       </p>
       <p class="text">
         يرجى تسجيل الدخول باستخدام الرقم الشخصي الخاص بكم (<strong>@m.Qid</strong>) لإكمال ملفكم الشخصي وتحميل سيرتكم الذاتية حتى نتمكن من المضي قدماً في النظر في الفرص المستقبلية المتاحة.
@@ -64,7 +64,6 @@
     </div>
     <div class="footer">
       <p class="muted">مع أطيب التحيات،<br>فريق عمل @product</p>
-      <p class="muted">للدعم الفني: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
     </div>
   </div>
