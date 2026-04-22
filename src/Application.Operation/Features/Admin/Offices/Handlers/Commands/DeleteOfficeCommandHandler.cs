@@ -43,11 +43,25 @@ public sealed class DeleteOfficeCommandHandler(
                 .Where(u => userIds.Contains(u.Id)).ExecuteUpdateAsync(
                     setters => setters
                         .SetProperty(u => u.IsDeleted, true)
+                        .SetProperty(u => u.Email, u => "deleted_" + Guid.NewGuid().ToString().Substring(0, 8) + "_" + u.Email)
+                        .SetProperty(u => u.NormalizedEmail, u => "DELETED_" + Guid.NewGuid().ToString().Substring(0, 8) + "_" + u.NormalizedEmail)
+                        .SetProperty(u => u.UserName, u => "deleted_" + Guid.NewGuid().ToString().Substring(0, 8) + "_" + u.UserName)
+                        .SetProperty(u => u.NormalizedUserName, u => "DELETED_" + Guid.NewGuid().ToString().Substring(0, 8) + "_" + u.NormalizedUserName)
                         .SetProperty(u => u.DeletedDate, time.GetUtcNow().UtcDateTime)
                         .SetProperty(u => u.DeletedById, request.UserId), cancellationToken);
 
             foreach (var userId in userIds)
             {
+                // Remove external logins (e.g. Google ProviderKey) so they
+                // won't resolve to this deleted user on future logins
+                var user = await userManager.FindByIdAsync(userId.ToString());
+                if (user is not null)
+                {
+                    var logins = await userManager.GetLoginsAsync(user);
+                    foreach (var login in logins)
+                        await userManager.RemoveLoginAsync(user, login.LoginProvider, login.ProviderKey);
+                }
+
                 await tokenService.RevokeAllAsync(userId, cancellationToken);
             }
         }

@@ -37,7 +37,7 @@ public static class JobBusinessRules
 
     public static bool CanModifyAgeRange(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Draft;
+        return CanEdit(jobStatusId);
     }
 
     public static bool CanEdit(Guid jobStatusId)
@@ -66,17 +66,17 @@ public static class JobBusinessRules
 
     public static bool CanModifyTitle(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Draft;
+        return CanEdit(jobStatusId);
     }
 
     public static bool CanModifyQualifications(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Draft;
+        return CanEdit(jobStatusId);
     }
 
     public static bool CanModifySkills(Guid jobStatusId)
     {
-        return jobStatusId == JobStatusIds.Draft;
+        return CanEdit(jobStatusId);
     }
 
     public static bool IsValidStatusTransition(Guid currentStatusId, Guid newStatusId)

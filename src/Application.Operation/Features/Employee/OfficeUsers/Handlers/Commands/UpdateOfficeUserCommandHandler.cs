@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.OfficeUsers.Commands;
+using Application.Operation.Features.Employee.OfficeUsers.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -61,6 +61,12 @@ public sealed class UpdateOfficeUserCommandHandler(
 
             if (emailExists)
                 return Result.Fail<Unit>(ErrorsCodes.EmailAlreadyInUse);
+
+            // Remove external logins (e.g. Google ProviderKey) so they
+            // won't resolve to this user with the old email on future logins
+            var logins = await userManager.GetLoginsAsync(officeUser);
+            foreach (var login in logins)
+                await userManager.RemoveLoginAsync(officeUser, login.LoginProvider, login.ProviderKey);
 
             officeUser.Email = email;
             officeUser.UserName = email;

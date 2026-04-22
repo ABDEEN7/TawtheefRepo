@@ -101,6 +101,12 @@ public sealed class UpdateOfficeCommandHandler(IUnitOfWork unitOfWork, UserManag
 
                 return Result.Fail(ErrorsCodes.EmailAlreadyInUse);
             }
+
+            // Remove external logins (e.g. Google ProviderKey) so they
+            // won't resolve to this user with the old email on future logins
+            var logins = await userManager.GetLoginsAsync(officeAdmin);
+            foreach (var login in logins)
+                await userManager.RemoveLoginAsync(officeAdmin, login.LoginProvider, login.ProviderKey);
         }
 
         officeAdmin.Email = email;
