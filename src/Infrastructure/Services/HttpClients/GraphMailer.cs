@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
@@ -61,7 +62,10 @@ public sealed class GraphMailer : IGraphMailer
             httpRequest.Headers.TryAddWithoutValidation("return-client-request-id", "true");
 
             var payload = BuildPayload(request);
-            var json = JsonSerializer.Serialize(payload);
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            });
 
             if (IsDiagnosticsEnabled())
             {
@@ -143,7 +147,7 @@ public sealed class GraphMailer : IGraphMailer
     {
         var isHtml = !string.IsNullOrWhiteSpace(request.HtmlBody);
 
-        var attachments = request.Attachments?.Select(a => new Dictionary<string, object?>
+        var attachments = (request.Attachments ?? []).Select(a => new Dictionary<string, object?>
         {
             ["@odata.type"] = "#microsoft.graph.fileAttachment",
             ["name"] = a.Name,
@@ -160,7 +164,7 @@ public sealed class GraphMailer : IGraphMailer
                 subject = request.Subject,
                 body = new
                 {
-                    contentType = isHtml ? "HTML" : "Text",
+                    contentType = isHtml ? "html" : "text",
                     content = isHtml ? request.HtmlBody : (request.TextBody ?? string.Empty)
                 },
                 toRecipients = request.To.Select(x => new { emailAddress = new { address = x } }),
