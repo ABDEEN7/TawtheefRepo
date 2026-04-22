@@ -25,7 +25,7 @@ public sealed class ListPermissionsQueryHandler(IUnitOfWork uow, ILocalizationSe
             {
                 var name = localizationService.GetLocalizedName(p);
                 var module = name.Split(" - ")[0].Trim();
-                return new PermissionDto(p.BackendName, name, module);
+                return new PermissionDto(p.BackendName, name, module, p.DisplayOrder);
             })
             .ToList();
 

@@ -15,5 +15,6 @@ export interface JobPointsResponse {
   total: number;
   isApproved:boolean;
   createdById?: GUID;
+  createdByName?: string;
   details: JobPointsDetailResponse[];
 }

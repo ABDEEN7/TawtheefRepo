@@ -73,14 +73,17 @@ export class JobReviewAttachmentsModalComponent {
   }
 
   previewAttachment(attachment: JobReviewAttachment): void {
+    if (attachment.url) {
+      window.open(attachment.url, '_blank');
+      return;
+    }
+
     if (!attachment.file) return;
 
     const fileURL = URL.createObjectURL(attachment.file);
     const fileType = attachment.file.type;
 
-    if (fileType === 'application/pdf') {
-      window.open(fileURL, '_blank');
-    } else if (fileType.startsWith('image/')) {
+    if (fileType === 'application/pdf' || fileType.startsWith('image/')) {
       window.open(fileURL, '_blank');
     } else {
       const link = document.createElement('a');

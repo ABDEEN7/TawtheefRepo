@@ -1,4 +1,4 @@
-﻿using Application.Operation.Common.Repositories;
+using Application.Operation.Common.Repositories;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -18,6 +18,7 @@ public class JobPointsRepository(IGenericRepository<JobPointsMain> repository, I
     {
         var jobPoints = await Repository.DbSet
             .Include(p => p.Details) 
+            .Include(p => p.CreatedBy)
             .FirstOrDefaultAsync(p => p.JobId == jobId);
 
         if (jobPoints == null)

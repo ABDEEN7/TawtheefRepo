@@ -1,4 +1,4 @@
-﻿namespace Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
+namespace Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 
 public class JobPointsMainResponseDto
 {
@@ -15,5 +15,6 @@ public class JobPointsMainResponseDto
     public int Total { get; set; }
     public bool IsApproved { get; set; }
     public Guid CreatedById { get; set; }
+    public string? CreatedByName { get; set; }
     public List<JobPointsDetailResponseDto> Details { get; set; } = [];
 }

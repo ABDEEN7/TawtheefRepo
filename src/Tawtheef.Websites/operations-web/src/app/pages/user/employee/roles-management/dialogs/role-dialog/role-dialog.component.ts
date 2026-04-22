@@ -1,14 +1,14 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {RolesService} from '../../services/roles.service';
-import {RoleDto} from '../../models/permission.model';
-import {PermissionDto} from '../../models/role.model';
-import {Lang, LanguageService} from '../../../../../../core/services/language.service';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {I18nNamespaceDirective} from '../../../../../../shared/directives/i18n-namespace.directive';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { RolesService } from '../../services/roles.service';
+import { RoleDto } from '../../models/permission.model';
+import { PermissionDto } from '../../models/role.model';
+import { Lang, LanguageService } from '../../../../../../core/services/language.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
 
 interface RoleDialogData {
   role?: RoleDto;
@@ -44,7 +44,7 @@ export class RoleDialogComponent implements OnInit {
 
   private roleData = this.config.data?.role;
 
-  formModel = signal<RoleDto>(this.roleData ? {...this.roleData} : this.defaultRole);
+  formModel = signal<RoleDto>(this.roleData ? { ...this.roleData } : this.defaultRole);
   permissions = signal<PermissionDto[]>(this.config.data?.permissions ?? []);
   permissionSearch = signal('');
   selectedPermissions = signal<string[]>([...(this.roleData?.permissions ?? [])]);
@@ -55,17 +55,25 @@ export class RoleDialogComponent implements OnInit {
 
   groupedPermissions = computed(() => {
     const search = this.permissionSearch().trim().toLowerCase();
+
+    // 1. Sort globally first
+    const sorted = [...this.permissions()]
+      .filter(p => !search || p.name.toLowerCase().includes(search))
+      .sort((a, b) => a.order - b.order);
+
+    // 2. Group after sorting
     const groups = new Map<string, PermissionDto[]>();
 
-    for (const perm of this.permissions()) {
-      if (search && !perm.name.toLowerCase().includes(search)) continue;
-
+    for (const perm of sorted) {
       const list = groups.get(perm.module) ?? [];
       list.push(perm);
       groups.set(perm.module, list);
     }
 
-    return Array.from(groups.entries()).map(([module, permissions]) => ({module, permissions}));
+    // 3. Optional: sort modules as well
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([module, permissions]) => ({ module, permissions }));
   });
 
   ngOnInit(): void {
@@ -73,7 +81,7 @@ export class RoleDialogComponent implements OnInit {
   }
 
   updateField<K extends keyof RoleDto>(key: K, value: RoleDto[K]) {
-    this.formModel.update(current => ({...current, [key]: value}));
+    this.formModel.update(current => ({ ...current, [key]: value }));
   }
 
   togglePermission(permId: string) {
@@ -104,7 +112,7 @@ export class RoleDialogComponent implements OnInit {
           const perm = this.permissions().find(p => p.id === id);
           return perm?.name ?? id;
         });
-        this.dialogRef.close({...savedRole, permissionNames});
+        this.dialogRef.close({ ...savedRole, permissionNames });
       },
       error: () => {
         this.isSaving.set(false);

@@ -326,7 +326,7 @@
                         <div class="attachment-item">
                           <i class="fa-solid fa-file"></i>
                           <span>{{ attachment.fileName }}</span>
-                          @if (attachment.file) {
+                          @if (attachment.file || attachment.url) {
                           <button type="button" class="btn-preview" (click)="previewAttachment(attachment)"
                             title="{{ 'COMMON.PREVIEW' | translate }}">
                             <i class="hgi hgi-stroke hgi-view"></i>
