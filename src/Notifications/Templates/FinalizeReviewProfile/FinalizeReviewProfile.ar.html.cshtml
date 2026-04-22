@@ -7,235 +7,116 @@
 
     var primary = b.PrimaryHex;
     var product = b.ProductName;
-    var support = b.SupportEmail;
     var website = b.WebsiteUrl;
+    var logo = b.LogoUrl;
 
     var isAccepted = m.Status == UserProfileStatus.Approved;
 
+    // Optional: a single note string or list of reasons
     string? notes = null; 
     IEnumerable<string>? reasons = null; 
 
     var profileUrl = website;
-    var logo = b.LogoUrl;
 
     var title = isAccepted ? "تمت الموافقة على ملفك الشخصي" : "ملفك الشخصي بحاجة لتحديثات";
-    var preheader = isAccepted
-        ? $"تمت الموافقة على ملفك الشخصي في {product}."
-        : $"تمت إعادة ملفك الشخصي في {product} لإجراء تحديثات. يرجى مراجعة الملاحظات.";
     var badgeText = isAccepted ? "تمت الموافقة" : "مطلوب إجراء";
-    var badgeBg = isAccepted ? "#ECFDF3" : "#FFF7ED";
-    var badgeTextColor = isAccepted ? "#027A48" : "#9A3412";
 }
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="x-apple-disable-message-reformatting">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@product - نتيجة مراجعة الملف الشخصي</title>
-
   <style>
-    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
-    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
-    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
-    table { border-collapse:collapse !important; }
-    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
-    a { text-decoration:none; }
-    .email-wrap { width:100%; background:#f7f4f6; }
-    .container {
-      width:100%;
-      max-width:600px;
-      margin:0 auto;
-      background:#ffffff;
-      border-radius:14px;
-      overflow:hidden;
-      border:1px solid #efe7eb;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-    }
-    .brand-bar { background:@primary; height:8px; line-height:8px; font-size:0; }
-    .px { padding-left:24px; padding-right:24px; }
-    .py { padding-top:24px; padding-bottom:24px; }
-    .h2 {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:22px;
-      line-height:28px;
-      color:#111827;
-      margin:0 0 8px 0;
-      font-weight:800;
-    }
-    .text {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:16px;
-      line-height:24px;
-      color:#111827;
-      margin:0 0 16px 0;
-    }
-    .muted {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:12px;
-      line-height:18px;
-      color:#6B7280;
-      margin:0;
-    }
-    .accent { color:@primary; }
-    .divider { height:1px; background:#efe7eb; }
-    .badge {
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:12px;
-      font-weight:800;
-      background:@badgeBg;
-      color:@badgeTextColor;
-      border:1px solid rgba(17,24,39,0.06);
-    }
-    .notes-box{
-      background:#fbf6f8;
-      border:1px solid #efe7eb;
-      padding:14px 16px;
-      border-radius:10px;
-    }
-    .notes-title{
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:14px;
-      font-weight:800;
-      color:#111827;
-      margin:0 0 8px 0;
-    }
-    .notes-item{
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:14px;
-      line-height:20px;
-      color:#111827;
-      margin:0 0 6px 0;
-    }
-    .btn {
-      display:inline-block;
-      background:@primary;
-      color:#ffffff !important;
-      padding:12px 16px;
-      border-radius:10px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size:14px;
-      font-weight:800;
-    }
-    .preheader { display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
+    body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; text-align: right; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; text-align: right; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+    .notes-box { background:#fbf6f8; border:1px solid #efe7eb; padding:14px 16px; border-radius:10px; margin-bottom: 16px; }
+    .notes-title { font-size:14px; font-weight:800; color:#111827; margin:0 0 8px 0; }
+    .notes-item { font-size:14px; line-height:20px; color:#111827; margin:0 0 6px 0; }
   </style>
 </head>
-
-<body class="email-wrap" style="background:#f7f4f6; margin:0; padding:20px; direction: rtl;">
-  <div class="preheader">
-    @preheader
-  </div>
-
-  <table role="presentation" style="width: 100%; background:#f7f4f6;" dir="rtl">
-    <tr>
-      <td style="padding:20px;">
-        <table role="presentation" class="container" align="center">
-          <tr>
-            <td class="brand-bar" aria-hidden="true">&nbsp;</td>
-          </tr>
-          <tr>
-            <td class="px" style="padding-top:18px; padding-bottom:12px;">
-              <table role="presentation" style="width:100%;">
-                <tr>
-                  <td style="vertical-align:middle; text-align: right;">
-                    @if (!string.IsNullOrWhiteSpace(logo))
-                    {
-                      <a href="@website" style="display:inline-block;" target="_blank">
-                        <img src="@logo" alt="@product" width="140" style="max-width:140px; height:auto;">
-                      </a>
-                    }
-                    else
-                    {
-                      <div style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight:800; font-size:18px; color:@primary;">
-                        @product
-                      </div>
-                    }
-                  </td>
-                  <td style="vertical-align:middle; text-align:left;">
-                    <span class="badge">@badgeText</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td class="px">
-              <div class="divider"></div>
-            </td>
-          </tr>
-          <tr>
-            <td class="px py" style="text-align: right;">
-              <h2 class="h2">@title</h2>
-              @if (isAccepted)
-              {
-                <p class="text">
-                  يسعدنا إبلاغكم بأنه قد تم <strong>قبول ملفكم الشخصي</strong> في منصة
-                  <span class="accent" style="color:@primary; font-weight:800;">@product</span>.
-                </p>
-                <p class="text" style="margin-bottom:18px;">
-                  يمكنكم الآن متابعة استخدام المنصة بشكل طبيعي والوصول لكافة الميزات.
-                </p>
-              }
-              else
-              {
-                <p class="text">
-                   لقد تمت<strong>إعادة ملفكم الشخصي لإجراء تحديثات</strong>.
-                  يرجى مراجعة الملاحظات أدناه، وإجراء التعديلات المطلوبة، ثم إعادة إرسال الملف.
-                </p>
-                @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
+<body>
+  <div class="container" style="direction: rtl;">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">@badgeText</p>
+      <h1 class="title">@title</h1>
+      <p class="text">مرحباً،</p>
+      
+      @if (isAccepted)
+      {
+        <p class="text">
+          يسعدنا إبلاغكم بأنه قد تم <strong>قبول ملفكم الشخصي</strong> في منصة @product.
+        </p>
+        <p class="text">
+          يمكنكم الآن متابعة استخدام المنصة بشكل طبيعي والوصول لكافة الميزات.
+        </p>
+      }
+      else
+      {
+        <p class="text">
+          لقد تمت <strong>إعادة ملفكم الشخصي لإجراء تحديثات</strong>. يرجى مراجعة الملاحظات أدناه، وإجراء التعديلات المطلوبة، ثم إعادة إرسال الملف.
+        </p>
+        
+        @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
+        {
+          <div class="notes-box">
+            <div class="notes-title">ملاحظات المراجعة</div>
+            @if (!string.IsNullOrWhiteSpace(notes))
+            {
+              <p class="notes-item">@notes</p>
+            }
+            @if (reasons != null && reasons.Any())
+            {
+              <ul style="padding-right:18px; margin:10px 0 0 0;">
+                @foreach (var r in reasons)
                 {
-                  <div class="notes-box" style="margin-top:10px; margin-bottom:16px;">
-                    <div class="notes-title">ملاحظات المراجعة</div>
-                    @if (!string.IsNullOrWhiteSpace(notes))
-                    {
-                      <p class="notes-item" style="margin-bottom:0;">@notes</p>
-                    }
-                    @if (reasons != null && reasons.Any())
-                    {
-                      <ul style="padding-right:18px; margin:10px 0 0 0;">
-                        @foreach (var r in reasons)
-                        {
-                          if (!string.IsNullOrWhiteSpace(r))
-                          {
-                            <li class="notes-item">@r</li>
-                          }
-                        }
-                      </ul>
-                    }
-                  </div>
+                  if (!string.IsNullOrWhiteSpace(r))
+                  {
+                    <li class="notes-item">@r</li>
+                  }
                 }
-              }
-              @if (profileUrl != null)
-              {
-                  <a href="@profileUrl" class="btn" target="_blank" style="color: white;">فتح الملف الشخصي</a>
-              }
-              <p class="text" style="margin-top:16px; margin-bottom:0;">
-                إذا كنت بحاجة للمساعدة، يرجى التواصل مع فريق الدعم الفني وسنكون سعداء بمساعدتك.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td class="px">
-              <div class="divider"></div>
-            </td>
-          </tr>
-          <tr>
-            <td class="px" style="padding-bottom:22px; text-align: right;">
-              <p class="muted">
-                مرسل من قبل <span class="accent" style="color:@primary; font-weight:700;">@product</span>
-              </p>
-              <p class="muted" style="margin-top:6px;">
-                © @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+              </ul>
+            }
+          </div>
+        }
+      }
+
+      <p class="text" style="margin-top: 24px; text-align: center;">
+        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">فتح الملف الشخصي</a>
+      </p>
+      
+      <p class="text">
+        إذا كنت بحاجة للمساعدة، يرجى التواصل مع فريق الدعم الفني وسنكون سعداء بمساعدتك.
+      </p>
+
+      <div class="divider"></div>
+      <p class="muted">
+        إذا كان الزر لا يعمل، يرجى نسخ هذا الرابط ولصقه في متصفحك: @profileUrl
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">مع أطيب التحيات،<br>فريق عمل @product</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
 </body>
 </html>

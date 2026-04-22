@@ -34,7 +34,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="direction: rtl;">
     <div class="brand-bar"></div>
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
@@ -67,7 +67,6 @@
     </div>
     <div class="footer">
       <p class="muted">مع تحيات،<br>فريق عمل @product</p>
-      <p class="muted">للدعم الفني: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
     </div>
   </div>

@@ -49,7 +49,7 @@
       <h1 class="title">A job posting has been removed</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been removed from the system.
+        The job posting @Html.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been removed from the system.
       </p>
       <p class="text">
         Please sign in to @product if you need to review historical details or take follow-up actions.
@@ -62,7 +62,6 @@
     </div>
     <div class="footer">
       <p class="muted">Regards,<br>@product Team</p>
-      <p class="muted">Support: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
     </div>
   </div>

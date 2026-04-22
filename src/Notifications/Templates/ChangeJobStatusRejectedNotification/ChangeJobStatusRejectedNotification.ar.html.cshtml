@@ -35,7 +35,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="direction: rtl;">
     <div class="brand-bar"></div>
     <div class="content">
       @if (!string.IsNullOrWhiteSpace(logo))
@@ -49,7 +49,7 @@
       <h1 class="title">تم رفض طلب الوظيفة</h1>
       <p class="text">عزيزي الزميل/الزميلة،</p>
       <p class="text">
-        تم رفض الطلب الخاص بـ @(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
+        تم رفض الطلب الخاص بـ @Html.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
       </p>
       <p class="text">
         يرجى مراجعة الملاحظات في @product، وتحديث الطلب حسب الحاجة، وإعادة إرساله.
@@ -62,7 +62,6 @@
     </div>
     <div class="footer">
       <p class="muted">مع تحيات،<br>فريق عمل @product</p>
-      <p class="muted">للدعم الفني: <a href="mailto:@support" style="color:@primary; text-decoration:none;" target="_blank">@support</a></p>
       <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
     </div>
   </div>
