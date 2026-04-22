@@ -238,8 +238,7 @@ export class JobPointsReviewPageComponent implements OnInit, OnDestroy {
 
       this.isSubmitting = true;
       this.jobPointsService.rejectJobPoints(this.jobId, reason).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (resp) => {
-          if (!resp) { this.isSubmitting = false; this.cdr.detectChanges(); return; }
+        next: () => {
           this.notificationService.success(this.translationService.instant('JOB_POINTS.REJECT.SUCCESS'));
           this.router.navigate([routes.portal.JobList]);
         },
