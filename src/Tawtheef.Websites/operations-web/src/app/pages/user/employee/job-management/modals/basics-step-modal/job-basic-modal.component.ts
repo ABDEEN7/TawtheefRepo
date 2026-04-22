@@ -145,6 +145,7 @@ export class JobBasicModalComponent implements OnInit, OnDestroy {
       jobCategoryId: jobResponse.jobCategory.id || '',
       workLocationId: jobResponse.workLocation.id || '',
       genderId: jobResponse.gender?.id || '',
+      workTypeId: jobResponse.workType.id || '',
 
       numberOfVacancies: jobResponse.numberOfVacancies || 1,
       closingDate: deadline,
