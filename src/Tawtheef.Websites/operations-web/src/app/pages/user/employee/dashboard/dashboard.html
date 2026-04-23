@@ -128,15 +128,6 @@
             <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
           </div>
 
-          <!-- Rejected Jobs -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.rejectedJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--danger">
-              <i class="hgi hgi-stroke hgi-cancel-circle"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().rejectedJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.rejectedJobs' | translate }}</div>
-          </div>
-
           <!-- New Jobs Today -->
           <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
             <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
