@@ -60,7 +60,7 @@ public sealed class GetTeamPerformanceQueryHandler(
         var reviewStats = await GetReviewStatsAsync(uow.GetEntityRepository<ReviewItem>(), employeeIds, ct);
 
         // Total assigned tasks for workload ratio
-        var totalAssignedTasks = await assignmentsQuery.CountAsync(ct);
+        var totalAssignedTasks = await assignmentsQuery.CountAsync(x => x.IsActive, ct);
 
         var allRows = BuildTeamRows(
             employeeList,
@@ -94,6 +94,7 @@ public sealed class GetTeamPerformanceQueryHandler(
                 nameof(TeamPerformanceRowDto.OverdueTasks) => isDesc ? allRows.OrderByDescending(x => x.OverdueTasks).ToList() : allRows.OrderBy(x => x.OverdueTasks).ToList(),
                 nameof(TeamPerformanceRowDto.ApprovalRate) => isDesc ? allRows.OrderByDescending(x => x.ApprovalRate).ToList() : allRows.OrderBy(x => x.ApprovalRate).ToList(),
                 nameof(TeamPerformanceRowDto.AverageResponseHours) => isDesc ? allRows.OrderByDescending(x => x.AverageResponseHours).ToList() : allRows.OrderBy(x => x.AverageResponseHours).ToList(),
+                nameof(TeamPerformanceRowDto.ProfilesReviewed) => isDesc ? allRows.OrderByDescending(x => x.ProfilesReviewed).ToList() : allRows.OrderBy(x => x.ProfilesReviewed).ToList(),
                 nameof(TeamPerformanceRowDto.ProductivityScore) => isDesc ? allRows.OrderByDescending(x => x.ProductivityScore).ToList() : allRows.OrderBy(x => x.ProductivityScore).ToList(),
                 _ => allRows
             };
@@ -151,8 +152,8 @@ public sealed class GetTeamPerformanceQueryHandler(
             var workloadRatio = globalTotalAssigned == 0 ? 0 : Math.Round(assigned * 100m / globalTotalAssigned, 2);
 
             var baseScore = (completed * 2) + (approved * 1);
-            var penalty = (overdue * 3);
-            //var productivityScore = Math.Max(0, baseScore - penalty);
+            var penalty = (overdue * 1);
+            var productivityScore = Math.Max(0, baseScore - penalty);
 
             return new TeamPerformanceRowDto
             {
@@ -176,7 +177,7 @@ public sealed class GetTeamPerformanceQueryHandler(
 
                 WorkloadRatio = workloadRatio,
                 WorkloadBalanceIndicator = workloadRatio > 20 ? "High" : workloadRatio > 10 ? "Balanced" : "Low",
-                // ProductivityScore = productivityScore
+                ProductivityScore = productivityScore
             };
         }).ToList();
     }
@@ -207,16 +208,16 @@ public sealed class GetTeamPerformanceQueryHandler(
             .Select(g => new
             {
                 EmployeeId = g.Key,
-                Assigned = g.Count(x=> x.UserProfile!.Status != UserProfileStatus.UnderReview || x.IsActive),
+                Assigned = g.Count(x => x.IsActive),
                 Active = g.Count(x => x.IsActive),
                 Completed = g.Count(x => x.UserProfile != null 
                                          && (x.UserProfile.Status == UserProfileStatus.Approved || x.UserProfile.Status == UserProfileStatus.RequiresUpdate)),
-                Remaining = g.Count(x =>  x.IsActive && (x.UserProfile == null 
-                                         || (x.UserProfile.Status == UserProfileStatus.UnderReview))),
+                Remaining = g.Count(x => x.IsActive && (x.UserProfile == null 
+                                         || x.UserProfile.Status == UserProfileStatus.UnderReview)),
                 Overdue = g.Count(x =>
                     x.IsActive
                     && x.UserProfile != null
-                    && x.UserProfile.Status == UserProfileStatus.UnderReview
+                    && (x.UserProfile.Status == UserProfileStatus.UnderReview || x.UserProfile.Status == UserProfileStatus.RequiresUpdate)
                     && x.AssignedAtUtc <= overdueCutoff),
                 Times = g.Where(x => x.UnassignedAtUtc != null)
                     .Select(x => new { x.AssignedAtUtc, x.UnassignedAtUtc })
@@ -250,14 +251,14 @@ public sealed class GetTeamPerformanceQueryHandler(
     {
         var raw = await reviewRepo.DbSet
             .AsNoTracking()
-            .Where(x => employeeIds.Contains(x.UserProfile!.ProfileAssignments.OrderByDescending(a => a.AssignedAtUtc).First().EmployeeId))
-            .GroupBy(x => x.UserProfile!.ProfileAssignments.OrderByDescending(a => a.AssignedAtUtc).First().EmployeeId)
+            .Where(x => x.ReviewedById != null && employeeIds.Contains(x.ReviewedById.Value))
+            .GroupBy(x => x.ReviewedById!.Value)
             .Select(g => new
             {
                 EmployeeId = g.Key,
-                Reviewed = g.Count(),
-                Approved = g.Count(x => x.Status == ReviewStatus.Approved),
-                Rejected = g.Count(x => x.Status == ReviewStatus.Rejected),
+                Reviewed = g.Select(x => x.UserProfileId).Distinct().Count(),
+                Approved = g.Where(x => x.Status == ReviewStatus.Approved).Select(x => x.UserProfileId).Distinct().Count(),
+                Rejected = g.Where(x => x.Status == ReviewStatus.Rejected).Select(x => x.UserProfileId).Distinct().Count(),
                 Times = g.Select(x => new
                 {
                     ReviewItemCreatedDate = x.CreatedDate, 

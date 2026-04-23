@@ -372,14 +372,14 @@ export class JobListComponent implements OnInit {
         command: () => this.approveJob(job.id)
       });
 
-      actions.push({
-        label: 'JOB_LIST_BUTTONS_REJECT',
-        icon: 'hgi hgi-stroke hgi-cancel-01',
-        command: () => this.changeStatus(job.id, JobStatus.Rejected, 'JOB_LIST_MESSAGES_JOB_REJECTED', {
-          title: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB',
-          description: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE'
-        })
-      });
+      // actions.push({
+      //   label: 'JOB_LIST_BUTTONS_REJECT',
+      //   icon: 'hgi hgi-stroke hgi-cancel-01',
+      //   command: () => this.changeStatus(job.id, JobStatus.Rejected, 'JOB_LIST_MESSAGES_JOB_REJECTED', {
+      //     title: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB',
+      //     description: 'JOB_LIST_CONFIRMATIONS_REJECT_JOB_NOTE'
+      //   })
+      // });
     }
 
     // 3. Points Management
@@ -440,16 +440,16 @@ export class JobListComponent implements OnInit {
       });
     }
 
-    if (canApprove && status === JobStatus.Rejected) {
-      actions.push({
-        label: 'JOB_LIST_BUTTONS_REOPEN',
-        icon: 'hgi hgi-stroke hgi-checkmark-circle-02',
-        command: () => this.changeStatus(job.id, JobStatus.Draft, 'JOB_LIST_MESSAGES_JOB_REOPENED', {
-          title: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB',
-          description: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE'
-        })
-      });
-    }
+    // if (canApprove && status === JobStatus.Rejected) {
+    //   actions.push({
+    //     label: 'JOB_LIST_BUTTONS_REOPEN',
+    //     icon: 'hgi hgi-stroke hgi-checkmark-circle-02',
+    //     command: () => this.changeStatus(job.id, JobStatus.Draft, 'JOB_LIST_MESSAGES_JOB_REOPENED', {
+    //       title: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB',
+    //       description: 'JOB_LIST_CONFIRMATIONS_REOPEN_JOB_NOTE'
+    //     })
+    //   });
+    // }
 
     // 5. Utility Actions
     if (canClone) {
