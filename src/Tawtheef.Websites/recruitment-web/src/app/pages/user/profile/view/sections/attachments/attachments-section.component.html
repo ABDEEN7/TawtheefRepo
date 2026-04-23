@@ -1,9 +1,10 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-attachment-square"
       aria-hidden="true"></i> <span>{{ 'profileOverview.sections.attachments' | translate }}</span></h5>
-  <div *ngIf="canAddAttachment || !attachments().length"><button type="button"
-      class="btn btn-outline-primary d-flex align-items-center gap-1" (click)="addAttachment()"><i
-        class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addAttachment' |
+  <div *ngIf="canAddAttachment"><button type="button" class="btn btn-outline-primary d-flex align-items-center gap-1"
+      (click)="addAttachment()">
+      <i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i>
+      <span>{{ 'profileView.actions.addAttachment' |
         translate }}</span></button></div>
 </div>
 
