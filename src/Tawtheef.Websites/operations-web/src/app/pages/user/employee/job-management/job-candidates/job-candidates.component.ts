@@ -26,6 +26,7 @@ import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
 import { JobCandidatesSpecializationFilterModalComponent } from '../modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
+import { SystemRoles } from '../../../../../core/constants/systemRoles';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -341,7 +342,7 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   canSelectCandidates(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Edit);
+    return this.authService.hasRole(SystemRoles.HrManager);
   }
 
   private extractFileName(response: {
@@ -354,7 +355,7 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   canManageJobs(): boolean {
-    return this.authService.hasPermission(Permissions.Jobs.Edit);
+    return this.authService.hasRole(SystemRoles.HrManager);
   }
 
   canViewJobs(): boolean {
