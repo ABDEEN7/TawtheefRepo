@@ -3,6 +3,7 @@
    ═══════════════════════════════════════════════════ */
 
 // ── Variables ─────────────────────────────────────
+@use "sass:color";
 $color-primary: #8a1538;
 $header-bg: $color-primary;
 $header-text: #ffffff;
@@ -50,7 +51,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   thead {
     th {
       background: $header-bg;
-      border-bottom: 2px solid darken($header-bg, 5%);
+      border-bottom: 2px solid color.adjust($header-bg, $lightness: -5%);
       padding: 0.875rem 1rem;
       font-size: 0.75rem;
       font-weight: 700;
@@ -78,7 +79,7 @@ $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transition: background $transition-fast;
 
   &:hover {
-    background: lighten($header-bg, 5%);
+    background: color.adjust($header-bg, $lightness: 5%);
   }
 
   .sort-icon {
