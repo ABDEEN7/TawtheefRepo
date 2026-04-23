@@ -260,7 +260,7 @@
   "server-error.MANAGEMENT_NAME_ALREADY_EXISTS": "Management name already exists.",
   "server-error.DEPARTMENT_NOT_FOUND": "Department not found.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "Department name already exists.",
-  "server-error.MOI_DATA_NOT_FOUND": "Unable to verify the sponsor’s personal ID details. Please check the entered information and try again.",
+  "server-error.MOI_DATA_NOT_FOUND": "Unable to verify the personal ID details. Please check the entered information and try again.",
   "server-error.MOI_FAILED_REQUEST": "MOI request failed.",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "Employee directory request failed.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "Employee directory payload is invalid.",
