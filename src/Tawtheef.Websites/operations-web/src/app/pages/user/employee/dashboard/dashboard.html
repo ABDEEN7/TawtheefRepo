@@ -293,8 +293,6 @@
                   <th pSortableColumn="RemainingTasks" class="text-center" style="width: 100px">{{
                     'dashboard.table.remainingTasks' | translate }} <p-sortIcon field="RemainingTasks"></p-sortIcon>
                   </th>
-                  <th pSortableColumn="OverdueTasks" class="text-center" style="width: 100px">{{
-                    'dashboard.table.overdueTasks' | translate }} <p-sortIcon field="OverdueTasks"></p-sortIcon></th>
                   <th pSortableColumn="ProfilesReviewed" class="text-center" style="width: 130px">{{
                     'dashboard.table.profilesReviewed' | translate }} <p-sortIcon field="ProfilesReviewed"></p-sortIcon>
                   </th>
@@ -322,12 +320,6 @@
                   <td class="text-center"><span class="badge badge-soft-primary">{{ row.assignedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-success">{{ row.completedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-info">{{ row.remainingTasks }}</span></td>
-                  <td class="text-center">
-                    <span class="badge" [class.badge-soft-danger]="row.overdueTasks > 0"
-                      [class.badge-soft-secondary]="row.overdueTasks === 0">
-                      {{ row.overdueTasks }}
-                    </span>
-                  </td>
                   <td class="text-center"><span class="badge badge-soft-primary">{{ row.profilesReviewed }}</span></td>
                   <td>
                     <div class="progress-indicator">

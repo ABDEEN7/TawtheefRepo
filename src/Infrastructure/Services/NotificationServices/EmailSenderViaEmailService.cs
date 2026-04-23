@@ -23,8 +23,8 @@ public sealed class DurableEmailSender(
         {
             try
             {
-                body = await renderer.RenderHtmlAsync(notification.TemplateKey, notification.PayloadJson ?? "{}");
-                plainText = await renderer.RenderTextAsync(notification.TemplateKey, notification.PayloadJson ?? "{}");
+                body = await renderer.RenderHtmlAsync(notification.TemplateKey, notification.PayloadJson ?? "{}", notification.Language);
+                plainText = await renderer.RenderTextAsync(notification.TemplateKey, notification.PayloadJson ?? "{}", notification.Language);
             }
             catch (Exception ex)
             {
