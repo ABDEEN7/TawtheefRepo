@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -63,11 +63,21 @@ public class GoogleExternalCallbackLoginHandler(
 
         if (linkedSignIn.Succeeded)
         {
-            _log.Information(
-                "Google external sign-in succeeded (already linked). ProviderKey={ProviderKey}",
-                info.ProviderKey);
+            var linkedUser = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (linkedUser is not null && linkedUser.IsDeleted)
+            {
+                _log.Warning("Google linked user is soft-deleted. Removing stale link. UserId={UserId}", linkedUser.Id);
+                await userManager.RemoveLoginAsync(linkedUser, info.LoginProvider, info.ProviderKey);
+                // Fall through to handle as not linked
+            }
+            else
+            {
+                _log.Information(
+                    "Google external sign-in succeeded (already linked). ProviderKey={ProviderKey}",
+                    info.ProviderKey);
 
-            return await HandleAlreadyLinkedAsync(request, info, ct);
+                return await HandleAlreadyLinkedAsync(request, info, ct);
+            }
         }
 
 // 3) Not linked yet => branch by requested user type

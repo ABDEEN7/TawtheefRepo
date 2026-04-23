@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, DestroyRef, OnDestroy } from "@angular/core";
-import { FormBuilder, Validators, FormArray, FormGroup } from "@angular/forms";
+import { FormBuilder, Validators, FormArray, FormGroup, AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { debounceTime, filter, Subject, takeUntil } from "rxjs";
 import { GUID } from "../../../../../../../shared/types/guid.type";
 import { Job } from "../../../models/job.model";
@@ -41,10 +41,11 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     jobSpecializations: this.fb.array([]),
     qualificationsDescriptionAr: ['', Validators.required],
     qualificationsDescriptionEn: ['', Validators.required]
-  });
+  }, { validators: [this.duplicateSpecializationValidator] });
   note: JobTabReviewNoteResponse | null = null;
   majorOptions: any[] = [];
   subMajorOptions: any[] = [];
+  needsMajor: boolean = true;
 
   // Track selected object names for review step
   selectedMajor: any = null;
@@ -130,10 +131,16 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
 
   addSpecialization(id: GUID | null = null, majorId: GUID | null = null, subMajorId: GUID | null = null, majorOption: any = null, subMajorOption: any = null): void {
     if (majorId) {
+      const mainMajorId = this.form.controls.majorId.value;
+      const mainSubMajorId = this.form.controls.subMajorId.value;
+
+      const isPrimary = mainMajorId === majorId && (mainSubMajorId || null) === (subMajorId || null);
+
       const exists = this.jobSpecializationsFormArray.controls.some((c: any) =>
-        c.value.majorId === majorId && c.value.subMajorId === subMajorId
+        c.value.majorId === majorId && (c.value.subMajorId || null) === (subMajorId || null)
       );
-      if (exists) {
+
+      if (exists || isPrimary) {
         this.notificationService.warn(this.translate.instant('JOB_WIZARD.VALIDATION.SPECIALIZATION_EXISTS'));
         return;
       }
@@ -174,23 +181,59 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     this.form.controls.degrees.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(degrees => {
-        const needsMajor = !degrees || degrees.length === 0 ||
-          degrees.some(d => {
-            const degreeId = d.degreeId || d;
-            const degreeObj = this.lookupsService.degrees().find(ld => ld.id === degreeId);
-            return !this.simplifiedDegrees.includes(degreeObj?.backendName);
-          });
-
-        if (needsMajor) {
-          this.form.controls.majorId.addValidators(Validators.required);
-        } else {
-          this.form.controls.majorId.removeValidators(Validators.required);
-          this.form.controls.subMajorId.removeValidators(Validators.required);
-        }
-
-        this.form.controls.majorId.updateValueAndValidity({ emitEvent: false });
-        this.form.controls.subMajorId.updateValueAndValidity({ emitEvent: false });
+        this.updateNeedsMajor(degrees);
       });
+  }
+
+  private updateNeedsMajor(degrees: any[] | null): void {
+    const needs = !degrees || degrees.length === 0 ||
+      degrees.some(d => {
+        const degreeId = d.degreeId || d;
+        const degreeObj = this.lookupsService.degrees().find(ld => ld.id === degreeId);
+        return !this.simplifiedDegrees.includes(degreeObj?.backendName);
+      });
+
+    this.needsMajor = needs;
+
+    if (needs) {
+      this.form.controls.majorId.addValidators(Validators.required);
+    } else {
+      this.form.controls.majorId.removeValidators(Validators.required);
+      this.form.controls.subMajorId.removeValidators(Validators.required);
+
+      if (this.form.controls.majorId.value || this.form.controls.subMajorId.value || this.jobSpecializationsFormArray.length > 0) {
+        this.form.patchValue({ majorId: null, subMajorId: null }, { emitEvent: false });
+        while (this.jobSpecializationsFormArray.length !== 0) {
+          this.jobSpecializationsFormArray.removeAt(0);
+        }
+        this.updateJobData();
+      }
+    }
+
+    this.form.controls.majorId.updateValueAndValidity({ emitEvent: false });
+    this.form.controls.subMajorId.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private duplicateSpecializationValidator(control: AbstractControl): ValidationErrors | null {
+    const majorId = control.get('majorId')?.value;
+    const subMajorId = control.get('subMajorId')?.value;
+    const specs = (control.get('jobSpecializations') as FormArray)?.value || [];
+
+    const seen = new Set<string>();
+    if (majorId) {
+      seen.add(`${majorId}_${subMajorId || ''}`);
+    }
+
+    for (const spec of specs) {
+      if (spec.majorId) {
+        const key = `${spec.majorId}_${spec.subMajorId || ''}`;
+        if (seen.has(key)) {
+          return { duplicateSpecialization: true };
+        }
+        seen.add(key);
+      }
+    }
+    return null;
   }
 
   onObjectSelected(obj: any): void {
@@ -247,6 +290,8 @@ export class QualificationsStepComponent extends WizardStepComponent implements 
     this.selectedSubMajor = jobResponse.subMajor || null;
     this.majorName = job.majorName || '';
     this.subMajorName = job.subMajorName || '';
+
+    this.updateNeedsMajor(degrees);
 
     if (note?.tabStatus !== JobTabStatus.Returned && job.jobStatus?.backendName === JobStatus.NeedUpdate) {
       this.form.disable();

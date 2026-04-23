@@ -35,7 +35,7 @@ export interface UpsertMajorDialogData {
 
         <div class="row">
           <div class="col-md-6">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_EN' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <input pInputText class="w-100 form-control"
                    name="nameEn"
                    [(ngModel)]="vm.nameEn"
@@ -48,7 +48,7 @@ export interface UpsertMajorDialogData {
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_AR' | translate }}</label>
+            <label class="form-label">{{ 'MAJORS_SKILLS.FIELD_NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <input pInputText class="w-100 form-control"
                    name="nameAr"
                    [(ngModel)]="vm.nameAr"
@@ -141,8 +141,8 @@ export class UpsertMajorDialogComponent {
       parentMajorId: this.vm.parentId ?? undefined,
       nameEn: this.vm.nameEn.trim(),
       nameAr: this.vm.nameAr.trim(),
-      descriptionEn: this.vm.descriptionEn?.trim() || null,
-      descriptionAr: this.vm.descriptionAr?.trim() || null,
+      descriptionEn: this.vm.descriptionEn?.trim() || '',
+      descriptionAr: this.vm.descriptionAr?.trim() || '',
       isActive: this.vm.isActive
     };
 

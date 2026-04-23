@@ -44,28 +44,30 @@
         <div class="card card-table">
           <div class="card-body">
             <div #stepsContainer></div>
-            @if (jobService.getCurrentJob()?.ReviewAttachment) {
+            @if (jobService.getCurrentJob()?.reviewAttachments && jobService.getCurrentJob()?.reviewAttachments?.length) {
             <div class="alert alert-warning mb-3 p-3">
               <label class="form-label fw-semibold mb-2">
                 {{ 'JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS' | translate }}
               </label>
 
               <div class="d-flex flex-column gap-2">
+                @for (attachment of jobService.getCurrentJob()?.reviewAttachments; track $index) {
                 <div class="attachment-row d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center gap-2">
-                    <i [class]="fileIcon(jobService.getCurrentJob()?.ReviewAttachment?.fileName)"></i>
+                    <i [class]="fileIcon(attachment.fileName)"></i>
                     <span class="small">{{
-                      jobService.getCurrentJob()?.ReviewAttachment?.fileName
+                      attachment.fileName
                       }}</span>
                   </div>
 
                   <div class="d-flex gap-2">
                     <button type="button" class="btn btn-sm btn-outline-secondary"
-                      (click)="preview(jobService.getCurrentJob()?.ReviewAttachment)">
+                      (click)="preview(attachment)">
                       <i class="hgi-stroke hgi-view"></i>
                     </button>
                   </div>
                 </div>
+                }
               </div>
             </div>
             }

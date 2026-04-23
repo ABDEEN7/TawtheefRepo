@@ -77,7 +77,7 @@
                   type="button"
                   class="btn-preview"
                   (click)="previewAttachment(attachment)"
-                  [disabled]="!attachment.file"
+                  [disabled]="!attachment.file && !attachment.url"
                   title="{{ 'COMMON.PREVIEW' | translate }}"
                 >
                   <i class="hgi hgi-stroke hgi-view"></i>

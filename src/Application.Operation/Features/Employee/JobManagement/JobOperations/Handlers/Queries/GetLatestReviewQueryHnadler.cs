@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Queries;
 using MediatR;
 using FluentResults;
@@ -16,7 +16,7 @@ public class GetLatestReviewQueryHnadler(IMediator mediator)
         var newJobReviewResp = new JobReviewResponseDto()
         {
             TabNoteReviews = tabReviewReponse.Value,
-            ReviewAttachment = reviewAttachmentReponse.Value
+            ReviewAttachments = reviewAttachmentReponse.Value
         };
 
         return Result.Ok(newJobReviewResp);

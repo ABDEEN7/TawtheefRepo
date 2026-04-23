@@ -89,6 +89,8 @@
     position: relative;
     background: #525659; // Contrast background
     padding: 20px;
+    display: flex;
+    justify-content: center;
 
     .viewer-loading {
       position: absolute;
@@ -173,9 +175,6 @@
         opacity: 1;
       }
     }
-
-    display: flex;
-    justify-content: center;
 
     .zoom-wrapper {
       width: 100%;

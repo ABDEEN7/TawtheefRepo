@@ -66,4 +66,13 @@ export class AuthService {
   hasPermission(permission: string | string[], requireAll: boolean = false): boolean {
     return this.permissionService.hasPermission(permission, requireAll);
   }
+
+  /**
+   * Check if user has the specified role.
+   *
+   * @param role the role to check
+   */
+  hasRole(role: string): boolean {
+    return this.getCurrentUser()?.userRoles?.includes(role) ?? false;
+  }
 }

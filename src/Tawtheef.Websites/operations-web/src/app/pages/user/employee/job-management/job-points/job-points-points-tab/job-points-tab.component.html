@@ -328,6 +328,13 @@
         </div>
       </section>
     </div>
+    @if (job?.jobPoints?.createdByName) {
+      <div class="configured-by-section mt-4 mb-3 d-flex align-items-center gap-2">
+        <i class="hgi-stroke hgi-user-circle text-primary fs-5"></i>
+        <span class="fw-bold">{{ 'JOB_POINTS.POINTS_TAB.CONFIGURED_BY' | translate }}:</span>
+        <span class="text-primary">{{ job?.jobPoints?.createdByName }}</span>
+      </div>
+    }
     <div class="bottom-nav" *ngIf="!isReadOnlyMode">
       <button type="button" class="btn btn-link d-flex align-items-center gap-2" (click)="goPrevious.emit()">
         <i class="hgi-stroke hgi-arrow-right-01" faDirArrow="start"></i>

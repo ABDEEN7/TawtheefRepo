@@ -69,6 +69,7 @@ export class JobListComponent implements OnInit {
     cancelled: 0,
     pendingApproval: 0,
     pendingPointConfiguration: 0,
+    needPointUpdate: 0,
     pendingPointApproval: 0,
     draft: 0
   });
@@ -382,7 +383,7 @@ export class JobListComponent implements OnInit {
     }
 
     // 3. Points Management
-    if (status === JobStatus.PendingPointConfiguration && this.canEditPoints() && canAccessEditPoints) {
+    if ((status === JobStatus.PendingPointConfiguration || status === JobStatus.NeedPointUpdate) && this.canEditPoints() && canAccessEditPoints) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_POINTS_CONFIG',
         icon: 'hgi hgi-stroke hgi-solar-system',
@@ -428,6 +429,7 @@ export class JobListComponent implements OnInit {
         JobStatus.Active,
         JobStatus.PendingPointApproval,
         JobStatus.PendingPointConfiguration,
+        JobStatus.NeedPointUpdate,
         JobStatus.ReadyForAnnouncement,
         JobStatus.Published,
       ].includes(status)) {
@@ -486,6 +488,7 @@ export class JobListComponent implements OnInit {
       [JobStatus.NeedUpdate]: 'pill warning',
       [JobStatus.PendingApproval]: 'pill warning',
       [JobStatus.PendingPointConfiguration]: 'pill info',
+      [JobStatus.NeedPointUpdate]: 'pill warning',
       [JobStatus.PendingPointApproval]: 'pill warning',
       [JobStatus.Published]: 'pill info',
       [JobStatus.Closed]: 'pill danger',
@@ -502,6 +505,7 @@ export class JobListComponent implements OnInit {
       JobStatus.Cancelled,
       JobStatus.PendingApproval,
       JobStatus.PendingPointConfiguration,
+      JobStatus.NeedPointUpdate,
       JobStatus.PendingPointApproval,
       JobStatus.Draft
     ];
@@ -524,6 +528,7 @@ export class JobListComponent implements OnInit {
       [JobStatus.Cancelled]: 'cancelled',
       [JobStatus.PendingApproval]: 'pendingApproval',
       [JobStatus.PendingPointConfiguration]: 'pendingPointConfiguration',
+      [JobStatus.NeedPointUpdate]: 'needPointUpdate',
       [JobStatus.PendingPointApproval]: 'pendingPointApproval',
       [JobStatus.Draft]: 'draft'
     };

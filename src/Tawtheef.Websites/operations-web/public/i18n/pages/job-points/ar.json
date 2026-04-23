@@ -26,6 +26,7 @@
   "JOB_POINTS.MAIN_ELEMENTS.ESTIMATED_TOTAL_EX": "إجمالي النقاط المقدر",
   "JOB_POINTS.MAIN_ELEMENTS.EMPTY_SECTION_ALERT": "هذا القسم فارغ، يرجى توزيع النقاط على أقسام أخرى",
   "JOB_POINTS.POINTS_TAB.SAVE_POINTS": "حفظ النقاط",
+  "JOB_POINTS.POINTS_TAB.CONFIGURED_BY": "تم إعداد النقاط بواسطة",
   "JOB_POINTS.POINTS_TAB.PREVIOUS": "السابق",
   "JOB_POINTS.POINTS_TAB.NO_ITEMS": "لا توجد عناصر مضافة لهذه الفئة",
   "JOB_POINTS.MAIN_ELEMENTS.POINT": "نقطة",

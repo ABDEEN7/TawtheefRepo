@@ -85,7 +85,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Candidate Users - View",
                 "مستخدمو المرشحين - عرض",
-                18);
+                6);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -94,7 +94,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Candidate Users - Manage",
                 "مستخدمو المرشحين - إدارة",
-                19);
+                7);
     }
 
     public static class Offices
@@ -106,7 +106,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Offices - View",
                 "المكاتب - عرض",
-                6);
+                8);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -115,7 +115,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Offices - Manage",
                 "المكاتب - إدارة",
-                7);
+                9);
     }
 
     public static class Languages
@@ -127,7 +127,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Languages - View",
                 "اللغات - عرض",
-                8);
+                10);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -136,7 +136,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Languages - Manage",
                 "اللغات - إدارة",
-                9);
+                11);
     }
 
     public static class Religions
@@ -148,7 +148,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Religions - View",
                 "الديانات - عرض",
-                10);
+                12);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -157,7 +157,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Religions - Manage",
                 "الديانات - إدارة",
-                11);
+                13);
     }
 
     public static class Countries
@@ -169,7 +169,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Countries - View",
                 "الدول - عرض",
-                12);
+                14);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -178,7 +178,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Countries - Manage",
                 "الدول - إدارة",
-                13);
+                15);
     }
 
     public static class Universities
@@ -190,7 +190,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Universities - View",
                 "الجامعات - عرض",
-                14);
+                16);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -199,7 +199,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Universities - Manage",
                 "الجامعات - إدارة",
-                15);
+                17);
     }
 
     public static class TargetEntities
@@ -211,7 +211,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Target Entities - View",
                 "الجهات المستهدفة - عرض",
-                16);
+                18);
 
         public static readonly PermissionDefinition Manage =
             Def(
@@ -220,7 +220,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Target Entities - Manage",
                 "الجهات المستهدفة - إدارة",
-                17);
+                19);
     }
 
     public static class HomeContent
@@ -255,7 +255,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Profile Logs - View",
                 "سجل الملفات - عرض",
-                14);
+                22);
     }
 
     // =========================
@@ -370,7 +370,7 @@ public static class Permissions
                 PermissionAction.SendInvitation,
                 "Jobs - Send Invitation",
                 "الوظائف - ارسال الدعوات",
-                32);
+                33);
 
         public static readonly PermissionDefinition Cancel =
             Def(
@@ -379,7 +379,7 @@ public static class Permissions
                 PermissionAction.Cancel,
                 "Jobs - Cancel",
                 "الوظائف - إلغاء",
-                33);
+                34);
 
         public static readonly PermissionDefinition Create =
             Def(
@@ -388,7 +388,7 @@ public static class Permissions
                 PermissionAction.Create,
                 "Jobs - Create",
                 "الوظائف - إنشاء",
-                34);
+                35);
 
         public static readonly PermissionDefinition Publish =
             Def(
@@ -397,7 +397,7 @@ public static class Permissions
                 PermissionAction.Publish,
                 "Jobs - Publish",
                 "الوظائف - نشر",
-                35);
+                36);
 
         public static readonly PermissionDefinition Delete =
             Def(
@@ -406,7 +406,7 @@ public static class Permissions
                 PermissionAction.Delete,
                 "Jobs - Delete",
                 "الوظائف - حذف",
-                36);
+                37);
 
         public static readonly PermissionDefinition Clone =
             Def(
@@ -415,7 +415,7 @@ public static class Permissions
                 PermissionAction.Clone,
                 "Jobs - Clone",
                 "الوظائف - استنساخ",
-                37);
+                38);
     }
 
     public static class JobsPoints
@@ -425,8 +425,8 @@ public static class Permissions
                 PermissionKeys.JobsPoints.Edit,
                 nameof(PermissionKeys.JobsPoints),
                 PermissionAction.Manage,
-                "Jobs - Points Edit",
-                "نقاط الوظائف - تعديل",
+                "Jobs Points - Manage",
+                "نقاط الوظائف - إدارة",
                 41);
 
         public static readonly PermissionDefinition View =
@@ -436,7 +436,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Jobs Points - View",
                 "نقاط الوظائف - عرض",
-                33);
+                42);
 
         public static readonly PermissionDefinition Approve =
             Def(
@@ -445,7 +445,7 @@ public static class Permissions
                 PermissionAction.Approve,
                 "Jobs Points - Approve",
                 "نقاط الوظائف - إعتماد",
-                33);
+                43);
     }
 
     public static class JobsInvitations
@@ -457,7 +457,7 @@ public static class Permissions
                 PermissionAction.View,
                 "Jobs Invitations - View",
                 "دعوات الوظائف - عرض",
-                34);
+                44);
 
         public static readonly PermissionDefinition ManageAttachment =
             Def(
@@ -466,7 +466,7 @@ public static class Permissions
                 PermissionAction.Manage,
                 "Jobs Invitations - Manage Attachment",
                 "دعوات الوظائف - إدارة المرفقات",
-                34);
+                45);
     }
 
     public static class Kawader

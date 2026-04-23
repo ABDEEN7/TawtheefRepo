@@ -155,6 +155,7 @@
                 <tr>
                   <th>{{ 'profileApproval.detail.qualifications.level' | translate }}</th>
                   <th>{{ 'profileApproval.detail.qualifications.major' | translate }}</th>
+                  <th>{{ 'profileApproval.detail.qualifications.subMajor' | translate }}</th>
                   <th>{{ 'profileApproval.detail.qualifications.university' | translate }}</th>
                   <th>{{ 'profileApproval.detail.qualifications.year' | translate }}</th>
                   <th>{{ 'profileApproval.detail.qualifications.grade' | translate }}</th>
@@ -165,6 +166,7 @@
                 <tr>
                   <td>{{ displayOption(item.degree, item.degreeId) }}</td>
                   <td>{{ displayOption(item.major, item.majorId) }}</td>
+                  <td>{{ displayOption(item.subMajor, item.subMajorId) }}</td>
                   <td>{{ displayOption(item.university, item.universityId) }}</td>
                   <td>{{ item.graduationYear || '—' }}</td>
                   <td>{{ displayOption(item.grade, item.gradeId) }} ({{ item.gpa || '0' }})</td>

@@ -155,7 +155,9 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
     this.isLoadingAttachments.set(true);
     this.detailsService.getInvitationAttachments(this.selectedInvitationId()).subscribe({
       next: (res) => {
-        this.attachments.set(res);
+        // Hide optional attachments that were not uploaded by the applicant
+        const validAttachments = res.filter(att => att.resourceId || att.isMandatory);
+        this.attachments.set(validAttachments);
         this.isLoadingAttachments.set(false);
       },
       error: () => this.isLoadingAttachments.set(false)

@@ -263,7 +263,7 @@
   "server-error.MANAGEMENT_NAME_ALREADY_EXISTS": "اسم الإدارة موجود بالفعل.",
   "server-error.DEPARTMENT_NOT_FOUND": "القسم غير موجود.",
   "server-error.DEPARTMENT_NAME_ALREADY_EXISTS": "اسم القسم موجود بالفعل.",
-  "server-error.MOI_DATA_NOT_FOUND": "حدث خطاء اثناء تحقق من البيانات مقدم الطلب",
+  "server-error.MOI_DATA_NOT_FOUND": "تعذر التحقق من بيانات الرقم الشخصي، يرجى التأكد من صحة البيانات المدخلة والمحاولة مرة اخرى",
   "server-error.MOI_FAILED_REQUEST": "حدث خطاء اثناء تحقق من البيانات مقدم الطلب",
   "server-error.EMPLOYEE_DIRECTORY_REQUEST_FAILED": "فشل طلب دليل الموظفين.",
   "server-error.EMPLOYEE_DIRECTORY_INVALID_PAYLOAD": "بيانات دليل الموظفين غير صالحة.",
