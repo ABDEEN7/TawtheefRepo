@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Infrastructure;
@@ -601,9 +602,13 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(new GetCountriesQuery { Language = language });
 
-        if (result.IsSuccess && User.HasClaim("login_provider", "Google"))
+        if (result.IsSuccess && User.HasClaim("login_provider", nameof(ProviderLoginIds.Google)))
         {
             result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);
+        }
+        else
+        {
+            result.Value.RemoveAll(c => c.Id != CountryIds.Qatar);
         }
 
         return result.ToActionResult();
@@ -616,7 +621,7 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(new GetCountriesQuery { Language = language });
 
-        if (result.IsSuccess && User.HasClaim("login_provider", "Google"))
+        if (result.IsSuccess && User.HasClaim("login_provider", nameof(ProviderLoginIds.Google)))
         {
             result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);
         }
