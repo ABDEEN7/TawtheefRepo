@@ -33,8 +33,8 @@ public sealed class RejectJobPointsCommandHandler(
 
         points.IsApproved = false;
         
-        // Update job status back to PendingPointConfiguration so it can be edited
-        job.ChangeStatus(JobStatusIds.PendingPointConfiguration);
+        // Update job status back to NeedPointUpdate so it can be edited
+        job.ChangeStatus(JobStatusIds.NeedPointUpdate);
 
         // Add domain event for notification
         job.AddDomainEvent(new JobPointsRejectedDomainEvent(job, request.Reason, DateTime.Now));

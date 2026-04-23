@@ -271,7 +271,8 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
 
     switch (this.job.jobStatus.backendName) {
       case JobStatus.PendingPointConfiguration:
-        return this.jobStatus.PendingPointConfiguration;
+      case JobStatus.NeedPointUpdate:
+        return this.isJobOpen() ? this.jobStatus.PendingPointConfiguration : this.jobStatus.Closed;
       case JobStatus.PendingApproval:
         return this.jobStatus.PendingApproval;
       case JobStatus.Draft:
@@ -279,6 +280,13 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       default:
         return this.jobStatus.Closed;
     }
+  }
+
+  isJobOpen(): boolean {
+    if (!this.job?.closingDate) return true;
+    const closingDate = new Date(this.job.closingDate);
+    const today = new Date();
+    return closingDate >= today;
   }
 
   getResponsibilities(): { textAr: string; textEn: string }[] {

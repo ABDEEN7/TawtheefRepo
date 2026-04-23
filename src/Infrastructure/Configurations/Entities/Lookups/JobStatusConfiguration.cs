@@ -83,6 +83,16 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
             },
             new JobStatus
             {
+                Id = JobStatusIds.NeedPointUpdate,
+                BackendName = nameof(JobStatusIds.NeedPointUpdate),
+                NameEn = "Need Point Update",
+                NameAr = "نقاط تحتاج للتعديل",
+                DescriptionEn = "Job points need to be updated.",
+                DescriptionAr = "نقاط الوظيفة تحتاج للتعديل.",
+                DisplayOrder = 6
+            },
+            new JobStatus
+            {
                 Id = JobStatusIds.PendingPointApproval,
                 BackendName = nameof(JobStatusIds.PendingPointApproval),
                 NameEn = "Pending Point Approval",

@@ -85,6 +85,7 @@ export enum JobStatus {
   Cancelled = "Cancelled",
   PendingApproval = "PendingApproval",
   PendingPointConfiguration = "PendingPointConfiguration",
+  NeedPointUpdate = "NeedPointUpdate",
   PendingPointApproval = "PendingPointApproval",
   ReadyForAnnouncement = "ReadyForAnnouncement",
   Published = "Published",

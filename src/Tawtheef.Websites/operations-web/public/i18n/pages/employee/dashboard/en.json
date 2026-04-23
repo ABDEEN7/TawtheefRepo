@@ -82,6 +82,8 @@
   "dashboard.status.pendingApproval": "Pending Approval",
   "dashboard.status.PendingPointConfiguration": "Pending Point Configuration",
   "dashboard.status.pendingPointConfiguration": "Pending Point Configuration",
+  "dashboard.status.NeedPointUpdate": "Need Point Update",
+  "dashboard.status.needPointUpdate": "Need Point Update",
   "dashboard.status.PendingPointApproval": "Pending Point Approval",
   "dashboard.status.pendingPointApproval": "Pending Point Approval",
   "dashboard.status.ReadyForAnnouncement": "Ready for Announcement",

@@ -85,6 +85,8 @@
   "dashboard.status.pendingApproval": "بانتظار الاعتماد",
   "dashboard.status.PendingPointConfiguration": "بانتظار توزيع النقاط",
   "dashboard.status.pendingPointConfiguration": "بانتظار توزيع النقاط",
+  "dashboard.status.NeedPointUpdate": "نقاط تحتاج للتعديل",
+  "dashboard.status.needPointUpdate": "نقاط تحتاج للتعديل",
   "dashboard.status.PendingPointApproval": "بانتظار اعتماد النقاط",
   "dashboard.status.pendingPointApproval": "بانتظار اعتماد النقاط",
   "dashboard.status.ReadyForAnnouncement": "جاهزة للإعلان",

@@ -171,7 +171,7 @@ public sealed class GetOperationsDashboardQueryHandler(
         var totalJobs = await jobsQuery.CountAsync(ct);
         var activeJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Active || x.JobStatusId == JobStatusIds.Published, ct);
         var pendingReviewJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingApproval, ct);
-        var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingPointConfiguration || x.JobStatusId == JobStatusIds.PendingPointApproval, ct);
+        var approvedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.PendingPointConfiguration || x.JobStatusId == JobStatusIds.NeedPointUpdate || x.JobStatusId == JobStatusIds.PendingPointApproval, ct);
         var rejectedJobs = await jobsQuery.CountAsync(x => x.JobStatusId == JobStatusIds.Rejected, ct);
         var newJobsToday = await repos.Job.DbSet.CountAsync(x => !x.IsDeleted && x.CreatedDate >= todayStart, ct);
 
@@ -434,6 +434,7 @@ public sealed class GetOperationsDashboardQueryHandler(
                 query = query.Where(x => x.JobStatusId == JobStatusIds.Active 
                                                  || x.JobStatusId == JobStatusIds.Published 
                                                  || x.JobStatusId == JobStatusIds.PendingPointConfiguration
+                                                 || x.JobStatusId == JobStatusIds.NeedPointUpdate
                                                  || x.JobStatusId == JobStatusIds.PendingPointApproval);
             }
             else if (string.Equals(request.Status, "Submitted", StringComparison.OrdinalIgnoreCase))

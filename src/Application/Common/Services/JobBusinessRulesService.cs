@@ -86,7 +86,8 @@ public static class JobBusinessRules
             [JobStatusIds.Draft] = [JobStatusIds.Closed, JobStatusIds.PendingApproval],
             [JobStatusIds.PendingApproval] = [JobStatusIds.Closed,JobStatusIds.NeedUpdate, JobStatusIds.PendingPointConfiguration, JobStatusIds.Rejected],
             [JobStatusIds.PendingPointConfiguration] = [JobStatusIds.Closed,JobStatusIds.PendingPointApproval, JobStatusIds.Cancelled],
-            [JobStatusIds.PendingPointApproval] = [JobStatusIds.Closed,JobStatusIds.PendingPointConfiguration,JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
+            [JobStatusIds.NeedPointUpdate] = [JobStatusIds.Closed,JobStatusIds.PendingPointApproval, JobStatusIds.Cancelled],
+            [JobStatusIds.PendingPointApproval] = [JobStatusIds.Closed,JobStatusIds.NeedPointUpdate,JobStatusIds.ReadyForAnnouncement, JobStatusIds.Cancelled],
             [JobStatusIds.NeedUpdate] = [JobStatusIds.Closed,JobStatusIds.PendingApproval, JobStatusIds.Cancelled],
             [JobStatusIds.ReadyForAnnouncement] = [JobStatusIds.Closed, JobStatusIds.Cancelled,JobStatusIds.Published],
             [JobStatusIds.Published] = [JobStatusIds.Closed, JobStatusIds.Cancelled],
@@ -101,6 +102,7 @@ public static class JobBusinessRules
     public static bool CanCopyFromPreviousJob(Guid jobStatusId)
     {
         return jobStatusId == JobStatusIds.PendingPointConfiguration ||
+               jobStatusId == JobStatusIds.NeedPointUpdate ||
                jobStatusId == JobStatusIds.PendingPointApproval ||
                jobStatusId == JobStatusIds.ReadyForAnnouncement ||
                jobStatusId == JobStatusIds.Published ||

@@ -11,6 +11,7 @@ public static class JobStatusIds
     public static readonly Guid Cancelled = Guid.Parse("C0D95787-8505-B84F-6F50-0B461ECE500D");
     public static readonly Guid PendingApproval = Guid.Parse("E07BD71F-C466-0EEA-49CC-2B13D1D9403F");
     public static readonly Guid PendingPointConfiguration = Guid.Parse("5C360B07-157C-630A-254A-9C01587D80A8");
+    public static readonly Guid NeedPointUpdate = Guid.Parse("3F2A1C9B-8B5D-4E1F-A3C9-1D7B4E5F6A2C");
     public static readonly Guid PendingPointApproval = Guid.Parse("2C3F9A4E-7D1B-4E9A-8C3D-1F2B3C4D5E6F");
     public static readonly Guid ReadyForAnnouncement = Guid.Parse("0D21E063-48D3-D320-4078-D85A7C2BF622");
     public static readonly Guid Published = Guid.Parse("1E3ECAD5-63FA-A11C-7ACB-DD4C62EF74FD");
