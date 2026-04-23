@@ -350,7 +350,8 @@
           <!-- Job Info Card -->
           <div class="card card-table">
             <div class="card-body">
-              <h5 class="text-primary d-flex mb-3"><i class="hgi-stroke hgi-information-circle"></i> {{ 'JOB_APPROVAL.JOB_INFO' |
+              <h5 class="text-primary d-flex mb-3"><i class="hgi-stroke hgi-information-circle"></i> {{
+                'JOB_APPROVAL.JOB_INFO' |
                 translate }} </h5>
 
               <div class="info-list-container">
@@ -373,7 +374,8 @@
 
                 <div class="info-list-item">
                   <span class="label">{{ 'JOB_APPROVAL.CREATED_BY' | translate }}</span>
-                  <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_APPROVAL.SYSTEM' | translate) }}</span>
+                  <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_APPROVAL.SYSTEM' | translate)
+                    }}</span>
                 </div>
               </div>
             </div>
@@ -418,7 +420,8 @@
 
             <div class="col-md-12 text-end">
               <button class="btn btn-primary" (click)="saveCurrentTabReview()"
-                [disabled]="!tabControls.tabControl.value"><i class="hgi-stroke hgi-floppy-disk mx-1"></i> <span>{{ 'common.save' |
+                [disabled]="!tabControls.tabControl.value"><i class="hgi-stroke hgi-floppy-disk mx-1"></i> <span>{{
+                  'common.save' |
                   translate }}</span></button>
             </div>
           </div>
@@ -441,7 +444,7 @@
         } @if(isAllTabsApproved() && canManageJobs()) {
         <div class="approve-btn">
           <button class="btn btn-primary" [disabled]="!isReviewComplete()" (click)="confirm()">
-            <i class="hgi-stroke hgi-tick-02"></i>
+            <i class="hgi-stroke hgi-rounded hgi-document-validation"></i>
             <span>{{ 'JOB_APPROVAL.JOB_APPROVE' | translate }}</span>
           </button>
         </div>
