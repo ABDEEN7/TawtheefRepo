@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
 namespace Tawtheef.Infrastructure.Extensions;
@@ -13,7 +14,7 @@ public static class OpenApiServiceExtensions
             c.CustomSchemaIds(type => type.FullName);
             c.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "My API",
+                Title = "Careers API",
                 Version = "v1"
             });
 
@@ -22,7 +23,14 @@ public static class OpenApiServiceExtensions
                 Description = "Enter 'Bearer' [space] and then your token.",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            });
+
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
             });
         });
     }
