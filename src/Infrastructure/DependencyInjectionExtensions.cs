@@ -173,9 +173,6 @@ namespace Tawtheef.Infrastructure
                 //TODO: should be operated in Recruitment module and Operation module
                 services.AddScoped<IProfileCompletenessService, ProfileCompletenessService>();
                 
-                // Background (Common) - keep only what truly runs in both
-                services.AddHostedService<NotificationDispatcher>();
-                
                 // Logging of request bodies (Common)
                 services
                     .AddOptions<RequestBodyLoggingOptions>()
@@ -352,6 +349,8 @@ namespace Tawtheef.Infrastructure
                 
                 // Recruitment-only background jobs
                 services.AddHostedService<JobAutoClosureService>();
+                // Background (Common) - keep only what truly runs in both
+                services.AddHostedService<NotificationDispatcher>();
             }
 
             private void AddOperationHttpClients()

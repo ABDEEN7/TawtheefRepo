@@ -33,14 +33,14 @@ public class Notification : EventEntity
     public string? Subject { get; private set; }
 
     // Message body (email HTML, SMS text, push body)
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? Body { get; private set; }
 
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? PlainTextBody { get; private set; }
 
     // Serialized payload (JSON metadata, variables, deep links, etc.)
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? PayloadJson { get; private set; }
 
     // Provider-side ID (SendGrid, Twilio, Firebase, etc.)
