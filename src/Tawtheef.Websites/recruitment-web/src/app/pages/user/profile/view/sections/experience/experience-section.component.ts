@@ -73,7 +73,7 @@ export class ProfileExperienceSectionComponent {
         employerName: cr.EmployerName ?? '',
         jobTitle: cr.JobTitle ?? '',
         countryId: cr.CountryId ?? null,
-        country: this.lookups.countries().find((c) => c.id === cr.CountryId) ?? null,
+        country: this.lookups.graduationCountry().find((c) => c.id === cr.CountryId) ?? null,
         startDate: cr.StartDate ?? null,
         endDate: cr.EndDate ?? null,
         isCurrent: !!cr.IsCurrent,

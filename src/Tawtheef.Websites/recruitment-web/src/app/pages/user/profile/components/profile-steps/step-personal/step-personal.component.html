@@ -40,7 +40,7 @@
     <!-- Nationality -->
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">{{ 'wizard.personal.nationality' | translate }}</label>
-      <p-select [options]="lookups.countries()" name="nationality" [ngModel]="ds.state().nationality"
+      <p-select [options]="lookups.nationalities()" name="nationality" [ngModel]="ds.state().nationality"
         (ngModelChange)="updateField('nationality', $event)" [filter]="true" [appendTo]="'body'"
         filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
         [placeholder]="'wizard.placeholders.selectNationality' | translate" class="w-full md:w-56"

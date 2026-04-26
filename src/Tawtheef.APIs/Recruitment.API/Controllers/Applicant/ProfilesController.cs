@@ -601,7 +601,6 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         //get language from header
         var language = Request.Headers.AcceptLanguage.ToString();
         var result = await mediator.Send(new GetCountriesQuery { Language = language });
-
         if (result.IsSuccess && User.HasClaim("login_provider", nameof(ProviderLoginIds.Google)))
         {
             result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);

@@ -23,7 +23,7 @@
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label required">{{ 'wizard.achievements.country' | translate }}</label>
-      <p-select inputId="country" formControlName="country" [options]="lookups.countries()" optionLabel="name"
+      <p-select inputId="country" formControlName="country" [options]="lookups.graduationCountry()" optionLabel="name"
         [filter]="true" filterBy="additionalData.nameAr,additionalData.nameEn,name"
         [placeholder]="'wizard.achievements.choiceCountry' | translate" [appendTo]="'body'"
         [panelStyle]="{ 'maxHeight': '260px', 'overflow': 'auto', 'width': '100%' }" [ngClass]="{

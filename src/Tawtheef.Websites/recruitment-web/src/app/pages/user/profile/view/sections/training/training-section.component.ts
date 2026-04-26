@@ -1,25 +1,25 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   AchievementDto, FileRefDto,
   ProfileStatusDto,
   QualificationDto, TrainingCourseDto
 } from '../../../../../../core/models/auth/auth-response.model';
-import {MyProfileReviewNoteDto, ReviewTargetTypeEnum} from '../../models/profile-overview.model';
-import {changeRequestDto} from '../../dtos/change-request-dto';
-import {FieldChange} from '../../utils/detect-change-fields';
-import {DegreeModal} from '../../../components/profile-steps/step-degree/dialogs/degree.modal/degree.modal';
-import {Degree} from '../../../wizard-profile/models/degree.model';
-import {DialogService} from 'primeng/dynamicdialog';
-import {ProfileService} from '../../../wizard-profile/services/profile.service';
-import {NotificationService} from '../../../../../../core/services/notification.service';
-import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
-import {FileUtilsService} from '../../../../../../core/utils/file-utils';
-import {CourseModal} from '../../../components/profile-steps/step-experience/dialogs/course.modal/course.modal';
-import {TrainingCourse} from '../../../wizard-profile/models/experience.model';
-import {Tooltip} from 'primeng/tooltip';
-import {UploadedFileRef} from '../../../wizard-profile/models/profile-state.model';
+import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { changeRequestDto } from '../../dtos/change-request-dto';
+import { FieldChange } from '../../utils/detect-change-fields';
+import { DegreeModal } from '../../../components/profile-steps/step-degree/dialogs/degree.modal/degree.modal';
+import { Degree } from '../../../wizard-profile/models/degree.model';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ProfileService } from '../../../wizard-profile/services/profile.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
+import { FileUtilsService } from '../../../../../../core/utils/file-utils';
+import { CourseModal } from '../../../components/profile-steps/step-experience/dialogs/course.modal/course.modal';
+import { TrainingCourse } from '../../../wizard-profile/models/experience.model';
+import { Tooltip } from 'primeng/tooltip';
+import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
 
 @Component({
   selector: 'app-profile-training-section',
@@ -51,11 +51,11 @@ export class ProfileTrainingSectionComponent {
         title: cr.Title,
         provider: cr.Provider,
         countryId: cr.CountryId,
-        country: this.lookups.countries().find(c => c.id === cr.CountryId) ?? null,
+        country: this.lookups.graduationCountry().find(c => c.id === cr.CountryId) ?? null,
         startDate: cr.StartDate,
         endDate: cr.EndDate,
         description: cr.Description,
-        attachment: {resourceId: cr.AttachmentResourceId, fileName: cr.FileName} as any,
+        attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as any,
       } as TrainingCourse;
     });
   }
@@ -70,18 +70,18 @@ export class ProfileTrainingSectionComponent {
     if (!course) return null;
     const rowNote = course.id
       ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Row &&
-            note.entityId?.toLowerCase() === course.id?.toLowerCase()
-        ) ?? null
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Row &&
+          note.entityId?.toLowerCase() === course.id?.toLowerCase()
+      ) ?? null
       : null;
 
     const attachmentNote = course.attachment?.resourceId
       ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Attachment &&
-            note.resourceId?.toLowerCase() === course.attachment?.resourceId.toLowerCase()
-        ) ?? null
+        note =>
+          note.targetType === ReviewTargetTypeEnum.Attachment &&
+          note.resourceId?.toLowerCase() === course.attachment?.resourceId.toLowerCase()
+      ) ?? null
       : null;
 
     return rowNote ?? attachmentNote ?? null;
@@ -92,18 +92,18 @@ export class ProfileTrainingSectionComponent {
       .open(CourseModal, {
         header: this.translate.instant('profileView.actions.addQualification'),
         width: '80%',
-        contentStyle: {'max-height': '80vh', overflow: 'auto'},
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
         baseZIndex: 10000,
         closable: true,
       })?.onClose.subscribe((course: TrainingCourse | null) => {
-      if (!course) return;
-      this.profileService.saveExperienceSection([], [course]).subscribe({
-        next: () => {
-          this.notify.success(this.translate.instant('profileView.notifications.saved'));
-          this.refresh.emit();
-        }
+        if (!course) return;
+        this.profileService.saveExperienceSection([], [course]).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          }
+        });
       });
-    });
   }
 
 
@@ -113,19 +113,19 @@ export class ProfileTrainingSectionComponent {
       .open(CourseModal, {
         header: this.translate.instant('profileView.actions.editCourseTraining'),
         width: '80%',
-        contentStyle: {'max-height': '80vh', overflow: 'auto'},
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
         baseZIndex: 10000,
         closable: true,
-        data: {initialValue: mapped, disableFileUpload: true},
+        data: { initialValue: mapped, disableFileUpload: true },
       })?.onClose.subscribe((course: TrainingCourse | null) => {
-      if (!course) return;
-      this.profileService.saveExperienceSection([], [course]).subscribe({
-        next: () => {
-          this.notify.success(this.translate.instant('profileView.notifications.saved'));
-          this.refresh.emit();
-        }
+        if (!course) return;
+        this.profileService.saveExperienceSection([], [course]).subscribe({
+          next: () => {
+            this.notify.success(this.translate.instant('profileView.notifications.saved'));
+            this.refresh.emit();
+          }
+        });
       });
-    });
   }
 
   private mapTrainingCourse(qualification: TrainingCourseDto): TrainingCourse {
@@ -138,9 +138,9 @@ export class ProfileTrainingSectionComponent {
       to: qualification.endDate ?? null,
       description: qualification.description ?? '',
       attachment: qualification.attachment == null ? null : {
-          resourceId: qualification.attachment.resourceId,
-          resourceName: qualification.attachment.fileName
-        } as UploadedFileRef
+        resourceId: qualification.attachment.resourceId,
+        resourceName: qualification.attachment.fileName
+      } as UploadedFileRef
     } as TrainingCourse;
   }
 

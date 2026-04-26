@@ -62,7 +62,7 @@ export class ProfileQualificationsSectionComponent {
         gradeId: cr.GradeId,
         grade: this.lookups.ratingGrades().find(g => g.id === cr.GradeId) ?? null,
         gradCountryId: cr.GradCountryId,
-        gradCountry: this.lookups.countries().find(c => c.id === cr.GradCountryId) ?? null,
+        gradCountry: this.lookups.graduationCountry().find(c => c.id === cr.GradCountryId) ?? null,
         attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,
       } as QualificationDto;
     });

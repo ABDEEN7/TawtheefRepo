@@ -71,7 +71,7 @@ export class CourseModal implements OnInit {
       this.form.patchValue({
         org: init.provider,
         name: init.title,
-        country: this.lookups.countries().find(c => c.id === init.country?.id) ?? null,
+        country: this.lookups.graduationCountry().find(c => c.id === init.country?.id) ?? null,
         period: period?.some(p => p) ? (period as Date[]) : null,
         description: init.description ?? '',
         file: init.file ?? null,

@@ -106,7 +106,7 @@ export class ExperienceModal implements OnInit {
       this.form.patchValue({
         org: init.employerName ?? '',
         name: init.jobTitle ?? '',
-        country: this.lookups.countries().find(c => c.id === init.country?.id) ?? null,
+        country: this.lookups.graduationCountry().find(c => c.id === init.country?.id) ?? null,
         from: init.from ? new Date(init.from) : null,
         to: init.to ? new Date(init.to) : null,
         current: !!init.current,
