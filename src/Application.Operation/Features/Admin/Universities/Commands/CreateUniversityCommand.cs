@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -17,7 +17,6 @@ public sealed record CreateUniversityCommand(
     string? Code,
     string? OriginalName,
     bool IsActive,
-    int? LogoArFileIndex,
-    int? LogoEnFileIndex,
-    List<IFormFile> Files) : IRequest<IResult<Guid>>;
+    IFormFile? LogoArFile,
+    IFormFile? LogoEnFile) : IRequest<IResult<Guid>>;
 

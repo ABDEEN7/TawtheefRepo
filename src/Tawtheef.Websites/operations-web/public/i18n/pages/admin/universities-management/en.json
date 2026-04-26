@@ -41,6 +41,7 @@
   "UNIVERSITIES.NO_VALUE": "Not provided",
   "UNIVERSITIES.FIELD_REQUIRED": "This field is required.",
   "UNIVERSITIES.INVALID_EMAIL": "Please enter a valid email address.",
+  "UNIVERSITIES.INVALID_URL": "Please enter a valid website URL.",
   "UNIVERSITIES.FILTER_COUNTRY": "Filter by country",
   "UNIVERSITIES.SELECT_COUNTRY": "Select country",
   "UNIVERSITIES.SELECT_CITY": "Select city",

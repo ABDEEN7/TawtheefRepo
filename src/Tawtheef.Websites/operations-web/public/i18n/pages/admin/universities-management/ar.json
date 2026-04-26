@@ -41,6 +41,7 @@
   "UNIVERSITIES.NO_VALUE": "غير متوفر",
   "UNIVERSITIES.FIELD_REQUIRED": "هذا الحقل مطلوب.",
   "UNIVERSITIES.INVALID_EMAIL": "يرجى إدخال بريد إلكتروني صحيح.",
+  "UNIVERSITIES.INVALID_URL": "يرجى إدخال رابط موقع إلكتروني صحيح.",
   "UNIVERSITIES.FILTER_COUNTRY": "تصفية حسب الدولة",
   "UNIVERSITIES.SELECT_COUNTRY": "اختر الدولة",
   "UNIVERSITIES.SELECT_CITY": "اختر المدينة",

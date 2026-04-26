@@ -78,7 +78,7 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     descriptionEn: [''],
     countryId: ['', Validators.required],
     cityId: ['', Validators.required],
-    webSite: [''],
+    webSite: ['', [Validators.pattern(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/)]],
     phone: [''],
     email: ['', Validators.email],
     code: [''],
@@ -233,13 +233,16 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     this.cancel.emit();
   }
 
-  requiredError(controlName: 'nameAr' | 'nameEn' | 'countryId' | 'cityId' | 'email'): string {
+  requiredError(controlName: 'nameAr' | 'nameEn' | 'countryId' | 'cityId' | 'email' | 'webSite'): string {
     const control = this.form.controls[controlName];
     if (control.hasError('required')) {
       return this.translate.instant('UNIVERSITIES.FIELD_REQUIRED');
     }
     if (control.hasError('email')) {
       return this.translate.instant('UNIVERSITIES.INVALID_EMAIL');
+    }
+    if (control.hasError('pattern') && controlName === 'webSite') {
+      return this.translate.instant('UNIVERSITIES.INVALID_URL');
     }
     return '';
   }

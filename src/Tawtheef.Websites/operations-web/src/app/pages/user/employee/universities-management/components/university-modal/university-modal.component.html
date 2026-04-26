@@ -15,7 +15,7 @@
 
       <div class="row g-3">
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.NAME_AR' | translate }}</label>
+          <label class="form-label">{{ 'UNIVERSITIES.NAME_AR' | translate }} <span class="text-danger">*</span></label>
           <input class="form-control" formControlName="nameAr"
             [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
           @if (submitted && form.controls.nameAr.invalid) {
@@ -23,7 +23,7 @@
           }
         </div>
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.NAME_EN' | translate }}</label>
+          <label class="form-label">{{ 'UNIVERSITIES.NAME_EN' | translate }} <span class="text-danger">*</span></label>
           <input class="form-control" formControlName="nameEn"
             [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
           @if (submitted && form.controls.nameEn.invalid) {
@@ -45,7 +45,7 @@
 
       <div class="row g-3 mt-1">
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.COUNTRY' | translate }}</label>
+          <label class="form-label">{{ 'UNIVERSITIES.COUNTRY' | translate }} <span class="text-danger">*</span></label>
           <select class="form-select" formControlName="countryId" (change)="onCountryChange($event)"
             [class.is-invalid]="submitted && form.controls.countryId.invalid">
             <option value="">{{ 'UNIVERSITIES.SELECT_COUNTRY' | translate }}</option>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.CITY' | translate }}</label>
+          <label class="form-label">{{ 'UNIVERSITIES.CITY' | translate }} <span class="text-danger">*</span></label>
           <select class="form-select" formControlName="cityId"
             [disabled]="!form.controls.countryId.value || citiesLoading()"
             [class.is-invalid]="submitted && form.controls.cityId.invalid">
@@ -76,11 +76,15 @@
 
       <div class="row g-3 mt-1">
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.WEBSITE' | translate }}</label>
-          <input class="form-control" formControlName="webSite" />
+          <label class="form-label">{{ 'UNIVERSITIES.WEBSITE' | translate }} <span class="text-danger">*</span></label>
+          <input type="url" class="form-control" formControlName="webSite"
+            [class.is-invalid]="submitted && form.controls.webSite.invalid" />
+          @if (submitted && form.controls.webSite.invalid) {
+          <div class="invalid-feedback d-block">{{ requiredError('webSite') }}</div>
+          }
         </div>
         <div class="col-md-6">
-          <label class="form-label">{{ 'UNIVERSITIES.EMAIL' | translate }}</label>
+          <label class="form-label">{{ 'UNIVERSITIES.EMAIL' | translate }} <span class="text-danger">*</span></label>
           <input type="email" class="form-control" formControlName="email"
             [class.is-invalid]="submitted && form.controls.email.invalid" />
           @if (submitted && form.controls.email.invalid) {
