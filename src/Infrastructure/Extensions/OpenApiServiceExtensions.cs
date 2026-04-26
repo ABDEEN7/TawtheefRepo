@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
 namespace Tawtheef.Infrastructure.Extensions;
@@ -11,7 +10,6 @@ public static class OpenApiServiceExtensions
     {
         services.AddSwaggerGen(c =>
         {
-            c.CustomSchemaIds(type => type.FullName);
             c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Careers API",
@@ -30,7 +28,7 @@ public static class OpenApiServiceExtensions
 
             c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
             });
         });
     }
