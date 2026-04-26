@@ -116,7 +116,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         {
             InvitationStatusIds.NewInvitation,
             InvitationStatusIds.Read,
-            InvitationStatusIds.Submitted
+            InvitationStatusIds.ExamEligible
         };
 
         var ids = await repo

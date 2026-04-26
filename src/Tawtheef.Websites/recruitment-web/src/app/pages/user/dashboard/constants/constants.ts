@@ -1,77 +1,57 @@
+import { InvitationStatus, JobCategory } from "../../../../core/enums/lookups.enum";
 import { ActionConfig } from "../types/action-config.type";
-import { InvitationStatus } from "../types/invitation-status.type";
-import { JobStatus } from "../types/job-status.type";
 
-// Constants for job types
-export const JOB_TYPES = {
-  ACADEMIC: 'Academic',
-  ADMINISTRATIVE: 'Administrative',
-  LABOR: 'Labor'
-} as const;
-
-
-// Constants for job statuses
-export const JOB_INVITATION_STATUSES = {
-  NEW_INVITATION: 'NewInvitation',
-  CLOSED: 'Closed',
-  CANCELLED: 'Cancelled',
-  REQUIRES_UPDATE: 'ReturnedAttachment',
-  PENDING_ATTACHMENT_APPROVAL: 'PendingAttachmentApproval',
-  SUBMITTED: 'Submitted',
-  READ: 'Read',
-  REJECTED: 'Rejected',
-} as const;
 
 // Constants for status pill classes
-export const STATUS_PILL_CLASSES: Record<JobStatus, string> = {
-  [JOB_INVITATION_STATUSES.NEW_INVITATION]: 'info',
-  [JOB_INVITATION_STATUSES.CLOSED]: 'soft',
-  [JOB_INVITATION_STATUSES.READ]: 'neutral',
-  [JOB_INVITATION_STATUSES.REJECTED]: 'soft',
-  [JOB_INVITATION_STATUSES.CANCELLED]: 'soft',
-  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: 'warning',
-  [JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL]: 'info',
-  [JOB_INVITATION_STATUSES.SUBMITTED]: 'success'
+export const STATUS_PILL_CLASSES: Record<InvitationStatus, string> = {
+  [InvitationStatus.NewInvitation]: 'info',
+  [InvitationStatus.Closed]: 'soft',
+  [InvitationStatus.Cancelled]: 'soft',
+  [InvitationStatus.Read]: 'neutral',
+  [InvitationStatus.ReturnedAttachment]: 'warning',
+  [InvitationStatus.PendingAttachmentApproval]: 'info',
+  [InvitationStatus.Rejected]: 'soft',
+  [InvitationStatus.ExamEligible]: 'success'
 } as const;
 
 // Constants for type badge classes
 export const TYPE_BADGE_CLASSES = {
-  [JOB_TYPES.ACADEMIC]: 'badge-soft academic',
-  [JOB_TYPES.ADMINISTRATIVE]: 'badge-soft administrative',
-  [JOB_TYPES.LABOR]: 'badge-soft labor'
+  [JobCategory.Academic]: 'badge-soft academic',
+  [JobCategory.Administrative]: 'badge-soft administrative',
+  [JobCategory.Labor]: 'badge-soft labor'
 } as const;
 
 // Action configurations
 export const ACTION_CONFIGS: Record<InvitationStatus, ActionConfig> = {
-  [JOB_INVITATION_STATUSES.NEW_INVITATION]: {
+  [InvitationStatus.NewInvitation]: {
     showApply: true,
     showDetails: false,
   },
-  [JOB_INVITATION_STATUSES.SUBMITTED]: {
+  [InvitationStatus.ExamEligible]: {
     showApply: false,
     showDetails: false,
   },
-  [JOB_INVITATION_STATUSES.REJECTED]: {
+  [InvitationStatus.Rejected]: {
     showApply: false,
     showDetails: false,
   },
-  [JOB_INVITATION_STATUSES.CLOSED]: {
+  [InvitationStatus.Closed]: {
     showApply: false,
     showDetails: false,
   },
-  [JOB_INVITATION_STATUSES.CANCELLED]: {
+  [InvitationStatus.Cancelled]: {
     showApply: false,
     showDetails: false,
   },
-  [JOB_INVITATION_STATUSES.REQUIRES_UPDATE]: {
+  [InvitationStatus.ReturnedAttachment]: {
     showApply: false,
     showDetails: true,
   },
-  [JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL]: {
+  [InvitationStatus.PendingAttachmentApproval]: {
     showApply: false,
     showDetails: true,
   },
-  [JOB_INVITATION_STATUSES.READ]: {
+  [InvitationStatus.Read]: {
     showApply: true,
     showDetails: false
   },

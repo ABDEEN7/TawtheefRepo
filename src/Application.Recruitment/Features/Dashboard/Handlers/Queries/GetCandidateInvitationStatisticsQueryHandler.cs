@@ -23,7 +23,7 @@ public sealed class GetCandidateInvitationStatisticsQueryHandler(IUnitOfWork uni
             .Select(g => new CandidateInvitationStatisticsDto
             {
                 Received = g.Count(),
-                Accepted = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Submitted),
+                Accepted = g.Count(i => i.InvitationStatusId == InvitationStatusIds.ExamEligible),
                 Rejected = g.Count(i => i.InvitationStatusId == InvitationStatusIds.Rejected),
             })
             .FirstOrDefaultAsync(cancellationToken) ?? new CandidateInvitationStatisticsDto();

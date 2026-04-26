@@ -33,7 +33,7 @@ public sealed class GetJobInvitationSummaryDetailsStatsQueryHandler(IUnitOfWork 
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Read,
                 cancellationToken),
             Applied = await invitations.CountAsync(
-                invitation => invitation.InvitationStatusId == InvitationStatusIds.Submitted,
+                invitation => invitation.InvitationStatusId == InvitationStatusIds.ExamEligible,
                 cancellationToken),
             Declined = await invitations.CountAsync(
                 invitation => invitation.InvitationStatusId == InvitationStatusIds.Rejected,

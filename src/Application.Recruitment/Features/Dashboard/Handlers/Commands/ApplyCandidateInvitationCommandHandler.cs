@@ -36,7 +36,7 @@ public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWor
             || invitation.InvitationStatusId == InvitationStatusIds.Read
             || invitation.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval
             || invitation.InvitationStatusId == InvitationStatusIds.ReturnedAttachment
-            || invitation.InvitationStatusId == InvitationStatusIds.Submitted;
+            || invitation.InvitationStatusId == InvitationStatusIds.ExamEligible;
 
         if (!canSubmit)
             return Result.Fail<Unit>(ErrorsCodes.InvitationStatusChangeNotAllowed);
@@ -44,7 +44,7 @@ public sealed class ApplyCandidateInvitationCommandHandler(IUnitOfWork unitOfWor
         bool needsApproval = invitation.Attachments.Any();
         var newStatus = needsApproval 
             ? InvitationStatusIds.PendingAttachmentApproval 
-            : InvitationStatusIds.Submitted;
+            : InvitationStatusIds.ExamEligible;
 
         invitation.ChangeInvitationStatus(newStatus);
         invitation.IsAccepted = true;

@@ -14,9 +14,9 @@ import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { GUID } from '../../../shared/types/guid.type';
 import { ActionConfig } from './types/action-config.type';
-import { STATUS_PILL_CLASSES, TYPE_BADGE_CLASSES, ACTION_CONFIGS, JOB_INVITATION_STATUSES } from './constants/constants';
+import { STATUS_PILL_CLASSES, TYPE_BADGE_CLASSES, ACTION_CONFIGS } from './constants/constants';
 import { CandidateDashboardService } from './services/candidate-dashboard.service';
-import { InvitationStatus } from './types/invitation-status.type';
+import { InvitationStatus } from '../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-dashboard',
@@ -105,16 +105,12 @@ export class Dashboard implements OnInit {
   }
 
   getActionButtons(invitationStatus: DropdownOptionVM): ActionConfig {
-    const status = invitationStatus.backendName as InvitationStatus;
+    const status: InvitationStatus = invitationStatus.backendName as InvitationStatus;
 
-    return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[JOB_INVITATION_STATUSES.CLOSED];
+    return ACTION_CONFIGS[status] ?? ACTION_CONFIGS[InvitationStatus.Closed];
   }
 
   getStatus(invitationStatus: DropdownOptionVM): string {
-    const status = invitationStatus.backendName as InvitationStatus;
-    if (status == JOB_INVITATION_STATUSES.SUBMITTED) {
-      return this.translate.instant('JOB_INVITATION_STATUSES.SUBMITTED');
-    }
     return invitationStatus.name;
   }
 
