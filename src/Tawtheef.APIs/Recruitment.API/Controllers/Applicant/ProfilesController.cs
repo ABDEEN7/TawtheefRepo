@@ -629,6 +629,21 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("lookups/graduation-countries")]
+    public async Task<IActionResult> GraduationCountry()
+    {
+        //get language from header
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(new GetCountriesQuery { Language = language });
+
+        if (result.IsSuccess && User.HasClaim("login_provider", nameof(ProviderLoginIds.Google)))
+        {
+            result.Value.RemoveAll(c => c.Id == CountryIds.Qatar);
+        }
+
+        return result.ToActionResult();
+    }
+
     [HttpGet("lookups/degrees")]
     public async Task<IActionResult> GetDegrees()
     {

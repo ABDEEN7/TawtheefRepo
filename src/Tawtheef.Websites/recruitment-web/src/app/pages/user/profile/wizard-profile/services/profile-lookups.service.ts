@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
-import {forkJoin, Observable} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
-import {HttpService} from '../../../../../core/http/http.service';
-import {UserService} from '../../../../../core/auth/user.service';
-import {HttpHeaders} from '@angular/common/http';
+import { forkJoin, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { dropdownOptionsModel, DropdownOptionVM } from '../../../../../shared/models/dropdown-options.model';
+import { HttpService } from '../../../../../core/http/http.service';
+import { UserService } from '../../../../../core/auth/user.service';
+import { HttpHeaders } from '@angular/common/http';
 
 export interface CountryDto extends dropdownOptionsModel {
   code: string;
@@ -27,24 +27,24 @@ export class ProfileLookupsService {
   loading = signal<boolean>(false);
   loaded = signal<boolean>(false);
 
-  candidateTypes   = signal<DropdownOptionVM[]>([]);
-  targetEntities   = signal<DropdownOptionVM[]>([]);
-  genders          = signal<DropdownOptionVM[]>([]);
-  religions        = signal<DropdownOptionVM[]>([]);
-  maritalStatuses  = signal<DropdownOptionVM[]>([]);
-  countries        = signal<CountryVM[]>([]);
-  degrees          = signal<DropdownOptionVM[]>([]);
-  studyTypes       = signal<DropdownOptionVM[]>([]);
-  ratingGrades     = signal<DropdownOptionVM[]>([]);
-  skillLevels     = signal<DropdownOptionVM[]>([]);
+  candidateTypes = signal<DropdownOptionVM[]>([]);
+  targetEntities = signal<DropdownOptionVM[]>([]);
+  genders = signal<DropdownOptionVM[]>([]);
+  religions = signal<DropdownOptionVM[]>([]);
+  maritalStatuses = signal<DropdownOptionVM[]>([]);
+  countries = signal<CountryVM[]>([]);
+  degrees = signal<DropdownOptionVM[]>([]);
+  studyTypes = signal<DropdownOptionVM[]>([]);
+  ratingGrades = signal<DropdownOptionVM[]>([]);
+  skillLevels = signal<DropdownOptionVM[]>([]);
   achievementTypes = signal<DropdownOptionVM[]>([]);
-  languages        = signal<DropdownOptionVM[]>([]);
-  languageLevels   = signal<DropdownOptionVM[]>([]);
-  nationalities        = signal<CountryVM[]>([]);
-  interviewLocation        = signal<CountryVM[]>([]);
-  residenceCountry        = signal<CountryVM[]>([]);
-  graduationCountry        = signal<CountryVM[]>([]);
-  sponsorTypes        = signal<DropdownOptionVM[]>([]);
+  languages = signal<DropdownOptionVM[]>([]);
+  languageLevels = signal<DropdownOptionVM[]>([]);
+  nationalities = signal<CountryVM[]>([]);
+  interviewLocation = signal<CountryVM[]>([]);
+  residenceCountry = signal<CountryVM[]>([]);
+  graduationCountry = signal<CountryVM[]>([]);
+  sponsorTypes = signal<DropdownOptionVM[]>([]);
 
   loadAll(): Observable<void> {
     if (this.loaded()) return new Observable(observer => {
@@ -62,6 +62,8 @@ export class ProfileLookupsService {
       religions: this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.religions),
       maritalStatuses: this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.maritalStatuses),
       countries: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.countries),
+      nationalities: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.nationalities),
+      graduationCountries: this.http.get<CountryDto[]>(this.endpoints.profile.lookups.graduationCountries),
       degrees: this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.degrees),
       studyTypes: this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.studyTypes),
       ratingGrades: this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.ratingGrades),
@@ -78,10 +80,10 @@ export class ProfileLookupsService {
         this.religions.set(this.toVMs(res.religions));
         this.maritalStatuses.set(this.toVMs(res.maritalStatuses));
         this.countries.set(this.toCountryVMs(res.countries));
-        this.nationalities.set(this.toCountryVMs(res.countries));
+        this.nationalities.set(this.toCountryVMs(res.nationalities));
         this.interviewLocation.set(this.toCountryVMs(res.countries));
         this.residenceCountry.set(this.toCountryVMs(res.countries));
-        this.graduationCountry.set(this.toCountryVMs(res.countries));
+        this.graduationCountry.set(this.toCountryVMs(res.graduationCountries));
         this.degrees.set(this.toVMs(res.degrees));
         this.studyTypes.set(this.toVMs(res.studyTypes));
         this.ratingGrades.set(this.toVMs(res.ratingGrades));
@@ -102,7 +104,7 @@ export class ProfileLookupsService {
     );
   }
   searchSkills(query: string): Observable<DropdownOptionVM[]> {
-    return this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.skill, { 'search': query },{
+    return this.http.get<DropdownOptionVM[]>(this.endpoints.profile.lookups.skill, { 'search': query }, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
