@@ -30,7 +30,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
     public DateTime? LastLoginDate { get; set; }
     
     [MaxLength(10)]
-    public string PreferredLanguage { get; set; } = "ar";
+    public string? PreferredLanguage { get; set; }
     
     [StringLength(2048)]
     public string? Avatar { get; set; }
@@ -190,6 +190,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         return Result.Ok(user);
     }
     public void Block() => IsBlocked = true;
+    public string GetPreferredLanguage(string? defaultValue = "ar") => PreferredLanguage ?? defaultValue ?? "ar";
     
     //--------------------------------------------
     

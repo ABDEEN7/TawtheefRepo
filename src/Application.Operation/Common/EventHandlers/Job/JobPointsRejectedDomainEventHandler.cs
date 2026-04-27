@@ -36,7 +36,7 @@ public sealed class JobPointsRejectedDomainEventHandler(
 
         var repo = unitOfWork.GetEntityRepository<Notification>();
         var notificationEntity = Notification.Create(NotificationChannel.InApp, JobPointsRejectedNotification.TemplateKey, user.Id, 
-            user.Email, null, null, null, payload, null, 3, user.PreferredLanguage);
+            user.Email, null, null, null, payload, user.GetPreferredLanguage(), null, 3);
         await repo.AddAsync(notificationEntity, ct);
         await unitOfWork.SaveChangesAsync(ct);
     }

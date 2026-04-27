@@ -22,7 +22,7 @@ internal static class JobNotificationEmailHelper
                 continue;
 
             var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-                user.Email, null, null, null, payloadJson, null, 3, user.PreferredLanguage);
+                user.Email, null, null, null, payloadJson, user.GetPreferredLanguage(), null, 3);
             await repo.AddAsync(notification, ct);
         }
         await unitOfWork.SaveChangesAsync(ct);
@@ -38,7 +38,7 @@ internal static class JobNotificationEmailHelper
 
         var repo = unitOfWork.GetEntityRepository<Notification>();
         var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-            user.Email, null, null, null, payloadJson, null, 3, user.PreferredLanguage);
+            user.Email, null, null, null, payloadJson, user.GetPreferredLanguage(), null, 3);
         await repo.AddAsync(notification, ct);
         await unitOfWork.SaveChangesAsync(ct);
     }

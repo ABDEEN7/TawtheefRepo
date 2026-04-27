@@ -2,9 +2,9 @@ using System.Text;
 using System.Text.Json;
 using Application.Operation.Features.Employee.Kawader.Commands;
 using Application.Operation.Features.Employee.Kawader.DTOs;
-using MediatR;
 using ExcelDataReader;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
@@ -184,8 +184,11 @@ public sealed class UploadKawaderUserCommandHandler(
             null,
             row.Email,
             null,
-            null, null, JsonSerializer.Serialize(model),
-            $"KawaderInvite_Email_{row.Qid}");
+            null, 
+            null, 
+            JsonSerializer.Serialize(model),
+            "ar",
+            idempotencyKey: $"KawaderInvite_Email_{row.Qid}");
         await uow.GetEntityRepository<Notification>().AddAsync(notification, ct);
         await uow.SaveChangesAsync(ct);
     }
@@ -223,9 +226,7 @@ public sealed class UploadKawaderUserCommandHandler(
             null,
             null,
             payload,
-            $"KawaderInvite_Sms_{row.Qid}",
-            3,
-            "ar");
+            "ar", $"KawaderInvite_Sms_{row.Qid}", 3);
 
         await uow.GetEntityRepository<Notification>().AddAsync(sms, ct);
     }

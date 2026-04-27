@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Application.Recruitment.Features.Authenticator.Commands.Verification;
 using Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -67,9 +68,8 @@ public class RequestPhoneVerificationCommandHandler(
             request.UserId.Value, request.PhoneE164, 
             null, 
             null, 
-            null, System.Text.Json.JsonSerializer.Serialize(model), 
-            null, 0, 
-            user.PreferredLanguage);
+            null, JsonSerializer.Serialize(model), 
+            user.GetPreferredLanguage(), null, 0);
         await unitOfWork.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);

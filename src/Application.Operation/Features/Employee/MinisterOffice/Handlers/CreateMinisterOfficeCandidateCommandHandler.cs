@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.HttpClients;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Kawader;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -149,7 +149,8 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
                 null,
                 null,
                 payload,
-                $"minister-office-reg-{normalizedQid}-{DateTime.UtcNow:yyyyMMddHHmmss}");
+                "ar",
+                idempotencyKey: $"minister-office-reg-{normalizedQid}-{DateTime.UtcNow:yyyyMMddHHmmss}");
 
             var notifRepo = uow.GetEntityRepository<Notification>();
             await notifRepo.AddAsync(notification, ct);
@@ -240,9 +241,8 @@ public sealed class CreateMinisterOfficeCandidateCommandHandler(
                 null,
                 null, null,
                 payload,
-                $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
-                3,
-                hr.PreferredLanguage);
+                hr.PreferredLanguage ?? "ar", 
+                idempotencyKey: $"minister-office-hr-inapp-{hr.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}");
             
             await notifRepo.AddAsync(inAppNotification, ct);
         }

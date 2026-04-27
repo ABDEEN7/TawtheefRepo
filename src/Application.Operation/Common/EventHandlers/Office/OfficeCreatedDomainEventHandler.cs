@@ -27,7 +27,7 @@ public sealed class OfficeCreatedDomainEventHandler(IUnitOfWork unitOfWork, User
         var repo = unitOfWork.GetEntityRepository<Notification>();
         var payload = JsonSerializer.Serialize(new OfficeCreatedNotificationModel(office.NameAr, office.NameEn, office.Code, admin.Email!));
         var emailNotification = Notification.Create(NotificationChannel.Email, OfficeCreatedNotification.TemplateKey, 
-            admin.Id, admin.Email, null, null, null, payload, null, 3, admin.PreferredLanguage);
+            admin.Id, admin.Email, null, null, null, payload, "ar", null, 3);
         await repo.AddAsync(emailNotification, ct);
     }
 }

@@ -1,12 +1,12 @@
-using MediatR;
-using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Entities.Notification;
-using Microsoft.EntityFrameworkCore;
-using Tawtheef.Domain.Entities.Users;
 using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Utils;
+using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation;
 using Tawtheef.Notifications.Templates.InvitationAttachmentReturned;
 
@@ -45,8 +45,7 @@ public class InvitationAttachmentReturnedEventHandler(
                 null,
                 null,
                 null,
-                payload,
-                null, 3, user.PreferredLanguage);
+                payload, user.GetPreferredLanguage(), null, 3);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(emailNotif, cancellationToken);
         }
 
@@ -59,8 +58,7 @@ public class InvitationAttachmentReturnedEventHandler(
                 null,
                 null,
                 null,
-                payload,
-                null, 3, user.PreferredLanguage);
+                payload, user.GetPreferredLanguage(), null, 3);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(inAppNotif, cancellationToken);
 
 
@@ -75,8 +73,7 @@ public class InvitationAttachmentReturnedEventHandler(
                 null,
                 null,
                 null,
-                payload,
-                null, 3, user.PreferredLanguage);
+                payload, user.GetPreferredLanguage(), null, 3);
             await unitOfWork.GetEntityRepository<Notification>().AddAsync(smsNotif, cancellationToken);
         }
 

@@ -27,7 +27,7 @@ public sealed class ChangeJobStatusApprovedNotificationDomainEventHandler(
 
         var repo = unitOfWork.GetEntityRepository<Notification>();
         var notification = Notification.Create(NotificationChannel.InApp, ChangeJobStatusApprovedNotification.TemplateKey, user.Id, 
-            user.Email, null, null, null, payload, null, 3, user.PreferredLanguage);
+            user.Email, null, null, null, payload, user.GetPreferredLanguage(), null, 3);
         await repo.AddAsync(notification, ct);
         await unitOfWork.SaveChangesAsync(ct);
     }

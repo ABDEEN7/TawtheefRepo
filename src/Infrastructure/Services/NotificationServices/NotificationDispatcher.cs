@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Entities.Notification;
-
 using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
@@ -185,6 +184,7 @@ public sealed class NotificationDispatcher(
                     var html = await renderer.RenderHtmlAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
                     var text = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
 
+                    typeof(Notification).GetProperty(nameof(Notification.Body))?.SetValue(n, html);
                     typeof(Notification).GetProperty(nameof(Notification.PlainTextBody))?.SetValue(n, text);
 
                     content = html; // for subject extraction logic below
@@ -194,6 +194,7 @@ public sealed class NotificationDispatcher(
                     // For other channels (SMS, Push), we just render text
                     content = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
                     content = content.Trim();
+                    typeof(Notification).GetProperty(nameof(Notification.Body))?.SetValue(n, content);
                 }
 
                 // If content starts with "Subject:", extract it and remove from body (legacy support)
@@ -203,8 +204,7 @@ public sealed class NotificationDispatcher(
                     if (lines.Length > 0)
                     {
                         var subjectLine = lines[0][8..].Trim();
-                        typeof(Notification).GetProperty(nameof(Notification.Subject))?
-                            .SetValue(n, subjectLine);
+                        typeof(Notification).GetProperty(nameof(Notification.Subject))?.SetValue(n, subjectLine);
                     }
                 }
             }

@@ -76,7 +76,7 @@ public class Notification : EventEntity
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
         string? toAddress, string? subject, string? body, string? plainTextBody,
-        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3, string language = "ar")
+        string? payloadJson, string language, string? idempotencyKey = null, int maxRetries = 3)
     {
         return new Notification
         {

@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Application.Recruitment.Common.Interfaces.Services.HttpClients;
 using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -222,9 +223,9 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                     null,
                     null,
                     null,
-                    payloadJson: System.Text.Json.JsonSerializer.Serialize(model),
-                    idempotencyKey: $"qatar-otp-{user.Id}-{Guid.NewGuid()}",
-                    maxRetries: 3);
+                    payloadJson: JsonSerializer.Serialize(model),
+                    user.PreferredLanguage ?? request.Language ?? "ar",
+                    idempotencyKey: $"qatar-otp-{user.Id}-{Guid.NewGuid()}");
                 await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
                 await uow.SaveChangesAsync(cancellationToken);
 
