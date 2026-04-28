@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,12 @@ public class NotificationTesterController(
     IEmailTemplateRenderer renderer,
     IWebHostEnvironment env) : ControllerBase
 {
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
+
     /// <summary>
     /// Returns all registered notification templates with metadata and parameter info.
     /// </summary>
@@ -285,7 +292,7 @@ public class NotificationTesterController(
             }
         }
 
-        return JsonSerializer.Serialize(modelParams);
+        return JsonSerializer.Serialize(modelParams, _jsonOptions);
     }
 
     private static object? ConvertParameterValue(string typeName, string? value)

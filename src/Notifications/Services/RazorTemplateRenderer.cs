@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using RazorLight;
 using Tawtheef.Notifications.Attributes;
 using Tawtheef.Notifications.Context;
@@ -12,6 +13,12 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
     private readonly RazorLightEngine _engine;
     private readonly IEmailBranding _branding;
     private readonly Dictionary<string, string> _keyMap; // normalized -> actual
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
 
     public RazorTemplateRenderer(IEmailBranding branding)
     {
@@ -138,9 +145,9 @@ public sealed class RazorTemplateRenderer : IEmailTemplateRenderer
             type = typeof(NotificationAssemblyMarker).Assembly.GetType(fallbackName);
             
             if (type == null)
-                return JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson) ?? new object();
+                return JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson, _jsonOptions) ?? new object();
         }
 
-        return JsonSerializer.Deserialize(payloadJson, type) ?? new object();
+        return JsonSerializer.Deserialize(payloadJson, type, _jsonOptions) ?? new object();
     }
 }
