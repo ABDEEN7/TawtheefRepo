@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Razor
 @using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
 
@@ -9,7 +9,7 @@
     var primary = b.PrimaryHex;
     var product = b.ProductName;
     var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
+    var website = b.RecruitmentUrl;
     var logo = b.LogoUrl;
 
     var jobTitle = m.JobTitle;
@@ -47,19 +47,16 @@
         </a>
         <br/>
       }
-      <p class="badge">Invitation to apply</p>
-      <h1 class="title">You are invited to apply</h1>
+      <p class="badge">Job Invitation</p>
+      <h1 class="title">Invitation to Apply for a Job</h1>
       <p class="text">Dear Candidate,</p>
       <p class="text">
-        You have been invited to apply for @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") on @product.
+        You are invited to apply for the job @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" \"{jobTitle}\""). Please log in to the platform to review the details and complete the application process.
       </p>
-      <p class="text">
-        Please sign in to review the opportunity and submit your application.
-      </p>
-      <a class="cta" style="color: white;" href="@website" target="_blank">View invitation</a>
+      <a class="cta" style="color: white;" href="@website" target="_blank">View Details</a>
       <div class="divider"></div>
       <p class="muted">
-        If the button does not work, copy and paste this link into your browser: @website
+        Portal Link: @website
       </p>
     </div>
     <div class="footer">

@@ -1,17 +1,8 @@
-@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
-@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr.MinisterOfficeNewCandidateHrModel>
+New Candidate in Minister’s Office
 
-@{
-    var product = Model.Branding.ProductName;
-    var website = Model.Branding.WebsiteUrl;
-    var m = Model.Model;
-    var distributionUrl = $"{website}/user/employee/profile-managment/distribution";
-}
+Dear Employee,
+A new candidate has been added to the Minister’s Office candidate’s page.
+Candidate Name: @(Model.Model.NameEn)
 
-Subject: New Minister's Office Candidate
-
-A new candidate has been added to the Minister's Office: @m.NameEn
-Please check the distribution list: @distributionUrl
-
-Regards,
-The @product Team
+Portal Link: @(Model.Branding.OperationsUrl)

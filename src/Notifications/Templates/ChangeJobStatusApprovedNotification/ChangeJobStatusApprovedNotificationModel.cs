@@ -7,5 +7,5 @@ public static class ChangeJobStatusApprovedNotification
     public const string TemplateKey = nameof(ChangeJobStatusApprovedNotification);
 }
 
-[NotificationTemplate(ChangeJobStatusApprovedNotification.TemplateKey, "تمت الموافقة على طلب الوظيفة", "Job Approval Confirmed")]
+[NotificationTemplate(ChangeJobStatusApprovedNotification.TemplateKey, "تم اعتماد الوظيفة", "The job has been approved")]
 public sealed record ChangeJobStatusApprovedNotificationModel(string JobTitle);

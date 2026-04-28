@@ -7,5 +7,5 @@ public static class InvitationAttachmentReturned
     public const string TemplateKey = nameof(InvitationAttachmentReturned);
 }
 
-[NotificationTemplate(InvitationAttachmentReturned.TemplateKey, "تمت إعادة المرفق للمراجعة", "Action Required: Job Application Attachment Returned")]
+[NotificationTemplate(InvitationAttachmentReturned.TemplateKey, "تم إرجاع المرفق للمراجعة", "Attachment Returned for Review")]
 public sealed record InvitationAttachmentReturnedModel(string AttachmentTitle, string ReviewNote);

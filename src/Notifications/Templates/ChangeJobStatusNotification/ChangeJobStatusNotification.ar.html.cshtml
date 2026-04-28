@@ -8,7 +8,8 @@
     var primary = b.PrimaryHex;
     var product = b.ProductName;
     var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
+    var website = b.OperationsUrl;
+    var targetPageUrl = $"{website}/portal/jobs";
     var logo = b.LogoUrl;
 
     var jobTitle = m.JobTitle;
@@ -46,19 +47,16 @@
         </a>
         <br/>
       }
-      <p class="badge">بانتظار المراجعة</p>
-      <h1 class="title">مراجعة حالة الوظيفة مطلوبة</h1>
-      <p class="text">عزيزي الزميل/الزميلة،</p>
+      <p class="badge">بانتظار الاعتماد</p>
+      <h1 class="title">بيانات الوظيفة بانتظار الاعتماد</h1>
+      <p class="text">عزيزي الموظف / عزيزتي الموظفة،</p>
       <p class="text">
-        تم تقديم طلب لتغيير حالة @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
+        نود إفادتكم بأن بيانات الوظيفة @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" «{jobTitle}»") بانتظار الاعتماد.
       </p>
-      <p class="text">
-        يرجى تسجيل الدخول إلى @product لمراجعة الطلب والمتابعة في الإجراء المناسب.
-      </p>
-      <a class="cta" style="color: white;" href="@website" target="_blank">مراجعة في @product</a>
+      <a class="cta" style="color: white;" href="@targetPageUrl" target="_blank">مراجعة في @product</a>
       <div class="divider"></div>
       <p class="muted">
-        إذا لم يعمل الزر، يرجى نسخ هذا الرابط ولصقه في المتصفح: @website
+        رابط المنصة: @targetPageUrl
       </p>
     </div>
     <div class="footer">

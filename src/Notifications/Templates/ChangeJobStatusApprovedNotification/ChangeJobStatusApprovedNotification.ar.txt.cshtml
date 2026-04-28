@@ -1,13 +1,7 @@
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
-تمت الموافقة على طلب الوظيفة
+تم اعتماد الوظيفة
 
-عزيزي الزميل/الزميلة،
+عزيزي الموظف / عزيزتي الموظفة
+تم اعتماد الوظيفة «@(Model.Model.JobTitle)» وهي الآن جاهزة للمرحلة التالية.
 
-تمت الموافقة على طلب الوظيفة @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"").
-
-يمكنك الآن المتابعة في نشر الوظيفة أو اتخاذ الخطوات التالية في @Model.Branding.ProductName.
-
-رابط المنصة: @Model.Branding.WebsiteUrl
-
-مع تحيات،
-فريق عمل @Model.Branding.ProductName
+رابط المنصة: @(Model.Branding.OperationsUrl)/portal/jobs

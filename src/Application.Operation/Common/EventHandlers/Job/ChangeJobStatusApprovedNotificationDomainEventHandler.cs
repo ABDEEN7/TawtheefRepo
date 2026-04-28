@@ -21,15 +21,12 @@ public sealed class ChangeJobStatusApprovedNotificationDomainEventHandler(
         var jobTitle = localizationService.GetLocalizedValue(eventData.Job.JobTitle?.JobNameAr ?? string.Empty, eventData.Job.JobTitle?.JobNameEn ?? string.Empty);
         var payload = JsonSerializer.Serialize(new ChangeJobStatusApprovedNotificationModel(jobTitle));
 
-        var user = await userManager.FindByIdAsync(eventData.Job.CreatedById.ToString()!);
-        if (user == null || string.IsNullOrWhiteSpace(user.Email))
-            return;
-
-        var repo = unitOfWork.GetEntityRepository<Notification>();
-        var notification = Notification.Create(NotificationChannel.InApp, ChangeJobStatusApprovedNotification.TemplateKey, user.Id, 
-            user.Email, null, null, null, payload, user.GetPreferredLanguage(), null, 3);
-        await repo.AddAsync(notification, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+        await JobNotificationEmailHelper.QueueForEmployeeAsync(
+            unitOfWork,
+            userManager,
+            eventData.Job.CreatedById.ToString()!,
+            ChangeJobStatusApprovedNotification.TemplateKey,
+            payload,
+            ct);
     }
 }
-

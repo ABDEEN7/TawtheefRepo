@@ -8,7 +8,8 @@
     var primary = b.PrimaryHex;
     var product = b.ProductName;
     var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
+    var website = b.OperationsUrl;
+    var targetPageUrl = $"{website}/portal/jobs";
     var logo = b.LogoUrl;
 
     var jobTitle = m.JobTitle;
@@ -47,15 +48,15 @@
         <br/>
       }
       <p class="badge">Approved</p>
-      <h1 class="title">Your job posting has been approved</h1>
-      <p class="text">Dear Colleague,</p>
+      <h1 class="title">The job has been approved</h1>
+      <p class="text">Dear Employee,</p>
       <p class="text">
-        The job posting @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been approved.
+        The job @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") you created has been approved and is now ready for the next step.
       </p>
-      <a class="cta" style="color: white;" href="@website" target="_blank">View in @product</a>
+      <a class="cta" style="color: white;" href="@targetPageUrl" target="_blank">View Details</a>
       <div class="divider"></div>
       <p class="muted">
-        If the button does not work, copy and paste this link into your browser: @website
+        Portal Link: @targetPageUrl
       </p>
     </div>
     <div class="footer">

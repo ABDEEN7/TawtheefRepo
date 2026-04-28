@@ -1,4 +1,4 @@
-﻿namespace Tawtheef.Notifications.Interfaces;
+namespace Tawtheef.Notifications.Interfaces;
 
 public interface IEmailBranding
 {
@@ -7,4 +7,6 @@ public interface IEmailBranding
     string SupportEmail { get; }
     string LogoUrl { get; }
     string WebsiteUrl { get; }
+    string RecruitmentUrl { get; }
+    string OperationsUrl { get; }
 }

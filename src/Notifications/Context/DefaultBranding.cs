@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Notifications.Interfaces;
 
@@ -22,4 +22,6 @@ public sealed class DefaultBranding(
     public string LogoUrl => "logo@careers";
 
     public string WebsiteUrl => _emailConfig.RedirectUrl ?? _appConfig.FrontendUrl;
+    public string RecruitmentUrl => _appConfig.ClientUrl ?? "";
+    public string OperationsUrl => _appConfig.FrontendUrl;
 }

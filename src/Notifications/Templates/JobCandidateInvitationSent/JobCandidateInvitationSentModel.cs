@@ -7,5 +7,5 @@ public static class JobCandidateInvitationSent
     public const string TemplateKey = nameof(JobCandidateInvitationSent);
 }
 
-[NotificationTemplate(JobCandidateInvitationSent.TemplateKey, "دعوة لتقديم طلب للوظيفة", "Careers Job Invitation")]
+[NotificationTemplate(JobCandidateInvitationSent.TemplateKey, "دعوة للتقديم على الوظيفة", "Invitation to Apply for a Job")]
 public sealed record JobCandidateInvitationSentModel(string JobTitle);

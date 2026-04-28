@@ -1,22 +1,7 @@
-@using Tawtheef.Notifications.Templates.ProfileAssigned
-@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ProfileAssigned.ProfileAssignedModel>
+تحويل ملف مرشح للمراجعة
 
-@{
-    var m = Model.Model;
-    var product = Model.Branding.ProductName;
-    var profileUrl = $"{Model.Branding.WebsiteUrl}/profiles/review/{m.ProfileId}";
-}
+عزيزي الموظف / عزيزتي الموظفة،
+تم تحويل ملف المرشح «@(Model.Model.CandidateName)» إليكم للمراجعة.
 
-العنوان: تم إسناد ملف جديد للمراجعة
-
-مرحباً،
-
-تم إسناد ملف مرشح جديد تحت مراجعتك في @product.
-
-اسم المرشح: @m.CandidateName
-
-يرجى زيارة الرابط التالي لمراجعة الملف:
-@profileUrl
-
-مع تحيات،
-فريق عمل @product
+رابط المنصة: @(Model.Branding.OperationsUrl)/portal/approval-profile

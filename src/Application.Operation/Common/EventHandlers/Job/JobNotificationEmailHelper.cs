@@ -21,9 +21,17 @@ internal static class JobNotificationEmailHelper
             if (string.IsNullOrWhiteSpace(user.Email))
                 continue;
 
-            var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-                user.Email, null, null, null, payloadJson, user.GetPreferredLanguage(), null, 3);
-            await repo.AddAsync(notification, ct);
+            var lang = user.GetPreferredLanguage();
+            
+            // Email
+            var emailNotification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
+                user.Email, null, null, null, payloadJson, lang, null, 3);
+            await repo.AddAsync(emailNotification, ct);
+
+            // In-App
+            var inAppNotification = Notification.Create(NotificationChannel.InApp, templateKey, user.Id, 
+                user.Email, null, null, null, payloadJson, lang, null, 3);
+            await repo.AddAsync(inAppNotification, ct);
         }
         await unitOfWork.SaveChangesAsync(ct);
     }
@@ -36,10 +44,19 @@ internal static class JobNotificationEmailHelper
         if (user == null || string.IsNullOrWhiteSpace(user.Email))
             return;
 
+        var lang = user.GetPreferredLanguage();
         var repo = unitOfWork.GetEntityRepository<Notification>();
-        var notification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
-            user.Email, null, null, null, payloadJson, user.GetPreferredLanguage(), null, 3);
-        await repo.AddAsync(notification, ct);
+        
+        // Email
+        var emailNotification = Notification.Create(NotificationChannel.Email, templateKey, user.Id, 
+            user.Email, null, null, null, payloadJson, lang, null, 3);
+        await repo.AddAsync(emailNotification, ct);
+
+        // In-App
+        var inAppNotification = Notification.Create(NotificationChannel.InApp, templateKey, user.Id, 
+            user.Email, null, null, null, payloadJson, lang, null, 3);
+        await repo.AddAsync(inAppNotification, ct);
+
         await unitOfWork.SaveChangesAsync(ct);
     }
 }

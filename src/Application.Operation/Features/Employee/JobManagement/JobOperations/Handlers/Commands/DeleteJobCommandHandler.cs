@@ -17,9 +17,6 @@ public class DeleteJobCommandHandler(IJobRepository jobRepository, IUnitOfWork u
             return Result.Fail<Unit>(existingJobResult.Errors);
 
         var existingJob = existingJobResult.Value;
-
-        existingJob.AddDomainEvent(new JobDeletedDomainEvent(existingJob, DateTimeOffset.UtcNow));
-        
         if (existingJob.JobPoints is not null)
         {
             unitOfWork.RemoveRange(existingJob.JobPoints.Details.ToList());
