@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNeedUpdateNotification.ChangeJobStatusNeedUpdateNotificationModel>
 
 @{
@@ -49,7 +50,7 @@
       <h1 class="title">طلب الوظيفة بحاجة لتحديثات</h1>
       <p class="text">عزيزي الزميل/الزميلة،</p>
       <p class="text">
-        يتطلب طلب الوظيفة @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") تحديثات إضافية قبل المتابعة.
+        يتطلب طلب الوظيفة @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") تحديثات إضافية قبل المتابعة.
       </p>
       <p class="text">
         يرجى تسجيل الدخول إلى @product، ومراجعة التغييرات المطلوبة، وإعادة إرسال العرض.

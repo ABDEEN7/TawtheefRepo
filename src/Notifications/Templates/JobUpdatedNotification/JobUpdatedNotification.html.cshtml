@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobUpdatedNotification.JobUpdatedNotificationModel>
 
 @{
@@ -49,7 +50,7 @@
       <h1 class="title">A job posting has been updated</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been updated.
+        The job posting @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been updated.
       </p>
       <p class="text">
         Please sign in to @product to review the updated details and confirm any required actions.

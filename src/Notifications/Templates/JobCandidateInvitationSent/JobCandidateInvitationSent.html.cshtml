@@ -1,3 +1,5 @@
+﻿@using Microsoft.AspNetCore.Mvc.Razor
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
 
 @{
@@ -49,7 +51,7 @@
       <h1 class="title">You are invited to apply</h1>
       <p class="text">Dear Candidate,</p>
       <p class="text">
-        You have been invited to apply for @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") on @product.
+        You have been invited to apply for @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") on @product.
       </p>
       <p class="text">
         Please sign in to review the opportunity and submit your application.

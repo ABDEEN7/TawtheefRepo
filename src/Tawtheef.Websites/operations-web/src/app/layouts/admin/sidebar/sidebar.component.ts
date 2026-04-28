@@ -11,6 +11,7 @@ import { FaDirArrowDirective } from '../../../shared/directives/dir-arrow.direct
 import { Permissions } from '../../../core/constants/permissions';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { MenuItem } from './sidebar.models';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-sidebar',
@@ -49,6 +50,16 @@ export class SidebarComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    if (!environment.production) {
+      this.menuItems.push({
+        key: 'notificationTester',
+        label: 'admin.sidebar.notificationTester',
+        icon: 'hgi-notification-03',
+        route: routes.portal.notificationTester,
+        permission: Permissions.Roles.Manage // Only SystemAdmin has Roles.Manage
+      });
+    }
+
     this.highlightActive(this.router.url);
 
     this.router.events

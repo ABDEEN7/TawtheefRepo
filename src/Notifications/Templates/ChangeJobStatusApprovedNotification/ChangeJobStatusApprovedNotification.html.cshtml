@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
 
 @{
@@ -49,7 +50,7 @@
       <h1 class="title">Your job posting has been approved</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been approved.
+        The job posting @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been approved.
       </p>
       <a class="cta" style="color: white;" href="@website" target="_blank">View in @product</a>
       <div class="divider"></div>

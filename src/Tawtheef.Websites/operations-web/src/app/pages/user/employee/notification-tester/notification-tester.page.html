@@ -1,0 +1,291 @@
+@if (isProduction()) {
+<div class="production-blocked">
+  <div class="empty-state">
+    <div class="icon-circle text-danger">
+      <i class="hgi hgi-stroke hgi-shield-x"></i>
+    </div>
+    <h3 class="mt-4">{{ 'NOTIFICATION_TESTER.ACCESS_DENIED' | translate }}</h3>
+    <p class="text-muted">{{ 'NOTIFICATION_TESTER.DISABLED_MSG' | translate }}</p>
+  </div>
+</div>
+} @else {
+<div class="notification-tester" [dir]="isRtl() ? 'rtl' : 'ltr'">
+  <p-toast></p-toast>
+
+  <div class="page-header d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge badge-soft-primary">
+          <i class="hgi hgi-solid hgi-experiment"></i> {{ 'NOTIFICATION_TESTER.TESTER_BADGE' | translate }}
+        </span>
+        <span class="badge badge-soft-warning">{{ 'NOTIFICATION_TESTER.NON_PROD_BADGE' | translate }}</span>
+      </div>
+      <h2 class="page-title mb-0">{{ 'NOTIFICATION_TESTER.PAGE_TITLE' | translate }}</h2>
+      <p class="text-muted mt-1 mb-0">{{ 'NOTIFICATION_TESTER.PAGE_SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <!-- Channel Selector -->
+      <div class="card glass-card mb-4">
+        <div class="card-header pb-0 border-0 bg-transparent">
+          <h5 class="card-title mb-0">{{ 'NOTIFICATION_TESTER.STEP_1' | translate }}</h5>
+        </div>
+        <div class="card-body">
+          <div class="channel-grid">
+            @for (c of channels; track c.key) {
+            <div class="channel-card" [class.active]="selectedChannel() === c.key" (click)="selectChannel(c.key)">
+              <div class="channel-icon" [style.color]="selectedChannel() === c.key ? c.color : ''">
+                <i class="hgi hgi-stroke" [ngClass]="c.icon"></i>
+              </div>
+              <div class="channel-info">
+                <div class="channel-name">{{ c.label }}</div>
+                <div class="channel-count">{{ channelTemplateCount()[c.key] }} {{ 'NOTIFICATION_TESTER.TEMPLATES' |
+                  translate }}</div>
+              </div>
+              @if (selectedChannel() === c.key) {
+              <div class="active-indicator" [style.background-color]="c.color"></div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Template Selector -->
+      <div class="card glass-card mb-4" [class.disabled]="loading()">
+        <div class="card-header pb-0 border-0 bg-transparent d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">{{ 'NOTIFICATION_TESTER.STEP_2' | translate }}</h5>
+          @if (loading()) {
+          <i class="hgi hgi-stroke hgi-loading-03 spin text-muted"></i>
+          }
+        </div>
+        <div class="card-body">
+          <div class="search-box mb-3">
+            <i class="hgi hgi-stroke hgi-search-01 search-icon"></i>
+            <input type="text" class="form-control form-control-sm"
+              [placeholder]="'NOTIFICATION_TESTER.SEARCH_PLACEHOLDER' | translate" [ngModel]="templateSearch()"
+              (ngModelChange)="templateSearch.set($event)">
+          </div>
+
+          <div class="template-list">
+            @if (filteredTemplates().length === 0) {
+            <div class="text-center p-3 text-muted">
+              <i class="hgi hgi-stroke hgi-search-minus fs-24 mb-2"></i>
+              <p class="mb-0">{{ 'NOTIFICATION_TESTER.NO_TEMPLATES' | translate }} {{ selectedChannel() }}</p>
+            </div>
+            }
+            @for (t of filteredTemplates(); track t.templateKey) {
+            <div class="template-item" [class.active]="selectedTemplateKey() === t.templateKey"
+              (click)="selectTemplate(t.templateKey)">
+              <div class="template-key">{{ t.templateKey }}</div>
+              <div class="template-subject">{{ isRtl() ? t.subjectAr : t.subjectEn }}</div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      @if (sentLog().length > 0) {
+      <div class="card glass-card">
+        <div class="card-header pb-0 border-0 bg-transparent">
+          <h6 class="card-title text-muted mb-0 fs-14 text-uppercase">{{ 'NOTIFICATION_TESTER.RECENT_TESTS' | translate
+            }}</h6>
+        </div>
+        <div class="card-body p-0">
+          <div class="activity-list">
+            @for (log of sentLog(); track $index) {
+            <div class="activity-item px-3 py-2 border-bottom">
+              <div class="d-flex align-items-center gap-2">
+                <i class="hgi hgi-stroke" [ngClass]="getChannelIcon(log.channel)"
+                  [class.text-success]="log.status === 'sent'" [class.text-danger]="log.status === 'error'">
+                </i>
+                <div class="text-truncate flex-grow-1">
+                  <div class="fs-13 fw-medium text-truncate" [title]="log.templateKey">{{ log.templateKey }}</div>
+                  <div class="fs-12 text-muted">{{ log.time | date:'shortTime' }} &bull; {{ log.toAddress }}</div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="col-lg-8">
+      @if (selectedTemplate(); as template) {
+      <div class="card glass-card main-editor-card h-100">
+        <div class="card-header border-bottom bg-transparent py-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h4 class="mb-1">{{ template.templateKey }}</h4>
+              <div class="text-muted d-flex gap-3">
+                <span><span class="flag-icon">🇸🇦</span> {{ template.subjectAr }}</span>
+                <span><span class="flag-icon">🇬🇧</span> {{ template.subjectEn }}</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-light btn-sm" (click)="fillAllTestValues()"
+                [pTooltip]="'NOTIFICATION_TESTER.AUTO_FILL_TOOLTIP' | translate">
+                <i class="hgi hgi-stroke hgi-magic-wand-01"></i> {{ 'NOTIFICATION_TESTER.AUTO_FILL' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-4">
+            <!-- Parameters Section -->
+            <div class="col-md-6">
+              <h6 class="section-title">{{ 'NOTIFICATION_TESTER.PARAMETERS' | translate }}</h6>
+              @if (template.parameters.length === 0) {
+              <div class="empty-state-small p-3 text-center bg-light rounded">
+                <p class="text-muted mb-0">{{ 'NOTIFICATION_TESTER.NO_PARAMS' | translate }}</p>
+              </div>
+              } @else {
+              <div class="parameters-form">
+                @for (p of template.parameters; track p.name) {
+                <div class="form-group mb-3">
+                  <label class="form-label d-flex justify-content-between">
+                    <span>{{ p.name }}</span>
+                    <span class="badge badge-soft-secondary fs-10">{{ p.type }}</span>
+                  </label>
+
+                  @if (p.isEnum && p.enumValues) {
+                  <select class="form-select" [ngModel]="paramValues()[p.name]"
+                    (ngModelChange)="updateParam(p.name, $event)">
+                    @for (v of p.enumValues; track v) {
+                    <option [value]="v">{{ v }}</option>
+                    }
+                  </select>
+                  } @else {
+                  <input type="text" class="form-control" [ngModel]="paramValues()[p.name]"
+                    (ngModelChange)="updateParam(p.name, $event)" [placeholder]="'e.g. ' + p.defaultValue">
+                  }
+                </div>
+                }
+              </div>
+              }
+            </div>
+
+            <!-- Configuration Section -->
+            <div class="col-md-6">
+              <h6 class="section-title">{{ 'NOTIFICATION_TESTER.DELIVERY_SETTINGS' | translate }}</h6>
+
+              <div class="form-group mb-3">
+                <label class="form-label">{{ 'NOTIFICATION_TESTER.LANGUAGE' | translate }}</label>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-primary flex-grow-1" [class.active]="language() === 'ar'"
+                    (click)="language.set('ar')">
+                    {{ 'NOTIFICATION_TESTER.ARABIC' | translate }}
+                  </button>
+                  <button class="btn btn-outline-primary flex-grow-1" [class.active]="language() === 'en'"
+                    (click)="language.set('en')">
+                    {{ 'NOTIFICATION_TESTER.ENGLISH' | translate }}
+                  </button>
+                </div>
+              </div>
+
+              @if (selectedChannel() === 'Email') {
+              <div class="form-group mb-3">
+                <label class="form-label">{{ 'NOTIFICATION_TESTER.RECIPIENT_EMAIL' | translate }}</label>
+                <input type="email" class="form-control" dir="ltr" style="text-align: left;"
+                  placeholder="test@example.com" [ngModel]="toEmail()" (ngModelChange)="toEmail.set($event)">
+              </div>
+              } @else if (selectedChannel() === 'Sms') {
+              <div class="form-group mb-3">
+                <label class="form-label">{{ 'NOTIFICATION_TESTER.RECIPIENT_PHONE' | translate }}</label>
+                <input type="tel" class="form-control" dir="ltr" style="text-align: left;" placeholder="+974..."
+                  [ngModel]="toPhone()" (ngModelChange)="toPhone.set($event)">
+              </div>
+              } @else if (selectedChannel() === 'InApp') {
+              <div class="form-group mb-3">
+                <label class="form-label">{{ 'NOTIFICATION_TESTER.RECIPIENT_USER_ID' | translate }}</label>
+                <input type="email" class="form-control" dir="ltr" style="text-align: left;" placeholder="GUID..."
+                  [ngModel]="toUserId()" (ngModelChange)="toUserId.set($event)">
+              </div>
+              }
+
+              <div class="action-buttons mt-4 d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1" [disabled]="sending() || previewing()" (click)="onSend()">
+                  @if (sending()) {
+                  <i class="hgi hgi-stroke hgi-loading-03 spin me-2"></i> {{ 'NOTIFICATION_TESTER.SENDING' | translate
+                  }}
+                  } @else {
+                  <i class="hgi hgi-stroke hgi-send-01 me-2"></i> {{ 'NOTIFICATION_TESTER.SEND_TEST' |
+                  translate:{channel: selectedChannel()} }}
+                  }
+                </button>
+                <button class="btn btn-outline-secondary px-4" [disabled]="sending() || previewing()"
+                  (click)="onPreview()">
+                  @if (previewing()) {
+                  <i class="hgi hgi-stroke hgi-loading-03 spin"></i>
+                  } @else {
+                  <i class="hgi hgi-stroke hgi-view"></i> {{ 'NOTIFICATION_TESTER.PREVIEW' | translate }}
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview Panel -->
+          @if (showPreview() && previewData()) {
+          <div class="preview-panel mt-4 border-top pt-4">
+            <h6 class="section-title d-flex justify-content-between align-items-center mb-3">
+              <span>{{ 'NOTIFICATION_TESTER.RENDERED_PREVIEW' | translate }}</span>
+              <span class="badge badge-soft-info">{{ selectedChannel() }}</span>
+            </h6>
+
+            <div class="subject-box mb-3 p-3 bg-light rounded">
+              <div class="text-muted fs-12 mb-1 text-uppercase fw-bold">{{ 'NOTIFICATION_TESTER.SUBJECT' | translate }}
+              </div>
+              <div class="fw-medium">{{ previewData()!.subject }}</div>
+            </div>
+
+            @if (selectedChannel() === 'Email') {
+            <div class="email-preview-container border rounded overflow-hidden bg-white">
+              <div class="browser-header d-flex align-items-center gap-2 p-2 bg-light border-bottom">
+                <div class="d-flex gap-2 me-2">
+                  <div class="dot bg-danger"></div>
+                  <div class="dot bg-warning"></div>
+                  <div class="dot bg-success"></div>
+                </div>
+                <div class="browser-url-bar flex-grow-1 bg-white rounded border px-2 py-0 d-flex align-items-center" style="font-size: 11px; height: 22px; color: #666;">
+                  <i class="hgi hgi-stroke hgi-globe-02 me-1" style="font-size: 12px;"></i>
+                  <span class="text-truncate">https://tawtheef.moehe.gov.qa/preview/{{ selectedTemplateKey() }}</span>
+                </div>
+              </div>
+              <iframe [srcdoc]="previewHtml()" class="w-100 border-0"
+                style="min-height: 400px; background: white;"></iframe>
+            </div>
+            } @else {
+            <div class="text-preview-container p-4 border rounded bg-light font-monospace"
+              style="white-space: pre-wrap;">
+              {{ previewData()!.plainText }}
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="card glass-card h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center p-5">
+          <div class="icon-circle mb-4 text-primary bg-primary-soft"
+            style="width: 80px; height: 80px; font-size: 32px;">
+            <i class="hgi hgi-stroke hgi-notification-03"></i>
+          </div>
+          <h4 class="mb-2">{{ 'NOTIFICATION_TESTER.NO_TEMPLATE_SELECTED' | translate }}</h4>
+          <p class="text-muted max-w-sm mx-auto">
+            {{ 'NOTIFICATION_TESTER.NO_TEMPLATE_MSG' | translate }}
+          </p>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}

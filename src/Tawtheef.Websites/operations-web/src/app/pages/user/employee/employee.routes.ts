@@ -212,4 +212,8 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.HomeContent.Manage] },
   },
+  {
+    path: "notification-tester",
+    loadComponent: () => import('./notification-tester/notification-tester.page').then(m => m.NotificationTesterPage),
+  },
 ];

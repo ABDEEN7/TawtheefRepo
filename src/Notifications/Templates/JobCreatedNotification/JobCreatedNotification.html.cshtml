@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCreatedNotification.JobCreatedNotificationModel>
 
 @{
@@ -49,7 +50,7 @@
       <h1 class="title">A new job posting has been created</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        The job posting @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been created and is ready for review.
+        The job posting @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>") has been created and is ready for review.
       </p>
       <p class="text">
         Please sign in to @product to review the details and proceed with the approval process.

@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusNotification.ChangeJobStatusNotificationModel>
 
 @{
@@ -49,7 +50,7 @@
       <h1 class="title">Job status change requires review</h1>
       <p class="text">Dear Colleague,</p>
       <p class="text">
-        A request has been submitted to change the status of @Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
+        A request has been submitted to change the status of @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" <strong>\"{jobTitle}\"</strong>").
       </p>
       <p class="text">
         Please sign in to @product to review the request and proceed with the appropriate action.

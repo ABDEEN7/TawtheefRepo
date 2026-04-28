@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {Navbar} from '../../common/navbar/navbar';
-import {Footer} from '../../common/footer/footer';
+import { RouterOutlet } from '@angular/router';
+import { Navbar } from '../../common/navbar/navbar';
+import { Footer } from '../../common/footer/footer';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
-import {SidebarComponent} from '../sidebar/sidebar.component';
-import {ProgressBarComponent} from '../../../shared/components/progress-bar/progress-bar.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { ProgressBarComponent } from '../../../shared/components/progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-user-layout',
@@ -20,9 +20,9 @@ import {ProgressBarComponent} from '../../../shared/components/progress-bar/prog
   styleUrl: './layout.scss',
 })
 export class Layout {
- isSidebarOpen = false;
+  isSidebarOpen = false;
 
- toggleSidebar() {
+  toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 }
