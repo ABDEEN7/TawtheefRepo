@@ -11,15 +11,10 @@
     var logo = b.LogoUrl;
 
     var isAccepted = m.Status == UserProfileStatus.Approved;
+    var profileUrl = b.RecruitmentUrl;
 
-    // Optional: a single note string or list of reasons
-    string? notes = null; 
-    IEnumerable<string>? reasons = null; 
-
-    var profileUrl = website;
-
-    var title = isAccepted ? "Your profile has been approved" : "Your profile requires updates";
-    var badgeText = isAccepted ? "Approved" : "Action Required";
+    var title = isAccepted ? "Profile Approved" : "Profile Returned for Update";
+    var badgeText = isAccepted ? "Approved" : "Returned for Update";
 }
 
 <!DOCTYPE html>
@@ -27,7 +22,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@product - Profile Review Result</title>
+  <title>@product - @title</title>
   <style>
     body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
     .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
@@ -41,9 +36,6 @@
     .footer { padding:0 28px 24px; }
     .logo { max-width:140px; height:auto; }
     .divider { height:1px; background:#e5e7eb; margin:20px 0; }
-    .notes-box { background:#fbf6f8; border:1px solid #efe7eb; padding:14px 16px; border-radius:10px; margin-bottom: 16px; }
-    .notes-title { font-size:14px; font-weight:800; color:#111827; margin:0 0 8px 0; }
-    .notes-item { font-size:14px; line-height:20px; color:#111827; margin:0 0 6px 0; }
   </style>
 </head>
 <body>
@@ -59,55 +51,25 @@
       }
       <p class="badge">@badgeText</p>
       <h1 class="title">@title</h1>
-      <p class="text">Hello,</p>
+      <p class="text">Dear Candidate,</p>
       
       @if (isAccepted)
       {
         <p class="text">
-          We are pleased to inform you that your profile has been <strong>approved</strong> on the @product platform.
-        </p>
-        <p class="text">
-          You can now continue using the platform normally and access all features.
+          Your profile has been approved on the Careers platform.
         </p>
       }
       else
       {
         <p class="text">
-          Your profile has been <strong>returned for updates</strong>. Please review the notes below, make the required changes, and resubmit your profile.
+          Your profile has been returned for update. Please log in to the platform to review your information and complete the required changes.
         </p>
-        
-        @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
-        {
-          <div class="notes-box">
-            <div class="notes-title">Review Notes</div>
-            @if (!string.IsNullOrWhiteSpace(notes))
-            {
-              <p class="notes-item">@notes</p>
-            }
-            @if (reasons != null && reasons.Any())
-            {
-              <ul style="padding-left:18px; margin:10px 0 0 0;">
-                @foreach (var r in reasons)
-                {
-                  if (!string.IsNullOrWhiteSpace(r))
-                  {
-                    <li class="notes-item">@r</li>
-                  }
-                }
-              </ul>
-            }
-          </div>
-        }
       }
 
       <p class="text" style="margin-top: 24px; text-align: center;">
-        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">Open Profile</a>
+        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">Open Portal</a>
       </p>
       
-      <p class="text">
-        If you need assistance, please contact our support team and we will be happy to help.
-      </p>
-
       <div class="divider"></div>
       <p class="muted">
         If the button does not work, please copy and paste this link into your browser: @profileUrl

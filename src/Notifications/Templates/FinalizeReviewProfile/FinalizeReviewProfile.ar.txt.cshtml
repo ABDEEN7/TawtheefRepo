@@ -5,59 +5,25 @@
     var b = Model.Branding;
     var m = Model.Model;
 
-    var product = b.ProductName;
-    var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
     var isAccepted = m.Status == UserProfileStatus.Approved;
-    
-    string? notes = null; // Mapping logic usually goes here in actual template
-    var profileUrl = website;
+    var profileUrl = b.RecruitmentUrl;
 }
 
 @if (isAccepted)
 {
-    @:العنوان: تمت الموافقة على ملفكم الشخصي - @product
-    @:
-    @:مرحباً،
-    @:
-    @:يسرنا إبلاغكم بأنه تمت الموافقة على ملفكم الشخصي في منصة @product.
-    @:
-    @:يمكنكم الآن الاستمرار في استخدام المنصة والوصول إلى كافة الميزات المتاحة.
-    @:
-    @:رابط الملف الشخصي:
-    @:@profileUrl
-    @:
-    @:إذا كان لديكم أي استفسارات، يسعدنا تواصلكم معنا عبر:
-    @:@support
-    @:
-    @:مع أطيب التحيات،
-    @:فريق عمل @product
-    @:
-    @:© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.
+@:Subject: تم اعتماد الملف الشخصي
+@:
+@:عزيزي المرشح / عزيزتي المرشحة،
+@:تم اعتماد ملفكم الشخصي على منصة Careers.
+@:
+@:رابط المنصة: @profileUrl
 }
 else
 {
-    @:العنوان: مطلوب إجراء – ملفكم الشخصي بحاجة لتحديثات - @product
-    @:
-    @:مرحباً،
-    @:
-    @:تمت إعادة ملفكم الشخصي لإجراء بعض التحديثات المطلوبة.
-    @:يرجى مراجعة الملاحظات أدناه، وإجراء التصحيحات اللازمة، ثم إعادة تقديم الملف.
-    @:
-    @if (!string.IsNullOrWhiteSpace(notes))
-    {
-        @:ملاحظات المراجع:
-        @:@notes
-        @:
-    }
-    @:يرجى تحديث ملفكم عبر الرابط التالي:
-    @:@profileUrl
-    @:
-    @:إذا كنتم بحاجة للمساعدة، يسعدنا تواصلكم عبر:
-    @:@support
-    @:
-    @:مع أطيب التحيات،
-    @:فريق عمل @product
-    @:
-    @:© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.
+@:Subject: تم إرجاع الملف الشخصي للتعديل
+@:
+@:عزيزي المرشح / عزيزتي المرشحة،
+@:تم إرجاع ملفكم الشخصي للتعديل. يرجى مراجعة البيانات واستكمال التعديلات المطلوبة.
+@:
+@:رابط المنصة: @profileUrl
 }
