@@ -33,7 +33,7 @@
     .label { font-weight:700; color:#111827; margin-right: 8px; }
     .muted { font-size:12px; color:#6b7280; margin:0; }
     .footer { padding:0 28px 24px; }
-    .logo { max-width:180px; max-height:60px; width:auto; height:auto; }
+    .logo { max-width:140px; height:auto; }
     .divider { height:1px; background:#e5e7eb; margin:20px 0; }
   </style>
 </head>
@@ -44,8 +44,9 @@
       @if (!string.IsNullOrWhiteSpace(logo))
       {
         <a href="@website" target="_blank">
-          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto 20px; max-height: 60px; width: auto;">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
         </a>
+        <br/>
       }
       <p class="badge">New Office</p>
       <h1 class="title">New Office Created</h1>
