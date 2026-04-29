@@ -1,14 +1,17 @@
-﻿using Application.Operation.Features.Employee.CandidateUsers.Commands;
+using Application.Operation.Features.Employee.CandidateUsers.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.CandidateUsers.Handlers.Commands;
 
-public sealed class UpdateCandidateUserBlockStatusCommandHandler(UserManager<User> userManager)
+public sealed class UpdateCandidateUserBlockStatusCommandHandler(
+    UserManager<User> userManager,
+    ITokenService tokenService)
     : IRequestHandler<UpdateCandidateUserBlockStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
@@ -27,6 +30,15 @@ public sealed class UpdateCandidateUserBlockStatusCommandHandler(UserManager<Use
         var updateResult = await userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)
             return Result.Fail<Unit>(string.Join(", ", updateResult.Errors.Select(e => e.Description)));
+
+        if (user.IsBlocked)
+        {
+            await tokenService.RevokeAllAsync(user.Id, cancellationToken);
+        }
+        else
+        {
+            await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
+        }
 
         return Result.Ok(Unit.Value);
     }

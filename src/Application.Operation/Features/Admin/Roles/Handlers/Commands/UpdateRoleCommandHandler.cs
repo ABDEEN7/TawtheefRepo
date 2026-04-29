@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.Roles.Commands;
+using Application.Operation.Features.Admin.Roles.Commands;
 using Application.Operation.Features.Admin.Roles.DTOs;
 using MediatR;
 using FluentResults;
@@ -64,7 +64,7 @@ public sealed class UpdateRoleCommandHandler(
         var users = await userManager.GetUsersInRoleAsync(role.Name!);
         foreach (var user in users)
         {
-            await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
+            await tokenService.RevokeAllAsync(user.Id, cancellationToken);
         }
 
         return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, updatedClaims)));
