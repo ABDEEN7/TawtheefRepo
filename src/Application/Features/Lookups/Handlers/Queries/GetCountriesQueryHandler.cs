@@ -52,7 +52,7 @@ public sealed class GetCountriesQueryHandler(IUnitOfWork unitOfWork, IMemoryCach
                 .ToListAsync(cancellationToken);
         });
 
-        return Result.Ok(countries ?? new List<DropdownOptions>());
+        return Result.Ok(countries?.ToList() ?? new List<DropdownOptions>());
     }
 }
 

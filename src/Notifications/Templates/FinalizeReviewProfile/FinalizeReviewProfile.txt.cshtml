@@ -5,69 +5,25 @@
     var b = Model.Branding;
     var m = Model.Model;
 
-    var product = b.ProductName;
-    var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
     var isAccepted = m.Status == UserProfileStatus.Approved;
-    
-    string? notes = null;
-    IEnumerable<string>? reasons = null;
-    var profileUrl = website;
+    var profileUrl = b.RecruitmentUrl;
 }
 
 @if (isAccepted)
 {
-    @:Subject: Your Profile Has Been Approved - @product
-    @:
-    @:Hello,
-    @:
-    @:We’re pleased to inform you that your profile has been APPROVED on @product.
-    @:
-    @:You can now continue using the platform and access all available features.
-    @:
-    @:Access your profile here:
-    @:@profileUrl
-    @:
-    @:If you have any questions, feel free to contact us at:
-    @:@support
-    @:
-    @:Best regards,
-    @:@product Team
-    @:
-    @:© @(DateTime.UtcNow.Year) @product. All rights reserved.
+@:Subject: Profile Approved
+@:
+@:Dear Candidate,
+@:Your profile has been approved on the Careers platform.
+@:
+@:Portal Link: @profileUrl
 }
 else
 {
-    @:Subject: Action Required – Your Profile Needs Updates - @product
-    @:
-    @:Hello,
-    @:
-    @:Your profile has been returned for updates.
-    @:Please review the notes below, make the necessary corrections, and resubmit your profile.
-    @:
-    @if (!string.IsNullOrWhiteSpace(notes))
-    {
-        @:Review Notes:
-        @:@notes
-        @:
-    }
-    @if (reasons != null && reasons.Any())
-    {
-        @:Detailed Notes:
-        @foreach (var r in reasons)
-        {
-            @: - @r
-        }
-        @:
-    }
-    @:Update your profile here:
-    @:@profileUrl
-    @:
-    @:If you need assistance, contact us at:
-    @:@support
-    @:
-    @:Best regards,
-    @:@product Team
-    @:
-    @:© @(DateTime.UtcNow.Year) @product. All rights reserved.
+@:Subject: Profile Returned for Update
+@:
+@:Dear Candidate,
+@:Your profile has been returned for update. Please log in to the platform to review your information and complete the required changes.
+@:
+@:Portal Link: @profileUrl
 }

@@ -1,11 +1,7 @@
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ChangeJobStatusApprovedNotification.ChangeJobStatusApprovedNotificationModel>
-Job Posting Approved
+The job has been approved
 
-Dear Colleague,
+Dear Employee,
+The job "@(Model.Model.JobTitle)" you created has been approved and is now ready for the next step.
 
-The job posting @(string.IsNullOrWhiteSpace(Model.Model.JobTitle) ? "" : $" \"{Model.Model.JobTitle}\"") has been approved.
-
-Access the portal: @Model.Branding.WebsiteUrl
-
-Regards,
-@Model.Branding.ProductName Team
+Portal Link: @(Model.Branding.OperationsUrl)/portal/jobs

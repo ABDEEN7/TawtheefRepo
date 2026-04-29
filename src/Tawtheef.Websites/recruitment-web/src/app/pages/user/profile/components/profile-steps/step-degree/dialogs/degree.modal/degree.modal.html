@@ -24,7 +24,7 @@
             <label for="gradCountry" class="form-label required">
               {{ 'wizard.degrees.gradCountry' | translate }}
             </label>
-            <p-select inputId="gradCountry" formControlName="gradCountry" [options]="lookups.countries()"
+            <p-select inputId="gradCountry" formControlName="gradCountry" [options]="lookups.graduationCountry()"
               optionLabel="name" [filter]="true" dataKey="id"
               filterBy="additionalData.nameAr,additionalData.nameEn,name"
               [placeholder]="'wizard.degrees.choiceGradCountry' | translate" [appendTo]="'body'"

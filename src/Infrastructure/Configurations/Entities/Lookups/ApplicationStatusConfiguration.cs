@@ -37,12 +37,12 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
             // 3 — SUBMITTED
             new InvitationStatus
             {
-                Id = InvitationStatusIds.Submitted,
-                BackendName = nameof(InvitationStatusIds.Submitted),
-                NameEn = "Submitted",
-                NameAr = "تم التقديم",
-                DescriptionEn = "The candidate submitted the application with all required information completed.",
-                DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
+                Id = InvitationStatusIds.ExamEligible,
+                BackendName = nameof(InvitationStatusIds.ExamEligible),
+                NameEn = "Exam Eligible",
+                NameAr = "مرشح للاختبار",
+                DescriptionEn = "The application is submitted and the candidate is eligible for the exam.",
+                DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة وهو مؤهل للاختبار.",
                 DisplayOrder = 3
             },
 

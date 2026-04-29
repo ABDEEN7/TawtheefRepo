@@ -48,7 +48,7 @@
             {{ 'wizard.experience.country' | translate }}
           </label>
           <p-select size="small" [filter]="true" [filterBy]="'additionalData.nameAr,additionalData.nameEn,name'"
-            inputId="country" formControlName="country" [options]="lookups.countries()" optionLabel="name"
+            inputId="country" formControlName="country" [options]="lookups.graduationCountry()" optionLabel="name"
             [placeholder]="'wizard.experience.choiceCountry' | translate" [appendTo]="'body'"
             [panelStyle]="{ maxHeight: '260px', overflow: 'auto', width: '100%' }" class="w-100" [ngClass]="{
               'p-invalid': f['country'].invalid && (f['country'].dirty || f['country'].touched),
@@ -164,8 +164,8 @@
           <label class="form-label required">
             {{ 'wizard.experience.tasks' | translate }}
           </label>
-          <textarea class="form-control" pTextarea rows="4" formControlName="description" (input)="sanitizeDescription($event)"
-            [attr.maxlength]="limits.descriptionMaxLength" [ngClass]="{
+          <textarea class="form-control" pTextarea rows="4" formControlName="description"
+            (input)="sanitizeDescription($event)" [attr.maxlength]="limits.descriptionMaxLength" [ngClass]="{
               'p-invalid':
                 f['description'].invalid && (f['description'].dirty || f['description'].touched),
             }">

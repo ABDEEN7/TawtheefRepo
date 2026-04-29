@@ -33,10 +33,6 @@ import { Lang, LanguageService } from '../../../../core/services/language.servic
 import { DropdownOptionVM } from '../../../../shared/models/dropdown-options.model';
 import { InvitationStatus } from '../../../../core/enums/lookups.enum';
 
-export const JOB_INVITATION_STATUSES = {
-  SUBMITTED: 'Submitted',
-} as const;
-
 @Component({
   selector: 'app-minister-office-management',
   standalone: true,
@@ -293,10 +289,6 @@ export class MinisterOfficeManagementPage implements OnInit {
   }
 
   getStatus(invitationStatus: DropdownOptionVM): string {
-    const status = invitationStatus.backendName as InvitationStatus;
-    if (status == JOB_INVITATION_STATUSES.SUBMITTED) {
-      return this.translate.instant('ministerOffice.JOB_INVITATION_STATUSES.SUBMITTED');
-    }
     return invitationStatus.name;
   }
 

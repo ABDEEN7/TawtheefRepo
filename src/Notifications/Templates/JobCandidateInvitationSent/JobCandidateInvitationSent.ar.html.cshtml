@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.JobCandidateInvitationSent.JobCandidateInvitationSentModel>
 
 @{
@@ -7,7 +8,7 @@
     var primary = b.PrimaryHex;
     var product = b.ProductName;
     var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
+    var website = b.RecruitmentUrl;
     var logo = b.LogoUrl;
 
     var jobTitle = m.JobTitle;
@@ -46,18 +47,15 @@
         <br/>
       }
       <p class="badge">دعوة وظيفية</p>
-      <h1 class="title">أنت مدعو للتقديم على وظيفة</h1>
-      <p class="text">عزيزي المرشح،</p>
+      <h1 class="title">دعوة للتقديم على الوظيفة</h1>
+      <p class="text">عزيزي المرشح / عزيزتي المرشحة،</p>
       <p class="text">
-        لقد تمت دعوتكم للتقديم على وظيفة <strong>@(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" \"{jobTitle}\"")</strong> عبر منصة @product.
-      </p>
-      <p class="text">
-        يرجى تسجيل الدخول لمراجعة تفاصيل الفرصة الوظيفية وتقديم طلبكم.
+        ندعوكم للتقديم على الوظيفة @RazorHelpers.Raw(string.IsNullOrWhiteSpace(jobTitle) ? "" : $" «{jobTitle}»"). يرجى تسجيل الدخول إلى المنصة للاطلاع على التفاصيل واستكمال إجراءات التقديم.
       </p>
       <a class="cta" style="color: white;" href="@website" target="_blank">عرض في @product</a>
       <div class="divider"></div>
       <p class="muted">
-        إذا لم يعمل الزر، يرجى نسخ هذا الرابط ولصقه في المتصفح: @website
+        رابط المنصة: @website
       </p>
     </div>
     <div class="footer">

@@ -7,12 +7,12 @@
 
     var primary = b.PrimaryHex;
     var product = b.ProductName;
-    var website = b.WebsiteUrl;
+    var website = b.OperationsUrl;
     var logo = b.LogoUrl;
 
-    var profileUrl = $"{website}/profiles/review/{m.ProfileId}";
+    var profileUrl = $"{website}/portal/approval-profile";
 
-    var title = "New Profile Assigned";
+    var title = "Candidate Profile Sent for Review";
     var badgeText = "New Assignment";
 }
 
@@ -50,22 +50,16 @@
       }
       <p class="badge">@badgeText</p>
       <h1 class="title">@title</h1>
-      <p class="text">Hello!</p>
+      <p class="text">Dear Employee,</p>
       <p class="text">
-        You have been assigned a new profile for review on the @product platform.
-      </p>
-      <p class="text">
-        <strong>Candidate Name:</strong> <span style="color:@primary; font-weight:800;">@m.CandidateName</span>
-      </p>
-      <p class="text">
-        Please log in to the portal to review the details and take the necessary action.
+        The candidate profile “@m.CandidateName” has been sent to you for review. Please review and take the appropriate action (approve or return).
       </p>
       <p class="text" style="margin-top: 24px; text-align: center;">
         <a class="cta" style="color: white;" href="@profileUrl" target="_blank">View Profile Details</a>
       </p>
       <div class="divider"></div>
       <p class="muted">
-        If the button does not work, please copy and paste this link into your browser: @profileUrl
+        Portal Link: @profileUrl
       </p>
     </div>
     <div class="footer">

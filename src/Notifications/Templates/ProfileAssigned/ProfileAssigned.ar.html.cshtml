@@ -1,3 +1,4 @@
+@using Tawtheef.Notifications.Templates
 @using Tawtheef.Notifications.Templates.ProfileAssigned
 @model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
 
@@ -7,12 +8,12 @@
 
     var primary = b.PrimaryHex;
     var product = b.ProductName;
-    var website = b.WebsiteUrl;
+    var website = b.OperationsUrl;
     var logo = b.LogoUrl;
 
-    var profileUrl = $"{website}/profiles/review/{m.ProfileId}";
+    var profileUrl = $"{website}/portal/approval-profile";
 
-    var title = "تم إسناد ملف جديد للمراجعة";
+    var title = "تحويل ملف مرشح للمراجعة";
     var badgeText = "إسناد جديد";
 }
 
@@ -50,22 +51,16 @@
       }
       <p class="badge">@badgeText</p>
       <h1 class="title">@title</h1>
-      <p class="text">مرحباً،</p>
+      <p class="text">عزيزي الموظف / عزيزتي الموظفة،</p>
       <p class="text">
-        تم تعيين ملف مرشح جديد تحت مراجعتك في @product.
-      </p>
-      <p class="text">
-        <strong>اسم المرشح:</strong> <span style="color:@primary; font-weight:800;">@m.CandidateName</span>
-      </p>
-      <p class="text">
-        يرجى زيارة الرابط أدناه للبدء في مراجعة بيانات الملف واتخاذ الإجراء اللازم.
+        تم تحويل ملف المرشح @RazorHelpers.Raw(string.IsNullOrWhiteSpace(m.CandidateName) ? "" : $" «{m.CandidateName}»") إليكم للمراجعة. يرجى الاطلاع واتخاذ الإجراء المناسب (اعتماد أو إرجاع).
       </p>
       <p class="text" style="margin-top: 24px; text-align: center;">
         <a class="cta" style="color: white;" href="@profileUrl" target="_blank">مراجعة الملف</a>
       </p>
       <div class="divider"></div>
       <p class="muted">
-        إذا كان الزر لا يعمل، يرجى نسخ هذا الرابط ولصقه في متصفحك: @profileUrl
+        رابط المنصة: @profileUrl
       </p>
     </div>
     <div class="footer">

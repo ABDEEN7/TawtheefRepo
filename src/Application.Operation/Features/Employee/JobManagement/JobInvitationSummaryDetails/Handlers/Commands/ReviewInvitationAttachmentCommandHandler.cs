@@ -63,7 +63,7 @@ public class ReviewInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork)
         // If all approved, move to Submitted
         if (invitation.Attachments.All(x => x.IsApproved))
         {
-            invitation.ChangeInvitationStatus(InvitationStatusIds.Submitted);
+            invitation.ChangeInvitationStatus(InvitationStatusIds.ExamEligible);
         }
         else if (!invitation.Attachments.Any(x => x.IsReturned) 
                  && invitation.Attachments.Any(x => !x.IsApproved))

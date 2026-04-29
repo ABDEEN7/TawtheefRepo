@@ -11,15 +11,10 @@
     var logo = b.LogoUrl;
 
     var isAccepted = m.Status == UserProfileStatus.Approved;
+    var profileUrl = b.RecruitmentUrl;
 
-    // Optional: a single note string or list of reasons
-    string? notes = null; 
-    IEnumerable<string>? reasons = null; 
-
-    var profileUrl = website;
-
-    var title = isAccepted ? "تمت الموافقة على ملفك الشخصي" : "ملفك الشخصي بحاجة لتحديثات";
-    var badgeText = isAccepted ? "تمت الموافقة" : "مطلوب إجراء";
+    var title = isAccepted ? "تم اعتماد الملف الشخصي" : "تم إرجاع الملف الشخصي للتعديل";
+    var badgeText = isAccepted ? "تم الاعتماد" : "إرجاع للتعديل";
 }
 
 <!DOCTYPE html>
@@ -27,7 +22,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@product - نتيجة مراجعة الملف الشخصي</title>
+  <title>@product - @title</title>
   <style>
     body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; text-align: right; }
     .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
@@ -41,9 +36,6 @@
     .footer { padding:0 28px 24px; text-align: right; }
     .logo { max-width:140px; height:auto; }
     .divider { height:1px; background:#e5e7eb; margin:20px 0; }
-    .notes-box { background:#fbf6f8; border:1px solid #efe7eb; padding:14px 16px; border-radius:10px; margin-bottom: 16px; }
-    .notes-title { font-size:14px; font-weight:800; color:#111827; margin:0 0 8px 0; }
-    .notes-item { font-size:14px; line-height:20px; color:#111827; margin:0 0 6px 0; }
   </style>
 </head>
 <body>
@@ -59,49 +51,23 @@
       }
       <p class="badge">@badgeText</p>
       <h1 class="title">@title</h1>
-      <p class="text">مرحباً،</p>
+      <p class="text">عزيزي المرشح / عزيزتي المرشحة،</p>
       
       @if (isAccepted)
       {
         <p class="text">
-          يسعدنا إبلاغكم بأنه قد تم <strong>قبول ملفكم الشخصي</strong> في منصة @product.
-        </p>
-        <p class="text">
-          يمكنكم الآن متابعة استخدام المنصة بشكل طبيعي والوصول لكافة الميزات.
+          تم اعتماد ملفكم الشخصي على منصة Careers.
         </p>
       }
       else
       {
         <p class="text">
-          لقد تمت <strong>إعادة ملفكم الشخصي لإجراء تحديثات</strong>. يرجى مراجعة الملاحظات أدناه، وإجراء التعديلات المطلوبة، ثم إعادة إرسال الملف.
+          تم إرجاع ملفكم الشخصي للتعديل. يرجى تسجيل الدخول إلى المنصة لمراجعة البيانات واستكمال التعديلات المطلوبة.
         </p>
-        
-        @if (!string.IsNullOrWhiteSpace(notes) || (reasons != null && reasons.Any()))
-        {
-          <div class="notes-box">
-            <div class="notes-title">ملاحظات المراجعة</div>
-            @if (!string.IsNullOrWhiteSpace(notes))
-            {
-              <p class="notes-item">@notes</p>
-            }
-            @if (reasons != null && reasons.Any())
-            {
-              <ul style="padding-right:18px; margin:10px 0 0 0;">
-                @foreach (var r in reasons)
-                {
-                  if (!string.IsNullOrWhiteSpace(r))
-                  {
-                    <li class="notes-item">@r</li>
-                  }
-                }
-              </ul>
-            }
-          </div>
-        }
       }
 
       <p class="text" style="margin-top: 24px; text-align: center;">
-        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">فتح الملف الشخصي</a>
+        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">فتح المنصة</a>
       </p>
     
       <div class="divider"></div>

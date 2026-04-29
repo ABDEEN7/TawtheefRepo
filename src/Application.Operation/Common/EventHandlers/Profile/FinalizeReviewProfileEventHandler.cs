@@ -30,8 +30,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             user.Email,
             null,
             null,null, 
-            payload,
-            null, 3, lang);        
+            payload, user.GetPreferredLanguage(), null, 3);        
         var notificationInApp = Notification.Create(
             NotificationChannel.InApp,
             FinalizeReviewProfile.TemplateKey,
@@ -39,8 +38,7 @@ public class FinalizeReviewProfileEventHandler(IUnitOfWork uow, UserManager<User
             user.Email,
             null,
             null,null, 
-            payload,
-            null, 3, lang);
+            payload, user.GetPreferredLanguage(), null, 3);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, cancellationToken);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationInApp, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);

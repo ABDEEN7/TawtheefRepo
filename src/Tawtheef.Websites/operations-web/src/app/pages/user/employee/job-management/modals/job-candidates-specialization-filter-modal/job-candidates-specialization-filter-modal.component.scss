@@ -25,10 +25,6 @@
     border-color: var(--primary-color) !important;
     background-color: rgba(var(--primary-color-rgb), 0.02);
   }
-
-  &.main-specialization {
-    border-left: 4px solid var(--primary-color);
-  }
 }
 
 :host ::v-deep {

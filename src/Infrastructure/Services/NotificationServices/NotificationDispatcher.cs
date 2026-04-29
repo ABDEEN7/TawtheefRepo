@@ -7,7 +7,6 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Notifications;
 using Tawtheef.Application.Common.Models.Notification;
 using Tawtheef.Domain.Entities.Notification;
-
 using Tawtheef.Notifications.Interfaces;
 
 namespace Tawtheef.Infrastructure.Services.NotificationServices;
@@ -178,25 +177,36 @@ public sealed class NotificationDispatcher(
         {
             try
             {
-                var content = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
-                content = content.Trim();
-                
-                // If content starts with "Subject:", extract it and remove from body
+                string content;
+                if (n.Channel == NotificationChannel.Email)
+                {
+                    // For Email, we render HTML into Body and Text into PlainTextBody
+                    var html = await renderer.RenderHtmlAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
+                    var text = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
+
+                    typeof(Notification).GetProperty(nameof(Notification.Body))?.SetValue(n, html);
+                    typeof(Notification).GetProperty(nameof(Notification.PlainTextBody))?.SetValue(n, text);
+
+                    content = html; // for subject extraction logic below
+                }
+                else
+                {
+                    // For other channels (SMS, Push), we just render text
+                    content = await renderer.RenderTextAsync(n.TemplateKey, n.PayloadJson ?? "{}", n.Language);
+                    content = content.Trim();
+                    typeof(Notification).GetProperty(nameof(Notification.Body))?.SetValue(n, content);
+                }
+
+                // If content starts with "Subject:", extract it and remove from body (legacy support)
                 if (content.StartsWith("Subject:", StringComparison.OrdinalIgnoreCase))
                 {
                     var lines = content.Split(['\r', '\n'], 2, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length > 0)
                     {
                         var subjectLine = lines[0][8..].Trim();
-                        typeof(Notification).GetProperty(nameof(Notification.Subject))?
-                            .SetValue(n, subjectLine);
-                        
-                        content = lines.Length > 1 ? lines[1].TrimStart() : string.Empty;
+                        typeof(Notification).GetProperty(nameof(Notification.Subject))?.SetValue(n, subjectLine);
                     }
                 }
-
-                typeof(Notification).GetProperty(nameof(Notification.Body))?
-                    .SetValue(n, content);
             }
             catch (Exception ex)
             {

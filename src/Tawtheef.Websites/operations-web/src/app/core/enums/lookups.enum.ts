@@ -14,15 +14,14 @@ export enum CandidateType {
    Invitation / Application Status
 ---------------------------------------------- */
 export enum InvitationStatus {
-  Submitted = "Submitted",
-  Returned = "Returned",
-  UnderReview = "UnderReview",
-  AdminShortlisting = "AdminShortlisting",
-  TechnicalShortlisting = "TechnicalShortlisting",
-  TestProcessing = "TestProcessing",
-  InterviewProcessing = "InterviewProcessing",
-  HiringProcessing = "HiringProcessing",
-  FinalApprovalProcessing = "FinalApprovalProcessing",
+  NewInvitation = "NewInvitation",
+  Closed = "Closed",
+  Cancelled = "Cancelled",
+  Read = "Read",
+  ReturnedAttachment = "ReturnedAttachment",
+  PendingAttachmentApproval = "PendingAttachmentApproval",
+  Rejected = "Rejected",
+  ExamEligible = "ExamEligible",
 }
 
 /* ---------------------------------------------

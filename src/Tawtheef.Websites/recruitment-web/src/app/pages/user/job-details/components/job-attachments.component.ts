@@ -5,7 +5,6 @@ import { JobDetailsService } from '../services/job-details.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { GUID } from '../../../../shared/types/guid.type';
 import { InvitationStatus } from '../../../../core/enums/lookups.enum';
-import { JOB_INVITATION_STATUSES } from '../../dashboard/constants/constants';
 import { DrawerModule } from 'primeng/drawer';
 import { FileUtilsService } from '../../../../core/utils/file-utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -35,9 +34,9 @@ export class JobAttachmentsComponent {
     if (!status) return false;
 
     const allowedStatuses: string[] = [
-      JOB_INVITATION_STATUSES.NEW_INVITATION,
-      JOB_INVITATION_STATUSES.READ,
-      JOB_INVITATION_STATUSES.REQUIRES_UPDATE
+      InvitationStatus.NewInvitation,
+      InvitationStatus.Read,
+      InvitationStatus.ReturnedAttachment
     ];
 
     return allowedStatuses.includes(status);

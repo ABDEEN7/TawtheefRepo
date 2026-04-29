@@ -1,17 +1,8 @@
-@using Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr
-@model Tawtheef.Notifications.Context.TemplateContext<MinisterOfficeNewCandidateHrModel>
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.MinisterOfficeNewCandidateHr.MinisterOfficeNewCandidateHrModel>
+مرشح جديد في مكتب سعادة الوزير
 
-@{
-    var product = Model.Branding.ProductName;
-    var website = Model.Branding.WebsiteUrl;
-    var m = Model.Model;
-    var distributionUrl = $"{website}/user/employee/profile-managment/distribution";
-}
+عزيزي الموظف / عزيزتي الموظفة،
+تمت إضافة مرشح جديد في صفحة مرشحي مكتب سعادة الوزير.
+اسم المرشح: @(Model.Model.NameAr)
 
-العنوان: مرشح جديد في مكتب الوزير
-
-تم إضافة مرشح جديد في مكتب سعادة الوزير: @m.NameAr
-يرجى مراجعة قائمة التوزيع: @distributionUrl
-
-مع تحيات،
-فريق عمل @product
+رابط المنصة: @(Model.Branding.OperationsUrl)

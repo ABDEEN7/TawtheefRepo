@@ -17,7 +17,7 @@ namespace Tawtheef.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.6")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -3226,15 +3226,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22ef7e86-28cb-4a30-98bc-7d45f9b44de3"),
-                            BackendName = "Submitted",
+                            BackendName = "ExamEligible",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
-                            DescriptionEn = "The candidate submitted the application with all required information completed.",
+                            DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة وهو مؤهل للاختبار.",
+                            DescriptionEn = "The application is submitted and the candidate is eligible for the exam.",
                             DisplayOrder = 3,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "تم التقديم",
-                            NameEn = "Submitted"
+                            NameAr = "مرشح للاختبار",
+                            NameEn = "Exam Eligible"
                         },
                         new
                         {
@@ -6611,8 +6611,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CcAddress")
                         .HasMaxLength(200)
@@ -6667,12 +6667,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PayloadJson")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlainTextBody")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProviderMessageId")
                         .HasMaxLength(100)
@@ -10082,7 +10082,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PreferredLanguage")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -10421,7 +10420,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "t-m.abdin-dev@edu.gov.qa",
@@ -10446,7 +10444,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "t-a.jaber-dev@edu.gov.qa",
@@ -10498,7 +10495,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "t-m.abdin@edu.gov.qa",
@@ -10523,7 +10519,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "t-a.jaber@edu.gov.qa",
@@ -10548,7 +10543,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "m.alhaddad@edu.gov.qa",
@@ -10573,7 +10567,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             OtpAttempts = 0,
                             OtpSendsInWindow = 0,
                             PhoneNumberConfirmed = false,
-                            PreferredLanguage = "ar",
                             SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
                             TwoFactorEnabled = false,
                             UserName = "na.almarri@edu.gov.qa",

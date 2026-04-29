@@ -105,7 +105,8 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("qatar-resident/request-otp")]
     public async Task<IActionResult> RequestQatarResidentOtp([FromBody] RequestQatarResidentOtpCommand command)
     {
-        var result = await mediator.Send(command);
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var result = await mediator.Send(command with { Language = language });
         return result.ToActionResult();
     }
 

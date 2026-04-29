@@ -4,6 +4,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Tawtheef.Notifications.TemplateTester</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Application\Application.csproj" />

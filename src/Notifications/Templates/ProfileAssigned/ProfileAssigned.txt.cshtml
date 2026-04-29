@@ -1,22 +1,7 @@
-@using Tawtheef.Notifications.Templates.ProfileAssigned
-@model Tawtheef.Notifications.Context.TemplateContext<ProfileAssignedModel>
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ProfileAssigned.ProfileAssignedModel>
+Profile Sent for Review
 
-@{
-    var m = Model.Model;
-    var product = Model.Branding.ProductName;
-    var profileUrl = $"{Model.Branding.WebsiteUrl}/profiles/review/{m.ProfileId}";
-}
+Dear Employee,
+The candidate profile "@(Model.Model.CandidateName)" has been sent to you for review.
 
-Subject: New Profile Assigned for Review
-
-Hello,
-
-You have been assigned a new profile for review in @product.
-
-Candidate Name: @m.CandidateName
-
-Please visit the following link to review the profile:
-@profileUrl
-
-Regards,
-The @product Team
+Portal Link: @(Model.Branding.OperationsUrl)/portal/approval-profile

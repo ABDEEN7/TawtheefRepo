@@ -23,8 +23,7 @@ public sealed class ContactVerificationSentEventHandler(IUnitOfWork uow)
             null,
             null,
             null,
-            payload,
-            null, 3, @event.Language);
+            payload, @event.Language, null, 3);
         await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
     }

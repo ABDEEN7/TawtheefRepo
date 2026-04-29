@@ -12,11 +12,9 @@ import { JobDetailsService } from './services/job-details.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { routes } from '../../../routes/routes';
 import { JobTabType } from './enums/job-tab-type';
-import { JOB_INVITATION_STATUSES } from '../dashboard/constants/constants';
 import { JobApplyConfirmationDialogComponent } from './dialogs/job-apply-confirmation.dialog.component';
 import { CandidateInvitationDetailsService } from './services/candidate-invitation-details.service';
 import { EMPTY, map, startWith, switchMap } from 'rxjs';
-import { GUID } from '../../../shared/types/guid.type';
 import { JobOverviewComponent } from './components/job-overview.component';
 import { JobResponsibilitiesComponent } from './components/job-responsibilities.component';
 import { JobQualificationsComponent } from './components/job-qualifications.component';
@@ -25,6 +23,7 @@ import { JobSkillsComponent } from './components/job-skills.component';
 import { JobBenefitsComponent } from './components/job-benefits.component';
 import { JobAttachmentsComponent } from './components/job-attachments.component';
 import { JobSideInfoComponent } from './components/job-side-info/job-side-info.component';
+import { InvitationStatus } from '../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-job-details',
@@ -68,13 +67,13 @@ export class JobDetails implements OnInit {
   hasApplied = computed(() => {
     if (this.appliedOverride()) return true;
     const status = this.job()?.invitationStatus?.backendName;
-    return status === JOB_INVITATION_STATUSES.SUBMITTED ||
-           status === JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL;
+    return status === InvitationStatus.ExamEligible ||
+      status === InvitationStatus.PendingAttachmentApproval;
   });
 
   isReturned = computed(() => {
     const status = this.job()?.invitationStatus?.backendName;
-    return status === JOB_INVITATION_STATUSES.REQUIRES_UPDATE;
+    return status === InvitationStatus.ReturnedAttachment;
   });
 
   routes = routes;
@@ -109,7 +108,7 @@ export class JobDetails implements OnInit {
         switchMap(resp => {
           // Handle status update
           const status$ =
-            resp?.invitationStatus?.backendName === JOB_INVITATION_STATUSES.NEW_INVITATION
+            resp?.invitationStatus?.backendName === InvitationStatus.NewInvitation
               ? this.detailsService.changeInvitationStatusRead(invitationId)
               : EMPTY;
 
@@ -178,9 +177,9 @@ export class JobDetails implements OnInit {
 
   canApply(): boolean {
     const status = this.job()?.invitationStatus?.backendName;
-    const isRejected = status === JOB_INVITATION_STATUSES.REJECTED;
-    const isClosed = status === JOB_INVITATION_STATUSES.CLOSED || status === JOB_INVITATION_STATUSES.CANCELLED;
-    const isSubmitted = status === JOB_INVITATION_STATUSES.SUBMITTED || status === JOB_INVITATION_STATUSES.PENDING_ATTACHMENT_APPROVAL;
+    const isRejected = status === InvitationStatus.Rejected;
+    const isClosed = status === InvitationStatus.Closed || status === InvitationStatus.Cancelled;
+    const isSubmitted = status === InvitationStatus.ExamEligible || status === InvitationStatus.PendingAttachmentApproval;
 
     return this.isJobOpen() && !isSubmitted && !this.detailsService.applying()
       && !isRejected
@@ -218,9 +217,9 @@ export class JobDetails implements OnInit {
   canRejectInvitation(): boolean {
     if (this.hasApplied()) return false;
     const status = this.job()?.invitationStatus?.backendName;
-    const isPending = status === JOB_INVITATION_STATUSES.NEW_INVITATION ||
-                      status === JOB_INVITATION_STATUSES.READ ||
-                      status === JOB_INVITATION_STATUSES.REQUIRES_UPDATE;
+    const isPending = status === InvitationStatus.NewInvitation ||
+      status === InvitationStatus.Read ||
+      status === InvitationStatus.ReturnedAttachment;
     return isPending;
   }
 

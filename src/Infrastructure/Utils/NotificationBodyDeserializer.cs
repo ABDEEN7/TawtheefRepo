@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Tawtheef.Notifications.Utils;
 
 namespace Tawtheef.Infrastructure.Utils;
@@ -7,7 +8,8 @@ public static class NotificationBodyDeserializer
 {
     private static readonly JsonSerializerOptions Options = new()
     {
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
     };
 
     public static object DeserializeBody(string templateKey, string? body)

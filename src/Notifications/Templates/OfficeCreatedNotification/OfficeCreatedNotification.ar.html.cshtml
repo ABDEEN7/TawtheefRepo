@@ -7,7 +7,7 @@
     var primary = b.PrimaryHex;
     var product = b.ProductName;
     var support = b.SupportEmail;
-    var website = b.WebsiteUrl;
+    var website = b.OperationsUrl;
     var logo = b.LogoUrl;
 
     var officeName = string.IsNullOrWhiteSpace(m.OfficeNameAr) ? "مكتب جديد" : m.OfficeNameAr;
@@ -49,23 +49,23 @@
         <br/>
       }
       <p class="badge">مكتب جديد</p>
-      <h1 class="title">تم إنشاء مكتب توظيف جديد</h1>
+      <h1 class="title">تم إنشاء مكتب جديد</h1>
       <p class="text">عزيزي المسؤول،</p>
       <p class="text">
-        تم إنشاء مكتب جديد للتوظيف بنجاح في نظام <strong>@product</strong> الأساسي.
+        تم إنشاء مكتب جديد في منصة Careers.
       </p>
       <div class="data-box">
-        <div class="data-item"><span class="label">اسم المكتب:</span> @officeName</div>
-        <div class="data-item"><span class="label">كود المكتب:</span> @m.OfficeCode</div>
-        <div class="data-item"><span class="label">بريد المسؤول:</span> @m.AdminEmail</div>
+        <div class="data-item"><span class="label">اسم المكتب:</span> «@officeName»</div>
+        <div class="data-item"><span class="label">الدولة:</span> «@m.CountryAr»</div>
+        <div class="data-item"><span class="label">بريد المسؤول:</span> «@m.AdminEmail»</div>
       </div>
       <p class="text">
-        يمكنكم الآن البدء في مراجعة المهام وإدارة العمليات لهذا المكتب عبر لوحة التحكم.
+        تم منحكم صلاحية إدارة ملفات المرشحين وأعضاء المكتب ضمن الدولة المحددة لكم.
       </p>
       <a class="cta" style="color: white;" href="@website" target="_blank">الدخول للوحة التحكم</a>
       <div class="divider"></div>
       <p class="muted">
-        إذا كان الزر لا يعمل، يرجى نسخ هذا الرابط ولصقه في متصفحك: @website
+        رابط المنصة: @website
       </p>
     </div>
     <div class="footer">

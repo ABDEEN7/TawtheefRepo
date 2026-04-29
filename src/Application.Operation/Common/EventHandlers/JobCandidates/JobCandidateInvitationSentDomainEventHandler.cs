@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.JobCandidates;
 using Tawtheef.Notifications.Templates.JobCandidateInvitationSent;
-
-using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Common.EventHandlers.JobCandidates;
 
@@ -37,9 +36,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
             null,
             null,
             payload,
-            null,
-            3,
-            lang);
+            lang, null, 3);
 
         await notificationRepository.AddAsync(inAppNotification, ct);
         
@@ -53,8 +50,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 null,
                 null,
                 null,
-                payload,
-                null, 3, lang);
+                payload, lang, null, 3);
 
             await notificationRepository.AddAsync(emailNotification, ct);
         }
@@ -71,8 +67,7 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
                 null,
                 null,
                 null,
-                payload,
-                null, 3, lang);
+                payload, lang, null, 3);
 
             await notificationRepository.AddAsync(smsNotification, ct);
         }

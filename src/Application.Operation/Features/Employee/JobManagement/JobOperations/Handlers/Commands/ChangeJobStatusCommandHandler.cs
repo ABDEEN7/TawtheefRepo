@@ -38,7 +38,7 @@ public class ChangeJobStatusCommandHandler(
         {
             var statusUsed = new List<Guid>
             {
-                InvitationStatusIds.Submitted,
+                InvitationStatusIds.ExamEligible,
                 InvitationStatusIds.PendingAttachmentApproval,
                 InvitationStatusIds.ReturnedAttachment,
                 InvitationStatusIds.Rejected,

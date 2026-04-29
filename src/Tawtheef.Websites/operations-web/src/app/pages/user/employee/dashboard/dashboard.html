@@ -128,15 +128,6 @@
             <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
           </div>
 
-          <!-- Rejected Jobs -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.rejectedJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--danger">
-              <i class="hgi hgi-stroke hgi-cancel-circle"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().rejectedJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.rejectedJobs' | translate }}</div>
-          </div>
-
           <!-- New Jobs Today -->
           <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
             <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
@@ -169,7 +160,8 @@
             <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--compact">
-            <p-chart type="bar" [data]="jobDepartmentChartData()" height="16.25rem" [options]="barChartOptions"></p-chart>
+            <p-chart type="bar" [data]="jobDepartmentChartData()" height="16.25rem"
+              [options]="barChartOptions"></p-chart>
           </div>
         </div>
       </div>
@@ -184,7 +176,8 @@
             <h5 class="dash-panel__title">{{ 'dashboard.charts.profileTrend' | translate }}</h5>
           </div>
           <div class="chart-host">
-            <p-chart type="line" [data]="profileTrendChartData()" height="16.25rem" [options]="lineChartOptions"></p-chart>
+            <p-chart type="line" [data]="profileTrendChartData()" height="16.25rem"
+              [options]="lineChartOptions"></p-chart>
           </div>
         </div>
         <div class="dash-panel">
@@ -291,12 +284,9 @@
                   <th pSortableColumn="RemainingTasks" class="text-center" style="width: 100px">{{
                     'dashboard.table.remainingTasks' | translate }} <p-sortIcon field="RemainingTasks"></p-sortIcon>
                   </th>
-                  <th pSortableColumn="OverdueTasks" class="text-center" style="width: 100px">{{
-                    'dashboard.table.overdueTasks' | translate }} <p-sortIcon field="OverdueTasks"></p-sortIcon></th>
                   <th pSortableColumn="ProfilesReviewed" class="text-center" style="width: 130px">{{
-                    'dashboard.table.profilesReviewed' | translate }} <p-sortIcon field="ProfilesReviewed"></p-sortIcon></th>
-                  <th pSortableColumn="ProductivityScore" class="text-center" style="width: 100px">{{
-                    'dashboard.table.productivityScore' | translate }} <p-sortIcon field="ProductivityScore"></p-sortIcon></th>
+                    'dashboard.table.profilesReviewed' | translate }} <p-sortIcon field="ProfilesReviewed"></p-sortIcon>
+                  </th>
                   <th pSortableColumn="ApprovalRate" style="width: 140px">{{ 'dashboard.table.approval' | translate }}
                     <p-sortIcon field="ApprovalRate"></p-sortIcon>
                   </th>
@@ -321,20 +311,7 @@
                   <td class="text-center"><span class="badge badge-soft-primary">{{ row.assignedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-success">{{ row.completedTasks }}</span></td>
                   <td class="text-center"><span class="badge badge-soft-info">{{ row.remainingTasks }}</span></td>
-                  <td class="text-center">
-                    <span class="badge" [class.badge-soft-danger]="row.overdueTasks > 0"
-                      [class.badge-soft-secondary]="row.overdueTasks === 0">
-                      {{ row.overdueTasks }}
-                    </span>
-                  </td>
                   <td class="text-center"><span class="badge badge-soft-primary">{{ row.profilesReviewed }}</span></td>
-                  <td class="text-center">
-                    <span class="fw-bold" [class.text-success]="row.productivityScore > 50"
-                      [class.text-warning]="row.productivityScore > 20 && row.productivityScore <= 50"
-                      [class.text-danger]="row.productivityScore <= 20">
-                      {{ row.productivityScore }}
-                    </span>
-                  </td>
                   <td>
                     <div class="progress-indicator">
                       <div class="progress-indicator__bar-outer">

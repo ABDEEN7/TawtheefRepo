@@ -132,6 +132,8 @@ export class EndpointsService {
       religions: this.getFullUrl(`/profiles/lookups/religions`),
       maritalStatuses: this.getFullUrl(`/profiles/lookups/marital-statuses`),
       countries: this.getFullUrl(`/profiles/lookups/countries`),
+      nationalities: this.getFullUrl(`/profiles/lookups/nationalities`),
+      graduationCountries: this.getFullUrl(`/profiles/lookups/graduation-countries`),
       degrees: this.getFullUrl(`/profiles/lookups/degrees`),
       universities: this.getFullUrl(`/profiles/lookups/universities`),
       majors: this.getFullUrl(`/profiles/lookups/majors`),

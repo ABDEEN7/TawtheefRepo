@@ -1,4 +1,3 @@
-using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using MediatR;
@@ -17,7 +16,6 @@ namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Ha
 
 public class CreateJobFromPreviousCommandHandler(
     IJobRepository jobRepository,
-    IJobPointsRepository jobPointsRepository,
     IUnitOfWork unitOfWork,
     IValidator<CreateJobFromPreviousCommand> validator)
     : IRequestHandler<CreateJobFromPreviousCommand, IResult<Guid>>
@@ -101,34 +99,14 @@ public class CreateJobFromPreviousCommandHandler(
             }
             await unitOfWork.SaveChangesAsync(ct);
 
-            var points = await BuildJobPointsAsync(
-                request.Job,
-                sourceJob.Id,
-                sourceJob.JobPoints != null,
-                job.Id);
-
-            if (points != null)
+            var specializations = BuildSpecializations(request.Job, sourceJob, job.Id);
+            foreach (var specialization in specializations)
             {
-                var details = points.Details?.ToList();
-                points.Details = []; // Clear details to insert them individually
-
-                var pointsMainResult = await jobPointsRepository.Repository.AddAsync(points, ct);
-                if (pointsMainResult.IsFailed)
-                    return Result.Fail<Guid>(pointsMainResult.Errors);
-                await unitOfWork.SaveChangesAsync(ct);
-
-                if (details != null)
-                {
-                    foreach (var detail in details)
-                    {
-                        detail.JobPointsMainId = points.Id;
-                        var detailResult = await unitOfWork.GetEntityRepository<JobPointsDetail>().AddAsync(detail, ct);
-                        if (detailResult.IsFailed)
-                            return Result.Fail<Guid>(detailResult.Errors);
-                    }
-                    await unitOfWork.SaveChangesAsync(ct);
-                }
+                var result = await unitOfWork.GetEntityRepository<JobSpecialization>().AddAsync(specialization, ct);
+                if (result.IsFailed)
+                    return Result.Fail<Guid>(result.Errors);
             }
+            await unitOfWork.SaveChangesAsync(ct);
 
             return Result.Ok(job.Id);
         }, cancellationToken);
@@ -238,49 +216,22 @@ public class CreateJobFromPreviousCommandHandler(
         }).ToList();
     }
 
-    private async Task<JobPointsMain?> BuildJobPointsAsync(
+    private static List<JobSpecialization> BuildSpecializations(
         CreateJobFromPreviousDto request,
-        Guid sourceJobId,
-        bool sourceHasPoints,
+        JobEntity source,
         Guid jobId)
     {
-        JobPointsCopyDto? points = request.JobPoints;
+        var specializations = request.JobSpecializations ?? source.JobSpecializations
+            .Select(s => new JobSpecializationRequestDto { MajorId = s.MajorId, SubMajorId = s.SubMajorId })
+            .ToList();
 
-        if (points == null && sourceHasPoints)
-        {
-            var sourcePointsResult = await jobPointsRepository.GetByJobIdAsync(sourceJobId);
-            if (sourcePointsResult.IsSuccess)
-                points = sourcePointsResult.Value.Adapt<JobPointsCopyDto>();
-        }
-
-        if (points == null)
-            return null;
-
-        var details = points.Details;
-
-        return new JobPointsMain
+        return specializations.Select(s => new JobSpecialization
         {
             Id = Guid.NewGuid(),
             JobId = jobId,
-            ApplicantCategory = points.ApplicantCategory,
-            Education = points.Education,
-            Experience = points.Experience,
-            Training = points.Training,
-            Skills = points.Skills,
-            Languages = points.Languages,
-            Certificates = points.Certificates,
-            Total = points.Total,
-            IsApproved = false,
-            Details = details.Select(d => new JobPointsDetail
-            {
-                Id = Guid.NewGuid(),
-                Type = d.Type,
-                Code = d.Code,
-                Name = d.Name,
-                ReferenceId = d.ReferenceId,
-                Points = d.Points
-            }).ToList()
-        };
+            MajorId = s.MajorId,
+            SubMajorId = s.SubMajorId
+        }).ToList();
     }
 }
 

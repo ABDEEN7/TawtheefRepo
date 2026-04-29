@@ -46,7 +46,7 @@ export class ProfileAchievementsSectionComponent {
         title: cr.Title,
         issuingAuthority: cr.IssuingAuthority,
         countryId: cr.CountryId,
-        country: this.lookups.countries().find(c => c.id === cr.CountryId) ?? null,
+        country: this.lookups.graduationCountry().find(c => c.id === cr.CountryId) ?? null,
         issueDate: cr.IssueDate,
         description: cr.Description,
         attachment: { resourceId: cr.AttachmentResourceId, fileName: cr.FileName } as FileRefDto,

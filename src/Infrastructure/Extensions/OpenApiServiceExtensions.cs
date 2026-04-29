@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
 namespace Tawtheef.Infrastructure.Extensions;
@@ -8,22 +9,30 @@ public static class OpenApiServiceExtensions
 {
     public static void AddSwagger(this IServiceCollection services)
     {
-        services.AddSwaggerGen(c =>
+        services.AddSwaggerGen(options =>
         {
-            c.CustomSchemaIds(type => type.FullName);
-            c.SwaggerDoc("v1", new OpenApiInfo
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "My API",
+                Title = "Careers API",
                 Version = "v1"
             });
 
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "Enter 'Bearer' [space] and then your token.",
                 Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey
+                Description = "Please enter token"
             });
+
+            // Security Requirement（use Transformer）
+            options.AddSecurityRequirement(document =>
+                new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                });
         });
     }
 
@@ -32,7 +41,7 @@ public static class OpenApiServiceExtensions
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             options.RoutePrefix = "swagger";
         });
     }

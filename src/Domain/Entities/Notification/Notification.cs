@@ -33,14 +33,14 @@ public class Notification : EventEntity
     public string? Subject { get; private set; }
 
     // Message body (email HTML, SMS text, push body)
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? Body { get; private set; }
 
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? PlainTextBody { get; private set; }
 
     // Serialized payload (JSON metadata, variables, deep links, etc.)
-    [MaxLength(4000)]
+    [MaxLength(int.MaxValue)]
     public string? PayloadJson { get; private set; }
 
     // Provider-side ID (SendGrid, Twilio, Firebase, etc.)
@@ -76,7 +76,7 @@ public class Notification : EventEntity
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
         string? toAddress, string? subject, string? body, string? plainTextBody,
-        string? payloadJson, string? idempotencyKey = null, int maxRetries = 3, string language = "ar")
+        string? payloadJson, string language, string? idempotencyKey = null, int maxRetries = 3)
     {
         return new Notification
         {

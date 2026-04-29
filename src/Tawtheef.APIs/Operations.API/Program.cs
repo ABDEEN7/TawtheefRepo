@@ -68,7 +68,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
       .Enrich.WithEnvironmentUserName()
       .Enrich.WithThreadId()
       .Enrich.WithExceptionDetails()
-      .Enrich.WithProperty("Application", "Tawtheef.Recruitment")
+      .Enrich.WithProperty("Application", "Tawtheef.Operations")
       .Enrich.WithProperty("Version", "1.0.0")
       .WriteTo.Console(outputTemplate:
           "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")

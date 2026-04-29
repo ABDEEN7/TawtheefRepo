@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.Universities.Commands;
+using Application.Operation.Features.Admin.Universities.Commands;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -49,14 +49,13 @@ public sealed class CreateUniversityCommandHandler(
 
         var now = timeProvider.GetUtcNow().UtcDateTime;
         _ = Guid.TryParse(currentUserService.UserId, out var userId);
-        var files = request.Files;
         var universityId = Guid.NewGuid();
 
-        var logoArResult = await UploadLogoAsync(universityId, "ar", request.LogoArFileIndex, files, cancellationToken);
+        var logoArResult = await UploadLogoAsync(universityId, "ar", request.LogoArFile, cancellationToken);
         if (logoArResult.IsFailed)
             return Result.Fail<Guid>(logoArResult.Errors);
 
-        var logoEnResult = await UploadLogoAsync(universityId, "en", request.LogoEnFileIndex, files, cancellationToken);
+        var logoEnResult = await UploadLogoAsync(universityId, "en", request.LogoEnFile, cancellationToken);
         if (logoEnResult.IsFailed)
             return Result.Fail<Guid>(logoEnResult.Errors);
 
@@ -97,17 +96,12 @@ public sealed class CreateUniversityCommandHandler(
     private async Task<Result<Guid?>> UploadLogoAsync(
         Guid universityId,
         string logoType,
-        int? fileIndex,
-        IReadOnlyList<IFormFile> files,
+        IFormFile? file,
         CancellationToken ct)
     {
-        if (fileIndex is null)
+        if (file is null)
             return Result.Ok<Guid?>(null);
 
-        if (fileIndex.Value < 0 || fileIndex.Value >= files.Count)
-            return Result.Fail<Guid?>(ErrorsCodes.InvalidAttachmentFileIndex);
-
-        var file = files[fileIndex.Value];
         if (file.Length == 0)
             return Result.Fail<Guid?>(ErrorsCodes.InvalidAttachmentFile);
 

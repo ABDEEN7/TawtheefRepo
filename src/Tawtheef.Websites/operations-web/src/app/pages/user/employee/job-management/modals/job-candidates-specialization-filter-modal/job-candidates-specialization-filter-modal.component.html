@@ -7,10 +7,11 @@
     <div [formGroup]="form">
       <div formArrayName="specializationSelections" class="specialization-list">
         @for (spec of specializationSelections.controls; track spec; let i = $index) {
-        <div [formGroupName]="i" class="specialization-item card mb-2 border-light shadow-sm"
+        <div [formGroupName]="i" class="specialization-item card mb-2 shadow-sm"
           [class.main-specialization]="spec.get('isMain')?.value" [class.selected]="spec.get('isSelected')?.value">
           <div class="card-body p-3 d-flex align-items-center">
-            <p-checkbox formControlName="isSelected" [binary]="true" [disabled]="spec.get('isMain')?.value"></p-checkbox>
+            <p-checkbox formControlName="isSelected" [binary]="true"
+              [disabled]="spec.get('isMain')?.value"></p-checkbox>
             <div class="ms-3 flex-grow-1">
               <div class="d-flex align-items-center gap-2">
                 <span class="fw-bold">{{ spec.get('label')?.value }}</span>

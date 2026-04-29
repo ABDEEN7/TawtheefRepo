@@ -24,7 +24,7 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
             InvitationStatusIds.Read,
             InvitationStatusIds.PendingAttachmentApproval,
             InvitationStatusIds.ReturnedAttachment,
-            InvitationStatusIds.Submitted,
+            InvitationStatusIds.ExamEligible,
             InvitationStatusIds.Rejected
         };
 

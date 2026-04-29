@@ -51,8 +51,7 @@ public class ProfileAssignedEventHandler(
             employee.Email,
             null,
             null, null,
-            payload,
-            null, 3, employee.PreferredLanguage);
+            payload, employee.GetPreferredLanguage(), null, 3);
 
         var notificationInApp = Notification.Create(
             NotificationChannel.InApp,
@@ -61,8 +60,7 @@ public class ProfileAssignedEventHandler(
             employee.Email,
             null,
             null, null,
-            payload,
-            null, 3, employee.PreferredLanguage);
+            payload, employee.GetPreferredLanguage(), null, 3);
 
         await uow.GetEntityRepository<Notification>().AddAsync(notificationEmail, ct);
         await uow.GetEntityRepository<Notification>().AddAsync(notificationInApp, ct);

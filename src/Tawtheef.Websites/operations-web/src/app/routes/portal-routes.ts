@@ -120,5 +120,8 @@ export const portalRoutes = {
   },
   get jobTitlesManagement() {
     return this.portal + '/job-titles-management'
+  },
+  get notificationTester() {
+    return this.portal + '/notification-tester'
   }
 }

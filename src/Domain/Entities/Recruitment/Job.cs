@@ -133,10 +133,6 @@ public sealed class Job : EventEntity
         {
             AddDomainEvent(new ChangeJobStatusNotificationDomainEvent(this, DateTimeOffset.Now));
         }
-        else if (newStatusId == JobStatusIds.Rejected)
-        {
-            AddDomainEvent(new ChangeJobStatusRejectedNotificationDomainEvent(this, DateTimeOffset.Now));
-        }
         else if (newStatusId == JobStatusIds.NeedUpdate)
         {
             AddDomainEvent(new ChangeJobStatusNeedUpdateNotificationDomainEvent(this, DateTimeOffset.Now));

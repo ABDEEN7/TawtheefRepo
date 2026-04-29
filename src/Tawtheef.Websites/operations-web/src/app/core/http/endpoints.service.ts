@@ -330,4 +330,10 @@ export class EndpointsService {
     targetEntities: this.getFullUrl('/MinisterOffice/lookups/target-entities'),
     candidateTypes: this.getFullUrl('/MinisterOffice/lookups/candidate-types'),
   };
+
+  notificationTester = {
+    templates: this.getFullUrl('/notification-tester/templates'),
+    send: this.getFullUrl('/notification-tester/send'),
+    preview: this.getFullUrl('/notification-tester/preview'),
+  };
 }

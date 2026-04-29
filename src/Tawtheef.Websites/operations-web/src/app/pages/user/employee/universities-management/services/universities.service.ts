@@ -45,18 +45,11 @@ export class UniversitiesService {
 
   private buildFormData(payload: UniversityFormPayload): FormData {
     const formData = new FormData();
-    const files: File[] = [];
-
-    const logoArIndex = payload.logoArFile ? files.push(payload.logoArFile) - 1 : null;
-    const logoEnIndex = payload.logoEnFile ? files.push(payload.logoEnFile) - 1 : null;
-
-    files.forEach(file => formData.append('Files', file));
-
-    if (logoArIndex !== null) {
-      formData.append('LogoArFileIndex', logoArIndex.toString());
+    if (payload.logoArFile) {
+      formData.append('LogoArFile', payload.logoArFile);
     }
-    if (logoEnIndex !== null) {
-      formData.append('LogoEnFileIndex', logoEnIndex.toString());
+    if (payload.logoEnFile) {
+      formData.append('LogoEnFile', payload.logoEnFile);
     }
 
     if (payload.id) {

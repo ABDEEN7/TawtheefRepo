@@ -22,7 +22,8 @@
                 <input #fileInput type="file" accept=".xlsx,.xls" class="form-control"
                   (change)="onFileChange($event)" />
 
-                <div class="text-danger mt-1" *ngIf="form.controls.file.invalid && form.controls.file.touched">
+                <div class="text-danger mt-1"
+                  [style.visibility]="(form.controls.file.invalid && form.controls.file.touched) ? 'visible' : 'hidden'">
                   {{ 'kawader.upload.required' | translate }}
                 </div>
               </div>

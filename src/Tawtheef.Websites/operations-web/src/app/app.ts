@@ -47,7 +47,7 @@ export class App {
     }
 
     if (control.type === 'text' || !control.type) {
-      return value.replace(/[^\p{L}\p{N}\s]/gu, '');
+      return value.replace(/[^\p{L}\p{N}\s\-@._]/gu, '');
     }
 
     return value;
