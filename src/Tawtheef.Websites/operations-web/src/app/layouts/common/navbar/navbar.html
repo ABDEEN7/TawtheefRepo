@@ -3,8 +3,10 @@
   <div class="container-fluid">
     <div class="row align-items-center">
       <div class="col-lg-6 col-md-6 col-6">
-        <img src="../../../../assets/img/logo-black.png" [alt]="'internal.nav.logoAlt' | translate"
-          class="img-fluid logo" />
+        <a routerLink="/">
+          <img src="../../../../../assets/img/logo-black.png" [alt]="'internal.nav.logoAlt' | translate"
+            class="img-fluid logo" />
+        </a>
       </div>
       <div class="col-lg-6 col-md-6 col-6">
         <div class="d-flex align-items-center gap-3 justify-content-end">
@@ -141,13 +143,15 @@
 
           <!-- Font Size Control -->
           <div class="font-scale-control d-flex align-items-center gap-1 me-2 border-end pe-3">
-            <button class="btn btn-sm btn-icon" (click)="decreaseFont()" [title]="'common.fontScale.decrease' | translate">
+            <button class="btn btn-sm btn-icon" (click)="decreaseFont()"
+              [title]="'common.fontScale.decrease' | translate">
               <i class="hgi hgi-stroke hgi-minus-sign"></i>
             </button>
             <button class="btn btn-sm btn-icon" (click)="resetFont()" [title]="'common.fontScale.reset' | translate">
               <i class="hgi hgi-stroke hgi-text-smallcaps"></i>
             </button>
-            <button class="btn btn-sm btn-icon" (click)="increaseFont()" [title]="'common.fontScale.increase' | translate">
+            <button class="btn btn-sm btn-icon" (click)="increaseFont()"
+              [title]="'common.fontScale.increase' | translate">
               <i class="hgi hgi-stroke hgi-add-01"></i>
             </button>
           </div>

@@ -958,3 +958,12 @@ $card-radius: 1rem;
 .font-monospace {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
+
+.p-datatable-sortable-column:not(.p-datatable-column-sorted):hover {
+  color: white;
+}
+
+:host ::ng-deep.p-datatable-thead>tr>th.p-datatable-column-sorted {
+  color: white !important;
+  font-weight: bold;
+}

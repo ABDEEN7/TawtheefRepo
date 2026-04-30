@@ -75,8 +75,8 @@ public class Notification : EventEntity
 
     public static Notification Create(
         NotificationChannel channel, string templateKey, Guid? userId,
-        string? toAddress, string? subject, string? body, string? plainTextBody,
-        string? payloadJson, string language, string? idempotencyKey = null, int maxRetries = 3)
+        string? toAddress = null, string? subject = null, string? body = null, string? plainTextBody = null,
+        string? payloadJson = null, string? language = null, string? idempotencyKey = null, int maxRetries = 3)
     {
         return new Notification
         {
@@ -91,7 +91,7 @@ public class Notification : EventEntity
             Status = NotificationStatus.Pending,
             IdempotencyKey = idempotencyKey,
             MaxRetries = maxRetries,
-            Language = language
+            Language = language ?? "ar"
         };
     }
 

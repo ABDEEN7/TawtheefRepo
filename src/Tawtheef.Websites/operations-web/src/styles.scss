@@ -5,29 +5,32 @@
 
 $primary: #000;
 .form-check-input:checked {
-  background-color: #8a1538  !important;
-  border-color: #8a1538  !important;
+  background-color: #8a1538 !important;
+  border-color: #8a1538 !important;
 }
+
 body {
   background: radial-gradient(1000px 400px at 50% -50%, #ffe9ef, transparent 70%), #fff;
   color: var(--text);
   line-height: 1.7;
-  font-family:'Cairo', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 .required::after {
   content: ' *';
-  color: #dc3545; /* Bootstrap red tone */
+  color: #dc3545;
+  /* Bootstrap red tone */
   font-weight: bold;
   margin-left: 3px;
 }
 
-.p-multiselect{
+.p-multiselect {
   height: calc(2.25rem) !important;
 }
 
 .p-virtualscroller {
-  min-height: 200px !important; /* Should match your scrollHeight */
+  min-height: 200px !important;
+  /* Should match your scrollHeight */
 }
 
 .p-dialog .p-dialog-content {

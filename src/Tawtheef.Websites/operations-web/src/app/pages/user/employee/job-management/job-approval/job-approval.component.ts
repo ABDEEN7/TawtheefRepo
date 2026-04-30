@@ -615,10 +615,6 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
       this.notificationService.success(
         this.transaltionService.instant('JOB_APPROVAL.SUBMIT_REVIEW_SUCCESS')
       );
-    } else {
-      this.notificationService.warn(
-        this.transaltionService.instant('JOB_APPROVAL.JOB_RETURNED_NEED_UPDATES')
-      );
     }
   }
 
