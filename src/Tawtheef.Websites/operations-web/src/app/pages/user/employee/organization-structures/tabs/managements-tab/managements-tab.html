@@ -111,5 +111,5 @@
 
 <app-pagination [currentPage]="store.managementFilters().pageNumber" [totalItems]="store.managementMeta().totalCount"
   [itemsPerPage]="store.managementFilters().pageSize" (pageChanged)="service.onManagementPageChange($event)"
-  (pageSizeChanged)="service.onManagementPageSizeChange($event)" class="mt-4">
+  (pageSizeChanged)="service.onManagementPageSizeChange($event)" class="w-100 mt-4">
 </app-pagination>

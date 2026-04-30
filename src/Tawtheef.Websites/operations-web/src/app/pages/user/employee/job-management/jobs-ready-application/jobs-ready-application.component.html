@@ -114,7 +114,7 @@
 
     @if (paginationMetadata && paginationMetadata.totalCount > 0) {
       <div class="pagination-box">
-        <app-pagination
+        <app-pagination class="w-100"
           [currentPage]="currentPage()"
           [totalItems]="paginationMetadata.totalCount"
           [itemsPerPage]="itemsPerPage"

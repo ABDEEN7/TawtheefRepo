@@ -1,4 +1,5 @@
 import {CommonModule} from '@angular/common';
+import { Select } from 'primeng/select';
 import {
   Component,
   computed,
@@ -29,7 +30,7 @@ import {FileUtilsService} from '../../../../../../core/utils/file-utils';
   standalone: true,
   templateUrl: './university-modal.component.html',
   styleUrls: ['./university-modal.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective]
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, I18nNamespaceDirective, Select]
 })
 export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
   private fb = inject(FormBuilder);
@@ -155,8 +156,8 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  onCountryChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
+  onCountryChange(event: any) {
+    const value = event?.value ?? (event?.target as HTMLSelectElement)?.value;
     this.form.patchValue({cityId: ''});
     this.cities.set([]);
     if (value) {

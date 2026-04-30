@@ -452,7 +452,15 @@ export class JobListComponent implements OnInit {
     // }
 
     // 5. Utility Actions
-    if (canClone) {
+    if (canClone && [
+      JobStatus.PendingPointConfiguration,
+      JobStatus.NeedPointUpdate,
+      JobStatus.PendingPointApproval,
+      JobStatus.ReadyForAnnouncement,
+      JobStatus.Published,
+      JobStatus.Closed,
+      JobStatus.Cancelled
+    ].includes(status)) {
       actions.push({
         label: 'JOB_LIST_BUTTONS_COPY',
         icon: 'hgi hgi-stroke hgi-copy-01',

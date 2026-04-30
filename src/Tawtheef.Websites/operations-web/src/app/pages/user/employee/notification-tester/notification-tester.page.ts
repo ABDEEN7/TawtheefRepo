@@ -6,6 +6,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { Tooltip } from 'primeng/tooltip';
+import { Select } from 'primeng/select';
 import { NotificationTesterService } from './services/notification-tester.service';
 import {
   TemplateMetadata,
@@ -37,7 +38,8 @@ interface SentLog {
     FormsModule,
     Toast,
     Tooltip,
-    TranslatePipe
+    TranslatePipe,
+    Select
   ],
   providers: [MessageService]
 })

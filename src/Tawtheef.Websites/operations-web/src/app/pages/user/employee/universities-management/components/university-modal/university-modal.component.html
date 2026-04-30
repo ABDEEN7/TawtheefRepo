@@ -46,13 +46,11 @@
       <div class="row g-3 mt-1">
         <div class="col-md-6">
           <label class="form-label">{{ 'UNIVERSITIES.COUNTRY' | translate }} <span class="text-danger">*</span></label>
-          <select class="form-select" formControlName="countryId" (change)="onCountryChange($event)"
+          <p-select styleClass="w-100" formControlName="countryId" (onChange)="onCountryChange($event)"
+            [options]="countries" optionLabel="name" optionValue="id" [appendTo]="'body'"
+            [placeholder]="'UNIVERSITIES.SELECT_COUNTRY' | translate"
             [class.is-invalid]="submitted && form.controls.countryId.invalid">
-            <option value="">{{ 'UNIVERSITIES.SELECT_COUNTRY' | translate }}</option>
-            @for (country of countries; track country.id) {
-            <option [value]="country.id">{{ country.name }}</option>
-            }
-          </select>
+          </p-select>
           @if (submitted && form.controls.countryId.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError('countryId') }}</div>
           }
@@ -60,14 +58,11 @@
 
         <div class="col-md-6">
           <label class="form-label">{{ 'UNIVERSITIES.CITY' | translate }} <span class="text-danger">*</span></label>
-          <select class="form-select" formControlName="cityId"
-            [disabled]="!form.controls.countryId.value || citiesLoading()"
+          <p-select styleClass="w-100" formControlName="cityId" [appendTo]="'body'" [options]="cities()"
+            optionLabel="name" optionValue="id" [loading]="citiesLoading()"
+            [placeholder]="'UNIVERSITIES.SELECT_CITY' | translate"
             [class.is-invalid]="submitted && form.controls.cityId.invalid">
-            <option value="">{{ 'UNIVERSITIES.SELECT_CITY' | translate }}</option>
-            @for (city of cities(); track city.id) {
-            <option [value]="city.id">{{ city.name }}</option>
-            }
-          </select>
+          </p-select>
           @if (submitted && form.controls.cityId.invalid) {
           <div class="invalid-feedback d-block">{{ requiredError('cityId') }}</div>
           }

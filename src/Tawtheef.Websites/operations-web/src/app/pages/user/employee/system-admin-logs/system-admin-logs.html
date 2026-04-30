@@ -95,5 +95,5 @@
   </div>
 </div>
 
-<app-pagination [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
+<app-pagination class="w-100" [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
   (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>

@@ -188,7 +188,7 @@
         </ng-template>
       </p-table>
       <div class="mt-4">
-        <app-pagination [currentPage]="currentPage" [itemsPerPage]="pageSize" [totalItems]="totalRecords()"
+        <app-pagination class="w-100" [currentPage]="currentPage" [itemsPerPage]="pageSize" [totalItems]="totalRecords()"
           (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)">
         </app-pagination>
       </div>

@@ -193,7 +193,7 @@
 
         <!-- Pagination -->
         <div class="pagination-wrap">
-          <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
+          <app-pagination class="w-100" [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
             (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
         </div>
       </div>
@@ -303,4 +303,4 @@
     <p class="text-muted">{{ 'common.loading' | translate }}</p>
   </div>
   }
-</p-drawer>
+</p-drawer>

@@ -137,7 +137,7 @@
   </div>
 
 
-  <app-pagination
+  <app-pagination class="w-100"
     [currentPage]="store.skillFilters().pageNumber"
     [totalItems]="store.skillsMeta()?.totalCount ?? 0"
     [itemsPerPage]="store.skillFilters().pageSize"

@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { FaDirArrowDirective } from '../../directives/dir-arrow.directive';
-
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, FormsModule, FaDirArrowDirective],
+  imports: [CommonModule, TranslatePipe, FormsModule, FaDirArrowDirective, Select],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
 })

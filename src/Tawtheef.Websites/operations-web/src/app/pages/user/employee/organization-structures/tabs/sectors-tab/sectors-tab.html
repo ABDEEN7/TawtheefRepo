@@ -98,5 +98,5 @@
 
 <app-pagination [currentPage]="store.sectorFilters().pageNumber" [totalItems]="store.sectorMeta().totalCount"
   [itemsPerPage]="store.sectorFilters().pageSize" (pageChanged)="service.onSectorPageChange($event)"
-  (pageSizeChanged)="service.onSectorPageSizeChange($event)" class="mt-4">
+  (pageSizeChanged)="service.onSectorPageSizeChange($event)" class="w-100 mt-4">
 </app-pagination>
