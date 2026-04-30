@@ -1,7 +1,6 @@
-
 <footer class="py-4 bg-primary">
   <div class="container container-narrow text-center small">
-    <div  class="text-white">{{ 'public.footer.ministry' | translate }}</div>
-    <div class="text-white">{{ 'public.footer.rights' | translate }}</div>
+    <div class="text-white">{{ 'public.footer.ministry' | translate: { year: getCurrentYear() } }}</div>
+    <div class="text-white">{{ 'public.footer.rights' | translate: { year: getCurrentYear() } }}</div>
   </div>
 </footer>

@@ -240,10 +240,12 @@ export class EndpointsService {
     faqStatus: (id: string) => this.getFullUrl(`/home-content/faqs/${id}/status`)
   };
   profileLogs = {
-    list: this.getFullUrl('/profile-logs')
+    list: this.getFullUrl('/profile-logs'),
+    lookups: this.getFullUrl('/profile-logs/lookups'),
   };
   systemAdminLogs = {
-    list: this.getFullUrl('/system-admin-logs')
+    list: this.getFullUrl('/system-admin-logs'),
+    lookups: this.getFullUrl('/system-admin-logs/lookups'),
   };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),

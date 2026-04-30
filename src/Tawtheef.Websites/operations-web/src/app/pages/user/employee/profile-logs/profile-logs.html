@@ -54,13 +54,13 @@
           </div>
           <div class="col-md-3">
             <label class="form-label">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
-            <input type="datetime-local" class="form-control" [ngModel]="toDateInputValue(fromDate)"
-              (ngModelChange)="onFromDateChange($event)" />
+            <p-datepicker [ngModel]="fromDate" (ngModelChange)="onFromDateChange($event)"
+              [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-100" styleClass="w-100 p-0" [placeholder]="'PROFILE_LOGS.FILTER_FROM' | translate"></p-datepicker>
           </div>
           <div class="col-md-3">
             <label class="form-label">{{ 'PROFILE_LOGS.FILTER_TO' | translate }}</label>
-            <input type="datetime-local" class="form-control" [ngModel]="toDateInputValue(toDate)"
-              (ngModelChange)="onToDateChange($event)" />
+            <p-datepicker [ngModel]="toDate" (ngModelChange)="onToDateChange($event)"
+              [showTime]="true" [showSeconds]="false" dateFormat="dd/mm/yy" class="w-100" styleClass="w-100 p-0" [placeholder]="'PROFILE_LOGS.FILTER_TO' | translate"></p-datepicker>
           </div>
           <div class="col-md-3 d-flex align-items-end">
             <button type="button" class="btn btn-outline-secondary w-100" (click)="clearFilters()">

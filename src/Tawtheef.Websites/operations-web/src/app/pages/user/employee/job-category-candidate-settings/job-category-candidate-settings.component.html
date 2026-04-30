@@ -6,9 +6,12 @@
 >
     <div class="card-body">
 
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-          <h3 class="page-title mb-0">{{ 'JOB_CATEGORY_SETTINGS.TITLE' | translate }}</h3>
-          <button type="button" class="btn btn-outline-primary" (click)="loadSettings()">
+        <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+          <div>
+            <h3 class="page-title mb-1">{{ 'JOB_CATEGORY_SETTINGS.TITLE' | translate }}</h3>
+            <p class="text-muted mb-0">{{ 'JOB_CATEGORY_SETTINGS.SUBTITLE' | translate }}</p>
+          </div>
+          <button type="button" class="btn btn-outline-primary mt-1" (click)="loadSettings()">
             <i class="pi pi-refresh me-1"></i>
             {{ 'common.refresh' | translate }}
           </button>

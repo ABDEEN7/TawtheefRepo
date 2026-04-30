@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
 import { SystemAdminLogsService } from './services/system-admin-logs.service';
 import { SystemAdminLogDto } from './models/system-admin-log.dto';
 import { SystemAdminLogFilters } from './models/system-admin-log-filters.dto';
@@ -11,6 +12,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
+import { UsersService } from '../users-management/services/users.service';
 
 @Component({
   selector: 'app-system-admin-logs',
@@ -24,6 +26,7 @@ import { PaginationMetadata } from '../../../../core/models/pagination-metadata.
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
+    DatePicker,
   ]
 })
 export class SystemAdminLogsComponent implements OnInit {
@@ -55,8 +58,21 @@ export class SystemAdminLogsComponent implements OnInit {
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   ngOnInit(): void {
+    this.loadUserOptions();
     this.loadLogs();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
+  }
+
+  loadUserOptions() {
+    this.systemAdminLogsService.getUsersLookup().subscribe({
+      next: (users) => {
+        const options = (users || []).map(u => ({
+          id: u.id,
+          label: u.name
+        }));
+        this._userOptions.set(options.sort((a, b) => a.label.localeCompare(b.label)));
+      }
+    });
   }
 
   loadLogs() {
@@ -76,7 +92,6 @@ export class SystemAdminLogsComponent implements OnInit {
     this.systemAdminLogsService.getLogs(this.filters()).subscribe({
       next: (response: PaginatedResult<SystemAdminLogDto>) => {
         this._logs.set(response.items);
-        this.mergeUserOptions(response.items);
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {
@@ -105,13 +120,13 @@ export class SystemAdminLogsComponent implements OnInit {
     this.loadLogs();
   }
 
-  onFromDateChange(value: string) {
-    this.fromDate = value ? new Date(value) : null;
+  onFromDateChange(value: Date | null) {
+    this.fromDate = value;
     this.onFiltersChanged();
   }
 
-  onToDateChange(value: string) {
-    this.toDate = value ? new Date(value) : null;
+  onToDateChange(value: Date | null) {
+    this.toDate = value;
     this.onFiltersChanged();
   }
 
@@ -135,31 +150,4 @@ export class SystemAdminLogsComponent implements OnInit {
     }
   }
 
-  toDateInputValue(date: Date | null) {
-    if (!date) {
-      return '';
-    }
-
-    const pad = (value: number) => value.toString().padStart(2, '0');
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
-      `T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
-
-  private mergeUserOptions(logs: SystemAdminLogDto[]) {
-    const existingOptions = new Map(this._userOptions().map(option => [option.id, option]));
-
-    logs.forEach(log => {
-      if (!log.userId) {
-        return;
-      }
-
-      existingOptions.set(log.userId, {
-        id: log.userId,
-        label: log.userName || log.userId,
-      });
-    });
-
-    this._userOptions.set(Array.from(existingOptions.values()).sort((a, b) => a.label.localeCompare(b.label)));
-  }
 }

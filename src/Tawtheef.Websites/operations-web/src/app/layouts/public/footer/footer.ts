@@ -10,4 +10,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 })
 export class Footer {
 
+  getCurrentYear() {
+    return new Date().getFullYear();
+  }
 }
