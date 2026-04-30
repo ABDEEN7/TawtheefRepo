@@ -9,6 +9,7 @@
   "common.mandatory": "Mandatory",
   "common.change": "Change",
   "common.info": "Info",
+  "common.chart.noData": "No Data",
   "common.chart.profiles": "Profiles",
   "common.chart.completedTasks": "Completed tasks",
   "common.chart.remainingTasks": "Remaining tasks",

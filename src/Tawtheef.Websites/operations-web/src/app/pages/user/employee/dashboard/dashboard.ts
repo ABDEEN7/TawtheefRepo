@@ -203,85 +203,187 @@ export class Dashboard implements OnInit {
 
   readonly tableRows = computed<TeamPerformanceRow[]>(() => this.teamPerformance()?.items ?? []);
 
-  readonly profileTrendChartData = computed<ChartData<'line'>>(() => ({
-    labels: this.dashboard()?.profileTrend.points.map((point) => this.translate.instant(point.label)) ?? [],
-    datasets: [
-      {
-        label: this.translate.instant('common.chart.profiles'),
-        data: this.dashboard()?.profileTrend.points.map((point) => point.value) ?? [],
-        borderColor: '#2f65d6',
-        backgroundColor: 'rgba(47,101,214,0.1)',
-        borderWidth: 3,
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: '#2f65d6',
-      },
-    ],
-  }));
+  readonly profileTrendChartData = computed<ChartData<'line'>>(() => {
+    const points = this.dashboard()?.profileTrend.points ?? [];
+    if (points.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            label: this.translate.instant('common.chart.profiles'),
+            data: [0],
+            borderColor: '#e5e7eb',
+            backgroundColor: 'rgba(229,231,235,0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#e5e7eb',
+          },
+        ],
+      };
+    }
+    return {
+      labels: points.map((point) => this.translate.instant(point.label)),
+      datasets: [
+        {
+          label: this.translate.instant('common.chart.profiles'),
+          data: points.map((point) => point.value),
+          borderColor: '#2f65d6',
+          backgroundColor: 'rgba(47,101,214,0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#2f65d6',
+        },
+      ],
+    };
+  });
 
-  readonly taskTrendChartData = computed<ChartData<'line'>>(() => ({
-    labels: this.dashboard()?.taskCompletionTrend.points.map((point) => this.translate.instant(point.label)) ?? [],
-    datasets: [
-      {
-        label: this.translate.instant('common.chart.tasks'),
-        data: this.dashboard()?.taskCompletionTrend.points.map((point) => point.value) ?? [],
-        borderColor: '#2b9d76',
-        backgroundColor: 'rgba(43,157,118,0.1)',
-        borderWidth: 3,
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointBackgroundColor: '#2b9d76',
-      },
-    ],
-  }));
+  readonly taskTrendChartData = computed<ChartData<'line'>>(() => {
+    const points = this.dashboard()?.taskCompletionTrend.points ?? [];
+    if (points.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            label: this.translate.instant('common.chart.tasks'),
+            data: [0],
+            borderColor: '#e5e7eb',
+            backgroundColor: 'rgba(229,231,235,0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#e5e7eb',
+          },
+        ],
+      };
+    }
+    return {
+      labels: points.map((point) => this.translate.instant(point.label)),
+      datasets: [
+        {
+          label: this.translate.instant('common.chart.tasks'),
+          data: points.map((point) => point.value),
+          borderColor: '#2b9d76',
+          backgroundColor: 'rgba(43,157,118,0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#2b9d76',
+        },
+      ],
+    };
+  });
 
 
 
-  readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => ({
-    labels: this.dashboard()?.profileBreakdown.byStatus.map((item) => this.translate.instant('dashboard.status.' + item.status)) ?? [],
-    datasets: [
-      {
-        data: this.dashboard()?.profileBreakdown.byStatus.map((item) => item.count) ?? [],
-        backgroundColor: ['#2f65d6', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
-      },
-    ],
-  }));
+  readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => {
+    const items = this.dashboard()?.profileBreakdown.byStatus ?? [];
+    if (items.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: ['#f3f4f6'],
+          },
+        ],
+      };
+    }
+    return {
+      labels: items.map((item) => this.translate.instant('dashboard.status.' + item.status)),
+      datasets: [
+        {
+          data: items.map((item) => item.count),
+          backgroundColor: ['#2f65d6', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+        },
+      ],
+    };
+  });
 
-  readonly jobStatusChartData = computed<ChartData<'doughnut'>>(() => ({
-    labels: this.dashboard()?.jobBreakdown.byStatus.map((item) => this.translate.instant('dashboard.status.' + item.status)) ?? [],
-    datasets: [
-      {
-        data: this.dashboard()?.jobBreakdown.byStatus.map((item) => item.count) ?? [],
-        backgroundColor: ['#4e80ea', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
-      },
-    ],
-  }));
+  readonly jobStatusChartData = computed<ChartData<'doughnut'>>(() => {
+    const items = this.dashboard()?.jobBreakdown.byStatus ?? [];
+    if (items.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: ['#f3f4f6'],
+          },
+        ],
+      };
+    }
+    return {
+      labels: items.map((item) => this.translate.instant('dashboard.status.' + item.status)),
+      datasets: [
+        {
+          data: items.map((item) => item.count),
+          backgroundColor: ['#4e80ea', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+        },
+      ],
+    };
+  });
 
-  readonly jobDepartmentChartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.dashboard()?.jobBreakdown.byDepartment.map((item) => item.label) ?? [],
-    datasets: [
-      {
-        label: this.translate.instant('dashboard.jobs.title'),
-        data: this.dashboard()?.jobBreakdown.byDepartment.map((item) => item.count) ?? [],
-        backgroundColor: '#4e80ea',
-        borderRadius: 6,
-      },
-    ],
-  }));
+  readonly jobDepartmentChartData = computed<ChartData<'bar'>>(() => {
+    const items = this.dashboard()?.jobBreakdown.byDepartment ?? [];
+    if (items.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            label: this.translate.instant('dashboard.jobs.title'),
+            data: [0],
+            backgroundColor: '#f3f4f6',
+            borderRadius: 6,
+          },
+        ],
+      };
+    }
+    return {
+      labels: items.map((item) => item.label),
+      datasets: [
+        {
+          label: this.translate.instant('dashboard.jobs.title'),
+          data: items.map((item) => item.count),
+          backgroundColor: '#4e80ea',
+          borderRadius: 6,
+        },
+      ],
+    };
+  });
 
-  readonly taskStatusChartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.dashboard()?.taskMonitoring.taskStatusStacked.map((item) => this.translate.instant(item.label)) ?? [],
-    datasets: [
-      {
-        label: this.translate.instant('common.chart.tasks'),
-        data: this.dashboard()?.taskMonitoring.taskStatusStacked.map((item) => item.count) ?? [],
-        backgroundColor: ['#2b9d76', '#4e80ea', '#df6d4e'],
-        borderRadius: 6,
-      },
-    ],
-  }));
+  readonly taskStatusChartData = computed<ChartData<'bar'>>(() => {
+    const items = this.dashboard()?.taskMonitoring.taskStatusStacked ?? [];
+    if (items.length === 0) {
+      return {
+        labels: [this.translate.instant('common.chart.noData')],
+        datasets: [
+          {
+            label: this.translate.instant('common.chart.tasks'),
+            data: [0],
+            backgroundColor: '#f3f4f6',
+            borderRadius: 6,
+          },
+        ],
+      };
+    }
+    return {
+      labels: items.map((item) => this.translate.instant(item.label)),
+      datasets: [
+        {
+          label: this.translate.instant('common.chart.tasks'),
+          data: items.map((item) => item.count),
+          backgroundColor: ['#2b9d76', '#4e80ea', '#df6d4e'],
+          borderRadius: 6,
+        },
+      ],
+    };
+  });
 
   readonly smartInsights = computed(() => {
     const kpis = this.activeKpis();
