@@ -91,8 +91,7 @@ public sealed class UpdateUserRolesCommandHandler(
                 return FailureFromIdentity(addResult);
         }
 
-        await tokenService.ClearUserCacheAsync(user.Id, cancellationToken);
-        await tokenService.RevokeAllAsync(user.Id, cancellationToken);
+        await tokenService.ForceUserRefreshAsync(user.Id, cancellationToken);
         
         return Result.Ok(Unit.Value);
     }

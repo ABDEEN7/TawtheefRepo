@@ -64,7 +64,7 @@ public sealed class UpdateRoleCommandHandler(
         var users = await userManager.GetUsersInRoleAsync(role.Name!);
         foreach (var user in users)
         {
-            await tokenService.RevokeAllAsync(user.Id, cancellationToken);
+            await tokenService.ForceUserRefreshAsync(user.Id, cancellationToken);
         }
 
         return Result.Ok(mapper.Map<RoleDto>(new RoleWithClaims(role, updatedClaims)));

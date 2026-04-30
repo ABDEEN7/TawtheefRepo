@@ -1,4 +1,4 @@
-﻿using FluentResults;
+using FluentResults;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
@@ -15,4 +15,5 @@ public interface ITokenService
     string HashRefreshToken(string refreshToken);
     Task RevokeAllAsync(Guid userId, CancellationToken ct);
     Task ClearUserCacheAsync(Guid userId, CancellationToken ct);
+    Task ForceUserRefreshAsync(Guid userId, CancellationToken ct);
 }

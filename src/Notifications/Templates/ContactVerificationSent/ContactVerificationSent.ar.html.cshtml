@@ -16,41 +16,51 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@product - رمز التحقق</title>
-    <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f7f4f6; margin: 0; padding: 20px; direction: rtl; }
-        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 14px; overflow: hidden; border: 1px solid #efe7eb; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-        .brand-bar { background: @primary; height: 8px; }
-        .content { padding: 40px; text-align: center; }
-        .h2 { font-size: 24px; color: #111827; margin-bottom: 20px; font-weight: 800; }
-        .text { font-size: 16px; line-height: 24px; color: #374151; margin-bottom: 30px; }
-        .code-box { font-size: 32px; letter-spacing: 8px; color: @primary; background: #fbf6f8; border: 2px solid #efe7eb; padding: 15px 25px; border-radius: 10px; display: inline-block; font-weight: 700; margin: 20px 0; }
-        .footer { padding: 20px; background: #fafafa; border-top: 1px solid #efe7eb; color: #6b7280; font-size: 12px; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - رمز التحقق</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; text-align: right; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .code-box { display:inline-block; font-size:22px; letter-spacing:6px; color:@primary; background:#f7f1f5; border:1px solid #efe7eb; padding:14px 16px; border-radius:10px; font-weight:700; margin: 8px 0 24px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; text-align: right; }
+    .logo { max-width:180px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
 </head>
 <body>
-    <div class="container" style="direction: rtl;">
-        <div class="brand-bar"></div>
-        <div class="content">
-            @if (!string.IsNullOrWhiteSpace(logo))
-            {
-                <img src="@logo" alt="@product" width="140" style="margin-bottom: 30px;">
-            }
-            <h2 class="h2">رمز التحقق من البريد الإلكتروني</h2>
-            <p class="text">
-                يرجى استخدام الرمز التالي لتأكيد عنوان بريدك الإلكتروني في منصة @product:
-            </p>
-            <div class="code-box">@verficationCode</div>
-            <p class="text">
-                إذا لم تطلب هذا الرمز، يرجى تجاهل هذه الرسالة.
-            </p>
-        </div>
-        <div class="footer">
-            <p>تم الإرسال بواسطة منصة @product</p>
-            <p>© @(DateTime.UtcNow.Year) جميع الحقوق محفوظة.</p>
-        </div>
+  <div class="container" style="direction: rtl;">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <h1 class="title">رمز التحقق من البريد الإلكتروني</h1>
+      <p class="text">
+        يرجى استخدام الرمز التالي لتأكيد عنوان بريدك الإلكتروني في منصة @product:
+      </p>
+
+      <div style="text-align: center; direction: ltr;">
+        <div class="code-box">@verficationCode</div>
+      </div>
+
+      <p class="text">
+        إذا لم تطلب هذا الرمز، يرجى تجاهل هذه الرسالة.
+      </p>
     </div>
+    <div class="footer">
+      <p class="muted">مع أطيب التحيات،<br>فريق عمل @product</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
 </body>
 </html>
