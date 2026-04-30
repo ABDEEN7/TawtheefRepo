@@ -64,7 +64,7 @@
 
           <div class="filter-group flex-grow-1" style="min-width: 200px;">
             <label>{{'ministerOffice.list.gender' | translate}}</label>
-            <p-select [options]="genders()" [formControl]="genderFilterControl"
+            <p-select [options]="genders()" [formControl]="genderFilterControl" [appendTo]="'body'"
               [placeholder]="'ministerOffice.list.gender' | translate" [showClear]="true" appendTo="body"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
@@ -78,8 +78,8 @@
 
           <div class="filter-group flex-grow-1" style="min-width: 250px;">
             <label>{{'ministerOffice.list.targetEntity' | translate}}</label>
-            <p-select [options]="targetEntities()" [formControl]="targetEntityFilterControl"
-              [placeholder]="'ministerOffice.list.targetEntity' | translate" [showClear]="true" appendTo="body"
+            <p-select [options]="targetEntities()" [formControl]="targetEntityFilterControl" [appendTo]="'body'"
+              [placeholder]="'ministerOffice.list.targetEntity' | translate" [showClear]="true"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
                 {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}
@@ -92,8 +92,8 @@
 
           <div class="filter-group flex-grow-1" style="min-width: 200px;">
             <label>{{'ministerOffice.list.candidateType' | translate}}</label>
-            <p-select [options]="candidateTypes()" [formControl]="candidateTypeFilterControl"
-              [placeholder]="'ministerOffice.list.candidateType' | translate" [showClear]="true" appendTo="body"
+            <p-select [options]="candidateTypes()" [formControl]="candidateTypeFilterControl" [appendTo]="'body'"
+              [placeholder]="'ministerOffice.list.candidateType' | translate" [showClear]="true"
               styleClass="filter-dropdown w-100" optionValue="id">
               <ng-template pTemplate="selectedItem" let-item>
                 {{ (currentLang() === 'ar' ? item.additionalData.nameAr : item.additionalData.nameEn) || item.name }}

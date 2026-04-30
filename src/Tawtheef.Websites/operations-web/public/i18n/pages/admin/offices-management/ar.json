@@ -11,6 +11,7 @@
   "OFFICES.ADMIN_NAME_AR": "اسم مدير المكتب (عربي)",
   "OFFICES.ADMIN_NAME_EN": "اسم مدير المكتب (إنجليزي)",
   "OFFICES.ADMIN_EMAIL": "بريد مدير المكتب",
+  "OFFICES.EMAIL_GMAIL_HINT": "يجب أن يكون البريد الإلكتروني قادراً على تسجيل الدخول باستخدام Gmail",
   "OFFICES.PHONE_NUMBER": "رقم هاتف المكتب",
   "OFFICES.INVALID_PHONE": "يرجى إدخال رقم هاتف صحيح.",
   "OFFICES.ACTIONS": "الإجراءات",

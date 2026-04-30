@@ -11,6 +11,7 @@
   "OFFICES.ADMIN_NAME_AR": "Office Admin Name (Arabic)",
   "OFFICES.ADMIN_NAME_EN": "Office Admin Name (English)",
   "OFFICES.ADMIN_EMAIL": "Office Admin Email",
+  "OFFICES.EMAIL_GMAIL_HINT": "Email should be able to login using Gmail",
   "OFFICES.PHONE_NUMBER": "Office Phone Number",
   "OFFICES.INVALID_PHONE": "Enter a valid phone number.",
   "OFFICES.ACTIONS": "Actions",
