@@ -1,234 +1,215 @@
-<div
-  class="modal-overlay"
-  i18nNamespace="pages/admin/offices-management"
-  [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+<div class="modal-overlay" i18nNamespace="pages/admin/offices-management" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
   <div class="modal-card">
+
+    <!-- ─── Title ─────────────────────────────────────────────────────── -->
     <h4 class="modal-title">
-      {{
-        mode === 'edit'
-          ? ('OFFICES.EDIT_OFFICE' | translate)
-          : mode === 'view'
-            ? ('OFFICES.VIEW_OFFICE' | translate)
-            : ('OFFICES.ADD_OFFICE' | translate)
-      }}
+      @if (isEditMode()) { {{ 'OFFICES.EDIT_OFFICE' | translate }} }
+      @else if (isViewMode()) { {{ 'OFFICES.VIEW_OFFICE' | translate }} }
+      @else { {{ 'OFFICES.ADD_OFFICE' | translate }} }
     </h4>
 
-    <form (ngSubmit)="submit()" [formGroup]="form" class="modal-form">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="modal-form">
+
+      <!-- ─── Loading overlay ──────────────────────────────────────────── -->
       @if (loading) {
-        <div class="loading-overlay">
-          <div class="spinner-border text-maroon" role="status">
-            <span class="visually-hidden">{{ 'LOADING' | translate }}</span>
+      <div class="loading-overlay">
+        <div class="spinner-border text-maroon" role="status">
+          <span class="visually-hidden">{{ 'LOADING' | translate }}</span>
+        </div>
+      </div>
+      }
+
+      <!-- ─── Fields ──────────────────────────────────────────────────── -->
+      <div class="row">
+
+        <!-- Office Name (AR) -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.NAME_AR' | translate }}</label>
+            <input class="form-control" formControlName="nameAr" [readonly]="isViewMode()"
+              [class.is-invalid]="submitted && form.controls.nameAr.invalid" />
+            @if (submitted && form.controls.nameAr.invalid) {
+            <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+            }
           </div>
         </div>
-      }
-      <div class="row">
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">{{ 'OFFICES.NAME_AR' | translate }}</label>
-                    <input
-                      class="form-control"
-                      formControlName="nameAr"
-                      [class.is-invalid]="submitted && form.controls.nameAr.invalid"
-                      [readonly]="isViewMode()" />
-                    @if (submitted && form.controls.nameAr.invalid) {
-                      <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
-                    }
-                  </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">{{ 'OFFICES.NAME_EN' | translate }}</label>
-                    <input
-                      class="form-control"
-                      formControlName="nameEn"
-                      [class.is-invalid]="submitted && form.controls.nameEn.invalid"
-                      [readonly]="isViewMode()" />
-                    @if (submitted && form.controls.nameEn.invalid) {
-                      <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
-                    }
-                  </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">{{ 'OFFICES.COUNTRY' | translate }}</label>
-                    <p-select
-                      formControlName="countryId"
-                      [options]="availableCountries()"
-                      optionValue="id"
-                      [filter]="true"
-                      filterBy="additionalData.nameAr,additionalData.nameEn,name"
-                      [showClear]="false"
-                      [placeholder]="'OFFICES.SELECT_COUNTRY' | translate"
-                      [disabled]="isEditMode() || isViewMode()"
-                      class="w-100 form-select p-0"
-                      [ngClass]="{'p-invalid': submitted && form.controls.countryId.invalid}">
-                      <ng-template #selectedItem let-country>
-                        {{ country.name }}
-                      </ng-template>
-                      <ng-template #item let-country>
-                        {{ country.name }}
-                      </ng-template>
-                    </p-select>
-                    @if (submitted && form.controls.countryId.invalid) {
-                      <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
-                    }
-                </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">{{ 'OFFICES.ADMIN_NAME_AR' | translate }}</label>
-                    <input
-                      class="form-control"
-                      formControlName="adminNameAr"
-                      [readonly]="isViewMode()"
-                      [class.is-invalid]="submitted && form.controls.adminNameAr.invalid" />
-                    @if (submitted && form.controls.adminNameAr.invalid) {
-                      <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
-                    }
-                  </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">{{ 'OFFICES.ADMIN_NAME_EN' | translate }}</label>
-                  <input
-                    class="form-control"
-                    formControlName="adminNameEn"
-                    [readonly]="isViewMode()"
-                    [class.is-invalid]="submitted && form.controls.adminNameEn.invalid" />
-                  @if (submitted && form.controls.adminNameEn.invalid) {
-                    <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
-                  }
-                </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                  <label class="form-label">{{ 'OFFICES.ADMIN_EMAIL' | translate }}</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    formControlName="adminEmail"
-                    [readonly]="isViewMode()"
-                    [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
-                  @if (submitted && form.controls.adminEmail.invalid) {
-                    <div class="invalid-feedback d-block">{{ emailError() }}</div>
-                  }
-                </div>
-           </div>
-           <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">{{ 'OFFICES.PHONE_NUMBER' | translate }}</label>
-                    <div class="office-phone">
-                      <ngx-intl-tel-input
-                        class="prime-tel-input w-100"
-                        [enableAutoCountrySelect]="true"
-                        [enablePlaceholder]="true"
-                        [searchCountryFlag]="true"
-                        [searchCountryField]="searchCountryFields"
-                        [phoneValidation]="true"
-                        [separateDialCode]="true"
-                        [selectedCountryISO]="selectedCountryIso()"
-                        [onlyCountries]="allowedCountries"
-                        formControlName="phoneNumber"
-                        [disabled]="isViewMode()">
-                      </ngx-intl-tel-input>
-                    </div>
-                    @if (submitted && form.controls.phoneNumber.invalid) {
-                      <div class="invalid-feedback d-block">
-                        {{
-                          form.controls.phoneNumber.hasError('required')
-                            ? ('OFFICES.FIELD_REQUIRED' | translate)
-                            : ('OFFICES.INVALID_PHONE' | translate)
-                        }}
-                      </div>
-                    }
-                  </div>
-           </div>
+
+        <!-- Office Name (EN) -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.NAME_EN' | translate }}</label>
+            <input class="form-control" formControlName="nameEn" [readonly]="isViewMode()"
+              [class.is-invalid]="submitted && form.controls.nameEn.invalid" />
+            @if (submitted && form.controls.nameEn.invalid) {
+            <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+            }
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.COUNTRY' | translate }}</label>
+            <p-select formControlName="countryId" [options]="availableCountries()" optionValue="id" [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name" [showClear]="false"
+              [placeholder]="'OFFICES.SELECT_COUNTRY' | translate" [disabled]="isEditMode() || isViewMode()"
+              class="w-100 form-select p-0" [ngClass]="{ 'p-invalid': submitted && form.controls.countryId.invalid }">
+              <ng-template #selectedItem let-country>{{ country.name }}</ng-template>
+              <ng-template #item let-country>{{ country.name }}</ng-template>
+            </p-select>
+            @if (submitted && form.controls.countryId.invalid) {
+            <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+            }
+          </div>
+        </div>
+
+        <!-- Admin Name (AR) -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.ADMIN_NAME_AR' | translate }}</label>
+            <input class="form-control" formControlName="adminNameAr" [readonly]="isViewMode()"
+              [class.is-invalid]="submitted && form.controls.adminNameAr.invalid" />
+            @if (submitted && form.controls.adminNameAr.invalid) {
+            <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+            }
+          </div>
+        </div>
+
+        <!-- Admin Name (EN) -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.ADMIN_NAME_EN' | translate }}</label>
+            <input class="form-control" formControlName="adminNameEn" [readonly]="isViewMode()"
+              [class.is-invalid]="submitted && form.controls.adminNameEn.invalid" />
+            @if (submitted && form.controls.adminNameEn.invalid) {
+            <div class="invalid-feedback d-block">{{ 'OFFICES.FIELD_REQUIRED' | translate }}</div>
+            }
+          </div>
+        </div>
+
+        <!-- Admin Email -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.ADMIN_EMAIL' | translate }}</label>
+            <input type="email" class="form-control" formControlName="adminEmail" [readonly]="isViewMode()"
+              [class.is-invalid]="submitted && form.controls.adminEmail.invalid" />
+            @if (!isViewMode()) {
+              <div class="field-hint">
+                <i class="pi pi-info-circle"></i>
+                <span>{{ 'OFFICES.EMAIL_GMAIL_HINT' | translate }}</span>
+              </div>
+            }
+            @if (submitted && form.controls.adminEmail.invalid) {
+            <div class="invalid-feedback d-block">{{ emailError() }}</div>
+            }
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label">{{ 'OFFICES.PHONE_NUMBER' | translate }}</label>
+            <div class="office-phone">
+              @if (phoneInputVisible()) {
+              <ngx-intl-tel-input class="prime-tel-input w-100" formControlName="phoneNumber"
+                [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+                [searchCountryField]="searchCountryFields" [phoneValidation]="true" [separateDialCode]="true"
+                [onlyCountries]="allowedCountries" [disabled]="isViewMode()">
+              </ngx-intl-tel-input>
+              }
+            </div>
+            @if (submitted && form.controls.phoneNumber.invalid) {
+            <div class="invalid-feedback d-block">
+              {{ form.controls.phoneNumber.hasError('required')
+              ? ('OFFICES.FIELD_REQUIRED' | translate)
+              : ('OFFICES.INVALID_PHONE' | translate) }}
+            </div>
+            }
+          </div>
+        </div>
+
       </div>
 
-      
+      <!-- ─── Users table (edit / view only) ──────────────────────────── -->
       @if (!isCreateMode()) {
-        <div class="office-users mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="mb-0">{{ 'OFFICES.USERS_TITLE' | translate }}</h5>
-          </div>
-          <div class="table-card rounded overflow-hidden">
-              <div class="table-responsive">
+      <div class="office-users mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">{{ 'OFFICES.USERS_TITLE' | translate }}</h5>
+        </div>
+
+        <div class="table-card rounded overflow-hidden">
+          <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle w-100">
-                          <thead class="table-light">
-              <tr>
-                <th>{{ 'OFFICES.USER_NAME' | translate }}</th>
-                <th>{{ 'OFFICES.USER_EMAIL' | translate }}</th>
-                <th>{{ 'OFFICES.USER_IS_BLOCKED' | translate }}</th>
-                <th>{{ 'OFFICES.USER_ROLE' | translate }}</th>
-                <th>{{ 'OFFICES.USER_ACTIONS' | translate }}</th>
-              </tr>
+              <thead class="table-light">
+                <tr>
+                  <th>{{ 'OFFICES.USER_NAME' | translate }}</th>
+                  <th>{{ 'OFFICES.USER_EMAIL' | translate }}</th>
+                  <th>{{ 'OFFICES.USER_IS_BLOCKED' | translate }}</th>
+                  <th>{{ 'OFFICES.USER_ROLE' | translate }}</th>
+                  <th>{{ 'OFFICES.USER_ACTIONS' | translate }}</th>
+                </tr>
               </thead>
               <tbody>
-              @if (!officeUsers.length) {
+                @if (!officeUsers.length) {
                 <tr>
                   <td colspan="5" class="text-muted">{{ 'NO_RECORDS' | translate }}</td>
                 </tr>
-              } @else {
+                } @else {
                 @for (user of officeUsers; track user.id; let row = $index) {
-                  <tr [ngClass]="{ 'row-even': row % 2 === 0, 'row-odd': row % 2 !== 0 }">
-                    <td>{{ localizedUserName(user) }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                      <span
-                        class="pill"
-                        [class.success]="!user.isBlocked"
-                        [class.soft]="user.isBlocked">
-                        {{ user.isBlocked ? ('OFFICES.BLOCKED' | translate) : ('OFFICES.ACTIVE' | translate) }}
-                      </span>
-                    </td>
-                    <td>
-                      {{ isOfficeAdmin(user) ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.ROLE_USER' | translate) }}
-                    </td>
-                    <td>
-                      <div class="action-buttons">
-                        <button
-                          type="button"
-                          class="btn-text"
-                          (click)="toggleUserBlock(user)"
-                          [disabled]="loading || isViewMode()"
-                          aria-label="{{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}">
-                          {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
-                        </button>
+                <tr [ngClass]="{ 'row-even': row % 2 === 0, 'row-odd': row % 2 !== 0 }">
 
-                        @if (!isOfficeAdmin(user)) {
-                          <button
-                            type="button"
-                            class="btn-text"
-                            (click)="promoteToAdmin(user)"
-                            [disabled]="loading"
-                            aria-label="{{ 'OFFICES.MAKE_ADMIN' | translate }}">
-                            {{ 'OFFICES.MAKE_ADMIN' | translate }}
-                          </button>
-                        }
-                      </div>
-                    </td>
-                  </tr>
+                  <td>{{ localizedUserName(user) }}</td>
+                  <td>{{ user.email }}</td>
+
+                  <td>
+                    <span class="pill" [class.success]="!user.isBlocked" [class.soft]="user.isBlocked">
+                      {{ user.isBlocked ? ('OFFICES.BLOCKED' | translate) : ('OFFICES.ACTIVE' | translate) }}
+                    </span>
+                  </td>
+
+                  <td>
+                    {{ isOfficeAdmin(user) ? ('OFFICES.ROLE_ADMIN' | translate) : ('OFFICES.ROLE_USER' | translate) }}
+                  </td>
+
+                  <td>
+                    <div class="action-buttons">
+                      <button type="button" class="btn-text" (click)="toggleUserBlock(user)"
+                        [disabled]="loading || isViewMode()"
+                        [attr.aria-label]="(user.isBlocked ? 'OFFICES.UNBLOCK' : 'OFFICES.BLOCK') | translate">
+                        {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
+                      </button>
+
+                      @if (!isOfficeAdmin(user)) {
+                      <button type="button" class="btn-text" (click)="promoteToAdmin(user)" [disabled]="loading"
+                        [attr.aria-label]="'OFFICES.MAKE_ADMIN' | translate">
+                        {{ 'OFFICES.MAKE_ADMIN' | translate }}
+                      </button>
+                      }
+                    </div>
+                  </td>
+
+                </tr>
                 }
-              }
+                }
               </tbody>
             </table>
           </div>
-          </div>
-          
         </div>
+      </div>
       }
 
+      <!-- ─── Actions ──────────────────────────────────────────────────── -->
       <div class="d-flex justify-content-end mt-4 gap-2">
         <button type="button" class="btn btn-secondary" (click)="close()">
           {{ 'OFFICES.CANCEL' | translate }}
         </button>
-
         @if (!isViewMode()) {
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            {{ 'OFFICES.SAVE' | translate }}
-          </button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ 'OFFICES.SAVE' | translate }}
+        </button>
         }
       </div>
+
     </form>
   </div>
 </div>

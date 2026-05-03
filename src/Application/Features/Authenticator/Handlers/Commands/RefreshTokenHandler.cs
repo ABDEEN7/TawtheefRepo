@@ -75,18 +75,9 @@ public class RefreshTokenHandler(
             if (storedToken.IsExpired)
             {
                 storedToken.Revoke(now, request.IpAddress, "Refresh token expired");
-                await uow.GetEntityRepository<RefreshToken>().UpdateAsync(storedToken);
+                await uow.GetEntityRepository<RefreshToken>().UpdateAsync(storedToken, cancellationToken);
                 await uow.SaveChangesAsync(cancellationToken);
                 return Result.Fail<TokenResponse>(UnauthorizedError(ErrorsCodes.InactiveRefreshToken));
-            }
-
-            var sessionCheckSw = Stopwatch.StartNew();
-            var isSessionActive = await tokenService.IsSessionActiveAsync(storedToken.UserId, storedToken.SecurityStamp, cancellationToken);
-            timings["SessionActiveCheck"] = sessionCheckSw.ElapsedMilliseconds;
-
-            if (!isSessionActive)
-            {
-                return Result.Fail<TokenResponse>(ForbiddenError(ErrorsCodes.SessionRevoked));
             }
 
             var rotationSw = Stopwatch.StartNew();

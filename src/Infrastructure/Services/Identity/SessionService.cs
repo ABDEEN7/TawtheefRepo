@@ -97,18 +97,37 @@ public sealed class EfSessionService(
 
     public async Task RevokeAllAsync(Guid userId, CancellationToken ct)
     {
+        // 1. Get all active sessions for this user to clear their status cache
+        var activeSessionIds = await uow.GetEntityRepository<UserSession>().DbSet
+            .Where(s => s.UserId == userId && s.RevokedAtUtc == null)
+            .Select(s => s.SessionId)
+            .ToListAsync(ct);
+
+        // 2. Revoke in DB
         await uow.GetEntityRepository<UserSession>().DbSet
             .Where(s => s.UserId == userId && s.RevokedAtUtc == null)
-            .ExecuteUpdateAsync(u => u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
+            .ExecuteUpdateAsync(u => 
+                u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
 
+        // 3. Clear primary session cache
         await cache.RemoveAsync(GetSidKey(userId), ct);
+
+        // 4. Clear status cache for each session to force immediate 401 on next request
+        foreach (var sid in activeSessionIds)
+        {
+            await cache.RemoveAsync($"sid_status:{sid}", ct);
+        }
     }
 
     public async Task RevokeAsync(Guid userId, string sessionId, CancellationToken ct)
     {
         await uow.GetEntityRepository<UserSession>().DbSet
             .Where(s => s.UserId == userId && s.SessionId == sessionId && s.RevokedAtUtc == null)
-            .ExecuteUpdateAsync(u => u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
+            .ExecuteUpdateAsync(u => 
+                u.SetProperty(s => s.RevokedAtUtc, _ => DateTime.UtcNow), ct);
+
+        // Invalidate status cache
+        await cache.RemoveAsync($"sid_status:{sessionId}", ct);
 
         // Invalidate cache if it matches the revoked session
         var current = await cache.GetStringAsync(GetSidKey(userId), ct);

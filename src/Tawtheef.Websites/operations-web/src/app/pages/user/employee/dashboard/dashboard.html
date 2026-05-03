@@ -1,5 +1,5 @@
 <section i18nNamespace="pages/employee/dashboard">
-  <div class="dashboard-simple-header mb-4">
+  <div class="dashboard-simple-header mb-2">
     <div class="d-flex align-items-center gap-2">
       <h1 class="h4 mb-0 fw-800 text-dark">{{ (isHrDashboard() ? 'dashboard.hr.title' :
         'dashboard.department.title') | translate }}</h1>
@@ -17,48 +17,6 @@
       }
       @else {
 
-      <!-- ═══════════ Employee Statistics Section ═══════════ -->
-      @if (canViewProfileStats()) {
-      <div class="kpi-section">
-        <div class="kpi-section__header">
-          <span class="kpi-section__accent"></span>
-          <h4 class="kpi-section__title">{{ 'dashboard.sections.employeeStats' | translate }}</h4>
-        </div>
-        <div class="kpi-section__grid">
-          <!-- KPI tiles here... (existing content) -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
-              <i class="hgi hgi-stroke hgi-user-group"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeKpis().totalEmployees }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalEmployees' | translate }}</div>
-          </div>
-          <!-- ... -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
-              <i class="hgi hgi-stroke hgi-file-02"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeKpis().totalProfiles }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-          </div>
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
-              <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeKpis().approvalRate }}%</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.approvalRate' | translate }}</div>
-          </div>
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
-              <i class="hgi hgi-stroke hgi-clock-01"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeKpis().remainingTasks }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.remainingTasks' | translate }}</div>
-          </div>
-        </div>
-      </div>
-      }
-
 
       <!-- ═══════════ Minister Office Candidates Section ═══════════ -->
       @if (hasMinisterOfficePermission()) {
@@ -68,7 +26,6 @@
           <h4 class="kpi-section__title">{{ 'dashboard.sections.ministerOffice' | translate }}</h4>
         </div>
         <div class="kpi-section__grid kpi-section__grid--compact">
-
           <!-- Minister Office Followed Candidates -->
           <div class="kpi-tile kpi-tile--minister" [pTooltip]="'dashboard.help.followedCandidates' | translate"
             tooltipPosition="top">
@@ -78,96 +35,121 @@
             <div class="kpi-tile__value">{{ activeKpis().followedMinisterOfficeCandidates }}</div>
             <div class="kpi-tile__label">{{ 'dashboard.kpi.followedCandidates' | translate }}</div>
           </div>
-
+        </div>
+      </div>
+      }
+      <!-- ═══════════ Employee Stats (left) + Profile Status Chart (right) ═══════════ -->
+      @if (canViewProfileStats()) {
+      <div class="kpi-chart-row">
+        <div class="kpi-section">
+          <div class="kpi-section__header">
+            <span class="kpi-section__accent"></span>
+            <h4 class="kpi-section__title">{{ 'dashboard.sections.employeeStats' | translate }}</h4>
+          </div>
+          <div class="kpi-section__grid kpi-section__grid--paired">
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.totalEmployees' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
+                <i class="hgi hgi-stroke hgi-user-group"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeKpis().totalEmployees }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.totalEmployees' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.totalProfiles' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
+                <i class="hgi hgi-stroke hgi-file-02"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeKpis().totalProfiles }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.approvalRate' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
+                <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeKpis().approvalRate }}%</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.approvalRate' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.remainingTasks' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
+                <i class="hgi hgi-stroke hgi-clock-01"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeKpis().remainingTasks }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.remainingTasks' | translate }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel__header">
+            <i class="hgi hgi-stroke hgi-chart-ring dash-panel__icon dash-panel__icon--rose"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h5>
+          </div>
+          <div class="chart-host chart-host--doughnut">
+            <p-chart type="doughnut" [data]="profileStatusChartData()" height="13rem"
+              [options]="doughnutChartOptions"></p-chart>
+          </div>
         </div>
       </div>
       }
 
+      <!-- ═══════════ Jobs Stats (left) + Job Status Chart (right) ═══════════ -->
       @if (canViewJobStats()) {
-      <!-- ═══════════ Jobs Management Section ═══════════ -->
-      <div class="kpi-section">
-        <div class="kpi-section__header">
-          <span class="kpi-section__accent kpi-section__accent--jobs"></span>
-          <h4 class="kpi-section__title">{{ 'dashboard.sections.jobManagement' | translate }}</h4>
+      <div class="kpi-chart-row">
+        <div class="kpi-section">
+          <div class="kpi-section__header">
+            <span class="kpi-section__accent kpi-section__accent--jobs"></span>
+            <h4 class="kpi-section__title">{{ 'dashboard.sections.jobManagement' | translate }}</h4>
+          </div>
+          <div class="kpi-section__grid kpi-section__grid--paired">
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.totalJobs' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
+                <i class="hgi hgi-stroke hgi-briefcase-01"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeJobKpis().totalJobs }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.activeJobs' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--success">
+                <i class="hgi hgi-stroke hgi-checkmark-badge-01"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeJobKpis().activeJobs }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.activeJobs' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.pendingReviewJobs' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
+                <i class="hgi hgi-stroke hgi-clock-02"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeJobKpis().pendingReviewJobs }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.approvedJobs' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
+                <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeJobKpis().approvedJobs }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
+            </div>
+            <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
+              <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
+                <i class="hgi hgi-stroke hgi-calendar-01"></i>
+              </div>
+              <div class="kpi-tile__value">{{ activeJobKpis().newJobsToday }}</div>
+              <div class="kpi-tile__label">{{ 'dashboard.kpi.newJobsToday' | translate }}</div>
+            </div>
+          </div>
         </div>
-        <div class="kpi-section__grid">
-
-          <!-- Total Jobs -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.totalJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--primary">
-              <i class="hgi hgi-stroke hgi-briefcase-01"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().totalJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
-          </div>
-
-          <!-- Active Jobs -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.activeJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--success">
-              <i class="hgi hgi-stroke hgi-checkmark-badge-01"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().activeJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.activeJobs' | translate }}</div>
-          </div>
-
-          <!-- Pending Review -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.pendingReviewJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--amber">
-              <i class="hgi hgi-stroke hgi-clock-02"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().pendingReviewJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</div>
-          </div>
-
-          <!-- Approved Jobs -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.approvedJobs' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--teal">
-              <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().approvedJobs }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.approvedJobs' | translate }}</div>
-          </div>
-
-          <!-- New Jobs Today -->
-          <div class="kpi-tile" [pTooltip]="'dashboard.help.newJobsToday' | translate" tooltipPosition="top">
-            <div class="kpi-tile__icon-wrap kpi-tile__icon-wrap--rose">
-              <i class="hgi hgi-stroke hgi-calendar-01"></i>
-            </div>
-            <div class="kpi-tile__value">{{ activeJobKpis().newJobsToday }}</div>
-            <div class="kpi-tile__label">{{ 'dashboard.kpi.newJobsToday' | translate }}</div>
-          </div>
-
-        </div>
-      </div>
-      }
-
-      <!-- ═══════════ Charts Row 1 — Jobs ═══════════ -->
-      @if (canViewJobStats()) {
-      <div class="dash-grid dash-grid--2col">
         <div class="dash-panel">
           <div class="dash-panel__header">
             <i class="hgi hgi-stroke hgi-pie-chart dash-panel__icon dash-panel__icon--primary"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.jobStatusBreakdown' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--doughnut">
-            <p-chart type="doughnut" [data]="jobStatusChartData()" height="16.25rem"
+            <p-chart type="doughnut" [data]="jobStatusChartData()" height="13rem"
               [options]="doughnutChartOptions"></p-chart>
-          </div>
-        </div>
-        <div class="dash-panel">
-          <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-chart-bar-line dash-panel__icon dash-panel__icon--amber"></i>
-            <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
-          </div>
-          <div class="chart-host chart-host--compact">
-            <p-chart type="bar" [data]="jobDepartmentChartData()" height="16.25rem"
-              [options]="barChartOptions"></p-chart>
           </div>
         </div>
       </div>
       }
 
-      <!-- ═══════════ Charts Row 2 — Trends (Profiles & Tasks) ═══════════ -->
+      <!-- ═══════════ Charts Row — Trends ═══════════ -->
       @if (canViewProfileStats()) {
       <div class="dash-grid dash-grid--2col">
         <div class="dash-panel">
@@ -176,8 +158,7 @@
             <h5 class="dash-panel__title">{{ 'dashboard.charts.profileTrend' | translate }}</h5>
           </div>
           <div class="chart-host">
-            <p-chart type="line" [data]="profileTrendChartData()" height="16.25rem"
-              [options]="lineChartOptions"></p-chart>
+            <p-chart type="line" [data]="profileTrendChartData()" height="13rem" [options]="lineChartOptions"></p-chart>
           </div>
         </div>
         <div class="dash-panel">
@@ -186,41 +167,39 @@
             <h5 class="dash-panel__title">{{ 'dashboard.charts.taskTrend' | translate }}</h5>
           </div>
           <div class="chart-host">
-            <p-chart type="line" [data]="taskTrendChartData()" height="16.25rem" [options]="lineChartOptions"></p-chart>
+            <p-chart type="line" [data]="taskTrendChartData()" height="13rem" [options]="lineChartOptions"></p-chart>
           </div>
         </div>
       </div>
       }
 
-      <!-- ═══════════ Charts Row 3 — Breakdowns & Performance ═══════════ -->
+      <!-- ═══════════ Charts Row — Additional Breakdowns ═══════════ -->
+      @if (canViewJobStats() || canViewProfileStats()) {
       <div class="dash-grid dash-grid--2col">
-
-        @if (canViewProfileStats()) {
-        <!-- Profile Status Breakdown -->
+        @if (canViewJobStats()) {
         <div class="dash-panel">
           <div class="dash-panel__header">
-            <i class="hgi hgi-stroke hgi-chart-ring dash-panel__icon dash-panel__icon--rose"></i>
-            <h5 class="dash-panel__title">{{ 'dashboard.charts.profileStatusBreakdown' | translate }}</h5>
+            <i class="hgi hgi-stroke hgi-chart-bar-line dash-panel__icon dash-panel__icon--amber"></i>
+            <h5 class="dash-panel__title">{{ 'dashboard.charts.jobDepartmentBreakdown' | translate }}</h5>
           </div>
-          <div class="chart-host chart-host--doughnut">
-            <p-chart type="doughnut" [data]="profileStatusChartData()" height="16.25rem"
-              [options]="doughnutChartOptions"></p-chart>
+          <div class="chart-host chart-host--compact">
+            <p-chart type="bar" [data]="jobDepartmentChartData()" height="13rem" [options]="barChartOptions"></p-chart>
           </div>
         </div>
-        <!-- Task Stacked Status -->
+        }
+        @if (canViewProfileStats()) {
         <div class="dash-panel">
           <div class="dash-panel__header">
             <i class="hgi hgi-stroke hgi-chart-bar-line dash-panel__icon dash-panel__icon--danger"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.charts.taskStacked' | translate }}</h5>
           </div>
           <div class="chart-host chart-host--compact">
-            <p-chart type="bar" [data]="taskStatusChartData()" height="16.25rem" [options]="barChartOptions"></p-chart>
+            <p-chart type="bar" [data]="taskStatusChartData()" height="13rem" [options]="barChartOptions"></p-chart>
           </div>
         </div>
         }
-
-
       </div>
+      }
 
       <!-- ═══════════ Smart Insights + Team Performance ═══════════ -->
       @if (canViewProfileStats() || canViewTeamPerformance()) {
@@ -232,7 +211,7 @@
             <i class="hgi hgi-stroke hgi-ai-brain-03 dash-panel__icon dash-panel__icon--minister"></i>
             <h5 class="dash-panel__title">{{ 'dashboard.sections.smartInsights' | translate }}</h5>
           </div>
-          <div class="insight-list mt-2">
+          <div class="insight-list mt-1">
             <div class="insight-row" *ngFor="let insight of smartInsights()"
               [class.warning]="insight.level === 'warning'" [class.success]="insight.level === 'success'">
               <i class="hgi hgi-stroke hgi-ai-brain-03"></i>
@@ -243,7 +222,7 @@
         }
 
         @if (canViewTeamPerformance()) {
-        <div class="dash-panel dash-panel--table mt-4 shadow-sm border-0">
+        <div class="dash-panel dash-panel--table shadow-sm border-0">
           <div class="dash-panel__header dash-panel__header--colorful">
             <div class="d-flex align-items-center gap-3">
               <div class="header-icon-wrap">
@@ -258,13 +237,10 @@
 
             <div class="table-search-bar d-flex align-items-center gap-3">
               <div class="search-input-wrap">
-                <input type="text" pInputText [placeholder]="'dashboard.search.placeholder' | translate"
-                  [ngModel]="tableFilters().search" (ngModelChange)="onSearchChange($event)">
+                <input type="text" pInputText style="width: 20rem !important;"
+                  [placeholder]="'dashboard.search.placeholder' | translate" [ngModel]="tableFilters().search"
+                  (ngModelChange)="onSearchChange($event)">
               </div>
-              <button class="btn-refresh" (click)="loadTeamPerformance();"
-                [class.spinning]="loading() || tableLoading()" [pTooltip]="'common.refresh' | translate">
-                <i class="hgi hgi-stroke hgi-refresh"></i>
-              </button>
             </div>
           </div>
 
@@ -328,9 +304,9 @@
             </p-table>
 
             <div class="table-pagination-footer">
-              <app-pagination [currentPage]="tableFilters().pageNumber!" [itemsPerPage]="tableFilters().pageSize!"
-                [totalItems]="teamPerformance()?.metadata?.totalCount ?? 0" (pageChanged)="onPageChange($event)"
-                (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+              <app-pagination class="w-100" [currentPage]="tableFilters().pageNumber!"
+                [itemsPerPage]="tableFilters().pageSize!" [totalItems]="teamPerformance()?.metadata?.totalCount ?? 0"
+                (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@
   "common.mandatory": "إلزامي",
   "common.change": "تغيير",
   "common.info": "معلومات",
+  "common.chart.noData": "لا توجد بيانات",
   "common.chart.profiles": "الملفات الشخصية",
   "common.chart.completedTasks": "المهام المكتملة",
   "common.chart.remainingTasks": "المهام المتبقية",

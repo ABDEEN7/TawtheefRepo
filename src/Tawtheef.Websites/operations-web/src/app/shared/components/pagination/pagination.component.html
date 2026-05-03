@@ -1,84 +1,61 @@
 <div class="pagination-wrapper">
   @if (showInfo()) {
-    <div class="pagination-info">
-      @if (paginationInfo().total > 0) {
-        <span>
-          {{ translationPrefix() + '.showing' | translate }}
-          <strong>{{ paginationInfo().start }}–{{ paginationInfo().end }}</strong>
-          {{ translationPrefix() + '.of' | translate }}
-          <strong>{{ paginationInfo().total }}</strong>
-          {{ translationPrefix() + '.results' | translate }}
-        </span>
-      } @else {
-        <span class="text-muted">
-          {{ translationPrefix() + '.no_results' | translate }}
-        </span>
-      }
-    </div>
+  <div class="pagination-info">
+    @if (paginationInfo().total > 0) {
+    <span>
+      {{ translationPrefix() + '.showing' | translate }}
+      <strong>{{ paginationInfo().start }}–{{ paginationInfo().end }}</strong>
+      {{ translationPrefix() + '.of' | translate }}
+      <strong>{{ paginationInfo().total }}</strong>
+      {{ translationPrefix() + '.results' | translate }}
+    </span>
+    }
+  </div>
   }
 
   <div class="page-size" *ngIf="pageSizeOptions().length">
     <label class="form-label me-2">{{ translationPrefix() + '.page_size' | translate }}</label>
-    <select class="form-select d-inline-block w-auto" [ngModel]="itemsPerPage()"
-            (ngModelChange)="changePageSize($event)">
-      @for (size of pageSizeOptions(); track size) {
-        <option [value]="size">{{ size }}</option>
-      }
-    </select>
+    <p-select [options]="pageSizeOptions()" [ngModel]="itemsPerPage()" (ngModelChange)="changePageSize($event)">
+    </p-select>
   </div>
   <!-- Pagination Controls -->
   @if (showControls() && totalPages() > 1) {
-    <nav aria-label="Pagination">
-      <ul class="pagination-controls">
-        <!-- Previous Button -->
-        <li [class.disabled]="isDisabled('prev')">
-          <button
-            type="button"
-            class="pagination-btn pagination-prev"
-            (click)="previousPage()"
-            [disabled]="isDisabled('prev')"
-            [attr.aria-label]="translationPrefix() + '.previous' | translate"
-          >
-            <i class="hgi  fs-18" [faDirArrow]="'start'"></i>
-            <span>{{ translationPrefix() + '.previous' | translate }}</span>
-          </button>
-        </li>
+  <nav aria-label="Pagination">
+    <ul class="pagination-controls">
+      <!-- Previous Button -->
+      <li [class.disabled]="isDisabled('prev')">
+        <button type="button" class="pagination-btn pagination-prev" (click)="previousPage()"
+          [disabled]="isDisabled('prev')" [attr.aria-label]="translationPrefix() + '.previous' | translate">
+          <i class="hgi  fs-18" [faDirArrow]="'start'"></i>
+          <span>{{ translationPrefix() + '.previous' | translate }}</span>
+        </button>
+      </li>
 
-        <!-- Page Numbers -->
-        @for (page of pageNumbers(); track $index) {
-          @if (page === -1) {
-            <li class="pagination-ellipsis">
-              <span>…</span>
-            </li>
-          } @else {
-            <li [class.active]="page === currentPage()">
-              <button
-                type="button"
-                class="pagination-btn pagination-number"
-                (click)="goToPage(page)"
-                [attr.aria-label]="'Page ' + page"
-                [attr.aria-current]="page === currentPage() ? 'page' : null"
-              >
-                {{ page }}
-              </button>
-            </li>
-          }
-        }
+      <!-- Page Numbers -->
+      @for (page of pageNumbers(); track $index) {
+      @if (page === -1) {
+      <li class="pagination-ellipsis">
+        <span>…</span>
+      </li>
+      } @else {
+      <li [class.active]="page === currentPage()">
+        <button type="button" class="pagination-btn pagination-number" (click)="goToPage(page)"
+          [attr.aria-label]="'Page ' + page" [attr.aria-current]="page === currentPage() ? 'page' : null">
+          {{ page }}
+        </button>
+      </li>
+      }
+      }
 
-        <!-- Next Button -->
-        <li [class.disabled]="isDisabled('next')">
-          <button
-            type="button"
-            class="pagination-btn pagination-next"
-            (click)="nextPage()"
-            [disabled]="isDisabled('next')"
-            [attr.aria-label]="translationPrefix() + '.next' | translate"
-          >
-            <span>{{ translationPrefix() + '.next' | translate }}</span>
-            <i class="hgi fs-18" [faDirArrow]="'end'"></i>
-          </button>
-        </li>
-      </ul>
-    </nav>
+      <!-- Next Button -->
+      <li [class.disabled]="isDisabled('next')">
+        <button type="button" class="pagination-btn pagination-next" (click)="nextPage()"
+          [disabled]="isDisabled('next')" [attr.aria-label]="translationPrefix() + '.next' | translate">
+          <span>{{ translationPrefix() + '.next' | translate }}</span>
+          <i class="hgi fs-18" [faDirArrow]="'end'"></i>
+        </button>
+      </li>
+    </ul>
+  </nav>
   }
 </div>

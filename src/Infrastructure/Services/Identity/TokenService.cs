@@ -94,7 +94,13 @@ public class TokenService(
         
         var swSetup = Stopwatch.StartNew();
         var now = time.GetUtcNow().UtcDateTime;
-        var replacement = GenerateRefreshToken(user.Id, currentToken.SecurityStamp, ipAddress);
+
+        // We generate a new session ID (sid) on every rotation. 
+        // This ensures that:
+        // 1. Refresh token rotation is more secure (session hijacking protection).
+        // 2. We can "Force Refresh" by revoking all current sessions without killing the refresh tokens.
+        var newSid = Guid.NewGuid().ToString("N");
+        var replacement = GenerateRefreshToken(user.Id, newSid, ipAddress);
         timings["GenTokenObj"] = swSetup.ElapsedMilliseconds;
 
         var swRevoke = Stopwatch.StartNew();
@@ -113,12 +119,17 @@ public class TokenService(
         }
         entry.State = EntityState.Modified;
         timings["AddAndAttach"] = swAdd.ElapsedMilliseconds;
+
+        // Register the new session in the database/cache
+        var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
+        await sessions.SetCurrentAsync(user.Id, newSid, device, ct);
+        
         timings["UpdateSetupTotal"] = swSetup.ElapsedMilliseconds;
 
         var buildSw = Stopwatch.StartNew();
         await ClearUserCacheAsync(user.Id, ct);
         var loginProvider = (await userManager.GetLoginsAsync(user)).FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Password";
-        var result = await BuildAuthResponseAsync(user, replacement, currentToken.SecurityStamp, loginProvider, ct);
+        var result = await BuildAuthResponseAsync(user, replacement, newSid, loginProvider, ct);
         timings["BuildAuthResponse"] = buildSw.ElapsedMilliseconds;
 
         if (result.IsFailed)
@@ -355,8 +366,19 @@ public class TokenService(
         }
 
         await uow.SaveChangesAsync(ct);
-        await cache.RemoveAsync($"roles:{userId}", ct);
-        await cache.RemoveAsync($"perms:{userId}", ct);
+        await ClearUserCacheAsync(userId, ct);
+    }
+
+    public async Task ForceUserRefreshAsync(Guid userId, CancellationToken ct)
+    {
+        // Revoke all current sessions to invalidate current access tokens.
+        await sessions.RevokeAllAsync(userId, ct);
+        
+        // Clear permissions cache so the next refresh fetches updated roles/permissions.
+        await ClearUserCacheAsync(userId, ct);
+        
+        // We do NOT revoke refresh tokens here, allowing the user to get new tokens 
+        // using their existing refresh token without re-logging in.
     }
 
     private static DeviceInfo? BuildDeviceInfo(HttpContext? ctx)

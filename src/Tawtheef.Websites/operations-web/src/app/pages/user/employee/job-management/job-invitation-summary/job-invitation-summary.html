@@ -248,7 +248,7 @@
 
       <!-- ═══ Pagination ═══ -->
       <div class="mt-3">
-        <app-pagination [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
+        <app-pagination class="w-100" [currentPage]="currentPage()" [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()"
           (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
       </div>
 

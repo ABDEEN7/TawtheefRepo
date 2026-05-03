@@ -155,12 +155,9 @@
                   </label>
 
                   @if (p.isEnum && p.enumValues) {
-                  <select class="form-select" [ngModel]="paramValues()[p.name]"
-                    (ngModelChange)="updateParam(p.name, $event)">
-                    @for (v of p.enumValues; track v) {
-                    <option [value]="v">{{ v }}</option>
-                    }
-                  </select>
+                  <p-select styleClass="w-100" [options]="p.enumValues" [ngModel]="paramValues()[p.name]"
+                    (ngModelChange)="updateParam(p.name, $event)" [appendTo]="'body'">
+                  </p-select>
                   } @else {
                   <input type="text" class="form-control" [ngModel]="paramValues()[p.name]"
                     (ngModelChange)="updateParam(p.name, $event)" [placeholder]="'e.g. ' + p.defaultValue">

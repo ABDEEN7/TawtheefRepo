@@ -296,7 +296,7 @@
             <div class="col-12">
               @if (jobs()?.metadata && jobs()!.metadata.totalCount > 0) {
               <div class="pagination-box">
-                <app-pagination [currentPage]="currentPage()" [totalItems]="jobs()!.metadata.totalCount"
+                <app-pagination class="w-100" [currentPage]="currentPage()" [totalItems]="jobs()!.metadata.totalCount"
                   [itemsPerPage]="itemsPerPage()" (pageChanged)="onPageChange($event)"
                   (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
               </div>

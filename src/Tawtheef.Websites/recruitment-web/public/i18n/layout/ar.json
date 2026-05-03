@@ -61,8 +61,8 @@
   "common.relativeTime.daysAgo": "منذ {{count}} يوم",
   "common.ar": "العربية",
 
-  "public.footer.rights": "جميع الحقوق محفوظة © 2026",
-  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي 2026 —جميع الحقوق محفوظة",
+  "public.footer.rights": "جميع الحقوق محفوظة © {{year}}",
+  "public.footer.ministry": "وزارة التربية والتعليم والتعليم العالي {{year}} —جميع الحقوق محفوظة",
   "layout.internal.termsDialog.title": "تحديث الشروط والأحكام",
   "layout.internal.termsDialog.description": "قمنا بتحديث الشروط والأحكام لتحسين الوضوح وتعزيز الأمان وتحسين تجربتك العامة. يرجى مراجعة التحديثات أدناه قبل المتابعة.",
   "layout.internal.termsDialog.accepted.detail": "من خلال الموافقة، فإنك تؤكد أنك قرأت الشروط والأحكام المحدّثة وفهمتها ووافقت عليها.",

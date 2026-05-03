@@ -1,13 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {UserDto} from '../models/user.dto';
-import {UserFilters} from '../models/user-filters.dto';
-import {UserRolesResponse} from '../models/user-roles-response.dto';
-import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {RoleSummaryDto} from '../models/role-summary.dto';
-import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
-import {HttpService} from '../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
+import { inject, Injectable } from '@angular/core';
+import { UserDto } from '../models/user.dto';
+import { UserFilters } from '../models/user-filters.dto';
+import { UserRolesResponse } from '../models/user-roles-response.dto';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { RoleSummaryDto } from '../models/role-summary.dto';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { HttpService } from '../../../../../core/http/http.service';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {

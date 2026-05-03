@@ -124,5 +124,5 @@
 
 <app-pagination [currentPage]="store.departmentFilters().pageNumber" [totalItems]="store.departmentMeta().totalCount"
   [itemsPerPage]="store.departmentFilters().pageSize" (pageChanged)="service.onDepartmentPageChange($event)"
-  (pageSizeChanged)="service.onDepartmentPageSizeChange($event)" class="mt-4">
+  (pageSizeChanged)="service.onDepartmentPageSizeChange($event)" class="w-100 mt-4">
 </app-pagination>

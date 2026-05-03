@@ -1,5 +1,6 @@
 {
-  "JOB_CATEGORY_SETTINGS.TITLE": "اعدادات معامل الشواغر",
+  "JOB_CATEGORY_SETTINGS.TITLE": "إعدادات مضاعف المرشحين",
+  "JOB_CATEGORY_SETTINGS.SUBTITLE": "يتم ضرب عدد الشواغر في هذا الارقام ادناه لتحديد عدد المرشحين وعدد الدعوات الممكن إرسالها للوظيفة",
   "JOB_CATEGORY_SETTINGS.ACADEMIC_VACANCIES": "معامل شواغر الوظائف الأكاديمية",
   "JOB_CATEGORY_SETTINGS.ADMINISTRATIVE_VACANCIES": "معامل شواغر الوظائف الإدارية",
   "JOB_CATEGORY_SETTINGS.LABOR_VACANCIES": "معامل شواغر الوظائف العمالية"

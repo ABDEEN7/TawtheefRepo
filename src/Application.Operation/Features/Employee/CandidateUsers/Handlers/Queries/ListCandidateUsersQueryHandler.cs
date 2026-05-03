@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Employee.CandidateUsers.DTOs;
+using Application.Operation.Features.Employee.CandidateUsers.DTOs;
 using Application.Operation.Features.Employee.CandidateUsers.Queries;
 using FluentResults;
 using MediatR;
@@ -26,7 +26,6 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
             .OfType<ApplicantUser>()
             .AsNoTracking()
             .Include(u => u.Profile)
-            .Where(u => !u.IsDeleted)
             .WhereIf(!string.IsNullOrWhiteSpace(name),
                 u => EF.Functions.Like(u.FullNameEn, $"%{name}%") ||
                      EF.Functions.Like(u.FullNameAr, $"%{name}%"))
@@ -47,7 +46,7 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
                 Id = u.Id,
                 FullNameEn = u.FullNameEn,
                 FullNameAr = u.FullNameAr,
-                Email = u.Email ?? string.Empty,
+                Email = u.EmailConfirmed ? (u.Email ?? string.Empty) : "------",
                 MobileNumber = u.PhoneNumber ?? string.Empty,
                 Qid = u.Profile != null ? u.Profile.NationalNumber : null,
                 IsBlocked = u.IsBlocked,
