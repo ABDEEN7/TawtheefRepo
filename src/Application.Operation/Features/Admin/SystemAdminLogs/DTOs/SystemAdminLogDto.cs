@@ -8,6 +8,7 @@ public sealed record SystemAdminLogDto
     public required Guid UserProfileId { get; init; }
     public Guid? UserId { get; init; }
     public string? UserName { get; init; }
+    public string? UserProfileOwnerName { get; init; }
     public required string Source { get; init; }
     public required string ActionType { get; init; }
     public string? Section { get; init; }

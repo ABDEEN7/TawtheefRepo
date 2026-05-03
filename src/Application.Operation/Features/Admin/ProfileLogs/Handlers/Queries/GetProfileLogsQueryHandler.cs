@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.ProfileLogs.DTOs;
+using Application.Operation.Features.Admin.ProfileLogs.DTOs;
 using Application.Operation.Features.Admin.ProfileLogs.Queries;
 using MediatR;
 using FluentResults;
@@ -89,6 +89,7 @@ public sealed class GetProfileLogsQueryHandler(
             .ToListAsync(cancellationToken);
 
         var userLookup = await BuildUserLookupAsync(items, cancellationToken);
+        var profileOwnerLookup = await BuildProfileOwnerLookupAsync(items, cancellationToken);
 
         var mapped = items
             .Select(log => new ProfileLogDto
@@ -102,6 +103,9 @@ public sealed class GetProfileLogsQueryHandler(
                 UserId = log.UserId,
                 UserName = log.UserId.HasValue && userLookup.TryGetValue(log.UserId.Value, out var name)
                     ? name
+                    : null,
+                UserProfileOwnerName = profileOwnerLookup.TryGetValue(log.UserProfileId, out var ownerName)
+                    ? ownerName
                     : null,
                 EntityId = log.EntityId,
                 AttachmentId = log.AttachmentId,
@@ -150,6 +154,41 @@ public sealed class GetProfileLogsQueryHandler(
                 : !string.IsNullOrWhiteSpace(u.FullNameEn)
                     ? u.FullNameEn
                     : u.Email ?? string.Empty);
+    }
+
+    private async Task<Dictionary<Guid, string>> BuildProfileOwnerLookupAsync(
+        IEnumerable<ProfileLogProjection> logs,
+        CancellationToken cancellationToken)
+    {
+        var profileIds = logs
+            .Select(l => l.UserProfileId)
+            .Distinct()
+            .ToArray();
+
+        if (profileIds.Length == 0)
+        {
+            return new Dictionary<Guid, string>();
+        }
+
+        var profiles = await uow.GetEntityRepository<UserProfile>().DbSet
+            .AsNoTracking()
+            .Where(p => profileIds.Contains(p.Id))
+            .Select(p => new
+            {
+                p.Id,
+                p.User!.FullNameAr,
+                p.User!.FullNameEn,
+                p.User!.Email
+            })
+            .ToListAsync(cancellationToken);
+
+        return profiles.ToDictionary(
+            p => p.Id,
+            p => !string.IsNullOrWhiteSpace(p.FullNameAr)
+                ? p.FullNameAr
+                : !string.IsNullOrWhiteSpace(p.FullNameEn)
+                    ? p.FullNameEn
+                    : p.Email ?? string.Empty);
     }
 
 

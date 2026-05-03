@@ -6,8 +6,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 namespace Application.Operation.Features.Employee.CandidateUsers.Queries;
 
 public sealed record GetCandidateUsersQuery
-    : PaginatedRequest,
-        IRequest<IResult<PaginatedResult<CandidateUserListItemDto>>>
+    : PaginatedRequest, IRequest<IResult<PaginatedResult<CandidateUserListItemDto>>>
 {
     public string? Name { get; init; }
     public string? Email { get; init; }

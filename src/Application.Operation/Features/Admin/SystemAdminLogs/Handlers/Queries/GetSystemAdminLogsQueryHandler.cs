@@ -1,4 +1,4 @@
-﻿using Application.Operation.Features.Admin.ProfileLogs;
+using Application.Operation.Features.Admin.ProfileLogs;
 using Application.Operation.Features.Admin.SystemAdminLogs.DTOs;
 using Application.Operation.Features.Admin.SystemAdminLogs.Queries;
 using MediatR;
@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Features.Admin.SystemAdminLogs.Handlers.Queries;
 
@@ -23,31 +24,56 @@ public sealed class GetSystemAdminLogsQueryHandler(
         CancellationToken cancellationToken)
     {
         var actionLogRepo = uow.GetEntityRepository<ActionLog>();
-        var actionType = request.ActionType?.Trim();
+        var profileLogRepo = uow.GetEntityRepository<UserProfileLogger>();
 
-        var query = actionLogRepo.DbSet
-            .Where(log => log.LogType == ActionLogType.Admin && log.UserId.HasValue)
-            .AsNoTracking()
+        // 1. Action Logs (Admin actions)
+        var actionLogs = actionLogRepo.DbSet
+            .Where(log => log.LogType == ActionLogType.Admin)
+            .Select(log => new SystemAdminLogProjection
+            {
+                Id = log.Id,
+                UserProfileId = log.UserProfileId ?? Guid.Empty,
+                UserId = log.UserId ?? Guid.Empty,
+                ActionType = log.ActionType,
+                Section = log.Section,
+                Notes = log.Notes,
+                EntityId = log.EntityId,
+                AttachmentId = log.AttachmentId,
+                ReviewStatus = null,
+                Source = ProfileLogSources.ActionLog,
+                CreatedDate = log.CreatedDate
+            });
+
+        // 2. Profile Logs (Specific profile activities)
+        var profileLogs = profileLogRepo.DbSet
+            .Select(log => new SystemAdminLogProjection
+            {
+                Id = log.Id,
+                UserProfileId = log.UserProfileId,
+                UserId = log.CreatedById ?? Guid.Empty,
+                ActionType = log.ActionType,
+                Section = "Profile",
+                Notes = log.Notes,
+                EntityId = null,
+                AttachmentId = null,
+                ReviewStatus = log.ReviewStatus,
+                Source = ProfileLogSources.UserProfileLogger,
+                CreatedDate = log.CreatedDate
+            });
+
+        // 3. Combined Query
+        var query = actionLogs.Union(profileLogs);
+
+        // 4. Apply Filters
+        var actionType = request.ActionType?.Trim();
+        query = query
             .WhereIf(request.UserProfileId.HasValue, log => log.UserProfileId == request.UserProfileId!.Value)
             .WhereIf(request.UserId.HasValue, log => log.UserId == request.UserId!.Value)
             .WhereIf(
                 !string.IsNullOrWhiteSpace(actionType),
                 log => EF.Functions.Like(log.ActionType, $"%{actionType}%"))
             .WhereIf(request.From.HasValue, log => log.CreatedDate >= request.From!.Value)
-            .WhereIf(request.To.HasValue, log => log.CreatedDate <= request.To!.Value)
-            .Select(log => new SystemAdminLogProjection
-            {
-                Id = log.Id,
-                UserProfileId = log.UserProfileId ?? Guid.Empty,
-                UserId = log.UserId!.Value,
-                ActionType = log.ActionType,
-                Section = log.Section,
-                Notes = log.Notes,
-                EntityId = log.EntityId,
-                AttachmentId = log.AttachmentId,
-                //ReviewStatus = null,
-                CreatedDate = log.CreatedDate
-            });
+            .WhereIf(request.To.HasValue, log => log.CreatedDate <= request.To!.Value);
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
@@ -68,6 +94,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
             .ToListAsync(cancellationToken);
 
         var userLookup = await BuildUserLookupAsync(items, cancellationToken);
+        var profileOwnerLookup = await BuildProfileOwnerLookupAsync(items, cancellationToken);
 
         var mapped = items
             .Select(log => new SystemAdminLogDto
@@ -76,13 +103,14 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 UserProfileId = log.UserProfileId,
                 UserId = log.UserId,
                 UserName = userLookup.GetValueOrDefault(log.UserId),
-                Source = ProfileLogSources.ActionLog,
+                UserProfileOwnerName = profileOwnerLookup.GetValueOrDefault(log.UserProfileId),
+                Source = log.Source,
                 ActionType = log.ActionType,
                 Section = log.Section,
                 Notes = log.Notes,
                 EntityId = log.EntityId,
                 AttachmentId = log.AttachmentId,
-                ReviewStatus = null,
+                ReviewStatus = log.ReviewStatus,
                 CreatedDate = log.CreatedDate
             })
             .ToList();
@@ -96,6 +124,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
     {
         var userIds = logs
             .Select(l => l.UserId)
+            .Where(id => id != Guid.Empty)
             .Distinct()
             .ToArray();
 
@@ -117,6 +146,34 @@ public sealed class GetSystemAdminLogsQueryHandler(
                     : u.Email ?? string.Empty);
     }
 
+    private async Task<Dictionary<Guid, string>> BuildProfileOwnerLookupAsync(
+        IEnumerable<SystemAdminLogProjection> logs,
+        CancellationToken cancellationToken)
+    {
+        var profileIds = logs
+            .Select(l => l.UserProfileId)
+            .Where(id => id != Guid.Empty)
+            .Distinct()
+            .ToArray();
+
+        if (profileIds.Length == 0)
+            return new Dictionary<Guid, string>();
+
+        var profiles = await uow.GetEntityRepository<UserProfile>().DbSet
+            .AsNoTracking()
+            .Where(p => profileIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.User!.FullNameAr, p.User!.FullNameEn, p.User!.Email })
+            .ToListAsync(cancellationToken);
+
+        return profiles.ToDictionary(
+            p => p.Id,
+            p => !string.IsNullOrWhiteSpace(p.FullNameAr)
+                ? p.FullNameAr
+                : !string.IsNullOrWhiteSpace(p.FullNameEn)
+                    ? p.FullNameEn
+                    : p.Email ?? string.Empty);
+    }
+
     private sealed record SystemAdminLogProjection
     {
         public required Guid Id { get; init; }
@@ -127,6 +184,8 @@ public sealed class GetSystemAdminLogsQueryHandler(
         public string? Notes { get; init; }
         public Guid? EntityId { get; init; }
         public Guid? AttachmentId { get; init; }
+        public ReviewStatus? ReviewStatus { get; init; }
+        public required string Source { get; init; }
         public required DateTimeOffset CreatedDate { get; init; }
     }
 }

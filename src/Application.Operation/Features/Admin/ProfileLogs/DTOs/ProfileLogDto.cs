@@ -12,6 +12,7 @@ public sealed record ProfileLogDto
     public string? Notes { get; init; }
     public Guid? UserId { get; init; }
     public string? UserName { get; init; }
+    public string? UserProfileOwnerName { get; init; }
     public Guid? EntityId { get; init; }
     public Guid? AttachmentId { get; init; }
     public ReviewStatus? ReviewStatus { get; init; }
