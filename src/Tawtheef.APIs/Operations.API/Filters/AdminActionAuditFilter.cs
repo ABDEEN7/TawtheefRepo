@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,12 @@ public sealed class AdminActionAuditFilter(
     ICurrentUserService currentUserService,
     ILogger<AdminActionAuditFilter> logger) : IAsyncActionFilter
 {
+    private const int MaxAuditStringLength = 500;
+    private const int MaxAuditCollectionItems = 20;
+    private const int MaxAuditObjectProperties = 40;
+    private const int MaxAuditDepth = 2;
+    private const int MaxAuditPayloadLength = 12000;
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         if (context.ActionDescriptor is not ControllerActionDescriptor controllerAction)
@@ -24,7 +31,12 @@ public sealed class AdminActionAuditFilter(
 
         var section = controllerAction.ControllerName;
         var action = controllerAction.ActionName;
-        var isUpdate = action.StartsWith("Update", StringComparison.OrdinalIgnoreCase) || 
+        var controllerNamespace = controllerAction.ControllerTypeInfo.Namespace ?? string.Empty;
+        var isAdminController = controllerNamespace.Contains(".Controllers.Admin", StringComparison.Ordinal);
+        var isEmployeeController = controllerNamespace.Contains(".Controllers.Employee", StringComparison.Ordinal);
+        var logType = isAdminController ? ActionLogType.Admin : ActionLogType.Employee;
+        var isExplicitNavigationLog = section == "SystemAdminLogs" && action == "LogNavigation";
+        var isUpdate = action.StartsWith("Update", StringComparison.OrdinalIgnoreCase) ||
                        action.StartsWith("Block", StringComparison.OrdinalIgnoreCase) ||
                        action.StartsWith("Set", StringComparison.OrdinalIgnoreCase);
 
@@ -32,12 +44,15 @@ public sealed class AdminActionAuditFilter(
         Dictionary<string, object?>? oldValues = null;
 
         // Pre-capture old state for updates
-        if (isUpdate && entityId.HasValue && entityId != Guid.Empty)
+        if (isAdminController && isUpdate && entityId.HasValue && entityId != Guid.Empty)
         {
             oldValues = await FetchEntityAsDictionaryAsync(section, entityId.Value);
         }
 
         var executedContext = await next();
+
+        if (isExplicitNavigationLog)
+            return;
 
         if (executedContext.Exception is not null || executedContext.Canceled)
             return;
@@ -46,7 +61,7 @@ public sealed class AdminActionAuditFilter(
         if (HttpMethods.IsGet(request.Method))
             return;
 
-        if (!controllerAction.ControllerTypeInfo.Namespace?.Contains(".Controllers.Admin", StringComparison.Ordinal) ?? true)
+        if (!isAdminController && !isEmployeeController)
             return;
 
         if (context.HttpContext.Response.StatusCode is < 200 or >= 300)
@@ -59,25 +74,31 @@ public sealed class AdminActionAuditFilter(
         {
             // Build human note and detect changes
             var humanNote = await BuildHumanNoteAsync(section, action, context.ActionArguments);
-            var changes = DetectChanges(oldValues, context.ActionArguments);
-            
-            var payload = BuildPayload(context.ActionArguments);
+            var changeEntries = DetectChanges(oldValues, context.ActionArguments);
+            var changesText = changeEntries.Count > 0
+                ? string.Join("\n", changeEntries.Select(c => $"{c.Field}: {c.OldValue} -> {c.NewValue}"))
+                : null;
+
+            var payload = BuildPayload(section, action, humanNote, context.ActionArguments, changeEntries);
             
             // Build the final note with Old vs New info
             var notesBuilder = new System.Text.StringBuilder();
             if (!string.IsNullOrEmpty(humanNote)) notesBuilder.AppendLine(humanNote);
-            if (!string.IsNullOrEmpty(changes)) 
+            if (!string.IsNullOrEmpty(changesText)) 
             {
                 notesBuilder.AppendLine("--- Changes ---");
-                notesBuilder.AppendLine(changes);
+                notesBuilder.AppendLine(changesText);
             }
-            notesBuilder.Append($"| Details: {payload}");
+            if (!string.IsNullOrWhiteSpace(payload))
+            {
+                notesBuilder.Append($"| Details: {payload}");
+            }
 
             var entry = new ActionLog
             {
                 UserProfileId = Guid.Empty,
                 UserId = userId,
-                LogType = ActionLogType.Admin,
+                LogType = logType,
                 ActionType = $"{section}.{action}",
                 Section = section,
                 Notes = notesBuilder.ToString(),
@@ -121,15 +142,17 @@ public sealed class AdminActionAuditFilter(
         }
     }
 
-    private string? DetectChanges(Dictionary<string, object?>? oldValues, IDictionary<string, object?> args)
-    {
-        if (oldValues == null || args == null) return null;
+    private sealed record ChangeEntry(string Field, string? OldValue, string? NewValue);
 
-        var changeList = new List<string>();
+    private List<ChangeEntry> DetectChanges(Dictionary<string, object?>? oldValues, IDictionary<string, object?> args)
+    {
+        if (oldValues == null || args == null) return new List<ChangeEntry>();
+
+        var changeList = new List<ChangeEntry>();
         
         // Find the command object in args
         var command = args.Values.FirstOrDefault(v => v != null && v.GetType().IsClass && v.GetType() != typeof(string));
-        if (command == null) return null;
+        if (command == null) return new List<ChangeEntry>();
 
         var commandProps = command.GetType().GetProperties();
         foreach (var cmdProp in commandProps)
@@ -149,12 +172,12 @@ public sealed class AdminActionAuditFilter(
                     
                     if (oldStr == newStr) continue;
 
-                    changeList.Add($"{cmdProp.Name}: {oldStr} -> {newStr}");
+                    changeList.Add(new ChangeEntry(cmdProp.Name, oldStr, newStr));
                 }
             }
         }
 
-        return changeList.Count > 0 ? string.Join("\n", changeList) : null;
+        return changeList;
     }
 
     private async Task<string?> BuildHumanNoteAsync(string section, string action, IDictionary<string, object?> args)
@@ -244,19 +267,190 @@ public sealed class AdminActionAuditFilter(
         return await dbContext.Set<Tawtheef.Domain.Entities.Users.User>().Where(x => x.Id == id).Select(x => x.FullNameEn).FirstOrDefaultAsync();
     }
 
-    private static string? BuildPayload(IDictionary<string, object?> actionArguments)
+    private static string? BuildPayload(
+        string section,
+        string action,
+        string? message,
+        IDictionary<string, object?> actionArguments,
+        IReadOnlyCollection<ChangeEntry> changes)
     {
-        if (actionArguments.Count == 0)
-            return null;
-
         try
         {
-            return JsonSerializer.Serialize(actionArguments);
+            var actionKind = InferActionKind(action);
+            var command = NormalizeForAudit(ExtractPrimaryObject(actionArguments), 0);
+            var payload = new
+            {
+                eventType = "AdminAction",
+                section,
+                actionType = $"{section}.{action}",
+                actionName = action,
+                actionKind,
+                message,
+                changedFields = changes.Select(c => new { field = c.Field, oldValue = c.OldValue, newValue = c.NewValue }),
+                command
+            };
+
+            return SerializeAuditPayload(payload);
         }
         catch
         {
             return null;
         }
+    }
+
+    private static string SerializeAuditPayload(object payload)
+    {
+        var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        });
+
+        return json.Length <= MaxAuditPayloadLength
+            ? json
+            : JsonSerializer.Serialize(new
+            {
+                eventType = "AdminAction",
+                message = "Audit payload exceeded size limit",
+                payloadTruncated = true
+            });
+    }
+
+    private static object? NormalizeForAudit(object? value, int depth)
+    {
+        if (value is null) return null;
+
+        if (value is string text)
+            return Truncate(text);
+
+        var type = value.GetType();
+        if (type.IsPrimitive || value is decimal || value is Guid || value is DateTime || value is DateTimeOffset || value is TimeSpan)
+            return value;
+
+        if (type.IsEnum)
+            return value.ToString();
+
+        if (value is IFormFile file)
+        {
+            return new
+            {
+                file.FileName,
+                file.ContentType,
+                file.Length
+            };
+        }
+
+        if (value is byte[] bytes)
+            return $"[byte array: {bytes.Length} bytes]";
+
+        if (value is System.Collections.IDictionary dictionary)
+        {
+            var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            var count = 0;
+            foreach (System.Collections.DictionaryEntry entry in dictionary)
+            {
+                if (count >= MaxAuditObjectProperties)
+                {
+                    result["_truncated"] = true;
+                    break;
+                }
+
+                result[StringifyKey(entry.Key)] = depth >= MaxAuditDepth
+                    ? entry.Value?.GetType().Name
+                    : NormalizeForAudit(entry.Value, depth + 1);
+                count++;
+            }
+
+            return result;
+        }
+
+        if (value is System.Collections.IEnumerable enumerable && value is not string)
+        {
+            var items = new List<object?>();
+            var count = 0;
+            foreach (var item in enumerable)
+            {
+                if (count >= MaxAuditCollectionItems)
+                {
+                    items.Add("[collection truncated]");
+                    break;
+                }
+
+                items.Add(depth >= MaxAuditDepth ? item?.GetType().Name : NormalizeForAudit(item, depth + 1));
+                count++;
+            }
+
+            return items;
+        }
+
+        if (depth >= MaxAuditDepth)
+            return type.Name;
+
+        var properties = type.GetProperties()
+            .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !ShouldSkipAuditProperty(p.Name))
+            .Take(MaxAuditObjectProperties)
+            .ToArray();
+
+        var normalized = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        foreach (var property in properties)
+        {
+            try
+            {
+                normalized[property.Name] = NormalizeForAudit(property.GetValue(value), depth + 1);
+            }
+            catch
+            {
+                normalized[property.Name] = "[unavailable]";
+            }
+        }
+
+        if (type.GetProperties().Length > properties.Length)
+            normalized["_truncated"] = true;
+
+        return normalized;
+    }
+
+    private static bool ShouldSkipAuditProperty(string propertyName)
+    {
+        return propertyName.Contains("password", StringComparison.OrdinalIgnoreCase) ||
+               propertyName.Contains("token", StringComparison.OrdinalIgnoreCase) ||
+               propertyName.Contains("secret", StringComparison.OrdinalIgnoreCase) ||
+               propertyName.Contains("content", StringComparison.OrdinalIgnoreCase) ||
+               propertyName.Contains("stream", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string Truncate(string value)
+    {
+        return value.Length <= MaxAuditStringLength
+            ? value
+            : string.Concat(value.AsSpan(0, MaxAuditStringLength), "...[truncated]");
+    }
+
+    private static string StringifyKey(object? key)
+    {
+        return key?.ToString() ?? "null";
+    }
+
+    private static string InferActionKind(string action)
+    {
+        if (action.StartsWith("Create", StringComparison.OrdinalIgnoreCase)) return "Create";
+        if (action.StartsWith("Update", StringComparison.OrdinalIgnoreCase)) return "Update";
+        if (action.StartsWith("Delete", StringComparison.OrdinalIgnoreCase)) return "Delete";
+        if (action.StartsWith("Set", StringComparison.OrdinalIgnoreCase)) return "Update";
+        if (action.StartsWith("Block", StringComparison.OrdinalIgnoreCase)) return "Update";
+        return "Action";
+    }
+
+    private static object? ExtractPrimaryObject(IDictionary<string, object?> actionArguments)
+    {
+        if (actionArguments.Count == 1)
+        {
+            return actionArguments.Values.FirstOrDefault();
+        }
+
+        var command = actionArguments
+            .FirstOrDefault(kvp => kvp.Value != null && kvp.Value.GetType().IsClass && kvp.Value.GetType() != typeof(string));
+
+        return command.Value ?? actionArguments;
     }
 
     private static Guid? ResolveEntityId(IDictionary<string, object?> actionArguments)

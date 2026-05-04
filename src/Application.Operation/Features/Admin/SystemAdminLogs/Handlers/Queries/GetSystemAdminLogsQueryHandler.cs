@@ -28,7 +28,6 @@ public sealed class GetSystemAdminLogsQueryHandler(
 
         // 1. Action Logs (Admin actions)
         var actionLogs = actionLogRepo.DbSet
-            .Where(log => log.LogType == ActionLogType.Admin)
             .Select(log => new SystemAdminLogProjection
             {
                 Id = log.Id,
@@ -40,6 +39,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 EntityId = log.EntityId,
                 AttachmentId = log.AttachmentId,
                 ReviewStatus = null,
+                LogType = log.LogType.ToString(),
                 Source = ProfileLogSources.ActionLog,
                 CreatedDate = log.CreatedDate
             });
@@ -57,6 +57,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 EntityId = null,
                 AttachmentId = null,
                 ReviewStatus = log.ReviewStatus,
+                LogType = null,
                 Source = ProfileLogSources.UserProfileLogger,
                 CreatedDate = log.CreatedDate
             });
@@ -111,6 +112,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
                 EntityId = log.EntityId,
                 AttachmentId = log.AttachmentId,
                 ReviewStatus = log.ReviewStatus,
+                LogType = log.LogType,
                 CreatedDate = log.CreatedDate
             })
             .ToList();
@@ -185,6 +187,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
         public Guid? EntityId { get; init; }
         public Guid? AttachmentId { get; init; }
         public ReviewStatus? ReviewStatus { get; init; }
+        public string? LogType { get; init; }
         public required string Source { get; init; }
         public required DateTimeOffset CreatedDate { get; init; }
     }

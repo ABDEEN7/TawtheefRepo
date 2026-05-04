@@ -4,6 +4,7 @@ export interface SystemAdminLogDto {
   id: string;
   userProfileId: string;
   source: string;
+  logType?: string | null;
   actionType: string;
   section?: string | null;
   notes?: string | null;

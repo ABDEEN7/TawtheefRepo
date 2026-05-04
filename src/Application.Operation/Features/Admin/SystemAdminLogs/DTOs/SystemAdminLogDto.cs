@@ -10,6 +10,7 @@ public sealed record SystemAdminLogDto
     public string? UserName { get; init; }
     public string? UserProfileOwnerName { get; init; }
     public required string Source { get; init; }
+    public string? LogType { get; init; }
     public required string ActionType { get; init; }
     public string? Section { get; init; }
     public string? Notes { get; init; }

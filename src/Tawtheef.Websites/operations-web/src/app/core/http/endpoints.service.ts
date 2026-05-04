@@ -247,6 +247,7 @@ export class EndpointsService {
   systemAdminLogs = {
     list: this.getFullUrl('/system-admin-logs'),
     lookups: this.getFullUrl('/system-admin-logs/lookups'),
+    navigation: this.getFullUrl('/system-admin-logs/navigation'),
   };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),
