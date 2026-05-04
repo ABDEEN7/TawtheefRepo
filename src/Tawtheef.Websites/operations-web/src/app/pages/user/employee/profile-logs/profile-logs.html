@@ -65,8 +65,7 @@
               [placeholder]="'PROFILE_LOGS.FILTER_TO' | translate"></p-datepicker>
           </div>
           <div class="col-md-3 d-flex align-items-end">
-            <button class="btn btn-primary ng-star-inserted" type="button"
-              (click)="clearFilters()">
+            <button class="btn btn-primary ng-star-inserted" type="button" (click)="clearFilters()">
               <i class="hgi hgi-stroke hgi-cancel-01"></i>
               <span class="fw-bold">{{ 'PROFILE_LOGS.CLEAR_SEARCH' | translate }}</span>
             </button>
@@ -80,7 +79,6 @@
           <thead class="table-light">
             <tr>
               <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
-              <th>{{ 'PROFILE_LOGS.TABLE_PROFILE_OWNER' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
               <th>{{ 'PROFILE_LOGS.TABLE_REVIEW_STATUS' | translate }}</th>
@@ -102,9 +100,6 @@
               <td>
                 <span>{{ log.createdDate | date:'dd/MM/yyyy' }}</span>
                 <div class="text-muted small">{{ log.createdDate | date:'HH:mm' }}</div>
-              </td>
-              <td class="text-break">
-                <div class="fw-semibold">{{ log.userProfileOwnerName || ('PROFILE_LOGS.UNKNOWN_USER' | translate) }}</div>
               </td>
               <td class="text-break fw-semibold">
                 {{ translateAction(log) }}

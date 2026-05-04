@@ -58,5 +58,17 @@
   "PROFILE_LOGS.SECTIONS.Languages": "Languages",
   "PROFILE_LOGS.SECTIONS.Language": "Languages",
   "PROFILE_LOGS.SECTIONS.Attachments": "Attachments",
-  "PROFILE_LOGS.SECTIONS.Attachment": "Attachments"
+  "PROFILE_LOGS.SECTIONS.Attachment": "Attachments",
+  "PROFILE_LOGS.NOTES.REASSIGNED_FROM": "Reassigned from",
+  "PROFILE_LOGS.NOTES.REASSIGNED_TO": "Reassigned to",
+  "PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED": "Item review updated",
+  "PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED": "Section review updated",
+  "PROFILE_LOGS.NOTES.SECTION": "Section",
+  "PROFILE_LOGS.NOTES.ITEM": "Item",
+  "PROFILE_LOGS.NOTES.STATUS": "Status",
+  "PROFILE_LOGS.NOTES.NOTE": "Note",
+  "PROFILE_LOGS.NOTES.TARGET": "Target",
+  "PROFILE_LOGS.NOTES.TYPE": "Type",
+  "PROFILE_LOGS.NOTES.PROFILE_DATA": "Profile data",
+  "PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED": "Profile change updated"
 }

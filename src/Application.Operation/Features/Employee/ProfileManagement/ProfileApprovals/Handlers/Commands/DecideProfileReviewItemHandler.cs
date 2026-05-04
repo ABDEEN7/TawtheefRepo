@@ -107,12 +107,23 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             change.ReviewerNote = cmd.Note;
         }
 
+        var decisionNote = JsonSerializer.Serialize(new
+        {
+            eventType = "ReviewItemDecision",
+            targetType = item.TargetType.ToString(),
+            section = item.Section.ToString(),
+            entityName = item.EntityName,
+            fieldPath = item.FieldPath,
+            status = cmd.Status.ToString(),
+            reviewerNote = cmd.Note
+        });
+
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = item.UserProfileId,
             UserId = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
-            Notes = $"Review item {item.Id} marked {cmd.Status}",
+            Notes = decisionNote,
             Section = item.Section.ToString(),
             EntityId = item.EntityId ?? item.Id,
             AttachmentId = item.ResourceId
@@ -123,7 +134,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             UserProfileId = item.UserProfileId,
             PerformedById = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
-            Notes = $"Review item {item.Id} marked {cmd.Status}",
+            Notes = decisionNote,
             Section = item.Section.ToString(),
             EntityId = item.EntityId ?? item.Id,
             AttachmentId = item.ResourceId,

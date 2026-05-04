@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
@@ -34,6 +35,7 @@ export class ProfileLogsComponent implements OnInit {
   private profileLogsService = inject(ProfileLogsService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private route = inject(ActivatedRoute);
 
   private _logs = signal<ProfileLogDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -70,6 +72,10 @@ export class ProfileLogsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserOptions();
+    const routeProfileId = this.route.snapshot.queryParamMap.get('profileId');
+    if (routeProfileId) {
+      this.profileIdFilter = routeProfileId;
+    }
     this.loadLogs();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -250,11 +256,13 @@ export class ProfileLogsComponent implements OnInit {
     const humanNote = changeParts[0].trim();
     const changes = changeParts.length > 1 ? changeParts[1].trim() : null;
 
-    // If we have a human-readable part or changes, use them
-    if (humanNote || changes) {
+    // If we have enriched human-readable note format, use it.
+    // Do not return early when the note itself looks like JSON.
+    const looksLikeJson = humanAndChanges.startsWith('{') || humanAndChanges.startsWith('[');
+    if ((changes || humanNote) && !looksLikeJson) {
       let summary = humanNote;
       if (changes) {
-        summary += (summary ? ' • ' : '') + changes.replace(/\n/g, ' • ');
+        summary += (summary ? ' | ' : '') + changes.replace(/\n/g, ' | ');
       }
       return summary;
     }
@@ -262,12 +270,144 @@ export class ProfileLogsComponent implements OnInit {
     try {
       const jsonString = jsonPart || log.notes;
       const parsed = JSON.parse(jsonString);
+      const assignmentSummary = this.tryFormatAssignmentReassigned(parsed);
+      if (assignmentSummary) return assignmentSummary;
+      if (parsed?.eventType === 'ReviewItemDecision') {
+        return this.formatReviewItemDecision(parsed);
+      }
+      if (parsed?.eventType === 'ReviewSectionDecision') {
+        return this.formatReviewSectionDecision(parsed);
+      }
+      if (parsed?.eventType === 'ProfileChangeRequested' || parsed?.eventType === 'ProfileChangeUpdated') {
+        return this.formatProfileChangeEvent(parsed);
+      }
+      if (parsed?.eventType === 'AssignmentCreated') {
+        const assignedTo = parsed.newAssignedUserName || '-';
+        return `${this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileAssigned')} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${assignedTo}`;
+      }
+      if (parsed?.eventType === 'OpenProfile') {
+        const section = this.translateSection(log?.section || parsed.section);
+        return `${this.translate.instant('PROFILE_LOGS.ACTIONS.OpenProfile')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section}`;
+      }
+      if (parsed?.eventType === 'OpenProfileChangeReview') {
+        const section = this.translateSection(log?.section || parsed.section);
+        return `${this.translate.instant('PROFILE_LOGS.ACTIONS.OpenProfileChangeReview')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section}`;
+      }
+      if (parsed?.eventType === 'ProfileReviewStarted') {
+        return this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileReviewStarted');
+      }
+      if (parsed?.eventType === 'ProfileReviewFinalized') {
+        const result = this.mapStatusLabel(parsed.result);
+        return `${this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileReviewFinalized')} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${result}`;
+      }
+      if (parsed?.eventType === 'AssignmentClosed') {
+        return this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileUnassigned');
+      }
+      if (parsed?.message && typeof parsed.message === 'string') {
+        return parsed.message;
+      }
       const results: string[] = [];
       this.extractReadableFields(parsed, results);
-      return results.length > 0 ? results.join(' • ') : '-';
+      return results.length > 0 ? results.join(' | ') : '-';
     } catch {
-      return log.notes;
+      const assignmentSummary = this.tryFormatAssignmentReassigned(log.notes);
+      if (assignmentSummary) return assignmentSummary;
+      return this.formatLegacyNote(log.notes);
     }
+  }
+
+  private tryFormatAssignmentReassigned(source: any): string | null {
+    if (!source) return null;
+
+    if (typeof source === 'object' && source.eventType === 'AssignmentReassigned') {
+      const oldName = source.oldAssignedUserName || '-';
+      const newName = source.newAssignedUserName || '-';
+      return `${this.translate.instant('PROFILE_LOGS.NOTES.REASSIGNED_FROM')}: ${oldName} | ${this.translate.instant('PROFILE_LOGS.NOTES.REASSIGNED_TO')}: ${newName}`;
+    }
+
+    if (typeof source !== 'string') return null;
+    if (!source.includes('AssignmentReassigned')) return null;
+
+    const oldNameMatch = source.match(/oldAssignedUserName"\s*:\s*"([^"]*)"/i);
+    const newNameMatch = source.match(/newAssignedUserName"\s*:\s*"([^"]*)"/i);
+
+    const oldName = oldNameMatch?.[1] || '-';
+    const newName = newNameMatch?.[1] || '-';
+    return `${this.translate.instant('PROFILE_LOGS.NOTES.REASSIGNED_FROM')}: ${oldName} | ${this.translate.instant('PROFILE_LOGS.NOTES.REASSIGNED_TO')}: ${newName}`;
+  }
+
+  private formatReviewItemDecision(note: any): string {
+    const section = note.section ? this.translateSection(note.section) : '-';
+    const status = this.mapStatusLabel(note.status);
+    const itemLabel = note.entityName || note.fieldPath || this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
+    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    return `${this.translate.instant('PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.ITEM')}: ${itemLabel} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
+  }
+
+  private formatReviewSectionDecision(note: any): string {
+    const section = note.section ? this.translateSection(note.section) : '-';
+    const status = this.mapStatusLabel(note.status);
+    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    return `${this.translate.instant('PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
+  }
+
+  private formatProfileChangeEvent(note: any): string {
+    const section = note.section ? this.translateSection(note.section) : '-';
+    const target = note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
+    const action = note.eventType === 'ProfileChangeRequested'
+      ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
+      : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
+    return `${action} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${target}`;
+  }
+
+  private formatLegacyNote(raw: string): string {
+    const reviewItemPattern = /^Review item [0-9a-f-]{36} marked (\w+)$/i;
+    const reviewSectionPattern = /^Section (\w+) marked (\w+)$/i;
+    const changePattern = /^(Field|Row|Section|Attachment) change for (.+)$/i;
+
+    const reviewItemMatch = raw.match(reviewItemPattern);
+    if (reviewItemMatch) {
+      const status = this.mapStatusLabel(reviewItemMatch[1]);
+      return `${this.translate.instant('PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}`;
+    }
+
+    const reviewSectionMatch = raw.match(reviewSectionPattern);
+    if (reviewSectionMatch) {
+      const section = this.translateSection(reviewSectionMatch[1]);
+      const status = this.mapStatusLabel(reviewSectionMatch[2]);
+      return `${this.translate.instant('PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}`;
+    }
+
+    const changeMatch = raw.match(changePattern);
+    if (changeMatch) {
+      const targetType = changeMatch[1];
+      const targetValue = changeMatch[2];
+      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue) ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA') : targetValue;
+      return `${this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${targetType} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${sanitizedTarget}`;
+    }
+
+    return raw;
+  }
+
+  private mapStatusLabel(status: string | number | null | undefined): string {
+    if (status === null || status === undefined) return '-';
+    const normalized = String(status).toLowerCase();
+    if (normalized === 'pending' || normalized === String(ReviewStatus.Pending)) {
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.PENDING');
+    }
+    if (normalized === 'approved' || normalized === String(ReviewStatus.Approved)) {
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.APPROVED');
+    }
+    if (normalized === 'rejected' || normalized === String(ReviewStatus.Rejected)) {
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
+    }
+    if (normalized === 'needscorrection' || normalized === 'needs_correction' || normalized === String(ReviewStatus.NeedsCorrection)) {
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION');
+    }
+    if (normalized === 'notreviewed' || normalized === 'not_reviewed' || normalized === String(ReviewStatus.NotReviewed)) {
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED');
+    }
+    return String(status);
   }
 
   private extractReadableFields(obj: any, results: string[]): void {
@@ -300,7 +440,11 @@ export class ProfileLogsComponent implements OnInit {
       order: 'Sort Order',
       type: 'Type',
       roleIds: 'Roles',
-      permissionKeys: 'Permissions'
+      permissionKeys: 'Permissions',
+      oldAssignedUserName: 'Old Assigned User',
+      newAssignedUserName: 'New Assigned User',
+      oldAssignedUserId: 'Old Assigned User Id',
+      newAssignedUserId: 'New Assigned User Id'
     };
 
     const skipPatterns = /^(id|countryId|cityId|officeId|userId|userProfileId)$/i;
@@ -345,3 +489,4 @@ export class ProfileLogsComponent implements OnInit {
   }
 
 }
+

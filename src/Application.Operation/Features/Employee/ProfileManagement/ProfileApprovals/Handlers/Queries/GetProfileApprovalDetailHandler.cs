@@ -3,6 +3,7 @@ using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
+using System.Text.Json;
 using FluentResults;
 using Mapster;
 using MapsterMapper;
@@ -143,13 +144,18 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             ProfileStatus = (int)profile.Status,
             Sections = sections
         };
+        var openProfileNote = JsonSerializer.Serialize(new
+        {
+            eventType = "OpenProfile",
+            message = UserProfileLogConstants.Notes.ProfileOpenedForReview
+        });
 
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
-            Notes = UserProfileLogConstants.Notes.ProfileOpenedForReview,
+            Notes = openProfileNote,
             Section = nameof(ProfileSection.Personal)
         });
         await loggerRepo.AddAsync(new UserProfileLogger
@@ -157,7 +163,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             UserProfileId = profile.Id,
             PerformedById = request.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
-            Notes = UserProfileLogConstants.Notes.ProfileOpenedForReview,
+            Notes = openProfileNote,
             Section = nameof(ProfileSection.Personal)
         });
         await uow.SaveChangesAsync(ct);

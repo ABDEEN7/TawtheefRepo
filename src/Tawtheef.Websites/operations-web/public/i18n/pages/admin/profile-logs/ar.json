@@ -58,5 +58,16 @@
   "PROFILE_LOGS.SECTIONS.Languages": "اللغات",
   "PROFILE_LOGS.SECTIONS.Language": "اللغات",
   "PROFILE_LOGS.SECTIONS.Attachments": "المرفقات",
-  "PROFILE_LOGS.SECTIONS.Attachment": "المرفقات"
-}
+  "PROFILE_LOGS.SECTIONS.Attachment": "المرفقات",  "PROFILE_LOGS.NOTES.REASSIGNED_FROM": "تمت إعادة التعيين من",
+  "PROFILE_LOGS.NOTES.REASSIGNED_TO": "تمت إعادة التعيين إلى",
+  "PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED": "تم تحديث مراجعة العنصر",
+  "PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED": "تم تحديث مراجعة القسم",
+  "PROFILE_LOGS.NOTES.SECTION": "القسم",
+  "PROFILE_LOGS.NOTES.ITEM": "العنصر",
+  "PROFILE_LOGS.NOTES.STATUS": "الحالة",
+  "PROFILE_LOGS.NOTES.NOTE": "الملاحظة",
+  "PROFILE_LOGS.NOTES.TARGET": "الهدف",
+  "PROFILE_LOGS.NOTES.TYPE": "النوع",
+  "PROFILE_LOGS.NOTES.PROFILE_DATA": "بيانات الملف",
+  "PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED": "تم تحديث تغيير الملف"}
+

@@ -176,7 +176,8 @@ export class EndpointsService {
   candidateUsers = {
     list: this.getFullUrl('/candidateUsers'),
     blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`),
-    profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`)
+    profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`),
+    profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`)
   };
 
   officeUsers = {

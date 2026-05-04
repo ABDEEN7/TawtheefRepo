@@ -5,6 +5,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -79,8 +80,12 @@ public sealed class ManualAssignProfilesHandler(
             return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionStatusNotAssignable);
 
         var assignments = await assignmentRepo.DbSet
+            .Include(a => a.Employee)
             .Where(a => a.IsActive && request.ProfileIds.Contains(a.UserProfileId))
             .ToListAsync(ct);
+        var previousAssignments = assignments.ToDictionary(
+            a => a.UserProfileId,
+            a => (OldAssignedUserId: a.EmployeeId, OldAssignedUserName: a.Employee?.FullNameEn));
 
         foreach (var assignment in assignments)
         {
@@ -91,7 +96,12 @@ public sealed class ManualAssignProfilesHandler(
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = null,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = UserProfileLogConstants.Notes.AssignmentDeactivatedBeforeManualReassignment,
+                Notes = BuildReassignmentNote(
+                    assignment.UserProfileId,
+                    previousAssignments,
+                    employee.Id,
+                    employee.FullNameEn,
+                    UserProfileLogConstants.Notes.AssignmentDeactivatedBeforeManualReassignment),
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             }, ct);
@@ -109,7 +119,12 @@ public sealed class ManualAssignProfilesHandler(
                 UserProfileId = profile.Id,
                 UserId = employee.Id,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
-                Notes = UserProfileLogConstants.Notes.ProfileAssignedManually,
+                Notes = BuildReassignmentNote(
+                    profile.Id,
+                    previousAssignments,
+                    employee.Id,
+                    employee.FullNameEn,
+                    UserProfileLogConstants.Notes.ProfileAssignedManually),
                 Section = UserProfileLogConstants.Sections.Assignment
             }, ct);
             await loggerRepo.AddAsync(new UserProfileLogger
@@ -117,7 +132,12 @@ public sealed class ManualAssignProfilesHandler(
                 UserProfileId = profile.Id,
                 PerformedById = employee.Id,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
-                Notes = UserProfileLogConstants.Notes.ProfileAssignedManually,
+                Notes = BuildReassignmentNote(
+                    profile.Id,
+                    previousAssignments,
+                    employee.Id,
+                    employee.FullNameEn,
+                    UserProfileLogConstants.Notes.ProfileAssignedManually),
                 Section = UserProfileLogConstants.Sections.Assignment
             }, ct);
         }
@@ -128,6 +148,27 @@ public sealed class ManualAssignProfilesHandler(
         var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
 
         return Result.Ok(result);
+    }
+
+    private static string BuildReassignmentNote(
+        Guid userProfileId,
+        IReadOnlyDictionary<Guid, (Guid OldAssignedUserId, string? OldAssignedUserName)> previousAssignments,
+        Guid newAssignedUserId,
+        string? newAssignedUserName,
+        string fallbackNote)
+    {
+        previousAssignments.TryGetValue(userProfileId, out var previous);
+
+        var note = new
+        {
+            eventType = "AssignmentReassigned",
+            oldAssignedUserId = previous.OldAssignedUserId == Guid.Empty ? (Guid?)null : previous.OldAssignedUserId,
+            oldAssignedUserName = previous.OldAssignedUserName,
+            newAssignedUserId,
+            newAssignedUserName,
+            message = fallbackNote
+        };
+        return JsonSerializer.Serialize(note);
     }
 }
 

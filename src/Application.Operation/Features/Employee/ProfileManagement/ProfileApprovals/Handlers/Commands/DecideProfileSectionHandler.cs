@@ -2,6 +2,7 @@
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -49,12 +50,20 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
         item.ReviewedAtUtc = time.GetUtcNow().UtcDateTime;
         item.IsOutdated = false;
 
+        var decisionNote = JsonSerializer.Serialize(new
+        {
+            eventType = "ReviewSectionDecision",
+            section = cmd.Section.ToString(),
+            status = cmd.Status.ToString(),
+            reviewerNote = cmd.Note
+        });
+
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ReviewSectionDecision,
-            Notes = $"Section {cmd.Section} marked {cmd.Status}",
+            Notes = decisionNote,
             Section = cmd.Section.ToString(),
             EntityId = item.Id
         });
@@ -64,7 +73,7 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ReviewSectionDecision,
-            Notes = $"Section {cmd.Section} marked {cmd.Status}",
+            Notes = decisionNote,
             Section = cmd.Section.ToString(),
             EntityId = item.Id,
             ReviewStatus = cmd.Status
