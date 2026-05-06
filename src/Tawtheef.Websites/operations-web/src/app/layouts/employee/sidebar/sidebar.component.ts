@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,7 @@ import { NavigationAuditService } from '../../../core/services/navigation-audit.
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule, RouterLink]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
@@ -73,7 +73,11 @@ export class SidebarComponent implements OnInit {
     this.toggleSidebar.emit();
   }
 
-  navigateTo(item: any) {
+  onSidebarItemClick(event: MouseEvent, item: MenuItem) {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
     if (this.router.url !== item.route) {
       this.navigationAudit.logSidebarNavigation({
         menuKey: item.key,
@@ -84,7 +88,6 @@ export class SidebarComponent implements OnInit {
     }
 
     this.activeItem = item.key;
-    this.router.navigate([item.route]);
   }
 
   logout() {

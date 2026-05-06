@@ -78,7 +78,7 @@ export enum JobCategory {
 ---------------------------------------------- */
 export enum JobStatus {
   Draft = "Draft",
-  Active = "Active",
+  Published = "Published",
   Closed = "Closed",
   Cancelled = "Cancelled",
 }

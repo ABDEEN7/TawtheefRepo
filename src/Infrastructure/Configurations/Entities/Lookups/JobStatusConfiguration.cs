@@ -32,16 +32,6 @@ public class JobStatusConfiguration : LookupBaseConfiguration<JobStatus>
             },
             new JobStatus
             {
-                Id = JobStatusIds.Active,
-                BackendName = nameof(JobStatusIds.Active),
-                NameEn = "Active",
-                NameAr = "نشطة",
-                DescriptionEn = "Job is open for applications and can be published to the target audience.",
-                DescriptionAr = "الوظيفة جاهزة للتقديم ويمكن إرسالها للجمهور المطلوب.",
-                DisplayOrder = 2
-            },
-            new JobStatus
-            {
                 Id = JobStatusIds.Closed,
                 BackendName = nameof(JobStatusIds.Closed),
                 NameEn = "Closed",

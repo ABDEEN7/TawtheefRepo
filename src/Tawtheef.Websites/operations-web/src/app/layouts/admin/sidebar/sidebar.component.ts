@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,7 @@ import { environment } from '../../../../environments/environment';
   host: { 'data-test': 'sidebar-main' },
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule, RouterLink]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
@@ -89,9 +89,12 @@ export class SidebarComponent implements OnInit {
     this.toggleSidebar.emit();
   }
 
-  navigateTo(item: any) {
+  activateItem(event: MouseEvent, item: MenuItem) {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
     this.activeItem = item.key;
-    this.router.navigate([item.route]);
   }
 
   logout() {
