@@ -1,24 +1,24 @@
-import {DestroyRef, inject, Injectable} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {TranslateService} from '@ngx-translate/core';
-import {DialogService} from 'primeng/dynamicdialog';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from 'primeng/dynamicdialog';
 
-import {NotificationService} from '../../../../core/services/notification.service';
-import {LanguageService} from '../../../../core/services/language.service';
-import {ConfirmationService} from 'primeng/api';
-import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { ConfirmationService } from 'primeng/api';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
-import {MajorsSkillsManagementService} from './services/majors-skills-management.service';
-import {MajorsSkillsManagementStore, MajorsSkillsTabKey} from './majors-skills-management.store';
+import { MajorsSkillsManagementService } from './services/majors-skills-management.service';
+import { MajorsSkillsManagementStore, MajorsSkillsTabKey } from './majors-skills-management.store';
 
-import {MajorSkillDetailsModel} from './models/major-skill-details.model';
-import {MajorListItemModel} from './models/major-list-item.model';
-import {SkillListItemModel} from './models/skill-list-item.model';
+import { MajorSkillDetailsModel } from './models/major-skill-details.model';
+import { MajorListItemModel } from './models/major-list-item.model';
+import { SkillListItemModel } from './models/skill-list-item.model';
 
-import {ParentMajorInfoDialogComponent} from './dialogs/parent-major-info.dialog';
-import {UpsertSkillDialogComponent} from './dialogs/upsert-skill.dialog';
-import {UpsertMajorDialogComponent} from './dialogs/upsert-major.dialog';
-import {UpsertMajorSkillDialogComponent} from './dialogs/upsert-major-skill.dialog';
+import { ParentMajorInfoDialogComponent } from './dialogs/parent-major-info.dialog';
+import { UpsertSkillDialogComponent } from './dialogs/upsert-skill.dialog';
+import { UpsertMajorDialogComponent } from './dialogs/upsert-major.dialog';
+import { UpsertMajorSkillDialogComponent } from './dialogs/upsert-major-skill.dialog';
 
 type ActivationHierarchyEntity = 'major' | 'subMajor' | 'skill';
 
@@ -181,12 +181,6 @@ export class MajorsSkillsManagementFacade {
   toggleMajorSkillActive(id: string, isActive: boolean) {
     this.api.changeMajorSkillActivation(id, isActive).subscribe({
       next: () => { this.toast('MAJORS_SKILLS.STATUS_UPDATED'); this.loadMajorSkills(); }
-    });
-  }
-
-  changeMajorSkillRequirement(id: string, isSkillRequired: boolean, isActive: boolean) {
-    this.api.updateMajorSkill({ id, isSkillRequired, isActive }).subscribe({
-      next: () => { this.toast('MAJORS_SKILLS.SAVE_SUCCESS'); this.loadMajorSkills(); }
     });
   }
 
@@ -361,7 +355,7 @@ export class MajorsSkillsManagementFacade {
 
   // ===================== Filter & Paging helpers =====================
   setMajorSkillSearch(v: string) { this.majorSkillSearchChanges$.next(v ?? ''); }
-  setMajorSkillType(v: string)   { this.store.updateMajorSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadMajorSkills(); }
+  setMajorSkillType(v: string) { this.store.updateMajorSkillFilters({ skillTypeId: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillSubMajor(v: string) { this.store.updateMajorSkillFilters({ subMajorId: v, pageNumber: 1 }); this.loadMajorSkills(); }
   setMajorSkillParent(v: string | undefined) {
     this.store.updateMajorSkillFilters({ parentMajorId: v, subMajorId: '', pageNumber: 1 });
@@ -373,7 +367,7 @@ export class MajorsSkillsManagementFacade {
   }
 
   setMainMajorSearch(v: string) { this.mainMajorSearchChanges$.next(v ?? ''); }
-  setSubMajorSearch(v: string)  { this.subMajorSearchChanges$.next(v ?? ''); }
+  setSubMajorSearch(v: string) { this.subMajorSearchChanges$.next(v ?? ''); }
   setSubMajorParent(parent: MajorListItemModel | null) {
     this.store.selectedParentMajor.set(parent);
     this.store.updateSubMajorFilters({ parentMajorId: parent?.id ?? '', pageNumber: 1 });

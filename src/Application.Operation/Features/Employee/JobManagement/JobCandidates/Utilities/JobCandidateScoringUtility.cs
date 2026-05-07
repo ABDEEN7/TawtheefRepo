@@ -31,8 +31,8 @@ internal static class JobCandidateScoringUtility
                 Profile = p,
             };
 
-            var points = JobCandidatePointsCalculator.Calculate(candidate, jobPointsMain,jobDegrees,jobMajorId,jobSubMajorId,logger);
-            scored.Add(candidate with { Points = points });
+            var pointsBreakdown = JobCandidatePointsCalculator.CalculateBreakdown(candidate, jobPointsMain, jobDegrees, jobMajorId, jobSubMajorId, logger);
+            scored.Add(candidate with { Points = pointsBreakdown.TotalPoints, PointsBreakdown = pointsBreakdown });
         }
 
         return scored;

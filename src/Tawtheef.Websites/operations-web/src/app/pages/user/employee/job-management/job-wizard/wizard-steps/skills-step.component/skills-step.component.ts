@@ -69,6 +69,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
     const skillGroup = this.fb.group({
       skillId: ['', [Validators.required]],
       showToApplicants: [true, [Validators.required]],
+      isRequired: [true, [Validators.required]],
     });
 
     this.jobSkillsArray.push(skillGroup);
@@ -94,6 +95,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
         const skillGroup = this.fb.group({
           skillId: [skill.skillId, [Validators.required]],
           showToApplicants: [skill.showToApplicants ?? true, [Validators.required]],
+          isRequired: [skill.isRequired ?? true, [Validators.required]],
         });
 
         this.jobSkillsArray.push(skillGroup);
@@ -127,6 +129,7 @@ export class SkillsStepComponent extends WizardStepComponent implements OnInit {
         return {
           skillId: group.get('skillId')?.value || ('' as GUID),
           showToApplicants: !!group.get('showToApplicants')?.value,
+          isRequired: !!group.get('isRequired')?.value,
         };
       });
 

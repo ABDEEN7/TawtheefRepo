@@ -16,5 +16,6 @@ public record JobCandidateRecord
 
     public Guid? InvitationStatusId { get; init; } // or int? depending on your model
     public int Points { get; init; }
+    public JobCandidatePointsBreakdown? PointsBreakdown { get; init; }
     public DateTimeOffset? CreatedDate { get; init; }
 }

@@ -80,5 +80,115 @@
   "JOB_CANDIDATE_SPECIALIZATION_FILTER_DESCRIPTION": "يمكنك اختيار التخصصات التي ترغب في تصفية المرشحين بناءً عليها من القائمة التالية:",
   "JOB_CANDIDATE_MAIN_SPECIALIZATION": "التخصص الرئيسي",
   "JOB_CANDIDATE_FILTERS_ACTIVE_FILTERS": "الفلاتر النشطة",
-  "JOB_CANDIDATE_FILTERS_CLEAR_ALL": "مسح الكل"
+  "JOB_CANDIDATE_FILTERS_CLEAR_ALL": "مسح الكل",
+  "jobs": {
+    "candidateEligibility": {
+      "title": "التحقق من أهلية المرشح",
+      "searchPlaceholder": "البحث بالاسم أو الرقم الشخصي",
+      "startSearching": "يرجى إدخال الاسم أو الرقم الشخصي للبحث عن المرشحين",
+      "eligible": "مؤهل",
+      "notEligible": "غير مؤهل",
+      "table": {
+        "condition": "الشرط",
+        "expected": "المتوقع",
+        "actual": "الحالي",
+        "reason": "السبب"
+      },
+      "conditions": {
+        "PROFILE_APPROVED": "تم اعتماد الملف الشخصي",
+        "AVAILABLE_FOR_RECRUITMENT": "متاح للتوظيف",
+        "TARGET_ENTITY_MATCH": "تطابق الجهة المطلوبة",
+        "NO_ACTIVE_INVITATION": "لا توجد دعوة نشطة لهذه الوظيفة",
+        "GENDER_MATCH": "تطابق الجنس مع متطلبات الوظيفة",
+        "BIRTH_DATE_EXISTS": "تاريخ الميلاد موجود",
+        "AGE_WITHIN_RANGE": "العمر ضمن النطاق المسموح",
+        "QUALIFICATION_MATCH": "تطابق مستوى المؤهل",
+        "REQUIRED_SKILLS_MATCH": "يمتلك جميع المهارات المطلوبة"
+      }
+    }
+  },
+  "candidateEligibility": {
+    "errors": {
+      "JOB_NOT_FOUND": "الوظيفة غير موجودة.",
+      "CANDIDATE_NOT_FOUND": "المرشح غير موجود."
+    },
+    "statuses": {
+      "PASSED": "ناجح",
+      "FAILED": "فشل",
+      "NOT_APPLICABLE": "غير قابل للتطبيق"
+    },
+    "values": {
+      "UNKNOWN": "غير معروف",
+      "NONE": "لا يوجد",
+      "ALL": "الكل",
+      "APPROVED": "معتمد",
+      "NOT_APPROVED": "غير معتمد",
+      "AVAILABLE": "متاح",
+      "NOT_AVAILABLE": "غير متاح",
+      "NO_ACTIVE_INVITATION": "لا توجد دعوة نشطة",
+      "HAS_ACTIVE_INVITATION": "توجد دعوة نشطة",
+      "BIRTH_DATE_EXISTS": "تاريخ الميلاد موجود",
+      "MISSING": "مفقود",
+      "MISSING_BIRTH_DATE": "تاريخ الميلاد مفقود",
+      "age": "{{age}} سنة",
+      "ageRange": "من {{min}} إلى {{max}}",
+      "qualificationIds": "{{ids}}",
+      "skillIds": "{{ids}}",
+      "MALE": "ذكر",
+      "FEMALE": "أنثى"
+    },
+    "conditions": {
+      "profileApproved": {
+        "label": "الملف الشخصي معتمد",
+        "failureReason": "يجب أن يكون الملف الشخصي معتمداً ليتم الترشيح للوظائف."
+      },
+      "availableForRecruitment": {
+        "label": "متاح للتوظيف",
+        "failureReason": "المرشح غير متاح حالياً للتوظيف."
+      },
+      "targetEntityMatch": {
+        "label": "الجهة المستهدفة تطابق جهة الوظيفة",
+        "failureReason": "الجهة المستهدفة للمرشح لا تتطابق مع جهة العمل الخاصة بهذه الوظيفة."
+      },
+      "noActiveInvitation": {
+        "label": "لا توجد دعوة نشطة لهذه الوظيفة",
+        "failureReason": "المرشح لديه دعوة نشطة بالفعل لهذه الوظيفة."
+      },
+      "genderMatch": {
+        "label": "الجنس يطابق متطلبات الوظيفة",
+        "failureReason": "جنس المرشح لا يتوافق مع متطلبات الجنس المحددة لهذه الوظيفة."
+      },
+      "birthDateExists": {
+        "label": "تاريخ الميلاد موجود",
+        "failureReason": "تاريخ الميلاد غير مسجل في ملف المرشح."
+      },
+      "ageWithinRange": {
+        "label": "العمر ضمن النطاق المسموح",
+        "failureReason": "عمر المرشح ({{age}}) خارج النطاق المطلوب لهذه الوظيفة.",
+        "missingBirthDateReason": "لا يمكن حساب العمر بسبب فقدان تاريخ الميلاد."
+      },
+      "qualificationMatch": {
+        "label": "يمتلك المؤهل العلمي المطلوب",
+        "failureReason": "لا يمتلك المرشح المؤهل العلمي المطلوب لهذه الوظيفة: {{missing}}."
+      },
+      "requiredSkillsMatch": {
+        "label": "يمتلك جميع المهارات المطلوبة",
+        "failureReason": "يفتقد المرشح للمهارات المطلوبة لهذه الوظيفة: {{missing}}."
+      }
+    }
+  },
+  "JOB_CANDIDATE_PROFILE_LOADING": "جارٍ تحميل ملف المرشح...",
+  "JOB_CANDIDATE_PROFILE_TOTAL_SCORE": "إجمالي النقاط",
+  "JOB_CANDIDATE_PROFILE_STRONGEST_AREA": "أقوى مجال",
+  "JOB_CANDIDATE_PROFILE_EMPTY_TITLE": "لم يتم العثور على ملف المرشح",
+  "JOB_CANDIDATE_PROFILE_EMPTY_DESCRIPTION": "تعذر عرض تفاصيل المرشح.",
+  "CANDIDATE_POINTS_BREAKDOWN_TITLE": "توزيع نقاط المرشح",
+  "CANDIDATE_POINTS_TOTAL_SCORE": "إجمالي النقاط",
+  "CANDIDATE_POINTS_NO_DATA": "لا تتوفر بيانات نقاط لهذا المرشح.",
+  "JOB_CANDIDATE_BUTTONS_VIEW_SCORE_DETAILS": "عرض تفاصيل النقاط",
+  "CANDIDATE_POINTS_DETAILS_TITLE": "تفاصيل منهجية احتساب النقاط",
+  "CANDIDATE_POINTS_SECTION": "القسم",
+  "CANDIDATE_POINTS_DESCRIPTION": "الوصف",
+  "CANDIDATE_POINTS_VALUE": "النقاط",
+  "CANDIDATE_POINTS_BREAKDOWN_SUBTITLE": "مراجعة تفاصيل احتساب النقاط بناءً على المعايير المعتمدة"
 }

@@ -165,7 +165,7 @@ export class JobService {
     }
   }
 
-  updateCurrentJobSkills(skills: { skillId: GUID; showToApplicants: boolean }[]): void {
+  updateCurrentJobSkills(skills: { skillId: GUID; showToApplicants: boolean; isRequired: boolean }[]): void {
     const current = this.currentJob();
     if (current) {
       this.currentJob.set({
@@ -490,6 +490,7 @@ export class JobService {
       skills: jobResponse.skills.map((s) => ({
         skillId: s.skillId,
         showToApplicants: s.showToApplicants,
+        isRequired: s.isRequired,
       })),
       requiredAttachments: jobResponse.requiredAttachments.map((a) => ({
         titleAr: a.titleAr,

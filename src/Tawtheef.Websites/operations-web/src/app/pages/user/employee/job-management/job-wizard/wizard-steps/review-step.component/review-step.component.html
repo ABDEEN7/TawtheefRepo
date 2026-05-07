@@ -206,6 +206,10 @@
               {{ skill.showToApplicants ? ('JOB_WIZARD.STEPS.REVIEW.SKILL_SHOWN' | translate) :
               ('JOB_WIZARD.STEPS.REVIEW.SKILL_HIDDEN' | translate) }}
             </span>
+            <span class="badge ms-1" [ngClass]="skill.isRequired ? 'bg-danger' : 'bg-info'">
+              {{ skill.isRequired ? ('JOB_WIZARD.STEPS.SKILLS.REQUIRED' | translate) :
+              ('JOB_WIZARD.STEPS.SKILLS.OPTIONAL' | translate) }}
+            </span>
           </div>
         </div>
         }

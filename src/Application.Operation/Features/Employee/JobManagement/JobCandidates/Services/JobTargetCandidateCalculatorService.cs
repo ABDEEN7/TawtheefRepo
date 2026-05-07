@@ -8,7 +8,7 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 
 public class JobTargetCandidateCalculatorService(IUnitOfWork unitOfWork) : IJobTargetCandidateCalculatorService
 {
-    public async Task<int> GetTargetCountAsync( Guid jobCategoryId,int numberOfVacancies)
+    public async Task<int> GetTargetCountAsync(Guid jobCategoryId, int numberOfVacancies)
     {
         var settings = await unitOfWork
             .GetEntityRepository<JobCategoryCandidateSettings>()

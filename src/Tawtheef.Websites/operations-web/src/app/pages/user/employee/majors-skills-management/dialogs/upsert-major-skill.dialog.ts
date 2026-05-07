@@ -36,7 +36,6 @@ type Vm = {
   parentMajorId: string;
   subMajorId: string;
   skillId: string;
-  isSkillRequired: boolean;
   isActive: boolean;
 };
 
@@ -120,15 +119,6 @@ type Vm = {
           </div>
 
           <div class="col-12 col-md-6 d-flex align-items-end justify-content-between gap-3">
-            <div class="d-flex align-items-center gap-2">
-              <p-toggle-switch
-                [(ngModel)]="vm().isSkillRequired"
-                (ngModelChange)="patchVm({ isSkillRequired: $event })"
-                name="isSkillRequired">
-              </p-toggle-switch>
-              <span>{{ 'MAJORS_SKILLS.FIELD_REQUIRED' | translate }}</span>
-            </div>
-
             <div class="d-flex align-items-center gap-2">
               <p-toggle-switch
                 [(ngModel)]="vm().isActive"
@@ -236,7 +226,6 @@ export class UpsertMajorSkillDialogComponent {
       id: v.id ?? undefined,
       majorId: majorIdToSave,
       skillId: v.skillId,
-      isSkillRequired: v.isSkillRequired,
       isActive: v.isActive,
     });
   }
@@ -264,7 +253,6 @@ export class UpsertMajorSkillDialogComponent {
       parentMajorId: preParent || parentFromModel,
       subMajorId: preSub || subFromModel,
       skillId: model?.skillId ?? model?.skill?.id ?? '',
-      isSkillRequired: !!model?.isSkillRequired,
       isActive: (model?.isActive ?? true),
     };
   }

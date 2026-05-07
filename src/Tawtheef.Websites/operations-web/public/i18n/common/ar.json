@@ -1,4 +1,6 @@
 {
+  "common.status": "الحالة",
+  "common.noResults": "لا توجد نتائج",
   "common.search": "البحث",
   "common.warning": "تحذير",
   "NO_RECORDS": "لا توجد سجلات",

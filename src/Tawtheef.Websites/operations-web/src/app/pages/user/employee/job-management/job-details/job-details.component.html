@@ -72,7 +72,7 @@
         <div class="row">
           <div class="col-lg-8 col-md-12 mb-4">
             <div class="card card-table">
-              <div class="card-body pb-0">
+              <div class="card-body">
                 <h5 class="mb-4 text-primary">
                   <i class="fa" [ngClass]="getTabContent().icon"></i>
                   {{ getTabContent().title | translate }}
@@ -169,14 +169,25 @@
                       </div>
                       }
 
-                      @if (getSpecializationRequirements()) {
+                      @if (getSpecializationRequirements().length > 0) {
                       <div class="col-12">
-                        <div class="basic-data-item p-3 shadow-sm border-0 bg-light rounded-3">
-                          <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="hgi-stroke hgi-star text-primary"></i>
-                            <span class="label mb-0">{{ 'JOB_DETAILS.SPECIALIZATIONS' | translate }}</span>
+                        <div class="basic-data-item p-4 shadow-sm border-0 bg-white rounded-4">
+                          <div class="d-flex align-items-center gap-3 mb-3">
+                            <h6 class="label mb-0 text-muted small uppercase fw-bold">{{ 'JOB_DETAILS.SPECIALIZATIONS' |
+                              translate }}</h6>
                           </div>
-                          <span class="value d-block ps-4 fw-bold text-dark">{{ getSpecializationRequirements() }}</span>
+                          <div class="d-flex flex-wrap gap-2">
+                            @for (spec of getSpecializationRequirements(); track spec.id) {
+                            <div
+                              class="spec-chip bg-light p-2 px-3 rounded-pill border d-flex align-items-center gap-2">
+                              <span class="fw-medium text-dark">{{ spec.major.name }}</span>
+                              @if (spec.subMajor) {
+                              <i class="hgi-stroke hgi-arrow-right-01 small text-muted"></i>
+                              <span class="text-secondary small">{{ spec.subMajor.name }}</span>
+                              }
+                            </div>
+                            }
+                          </div>
                         </div>
                       </div>
                       }
@@ -210,58 +221,68 @@
                     @if (activeTab === tabType.Conditions) {
                     @if (getJobConditions().length > 0) {
                     <div class="basic-requirements">
-                      <h5>{{ 'JOB_DETAILS.CONDITIONS' | translate }}</h5>
-                      @for (condition of getJobConditions(); track $index) {
-                      <div class="row">
-                        <div class="col-lg-6 col-md-12 mb-4">
-                          <div class="dual-text-container m-0 w-100 d-block">
-                            <div class="text-area">
-                              <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                              <div [innerHTML]="condition.textAr"></div>
+                      <div class="d-flex flex-column gap-4">
+                        @for (condition of getJobConditions(); track $index) {
+                        <div
+                          class="condition-item p-4 bg-white rounded-4 shadow-sm border-start border-4 border-primary">
+                          <div class="row g-4">
+                            <div class="col-lg-6">
+                              <div class="text-area">
+                                <h6 class="text-primary-emphasis mb-3 d-flex align-items-center gap-2">
+                                  <i class="hgi-stroke hgi-bubble-chat-dots-02"></i>
+                                  {{ 'JOB_DETAILS.ARABIC' | translate }}
+                                </h6>
+                                <div class="p-3 bg-light rounded-3" [innerHTML]="condition.textAr"></div>
+                              </div>
+                            </div>
+                            <div class="col-lg-6">
+                              <div class="text-area">
+                                <h6 class="text-primary-emphasis mb-3 d-flex align-items-center gap-2">
+                                  <i class="hgi-stroke hgi-bubble-chat-dots-02"></i>
+                                  {{ 'JOB_DETAILS.ENGLISH' | translate }}
+                                </h6>
+                                <div class="p-3 bg-light rounded-3" [innerHTML]="condition.textEn"></div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <div class="col-lg-6 col-md-12 mb-4">
-                          <div class="dual-text-container m-0 w-100 d-block">
-
-                            <div class="text-area">
-                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                              <div [innerHTML]="condition.textEn"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12 mb-4">
-                          <div class="dual-text-container m-0 w-100 d-block">
-
-                            <div class="text-area">
-                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                              <div [innerHTML]="condition.textEn"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12 mb-4">
-                          <div class="dual-text-container m-0 w-100 d-block">
-
-                            <div class="text-area">
-                              <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                              <div [innerHTML]="condition.textEn"></div>
-                            </div>
-                          </div>
-                        </div>
+                        }
                       </div>
-
-
-                      }
+                    </div>
+                    } @else {
+                    <div class="text-center py-5 text-muted">
+                      <i class="hgi-stroke hgi-clipboard-list-01 fs-1 mb-3 d-block opacity-25"></i>
+                      <p>{{ 'JOB_DETAILS.NO_CONDITIONS' | translate }}</p>
                     </div>
                     }
                     }
                     @if (activeTab === tabType.Skills) {
                     @if (getJobSkills().length > 0) {
-                    <ul>
-                      @for (skill of getJobSkills(); track $index) {
-                      <li>{{ skill }}</li>
-                      }
-                    </ul>
+                    <div class="skills-container p-3 bg-white rounded-4 shadow-sm">
+                      <div class="d-flex flex-wrap gap-3">
+                        @for (jobSkill of getJobSkills(); track jobSkill.id) {
+                        <div
+                          class="skill-pill d-flex align-items-center bg-light border rounded-pill overflow-hidden shadow-sm hover-elevate transition-all">
+                          <div class="skill-icon bg-primary text-white p-2 px-3">
+                            <i class="hgi-stroke hgi-settings-02"></i>
+                          </div>
+                          <div class="skill-info p-2 px-3 d-flex align-items-center gap-2">
+                            <span class="fw-medium text-dark">{{ jobSkill.skill.name }}</span>
+                            <!-- Assuming required is handled by backend or default to true if showToApplicants is true -->
+                            <span
+                              class="badge rounded-pill bg-success-subtle text-success small border border-success-subtle">
+                              {{ 'JOB_DETAILS.MANDATORY' | translate }}
+                            </span>
+                          </div>
+                        </div>
+                        }
+                      </div>
+                    </div>
+                    } @else {
+                    <div class="text-center py-5 text-muted">
+                      <i class="hgi-stroke hgi-settings-02 fs-1 mb-3 d-block opacity-25"></i>
+                      <p>{{ 'JOB_DETAILS.NO_SKILLS' | translate }}</p>
+                    </div>
                     }
                     }
                     @if (activeTab === tabType.Benefits) {
@@ -290,22 +311,38 @@
                     }
                     @if (activeTab === tabType.Attachments) {
                     @if (job.requiredAttachments && job.requiredAttachments.length) {
-                    @for (attachment of job.requiredAttachments; track $index) {
-                    <div class="dual-text-container">
-                      <div class="attachmentAr">
-                        <h6>{{ 'JOB_DETAILS.ARABIC' | translate }}</h6>
-                        <div [innerHTML]="attachment.titleAr"></div>
+                    <div class="d-flex flex-column gap-3">
+                      @for (attachment of job.requiredAttachments; track $index) {
+                      <div
+                        class="attachment-card p-4 bg-white rounded-4 shadow-sm border border-light-subtle hover-elevate transition-all">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                          <div class="d-flex align-items-center gap-3 flex-grow-1">
+                            <div class="icon-box bg-primary-subtle p-3 rounded-circle text-primary">
+                              <i class="hgi-stroke hgi-file-02 fs-4"></i>
+                            </div>
+                            <div class="attachment-names">
+                              <h6 class="mb-1 fw-bold text-dark">{{ attachment.titleAr }}</h6>
+                              <p class="mb-0 text-muted small">{{ attachment.titleEn }}</p>
+                            </div>
+                          </div>
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="mandatory-badge d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+                              [ngClass]="attachment.isMandatory ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle'">
+                              <i class="hgi-stroke"
+                                [ngClass]="attachment.isMandatory ? 'hgi-alert-circle' : 'hgi-information-circle'"></i>
+                              <span class="small fw-bold">{{ attachment.isMandatory ? ('JOB_DETAILS.MANDATORY' |
+                                translate) : ('JOB_DETAILS.OPTIONAL' | translate) }}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="attachmentEn">
-                        <h6>{{ 'JOB_DETAILS.ENGLISH' | translate }}</h6>
-                        <div [innerHTML]="attachment.titleEn"></div>
-                      </div>
-                      <div class="form-check form-switch m-0">
-                        <input class="form-check-input switch-lg" disabled="true" type="checkbox"
-                          [(ngModel)]="attachment.isMandatory" />
-                      </div>
+                      }
                     </div>
-                    }
+                    } @else {
+                    <div class="text-center py-5 text-muted">
+                      <i class="hgi-stroke hgi-attachment-01 fs-1 mb-3 d-block opacity-25"></i>
+                      <p>{{ 'JOB_DETAILS.NO_ATTACHMENTS_REQUIRED' | translate }}</p>
+                    </div>
                     }
                     }
                   </div>
@@ -346,7 +383,8 @@
 
                     <div class="info-list-item">
                       <span class="label">{{ 'JOB_DETAILS.CREATED_BY' | translate }}</span>
-                      <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_DETAILS.SYSTEM' | translate) }}</span>
+                      <span class="value text-primary fw-medium">{{ job.createdByName || ('JOB_DETAILS.SYSTEM' |
+                        translate) }}</span>
                     </div>
                   </div>
                 </div>

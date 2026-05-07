@@ -26,6 +26,8 @@ import { Permissions } from '../../../../../core/constants/permissions';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
 import { JobCandidatesSpecializationFilterModalComponent } from '../modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
+import { CandidateEligibilityCheckDialogComponent } from '../modals/candidate-eligibility-check-dialog/candidate-eligibility-check-dialog.component';
+import { CandidatePointsBreakdownDialogComponent } from '../modals/candidate-points-breakdown-dialog/candidate-points-breakdown-dialog.component';
 import { SystemRoles } from '../../../../../core/constants/systemRoles';
 
 @Component({
@@ -182,9 +184,43 @@ export class JobCandidatesComponent implements OnInit {
       },
       header: this.translationService.instant('JOB_CANDIDATE_PROFILE_TITLE'),
       modal: true,
+      closable: true,
       dismissableMask: true,
       width: 'min(960px, 95vw)',
       draggable: false,   // ✅ disables dragging
+      contentStyle: { 'max-height': '85vh', overflow: 'auto' },
+    });
+  }
+
+  viewPointsBreakdown(candidate: JobCandidateListItem) {
+    if (!this.canViewJobs()) return;
+    this.dialogService.open(CandidatePointsBreakdownDialogComponent, {
+      data: {
+        jobId: this.jobId,
+        candidateId: candidate.candidateId,
+        candidateName: candidate.candidateName,
+      },
+      header: this.translationService.instant('CANDIDATE_POINTS_BREAKDOWN_TITLE'),
+      modal: true,
+      closable: true,
+      dismissableMask: true,
+      draggable: false,
+      contentStyle: { 'max-height': '85vh', overflow: 'auto' },
+    });
+  }
+
+  openEligibilityCheckDialog(): void {
+    if (!this.canViewJobs()) return;
+    this.dialogService.open(CandidateEligibilityCheckDialogComponent, {
+      data: {
+        jobId: this.jobId
+      },
+      header: this.translationService.instant('jobs.candidateEligibility.title'),
+      modal: true,
+      closable: true,
+      dismissableMask: true,
+      width: '50rem',
+      draggable: false,
       contentStyle: { 'max-height': '85vh', overflow: 'auto' },
     });
   }
@@ -279,7 +315,7 @@ export class JobCandidatesComponent implements OnInit {
       this.saveFilterSettings();
     });
   }
-  
+
   openSpecializationFilter(): void {
     const ref = this.dialogService.open(JobCandidatesSpecializationFilterModalComponent, {
       header: this.translationService.instant('JOB_CANDIDATE_FILTERS_SPECIALIZATION_TITLE'),

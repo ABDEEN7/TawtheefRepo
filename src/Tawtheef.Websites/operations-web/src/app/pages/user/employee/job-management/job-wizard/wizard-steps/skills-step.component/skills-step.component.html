@@ -35,7 +35,7 @@
 
               <div class="row align-items-end" [formGroupName]="i">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">
                     {{ 'JOB_WIZARD.STEPS.SKILLS.SKILL_NAME' | translate }}
                   </label>
@@ -53,7 +53,7 @@
                   }
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">
                     {{ 'JOB_WIZARD.STEPS.SKILLS.SHOW_TO_APPLICANTS' | translate }}
                   </label>
@@ -75,7 +75,30 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-3">
+                  <label class="form-label">
+                    {{ 'JOB_WIZARD.STEPS.SKILLS.IS_REQUIRED' | translate }}
+                  </label>
+                  <div class="grey-div">
+                    <div class="form-check-inline">
+                      <p-radioButton name="isRequired{{ i }}" [value]="true" formControlName="isRequired"
+                        inputId="requiredYes{{ i }}"></p-radioButton>
+                      <label class="ms-2" for="requiredYes{{ i }}">
+                        {{ 'JOB_WIZARD.STEPS.SKILLS.REQUIRED' | translate }}
+                      </label>
+                    </div>
+
+                    <div class="form-check-inline ms-4">
+                      <p-radioButton name="isRequired{{ i }}" [value]="false" formControlName="isRequired"
+                        inputId="requiredNo{{ i }}"></p-radioButton>
+                      <label class="ms-2" for="requiredNo{{ i }}">
+                        {{ 'JOB_WIZARD.STEPS.SKILLS.OPTIONAL' | translate }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-1">
                   <button type="button" class="btn btn-outline-primary btn-sm" (click)="removeSkill(i)"
                     [disabled]="form.disabled" [title]="'JOB_WIZARD.STEPS.SKILLS.REMOVE' | translate">
                     <i class="hgi hgi-stroke hgi-delete-02"></i>

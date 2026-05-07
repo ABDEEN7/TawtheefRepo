@@ -1,5 +1,7 @@
 {
-  "common.search":"Search",
+  "common.status": "Status",
+  "common.noResults": "No results found",
+  "common.search": "Search",
   "common.warning": "warning",
   "NO_RECORDS": "No Records",
   "common.close": "Close",

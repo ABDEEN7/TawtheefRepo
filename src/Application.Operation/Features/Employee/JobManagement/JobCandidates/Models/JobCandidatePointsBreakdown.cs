@@ -9,6 +9,8 @@ public sealed record JobCandidatePointsBreakdown(
     int LanguagePoints,
     int CertificatePoints)
 {
+    public List<PointDetailDto> Details { get; init; } = new();
+
     public int TotalPoints =>
         CategoryPoints +
         EducationPoints +

@@ -2,7 +2,8 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Recruitment.JobDetails;
+using JobSpecialization = Application.Operation.Features.Employee.JobManagement.JobCandidates.Models.JobSpecialization;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 
@@ -10,40 +11,38 @@ public class JobRequirementsService(IUnitOfWork unitOfWork) : IJobRequirementsSe
 {
     public async Task<JobRequirements> GetAsync(Tawtheef.Domain.Entities.Recruitment.Job job)
     {
-        var majorIds = new List<Guid>();
-        if (job.MajorId.HasValue && job.MajorId.Value != Guid.Empty)
-            majorIds.Add(job.MajorId.Value);
-
-        if (job.SubMajorId.HasValue && job.SubMajorId.Value != Guid.Empty)
-            majorIds.Add(job.SubMajorId.Value);
-        
-        var jobSpecializations = job.JobSpecializations?.Select(js =>
-                new JobSpecialization(js.MajorId, js.SubMajorId))
+        var jobSpecializations = job.JobSpecializations?
+            .Select(js => new JobSpecialization(js.MajorId, js.SubMajorId))
             .ToList() ?? [];
-        jobSpecializations.ForEach(js =>
-        {
-            if (js.MajorId != Guid.Empty && !majorIds.Contains(js.MajorId))
-                majorIds.Add(js.MajorId);
-            if (js.SubMajorId != Guid.Empty && !majorIds.Contains(js.SubMajorId))
-                majorIds.Add(js.SubMajorId);
-        });
 
-        List<Guid> requiredSkillIds = [];
+        var majorIds = new[]
+            {
+                job.MajorId,
+                job.SubMajorId
+            }
+            .Where(id => id.HasValue && id.Value != Guid.Empty)
+            .Select(id => id!.Value)
+            .Concat(jobSpecializations.SelectMany(js => new[] { js.MajorId, js.SubMajorId }))
+            .Where(id => id != Guid.Empty)
+            .Distinct()
+            .ToList();
 
         var qualificationLevelIds = job.JobDegrees
-            .Select(jd => jd.DegreeId).ToList();
-        
-        if (majorIds.Count > 0)
-        {
-            requiredSkillIds = await unitOfWork.GetEntityRepository<MajorSkill>().DbSet
-                .AsNoTracking()
-                .Where(ms => majorIds.Contains(ms.MajorId) && ms.IsActive && ms.IsSkillRequired)
-                .Select(ms => ms.SkillId)
-                .Distinct()
-                .ToListAsync();
-        }
+            .Select(jd => jd.DegreeId)
+            .ToList();
 
-        return new JobRequirements(job.MajorId, job.SubMajorId, 
-            jobSpecializations, qualificationLevelIds, requiredSkillIds);
+        var requiredSkillIds = await unitOfWork.GetEntityRepository<JobSkill>().DbSet
+            .AsNoTracking()
+            .Where(js => js.JobId == job.Id && js.IsRequired)
+            .Select(js => js.SkillId)
+            .Distinct()
+            .ToListAsync();
+
+        return new JobRequirements(
+            job.MajorId,
+            job.SubMajorId,
+            jobSpecializations,
+            qualificationLevelIds,
+            requiredSkillIds);
     }
 }

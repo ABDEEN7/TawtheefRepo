@@ -112,7 +112,6 @@
         <tr>
           <th>{{ 'MAJORS_SKILLS.MAJOR_SUBMAJOR_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
-          <th>{{ 'MAJORS_SKILLS.SKILL_REQUIRED' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
         </tr>
@@ -142,13 +141,6 @@
           <td>{{ item.skill?.name ?? '-' }}</td>
 
           <td>
-            <p-toggle-switch
-              [ngModel]="item.isSkillRequired"
-              (ngModelChange)="service.changeMajorSkillRequirement(item.id, $event, item.isActive)">
-            </p-toggle-switch>
-          </td>
-
-          <td>
           <span class="pill" [class.success]="item.isActive" [class.danger]="!item.isActive">
             {{ item.isActive ? ('MAJORS_SKILLS.ACTIVE' | translate) : ('MAJORS_SKILLS.INACTIVE' | translate) }}
           </span>
@@ -175,7 +167,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
+          <td colspan="4" class="text-center text-muted">{{ 'MAJORS_SKILLS.NO_RECORDS' | translate }}</td>
         </tr>
       </ng-template>
     </p-table></div>

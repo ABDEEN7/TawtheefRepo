@@ -61,7 +61,10 @@ public class UpdateJobSkillsCommandHandler(
         foreach (var existing in existsSkills)
         {
             if (newLookup.TryGetValue(existing.SkillId, out var dto))
+            {
                 existing.ShowToApplicants = dto.ShowToApplicants;
+                existing.IsRequired = dto.IsRequired;
+            }
         }
 
         // Add new items
@@ -71,7 +74,8 @@ public class UpdateJobSkillsCommandHandler(
             {
                 JobId = jobId,
                 SkillId = dto.SkillId,
-                ShowToApplicants = dto.ShowToApplicants
+                ShowToApplicants = dto.ShowToApplicants,
+                IsRequired = dto.IsRequired
             },ct);
         }
     }

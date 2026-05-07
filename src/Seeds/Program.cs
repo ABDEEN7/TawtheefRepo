@@ -1024,7 +1024,6 @@ internal sealed class ImportRunner
                     Id = Guid.NewGuid(),
                     MajorId = majorId,
                     SkillId = skillId,
-                    IsSkillRequired = false,
                     IsActive = true,
                     IsDeleted = false,
                     CreatedById = createdById,

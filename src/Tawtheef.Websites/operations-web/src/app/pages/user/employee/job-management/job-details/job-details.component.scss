@@ -35,3 +35,67 @@
         cursor: not-allowed;
     }
 }
+
+.hover-elevate {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+.icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.spec-chip {
+    transition: all 0.2s ease;
+    cursor: default;
+
+    &:hover {
+        background-color: var(--bs-warning-subtle) !important;
+        border-color: var(--bs-warning) !important;
+    }
+}
+
+.skill-pill {
+    .skill-icon {
+        background: linear-gradient(135deg, #8a1538, #6c0027);
+    }
+
+    &:hover {
+        border-color: #8a1538 !important;
+    }
+}
+
+.attachment-card {
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+
+    .icon-box {
+        background: linear-gradient(135deg, rgba(138, 21, 56, 0.1), rgba(138, 21, 56, 0.05));
+    }
+}
+
+.condition-item {
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+
+    .text-area div {
+        line-height: 1.6;
+        color: #444;
+    }
+}
+
+.uppercase {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+:host-context(html[dir='rtl']) .hgi-arrow-right-01::before {
+    content: "\3b6a";
+}

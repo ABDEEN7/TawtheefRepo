@@ -174,7 +174,13 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.JobTitle)
             .Include(j => j.Major)
             .Include(j => j.SubMajor)
+            .Include(j => j.WorkLocation)
+            .Include(j => j.Gender)
             .Include(j => j.JobDegrees)
+                .ThenInclude(d => d.Degree)
+            .Include(j => j.JobSkills)
+                .ThenInclude(s => s.Skill)
             .FirstOrDefaultAsync(j => j.Id == jobId);
     }
+
 }

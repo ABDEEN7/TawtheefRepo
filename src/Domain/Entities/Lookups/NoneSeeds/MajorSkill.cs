@@ -14,7 +14,5 @@ public class MajorSkill : EventEntity
     
     public Guid SkillId { get; init; }
     public Skill? Skill { get; init; }
-
-    public bool IsSkillRequired { get; set; } = false;
     public bool IsActive { get; set; } = true;
 }

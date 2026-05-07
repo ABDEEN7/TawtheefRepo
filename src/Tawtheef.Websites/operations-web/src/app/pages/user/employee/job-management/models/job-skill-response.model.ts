@@ -7,6 +7,7 @@ export interface JobSkillResponse {
   skillId: GUID;
   skill: dropdownOptionsModel;
   showToApplicants: boolean;
+  isRequired: boolean;
   createdDate: Date;
   lastModifiedDate?: Date;
 }

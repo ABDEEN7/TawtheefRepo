@@ -9,6 +9,5 @@ public record MajorSkillDetailsDto(
     MajorDetailsDto Major,
     Guid SkillId,
     DropdownOptions Skill,
-    bool IsSkillRequired,
     bool IsActive
 );

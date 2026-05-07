@@ -14,6 +14,8 @@ import {
 import { JobCandidatesFilterSettings } from '../models/job-candidates-filter-settings.model';
 import { JobCandidatesResponse } from '../models/job-candidates-response';
 import { JobCandidateProfile } from '../models/job-candidate-profile.model';
+import { CandidateSearchDto } from '../models/candidate-search.model';
+import { CandidateEligibilityResult } from '../models/candidate-eligibility-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobCandidatesService {
@@ -71,5 +73,18 @@ export class JobCandidatesService {
       jobId,
       candidateId,
     });
+  }
+
+  checkCandidateEligibility(jobId: GUID, candidateId: GUID): Observable<CandidateEligibilityResult> {
+    return this.http.get<CandidateEligibilityResult>(
+      this.endpoints.jobCandidates.eligibilityCheck(jobId, candidateId)
+    );
+  }
+
+  searchAllCandidates(searchTerm: string): Observable<CandidateSearchDto[]> {
+    return this.http.get<CandidateSearchDto[]>(
+      this.endpoints.jobCandidates.searchAllCandidates,
+      { searchTerm }
+    );
   }
 }

@@ -55,6 +55,8 @@ import { MenuModule } from 'primeng/menu';
 import { DrawerModule } from 'primeng/drawer';
 import { CheckboxModule } from 'primeng/checkbox';
 import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
+import { CandidateEligibilityCheckDialogComponent } from './modals/candidate-eligibility-check-dialog/candidate-eligibility-check-dialog.component';
+import { CandidatePointsBreakdownDialogComponent } from './modals/candidate-points-breakdown-dialog/candidate-points-breakdown-dialog.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +85,8 @@ import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-ca
     JobCandidatesNationalityBreakdownDialogComponent,
     JobPointsReviewPageComponent,
     JobCandidatesSpecializationFilterModalComponent,
+    CandidateEligibilityCheckDialogComponent,
+    CandidatePointsBreakdownDialogComponent
   ],
     imports: [
         RouterModule.forChild(jobRoutes),
