@@ -156,7 +156,7 @@
   "dashboard.candidates.totalNote": "يشمل جميع الملفات المسجلة والمقدمة والمعتمدة والمرجعة والمرفوضة ضمن النطاق الحالي.",
   "dashboard.candidates.returnedRejected": "مرجعة أو مرفوضة",
   "dashboard.candidates.typeTitle": "أنواع المرشحين",
-  "dashboard.candidates.typeSubtitle": "توزيع أنواع المرشحين من بيانات الملفات الفعلية.",
+  "dashboard.candidates.typeSubtitle": "توزيع أنواع المرشحين من بيانات الملفات المعتمدة.",
   "dashboard.candidateTypes.qatari": "مرشحون قطريون",
   "dashboard.candidateTypes.nonQatari": "مرشحون غير قطريين",
   "dashboard.candidateTypes.sonOfQatariMother": "أبناء القطريات",

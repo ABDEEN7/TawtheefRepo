@@ -162,7 +162,7 @@
   "dashboard.candidates.totalNote": "Includes all registered, submitted, approved, returned, and rejected profiles in the current scope.",
   "dashboard.candidates.returnedRejected": "Returned or rejected",
   "dashboard.candidates.typeTitle": "Candidate types",
-  "dashboard.candidates.typeSubtitle": "Candidate type distribution from the live profile data.",
+  "dashboard.candidates.typeSubtitle": "Candidate type distribution from the approved profile data.",
   "dashboard.candidateTypes.qatari": "Qatari candidates",
   "dashboard.candidateTypes.nonQatari": "Non-Qatari candidates",
   "dashboard.candidateTypes.sonOfQatariMother": "Children of Qatari mothers",

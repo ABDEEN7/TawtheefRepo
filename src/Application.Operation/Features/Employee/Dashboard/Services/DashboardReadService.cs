@@ -651,6 +651,7 @@ public sealed class DashboardReadService(
         };
 
         var raw = await profileQuery
+            .Where(p=> p.Status == UserProfileStatus.Approved)
             .GroupBy(x => new { x.CandidateTypeId, Label = x.CandidateType != null ? x.CandidateType.NameEn : "N/A" })
             .Select(g => new { g.Key.CandidateTypeId, g.Key.Label, Count = g.Count() })
             .ToListAsync(ct);
