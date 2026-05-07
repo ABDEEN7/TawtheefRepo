@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../../../../core/http/http.service';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
@@ -77,7 +77,9 @@ export class JobCandidatesService {
 
   checkCandidateEligibility(jobId: GUID, candidateId: GUID): Observable<CandidateEligibilityResult> {
     return this.http.get<CandidateEligibilityResult>(
-      this.endpoints.jobCandidates.eligibilityCheck(jobId, candidateId)
+      this.endpoints.jobCandidates.eligibilityCheck(jobId, candidateId), null, {
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    }
     );
   }
 

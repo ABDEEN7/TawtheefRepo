@@ -1,8 +1,16 @@
 <div class="dialog-content animate__animated animate__fadeIn" i18nNamespace="pages/job-candidates">
   
-  <div class="loading-state py-5 text-center" *ngIf="isLoading">
-    <i class="pi pi-spin pi-spinner fs-40 text-primary mb-3"></i>
-    <p class="text-muted">{{ 'common.loading' | translate }}</p>
+  <!-- Enhanced Loading Overlay -->
+  <div class="loading-overlay d-flex flex-column align-items-center justify-content-center" *ngIf="isLoading">
+    <div class="logo-container mb-3">
+      <img src="assets/img/logo.png" alt="Logo" class="loading-logo">
+    </div>
+    <div class="loading-text fw-bold text-primary">
+      {{ 'common.loading' | translate }}...
+    </div>
+    <div class="progress-bar-container mt-3">
+      <div class="progress-bar-inner"></div>
+    </div>
   </div>
 
   <div class="content-state" *ngIf="!isLoading && result?.pointsBreakdown">

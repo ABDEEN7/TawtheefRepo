@@ -205,6 +205,7 @@ export class JobCandidatesComponent implements OnInit {
       closable: true,
       dismissableMask: true,
       draggable: false,
+      width: 'min(1100px, 95vw)',
       contentStyle: { 'max-height': '85vh', overflow: 'auto' },
     });
   }
@@ -219,7 +220,7 @@ export class JobCandidatesComponent implements OnInit {
       modal: true,
       closable: true,
       dismissableMask: true,
-      width: '50rem',
+      width: 'min(1100px, 95vw)',
       draggable: false,
       contentStyle: { 'max-height': '85vh', overflow: 'auto' },
     });

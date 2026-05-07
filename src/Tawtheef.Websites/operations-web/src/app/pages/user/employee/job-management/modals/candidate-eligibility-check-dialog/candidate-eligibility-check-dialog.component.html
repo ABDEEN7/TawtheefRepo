@@ -153,7 +153,16 @@
   </div>
 
 
-  <div class="text-center p-4" *ngIf="loadingEligibility">
-    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+  <!-- Enhanced Loading Overlay -->
+  <div class="loading-overlay d-flex flex-column align-items-center justify-content-center" *ngIf="loadingEligibility">
+    <div class="logo-container mb-3">
+      <img src="assets/img/logo.png" alt="Logo" class="loading-logo">
+    </div>
+    <div class="loading-text fw-bold text-primary">
+      {{ 'common.loading' | translate }}...
+    </div>
+    <div class="progress-bar-container mt-3">
+      <div class="progress-bar-inner"></div>
+    </div>
   </div>
 </div>
