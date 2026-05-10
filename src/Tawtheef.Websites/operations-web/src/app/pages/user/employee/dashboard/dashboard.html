@@ -737,47 +737,33 @@
           </div>
           <div class="table-search">
             <i class="hgi-stroke hgi-search-01" aria-hidden="true"></i>
-            <input
-              pInputText
-              type="search"
-              [ngModel]="tableSearch()"
-              (ngModelChange)="onSearchChange($event)"
-              [placeholder]="'dashboard.search.placeholder' | translate"
-            />
+            <input pInputText type="search" [ngModel]="tableSearch()" (ngModelChange)="onSearchChange($event)"
+              [placeholder]="'dashboard.search.placeholder' | translate" />
           </div>
         </div>
         <div class="table-responsive">
-          <p-table
-            class="custom-table team-performance-table"
-            [value]="tableRows()"
-            [rowHover]="true"
-            [customSort]="true"
-            [sortField]="tableSortField()"
-            [sortOrder]="tableSortOrder()"
-            sortMode="single"
-            responsiveLayout="scroll"
-            dataKey="employeeId"
-            (sortFunction)="onTableSort($event)"
-          >
+          <p-table class="custom-table team-performance-table" [value]="tableRows()" [rowHover]="true"
+            [customSort]="true" [sortField]="tableSortField()" [sortOrder]="tableSortOrder()" sortMode="single"
+            responsiveLayout="scroll" dataKey="employeeId" (sortFunction)="onTableSort($event)">
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="name" style="min-width: 220px">
+                <th pSortableColumn="Name" style="min-width: 220px">
                   {{ 'dashboard.table.employee' | translate }}
                   <p-sortIcon field="name"></p-sortIcon>
                 </th>
-                <th pSortableColumn="assignedTasks">
+                <th pSortableColumn="AssignedTasks">
                   {{ 'dashboard.table.assignedTasks' | translate }}
                   <p-sortIcon field="assignedTasks"></p-sortIcon>
                 </th>
-                <th pSortableColumn="completedTasks">
+                <th pSortableColumn="CompletedTasks">
                   {{ 'dashboard.table.completedTasks' | translate }}
                   <p-sortIcon field="completedTasks"></p-sortIcon>
                 </th>
-                <th pSortableColumn="remainingTasks">
+                <th pSortableColumn="RemainingTasks">
                   {{ 'dashboard.table.remainingTasks' | translate }}
                   <p-sortIcon field="remainingTasks"></p-sortIcon>
                 </th>
-                <th pSortableColumn="overdueTasks">
+                <th pSortableColumn="OverdueTasks">
                   {{ 'dashboard.table.overdueTasks' | translate }}
                   <p-sortIcon field="overdueTasks"></p-sortIcon>
                 </th>
@@ -829,14 +815,9 @@
             </ng-template>
           </p-table>
         </div>
-        <app-pagination
-          class="w-100 mt-3 d-block"
-          [currentPage]="tableCurrentPage()"
-          [totalItems]="tableTotalItems()"
-          [itemsPerPage]="tablePageSize()"
-          (pageChanged)="onPageChange($event)"
-          (pageSizeChanged)="onPageSizeChange($event)"
-        ></app-pagination>
+        <app-pagination class="w-100 mt-3 d-block" [currentPage]="tableCurrentPage()" [totalItems]="tableTotalItems()"
+          [itemsPerPage]="tablePageSize()" (pageChanged)="onPageChange($event)"
+          (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
       </article>
       }
     </section>
