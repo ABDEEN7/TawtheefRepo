@@ -8,6 +8,8 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Application.Common.Security;
+
 
 namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Queries;
 
@@ -21,13 +23,15 @@ public class GetJobsQueryHandler(
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(
     GetJobsQuery request, CancellationToken cancellationToken)
     {
-        var isHrManager = httpContextAccessor.HttpContext?.User.IsInRole(nameof(SystemRoleIds.HrManager)) ?? false;
+        var user = httpContextAccessor.HttpContext?.User;
+        var canViewAllJobs = user?.HasFullJobAccess() ?? false;
+
         Guid.TryParse(currentUserService.UserId, out var parsedUserId);
         var result = await jobRepository.GetFilteredJobsAsync(
             filter: request.Filter ?? new JobQueryFilter(),
             pagination: request.Pagination,
             currentUserId: parsedUserId,
-            isHRManager: isHrManager
+            isHRManager: canViewAllJobs
         );
 
         if (result.IsFailed)
@@ -37,7 +41,7 @@ public class GetJobsQueryHandler(
 
         
         var dtoItems = mapper.From(jobs.Items)
-            .AddParameters("IsHrManager", isHrManager)
+            .AddParameters("IsHrManager", canViewAllJobs)
             .AddParameters("CurrentUserId", parsedUserId)
             .AdaptToType<List<JobResponseDto>>();
 
