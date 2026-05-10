@@ -85,7 +85,8 @@
               </h4>
 
               <div class="col-md-4 text-end d-flex justify-content-end gap-2 align-items-center">
-                <button class="btn btn-outline-info" type="button" (click)="openEligibilityCheckDialog()">
+                <button class="btn btn-outline-info" type="button" *ngIf="isNotProductionEnv"
+                  (click)="openEligibilityCheckDialog()">
                   <i class="hgi hgi-stroke hgi-user-search me-1"></i>
                   <span>{{ 'jobs.candidateEligibility.title' | translate }}</span>
                 </button>

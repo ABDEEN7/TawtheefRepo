@@ -29,6 +29,7 @@ import { JobCandidatesSpecializationFilterModalComponent } from '../modals/job-c
 import { CandidateEligibilityCheckDialogComponent } from '../modals/candidate-eligibility-check-dialog/candidate-eligibility-check-dialog.component';
 import { CandidatePointsBreakdownDialogComponent } from '../modals/candidate-points-breakdown-dialog/candidate-points-breakdown-dialog.component';
 import { SystemRoles } from '../../../../../core/constants/systemRoles';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -46,6 +47,7 @@ export class JobCandidatesComponent implements OnInit {
   private fileUtilsService = inject(FileUtilsService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
+  private environment = environment;
   lookupsService = inject(JobLookupService);
 
   paginationMetadata: PaginationMetadata | undefined;
@@ -190,6 +192,9 @@ export class JobCandidatesComponent implements OnInit {
       draggable: false,   // ✅ disables dragging
       contentStyle: { 'max-height': '85vh', overflow: 'auto' },
     });
+  }
+  isNotProductionEnv() {
+    return !this.environment.production;
   }
 
   viewPointsBreakdown(candidate: JobCandidateListItem) {
