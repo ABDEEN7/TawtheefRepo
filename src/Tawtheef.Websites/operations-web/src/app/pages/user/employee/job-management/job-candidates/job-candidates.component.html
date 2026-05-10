@@ -300,8 +300,7 @@
           <div class="row mt-4 border-top pt-3 align-items-center" *ngIf="canManageJobs()">
             <div class="col-md-6">
               <p class="m-0 text-muted" *ngIf="selectedCandidates.length > 0">
-                <i class="hgi hgi-stroke hgi-checkmark-circle-02 me-1 text-success"></i>
-                {{ selectedCandidates.length }} {{ 'JOB_CANDIDATE_SELECTED' | translate }}
+                <span>{{ selectedCandidates.length }} {{ 'JOB_CANDIDATE_SELECTED' | translate }}</span>
               </p>
             </div>
             <div class="col-md-6 text-end">
