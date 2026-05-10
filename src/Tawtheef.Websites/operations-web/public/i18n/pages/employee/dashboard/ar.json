@@ -200,7 +200,7 @@
   "dashboard.employees.outcomeSubtitle": "تفصيل مبسط لما انتهى إليه عمل المراجعين.",
   "dashboard.kpi.totalProfiles": "إجمالي الملفات",
   "dashboard.kpi.totalJobs": "إجمالي الوظائف",
-  "dashboard.kpi.activeEmployees": "الموظفون النشطون",
+  "dashboard.kpi.activeEmployees": "الموظفون",
   "dashboard.kpi.remainingTasks": "المهام المتبقية",
   "dashboard.kpi.pendingReviewJobs": "في انتظار الاعتماد",
   "dashboard.help.totalProfiles": "الملفات التي تم إنشاؤها داخل قطر.",

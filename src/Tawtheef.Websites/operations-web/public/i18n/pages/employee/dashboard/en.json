@@ -6,7 +6,7 @@
   "dashboard.filters.employeeId": "Filter by employee ID",
   "dashboard.filters.allStatuses": "All statuses",
   "dashboard.kpi.totalEmployees": "Total employees",
-  "dashboard.kpi.activeEmployees": "Active employees",
+  "dashboard.kpi.activeEmployees": "Employees",
   "dashboard.kpi.totalProfiles": "Total profiles",
   "dashboard.kpi.approvalRate": "Approval rate",
   "dashboard.kpi.remainingTasks": "Remaining tasks",
