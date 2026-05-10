@@ -1,6 +1,7 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
+using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.Dashboard.Services;
 using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,8 @@ namespace Application.Operation
                 services.AddScoped<IJobTargetCandidateCalculatorService, JobTargetCandidateCalculatorService>();
                 services.AddScoped<IJobRequirementsService, JobRequirementsService>();
                 services.AddScoped<IJobCandidatesQueryBuilderService, JobCandidatesQueryBuilderService>();
+                services.AddScoped<ICandidateEligibilityEvaluationService, CandidateEligibilityEvaluationService>();
+                services.AddScoped<IDashboardReadService, DashboardReadService>();
             }
 
             private void RegisterValidators()

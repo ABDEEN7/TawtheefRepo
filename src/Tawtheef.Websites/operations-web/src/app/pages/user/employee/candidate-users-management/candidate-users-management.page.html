@@ -1,4 +1,5 @@
-<div class="candidate-users-container card shadow-sm p-4" i18nNamespace="pages/employee/candidate-users-management"
+<div class="candidate-users-container card shadow-sm p-4"
+  [i18nNamespace]="['pages/employee/candidate-users-management', 'pages/admin/profile-logs']"
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [class.table-rtl]="isRtl()">
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="fw-bold mb-0">{{ 'CANDIDATE_USERS.TITLE' | translate }}</h3>
@@ -102,6 +103,14 @@
                   <i class="hgi hgi-stroke hgi-view fs-18"></i>
                 </button>
 
+                <ng-container *hasPermission="Permissions.ProfileLogs.View">
+                  <button type="button" class="btn btn-action btn-outline-secondary"
+                    [title]="'CANDIDATE_USERS.VIEW_PROFILE_LOGS' | translate" (click)="viewProfileLogs(user)"
+                    *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                    <i class="hgi hgi-stroke hgi-task-02 fs-18"></i>
+                  </button>
+                </ng-container>
+
                 <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
                   <button type="button" class="btn btn-action"
                     [title]="(user.isBlocked ? 'CANDIDATE_USERS.UNBLOCK_USER' : 'CANDIDATE_USERS.BLOCK_USER') | translate"
@@ -130,5 +139,43 @@
 
 </div>
 
-<app-pagination class="w-100" [currentPage]="filters().pageNumber" [totalItems]="totalItems()" [itemsPerPage]="filters().pageSize"
-  (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+<app-pagination class="w-100" [currentPage]="filters().pageNumber" [totalItems]="totalItems()"
+  [itemsPerPage]="filters().pageSize" (pageChanged)="onPageChange($event)"
+  (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+
+<p-dialog [(visible)]="profileLogsDialogVisible" [modal]="true" [draggable]="false" [resizable]="false"
+  [style]="{ width: '75rem', maxWidth: '95vw' }"
+  [header]="('CANDIDATE_USERS.VIEW_PROFILE_LOGS' | translate) + ' - ' + profileLogsCandidateName"
+  (onHide)="closeProfileLogsDialog()">
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100">
+      <thead class="table-light">
+        <tr>
+          <th>{{ 'PROFILE_LOGS.TABLE_DATE' | translate }}</th>
+          <th>{{ 'PROFILE_LOGS.TABLE_ACTION' | translate }}</th>
+          <th>{{ 'PROFILE_LOGS.TABLE_SECTION' | translate }}</th>
+          <th>{{ 'PROFILE_LOGS.TABLE_USER' | translate }}</th>
+          <th>{{ 'PROFILE_LOGS.TABLE_NOTES' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="profileLogsLoading()">
+          <td colspan="5" class="text-center text-muted py-4">{{ 'common.loading' | translate }}</td>
+        </tr>
+        <tr *ngIf="!profileLogsLoading() && profileLogs().length === 0">
+          <td colspan="5" class="text-center text-muted py-4">{{ 'NO_RECORDS' | translate }}</td>
+        </tr>
+        <tr *ngFor="let log of profileLogs()">
+          <td>
+            <span>{{ log.createdDate | date:'dd/MM/yyyy' }}</span>
+            <div class="text-muted small">{{ log.createdDate | date:'HH:mm' }}</div>
+          </td>
+          <td>{{ 'PROFILE_LOGS.ACTIONS.' + log.actionType | translate }}</td>
+          <td>{{ translateSection(log.section) }}</td>
+          <td>{{ log.userName || '-' }}</td>
+          <td class="small">{{ formatProfileLogNote(log) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</p-dialog>

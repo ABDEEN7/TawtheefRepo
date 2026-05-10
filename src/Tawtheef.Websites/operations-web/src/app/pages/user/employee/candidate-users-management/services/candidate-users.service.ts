@@ -6,6 +6,7 @@ import {PaginatedResult} from '../../../../../core/models/paginated-result.model
 import {CandidateUserDto} from '../models/candidate-user.dto';
 import {CandidateUserFilters} from '../models/candidate-user-filters.dto';
 import {ProfileApprovalDetail} from '../../profile-managment/approval-list/models/profile-approval.models';
+import { ProfileLogDto } from '../../profile-logs/models/profile-log.dto';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateUsersService {
@@ -22,5 +23,12 @@ export class CandidateUsersService {
 
   getCandidateProfile(userId: string): Observable<ProfileApprovalDetail> {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.candidateUsers.profile(userId));
+  }
+
+  getCandidateProfileLogs(userId: string, pageNumber = 1, pageSize = 20): Observable<PaginatedResult<ProfileLogDto>> {
+    return this.http.get<PaginatedResult<ProfileLogDto>>(this.endpoints.candidateUsers.profileLogs(userId), {
+      pageNumber,
+      pageSize
+    });
   }
 }

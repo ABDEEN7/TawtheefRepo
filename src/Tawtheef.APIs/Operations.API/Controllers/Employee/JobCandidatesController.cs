@@ -103,6 +103,25 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.ToActionResult();
     }
+
+    [HttpGet("{jobId:guid}/{candidateId:guid}/eligibility-check")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
+    public async Task<IActionResult> CheckEligibility([FromRoute] Guid jobId, [FromRoute] Guid candidateId)
+    {
+        var language = Request.Headers.AcceptLanguage.ToString();
+        var query = new CheckCandidateEligibilityQuery(jobId, candidateId, language);
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("search-all")]
+    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
+    public async Task<IActionResult> SearchAllCandidates([FromQuery] string searchTerm)
+    {
+        var query = new SearchAllCandidatesQuery { SearchTerm = searchTerm };
+        var result = await mediator.Send(query);
+        return result.ToActionResult();
+    }
     #endregion
 }
 

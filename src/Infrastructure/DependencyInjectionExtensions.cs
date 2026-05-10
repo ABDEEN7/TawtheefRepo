@@ -521,6 +521,14 @@ namespace Tawtheef.Infrastructure
                         o.Scope.Add("openid");
                         o.Scope.Add("profile");
                         o.Scope.Add("email");
+                        
+                        o.SaveTokens = true;
+                        o.Events.OnTicketReceived = async ctx =>
+                        {
+                            // Remove large tokens before the external cookie is written
+                            ctx.Properties?.StoreTokens([]);
+                            await Task.CompletedTask;
+                        };
                     });
                     
                     services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(_ => {

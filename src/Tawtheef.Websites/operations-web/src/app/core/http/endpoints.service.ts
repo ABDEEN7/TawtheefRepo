@@ -103,6 +103,8 @@ export class EndpointsService {
     sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
     filters: this.getFullUrl('/jobCandidates/filters'),
     categorySettings: this.getFullUrl('/jobCandidates/category-settings'),
+    eligibilityCheck: (jobId: string, candidateId: string) => this.getFullUrl(`/jobCandidates/${jobId}/${candidateId}/eligibility-check`),
+    searchAllCandidates: this.getFullUrl('/jobCandidates/search-all'),
     lookups: {
       candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
       nationalities: this.getFullUrl('/jobCandidates/lookups/nationalities'),
@@ -128,6 +130,13 @@ export class EndpointsService {
 
   operationsDashboard = {
     summary: this.getFullUrl('/operations-dashboard'),
+    overview: this.getFullUrl('/operations-dashboard/overview'),
+    candidateStatus: this.getFullUrl('/operations-dashboard/candidates/status'),
+    candidateTypes: this.getFullUrl('/operations-dashboard/candidates/types'),
+    jobsSummary: this.getFullUrl('/operations-dashboard/jobs/summary'),
+    latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
+    employeeIndicators: this.getFullUrl('/operations-dashboard/employees/indicators'),
+    employeeReviewOutcomes: this.getFullUrl('/operations-dashboard/employees/review-outcomes'),
     teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
   };
   distribution = {
@@ -176,7 +185,8 @@ export class EndpointsService {
   candidateUsers = {
     list: this.getFullUrl('/candidateUsers'),
     blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`),
-    profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`)
+    profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`),
+    profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`)
   };
 
   officeUsers = {
@@ -246,6 +256,7 @@ export class EndpointsService {
   systemAdminLogs = {
     list: this.getFullUrl('/system-admin-logs'),
     lookups: this.getFullUrl('/system-admin-logs/lookups'),
+    navigation: this.getFullUrl('/system-admin-logs/navigation'),
   };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),

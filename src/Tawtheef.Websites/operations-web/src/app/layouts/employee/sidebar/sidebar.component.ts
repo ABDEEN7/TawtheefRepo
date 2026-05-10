@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -12,16 +12,18 @@ import { MenuItem, Sidebar } from '../../admin/sidebar/sidebar.models';
 import { Permissions } from '../../../core/constants/permissions';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { environment } from '../../../../environments/environment';
+import { NavigationAuditService } from '../../../core/services/navigation-audit.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule]
+  imports: [CommonModule, TranslatePipe, Tooltip, FaDirArrowDirective, HasPermissionDirective, FormsModule, RouterLink]
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
+  private navigationAudit = inject(NavigationAuditService);
   @Output() toggleSidebar = new EventEmitter<void>();
 
   isCollapsed = false;
@@ -71,12 +73,31 @@ export class SidebarComponent implements OnInit {
     this.toggleSidebar.emit();
   }
 
-  navigateTo(item: any) {
+  onSidebarItemClick(event: MouseEvent, item: MenuItem) {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    if (this.router.url !== item.route) {
+      this.navigationAudit.logSidebarNavigation({
+        menuKey: item.key,
+        menuLabel: item.label,
+        targetUrl: item.route,
+        previousUrl: this.router.url
+      });
+    }
+
     this.activeItem = item.key;
-    this.router.navigate([item.route]);
   }
 
   logout() {
+    this.navigationAudit.logSidebarNavigation({
+      menuKey: 'logout',
+      menuLabel: 'common.sidebar.logout',
+      targetUrl: '/logout',
+      previousUrl: this.router.url
+    });
+
     this.authService.logout();
   }
 }

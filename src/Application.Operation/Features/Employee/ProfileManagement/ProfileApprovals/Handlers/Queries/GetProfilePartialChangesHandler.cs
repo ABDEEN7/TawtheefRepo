@@ -158,12 +158,17 @@ public sealed class GetProfilePartialChangesHandler(
 
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
+        var openReviewNote = JsonSerializer.Serialize(new
+        {
+            eventType = "OpenProfileChangeReview",
+            message = UserProfileLogConstants.Notes.ProfileOpenedForChangeReview
+        });
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = request.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.OpenProfileChangeReview,
-            Notes = UserProfileLogConstants.Notes.ProfileOpenedForChangeReview,
+            Notes = openReviewNote,
             Section = nameof(ProfileSection.Personal)
         });
         await loggerRepo.AddAsync(new UserProfileLogger
@@ -171,7 +176,7 @@ public sealed class GetProfilePartialChangesHandler(
             UserProfileId = profile.Id,
             PerformedById = request.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.OpenProfileChangeReview,
-            Notes = UserProfileLogConstants.Notes.ProfileOpenedForChangeReview,
+            Notes = openReviewNote,
             Section = nameof(ProfileSection.Personal)
         });
         await uow.SaveChangesAsync(ct);

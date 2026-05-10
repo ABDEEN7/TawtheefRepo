@@ -1,4 +1,5 @@
 {
+  "JOB_CANDIDATE_SELECTED": "Of candidate selected",
   "JOB_CANDIDATE_SUBTITLE": "This page displays the list of candidates for this job.",
   "JOB_LIST_BUTTONS_MORE_FILTERS": "More Filters",
   "JOB_CANDIDATE_AVAILABLE_JOBS": "Jobs Ready for Nomination",
@@ -81,5 +82,115 @@
   "JOB_CANDIDATE_SPECIALIZATION_FILTER_DESCRIPTION": "Select from the list of job specializations to filter candidates:",
   "JOB_CANDIDATE_MAIN_SPECIALIZATION": "Main Specialization",
   "JOB_CANDIDATE_FILTERS_ACTIVE_FILTERS": "Active Filters",
-  "JOB_CANDIDATE_FILTERS_CLEAR_ALL": "Clear All"
+  "JOB_CANDIDATE_FILTERS_CLEAR_ALL": "Clear All",
+  "jobs": {
+    "candidateEligibility": {
+      "title": "Check Candidate Eligibility",
+      "searchPlaceholder": "Search by name or national number",
+      "startSearching": "Please enter name or national number to search for candidates",
+      "eligible": "Eligible",
+      "notEligible": "Not Eligible",
+      "table": {
+        "condition": "Condition",
+        "expected": "Expected",
+        "actual": "Actual",
+        "reason": "Reason"
+      },
+      "conditions": {
+        "PROFILE_APPROVED": "Profile is approved",
+        "AVAILABLE_FOR_RECRUITMENT": "Available for recruitment",
+        "TARGET_ENTITY_MATCH": "Target entity matches job",
+        "NO_ACTIVE_INVITATION": "No active invitation for this job",
+        "GENDER_MATCH": "Gender matches job requirement",
+        "BIRTH_DATE_EXISTS": "Birth date exists",
+        "AGE_WITHIN_RANGE": "Age within allowed range",
+        "QUALIFICATION_MATCH": "Has matching qualification level",
+        "REQUIRED_SKILLS_MATCH": "Has all required skills"
+      }
+    }
+  },
+  "candidateEligibility": {
+    "errors": {
+      "JOB_NOT_FOUND": "Job not found.",
+      "CANDIDATE_NOT_FOUND": "Candidate not found."
+    },
+    "statuses": {
+      "PASSED": "Passed",
+      "FAILED": "Failed",
+      "NOT_APPLICABLE": "Not applicable"
+    },
+    "values": {
+      "UNKNOWN": "Unknown",
+      "NONE": "None",
+      "ALL": "All",
+      "APPROVED": "Approved",
+      "NOT_APPROVED": "Not approved",
+      "AVAILABLE": "Available",
+      "NOT_AVAILABLE": "Not available",
+      "NO_ACTIVE_INVITATION": "No active invitation",
+      "HAS_ACTIVE_INVITATION": "Has active invitation",
+      "BIRTH_DATE_EXISTS": "Birth date exists",
+      "MISSING": "Missing",
+      "MISSING_BIRTH_DATE": "Missing birth date",
+      "age": "{{age}} years",
+      "ageRange": "Between {{min}} and {{max}}",
+      "qualificationIds": "{{ids}}",
+      "skillIds": "{{ids}}",
+      "MALE": "Male",
+      "FEMALE": "Female"
+    },
+    "conditions": {
+      "profileApproved": {
+        "label": "Profile is approved",
+        "failureReason": "The user profile must be approved to be eligible for jobs."
+      },
+      "availableForRecruitment": {
+        "label": "Available for recruitment",
+        "failureReason": "The candidate is currently marked as not available for recruitment."
+      },
+      "targetEntityMatch": {
+        "label": "Target entity matches job",
+        "failureReason": "The candidate's target entity does not match the work location of this job."
+      },
+      "noActiveInvitation": {
+        "label": "No active invitation for this job",
+        "failureReason": "The candidate already has an active invitation for this job."
+      },
+      "genderMatch": {
+        "label": "Gender matches job requirement",
+        "failureReason": "The candidate's gender does not match the required gender for this job."
+      },
+      "birthDateExists": {
+        "label": "Birth date exists",
+        "failureReason": "The candidate's birth date is not recorded in their profile."
+      },
+      "ageWithinRange": {
+        "label": "Age within allowed range",
+        "failureReason": "The candidate's age ({{age}}) is outside the required range for this job.",
+        "missingBirthDateReason": "Cannot calculate age due to missing birth date."
+      },
+      "qualificationMatch": {
+        "label": "Has matching qualification level",
+        "failureReason": "The candidate does not have the required qualification level for this job: {{missing}}."
+      },
+      "requiredSkillsMatch": {
+        "label": "Has all required skills",
+        "failureReason": "The candidate is missing some skills required for this job: {{missing}}."
+      }
+    }
+  },
+  "JOB_CANDIDATE_PROFILE_LOADING": "Loading candidate profile...",
+  "JOB_CANDIDATE_PROFILE_TOTAL_SCORE": "Total score",
+  "JOB_CANDIDATE_PROFILE_STRONGEST_AREA": "Strongest area",
+  "JOB_CANDIDATE_PROFILE_EMPTY_TITLE": "No candidate profile found",
+  "JOB_CANDIDATE_PROFILE_EMPTY_DESCRIPTION": "The candidate details could not be displayed.",
+  "CANDIDATE_POINTS_BREAKDOWN_TITLE": "Candidate Points Breakdown",
+  "CANDIDATE_POINTS_TOTAL_SCORE": "Total Score",
+  "CANDIDATE_POINTS_NO_DATA": "No points data available for this candidate.",
+  "JOB_CANDIDATE_BUTTONS_VIEW_SCORE_DETAILS": "View Score Details",
+  "CANDIDATE_POINTS_DETAILS_TITLE": "Scoring Methodology Details",
+  "CANDIDATE_POINTS_SECTION": "Category",
+  "CANDIDATE_POINTS_DESCRIPTION": "Description",
+  "CANDIDATE_POINTS_VALUE": "Points",
+  "CANDIDATE_POINTS_BREAKDOWN_SUBTITLE": "Review scoring details based on approved criteria"
 }

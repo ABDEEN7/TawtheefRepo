@@ -1,115 +1,212 @@
 <section i18nNamespace="pages/job-candidates" class="candidate-profile-dialog">
-  
-      @if (candidateProfile()) {
-      <div class="row ">
 
-        <div class="col-lg-4">
-          <div class="card card-table h-100 profile-card">
-            <div class="card-body">
-              <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="avatar-circle">
-                  <span class="avatar-initials">
-                    {{ (candidateProfile()?.candidateName || '—').slice(0, 1) }}
+  @if (isLoading()) {
+    <div class="profile-loading">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mb-0 mt-3 text-muted">
+        {{ 'JOB_CANDIDATE_PROFILE_LOADING' | translate }}
+      </p>
+    </div>
+  }
+
+  @else if (candidateProfile()) {
+    <div class="profile-layout">
+
+      <!-- Left Profile Card -->
+      <aside class="profile-sidebar">
+        <div class="profile-card card card-table">
+          <div class="card-body">
+
+            <div class="profile-header">
+              <div class="avatar-circle">
+                <span class="avatar-initials">
+                  {{ candidateInitials() }}
+                </span>
+              </div>
+
+              <div class="profile-identity">
+                <h5 class="candidate-name">
+                  {{ candidateProfile()?.candidateName || '-' }}
+                </h5>
+
+                <div class="candidate-badges">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+                    {{ candidateProfile()?.candidateType || '-' }}
+                  </span>
+
+                  <span class="badge rounded-pill bg-light text-dark border">
+                    {{ candidateProfile()?.nationality || '-' }}
+                  </span>
+
+                  <span class="badge rounded-pill bg-light text-dark border">
+                    {{ candidateProfile()?.gender || '-' }}
                   </span>
                 </div>
+              </div>
+            </div>
 
-                <div class="flex-grow-1">
-                  <div class="fw-bold fs-5 candidate-name">
-                    {{ candidateProfile()?.candidateName || '-' }}
-                  </div>
+            <div class="score-summary">
+              <div>
+                <span class="score-label">
+                  {{ 'JOB_CANDIDATE_PROFILE_TOTAL_SCORE' | translate }}
+                </span>
+                <strong class="score-value">
+                  {{ totalPoints() }}
+                </strong>
+              </div>
 
-                  <div class="d-flex flex-wrap gap-2 mt-1">
-                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
-                      {{ candidateProfile()?.candidateType || '-' }}
-                    </span>
-                    <span class="badge rounded-pill bg-light text-dark border">
-                      {{ candidateProfile()?.nationality || '-' }}
-                    </span>
-                    <span class="badge rounded-pill bg-light text-dark border">
-                      {{ candidateProfile()?.gender || '-' }}
-                    </span>
-                  </div>
+              @if (highestScoreItem()) {
+                <div class="score-highlight">
+                  <span class="score-label">
+                    {{ 'JOB_CANDIDATE_PROFILE_STRONGEST_AREA' | translate }}
+                  </span>
+                  <strong>
+                    {{ highestScoreItem()?.labelKey | translate }}
+                  </strong>
+                </div>
+              }
+            </div>
+
+            <h6 class="section-title">
+              {{ 'JOB_CANDIDATE_PROFILE_INFO_TITLE' | translate }}
+            </h6>
+
+            <div class="info-grid">
+
+              <div class="info-tile">
+                <div class="label">
+                  {{ 'JOB_CANDIDATE_PROFILE_INFO_EMAIL' | translate }}
+                </div>
+                <a class="value link-value text-truncate"
+                   [href]="'mailto:' + candidateProfile()?.email">
+                  {{ candidateProfile()?.email || '-' }}
+                </a>
+              </div>
+
+              <div class="info-tile">
+                <div class="label">
+                  {{ 'JOB_CANDIDATE_PROFILE_INFO_PHONE' | translate }}
+                </div>
+                <a class="value link-value"
+                   [href]="'tel:' + candidateProfile()?.phoneNumber">
+                  {{ candidateProfile()?.phoneNumber || '-' }}
+                </a>
+              </div>
+
+              <div class="info-tile">
+                <div class="label">
+                  {{ 'JOB_CANDIDATE_PROFILE_INFO_NATIONAL_ID' | translate }}
+                </div>
+                <div class="value">
+                  {{ candidateProfile()?.nationalNumber || '-' }}
                 </div>
               </div>
 
-              <h6 class="section-title mb-3">
-                {{ 'JOB_CANDIDATE_PROFILE_INFO_TITLE' | translate }}
-              </h6>
-
-              <div class="info-grid">
-                <div class="info-tile">
-                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_EMAIL' | translate }}</div>
-                  <div class="value text-truncate">{{ candidateProfile()?.email || '-' }}</div>
+              <div class="info-tile">
+                <div class="label">
+                  {{ 'JOB_CANDIDATE_PROFILE_INFO_AGE' | translate }}
                 </div>
-
-                <div class="info-tile">
-                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_PHONE' | translate }}</div>
-                  <div class="value">{{ candidateProfile()?.phoneNumber || '-' }}</div>
-                </div>
-
-                <div class="info-tile">
-                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_NATIONAL_ID' | translate }}</div>
-                  <div class="value">{{ candidateProfile()?.nationalNumber || '-' }}</div>
-                </div>
-
-                <div class="info-tile">
-                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_AGE' | translate }}</div>
-                  <div class="value">{{ candidateProfile()?.age || '-' }}</div>
-                </div>
-
-                <div class="info-tile">
-                  <div class="label">{{ 'JOB_CANDIDATE_PROFILE_INFO_EXPERIENCE' | translate }}</div>
-                  <div class="value">
-                    {{ candidateProfile()?.experienceYears ?? 0 }}
-                  </div>
+                <div class="value">
+                  {{ candidateProfile()?.age || '-' }}
                 </div>
               </div>
+
+              <div class="info-tile">
+                <div class="label">
+                  {{ 'JOB_CANDIDATE_PROFILE_INFO_EXPERIENCE' | translate }}
+                </div>
+                <div class="value">
+                  {{ candidateProfile()?.experienceYears ?? 0 }}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
+      </aside>
 
-        <div class="col-lg-8">
-          <div class="card card-table">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                <div>
-                  <h5 class="fw-bold mb-1">{{ 'JOB_CANDIDATE_PROFILE_POINTS_TITLE' | translate }}</h5>
-                  <div class="text-muted small">
-                    {{ 'JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL' | translate:{ total: candidateProfile()?.points?.totalPoints ?? 0 } }}
-                  </div>
+      <!-- Right Details Card -->
+      <main class="profile-content">
+        <div class="card card-table">
+          <div class="card-body">
+
+            <div class="points-header">
+              <div>
+                <h5 class="fw-bold mb-1">
+                  {{ 'JOB_CANDIDATE_PROFILE_POINTS_TITLE' | translate }}
+                </h5>
+
+                <div class="text-muted small">
+                  {{
+                    'JOB_CANDIDATE_PROFILE_POINTS_OF_TOTAL'
+                      | translate:{ total: totalPoints() }
+                  }}
                 </div>
               </div>
 
-              <div class="d-flex flex-column gap-3">
-                @for (item of pointsBreakdown(); track item.labelKey) {
+              <div class="total-score-pill">
+                {{ totalPoints() }}
+              </div>
+            </div>
+
+            <div class="points-list">
+              @for (item of pointsBreakdown(); track item.labelKey) {
                 <div class="points-item">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-semibold">{{ item.labelKey | translate }}</span>
+
+                  <div class="points-item-header">
+                    <div>
+                      <div class="fw-semibold">
+                        {{ item.labelKey | translate }}
+                      </div>
+
+                      <div class="small text-muted">
+                        {{ item.percentage | number:'1.0-0' }}%
+                      </div>
+                    </div>
+
                     <span class="chip">
-                      <span class="fw-semibold">{{ item.points }}</span>
-                      <span class="text-muted ms-1">/ {{ candidateProfile()?.points?.totalPoints ?? 0 }}</span>
+                      <strong>{{ item.points }}</strong>
+                      <span class="text-muted ms-1">/ {{ totalPoints() }}</span>
                     </span>
                   </div>
 
-                  <p-progressBar [value]="item.percentage"
-                                 [showValue]="false"
-                                 class="rounded-progress"></p-progressBar>
+                  <p-progressBar
+                    [value]="item.percentage"
+                    [showValue]="false"
+                    class="rounded-progress">
+                  </p-progressBar>
 
-                  <div class="d-flex justify-content-between mt-2 small text-muted">
-                    <span>{{ item.percentage | number:'1.0-0' }}%</span>
-                    <span>{{ 'JOB_CANDIDATE_PROFILE_POINTS_TOTAL' | translate }}: {{ candidateProfile()?.points?.totalPoints ?? 0 }}</span>
-                  </div>
                 </div>
-                }
-              </div>
+              }
             </div>
+
           </div>
         </div>
+      </main>
 
-      </div>
-      }
-  
+    </div>
+  }
+
+  @else {
+    <div class="empty-state">
+      <i class="hgi hgi-stroke hgi-user-circle fs-1 text-muted"></i>
+      <h6 class="mt-3 mb-1">
+        {{ 'JOB_CANDIDATE_PROFILE_EMPTY_TITLE' | translate }}
+      </h6>
+      <p class="text-muted mb-0">
+        {{ 'JOB_CANDIDATE_PROFILE_EMPTY_DESCRIPTION' | translate }}
+      </p>
+    </div>
+  }
+
   <div class="modal-footer justify-content-end gap-3 mt-3">
-    <button type="button" class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" (click)="closeDialog()"><i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i> {{ 'common.cancel' | translate }} </button>
+    <button
+      type="button"
+      class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center"
+      (click)="closeDialog()">
+      <i class="hgi hgi-stroke hgi-cancel-01 text-primary fs-18"></i>
+      {{ 'common.cancel' | translate }}
+    </button>
   </div>
+
 </section>

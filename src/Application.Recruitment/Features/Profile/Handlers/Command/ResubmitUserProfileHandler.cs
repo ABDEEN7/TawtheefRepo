@@ -1,7 +1,8 @@
-﻿using Application.Recruitment.Features.Profile.Command;
+using Application.Recruitment.Features.Profile.Command;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
@@ -41,12 +42,20 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         {
             assignment.Deactivate();
 
+            var unassignNote = JsonSerializer.Serialize(new
+            {
+                eventType = "AssignmentReassigned",
+                newAssignedUserId = (Guid?)null,
+                newAssignedUserName = (string?)null,
+                message = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution
+            });
+
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId  = profile.Id,
                 PerformedById  = cmd.UserId,
                 ActionType     = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes          = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
+                Notes          = unassignNote,
                 Section        = UserProfileLogConstants.Sections.Assignment,
                 EntityId       = assignment.Id
             }, ct);
@@ -376,4 +385,6 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         return item is null ? null : snapshot(item);
     }
 }
+
+
 

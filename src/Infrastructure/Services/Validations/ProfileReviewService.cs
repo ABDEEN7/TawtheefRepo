@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Constants;
@@ -96,8 +97,19 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
 
         if (pending is not null)
         {
-            await AddAuditEntryAsync(auditRepo,loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
-                resourceId, createdNewChange);
+            await AddAuditEntryAsync(
+                auditRepo,
+                loggerRepo,
+                userProfileId,
+                requestedByUserId,
+                targetType,
+                section,
+                fieldPath,
+                entityName,
+                attachmentTitle,
+                entityId,
+                resourceId,
+                createdNewChange);
             return pending;
         }
 
@@ -109,8 +121,19 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         item.IsOutdated = true;
 
         await reviewRepo.AddAsync(item);
-        await AddAuditEntryAsync(auditRepo, loggerRepo, userProfileId, requestedByUserId, targetType, section, fieldPath, entityId,
-            resourceId, createdNewChange);
+        await AddAuditEntryAsync(
+            auditRepo,
+            loggerRepo,
+            userProfileId,
+            requestedByUserId,
+            targetType,
+            section,
+            fieldPath,
+            entityName,
+            attachmentTitle,
+            entityId,
+            resourceId,
+            createdNewChange);
         return item;
     }
 
@@ -122,6 +145,8 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         ReviewTargetType targetType,
         ProfileSection section,
         string? fieldPath,
+        string? entityName,
+        string? attachmentTitle,
         Guid? entityId,
         Guid? resourceId,
         bool createdNewChange)
@@ -129,14 +154,25 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         var actionLabel = createdNewChange
             ? UserProfileLogConstants.ActionTypes.ProfileChangeRequested
             : UserProfileLogConstants.ActionTypes.ProfileChangeUpdated;
-        var targetLabel = fieldPath ?? entityId?.ToString() ?? section.ToString();
+        var note = JsonSerializer.Serialize(new
+        {
+            eventType = actionLabel,
+            targetType = targetType.ToString(),
+            section = section.ToString(),
+            fieldPath,
+            entityName,
+            attachmentTitle,
+            message = createdNewChange
+                ? "A profile change was submitted for review"
+                : "A submitted profile change was updated"
+        });
 
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = userProfileId,
             UserId = requestedByUserId,
             ActionType = actionLabel,
-            Notes = $"{targetType} change for {targetLabel}",
+            Notes = note,
             Section = section.ToString(),
             EntityId = entityId,
             AttachmentId = resourceId
@@ -147,7 +183,7 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
             UserProfileId = userProfileId,
             PerformedById = requestedByUserId,
             ActionType = actionLabel,
-            Notes = $"{targetType} change for {targetLabel}",
+            Notes = note,
             Section = section.ToString(),
             EntityId = entityId,
             AttachmentId = resourceId,
@@ -170,13 +206,20 @@ public class ProfileReviewService(IUnitOfWork uow) : IProfileReviewService
         foreach (var assignment in activeAssignments)
         {
             assignment.Deactivate();
+            var unassignNote = JsonSerializer.Serialize(new
+            {
+                eventType = "AssignmentReassigned",
+                newAssignedUserId = (Guid?)null,
+                newAssignedUserName = (string?)null,
+                message = note
+            });
 
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = performedById,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = note,
+                Notes = unassignNote,
                 Section = "Assignment",
                 EntityId = assignment.Id
             });

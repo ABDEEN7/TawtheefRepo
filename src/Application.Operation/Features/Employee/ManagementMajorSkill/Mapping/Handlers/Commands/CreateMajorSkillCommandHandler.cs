@@ -47,19 +47,18 @@ public sealed class CreateMajorSkillCommandHandler(IUnitOfWork uow)
 
         if (exists)
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorSkillLinkAlreadyExists)
-                .WithMetadata("MajorId", request.MajorId)
-                .WithMetadata("SkillId", request.SkillId)
+                .WithMetadata(nameof(request.MajorId), request.MajorId)
+                .WithMetadata(nameof(request.SkillId), request.SkillId)
             );
 
         var link = new MajorSkill
         {
             MajorId = request.MajorId,
             SkillId = request.SkillId,
-            IsSkillRequired = request.IsSkillRequired,
             IsActive = request.IsActive
         };
 
-        await linkRepo.AddAsync(link);
+        await linkRepo.AddAsync(link, ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

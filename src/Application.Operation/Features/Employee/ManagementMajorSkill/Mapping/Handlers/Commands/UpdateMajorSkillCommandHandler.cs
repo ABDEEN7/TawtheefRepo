@@ -22,7 +22,6 @@ public sealed class UpdateMajorSkillCommandHandler(
         if (link is null)
             return Result.Fail<Unit>(new Error(ErrorsCodes.MajorSkillLinkNotFound).WithMetadata("LinkId", request.Id));
         
-        link.IsSkillRequired = request.IsSkillRequired;
         link.IsActive = request.IsActive;
 
         await uow.SaveChangesAsync(ct);

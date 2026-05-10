@@ -9,6 +9,8 @@ import { JobTabType } from '../enums/job-tab-type';
 import { JobBasicModalComponent } from '../modals/basics-step-modal/job-basic-modal.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
+import { JobSkillResponse } from '../models/job-skill-response.model';
+import { JobSpecializationResponse } from '../models/job-specialization-response.model';
 
 @Component({
   selector: 'app-job-details',
@@ -105,11 +107,9 @@ export class JobDetailsComponent implements OnInit {
     }));
   }
 
-  getJobSkills(): string[] {
+  getJobSkills(): JobSkillResponse[] {
     if (!this.job?.skills?.length) return [];
-    return this.job.skills
-      .filter(skill => skill.showToApplicants)
-      .map(skill => skill.skill.name);
+    return this.job.skills.filter(skill => skill.showToApplicants);
   }
 
   getJobBenefits(): string[] {
@@ -126,12 +126,8 @@ export class JobDetailsComponent implements OnInit {
     return degreeNames.join(',') || '';
   }
 
-  getSpecializationRequirements(): string {
-    if (!this.job?.jobSpecializations?.length) return '';
-    return this.job.jobSpecializations
-      .map((spec) => `${spec.major?.name || ''} - ${spec.subMajor?.name || ''}`)
-      .filter((s) => s !== ' - ')
-      .join(', ') || '';
+  getSpecializationRequirements(): JobSpecializationResponse[] {
+    return this.job?.jobSpecializations || [];
   }
 
   isJobOpen(): boolean {

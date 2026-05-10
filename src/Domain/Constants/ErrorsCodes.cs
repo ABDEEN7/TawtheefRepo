@@ -359,3 +359,48 @@ public class ErrorsCodes
     public const string QidExpiryDateRequired = "QID_EXPIRY_DATE_REQUIRED";
     #endregion
 }
+public static class CandidateEligibilityConditionCodes
+{
+    public const string ProfileApproved = "PROFILE_APPROVED";
+    public const string AvailableForRecruitment = "AVAILABLE_FOR_RECRUITMENT";
+    public const string TargetEntityMatch = "TARGET_ENTITY_MATCH";
+    public const string NoActiveInvitation = "NO_ACTIVE_INVITATION";
+    public const string GenderMatch = "GENDER_MATCH";
+    public const string BirthDateExists = "BIRTH_DATE_EXISTS";
+    public const string AgeWithinRange = "AGE_WITHIN_RANGE";
+    public const string QualificationMatch = "QUALIFICATION_MATCH";
+    public const string RequiredSkillsMatch = "REQUIRED_SKILLS_MATCH";
+}
+
+public static class CandidateEligibilityStatuss
+{
+    public const string Passed = "PASSED";
+    public const string Failed = "FAILED";
+    public const string NotApplicable = "NOT_APPLICABLE";
+}
+
+public static class CandidateEligibilityValueCodes
+{
+    public const string Unknown = "UNKNOWN";
+    public const string None = "NONE";
+    public const string All = "ALL";
+
+    public const string Approved = "APPROVED";
+    public const string NotApproved = "NOT_APPROVED";
+
+    public const string Available = "AVAILABLE";
+    public const string NotAvailable = "NOT_AVAILABLE";
+
+    public const string NoActiveInvitation = "NO_ACTIVE_INVITATION";
+    public const string HasActiveInvitation = "HAS_ACTIVE_INVITATION";
+
+    public const string BirthDateExists = "BIRTH_DATE_EXISTS";
+    public const string Missing = "MISSING";
+    public const string MissingBirthDate = "MISSING_BIRTH_DATE";
+}
+
+public static class CandidateEligibilityErrorCodes
+{
+    public const string JobNotFound = "JOB_NOT_FOUND";
+    public const string CandidateNotFound = "CANDIDATE_NOT_FOUND";
+}

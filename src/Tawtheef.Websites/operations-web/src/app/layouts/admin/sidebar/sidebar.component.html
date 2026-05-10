@@ -19,12 +19,12 @@
 
   <nav class="sidebar-nav">
     @for (item of filteredMenuItems; track item.key) {
-    <button class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
-      (click)="navigateTo(item)" [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right"
-      [tooltipDisabled]="!isCollapsed">
+    <a class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
+      [routerLink]="item.route" (click)="activateItem($event, item)"
+      [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right" [tooltipDisabled]="!isCollapsed">
       <i class="icons hgi hgi-stroke " [ngClass]="item.icon"></i>
       <span class="label">{{ item.label | translate }}</span>
-    </button>
+    </a>
     }
 
   </nav>

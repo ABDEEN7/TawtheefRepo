@@ -1,4 +1,4 @@
-﻿using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Common.Models;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 
@@ -9,6 +9,7 @@ public class JobSkillResponseDto
     public required Guid SkillId { get; set; }
     public required DropdownOptions? Skill { get; set; }
     public required bool ShowToApplicants { get; set; }
+    public bool IsRequired { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
     public DateTimeOffset? LastModifiedDate { get; set; }
 }

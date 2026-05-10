@@ -1,16 +1,15 @@
+using Application.Operation.Common.Validations;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-using Application.Operation.Common.Validations;
-
-namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands.Update;
 
 public class UpdateJobSkillsCommandHandler(
     IJobValidationService validationService,
@@ -61,7 +60,10 @@ public class UpdateJobSkillsCommandHandler(
         foreach (var existing in existsSkills)
         {
             if (newLookup.TryGetValue(existing.SkillId, out var dto))
+            {
                 existing.ShowToApplicants = dto.ShowToApplicants;
+                existing.IsRequired = dto.IsRequired;
+            }
         }
 
         // Add new items
@@ -71,7 +73,8 @@ public class UpdateJobSkillsCommandHandler(
             {
                 JobId = jobId,
                 SkillId = dto.SkillId,
-                ShowToApplicants = dto.ShowToApplicants
+                ShowToApplicants = dto.ShowToApplicants,
+                IsRequired = dto.IsRequired
             },ct);
         }
     }

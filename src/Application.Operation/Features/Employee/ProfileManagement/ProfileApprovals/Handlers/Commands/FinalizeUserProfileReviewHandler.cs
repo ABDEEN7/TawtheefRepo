@@ -1,5 +1,6 @@
-﻿using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
+using System.Text.Json;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -51,13 +52,20 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         var hasCorrections = sectionItems.Any(i => i.Status == ReviewStatus.NeedsCorrection);
         profile.FinalizeReviewProfile(hasCorrections);
 
+        var finalizeNote = JsonSerializer.Serialize(new
+        {
+            eventType = "ProfileReviewFinalized",
+            result = hasCorrections ? "NeedsCorrection" : "Approved",
+            message = hasCorrections
+                ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
+                : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved
+        });
+
         await auditRepo.AddAsync(new AuditTrailEntry {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
-            Notes = hasCorrections
-                ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
-                : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
+            Notes = finalizeNote,
             Section = nameof(ProfileSection.Personal)
         }, ct);
 
@@ -65,9 +73,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewFinalized,
-            Notes = hasCorrections
-                ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
-                : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved,
+            Notes = finalizeNote,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = hasCorrections ? ReviewStatus.NeedsCorrection : ReviewStatus.Approved
         }, ct);
@@ -80,12 +86,18 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         {
             assignment.Deactivate();
 
+            var closeAssignmentNote = JsonSerializer.Serialize(new
+            {
+                eventType = "AssignmentClosed",
+                message = UserProfileLogConstants.Notes.AssignmentClosed
+            });
+
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = assignment.UserProfileId,
                 PerformedById = cmd.OfficerId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = UserProfileLogConstants.Notes.AssignmentClosed,
+                Notes = closeAssignmentNote,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             }, ct);
@@ -95,4 +107,3 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         return Result.Ok(Unit.Value);
     }
 }
-

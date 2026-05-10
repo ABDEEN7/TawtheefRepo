@@ -21,9 +21,9 @@ public class JobController(
     ICurrentUserService currentUserService,
     IJobRepository jobRepository) : ControllerBase
 {
-    private async Task<bool> IsCreatorOrHRManager(Guid jobId)
+    private async Task<bool> HasFullJobAccessOrIsCreator(Guid jobId)
     {
-        if (User.IsInRole("HrManager")) return true;
+        if (User.HasFullJobAccess()) return true;
 
         var currentUserIdStr = currentUserService.UserId;
         if (!Guid.TryParse(currentUserIdStr, out var currentUserId)) return false;
@@ -205,7 +205,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Delete)]
     public async Task<IActionResult> DeleteJob(Guid id)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new DeleteJobCommand(id));
         return result.ToActionResult();
     }
@@ -260,7 +260,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobBasics(Guid id, [FromBody] UpdateJobBasicsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobBasicsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -269,7 +269,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobOverview(Guid id, [FromBody] UpdateJobOverviewDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobOverviewCommand(id, dto));
         return result.ToActionResult();
     }
@@ -278,7 +278,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobQualifications(Guid id, [FromBody] UpdateJobQualificationsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobQualificationsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -287,7 +287,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobResponsibilities(Guid id, [FromBody] UpdateJobResponsibilitiesDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobResponsibilitiesCommand(id, dto));
         return result.ToActionResult();
     }
@@ -296,7 +296,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobConditions(Guid id, [FromBody] UpdateJobConditionsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobConditionsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -305,7 +305,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobSkills(Guid id, [FromBody] UpdateJobSkillsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobSkillsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -314,7 +314,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobAttachments(Guid id, [FromBody] UpdateJobAttachmentsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobAttachmentsCommand(id, dto));
         return result.ToActionResult();
     }
@@ -323,7 +323,7 @@ public class JobController(
     [AuthorizePermission(PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> UpdateJobBenefits(Guid id, [FromBody] UpdateJobBenefitsDto dto)
     {
-        if (!await IsCreatorOrHRManager(id)) return Forbid();
+        if (!await HasFullJobAccessOrIsCreator(id)) return Forbid();
         var result = await mediator.Send(new UpdateJobBenefitsCommand(id, dto));
         return result.ToActionResult();
     }

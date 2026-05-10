@@ -17,7 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Application.Operation.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
 public sealed class AzureExternalCallbackLoginHandler(
-    IExternalIdTokenValidator azureTokenValidator,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     ITokenService tokenService,
@@ -49,25 +48,18 @@ public sealed class AzureExternalCallbackLoginHandler(
         }
 
         // 2) Get id_token + validate
-        var idToken = await GetExternalIdTokenAsync();
-        if (idToken is null)
-        {
-            _log.Warning("Azure callback failed: id_token not found in ExternalLoginInfo tokens");
-            return await LogFailureAsync(ErrorsCodes.ExternalLoginInfoNotFound, ct: ct);
-        }
-
-        var principalResult = await azureTokenValidator.ValidateAsync(idToken, ct);
-        if (principalResult.IsFailed)
+        var principalResult = await GetExternalPrincipalAsync(ct);
+        if (principalResult.IsFailed || principalResult.Value is null)
         {
             _log.Warning(
                 "Azure token validation failed. Errors={Errors}",
                 string.Join(" | ", principalResult.Errors.Select(e => e.Message)));
-
+        
             return await LogFailureAsync(principalResult.Errors, ct: ct);
         }
-
+        
         var principal = principalResult.Value;
-
+        
         // 3) Build normalized claims model
         var claims = AzureClaims.From(principal);
 
@@ -343,6 +335,12 @@ public sealed class AzureExternalCallbackLoginHandler(
         await Upsert("locale", data.Locale);
 
         await userManager.UpdateAsync(user);
+    }
+    private async Task<Result<ClaimsPrincipal?>> GetExternalPrincipalAsync(CancellationToken ct)
+    {
+        var info = await signInManager.GetExternalLoginInfoAsync();
+        await signInManager.SignOutAsync();
+        return Result.Ok(info?.Principal);
     }
 }
 

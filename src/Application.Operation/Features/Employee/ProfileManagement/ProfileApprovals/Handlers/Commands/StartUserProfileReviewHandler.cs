@@ -2,6 +2,7 @@
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -28,13 +29,18 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.NotSubmitted);
 
         profile.Status = UserProfileStatus.UnderReview;
+        var startReviewNote = JsonSerializer.Serialize(new
+        {
+            eventType = "ProfileReviewStarted",
+            message = UserProfileLogConstants.Notes.ProfileReviewStarted
+        });
 
         await auditRepo.AddAsync(new AuditTrailEntry
         {
             UserProfileId = profile.Id,
             UserId = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewStarted,
-            Notes = UserProfileLogConstants.Notes.ProfileReviewStarted,
+            Notes = startReviewNote,
             Section = nameof(ProfileSection.Personal)
         });
 
@@ -43,7 +49,7 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
             UserProfileId = profile.Id,
             PerformedById = cmd.OfficerId,
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewStarted,
-            Notes = UserProfileLogConstants.Notes.ProfileReviewStarted,
+            Notes = startReviewNote,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = ReviewStatus.Pending
         });

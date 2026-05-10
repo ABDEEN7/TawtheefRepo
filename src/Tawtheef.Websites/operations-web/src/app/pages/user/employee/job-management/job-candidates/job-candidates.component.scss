@@ -53,6 +53,13 @@
     color: white;
     border-color: var(--primary-color);
   }
+
+  &.sm {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
 }
 
 .filter-card {

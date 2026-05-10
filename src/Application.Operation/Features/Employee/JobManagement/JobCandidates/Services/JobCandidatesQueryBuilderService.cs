@@ -18,19 +18,9 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         filter ??= new JobCandidatesFilter(null, null, null);
         var searchTerm = filter.SearchTerm?.Trim();
 
-        var activeInvitationStatuses = new[]
-        {
-            InvitationStatusIds.NewInvitation,
-            InvitationStatusIds.Read,
-            InvitationStatusIds.PendingAttachmentApproval,
-            InvitationStatusIds.ReturnedAttachment,
-            InvitationStatusIds.ExamEligible,
-            InvitationStatusIds.Rejected
-        };
-
         var invitationsForJob = unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
-            .Where(i => i.JobId == jobId && activeInvitationStatuses.Contains(i.InvitationStatusId));
+            .Where(i => i.JobId == jobId && CandidateEligibilityRules.ActiveInvitationStatuses.Contains(i.InvitationStatusId));
 
         var profiles = unitOfWork.GetEntityRepository<UserProfile>().DbSet
             .AsNoTracking()
@@ -74,11 +64,8 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
         if (req.RequiredSkillIds.Count > 0)
         {
             profiles = profiles.Where(p =>
-                p.Skills!
-                    .Where(s => req.RequiredSkillIds.Contains(s.SkillId))
-                    .Select(s => s.SkillId)
-                    .Distinct()
-                    .Count() == req.RequiredSkillIds.Count);
+                req.RequiredSkillIds.All(requiredSkillId =>
+                    p.Skills!.Any(s => s.SkillId == requiredSkillId)));
         }
 
         // SearchTerm (optional) - عدّل حسب حقول ApplicantUser عندكم

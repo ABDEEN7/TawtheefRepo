@@ -26,6 +26,7 @@
   "CANDIDATE_USERS.BLOCK_SUCCESS": "Candidate user blocked successfully.",
   "CANDIDATE_USERS.UNBLOCK_SUCCESS": "Candidate user unblocked successfully.",
   "CANDIDATE_USERS.VIEW_PROFILE": "View Profile",
+  "CANDIDATE_USERS.VIEW_PROFILE_LOGS": "View Profile Logs",
   "CANDIDATE_USERS.PROFILE_NOT_FOUND": "Candidate user profile not found or not yet submitted.",
   "CANDIDATE_USERS.BACK": "Back"
 }

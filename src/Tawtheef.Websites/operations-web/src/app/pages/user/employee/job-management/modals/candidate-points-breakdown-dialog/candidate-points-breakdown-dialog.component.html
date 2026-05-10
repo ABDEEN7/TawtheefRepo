@@ -1,0 +1,111 @@
+<div class="dialog-content animate__animated animate__fadeIn" i18nNamespace="pages/job-candidates">
+  
+  <!-- Enhanced Loading Overlay -->
+  <div class="loading-overlay d-flex flex-column align-items-center justify-content-center" *ngIf="isLoading">
+    <div class="logo-container mb-3">
+      <img src="assets/img/logo.png" alt="Logo" class="loading-logo">
+    </div>
+    <div class="loading-text fw-bold text-primary">
+      {{ 'common.loading' | translate }}...
+    </div>
+    <div class="progress-bar-container mt-3">
+      <div class="progress-bar-inner"></div>
+    </div>
+  </div>
+
+  <div class="content-state" *ngIf="!isLoading && result?.pointsBreakdown">
+    <!-- Candidate Info Header -->
+    <div class="candidate-info mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-circle">
+          <i class="hgi hgi-stroke hgi-user text-primary fs-20"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">{{ candidateName }}</h5>
+          <p class="text-muted m-0 fs-12">{{ 'CANDIDATE_POINTS_BREAKDOWN_SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="total-score-card mb-4 p-4 text-center shadow-sm">
+      <div class="fs-13 text-muted mb-1 text-uppercase letter-spacing-1">{{ 'CANDIDATE_POINTS_TOTAL_SCORE' | translate }}</div>
+      <div class="display-4 fw-bold text-primary">{{ result?.pointsBreakdown?.totalPoints }}</div>
+    </div>
+
+    <div class="breakdown-grid mb-4">
+      <div class="row g-3">
+        @for (item of getBreakdownItems(result?.pointsBreakdown); track item.label) {
+        <div class="col-md-6">
+          <div class="breakdown-item p-3 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <i class="hgi hgi-stroke {{ item.icon }} text-muted fs-16"></i>
+                <span class="fw-medium fs-13">{{ item.label | translate }}</span>
+              </div>
+              <span class="badge bg-primary bg-opacity-10 text-primary fw-bold">{{ item.value }}</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar" role="progressbar" [style.width.%]="(item.value / 200) * 100"></div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Detailed Entries -->
+    <div class="details-section" *ngIf="result?.pointsBreakdown?.details?.length">
+      <div class="d-flex align-items-center justify-content-between mb-3 mt-4">
+        <h6 class="fw-bold m-0 d-flex align-items-center gap-2">
+          <i class="hgi hgi-stroke hgi-list-check text-primary"></i>
+          {{ 'CANDIDATE_POINTS_DETAILS_TITLE' | translate }}
+        </h6>
+      </div>
+      <div class="table-responsive rounded-3 border overflow-hidden shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="fs-11 text-muted px-3 py-3 border-0">{{ 'CANDIDATE_POINTS_SECTION' | translate }}</th>
+              <th class="fs-11 text-muted py-3 border-0">{{ 'CANDIDATE_POINTS_DESCRIPTION' | translate }}</th>
+              <th class="fs-11 text-muted text-center py-3 border-0" style="width: 80px;">{{ 'CANDIDATE_POINTS_VALUE' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of result?.pointsBreakdown?.details">
+              <td class="px-3 py-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold fs-10 rounded-pill px-2">
+                  {{ (isArabic ? detail.sectionAr : detail.sectionEn) || detail.section }}
+                </span>
+              </td>
+              <td class="fs-12 text-dark py-3 fw-medium">
+                <div>{{ (isArabic ? detail.descriptionAr : detail.descriptionEn) || detail.description }}</div>
+                <div *ngIf="(isArabic ? detail.itemsAr : detail.itemsEn)?.length" class="mt-2">
+                  <div class="d-flex flex-wrap gap-1">
+                    <span *ngFor="let item of (isArabic ? detail.itemsAr : detail.itemsEn)" class="badge bg-light text-muted border fw-normal fs-9">
+                      {{ item }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center py-3">
+                <div class="points-badge">+{{ detail.points }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state py-5 text-center" *ngIf="!isLoading && !result?.pointsBreakdown">
+    <i class="hgi hgi-stroke hgi-alert-circle fs-48 text-muted mb-3"></i>
+    <p class="text-muted">{{ 'CANDIDATE_POINTS_NO_DATA' | translate }}</p>
+  </div>
+
+  <div class="dialog-footer mt-4 pt-3 border-top text-end">
+    <button class="btn btn-secondary px-4 rounded-3" (click)="close()">
+      {{ 'common.close' | translate }}
+    </button>
+  </div>
+</div>
+

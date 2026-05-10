@@ -1,4 +1,5 @@
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 

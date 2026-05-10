@@ -7,6 +7,5 @@ export interface MajorSkillDetailsModel {
   major: majorDetails;
   skillId: string;
   skill: dropdownOptionsModel;
-  isSkillRequired: boolean;
   isActive: boolean;
 }

@@ -5,6 +5,7 @@ using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -44,13 +45,20 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         foreach (var assignment in activeAssignments)
         {
             assignment.Deactivate();
+            var unassignNote = JsonSerializer.Serialize(new
+            {
+                eventType = "AssignmentReassigned",
+                newAssignedUserId = (Guid?)null,
+                newAssignedUserName = (string?)null,
+                message = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution
+            });
 
             await loggerRepo.AddAsync(new UserProfileLogger
             {
                 UserProfileId = profile.Id,
                 PerformedById = cmd.UserId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution,
+                Notes = unassignNote,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignment.Id
             }, ct);

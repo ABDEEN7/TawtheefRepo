@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Logger;
@@ -27,6 +28,9 @@ public class ReviewInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork)
         if (attachment == null)
             return Result.Fail(ErrorsCodes.AttachmentNotFound);
 
+        var oldIsApproved = attachment.IsApproved;
+        var oldIsReturned = attachment.IsReturned;
+
         // Update attachment
         attachment.IsApproved = request.IsApproved;
         attachment.IsReturned = !request.IsApproved && !string.IsNullOrWhiteSpace(request.ReviewNote);
@@ -35,11 +39,29 @@ public class ReviewInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork)
         // Log audit
         var auditRepo = unitOfWork.GetEntityRepository<ActionLog>();
         var actionType = request.IsApproved ? "AttachmentApproved" : "AttachmentReturned";
-        var note = request.IsApproved ? "Attachment approved" : $"Attachment returned: {request.ReviewNote}";
+        var note = JsonSerializer.Serialize(new
+        {
+            eventType = "InvitationAttachmentReview",
+            actionKind = "Update",
+            actionType,
+            section = "JobInvitationAttachment",
+            invitationId = request.InvitationId,
+            attachmentId = request.AttachmentId,
+            attachmentTitle = attachment.AttachmentTitleEn,
+            status = request.IsApproved ? "Approved" : "Returned",
+            reviewNote = request.IsApproved ? null : request.ReviewNote,
+            changedFields = new[]
+            {
+                new { field = "IsApproved", oldValue = oldIsApproved.ToString(), newValue = attachment.IsApproved.ToString() },
+                new { field = "IsReturned", oldValue = oldIsReturned.ToString(), newValue = attachment.IsReturned.ToString() }
+            },
+            message = request.IsApproved ? "Attachment approved" : "Attachment returned"
+        });
         
         await auditRepo.AddAsync(new ActionLog
         {
             UserId = invitation.ApplicantId,
+            LogType = ActionLogType.Employee,
             ActionType = actionType,
             Notes = note,
             Section = "JobInvitationAttachment",

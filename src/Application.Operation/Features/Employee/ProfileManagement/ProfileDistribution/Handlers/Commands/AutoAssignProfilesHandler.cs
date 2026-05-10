@@ -5,6 +5,7 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -121,13 +122,22 @@ public sealed class AutoAssignProfilesHandler(
             if (assignmentResult.IsFailed)
                 continue;
 
+            var assignmentNote = JsonSerializer.Serialize(new
+            {
+                eventType = "AssignmentCreated",
+                assignmentMode = "Auto",
+                newAssignedUserId = assignmentResult.Value.EmployeeId,
+                newAssignedUserName = chosen.Employee.FullNameEn,
+                message = UserProfileLogConstants.Notes.ProfileAssignedAutomatically
+            });
+
             assignmentRepo.DbSet.Add(assignmentResult.Value);
             await auditRepo.AddAsync(new AuditTrailEntry
             {
                 UserProfileId = profile.Id,
                 UserId = assignmentResult.Value.EmployeeId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
-                Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
+                Notes = assignmentNote,
                 Section = UserProfileLogConstants.Sections.Assignment
             }, ct);
             await loggerRepo.AddAsync(new UserProfileLogger
@@ -135,7 +145,7 @@ public sealed class AutoAssignProfilesHandler(
                 UserProfileId = profile.Id,
                 PerformedById = assignmentResult.Value.EmployeeId,
                 ActionType = UserProfileLogConstants.ActionTypes.ProfileAssigned,
-                Notes = UserProfileLogConstants.Notes.ProfileAssignedAutomatically,
+                Notes = assignmentNote,
                 Section = UserProfileLogConstants.Sections.Assignment,
                 EntityId = assignmentResult.Value.Id
             }, ct);

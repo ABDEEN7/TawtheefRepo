@@ -38,5 +38,13 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetCandidateUserProfileQuery(id));
         return result.ToActionResult();
     }
+
+    [HttpGet("{id:guid}/profile-logs")]
+    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
+    public async Task<IActionResult> GetCandidateUserProfileLogs(Guid id, [FromQuery] GetCandidateUserProfileLogsQuery query)
+    {
+        var result = await mediator.Send(query with { UserId = id });
+        return result.ToActionResult();
+    }
 }
 

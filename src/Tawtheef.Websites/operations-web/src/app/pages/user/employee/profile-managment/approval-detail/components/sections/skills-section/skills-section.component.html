@@ -13,7 +13,9 @@
       <div class="chip-stack" *ngIf="skills?.length; else emptySkills">
         <div class="chip-row" *ngFor="let s of skills">
           <div class="chip-title">{{ displayOption(s.skill, s.skillId) }}</div>
-          <p-tag severity="info" [value]="displayOption(s.level, s.levelId)"></p-tag>
+          <p-tag *ngIf="s.level || s.levelId" severity="info" [value]="displayOption(s.level, s.levelId)"></p-tag>
+          <p-tag *ngIf="s.isRequired !== undefined" [severity]="s.isRequired ? 'danger' : 'secondary'"
+            [value]="(s.isRequired ? 'JOB_WIZARD.STEPS.SKILLS.REQUIRED' : 'JOB_WIZARD.STEPS.SKILLS.OPTIONAL') | translate"></p-tag>
         </div>
       </div>
     </p-card>

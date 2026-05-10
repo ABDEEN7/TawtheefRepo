@@ -16,22 +16,30 @@ import 'chart.js/auto';
 import { ChartData, ChartOptions } from 'chart.js';
 import { ChartModule } from 'primeng/chart';
 import { Tooltip } from 'primeng/tooltip';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { SortEvent } from 'primeng/api';
+import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import {
+  CandidateStatusSummary,
+  CandidateTypeSummary,
   DashboardKpis,
+  DashboardOverview,
+  EmployeeIndicators,
+  EmployeeReviewOutcomes,
   JobKpis,
+  JobsSummary,
+  LatestJob,
   OperationsDashboardFilters,
   OperationsDashboardResponse,
   TeamPerformanceRow,
 } from './models/operations-dashboard.model';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { FontSizeService } from '../../../../core/services/font-size.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,6 +62,21 @@ export class Dashboard implements OnInit {
 
   readonly loading = signal(false);
   readonly dashboard = signal<OperationsDashboardResponse | null>(null);
+  readonly overview = signal<DashboardOverview | null>(null);
+  readonly candidateStatus = signal<CandidateStatusSummary | null>(null);
+  readonly candidateTypes = signal<CandidateTypeSummary | null>(null);
+  readonly jobsSummary = signal<JobsSummary | null>(null);
+  readonly latestJobs = signal<LatestJob[]>([]);
+  readonly employeeIndicators = signal<EmployeeIndicators | null>(null);
+  readonly employeeReviewOutcomes = signal<EmployeeReviewOutcomes | null>(null);
+
+  readonly overviewLoading = signal(false);
+  readonly candidateStatusLoading = signal(false);
+  readonly candidateTypesLoading = signal(false);
+  readonly jobsSummaryLoading = signal(false);
+  readonly latestJobsLoading = signal(false);
+  readonly employeeIndicatorsLoading = signal(false);
+  readonly employeeReviewOutcomesLoading = signal(false);
 
   readonly fromDate = signal<Date | null>(new Date(new Date().setDate(new Date().getDate() - 30)));
   readonly toDate = signal<Date | null>(new Date());
@@ -71,9 +94,14 @@ export class Dashboard implements OnInit {
   });
 
   readonly searchStatus = signal<string>('');
+  readonly activeTab = signal<'overview' | 'candidates' | 'jobs' | 'employees'>('overview');
+  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
+  readonly miniSkeletonItems = [1, 2, 3, 4];
+  readonly tableSkeletonRows = [1, 2, 3, 4, 5];
 
   readonly teamPerformance = signal<PaginatedResult<TeamPerformanceRow> | null>(null);
   readonly tableLoading = signal(false);
+  readonly tableSearch = signal('');
 
   private filterChanges$ = new Subject<void>();
 
@@ -148,8 +176,8 @@ export class Dashboard implements OnInit {
     };
   });
 
-  readonly isHrDashboard = computed(() => this.dashboard()?.role === 'HrManager');
-  readonly isDepartmentManager = computed(() => this.dashboard()?.role === 'DepartmentManager');
+  readonly isHrDashboard = computed(() => (this.overview()?.role ?? this.dashboard()?.role) === 'HrManager');
+  readonly isDepartmentManager = computed(() => (this.overview()?.role ?? this.dashboard()?.role) === 'DepartmentManager');
 
   readonly hasMinisterOfficePermission = computed(() =>
     this.authService.hasPermission(Permissions.MinisterOffice.View)
@@ -168,8 +196,8 @@ export class Dashboard implements OnInit {
     this.authService.hasPermission(Permissions.ProfileDistribution.Manage)
   );
 
-  readonly activeKpis = computed<DashboardKpis>(() =>
-    this.dashboard()?.kpis ?? {
+  private defaultKpis(): DashboardKpis {
+    return {
       totalEmployees: 0,
       activeEmployees: 0,
       totalProfiles: 0,
@@ -178,30 +206,122 @@ export class Dashboard implements OnInit {
       newProfilesThisMonth: 0,
       approvedProfiles: 0,
       rejectedProfiles: 0,
+      inCreationProfiles: 0,
+      submittedProfiles: 0,
+      underReviewProfiles: 0,
       pendingProfiles: 0,
       returnedProfiles: 0,
       approvalRate: 0,
       rejectionRate: 0,
       averageApprovalHours: 0,
       totalAssignedTasks: 0,
+      completedTasks: 0,
       remainingTasks: 0,
       overdueTasks: 0,
+      unassignedProfiles: 0,
       followedMinisterOfficeCandidates: 0,
-    }
-  );
+    };
+  }
+
+  readonly activeKpis = computed<DashboardKpis>(() => {
+    const base = this.dashboard()?.kpis ?? this.defaultKpis();
+    const overview = this.overview()?.kpis;
+    const candidate = this.candidateStatus();
+    const indicators = this.employeeIndicators();
+    const outcomes = this.employeeReviewOutcomes();
+
+    return {
+      ...base,
+      ...(overview ?? {}),
+      ...(candidate ? {
+        totalProfiles: candidate.totalProfiles,
+        inCreationProfiles: candidate.inCreationProfiles,
+        submittedProfiles: candidate.submittedProfiles,
+        underReviewProfiles: candidate.underReviewProfiles,
+        approvedProfiles: candidate.approvedProfiles,
+        returnedProfiles: candidate.returnedProfiles,
+        rejectedProfiles: candidate.rejectedProfiles,
+      } : {}),
+      ...(indicators ? {
+        activeEmployees: indicators.activeEmployees,
+        remainingTasks: indicators.remainingTasks,
+        unassignedProfiles: indicators.unassignedProfiles,
+        completedTasks: indicators.completedTasks,
+      } : {}),
+      ...(outcomes ? {
+        totalProfiles: outcomes.totalProfiles,
+        approvedProfiles: outcomes.approvedProfiles,
+        returnedProfiles: outcomes.returnedProfiles,
+        unassignedProfiles: outcomes.unassignedProfiles,
+        pendingProfiles: outcomes.pendingProfiles,
+      } : {}),
+    };
+  });
 
   readonly activeJobKpis = computed<JobKpis>(() =>
-    this.dashboard()?.jobKpis ?? {
+    this.jobsSummary()?.jobKpis ?? this.overview()?.jobKpis ?? this.dashboard()?.jobKpis ?? {
       totalJobs: 0,
+      draftJobs: 0,
       activeJobs: 0,
       pendingReviewJobs: 0,
       approvedJobs: 0,
       rejectedJobs: 0,
       newJobsToday: 0,
+      pendingPointConfigurationJobs: 0,
+      needPointUpdateJobs: 0,
+      pendingPointApprovalJobs: 0,
+      needUpdateJobs: 0,
+      readyForAnnouncementJobs: 0,
+      publishedJobs: 0,
+      closedJobs: 0,
+      cancelledJobs: 0,
     }
   );
 
+  readonly activeInvitationKpis = computed(() =>
+    this.jobsSummary()?.invitationKpis ?? this.overview()?.invitationKpis ?? this.dashboard()?.invitationKpis ?? {
+      totalInvitations: 0,
+      acceptedInvitations: 0,
+      pendingInvitations: 0,
+      pendingAttachmentApproval: 0,
+    }
+  );
+
+  readonly jobDonutSegments = computed(() => {
+    const jobKpis = this.activeJobKpis();
+    const circumference = 439.82;
+    const segments = [
+      { key: 'draft', statusKey: 'Draft', value: jobKpis.draftJobs, color: '#c9cbd1' },
+      { key: 'pending', statusKey: 'PendingApproval', value: jobKpis.pendingReviewJobs, color: '#e3a72f' },
+      { key: 'approved', statusKey: 'PendingPointConfiguration', value: jobKpis.pendingPointConfigurationJobs, color: '#2f9e5b' },
+      { key: 'returned', statusKey: 'NeedUpdate', value: jobKpis.needUpdateJobs, color: '#e87532' },
+      { key: 'ready', statusKey: 'ReadyForAnnouncement', value: jobKpis.readyForAnnouncementJobs, color: '#f05d23' },
+      { key: 'published', statusKey: 'Published', value: jobKpis.publishedJobs, color: '#8a1538' },
+      { key: 'closed', statusKey: 'Closed', value: jobKpis.closedJobs, color: '#5f6673' },
+    ].filter((segment) => segment.value > 0);
+    const total = segments.reduce((sum, segment) => sum + segment.value, 0);
+
+    let offset = 0;
+    return segments.map((segment) => {
+      const length = total > 0 ? (segment.value / total) * circumference : 0;
+      const result = {
+        ...segment,
+        dasharray: `${length} ${circumference - length}`,
+        dashoffset: -offset,
+        percentage: total > 0 ? Math.round((segment.value / total) * 100) : 0,
+      };
+      offset += length;
+      return result;
+    });
+  });
+
   readonly tableRows = computed<TeamPerformanceRow[]>(() => this.teamPerformance()?.items ?? []);
+  readonly tableTotalItems = computed(() => this.teamPerformance()?.metadata?.totalCount ?? 0);
+  readonly tableCurrentPage = computed(() => this.tableFilters().pageNumber ?? 1);
+  readonly tablePageSize = computed(() => this.tableFilters().pageSize ?? 10);
+  readonly tableSortField = computed(() => this.tableFilters().sortBy || '');
+  readonly tableSortOrder = computed(() => this.tableFilters().sortDirection === 'desc' ? -1 : 1);
+  readonly latestJobRows = computed(() => this.latestJobs().length ? this.latestJobs() : this.dashboard()?.latestJobs ?? []);
 
   readonly profileTrendChartData = computed<ChartData<'line'>>(() => {
     const points = this.dashboard()?.profileTrend.points ?? [];
@@ -229,13 +349,13 @@ export class Dashboard implements OnInit {
         {
           label: this.translate.instant('common.chart.profiles'),
           data: points.map((point) => point.value),
-          borderColor: '#2f65d6',
-          backgroundColor: 'rgba(47,101,214,0.1)',
+          borderColor: '#8a1538',
+          backgroundColor: 'rgba(138,21,56,0.1)',
           borderWidth: 3,
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#2f65d6',
+          pointBackgroundColor: '#8a1538',
         },
       ],
     };
@@ -267,13 +387,13 @@ export class Dashboard implements OnInit {
         {
           label: this.translate.instant('common.chart.tasks'),
           data: points.map((point) => point.value),
-          borderColor: '#2b9d76',
-          backgroundColor: 'rgba(43,157,118,0.1)',
+          borderColor: '#2f9e5b',
+          backgroundColor: 'rgba(47,158,91,0.1)',
           borderWidth: 3,
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#2b9d76',
+          pointBackgroundColor: '#2f9e5b',
         },
       ],
     };
@@ -282,7 +402,7 @@ export class Dashboard implements OnInit {
 
 
   readonly profileStatusChartData = computed<ChartData<'doughnut'>>(() => {
-    const items = this.dashboard()?.profileBreakdown.byStatus ?? [];
+    const items = this.candidateStatus()?.profileBreakdown.byStatus ?? this.dashboard()?.profileBreakdown.byStatus ?? [];
     if (items.length === 0) {
       return {
         labels: [this.translate.instant('common.chart.noData')],
@@ -299,14 +419,14 @@ export class Dashboard implements OnInit {
       datasets: [
         {
           data: items.map((item) => item.count),
-          backgroundColor: ['#2f65d6', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+          backgroundColor: ['#8a1538', '#2f9e5b', '#e3a72f', '#e87532', '#6c4bb6'],
         },
       ],
     };
   });
 
   readonly jobStatusChartData = computed<ChartData<'doughnut'>>(() => {
-    const items = this.dashboard()?.jobBreakdown.byStatus ?? [];
+    const items = this.jobsSummary()?.jobBreakdown.byStatus ?? this.dashboard()?.jobBreakdown.byStatus ?? [];
     if (items.length === 0) {
       return {
         labels: [this.translate.instant('common.chart.noData')],
@@ -323,14 +443,14 @@ export class Dashboard implements OnInit {
       datasets: [
         {
           data: items.map((item) => item.count),
-          backgroundColor: ['#4e80ea', '#2b9d76', '#f5b342', '#df6d4e', '#9a6bff'],
+          backgroundColor: ['#8a1538', '#2f9e5b', '#e3a72f', '#e87532', '#6c4bb6'],
         },
       ],
     };
   });
 
   readonly jobDepartmentChartData = computed<ChartData<'bar'>>(() => {
-    const items = this.dashboard()?.jobBreakdown.byDepartment ?? [];
+    const items = this.jobsSummary()?.jobBreakdown.byDepartment ?? this.dashboard()?.jobBreakdown.byDepartment ?? [];
     if (items.length === 0) {
       return {
         labels: [this.translate.instant('common.chart.noData')],
@@ -350,7 +470,7 @@ export class Dashboard implements OnInit {
         {
           label: this.translate.instant('dashboard.jobs.title'),
           data: items.map((item) => item.count),
-          backgroundColor: '#4e80ea',
+          backgroundColor: '#8a1538',
           borderRadius: 6,
         },
       ],
@@ -378,7 +498,7 @@ export class Dashboard implements OnInit {
         {
           label: this.translate.instant('common.chart.tasks'),
           data: items.map((item) => item.count),
-          backgroundColor: ['#2b9d76', '#4e80ea', '#df6d4e'],
+          backgroundColor: ['#2f9e5b', '#8a1538', '#e87532'],
           borderRadius: 6,
         },
       ],
@@ -441,7 +561,6 @@ export class Dashboard implements OnInit {
       .pipe(debounceTime(350), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.loadDashboard();
-        this.loadTeamPerformance();
       });
 
     this.searchSubject
@@ -460,21 +579,87 @@ export class Dashboard implements OnInit {
       });
 
     this.loadDashboard();
-    if (this.canViewTeamPerformance()) {
-      this.loadTeamPerformance();
-    }
   }
 
   loadDashboard(): void {
-    this.loading.set(true);
+    this.loadActiveTab();
+  }
+
+  private loadActiveTab(): void {
+    switch (this.activeTab()) {
+      case 'overview':
+        this.loadOverview();
+        break;
+      case 'candidates':
+        this.loadCandidateStatus();
+        this.loadCandidateTypes();
+        break;
+      case 'jobs':
+        this.loadJobsSummary();
+        this.loadLatestJobs();
+        break;
+      case 'employees':
+        this.loadEmployeeIndicators();
+        this.loadEmployeeReviewOutcomes();
+        this.loadTeamPerformance();
+        break;
+    }
+  }
+
+  private loadOverview(): void {
+    this.overviewLoading.set(true);
     this.dashboardService
-      .getDashboard(this.dashboardFilters())
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.dashboard.set(response);
-        },
-      });
+      .getOverview(this.dashboardFilters())
+      .pipe(finalize(() => this.overviewLoading.set(false)))
+      .subscribe({ next: (response) => this.overview.set(response) });
+  }
+
+  private loadCandidateStatus(): void {
+    this.candidateStatusLoading.set(true);
+    this.dashboardService
+      .getCandidateStatus(this.dashboardFilters())
+      .pipe(finalize(() => this.candidateStatusLoading.set(false)))
+      .subscribe({ next: (response) => this.candidateStatus.set(response) });
+  }
+
+  private loadCandidateTypes(): void {
+    this.candidateTypesLoading.set(true);
+    this.dashboardService
+      .getCandidateTypes(this.dashboardFilters())
+      .pipe(finalize(() => this.candidateTypesLoading.set(false)))
+      .subscribe({ next: (response) => this.candidateTypes.set(response) });
+  }
+
+  private loadJobsSummary(): void {
+    this.jobsSummaryLoading.set(true);
+    this.dashboardService
+      .getJobsSummary(this.dashboardFilters())
+      .pipe(finalize(() => this.jobsSummaryLoading.set(false)))
+      .subscribe({ next: (response) => this.jobsSummary.set(response) });
+  }
+
+  private loadLatestJobs(): void {
+    this.latestJobsLoading.set(true);
+    this.dashboardService
+      .getLatestJobs(this.dashboardFilters())
+      .pipe(finalize(() => this.latestJobsLoading.set(false)))
+      .subscribe({ next: (response) => this.latestJobs.set(response) });
+  }
+
+  private loadEmployeeIndicators(): void {
+    this.employeeIndicatorsLoading.set(true);
+    this.dashboardService
+      .getEmployeeIndicators(this.dashboardFilters())
+      .pipe(finalize(() => this.employeeIndicatorsLoading.set(false)))
+      .subscribe({ next: (response) => this.employeeIndicators.set(response) });
+  }
+
+  private loadEmployeeReviewOutcomes(): void {
+    this.employeeReviewOutcomesLoading.set(true);
+    this.dashboardService
+      .getEmployeeReviewOutcomes(this.dashboardFilters())
+      .pipe(finalize(() => this.employeeReviewOutcomesLoading.set(false)))
+      .subscribe({ next: (response) => this.employeeReviewOutcomes.set(response) });
   }
 
   loadTeamPerformance(): void {
@@ -494,9 +679,11 @@ export class Dashboard implements OnInit {
       });
   }
 
-  onTableLazyLoad(event: TableLazyLoadEvent): void {
-    const sortBy = event.sortField as string || '';
-    const sortDirection = event.sortOrder === 1 ? 'asc' : 'desc';
+  onTableSort(event: SortEvent): void {
+    if (!event.field || !event.order) return;
+
+    const sortBy = event.field;
+    const sortDirection = event.order === 1 ? 'asc' : 'desc';
 
     const current = this.tableFilters();
     if (current.sortBy === sortBy &&
@@ -508,6 +695,7 @@ export class Dashboard implements OnInit {
       ...v,
       sortBy: sortBy,
       sortDirection: sortDirection,
+      pageNumber: 1,
     }));
 
     this.loadTeamPerformance();
@@ -524,7 +712,74 @@ export class Dashboard implements OnInit {
   }
 
   onSearchChange(value: string): void {
+    this.tableSearch.set(value);
     this.searchSubject.next(value);
+  }
+
+  setActiveTab(tab: 'overview' | 'candidates' | 'jobs' | 'employees'): void {
+    this.activeTab.set(tab);
+    this.loadActiveTab();
+  }
+
+  statusCount(status: string): number {
+    const normalizedStatus = status.toLowerCase();
+    return (this.candidateStatus()?.profileBreakdown.byStatus ?? this.dashboard()?.profileBreakdown.byStatus ?? [])
+      .find((item) => item.status.toLowerCase() === normalizedStatus)?.count ?? 0;
+  }
+
+  jobStatusCount(status: string): number {
+    const normalizedStatus = status.toLowerCase();
+    return (this.jobsSummary()?.jobBreakdown.byStatus ?? this.dashboard()?.jobBreakdown.byStatus ?? [])
+      .find((item) => item.status.toLowerCase() === normalizedStatus)?.count ?? 0;
+  }
+
+  candidateTypeCount(key: string): number {
+    const kpis = this.candidateTypes()?.candidateTypeKpis ?? this.dashboard()?.candidateTypeKpis;
+    if (kpis) {
+      const kpiKey = key as keyof typeof kpis;
+      const count = kpis[kpiKey];
+      if (typeof count === 'number') return count;
+    }
+
+    return (this.candidateTypes()?.byCandidateType ?? this.dashboard()?.profileBreakdown.byCandidateType ?? [])
+      .find((item) => item.key === key)?.count ?? 0;
+  }
+
+  candidateTypeTotal(): number {
+    const kpis = this.candidateTypes()?.candidateTypeKpis ?? this.dashboard()?.candidateTypeKpis;
+    if (kpis) return kpis.total;
+
+    return (this.candidateTypes()?.byCandidateType ?? this.dashboard()?.profileBreakdown.byCandidateType ?? [])
+      .reduce((total, item) => total + item.count, 0);
+  }
+
+  progress(value: number, total: number): number {
+    if (!total || total <= 0) return 0;
+    return Math.min(100, Math.round((value / total) * 100));
+  }
+
+  jobDonutTooltip(segment: { statusKey: string; value: number; percentage: number }): string {
+    const label = this.translate.instant('dashboard.status.' + segment.statusKey);
+    const unit = this.translate.instant('dashboard.jobs.unit');
+    return `${label}: ${segment.value.toLocaleString()} ${unit} (${segment.percentage}%)`;
+  }
+
+  jobStatusClass(status: string): string {
+    const normalized = status.toLowerCase();
+    if (normalized.includes('published')) return 'published';
+    if (normalized.includes('pending')) return 'pending';
+    if (normalized.includes('need') || normalized.includes('rejected')) return 'returned';
+    if (normalized.includes('ready') || normalized.includes('active')) return 'approved';
+    if (normalized.includes('closed') || normalized.includes('cancelled')) return 'closed';
+    return 'draft';
+  }
+
+  jobActionKey(status: string): string {
+    const normalized = status.toLowerCase();
+    if (normalized.includes('pendingapproval')) return 'dashboard.latestJobs.actions.review';
+    if (normalized.includes('need')) return 'dashboard.latestJobs.actions.update';
+    if (normalized.includes('published')) return 'dashboard.latestJobs.actions.followInvitations';
+    return 'dashboard.latestJobs.actions.none';
   }
 
   applyFilters(): void {
@@ -555,6 +810,8 @@ export class Dashboard implements OnInit {
 
     this.dashboardFilters.update(v => ({
       ...v,
+      fromDateUtc: fromIso,
+      toDateUtc: toIso,
     }));
     this.filterChanges$.next();
   }

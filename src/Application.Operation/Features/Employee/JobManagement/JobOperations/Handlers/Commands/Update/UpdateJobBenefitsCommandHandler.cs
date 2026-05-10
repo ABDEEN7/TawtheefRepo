@@ -1,22 +1,21 @@
+using Application.Operation.Common.Validations;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 
-using Application.Operation.Common.Validations;
+namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands.Update;
 
-namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands;
-
-public class UpdateJobOverviewCommandHandler(
+public class UpdateJobBenefitsCommandHandler(
     IJobRepository jobRepository,
     IJobValidationService validationService,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateJobOverviewCommand, IResult<Unit>>
+    : IRequestHandler<UpdateJobBenefitsCommand, IResult<Unit>>
 {
-    public async Task<IResult<Unit>> Handle(UpdateJobOverviewCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(UpdateJobBenefitsCommand request, CancellationToken cancellationToken)
     {
         // 1. Load the job (scalar-only update, no collections needed)
         var jobResult = await jobRepository.Repository.GetByIdAsync(request.JobId, cancellationToken);
@@ -25,13 +24,13 @@ public class UpdateJobOverviewCommandHandler(
 
         var job = jobResult.Value;
 
-        var validationResult = await validationService.ValidateOverviewUpdate(request.Data, job);
+        var validationResult = await validationService.ValidateBenefitsUpdate(request.Data, job);
         if (!validationResult.IsValid)
             return Result.Fail<Unit>(validationResult.Errors.First().ErrorMessage);
-        
-        // 4. Update only overview fields
-        job.OverViewAr = request.Data.OverviewAr;
-        job.OverViewEn = request.Data.OverviewEn;
+
+        // 4. Update only benefits fields
+        job.BenefitsAr = request.Data.BenefitsAr;
+        job.BenefitsEn = request.Data.BenefitsEn;
 
         // 5. Persist
         try

@@ -3534,19 +3534,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e0cd7b22-8948-0c37-9b15-2e5217f0c565"),
-                            BackendName = "Active",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "الوظيفة جاهزة للتقديم ويمكن إرسالها للجمهور المطلوب.",
-                            DescriptionEn = "Job is open for applications and can be published to the target audience.",
-                            DisplayOrder = 2,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "نشطة",
-                            NameEn = "Active"
-                        },
-                        new
-                        {
                             Id = new Guid("114dae76-bde9-3efa-2a2b-803ebd92e109"),
                             BackendName = "Closed",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -4517,9 +4504,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
-
-                    b.Property<bool>("IsSkillRequired")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
@@ -8142,6 +8126,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");

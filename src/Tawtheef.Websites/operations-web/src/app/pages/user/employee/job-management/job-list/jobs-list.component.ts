@@ -426,7 +426,6 @@ export class JobListComponent implements OnInit {
 
     if (canCancel &&
       [
-        JobStatus.Active,
         JobStatus.PendingPointApproval,
         JobStatus.PendingPointConfiguration,
         JobStatus.NeedPointUpdate,
@@ -498,12 +497,11 @@ export class JobListComponent implements OnInit {
       [JobStatus.PendingPointConfiguration]: 'pill info',
       [JobStatus.NeedPointUpdate]: 'pill warning',
       [JobStatus.PendingPointApproval]: 'pill warning',
-      [JobStatus.Published]: 'pill info',
+      [JobStatus.Published]: 'pill success',
       [JobStatus.Closed]: 'pill danger',
       [JobStatus.Rejected]: 'pill danger',
       [JobStatus.Cancelled]: 'pill secondary',
       [JobStatus.ReadyForAnnouncement]: 'pill info',
-      [JobStatus.Active]: 'pill success',
     };
     return badgeMap[statusName] || 'pill neutral';
   }
