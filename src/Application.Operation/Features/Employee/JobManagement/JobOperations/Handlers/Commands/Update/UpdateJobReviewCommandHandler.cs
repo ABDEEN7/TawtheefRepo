@@ -2,8 +2,8 @@
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.SaveOperation;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -14,7 +14,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using JobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
-namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands.Update;
 
 public sealed class UpdateJobReviewCommandHandler(
     IUnitOfWork uow,

@@ -1,14 +1,13 @@
+using Application.Operation.Common.Validations;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 
-using Application.Operation.Common.Validations;
-
-namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands;
+namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Commands.Update;
 
 public class UpdateJobBasicsCommandHandler(
     IJobRepository jobRepository,
