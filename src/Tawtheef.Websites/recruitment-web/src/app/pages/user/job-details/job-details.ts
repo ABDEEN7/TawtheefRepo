@@ -218,8 +218,7 @@ export class JobDetails implements OnInit {
     if (this.hasApplied()) return false;
     const status = this.job()?.invitationStatus?.backendName;
     const isPending = status === InvitationStatus.NewInvitation ||
-      status === InvitationStatus.Read ||
-      status === InvitationStatus.ReturnedAttachment;
+      status === InvitationStatus.Read;
     return isPending;
   }
 
