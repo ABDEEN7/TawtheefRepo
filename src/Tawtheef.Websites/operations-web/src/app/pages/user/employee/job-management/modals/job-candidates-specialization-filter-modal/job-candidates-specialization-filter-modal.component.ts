@@ -29,6 +29,24 @@ export class JobCandidatesSpecializationFilterModalComponent implements OnInit {
     return this.form.get('specializationSelections') as FormArray;
   }
 
+  get hasSelectableSpecializations(): boolean {
+    return this.specializationSelections.controls.some(control => !control.get('isMain')?.value);
+  }
+
+  get areAllSelectableSpecializationsSelected(): boolean {
+    const selectableSpecializations = this.specializationSelections.controls
+      .filter(control => !control.get('isMain')?.value);
+
+    return selectableSpecializations.length > 0 &&
+      selectableSpecializations.every(control => control.get('isSelected')?.value);
+  }
+
+  get selectedSpecializationCount(): number {
+    return this.specializationSelections.controls
+      .filter(control => control.get('isSelected')?.value)
+      .length;
+  }
+
   ngOnInit(): void {
     const data = this.dialogConfig.data ?? {};
     this.mainMajor = data.mainMajor;
@@ -68,6 +86,14 @@ export class JobCandidatesSpecializationFilterModalComponent implements OnInit {
 
   getSpecLabel(spec: any): string {
     return `${spec.major.name}${spec.subMajor ? ' / ' + spec.subMajor.name : ''}`;
+  }
+
+  toggleAllSpecializations(): void {
+    const shouldSelect = !this.areAllSelectableSpecializationsSelected;
+
+    this.specializationSelections.controls
+      .filter(control => !control.get('isMain')?.value)
+      .forEach(control => control.get('isSelected')?.setValue(shouldSelect));
   }
 
   save(): void {

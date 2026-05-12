@@ -24,7 +24,10 @@ public sealed class JobCandidateInvitationSentDomainEventHandler(IUnitOfWork uni
 
 
         // Email Notification
-        var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(jobTitle));
+        var payload = JsonSerializer.Serialize(new JobCandidateInvitationSentModel(
+            jobTitle,
+            request.ExpiryDays,
+            request.ExpiresOn));
 
         // In-App Notification
         var inAppNotification = Notification.Create(

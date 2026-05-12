@@ -17,6 +17,7 @@ export interface JobResponse {
   titleEn?: string;
   jobNumber?: string;
   numberOfVacancies: number;
+  availableVacancies: number;
   closingDate: Date;
   minimumAge: number;
   maximumAge: number;

@@ -332,6 +332,7 @@ namespace Tawtheef.Infrastructure
                 
                 services.AddScoped<IJobPointsRepository, JobPointsRepository>();
                 services.AddScoped<IJobPointsConfigurationsRepository, JobPointsConfigurationsRepository>();
+                services.AddScoped<IInvitationExpiryConfigurationRepository, InvitationExpiryConfigurationRepository>();
                 services.AddScoped<IJobCategoryCandidateSettingsRepository, JobCategoryCandidateSettingsRepository>();
                 services.AddScoped<IJobReviewAttachmentRepository, JobReviewAttachmentRepository>();
                 services.AddScoped<IJobTabReviewNoteRepository, JobTabReviewNoteRepository>();
@@ -349,6 +350,7 @@ namespace Tawtheef.Infrastructure
                 
                 // Recruitment-only background jobs
                 services.AddHostedService<JobAutoClosureService>();
+                services.AddHostedService<InvitationExpiryService>();
                 // Background (Common) - keep only what truly runs in both
                 services.AddHostedService<NotificationDispatcher>();
             }

@@ -169,6 +169,12 @@ export const employeeRoutes: Routes = [
     data: { permissions: [Permissions.JobCategoryCandidateSettings.View] },
   },
   {
+    path: "invitation-expiry-configuration",
+    loadComponent: () => import('./invitation-expiry-configuration/invitation-expiry-configuration.component').then(m => m.InvitationExpiryConfigurationComponent),
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.InvitationExpiryConfiguration.View, Permissions.InvitationExpiryConfiguration.Manage], requiredAll: false },
+  },
+  {
     path: "job-titles-management",
     loadComponent: () => import('./job-titles-management/job-titles-management.component').then(m => m.JobTitlesManagementComponent),
     canActivate: [permissionGuard],

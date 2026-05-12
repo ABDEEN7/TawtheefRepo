@@ -167,6 +167,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -651629113,
+                            ClaimType = "permission",
+                            ClaimValue = "invitation-expiry-configuration.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1711943202,
+                            ClaimType = "permission",
+                            ClaimValue = "invitation-expiry-configuration.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -1547244454,
                             ClaimType = "permission",
                             ClaimValue = "job-category-candidate-settings.manage",
@@ -562,6 +576,20 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = -1712025094,
                             ClaimType = "permission",
                             ClaimValue = "cities.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -134168132,
+                            ClaimType = "permission",
+                            ClaimValue = "invitation-expiry-configuration.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -83519686,
+                            ClaimType = "permission",
+                            ClaimValue = "invitation-expiry-configuration.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
@@ -3300,6 +3328,19 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "مغلق",
                             NameEn = "Closed"
+                        },
+                        new
+                        {
+                            Id = new Guid("c0a9d348-2175-4fa2-a1fb-fa6a6a729e64"),
+                            BackendName = "Expired",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DescriptionAr = "انتهت صلاحية الدعوة لأن المرشح لم يستجب خلال الوقت المحدد.",
+                            DescriptionEn = "The invitation expired because the candidate did not respond within the specified time.",
+                            DisplayOrder = 9,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "منتهي الصلاحية",
+                            NameEn = "Expired"
                         });
                 });
 
@@ -6900,6 +6941,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
+                    b.Property<DateOnly>("ExpiresOn")
+                        .HasColumnType("date");
+
                     b.Property<Guid>("InvitationStatusId")
                         .HasColumnType("uniqueidentifier");
 
@@ -7199,6 +7243,67 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasDatabaseName("IX_Job_Status_ClosingDate_Deleted");
 
                     b.ToTable("Job", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.InvitationExpiryConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("ExpiryDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("InvitationExpiryConfiguration", "hr");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d3ecf2b4-8ddf-48d7-859d-88b7fe32ef13"),
+                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ExpiryDays = 7,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", b =>
@@ -9652,6 +9757,30 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "إعدادات نقاط الوظيفة - إدارة",
                             NameEn = "Job Points Configuration - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("0342b09b-1b90-335f-ba63-c0c9a7bf0f3b"),
+                            BackendName = "invitation-expiry-configuration.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 100,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "Invitation Expiry Configuration - View",
+                            NameEn = "Invitation Expiry Configuration - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("30b1b4f9-70da-af5d-888b-f434086b5af0"),
+                            BackendName = "invitation-expiry-configuration.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 101,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "Invitation Expiry Configuration - Manage",
+                            NameEn = "Invitation Expiry Configuration - Manage"
                         });
                 });
 
@@ -12575,6 +12704,30 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("WorkLocation");
 
                     b.Navigation("WorkType");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.InvitationExpiryConfiguration", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", b =>

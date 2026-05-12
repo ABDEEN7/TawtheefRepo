@@ -12,25 +12,26 @@ namespace Tawtheef.Domain.Entities.Recruitment;
 [Index(nameof(InvitationStatusId))]
 public class Invitation : EventEntity
 {
-    public Guid JobId { get; set; }
-    public Job? Job { get; set; }
+    public Guid JobId { get; init; }
+    public Job? Job { get; init; }
     
-    public Guid ApplicantId { get; set; }
-    public ApplicantUser? Applicant { get; set; }
+    public Guid ApplicantId { get; init; }
+    public ApplicantUser? Applicant { get; init; }
     
     public bool IsAccepted { get; set; }
     public DateTime? AcceptedAt { get; set; }
     
     public Guid InvitationStatusId { get; set; }
-    public InvitationStatus? InvitationStatus { get; set; }
+    public InvitationStatus? InvitationStatus { get; init; }
 
-    public Guid BatchNumber { get; set; }
+    public Guid BatchNumber { get; init; }
+    public DateOnly ExpiresOn  { get; init; }
     
     [NotMapped]
-    public DateTime? InvitationAt => CreatedDate;
+    public DateTime? InvitedAt => CreatedDate;
     
     public ICollection<HistoryInvitation> History { get; init; } = [];
-    public ICollection<InvitationAttachment> Attachments { get; set; } = [];
+    public ICollection<InvitationAttachment> Attachments { get; init; } = [];
 
     public bool CanModifyAttachments =>
         InvitationStatusId == InvitationStatusIds.NewInvitation ||
@@ -40,5 +41,16 @@ public class Invitation : EventEntity
     public void ChangeInvitationStatus(Guid newInvitationStatusId) 
     {
         this.InvitationStatusId = newInvitationStatusId;
+    }
+
+    public void CheckIfExpired(DateOnly currentDate)
+    {
+        var canExpire = InvitationStatusId == InvitationStatusIds.NewInvitation ||
+                        InvitationStatusId == InvitationStatusIds.Read;
+
+        if(canExpire && ExpiresOn < currentDate)
+        {
+            InvitationStatusId = InvitationStatusIds.Expired;
+        }
     }
 }

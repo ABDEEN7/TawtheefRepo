@@ -7,6 +7,7 @@ public static class InvitationStatusIds
     //by sys
     public static readonly Guid NewInvitation = Guid.Parse("F0BC801D-F54C-4A0E-8AAE-00694E4FC80D");
     public static readonly Guid Closed = Guid.Parse("CA054592-8617-406D-8E8F-3A773B3D0D5E");
+    public static readonly Guid Expired = Guid.Parse("c0a9d348-2175-4fa2-a1fb-fa6a6a729e64");
     //by employee
     public static readonly Guid Cancelled = Guid.Parse("BCED01D8-3784-4E2C-9312-930951CC59D8");
     public static readonly Guid ReturnedAttachment = Guid.Parse("9B86FA2C-D295-46D7-9092-23AD8AB7B10C");

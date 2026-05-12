@@ -1,0 +1,6 @@
+{
+  "INVITATION_EXPIRY_CONFIGURATION.TITLE": "Invitation Expiry Configuration",
+  "INVITATION_EXPIRY_CONFIGURATION.SUBTITLE": "Set how many days a candidate invitation remains available after it is sent.",
+  "INVITATION_EXPIRY_CONFIGURATION.EXPIRY_DAYS": "Invitation expiry period in days",
+  "INVITATION_EXPIRY_CONFIGURATION.DESCRIPTION": "The system adds this number of days plus one extra day to the invitation creation date, then marks expired invitations automatically at midnight."
+}

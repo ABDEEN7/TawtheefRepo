@@ -10,7 +10,7 @@ public static class EnumerableExtensions
      * Pagination
      * -------------------------------------------------- */
 
-    extension<TSource>(IList<TSource> source)
+    extension<TSource>(IEnumerable<TSource> source)
     {
         public List<TSource> ToPaginatedResult(PaginatedRequest paginatedRequest)
         {

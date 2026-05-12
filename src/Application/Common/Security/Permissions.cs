@@ -633,4 +633,25 @@ public static class Permissions
                 "إعدادات نقاط الوظيفة - إدارة",
                 99);
     }
+
+    public static class InvitationExpiryConfiguration
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InvitationExpiryConfiguration.View,
+                nameof(PermissionKeys.InvitationExpiryConfiguration),
+                PermissionAction.View,
+                "Invitation Expiry Configuration - View",
+                "Invitation Expiry Configuration - View",
+                100);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InvitationExpiryConfiguration.Manage,
+                nameof(PermissionKeys.InvitationExpiryConfiguration),
+                PermissionAction.Manage,
+                "Invitation Expiry Configuration - Manage",
+                "Invitation Expiry Configuration - Manage",
+                101);
+    }
 }

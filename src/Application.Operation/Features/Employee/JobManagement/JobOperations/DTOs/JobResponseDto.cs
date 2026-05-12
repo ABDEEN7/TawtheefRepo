@@ -11,6 +11,7 @@ public class JobResponseDto
     public string? TitleEn { get; set; } 
     public string? JobNumber { get; set; }
     public int NumberOfVacancies { get; set; }
+    public int AvailableVacancies { get; set; }
     public DateTimeOffset ClosingDate { get; set; }
     public string? BenefitsAr { get; set; } 
     public string? BenefitsEn { get; set; } 

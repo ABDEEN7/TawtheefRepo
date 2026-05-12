@@ -1,0 +1,50 @@
+<div
+  class="card card-table"
+  i18nNamespace="pages/admin/invitation-expiry-configuration"
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.form-rtl]="isRtl()"
+>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+      <div>
+        <h3 class="page-title mb-1">{{ 'INVITATION_EXPIRY_CONFIGURATION.TITLE' | translate }}</h3>
+        <p class="text-muted mb-0">{{ 'INVITATION_EXPIRY_CONFIGURATION.SUBTITLE' | translate }}</p>
+      </div>
+      <button type="button" class="btn btn-outline-primary mt-1" (click)="loadConfiguration()">
+        <i class="pi pi-refresh me-1"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="row g-4">
+      <div class="col-md-4">
+        <label class="form-label" for="expiryDays">
+          {{ 'INVITATION_EXPIRY_CONFIGURATION.EXPIRY_DAYS' | translate }}
+        </label>
+        <p-inputNumber
+          inputId="expiryDays"
+          formControlName="expiryDays"
+          [min]="0"
+          [max]="365"
+          [useGrouping]="false"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="0"
+          [inputStyleClass]="'w-100'"
+          class="w-100"
+          (paste)="preventPaste($event)"
+        ></p-inputNumber>
+        <p class="text-muted mt-2 mb-0">
+          {{ 'INVITATION_EXPIRY_CONFIGURATION.DESCRIPTION' | translate }}
+        </p>
+      </div>
+    </form>
+
+    @if (canManage()) {
+      <div class="d-flex justify-content-end mt-4">
+        <button type="button" class="btn btn-primary" (click)="save()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

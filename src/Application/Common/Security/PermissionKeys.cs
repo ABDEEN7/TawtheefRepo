@@ -171,4 +171,10 @@ public static class PermissionKeys
         public const string View = "job-points-configuration.view";
         public const string Manage = "job-points-configuration.manage";
     }
+
+    public static class InvitationExpiryConfiguration
+    {
+        public const string View = "invitation-expiry-configuration.view";
+        public const string Manage = "invitation-expiry-configuration.manage";
+    }
 }

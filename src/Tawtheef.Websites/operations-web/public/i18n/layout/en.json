@@ -60,6 +60,7 @@
   "admin.sidebar.profileLogs": "Profile Logs",
   "admin.sidebar.jobPointsConfig": "Job Points Configuration",
   "admin.sidebar.jobCategoryCandidateSettings": "Candidate Multiplier Settings",
+  "admin.sidebar.invitationExpiryConfiguration": "Invitation Expiry Configuration",
   "admin.sidebar.homeContent": "Home Content Management",
   "common.sidebar.settings": "Settings",
   "common.sidebar.logout": "Logout",

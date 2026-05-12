@@ -1,6 +1,21 @@
+.specialization-filter-container {
+  display: flex;
+  max-height: 80vh;
+  flex-direction: column;
+}
+
+.specialization-filter-content {
+  min-height: 0;
+}
+
+.specialization-list-actions {
+  flex-wrap: wrap;
+}
+
 .specialization-list {
-  max-height: 400px;
+  max-height: min(400px, calc(80vh - 230px));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding-right: 5px;
 
   &::-webkit-scrollbar {

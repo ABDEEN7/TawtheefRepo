@@ -115,6 +115,9 @@ export const portalRoutes = {
   get jobCategoryCandidateSettings() {
     return this.portal + '/job-category-candidate-settings'
   },
+  get invitationExpiryConfiguration() {
+    return this.portal + '/invitation-expiry-configuration'
+  },
   get homeContentManagement() {
     return this.portal + '/home-content-management'
   },

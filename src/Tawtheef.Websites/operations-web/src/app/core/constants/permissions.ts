@@ -109,5 +109,9 @@ export const Permissions = {
   JobPointsConfiguration: {
     View: 'job-points-configuration.view',
     Manage: 'job-points-configuration.manage',
+  },
+  InvitationExpiryConfiguration: {
+    View: 'invitation-expiry-configuration.view',
+    Manage: 'invitation-expiry-configuration.manage',
   }
 } as const;
