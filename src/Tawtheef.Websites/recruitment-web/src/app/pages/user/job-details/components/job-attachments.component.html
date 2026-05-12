@@ -1,15 +1,15 @@
 @if (job()?.requiredAttachments && job()?.requiredAttachments!.length) {
 <div class="row g-3">
   @for (attachment of job()!.requiredAttachments!; track $index) {
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-6 min-w-0">
     <div class="card h-100 attachment-card" [class.border-warning]="attachment.isReturned">
-      <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
+      <div class="card-body py-3 px-3 d-flex align-items-center gap-3 attachment-card-body">
         <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
           <i class="hgi hgi-stroke hgi-attachment-square" aria-hidden="true"></i>
         </div>
-        <div class="flex-grow-1 min-w-0">
-          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-            <div class="text-muted small fw-semibold text-truncate" [title]="attachment.title">
+        <div class="attachment-content flex-grow-1 min-w-0">
+          <div class="attachment-title-row d-flex align-items-center gap-2 mb-1">
+            <div class="attachment-title text-muted small fw-semibold text-truncate" [title]="attachment.title">
               {{ attachment.title }}
             </div>
             @if (attachment.isMandatory) {
@@ -20,15 +20,17 @@
           </div>
           <div class="min-w-0">
             @if (attachment.resourceUrl) {
-            <div class="d-flex align-items-center gap-2 min-w-0">
+            <div class="attachment-file-row d-flex align-items-center gap-2 min-w-0">
               <button type="button" (click)="previewAttachment(attachment)"
-                class="btn btn-link p-0 d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-primary min-w-0 attach-link text-truncate">
+                class="btn btn-link p-0 d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-primary min-w-0 attach-link"
+                [title]="attachment.resourceName">
                 <i class="pi pi-file flex-shrink-0" aria-hidden="true"></i>
-                <span class="text-truncate d-inline-block" [title]="attachment.resourceName">{{ attachment.resourceName }}</span>
+                <span class="attachment-file-name text-truncate">{{ attachment.resourceName }}</span>
               </button>
               @if (!attachment.isApproved && canModifiedAttachment()) {
-              <button type="button" class="btn btn-link text-danger p-0"
-                (click)="deleteAttachment(attachment.attachmentId!)">
+              <button type="button" class="btn btn-link text-danger p-0 attachment-delete-btn"
+                (click)="deleteAttachment(attachment.attachmentId!)" [title]="'common.remove' | translate"
+                [attr.aria-label]="'common.remove' | translate">
                 <i class="pi pi-trash"></i>
               </button>
               }
@@ -46,7 +48,7 @@
             }
           </div>
           @if (attachment.isReturned && attachment.reviewNote) {
-          <div class="mt-2 text-warning small">
+          <div class="attachment-review-note mt-2 text-warning small">
             <i class="pi pi-exclamation-triangle me-1"></i>
             <span>{{ 'JOB_DETAILS.REVIEW_NOTE' | translate }}: {{ attachment.reviewNote }}</span>
           </div>
