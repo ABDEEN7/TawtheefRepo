@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,13 +12,15 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260324064055_MakeDepartmentJobAsNullable")]
+    partial class MakeDepartmentJobAsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -48,758 +51,590 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = -1805854264,
+                            Id = -1,
                             ClaimType = "permission",
-                            ClaimValue = "profile.approval.changes",
-                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
-                        },
-                        new
-                        {
-                            Id = -1385271642,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.review",
-                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
-                        },
-                        new
-                        {
-                            Id = -1240579769,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.view",
-                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
-                        },
-                        new
-                        {
-                            Id = -1841718301,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.manage",
-                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
-                        },
-                        new
-                        {
-                            Id = -1501025149,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.view",
-                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
-                        },
-                        new
-                        {
-                            Id = -2125966335,
-                            ClaimType = "permission",
-                            ClaimValue = "home.content.manage",
+                            ClaimValue = "dashboard.view",
                             RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
                         },
                         new
                         {
-                            Id = -1589507653,
+                            Id = -2,
+                            ClaimType = "permission",
+                            ClaimValue = "users.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -3,
+                            ClaimType = "permission",
+                            ClaimValue = "users.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -4,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.view",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -5,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -6,
                             ClaimType = "permission",
                             ClaimValue = "home.content.view",
                             RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
                         },
                         new
                         {
-                            Id = -894515096,
+                            Id = -7,
+                            ClaimType = "permission",
+                            ClaimValue = "home.content.manage",
+                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
+                        },
+                        new
+                        {
+                            Id = -8,
                             ClaimType = "permission",
                             ClaimValue = "profile.logs.view",
                             RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
                         },
                         new
                         {
-                            Id = -1137963000,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.manage",
-                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
-                        },
-                        new
-                        {
-                            Id = -821983373,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.view",
-                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
-                        },
-                        new
-                        {
-                            Id = -80977475,
-                            ClaimType = "permission",
-                            ClaimValue = "users.manage",
-                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
-                        },
-                        new
-                        {
-                            Id = -647186269,
-                            ClaimType = "permission",
-                            ClaimValue = "users.view",
-                            RoleId = new Guid("1361d691-53c5-4a84-aea1-64ff134cf082")
-                        },
-                        new
-                        {
-                            Id = -1569579725,
-                            ClaimType = "permission",
-                            ClaimValue = "candidate.users.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1032956618,
-                            ClaimType = "permission",
-                            ClaimValue = "candidate.users.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -82237110,
-                            ClaimType = "permission",
-                            ClaimValue = "cities.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -655765710,
-                            ClaimType = "permission",
-                            ClaimValue = "cities.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1460809925,
+                            Id = -9,
                             ClaimType = "permission",
                             ClaimValue = "dashboard.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
                         {
-                            Id = -651629113,
-                            ClaimType = "permission",
-                            ClaimValue = "invitation-expiry-configuration.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1711943202,
-                            ClaimType = "permission",
-                            ClaimValue = "invitation-expiry-configuration.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1547244454,
-                            ClaimType = "permission",
-                            ClaimValue = "job-category-candidate-settings.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -443960306,
-                            ClaimType = "permission",
-                            ClaimValue = "job-category-candidate-settings.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -60620829,
-                            ClaimType = "permission",
-                            ClaimValue = "job-titles.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1629212727,
-                            ClaimType = "permission",
-                            ClaimValue = "job-titles.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1270930668,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.approve",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -86041534,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.cancel",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1161344859,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.clone",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -529932315,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.create",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1373445632,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.delete",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1572135063,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.edit",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -2004100406,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.invitations.manage-attachment",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1251632738,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.invitations.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1441841093,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.approve",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1259038385,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.edit",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1171501126,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -446936914,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.publish",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1109251112,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.send-invitation",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -89916269,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1444825128,
-                            ClaimType = "permission",
-                            ClaimValue = "kawader.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1522804134,
-                            ClaimType = "permission",
-                            ClaimValue = "major-skill.management",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -779259237,
-                            ClaimType = "permission",
-                            ClaimValue = "minister-office.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -90565718,
-                            ClaimType = "permission",
-                            ClaimValue = "minister-office.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1379884310,
-                            ClaimType = "permission",
-                            ClaimValue = "organization-structures.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -204741646,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.changes",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -43323096,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.review",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1333360313,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1669644802,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1169940946,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1199227271,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.logs.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -617301834,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1307898785,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1941419433,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -1795627862,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.view",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -844657878,
-                            ClaimType = "permission",
-                            ClaimValue = "users.manage",
-                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
-                        },
-                        new
-                        {
-                            Id = -761153799,
+                            Id = -10,
                             ClaimType = "permission",
                             ClaimValue = "users.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
                         {
-                            Id = -1469505918,
+                            Id = -11,
                             ClaimType = "permission",
-                            ClaimValue = "office.users.manage",
-                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                            ClaimValue = "users.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
                         {
-                            Id = -1796163803,
+                            Id = -12,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -13,
+                            ClaimType = "permission",
+                            ClaimValue = "roles.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -14,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -15,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -16,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.distribution.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -17,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.distribution.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -18,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -19,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.review",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -20,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.changes",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -21,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -22,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -23,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.approve",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -24,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -25,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -26,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.approve",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -27,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.invitations.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -28,
+                            ClaimType = "permission",
+                            ClaimValue = "nominations.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -29,
+                            ClaimType = "permission",
+                            ClaimValue = "nominations.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -30,
+                            ClaimType = "permission",
+                            ClaimValue = "kawader.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -31,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -32,
+                            ClaimType = "permission",
+                            ClaimValue = "office.users.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -33,
+                            ClaimType = "permission",
+                            ClaimValue = "candidate.users.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -34,
+                            ClaimType = "permission",
+                            ClaimValue = "candidate.users.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -35,
+                            ClaimType = "permission",
+                            ClaimValue = "organization-structures.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -36,
+                            ClaimType = "permission",
+                            ClaimValue = "major-skill.management",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -37,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.logs.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -38,
+                            ClaimType = "permission",
+                            ClaimValue = "dashboard.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -39,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -40,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -41,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.review",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -42,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -43,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.approve",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -44,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -45,
+                            ClaimType = "permission",
+                            ClaimValue = "jobs.points.approve",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -46,
+                            ClaimType = "permission",
+                            ClaimValue = "nominations.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -47,
+                            ClaimType = "permission",
+                            ClaimValue = "candidate.users.view",
+                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                        },
+                        new
+                        {
+                            Id = -48,
                             ClaimType = "permission",
                             ClaimValue = "office.users.view",
                             RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -1158522936,
+                            Id = -49,
                             ClaimType = "permission",
-                            ClaimValue = "profile.approval.changes",
+                            ClaimValue = "office.users.manage",
                             RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -777988886,
+                            Id = -50,
                             ClaimType = "permission",
-                            ClaimValue = "profile.approval.review",
+                            ClaimValue = "profile.view",
                             RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -1242392345,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.view",
-                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
-                        },
-                        new
-                        {
-                            Id = -609833224,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.manage",
-                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
-                        },
-                        new
-                        {
-                            Id = -1468738632,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.view",
-                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
-                        },
-                        new
-                        {
-                            Id = -784974861,
+                            Id = -51,
                             ClaimType = "permission",
                             ClaimValue = "profile.manage",
                             RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -1664266164,
+                            Id = -52,
                             ClaimType = "permission",
-                            ClaimValue = "profile.view",
+                            ClaimValue = "profile.distribution.view",
                             RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -1811987670,
+                            Id = -53,
                             ClaimType = "permission",
-                            ClaimValue = "candidate.users.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                            ClaimValue = "profile.distribution.manage",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -1962756445,
-                            ClaimType = "permission",
-                            ClaimValue = "dashboard.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -1860870590,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.approve",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -1193875779,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.approve",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -2129763073,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -561010134,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -1004312133,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.review",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
-                        },
-                        new
-                        {
-                            Id = -1255725809,
+                            Id = -54,
                             ClaimType = "permission",
                             ClaimValue = "profile.approval.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
                         },
                         new
                         {
-                            Id = -131944289,
+                            Id = -55,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.review",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                        },
+                        new
+                        {
+                            Id = -56,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.changes",
+                            RoleId = new Guid("98e20970-b6bc-4da9-a947-f75e9adae3ca")
+                        },
+                        new
+                        {
+                            Id = -57,
                             ClaimType = "permission",
                             ClaimValue = "profile.view",
-                            RoleId = new Guid("ac011a30-6b0e-496c-a8ef-ba8132bd1808")
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
                         },
                         new
                         {
-                            Id = -1605969511,
+                            Id = -58,
                             ClaimType = "permission",
-                            ClaimValue = "candidate.users.manage",
+                            ClaimValue = "profile.manage",
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
+                        },
+                        new
+                        {
+                            Id = -59,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.view",
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
+                        },
+                        new
+                        {
+                            Id = -60,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.review",
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
+                        },
+                        new
+                        {
+                            Id = -61,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.approval.changes",
+                            RoleId = new Guid("12f5805d-6970-4a9e-a275-2b7cf3db3bb8")
+                        },
+                        new
+                        {
+                            Id = -62,
+                            ClaimType = "permission",
+                            ClaimValue = "profile.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1218056137,
+                            Id = -63,
                             ClaimType = "permission",
-                            ClaimValue = "candidate.users.view",
+                            ClaimValue = "profile.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1923873668,
+                            Id = -64,
                             ClaimType = "permission",
-                            ClaimValue = "cities.manage",
+                            ClaimValue = "profile.distribution.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1712025094,
+                            Id = -65,
                             ClaimType = "permission",
-                            ClaimValue = "cities.view",
+                            ClaimValue = "profile.distribution.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -134168132,
+                            Id = -66,
                             ClaimType = "permission",
-                            ClaimValue = "invitation-expiry-configuration.manage",
+                            ClaimValue = "profile.approval.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -83519686,
+                            Id = -67,
                             ClaimType = "permission",
-                            ClaimValue = "invitation-expiry-configuration.view",
+                            ClaimValue = "profile.approval.review",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -874467932,
+                            Id = -68,
                             ClaimType = "permission",
-                            ClaimValue = "job-category-candidate-settings.manage",
+                            ClaimValue = "profile.approval.changes",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -616470609,
+                            Id = -69,
                             ClaimType = "permission",
-                            ClaimValue = "job-category-candidate-settings.view",
+                            ClaimValue = "jobs.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1137221041,
+                            Id = -70,
                             ClaimType = "permission",
-                            ClaimValue = "job-titles.manage",
+                            ClaimValue = "jobs.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1664615521,
-                            ClaimType = "permission",
-                            ClaimValue = "job-titles.view",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1338078740,
+                            Id = -71,
                             ClaimType = "permission",
                             ClaimValue = "jobs.approve",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -686811409,
+                            Id = -72,
                             ClaimType = "permission",
-                            ClaimValue = "jobs.cancel",
+                            ClaimValue = "jobs.points.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -790383713,
+                            Id = -73,
                             ClaimType = "permission",
-                            ClaimValue = "jobs.clone",
+                            ClaimValue = "jobs.points.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1808986077,
+                            Id = -74,
                             ClaimType = "permission",
-                            ClaimValue = "jobs.create",
+                            ClaimValue = "jobs.points.approve",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -838100981,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.delete",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1402030595,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.edit",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1861617440,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.invitations.manage-attachment",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -716025503,
+                            Id = -75,
                             ClaimType = "permission",
                             ClaimValue = "jobs.invitations.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -2103037612,
+                            Id = -76,
                             ClaimType = "permission",
-                            ClaimValue = "jobs.points.approve",
+                            ClaimValue = "nominations.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -92787468,
+                            Id = -77,
                             ClaimType = "permission",
-                            ClaimValue = "jobs.points.edit",
+                            ClaimValue = "nominations.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -504140848,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.points.view",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1439392780,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.publish",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1920461912,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.send-invitation",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -1201773787,
-                            ClaimType = "permission",
-                            ClaimValue = "jobs.view",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -150760783,
+                            Id = -78,
                             ClaimType = "permission",
                             ClaimValue = "kawader.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1675644082,
+                            Id = -79,
                             ClaimType = "permission",
-                            ClaimValue = "major-skill.management",
+                            ClaimValue = "office.users.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1887851879,
+                            Id = -80,
                             ClaimType = "permission",
-                            ClaimValue = "minister-office.manage",
+                            ClaimValue = "office.users.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -649410427,
+                            Id = -81,
                             ClaimType = "permission",
-                            ClaimValue = "minister-office.view",
+                            ClaimValue = "candidate.users.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -293008670,
+                            Id = -82,
+                            ClaimType = "permission",
+                            ClaimValue = "candidate.users.manage",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -83,
                             ClaimType = "permission",
                             ClaimValue = "organization-structures.manage",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
                         {
-                            Id = -1814645448,
+                            Id = -84,
                             ClaimType = "permission",
-                            ClaimValue = "profile.approval.changes",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -702178142,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.review",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -498090516,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.approval.view",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -981672420,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.manage",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -195285781,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.distribution.view",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -173200488,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.manage",
-                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
-                        },
-                        new
-                        {
-                            Id = -451529468,
-                            ClaimType = "permission",
-                            ClaimValue = "profile.view",
+                            ClaimValue = "major-skill.management",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         });
                 });
@@ -1607,11 +1442,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -2049,24 +1879,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("InvitedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
-
-                    b.Property<bool>("IsInvited")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qid")
                         .IsRequired()
@@ -2140,7 +1955,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Section")
                         .HasMaxLength(200)
@@ -3254,41 +3070,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22ef7e86-28cb-4a30-98bc-7d45f9b44de3"),
-                            BackendName = "ExamEligible",
+                            BackendName = "Submitted",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة وهو مؤهل للاختبار.",
-                            DescriptionEn = "The application is submitted and the candidate is eligible for the exam.",
+                            DescriptionAr = "المرشح قدم طلبه وجميع بياناته مكتملة.",
+                            DescriptionEn = "The candidate submitted the application with all required information completed.",
                             DisplayOrder = 3,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "مرشح للاختبار",
-                            NameEn = "Exam Eligible"
-                        },
-                        new
-                        {
-                            Id = new Guid("6608f560-4dc0-4f2a-a190-6743a9a8c5cb"),
-                            BackendName = "PendingAttachmentApproval",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "قام المرشح برفع المرفقات الإلزامية وهو بانتظار اعتماد الموارد البشرية.",
-                            DescriptionEn = "The candidate successfully uploaded the mandatory attachments and is pending HR approval.",
-                            DisplayOrder = 4,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "بانتظار اعتماد المرفقات",
-                            NameEn = "Pending Attachment Approval"
-                        },
-                        new
-                        {
-                            Id = new Guid("9b86fa2c-d295-46d7-9092-23ad8ab7b10c"),
-                            BackendName = "ReturnedAttachment",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "قامت الموارد البشرية بإعادة مرفق للمرشح للتعديل.",
-                            DescriptionEn = "The HR returned an attachment to candidate for fix.",
-                            DisplayOrder = 5,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "مرفقات معادة",
-                            NameEn = "Returned Attachment"
+                            NameAr = "تم التقديم",
+                            NameEn = "Submitted"
                         },
                         new
                         {
@@ -3297,7 +3087,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "الطلب لم يتم قبوله لأسباب وظيفية أو تنظيمية.",
                             DescriptionEn = "The application was not accepted for functional or organizational reasons.",
-                            DisplayOrder = 6,
+                            DisplayOrder = 7,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "مرفوض",
@@ -3310,7 +3100,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "المرشح قام بإلغاء الطلب أو تم إلغاؤه وفق الإجراءات.",
                             DescriptionEn = "The candidate cancelled the application or it was cancelled procedurally.",
-                            DisplayOrder = 7,
+                            DisplayOrder = 8,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "ملغي",
@@ -3323,24 +3113,11 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "الوظيفة انتهت أو أُغلقت من قبل الموارد البشرية ولا يمكن اتخاذ أي إجراء عليها.",
                             DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
-                            DisplayOrder = 8,
+                            DisplayOrder = 9,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "مغلق",
                             NameEn = "Closed"
-                        },
-                        new
-                        {
-                            Id = new Guid("c0a9d348-2175-4fa2-a1fb-fa6a6a729e64"),
-                            BackendName = "Expired",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "انتهت صلاحية الدعوة لأن المرشح لم يستجب خلال الوقت المحدد.",
-                            DescriptionEn = "The invitation expired because the candidate did not respond within the specified time.",
-                            DisplayOrder = 9,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "منتهي الصلاحية",
-                            NameEn = "Expired"
                         });
                 });
 
@@ -3575,6 +3352,19 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("e0cd7b22-8948-0c37-9b15-2e5217f0c565"),
+                            BackendName = "Active",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DescriptionAr = "الوظيفة جاهزة للتقديم ويمكن إرسالها للجمهور المطلوب.",
+                            DescriptionEn = "Job is open for applications and can be published to the target audience.",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "نشطة",
+                            NameEn = "Active"
+                        },
+                        new
+                        {
                             Id = new Guid("114dae76-bde9-3efa-2a2b-803ebd92e109"),
                             BackendName = "Closed",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -3615,41 +3405,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("5c360b07-157c-630a-254a-9c01587d80a8"),
-                            BackendName = "PendingPointConfiguration",
+                            BackendName = "Approved",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "الوظيفة قيد اعداد النقاط.",
-                            DescriptionEn = "Job is pending point configuration.",
+                            DescriptionAr = "تم اعتماد الوظيفة.",
+                            DescriptionEn = "Job was approved.",
                             DisplayOrder = 6,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "قيد اعداد النقاط",
-                            NameEn = "Pending Point Configuration"
-                        },
-                        new
-                        {
-                            Id = new Guid("3f2a1c9b-8b5d-4e1f-a3c9-1d7b4e5f6a2c"),
-                            BackendName = "NeedPointUpdate",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "نقاط الوظيفة تحتاج للتعديل.",
-                            DescriptionEn = "Job points need to be updated.",
-                            DisplayOrder = 6,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "نقاط تحتاج للتعديل",
-                            NameEn = "Need Point Update"
-                        },
-                        new
-                        {
-                            Id = new Guid("2c3f9a4e-7d1b-4e9a-8c3d-1f2b3c4d5e6f"),
-                            BackendName = "PendingPointApproval",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DescriptionAr = "الوظيفة قيد اعتماد النقاط.",
-                            DescriptionEn = "Job is pending point approval.",
-                            DisplayOrder = 7,
-                            IsActive = true,
-                            IsDeleted = false,
-                            NameAr = "قيد اعتماد النقاط",
-                            NameEn = "Pending Point Approval"
+                            NameAr = "معتمدة",
+                            NameEn = "Approved"
                         },
                         new
                         {
@@ -3658,7 +3422,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "الوظيفة جاهزة للإعلان.",
                             DescriptionEn = "Job is ready to be announced.",
-                            DisplayOrder = 8,
+                            DisplayOrder = 7,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "جاهزة للإعلان",
@@ -3671,7 +3435,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "تم نشر الوظيفة.",
                             DescriptionEn = "Job is published.",
-                            DisplayOrder = 9,
+                            DisplayOrder = 8,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "منشورة",
@@ -3684,7 +3448,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "تم رفض الوظيفة.",
                             DescriptionEn = "Job was rejected.",
-                            DisplayOrder = 10,
+                            DisplayOrder = 9,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "مرفوضة",
@@ -4546,6 +4310,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
+                    b.Property<bool>("IsSkillRequired")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4728,9 +4495,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
-
-                    b.Property<bool>("IsGeneral")
-                        .HasColumnType("bit");
 
                     b.Property<string>("NameAr")
                         .IsRequired()
@@ -6325,166 +6089,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<string>("FullNameAr")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("FullNameEn")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<bool>("IsFollowUpActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("NationalityAr")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("NationalityCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NationalityEn")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Qid")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<DateOnly>("QidExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("Qid")
-                        .IsUnique();
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("MinisterOfficeCandidate", "hr");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidateAuditLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("CandidateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<string>("Details")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<string>("Qid")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Action");
-
-                    b.HasIndex("CandidateId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("MinisterOfficeCandidateAuditLog", "hr");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailQueue", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6636,8 +6240,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("CcAddress")
                         .HasMaxLength(200)
@@ -6674,17 +6278,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<bool>("IsDismissed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<int>("MaxRetries")
                         .HasColumnType("int");
 
@@ -6692,12 +6285,12 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PayloadJson")
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("PlainTextBody")
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("ProviderMessageId")
                         .HasMaxLength(100)
@@ -6759,8 +6352,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("Status", "Channel");
-
-                    b.HasIndex("UserId", "Channel", "IsDismissed", "IsRead");
 
                     b.ToTable("Notifications");
                 });
@@ -6941,9 +6532,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
-                    b.Property<DateOnly>("ExpiresOn")
-                        .HasColumnType("date");
-
                     b.Property<Guid>("InvitationStatusId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6984,91 +6572,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("Invitation", "hr");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.InvitationAttachment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AttachmentTitleAr")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("AttachmentTitleEn")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<Guid>("InvitationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<bool>("IsReturned")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobRequiredAttachmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ResourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ReviewNote")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("JobRequiredAttachmentId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.HasIndex("InvitationId", "JobRequiredAttachmentId")
-                        .IsUnique();
-
-                    b.ToTable("InvitationAttachment", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Job", b =>
@@ -7126,7 +6629,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("JobTitleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("MajorId")
+                    b.Property<Guid>("MajorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ManagementId")
@@ -7208,8 +6711,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobStatusId")
                         .HasDatabaseName("IX_Job_JobStatusId");
 
-                    b.HasIndex("JobTitleId");
-
                     b.HasIndex("MajorId")
                         .HasDatabaseName("IX_Job_MajorId");
 
@@ -7242,68 +6743,12 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobStatusId", "ClosingDate", "IsDeleted")
                         .HasDatabaseName("IX_Job_Status_ClosingDate_Deleted");
 
+                    b.HasIndex("JobTitleId", "DepartmentId", "JobCategoryId", "SubMajorId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Job_Unique_JobTitle_Department_Category_SubMajor")
+                        .HasFilter("[IsDeleted] = 0");
+
                     b.ToTable("Job", "hr");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.InvitationExpiryConfiguration", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<int>("ExpiryDays")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("InvitationExpiryConfiguration", "hr");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d3ecf2b4-8ddf-48d7-859d-88b7fe32ef13"),
-                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpiryDays = 7,
-                            IsDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", b =>
@@ -7367,70 +6812,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("JobCandidateFilterSetting", "hr");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSpecialization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<Guid>("JobCandidateFilterSettingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubMajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("JobCandidateFilterSettingId");
-
-                    b.HasIndex("MajorId");
-
-                    b.HasIndex("SubMajorId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("JobCandidateFilterSpecialization", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateNationalityPercentage", b =>
@@ -8232,9 +7613,6 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnOrder(99);
 
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
@@ -8269,76 +7647,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("JobSkill", "hr");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobSpecialization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(93);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(94);
-
-                    b.Property<Guid?>("DeletedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(97);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(98);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(99);
-
-                    b.Property<Guid>("JobId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubMajorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdatedById")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(95);
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnOrder(96);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DeletedById");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("MajorId");
-
-                    b.HasIndex("SubMajorId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.HasIndex("JobId", "MajorId")
-                        .IsUnique()
-                        .HasFilter("[SubMajorId] IS NULL AND [IsDeleted] = 0");
-
-                    b.HasIndex("JobId", "MajorId", "SubMajorId")
-                        .IsUnique()
-                        .HasFilter("[SubMajorId] IS NOT NULL AND [IsDeleted] = 0");
-
-                    b.ToTable("JobSpecialization", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobTabReviewNote", b =>
@@ -9127,7 +8435,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("48571726-6c3c-0d55-9e84-5827bb52c9a4"),
                             BackendName = "candidate.users.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 6,
+                            DisplayOrder = 18,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9139,7 +8447,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("83ff0b70-5423-b05f-a5aa-dd69f5155d6c"),
                             BackendName = "candidate.users.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 7,
+                            DisplayOrder = 19,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9151,7 +8459,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("931e09d8-30f2-455a-b832-aad017c97cf8"),
                             BackendName = "offices.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 8,
+                            DisplayOrder = 6,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9163,7 +8471,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("829e83f6-214b-e755-b6e8-01ccc773d5fe"),
                             BackendName = "offices.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 9,
+                            DisplayOrder = 7,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9175,7 +8483,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("06a9ef54-2bd0-8b55-b746-16d7bce6274c"),
                             BackendName = "languages.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 10,
+                            DisplayOrder = 8,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9187,7 +8495,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("1502d704-7619-0255-ade1-8eab23a079a3"),
                             BackendName = "languages.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 11,
+                            DisplayOrder = 9,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9199,7 +8507,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("5adc185c-aabf-a55f-9675-769a482552da"),
                             BackendName = "religions.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 12,
+                            DisplayOrder = 10,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9211,7 +8519,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("f523d40b-2395-e454-a2d3-22e96edf347d"),
                             BackendName = "religions.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 13,
+                            DisplayOrder = 11,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9223,7 +8531,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("a2d2c7dc-d2a2-fd51-af47-34a24b77a14b"),
                             BackendName = "countries.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 14,
+                            DisplayOrder = 12,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9235,7 +8543,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("ffd0887b-67c6-a35f-82e8-1a973da7448a"),
                             BackendName = "countries.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 15,
+                            DisplayOrder = 13,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9247,7 +8555,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("35dea045-9dab-125d-ab51-c820bf59525a"),
                             BackendName = "universities.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 16,
+                            DisplayOrder = 14,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9259,7 +8567,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("241a2e7e-4868-3e57-9f4b-a2e1d3bd2423"),
                             BackendName = "universities.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 17,
+                            DisplayOrder = 15,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9271,7 +8579,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("a601244f-898e-f95c-9e8b-a2ff34797f75"),
                             BackendName = "targetentities.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 18,
+                            DisplayOrder = 16,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9283,7 +8591,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("3b9b386e-13a1-f959-a87e-a9d598b7ecf8"),
                             BackendName = "targetentities.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 19,
+                            DisplayOrder = 17,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9319,7 +8627,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("42ea0acc-9bac-b15a-aef3-2ca7c7b9dbed"),
                             BackendName = "profile.logs.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 22,
+                            DisplayOrder = 14,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9424,15 +8732,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("13abdab6-ce4f-0c55-b969-c2ca56eb8fe6"),
-                            BackendName = "jobs.edit",
+                            Id = new Guid("ab24906c-15de-7251-bbc0-d278fda72ae0"),
+                            BackendName = "jobs.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 31,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
-                            NameAr = "الوظائف - تعديل",
-                            NameEn = "Jobs - Edit"
+                            NameAr = "الوظائف - إدارة",
+                            NameEn = "Jobs - Manage"
                         },
                         new
                         {
@@ -9448,82 +8756,10 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9e6683e2-9aab-d85c-9039-8e83d57085a0"),
-                            BackendName = "jobs.send-invitation",
+                            Id = new Guid("377a116d-4709-d65d-9565-c01e8908d25a"),
+                            BackendName = "jobs.points.manage",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 33,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - ارسال الدعوات",
-                            NameEn = "Jobs - Send Invitation"
-                        },
-                        new
-                        {
-                            Id = new Guid("d714523d-6aac-a255-bab5-f1b74ae0bd30"),
-                            BackendName = "jobs.cancel",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 34,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - إلغاء",
-                            NameEn = "Jobs - Cancel"
-                        },
-                        new
-                        {
-                            Id = new Guid("6917c852-e9e4-6758-8e80-5a4797d8e7b9"),
-                            BackendName = "jobs.create",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 35,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - إنشاء",
-                            NameEn = "Jobs - Create"
-                        },
-                        new
-                        {
-                            Id = new Guid("6fb9d7e1-c7e8-b05b-a2c4-16c5da50e1b0"),
-                            BackendName = "jobs.publish",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 36,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - نشر",
-                            NameEn = "Jobs - Publish"
-                        },
-                        new
-                        {
-                            Id = new Guid("36030234-5820-8756-89b9-dd1038173a45"),
-                            BackendName = "jobs.delete",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 37,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - حذف",
-                            NameEn = "Jobs - Delete"
-                        },
-                        new
-                        {
-                            Id = new Guid("b9d42f3d-ab20-f85f-8a3f-448db7e727f2"),
-                            BackendName = "jobs.clone",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 38,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "الوظائف - استنساخ",
-                            NameEn = "Jobs - Clone"
-                        },
-                        new
-                        {
-                            Id = new Guid("50642bb5-f557-6954-99f3-6d6732446624"),
-                            BackendName = "jobs.points.edit",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 41,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9535,7 +8771,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("0148d1fe-79a7-0d5d-8391-7baf026f65fd"),
                             BackendName = "jobs.points.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 42,
+                            DisplayOrder = 33,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9547,7 +8783,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("e95eaa09-b74d-1955-b325-8896bc574523"),
                             BackendName = "jobs.points.approve",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 43,
+                            DisplayOrder = 33,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9559,7 +8795,7 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = new Guid("fe4eb16e-25b4-7950-be57-a79c2c212fa3"),
                             BackendName = "jobs.invitations.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 44,
+                            DisplayOrder = 34,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
@@ -9568,15 +8804,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d14507aa-e61e-ec5f-abf8-f85b50bcaa9a"),
-                            BackendName = "jobs.invitations.manage-attachment",
+                            Id = new Guid("64b8bb0d-a959-9555-ad77-3c3ab94bd7a6"),
+                            BackendName = "nominations.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 45,
+                            DisplayOrder = 40,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
-                            NameAr = "دعوات الوظائف - إدارة المرفقات",
-                            NameEn = "Jobs Invitations - Manage Attachment"
+                            NameAr = "الترشيحات - عرض",
+                            NameEn = "Nominations - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("5d68fab4-cd5e-1958-a5f0-19d93f0db665"),
+                            BackendName = "nominations.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 41,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "الترشيحات - إدارة",
+                            NameEn = "Nominations - Manage"
                         },
                         new
                         {
@@ -9637,150 +8885,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "الهياكل التنظيمية - إدارة",
                             NameEn = "Organization Structures - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("4cac1167-25a0-5d5f-9d34-9e42c3a3b51d"),
-                            BackendName = "minister-office.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 90,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "مكتب سعادة الوزير - عرض",
-                            NameEn = "Minister Office - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("f12b680a-44c9-b955-9de8-5e22fd77e601"),
-                            BackendName = "minister-office.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 91,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "مكتب سعادة الوزير - إدارة",
-                            NameEn = "Minister Office - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("a2d68b9a-89e4-555e-be1b-1a261a164899"),
-                            BackendName = "cities.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 92,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "المدن - عرض",
-                            NameEn = "Cities - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("f9d2c7ac-37a9-8b54-9cec-5bbd7c7f1019"),
-                            BackendName = "cities.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 93,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "المدن - إدارة",
-                            NameEn = "Cities - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("d9a3ea88-d07d-c454-ab70-c5c02dd6cabf"),
-                            BackendName = "job-titles.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 94,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "المسميات الوظيفية - عرض",
-                            NameEn = "Job Titles - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("d834840b-b71a-0158-8ca0-e8b69f279832"),
-                            BackendName = "job-titles.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 95,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "المسميات الوظيفية - إدارة",
-                            NameEn = "Job Titles - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("4707ef48-6d9b-f353-b98b-05a3c2c18fee"),
-                            BackendName = "job-category-candidate-settings.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 96,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "إعدادات المرشحين حسب تصنيف الوظيفة - عرض",
-                            NameEn = "Job Category Candidate Settings - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("e6cdfe35-b480-b85e-be3e-05a8b67e9468"),
-                            BackendName = "job-category-candidate-settings.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 97,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "إعدادات المرشحين حسب تصنيف الوظيفة - إدارة",
-                            NameEn = "Job Category Candidate Settings - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("19dacd27-70e1-cf58-9044-3f8d3c89b218"),
-                            BackendName = "job-points-configuration.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 98,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "إعدادات نقاط الوظيفة - عرض",
-                            NameEn = "Job Points Configuration - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("ad3c96a7-f148-1951-a9b1-2f9ca4a2609d"),
-                            BackendName = "job-points-configuration.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 99,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "إعدادات نقاط الوظيفة - إدارة",
-                            NameEn = "Job Points Configuration - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("0342b09b-1b90-335f-ba63-c0c9a7bf0f3b"),
-                            BackendName = "invitation-expiry-configuration.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 100,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "Invitation Expiry Configuration - View",
-                            NameEn = "Invitation Expiry Configuration - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("30b1b4f9-70da-af5d-888b-f434086b5af0"),
-                            BackendName = "invitation-expiry-configuration.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 101,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "Invitation Expiry Configuration - Manage",
-                            NameEn = "Invitation Expiry Configuration - Manage"
                         });
                 });
 
@@ -10196,10 +9300,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("PreferredLanguage")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -10738,7 +9838,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", null)
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -12306,62 +11406,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidateAuditLog", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate", "Candidate")
-                        .WithMany()
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Candidate");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailQueue", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -12550,54 +11594,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.InvitationAttachment", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Invitation", "Invitation")
-                        .WithMany("Attachments")
-                        .HasForeignKey("InvitationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobRequiredAttachment", "JobRequiredAttachment")
-                        .WithMany()
-                        .HasForeignKey("JobRequiredAttachmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Resource")
-                        .WithMany()
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("Invitation");
-
-                    b.Navigation("JobRequiredAttachment");
-
-                    b.Navigation("Resource");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Job", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -12641,7 +11637,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
                         .WithMany()
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Lookups.Management", "Management")
                         .WithMany()
@@ -12706,30 +11703,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("WorkType");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.InvitationExpiryConfiguration", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -12764,54 +11737,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Gender");
 
                     b.Navigation("Job");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSpecialization", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobCandidateFilterSetting", "JobCandidateFilterSetting")
-                        .WithMany("SelectedSpecializations")
-                        .HasForeignKey("JobCandidateFilterSettingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
-                        .WithMany()
-                        .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
-                        .WithMany()
-                        .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("JobCandidateFilterSetting");
-
-                    b.Navigation("Major");
-
-                    b.Navigation("SubMajor");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -13228,54 +12153,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Job");
 
                     b.Navigation("Skill");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobSpecialization", b =>
-                {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
-                        .WithMany("JobSpecializations")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "Major")
-                        .WithMany()
-                        .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.Major", "SubMajor")
-                        .WithMany()
-                        .HasForeignKey("SubMajorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("Job");
-
-                    b.Navigation("Major");
-
-                    b.Navigation("SubMajor");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -13823,8 +12700,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
                 {
-                    b.Navigation("Attachments");
-
                     b.Navigation("History");
                 });
 
@@ -13846,8 +12721,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.Navigation("JobSkills");
 
-                    b.Navigation("JobSpecializations");
-
                     b.Navigation("ReviewAttachment");
 
                     b.Navigation("TabReviewNotes");
@@ -13858,8 +12731,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CandidateTypePercentages");
 
                     b.Navigation("NationalityPercentages");
-
-                    b.Navigation("SelectedSpecializations");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.JobDetails.JobPointsMain", b =>
@@ -13876,8 +12747,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserProfileLoggers");
-
-                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.UserProfile", b =>

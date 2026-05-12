@@ -1,0 +1,6 @@
+{
+  "INVITATION_EXPIRY_CONFIGURATION.TITLE": "إعدادات انتهاء الدعوات",
+  "INVITATION_EXPIRY_CONFIGURATION.SUBTITLE": "حدد عدد الأيام التي تبقى فيها دعوة المرشح متاحة بعد إرسالها.",
+  "INVITATION_EXPIRY_CONFIGURATION.EXPIRY_DAYS": "مدة انتهاء الدعوة بالأيام",
+  "INVITATION_EXPIRY_CONFIGURATION.DESCRIPTION": "يضيف النظام هذا العدد من الأيام مع يوم إضافي واحد إلى تاريخ إنشاء الدعوة، ثم يحدّث الدعوات المنتهية تلقائيا عند منتصف الليل."
+}
