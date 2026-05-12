@@ -104,6 +104,17 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DescriptionEn = "The job has ended or was closed by HR and no further action can be taken.",
                 DescriptionAr = "الوظيفة انتهت أو أُغلقت من قبل الموارد البشرية ولا يمكن اتخاذ أي إجراء عليها.",
                 DisplayOrder = 8
+            },
+            // 10 — EXPIREDSED
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.Expired,
+                BackendName = nameof(InvitationStatusIds.Expired),
+                NameEn = "Expired",
+                NameAr = "منتهي الصلاحية",
+                DescriptionEn = "The invitation expired because the candidate did not respond within the specified time.",
+                DescriptionAr = "انتهت صلاحية الدعوة لأن المرشح لم يستجب خلال الوقت المحدد.",
+                DisplayOrder = 9
             }
         );
     }

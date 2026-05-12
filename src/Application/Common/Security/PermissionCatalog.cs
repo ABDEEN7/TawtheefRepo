@@ -88,6 +88,9 @@ public static class PermissionCatalog
 
         Permissions.JobPointsConfiguration.View,
         Permissions.JobPointsConfiguration.Manage,
+
+        Permissions.InvitationExpiryConfiguration.View,
+        Permissions.InvitationExpiryConfiguration.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

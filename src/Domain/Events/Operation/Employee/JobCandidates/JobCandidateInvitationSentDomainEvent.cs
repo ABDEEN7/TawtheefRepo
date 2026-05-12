@@ -8,4 +8,6 @@ public sealed record JobCandidateInvitationSentDomainEvent(
     string? Email,
     string? PhoneNumber,
     string JobTitle,
+    int ExpiryDays,
+    DateOnly ExpiresOn,
     DateTimeOffset DateOccurred) : BaseEvent(DateOccurred);

@@ -58,7 +58,7 @@ export class JobCandidatesComponent implements OnInit {
 
   totalCandidatesCount = 0;
   availableCandidatesCount = 0;
-  abovePointsCandidatesCount = 0;
+  availableVacancies = 0;
   pointsAverage = 0;
   currentPage = signal(1);
   itemsPerPage = signal(10);
@@ -134,7 +134,7 @@ export class JobCandidatesComponent implements OnInit {
 
           this.totalCandidatesCount = overview.totalCandidatesCount;
           this.availableCandidatesCount = overview.availableCandidatesCount;
-          this.abovePointsCandidatesCount = overview.abovePointsCandidatesCount;
+          this.availableVacancies = overview.availableVacancies;
           this.pointsAverage = overview.pointsAverage;
 
           this.candidates = list;

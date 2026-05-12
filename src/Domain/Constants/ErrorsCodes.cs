@@ -254,6 +254,8 @@ public class ErrorsCodes
     public const string InvitationStatusChangeNotAllowed = "INVITATION_STATUS_CHANGE_NOT_ALLOWED";
     public const string JobRequiredAttachmentMissing = "JOB_REQUIRED_ATTACHMENT_MISSING";
     public const string JobRequiredAttachmentUploadFailed = "JOB_REQUIRED_ATTACHMENT_UPLOAD_FAILED";
+
+    public const string InvitationExpiryDaysInvalid = "INVITATION_EXPIRY_DAYS_INVALID";
     #endregion
 
     // =========================================================

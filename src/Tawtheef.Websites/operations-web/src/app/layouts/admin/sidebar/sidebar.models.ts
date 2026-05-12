@@ -35,6 +35,7 @@ export class Sidebar {
     { key: 'universities', label: 'admin.sidebar.universities', icon: ' hgi-university', route: routes.portal.universitiesManagement, permission: Permissions.Universities.Manage },
     { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.portal.jobPointsConfiguration, permission: Permissions.JobPointsConfiguration.View },
     { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.portal.jobCategoryCandidateSettings, permission: Permissions.JobCategoryCandidateSettings.View },
+    { key: 'invitation-expiry-configuration', label: 'admin.sidebar.invitationExpiryConfiguration', icon: 'hgi-calendar-03', route: routes.portal.invitationExpiryConfiguration, permission: Permissions.InvitationExpiryConfiguration.View },
     { key: 'job-titles', label: 'admin.sidebar.jobTitles', icon: 'hgi-license-draft', route: routes.portal.jobTitlesManagement, permission: Permissions.JobTitles.View },
 
     { key: 'home-content', label: 'admin.sidebar.homeContent', icon: 'hgi-settings-02', route: routes.portal.homeContentManagement, permission: Permissions.HomeContent.Manage },

@@ -10,4 +10,5 @@ public sealed class JobCandidateListItemDto
     public string CandidateCategory { get; init; } = string.Empty;
     public string CandidateGender { get; init; } = string.Empty;
     public int Points { get; init; }
+    public int GroupOrder { get; init; }
 }

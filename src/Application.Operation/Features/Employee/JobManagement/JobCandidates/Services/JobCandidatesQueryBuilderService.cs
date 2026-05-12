@@ -11,8 +11,7 @@ namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Se
 public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCandidatesQueryBuilderService
 {
     public IQueryable<JobCandidateRecord> BuildEligibleQuery(Guid jobId, Guid jobTargetId,
-        Guid? jobGenderId, int jobMaximumAge,
-        int jobMinimumAge,JobRequirements req, JobCandidatesFilter? filter)
+        Guid? jobGenderId, int jobMaximumAge, int jobMinimumAge,JobRequirements req, JobCandidatesFilter? filter)
     {
 
         filter ??= new JobCandidatesFilter(null, null, null);
@@ -90,6 +89,8 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
             Major = null,
             InvitationStatusId = null,
             Points = 0,
+            GroupOrder = p.Qualifications!.Sum(q => 
+                (q.MajorId == req.JobMajorId ? 1 : 0) + (q.SubMajorId == req.JobSubMajorId ? 1 : 0)), 
             CreatedDate = p.CreatedDate
         });
     }

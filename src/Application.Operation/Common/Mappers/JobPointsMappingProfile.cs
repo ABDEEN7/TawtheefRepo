@@ -26,6 +26,9 @@ public class JobPointsMappingProfile : IRegister
 
         config.NewConfig<JobCategoryCandidateSettings, JobCategoryCandidateSettingsResponseDto>();
         config.NewConfig<JobCategoryCandidateSettingsRequestDto, JobCategoryCandidateSettings>();
+
+        config.NewConfig<InvitationExpiryConfiguration, InvitationExpiryConfigurationResponseDto>();
+        config.NewConfig<InvitationExpiryConfigurationRequestDto, InvitationExpiryConfiguration>();
         
         config.NewConfig<JobPointsMain, JobPointsCopyDto>()
             .Map(dest => dest.Details, src => src.Details);

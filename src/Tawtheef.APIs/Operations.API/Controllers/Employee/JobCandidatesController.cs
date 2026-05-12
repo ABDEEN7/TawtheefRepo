@@ -66,6 +66,22 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("invitation-expiry-configuration")]
+    [AuthorizePermission(PermissionKeys.InvitationExpiryConfiguration.View)]
+    public async Task<IActionResult> GetInvitationExpiryConfiguration()
+    {
+        var result = await mediator.Send(new GetInvitationExpiryConfigurationQuery());
+        return result.ToActionResult();
+    }
+
+    [HttpPost("invitation-expiry-configuration")]
+    [AuthorizePermission(PermissionKeys.InvitationExpiryConfiguration.Manage)]
+    public async Task<IActionResult> SaveInvitationExpiryConfiguration([FromBody] SaveInvitationExpiryConfigurationCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.ToActionResult();
+    }
+
     [HttpPost("search")]
     [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
     public async Task<IActionResult> Search([FromBody] GetJobCandidatesQuery query)

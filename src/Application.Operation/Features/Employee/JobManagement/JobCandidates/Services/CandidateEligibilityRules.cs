@@ -10,8 +10,7 @@ public static class CandidateEligibilityRules
         InvitationStatusIds.Read,
         InvitationStatusIds.PendingAttachmentApproval,
         InvitationStatusIds.ReturnedAttachment,
-        InvitationStatusIds.ExamEligible,
-        InvitationStatusIds.Rejected
+        InvitationStatusIds.ExamEligible
     };
 
     public static bool IsAgeWithinRange(DateOnly birthDate, int minAge, int maxAge)

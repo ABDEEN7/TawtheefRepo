@@ -1,10 +1,20 @@
 <div class="specialization-filter-container p-3" i18nNamespace="pages/job-candidates">
-  <div class="mb-4">
+  <div class="specialization-filter-content mb-4">
     <p class="text-muted fs-14 mb-3">
       {{ 'JOB_CANDIDATE_SPECIALIZATION_FILTER_DESCRIPTION' | translate }}
     </p>
 
     <div [formGroup]="form">
+      <div class="specialization-list-actions d-flex align-items-center justify-content-between gap-2 mb-2">
+        <span class="text-muted fs-13">
+          {{ selectedSpecializationCount }} / {{ specializationSelections.length }}
+          {{ 'JOB_CANDIDATE_SPECIALIZATIONS_SELECTED' | translate }}
+        </span>
+        <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="!hasSelectableSpecializations"
+          (click)="toggleAllSpecializations()">
+          {{ (areAllSelectableSpecializationsSelected ? 'JOB_CANDIDATE_UNSELECT_ALL_SPECIALIZATIONS' : 'JOB_CANDIDATE_SELECT_ALL_SPECIALIZATIONS') | translate }}
+        </button>
+      </div>
       <div formArrayName="specializationSelections" class="specialization-list">
         @for (spec of specializationSelections.controls; track spec; let i = $index) {
         <div [formGroupName]="i" class="specialization-item card mb-2 shadow-sm"

@@ -2,6 +2,7 @@ using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Queries;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using FluentResults;
@@ -12,6 +13,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
@@ -47,6 +49,8 @@ public sealed class GetJobCandidatesQueryHandler(
         var targetCount = await targetCandidateCalculator.GetTargetCountAsync(
             job.JobCategoryId,
             job.NumberOfVacancies);
+        var activeInvitationCount = await CountActiveInvitationsAsync(job.Id, ct);
+        var availableVacancies = Math.Max(targetCount - activeInvitationCount, 0);
 
         var requirements = await jobRequirementsService.GetAsync(job);
 
@@ -66,7 +70,7 @@ public sealed class GetJobCandidatesQueryHandler(
             ct);
 
         if (candidatesWindow.Count == 0)
-            return Result.Ok(CreateEmptyResponse(pageNumber, pageSize));
+            return Result.Ok(CreateEmptyResponse(pageNumber, pageSize, availableVacancies));
 
         var scoredCandidates = await ScoreCandidatesAsync(
             candidatesWindow,
@@ -85,13 +89,10 @@ public sealed class GetJobCandidatesQueryHandler(
             filterSettings,
             targetCount);
 
-        var overview = CreateOverview(scoredCandidates, finalCandidates);
+        var overview = CreateOverview(scoredCandidates, finalCandidates, availableVacancies);
 
-        var list = CreatePaginatedList(
-            finalCandidates,
-            job,
-            pageNumber,
-            pageSize);
+        var list = CreatePaginatedList(finalCandidates, job,
+            new PaginatedRequest { PageNumber = pageNumber, PageSize = pageSize });
 
         return Result.Ok(new JobCandidatesCombinedDto
         {
@@ -158,9 +159,24 @@ public sealed class GetJobCandidatesQueryHandler(
             .FirstOrDefaultAsync(setting => setting.JobId == jobId, ct);
     }
 
+    private async Task<int> CountActiveInvitationsAsync(
+        Guid jobId,
+        CancellationToken ct)
+    {
+        return await unitOfWork
+            .GetEntityRepository<Invitation>()
+            .DbSet
+            .AsNoTracking()
+            .CountAsync(invitation =>
+                invitation.JobId == jobId &&
+                CandidateEligibilityRules.ActiveInvitationStatuses.Contains(invitation.InvitationStatusId),
+                ct);
+    }
+
     private static JobCandidatesOverviewDto CreateOverview(
         List<JobCandidateRecord> scoredCandidates,
-        List<JobCandidateRecord> finalCandidates)
+        List<JobCandidateRecord> finalCandidates,
+        int availableVacancies)
     {
         var totalEligible = scoredCandidates.Count;
         var pointsAverage = totalEligible == 0
@@ -171,20 +187,15 @@ public sealed class GetJobCandidatesQueryHandler(
         {
             TotalCandidatesCount = totalEligible,
             AvailableCandidatesCount = finalCandidates.Count,
-            AbovePointsCandidatesCount = scoredCandidates.Count(candidate => candidate.Points >= 800),
+            AvailableVacancies = availableVacancies,
             PointsAverage = Math.Round(pointsAverage, 2)
         };
     }
 
     private PaginatedResult<JobCandidateListItemDto> CreatePaginatedList(
-        List<JobCandidateRecord> candidates,
-        Job job,
-        int pageNumber,
-        int pageSize)
+        List<JobCandidateRecord> candidates, Job job, PaginatedRequest paginatedRequest)
     {
-        var items = candidates
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
+        var pageResult = candidates
             .Select(candidate => new JobCandidateListItemDto
             {
                 InvitationId = candidate.InvitationId,
@@ -194,20 +205,20 @@ public sealed class GetJobCandidatesQueryHandler(
                 JobCategory = localizationService.GetLocalizedName(job.JobCategory),
                 CandidateCategory = localizationService.GetLocalizedName(candidate.Profile?.CandidateType),
                 CandidateGender = localizationService.GetLocalizedName(candidate.Profile?.Gender),
+                GroupOrder = candidate.GroupOrder,
                 Points = candidate.Points
             })
-            .ToList();
+            .OrderByDescending(candidate => candidate.GroupOrder)
+            .ThenByDescending(candidate => candidate.Points)
+            .ToPaginatedList(paginatedRequest);
 
-        return new PaginatedResult<JobCandidateListItemDto>(
-            items,
-            candidates.Count,
-            pageNumber,
-            pageSize);
+        return pageResult;
     }
 
     private static JobCandidatesCombinedDto CreateEmptyResponse(
         int pageNumber,
-        int pageSize)
+        int pageSize,
+        int availableVacancies)
     {
         return new JobCandidatesCombinedDto
         {
@@ -220,7 +231,7 @@ public sealed class GetJobCandidatesQueryHandler(
             {
                 TotalCandidatesCount = 0,
                 AvailableCandidatesCount = 0,
-                AbovePointsCandidatesCount = 0,
+                AvailableVacancies = availableVacancies,
                 PointsAverage = 0
             }
         };

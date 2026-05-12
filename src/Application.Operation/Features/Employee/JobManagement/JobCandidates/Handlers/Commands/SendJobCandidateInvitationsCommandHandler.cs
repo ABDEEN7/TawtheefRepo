@@ -2,6 +2,7 @@ using Application.Operation.Common.Repositories;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Commands;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Models;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using FluentResults;
@@ -22,6 +23,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IUnitOfWork unitOfWork,
     IJobRepository jobRepository,
     IUserProfileRepository userProfileRepository,
+    IInvitationExpiryConfigurationRepository invitationExpiryConfigurationRepository,
     IJobTargetCandidateCalculatorService targetCalculator,
     IJobRequirementsService jobRequirementsService,
     IJobCandidatesQueryBuilderService queryBuilder,
@@ -43,6 +45,12 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
 
         var targetCount = await targetCalculator
             .GetTargetCountAsync(job.JobCategoryId, job.NumberOfVacancies);
+        var activeInvitationCount = await CountActiveInvitations(request.JobId, cancellationToken);
+        var availableVacancies = Math.Max(targetCount - activeInvitationCount, 0);
+
+        if (availableVacancies == 0)
+            return Result.Fail<SendJobCandidateInvitationsResult>(
+                JobCandidatesMessages.JobCandidateInvitationVacanciesFull);
 
         var requirements = await jobRequirementsService
             .GetAsync(job);
@@ -54,7 +62,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         var candidateWindow = await LoadCandidateWindow(
             eligibleQuery,
             request,
-            targetCount,
+            availableVacancies,
             alreadyInvited,
             cancellationToken);
 
@@ -73,7 +81,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         var finalCandidates = await SelectFinalCandidates(
             scoredCandidates,
             request,
-            targetCount,
+            availableVacancies,
             cancellationToken);
 
         if (finalCandidates.Count == 0)
@@ -112,21 +120,25 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     {
         var repo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
 
-        var activeStatuses = new[]
-        {
-            InvitationStatusIds.NewInvitation,
-            InvitationStatusIds.Read,
-            InvitationStatusIds.ExamEligible
-        };
-
         var ids = await repo
             .AsNoTracking()
-            .Where(i => i.JobId == jobId && activeStatuses.Contains(i.InvitationStatusId))
+            .Where(i => i.JobId == jobId && CandidateEligibilityRules.ActiveInvitationStatuses.Contains(i.InvitationStatusId))
             .Select(i => i.ApplicantId)
             .Distinct()
             .ToListAsync(ct);
 
         return ids.ToHashSet();
+    }
+
+    private async Task<int> CountActiveInvitations(
+        Guid jobId,
+        CancellationToken ct)
+    {
+        var repo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
+
+        return await repo
+            .AsNoTracking()
+            .CountAsync(i => i.JobId == jobId && CandidateEligibilityRules.ActiveInvitationStatuses.Contains(i.InvitationStatusId), ct);
     }
 
     private async Task<List<JobCandidateRecord>> LoadCandidateWindow(
@@ -151,10 +163,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     }
 
     private async Task<List<JobCandidateRecord>> ScoreCandidates(
-        List<JobCandidateRecord> window,
-        Tawtheef.Domain.Entities.Recruitment.Job job,
-        int? minimumPoints,
-        CancellationToken ct)
+        List<JobCandidateRecord> window,Job job,int? minimumPoints,CancellationToken ct)
     {
         var applicantIds = window.Select(c => c.ApplicantId).Distinct().ToList();
 
@@ -231,6 +240,9 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         CancellationToken ct)
     {
         var batch = Guid.NewGuid();
+        var currentDate = DateOnly.FromDateTime(DateTime.Now);
+        var expiryDays = await GetInvitationExpiryDaysAsync();
+        var expiresOn = currentDate.AddDays(expiryDays + 1);
 
         var repo = unitOfWork.GetEntityRepository<Invitation>().DbSet;
 
@@ -242,7 +254,8 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 JobId = jobId,
                 ApplicantId = candidate.ApplicantId,
                 InvitationStatusId = InvitationStatusIds.NewInvitation,
-                BatchNumber = batch
+                BatchNumber = batch,
+                ExpiresOn = expiresOn
             };
 
             invitation.AddDomainEvent(new JobCandidateInvitationSentDomainEvent(
@@ -251,6 +264,8 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
                 candidate.Applicant?.Email,
                 candidate.Applicant?.PhoneNumber,
                 jobTitle,
+                expiryDays,
+                expiresOn,
                 DateTimeOffset.UtcNow));
 
             return invitation;
@@ -276,4 +291,10 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         SentSmsCount = 0,
         UpdatedStatusCount = 0
     };
+
+    private async Task<int> GetInvitationExpiryDaysAsync()
+    {
+        var configuration = await invitationExpiryConfigurationRepository.GetAsync();
+        return configuration.IsSuccess ? configuration.Value.ExpiryDays : 7;
+    }
 }

@@ -8,4 +8,4 @@ public static class JobCandidateInvitationSent
 }
 
 [NotificationTemplate(JobCandidateInvitationSent.TemplateKey, "دعوة للتقديم على الوظيفة", "Invitation to Apply for a Job")]
-public sealed record JobCandidateInvitationSentModel(string JobTitle);
+public sealed record JobCandidateInvitationSentModel(string JobTitle, int ExpiryDays, DateOnly ExpiresOn);

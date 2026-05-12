@@ -61,6 +61,7 @@
   "admin.sidebar.profileLogs": "سجل نشاط الملفات",
   "admin.sidebar.jobPointsConfig": "تهيئة نقاط الوظائف",
   "admin.sidebar.jobCategoryCandidateSettings": "إعدادات مضاعف المرشحين",
+  "admin.sidebar.invitationExpiryConfiguration": "إعدادات انتهاء الدعوات",
   "admin.sidebar.homeContent": "إدارة محتوى الصفحة الرئيسية",
   "common.sidebar.settings": "الإعدادات",
   "common.sidebar.logout": "الخروج",

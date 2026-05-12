@@ -7,6 +7,7 @@ public static class JobCandidatesMessages
     public const string JobInvitationWithTitle =
         "You have been invited to apply for {0} on Careers. Please sign in to review the details.";
     public const  string JobCategoryCandidateSettingsNotFound = "JOB_CATEGORY_CANDIDATE_SETTINGS_NOT_FOUND";
+    public const string JobCandidateInvitationVacanciesFull = "JOB_CANDIDATE_INVITATION_VACANCIES_FULL";
     public const string JobCandidatesFilterPercentagesInvalid = "JOB_CANDIDATE_FILTER_PERCENTAGES_INVALID";
     public const string JobCandidatesNationalityBreakdownInvalid = "JOB_CANDIDATE_NATIONALITY_BREAKDOWN_INVALID";
     public const string CandidateName = "CANDIDATE_NAME";

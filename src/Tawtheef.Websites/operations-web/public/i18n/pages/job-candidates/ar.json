@@ -5,6 +5,7 @@
   "JOB_CANDIDATE_STATISTICS": "الإحصائيات",
   "JOB_CANDIDATE_JOB_CANDIDATE": "إجمالي المرشحين",
   "JOB_CANDIDATE_STATS_ABOVE_800_POINT": "مرشحين حصلوا على 800+ نقطة",
+  "JOB_CANDIDATE_STATS_AVAILABLE_VACANCIES": "الشواغر المتاحة",
   "JOB_CANDIDATE_AVAILABLE_CANDIDATES": "متاح للتعيين",
   "JOB_CANDIDATE_POINTS_AVERAGE": "متوسط النقاط",
   "JOB_CANDIDATE_FILTERS_SEARCH_PLACEHOLDER": "البحث",
@@ -80,6 +81,9 @@
   "JOB_CANDIDATE_FILTERS_SPECIALIZATION_TITLE": "التصفية حسب التخصصات",
   "JOB_CANDIDATE_SPECIALIZATION_FILTER_DESCRIPTION": "يمكنك اختيار التخصصات التي ترغب في تصفية المرشحين بناءً عليها من القائمة التالية:",
   "JOB_CANDIDATE_MAIN_SPECIALIZATION": "التخصص الرئيسي",
+  "JOB_CANDIDATE_SPECIALIZATIONS_SELECTED": "محدد",
+  "JOB_CANDIDATE_SELECT_ALL_SPECIALIZATIONS": "تحديد الكل",
+  "JOB_CANDIDATE_UNSELECT_ALL_SPECIALIZATIONS": "إلغاء تحديد الكل",
   "JOB_CANDIDATE_FILTERS_ACTIVE_FILTERS": "الفلاتر النشطة",
   "JOB_CANDIDATE_FILTERS_CLEAR_ALL": "مسح الكل",
   "jobs": {

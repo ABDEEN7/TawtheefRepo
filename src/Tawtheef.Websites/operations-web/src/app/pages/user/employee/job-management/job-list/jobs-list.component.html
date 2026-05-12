@@ -228,6 +228,11 @@
                           <span class="fw-semibold text-dark">{{ job.numberOfVacancies }}</span>
                           <span class="text-muted fs-12">{{ 'JOB_LIST_COLUMNS_VACANCIES' | translate }}</span>
                         </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="hgi hgi-stroke hgi-user-check text-success fs-14"></i>
+                          <span class="fw-semibold text-dark">{{ job.availableVacancies }}</span>
+                          <span class="text-muted fs-12">{{ 'JOB_LIST_COLUMNS_AVAILABLE_VACANCIES' | translate }}</span>
+                        </div>
                         <div class="d-flex align-items-center gap-2 text-muted fs-12"
                           [pTooltip]="'JOB_LIST_COLUMNS_DEADLINE' | translate">
                           <i class="pi pi-calendar fs-11"></i>
