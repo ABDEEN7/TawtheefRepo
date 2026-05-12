@@ -396,8 +396,8 @@ export class JobCandidatesComponent implements OnInit {
     return decodeURIComponent(match[1].replace(/\"/g, ''));
   }
 
-  canManageJobs(): boolean {
-    return this.authService.hasRole(SystemRoles.HrManager);
+  canSendInvitation(): boolean {
+    return this.authService.hasPermission([Permissions.Jobs.SendInvitation, Permissions.Jobs.View]);
   }
 
   canViewJobs(): boolean {
