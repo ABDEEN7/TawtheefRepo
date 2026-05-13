@@ -1,0 +1,60 @@
+.attachment-card {
+  overflow: hidden;
+}
+
+.attachment-card-body,
+.attachment-content,
+.attachment-title-row,
+.attachment-file-row,
+.attach-link,
+.attachment-file-name {
+  min-width: 0;
+}
+
+.attachment-content {
+  overflow: hidden;
+}
+
+.attachment-title-row {
+  flex-wrap: nowrap;
+}
+
+.attachment-title,
+.attach-link,
+.attachment-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-title {
+  flex: 1 1 auto;
+}
+
+.attach-link {
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+
+.attachment-file-name {
+  display: block;
+}
+
+.attachment-delete-btn {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 2rem;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.attachment-review-note {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .attachment-card-body {
+    align-items: flex-start !important;
+  }
+}

@@ -232,7 +232,7 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   exportToExcel() {
-    if (!this.canManageJobs()) return;
+    if (!this.canSendInvitation()) return;
     const invitationIds =
       this.selectedCandidates.length > 0
         ? this.selectedCandidates.map((candidate) => candidate.candidateId)
@@ -256,7 +256,7 @@ export class JobCandidatesComponent implements OnInit {
   }
 
   sendInvitations() {
-    if (!this.canManageJobs()) return;
+    if (!this.canSendInvitation()) return;
     const ref = this.dialogHelperService.openConfirmDialog({
       type: 'submit',
       title: 'JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE',
@@ -396,8 +396,8 @@ export class JobCandidatesComponent implements OnInit {
     return decodeURIComponent(match[1].replace(/\"/g, ''));
   }
 
-  canManageJobs(): boolean {
-    return this.authService.hasRole(SystemRoles.HrManager);
+  canSendInvitation(): boolean {
+    return this.authService.hasPermission([Permissions.Jobs.SendInvitation, Permissions.Jobs.View]);
   }
 
   canViewJobs(): boolean {

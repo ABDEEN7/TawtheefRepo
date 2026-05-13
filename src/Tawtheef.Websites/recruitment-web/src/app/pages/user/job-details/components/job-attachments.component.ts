@@ -13,7 +13,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   selector: 'app-job-attachments',
   standalone: true,
   imports: [CommonModule, TranslatePipe, DrawerModule],
-  templateUrl: './job-attachments.component.html'
+  templateUrl: './job-attachments.component.html',
+  styleUrl: './job-attachments.component.scss'
 })
 export class JobAttachmentsComponent {
   invitationId = input.required<string | null>();
