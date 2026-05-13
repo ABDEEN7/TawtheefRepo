@@ -21,8 +21,8 @@ import { JobDetailsService } from '../../services/job-details.service';
             </span>
           </div>
           <div class="info-list-item d-flex align-items-center justify-content-between min-w-0">
-            <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.CLOSING_DATE' | translate }}:</span>
-            <span class="value">{{ job()?.closingDate | date: 'dd/MM/yyyy' }}</span>
+            <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.INVITATION_EXPIRY_DATE' | translate }}:</span>
+            <span class="value">{{ job()?.expiresOn ? (job()?.expiresOn | date: 'dd/MM/yyyy') : '-' }}</span>
           </div>
           <div class="info-list-item d-flex align-items-center justify-content-between min-w-0">
             <span class="label me-3 flex-shrink-0">{{ 'JOB_DETAILS.WORK_LOCATION' | translate }}:</span>

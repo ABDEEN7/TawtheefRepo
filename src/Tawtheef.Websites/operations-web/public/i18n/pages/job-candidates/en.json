@@ -34,6 +34,7 @@
   "JOB_CANDIDATE_MESSAGES_EXPORT_FAILED": "Failed to export job candidates.",
   "JOB_CANDIDATE_MESSAGES_INVITES_SENT": "Invitations sent successfully.",
   "JOB_CANDIDATE_MESSAGES_INVITES_FAILED": "Failed to send invitations.",
+  "JOB_CANDIDATE_MESSAGES_INVITATION_EXPIRY_EXCEEDS_CLOSING_DATE": "The invitation cannot be sent because the configured invitation expiry period is greater than the remaining days before the job closing date. Please reduce the invitation expiry days.",
   "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE": "Send invitations",
   "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_DESCRIPTION": "Are you sure you want to send invitations to the selected candidates?",
   "JOB_CANDIDATE_FILTERS_NATIONALITY_TITLE": "Filter by Nationality",

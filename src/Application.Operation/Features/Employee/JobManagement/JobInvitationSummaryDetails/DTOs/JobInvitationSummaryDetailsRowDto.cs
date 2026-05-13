@@ -12,9 +12,11 @@ public sealed class JobInvitationSummaryDetailsRowDto
     public DropdownOptions Status { get; set; } = new();
     public Guid  BatchNumber { get; init; }
     public DateTimeOffset SentDate { get; init; }
+    public DateOnly InvitationExpiryDate { get; init; }
     public DateTimeOffset? ReadDate { get; set; }
     public DateTimeOffset? AppliedDate { get; init; }
     public DateTimeOffset? DeclinedDate { get; set; }
     public DateTimeOffset? ExpiredDate { get; set; }
+    public DateTimeOffset? LastActivityDate { get; set; }
     public bool HasAttachments { get; set; }
 }

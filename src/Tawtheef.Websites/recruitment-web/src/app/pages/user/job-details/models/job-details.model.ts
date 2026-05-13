@@ -41,4 +41,5 @@ export interface JobDetailsModel {
   
   invitationStatusId?: GUID;
   invitationStatus?: DropdownOptionVM;
+  expiresOn: Date;
 }

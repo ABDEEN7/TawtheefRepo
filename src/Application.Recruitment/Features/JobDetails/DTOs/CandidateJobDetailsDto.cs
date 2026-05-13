@@ -38,4 +38,5 @@ public sealed class CandidateJobDetailsDto
     // Invitation status
     public Guid InvitationStatusId { get; set; }
     public DropdownOptions? InvitationStatus { get; set; }
+    public DateOnly ExpiresOn { get; set; }
 }

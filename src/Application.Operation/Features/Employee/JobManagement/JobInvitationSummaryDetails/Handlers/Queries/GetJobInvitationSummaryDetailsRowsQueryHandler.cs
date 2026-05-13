@@ -78,9 +78,11 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
             item.DeclinedDate = invitation.InvitationStatusId == InvitationStatusIds.Rejected
                 ? invitation.UpdatedDate
                 : null;
-            item.ExpiredDate = invitation.InvitationStatusId == InvitationStatusIds.Closed
+            item.ExpiredDate = invitation.InvitationStatusId == InvitationStatusIds.Closed ||
+                               invitation.InvitationStatusId == InvitationStatusIds.Expired
                 ? invitation.UpdatedDate
                 : null;
+            item.LastActivityDate = invitation.UpdatedDate;
             item.HasAttachments = invitation.Attachments.Any();
         }
 

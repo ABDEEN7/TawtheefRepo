@@ -46,6 +46,7 @@ public sealed class GetCandidateJobDetailsQueryHandler(
         
         // Map invitation status
         jobDto.InvitationStatusId = invitation.InvitationStatusId;
+        jobDto.ExpiresOn = invitation.ExpiresOn;
         if (invitation.InvitationStatus != null)
         {
             jobDto.InvitationStatus = mapper.Map<DropdownOptions>(invitation.InvitationStatus);

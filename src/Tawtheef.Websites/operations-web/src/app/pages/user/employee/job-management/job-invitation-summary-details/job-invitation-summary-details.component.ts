@@ -15,7 +15,6 @@ import {
   InviteRowVM,
   JobInfoVM,
   JobInvitesStatsVM,
-  LookupOption,
   InvitationAttachmentVM
 } from '../models/job-invitation-summary-details.model';
 import { JobInvitationSummaryDetailsService } from '../services/job-invitation-summary-details.service';
@@ -26,6 +25,9 @@ import { TableModule } from 'primeng/table';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import { LanguageService } from '../../../../../core/services/language.service';
+import { MetricChipComponent } from '../../../../../shared/components/metric-chip/metric-chip.component';
+import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
 
 @Component({
@@ -43,7 +45,9 @@ import { LanguageService } from '../../../../../core/services/language.service';
     FaDirArrowDirective,
     DrawerModule,
     TextareaModule,
-    TooltipModule
+    TooltipModule,
+    MetricChipComponent,
+    StatusBadgeComponent
   ],
   templateUrl: './job-invitation-summary-details.component.html',
   styleUrl: './job-invitation-summary-details.component.scss',
@@ -60,7 +64,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
   searchText = signal<string>('');
   batchNumber = signal<string>('');
   currentPage = signal(1);
-  itemsPerPage = signal(7);
+  itemsPerPage = signal(10);
 
   jobInfo = signal<JobInfoVM | null>(null);
   stats = signal<JobInvitesStatsVM | null>(null);
@@ -69,7 +73,7 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount ?? 0);
 
-  statusOptions = signal<LookupOption[]>([]);
+  statusOptions = signal<dropdownOptionsModel[]>([]);
 
   // Attachment State
   showAttachments = signal(false);
@@ -212,21 +216,12 @@ export class JobInvitationSummaryDetailsComponent implements OnInit {
     this.loadAll();
   }
 
-  // status pills classes (adjust backend names to your API)
-  getStatusPillClass(backendName: string): string {
-    const map: Record<string, string> = {
-      Applied: 'pill success',
-      Submitted: 'pill success',
-      NewInvitation: 'pill info',
-      PendingAttachmentApproval: 'pill warning',
-      ReturnedAttachment: 'pill danger',
-      Cancelled: 'pill danger',
-      Closed: 'pill danger',
-      Declined: 'pill warning',
-      Refused: 'pill warning',
-    };
+  setStatusFilter(backendName: string): void {
+    const status = this.statusOptions().find(option => option.backendName === backendName);
+    if (!status) return;
 
-    return map[backendName] ?? 'pill neutral';
+    this.selectedStatus.set(status.id);
+    this.onFilterChange();
   }
 
   navigateTo() {

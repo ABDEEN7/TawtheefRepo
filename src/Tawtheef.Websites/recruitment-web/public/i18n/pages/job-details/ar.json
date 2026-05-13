@@ -33,6 +33,7 @@
   "JOB_DETAILS.REQUESTING_ENTITY": "الجهة الطالبة",
   "JOB_DETAILS.JOB_STATUS": "حالة الوظيفة",
   "JOB_DETAILS.CLOSING_DATE": "تاريخ الإغلاق",
+  "JOB_DETAILS.INVITATION_EXPIRY_DATE": "تاريخ انتهاء الدعوة",
   "JOB_DETAILS.WORK_LOCATION": "موقع العمل",
   "JOB_DETAILS.VACANCIES": "عدد الشواغر",
   "JOB_DETAILS.APPLICATION_CLOSED": "التقديم مغلق",
