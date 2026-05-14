@@ -33,6 +33,7 @@
   "JOB_CANDIDATE_MESSAGES_EXPORT_FAILED": "تعذر تصدير المرشحين.",
   "JOB_CANDIDATE_MESSAGES_INVITES_SENT": "تم إرسال الدعوات بنجاح.",
   "JOB_CANDIDATE_MESSAGES_INVITES_FAILED": "تعذر إرسال الدعوات.",
+  "JOB_CANDIDATE_MESSAGES_INVITATION_EXPIRY_EXCEEDS_CLOSING_DATE": "لا يمكن إرسال الدعوة لأن فترة انتهاء صلاحية الدعوة المحددة أكبر من الأيام المتبقية قبل تاريخ إغلاق الوظيفة. يرجى تقليل أيام انتهاء صلاحية الدعوة.",
   "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE": "إرسال الدعوات",
   "JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_DESCRIPTION": "هل أنت متأكد من إرسال الدعوات للمرشحين المحددين؟",
   "JOB_CANDIDATE_TITLE": "قائمة المرشحين",

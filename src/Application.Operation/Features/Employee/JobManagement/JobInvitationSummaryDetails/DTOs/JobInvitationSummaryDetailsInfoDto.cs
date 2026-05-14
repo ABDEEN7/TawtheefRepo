@@ -8,5 +8,6 @@ public sealed class JobInvitationSummaryDetailsInfoDto
     public string JobName { get; set; } = string.Empty;
     public string DepartmentName { get; set; } = string.Empty;
     public DropdownOptions JobStatus { get; set; } = new();
+    public DateTimeOffset ClosingDate { get; set; }
     public Guid? CurrentBatchNumber { get; set; }
 }

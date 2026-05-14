@@ -33,6 +33,7 @@
   "JOB_DETAILS.REQUESTING_ENTITY": "Requesting Entity",
   "JOB_DETAILS.JOB_STATUS": "Job Status",
   "JOB_DETAILS.CLOSING_DATE": "Closing Date",
+  "JOB_DETAILS.INVITATION_EXPIRY_DATE": "Invitation Expiry Date",
   "JOB_DETAILS.WORK_LOCATION": "Work Location",
   "JOB_DETAILS.VACANCIES": "Number of Vacancies",
   "JOB_DETAILS.APPLICATION_CLOSED": "Application Closed",

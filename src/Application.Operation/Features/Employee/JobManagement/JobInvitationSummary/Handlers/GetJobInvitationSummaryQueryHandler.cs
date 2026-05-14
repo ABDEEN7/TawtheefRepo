@@ -27,6 +27,9 @@ public sealed class GetJobInvitationSummaryQueryHandler(IUnitOfWork unitOfWork, 
             .WhereIf(query.JobCategoryId is not null, i => i.JobCategoryId == query.JobCategoryId)
             .WhereIf(query.DepartmentId is not null, i => i.DepartmentId == query.DepartmentId)
             .WhereIf(query.JobStatusId is not null, i => i.JobStatusId == query.JobStatusId)
+            .WhereIf(query.Search is not null && !string.IsNullOrEmpty(query.Search), i => 
+                EF.Functions.Like(i.JobTitle!.JobNameEn, $"%{query.Search}%") ||
+                EF.Functions.Like(i.JobTitle!.JobNameAr, $"%{query.Search}%"))
             .Select(job => new JobInvitationSummaryDto {
                 JobId = job.Id,
                 JobStatus = new DropdownOptions

@@ -1,15 +1,11 @@
 export type SortDirection = 'asc' | 'desc';
 
-export interface LookupOption {
-  id: string;
-  name: string;
-}
-
 export interface JobInfoVM {
   jobId: string;
   jobName: string;
   departmentName: string;
   jobStatus: StatusVM;
+  closingDate: string;
   currentBatchNumber: string | null;
 }
 
@@ -28,10 +24,12 @@ export interface InviteRowVM {
   status: StatusVM;
   batchNumber: string;
   sentDate: string;
+  invitationExpiryDate: string;
   readDate?: string | null;
   appliedDate?: string | null;
   declinedDate?: string | null;
   expiredDate?: string | null;
+  lastActivityDate?: string | null;
   hasAttachments: boolean;
 }
 

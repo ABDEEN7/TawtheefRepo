@@ -22,6 +22,88 @@
   border-radius: 8px;
 }
 
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.meta-tag {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.meta-tag--dept {
+  background: rgba(138, 21, 56, 0.08);
+  color: #8a1538;
+}
+
+.meta-tag--status {
+  background: rgba(108, 117, 125, 0.08);
+  color: #6c757d;
+}
+
+.meta-tag--date {
+  background: rgba(78, 128, 234, 0.1);
+  color: #2f5ac4;
+}
+
+.metrics-panel {
+  border: 1px solid rgba(203, 203, 203, 1);
+  border-radius: 12px;
+  background: #fafbfc;
+  padding: 16px 24px;
+}
+
+.metrics-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metric-filter {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.date-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.date-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  line-height: 1.2;
+}
+
+.date-label {
+  color: #64748b;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.date-value {
+  color: #1e293b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.date-line--deadline .date-value {
+  color: #8a1538;
+}
+
 .pill {
   padding: 4px 12px;
   border-radius: 50px;

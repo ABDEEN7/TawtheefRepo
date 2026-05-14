@@ -12,4 +12,5 @@ public class CandidateInvitationsDto
     public required DropdownOptions InvitationStatus { get; set; }
     
     public DateTimeOffset CreatedDate { get; set; }
+    public DateOnly ExpiresOn { get; set; }
 }

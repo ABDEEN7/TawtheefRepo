@@ -30,6 +30,7 @@ import { CandidateEligibilityCheckDialogComponent } from '../modals/candidate-el
 import { CandidatePointsBreakdownDialogComponent } from '../modals/candidate-points-breakdown-dialog/candidate-points-breakdown-dialog.component';
 import { SystemRoles } from '../../../../../core/constants/systemRoles';
 import { environment } from '../../../../../../environments/environment';
+import { InvitationExpiryConfigurationService } from '../../invitation-expiry-configuration/services/invitation-expiry-configuration.service';
 
 @Component({
   selector: 'app-job-candidates.component',
@@ -47,6 +48,7 @@ export class JobCandidatesComponent implements OnInit {
   private fileUtilsService = inject(FileUtilsService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
+  private invitationExpiryConfigurationService = inject(InvitationExpiryConfigurationService);
   private environment = environment;
   lookupsService = inject(JobLookupService);
 
@@ -257,6 +259,19 @@ export class JobCandidatesComponent implements OnInit {
 
   sendInvitations() {
     if (!this.canSendInvitation()) return;
+
+    this.invitationExpiryConfigurationService.getConfiguration().subscribe({
+      next: (configuration) => {
+        if (!this.canSendInvitationBeforeJobClosingDate(configuration.expiryDays)) return;
+        this.openSendInvitationsConfirmation();
+      },
+      error: () => {
+        this.notificationService.error(this.translationService.instant('common.loadFailed'));
+      },
+    });
+  }
+
+  private openSendInvitationsConfirmation(): void {
     const ref = this.dialogHelperService.openConfirmDialog({
       type: 'submit',
       title: 'JOB_CANDIDATE_CONFIRMATIONS_SEND_INVITATIONS_TITLE',
@@ -288,6 +303,33 @@ export class JobCandidatesComponent implements OnInit {
           },
         });
     });
+  }
+
+  private canSendInvitationBeforeJobClosingDate(invitationExpiryDays: number): boolean {
+    const remainingDaysUntilClosingDate = this.getRemainingDaysUntilJobClosingDate();
+    if (remainingDaysUntilClosingDate === null) return true;
+
+    if (Number(invitationExpiryDays) <= remainingDaysUntilClosingDate) return true;
+
+    this.notificationService.error(this.translationService.instant('JOB_CANDIDATE_MESSAGES_INVITATION_EXPIRY_EXCEEDS_CLOSING_DATE'), undefined, 5000);
+    return false;
+  }
+
+  private getRemainingDaysUntilJobClosingDate(): number | null {
+    if (!this.jobInfo?.closingDate) return null;
+
+    const closingDate = new Date(this.jobInfo.closingDate);
+    if (Number.isNaN(closingDate.getTime())) return null;
+
+    const today = this.getStartOfDay(new Date());
+    const closingDateStartOfDay = this.getStartOfDay(closingDate);
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+    return Math.max(0, Math.ceil((closingDateStartOfDay.getTime() - today.getTime()) / millisecondsPerDay));
+  }
+
+  private getStartOfDay(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
   onPageChange(page: number) {

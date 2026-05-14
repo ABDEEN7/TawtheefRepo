@@ -28,6 +28,7 @@
   "candidate_dashboard.column_type": "Type",
   "candidate_dashboard.column_status": "Status",
   "candidate_dashboard.column_date": "Date",
+  "candidate_dashboard.column_expiry_date": "Invitation Expiry Date",
   "candidate_dashboard.column_actions": "Actions",
   "candidate_dashboard.no_results": "No results according to current filter",
   "candidate_dashboard.action_apply_now": "Apply Now",

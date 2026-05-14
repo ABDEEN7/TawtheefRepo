@@ -28,6 +28,7 @@
   "candidate_dashboard.column_type": "النوع",
   "candidate_dashboard.column_status": "الحالة",
   "candidate_dashboard.column_date": "التاريخ",
+  "candidate_dashboard.column_expiry_date": "تاريخ انتهاء الدعوة",
   "candidate_dashboard.column_actions": "إجراءات",
   "candidate_dashboard.no_results": "لا توجد نتائج وفق التصفية الحالية",
   "candidate_dashboard.action_apply_now": "قدّم الآن",

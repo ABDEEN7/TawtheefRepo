@@ -114,6 +114,7 @@
                     <th>{{ 'candidate_dashboard.column_type' | translate }}</th>
                     <th>{{ 'candidate_dashboard.column_status' | translate }}</th>
                     <th>{{ 'candidate_dashboard.column_date' | translate }}</th>
+                    <th>{{ 'candidate_dashboard.column_expiry_date' | translate }}</th>
                     <th>{{ 'candidate_dashboard.column_actions' | translate }}</th>
                   </tr>
                 </ng-template>
@@ -133,6 +134,7 @@
                       </span>
                     </td>
                     <td>{{ record.createdDate | date :'dd/MM/yyyy'}}</td>
+                    <td>{{ record.expiresOn ? (record.expiresOn | date :'dd/MM/yyyy') : '-' }}</td>
                     <td>
                       @if (getActionButtons(record.invitationStatus); as actions) {
                       @if (actions.showApply) {
@@ -154,7 +156,7 @@
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
+                    <td colspan="8" class="text-center text-muted py-4">
                       {{ 'candidate_dashboard.no_results' | translate }}
                     </td>
                   </tr>

@@ -8,4 +8,5 @@ export interface CandidateInvitationModel {
   jobCategoryBackendName: string;
   invitationStatus: DropdownOptionVM;
   createdDate: Date;
+  expiresOn: Date;
 }
