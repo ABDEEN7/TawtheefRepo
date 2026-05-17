@@ -38,7 +38,10 @@
   "internal.termsDialog.accepted.summary": "Terms Accepted",
   "internal.termsDialog.accepted.detail": "Thank you for confirming the terms and conditions.",
 
+  "public.nav.home": "Home",
   "public.nav.about": "About the Platform",
+  "public.nav.values": "Our Values",
+  "public.nav.contact": "Contact Us",
   "public.nav.tracks": "Recruitment Tracks",
   "public.nav.why": "Why Choose Us",
   "public.nav.success": "Success Stories",

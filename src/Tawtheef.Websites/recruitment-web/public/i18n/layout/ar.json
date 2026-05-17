@@ -38,7 +38,10 @@
   "internal.termsDialog.accepted.summary": "تمت الموافقة على الشروط",
   "internal.termsDialog.accepted.detail": "شكرًا لتأكيدك الشروط والأحكام.",
 
+  "public.nav.home": "الرئيسية",
   "public.nav.about": "عن المنصة",
+  "public.nav.values": "قيمنا",
+  "public.nav.contact": "تواصل معنا",
   "public.nav.tracks": "مسارات التوظيف",
   "public.nav.why": "لماذا معنا",
   "public.nav.success": "قصص نجاح",

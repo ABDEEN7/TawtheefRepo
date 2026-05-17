@@ -1,50 +1,65 @@
-<nav class="navbar navbar-expand-lg navbar-dark brand-grad py-2 sticky-top">
-  <div class="container container-narrow">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="" (click)="navigateToHome($event)">
-        <img alt="" src="../../../../assets/img/logo-en.png" class="logo-qa me-2">
+<nav class="navbar navbar-expand-lg sticky-top custom-navbar" dir="rtl">
+  <div class="container container-narrow d-flex align-items-center justify-content-between">
+    
+    <!-- Right side (RTL): Ministry Logo -->
+    <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="" (click)="navigateToHome($event)">
+        <img alt="Ministry Logo" src="../../../../assets/img/logo-en.png" class="logo-qa">
     </a>
 
-    <button class="navbar-toggler bg-primary" type="button" aria-expanded="false"
-            data-bs-toggle="collapse" data-bs-target="#navMain">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div id="navMain" class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <!-- Center: Main Navigation Links -->
+    <div id="navMain" class="collapse navbar-collapse justify-content-center order-3 order-lg-2 mt-3 mt-lg-0">
+      <ul class="navbar-nav mb-2 mb-lg-0 gap-1 gap-lg-3">
         @if (menuTemplate) {
           <ng-container *ngTemplateOutlet="menuTemplate"></ng-container>
         }
-        @else{
-          <ng-template>
-            <li class="nav-item"><a class="nav-link" href="#about">{{ 'home.nav.about' | translate }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#tracks">{{ 'home.nav.tracks' | translate }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#why">{{ 'home.nav.why' | translate }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#success">{{ 'home.nav.success' | translate }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="#faq">{{ 'home.nav.faq' | translate }}</a></li>
-          </ng-template>
+        @else {
+          <!-- Render directly, no ng-template -->
+          <li class="nav-item"><a class="nav-link" href="#home">{{ 'public.nav.home' | translate }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">{{ 'public.nav.about' | translate }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="#values">{{ 'public.nav.values' | translate }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">{{ 'public.nav.contact' | translate }}</a></li>
         }
       </ul>
+    </div>
 
-      <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-text d-flex gap-2 align-items-center" (click)="toggleLanguage()">
-          <span>{{ `common.${language.getPrev()}` | translate }}</span>
-          <i class="hgi hgi-stroke hgi-earth"></i>
+    <!-- Left side (RTL): Actions & Hamburger grouped together -->
+    <div class="d-flex align-items-center gap-2 order-2 order-lg-3">
+      
+      <!-- Language Switch & Login Actions -->
+      <div class="navbar-actions d-flex align-items-center gap-2 gap-lg-3">
+        
+        <!-- Language Switch -->
+        <button class="btn btn-lang d-flex align-items-center justify-content-center" (click)="toggleLanguage()" aria-label="Switch Language">
+          <span class="lang-text me-1 d-none d-sm-inline">{{ `common.${language.getPrev()}` | translate }}</span>
+          <i class="hgi hgi-stroke hgi-earth fs-5"></i>
         </button>
+
+        <!-- Auth Actions -->
         <ng-container *ngIf="(isLoggedIn$ | async) === false">
-          <a [routerLink]="routes.auth.login" class="btn btn-primary d-inline-flex align-items-center me-2">
-            {{ 'public.nav.login' | translate }}
+          <a [routerLink]="routes.auth.login" class="btn btn-login d-flex align-items-center justify-content-center">
+            <span class="d-none d-sm-inline">{{ 'public.nav.login' | translate }}</span>
+            <i class="hgi hgi-stroke hgi-login-03 d-inline d-sm-none fs-5"></i>
           </a>
         </ng-container>
 
         <ng-container *ngIf="(isLoggedIn$ | async) === true">
-          <a [routerLink]="routes.user.dashboard" class="btn btn-primary d-inline-flex align-items-center me-2">
-            <i class="isax isax-user me-2"></i>{{ 'public.nav.profile.dashboard' | translate }}
+          <a [routerLink]="routes.user.dashboard" class="btn btn-login d-flex align-items-center justify-content-center">
+            <span class="d-none d-sm-inline">{{ 'public.nav.profile.dashboard' | translate }}</span>
+            <i class="isax isax-user d-inline d-sm-none fs-5"></i>
           </a>
-          <a (click)="logout()" class="btn btn-secondary me-0">
-            <i class="isax isax-logout me-2"></i>{{ 'public.nav.logout' | translate }}
+          <a (click)="logout()" class="btn btn-lang d-flex align-items-center justify-content-center">
+            <i class="isax isax-logout fs-5"></i>
           </a>
         </ng-container>
       </div>
+
+      <!-- Hamburger Menu (Mobile/Tablet) -->
+      <button class="navbar-toggler border-0 shadow-none ms-1 px-2" type="button" aria-expanded="false"
+              data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
     </div>
+
   </div>
 </nav>
