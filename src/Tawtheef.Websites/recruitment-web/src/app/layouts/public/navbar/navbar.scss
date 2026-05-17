@@ -1,5 +1,16 @@
+.logo-qa {
+    height: 56px;
+}
 
-.logo-qa { height: 56px; @media (min-width: 992px){ min-height:80px; } }
-.navbar { background:#fff;    z-index: 99999;
- }
-.nav-link { color:#000 !important; &:hover{ opacity:1; } }
+.navbar {
+    background: #fff;
+    z-index: 99999;
+}
+
+.nav-link {
+    color: #000 !important;
+
+    &:hover {
+        opacity: 1;
+    }
+}

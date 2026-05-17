@@ -1,181 +1,94 @@
-<section i18nNamespace="pages/home">
-  <header class="hero brand-grad mb-4">
-    <div class="inner container text-center">
-      <!-- <div class="kicker mb-2">{{ 'home.hero.kicker' | translate }}</div> -->
-      <h1 class="display-5 fw-bold mb-3">{{ 'home.hero.title' | translate }}</h1>
-      <p class="lead mb-4 text-white">{{ 'home.hero.subtitle' | translate }}</p>
-      <!-- <div class="d-flex flex-wrap justify-content-center gap-2">
-        <a class="btn btn-brand btn-lg px-4" href="#tracks">
-          {{ 'home.hero.cta1' | translate }}
-        </a>
-        <a class="btn btn-outline-light btn-lg rounded-pill px-4" [routerLink]="routes.auth.login">
-          {{ 'home.hero.cta2' | translate }}
-        </a>
-      </div> -->
+<section class="home-final" i18nNamespace="pages/home">
+  <header class="hero" id="home">
+    <div class="hero__overlay"></div>
+    <div class="container hero__inner">
+      <h1>{{ 'home.hero.title' | translate }}</h1>
+      <p>{{ 'home.hero.subtitle' | translate }}</p>
     </div>
   </header>
-  <!-- <section id="about" class="section">
+
+  <section class="section employment-system" id="about">
     <div class="container">
-      <div class="text-center mb-4">
-        <h2 class="fw-bold" data-aos="fade-up">{{ 'home.about.title' | translate }}</h2>
-        <p class="text-muted" data-aos="fade-up" data-aos-delay="50">
-          {{ 'home.about.desc' | translate }}
-        </p>
-      </div>
-    </div>
-  </section> -->
-  <section id="tracks" class="section tracks">
-    <div class="container">
-      <div class="row g-3">
-        <div class="col-md-5">
-          <div class="image-wrapper mb-5 pb-5">
-            <div class="images position-relative aos-init aos-animate" data-aos="zoom-out" data-aos-delay="400">
-              <img src="../../../../assets/img/img-2.png?q=80&w=1200&auto=format&fit=crop'"
-                [attr.alt]="'home.tracks.mainImageAlt' | translate" class="img-fluid main-image rounded-4">
-              <img src="../../../../assets/img/img-1.png?q=80&w=1200&auto=format&fit=crop'"
-                [attr.alt]="'home.tracks.secondaryImageAlt' | translate" class="img-fluid small-image rounded-4">
+      <div class="row align-items-center g-4 g-lg-5">
+        <div class="col-12 col-lg-6 join-copy-col">
+          <div class="section-copy">
+            <h2>{{ 'home.system.title' | translate }}</h2>
+            <p class="system-subtitle">{{ 'home.system.subtitle' | translate }}</p>
+
+            <div class="system-group">
+              <h3>{{ 'home.system.ministry.title' | translate }}</h3>
+              <p>{{ 'home.system.ministry.body' | translate }}</p>
             </div>
+
+            <div class="system-group">
+              <h3>{{ 'home.system.schools.title' | translate }}</h3>
+              <p>{{ 'home.system.schools.body' | translate }}</p>
+            </div>
+
+            <a class="system-cta" [routerLink]="['/auth/login']">
+              <i class="hgi hgi-stroke hgi-login-01"></i>
+              {{ 'home.system.cta' | translate }}
+            </a>
           </div>
         </div>
-        <div class="col-12 col-md-7">
-          <h2 class="fw-bold mb-4" data-aos="fade-up">{{ 'home.tracks.title' | translate }}</h2>
-          <p-tabs [(value)]="activeTab">
-            <p-tablist class="row">
-              @for (tab of tracks; track tab.key) {
-              <p-tab class="fs-18 col-6 text-center" [value]="tab.key" (click)="setActiveTab(tab.key)">
-                {{ ('home.tracks.items.' + tab.key + '.title') | translate }}
-              </p-tab>
+
+        <div class="col-12 col-lg-6 join-image-col">
+          <img class="system-image" src="assets/img/home-final/employment-system.jpg"
+            [attr.alt]="'home.system.imageAlt' | translate" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section values-section" id="values">
+    <div class="container">
+      <div class="section-heading text-center">
+        <h2>{{ 'home.values.title' | translate }}</h2>
+        <p class="values-subtitle">{{ 'home.values.subtitle' | translate }}</p>
+      </div>
+
+      <div class="values-grid">
+        @for (item of values; track item.key; let last = $last) {
+        <article class="value-card">
+          <span class="value-card__icon">
+            <i class="hgi hgi-stroke" [ngClass]="item.icon"></i>
+          </span>
+          <h3>{{ ('home.values.items.' + item.key + '.title') | translate }}</h3>
+          <p>{{ ('home.values.items.' + item.key + '.desc') | translate }}</p>
+        </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact-section" id="contact">
+    <div class="container">
+      <div class="row align-items-center g-4 g-lg-5">
+        <div class="col-12 col-lg-6 contact-map-col">
+          <img class="contact-map" src="assets/img/home-final/ministry-map.png"
+            [attr.alt]="'home.contact.mapAlt' | translate" />
+        </div>
+
+        <div class="col-12 col-lg-6 contact-info-col">
+          <div class="contact-copy">
+            <h2>{{ 'home.contact.title' | translate }}</h2>
+            <p>{{ 'home.contact.desc' | translate }}</p>
+
+            <ul class="contact-list">
+              @for (item of contacts; track item.key) {
+              <li>
+                <span class="contact-list__icon">
+                  <i class="hgi hgi-stroke" [ngClass]="item.icon"></i>
+                </span>
+                <span>
+                  <strong>{{ ('home.contact.items.' + item.key + '.label') | translate }}</strong>
+                  <span>{{ ('home.contact.items.' + item.key + '.value') | translate }}</span>
+                </span>
+              </li>
               }
-            </p-tablist>
-
-            <p-tabpanels>
-              @for (tab of tracks; track tab.key) {
-              <p-tabpanel class="m-4" [value]="tab.key">
-                <p class="m-0 fs-18">{{ ('home.tracks.items.' + tab.key + '.desc') | translate }}</p>
-                <a class="btn btn-primary btn-lg d-block mt-4" href="https://www.edu.gov.qa/">{{ 'home.tracks.cta' |
-                  translate }}</a>
-              </p-tabpanel>
-              }
-            </p-tabpanels>
-          </p-tabs>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section id="why" class="section bg-light why">
-    <div class="container">
-      <div class="text-center mb-4">
-        <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.why.title' | translate }}</h2>
-        <p class="text-muted fs-18" data-aos="fade-up" data-aos-delay="50">{{ 'home.why.desc' | translate }}</p>
-      </div>
-
-      <div class="row g-3 mt-4">
-        @for (w of whyItems; track w.key; let i = $index) {
-        <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" [attr.data-aos-delay]="i*60">
-          <div class="card-ghost h-100 px-3 py-5">
-            <div class="d-flex align-items-center gap-2 mb-2 flex-column text-center">
-              <span class="icon-circle mb-3"><i class="fs-32 fa-solid" [ngClass]="w.icon"></i></span>
-              <h6 class="m-0 fs-18 fw-semibold">{{ ('home.why.items.' + w.key + '.title') | translate }}</h6>
-              <p class="m-0 fs-16">{{ ('home.why.items.' + w.key + '.desc') | translate }}</p>
-            </div>
-
+            </ul>
           </div>
         </div>
-        }
-      </div>
-    </div>
-  </section>
-  <section id="success" class="section success" *ngIf="successStoriesView().length > 0 || pageLoading()">
-    <div class="container">
-      <div class="text-center mb-4">
-        <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.success.title' | translate }}</h2>
-        <p class="text-muted fs-18" data-aos="fade-up" data-aos-delay="50">{{ 'home.success.desc' | translate }}</p>
-      </div>
-
-      @if (pageLoading()) {
-      <div class="row mt-5">
-        @for (_ of [1,2,3]; track _) {
-        <div class="col-md-4 px-3 mb-3">
-          <div class="card-ghost p-3 h-100">
-            <div class="profile d-flex mb-3">
-              <div class="me-3">
-                <p-skeleton shape="circle" size="36px"></p-skeleton>
-              </div>
-              <div class="flex-grow-1">
-                <p-skeleton width="60%" height="14px" class="mb-2"></p-skeleton>
-                <p-skeleton width="40%" height="12px"></p-skeleton>
-              </div>
-            </div>
-            <p-skeleton width="80%" height="18px" class="mb-2"></p-skeleton>
-            <p-skeleton width="50%" height="14px"></p-skeleton>
-          </div>
-        </div>
-        }
-      </div>
-      } @else {
-      <p-carousel class="mt-5" [value]="successStoriesView()" [numVisible]="3" [numScroll]="1" [circular]="false"
-        [autoplayInterval]="false" [responsiveOptions]="responsiveOptions">
-        <ng-template pTemplate="item" let-review let-i="index">
-          <div class="">
-            <div class="px-3" data-aos="zoom-in" [attr.data-aos-delay]="i*60">
-              <div class=" card-ghost p-3">
-                <div class="profile d-flex mb-3">
-                  <div class="me-3">
-                    <img #userPictureRef [src]="review.img" [attr.alt]="review.profile"
-                      class="success-story-avatar img-fluid" (error)="userPictureRef.src = defaultAvatar" />
-                  </div>
-                  <div class="">
-                    <h6 class="mb-1">{{ review.profile }}</h6>
-                    <p class="m-0">{{ review.desc }}</p>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="fs-18 fw-semibold text-truncate-1">{{ review.value }}</div>
-                    <div class="text-muted mt-1">{{ review.label }}</div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </ng-template>
-
-      </p-carousel>
-      }
-    </div>
-  </section>
-  <section id="faq" class="section bg-light" *ngIf="faqItemsView().length > 0 || pageLoading()">
-    <div class="container">
-      <div class="text-center mb-4">
-        <h2 class="fw-bold mb-2" data-aos="fade-up">{{ 'home.faq.title' | translate }}</h2>
-        <p class="text-muted fs-18" data-aos="fade-up" data-aos-delay="50">{{ 'home.faq.desc' | translate }}</p>
-      </div>
-
-      <div class="faq-list mt-5">
-        @if (pageLoading()) {
-        @for (_ of [1,2,3,4]; track _) {
-        <div class="faq-item card-ghost p-3 mb-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <p-skeleton width="60%" height="24px"></p-skeleton>
-            <p-skeleton shape="circle" size="20px"></p-skeleton>
-          </div>
-        </div>
-        }
-        } @else {
-        @for (f of faqItemsView(); track f.id; let i = $index) {
-        <div class="faq-item card-ghost p-3 mb-2">
-          <button class="faq-q w-100 text-start btn btn-link d-flex align-items-center justify-content-between px-0"
-            (click)="toggleFaq(i)">
-            <span><span class="icon">?</span>&nbsp; {{ f.question }}</span>
-            <i class="fa-solid" [ngClass]="expandedFaq === i ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-          </button>
-          <div class="faq-a" [class.open]="expandedFaq === i">
-            <p class="text-muted m-0 fs-16">{{ f.answer }}</p>
-          </div>
-        </div>
-        }
-        }
       </div>
     </div>
   </section>

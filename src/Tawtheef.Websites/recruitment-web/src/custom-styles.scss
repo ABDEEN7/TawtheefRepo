@@ -220,6 +220,17 @@ p {
     align-items: center;
     margin: 0;
     padding: 0;
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none; /* Hide scrollbar for clean look */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
 
     li {
       white-space: nowrap;
@@ -227,12 +238,34 @@ p {
   }
 
   .nav-link {
-    padding: 1rem 0.5rem;
+    padding: 0.5rem 0;
     font-size: 1rem;
-    color: $color-black;
+    font-weight: 600;
+    color: #4a4a4a;
+    position: relative;
+    transition: color 0.2s ease;
 
-    &:hover {
+    @media (max-width: 768px) {
+      font-size: 0.9rem;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: $color-primary;
+      transition: width 0.3s ease;
+    }
+
+    &:hover, &.active {
       color: $color-primary;
+    }
+
+    &.active::after {
+      width: 100%;
     }
   }
 }
@@ -241,41 +274,45 @@ p {
 # Menu
 --------------------------------------------------------------*/
 header.topbar {
-  border-bottom: 1px solid rgba(203, 203, 203, 1);
-  border-top: 10px solid $color-primary;
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  border-top: 4px solid $color-primary;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
+  padding: 0;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1030;
-  min-height: 85px;
+  min-height: 74px;
 
-  // img.logo {
-  //   height: 65px;
-  // }
+  img.logo {
+    height: 48px;
+    width: auto;
+    max-width: 100%;
+  }
 
   @media (max-width: 768px) {
-    min-height: 135px;
+    min-height: auto;
+    padding: 0.5rem 0;
   }
 }
 
 .layout {
   display: flex;
   flex: 1;
-  // overflow: hidden;
-  margin-top: 85px; // push content below fixed header
+  margin-top: 74px;
 
   @media (max-width: 992px) {
-    margin-top: 90px;
+    margin-top: 74px;
   }
 
   @media (max-width: 768px) {
-    margin-top: 135px;
+    margin-top: 110px;
   }
 }
 
