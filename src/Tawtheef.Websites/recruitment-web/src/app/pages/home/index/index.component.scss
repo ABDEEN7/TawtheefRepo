@@ -145,7 +145,6 @@
   display: block;
   width: 100%;
   max-width: 100%;
-  height: auto;
   object-fit: cover;
 }
 
@@ -258,30 +257,14 @@
 
 .contact-map {
   aspect-ratio: 1.62 / 1;
+  height: auto;
+  min-height: 360px;
+  overflow: hidden;
 }
 
 .contact-copy {
   position: relative;
   margin-inline: auto;
-
-  &::before {
-    content: "\201D";
-    position: absolute;
-    inset-block-start: -1.2rem;
-    inset-inline-end: 0;
-    width: 60px;
-    height: 60px;
-    display: grid;
-    place-items: center;
-    border-radius: 14px;
-    background: #fbf1f4;
-    color: var(--brand);
-    font-family: Georgia, serif;
-    font-size: 2.8rem;
-    font-weight: 900;
-    line-height: 1;
-    transform: rotate(-14deg);
-  }
 }
 
 .contact-list {
@@ -297,7 +280,6 @@
     display: flex;
     gap: .85rem;
     align-items: center;
-    justify-content: space-between;
     border: 1px solid #dfdfdf;
     border-radius: 6px;
   }
@@ -306,12 +288,10 @@
     width: 44px;
     height: 44px;
     flex: 0 0 44px;
-    order: 2;
     display: grid;
     place-items: center;
-    border-radius: 50%;
-    background: #fbf1f4;
     color: var(--brand);
+    font-size: 1.5rem;
   }
 
   strong,

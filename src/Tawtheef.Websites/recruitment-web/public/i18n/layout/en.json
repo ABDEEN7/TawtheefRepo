@@ -46,7 +46,7 @@
   "public.nav.why": "Why Choose Us",
   "public.nav.success": "Success Stories",
   "public.nav.faq": "Frequently Asked Questions",
-  "public.nav.login": "Login",
+  "public.nav.login": "Log In",
   "public.nav.logout": "Logout",
   "public.nav.profile.dashboard": "Dashboard",
   "common.selected": "Selected",
@@ -64,8 +64,10 @@
   "common.relativeTime.daysAgo": "{{count}} d ago",
   "common.en": "English",
 
-  "public.footer.rights": "All rights reserved © 2026",
-  "public.footer.ministry": "Ministry of Education and Higher Education 2026 — All rights reserved",
+  "public.footer.terms": "Terms and Conditions",
+  "public.footer.privacy": "Privacy Policy",
+  "public.footer.rights": "\u00A9 {{year}} Ministry of Education and Higher Education, All rights reserved.",
+  "public.footer.ministry": "\u00A9 {{year}} Ministry of Education and Higher Education, All rights reserved.",
 
   "layout.internal.termsDialog.title": "Updated Terms and Conditions",
   "layout.internal.termsDialog.description": "We have updated the terms and conditions to improve clarity, enhance security, and improve your overall experience. Please review the updates below before proceeding.",

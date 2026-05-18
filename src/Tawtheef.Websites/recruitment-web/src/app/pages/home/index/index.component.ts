@@ -26,7 +26,7 @@ export class IndexComponent implements AfterViewInit {
   ];
 
   contacts: ContactItem[] = [
-    { key: 'hotline', icon: 'hgi-call' },
+    { key: 'hotline', icon: 'hgi-rounded hgi-calling-02' },
     { key: 'email', icon: 'hgi-mail-01' }
   ];
 
