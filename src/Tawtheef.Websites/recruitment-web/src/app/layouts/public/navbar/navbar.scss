@@ -4,7 +4,7 @@
     .logo-qa {
         height: 52px;
         transition: transform 0.3s ease;
-        
+
         @media (max-width: 991px) {
             height: 44px;
         }
@@ -57,7 +57,8 @@
                 height: 24px;
             }
 
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 background-color: #F3F4F6 !important;
             }
         }
@@ -65,13 +66,14 @@
         .nav-link {
             color: #4B5563 !important;
             font-weight: 600 !important;
-            font-size: 1.05rem;
+            font-size: 0.85rem;
             padding: 0.5rem 1rem !important;
             margin: 0 0.25rem;
             position: relative;
             transition: color 0.2s ease !important;
 
-            &:hover, &.active {
+            &:hover,
+            &.active {
                 color: #8A1538 !important;
             }
 
@@ -89,7 +91,8 @@
                 opacity: 0;
             }
 
-            &:hover::after, &.active::after {
+            &:hover::after,
+            &.active::after {
                 width: 80%;
                 opacity: 1;
             }
@@ -103,21 +106,22 @@
             min-width: 48px !important;
             padding: 0 1.5rem !important;
             font-weight: 600 !important;
-            font-size: 1rem;
+            font-size: 0.85rem;
             transition: background-color 0.2s ease, transform 0.1s ease !important;
             text-decoration: none;
             border: none !important;
-            
+
             @media (max-width: 575px) {
                 padding: 0 !important;
                 justify-content: center;
             }
 
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 background-color: #70102D !important;
                 color: #ffffff !important;
             }
-            
+
             &:active {
                 transform: scale(0.98) !important;
             }
@@ -136,20 +140,21 @@
             min-width: 48px !important;
             padding: 0 0.75rem !important;
             font-weight: 600 !important;
-            font-size: 1rem;
+            font-size: 0.85rem;
             transition: background-color 0.2s ease, color 0.2s ease !important;
             text-decoration: none;
-            
+
             @media (max-width: 575px) {
                 padding: 0 !important;
                 justify-content: center;
             }
 
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 background-color: #F3F4F6 !important;
                 color: #111827 !important;
             }
-            
+
             &:active {
                 background-color: #E5E7EB !important;
             }
