@@ -1,19 +1,21 @@
 <!-- Header -->
 <header class="topbar">
   <div class="container-fluid">
-    <div class="row align-items-center">
-      <div class="col-lg-4 col-md-4 col-12 mb-0">
-        <div class="d-flex align-items-center gap-3">
-          <a href="" (click)="navigateToHome($event)">
-            <img src="assets/img/logo-black.png" [alt]="'internal.nav.logoAlt' | translate" class="img-fluid logo"></a>
-        </div>
+    <div class="d-flex align-items-center justify-content-between w-100 flex-wrap flex-md-nowrap gap-2 py-1 py-md-0">
+      
+      <!-- Left: Logo -->
+      <div class="d-flex align-items-center">
+        <a href="" (click)="navigateToHome($event)">
+          <img src="assets/img/logo-black.png" [alt]="'internal.nav.logoAlt' | translate" class="img-fluid logo">
+        </a>
       </div>
 
-      <div class="col-lg-4 col-md-4 col-8 mb-0">
+      <!-- Center: Nav Links -->
+      <div class="flex-grow-1 d-flex justify-content-md-center order-3 order-md-2 overflow-auto" style="white-space: nowrap;">
         <nav id="navbar" class="navbar">
-          <ul class="nav-links px-3">
+          <ul class="nav-links">
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="routes.user.dashboard" routerLinkActive="active">
+              <a class="nav-link" [routerLink]="routes.user.dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 {{ 'internal.nav.home' | translate }}
               </a>
             </li>
@@ -23,12 +25,19 @@
                 {{ 'internal.nav.personalProfile' | translate }}
               </a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/user/jobs" routerLinkActive="active">
+                {{ 'internal.nav.jobs' | translate }}
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
 
-      <div class="col-lg-4 col-md-4 col-4 mb-0">
-        <div class="d-flex align-items-center gap-3 justify-content-end">
+      <!-- Right: Actions -->
+      <div class="d-flex align-items-center gap-2 gap-md-3 order-2 order-md-3 justify-content-end">
+        <div class="d-flex align-items-center gap-2 gap-md-3">
           <div class="notification" #notificationRoot>
             <button class="notification-btn btn position-relative" [class.has-notifications]="notificationCount > 0"
               (click)="toggleNotificationMenu($event)" type="button" aria-haspopup="true"
