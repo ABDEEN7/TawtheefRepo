@@ -20,6 +20,7 @@
       <app-step-contact *ngSwitchCase="'contact'"
                         [submitLabelKey]="'common.save'"
                         [showBack]="false"
+                        [showInterviewPlace]="false"
                         [requireChanges]="true"
                         (back)="close()"
                         (next)="close()">

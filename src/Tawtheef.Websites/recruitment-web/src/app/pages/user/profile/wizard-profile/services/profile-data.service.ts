@@ -134,6 +134,7 @@ export class ProfileDataService {
     if (l[key]) return true;
 
     if (this.isResidentQatar && (key === 'fullNameAr' || key === 'fullNameEn')) return true;
+    if (this.isQatarResidentOtpProvider() && key === 'phone') return true;
     if (this.isIndividualSponsor && key === 'sponsorEmployerName') return true;
     if (this.shouldLockCandidateType() && key === 'candidateType') return true;
 
@@ -401,6 +402,10 @@ export class ProfileDataService {
     const provider = (this.state().provider ?? '').toString().toLowerCase();
     const isPreferredProvider = ['qatarpass', 'qatarresidentotp'].includes(provider);
     return isPreferredProvider && !!this.state().isKawaderQid;
+  }
+
+  private isQatarResidentOtpProvider(): boolean {
+    return (this.state().provider ?? '').toString().toLowerCase() === 'qatarresidentotp';
   }
 
   private applyKawaderCandidateType(): void {

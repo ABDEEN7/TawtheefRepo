@@ -37,9 +37,8 @@ public class ContactVerification : EventEntity
     public bool IsUsed => UsedAt.HasValue;
     public bool IsExpired => DateTime.UtcNow > ExpiresAt;
 
-    public void Send(string? language = null)
+    public void Send()
     {
-        if (language != null) Language = language;
-        AddDomainEvent(new ContactVerificationSentEvent(UserId, Type, Destination, Code, Language));
+        AddDomainEvent(new ContactVerificationSentEvent(UserId, Type, Destination, Code));
     }
 }

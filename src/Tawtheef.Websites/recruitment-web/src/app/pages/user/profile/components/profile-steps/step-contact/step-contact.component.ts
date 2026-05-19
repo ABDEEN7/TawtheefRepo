@@ -87,6 +87,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
   next = output<void>();
   submitLabelKey = input<string>('wizard.buttons.next');
   showBack = input<boolean>(true);
+  showInterviewPlace = input<boolean>(true);
   requireChanges = input<boolean>(false);
 
   // services
@@ -153,7 +154,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.configurePhoneCountries();
     this.geoIp.getCountryIso2().subscribe({
       next: (code) => {
-        const ipCountry = code as CountryISO;
+        const ipCountry = this.toCountryIso(code);
         if (this.onlyPhoneCountries().includes(ipCountry)) {
           this.selectedCountryIso2.set(ipCountry);
           this.pendingGeoCountryIso2 = code;
@@ -170,7 +171,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
           const national = String(parsed.getNationalNumber());              // "33632375"
           const iso2 = this.phoneNumberUtil.getRegionCodeForNumber(parsed); // "QA"
 
-          this.selectedCountryIso2.set(iso2 as CountryISO);
+          this.setSelectedCountryIso2IfAllowed(iso2);
 
           // خزن بالحقل قيمة بدون +974 (إذا separateDialCode = true)
           this.phoneValue.set(national);
@@ -183,14 +184,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
         }
       }
       this.phone.update(s => ({ ...s, value: state.phone!.e164Number, valid: true }));
-      const savedIso2 = (state.phone.countryCode ?? '').toLowerCase();
-      const isAllowed =
-        !savedIso2 ||
-        this.onlyPhoneCountries().length === 0 ||
-        this.onlyPhoneCountries().some(c => c.toLowerCase() === savedIso2);
-      if (savedIso2 && isAllowed) {
-        this.selectedCountryIso2.set(state.phone.countryCode as CountryISO);
-      }
+      this.setSelectedCountryIso2IfAllowed(state.phone.countryCode);
     }
     // Enforce rule on initial load:
     if (state.phone && !this.isQatarPhone(state.phone)) {
@@ -301,6 +295,23 @@ export class StepContactComponent implements OnInit, OnDestroy {
       .filter(c => c !== CountryISO.Israel) as CountryISO[]);
   }
 
+  private toCountryIso(iso2: string | null | undefined): CountryISO {
+    return (iso2 ?? '').toLowerCase() as CountryISO;
+  }
+
+  private setSelectedCountryIso2IfAllowed(iso2: string | null | undefined): void {
+    const countryIso = this.toCountryIso(iso2);
+    if (!countryIso) return;
+
+    const isAllowed =
+      this.onlyPhoneCountries().length === 0 ||
+      this.onlyPhoneCountries().includes(countryIso);
+
+    if (isAllowed) {
+      this.selectedCountryIso2.set(countryIso);
+    }
+  }
+
   private setCountryFromIso(iso2: string): void {
     if (!iso2) return;
 
@@ -345,15 +356,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (!value || this.ds.isLocked('phone')) return;
 
     this.phoneValue.set(value.e164Number.replace(value.dialCode, ''));
-    const incomingIso2 = (value.countryCode ?? '').toLowerCase();
-    if (incomingIso2) {
-      const isAllowed =
-        this.onlyPhoneCountries().length === 0 ||
-        this.onlyPhoneCountries().some(c => c.toLowerCase() === incomingIso2);
-      if (isAllowed) {
-        this.selectedCountryIso2.set(value.countryCode as CountryISO);
-      }
-    }
+    this.setSelectedCountryIso2IfAllowed(value.countryCode);
     this.phone.update(s => ({ ...s, touched: true, errorMessage: null }));
 
     // reset OTP workflow when the phone changes

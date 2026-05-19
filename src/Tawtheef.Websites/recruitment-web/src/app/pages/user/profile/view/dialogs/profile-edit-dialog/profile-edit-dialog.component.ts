@@ -102,10 +102,11 @@ export class ProfileEditDialogComponent {
 
       const prefill = this.userService.getPrefill?.() ?? null;
       untracked(() => {
+        const provider = res.status.provider ?? this.userService.getCurrentUser()?.provider ?? 'Google';
         const state = mapProfileStatusToState(
           this.phoneMapperService,
           this.lookups,
-          res.status,
+          { ...res.status, provider },
           prefill
         );
 
