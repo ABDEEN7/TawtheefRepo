@@ -6,12 +6,15 @@
     var product = b.ProductNameAr;
     var website = b.RecruitmentUrl;
     var support = b.SupportEmail;
+    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "المستخدم" : m.FullName;
 
 }
 تحية طيبة،
+السيد/ة @fullName
 
-يسرنا دعوتكم للانضمام إلى  @product.
+يسر إدارة الموارد البشرية دعوتكم للانضمام إلى  @product.
 
 يرجى تسجيل الدخول باستخدام الرقم الشخصي الخاص بكم (@m.Qid) لإكمال ملفكم الشخصي وتحميل السيرة الذاتية حتى نتمكن من البدء في النظر في فرص التوظيف المستقبلية الخاصة بكم.
 
-يمكنكم تسجيل الدخول عبر الرابط: @website
+يمكنكم تسجيل الدخول عبر الرابط:
+@website
