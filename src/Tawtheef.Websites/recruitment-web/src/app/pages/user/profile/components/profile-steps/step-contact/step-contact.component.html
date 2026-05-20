@@ -22,7 +22,8 @@
           [searchCountryFlag]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
           [maxLength]="15" [phoneValidation]="true" [selectedCountryISO]="selectedCountryIso2()"
           [onlyCountries]="onlyPhoneCountries()" [ngModel]="phoneValue()" [separateDialCode]="true"
-          (ngModelChange)="onPhoneChange($event)" [disabled]="ds.isLocked('phone')"></ngx-intl-tel-input>
+          (ngModelChange)="onPhoneChange($event)" [disabled]="ds.isLocked('phone')"
+          [class.locked-field]="ds.isLocked('phone')"></ngx-intl-tel-input>
       </div>
       @if (phone().touched && !phone().valid) {
       <div class="text-danger mt-1">
@@ -178,6 +179,7 @@
         placeholder="{{'wizard.placeholders.typeHere' | translate}}" (ngModelChange)="ds.up('address',$event)">
     </div>
     }
+    @if (showInterviewPlace()) {
     <div class="col-md-3 d-flex flex-column">
       <label class="form-label required">{{'wizard.contact.interviewPlace' | translate}}</label>
       <p-select [options]="lookups.countries()" [ngModel]="ds.state().interviewPlace" [appendTo]="'body'"
@@ -185,6 +187,7 @@
         class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectInterviewPlace' | translate"
         [disabled]="true"></p-select>
     </div>
+    }
   </div>
 
   @if (ds.isResidentQatar) {

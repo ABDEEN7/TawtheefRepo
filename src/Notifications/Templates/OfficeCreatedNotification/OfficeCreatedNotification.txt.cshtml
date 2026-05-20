@@ -4,7 +4,7 @@
     var b = Model.Branding;
     var m = Model.Model;
 
-    var product = b.ProductName;
+    var product = b.ProductNameEn;
     var support = b.SupportEmail;
     var website = b.WebsiteUrl;
 
@@ -13,7 +13,7 @@
     var adminEmail = string.IsNullOrWhiteSpace(m.AdminEmail) ? "your account" : m.AdminEmail;
 }
 
-Subject: @($"{product} - Recruitment Office Created")
+@($"{product} - Recruitment Office Created")
 
 Dear Administrator,
 

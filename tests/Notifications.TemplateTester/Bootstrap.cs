@@ -34,7 +34,8 @@ internal static class Bootstrap
             EmailPass = "Taw@Theef",
             ManagerEmails = "manager@careers.local",
             ContactUsEmail = "contact@careers.local",
-            ProductName = "Careers"
+            ProductNameEn = "Careers",
+            ProductNameAr = "نظام الاستقطاب والتعيين وتخطيط القوى العاملة"
         };
 
         var appConfig = new AppConfigSettings
