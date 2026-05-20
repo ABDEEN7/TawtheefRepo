@@ -160,7 +160,8 @@ public sealed class UploadKawaderUserCommandHandler(
         try
         {
             await SendEmail(row, ct);
-            await QueueSms(row, ct);
+            // Mahdi ask stop sms notification for some time
+            // await QueueSms(row, ct);
         }
         catch (Exception ex)
         {

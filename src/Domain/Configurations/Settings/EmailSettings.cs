@@ -14,7 +14,8 @@ public sealed class EmailSettings
     public required string EmailPass { get; init; }
     public bool EnableSsl { get; init; } = true;
 
-    public string ProductName { get; init; } = "Careers";
+    public string ProductNameEn { get; init; } = "Careers";
+    public string ProductNameAr { get; init; } = "نظام الاستقطاب والتعيين وتخطيط القوى العاملة";
     public string DefaultFromDisplay { get; init; } = "Careers";
     public string? DefaultReplyTo { get; init; }   // e.g. support@yourdomain
     public string? UnsubscribeHttpUrl { get; init; } // e.g. https://.../unsubscribe

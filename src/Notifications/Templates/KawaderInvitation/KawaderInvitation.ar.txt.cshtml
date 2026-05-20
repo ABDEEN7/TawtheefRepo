@@ -3,19 +3,15 @@
     var b = Model.Branding;
     var m = Model.Model;
 
-    var product = b.ProductName;
+    var product = b.ProductNameAr;
     var website = b.RecruitmentUrl;
     var support = b.SupportEmail;
 
-    var fullName = string.IsNullOrWhiteSpace(m.FullName) || m.FullName == "User" ? "عزيزي المستخدم" : m.FullName;
 }
-عزيزي @fullName،
+تحية طيبة،
 
-يسرنا دعوتكم للانضمام إلى منصة @product.
+يسرنا دعوتكم للانضمام إلى  @product.
 
 يرجى تسجيل الدخول باستخدام الرقم الشخصي الخاص بكم (@m.Qid) لإكمال ملفكم الشخصي وتحميل السيرة الذاتية حتى نتمكن من البدء في النظر في فرص التوظيف المستقبلية الخاصة بكم.
 
 يمكنكم تسجيل الدخول عبر الرابط: @website
-
----
-© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.

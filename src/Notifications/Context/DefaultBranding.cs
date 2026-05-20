@@ -11,7 +11,8 @@ public sealed class DefaultBranding(
     private readonly EmailSettings _emailConfig = emailConfiguration.Value;
     private readonly AppConfigSettings _appConfig = appConfiguration.Value;
 
-    public string ProductName => _emailConfig.ProductName;
+    public string ProductNameEn => _emailConfig.ProductNameEn;
+    public string ProductNameAr => _emailConfig.ProductNameAr;
 
     // From the logo dominant color
     public string PrimaryHex => "#881038";
