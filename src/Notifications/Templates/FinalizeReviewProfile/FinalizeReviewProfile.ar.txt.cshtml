@@ -4,6 +4,7 @@
 @{
     var b = Model.Branding;
     var m = Model.Model;
+    var product = b.ProductNameAr;
 
     var isAccepted = m.Status == UserProfileStatus.Approved;
     var profileUrl = b.RecruitmentUrl;
@@ -14,9 +15,9 @@
 @:تم اعتماد الملف الشخصي
 @:
 @:تحية طيبة،
-@:تم اعتماد ملفكم الشخصي على منصة Careers.
+@:تم اعتماد ملفكم الشخصي على @product.
 @:
-@:رابط المنصة: @profileUrl
+@:رابط النظام: @profileUrl
 }
 else
 {
@@ -25,5 +26,5 @@ else
 @:تحية طيبة،
 @:تم إرجاع ملفكم الشخصي للتعديل. يرجى مراجعة البيانات واستكمال التعديلات المطلوبة.
 @:
-@:رابط المنصة: @profileUrl
+@:رابط النظام: @profileUrl
 }

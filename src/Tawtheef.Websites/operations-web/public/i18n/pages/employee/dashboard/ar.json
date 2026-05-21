@@ -118,7 +118,7 @@
   "dashboard.tabs.candidates": "المرشحون",
   "dashboard.tabs.jobs": "الوظائف",
   "dashboard.tabs.employees": "الموظفون",
-  "dashboard.overview.title": "ملخص المنصة",
+  "dashboard.overview.title": "ملخص النظام",
   "dashboard.overview.subtitle": "أهم الأرقام التشغيلية الحالية بناء على بيانات لوحة التحكم الفعلية.",
   "dashboard.overview.allData": "جميع البيانات",
   "dashboard.kpi.unassignedProfiles": "ملفات بانتظار التوزيع",
