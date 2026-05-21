@@ -39,7 +39,7 @@
   "internal.termsDialog.accepted.detail": "شكرًا لتأكيدك الشروط والأحكام.",
 
   "public.nav.home": "الرئيسية",
-  "public.nav.about": "عن المنصة",
+  "public.nav.about": "عن النظام",
   "public.nav.values": "قيمنا",
   "public.nav.contact": "تواصل معنا",
   "public.nav.tracks": "مسارات التوظيف",
@@ -73,7 +73,7 @@
   "layout.internal.termsDialog.accepted.detail": "من خلال الموافقة، فإنك تؤكد أنك قرأت الشروط والأحكام المحدّثة وفهمتها ووافقت عليها.",
   "layout.internal.termsDialog.accepted.summary": "تمت الموافقة على الشروط والأحكام المحدّثة بنجاح.",
   "common.errorGeneric": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.",
-  "layout.internal.termsDialog.points.review": "يرجى مراجعة الشروط المحدّثة بعناية لفهم كيفية تأثيرها على استخدامك للمنصة.",
+  "layout.internal.termsDialog.points.review": "يرجى مراجعة الشروط المحدّثة بعناية لفهم كيفية تأثيرها على استخدامك للنظام.",
   "layout.internal.termsDialog.points.updates": "قد تتضمن التحديثات تغييرات على السياسات أو الميزات أو الالتزامات القانونية.",
   "layout.internal.termsDialog.later": "مراجعة لاحقًا",
   "layout.internal.termsDialog.accept": "موافق والمتابعة"
