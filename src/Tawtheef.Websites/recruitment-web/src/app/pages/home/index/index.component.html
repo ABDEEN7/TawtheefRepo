@@ -82,17 +82,26 @@
             </div>
 
             <ul class="contact-list">
-              @for (item of contacts; track item.key) {
               <li>
                 <span class="contact-list__icon">
-                  <i class="hgi hgi-stroke" [ngClass]="item.icon"></i>
+                  <i class="hgi hgi-stroke hgi-rounded hgi-calling-02"></i>
                 </span>
                 <span>
-                  <strong>{{ ('home.contact.items.' + item.key + '.label') | translate }}</strong>
-                  <span>{{ ('home.contact.items.' + item.key + '.value') | translate }}</span>
+                  <strong>{{ ('home.contact.items.hotline.label') | translate }}</strong>
+                  <!--phone number call-->
+                  <a [href]="'tel:44044444'">44044444</a>
                 </span>
               </li>
-              }
+              <li>
+                <span class="contact-list__icon">
+                  <i class="hgi hgi-stroke hgi-mail-01"></i>
+                </span>
+                <span>
+                  <strong>{{ ('home.contact.items.email.label') | translate }}</strong>
+                  <!--email address mailto-->
+                  <a [href]="'mailto:info@edu.gov.qa'">info@edu.gov.qa</a>
+                </span>
+              </li>
             </ul>
           </div>
         </div>

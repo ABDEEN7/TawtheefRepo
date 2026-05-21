@@ -48,6 +48,7 @@
           <label class="form-label">{{ 'UNIVERSITIES.COUNTRY' | translate }} <span class="text-danger">*</span></label>
           <p-select styleClass="w-100" formControlName="countryId" (onChange)="onCountryChange($event)"
             [options]="countries" optionLabel="name" optionValue="id" [appendTo]="'body'"
+            [filter]="true" filterBy="additionalData.nameAr,additionalData.nameEn,name"
             [placeholder]="'UNIVERSITIES.SELECT_COUNTRY' | translate"
             [class.is-invalid]="submitted && form.controls.countryId.invalid">
           </p-select>

@@ -35,7 +35,5 @@
   "home.contact.desc": "We are here to help you and answer all your inquiries related to the platform.",
   "home.contact.mapAlt": "Ministry of Education and Higher Education location",
   "home.contact.items.hotline.label": "Hotline",
-  "home.contact.items.hotline.value": "44044444",
-  "home.contact.items.email.label": "Email",
-  "home.contact.items.email.value": "info@edu.gov.qa"
+  "home.contact.items.email.label": "Email"
 }
