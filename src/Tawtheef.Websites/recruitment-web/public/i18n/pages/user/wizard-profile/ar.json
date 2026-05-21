@@ -20,7 +20,7 @@
   "wizard.skill.deleteError": "حدث خطأ أثناء حذف المهارة",
   "wizard.language.deleteError": "حدث خطأ أثناء حذف اللغة",
   "wizard.course.deleteError": "حدث خطأ أثناء حذف الدورة",
-  "wizard.title": "نظام التوظيف – الملف الشخصي",
+  "wizard.title": "الملف الشخصي",
   "wizard.placeholders.select": "اختر...",
   "wizard.accountFieldNote": "هذا الحقل مستمد من حسابك ولا يمكن تغييره.",
   "wizard.steps.firstInfo": "المعلومات الأساسية",
