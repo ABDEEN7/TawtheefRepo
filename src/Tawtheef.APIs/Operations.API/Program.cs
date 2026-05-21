@@ -61,21 +61,22 @@ builder.Host.UseSerilog((ctx, services, lc) =>
     var seqKey = ctx.Configuration["Seq:ApiKey"];
 
     lc.ReadFrom.Configuration(ctx.Configuration)
-      .ReadFrom.Services(services)
-      .Enrich.FromLogContext()
-      .Enrich.WithMachineName()
-      .Enrich.WithEnvironmentName()
-      .Enrich.WithEnvironmentUserName()
-      .Enrich.WithThreadId()
-      .Enrich.WithExceptionDetails()
-      .Enrich.WithProperty("Application", "Tawtheef.Operations")
-      .Enrich.WithProperty("Version", "1.0.0")
-      .WriteTo.Console(outputTemplate:
-          "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
-      .WriteTo.File(
-          @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
-          rollingInterval: RollingInterval.Year,
-          shared: true);
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName()
+        .Enrich.WithEnvironmentUserName()
+        .Enrich.WithThreadId()
+        .Enrich.WithExceptionDetails()
+        .Enrich.WithProperty("Application", "Tawtheef.Operations")
+        .Enrich.WithProperty("Version", "1.0.0")
+        .WriteTo.Console(outputTemplate:
+            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+        .WriteTo.File(
+            @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
+            rollingInterval: RollingInterval.Day,
+            shared: true,
+            retainedFileCountLimit: 30);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))

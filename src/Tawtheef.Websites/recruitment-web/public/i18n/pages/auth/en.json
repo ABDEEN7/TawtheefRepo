@@ -3,7 +3,7 @@
   "auth.login.qatarResidentDialog.otpHint": "Please enter the 6-digit code",
   "auth.login.ministry_name": "Ministry of Education and Higher Education",
   "auth.login.qatarResidentDialog.resent": "Verification code resent to {{phone}}. Please enter it below.",
-  "auth.login.tawtheef": "Careers",
+  "auth.login.tawtheef": "Outreach, Recruitment, and Manpower Planning System",
   "auth.login.choose_residency": "Please select your status:",
   "auth.login.mode_resident": "I reside in Qatar",
   "auth.login.mode_nonresident": "I am not residing in Qatar",

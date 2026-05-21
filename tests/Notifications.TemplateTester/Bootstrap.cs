@@ -1,13 +1,14 @@
 using System.Reflection;
+using FluentResults;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Domain.Configurations.Settings;
+using Tawtheef.Infrastructure.Services.HttpClients;
+using Tawtheef.Infrastructure.Services.NotificationServices;
 using Tawtheef.Notifications.Attributes;
 using Tawtheef.Notifications.Context;
 using Tawtheef.Notifications.Services;
-using Tawtheef.Infrastructure.Services.HttpClients;
-using Tawtheef.Infrastructure.Services.NotificationServices;
 
 namespace Tawtheef.Notifications.TemplateTester;
 
@@ -30,8 +31,8 @@ internal static class Bootstrap
         {
             SmtpHost = "smtp.edu.gov.qa",
             SmtpPort = 25,
-            EmailUser = "careers@edu.gov.qa",
-            EmailPass = "Taw@Theef",
+            EmailUser = "",
+            EmailPass = "",
             ManagerEmails = "manager@careers.local",
             ContactUsEmail = "contact@careers.local",
             ProductNameEn = "Careers",
@@ -53,7 +54,7 @@ internal static class Bootstrap
             TenantId = "2dcae639-d4a4-4454-82c7-592ab66fc7bd",
             ClientId = "3e3a6832-f94c-4b9b-8821-69672cbbfb75",
             ClientSecret = "qN~8Q~8~jyHA6DkiVJLf.9qViJh5SoxCncT3Scjg",
-            FromAddress = "careers@edu.gov.qa",
+            FromAddress = "careers_noreply@edu.gov.qa",
             SaveToSentItems = true,
             LogoPath = "Templates\\Assets\\logo-en.jpg",
             LogoUrl = "assets/img/logo-black.png"
@@ -99,7 +100,7 @@ internal sealed class SilentLogger : IAppLogger
     public void Warning(Exception exception, string messageTemplate, params object?[] propertyValues) { }
     public void Error(string messageTemplate, params object?[] propertyValues) { }
     public void Error(Exception exception, string messageTemplate, params object?[] propertyValues) { }
-    public void Error(IEnumerable<FluentResults.IError> errors, string messageTemplate, params object?[] propertyValues) { }
+    public void Error(IEnumerable<IError> errors, string messageTemplate, params object?[] propertyValues) { }
     public void Fatal(string messageTemplate, params object?[] propertyValues) { }
     public void Fatal(Exception exception, string messageTemplate, params object?[] propertyValues) { }
 }
