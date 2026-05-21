@@ -65,6 +65,7 @@ export class UniversitiesManagement implements OnInit {
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
+  sortedCountries = computed(() => this.sortOptionsByCurrentLanguage(this.countries()));
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
 
   isModalOpen = signal(false);
@@ -101,6 +102,22 @@ export class UniversitiesManagement implements OnInit {
     this.universitiesService.getCountries().subscribe({
       next: res => this.countries.set(res)
     });
+  }
+
+  private sortOptionsByCurrentLanguage(options: dropdownOptionsModel[]): dropdownOptionsModel[] {
+    const locale = this.currentLang() === 'ar' ? 'ar' : 'en';
+    const collator = new Intl.Collator(locale, {numeric: true, sensitivity: 'base'});
+
+    return [...options].sort((a, b) => collator.compare(this.getOptionDisplayName(a), this.getOptionDisplayName(b)));
+  }
+
+  private getOptionDisplayName(option: dropdownOptionsModel): string {
+    const nameKey = this.currentLang() === 'ar' ? 'nameAr' : 'nameEn';
+    const localizedName = option.additionalData?.[nameKey];
+
+    return (typeof localizedName === 'string' && localizedName.trim())
+      ? localizedName.trim()
+      : option.name;
   }
 
   onSearchChange() {

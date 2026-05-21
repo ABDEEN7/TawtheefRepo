@@ -36,10 +36,10 @@
                     <label class="form-label">{{ 'UNIVERSITIES.FILTER_COUNTRY' | translate }}</label>
                     <div class="input-group search-bar">
                       <p-select
-                        [options]="countries()"
+                        [options]="sortedCountries()"
                         optionLabel="name"
                         optionValue="id"
-                        filter="true"
+                        [filter]="true"
                         filterBy="additionalData.nameAr,additionalData.nameEn,name"
                         style="width: 100%;"
                         [showClear]="true"
@@ -147,7 +147,7 @@
     [mode]="modalMode()"
     [university]="editingUniversity()"
     [loading]="isModalLoading()"
-    [countries]="countries()"
+    [countries]="sortedCountries()"
     (cancel)="closeModal()"
     (create)="createUniversity($event)"
     (update)="updateUniversity($event)"></app-university-modal>
