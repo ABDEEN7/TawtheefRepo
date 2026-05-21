@@ -43,13 +43,27 @@
         </ng-container>
 
         <ng-container *ngIf="(isLoggedIn$ | async) === true">
-          <a [routerLink]="routes.user.dashboard" class="btn btn-login d-flex align-items-center justify-content-center">
-            <span class="d-none d-sm-inline">{{ 'public.nav.profile.dashboard' | translate }}</span>
-            <i class="isax isax-user d-inline d-sm-none fs-5"></i>
-          </a>
-          <a (click)="logout()" class="btn btn-lang d-flex align-items-center justify-content-center">
-            <i class="isax isax-logout fs-5"></i>
-          </a>
+          <div class="user-menu" *ngIf="(isLoggedIn$ | async) === true">
+            <button class="btn btn-primary btn-sm user-toggle" (click)="toggleUserMenu()">
+              <!-- <img [src]="userAvatar"  [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle" /> -->
+
+              <img #userPictureRef [src]="userAvatar" (error)="userPictureRef.src = defaultAvatar"
+                [alt]="'internal.nav.userAvatarAlt' | translate" height="35" class="rounded-circle" />
+              <span class="mx-2 d-none d-md-block" *ngIf="userName">{{ userName }}</span>
+            </button>
+            <ul class="user-dropdown" *ngIf="showUserMenu">
+              <li>
+                <a [routerLink]="routes.user.profileOverview">
+                  {{ 'internal.nav.userProfile' | translate }}
+                </a>
+              </li>
+              <li>
+                <a (click)="logout()">
+                  {{ 'internal.nav.logout' | translate }}
+                </a>
+              </li>
+            </ul>
+          </div>
         </ng-container>
       </div>
 

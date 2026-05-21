@@ -35,7 +35,5 @@
   "home.contact.desc": "نحن هنا لمساعدتك والإجابة على جميع استفساراتك المتعلقة بالمنصة.",
   "home.contact.mapAlt": "موقع وزارة التربية والتعليم والتعليم العالي",
   "home.contact.items.hotline.label": "الخط الساخن",
-  "home.contact.items.hotline.value": "44044444",
-  "home.contact.items.email.label": "البريد الإلكتروني",
-  "home.contact.items.email.value": "info@edu.gov.qa"
+  "home.contact.items.email.label": "البريد الإلكتروني"
 }
