@@ -13,6 +13,7 @@
   "wizard.files.formats.marriage": "الصيغ المسموحة: JPG, PNG, PDF",
   "wizard.warningTitle": "تنبيه",
   "wizard.validationErrorTitle": "خطأ في التحقق من صحة البيانات",
+  "wizard.validation.duplicateTitle": "لا يسمح بتكرار الأسماء.",
   "wizard.errorTitle": "حدث خطأ",
   "wizard.degrees.deleteError": "حدث خطأ أثناء حذف المؤهل.",
   "wizard.achievements.deleteError": "حدث خطأ أثناء حذف الإنجاز.",

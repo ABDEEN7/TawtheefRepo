@@ -267,7 +267,7 @@
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_AR": "Benefits & Allowances (Arabic)",
   "JOB_WIZARD.STEPS.REVIEW.BENEFITS_EN": "Benefits & Allowances (English)",
   "JOB_WIZARD.STEPS.No_ENTERED_DATA_ERROR": "No data has been entered yet.",
-  "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR": "Duplicate responsibility cannot be added.",
+  "JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR": "Duplicate entry cannot be added.",
   "JOB_WIZARD.REVIEW_NOTES.TITLE": "Notes",
   "JOB_WIZARD.REVIEW_NOTES.NOTE": "Note:",
   "JOB_WIZARD.REVIEW_NOTES.ATTACHMENTS": "Supporting Attachments",

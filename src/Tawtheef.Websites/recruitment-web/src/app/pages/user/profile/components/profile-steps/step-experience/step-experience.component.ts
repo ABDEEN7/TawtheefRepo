@@ -27,6 +27,7 @@ import { ExperienceModal } from './dialogs/experience.modal/experience.modal';
 import { Experience, TrainingCourse } from '../../../wizard-profile/models/experience.model';
 import { CourseModal } from './dialogs/course.modal/course.modal';
 import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
+import { StringUtils } from '../../../../../../core/utils/string-utils';
 
 
 @Component({
@@ -79,6 +80,10 @@ export class StepExperienceComponent implements OnInit {
       data: { degrees: this.ds.state().degrees },
     })?.onClose.subscribe(result => {
       if (result) {
+        if (this.hasDuplicateExperienceTitle(result)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.addExp(result);
       }
     });
@@ -96,6 +101,10 @@ export class StepExperienceComponent implements OnInit {
       data: { degrees: this.ds.state().degrees, initialValue: experience },
     })?.onClose.subscribe(result => {
       if (result) {
+        if (this.hasDuplicateExperienceTitle(result, index)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.updateExp(index, result);
       }
     });
@@ -130,6 +139,10 @@ export class StepExperienceComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe(result => {
       if (result) {
+        if (this.hasDuplicateCourseTitle(result)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.addCourse(result);
       }
     });
@@ -147,6 +160,10 @@ export class StepExperienceComponent implements OnInit {
       data: { initialValue: course },
     })?.onClose.subscribe(result => {
       if (result) {
+        if (this.hasDuplicateCourseTitle(result, index)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.updateCourse(index, result);
       }
     });
@@ -181,6 +198,12 @@ export class StepExperienceComponent implements OnInit {
     const state = this.ds.state();
     const experiences = state.experiences || [];
     const courses = state.courses || [];
+    if (this.hasDuplicateTitles(experiences, experience => experience.jobTitle) ||
+      this.hasDuplicateTitles(courses, course => course.title)) {
+      this.notifyDuplicateName();
+      return;
+    }
+
     const signature = this.buildSignature(experiences, courses);
 
     if (signature && signature === this.lastSubmittedSignature) {
@@ -258,6 +281,57 @@ export class StepExperienceComponent implements OnInit {
     }));
 
     return JSON.stringify({ experienceSignature, courseSignature });
+  }
+
+  private hasDuplicateExperienceTitle(experience: Experience, excludedIndex: number | null = null): boolean {
+    const title = this.normalizeTitle(experience.jobTitle);
+    if (!title) {
+      return false;
+    }
+
+    return this.ds.state().experiences.some((item, index) =>
+      index !== excludedIndex && this.normalizeTitle(item.jobTitle) === title
+    );
+  }
+
+  private hasDuplicateCourseTitle(course: TrainingCourse, excludedIndex: number | null = null): boolean {
+    const title = this.normalizeTitle(course.title);
+    if (!title) {
+      return false;
+    }
+
+    return this.ds.state().courses.some((item, index) =>
+      index !== excludedIndex && this.normalizeTitle(item.title) === title
+    );
+  }
+
+  private hasDuplicateTitles<T>(items: T[], selector: (item: T) => unknown): boolean {
+    const seenTitles = new Set<string>();
+    for (const item of items ?? []) {
+      const title = this.normalizeTitle(selector(item));
+      if (!title) {
+        continue;
+      }
+
+      if (seenTitles.has(title)) {
+        return true;
+      }
+
+      seenTitles.add(title);
+    }
+
+    return false;
+  }
+
+  private normalizeTitle(value: unknown): string {
+    return StringUtils.normalize((value ?? '').toString());
+  }
+
+  private notifyDuplicateName(): void {
+    this.notify.error(
+      this.translate.instant('wizard.validation.duplicateTitle'),
+      this.translate.instant('wizard.validationErrorTitle')
+    );
   }
 
   get calculatedExperienceYears(): number {

@@ -13,7 +13,7 @@ import {
   signal
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormsModule, ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -24,6 +24,7 @@ import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
 import { Attachment } from '../../../wizard-profile/models/attachment.model';
 import { NotificationService } from '../../../../../../core/services/notification.service';
+import { StringUtils } from '../../../../../../core/utils/string-utils';
 
 @Component({
   selector: 'app-step-attachments',
@@ -71,7 +72,7 @@ export class StepAttachmentsComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     rows: this.fb.array([]),
-  });
+  }, { validators: [this.duplicateTitleValidator.bind(this)] });
 
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
@@ -119,6 +120,7 @@ export class StepAttachmentsComponent implements OnInit {
     if (sanitized !== input.value) {
       input.value = sanitized;
       (this.rows.at(i) as FormGroup).get('title')?.setValue(sanitized, { emitEvent: false });
+      this.form.updateValueAndValidity();
     }
   }
 
@@ -139,6 +141,14 @@ export class StepAttachmentsComponent implements OnInit {
     const g = this.rows.at(i) as FormGroup;
     if (g.invalid) {
       g.markAllAsTouched();
+      return;
+    }
+    if (this.hasDuplicateTitles()) {
+      g.get('title')?.markAsTouched();
+      this.notificationService.error(
+        this.translate.instant('wizard.validation.duplicateTitle'),
+        this.translate.instant('wizard.validationErrorTitle')
+      );
       return;
     }
     g.disable({ emitEvent: false });
@@ -214,6 +224,17 @@ export class StepAttachmentsComponent implements OnInit {
     return !!c && c.enabled && c.invalid && (c.dirty || c.touched);
   }
 
+  isDuplicateTitle(i: number): boolean {
+    const title = this.normalizeTitle((this.rows.at(i) as FormGroup).get('title')?.value);
+    if (!title) {
+      return false;
+    }
+
+    return this.rows.controls.some((control, index) =>
+      index !== i && this.normalizeTitle((control as FormGroup).get('title')?.value) === title
+    );
+  }
+
   // ======== Navigation ========
 
   onBack(): void {
@@ -229,7 +250,10 @@ export class StepAttachmentsComponent implements OnInit {
     });
 
     if (this.form.invalid) {
-      this.notificationService.error(this.translate.instant('wizard.attachments.empty'), this.translate.instant('wizard.validationErrorTitle'));
+      const message = this.hasDuplicateTitles()
+        ? this.translate.instant('wizard.validation.duplicateTitle')
+        : this.translate.instant('wizard.attachments.empty');
+      this.notificationService.error(message, this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
@@ -335,5 +359,36 @@ export class StepAttachmentsComponent implements OnInit {
     grp.get('file')?.setErrors({ invalidFile: true });
 
     this.notificationService.error(message, this.translate.instant('wizard.validationErrorTitle'));
+  }
+
+  private hasDuplicateTitles(): boolean {
+    return !!this.form.errors?.['duplicateTitle'];
+  }
+
+  private duplicateTitleValidator(control: AbstractControl): ValidationErrors | null {
+    const rows = control.get('rows') as FormArray | null;
+    if (!rows) {
+      return null;
+    }
+
+    const seenTitles = new Set<string>();
+    for (const item of rows.controls) {
+      const title = this.normalizeTitle((item as FormGroup).get('title')?.value);
+      if (!title) {
+        continue;
+      }
+
+      if (seenTitles.has(title)) {
+        return { duplicateTitle: true };
+      }
+
+      seenTitles.add(title);
+    }
+
+    return null;
+  }
+
+  private normalizeTitle(value: unknown): string {
+    return StringUtils.normalize((value ?? '').toString());
   }
 }

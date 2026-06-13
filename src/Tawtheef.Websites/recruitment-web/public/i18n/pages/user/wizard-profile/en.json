@@ -13,6 +13,7 @@
   "wizard.files.formats.marriage": "Allowed formats: JPG, PNG, PDF",
   "wizard.warningTitle": "Warning",
   "wizard.validationErrorTitle": "Validation Error",
+  "wizard.validation.duplicateTitle": "Duplicate names are not allowed.",
   "wizard.errorTitle": "An error occurred",
   "wizard.degrees.deleteError": "An error occurred while deleting the degree.",
   "wizard.achievements.deleteError": "An error occurred while deleting the achievement.",

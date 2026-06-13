@@ -7,6 +7,7 @@ import {
 import {ProfileState} from '../models/profile-state.model';
 import {dropdownOptionsModel, DropdownOptionVM} from '../../../../../shared/models/dropdown-options.model';
 import {CandidateType, SponsorType} from '../../../../../core/enums/lookups.enum';
+import { StringUtils } from '../../../../../core/utils/string-utils';
 
 function parseDate(value?: string | null): Date | null {
   if (!value) return null;
@@ -24,6 +25,28 @@ function startOfToday(): Date {
 function isCertificateType(type?: DropdownOptionVM | null): boolean {
   const backendName = type?.backendName?.toLowerCase() ?? '';
   return backendName.includes('certificate');
+}
+
+function normalizeTitle(value: unknown): string {
+  return StringUtils.normalize((value ?? '').toString());
+}
+
+function hasDuplicateTitles<T>(items: T[] | undefined, selector: (item: T) => unknown): boolean {
+  const seenTitles = new Set<string>();
+  for (const item of items ?? []) {
+    const title = normalizeTitle(selector(item));
+    if (!title) {
+      continue;
+    }
+
+    if (seenTitles.has(title)) {
+      return true;
+    }
+
+    seenTitles.add(title);
+  }
+
+  return false;
 }
 
 export function isFilledField(value: unknown): boolean {
@@ -321,6 +344,13 @@ function validateDegreesStep(s: ProfileState): StepValidationResult {
     });
   }
 
+  if (hasDuplicateTitles(s.degrees, degree => degree.degree?.name)) {
+    errors.push({
+      field: 'degrees',
+      i18nKey: 'wizard.validation.duplicateTitle',
+    });
+  }
+
   s.degrees?.forEach((degree, index) => {
     if ((!degree.file || !degree.fileName) && !degree.attachmentId) {
       errors.push({
@@ -405,6 +435,13 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       }
     }
   });
+  if (hasDuplicateTitles(s.experiences, experience => experience.jobTitle)) {
+    errors.push({
+      field: 'experiences',
+      i18nKey: 'wizard.validation.duplicateTitle',
+    });
+  }
+
   s.courses?.forEach((course, index) => {
     if ((!course.file || !course.fileName) && !course.attachmentId) {
       errors.push({
@@ -423,6 +460,13 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       });
     }
   });
+  if (hasDuplicateTitles(s.courses, course => course.title)) {
+    errors.push({
+      field: 'courses',
+      i18nKey: 'wizard.validation.duplicateTitle',
+    });
+  }
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -446,6 +490,13 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
       });
     }
   });
+  if (hasDuplicateTitles(s.achievements, achievement => achievement.title)) {
+    errors.push({
+      field: 'achievements',
+      i18nKey: 'wizard.validation.duplicateTitle',
+    });
+  }
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -493,6 +544,13 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
 
 function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
+  if (hasDuplicateTitles(s.attachments, attachment => attachment.title)) {
+    errors.push({
+      field: 'attachments',
+      i18nKey: 'wizard.validation.duplicateTitle',
+    });
+  }
+
   s.attachments?.forEach((attachment, index) => {
     if (!isFilledField(attachment?.title)) {
       errors.push({
