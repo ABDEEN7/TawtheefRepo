@@ -26,6 +26,7 @@ import { DegreeModal } from './dialogs/degree.modal/degree.modal';
 import { Degree } from '../../../wizard-profile/models/degree.model';
 import { finalize, switchMap } from 'rxjs/operators';
 import { ProfileState } from '../../../wizard-profile/models/profile-state.model';
+import { StringUtils } from '../../../../../../core/utils/string-utils';
 
 @Component({
   selector: 'app-step-degrees',
@@ -75,6 +76,10 @@ export class StepDegreeComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe((e: Degree) => {
       if (e) {
+        if (this.hasDuplicateDegree(e)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.addDegree(e);
         this.ds.state().degrees = [...this.ds.state().degrees.sort((a, b) => a.gradYear - b.gradYear)];
       }
@@ -93,6 +98,10 @@ export class StepDegreeComponent implements OnInit {
       data: { initialValue: degree },
     })?.onClose.subscribe((result: Degree | null) => {
       if (result) {
+        if (this.hasDuplicateDegree(result, index)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.updateDegree(index, result);
         const sortedDegrees = [...this.ds.state().degrees].sort((a, b) => a.gradYear - b.gradYear);
         this.ds.patch({ degrees: sortedDegrees } as Partial<ProfileState>);
@@ -149,6 +158,11 @@ export class StepDegreeComponent implements OnInit {
 
     const state = this.ds.state();
     const degrees = state.degrees || [];
+    if (this.hasDuplicateDegrees(degrees)) {
+      this.notifyDuplicateName();
+      return;
+    }
+
     const signature = this.buildSignature(degrees);
 
     if (signature && signature === this.lastSubmittedSignature) {
@@ -207,6 +221,62 @@ export class StepDegreeComponent implements OnInit {
         attachmentId: d.attachmentId ?? null,
         fileName: d.file?.name ?? d.certificate?.resourceName ?? null,
       }))
+    );
+  }
+
+  private hasDuplicateDegree(degree: Degree, excludedIndex: number | null = null): boolean {
+    const key = this.degreeDuplicateKey(degree);
+    if (!key) return false;
+
+    return this.ds.state().degrees.some((item, index) =>
+      index !== excludedIndex && this.degreeDuplicateKey(item) === key
+    );
+  }
+
+  private hasDuplicateDegrees(degrees: Degree[]): boolean {
+    return this.hasDuplicateKeys(degrees, degree => this.degreeDuplicateKey(degree));
+  }
+
+  private hasDuplicateKeys<T>(items: T[], selector: (item: T) => string): boolean {
+    const seenKeys = new Set<string>();
+    for (const item of items ?? []) {
+      const key = selector(item);
+      if (!key) {
+        continue;
+      }
+
+      if (seenKeys.has(key)) {
+        return true;
+      }
+
+      seenKeys.add(key);
+    }
+
+    return false;
+  }
+
+  private degreeDuplicateKey(degree: Degree): string {
+    return [
+      degree.degree?.id,
+      degree.gradCountry?.id,
+      degree.university?.id,
+      degree.major?.id,
+      degree.subMajor?.id,
+      degree.gradYear,
+      degree.studySystem?.id,
+      degree.gpa,
+      degree.grade?.id,
+    ].map(value => this.normalizeTitle(value)).join('|');
+  }
+
+  private normalizeTitle(value: unknown): string {
+    return StringUtils.normalize((value ?? '').toString());
+  }
+
+  private notifyDuplicateName(): void {
+    this.notify.error(
+      this.translate.instant('wizard.validation.duplicateTitle'),
+      this.translate.instant('wizard.validationErrorTitle')
     );
   }
 }

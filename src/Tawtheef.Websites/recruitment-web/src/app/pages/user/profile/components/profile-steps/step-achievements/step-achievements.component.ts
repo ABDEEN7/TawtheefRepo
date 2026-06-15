@@ -25,6 +25,7 @@ import { ProfileService } from '../../../wizard-profile/services/profile.service
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { Achievement } from '../../../wizard-profile/models/achievement.model';
 import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { StringUtils } from '../../../../../../core/utils/string-utils';
 
 @Component({
   selector: 'app-step-achievements',
@@ -74,6 +75,10 @@ export class StepAchievementsComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {
+        if (this.hasDuplicateAchievement(result)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.addAchievement(result);
       }
     });
@@ -91,6 +96,10 @@ export class StepAchievementsComponent implements OnInit {
       data: { initialValue: achievement },
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {
+        if (this.hasDuplicateAchievement(result, index)) {
+          this.notifyDuplicateName();
+          return;
+        }
         this.ds.updateAchievement(index, result);
       }
     });
@@ -138,6 +147,11 @@ export class StepAchievementsComponent implements OnInit {
     }
 
     const achievements = this.ds.state().achievements || [];
+    if (this.hasDuplicateKeys(achievements, achievement => this.achievementDuplicateKey(achievement))) {
+      this.notifyDuplicateName();
+      return;
+    }
+
     const signature = this.buildSignature(achievements);
 
     if (signature && signature === this.lastSubmittedSignature) {
@@ -192,5 +206,53 @@ export class StepAchievementsComponent implements OnInit {
       fileName: a.file?.name ?? a.attachment?.resourceName ?? null,
       relatedToSpecialization: a.relatedToSpecialization ?? null,
     })));
+  }
+
+  private hasDuplicateAchievement(achievement: Achievement, excludedIndex: number | null = null): boolean {
+    const key = this.achievementDuplicateKey(achievement);
+    if (!key) return false;
+
+    return this.ds.state().achievements.some((item, index) =>
+      index !== excludedIndex && this.achievementDuplicateKey(item) === key
+    );
+  }
+
+  private hasDuplicateKeys<T>(items: T[], selector: (item: T) => string): boolean {
+    const seenKeys = new Set<string>();
+    for (const item of items ?? []) {
+      const key = selector(item);
+      if (!key) {
+        continue;
+      }
+
+      if (seenKeys.has(key)) {
+        return true;
+      }
+
+      seenKeys.add(key);
+    }
+
+    return false;
+  }
+
+  private achievementDuplicateKey(achievement: Achievement): string {
+    return [
+      achievement.achievementType?.id ?? achievement.achievementTypeId,
+      achievement.title,
+      achievement.issuingAuthority,
+      achievement.countryId ?? achievement.country?.id,
+      achievement.issueDate,
+    ].map(value => this.normalizeTitle(value)).join('|');
+  }
+
+  private normalizeTitle(value: unknown): string {
+    return StringUtils.normalize((value ?? '').toString());
+  }
+
+  private notifyDuplicateName(): void {
+    this.notify.error(
+      this.translate.instant('wizard.validation.duplicateTitle'),
+      this.translate.instant('wizard.validationErrorTitle')
+    );
   }
 }

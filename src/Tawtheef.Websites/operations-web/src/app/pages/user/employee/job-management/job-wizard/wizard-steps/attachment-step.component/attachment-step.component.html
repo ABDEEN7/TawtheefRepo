@@ -151,6 +151,8 @@
 
           @if (attachmentsArray.length === 0) {
             {{ 'JOB_WIZARD.VALIDATION.AT_LEAST_ONE_ATTACHMENT' | translate }}
+          } @else if (hasDuplicateTitles()) {
+            {{ 'JOB_WIZARD.STEPS.DUPLICATE_ENTRY_ERROR' | translate }}
           } @else {
             {{ 'JOB_WIZARD.VALIDATION.COMPLETE_ALL_ATTACHMENTS' | translate }}
           }

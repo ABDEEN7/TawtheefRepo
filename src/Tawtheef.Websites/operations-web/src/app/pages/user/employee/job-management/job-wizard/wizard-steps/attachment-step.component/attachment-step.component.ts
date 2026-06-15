@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
 import { JobService } from '../../../services/job.service';
 import { WizardStepComponent } from '../base/wizard-step.component';
 import { Job } from '../../../models/job.model';
@@ -9,6 +9,7 @@ import { JobTabReviewNoteResponse } from '../../../models/job-tab-review-note-re
 import { JobTabStatus } from '../../../enums/job-tab-status';
 import { NotificationService } from '../../../../../../../core/services/notification.service';
 import { JobStatus } from '../../../../../../../core/enums/lookups.enum';
+import { StringUtils } from '../../../../../../../core/utils/string-utils';
 
 @Component({
   selector: 'app-attachment-step',
@@ -32,7 +33,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
 
   readonly form: FormGroup = this.fb.group({
     attachments: this.fb.array([]),
-  });
+  }, { validators: [this.duplicateAttachmentTitlesValidator.bind(this)] });
 
   private readonly destroy$ = new Subject<void>();
 
@@ -94,10 +95,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
       return;
     }
 
-    const isDuplicate = this.attachmentsArray.controls.some((control: AbstractControl) => {
-      const group = control as FormGroup;
-      return group.get('titleAr')?.value === titleAr && group.get('titleEn')?.value === titleEn;
-    });
+    const isDuplicate = this.hasDuplicateAttachmentTitle(titleAr, titleEn);
 
     if (isDuplicate) {
       this.notificationService.error(
@@ -125,6 +123,7 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
   removeAttachment(index: number): void {
     this.attachmentsArray.removeAt(index);
     this.updateJobData();
+    this.form.updateValueAndValidity();
   }
 
   isValid(): boolean {
@@ -171,6 +170,10 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     return !!titleAr;
   }
 
+  hasDuplicateTitles(): boolean {
+    return !!this.form.errors?.['duplicateAttachmentTitle'];
+  }
+
   private resetNewAttachment(): void {
     this.newAttachment = {
       titleAr: '',
@@ -183,5 +186,59 @@ export class AttachmentStepComponent extends WizardStepComponent implements OnIn
     const group = this.getAttachmentGroup(groupIndex);
     const field = group.get(fieldName);
     return field ? !(field.invalid && field.touched) : true;
+  }
+
+  private hasDuplicateAttachmentTitle(titleAr: string, titleEn: string, excludedIndex: number | null = null): boolean {
+    const normalizedTitleAr = this.normalizeTitle(titleAr);
+    const normalizedTitleEn = this.normalizeTitle(titleEn);
+
+    return this.attachmentsArray.controls.some((control: AbstractControl, index: number) => {
+      if (excludedIndex !== null && index === excludedIndex) {
+        return false;
+      }
+
+      const group = control as FormGroup;
+      const existingTitleAr = this.normalizeTitle(group.get('titleAr')?.value);
+      const existingTitleEn = this.normalizeTitle(group.get('titleEn')?.value);
+
+      return (!!normalizedTitleAr && normalizedTitleAr === existingTitleAr) ||
+        (!!normalizedTitleEn && normalizedTitleEn === existingTitleEn);
+    });
+  }
+
+  private duplicateAttachmentTitlesValidator(control: AbstractControl): ValidationErrors | null {
+    const attachments = control.get('attachments') as FormArray | null;
+    if (!attachments) {
+      return null;
+    }
+
+    const seenArabicTitles = new Set<string>();
+    const seenEnglishTitles = new Set<string>();
+
+    for (const item of attachments.controls) {
+      const group = item as FormGroup;
+      const titleAr = this.normalizeTitle(group.get('titleAr')?.value);
+      const titleEn = this.normalizeTitle(group.get('titleEn')?.value);
+
+      if (titleAr) {
+        if (seenArabicTitles.has(titleAr)) {
+          return { duplicateAttachmentTitle: true };
+        }
+        seenArabicTitles.add(titleAr);
+      }
+
+      if (titleEn) {
+        if (seenEnglishTitles.has(titleEn)) {
+          return { duplicateAttachmentTitle: true };
+        }
+        seenEnglishTitles.add(titleEn);
+      }
+    }
+
+    return null;
+  }
+
+  private normalizeTitle(value: unknown): string {
+    return StringUtils.normalize((value ?? '').toString());
   }
 }

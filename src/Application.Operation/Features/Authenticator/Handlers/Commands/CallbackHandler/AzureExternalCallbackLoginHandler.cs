@@ -289,7 +289,7 @@ public sealed class AzureExternalCallbackLoginHandler(
 
     private static bool IsEduGovQaEmail(string? email)
         => !string.IsNullOrWhiteSpace(email)
-           && email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase);
+           && (email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) || email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase));
 
     private static async Task UpsertProviderClaimsAsync(
         UserManager<User> userManager,

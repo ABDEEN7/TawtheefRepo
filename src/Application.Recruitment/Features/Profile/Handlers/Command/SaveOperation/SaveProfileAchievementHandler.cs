@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using Application.Recruitment.Features.Profile.Validators;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -57,6 +58,10 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
         var existing = await achievementRepo.DbSet
             .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
+
+        var duplicateValidation = ProfileDuplicateValidation.ValidateAchievements(dtos, existing);
+        if (duplicateValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateValidation.Errors);
 
         // Upsert
         foreach (var dto in dtos)

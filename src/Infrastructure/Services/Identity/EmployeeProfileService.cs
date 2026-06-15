@@ -14,8 +14,6 @@ public class EmployeeProfileService(
     UserManager<User> userManager)
     : IEmployeeProfileService
 {
-    private const string AllowedEmailDomain = "@edu.gov.qa";
-
     public async Task<IResult<EmployeeProfileInfo>> SyncFromDirectoryAsync(
         EmployeeUser user,
         CancellationToken ct = default)
@@ -44,7 +42,8 @@ public class EmployeeProfileService(
         if (string.IsNullOrWhiteSpace(user.Email))
             return Result.Fail<Unit>(ErrorsCodes.ExternalLoginEmailNotFound);
 
-        if (!user.Email.EndsWith(AllowedEmailDomain, StringComparison.OrdinalIgnoreCase))
+        if (!user.Email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) && 
+            !user.Email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase))
             return Result.Fail<Unit>(ErrorsCodes.ExternalLoginEmailDomainNotAllowed);
 
         return Result.Ok(Unit.Value);

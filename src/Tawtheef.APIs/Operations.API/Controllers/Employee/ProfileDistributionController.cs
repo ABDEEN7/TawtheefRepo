@@ -24,7 +24,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     };
 
     [HttpGet("profiles")]
-    [AuthorizePermission(PermissionKeys.Profile.View)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
     public async Task<IActionResult> GetFiles([FromQuery] GetDistributionProfilesQuery query, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -33,7 +33,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet("target-entities")]
-    [AuthorizePermission(PermissionKeys.Profile.View)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());
@@ -41,7 +41,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("employees")]
-    [AuthorizePermission(PermissionKeys.Profile.View)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
     public async Task<IActionResult> GetEmployees(CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -50,7 +50,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("assign/manual")]
-    [AuthorizePermission(PermissionKeys.Profile.Manage)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.Manage)]
     public async Task<IActionResult> AssignManually([FromBody] ManualAssignRequest request, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -60,7 +60,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("assign/auto")]
-    [AuthorizePermission(PermissionKeys.Profile.Manage)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.Manage)]
     public async Task<IActionResult> AssignAutomatically([FromBody] AutoAssignRequest request, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
@@ -70,7 +70,7 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("reassign")]
-    [AuthorizePermission(PermissionKeys.Profile.Manage)]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.Manage)]
     public async Task<IActionResult> Reassign([FromBody] ReassignRequest request, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);

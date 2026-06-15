@@ -193,6 +193,10 @@ public class ErrorsCodes
     public const string InvalidExperienceFile = "INVALID_EXPERIENCE_FILE";
     public const string InvalidTrainingCourseFile = "INVALID_TRAINING_COURSE_FILE";
     public const string InvalidAchievementFile = "INVALID_ACHIEVEMENT_FILE";
+    public const string DuplicateEducation = "DUPLICATE_EDUCATION";
+    public const string DuplicateExperience = "DUPLICATE_EXPERIENCE";
+    public const string DuplicateTrainingCourse = "DUPLICATE_TRAINING_COURSE";
+    public const string DuplicateAchievement = "DUPLICATE_ACHIEVEMENT";
     public const string ExperienceDescriptionTooLong = "EXPERIENCE_DESCRIPTION_TOO_LONG";
     public const string TrainingDescriptionTooLong = "TRAINING_DESCRIPTION_TOO_LONG";
     public const string AchievementDescriptionTooLong = "ACHIEVEMENT_DESCRIPTION_TOO_LONG";

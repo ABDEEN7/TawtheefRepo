@@ -47,7 +47,7 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
 
     
     [HttpGet("target-entities")]
-    [AuthorizePermission(PermissionKeys.Profile.View)]
+    [AuthorizePermission(PermissionKeys.ProfileApproval.View)]
     public async Task<IActionResult> GetTargetEntities()
     {
         var result = await mediator.Send(new GetTargetEntitiesQuery());

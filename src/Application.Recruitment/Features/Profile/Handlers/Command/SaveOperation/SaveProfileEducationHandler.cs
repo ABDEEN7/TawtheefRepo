@@ -79,6 +79,10 @@ public sealed class SaveProfileEducationHandler(
             .Where(q => q.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        var duplicateValidation = ProfileDuplicateValidation.ValidateEducation(degrees, existingQualifications);
+        if (duplicateValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateValidation.Errors);
+
         foreach (var dto in degrees)
         {
             var file = ResolveFile(dto, files);
