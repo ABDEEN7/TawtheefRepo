@@ -49,10 +49,6 @@ export const Permissions = {
     View: 'home.content.view',
     Manage: 'home.content.manage',
   },
-  Profile: {
-    View: 'profile.view',
-    Manage: 'profile.manage',
-  },
   ProfileDistribution: {
     View: 'profile.distribution.view',
     Manage: 'profile.distribution.manage',
