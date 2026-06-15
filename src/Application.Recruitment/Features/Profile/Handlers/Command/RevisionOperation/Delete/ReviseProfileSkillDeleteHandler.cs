@@ -30,6 +30,16 @@ public sealed class ReviseProfileSkillDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.SkillNotFound);
 
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+            uow,
+            profile.Id,
+            ProfileSection.Skills,
+            cmd.Id,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         await repo.DeleteAsync(target);
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
         await uow.SaveChangesAsync(ct);

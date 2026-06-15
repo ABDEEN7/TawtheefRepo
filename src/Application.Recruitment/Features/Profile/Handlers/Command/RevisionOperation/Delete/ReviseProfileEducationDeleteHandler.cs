@@ -30,6 +30,16 @@ public sealed class ReviseProfileEducationDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.DegreeNotFound);
 
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+            uow,
+            profile.Id,
+            ProfileSection.Qualifications,
+            cmd.Id,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         var qualificationsCount = await qualificationRepo.DbSet
             .CountAsync(x => x.UserProfileId == profile.Id, ct);
 

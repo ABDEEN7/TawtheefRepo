@@ -30,6 +30,16 @@ public sealed class ReviseProfileExperienceDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.ExperienceNotFound);
 
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+            uow,
+            profile.Id,
+            ProfileSection.Experience,
+            cmd.Id,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         await repo.DeleteAsync(target);
         await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.Experience, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
