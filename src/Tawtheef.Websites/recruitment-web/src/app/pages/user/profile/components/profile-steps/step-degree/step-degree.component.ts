@@ -76,7 +76,7 @@ export class StepDegreeComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe((e: Degree) => {
       if (e) {
-        if (this.hasDuplicateDegreeName(e)) {
+        if (this.hasDuplicateDegree(e)) {
           this.notifyDuplicateName();
           return;
         }
@@ -98,7 +98,7 @@ export class StepDegreeComponent implements OnInit {
       data: { initialValue: degree },
     })?.onClose.subscribe((result: Degree | null) => {
       if (result) {
-        if (this.hasDuplicateDegreeName(result, index)) {
+        if (this.hasDuplicateDegree(result, index)) {
           this.notifyDuplicateName();
           return;
         }
@@ -145,6 +145,8 @@ export class StepDegreeComponent implements OnInit {
 
   // ====== NEW: submit to API ======
   onNext() {
+    if (this.savingDegrees()) return;
+
     if (!this.step().valid) {
       this.notify.error(
         `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors
@@ -156,7 +158,7 @@ export class StepDegreeComponent implements OnInit {
 
     const state = this.ds.state();
     const degrees = state.degrees || [];
-    if (this.hasDuplicateDegreeNames(degrees)) {
+    if (this.hasDuplicateDegrees(degrees)) {
       this.notifyDuplicateName();
       return;
     }
@@ -222,37 +224,49 @@ export class StepDegreeComponent implements OnInit {
     );
   }
 
-  private hasDuplicateDegreeName(degree: Degree, excludedIndex: number | null = null): boolean {
-    const title = this.normalizeTitle(degree.degree?.name);
-    if (!title) {
-      return false;
-    }
+  private hasDuplicateDegree(degree: Degree, excludedIndex: number | null = null): boolean {
+    const key = this.degreeDuplicateKey(degree);
+    if (!key) return false;
 
     return this.ds.state().degrees.some((item, index) =>
-      index !== excludedIndex && this.normalizeTitle(item.degree?.name) === title
+      index !== excludedIndex && this.degreeDuplicateKey(item) === key
     );
   }
 
-  private hasDuplicateDegreeNames(degrees: Degree[]): boolean {
-    return this.hasDuplicateTitles(degrees, degree => degree.degree?.name);
+  private hasDuplicateDegrees(degrees: Degree[]): boolean {
+    return this.hasDuplicateKeys(degrees, degree => this.degreeDuplicateKey(degree));
   }
 
-  private hasDuplicateTitles<T>(items: T[], selector: (item: T) => unknown): boolean {
-    const seenTitles = new Set<string>();
+  private hasDuplicateKeys<T>(items: T[], selector: (item: T) => string): boolean {
+    const seenKeys = new Set<string>();
     for (const item of items ?? []) {
-      const title = this.normalizeTitle(selector(item));
-      if (!title) {
+      const key = selector(item);
+      if (!key) {
         continue;
       }
 
-      if (seenTitles.has(title)) {
+      if (seenKeys.has(key)) {
         return true;
       }
 
-      seenTitles.add(title);
+      seenKeys.add(key);
     }
 
     return false;
+  }
+
+  private degreeDuplicateKey(degree: Degree): string {
+    return [
+      degree.degree?.id,
+      degree.gradCountry?.id,
+      degree.university?.id,
+      degree.major?.id,
+      degree.subMajor?.id,
+      degree.gradYear,
+      degree.studySystem?.id,
+      degree.gpa,
+      degree.grade?.id,
+    ].map(value => this.normalizeTitle(value)).join('|');
   }
 
   private normalizeTitle(value: unknown): string {

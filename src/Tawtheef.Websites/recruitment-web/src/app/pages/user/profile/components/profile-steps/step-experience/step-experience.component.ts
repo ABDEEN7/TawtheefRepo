@@ -80,7 +80,7 @@ export class StepExperienceComponent implements OnInit {
       data: { degrees: this.ds.state().degrees },
     })?.onClose.subscribe(result => {
       if (result) {
-        if (this.hasDuplicateExperienceTitle(result)) {
+        if (this.hasDuplicateExperience(result)) {
           this.notifyDuplicateName();
           return;
         }
@@ -101,7 +101,7 @@ export class StepExperienceComponent implements OnInit {
       data: { degrees: this.ds.state().degrees, initialValue: experience },
     })?.onClose.subscribe(result => {
       if (result) {
-        if (this.hasDuplicateExperienceTitle(result, index)) {
+        if (this.hasDuplicateExperience(result, index)) {
           this.notifyDuplicateName();
           return;
         }
@@ -139,7 +139,7 @@ export class StepExperienceComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe(result => {
       if (result) {
-        if (this.hasDuplicateCourseTitle(result)) {
+        if (this.hasDuplicateCourse(result)) {
           this.notifyDuplicateName();
           return;
         }
@@ -160,7 +160,7 @@ export class StepExperienceComponent implements OnInit {
       data: { initialValue: course },
     })?.onClose.subscribe(result => {
       if (result) {
-        if (this.hasDuplicateCourseTitle(result, index)) {
+        if (this.hasDuplicateCourse(result, index)) {
           this.notifyDuplicateName();
           return;
         }
@@ -187,6 +187,8 @@ export class StepExperienceComponent implements OnInit {
   }
 
   onNext() {
+    if (this.saving()) return;
+
     if (!this.step().valid) {
       this.notify.error(
         `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors
@@ -198,8 +200,8 @@ export class StepExperienceComponent implements OnInit {
     const state = this.ds.state();
     const experiences = state.experiences || [];
     const courses = state.courses || [];
-    if (this.hasDuplicateTitles(experiences, experience => experience.jobTitle) ||
-      this.hasDuplicateTitles(courses, course => course.title)) {
+    if (this.hasDuplicateKeys(experiences, experience => this.experienceDuplicateKey(experience)) ||
+      this.hasDuplicateKeys(courses, course => this.courseDuplicateKey(course))) {
       this.notifyDuplicateName();
       return;
     }
@@ -283,44 +285,61 @@ export class StepExperienceComponent implements OnInit {
     return JSON.stringify({ experienceSignature, courseSignature });
   }
 
-  private hasDuplicateExperienceTitle(experience: Experience, excludedIndex: number | null = null): boolean {
-    const title = this.normalizeTitle(experience.jobTitle);
-    if (!title) {
-      return false;
-    }
+  private hasDuplicateExperience(experience: Experience, excludedIndex: number | null = null): boolean {
+    const key = this.experienceDuplicateKey(experience);
+    if (!key) return false;
 
     return this.ds.state().experiences.some((item, index) =>
-      index !== excludedIndex && this.normalizeTitle(item.jobTitle) === title
+      index !== excludedIndex && this.experienceDuplicateKey(item) === key
     );
   }
 
-  private hasDuplicateCourseTitle(course: TrainingCourse, excludedIndex: number | null = null): boolean {
-    const title = this.normalizeTitle(course.title);
-    if (!title) {
-      return false;
-    }
+  private hasDuplicateCourse(course: TrainingCourse, excludedIndex: number | null = null): boolean {
+    const key = this.courseDuplicateKey(course);
+    if (!key) return false;
 
     return this.ds.state().courses.some((item, index) =>
-      index !== excludedIndex && this.normalizeTitle(item.title) === title
+      index !== excludedIndex && this.courseDuplicateKey(item) === key
     );
   }
 
-  private hasDuplicateTitles<T>(items: T[], selector: (item: T) => unknown): boolean {
-    const seenTitles = new Set<string>();
+  private hasDuplicateKeys<T>(items: T[], selector: (item: T) => string): boolean {
+    const seenKeys = new Set<string>();
     for (const item of items ?? []) {
-      const title = this.normalizeTitle(selector(item));
-      if (!title) {
+      const key = selector(item);
+      if (!key) {
         continue;
       }
 
-      if (seenTitles.has(title)) {
+      if (seenKeys.has(key)) {
         return true;
       }
 
-      seenTitles.add(title);
+      seenKeys.add(key);
     }
 
     return false;
+  }
+
+  private experienceDuplicateKey(experience: Experience): string {
+    return [
+      experience.employerName,
+      experience.jobTitle,
+      experience.country?.id,
+      experience.from,
+      experience.current ? '' : experience.to,
+      experience.qualificationId,
+    ].map(value => this.normalizeTitle(value)).join('|');
+  }
+
+  private courseDuplicateKey(course: TrainingCourse): string {
+    return [
+      course.provider,
+      course.title,
+      course.country?.id,
+      course.from,
+      course.to,
+    ].map(value => this.normalizeTitle(value)).join('|');
   }
 
   private normalizeTitle(value: unknown): string {

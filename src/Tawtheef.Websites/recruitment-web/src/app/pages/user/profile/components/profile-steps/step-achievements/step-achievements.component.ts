@@ -75,7 +75,7 @@ export class StepAchievementsComponent implements OnInit {
       draggable: false,
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {
-        if (this.hasDuplicateAchievementTitle(result)) {
+        if (this.hasDuplicateAchievement(result)) {
           this.notifyDuplicateName();
           return;
         }
@@ -96,7 +96,7 @@ export class StepAchievementsComponent implements OnInit {
       data: { initialValue: achievement },
     })?.onClose.subscribe((result: Achievement | null) => {
       if (result) {
-        if (this.hasDuplicateAchievementTitle(result, index)) {
+        if (this.hasDuplicateAchievement(result, index)) {
           this.notifyDuplicateName();
           return;
         }
@@ -135,6 +135,8 @@ export class StepAchievementsComponent implements OnInit {
   }
 
   onNext() {
+    if (this.saving()) return;
+
     if (!this.step().valid) {
       this.notify.error(
         `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors
@@ -145,7 +147,7 @@ export class StepAchievementsComponent implements OnInit {
     }
 
     const achievements = this.ds.state().achievements || [];
-    if (this.hasDuplicateTitles(achievements, achievement => achievement.title)) {
+    if (this.hasDuplicateKeys(achievements, achievement => this.achievementDuplicateKey(achievement))) {
       this.notifyDuplicateName();
       return;
     }
@@ -206,33 +208,41 @@ export class StepAchievementsComponent implements OnInit {
     })));
   }
 
-  private hasDuplicateAchievementTitle(achievement: Achievement, excludedIndex: number | null = null): boolean {
-    const title = this.normalizeTitle(achievement.title);
-    if (!title) {
-      return false;
-    }
+  private hasDuplicateAchievement(achievement: Achievement, excludedIndex: number | null = null): boolean {
+    const key = this.achievementDuplicateKey(achievement);
+    if (!key) return false;
 
     return this.ds.state().achievements.some((item, index) =>
-      index !== excludedIndex && this.normalizeTitle(item.title) === title
+      index !== excludedIndex && this.achievementDuplicateKey(item) === key
     );
   }
 
-  private hasDuplicateTitles<T>(items: T[], selector: (item: T) => unknown): boolean {
-    const seenTitles = new Set<string>();
+  private hasDuplicateKeys<T>(items: T[], selector: (item: T) => string): boolean {
+    const seenKeys = new Set<string>();
     for (const item of items ?? []) {
-      const title = this.normalizeTitle(selector(item));
-      if (!title) {
+      const key = selector(item);
+      if (!key) {
         continue;
       }
 
-      if (seenTitles.has(title)) {
+      if (seenKeys.has(key)) {
         return true;
       }
 
-      seenTitles.add(title);
+      seenKeys.add(key);
     }
 
     return false;
+  }
+
+  private achievementDuplicateKey(achievement: Achievement): string {
+    return [
+      achievement.achievementType?.id ?? achievement.achievementTypeId,
+      achievement.title,
+      achievement.issuingAuthority,
+      achievement.countryId ?? achievement.country?.id,
+      achievement.issueDate,
+    ].map(value => this.normalizeTitle(value)).join('|');
   }
 
   private normalizeTitle(value: unknown): string {

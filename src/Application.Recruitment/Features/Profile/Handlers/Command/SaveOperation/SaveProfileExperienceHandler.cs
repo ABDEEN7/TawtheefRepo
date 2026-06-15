@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using Application.Recruitment.Features.Profile.Validators;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -70,6 +71,16 @@ public sealed class SaveProfileExperienceHandler(
         var existingTrainings = await trainingRepo.DbSet
             .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
+
+        var duplicateExperiencesValidation =
+            ProfileDuplicateValidation.ValidateExperiences(experiences, existingExperiences);
+        if (duplicateExperiencesValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateExperiencesValidation.Errors);
+
+        var duplicateTrainingsValidation =
+            ProfileDuplicateValidation.ValidateTrainingCourses(trainings, existingTrainings);
+        if (duplicateTrainingsValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateTrainingsValidation.Errors);
         
         // ===== Experiences UPSERT =====
         foreach (var dto in experiences)

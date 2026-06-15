@@ -31,22 +31,79 @@ function normalizeTitle(value: unknown): string {
   return StringUtils.normalize((value ?? '').toString());
 }
 
-function hasDuplicateTitles<T>(items: T[] | undefined, selector: (item: T) => unknown): boolean {
-  const seenTitles = new Set<string>();
+function keyPart(value: unknown): string {
+  return normalizeTitle(value);
+}
+
+function optionKey(option: DropdownOptionVM | null | undefined): string {
+  return keyPart(option?.id ?? option?.backendName ?? option?.name);
+}
+
+function compositeKey(parts: unknown[]): string {
+  return parts.map(keyPart).join('|');
+}
+
+function hasDuplicateKeys<T>(items: T[] | undefined, selector: (item: T) => string): boolean {
+  const seenKeys = new Set<string>();
   for (const item of items ?? []) {
-    const title = normalizeTitle(selector(item));
-    if (!title) {
+    const key = selector(item);
+    if (!key || key.split('|').every(part => !part)) {
       continue;
     }
 
-    if (seenTitles.has(title)) {
+    if (seenKeys.has(key)) {
       return true;
     }
 
-    seenTitles.add(title);
+    seenKeys.add(key);
   }
 
   return false;
+}
+
+function degreeDuplicateKey(degree: ProfileState['degrees'][number]): string {
+  return compositeKey([
+    optionKey(degree.degree),
+    optionKey(degree.gradCountry),
+    optionKey(degree.university),
+    optionKey(degree.major),
+    optionKey(degree.subMajor),
+    degree.gradYear,
+    optionKey(degree.studySystem),
+    degree.gpa,
+    optionKey(degree.grade),
+  ]);
+}
+
+function experienceDuplicateKey(experience: ProfileState['experiences'][number]): string {
+  return compositeKey([
+    experience.employerName,
+    experience.jobTitle,
+    optionKey(experience.country),
+    experience.from,
+    experience.current ? '' : experience.to,
+    experience.qualificationId,
+  ]);
+}
+
+function courseDuplicateKey(course: ProfileState['courses'][number]): string {
+  return compositeKey([
+    course.provider,
+    course.title,
+    optionKey(course.country),
+    course.from,
+    course.to,
+  ]);
+}
+
+function achievementDuplicateKey(achievement: ProfileState['achievements'][number]): string {
+  return compositeKey([
+    optionKey(achievement.achievementType),
+    achievement.title,
+    achievement.issuingAuthority,
+    achievement.countryId ?? optionKey(achievement.country),
+    achievement.issueDate,
+  ]);
 }
 
 export function isFilledField(value: unknown): boolean {
@@ -344,7 +401,7 @@ function validateDegreesStep(s: ProfileState): StepValidationResult {
     });
   }
 
-  if (hasDuplicateTitles(s.degrees, degree => degree.degree?.name)) {
+  if (hasDuplicateKeys(s.degrees, degreeDuplicateKey)) {
     errors.push({
       field: 'degrees',
       i18nKey: 'wizard.validation.duplicateTitle',
@@ -435,7 +492,7 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       }
     }
   });
-  if (hasDuplicateTitles(s.experiences, experience => experience.jobTitle)) {
+  if (hasDuplicateKeys(s.experiences, experienceDuplicateKey)) {
     errors.push({
       field: 'experiences',
       i18nKey: 'wizard.validation.duplicateTitle',
@@ -460,7 +517,7 @@ function validateExperienceStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-  if (hasDuplicateTitles(s.courses, course => course.title)) {
+  if (hasDuplicateKeys(s.courses, courseDuplicateKey)) {
     errors.push({
       field: 'courses',
       i18nKey: 'wizard.validation.duplicateTitle',
@@ -490,7 +547,7 @@ function validateAchievementsStep(s: ProfileState): StepValidationResult {
       });
     }
   });
-  if (hasDuplicateTitles(s.achievements, achievement => achievement.title)) {
+  if (hasDuplicateKeys(s.achievements, achievementDuplicateKey)) {
     errors.push({
       field: 'achievements',
       i18nKey: 'wizard.validation.duplicateTitle',
@@ -544,7 +601,7 @@ function validateLanguagesStep(s: ProfileState): StepValidationResult {
 
 function validateAttachmentsStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
-  if (hasDuplicateTitles(s.attachments, attachment => attachment.title)) {
+  if (hasDuplicateKeys(s.attachments, attachment => normalizeTitle(attachment.title))) {
     errors.push({
       field: 'attachments',
       i18nKey: 'wizard.validation.duplicateTitle',
