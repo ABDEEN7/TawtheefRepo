@@ -379,6 +379,8 @@ export class StepPersonalComponent implements OnInit {
     input.value = '';
   }
   onNext() {
+    if (this.savingPersonal()) return;
+
     if (!this.step().valid) {
       this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;

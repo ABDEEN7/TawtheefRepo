@@ -31,8 +31,25 @@ public sealed class ReviseProfileAttachmentDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotFound);
 
+        var oldResourceId = target.AttachmentId;
+        var canDelete = await ReviewDeleteGuard.CanDeleteAttachmentAsync(
+            uow,
+            profile.Id,
+            ProfileSection.Attachments,
+            oldResourceId,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
+        await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+            uow,
+            profile,
+            ProfileSection.Attachments,
+            oldResourceId,
+            ct,
+            force: true);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

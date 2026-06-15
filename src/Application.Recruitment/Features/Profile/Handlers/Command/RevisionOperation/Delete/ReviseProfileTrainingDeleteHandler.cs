@@ -30,8 +30,18 @@ public sealed class ReviseProfileTrainingDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.TrainingNotFound);
 
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+            uow,
+            profile.Id,
+            ProfileSection.TrainingCourses,
+            cmd.Id,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.TrainingCourses, ct);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.TrainingCourses, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

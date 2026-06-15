@@ -1,0 +1,66 @@
+<div class="resubmit-confirm">
+  <div class="resubmit-confirm__hero">
+    <div class="resubmit-confirm__icon">
+      <i class="pi pi-send" aria-hidden="true"></i>
+    </div>
+    <div>
+      <div class="resubmit-confirm__title">{{ 'profileOverview.resubmitConfirm.title' | translate }}</div>
+      <div class="resubmit-confirm__subtitle">{{ 'profileOverview.resubmitConfirm.subtitle' | translate }}</div>
+    </div>
+  </div>
+
+  @if (sections.length) {
+  <div class="resubmit-confirm__sections">
+    @for (section of sections; track section.section) {
+    <section class="resubmit-confirm__section">
+      <div class="resubmit-confirm__section-head">
+        <span class="resubmit-confirm__section-name">{{ section.labelKey | translate }}</span>
+        <span class="resubmit-confirm__count">
+          {{ section.items.length }}
+          {{ 'profileOverview.resubmitConfirm.itemsCount' | translate }}
+        </span>
+      </div>
+
+      <div class="resubmit-confirm__items">
+        @for (item of section.items; track item.reviewItemId) {
+        <div class="resubmit-confirm__item">
+          <span class="resubmit-confirm__type">{{ itemTypeLabelKey(item) | translate }}</span>
+          <span class="resubmit-confirm__item-title">
+            @if (itemTitleKey(item); as titleKey) {
+            {{ titleKey | translate }}
+            } @else {
+            {{ item.title }}
+            }
+          </span>
+        </div>
+        }
+      </div>
+    </section>
+    }
+  </div>
+  } @else {
+  <div class="resubmit-confirm__fallback">
+    <div class="resubmit-confirm__section-name">{{ 'profileOverview.resubmitConfirm.correctedSections' | translate }}</div>
+    <div class="resubmit-confirm__fallback-list">
+      @for (label of fallbackLabels; track label) {
+      <span>{{ label }}</span>
+      }
+    </div>
+  </div>
+  }
+
+  <div class="resubmit-confirm__notice">
+    <i class="pi pi-info-circle" aria-hidden="true"></i>
+    <span>{{ 'profileOverview.resubmitConfirm.notice' | translate }}</span>
+  </div>
+
+  <div class="resubmit-confirm__actions">
+    <button pButton type="button" class="btn btn-outline-secondary" (click)="cancel()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button pButton type="button" class="btn btn-primary" (click)="confirm()">
+      <i class="pi pi-send" aria-hidden="true"></i>
+      <span>{{ 'profileOverview.resubmitConfirm.confirm' | translate }}</span>
+    </button>
+  </div>
+</div>

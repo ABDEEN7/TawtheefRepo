@@ -7,6 +7,7 @@ public static class ProfileReviewConstants
 {
     public static class FieldPaths
     {
+        public const string SectionData = "SectionData";
         public const string ResumeAttachmentId = nameof(UserProfile.ResumeAttachmentId);
         public const string NationalCardId = nameof(UserProfile.NationalCardId);
         public const string BirthdayCertificateId = nameof(UserProfile.BirthdayCertificateId);

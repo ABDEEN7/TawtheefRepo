@@ -1,7 +1,6 @@
-using Application.Recruitment.Features.Profile.Command;
-using Application.Recruitment.Features.Profile.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -9,80 +8,126 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 
 internal static class ReviewItemSaveHelper
 {
+    public static Task MarkSectionDataSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        return MarkTargetSolvedAsync(
+            uow,
+            profile,
+            section,
+            ReviewTargetType.Field,
+            item => item.FieldPath == ProfileReviewConstants.FieldPaths.SectionData,
+            ct);
+    }
+
+    public static Task MarkSectionSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        return MarkTargetSolvedAsync(
+            uow,
+            profile,
+            section,
+            ReviewTargetType.Section,
+            _ => true,
+            ct);
+    }
+
+    public static Task MarkRowSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        Guid? entityId,
+        CancellationToken ct,
+        bool force = false)
+    {
+        if (entityId is null || entityId == Guid.Empty)
+            return Task.CompletedTask;
+
+        return MarkTargetSolvedAsync(
+            uow,
+            profile,
+            section,
+            ReviewTargetType.Row,
+            item => item.EntityId == entityId,
+            ct,
+            force);
+    }
+
+    public static Task MarkAttachmentSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        Guid? oldResourceId,
+        CancellationToken ct,
+        bool force = false)
+    {
+        if (oldResourceId is null || oldResourceId == Guid.Empty)
+            return Task.CompletedTask;
+
+        return MarkTargetSolvedAsync(
+            uow,
+            profile,
+            section,
+            ReviewTargetType.Attachment,
+            item => item.ResourceId == oldResourceId,
+            ct,
+            force);
+    }
+
     public static async Task UpdateSectionStatusAsync(
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
         CancellationToken ct)
     {
+        await MarkSectionSolvedAsync(uow, profile, section, ct);
+    }
+
+    private static async Task MarkTargetSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        ReviewTargetType targetType,
+        Func<ReviewItem, bool> match,
+        CancellationToken ct,
+        bool force = false)
+    {
         if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
             return;
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var items = await reviewRepo.DbSet
-            .Where(item => item.UserProfileId == profile.Id && item.Status != ReviewStatus.Solved)
+        var candidates = await reviewRepo.DbSet
+            .Where(item =>
+                item.UserProfileId == profile.Id &&
+                item.Section == section &&
+                item.TargetType == targetType &&
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved))
             .ToListAsync(ct);
 
-        if (items.Count == 0)
-        {
-            var handler = new ResubmitUserProfileHandler(uow);
-            await handler.Handle(new ResubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
+        var item = candidates.FirstOrDefault(match);
+        if (item is null)
             return;
+
+        var previousHash = item.CurrentHash;
+        var currentValue = ReviewItemSnapshotBuilder.GetCurrentValue(profile, item);
+        item.UpdateHash(currentValue);
+
+        if (item.TargetType == ReviewTargetType.Attachment)
+        {
+            item.ResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
         }
 
-        foreach (var item in items.Where(item => item.Section == section))
-        {
-            var previousHash = item.CurrentHash;
-            var previousStatus = item.Status;
-            var previousOutdated = item.IsOutdated;
-            var wasReviewerIssue = item.Status is ReviewStatus.NeedsCorrection;
-            var currentValue = GetCurrentValue(profile, item);
-            item.UpdateHash(currentValue);
+        var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
+        if (!force && !valueChanged)
+            return;
 
-            var valueChanged = previousHash != item.CurrentHash;
-            var attachmentReplaced = item.TargetType != ReviewTargetType.Attachment
-                || IsAttachmentReplaced(profile, item);
-
-            if (!valueChanged)
-            {
-                item.Status = previousStatus;
-                item.IsOutdated = previousOutdated;
-                continue;
-            }
-
-            if (wasReviewerIssue && attachmentReplaced)
-            {
-                item.Status = ReviewStatus.Solved;
-                item.IsOutdated = false;
-                if (item.TargetType == ReviewTargetType.Attachment)
-                {
-                    item.ResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
-                }
-            }
-        }
-
-        if (items.All(item => item.Status != ReviewStatus.NeedsCorrection))
-        {
-            var handler = new ResubmitUserProfileHandler(uow);
-            await handler.Handle(new ResubmitUserProfileCommand(profile.UserId, new SubmitUserProfileRequest()), ct);
-        }
-    }
-
-    private static object? GetCurrentValue(UserProfile profile, ReviewItem item)
-    {
-        return item.TargetType switch
-        {
-            ReviewTargetType.Section => ReviewItemSnapshotBuilder.GetSectionSnapshot(profile.User!, profile, item.Section),
-            ReviewTargetType.Field => ReviewItemSnapshotBuilder.GetFieldValue(profile, item.FieldPath),
-            ReviewTargetType.Row => ReviewItemSnapshotBuilder.GetRowSnapshot(profile, item.Section, item.EntityId, item),
-            ReviewTargetType.Attachment => ReviewItemSnapshotBuilder.GetAttachmentSnapshot(profile, item),
-            _ => null
-        };
-    }
-
-    private static bool IsAttachmentReplaced(UserProfile profile, ReviewItem item)
-    {
-        var currentResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
-        return currentResourceId != item.ResourceId;
+        item.Status = ReviewStatus.Solved;
+        item.IsOutdated = false;
     }
 }

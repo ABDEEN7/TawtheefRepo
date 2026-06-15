@@ -136,6 +136,8 @@ export class StepDegreeComponent implements OnInit {
 
   // ====== NEW: submit to API ======
   onNext() {
+    if (this.savingDegrees()) return;
+
     if (!this.step().valid) {
       this.notify.error(
         `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors

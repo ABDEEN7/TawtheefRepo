@@ -7,10 +7,12 @@ import {
   ProfileApprovalData,
   ProfileApprovalItem,
   ReviewStatus,
+  ReviewTargetType,
 } from '../../../../approval-list/models/profile-approval.models';
 import { Ripple } from 'primeng/ripple';
 import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
 import { Tooltip } from 'primeng/tooltip';
+import { SponsorType } from '../../../../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-profile-approval-basic-info-section',
@@ -20,6 +22,8 @@ import { Tooltip } from 'primeng/tooltip';
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class BasicInfoSectionComponent {
+  private readonly sectionDataFieldPath = 'SectionData';
+
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
   @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
@@ -49,10 +53,16 @@ export class BasicInfoSectionComponent {
 
       { label: 'profileApproval.detail.snapshot.idExpiry', value: this.profile.basicInformation.qidExpiry },
       { label: 'profileApproval.detail.snapshot.sponsorType', value: this.profile.basicInformation.sponsorType },
-      { label: 'profileApproval.detail.snapshot.sponsorEmployerName', value: this.profile.basicInformation.sponsorEmployerName },
-      { label: 'profileApproval.detail.snapshot.sponsorEmployerNumber', value: this.profile.basicInformation.sponsorEmployerNumber },
-      { label: 'profileApproval.detail.snapshot.sponsorQidExpiry', value: this.profile.basicInformation.sponsorQidExpiry },
+      { label: this.sponsorLabelKey('name'), value: this.profile.basicInformation.sponsorEmployerName },
+      { label: this.sponsorLabelKey('number'), value: this.profile.basicInformation.sponsorEmployerNumber },
     ];
+
+    if (!this.isCompanySponsor()) {
+      fields.push({
+        label: 'profileApproval.detail.snapshot.sponsorQidExpiry',
+        value: this.profile.basicInformation.sponsorQidExpiry
+      });
+    }
 
     return fields.filter(field => this.hasValue(field.value));
   }
@@ -69,6 +79,10 @@ export class BasicInfoSectionComponent {
     return !!b?.sponsorCard;
   }
 
+  sponsorCardLabelKey(): string {
+    return this.sponsorLabelKey('card');
+  }
+
   preview(url?: string | null, fileName?: string | null): void {
     if (url) {
       this.viewFile.emit({ url, fileName: fileName || '' });
@@ -78,5 +92,46 @@ export class BasicInfoSectionComponent {
   reviewItemFor(resourceId?: string | null): ProfileApprovalItem | null {
     if (!resourceId) return null;
     return (this.reviewItems ?? []).find(i => i.resourceId === resourceId) ?? null;
+  }
+
+  sectionDataReviewItem(): ProfileApprovalItem | null {
+    return (this.reviewItems ?? []).find(item =>
+      item.targetType === ReviewTargetType.Field &&
+      item.fieldPath === this.sectionDataFieldPath
+    ) ?? null;
+  }
+
+  private sponsorLabelKey(field: 'name' | 'number' | 'card'): string {
+    const type = this.sponsorTypeKey();
+    if (!type) {
+      const fallback: Record<typeof field, string> = {
+        name: 'profileApproval.detail.snapshot.sponsorEmployerName',
+        number: 'profileApproval.detail.snapshot.sponsorEmployerNumber',
+        card: 'profileApproval.detail.snapshot.sponsorCard',
+      };
+      return fallback[field];
+    }
+
+    return `profileApproval.detail.snapshot.sponsor.${type}.${field}`;
+  }
+
+  private sponsorTypeKey(): 'individual' | 'company' | null {
+    const backendName = this.profile?.basicInformation?.sponsorTypeBackendName;
+    if (backendName === SponsorType.Company) return 'company';
+    if (backendName === SponsorType.Individual) return 'individual';
+
+    const sponsorType = (this.profile?.basicInformation?.sponsorType ?? '').toLowerCase();
+    if (sponsorType.includes('company') || sponsorType.includes('establishment') || sponsorType.includes('منش')) {
+      return 'company';
+    }
+    if (sponsorType.includes('individual') || sponsorType.includes('فرد')) {
+      return 'individual';
+    }
+
+    return null;
+  }
+
+  private isCompanySponsor(): boolean {
+    return this.sponsorTypeKey() === 'company';
   }
 }

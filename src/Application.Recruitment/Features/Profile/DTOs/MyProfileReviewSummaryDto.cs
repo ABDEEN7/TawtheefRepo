@@ -15,6 +15,7 @@ public sealed class MyProfileReviewSummaryDto
     // ===== User Saved Changes (Phase 2) =====
     public bool HasSavedChanges { get; set; }
     public IReadOnlyList<ProfileSection> ChangedSections { get; set; } = [];
+    public IReadOnlyList<MyProfileReviewChangedItemDto> ChangedItems { get; set; } = [];
 
     // Optional but very useful for UX:
     public DateTimeOffset? LastReviewerActionAtUtc { get; set; }
@@ -22,4 +23,17 @@ public sealed class MyProfileReviewSummaryDto
 
     // Show CTA "Resubmit"
     public bool CanResubmit { get; set; }
+}
+
+public sealed class MyProfileReviewChangedItemDto
+{
+    public Guid ReviewItemId { get; set; }
+    public ProfileSection Section { get; set; }
+    public ReviewTargetType TargetType { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Note { get; set; }
+    public string? FieldPath { get; set; }
+    public Guid? EntityId { get; set; }
+    public string? EntityName { get; set; }
+    public Guid? ResourceId { get; set; }
 }

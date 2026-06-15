@@ -115,27 +115,27 @@ public sealed class ReviseProfileAttachmentsHandler(
                 existingByResourceId.Remove(oldResourceId);
                 existingByResourceId[row.AttachmentId] = row;
 
-                // Mark the corresponding ReviewItem as solved and move it to the new resource id
-                await SolveReviewItemAsync(
-                    reviewRepo,
-                    profile.Id,
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow,
+                    profile,
+                    ProfileSection.Attachments,
                     oldResourceId,
-                    newResourceId.Value,
-                    ct);
+                    ct,
+                    force: true);
             }
             else
             {
                 // No replacement: still mark as solved if user updated allowed fields (e.g., title)
-                await SolveReviewItemAsync(
-                    reviewRepo,
-                    profile.Id,
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow,
+                    profile,
+                    ProfileSection.Attachments,
                     row.AttachmentId,
-                    row.AttachmentId,
-                    ct);
+                    ct,
+                    force: true);
             }
         }
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Attachments, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
 
@@ -184,33 +184,6 @@ public sealed class ReviseProfileAttachmentsHandler(
             return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
         }
 
-        static async Task SolveReviewItemAsync(
-            IGenericRepository<ReviewItem> reviewRepo,
-            Guid userProfileId,
-            Guid oldResourceId,
-            Guid newResourceId,
-            CancellationToken cancellationToken)
-        {
-            // Solve the NeedsCorrection item for the old resource id
-            var item = await reviewRepo.DbSet
-                .FirstOrDefaultAsync(r =>
-                        r.UserProfileId == userProfileId &&
-                        r.Section == ProfileSection.Attachments &&
-                        r.TargetType == ReviewTargetType.Attachment &&
-                        r.Status == ReviewStatus.NeedsCorrection &&
-                        r.ResourceId == oldResourceId,
-                    cancellationToken);
-
-            if (item is null)
-                return;
-
-            item.Status = ReviewStatus.Solved;
-            item.IsOutdated = false;
-
-            // If file replaced, move linkage to new resource id for audit/trace consistency
-            if (newResourceId != Guid.Empty && newResourceId != oldResourceId)
-                item.ResourceId = newResourceId;
-        }
     }
 }
 

@@ -24,6 +24,14 @@
       <ng-template #emptyContact>
         <div class="empty-block">{{ 'profileApproval.detail.snapshot.noEntries' | translate }}</div>
       </ng-template>
+
+      <app-item-inline-review
+        *ngIf="sectionDataReviewItem() as review"
+        [reviewItemId]="review.reviewItemId"
+        [status]="review.status"
+        [note]="review.note"
+        (review)="reviewItem.emit($event)"
+      ></app-item-inline-review>
     </p-card>
   </div>
 

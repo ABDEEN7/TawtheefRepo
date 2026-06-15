@@ -26,6 +26,7 @@ public record BasicInformationSnapshot
     public bool HasDisability { get; init; }
     public string? DisabilityDetails { get; init; }
     public string? SponsorType { get; set; }
+    public string? SponsorTypeBackendName { get; set; }
     public string? SponsorEmployerName { get; set; }
     public string? SponsorEmployerNumber { get; set; }
     public DateOnly? SponsorQidExpiry { get; set; }

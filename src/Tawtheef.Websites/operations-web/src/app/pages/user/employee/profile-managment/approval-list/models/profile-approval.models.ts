@@ -45,6 +45,7 @@ export interface ProfileApprovalItem {
   note?: string | null;
   resourceId?: string;
   resourceUrl?: string;
+  fieldPath?: string | null;
   entityId?: string;
   entityName?: string;
   oldValue?: string;
@@ -85,6 +86,7 @@ export interface BasicInformationSnapshot {
   hasDisability?: boolean;
   disabilityDetails?: string;
   sponsorType?: string;
+  sponsorTypeBackendName?: string;
   sponsorEmployerName?: string;
   sponsorEmployerNumber?: string;
   sponsorQidExpiry?: string;

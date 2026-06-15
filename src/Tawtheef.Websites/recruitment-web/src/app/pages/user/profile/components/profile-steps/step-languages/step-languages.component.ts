@@ -114,6 +114,8 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   onNext() {
+    if (this.saving()) return;
+
     if (!this.step().valid) {
       this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'));
       return;

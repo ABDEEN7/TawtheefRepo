@@ -87,7 +87,7 @@ public sealed class ReviseProfileContactHandler(
 
         }
         
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
+        await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
         

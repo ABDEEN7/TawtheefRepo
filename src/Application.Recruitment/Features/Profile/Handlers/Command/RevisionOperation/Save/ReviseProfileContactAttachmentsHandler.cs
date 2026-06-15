@@ -36,6 +36,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
         if (cmd.Request.ResidenceAddress is not null)
         {
             var current = profile.ResidenceAddress.CertificateId;
+            var oldResourceId = current;
 
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
@@ -50,7 +51,7 @@ public sealed class ReviseProfileContactAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResidenceAddress.CertificateId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Contact, oldResourceId, ct);
         }
 
         await uow.SaveChangesAsync(ct);

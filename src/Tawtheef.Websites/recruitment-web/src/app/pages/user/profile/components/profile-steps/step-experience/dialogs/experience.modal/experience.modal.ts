@@ -71,6 +71,12 @@ export class ExperienceModal implements OnInit {
 
   today = new Date();
 
+  get submitLabelKey(): string {
+    return this.config.data?.initialValue
+      ? 'wizard.buttons.saveChanges'
+      : 'wizard.experience.add';
+  }
+
   private readonly textPattern = /^[\p{L}\p{N}\s]*$/u;
   private readonly textAreaPattern = /^[\p{L}\p{N}\s\-',.،]*$/u;
 

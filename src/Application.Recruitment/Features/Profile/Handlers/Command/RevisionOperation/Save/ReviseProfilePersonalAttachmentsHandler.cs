@@ -33,6 +33,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
         // Resume
         if (cmd.Request.Resume is not null)
         {
+            var oldResourceId = profile.ResumeAttachmentId;
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -46,12 +47,13 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResumeAttachmentId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, section: ProfileSection.Prerequisites, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         // National card
         if (cmd.Request.NationalCard is not null)
         {
+            var oldResourceId = profile.NationalCardId;
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -65,7 +67,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.NationalCardId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, section: ProfileSection.Prerequisites, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         // Sponsor card (nested)
@@ -75,6 +77,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
                 return Result.Fail<Unit>(ErrorsCodes.SponsorProfileNotFound);
 
             var current = profile.SponsorProfile.SponsorCardId;
+            var oldResourceId = current;
 
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
@@ -89,7 +92,7 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.SponsorProfile.SponsorCardId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Personal, oldResourceId, ct);
         }
 
         await uow.SaveChangesAsync(ct);

@@ -32,6 +32,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
         if (cmd.Request.Birthday is not null)
         {
+            var oldResourceId = profile.BirthdayCertificateId;
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -45,11 +46,12 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.BirthdayCertificateId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         if (cmd.Request.Marriage is not null)
         {
+            var oldResourceId = profile.MarriageCertificateId;
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -63,7 +65,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.MarriageCertificateId = newId.Value;
             if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         await uow.SaveChangesAsync(ct);

@@ -1,0 +1,145 @@
+.resubmit-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: min(620px, 82vw);
+}
+
+.resubmit-confirm__hero {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+}
+
+.resubmit-confirm__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: #eaf3ff;
+  color: #0d6efd;
+  border: 1px solid #cfe2ff;
+}
+
+.resubmit-confirm__title {
+  font-weight: 900;
+  color: #111827;
+  line-height: 1.35;
+}
+
+.resubmit-confirm__subtitle,
+.resubmit-confirm__notice {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: .92rem;
+}
+
+.resubmit-confirm__sections {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  max-height: 42vh;
+  overflow: auto;
+  padding-inline-end: .25rem;
+}
+
+.resubmit-confirm__section,
+.resubmit-confirm__fallback {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: .85rem;
+  background: #fff;
+}
+
+.resubmit-confirm__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .65rem;
+}
+
+.resubmit-confirm__section-name {
+  font-weight: 800;
+  color: #111827;
+}
+
+.resubmit-confirm__count,
+.resubmit-confirm__type {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: .15rem .5rem;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: .78rem;
+  white-space: nowrap;
+}
+
+.resubmit-confirm__items,
+.resubmit-confirm__fallback-list {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.resubmit-confirm__item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.resubmit-confirm__item-title {
+  min-width: 0;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resubmit-confirm__fallback-list span {
+  color: #374151;
+}
+
+.resubmit-confirm__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  border: 1px solid #cfe2ff;
+  background: #f4f8ff;
+  border-radius: 10px;
+  padding: .75rem .85rem;
+}
+
+.resubmit-confirm__notice i {
+  color: #0d6efd;
+  margin-top: .2rem;
+}
+
+.resubmit-confirm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  border-top: 1px solid #eef2f7;
+  padding-top: .85rem;
+}
+
+@media (max-width: 768px) {
+  .resubmit-confirm {
+    min-width: 0;
+  }
+
+  .resubmit-confirm__section-head,
+  .resubmit-confirm__item,
+  .resubmit-confirm__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .resubmit-confirm__actions button {
+    width: 100%;
+  }
+}

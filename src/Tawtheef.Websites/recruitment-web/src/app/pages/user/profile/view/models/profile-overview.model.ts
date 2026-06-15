@@ -62,6 +62,24 @@ export interface MyProfileReviewSummaryDto {
   profileStatus: UserProfileStatusCode; // numeric
   totalNotes: number;
   sections: MyProfileReviewSectionDto[];
+  hasSavedChanges?: boolean;
+  changedSections?: ProfileSectionCode[];
+  changedItems?: MyProfileReviewChangedItemDto[];
+  lastReviewerActionAtUtc?: string | null;
+  lastUserChangeAtUtc?: string | null;
+  canResubmit?: boolean;
+}
+
+export interface MyProfileReviewChangedItemDto {
+  reviewItemId: GUID;
+  section: ProfileSectionCode;
+  targetType: ReviewTargetTypeCode;
+  title: string;
+  note?: string | null;
+  fieldPath?: string | null;
+  entityId?: GUID | null;
+  entityName?: string | null;
+  resourceId?: GUID | null;
 }
 
 export interface MyProfileReviewSectionDto {

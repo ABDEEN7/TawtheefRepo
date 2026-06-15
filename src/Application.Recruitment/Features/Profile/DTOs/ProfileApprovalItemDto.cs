@@ -11,6 +11,7 @@ public record ProfileApprovalItemDto
     public string? Note { get; init; }
     public Guid? ResourceId { get; init; }
     public string? ResourceUrl { get; set; }
+    public string? FieldPath { get; init; }
     public Guid? EntityId { get; init; }
     public string? EntityName { get; init; }
     public string? OldValue { get; init; }

@@ -70,6 +70,9 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
             await reviewRepo.AddAsync(NewSectionReviewItem(profile, sec, snapshot), ct);
         }
 
+        foreach (var item in BuildMixedSectionDataItems(profile))
+            await reviewRepo.AddAsync(item, ct);
+
         foreach (var item in BuildProfileFiles(profile))
             await reviewRepo.AddAsync(item, ct);
 
@@ -87,6 +90,22 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);
+    }
+
+    private static IEnumerable<ReviewItem> BuildMixedSectionDataItems(UserProfile profile)
+    {
+        foreach (var section in new[] { ProfileSection.Prerequisites, ProfileSection.Personal, ProfileSection.Contact })
+        {
+            var item = ReviewItem.Create(
+                profile.Id,
+                section,
+                ReviewTargetType.Field,
+                ProfileReviewConstants.FieldPaths.SectionData,
+                currentValue: ReviewItemSnapshotBuilder.GetSectionDataSnapshot(profile, section));
+
+            Normalize(item);
+            yield return item;
+        }
     }
 
     // -----------------------
@@ -232,19 +251,23 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
     {
         if (profile.Qualifications is not null)
             foreach (var q in profile.Qualifications)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id, Snapshot(q)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Qualifications, q.Id, new ReviewItem())));
 
         if (profile.Experiences is not null)
             foreach (var e in profile.Experiences)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id, Snapshot(e)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Experience, e.Id, new ReviewItem())));
 
         if (profile.TrainingCourses is not null)
             foreach (var t in profile.TrainingCourses)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id, Snapshot(t)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.TrainingCourses, t.Id, new ReviewItem())));
 
         if (profile.Achievements is not null)
             foreach (var a in profile.Achievements)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id, Snapshot(a)));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.CertificatesAndAwards, a.Id, new ReviewItem())));
     }
 
     private static ReviewItem NewRow(
@@ -252,7 +275,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         ProfileSection section,
         string entityName,
         Guid entityId,
-        object snapshot)
+        object? snapshot)
     {
         var item = ReviewItem.Create(
             profileId,
@@ -276,55 +299,5 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         item.ReviewedById = null;
         item.ReviewerNote = null;
     }
-
-    // -----------------------
-    // Hash snapshots (rows)
-    // -----------------------
-    private static object Snapshot(Qualification q) => new
-    {
-        q.DegreeId,
-        q.CountryId,
-        q.MajorId,
-        q.SubMajorId,
-        q.UniversityId,
-        q.GraduationYear,
-        q.StudyTypeId,
-        q.GPA,
-        q.RatingId
-    };
-
-    private static object Snapshot(Experience e) => new
-    {
-        e.EmployerName,
-        e.JobTitle,
-        e.CountryId,
-        e.StartDate,
-        e.EndDate,
-        e.Description,
-        e.SpecializationRelation,
-        e.QualificationId
-    };
-
-    private static object Snapshot(TrainingCourse t) => new
-    {
-        t.Title,
-        t.Provider,
-        t.CountryId,
-        t.StartDate,
-        t.EndDate,
-        t.Description,
-        t.SpecializationRelation
-    };
-
-    private static object Snapshot(Achievement a) => new
-    {
-        a.AchievementTypeId,
-        a.Title,
-        a.IssuingAuthority,
-        a.CountryId,
-        a.IssueDate,
-        a.Description,
-        a.RelatedToSpecialization
-    };
 }
 

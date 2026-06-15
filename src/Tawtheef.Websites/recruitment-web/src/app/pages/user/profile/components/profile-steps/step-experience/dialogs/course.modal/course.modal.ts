@@ -51,6 +51,12 @@ export class CourseModal implements OnInit {
   private initialAttachmentId: string | null = null;
   today = new Date();
 
+  get submitLabelKey(): string {
+    return this.config.data?.initialValue
+      ? 'wizard.buttons.saveChanges'
+      : 'wizard.courses.add';
+  }
+
   private readonly textPattern = /^[\p{L}\p{N}\s]*$/u;
   private readonly textAreaPattern = /^[\p{L}\p{N}\s\-',.،]*$/u;
 

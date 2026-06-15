@@ -30,8 +30,18 @@ public sealed class ReviseProfileAchievementDeleteHandler(IUnitOfWork uow)
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotFound);
 
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+            uow,
+            profile.Id,
+            ProfileSection.CertificatesAndAwards,
+            cmd.Id,
+            ct);
+
+        if (!canDelete)
+            return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.CertificatesAndAwards, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

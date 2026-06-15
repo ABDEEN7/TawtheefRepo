@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AchievementDto, FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -32,6 +32,7 @@ export class ProfileAchievementsSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
@@ -57,13 +58,7 @@ export class ProfileAchievementsSectionComponent {
 
   protected noteForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!achievement) return null;
-    const rowNote = achievement.id
-      ? this.notes.find(
-          note =>
-            note.targetType === ReviewTargetTypeEnum.Row &&
-            note.entityId?.toLowerCase() === achievement.id.toLowerCase()
-        ) ?? null
-      : null;
+    const rowNote = this.rowNoteForRaw(achievement);
 
     const attachmentNote = achievement.attachment?.resourceId
       ? this.notes.find(
@@ -74,6 +69,64 @@ export class ProfileAchievementsSectionComponent {
       : null;
 
     return rowNote ?? attachmentNote ?? null;
+  }
+
+  protected canEditRaw(achievement: AchievementDto | null | undefined): boolean {
+    return !!this.noteForRaw(achievement) || !!this.editableItemForRaw(achievement);
+  }
+
+  protected canDeleteRaw(achievement: AchievementDto | null | undefined): boolean {
+    const rowNote = this.rowNoteForRaw(achievement);
+    const rowItem = this.editableRowItemForRaw(achievement);
+    return !!achievement?.id && (!!rowNote || !!rowItem);
+  }
+
+  protected deleteAchievement(achievement: AchievementDto): void {
+    if (!achievement.id) return;
+    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+
+    this.profileService.deleteAchievement(achievement.id).subscribe({
+      next: () => {
+        this.notify.success(this.translate.instant('profileView.notifications.deleted'));
+        this.refresh.emit();
+      },
+      error: () => {
+        this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
+      },
+    });
+  }
+
+  private rowNoteForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!achievement?.id) return null;
+    return this.notes.find(
+      note =>
+        note.targetType === ReviewTargetTypeEnum.Row &&
+        note.entityId?.toLowerCase() === achievement.id?.toLowerCase()
+    ) ?? null;
+  }
+
+  private editableItemForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!achievement) return null;
+    const rowItem = this.editableRowItemForRaw(achievement);
+
+    const attachmentItem = achievement.attachment?.resourceId
+      ? this.editableItems.find(
+          item =>
+            item.targetType === ReviewTargetTypeEnum.Attachment &&
+            item.resourceId?.toLowerCase() === achievement.attachment?.resourceId.toLowerCase()
+        ) ?? null
+      : null;
+
+    return rowItem ?? attachmentItem ?? null;
+  }
+
+  private editableRowItemForRaw(achievement: AchievementDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!achievement?.id) return null;
+    return this.editableItems.find(
+      item =>
+        item.targetType === ReviewTargetTypeEnum.Row &&
+        item.entityId?.toLowerCase() === achievement.id?.toLowerCase()
+    ) ?? null;
   }
 
   protected addAchievement() {
@@ -96,9 +149,12 @@ export class ProfileAchievementsSectionComponent {
     });
   }
 
-  protected editAchievement(achievement: AchievementDto) {const achievementType =
+  protected editAchievement(achievement: AchievementDto) {
+    const achievementType =
     this.lookups.achievementTypes().find(type => type.id === achievement.achievementTypeId) ?? null;
     const initialValue = {
+      id: achievement.id,
+      achievementTypeId: achievement.achievementTypeId,
       achievementType,
       title: achievement.title ?? '',
       issuingAuthority: achievement.issuingAuthority ?? '',
@@ -132,7 +188,13 @@ export class ProfileAchievementsSectionComponent {
       })
       ?.onClose.subscribe((result: Achievement | null) => {
       if (!result) return;
-      this.profileService.saveAchievementsSection([result]).subscribe({
+      const payload = {
+        ...result,
+        id: achievement.id,
+        attachmentId: result.attachmentId ?? achievement.attachment?.resourceId ?? null,
+      } as Achievement;
+
+      this.profileService.saveAchievementsSection([payload]).subscribe({
         next: () => {
           this.notify.success(this.translate.instant('profileView.notifications.saved'));
           this.refresh.emit();

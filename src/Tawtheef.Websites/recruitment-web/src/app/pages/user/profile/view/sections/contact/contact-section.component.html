@@ -170,7 +170,7 @@
                           aria-hidden="true"></i>
                       }
                     </a>
-                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote">
+                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="canReplaceFile(att.file)">
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-secondary rounded-pill"

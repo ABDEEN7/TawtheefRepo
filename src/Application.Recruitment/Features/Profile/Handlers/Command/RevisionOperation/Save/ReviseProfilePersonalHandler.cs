@@ -106,7 +106,7 @@ public sealed class ReviseProfilePersonalHandler(
                     SponsorTypeId = r.SponsorTypeId!.Value,
                     SponsorName = r.SponsorEmployerName,
                     SponsorNumber = r.SponsorEmployerNumber,
-                    QIDExpiry = r.SponsorQidExpiry!.Value,
+                    QIDExpiry = r.SponsorQidExpiry,
                     SponsorCardId = idResult.Value,
                 };
             }
@@ -115,12 +115,12 @@ public sealed class ReviseProfilePersonalHandler(
                 profile.SponsorProfile.SponsorTypeId = r.SponsorTypeId!.Value;
                 profile.SponsorProfile.SponsorName = r.SponsorEmployerName;
                 profile.SponsorProfile.SponsorNumber = r.SponsorEmployerNumber;
-                profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry!.Value;
+                profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
         }
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
+        await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Personal, ct);
         var result = await uow.SaveChangesAsync(ct);
         return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);
 

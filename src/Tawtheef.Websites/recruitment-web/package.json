@@ -35,6 +35,7 @@
     "@angular/localize": "^20.3.16",
     "@angular/platform-browser": "^20.3.16",
     "@angular/router": "^20.3.16",
+    "@angular/animations": "^20.3.16",
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ng-bootstrap/ng-bootstrap": "19.0.1",

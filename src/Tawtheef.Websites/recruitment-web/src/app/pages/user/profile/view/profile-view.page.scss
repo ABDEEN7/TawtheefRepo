@@ -120,6 +120,104 @@
 }
 
 /* =========================
+   Resubmit CTA
+========================= */
+
+.resubmit-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba($brand, .28);
+  border-inline-start: 5px solid $brand;
+  border-radius: 12px;
+  padding: 1rem;
+  background:
+    linear-gradient(90deg, rgba($brand, .1), rgba(255, 255, 255, .96) 46%),
+    #fff;
+  box-shadow: 0 10px 26px rgba(17, 24, 39, .08);
+}
+
+.resubmit-cta__content {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  min-width: 0;
+}
+
+.resubmit-cta__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: rgba($brand, .12);
+  color: $brand;
+  border: 1px solid rgba($brand, .2);
+  font-size: 1.15rem;
+}
+
+.resubmit-cta__copy {
+  min-width: 0;
+}
+
+.resubmit-cta__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: .15rem .55rem;
+  margin-bottom: .25rem;
+  background: #e6f5eb;
+  color: $ok;
+  border: 1px solid #c5e7cf;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.resubmit-cta__title {
+  color: #111827;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.resubmit-cta__subtitle {
+  color: $muted;
+  font-size: .9rem;
+  line-height: 1.6;
+  margin-top: .1rem;
+}
+
+.resubmit-cta__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  white-space: nowrap;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba($brand, .22);
+
+  &:disabled {
+    box-shadow: none;
+    opacity: .75;
+  }
+}
+
+@media (max-width: 768px) {
+  .resubmit-cta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .resubmit-cta__button {
+    width: 100%;
+  }
+}
+
+/* =========================
    Status Chips
 ========================= */
 
@@ -228,6 +326,140 @@
   gap: .5rem;
   font-weight: 800;
   color: $brand;
+}
+
+/* =========================
+   Review Notes
+========================= */
+
+.review-panel {
+  border: 1px solid rgba(17, 24, 39, .08);
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+
+  &--action {
+    border-inline-start: 4px solid #d97706;
+    background: linear-gradient(90deg, rgba(217, 119, 6, .07), #fff 38%);
+  }
+
+  &--done {
+    border-inline-start: 4px solid $ok;
+    background: linear-gradient(90deg, rgba($ok, .08), #fff 38%);
+  }
+}
+
+.review-panel__header {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  margin-bottom: .9rem;
+}
+
+.review-panel__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: #9a6b00;
+  background: #fff5d6;
+  border: 1px solid #ffe3a6;
+
+  .review-panel--done & {
+    color: $ok;
+    background: rgba($ok, .08);
+    border-color: rgba($ok, .24);
+  }
+}
+
+.review-panel__heading {
+  min-width: 0;
+}
+
+.review-panel__title {
+  font-weight: 800;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.review-panel__subtitle {
+  color: $muted;
+  font-size: .9rem;
+  margin-top: .15rem;
+}
+
+.review-note-group {
+  margin-top: .75rem;
+}
+
+.review-note-group__label,
+.review-context__label {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: #374151;
+  font-size: .86rem;
+  font-weight: 800;
+  margin-bottom: .55rem;
+}
+
+.review-note-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: .75rem;
+}
+
+.review-note {
+  border: 1px solid rgba(217, 119, 6, .22);
+  border-radius: 10px;
+  padding: .8rem;
+  background: rgba(255, 255, 255, .88);
+}
+
+.review-note__meta {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.review-note__target {
+  font-weight: 800;
+  color: #111827;
+}
+
+.review-note__body {
+  margin: .55rem 0 0;
+  color: #4b5563;
+  line-height: 1.65;
+  font-size: .92rem;
+}
+
+.review-context {
+  margin-top: .9rem;
+  border: 1px dashed rgba(17, 24, 39, .16);
+  border-radius: 10px;
+  padding: .75rem;
+  background: rgba(249, 250, 251, .78);
+}
+
+.review-context__items {
+  display: grid;
+  gap: .45rem;
+}
+
+.review-context__item {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  flex-wrap: wrap;
+}
+
+.review-context__text {
+  color: #4b5563;
+  line-height: 1.6;
 }
 
 .muted {
