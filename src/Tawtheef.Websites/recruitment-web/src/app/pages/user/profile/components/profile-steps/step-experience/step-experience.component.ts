@@ -170,6 +170,8 @@ export class StepExperienceComponent implements OnInit {
   }
 
   onNext() {
+    if (this.saving()) return;
+
     if (!this.step().valid) {
       this.notify.error(
         `${this.translate.instant('wizard.validationErrorTitle')}: ${this.step().errors

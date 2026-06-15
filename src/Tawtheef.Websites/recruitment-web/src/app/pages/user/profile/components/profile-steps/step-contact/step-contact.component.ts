@@ -657,14 +657,21 @@ export class StepContactComponent implements OnInit, OnDestroy {
     input.value = '';
   }
   async onNext(): Promise<void> {
+    if (this.savingContact()) return;
+
     if (!this.step().valid) {
       this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
 
+    this.savingContact.set(true);
+
     // If Google provider: update phone before saving contact section
     const ok = await this.updatePhoneIfGoogleProvider();
-    if (!ok) return;
+    if (!ok) {
+      this.savingContact.set(false);
+      return;
+    }
 
     const s = this.ds.state();
     const dto = mapContactSection(s);
@@ -676,14 +683,15 @@ export class StepContactComponent implements OnInit, OnDestroy {
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
+        this.savingContact.set(false);
         return;
       }
       this.notificationService.info(this.translate.instant('profileView.notifications.noChanges'));
+      this.savingContact.set(false);
       this.next.emit();
       return;
     }
 
-    this.savingContact.set(true);
     this.profileService
       .saveContactSection(dto, { nationalAddressFile: fileToUpload(this.naLocalFile) })
       .pipe(finalize(() => (this.savingContact.set(false))))

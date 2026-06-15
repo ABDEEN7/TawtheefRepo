@@ -221,6 +221,8 @@ export class StepAttachmentsComponent implements OnInit {
   }
 
   onNext(): void {
+    if (this.saving()) return;
+
     this.rows.controls.forEach(g => {
       const grp = g as FormGroup;
       if (grp.enabled) {
