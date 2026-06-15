@@ -22,7 +22,7 @@
           <th>{{ 'profileOverview.fields.graduationYear' | translate }}</th>
           <th>{{ 'profileOverview.fields.studyType' | translate }}</th>
           <th>{{ 'profileOverview.table.attachment' | translate }}</th>
-          <th *ngIf="notes?.length">{{ 'profileOverview.table.actions' | translate }}</th>
+      <th *ngIf="notes?.length || editableItems?.length">{{ 'profileOverview.table.actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -79,10 +79,25 @@
       <span class="text-muted">{{ 'common.none' | translate }}</span>
       }
     </td>
-    <td *ngIf="noteRecord">
+    <td *ngIf="notes?.length || editableItems?.length">
+      <div class="d-flex align-items-center gap-2">
+      @if (canEditRaw(q)) {
       <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="editQualification(q)">
         <i class="pi pi-pencil" aria-hidden="true"></i>
       </button>
+      }
+      @if (canDeleteRaw(q)) {
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger rounded-pill"
+        [attr.aria-label]="'profileView.actions.deleteItem' | translate"
+        [pTooltip]="'profileView.actions.deleteItem' | translate"
+        tooltipPosition="top"
+        (click)="deleteQualification(q)">
+        <i class="pi pi-trash" aria-hidden="true"></i>
+      </button>
+      }
+      </div>
     </td>
   </tr>
 </ng-template>

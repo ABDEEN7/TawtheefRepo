@@ -182,7 +182,7 @@
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <label class="text-light w-100 fs-16">
-                {{ 'profileOverview.fields.sponsorEmployerName' | translate }}
+                {{ sponsorLabelKey('name') | translate }}
               </label>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerName')">
                 <span class="pill info">
@@ -202,7 +202,7 @@
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
               <div class="text-light w-100 fs-16">
-                {{ 'profileOverview.fields.sponsorEmployerNumber' | translate }}
+                {{ sponsorLabelKey('number') | translate }}
               </div>
               <div class="align-self-center" *ngIf="fieldUnderReview('sponsorEmployerNumber')">
                 <span class="pill info">
@@ -217,7 +217,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection">
+      <div class="col-12 col-lg-3" *ngIf="visibility?.showSponsorSection && showSponsorQidExpiry()">
         <div class="card h-100 card-table">
           <div class="card-body py-3 px-3">
             <div class="d-flex align-items-center justify-content-between gap-3">
@@ -293,7 +293,7 @@
                           aria-hidden="true"></i>
                       }
                     </a>
-                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote">
+                    <div class="d-flex align-items-center gap-2 mt-2" *ngIf="canReplaceFile(att.file)">
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-secondary rounded-pill"

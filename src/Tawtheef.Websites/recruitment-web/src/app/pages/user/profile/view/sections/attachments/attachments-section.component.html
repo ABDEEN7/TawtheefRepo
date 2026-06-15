@@ -43,10 +43,20 @@
                 tooltipPosition="top" aria-hidden="true"></i>
               }
             </a>
-            <div class="d-flex align-items-center gap-2 mt-2" *ngIf="fileNote">
-              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
+            <div class="d-flex align-items-center gap-2 mt-2" *ngIf="canReplaceFile(att.file) || canDeleteAttachment(att)">
+              <button *ngIf="canReplaceFile(att.file)" type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
                 (click)="replaceInput.click()">
                 {{ 'profileView.actions.replaceFile' | translate }}
+              </button>
+              <button
+                *ngIf="canDeleteAttachment(att)"
+                type="button"
+                class="btn btn-sm btn-outline-danger rounded-pill"
+                [attr.aria-label]="'profileView.actions.deleteItem' | translate"
+                [pTooltip]="'profileView.actions.deleteItem' | translate"
+                tooltipPosition="top"
+                (click)="deleteAttachment(att)">
+                <i class="pi pi-trash" aria-hidden="true"></i>
               </button>
               <input #replaceInput type="file" class="d-none" accept=".pdf,.png,.jpeg,.jpg,.webp"
                 (change)="replaceAttachment(att, $event)" />

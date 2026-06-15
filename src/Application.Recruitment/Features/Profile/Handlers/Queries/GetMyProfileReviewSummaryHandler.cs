@@ -27,11 +27,33 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         var items = await uow.GetEntityRepository<ReviewItem>()
             .DbSet.AsNoTracking()
-            .Where(x => x.UserProfileId == profile.Id && x.Status != ReviewStatus.Solved)
+            .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        var visibleItems = items
+            .Where(x => x.Status != ReviewStatus.Solved)
+            .ToList();
+
         var changed = items.Where(IsUserChanged).ToList();
-        var changedSections = changed
+        var correctedItems = items
+            .Where(IsUserCorrectedActionableItem)
+            .OrderBy(x => (int)x.Section)
+            .ThenBy(x => (int)x.TargetType)
+            .ThenBy(x => x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? string.Empty)
+            .Select(x => new MyProfileReviewChangedItemDto
+            {
+                ReviewItemId = x.Id,
+                Section = x.Section,
+                TargetType = x.TargetType,
+                Title = x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? "?",
+                Note = x.ReviewerNote,
+                FieldPath = x.FieldPath,
+                EntityId = x.EntityId,
+                EntityName = x.EntityName,
+                ResourceId = x.ResourceId
+            })
+            .ToList();
+        var displayChangedSections = correctedItems
             .Select(x => x.Section)
             .Distinct()
             .OrderBy(x => (int)x)
@@ -39,7 +61,23 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         var lastUserChangeAt = items
             .Where(i => i.IsOutdated)
-            .Max(i => i.UpdatedDate);
+            .Select(i => i.UpdatedDate)
+            .Where(d => d.HasValue)
+            .DefaultIfEmpty()
+            .Max();
+        if (lastUserChangeAt is null)
+        {
+            lastUserChangeAt = items
+                .Where(i => i.Status == ReviewStatus.Solved)
+                .Select(i => i.UpdatedDate)
+                .Where(d => d.HasValue)
+                .DefaultIfEmpty()
+                .Max();
+        }
+
+        var canResubmit = profile.Status == UserProfileStatus.RequiresUpdate &&
+                          changed.Count > 0 &&
+                          !items.Any(IsOutstandingActionableCorrection);
         
         if (profile.Status is not UserProfileStatus.InCreation && 
             profile.Status is not UserProfileStatus.RequiresUpdate &&
@@ -49,13 +87,14 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                 UserProfileId = profile.Id,
                 ProfileStatus = profile.Status,
                 HasSavedChanges = changed.Count > 0,
-                ChangedSections = changedSections,
+                ChangedSections = displayChangedSections,
+                ChangedItems = correctedItems,
                 LastUserChangeAtUtc = lastUserChangeAt,
-                CanResubmit = profile.Status == UserProfileStatus.RequiresUpdate && changed.Count > 0
+                CanResubmit = canResubmit
             });
         
 
-        var notes = items
+        var notes = visibleItems
             .Where(IsReviewerNote)
             .Select(x => new MyProfileReviewNoteDto {
                 ReviewItemId = x.Id,
@@ -75,15 +114,17 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .GroupBy(n => items.First(i => i.Id == n.ReviewItemId).Section)
             .ToDictionary(g => g.Key, g => g.ToList());
         
-        var lastReviewerAt = items
+        var lastReviewerAt = visibleItems
             .Where(i => i.ReviewedAtUtc != null)
-            .Max(i => i.ReviewedAtUtc);
+            .Select(i => i.ReviewedAtUtc)
+            .DefaultIfEmpty()
+            .Max();
 
         var sections = Enum.GetValues<ProfileSection>()
             .Select(sec => {
                 var secNotes = notesBySection.TryGetValue(sec, out var list) ? list : [];
 
-                var secPendingCount = items.Count(i => i.Section == sec && i.IsOutdated);
+                var secPendingCount = visibleItems.Count(i => i.Section == sec && i.IsOutdated);
                 return new MyProfileReviewSectionDto
                 {
                     Section = sec,
@@ -103,10 +144,11 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             Sections = sections,
             TotalNotes = notes.Count,
             HasSavedChanges = changed.Count > 0,
-            ChangedSections = changedSections,
+            ChangedSections = displayChangedSections,
+            ChangedItems = correctedItems,
             LastReviewerActionAtUtc = lastReviewerAt,
             LastUserChangeAtUtc = lastUserChangeAt,
-            CanResubmit = profile.Status == UserProfileStatus.RequiresUpdate && changed.Count > 0
+            CanResubmit = canResubmit
         };
 
         return Result.Ok(dto);
@@ -114,7 +156,16 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
         bool IsReviewerNote(ReviewItem x) =>
             x is { ReviewedAtUtc: not null, Status: ReviewStatus.NeedsCorrection or ReviewStatus.Rejected };
 
-        bool IsUserChanged(ReviewItem x) => x.IsOutdated;
+        bool IsUserChanged(ReviewItem x) => x.IsOutdated || x.Status == ReviewStatus.Solved;
+
+        bool IsUserCorrectedActionableItem(ReviewItem x) =>
+            x.Status == ReviewStatus.Solved &&
+            (x.TargetType != ReviewTargetType.Section ||
+             x.Section is ProfileSection.Skills or ProfileSection.Languages);
+
+        bool IsOutstandingActionableCorrection(ReviewItem x) =>
+            x.TargetType != ReviewTargetType.Section &&
+            x.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected;
     }
 }
 

@@ -43,6 +43,7 @@
   "wizard.buttons.prev": "السابق",
   "wizard.buttons.next": "التالي",
   "wizard.buttons.save": "حفظ",
+  "wizard.buttons.saveChanges": "حفظ التعديل",
   "wizard.buttons.submit": "إرسال",
   "wizard.buttons.finalSave": "حفظ نهائي",
   "wizard.buttons.add": "إضافة",

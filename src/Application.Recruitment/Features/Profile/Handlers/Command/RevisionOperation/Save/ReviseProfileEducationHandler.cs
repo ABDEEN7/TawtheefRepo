@@ -144,7 +144,16 @@ public sealed class ReviseProfileEducationHandler(
             }
         }
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Qualifications, ct);
+        foreach (var dto in degrees)
+        {
+            await ReviewItemSaveHelper.MarkRowSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.Qualifications,
+                dto.Id,
+                ct);
+        }
+
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

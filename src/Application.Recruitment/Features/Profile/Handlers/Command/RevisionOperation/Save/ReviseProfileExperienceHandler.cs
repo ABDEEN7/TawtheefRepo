@@ -187,10 +187,26 @@ public sealed class ReviseProfileExperienceHandler(
             }
         }
 
-        if(experiences is {Count: > 0})
-            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Experience, ct);
-        if(trainings is {Count: > 0})
-            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.TrainingCourses, ct);
+        foreach (var dto in experiences)
+        {
+            await ReviewItemSaveHelper.MarkRowSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.Experience,
+                dto.Id,
+                ct);
+        }
+
+        foreach (var dto in trainings)
+        {
+            await ReviewItemSaveHelper.MarkRowSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.TrainingCourses,
+                dto.Id,
+                ct);
+        }
+
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

@@ -134,6 +134,7 @@ public class ErrorsCodes
     public const string InvalidDegreeStudyTypeId = "INVALID_DEGREE_STUDY_TYPE_ID";
     public const string InvalidDegreeSubMajorId = "INVALID_DEGREE_SUB_MAJOR_ID";
     public const string DegreeLinkedToExperience = "DEGREE_LINKED_TO_EXPERIENCE";
+    public const string AtLeastOneQualificationRequired = "AT_LEAST_ONE_QUALIFICATION_REQUIRED";
     public const string InvalidExperienceQualification = "INVALID_EXPERIENCE_QUALIFICATION";
     public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
     public const string NoChangesMade = "NO_CHANGES_MADE";

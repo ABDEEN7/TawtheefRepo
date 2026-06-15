@@ -4,6 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import {
   MyProfileReviewNoteDto,
+  MyProfileReviewChangedItemDto,
   ProfileChangeActionEnum,
   ProfileSectionEnum,
   ReviewTargetTypeEnum
@@ -16,6 +17,7 @@ import { Attachment } from '../../../wizard-profile/models/attachment.model';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { ProfileOverviewVisibility } from '../../services/profile-overview.visibility';
+import { SponsorType } from '../../../../../../core/enums/lookups.enum';
 
 export function formatChanges(
   changes: FieldChange[],
@@ -43,6 +45,7 @@ export class ProfilePersonalSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() canReplaceAttachment!: boolean;
   @Input() visibility: ProfileOverviewVisibility | null = null;
@@ -55,12 +58,41 @@ export class ProfilePersonalSectionComponent {
     const showSponsor = this.visibility?.showSponsorSection ?? true;
     return [
       showSponsor
-        ? { key: 'sponsorCard', titleKey: 'profileOverview.attachments.sponsorCard', file: p.sponsorCard ?? null }
+        ? { key: 'sponsorCard', titleKey: this.sponsorLabelKey('card'), file: p.sponsorCard ?? null }
         : null
     ]
       .filter((item): item is { key: string; titleKey: string; file: FileRefDto | null } => !!item)
       .filter(item => item.file);
   });
+
+  protected showSponsorQidExpiry(): boolean {
+    return !this.isCompanySponsor();
+  }
+
+  protected sponsorLabelKey(field: 'name' | 'number' | 'card'): string {
+    const type = this.sponsorTypeKey();
+    if (!type) {
+      const fallback: Record<typeof field, string> = {
+        name: 'profileOverview.fields.sponsorEmployerName',
+        number: 'profileOverview.fields.sponsorEmployerNumber',
+        card: 'profileOverview.attachments.sponsorCard'
+      };
+      return fallback[field];
+    }
+
+    return `profileOverview.fields.sponsor.${type}.${field}`;
+  }
+
+  private sponsorTypeKey(): 'individual' | 'company' | null {
+    const backendName = this.profile?.sponsorType?.backendName;
+    if (backendName === SponsorType.Company) return 'company';
+    if (backendName === SponsorType.Individual) return 'individual';
+    return null;
+  }
+
+  private isCompanySponsor(): boolean {
+    return this.sponsorTypeKey() === 'company';
+  }
 
   protected fieldUnderReview(fieldKey: string) {
     return this.changesRequest.filter(c => c.field.toLowerCase() === fieldKey.toLowerCase()).length > 0;
@@ -73,6 +105,21 @@ export class ProfilePersonalSectionComponent {
         note =>
           note.targetType === ReviewTargetTypeEnum.Attachment &&
           note.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
+  }
+
+  protected canReplaceFile(file: FileRefDto | null | undefined): boolean {
+    return !!this.noteForFile(file) || !!this.editableItemForFile(file);
+  }
+
+  private editableItemForFile(file: FileRefDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.editableItems.find(
+        item =>
+          item.targetType === ReviewTargetTypeEnum.Attachment &&
+          item.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
       ) ?? null
     );
   }
@@ -94,8 +141,8 @@ export class ProfilePersonalSectionComponent {
       attachmentId: att.file?.resourceId,
       title: file.name
     };
-    const note = this.noteForFile(att.file);
-    if (note) payload.reviewItemId = note.reviewItemId;
+    const reviewItem = this.noteForFile(att.file) ?? this.editableItemForFile(att.file);
+    if (reviewItem) payload.reviewItemId = reviewItem.reviewItemId;
     const info: any = {}
     const files: any = {}
     switch (att.key) {

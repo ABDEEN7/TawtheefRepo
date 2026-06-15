@@ -4,7 +4,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonDirective } from 'primeng/button';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
@@ -28,6 +28,7 @@ export class ProfilePrerequisitesSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Output() edit = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
   @Input() canReplaceAttachment!: boolean;
@@ -66,6 +67,21 @@ export class ProfilePrerequisitesSectionComponent {
       ) ?? null
     );
   }
+
+  protected canReplaceFile(file: FileRefDto | null | undefined): boolean {
+    return !!this.noteForFile(file) || !!this.editableItemForFile(file);
+  }
+
+  private editableItemForFile(file: FileRefDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.editableItems.find(
+        item =>
+          item.targetType === ReviewTargetTypeEnum.Attachment &&
+          item.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
+  }
   open(file: FileRefDto | null | undefined) {
     if (!file) return;
     this.fileUtils.previewUrl(file.url ?? '');
@@ -84,8 +100,8 @@ export class ProfilePrerequisitesSectionComponent {
       attachmentId: att.file?.resourceId,
       title: file.name
     };
-    const note = this.noteForFile(att.file);
-    if (note) payload.reviewItemId = note.reviewItemId;
+    const reviewItem = this.noteForFile(att.file) ?? this.editableItemForFile(att.file);
+    if (reviewItem) payload.reviewItemId = reviewItem.reviewItemId;
 
     const info: any = {}
     const files: any = {}

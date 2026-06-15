@@ -80,6 +80,39 @@
           </div>
         </div>
 
+    <div class="card-body mt-3" *ngIf="!summaryLoading() && canResubmit()">
+      <div class="resubmit-cta">
+        <div class="resubmit-cta__content">
+          <div class="resubmit-cta__icon">
+            <i class="pi pi-send" aria-hidden="true"></i>
+          </div>
+          <div class="resubmit-cta__copy">
+            <div class="resubmit-cta__eyebrow">{{ 'profileOverview.resubmit.readyLabel' | translate }}</div>
+            <div class="resubmit-cta__title">{{ 'profileOverview.resubmit.title' | translate }}</div>
+            <div class="resubmit-cta__subtitle">
+              {{ 'profileOverview.resubmit.subtitle' | translate }}
+              @if (changedSectionLabels().length) {
+              <span>{{ changedSectionLabels().join('، ') }}</span>
+              }
+            </div>
+          </div>
+        </div>
+        <button
+          pButton
+          type="button"
+          class="btn btn-primary resubmit-cta__button"
+          [disabled]="resubmitting()"
+          (click)="resubmitProfile()"
+        >
+          @if (resubmitting()) {
+          <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
+          } @else {
+          <i class="pi pi-send" aria-hidden="true"></i>
+          }
+          <span>{{ 'profileOverview.resubmit.action' | translate }}</span>
+        </button>
+        </div>
+    </div>
         <div class="row ">
           <div class="col-12 col-md-6">
             <div class="card card-table mb-3 lift-on-hover">
@@ -117,6 +150,7 @@
             </div>
           </div>
         </div>
+        
         <!-- Section tiles -->
         <div class="card card-table pb-0">
           <div class="card-body pb-0">
@@ -181,33 +215,80 @@
         <span>{{ 'common.loading' | translate }}</span>
       </div>
     </div>
-    <div class="card-body mt-3" *ngIf="!summaryLoading() && (activeSectionReviewNotes()?.length || 0) > 0">
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <div class="hr-title">
-          <i class="hgi hgi-stroke hgi-notebook-02"></i>
-          {{ 'profileView.hrNotes.title' | translate }}
-        </div>
-      </div>
-
-      <div class="mini-card" style="min-height:140px">
-        <div class="d-flex gap-3">
-          <div class="text-start">
-            <ol class="mb-0 small" style="list-style-type: none;">
-              @for (note of activeSectionReviewNotes(); track note.reviewItemId) {
-              <li class="mb-2">
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                  <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
-                    {{ noteStatusLabelKey(note.status) | translate }}
-                  </span>
-                </div>
-                <div class="text-muted" *ngIf="note.note">{{ note.note }}</div>
-              </li>
-              }
-            </ol>
+    @if (!summaryLoading() && (activeSectionReviewNotes().length > 0 || activeSectionTargetNotes().length > 0 || activeSectionResolvedCorrections())) {
+    <div class="card-body mt-3">
+      <section
+        class="review-panel"
+        [ngClass]="activeSectionResolvedCorrections() ? 'review-panel--done' : 'review-panel--action'"
+      >
+        <div class="review-panel__header">
+          <div class="review-panel__icon">
+            <i
+              class="hgi hgi-stroke"
+              [ngClass]="activeSectionResolvedCorrections() ? 'hgi-checkmark-circle-02' : 'hgi-alert-02'"
+            ></i>
+          </div>
+          <div class="review-panel__heading">
+            <div class="review-panel__title">
+              {{
+                activeSectionResolvedCorrections()
+                  ? ('profileOverview.review.sectionCorrectionsSaved' | translate)
+                  : ('profileOverview.review.actionTitle' | translate)
+              }}
+            </div>
+            <div class="review-panel__subtitle">
+              {{
+                activeSectionResolvedCorrections()
+                  ? ('profileOverview.review.sectionCorrectionsSavedHint' | translate)
+                  : ('profileOverview.review.actionSubtitle' | translate)
+              }}
+            </div>
           </div>
         </div>
-      </div>
+
+        @if (activeSectionTargetNotes().length > 0) {
+        <div class="review-note-group">
+          <div class="review-note-group__label">
+            <i class="hgi hgi-stroke hgi-task-01"></i>
+            {{ 'profileOverview.review.targetNotesTitle' | translate }}
+          </div>
+          <div class="review-note-list">
+            @for (note of activeSectionTargetNotes(); track note.reviewItemId) {
+            <article class="review-note review-note--target">
+              <div class="review-note__meta">
+                <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
+                  {{ noteStatusLabelKey(note.status) | translate }}
+                </span>
+                <span class="review-note__target">{{ note.title }}</span>
+              </div>
+              <p class="review-note__body" *ngIf="note.note">{{ note.note }}</p>
+            </article>
+            }
+          </div>
+        </div>
+        }
+
+        @if (activeSectionReviewNotes().length > 0) {
+        <div class="review-context">
+          <div class="review-context__label">
+            <i class="hgi hgi-stroke hgi-notebook-02"></i>
+            {{ 'profileOverview.review.generalNoteTitle' | translate }}
+          </div>
+          <div class="review-context__items">
+            @for (note of activeSectionReviewNotes(); track note.reviewItemId) {
+            <div class="review-context__item">
+              <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
+                {{ noteStatusLabelKey(note.status) | translate }}
+              </span>
+              <span class="review-context__text">{{ note.note || ('profileOverview.review.noNote' | translate) }}</span>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </section>
     </div>
+    }
     <div class="card-body">
       @if(expanded()){
       @let active = expanded()!;
@@ -233,6 +314,7 @@
             [profile]="sectionValue(active)" [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Prerequisites)"
             [changesRequest]="changes(ProfileSectionEnum.Prerequisites)" [notes]="activeSectionNotes()"
+            [editableItems]="editableItemsForSection(ProfileSectionEnum.Prerequisites)"
             (edit)="openEditDialog(ProfileSectionEnum.Prerequisites)"
             (refresh)="reloadSection(ProfileSectionEnum.Prerequisites)">
           </app-profile-prerequisites-section>
@@ -241,6 +323,7 @@
             [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Personal)"
             [changesRequest]="changes(ProfileSectionEnum.Personal)" [notes]="activeSectionNotes()"
+            [editableItems]="editableItemsForSection(ProfileSectionEnum.Personal)"
             (edit)="openEditDialog(ProfileSectionEnum.Personal)" (refresh)="reloadSection(ProfileSectionEnum.Personal)">
           </app-profile-personal-section>
 
@@ -248,19 +331,22 @@
             [visibility]="visibility()" [canReplaceAttachment]="canReplaceAttachment"
             [canEdit]="canEditSections(ProfileSectionEnum.Contact)"
             [changesRequest]="changes(ProfileSectionEnum.Contact)" [notes]="activeSectionNotes()"
+            [editableItems]="editableItemsForSection(ProfileSectionEnum.Contact)"
             (edit)="openEditDialog(ProfileSectionEnum.Contact)" (refresh)="reloadSection(ProfileSectionEnum.Contact)">
           </app-profile-contact-section>
 
           <app-profile-qualifications-section *ngSwitchCase="ProfileSectionEnum.Qualifications"
             [profile]="sectionValue(active)" [canReplaceAttachment]="canReplaceAttachment"
             [canAddAttachment]="canAddAttachments" [changesRequest]="changes(ProfileSectionEnum.Qualifications)"
-            [notes]="activeSectionNotes()" (edit)="openEditDialog(ProfileSectionEnum.Qualifications)"
+            [notes]="activeSectionNotes()" [editableItems]="editableItemsForSection(ProfileSectionEnum.Qualifications)"
+            (edit)="openEditDialog(ProfileSectionEnum.Qualifications)"
             (refresh)="reloadSection(ProfileSectionEnum.Qualifications)">
           </app-profile-qualifications-section>
 
           <app-profile-experience-section *ngSwitchCase="ProfileSectionEnum.Experience" [profile]="sectionValue(active)"
             [isProfileApproved]="canReplaceAttachment" [canAddAttachment]="canAddAttachments"
             [changesRequest]="changes(ProfileSectionEnum.Experience)" [notes]="activeSectionNotes()"
+            [editableItems]="editableItemsForSection(ProfileSectionEnum.Experience)"
             (edit)="openEditDialog(ProfileSectionEnum.Experience)"
             (refresh)="reloadSection(ProfileSectionEnum.Experience)">
           </app-profile-experience-section>
@@ -268,13 +354,16 @@
           <app-profile-training-section *ngSwitchCase="ProfileSectionEnum.TrainingCourses"
             [profile]="sectionValue(active)" [isProfileApproved]="canReplaceAttachment"
             [canAddAttachment]="canAddAttachments" [changesRequest]="changes(ProfileSectionEnum.TrainingCourses)"
-            [notes]="activeSectionNotes()" (edit)="openEditDialog(ProfileSectionEnum.TrainingCourses)">
+            [notes]="activeSectionNotes()" [editableItems]="editableItemsForSection(ProfileSectionEnum.TrainingCourses)"
+            (edit)="openEditDialog(ProfileSectionEnum.TrainingCourses)"
+            (refresh)="reloadSection(ProfileSectionEnum.TrainingCourses)">
           </app-profile-training-section>
 
           <app-profile-achievements-section *ngSwitchCase="ProfileSectionEnum.CertificatesAndAwards"
             [profile]="sectionValue(active)" [isProfileApproved]="canReplaceAttachment"
             [canAddAttachment]="canAddAttachments" [changesRequest]="changes(ProfileSectionEnum.CertificatesAndAwards)"
-            [notes]="activeSectionNotes()" (edit)="openEditDialog(ProfileSectionEnum.CertificatesAndAwards)"
+            [notes]="activeSectionNotes()" [editableItems]="editableItemsForSection(ProfileSectionEnum.CertificatesAndAwards)"
+            (edit)="openEditDialog(ProfileSectionEnum.CertificatesAndAwards)"
             (refresh)="reloadSection(ProfileSectionEnum.CertificatesAndAwards)">
           </app-profile-achievements-section>
 
@@ -293,7 +382,8 @@
           <app-profile-attachments-section *ngSwitchCase="ProfileSectionEnum.Attachments"
             [profile]="sectionValue(active)" [isProfileApproved]="canReplaceAttachment"
             [canAddAttachment]="canAddAttachments" [changesRequest]="changes(ProfileSectionEnum.Attachments)"
-            [notes]="activeSectionNotes()" (edit)="openEditDialog(ProfileSectionEnum.Attachments)"
+            [notes]="activeSectionNotes()" [editableItems]="editableItemsForSection(ProfileSectionEnum.Attachments)"
+            (edit)="openEditDialog(ProfileSectionEnum.Attachments)"
             (refresh)="reloadSection(ProfileSectionEnum.Attachments)">
           </app-profile-attachments-section>
         </div>

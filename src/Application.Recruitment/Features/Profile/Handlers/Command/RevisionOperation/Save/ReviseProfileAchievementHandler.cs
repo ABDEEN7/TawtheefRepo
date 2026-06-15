@@ -120,7 +120,16 @@ public async Task<IResult<Unit>> Handle(ReviseProfileAchievementCommand cmd, Can
             }
         }
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
+        foreach (var dto in dtos)
+        {
+            await ReviewItemSaveHelper.MarkRowSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.CertificatesAndAwards,
+                dto.Id,
+                ct);
+        }
+
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

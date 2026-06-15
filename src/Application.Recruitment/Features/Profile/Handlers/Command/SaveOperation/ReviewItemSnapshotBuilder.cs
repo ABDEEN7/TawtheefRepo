@@ -90,6 +90,66 @@ internal static class ReviewItemSnapshotBuilder
         };
     }
 
+    public static object? GetSectionDataSnapshot(UserProfile profile, ProfileSection section)
+    {
+        return section switch
+        {
+            ProfileSection.Prerequisites => new
+            {
+                profile.CandidateTypeId,
+                profile.TargetEntityId,
+                profile.OfficeId,
+                QidExpiry = profile.QIDExpiry
+            },
+            ProfileSection.Personal => new
+            {
+                profile.User?.FullNameAr,
+                profile.User?.FullNameEn,
+                profile.NationalNumber,
+                QidExpiry = profile.QIDExpiry,
+                profile.BirthDate,
+                profile.NationalityId,
+                profile.GenderId,
+                profile.ReligionId,
+                profile.MaritalStatusId,
+                profile.ChildrenCount,
+                profile.HasDisability,
+                profile.DisabilityDetails,
+                profile.SponsorProfile?.SponsorTypeId,
+                SponsorEmployerName = profile.SponsorProfile?.SponsorName,
+                SponsorEmployerNumber = profile.SponsorProfile?.SponsorNumber,
+                SponsorQidExpiry = profile.SponsorProfile?.QIDExpiry
+            },
+            ProfileSection.Contact => new
+            {
+                profile.ResidenceCountryId,
+                profile.InterviewLocationId,
+                profile.Address,
+                Zone = profile.ResidenceAddress?.ZoneNo,
+                Street = profile.ResidenceAddress?.StreetNo,
+                Building = profile.ResidenceAddress?.BuildingNo,
+                Unit = profile.ResidenceAddress?.UnitNo,
+                profile.User?.PhoneNumber,
+                profile.User?.Email
+            },
+            _ => GetSectionSnapshot(profile.User!, profile, section)
+        };
+    }
+
+    public static object? GetCurrentValue(UserProfile profile, ReviewItem item)
+    {
+        return item.TargetType switch
+        {
+            ReviewTargetType.Section => GetSectionSnapshot(profile.User!, profile, item.Section),
+            ReviewTargetType.Field when item.FieldPath == ProfileReviewConstants.FieldPaths.SectionData =>
+                GetSectionDataSnapshot(profile, item.Section),
+            ReviewTargetType.Field => GetFieldValue(profile, item.FieldPath),
+            ReviewTargetType.Row => GetRowSnapshot(profile, item.Section, item.EntityId, item),
+            ReviewTargetType.Attachment => GetAttachmentSnapshot(profile, item),
+            _ => null
+        };
+    }
+
     public static object? GetFieldValue(UserProfile profile, string? fieldPath)
     {
         if (string.IsNullOrWhiteSpace(fieldPath))

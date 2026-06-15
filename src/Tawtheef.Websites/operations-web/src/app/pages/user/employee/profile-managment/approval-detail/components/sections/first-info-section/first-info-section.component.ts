@@ -6,7 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   ProfileApprovalData,
   ProfileApprovalItem,
-  ReviewStatus
+  ReviewStatus,
+  ReviewTargetType
 } from '../../../../approval-list/models/profile-approval.models';
 import { Ripple } from 'primeng/ripple';
 import { ItemInlineReviewComponent } from '../../item-inline-review/item-inline-review';
@@ -20,6 +21,8 @@ import { Tooltip } from 'primeng/tooltip';
   styleUrls: ['../../../profile-approval-detail.page.scss'],
 })
 export class FirstInfoSectionComponent {
+  private readonly sectionDataFieldPath = 'SectionData';
+
   @Input({ required: true }) profile!: ProfileApprovalData;
   @Input() reviewItems: ProfileApprovalItem[] | null = null;
   @Output() viewFile = new EventEmitter<{ url: string; fileName: string }>();
@@ -57,5 +60,12 @@ export class FirstInfoSectionComponent {
   reviewItemFor(resourceId?: string | null): ProfileApprovalItem | null {
     if (!resourceId) return null;
     return (this.reviewItems ?? []).find(i => i.resourceId === resourceId) ?? null;
+  }
+
+  sectionDataReviewItem(): ProfileApprovalItem | null {
+    return (this.reviewItems ?? []).find(item =>
+      item.targetType === ReviewTargetType.Field &&
+      item.fieldPath === this.sectionDataFieldPath
+    ) ?? null;
   }
 }

@@ -7,7 +7,7 @@ import {
   ProfileStatusDto,
   QualificationDto
 } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -38,6 +38,7 @@ export class ProfileQualificationsSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() canReplaceAttachment!: boolean;
   @Output() edit = new EventEmitter<void>();
@@ -70,13 +71,7 @@ export class ProfileQualificationsSectionComponent {
 
   protected noteForRaw(qua: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!qua) return null;
-    const rowNote = qua.id
-      ? this.notes.find(
-        note =>
-          note.targetType === ReviewTargetTypeEnum.Row &&
-          note.entityId?.toLowerCase() === qua.id.toLowerCase()
-      ) ?? null
-      : null;
+    const rowNote = this.rowNoteForRaw(qua);
 
     const attachmentNote = qua.attachment?.resourceId
       ? this.notes.find(
@@ -87,6 +82,71 @@ export class ProfileQualificationsSectionComponent {
       : null;
 
     return rowNote ?? attachmentNote ?? null;
+  }
+
+  protected canEditRaw(qua: QualificationDto | null | undefined): boolean {
+    return !!this.noteForRaw(qua) || !!this.editableItemForRaw(qua);
+  }
+
+  protected canDeleteRaw(qua: QualificationDto | null | undefined): boolean {
+    const rowNote = this.rowNoteForRaw(qua);
+    const rowItem = this.editableRowItemForRaw(qua);
+    return !!qua?.id && (!!rowNote || !!rowItem);
+  }
+
+  protected deleteQualification(qualification: QualificationDto): void {
+    if (!qualification.id) return;
+
+    const qualificationsCount = this.profile?.qualifications?.length ?? 0;
+    if (qualificationsCount <= 1) {
+      this.notify.warn(this.translate.instant('profileView.notifications.mustKeepOneQualification'));
+      return;
+    }
+
+    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+
+    this.profileService.deleteEducation(qualification.id).subscribe({
+      next: () => {
+        this.notify.success(this.translate.instant('profileView.notifications.deleted'));
+        this.refresh.emit();
+      },
+      error: () => {
+        this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
+      },
+    });
+  }
+
+  private rowNoteForRaw(qua: QualificationDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!qua?.id) return null;
+    return this.notes.find(
+      note =>
+        note.targetType === ReviewTargetTypeEnum.Row &&
+        note.entityId?.toLowerCase() === qua.id?.toLowerCase()
+    ) ?? null;
+  }
+
+  private editableItemForRaw(qua: QualificationDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!qua) return null;
+    const rowItem = this.editableRowItemForRaw(qua);
+
+    const attachmentItem = qua.attachment?.resourceId
+      ? this.editableItems.find(
+        item =>
+          item.targetType === ReviewTargetTypeEnum.Attachment &&
+          item.resourceId?.toLowerCase() === qua.attachment?.resourceId.toLowerCase()
+      ) ?? null
+      : null;
+
+    return rowItem ?? attachmentItem ?? null;
+  }
+
+  private editableRowItemForRaw(qua: QualificationDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!qua?.id) return null;
+    return this.editableItems.find(
+      item =>
+        item.targetType === ReviewTargetTypeEnum.Row &&
+        item.entityId?.toLowerCase() === qua.id?.toLowerCase()
+    ) ?? null;
   }
 
   protected addQualification() {

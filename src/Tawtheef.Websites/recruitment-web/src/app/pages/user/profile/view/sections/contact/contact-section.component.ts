@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, comput
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FileRefDto, ProfileStatusDto } from '../../../../../../core/models/auth/auth-response.model';
-import { MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
 import { changeRequestDto } from '../../dtos/change-request-dto';
 import { FieldChange } from '../../utils/detect-change-fields';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
@@ -28,6 +28,7 @@ export class ProfileContactSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() canReplaceAttachment!: boolean;
   @Input() visibility: ProfileOverviewVisibility | null = null;
@@ -68,6 +69,21 @@ export class ProfileContactSectionComponent {
     );
   }
 
+  protected canReplaceFile(file: FileRefDto | null | undefined): boolean {
+    return !!this.noteForFile(file) || !!this.editableItemForFile(file);
+  }
+
+  private editableItemForFile(file: FileRefDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!file?.resourceId) return null;
+    return (
+      this.editableItems.find(
+        item =>
+          item.targetType === ReviewTargetTypeEnum.Attachment &&
+          item.resourceId?.toLowerCase() === file.resourceId.toLowerCase()
+      ) ?? null
+    );
+  }
+
   protected replaceAttachment(att: { key: string; title?: string | null; file: FileRefDto | null }, event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
@@ -78,8 +94,8 @@ export class ProfileContactSectionComponent {
       attachmentId: att.file?.resourceId,
       title: file.name
     };
-    const note = this.noteForFile(att.file);
-    if (note) payload.reviewItemId = note.reviewItemId;
+    const reviewItem = this.noteForFile(att.file) ?? this.editableItemForFile(att.file);
+    if (reviewItem) payload.reviewItemId = reviewItem.reviewItemId;
     const info: any = {}
     const files: any = {}
     switch (att.key) {

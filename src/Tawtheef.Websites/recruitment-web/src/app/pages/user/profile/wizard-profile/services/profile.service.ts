@@ -404,6 +404,14 @@ export class ProfileService {
     return this.http.delete(endpoint);
   }
 
+  deleteAttachment(id: GUID) {
+    const endpoint = this.isRevisionMode()
+      ? this.endpoints.user.profile.revisions.deleteReference(id)
+      : this.endpoints.user.profile.deleteReference(id);
+
+    return this.http.delete(endpoint);
+  }
+
   // ========== SKILLS ==========
   saveSkillsSection(skills: Skill[]) {
     const dto = {

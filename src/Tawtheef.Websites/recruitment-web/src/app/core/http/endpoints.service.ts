@@ -58,6 +58,7 @@ export class EndpointsService {
       deleteLanguage: (id: string) => this.getFullUrl(`/profiles/language/${id}/delete`),
       saveLanguages: this.getFullUrl(`/profiles/languages`),
       saveReferences: this.getFullUrl(`/profiles/references`),
+      deleteReference: (id: string) => this.getFullUrl(`/profiles/references/${id}/delete`),
       submit: this.getFullUrl(`/profiles/submit`),
       resubmit: this.getFullUrl(`/profiles/revisions/submit`),
       checkProfile: this.getFullUrl(`/profiles/check-profile`),

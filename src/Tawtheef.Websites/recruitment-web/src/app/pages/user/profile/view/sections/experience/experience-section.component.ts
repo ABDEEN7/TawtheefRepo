@@ -15,6 +15,7 @@ import {
 } from '../../../../../../core/models/auth/auth-response.model';
 import {
   MyProfileReviewNoteDto,
+  MyProfileReviewChangedItemDto,
   ReviewTargetTypeEnum,
 } from '../../models/profile-overview.model';
 import { FieldChange } from '../../utils/detect-change-fields';
@@ -61,6 +62,7 @@ export class ProfileExperienceSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
+  @Input() editableItems: MyProfileReviewChangedItemDto[] = [];
   @Input() changesRequest: FieldChange[] = [];
   @Input() isProfileApproved = false;
 
@@ -94,14 +96,7 @@ export class ProfileExperienceSectionComponent {
   protected noteForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewNoteDto | null {
     if (!exp) return null;
 
-    const rowNote =
-      exp.id
-        ? this.notes.find(
-            (note) =>
-              note.targetType === ReviewTargetTypeEnum.Row &&
-              note.entityId?.toLowerCase() === exp.id.toLowerCase()
-          ) ?? null
-        : null;
+    const rowNote = this.rowNoteForRaw(exp);
 
     const attachmentNote =
       exp.attachment?.resourceId
@@ -113,6 +108,66 @@ export class ProfileExperienceSectionComponent {
         : null;
 
     return rowNote ?? attachmentNote ?? null;
+  }
+
+  protected canEditRaw(exp: ExperienceDto | null | undefined): boolean {
+    return !!this.noteForRaw(exp) || !!this.editableItemForRaw(exp);
+  }
+
+  protected canDeleteRaw(exp: ExperienceDto | null | undefined): boolean {
+    const rowNote = this.rowNoteForRaw(exp);
+    const rowItem = this.editableRowItemForRaw(exp);
+    return !!exp?.id && (!!rowNote || !!rowItem);
+  }
+
+  protected deleteExperience(exp: ExperienceDto): void {
+    if (!exp.id) return;
+    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+
+    this.profileService.deleteExperience(exp.id).subscribe({
+      next: () => {
+        this.notify.success(this.translate.instant('profileView.notifications.deleted'));
+        this.refresh.emit();
+      },
+      error: () => {
+        this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
+      },
+    });
+  }
+
+  private rowNoteForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewNoteDto | null {
+    if (!exp?.id) return null;
+    return this.notes.find(
+      note =>
+        note.targetType === ReviewTargetTypeEnum.Row &&
+        note.entityId?.toLowerCase() === exp.id?.toLowerCase()
+    ) ?? null;
+  }
+
+  private editableItemForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!exp) return null;
+
+    const rowItem = this.editableRowItemForRaw(exp);
+
+    const attachmentItem =
+      exp.attachment?.resourceId
+        ? this.editableItems.find(
+            item =>
+              item.targetType === ReviewTargetTypeEnum.Attachment &&
+              item.resourceId?.toLowerCase() === exp.attachment?.resourceId.toLowerCase()
+          ) ?? null
+        : null;
+
+    return rowItem ?? attachmentItem ?? null;
+  }
+
+  private editableRowItemForRaw(exp: ExperienceDto | null | undefined): MyProfileReviewChangedItemDto | null {
+    if (!exp?.id) return null;
+    return this.editableItems.find(
+      item =>
+        item.targetType === ReviewTargetTypeEnum.Row &&
+        item.entityId?.toLowerCase() === exp.id?.toLowerCase()
+    ) ?? null;
   }
 
   protected addExperience() {

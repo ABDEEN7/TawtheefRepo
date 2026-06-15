@@ -65,6 +65,12 @@ export class DegreeModal implements OnInit {
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
 
+  get submitLabelKey(): string {
+    return this.config.data?.initialValue
+      ? 'wizard.buttons.saveChanges'
+      : 'wizard.degrees.add';
+  }
+
   form: FormGroup = this.fb.group({
     degree: [null, Validators.required],
     gradCountry: [null, Validators.required],

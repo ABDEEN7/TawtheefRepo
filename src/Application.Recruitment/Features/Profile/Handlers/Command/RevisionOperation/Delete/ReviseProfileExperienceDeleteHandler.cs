@@ -31,7 +31,7 @@ public sealed class ReviseProfileExperienceDeleteHandler(IUnitOfWork uow) :
             return Result.Fail<Unit>(ErrorsCodes.ExperienceNotFound);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Experience, ct);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.Experience, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

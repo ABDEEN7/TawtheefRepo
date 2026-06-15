@@ -31,7 +31,7 @@ public sealed class ReviseProfileAchievementDeleteHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotFound);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.CertificatesAndAwards, ct);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.CertificatesAndAwards, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

@@ -59,12 +59,24 @@
             <span class="text-muted">{{ 'common.none' | translate }}</span>
           }
         </div>
-        <button *ngIf="fileNote"
-                type="button"
-                class="btn btn-sm btn-outline-secondary rounded-pill"
-                (click)="editAchievement(ach)">
-          <i class="pi pi-pencil" aria-hidden="true"></i>
-        </button>
+        <div class="d-flex align-items-center gap-2 mt-auto" *ngIf="canEditRaw(ach) || canDeleteRaw(ach)">
+          <button *ngIf="canEditRaw(ach)"
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary rounded-pill"
+                  (click)="editAchievement(ach)">
+            <i class="pi pi-pencil" aria-hidden="true"></i>
+          </button>
+          <button
+            *ngIf="canDeleteRaw(ach)"
+            type="button"
+            class="btn btn-sm btn-outline-danger rounded-pill"
+            [attr.aria-label]="'profileView.actions.deleteItem' | translate"
+            [pTooltip]="'profileView.actions.deleteItem' | translate"
+            tooltipPosition="top"
+            (click)="deleteAchievement(ach)">
+            <i class="pi pi-trash" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

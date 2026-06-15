@@ -43,6 +43,7 @@
   "wizard.buttons.prev": "Previous",
   "wizard.buttons.next": "Next",
   "wizard.buttons.save": "Save",
+  "wizard.buttons.saveChanges": "Save changes",
   "wizard.buttons.submit": "Submit",
   "wizard.buttons.finalSave": "Confirm & Submit",
   "wizard.buttons.add": "Add",

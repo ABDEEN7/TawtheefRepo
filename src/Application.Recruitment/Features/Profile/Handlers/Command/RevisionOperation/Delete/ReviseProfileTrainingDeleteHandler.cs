@@ -31,7 +31,7 @@ public sealed class ReviseProfileTrainingDeleteHandler(IUnitOfWork uow) :
             return Result.Fail<Unit>(ErrorsCodes.TrainingNotFound);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.TrainingCourses, ct);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.TrainingCourses, cmd.Id, ct, force: true);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);
