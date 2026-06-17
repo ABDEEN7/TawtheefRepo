@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { JobLookupService } from '../services/job-lookup.service';
@@ -11,6 +11,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { JobSkillResponse } from '../models/job-skill-response.model';
 import { JobSpecializationResponse } from '../models/job-specialization-response.model';
+import { routes } from '../../../../../routes/routes';
 
 @Component({
   selector: 'app-job-details',
@@ -41,6 +42,7 @@ export class JobDetailsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   lookupsService = inject(JobLookupService);
   private dialogService = inject(DialogService);
   private translateService = inject(TranslateService);
@@ -61,6 +63,10 @@ export class JobDetailsComponent implements OnInit {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  navigateToList(): void {
+    this.router.navigate([routes.portal.JobList]);
   }
 
   getTabContent(): { id: string, title: string, icon: string } {

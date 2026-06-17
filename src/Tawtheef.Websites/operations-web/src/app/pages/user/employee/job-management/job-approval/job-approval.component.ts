@@ -244,6 +244,10 @@ export class JobApprovalComponent implements OnInit, OnDestroy {
     this.loadJobById();
   }
 
+  navigateToList(): void {
+    this.router.navigate([routes.portal.JobList]);
+  }
+
   setActiveTab(tab: JobApprovalTab): void {
     this.activeTab = tab;
     this.cdr.detectChanges();

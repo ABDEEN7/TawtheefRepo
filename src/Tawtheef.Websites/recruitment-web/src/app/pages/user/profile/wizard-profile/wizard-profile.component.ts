@@ -21,6 +21,7 @@ import { AvatarUtils } from '../../../../core/utils/avatar-utils';
 import { BOOTSTRAP_KEY } from '../../../../core/guards/profile-complete.guard';
 import { PROFILE_WRITE_MODE } from './services/profile-write-mode.token';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 // Step components
 import { StepPrereqComponent } from '../components/profile-steps/step-first-info/step-prereq.component';
@@ -70,6 +71,7 @@ export class WizardProfileComponent implements OnInit {
   private auth = inject(AuthService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
+  private notify = inject(NotificationService);
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
   language = inject(LanguageService);
@@ -247,7 +249,25 @@ export class WizardProfileComponent implements OnInit {
     return true;
   }
 
+  canNavigateTo(targetStep: number): boolean {
+    if (targetStep === this.step()) return true;
+    if (this.ds.hasUnsavedStepChanges()) return false;
+    return this.canGoTo(targetStep);
+  }
+
+  currentSubmitLabelKey(): string {
+    const currentStepKey = this.stepKeyMap[this.step()];
+    return currentStepKey && this.ds.isStepDirty(currentStepKey)
+      ? 'wizard.buttons.save'
+      : 'wizard.buttons.next';
+  }
+
   go(step: number) {
+    if (step === this.step()) return;
+    if (this.ds.hasUnsavedStepChanges()) {
+      this.showUnsavedChangesWarning();
+      return;
+    }
     if (!this.canGoTo(step)) return;
     this.step.set(step);
     this.markTouched(this.step());
@@ -259,18 +279,29 @@ export class WizardProfileComponent implements OnInit {
       return;
     }
 
-    if (this.step() < this.total) {
-      this.step.update(s => s + 1);
+    const targetStep = this.step() + 1;
+    if (targetStep <= this.total && this.canGoTo(targetStep)) {
+      this.step.set(targetStep);
       this.markTouched(this.step());
     }
   }
 
   prev() {
     this.markTouched(this.step());
-    if (this.step() > 1) {
-      this.step.update(s => s - 1);
-      this.markTouched(this.step());
+    if (this.step() <= 1) return;
+    if (this.ds.hasUnsavedStepChanges()) {
+      this.showUnsavedChangesWarning();
+      return;
     }
+    this.step.update(s => s - 1);
+    this.markTouched(this.step());
+  }
+
+  private showUnsavedChangesWarning(): void {
+    this.notify.warn(
+      this.translate.instant('wizard.navigation.unsavedChanges'),
+      this.translate.instant('wizard.warningTitle')
+    );
   }
 
   openAvatarDialog() {
@@ -300,7 +331,7 @@ export class WizardProfileComponent implements OnInit {
 
   private applyForcedStep() {
     if (!this.forcedStep) return;
-    if (this.canGoTo(this.forcedStep)) {
+    if (this.canNavigateTo(this.forcedStep)) {
       this.step.set(this.forcedStep);
     }
   }

@@ -390,7 +390,7 @@ export class StepPersonalComponent implements OnInit {
     const dto = mapPersonalSection(s);
     const signature = this.buildSignature(dto);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('personal')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(2)) {
         const msg = this.ds.hasUnsolvedCorrections(2)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

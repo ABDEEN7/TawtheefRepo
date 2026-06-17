@@ -54,14 +54,79 @@ export class ProfileDataService {
     attachments: false,
   });
 
+  /** Tracks steps with local edits that have not been submitted yet */
+  private dirtySteps = signal<Partial<Record<string, boolean>>>({});
+
+  private readonly fieldStepMap: Partial<Record<keyof ProfileState, keyof ReturnType<typeof this.stepValidity>>> = {
+    candidateType: 'basic',
+    targetEntity: 'basic',
+    cvName: 'basic',
+    cvFile: 'basic',
+    idName: 'basic',
+    idFile: 'basic',
+    birthCertificateName: 'basic',
+    birthCertificateFile: 'basic',
+    marriageCertificateName: 'basic',
+    marriageCertificateFile: 'basic',
+    qidExpiry: 'basic',
+
+    fullNameAr: 'personal',
+    fullNameEn: 'personal',
+    qid: 'personal',
+    nationality: 'personal',
+    gender: 'personal',
+    religion: 'personal',
+    marital: 'personal',
+    dob: 'personal',
+    hasDisability: 'personal',
+    disabilityDetails: 'personal',
+    sponsorType: 'personal',
+    sponsorEmployerName: 'personal',
+    sponsorEmployerNumber: 'personal',
+    sponsorQidExpiry: 'personal',
+    sponsorCardName: 'personal',
+    sponsorCard: 'personal',
+
+    country: 'contact',
+    address: 'contact',
+    phone: 'contact',
+    phoneVerified: 'contact',
+    email: 'contact',
+    emailVerified: 'contact',
+    interviewPlace: 'contact',
+    naZone: 'contact',
+    naStreet: 'contact',
+    naBuilding: 'contact',
+    naUnit: 'contact',
+    naFileName: 'contact',
+    naFile: 'contact',
+
+    degrees: 'degrees',
+    experiences: 'experience',
+    courses: 'experience',
+    achievements: 'achievements',
+    skills: 'skills',
+    languages: 'languages',
+    attachments: 'attachments',
+  };
+
   /** Mark a step as successfully submitted to the server */
   markStepSubmitted(stepKey: string): void {
     this.submittedSteps.update(m => ({ ...m, [stepKey]: true }));
+    this.dirtySteps.update(m => ({ ...m, [stepKey]: false }));
   }
 
   /** Check whether a step has been successfully submitted to the server */
   isStepSubmitted(stepKey: string): boolean {
     return !!this.submittedSteps()[stepKey];
+  }
+
+  hasUnsavedStepChanges(): boolean {
+    return Object.values(this.dirtySteps()).some(Boolean);
+  }
+
+  isStepDirty(stepKey: string): boolean {
+    return !!this.dirtySteps()[stepKey];
   }
 
   get isNeedSponsor() {
@@ -333,8 +398,10 @@ export class ProfileDataService {
     } as const;
   });
 
-  up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null) {
+  up<K extends keyof ProfileState>(key: K, val: ProfileState[K] | null, options: { markDirty?: boolean } = {}) {
     if (key === 'candidateType' && this.shouldLockCandidateType()) return;
+    const previous = this.state()[key];
+    const markDirty = options.markDirty !== false;
     this.state.update(s => {
       const updated = { ...s, [key]: val } as ProfileState;
 
@@ -348,6 +415,33 @@ export class ProfileDataService {
 
       return updated;
     });
+    if (markDirty && !this.areValuesEqual(previous, this.state()[key])) {
+      this.markFieldChanged(key);
+    }
+  }
+
+  private markFieldChanged<K extends keyof ProfileState>(key: K): void {
+    const stepKey = this.fieldStepMap[key];
+    if (!stepKey) return;
+
+    this.submittedSteps.update(m => ({ ...m, [stepKey]: false }));
+    this.dirtySteps.update(m => ({ ...m, [stepKey]: true }));
+  }
+
+  private markCollectionChanged(stepKey: keyof ReturnType<typeof this.stepValidity>): void {
+    this.submittedSteps.update(m => ({ ...m, [stepKey]: false }));
+    this.dirtySteps.update(m => ({ ...m, [stepKey]: true }));
+  }
+
+  private areValuesEqual(a: unknown, b: unknown): boolean {
+    if (Object.is(a, b)) return true;
+    if (a === null || b === null || a === undefined || b === undefined) return false;
+
+    try {
+      return JSON.stringify(a) === JSON.stringify(b);
+    } catch {
+      return false;
+    }
   }
 
   private cleanDisabilityDependents(state: ProfileState): ProfileState {
@@ -470,7 +564,7 @@ export class ProfileDataService {
 
   refreshDegreesFromBackend() {
     return this.profileService
-      .getProfileStatus()
+      .getQualificationsSection()
       .pipe(
         take(1),
         tap(dto => {
@@ -481,6 +575,61 @@ export class ProfileDataService {
             this.userService.getPrefill()
           );
           this.state.update(s => ({ ...s, degrees: mapped.degrees }));
+        })
+      );
+  }
+
+  refreshAchievementsFromBackend() {
+    return this.profileService
+      .getAchievementsSection()
+      .pipe(
+        take(1),
+        tap(dto => {
+          const mapped = mapProfileStatusToState(
+            this.phoneMapperService,
+            this.lookups,
+            dto,
+            this.userService.getPrefill()
+          );
+          this.state.update(s => ({ ...s, achievements: mapped.achievements }));
+        })
+      );
+  }
+
+  refreshExperienceFromBackend() {
+    return this.profileService
+      .getExperienceSection()
+      .pipe(
+        take(1),
+        tap(dto => {
+          const mapped = mapProfileStatusToState(
+            this.phoneMapperService,
+            this.lookups,
+            dto,
+            this.userService.getPrefill()
+          );
+          this.state.update(s => ({
+            ...s,
+            experiences: mapped.experiences,
+            courses: mapped.courses,
+          }));
+        })
+      );
+  }
+
+  refreshAttachmentsFromBackend() {
+    return this.profileService
+      .getAttachmentsSection()
+      .pipe(
+        take(1),
+        tap(dto => {
+          const mapped = mapProfileStatusToState(
+            this.phoneMapperService,
+            this.lookups,
+            dto,
+            this.userService.getPrefill()
+          );
+          this.state.update(s => ({ ...s, attachments: mapped.attachments }));
         })
       );
   }
@@ -505,51 +654,106 @@ export class ProfileDataService {
     }));
   }
 
-  addDegree(d: Degree) { this.state.update(s => ({ ...s, degrees: [...s.degrees, d] })); }
+  addDegree(d: Degree) {
+    this.state.update(s => ({ ...s, degrees: [...s.degrees, d] }));
+    this.markCollectionChanged('degrees');
+  }
   updateDegree(i: number, degree: Degree) {
     this.state.update(s => ({ ...s, degrees: s.degrees.map((item, idx) => (idx === i ? degree : item)) }));
+    this.markCollectionChanged('degrees');
   }
-  delDegree(i: number) { this.state.update(s => ({ ...s, degrees: s.degrees.filter((_, x) => x !== i) })); }
+  delDegree(i: number) {
+    this.state.update(s => ({ ...s, degrees: s.degrees.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('degrees');
+  }
 
-  addExp(e: Experience) { this.state.update(s => ({ ...s, experiences: [...s.experiences, e] })); }
+  addExp(e: Experience) {
+    this.state.update(s => ({ ...s, experiences: [...s.experiences, e] }));
+    this.markCollectionChanged('experience');
+  }
   updateExp(i: number, exp: Experience) {
     this.state.update(s => ({ ...s, experiences: s.experiences.map((item, idx) => (idx === i ? exp : item)) }));
+    this.markCollectionChanged('experience');
   }
-  delExp(i: number) { this.state.update(s => ({ ...s, experiences: s.experiences.filter((_, x) => x !== i) })); }
+  delExp(i: number) {
+    this.state.update(s => ({ ...s, experiences: s.experiences.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('experience');
+  }
 
-  addCourse(e: TrainingCourse) { this.state.update(s => ({ ...s, courses: [...s.courses, e] })); }
+  addCourse(e: TrainingCourse) {
+    this.state.update(s => ({ ...s, courses: [...s.courses, e] }));
+    this.markCollectionChanged('experience');
+  }
   updateCourse(i: number, course: TrainingCourse) {
     this.state.update(s => ({ ...s, courses: s.courses.map((item, idx) => (idx === i ? course : item)) }));
+    this.markCollectionChanged('experience');
   }
-  delCourse(i: number) { this.state.update(s => ({ ...s, courses: s.courses.filter((_, x) => x !== i) })); }
+  delCourse(i: number) {
+    this.state.update(s => ({ ...s, courses: s.courses.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('experience');
+  }
 
-  addAchievement(a: Achievement) { this.state.update(s => ({ ...s, achievements: [...s.achievements, a] })); }
-  updateAchievement(i: number, a: Achievement) { this.state.update(s => ({ ...s, achievements: s.achievements.map((item, idx) => idx === i ? a : item) })); }
-  delAchievement(i: number) { this.state.update(s => ({ ...s, achievements: s.achievements.filter((_, x) => x !== i) })); }
+  addAchievement(a: Achievement) {
+    this.state.update(s => ({ ...s, achievements: [...s.achievements, a] }));
+    this.markCollectionChanged('achievements');
+  }
+  updateAchievement(i: number, a: Achievement) {
+    this.state.update(s => ({ ...s, achievements: s.achievements.map((item, idx) => idx === i ? a : item) }));
+    this.markCollectionChanged('achievements');
+  }
+  delAchievement(i: number) {
+    this.state.update(s => ({ ...s, achievements: s.achievements.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('achievements');
+  }
 
-  addLang(l: Language) { this.state.update(s => ({ ...s, languages: [...s.languages, l] })); }
-  delLang(i: number) { this.state.update(s => ({ ...s, languages: s.languages.filter((_, x) => x !== i) })); }
+  addLang(l: Language) {
+    this.state.update(s => ({ ...s, languages: [...s.languages, l] }));
+    this.markCollectionChanged('languages');
+  }
+  delLang(i: number) {
+    this.state.update(s => ({ ...s, languages: s.languages.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('languages');
+  }
 
   addSkill(skill: Skill) {
     this.state.update(s => s.skills.some(t => t.skillId === skill.skillId)
       ? s
       : ({ ...s, skills: [...s.skills, skill] })
     );
+    this.markCollectionChanged('skills');
   }
-  delSkill(i: number) { this.state.update(s => ({ ...s, skills: s.skills.filter((_, x) => x !== i) })); }
+  delSkill(i: number) {
+    this.state.update(s => ({ ...s, skills: s.skills.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('skills');
+  }
 
-  addAttachment(a: Attachment) { this.state.update(s => ({ ...s, attachments: [...s.attachments, a] })); }
+  addAttachment(a: Attachment) {
+    this.state.update(s => ({ ...s, attachments: [...s.attachments, a] }));
+    this.markCollectionChanged('attachments');
+  }
   updateAttachment(i: number, attachment: Attachment) {
     this.state.update(s => ({ ...s, attachments: s.attachments.map((item, idx) => (idx === i ? attachment : item)) }));
+    this.markCollectionChanged('attachments');
   }
-  delAttachment(i: number) { this.state.update(s => ({ ...s, attachments: s.attachments.filter((_, x) => x !== i) })); }
+  delAttachment(i: number) {
+    this.state.update(s => ({ ...s, attachments: s.attachments.filter((_, x) => x !== i) }));
+    this.markCollectionChanged('attachments');
+  }
 
   setState(next: ProfileState): void {
     this.state.set(next);
   }
 
-  patch(partial: Partial<ProfileState>): void {
+  patch(partial: Partial<ProfileState>, options: { markDirty?: boolean } = {}): void {
+    const previous = this.state();
     this.state.update(s => ({ ...s, ...partial }));
+    if (options.markDirty === false) return;
+
+    for (const key of Object.keys(partial) as (keyof ProfileState)[]) {
+      if (!this.areValuesEqual(previous[key], this.state()[key])) {
+        this.markFieldChanged(key);
+      }
+    }
   }
 
   clear(): void {

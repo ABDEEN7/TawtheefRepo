@@ -125,7 +125,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     const languages = state.languages || [];
     const signature = this.buildSignature(languages);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('languages')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(9)) {
         const msg = this.ds.hasUnsolvedCorrections(9)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

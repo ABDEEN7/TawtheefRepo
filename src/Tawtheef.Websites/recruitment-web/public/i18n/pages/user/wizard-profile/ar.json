@@ -12,6 +12,7 @@
   "wizard.files.formats.birth": "الصيغ المسموحة: JPG, PNG, PDF",
   "wizard.files.formats.marriage": "الصيغ المسموحة: JPG, PNG, PDF",
   "wizard.warningTitle": "تنبيه",
+  "wizard.navigation.unsavedChanges": "لديك تغييرات غير محفوظة. يرجى حفظ التغييرات قبل الانتقال إلى خطوة أخرى.",
   "wizard.validationErrorTitle": "خطأ في التحقق من صحة البيانات",
   "wizard.validation.duplicateTitle": "لا يسمح بتكرار الأسماء.",
   "wizard.errorTitle": "حدث خطأ",

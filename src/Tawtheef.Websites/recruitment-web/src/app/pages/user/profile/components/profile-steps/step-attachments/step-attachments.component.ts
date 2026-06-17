@@ -25,6 +25,7 @@ import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.mo
 import { Attachment } from '../../../wizard-profile/models/attachment.model';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { StringUtils } from '../../../../../../core/utils/string-utils';
+import { finalize, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-step-attachments',
@@ -69,10 +70,11 @@ export class StepAttachmentsComponent implements OnInit {
 
   private filesStore: (File | null)[] = [];
   private fileRefs: (UploadedFileRef | null)[] = [];
+  private replacingFile: boolean[] = [];
 
   form: FormGroup = this.fb.group({
     rows: this.fb.array([]),
-  }, { validators: [this.duplicateTitleValidator.bind(this)] });
+  }, { validators: [this.duplicateTitleValidator.bind(this), this.emptyTitleValidator.bind(this)] });
 
   ngOnInit(): void {
     const attachments = this.ds.state().attachments || [];
@@ -87,6 +89,7 @@ export class StepAttachmentsComponent implements OnInit {
       this.rows.push(row);
       this.filesStore[idx] = att.file ?? null;
       this.fileRefs[idx] = att.fileRef ?? null;
+      this.replacingFile[idx] = false;
     });
 
     this.lastSubmittedSignature = this.buildSignature(attachments);
@@ -102,7 +105,7 @@ export class StepAttachmentsComponent implements OnInit {
     return this.fb.group({
       id: [id ?? null],
       attachmentId: [attachmentId ?? null],
-      title: [title, [Validators.required, Validators.pattern(this.textPattern)]],
+      title: [title, [Validators.required, Validators.pattern(this.textPattern), this.nonWhitespaceTitleValidator]],
       file: [
         null,
         existing ? [] : [Validators.required],
@@ -129,12 +132,32 @@ export class StepAttachmentsComponent implements OnInit {
     this.rows.push(this.createRow());
     this.filesStore.push(null);
     this.fileRefs.push(null);
+    this.replacingFile.push(false);
   }
 
   removeRow(i: number): void {
+    const row = this.rows.at(i) as FormGroup;
+    const id = row.get('id')?.value;
+
+    if (id && !this.profile.isChangeRequestMode()) {
+      this.profile.deleteAttachment(id).subscribe({
+        next: () => this.removeLocalRow(i),
+        error: (err: any) => {
+          if (isDevMode())
+            console.error(err);
+        },
+      });
+      return;
+    }
+
+    this.removeLocalRow(i);
+  }
+
+  private removeLocalRow(i: number): void {
     this.rows.removeAt(i);
     this.filesStore.splice(i, 1);
     this.fileRefs.splice(i, 1);
+    this.replacingFile.splice(i, 1);
   }
 
   confirmRow(i: number): void {
@@ -190,6 +213,11 @@ export class StepAttachmentsComponent implements OnInit {
     // قبول الملف
     this.filesStore[i] = file;
     this.fileRefs[i] = null;
+    this.replacingFile[i] = false;
+
+    const fileControl = grp.get('file');
+    fileControl?.setValidators([]);
+    fileControl?.updateValueAndValidity({ emitEvent: false });
 
     grp.get('file')?.setErrors(null);
     grp.patchValue({ file, fileName: file.name }, { emitEvent: false });
@@ -198,12 +226,20 @@ export class StepAttachmentsComponent implements OnInit {
 
   changeFile(i: number): void {
     const grp = this.rows.at(i) as FormGroup;
-    this.filesStore[i] = null;
-    this.fileRefs[i] = null;
-    grp.patchValue({ file: null, fileName: '' });
+    this.replacingFile[i] = true;
+
+    const fileControl = grp.get('file');
+    fileControl?.setValidators([Validators.required]);
+    fileControl?.updateValueAndValidity({ emitEvent: false });
+
+    grp.patchValue({ file: null }, { emitEvent: false });
   }
 
   hasFile(i: number): boolean {
+    if (this.replacingFile[i]) {
+      return false;
+    }
+
     const grp = this.rows.at(i) as FormGroup;
     const fileName = grp.get('fileName')?.value;
     const file = grp.get('file')?.value;
@@ -254,7 +290,9 @@ export class StepAttachmentsComponent implements OnInit {
     if (this.form.invalid) {
       const message = this.hasDuplicateTitles()
         ? this.translate.instant('wizard.validation.duplicateTitle')
-        : this.translate.instant('wizard.attachments.empty');
+        : this.hasEmptyTitle()
+          ? this.translate.instant('validation.required')
+          : this.translate.instant('wizard.attachments.empty');
       this.notificationService.error(message, this.translate.instant('wizard.validationErrorTitle'));
       return;
     }
@@ -277,7 +315,7 @@ export class StepAttachmentsComponent implements OnInit {
     this.ds.up('attachments', attachments as any);
 
     const signature = this.buildSignature(attachments);
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('attachments')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(10)) {
         const msg = this.ds.hasUnsolvedCorrections(10)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
@@ -291,22 +329,34 @@ export class StepAttachmentsComponent implements OnInit {
     }
 
     this.saving.set(true);
-    this.profile.saveAttachmentsSection(attachments).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.lastSubmittedSignature = signature;
-        this.ds.markStepSubmitted('attachments');
-        if (this.profile.isChangeRequestMode()) {
-          this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
-        }
-        this.next.emit();
-      },
-      error: (err: any) => {
-        if (isDevMode())
-          console.error(err);
-        this.saving.set(false);
-      },
-    });
+    const save$ = this.profile.saveAttachmentsSection(attachments);
+    const submit$ = this.profile.isChangeRequestMode()
+      ? save$
+      : save$.pipe(switchMap(() => this.ds.refreshAttachmentsFromBackend()));
+
+    submit$
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => {
+          const savedAttachments = this.profile.isChangeRequestMode()
+            ? attachments
+            : this.ds.state().attachments || [];
+          if (!this.profile.isChangeRequestMode()) {
+            this.filesStore = savedAttachments.map(() => null);
+            this.fileRefs = savedAttachments.map(attachment => attachment.fileRef ?? null);
+          }
+          this.lastSubmittedSignature = this.buildSignature(savedAttachments);
+          this.ds.markStepSubmitted('attachments');
+          if (this.profile.isChangeRequestMode()) {
+            this.notificationService.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+          }
+          this.next.emit();
+        },
+        error: (err: any) => {
+          if (isDevMode())
+            console.error(err);
+        },
+      });
   }
 
   previewFile(i: number, ev?: Event): void {
@@ -337,7 +387,7 @@ export class StepAttachmentsComponent implements OnInit {
   }
 
   canPreview(i: number): boolean {
-    return !!this.filesStore[i] || !!this.fileRefs[i]?.url;
+    return !this.replacingFile[i] && (!!this.filesStore[i] || !!this.fileRefs[i]?.url);
   }
 
   private isAllowedFile(file: File): boolean {
@@ -367,6 +417,10 @@ export class StepAttachmentsComponent implements OnInit {
     return !!this.form.errors?.['duplicateTitle'];
   }
 
+  private hasEmptyTitle(): boolean {
+    return !!this.form.errors?.['emptyTitle'];
+  }
+
   private duplicateTitleValidator(control: AbstractControl): ValidationErrors | null {
     const rows = control.get('rows') as FormArray | null;
     if (!rows) {
@@ -388,6 +442,27 @@ export class StepAttachmentsComponent implements OnInit {
     }
 
     return null;
+  }
+
+  private emptyTitleValidator(control: AbstractControl): ValidationErrors | null {
+    const rows = control.get('rows') as FormArray | null;
+    if (!rows) {
+      return null;
+    }
+
+    for (const item of rows.controls) {
+      const title = this.normalizeTitle((item as FormGroup).get('title')?.value);
+      if (!title) {
+        return { emptyTitle: true };
+      }
+    }
+
+    return null;
+  }
+
+  private nonWhitespaceTitleValidator(control: AbstractControl): ValidationErrors | null {
+    const value = (control.value ?? '').toString();
+    return value.trim().length > 0 ? null : { whitespace: true };
   }
 
   private normalizeTitle(value: unknown): string {

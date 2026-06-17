@@ -199,7 +199,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const skills = state.skills || [];
     const signature = this.buildSignature(skills);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('skills')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(8)) {
         const msg = this.ds.hasUnsolvedCorrections(8)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

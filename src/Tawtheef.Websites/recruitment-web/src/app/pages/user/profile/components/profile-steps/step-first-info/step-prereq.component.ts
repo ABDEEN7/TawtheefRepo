@@ -230,7 +230,7 @@ export class StepPrereqComponent implements OnInit {
     const needsCheckNow = shouldCheckProfile && !this.hasCheckedProfile();
 
     // If nothing changed and we don't need to re-check → just go next
-    if (signature && signature === this.lastSubmittedSignature && !needsCheckNow) {
+    if (signature && signature === this.lastSubmittedSignature && !needsCheckNow && this.ds.isStepSubmitted('basic')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(1)) {
         const msg = this.ds.hasUnsolvedCorrections(1)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

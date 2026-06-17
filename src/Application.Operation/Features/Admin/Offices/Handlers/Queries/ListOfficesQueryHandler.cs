@@ -18,16 +18,48 @@ public sealed class ListOfficesQueryHandler(IUnitOfWork unitOfWork, IMapper mapp
         GetListOfficesQuery request,
         CancellationToken cancellationToken)
     {
-        var offices = await unitOfWork.GetEntityRepository<Office>().DbSet
+        var officeRepository = unitOfWork.GetEntityRepository<Office>();
+        var searchTerm = request.Search?.Trim();
+
+        var officeQuery = officeRepository.DbSet
             .AsNoTracking()
-            .Include(a => a.OfficeAdmin)
+            .WhereIf(!string.IsNullOrWhiteSpace(searchTerm), o =>
+                EF.Functions.Like(o.NameAr, $"%{searchTerm}%") ||
+                EF.Functions.Like(o.NameEn, $"%{searchTerm}%") ||
+                EF.Functions.Like(o.Code, $"%{searchTerm}%"));
+
+        var totalCount = await officeQuery.CountAsync(cancellationToken);
+        var pageOffices = await officeQuery
+            .OrderBy(o => o.DisplayOrder)
+            .ThenBy(o => o.NameEn)
+            .ToPaginatedResultAsync(request, cancellationToken);
+
+        var pageOfficeIds = pageOffices.Select(o => o.Id).ToList();
+        if (pageOfficeIds.Count == 0)
+        {
+            return Result.Ok(new PaginatedResult<OfficeDto>([], totalCount, request.PageNumber, request.PageSize));
+        }
+
+        var officeDetails = await officeRepository.DbSet
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(o => o.OfficeAdmin)
             .Include(o => o.Country)
             .Include(o => o.SupportedCountries).ThenInclude(sc => sc.Country)
-            .Include(o => o.OfficeUsers)
-            .WhereIf(!string.IsNullOrWhiteSpace(request.Search), o => o.NameAr.Contains(request.Search!) || 
-                                                                      o.NameEn.Contains(request.Search!) || 
-                                                                      o.Code.Contains(request.Search!))
-            .ToPaginatedListAsync<Office, OfficeDto>(mapper, request, cancellationToken);
+            .Where(o => pageOfficeIds.Contains(o.Id))
+            .ToListAsync(cancellationToken);
+
+        var officeDetailsById = officeDetails.ToDictionary(o => o.Id);
+        var orderedOffices = pageOfficeIds
+            .Where(officeDetailsById.ContainsKey)
+            .Select(id => officeDetailsById[id])
+            .ToList();
+
+        var offices = new PaginatedResult<OfficeDto>(
+            mapper.Map<List<OfficeDto>>(orderedOffices),
+            totalCount,
+            request.PageNumber,
+            request.PageSize);
 
         return Result.Ok(offices);
     }

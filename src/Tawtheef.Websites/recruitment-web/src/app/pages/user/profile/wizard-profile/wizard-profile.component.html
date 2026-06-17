@@ -40,9 +40,10 @@
                 <ul class="nav nav-pills flex-wrap stepper" aria-label="Profile steps">
                   @for (item of stepLabels; track i; let i = $index) {
                   <li class="nav-item">
-                    <a class="nav-link" [class.active]="step()===i+1" [class.disabled]="!canGoTo(i+1)"
-                      [attr.aria-disabled]="!canGoTo(i+1)" href
-                      (click)="$event.preventDefault(); canGoTo(i+1) && go(i+1)">
+                    <a class="nav-link" [class.active]="step()===i+1"
+                      [class.disabled]="!ds.hasUnsavedStepChanges() && !canGoTo(i+1)"
+                      [attr.aria-disabled]="!canNavigateTo(i+1)" href
+                      (click)="$event.preventDefault(); go(i+1)">
                       <span [class.is-active]="step()===i+1">
                         <i class="hgi hgi-stroke fw-normal fs-16" [class]="item.icon"></i>
                       </span>
@@ -66,15 +67,15 @@
                 </div>
                 } @else {
                 @switch (step()) {
-                @case (1) { <app-step-prereq (next)="next()"></app-step-prereq> }
-                @case (2) { <app-step-personal (back)="prev()" (next)="next()"></app-step-personal> }
-                @case (3) { <app-step-contact (back)="prev()" (next)="next()"></app-step-contact> }
-                @case (4) { <app-step-degrees (back)="prev()" (next)="next()"></app-step-degrees> }
-                @case (5) { <app-step-experience (back)="prev()" (next)="next()"></app-step-experience> }
-                @case (6) { <app-step-achievements (back)="prev()" (next)="next()"></app-step-achievements> }
-                @case (7) { <app-step-skills (back)="prev()" (next)="next()"></app-step-skills> }
-                @case (8) { <app-step-languages (back)="prev()" (next)="next()"></app-step-languages> }
-                @case (9) { <app-step-attachments (back)="prev()" (next)="next()"></app-step-attachments> }
+                @case (1) { <app-step-prereq [submitLabelKey]="currentSubmitLabelKey()" (next)="next()"></app-step-prereq> }
+                @case (2) { <app-step-personal [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-personal> }
+                @case (3) { <app-step-contact [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-contact> }
+                @case (4) { <app-step-degrees [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-degrees> }
+                @case (5) { <app-step-experience [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-experience> }
+                @case (6) { <app-step-achievements [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-achievements> }
+                @case (7) { <app-step-skills [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-skills> }
+                @case (8) { <app-step-languages [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-languages> }
+                @case (9) { <app-step-attachments [submitLabelKey]="currentSubmitLabelKey()" (back)="prev()" (next)="next()"></app-step-attachments> }
                 @case (10) { <app-step-review (back)="prev()"></app-step-review> }
                 }
                 }

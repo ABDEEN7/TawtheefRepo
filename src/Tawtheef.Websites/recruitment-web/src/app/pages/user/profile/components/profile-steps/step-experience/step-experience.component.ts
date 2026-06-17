@@ -28,6 +28,7 @@ import { Experience, TrainingCourse } from '../../../wizard-profile/models/exper
 import { CourseModal } from './dialogs/course.modal/course.modal';
 import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
 import { StringUtils } from '../../../../../../core/utils/string-utils';
+import { finalize, switchMap } from 'rxjs/operators';
 
 
 @Component({
@@ -208,7 +209,7 @@ export class StepExperienceComponent implements OnInit {
 
     const signature = this.buildSignature(experiences, courses);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('experience')) {
       const hasNotes = this.ds.hasUnsolvedCorrections(5) || this.ds.hasUnsolvedCorrections(6);
       if (this.requireChanges() || hasNotes) {
         const msg = hasNotes
@@ -223,22 +224,30 @@ export class StepExperienceComponent implements OnInit {
     }
 
     this.saving.set(true);
-    this.profile.saveExperienceSection(experiences, courses).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.lastSubmittedSignature = signature;
-        this.ds.markStepSubmitted('experience');
-        if (this.profile.isChangeRequestMode()) {
-          this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
-        }
-        this.next.emit();
-      },
-      error: (err: any) => {
-        if (isDevMode())
-          console.error(err);
-        this.saving.set(false);
-      },
-    });
+    const save$ = this.profile.saveExperienceSection(experiences, courses);
+    const submit$ = this.profile.isChangeRequestMode()
+      ? save$
+      : save$.pipe(switchMap(() => this.ds.refreshExperienceFromBackend()));
+
+    submit$
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => {
+          const savedState = this.ds.state();
+          this.lastSubmittedSignature = this.profile.isChangeRequestMode()
+            ? signature
+            : this.buildSignature(savedState.experiences || [], savedState.courses || []);
+          this.ds.markStepSubmitted('experience');
+          if (this.profile.isChangeRequestMode()) {
+            this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+          }
+          this.next.emit();
+        },
+        error: (err: any) => {
+          if (isDevMode())
+            console.error(err);
+        },
+      });
   }
 
   private previewAttachment(ref?: UploadedFileRef | null, file?: File | null, fallbackName?: string | null, ev?: Event) {

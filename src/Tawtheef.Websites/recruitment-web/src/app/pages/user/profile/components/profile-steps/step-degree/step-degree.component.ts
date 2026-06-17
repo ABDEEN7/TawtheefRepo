@@ -81,7 +81,8 @@ export class StepDegreeComponent implements OnInit {
           return;
         }
         this.ds.addDegree(e);
-        this.ds.state().degrees = [...this.ds.state().degrees.sort((a, b) => a.gradYear - b.gradYear)];
+        const sortedDegrees = [...this.ds.state().degrees].sort((a, b) => a.gradYear - b.gradYear);
+        this.ds.patch({ degrees: sortedDegrees } as Partial<ProfileState>);
       }
     });
   }
@@ -165,7 +166,7 @@ export class StepDegreeComponent implements OnInit {
 
     const signature = this.buildSignature(degrees);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('degrees')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(4)) {
         const msg = this.ds.hasUnsolvedCorrections(4)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
@@ -195,7 +196,16 @@ export class StepDegreeComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.lastSubmittedSignature = signature;
+          const refreshedDegrees = this.ds.state().degrees || [];
+          if (!refreshedDegrees.length) {
+            this.notify.error(
+              this.translate.instant('wizard.degrees.validation.noRows'),
+              this.translate.instant('wizard.validationErrorTitle')
+            );
+            return;
+          }
+
+          this.lastSubmittedSignature = this.buildSignature(refreshedDegrees);
           this.ds.markStepSubmitted('degrees');
           if (this.profile.isChangeRequestMode()) {
             this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));

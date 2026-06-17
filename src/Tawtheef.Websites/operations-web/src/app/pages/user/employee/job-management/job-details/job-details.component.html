@@ -6,9 +6,15 @@
       <div class="card-body pb-0">
         <div class="row mb-4">
           <div class="col-md-10">
-            <h3 class="fw-bold mb-0">
-              {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job.titleAr }}/{{ job.titleEn }}
-            </h3>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center"
+                (click)="navigateToList()" [attr.aria-label]="'common.back' | translate">
+                <i class="hgi fs-24" faDirArrow="start"></i>
+              </button>
+              <h3 class="fw-bold mb-0">
+                {{ 'JOB_DETAILS.JOB_DETAILS' | translate }} - {{ job.titleAr }}/{{ job.titleEn }}
+              </h3>
+            </div>
             <p class="text-muted mt-2 mb-0">{{ 'JOB_DETAILS.JOB_REVIEW_NOT' | translate }}</p>
           </div>
           <div class="col-md-2 d-flex flex-column align-items-end gap-2">

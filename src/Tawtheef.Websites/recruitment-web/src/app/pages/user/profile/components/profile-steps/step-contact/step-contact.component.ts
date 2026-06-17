@@ -201,12 +201,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
       if (!state.phoneVerified && state.phone?.e164Number) {
         const cached = this.getLastVerifiedPhoneE164();
         if (cached && cached === state.phone.e164Number) {
-          this.ds.up('phoneVerified', true);
+          this.ds.up('phoneVerified', true, { markDirty: false });
           this.phone.update(s => ({ ...s, status: 'verified' }));
         }
       }
     }
-    this.syncCountryDependents(this.ds.state().country ?? null);
+    this.syncCountryDependents(this.ds.state().country ?? null, false);
     // init email
     if (state.email) {
       this.emailValue.set(state.email);
@@ -324,18 +324,18 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.pendingGeoCountryIso2 = null;
 
     if (this.ds.isLocked('country') && this.ds.state().country) {
-      this.syncCountryDependents(this.ds.state().country ?? null);
+      this.syncCountryDependents(this.ds.state().country ?? null, false);
       return;
     }
 
     if (this.ds.state().country) {
-      this.syncCountryDependents(this.ds.state().country ?? null);
+      this.syncCountryDependents(this.ds.state().country ?? null, false);
       return;
     }
 
     const match = this.lookups.countries().find(c => c.code?.toLowerCase() === iso2?.toLowerCase());
     if (match) {
-      this.onCountryChange(match);
+      this.onCountryChange(match, false);
     }
   }
 
@@ -344,12 +344,12 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.setCountryFromIso(this.pendingGeoCountryIso2);
   }
 
-  private syncCountryDependents(country: CountryVM | null): void {
-    this.syncInterviewPlace(country);
+  private syncCountryDependents(country: CountryVM | null, markDirty = true): void {
+    this.syncInterviewPlace(country, markDirty);
   }
 
-  private syncInterviewPlace(country: CountryVM | null): void {
-    this.ds.up('interviewPlace', country ?? null);
+  private syncInterviewPlace(country: CountryVM | null, markDirty = true): void {
+    this.ds.up('interviewPlace', country ?? null, { markDirty });
   }
   // ========== Phone ==========
   onPhoneChange(value: PhoneNumber | null): void {
@@ -430,9 +430,9 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.phoneOtp.set(otp);
   }
 
-  onCountryChange(country: CountryVM | null): void {
-    this.ds.up('country', country ?? null);
-    this.syncCountryDependents(country);
+  onCountryChange(country: CountryVM | null, markDirty = true): void {
+    this.ds.up('country', country ?? null, { markDirty });
+    this.syncCountryDependents(country, markDirty);
   }
 
   sendPhoneCode(): void {
@@ -677,7 +677,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const dto = mapContactSection(s);
     const signature = this.buildSignature(dto, s);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('contact')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(3)) {
         const msg = this.ds.hasUnsolvedCorrections(3)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

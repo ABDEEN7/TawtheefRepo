@@ -12,6 +12,7 @@
   "wizard.files.formats.birth": "Allowed formats: JPG, PNG, PDF",
   "wizard.files.formats.marriage": "Allowed formats: JPG, PNG, PDF",
   "wizard.warningTitle": "Warning",
+  "wizard.navigation.unsavedChanges": "You have unsaved changes. Please save before moving to another step.",
   "wizard.validationErrorTitle": "Validation Error",
   "wizard.validation.duplicateTitle": "Duplicate names are not allowed.",
   "wizard.errorTitle": "An error occurred",
