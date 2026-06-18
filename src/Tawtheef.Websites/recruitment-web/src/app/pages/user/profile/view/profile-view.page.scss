@@ -91,6 +91,34 @@
   object-fit: cover;
 }
 
+.availability-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .65rem;
+  min-height: 42px;
+  padding: .45rem .75rem;
+  border: 1px solid rgba($brand, .16);
+  border-radius: 999px;
+  background: rgba($brand, .04);
+}
+
+.availability-toggle__label {
+  margin: 0;
+  color: #1f2937;
+  font-size: .92rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .availability-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
 /* =========================
    Loading
 ========================= */

@@ -19,6 +19,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
 import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
@@ -40,7 +42,8 @@ import { Tooltip } from 'primeng/tooltip';
     ButtonModule,
     TableModule,
     FaDirArrowDirective,
-    Tooltip
+    Tooltip,
+    ConfirmDialogModule
   ]
 })
 export class StepLanguagesComponent implements OnInit, OnDestroy {
@@ -55,6 +58,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   notificationService = inject(NotificationService);
   translate = inject(TranslateService);
   profile = inject(ProfileService);
+  confirmationService = inject(ConfirmationService);
 
   saving = signal(false);
   private lastSubmittedSignature: string | null = null;
@@ -101,6 +105,10 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   }
 
   removeLang(index: number) {
+    this.confirmDelete(() => this.deleteLang(index));
+  }
+
+  private deleteLang(index: number) {
     const lang = this.ds.state().languages[index];
     if (lang.id) {
       this.profile.deleteLanguage(lang.id).subscribe({
@@ -111,6 +119,19 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     } else {
       this.ds.delLang(index);
     }
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
+    });
   }
 
   onNext() {

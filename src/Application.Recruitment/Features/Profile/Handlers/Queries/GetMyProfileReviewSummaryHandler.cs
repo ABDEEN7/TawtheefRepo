@@ -164,8 +164,9 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
              x.Section is ProfileSection.Skills or ProfileSection.Languages);
 
         bool IsOutstandingActionableCorrection(ReviewItem x) =>
-            x.TargetType != ReviewTargetType.Section &&
-            x.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected;
+            x.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected &&
+            (x.TargetType != ReviewTargetType.Section ||
+             x.Section is ProfileSection.Skills or ProfileSection.Languages);
     }
 }
 

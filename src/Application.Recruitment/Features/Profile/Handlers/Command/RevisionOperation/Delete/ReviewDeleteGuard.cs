@@ -22,6 +22,19 @@ internal static class ReviewDeleteGuard
             ct);
     }
 
+    public static async Task<bool> CanDeleteRowOrSectionAsync(
+        IUnitOfWork uow,
+        Guid userProfileId,
+        ProfileSection section,
+        Guid entityId,
+        CancellationToken ct)
+    {
+        if (await CanDeleteRowAsync(uow, userProfileId, section, entityId, ct))
+            return true;
+
+        return await HasActionableSectionReviewItemAsync(uow, userProfileId, section, ct);
+    }
+
     public static Task<bool> CanDeleteAttachmentAsync(
         IUnitOfWork uow,
         Guid userProfileId,
@@ -60,6 +73,26 @@ internal static class ReviewDeleteGuard
                 (targetType == ReviewTargetType.Attachment
                     ? item.ResourceId == targetId
                     : item.EntityId == targetId),
+                ct);
+    }
+
+    private static Task<bool> HasActionableSectionReviewItemAsync(
+        IUnitOfWork uow,
+        Guid userProfileId,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
+        return reviewRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(item =>
+                item.UserProfileId == userProfileId &&
+                item.Section == section &&
+                item.TargetType == ReviewTargetType.Section &&
+                item.ReviewedAtUtc != null &&
+                !string.IsNullOrWhiteSpace(item.ReviewerNote) &&
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved),
                 ct);
     }
 }

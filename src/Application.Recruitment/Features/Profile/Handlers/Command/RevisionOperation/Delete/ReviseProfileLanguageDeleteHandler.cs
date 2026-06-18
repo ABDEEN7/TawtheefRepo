@@ -30,7 +30,7 @@ public sealed class ReviseProfileLanguageDeleteHandler(IUnitOfWork uow) :
         if (target is null)
             return Result.Fail<Unit>(ErrorsCodes.LanguageProfileNotFound);
 
-        var canDelete = await ReviewDeleteGuard.CanDeleteRowAsync(
+        var canDelete = await ReviewDeleteGuard.CanDeleteRowOrSectionAsync(
             uow,
             profile.Id,
             ProfileSection.Languages,
@@ -41,7 +41,7 @@ public sealed class ReviseProfileLanguageDeleteHandler(IUnitOfWork uow) :
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct);
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct, force: true);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

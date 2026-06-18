@@ -78,6 +78,24 @@
             </div>
 
           </div>
+          <div class="availability-toggle">
+            <label class="availability-toggle__label" for="profileAvailabilitySwitch">
+              {{ 'wizard.availability' | translate }}
+            </label>
+            <p-toggleswitch
+              inputId="profileAvailabilitySwitch"
+              [ngModel]="availableForRecruitment()"
+              [disabled]="availabilitySaving()"
+              (ngModelChange)="onAvailabilityChange($event)"
+            >
+              <ng-template #handle let-checked="checked">
+                <i [class]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+              </ng-template>
+            </p-toggleswitch>
+            @if (availabilitySaving()) {
+            <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
+            }
+          </div>
         </div>
 
     <div class="card-body mt-3" *ngIf="!summaryLoading() && canResubmit()">

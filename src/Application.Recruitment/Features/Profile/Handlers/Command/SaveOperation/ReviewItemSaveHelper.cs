@@ -27,7 +27,8 @@ internal static class ReviewItemSaveHelper
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool force = false)
     {
         return MarkTargetSolvedAsync(
             uow,
@@ -35,7 +36,8 @@ internal static class ReviewItemSaveHelper
             section,
             ReviewTargetType.Section,
             _ => true,
-            ct);
+            ct,
+            force);
     }
 
     public static Task MarkRowSolvedAsync(
@@ -84,9 +86,10 @@ internal static class ReviewItemSaveHelper
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
-        CancellationToken ct)
+        CancellationToken ct,
+        bool force = false)
     {
-        await MarkSectionSolvedAsync(uow, profile, section, ct);
+        await MarkSectionSolvedAsync(uow, profile, section, ct, force);
     }
 
     private static async Task MarkTargetSolvedAsync(

@@ -17,6 +17,8 @@ import { AbstractControl, FormsModule, ReactiveFormsModule, FormArray, FormBuild
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
@@ -39,7 +41,8 @@ import { finalize, switchMap } from 'rxjs/operators';
     TranslatePipe,
     ButtonModule,
     TooltipModule,
-    FaDirArrowDirective
+    FaDirArrowDirective,
+    ConfirmDialogModule
   ]
 })
 export class StepAttachmentsComponent implements OnInit {
@@ -62,6 +65,7 @@ export class StepAttachmentsComponent implements OnInit {
   notificationService = inject(NotificationService);
   profile = inject(ProfileService);
   fileUtils = inject(FileUtilsService);
+  confirmationService = inject(ConfirmationService);
 
   saving = signal(false);
   private lastSubmittedSignature: string | null = null;
@@ -136,6 +140,10 @@ export class StepAttachmentsComponent implements OnInit {
   }
 
   removeRow(i: number): void {
+    this.confirmDelete(() => this.deleteRow(i));
+  }
+
+  private deleteRow(i: number): void {
     const row = this.rows.at(i) as FormGroup;
     const id = row.get('id')?.value;
 
@@ -151,6 +159,19 @@ export class StepAttachmentsComponent implements OnInit {
     }
 
     this.removeLocalRow(i);
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
+    });
   }
 
   private removeLocalRow(i: number): void {

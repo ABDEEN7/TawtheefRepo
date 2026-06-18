@@ -19,12 +19,14 @@ import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { CourseModal } from '../../../components/profile-steps/step-experience/dialogs/course.modal/course.modal';
 import { TrainingCourse } from '../../../wizard-profile/models/experience.model';
 import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UploadedFileRef } from '../../../wizard-profile/models/profile-state.model';
 
 @Component({
   selector: 'app-profile-training-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, Tooltip],
+  imports: [CommonModule, TranslatePipe, Tooltip, ConfirmDialogModule],
   templateUrl: './training-section.component.html',
   styleUrls: ['./training-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -36,6 +38,7 @@ export class ProfileTrainingSectionComponent {
   private readonly notify = inject(NotificationService);
   private readonly lookups = inject(ProfileLookupsService);
   private readonly fileUtils = inject(FileUtilsService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
@@ -94,8 +97,11 @@ export class ProfileTrainingSectionComponent {
 
   protected deleteCourseTraining(course: TrainingCourse): void {
     if (!course.id) return;
-    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+    this.confirmDelete(() => this.executeDeleteCourseTraining(course));
+  }
 
+  private executeDeleteCourseTraining(course: TrainingCourse): void {
+    if (!course.id) return;
     this.profileService.deleteTrainingCourse(course.id).subscribe({
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
@@ -104,6 +110,19 @@ export class ProfileTrainingSectionComponent {
       error: () => {
         this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
       },
+    });
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
     });
   }
 
