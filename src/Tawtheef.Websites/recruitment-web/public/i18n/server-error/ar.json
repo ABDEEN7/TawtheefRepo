@@ -292,5 +292,9 @@
   "server-error.field.LAST_NAME": "اسم العائلة",
   "server-error.field.EMAIL": "البريد الإلكتروني",
   "server-error.field.PHONE": "الهاتف",
-  "server-error.field.NAME": "الاسم"
+  "server-error.field.NAME": "الاسم",
+  "server-error.DUPLICATE_EDUCATION":"يوجد مؤهل مكرر بالفعل.",
+  "server-error.DUPLICATE_EXPERIENCE":"توجد خبرة مكررة بالفعل.",
+  "server-error.DUPLICATE_TRAINING_COURSE":"توجد دورة تدريبية مكررة بالفعل.",
+  "server-error.DUPLICATE_ACHIEVEMENT":"توجد إنجازات مكررة بالفعل."
 }

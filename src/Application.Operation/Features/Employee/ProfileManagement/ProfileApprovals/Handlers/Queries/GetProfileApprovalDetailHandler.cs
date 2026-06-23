@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
 using System.Text.Json;
@@ -57,6 +58,8 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             .AsNoTracking()
             .Where(r => r.UserProfileId == profile.Id && r.ProfileChangeId == null)
             .ToListAsync(ct);
+
+        reviewItems = ActiveProfileReviewItems.ForFullReview(profile, reviewItems);
         var resourceRepo = uow.GetEntityRepository<Resource>();
         var resourceIds = reviewItems
             .Where(r => r.ResourceId.HasValue)

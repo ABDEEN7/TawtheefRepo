@@ -24,6 +24,8 @@ import { TableModule } from 'primeng/table';
 import { of, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
 import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
@@ -49,7 +51,8 @@ import { RemoteSelectComponent } from '../../../../../../shared/components/remot
     TableModule,
     FaDirArrowDirective,
     RemoteSelectComponent,
-    TooltipModule
+    TooltipModule,
+    ConfirmDialogModule
   ]
 })
 export class StepSkillsComponent implements OnInit, OnDestroy {
@@ -66,6 +69,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly profile = inject(ProfileService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly confirmationService = inject(ConfirmationService);
 
   saving = signal(false);
   private lastSubmittedSignature: string | null = null;
@@ -172,6 +176,10 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   }
 
   removeSkill(index: number): void {
+    this.confirmDelete(() => this.deleteSkill(index));
+  }
+
+  private deleteSkill(index: number): void {
     const skill = this.ds.state().skills[index];
 
     if (skill.id) {
@@ -183,6 +191,19 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     } else {
       this.ds.delSkill(index);
     }
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
+    });
   }
 
   onNext(): void {
@@ -199,7 +220,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     const skills = state.skills || [];
     const signature = this.buildSignature(skills);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('skills')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(8)) {
         const msg = this.ds.hasUnsolvedCorrections(8)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'

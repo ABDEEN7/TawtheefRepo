@@ -21,6 +21,8 @@ import {
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
@@ -45,7 +47,7 @@ type PendingExperienceChange = {
 @Component({
   selector: 'app-profile-experience-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, TooltipModule],
+  imports: [CommonModule, TranslatePipe, TooltipModule, ConfirmDialogModule],
   templateUrl: './experience-section.component.html',
   styleUrls: ['./experience-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +60,7 @@ export class ProfileExperienceSectionComponent {
   private readonly notify = inject(NotificationService);
   private readonly lookups = inject(ProfileLookupsService);
   private readonly fileUtils = inject(FileUtilsService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
@@ -122,8 +125,11 @@ export class ProfileExperienceSectionComponent {
 
   protected deleteExperience(exp: ExperienceDto): void {
     if (!exp.id) return;
-    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+    this.confirmDelete(() => this.executeDeleteExperience(exp));
+  }
 
+  private executeDeleteExperience(exp: ExperienceDto): void {
+    if (!exp.id) return;
     this.profileService.deleteExperience(exp.id).subscribe({
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
@@ -132,6 +138,19 @@ export class ProfileExperienceSectionComponent {
       error: () => {
         this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
       },
+    });
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
     });
   }
 

@@ -377,10 +377,10 @@ export class ProfileService {
     const payload = (achievements ?? [])
       .map(a => ({
         id: a.id ?? null,
-        achievementTypeId: a.achievementType?.id,
+        achievementTypeId: a.achievementType?.id ?? a.achievementTypeId,
         title: a.title,
         issuingAuthority: a.issuingAuthority,
-        countryId: a.country?.id,
+        countryId: a.country?.id ?? a.countryId,
         issueDate: a.issueDate,
         description: a.description,
         attachmentId: a.attachmentId ?? null,

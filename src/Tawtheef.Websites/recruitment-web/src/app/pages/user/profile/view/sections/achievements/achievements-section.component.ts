@@ -6,6 +6,8 @@ import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetType
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { ProfileLookupsService } from '../../../wizard-profile/services/profile-lookups.service';
@@ -16,7 +18,7 @@ import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 @Component({
   selector: 'app-profile-achievements-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, TooltipModule],
+  imports: [CommonModule, TranslatePipe, TooltipModule, ConfirmDialogModule],
   templateUrl: './achievements-section.component.html',
   styleUrls: ['./achievements-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -28,6 +30,7 @@ export class ProfileAchievementsSectionComponent {
   private readonly notify = inject(NotificationService);
   private readonly lookups = inject(ProfileLookupsService);
   private readonly fileUtils = inject(FileUtilsService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
@@ -83,8 +86,11 @@ export class ProfileAchievementsSectionComponent {
 
   protected deleteAchievement(achievement: AchievementDto): void {
     if (!achievement.id) return;
-    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+    this.confirmDelete(() => this.executeDeleteAchievement(achievement));
+  }
 
+  private executeDeleteAchievement(achievement: AchievementDto): void {
+    if (!achievement.id) return;
     this.profileService.deleteAchievement(achievement.id).subscribe({
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
@@ -93,6 +99,19 @@ export class ProfileAchievementsSectionComponent {
       error: () => {
         this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
       },
+    });
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
     });
   }
 

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, effect, linkedSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ButtonDirective } from 'primeng/button';
@@ -7,6 +8,7 @@ import { Skeleton } from 'primeng/skeleton';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import {
   ProfileSectionEnum,
@@ -66,9 +68,11 @@ type RxRes<T> = Omit<AnyRxRes, 'value'> & { value: () => T | undefined };
   ],
   imports: [
     CommonModule,
+    FormsModule,
     TranslatePipe,
     Skeleton,
     TooltipModule,
+    ToggleSwitchModule,
     I18nNamespaceDirective,
     ProfilePrerequisitesSectionComponent,
     ProfilePersonalSectionComponent,
@@ -100,6 +104,7 @@ export class ProfileViewPage {
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   private readonly sectionDataFieldPath = 'SectionData';
   protected readonly resubmitting = signal(false);
+  protected readonly availabilitySaving = signal(false);
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
     isResident: false,
@@ -220,6 +225,7 @@ export class ProfileViewPage {
   }
 
   readonly header = computed(() => this.basics.value());
+  protected readonly availableForRecruitment = linkedSignal(() => this.header()?.availableForRecruitment ?? true);
   readonly visibility = computed<ProfileOverviewVisibility>(() => {
     const profile = this.basics.value();
     if (!profile) return this.emptyVisibility;
@@ -394,6 +400,32 @@ export class ProfileViewPage {
     this.changeRequests.reload();
     this.authState.resetBootstrap();
     this.authState.getAuthBootstrap$().subscribe();
+  }
+
+  onAvailabilityChange(available: boolean) {
+    if (this.availabilitySaving()) return;
+
+    const previous = this.availableForRecruitment();
+    this.availableForRecruitment.set(available);
+    this.availabilitySaving.set(true);
+
+    this.profileService.saveRecruitmentAvailability(available)
+      .pipe(
+        take(1),
+        finalize(() => this.availabilitySaving.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.notify.success(this.i18n.instant('profileView.notifications.saved'));
+          this.basics.reload();
+          this.authState.resetBootstrap();
+          this.authState.getAuthBootstrap$().subscribe();
+        },
+        error: () => {
+          this.availableForRecruitment.set(previous);
+          this.notify.error(this.i18n.instant('profileView.notifications.saveFailed'));
+        }
+      });
   }
 
   resubmitProfile() {

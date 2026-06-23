@@ -60,7 +60,6 @@ public sealed class SaveProfileAttachmentsHandler(
 
         foreach (var dto in incoming)
         {
-            // Upload new file only if FileIndex is provided
             var uploadResult = await UploadIfNeededAsync(
                 dto.FileIndex,
                 files,
@@ -71,21 +70,34 @@ public sealed class SaveProfileAttachmentsHandler(
             if (uploadResult.IsFailed)
                 return Result.Fail<Unit>(uploadResult.Errors);
 
-            var finalAttachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
+            var hasNewFile = uploadResult.Value is not null;
 
-            if (finalAttachmentId is null || finalAttachmentId == Guid.Empty)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+            // في حالة التعديل: ابحث عن الصف القديم بالـ AttachmentId القادم من الـ DTO
+            ProfileAdditionalAttachment? row = null;
 
-            // Upsert
-            if (existingByAttachmentId.TryGetValue(finalAttachmentId.Value, out var row))
+            if (dto.AttachmentId is not null && dto.AttachmentId != Guid.Empty)
             {
-                // Update editable fields (e.g., title / file name)
-                // Note: your entity uses FileName to store dto.Title
+                existingByAttachmentId.TryGetValue(dto.AttachmentId.Value, out row);
+            }
+
+            if (row is not null)
+            {
+                // تحديث العنوان
                 if (!string.Equals(row.FileName, dto.Title, StringComparison.Ordinal))
                     row.FileName = dto.Title;
+
+                // تحديث الملف فقط إذا تم رفع ملف جديد
+                if (hasNewFile)
+                    row.AttachmentId = uploadResult.Value!.ResourceId;
             }
             else
             {
+                // إضافة عنصر جديد
+                var finalAttachmentId = uploadResult.Value?.ResourceId ?? dto.AttachmentId;
+
+                if (finalAttachmentId is null || finalAttachmentId == Guid.Empty)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidAttachmentFile);
+
                 var newRow = new ProfileAdditionalAttachment
                 {
                     FileName      = dto.Title,
@@ -93,12 +105,7 @@ public sealed class SaveProfileAttachmentsHandler(
                     UserProfileId = profile.Id
                 };
 
-                // Option A (recommended): EF Core supports CT
                 await attachRepo.DbSet.AddAsync(newRow, ct);
-
-                // Option B (if you prefer sync add):
-                // attachRepo.DbSet.Add(newRow);
-
                 profile.AdditionalAttachments.Add(newRow);
             }
         }

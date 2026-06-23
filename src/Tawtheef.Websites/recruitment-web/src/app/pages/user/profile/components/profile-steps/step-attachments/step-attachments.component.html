@@ -1,4 +1,6 @@
 <div class="attachments-card">
+  <p-confirmDialog appendTo="body"></p-confirmDialog>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class=" text-primary">{{ 'wizard.attachments.title' | translate }}</h5>
 
@@ -26,6 +28,9 @@
                 <input class="form-control" formControlName="title" (input)="sanitizeTitle(i, $event)"
                   placeholder="{{'wizard.attachments.placeholders.attachmentTitle' | translate}}"
                   [disabled]="g.disabled" [class.is-invalid]="isInvalid(i,'title') || isDuplicateTitle(i)">
+                <small *ngIf="(g.get('title')?.hasError('required') || g.get('title')?.hasError('whitespace')) && (g.get('title')?.dirty || g.get('title')?.touched)" class="text-danger mt-1 d-block">
+                  {{ 'validation.required' | translate }}
+                </small>
                 <small *ngIf="g.get('title')?.hasError('pattern') && (g.get('title')?.dirty || g.get('title')?.touched)" class="text-danger mt-1 d-block">
                   {{ 'wizard.validation.invalidCharacters' | translate }}
                 </small>

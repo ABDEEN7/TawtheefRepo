@@ -26,6 +26,7 @@ import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { Achievement } from '../../../wizard-profile/models/achievement.model';
 import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
 import { StringUtils } from '../../../../../../core/utils/string-utils';
+import { finalize, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-step-achievements',
@@ -109,10 +110,14 @@ export class StepAchievementsComponent implements OnInit {
     const achievement = this.ds.state().achievements[index];
     if (achievement?.id) {
       this.profile.deleteAchievement(achievement.id).subscribe({
-        next: () => this.ds.delAchievement(index),
+        next: () => {
+          this.ds.delAchievement(index);
+          this.lastSubmittedSignature = this.buildSignature(this.ds.state().achievements);
+        },
         error: (err: any) => {
           if (isDevMode())
             console.error(err);
+          this.refreshAchievementsFromBackend();
         },
       });
     } else {
@@ -154,7 +159,7 @@ export class StepAchievementsComponent implements OnInit {
 
     const signature = this.buildSignature(achievements);
 
-    if (signature && signature === this.lastSubmittedSignature) {
+    if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('achievements')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(7)) {
         const msg = this.ds.hasUnsolvedCorrections(7)
           ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
@@ -175,31 +180,42 @@ export class StepAchievementsComponent implements OnInit {
     }
 
     this.saving.set(true);
-    this.profile.saveAchievementsSection(achievements).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.lastSubmittedSignature = signature;
-        this.ds.markStepSubmitted('achievements');
-        if (this.profile.isChangeRequestMode()) {
-          this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
-        }
-        this.next.emit();
-      },
-      error: (err: any) => {
-        if (isDevMode())
-          console.error(err);
-        this.saving.set(false);
-      },
-    });
+    const save$ = this.profile.saveAchievementsSection(achievements);
+    const submit$ = this.profile.isChangeRequestMode()
+      ? save$
+      : save$.pipe(switchMap(() => this.ds.refreshAchievementsFromBackend()));
+
+    submit$
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: () => {
+          const savedAchievements = this.profile.isChangeRequestMode()
+            ? achievements
+            : this.ds.state().achievements || [];
+          this.lastSubmittedSignature = this.buildSignature(savedAchievements);
+          this.ds.markStepSubmitted('achievements');
+          if (this.profile.isChangeRequestMode()) {
+            this.notify.success(this.translate.instant('profileView.notifications.changeRequestSent'));
+          }
+          this.next.emit();
+        },
+        error: (err: any) => {
+          if (isDevMode())
+            console.error(err);
+          if (this.isDuplicateAchievementError(err)) {
+            this.refreshAchievementsFromBackend();
+          }
+        },
+      });
   }
 
   private buildSignature(achievements: Achievement[]): string {
     return JSON.stringify((achievements ?? []).map(a => ({
       id: a.id ?? null,
-      achievementTypeId: a.achievementType?.id ?? null,
+      achievementTypeId: a.achievementType?.id ?? a.achievementTypeId ?? null,
       title: a.title ?? '',
       issuingAuthority: a.issuingAuthority ?? '',
-      countryId: a.country?.id ?? null,
+      countryId: a.country?.id ?? a.countryId ?? null,
       issueDate: a.issueDate ?? null,
       description: a.description ?? '',
       attachmentId: a.attachmentId ?? null,
@@ -254,5 +270,26 @@ export class StepAchievementsComponent implements OnInit {
       this.translate.instant('wizard.validation.duplicateTitle'),
       this.translate.instant('wizard.validationErrorTitle')
     );
+  }
+
+  private refreshAchievementsFromBackend(): void {
+    this.ds.refreshAchievementsFromBackend().subscribe({
+      next: () => {
+        this.lastSubmittedSignature = this.buildSignature(this.ds.state().achievements);
+      },
+      error: (err: any) => {
+        if (isDevMode())
+          console.error(err);
+      },
+    });
+  }
+
+  private isDuplicateAchievementError(err: any): boolean {
+    const body = err?.error ?? err;
+    if (typeof body === 'string') {
+      return body.includes('DUPLICATE_ACHIEVEMENT');
+    }
+
+    return JSON.stringify(body ?? {}).includes('DUPLICATE_ACHIEVEMENT');
   }
 }

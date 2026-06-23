@@ -292,5 +292,9 @@
   "server-error.field.LAST_NAME": "Last name",
   "server-error.field.EMAIL": "Email",
   "server-error.field.PHONE": "Phone",
-  "server-error.field.NAME": "Name"
+  "server-error.field.NAME": "Name",
+  "server-error.DUPLICATE_EDUCATION":"Duplicate education found.",
+  "server-error.DUPLICATE_EXPERIENCE":"Duplicate experience found.",
+  "server-error.DUPLICATE_TRAINING_COURSE":"Duplicate training course found.",
+  "server-error.DUPLICATE_ACHIEVEMENT":"Duplicate achievement found."
 }

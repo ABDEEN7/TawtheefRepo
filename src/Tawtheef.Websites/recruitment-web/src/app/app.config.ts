@@ -12,7 +12,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -35,6 +35,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 }
 export const appConfig: ApplicationConfig = {
   providers: [
+    ConfirmationService,
     MessageService,
     importProvidersFrom(NgbModule),
     provideBrowserGlobalErrorListeners(),

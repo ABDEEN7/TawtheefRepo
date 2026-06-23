@@ -7,6 +7,8 @@ import { MyProfileReviewChangedItemDto, MyProfileReviewNoteDto, ReviewTargetType
 import { FieldChange } from '../../utils/detect-change-fields';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../../../wizard-profile/services/profile.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
@@ -24,7 +26,7 @@ type ProfileAttachmentView = {
 @Component({
   selector: 'app-profile-attachments-section',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, TooltipModule],
+  imports: [CommonModule, TranslatePipe, TooltipModule, ConfirmDialogModule],
   templateUrl: './attachments-section.component.html',
   styleUrls: ['./attachments-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,6 +37,7 @@ export class ProfileAttachmentsSectionComponent {
   private readonly translate = inject(TranslateService);
   private readonly profileService = inject(ProfileService);
   private readonly notify = inject(NotificationService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canAddAttachment = false;
@@ -83,8 +86,11 @@ export class ProfileAttachmentsSectionComponent {
 
   protected deleteAttachment(att: ProfileAttachmentView): void {
     if (!att.id) return;
-    if (!window.confirm(this.translate.instant('profileView.confirmDeleteRow'))) return;
+    this.confirmDelete(() => this.executeDeleteAttachment(att));
+  }
 
+  private executeDeleteAttachment(att: ProfileAttachmentView): void {
+    if (!att.id) return;
     this.profileService.deleteAttachment(att.id).subscribe({
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
@@ -93,6 +99,19 @@ export class ProfileAttachmentsSectionComponent {
       error: () => {
         this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
       },
+    });
+  }
+
+  private confirmDelete(accept: () => void): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('wizard.buttons.delete'),
+      message: this.translate.instant('profileView.confirmDeleteRow'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.yes'),
+      rejectLabel: this.translate.instant('common.no'),
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept,
     });
   }
 
