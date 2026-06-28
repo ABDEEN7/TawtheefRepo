@@ -558,19 +558,21 @@ export class ProfileViewPage {
   }
 
   protected reviewNoteTitle(note: MyProfileReviewNoteDto): string {
+    const fallbackTitle = this.translatedReviewTitle(note);
+
     switch (this.expanded()) {
       case ProfileSectionEnum.Qualifications:
-        return this.qualificationReviewNoteTitle(note) ?? note.title;
+        return this.qualificationReviewNoteTitle(note) ?? fallbackTitle;
       case ProfileSectionEnum.Experience:
-        return this.experienceReviewNoteTitle(note) ?? note.title;
+        return this.experienceReviewNoteTitle(note) ?? fallbackTitle;
       case ProfileSectionEnum.TrainingCourses:
-        return this.trainingReviewNoteTitle(note) ?? note.title;
+        return this.trainingReviewNoteTitle(note) ?? fallbackTitle;
       case ProfileSectionEnum.CertificatesAndAwards:
-        return this.achievementReviewNoteTitle(note) ?? note.title;
+        return this.achievementReviewNoteTitle(note) ?? fallbackTitle;
       case ProfileSectionEnum.Attachments:
-        return this.attachmentReviewNoteTitle(note) ?? note.title;
+        return this.attachmentReviewNoteTitle(note) ?? fallbackTitle;
       default:
-        return note.title;
+        return fallbackTitle;
     }
   }
 
@@ -648,6 +650,14 @@ export class ProfileViewPage {
 
   private isSectionNoteActionable(section: ProfileSectionEnum): boolean {
     return section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages;
+  }
+
+  private translatedReviewTitle(note: MyProfileReviewNoteDto): string {
+    const key = REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.title)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.fieldPath)] ??
+      null;
+
+    return key ? this.i18n.instant(key) : note.title;
   }
 
   private qualificationReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
@@ -784,3 +794,28 @@ function cleanLabel(value?: string | null): string | null {
   const normalized = value?.trim();
   return normalized && normalized !== '-' ? normalized : null;
 }
+
+function normalizeReviewTitle(value?: string | null): string {
+  return (value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
+  resume: 'profileOverview.attachments.resume',
+  cv: 'profileOverview.attachments.resume',
+  resumeattachmentid: 'profileOverview.attachments.resume',
+  nationalcard: 'profileOverview.attachments.nationalCard',
+  nationalidcard: 'profileOverview.attachments.nationalCard',
+  nationalcardid: 'profileOverview.attachments.nationalCard',
+  birthcertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificateid: 'profileOverview.attachments.birthdayCertificate',
+  marriagecertificate: 'profileOverview.attachments.marriageCertificate',
+  marriagecertificateid: 'profileOverview.attachments.marriageCertificate',
+  sponsorcard: 'profileOverview.attachments.sponsorCard',
+  sponsorcardid: 'profileOverview.attachments.sponsorCard',
+  sponsorcardresourceid: 'profileOverview.attachments.sponsorCard',
+  nationaladdresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+  nationaladdresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddress: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+};

@@ -43,7 +43,13 @@ export class ResubmitConfirmDialogComponent {
       return 'profileOverview.resubmitConfirm.sectionData';
     }
 
-    return null;
+    return REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.title)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.fieldPath)] ??
+      null;
+  }
+
+  protected itemTitle(item: MyProfileReviewChangedItemDto): string {
+    return item.entityName || item.title;
   }
 
   protected confirm(): void {
@@ -54,3 +60,28 @@ export class ResubmitConfirmDialogComponent {
     this.ref.close(false);
   }
 }
+
+function normalizeReviewTitle(value?: string | null): string {
+  return (value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
+  resume: 'profileOverview.attachments.resume',
+  cv: 'profileOverview.attachments.resume',
+  resumeattachmentid: 'profileOverview.attachments.resume',
+  nationalcard: 'profileOverview.attachments.nationalCard',
+  nationalidcard: 'profileOverview.attachments.nationalCard',
+  nationalcardid: 'profileOverview.attachments.nationalCard',
+  birthcertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificateid: 'profileOverview.attachments.birthdayCertificate',
+  marriagecertificate: 'profileOverview.attachments.marriageCertificate',
+  marriagecertificateid: 'profileOverview.attachments.marriageCertificate',
+  sponsorcard: 'profileOverview.attachments.sponsorCard',
+  sponsorcardid: 'profileOverview.attachments.sponsorCard',
+  sponsorcardresourceid: 'profileOverview.attachments.sponsorCard',
+  nationaladdresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+  nationaladdresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddress: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+};

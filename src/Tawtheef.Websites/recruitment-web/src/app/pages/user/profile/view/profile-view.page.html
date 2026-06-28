@@ -194,6 +194,12 @@
                           {{ 'profileView.sections.status.ok' | translate }}
                         </span>
                         }
+                        @else if(profileStatus() == UserProfileStatusEnum.RequiresUpdate){
+                        <span class="pill warning tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                          <i class="hgi hgi-stroke fw-normal hgi-hourglass fs-16"></i>
+                          {{ 'profileOverview.status.readyForResubmit' | translate }}
+                        </span>
+                        }
                         @else{
                         <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
                           <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
