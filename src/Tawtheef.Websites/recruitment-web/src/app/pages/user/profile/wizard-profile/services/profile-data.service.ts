@@ -129,6 +129,10 @@ export class ProfileDataService {
     return !!this.dirtySteps()[stepKey];
   }
 
+  markStepDirty(stepKey: keyof ReturnType<typeof this.stepValidity>): void {
+    this.markCollectionChanged(stepKey);
+  }
+
   get isNeedSponsor() {
     return candidateTypeNeedsSponsor(candidateTypeFromState(this.state()));
   }

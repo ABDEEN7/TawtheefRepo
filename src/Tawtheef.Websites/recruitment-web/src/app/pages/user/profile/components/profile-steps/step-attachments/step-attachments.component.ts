@@ -122,6 +122,7 @@ export class StepAttachmentsComponent implements OnInit {
 
 
   sanitizeTitle(i: number, event: Event): void {
+    this.markAttachmentsDirty();
     const input = event.target as HTMLInputElement;
     const sanitized = (input.value ?? '').replace(/[^\p{L}\p{N}\s]/gu, '').slice(0, 150);
     if (sanitized !== input.value) {
@@ -137,6 +138,7 @@ export class StepAttachmentsComponent implements OnInit {
     this.filesStore.push(null);
     this.fileRefs.push(null);
     this.replacingFile.push(false);
+    this.markAttachmentsDirty();
   }
 
   removeRow(i: number): void {
@@ -149,7 +151,7 @@ export class StepAttachmentsComponent implements OnInit {
 
     if (id && !this.profile.isChangeRequestMode()) {
       this.profile.deleteAttachment(id).subscribe({
-        next: () => this.removeLocalRow(i),
+        next: () => this.removeLocalRow(i, false),
         error: (err: any) => {
           if (isDevMode())
             console.error(err);
@@ -174,11 +176,14 @@ export class StepAttachmentsComponent implements OnInit {
     });
   }
 
-  private removeLocalRow(i: number): void {
+  private removeLocalRow(i: number, markDirty = true): void {
     this.rows.removeAt(i);
     this.filesStore.splice(i, 1);
     this.fileRefs.splice(i, 1);
     this.replacingFile.splice(i, 1);
+    if (markDirty) {
+      this.markAttachmentsDirty();
+    }
   }
 
   confirmRow(i: number): void {
@@ -235,6 +240,7 @@ export class StepAttachmentsComponent implements OnInit {
     this.filesStore[i] = file;
     this.fileRefs[i] = null;
     this.replacingFile[i] = false;
+    this.markAttachmentsDirty();
 
     const fileControl = grp.get('file');
     fileControl?.setValidators([]);
@@ -248,6 +254,7 @@ export class StepAttachmentsComponent implements OnInit {
   changeFile(i: number): void {
     const grp = this.rows.at(i) as FormGroup;
     this.replacingFile[i] = true;
+    this.markAttachmentsDirty();
 
     const fileControl = grp.get('file');
     fileControl?.setValidators([Validators.required]);
@@ -430,6 +437,7 @@ export class StepAttachmentsComponent implements OnInit {
     grp.patchValue({ file: null, fileName: '' }, { emitEvent: false });
     grp.get('file')?.markAsTouched();
     grp.get('file')?.setErrors({ invalidFile: true });
+    this.markAttachmentsDirty();
 
     this.notificationService.error(message, this.translate.instant('wizard.validationErrorTitle'));
   }
@@ -488,5 +496,9 @@ export class StepAttachmentsComponent implements OnInit {
 
   private normalizeTitle(value: unknown): string {
     return StringUtils.normalize((value ?? '').toString());
+  }
+
+  private markAttachmentsDirty(): void {
+    this.ds.markStepDirty('attachments');
   }
 }

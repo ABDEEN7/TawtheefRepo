@@ -151,6 +151,8 @@
   "wizard.nationalAddress.building": "المبنى",
   "wizard.nationalAddress.unit": "الوحدة",
   "wizard.nationalAddress.document": "وثيقة العنوان الوطني",
+  "wizard.nationalAddress.fileTypeError": "صيغة الملف غير صحيحة. الصيغ المسموحة: PDF, JPG, PNG.",
+  "wizard.nationalAddress.fileSizeError": "حجم الملف يجب ألا يتجاوز 2 ميجابايت.",
   "wizard.degrees.title": "المؤهلات",
   "wizard.degrees.degree": "الدرجة العلمية",
   "wizard.degrees.major": "التخصص الفرعي",

@@ -115,10 +115,7 @@ export class ProfileQualificationsSectionComponent {
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
         this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
-      },
+      }
     });
   }
 

@@ -102,7 +102,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
 
   naFileError = signal<string | null>(null);
   maxNaFileSize = 2 * 1024 * 1024; // 2MB
-  allowedNaTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+  readonly allowedNaExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
   private naLocalFile: FileSlot = createFileSlot();
   protected readonly phoneNumberUtil = PhoneNumberUtil.getInstance();
   protected readonly SearchCountryField = SearchCountryField;
@@ -639,7 +639,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) return;
-    if (!this.allowedNaTypes.includes(file.type)) {
+    if (!this.isAllowedNaFile(file)) {
       this.naFileError.set(this.translate.instant('wizard.nationalAddress.fileTypeError'));
       input.value = '';
       return;
@@ -658,6 +658,11 @@ export class StepContactComponent implements OnInit, OnDestroy {
   }
   async onNext(): Promise<void> {
     if (this.savingContact()) return;
+
+    if (this.naFileError()) {
+      this.notificationService.error(this.naFileError()!, this.translate.instant('wizard.validationErrorTitle'));
+      return;
+    }
 
     if (!this.step().valid) {
       this.notificationService.error(this.step().errors.map(e => `* ${this.translate.instant(e.i18nKey)}`).join('\n'), this.translate.instant('wizard.validationErrorTitle'));
@@ -739,6 +744,14 @@ export class StepContactComponent implements OnInit, OnDestroy {
     } catch {
       return null;
     }
+  }
+
+  private isAllowedNaFile(file: File): boolean {
+    const fileName = file.name ?? '';
+    const dotIndex = fileName.lastIndexOf('.');
+    const extension = dotIndex >= 0 ? fileName.slice(dotIndex).toLowerCase() : '';
+
+    return this.allowedNaExtensions.includes(extension);
   }
 
   onNaNumberChange(field: NaField, value: any): void {

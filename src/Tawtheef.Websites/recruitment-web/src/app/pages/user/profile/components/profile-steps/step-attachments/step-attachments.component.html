@@ -22,8 +22,7 @@
         <tbody [formGroup]="form">
           <ng-container formArrayName="rows">
             @for (g of rows.controls; track i; let i = $index) {
-            <tr [formGroupName]="i" [class.is-disabled]="g.disabled">
-              <!-- عنوان -->
+            <tr [formGroupName]="i">
               <td>
                 <input class="form-control" formControlName="title" (input)="sanitizeTitle(i, $event)"
                   placeholder="{{'wizard.attachments.placeholders.attachmentTitle' | translate}}"

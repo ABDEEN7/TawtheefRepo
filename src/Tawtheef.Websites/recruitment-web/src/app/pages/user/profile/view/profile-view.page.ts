@@ -24,7 +24,11 @@ import {
 } from './models/profile-overview.model';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { ProfileEditDialogComponent } from './dialogs/profile-edit-dialog/profile-edit-dialog.component';
-import { ProfileStatusDto } from '../../../../core/models/auth/auth-response.model';
+import {
+  AdditionalAttachmentDto,
+  ProfileStatusDto,
+  QualificationDto
+} from '../../../../core/models/auth/auth-response.model';
 import { ProfilePrerequisitesSectionComponent } from './sections/prerequisites/prerequisites-section.component';
 import { ProfilePersonalSectionComponent } from './sections/personal/personal-section.component';
 import { ProfileContactSectionComponent } from './sections/contact/contact-section.component';
@@ -257,8 +261,8 @@ export class ProfileViewPage {
         };
       case UserProfileStatusEnum.RequiresUpdate:
         return {
-          labelKey: 'profileOverview.status.requiresUpdate',
-          hintKey: 'profileOverview.statusHint.requiresUpdate',
+          labelKey: 'profileOverview.status.readyForResubmit',
+          hintKey: 'profileOverview.statusHint.readyForResubmit',
           severity: 'chip-warn'
         };
       case UserProfileStatusEnum.Rejected:
@@ -553,6 +557,23 @@ export class ProfileViewPage {
     return 'profileOverview.reviewStatus.other';
   }
 
+  protected reviewNoteTitle(note: MyProfileReviewNoteDto): string {
+    switch (this.expanded()) {
+      case ProfileSectionEnum.Qualifications:
+        return this.qualificationReviewNoteTitle(note) ?? note.title;
+      case ProfileSectionEnum.Experience:
+        return this.experienceReviewNoteTitle(note) ?? note.title;
+      case ProfileSectionEnum.TrainingCourses:
+        return this.trainingReviewNoteTitle(note) ?? note.title;
+      case ProfileSectionEnum.CertificatesAndAwards:
+        return this.achievementReviewNoteTitle(note) ?? note.title;
+      case ProfileSectionEnum.Attachments:
+        return this.attachmentReviewNoteTitle(note) ?? note.title;
+      default:
+        return note.title;
+    }
+  }
+
   changeStatusLabelKey(status: number): string {
     switch (status) {
       case ProfileChangeRequestStatusEnum.Pending:
@@ -628,6 +649,126 @@ export class ProfileViewPage {
   private isSectionNoteActionable(section: ProfileSectionEnum): boolean {
     return section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages;
   }
+
+  private qualificationReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
+    const profile = this.sectionValue(ProfileSectionEnum.Qualifications) as ProfileStatusDto | null;
+    const qualification = this.qualificationForReviewNote(note, profile?.qualifications ?? []);
+    if (!qualification) return null;
+
+    const degree = cleanLabel(qualification.degree?.name);
+    const major = cleanLabel(qualification.major?.name);
+    const subMajor = cleanLabel(qualification.subMajor?.name);
+    const specialization = [major, subMajor].filter(Boolean).join(' / ');
+    const university = cleanLabel(qualification.university?.name);
+    const year = qualification.graduationYear ? String(qualification.graduationYear) : '';
+    const details = [degree, specialization, university, year].filter(Boolean);
+
+    if (details.length) return details.join(' - ');
+
+    return cleanLabel(qualification.attachment?.fileName) ?? null;
+  }
+
+  private qualificationForReviewNote(
+    note: MyProfileReviewNoteDto,
+    qualifications: QualificationDto[]
+  ): QualificationDto | null {
+    return this.itemForReviewNote(note, qualifications);
+  }
+
+  private experienceReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
+    const profile = this.sectionValue(ProfileSectionEnum.Experience) as ProfileStatusDto | null;
+    const experience = this.itemForReviewNote(note, profile?.experiences ?? []);
+    if (!experience) return null;
+
+    const details = [
+      cleanLabel(experience.jobTitle),
+      cleanLabel(experience.employerName),
+      cleanLabel(experience.qualification?.name),
+      cleanLabel(experience.country?.name)
+    ].filter(Boolean);
+
+    if (details.length) return details.join(' - ');
+
+    return cleanLabel(experience.attachment?.fileName) ?? null;
+  }
+
+  private trainingReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
+    const profile = this.sectionValue(ProfileSectionEnum.TrainingCourses) as ProfileStatusDto | null;
+    const course = this.itemForReviewNote(note, profile?.trainingCourses ?? []);
+    if (!course) return null;
+
+    const details = [
+      cleanLabel(course.title),
+      cleanLabel(course.provider),
+      cleanLabel(course.country?.name)
+    ].filter(Boolean);
+
+    if (details.length) return details.join(' - ');
+
+    return cleanLabel(course.attachment?.fileName) ?? null;
+  }
+
+  private achievementReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
+    const profile = this.sectionValue(ProfileSectionEnum.CertificatesAndAwards) as ProfileStatusDto | null;
+    const achievement = this.itemForReviewNote(note, profile?.achievements ?? []);
+    if (!achievement) return null;
+
+    const details = [
+      cleanLabel(achievement.title),
+      cleanLabel(achievement.achievementType?.name),
+      cleanLabel(achievement.issuingAuthority),
+      cleanLabel(achievement.country?.name)
+    ].filter(Boolean);
+
+    if (details.length) return details.join(' - ');
+
+    return cleanLabel(achievement.attachment?.fileName) ?? null;
+  }
+
+  private attachmentReviewNoteTitle(note: MyProfileReviewNoteDto): string | null {
+    const profile = this.sectionValue(ProfileSectionEnum.Attachments) as ProfileStatusDto | null;
+    const attachments = profile?.additionalAttachments ?? [];
+    const entityId = note.entityId?.toLowerCase();
+    if (entityId) {
+      const row = attachments.find(item => item.id?.toLowerCase() === entityId);
+      if (row) return this.additionalAttachmentTitle(row);
+    }
+
+    const resourceId = note.resourceId?.toLowerCase();
+    if (resourceId) {
+      const row = attachments.find(item => item.file?.resourceId?.toLowerCase() === resourceId);
+      if (row) return this.additionalAttachmentTitle(row);
+    }
+
+    return null;
+  }
+
+  private itemForReviewNote<
+    T extends { id?: string | null; attachment?: { resourceId?: string | null } | null }
+  >(note: MyProfileReviewNoteDto, items: T[]): T | null {
+    const entityId = note.entityId?.toLowerCase();
+    if (entityId) {
+      const row = items.find(item => item.id?.toLowerCase() === entityId);
+      if (row) return row;
+    }
+
+    const resourceId = note.resourceId?.toLowerCase();
+    if (resourceId) {
+      const row = items.find(item => item.attachment?.resourceId?.toLowerCase() === resourceId);
+      if (row) return row;
+    }
+
+    return null;
+  }
+
+  private additionalAttachmentTitle(item: AdditionalAttachmentDto): string | null {
+    const details = [
+      cleanLabel(item.title),
+      cleanLabel(item.file?.fileName)
+    ].filter(Boolean);
+
+    return details.length ? details.join(' - ') : null;
+  }
 }
 
 function parseJsonValue(value?: string | null) {
@@ -637,4 +778,9 @@ function parseJsonValue(value?: string | null) {
   } catch {
     return value;
   }
+}
+
+function cleanLabel(value?: string | null): string | null {
+  const normalized = value?.trim();
+  return normalized && normalized !== '-' ? normalized : null;
 }

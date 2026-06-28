@@ -151,6 +151,8 @@
   "wizard.nationalAddress.building": "Building",
   "wizard.nationalAddress.unit": "Unit",
   "wizard.nationalAddress.document": "National address document",
+  "wizard.nationalAddress.fileTypeError": "Invalid file format. Allowed formats: PDF, JPG, PNG.",
+  "wizard.nationalAddress.fileSizeError": "File size must not exceed 2 MB.",
   "wizard.degrees.title": "Degrees",
   "wizard.degrees.degree": "Degree",
   "wizard.degrees.major": "Sub Major",

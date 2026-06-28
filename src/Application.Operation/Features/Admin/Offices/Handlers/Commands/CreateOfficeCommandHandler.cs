@@ -35,6 +35,7 @@ public sealed class CreateOfficeCommandHandler(IUnitOfWork unitOfWork,
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminEmailInvalid);
 
         var existingUser = await userManager.Users
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(u => u.Email == email, ct);
 
         if (existingUser is not null)

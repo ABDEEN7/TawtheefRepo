@@ -277,7 +277,7 @@
                 <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
                   {{ noteStatusLabelKey(note.status) | translate }}
                 </span>
-                <span class="review-note__target">{{ note.title }}</span>
+                <span class="review-note__target">{{ reviewNoteTitle(note) }}</span>
               </div>
               <p class="review-note__body" *ngIf="note.note">{{ note.note }}</p>
             </article>

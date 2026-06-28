@@ -11,6 +11,7 @@
   "server-error.CONCURRENCY_FAILURE": "حدث تعارض أثناء تنفيذ العملية، يرجى المحاولة مرة أخرى.",
   "server-error.LOGIN_FAILED": "فشل تسجيل الدخول.",
   "server-error.UPLOAD_FAILED": "فشل رفع الملف.",
+  "server-error.INVALID_FILE_TYPE": "صيغة الملف غير صحيحة. يرجى رفع ملف بإحدى الصيغ المسموحة.",
   "server-error.REVIEW_ITEM_NOT_FOUND": "عنصر المراجعة غير موجود.",
   "server-error.INVALID_TOKEN": "الرمز غير صالح.",
   "server-error.INVALID_TOKEN_TYPE": "نوع الرمز غير صالح.",
