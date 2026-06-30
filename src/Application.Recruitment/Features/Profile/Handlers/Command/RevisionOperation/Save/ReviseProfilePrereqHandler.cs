@@ -85,6 +85,7 @@ public sealed class ReviseProfilePrereqHandler(
 
         CleanCandidateTypeDependents();
 
+        await ProfileReviewItemSync.EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Prerequisites, ct);
         var result = await uow.SaveChangesAsync(ct);
         return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);

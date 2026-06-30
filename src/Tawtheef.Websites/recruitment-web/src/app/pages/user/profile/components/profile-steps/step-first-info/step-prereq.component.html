@@ -103,15 +103,34 @@
   </div>
   }
   }
-  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
+  @if (showCandidateTypeDocuments()) {
+  <div class="col-12">
+    <div class="required-documents-banner">
+      <div class="required-documents-banner__title">
+        {{ 'wizard.prereq.documents.title' | translate }}
+      </div>
+      <div class="required-documents-banner__hint">
+        {{ 'wizard.prereq.documents.hint' | translate }}
+      </div>
+    </div>
+  </div>
+  }
+  @if (!profile.isChangeRequestMode()) {
   <!-- Birth Certificate -->
   @if (ds.isNeedBirthCertificate) {
   <div class="col-md-6">
-    <label class="form-label required d-flex align-items-center">
+    <label class="form-label required document-label d-flex align-items-center gap-2">
       <span class="d-flex align-items-center gap-2">
         {{ 'wizard.prereq.birthCertificate' | translate }}
       </span>
-      <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
+      <span class="document-status"
+        [ngClass]="isDocumentMissing('birth') ? 'document-status--required' : 'document-status--done'">
+        {{
+          (isDocumentMissing('birth')
+            ? 'wizard.prereq.documents.required'
+            : 'wizard.prereq.documents.attached') | translate
+        }}
+      </span>
     </label>
 
     <div class="upload-field" (click)="birthInput.click()">
@@ -138,15 +157,22 @@
   }
   }
 
-  @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
+  @if (!profile.isChangeRequestMode()) {
   <!-- Marriage Certificate -->
   @if (ds.isNeedMarriageCertificate) {
   <div class="col-md-6">
-    <label class="form-label required d-flex align-items-center">
+    <label class="form-label required document-label d-flex align-items-center gap-2">
       <span class="d-flex align-items-center gap-2">
         {{ 'wizard.prereq.marriageCertificate' | translate }}
       </span>
-      <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
+      <span class="document-status"
+        [ngClass]="isDocumentMissing('marriage') ? 'document-status--required' : 'document-status--done'">
+        {{
+          (isDocumentMissing('marriage')
+            ? 'wizard.prereq.documents.required'
+            : 'wizard.prereq.documents.attached') | translate
+        }}
+      </span>
     </label>
 
     <div class="upload-field" (click)="marriageInput.click()">

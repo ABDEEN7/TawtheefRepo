@@ -121,6 +121,16 @@ export class StepPrereqComponent implements OnInit {
     this.hasCheckedProfile.set(false);
   }
 
+  showCandidateTypeDocuments(): boolean {
+    return !this.profile.isChangeRequestMode() &&
+      (this.ds.isNeedBirthCertificate || this.ds.isNeedMarriageCertificate);
+  }
+
+  isDocumentMissing(kind: 'birth' | 'marriage'): boolean {
+    if (kind === 'birth') return !this.ds.state().birthCertificateName;
+    return !this.ds.state().marriageCertificateName;
+  }
+
   onQidExpirySelect(date: Date) {
     if (this.profile.isChangeRequestMode()) return;
     this.ds.up('qidExpiry', dateToDateOnly(date));

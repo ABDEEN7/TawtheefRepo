@@ -48,3 +48,52 @@
 }
 
 .cursor-pointer { cursor: pointer; }
+
+.required-documents-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba($brand, 0.18);
+  border-radius: 0.75rem;
+  background: rgba($brand, 0.04);
+
+  &__title {
+    color: $brand;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  &__hint {
+    color: #667085;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+}
+
+.document-status {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  &--required {
+    color: #b42318;
+    background: #fff1f1;
+    border: 1px solid #f7c7c7;
+  }
+
+  &--done {
+    color: #067647;
+    background: #ecfdf3;
+    border: 1px solid #abefc6;
+  }
+}
+
+@media (max-width: 576px) {
+  .document-label {
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
+}

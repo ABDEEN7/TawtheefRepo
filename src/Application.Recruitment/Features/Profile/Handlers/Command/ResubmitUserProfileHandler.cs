@@ -5,6 +5,7 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -29,6 +30,8 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         var reviewRepo      = uow.GetEntityRepository<ReviewItem>();
         var assignmentRepo  = uow.GetEntityRepository<ProfileAssignment>();
         var loggerRepo      = uow.GetEntityRepository<UserProfileLogger>();
+
+        await ProfileReviewItemSync.EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
 
         // -----------------------------------------
         // 1) Deactivate assignments (same behavior)
