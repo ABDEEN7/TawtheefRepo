@@ -43,7 +43,8 @@ public sealed class GetOfficeUsersQueryHandler(
             CountryNameAr = officeAdmin.Office.Country?.NameAr ?? string.Empty,
             CountryNameEn = officeAdmin.Office.Country?.NameEn ?? string.Empty,
             PhoneCountryCode = officeAdmin.Office.PhoneCountryCode,
-            PhoneNumber = officeAdmin.Office.PhoneNumber
+            PhoneNumber = officeAdmin.Office.PhoneNumber,
+            IsActive = officeAdmin.Office.IsActive
         };
 
         var name = request.Name?.Trim();

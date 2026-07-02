@@ -24,10 +24,14 @@ public sealed class CreateOfficeUserCommandHandler(
 
         var officeAdmin = await userManager.Users
             .OfType<OfficeUser>()
+            .Include(user => user.Office)
             .FirstOrDefaultAsync(user => user.Id == currentUserId && !user.IsDeleted, cancellationToken);
 
         if (officeAdmin?.OfficeId is null)
             return Result.Fail<Guid>(ErrorsCodes.OfficeAdminNotFound);
+
+        if (officeAdmin.Office is not { IsActive: true })
+            return Result.Fail<Guid>(ErrorsCodes.OfficeInactive);
 
         var email = request.Email.Trim();
         if (string.IsNullOrWhiteSpace(email))

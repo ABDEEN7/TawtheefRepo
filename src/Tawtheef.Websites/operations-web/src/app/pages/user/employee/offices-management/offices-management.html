@@ -44,6 +44,7 @@
                   <th>{{ 'OFFICES.COUNTRY' | translate }}</th>
                   <th>{{ 'OFFICES.SUPPORTED_COUNTRIES' | translate }}</th>
                   <th>{{ 'OFFICES.ADMIN_EMAIL' | translate }}</th>
+                  <th>{{ 'OFFICES.STATUS' | translate }}</th>
                   <th >{{ 'OFFICES.ACTIONS' | translate }}</th>
                 </tr>
                 </thead>
@@ -51,7 +52,7 @@
                 <tbody>
                   @if (offices().length === 0) {
                     <tr>
-                      <td colspan="5" class="text-muted no-data text-center">
+                      <td colspan="6" class="text-muted no-data text-center">
                         {{ 'NO_RECORDS' | translate }}
                       </td>
                     </tr>
@@ -66,6 +67,11 @@
                           }
                         </td>
                         <td>{{ office.adminEmail }}</td>
+                        <td>
+                          <span class="pill" [class.success]="office.isActive" [class.soft]="!office.isActive">
+                            {{ office.isActive ? ('OFFICES.ACTIVE' | translate) : ('OFFICES.INACTIVE' | translate) }}
+                          </span>
+                        </td>
                         <td class="text-nowrap">
                             <div class="action-buttons">
                                  <button
@@ -93,12 +99,12 @@
                           <button
                             type="button"
                             class="btn"
-                            (click)="confirmDelete(office)"
-                            [pTooltip]="'OFFICES.DELETE' | translate"
+                            (click)="confirmStatusChange(office, !office.isActive)"
+                            [pTooltip]="(office.isActive ? 'OFFICES.DEACTIVATE' : 'OFFICES.ACTIVATE') | translate"
                             tooltipPosition="top"
                             [tooltipDisabled]="false"
-                            aria-label="{{ 'OFFICES.DELETE' | translate }}">
-                            <i class="hgi hgi-stroke hgi-delete-02"></i>
+                            [attr.aria-label]="(office.isActive ? 'OFFICES.DEACTIVATE' : 'OFFICES.ACTIVATE') | translate">
+                            <i class="fa" [ngClass]="office.isActive ? 'fa-ban' : 'fa-check'"></i>
                           </button>
                             </div>
                           

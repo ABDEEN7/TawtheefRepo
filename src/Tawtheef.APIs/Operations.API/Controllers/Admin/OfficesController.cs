@@ -74,6 +74,14 @@ public class OfficesController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPut("{id:guid}/status")]
+    [AuthorizePermission(PermissionKeys.Offices.Manage)]
+    public async Task<IActionResult> UpdateOfficeStatus(Guid id, [FromBody] SetOfficeStatusCommand command)
+    {
+        var result = await mediator.Send(command with { OfficeId = id });
+        return result.ToActionResult();
+    }
+
     [HttpPut("{officeId:guid}/users/{userId:guid}/block-status")]
     [AuthorizePermission(PermissionKeys.Offices.Manage)]
     public async Task<IActionResult> UpdateBlockStatus(Guid officeId, Guid userId, [FromBody] BlockOfficeUserCommand command)

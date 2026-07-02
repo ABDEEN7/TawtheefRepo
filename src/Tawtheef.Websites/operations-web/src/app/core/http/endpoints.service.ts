@@ -204,6 +204,7 @@ export class EndpointsService {
     createOffice: this.getFullUrl('/offices/create-office'),
     updateOffice: (id: string) => this.getFullUrl(`/offices/update-office/${id}`),
     deleteOffice: (id: string) => this.getFullUrl(`/offices/delete-office/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/offices/${id}/status`),
     updateOfficeUserBlockStatus: (officeId: string, userId: string) =>
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
     setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)

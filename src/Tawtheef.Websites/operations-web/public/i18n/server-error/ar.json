@@ -91,6 +91,7 @@
   "server-error.OFFICE_SUPPORTED_COUNTRY_INVALID": "الدولة غير مدعومة للجهة.",
   "server-error.OFFICE_ADMIN_EMAIL_INVALID": "البريد الإلكتروني لمسؤول الجهة غير صالح.",
   "server-error.OFFICE_ADMIN_EMAIL_EXISTS": "البريد الإلكتروني لمسؤول الجهة مستخدم بالفعل.",
+  "server-error.OFFICE_INACTIVE": "\u0627\u0644\u0645\u0643\u062a\u0628 \u0645\u0639\u0637\u0644.",
   "server-error.MAJOR_NOT_FOUND": "التخصص غير موجود.",
   "server-error.MAJOR_ALREADY_USED": "التخصص مستخدم بالفعل في احدى الوظائف.",
   "server-error.MAJOR_NAME_ALREADY_EXISTS": "اسم التخصص موجود بالفعل.",
