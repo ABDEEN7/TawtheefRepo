@@ -205,6 +205,8 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
         if (personalInfo.NationalityCode == MoiUtils.QatarNationalityCode)
             userProfile.CandidateTypeId = CandidateTypeIds.Qatari;
+        else if (personalInfo.NationalityCode == MoiUtils.QidHolderNationalityCode)
+            userProfile.CandidateTypeId = CandidateTypeIds.QidHolder;
 
         await uow.SaveChangesAsync(cancellationToken);
 

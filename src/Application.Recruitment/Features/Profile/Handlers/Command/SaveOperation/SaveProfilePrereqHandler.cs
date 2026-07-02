@@ -47,7 +47,7 @@ public sealed class SaveProfilePrereqHandler(
 
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
-        if (!isLockedProvider || profile.CandidateTypeId != CandidateTypeIds.Qatari)
+        if (!isLockedProvider || !CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId))
             profile.CandidateTypeId = r.CandidateTypeId;
 
         profile.TargetEntityId  = r.TargetEntityId;

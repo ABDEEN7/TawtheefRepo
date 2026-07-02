@@ -499,15 +499,22 @@ export class ProfileDataService {
   private shouldLockCandidateType(): boolean {
     const provider = (this.state().provider ?? '').toString().toLowerCase();
     const isPreferredProvider = ['qatarpass', 'qatarresidentotp'].includes(provider);
-    return isPreferredProvider && !!this.state().isKawaderQid;
+    return isPreferredProvider && (this.state().isKawaderQid || this.isVerifiedIdentityCandidateType());
   }
 
   private isQatarResidentOtpProvider(): boolean {
     return (this.state().provider ?? '').toString().toLowerCase() === 'qatarresidentotp';
   }
 
+  private isVerifiedIdentityCandidateType(): boolean {
+    const backendName = this.state().candidateType?.backendName;
+    return backendName === CandidateType.Qatari || backendName === CandidateType.QidHolder;
+  }
+
   private applyKawaderCandidateType(): void {
-    if (!this.shouldLockCandidateType()) return;
+    const provider = (this.state().provider ?? '').toString().toLowerCase();
+    const isPreferredProvider = ['qatarpass', 'qatarresidentotp'].includes(provider);
+    if (!isPreferredProvider || !this.state().isKawaderQid) return;
 
     const qatariOption = this.lookups
       .candidateTypes()

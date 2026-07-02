@@ -3,6 +3,7 @@ namespace Tawtheef.Application.Common.Utils;
 public static class MoiUtils
 {
     public static readonly int QatarNationalityCode = 634;
+    public static readonly int QidHolderNationalityCode = 0;
     public static string MaskQid(string? qid)
     {
         if (string.IsNullOrWhiteSpace(qid)) return "—";

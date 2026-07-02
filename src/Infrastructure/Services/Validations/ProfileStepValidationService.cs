@@ -149,11 +149,11 @@ public sealed class ProfileStepValidationService : IProfileStepValidationService
             return Result.Ok();
 
         // Mirror the logic in SaveProfilePrereqHandler:
-        // Only block if it's a locked provider AND the type is Qatari.
+        // Only block if it's a locked provider and a type fixed by verified identity.
         var provider = profile.Provider?.ToLowerInvariant();
         var isLockedProvider = provider == "qatarpass" || provider == "qatarresidentotp";
 
-        if (isLockedProvider && profile.CandidateTypeId == CandidateTypeIds.Qatari)
+        if (isLockedProvider && CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId))
             return Result.Fail(ErrorsCodes.CandidateTypeChangeNotAllowed);
 
         return Result.Ok();
