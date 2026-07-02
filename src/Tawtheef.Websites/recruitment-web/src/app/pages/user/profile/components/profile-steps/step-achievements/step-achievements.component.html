@@ -17,6 +17,7 @@
             <th>{{ 'wizard.achievements.table.issuer' | translate }}</th>
             <th>{{ 'wizard.achievements.table.country' | translate }}</th>
             <th>{{ 'wizard.achievements.table.issueDate' | translate }}</th>
+            <th>{{ 'wizard.achievements.table.relatedToSpecialization' | translate }}</th>
             <th>{{ 'wizard.achievements.table.description' | translate }}</th>
             <th>{{ 'wizard.achievements.table.file' | translate }}</th>
             <th>{{ 'wizard.table.actions' | translate }}</th>
@@ -30,11 +31,7 @@
             <td>{{ r.country?.name || '—' }}</td>
             <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
             <td>
-              @if (r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined) {
-              {{ r.relatedToSpecialization ? ('common.yes' | translate) : ('common.no' | translate) }}
-              } @else {
-              —
-              }
+              {{ (r.relatedToSpecialization ?? false) ? ('common.yes' | translate) : ('common.no' | translate) }}
             </td>
             <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
             <td>
