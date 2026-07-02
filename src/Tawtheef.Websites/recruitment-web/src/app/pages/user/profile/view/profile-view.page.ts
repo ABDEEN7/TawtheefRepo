@@ -655,6 +655,7 @@ export class ProfileViewPage {
   private translatedReviewTitle(note: MyProfileReviewNoteDto): string {
     const key = REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.title)] ??
       REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.fieldPath)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.entityName)] ??
       null;
 
     return key ? this.i18n.instant(key) : note.title;
@@ -800,6 +801,7 @@ function normalizeReviewTitle(value?: string | null): string {
 }
 
 const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
+  sectiondata: 'profileOverview.resubmitConfirm.sectionData',
   resume: 'profileOverview.attachments.resume',
   cv: 'profileOverview.attachments.resume',
   resumeattachmentid: 'profileOverview.attachments.resume',
@@ -816,6 +818,19 @@ const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
   sponsorcardresourceid: 'profileOverview.attachments.sponsorCard',
   nationaladdresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
   nationaladdresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
   residenceaddress: 'profileOverview.attachments.residenceAddressCertificate',
   residenceaddresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+  qualification: 'profileOverview.sections.qualifications',
+  experience: 'profileOverview.sections.experiences',
+  trainingcourse: 'profileOverview.sections.trainingCourses',
+  achievement: 'profileOverview.sections.certificatesAndAwards',
+  skill: 'profileOverview.sections.skills',
+  language: 'profileOverview.sections.languages',
+  attachment: 'profileOverview.files.attachment',
+  profileadditionalattachment: 'profileOverview.files.attachment',
+  additionalattachments: 'profileOverview.files.attachment',
+  attachmentid: 'profileOverview.files.attachment',
+  attachmentresourceid: 'profileOverview.files.attachment',
+  certificateid: 'profileOverview.files.attachment',
 };
