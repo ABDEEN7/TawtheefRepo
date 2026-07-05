@@ -9,6 +9,7 @@
   "auth.login.mode_nonresident": "I am not residing in Qatar",
   "auth.login.tawtheeq_cta": "Login via National Authentication (Residents in Qatar)",
   "auth.login.qatar_resident_cta": "Login with Qatar ID (OTP)",
+  "auth.login.or": "or",
   "auth.login.qatarResidentDialog.title": "Verify your Qatar ID",
   "auth.login.qatarResidentDialog.subtitle": "Enter your Qatar ID and phone number to receive a one-time password.",
   "auth.login.qatarResidentDialog.qid": "Qatar ID",
