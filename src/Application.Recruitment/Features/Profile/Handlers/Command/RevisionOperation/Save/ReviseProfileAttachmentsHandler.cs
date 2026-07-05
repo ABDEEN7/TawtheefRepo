@@ -58,14 +58,14 @@ public sealed class ReviseProfileAttachmentsHandler(
             .Where(x => x.AttachmentId != Guid.Empty)
             .ToDictionary(x => x.AttachmentId);
 
-        // Only attachments with ReviewItem.Status == NeedsCorrection are editable in revision
+        // Corrected attachments remain editable until the candidate resubmits the profile.
         var allowedResourceIds = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r =>
                 r.UserProfileId == profile.Id &&
                 r.Section == ProfileSection.Attachments &&
                 r.TargetType == ReviewTargetType.Attachment &&
-                r.Status == ReviewStatus.NeedsCorrection &&
+                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Solved) &&
                 r.ResourceId != null)
             .Select(r => r.ResourceId!.Value)
             .ToHashSetAsync(ct);

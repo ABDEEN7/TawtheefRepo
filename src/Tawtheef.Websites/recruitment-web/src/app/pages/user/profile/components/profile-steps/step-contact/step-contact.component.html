@@ -226,7 +226,7 @@
       {{ 'wizard.nationalAddress.document' | translate }}
       <span class="text-muted fz-2xs">(PDF, JPG, PNG)</span>
     </label>
-    <div class="upload-field" (click)="naInput.click()">
+    <div class="upload-field" [ngClass]="{ 'is-invalid': naFileError() }" (click)="naInput.click()">
 
       <div class="upload-field__icon">
         @if (!ds.state().naFileName) {
@@ -242,6 +242,11 @@
 
       <input #naInput type="file" class="d-none" accept=".jpg,.jpeg,.png,.pdf" (change)="onNaFileSelected($event)" />
     </div>
+    @if (naFileError()) {
+    <small class="text-danger mt-1 d-block">
+      {{ naFileError() }}
+    </small>
+    }
   </div>
   }
   }

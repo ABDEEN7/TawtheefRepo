@@ -68,6 +68,16 @@ public class CandidateTypeConfiguration : LookupBaseConfiguration<CandidateType>
                 DescriptionAr = "الزوج أو الزوجة غير قطري/ة المتزوج/ة من قطري/ة",
                 DescriptionEn = "Non-Qatari spouse married to a Qatari",
                 DisplayOrder = 6
+            },
+            new CandidateType
+            {
+                Id = CandidateTypeIds.QidHolder,
+                BackendName = nameof(CandidateTypeIds.QidHolder),
+                NameEn = "Holders of Qatari Documents",
+                NameAr = "حملة الوثائق القطرية",
+                DescriptionAr = "مرشح يمتلك الوثيقة الشخصية القطرية",
+                DescriptionEn = "Holders of Qatari Documents",
+                DisplayOrder = 7
             }
         );
     }

@@ -10,6 +10,7 @@ public sealed record OfficeDto
     public required DropdownOptions Country {get; set;
     }
     public List<DropdownOptions> SupportedCountries { get; init; } = [];
+    public bool IsActive { get; init; }
     public string AdminNameAr { get; init; } = string.Empty;
     public string AdminNameEn { get; init; } = string.Empty;
     public string AdminEmail { get; set; } = string.Empty;

@@ -41,6 +41,10 @@ export class OfficesService {
     return this.http.delete<void>(this.endpoints.offices.deleteOffice(id));
   }
 
+  updateOfficeStatus(id: string, isActive: boolean): Observable<void> {
+    return this.http.put<void>(this.endpoints.offices.updateStatus(id), {isActive});
+  }
+
   updateOfficeUserBlockStatus(officeId: string, userId: string, isBlocked: boolean): Observable<void> {
     return this.http.put<void>(this.endpoints.offices.updateOfficeUserBlockStatus(officeId, userId), {isBlocked});
   }

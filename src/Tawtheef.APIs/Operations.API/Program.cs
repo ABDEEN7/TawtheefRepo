@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Operations.API.Filters;
 using Serilog;
+using Serilog.Context;
 using Serilog.Exceptions;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Infrastructure;
@@ -16,6 +17,8 @@ using Tawtheef.Infrastructure.Middlewares;
 using EnvironmentName = Tawtheef.Domain.Common.EnvironmentName;
 
 const string myCors = "_myAllowSpecificOrigins";
+const string logOutputTemplate =
+    "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [cid={CorrelationId}] [uid={UserId}] {Message:lj} {Properties:j}{NewLine}{Exception}";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,13 +73,13 @@ builder.Host.UseSerilog((ctx, services, lc) =>
         .Enrich.WithExceptionDetails()
         .Enrich.WithProperty("Application", "Tawtheef.Operations")
         .Enrich.WithProperty("Version", "1.0.0")
-        .WriteTo.Console(outputTemplate:
-            "{Timestamp:HH:mm:ss} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+        .WriteTo.Console(outputTemplate: logOutputTemplate)
         .WriteTo.File(
             @"C:\home\LogFiles\app-serilog-tawtheef-.txt",
             rollingInterval: RollingInterval.Day,
             shared: true,
-            retainedFileCountLimit: 30);
+            retainedFileCountLimit: 30,
+            outputTemplate: logOutputTemplate);
 
     // Seq
     if (!string.IsNullOrWhiteSpace(seqUrl) && !string.IsNullOrWhiteSpace(seqKey))
@@ -113,6 +116,7 @@ builder.Services.AddControllers(options =>
     })
     .ConfigureApiBehaviorOptions(options => {
     options.InvalidModelStateResponseFactory = ctx => {
+        var correlationId = ctx.HttpContext.GetCorrelationId();
         var problem = new ValidationProblemDetails(ctx.ModelState) {
             Status  = StatusCodes.Status400BadRequest,
             Type    = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
@@ -120,8 +124,9 @@ builder.Services.AddControllers(options =>
             Detail  = "See the 'errors' property for details.",
             Instance= ctx.HttpContext.Request.Path,
             Extensions = {
-                ["traceId"] = ctx.HttpContext.TraceIdentifier,
-                ["correlationId"] = ctx.HttpContext.Items.TryGetValue("CorrelationId", out var cid) ? cid : null
+                ["traceId"] = correlationId,
+                ["correlationId"] = correlationId,
+                ["ticket"] = correlationId
             }
         };
 
@@ -135,7 +140,11 @@ builder.Services.AddCors(options => {
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
-              .WithExposedHeaders("Content-Disposition", "X-Blocked-By"));
+              .WithExposedHeaders(
+                  "Content-Disposition",
+                  "X-Blocked-By",
+                  HttpContextExtensions.CorrelationIdHeaderName,
+                  HttpContextExtensions.RequestIdHeaderName));
 });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
@@ -173,7 +182,7 @@ app.UseSerilogRequestLogging(opts => {
         var userId = httpCtx.User.FindFirst("sub")?.Value
                      ?? httpCtx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        diagCtx.Set("CorrelationId", (httpCtx.Items.TryGetValue("CorrelationId", out var cid) ? cid : httpCtx.TraceIdentifier) ?? "");
+        diagCtx.Set("CorrelationId", httpCtx.GetCorrelationId());
         diagCtx.Set("UserId", userId ?? "anonymous");
         diagCtx.Set("QueryString", httpCtx.Request.QueryString.HasValue ? httpCtx.Request.QueryString.Value : "");
         diagCtx.Set("Route", httpCtx.GetEndpoint()?.DisplayName ?? "");
@@ -215,6 +224,13 @@ app.UseHttpsRedirection();
 app.UseCors(myCors);
 app.UseCookiePolicy(); 
 app.UseAuthentication();
+app.Use(async (ctx, next) =>
+{
+    using (LogContext.PushProperty("UserId", ctx.GetUserIdOrAnonymous()))
+    {
+        await next();
+    }
+});
 app.UseAuthorization();
 
 //enable rate limiter middleware

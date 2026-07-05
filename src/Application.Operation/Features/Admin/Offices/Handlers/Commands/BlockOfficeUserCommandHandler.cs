@@ -17,10 +17,14 @@ public sealed class BlockOfficeUserCommandHandler(
     public async Task<IResult<Unit>> Handle(BlockOfficeUserCommand request, CancellationToken cancellationToken)
     {
         var officeUser = await userManager.Users.OfType<OfficeUser>()
-            .FirstOrDefaultAsync(u => u.Id == request.UserId &&u.OfficeId == request.OfficeId, cancellationToken);
+            .Include(u => u.Office)
+            .FirstOrDefaultAsync(u => u.Id == request.UserId && u.OfficeId == request.OfficeId, cancellationToken);
 
         if (officeUser is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeUserNotFound);
+
+        if (!request.IsBlocked && officeUser.Office is not { IsActive: true })
+            return Result.Fail<Unit>(ErrorsCodes.OfficeInactive);
 
         officeUser.IsBlocked = request.IsBlocked;
         var updateResult = await userManager.UpdateAsync(officeUser);

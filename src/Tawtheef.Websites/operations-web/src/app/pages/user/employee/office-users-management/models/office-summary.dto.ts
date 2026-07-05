@@ -5,4 +5,5 @@ export interface OfficeSummaryDto {
   countryNameEn: string;
   phoneCountryCode?: string | null;
   phoneNumber?: string | null;
+  isActive: boolean;
 }

@@ -9,13 +9,13 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 
 namespace Application.Operation.Features.Admin.Offices.Handlers.Commands;
 
-public sealed class DeleteOfficeCommandHandler(
+public sealed class SetOfficeStatusCommandHandler(
     IUnitOfWork unitOfWork,
     ITokenService tokenService)
-    : IRequestHandler<DeleteOfficeCommand, IResult<Unit>>
+    : IRequestHandler<SetOfficeStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
-        DeleteOfficeCommand request,
+        SetOfficeStatusCommand request,
         CancellationToken cancellationToken)
     {
         var officeRepo = unitOfWork.GetEntityRepository<Office>();
@@ -27,22 +27,24 @@ public sealed class DeleteOfficeCommandHandler(
         if (office is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeNotFound);
 
-        office.IsActive = false;
+        office.IsActive = request.IsActive;
 
-        var userIds = office.OfficeUsers?
-            .Where(user => !user.IsDeleted)
-            .Select(user =>
+        var userIdsToRevoke = new List<Guid>();
+        if (!request.IsActive && office.OfficeUsers is { Count: > 0 })
+        {
+            foreach (var user in office.OfficeUsers.Where(user => !user.IsDeleted))
             {
                 user.IsBlocked = true;
-                return user.Id;
-            })
-            .ToList() ?? [];
+                userIdsToRevoke.Add(user.Id);
+            }
+        }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        foreach (var userId in userIds)
+        foreach (var userId in userIdsToRevoke)
             await tokenService.RevokeAllAsync(userId, cancellationToken);
 
         return Result.Ok(Unit.Value);
     }
 }
+

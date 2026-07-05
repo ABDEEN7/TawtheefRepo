@@ -157,7 +157,7 @@ public static class ResultExtensions
         if (!string.IsNullOrWhiteSpace(blockedBy))
             context.Response.Headers["X-Blocked-By"] = blockedBy;
 
-        var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+        var traceId = context.GetCorrelationId();
 
         var safeErrors = errors ?? new List<IError>
         {

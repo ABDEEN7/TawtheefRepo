@@ -46,7 +46,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   function buildErrorHtml(apiError: any): string {
     if (!apiError) return translate.instant('server-error.UN_EXPECTED_ERROR');
 
-    const ticket = apiError.ticket || apiError.extensions?.ticket || apiError.traceId;
+    const ticket =
+      apiError.ticket ||
+      apiError.correlationId ||
+      apiError.extensions?.ticket ||
+      apiError.extensions?.correlationId ||
+      apiError.traceId;
     const items: string[] = [];
 
     // Handle ASP.NET Core Validation Errors (ProblemDetails format)

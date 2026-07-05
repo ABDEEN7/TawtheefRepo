@@ -299,7 +299,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
             ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.NationalityId));
             ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.GenderId));
             var candidateTypeProperty = entry.Property(nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
-            if (candidateTypeProperty.OriginalValue is Guid originalId && originalId == CandidateTypeIds.Qatari)
+            if (candidateTypeProperty.OriginalValue is Guid originalId &&
+                CandidateTypeIds.IsVerifiedIdentityLocked(originalId))
             {
                 ProtectProperty(entry, nameof(Domain.Entities.Users.UserProfile.CandidateTypeId));
             }

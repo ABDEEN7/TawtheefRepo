@@ -149,6 +149,7 @@ export function candidateTypeIsResident(
 
   return [
     CandidateType.ResidentQatar,
+    CandidateType.QidHolder,
     CandidateType.Qatari,
     CandidateType.SonOfQatariMother,
     CandidateType.WifeOfQatari

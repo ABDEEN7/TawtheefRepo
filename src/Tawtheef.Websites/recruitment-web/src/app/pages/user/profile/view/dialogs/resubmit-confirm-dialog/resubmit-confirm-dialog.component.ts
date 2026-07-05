@@ -43,7 +43,14 @@ export class ResubmitConfirmDialogComponent {
       return 'profileOverview.resubmitConfirm.sectionData';
     }
 
-    return null;
+    return REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.title)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.fieldPath)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.entityName)] ??
+      null;
+  }
+
+  protected itemTitle(item: MyProfileReviewChangedItemDto): string {
+    return item.entityName || item.title;
   }
 
   protected confirm(): void {
@@ -54,3 +61,42 @@ export class ResubmitConfirmDialogComponent {
     this.ref.close(false);
   }
 }
+
+function normalizeReviewTitle(value?: string | null): string {
+  return (value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
+  sectiondata: 'profileOverview.resubmitConfirm.sectionData',
+  resume: 'profileOverview.attachments.resume',
+  cv: 'profileOverview.attachments.resume',
+  resumeattachmentid: 'profileOverview.attachments.resume',
+  nationalcard: 'profileOverview.attachments.nationalCard',
+  nationalidcard: 'profileOverview.attachments.nationalCard',
+  nationalcardid: 'profileOverview.attachments.nationalCard',
+  birthcertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificate: 'profileOverview.attachments.birthdayCertificate',
+  birthdaycertificateid: 'profileOverview.attachments.birthdayCertificate',
+  marriagecertificate: 'profileOverview.attachments.marriageCertificate',
+  marriagecertificateid: 'profileOverview.attachments.marriageCertificate',
+  sponsorcard: 'profileOverview.attachments.sponsorCard',
+  sponsorcardid: 'profileOverview.attachments.sponsorCard',
+  sponsorcardresourceid: 'profileOverview.attachments.sponsorCard',
+  nationaladdresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+  nationaladdresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddresscertificateid: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddress: 'profileOverview.attachments.residenceAddressCertificate',
+  residenceaddresscertificate: 'profileOverview.attachments.residenceAddressCertificate',
+  qualification: 'profileOverview.sections.qualifications',
+  experience: 'profileOverview.sections.experiences',
+  trainingcourse: 'profileOverview.sections.trainingCourses',
+  achievement: 'profileOverview.sections.certificatesAndAwards',
+  skill: 'profileOverview.sections.skills',
+  language: 'profileOverview.sections.languages',
+  attachment: 'profileOverview.files.attachment',
+  profileadditionalattachment: 'profileOverview.files.attachment',
+  additionalattachments: 'profileOverview.files.attachment',
+  attachmentid: 'profileOverview.files.attachment',
+  attachmentresourceid: 'profileOverview.files.attachment',
+  certificateid: 'profileOverview.files.attachment',
+};

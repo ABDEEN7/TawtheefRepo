@@ -1,10 +1,10 @@
 
-using System.Security.Claims;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Tawtheef.Application.Common.Exceptions;
+using Tawtheef.Infrastructure.Extensions;
 
 namespace Tawtheef.Infrastructure.Middlewares;
 public sealed class CustomExceptionHandler : IExceptionHandler
@@ -17,8 +17,8 @@ public sealed class CustomExceptionHandler : IExceptionHandler
         if (httpContext.Response.HasStarted)
             return false;
 
-        var correlationId = httpContext.TraceIdentifier;
-        var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+        var correlationId = httpContext.GetCorrelationId();
+        var userId = httpContext.GetUserIdOrAnonymous();
 
         var (statusCode, title) = exception switch
         {
@@ -61,10 +61,13 @@ public sealed class CustomExceptionHandler : IExceptionHandler
         }
 
         problem.Extensions["traceId"] = correlationId;
+        problem.Extensions["correlationId"] = correlationId;
         problem.Extensions["ticket"] = correlationId;
 
         httpContext.Response.StatusCode = statusCode;
         httpContext.Response.ContentType = "application/problem+json";
+        httpContext.Response.Headers[HttpContextExtensions.CorrelationIdHeaderName] = correlationId;
+        httpContext.Response.Headers[HttpContextExtensions.RequestIdHeaderName] = correlationId;
 
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
 

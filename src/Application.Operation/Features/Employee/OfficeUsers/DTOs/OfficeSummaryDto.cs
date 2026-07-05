@@ -8,4 +8,5 @@ public sealed record OfficeSummaryDto
     public string CountryNameEn { get; init; } = string.Empty;
     public string? PhoneCountryCode { get; init; }
     public string? PhoneNumber { get; init; }
+    public bool IsActive { get; init; }
 }

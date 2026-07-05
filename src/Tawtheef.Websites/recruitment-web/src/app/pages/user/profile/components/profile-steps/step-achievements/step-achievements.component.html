@@ -31,11 +31,7 @@
             <td>{{ r.country?.name || '—' }}</td>
             <td>{{ r.issueDate ? (r.issueDate | date:'dd/MM/yyyy') : '—' }}</td>
             <td>
-              @if (r.relatedToSpecialization !== null && r.relatedToSpecialization !== undefined) {
-              {{ r.relatedToSpecialization ? ('common.yes' | translate) : ('common.no' | translate) }}
-              } @else {
-              —
-              }
+              {{ (r.relatedToSpecialization ?? false) ? ('common.yes' | translate) : ('common.no' | translate) }}
             </td>
             <td class="text-truncate" style="max-width:200px">{{ r.description || '—' }}</td>
             <td>
@@ -52,7 +48,7 @@
               —
               }
             </td>
-            <td class="d-flex gap-2">
+            <td class="gap-2">
               <div class="action-buttons">
                 <button class="btn" (click)="editAchievement(i)"><i
                     class="hgi hgi-stroke hgi-pencil-edit-02"></i></button>

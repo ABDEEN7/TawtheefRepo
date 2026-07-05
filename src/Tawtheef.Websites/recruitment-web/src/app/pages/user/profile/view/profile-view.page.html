@@ -194,6 +194,12 @@
                           {{ 'profileView.sections.status.ok' | translate }}
                         </span>
                         }
+                        @else if(profileStatus() == UserProfileStatusEnum.RequiresUpdate){
+                        <span class="pill warning tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
+                          <i class="hgi hgi-stroke fw-normal hgi-hourglass fs-16"></i>
+                          {{ 'profileOverview.status.readyForResubmit' | translate }}
+                        </span>
+                        }
                         @else{
                         <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
                           <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
@@ -277,7 +283,7 @@
                 <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
                   {{ noteStatusLabelKey(note.status) | translate }}
                 </span>
-                <span class="review-note__target">{{ note.title }}</span>
+                <span class="review-note__target">{{ reviewNoteTitle(note) }}</span>
               </div>
               <p class="review-note__body" *ngIf="note.note">{{ note.note }}</p>
             </article>

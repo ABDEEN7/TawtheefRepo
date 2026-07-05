@@ -29,7 +29,7 @@
             @if (itemTitleKey(item); as titleKey) {
             {{ titleKey | translate }}
             } @else {
-            {{ item.title }}
+            {{ itemTitle(item) }}
             }
           </span>
         </div>

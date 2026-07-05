@@ -59,8 +59,11 @@ public class MOEPersonalInfo
     [DataMember]
     public DateOnly DateOfBirth { get; set; }
 
-    [DataMember]
-    public DateOnly QIDExpiry { get; set; }
+    [DataMember(Name = "QIDExpiry")]
+    private string? QIDExpiryRaw { get; set; }
+
+    [IgnoreDataMember]
+    public DateOnly? QIDExpiry => TryParseDateOnly(QIDExpiryRaw);
 
     [DataMember]
     public int NationalityCode { get; set; }

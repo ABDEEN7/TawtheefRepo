@@ -143,6 +143,7 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   isCreateMode = () => this.mode === 'create';
   isEditMode = () => this.mode === 'edit';
   isViewMode = () => this.mode === 'view';
+  isOfficeActive = () => this.office?.isActive ?? true;
 
   // ─── Form initialization ───────────────────────────────────────────────────
 
@@ -220,6 +221,8 @@ export class OfficeModalComponent implements OnInit, OnChanges {
   }
 
   toggleUserBlock(user: OfficeUserDto): void {
+    if (user.isBlocked && !this.isOfficeActive()) return;
+
     this.toggleBlock.emit({ userId: user.id, isBlocked: !user.isBlocked });
   }
 

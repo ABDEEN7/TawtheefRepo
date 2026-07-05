@@ -91,6 +91,7 @@
   "server-error.OFFICE_SUPPORTED_COUNTRY_INVALID": "Invalid supported country for the office.",
   "server-error.OFFICE_ADMIN_EMAIL_INVALID": "Invalid office admin email.",
   "server-error.OFFICE_ADMIN_EMAIL_EXISTS": "Office admin email already exists.",
+  "server-error.OFFICE_INACTIVE": "Office is inactive.",
   "server-error.MAJOR_NOT_FOUND": "Major not found.",
   "server-error.MAJOR_ALREADY_USED": "Major is already used in a job.",
   "server-error.MAJOR_NAME_ALREADY_EXISTS": "Major name already exists.",

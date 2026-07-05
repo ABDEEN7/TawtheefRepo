@@ -172,13 +172,6 @@ export class StepAchievementsComponent implements OnInit {
       return;
     }
 
-    if (!achievements.length) {
-      this.notify.error(
-        `${this.translate.instant('wizard.validationErrorTitle')}: ${this.translate.instant('wizard.achievements.validation.noRows')}`,
-      );
-      return;
-    }
-
     this.saving.set(true);
     const save$ = this.profile.saveAchievementsSection(achievements);
     const submit$ = this.profile.isChangeRequestMode()

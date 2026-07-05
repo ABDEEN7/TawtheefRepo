@@ -144,7 +144,7 @@
                 <tr>
                   <th>{{ 'OFFICES.USER_NAME' | translate }}</th>
                   <th>{{ 'OFFICES.USER_EMAIL' | translate }}</th>
-                  <th>{{ 'OFFICES.USER_IS_BLOCKED' | translate }}</th>
+                  <th>{{ 'OFFICES.USER_STATUS' | translate }}</th>
                   <th>{{ 'OFFICES.USER_ROLE' | translate }}</th>
                   <th>{{ 'OFFICES.USER_ACTIONS' | translate }}</th>
                 </tr>
@@ -163,7 +163,7 @@
 
                   <td>
                     <span class="pill" [class.success]="!user.isBlocked" [class.soft]="user.isBlocked">
-                      {{ user.isBlocked ? ('OFFICES.BLOCKED' | translate) : ('OFFICES.ACTIVE' | translate) }}
+                      {{ user.isBlocked ? ('OFFICES.INACTIVE' | translate) : ('OFFICES.ACTIVE' | translate) }}
                     </span>
                   </td>
 
@@ -174,9 +174,9 @@
                   <td>
                     <div class="action-buttons">
                       <button type="button" class="btn-text" (click)="toggleUserBlock(user)"
-                        [disabled]="loading || isViewMode()"
-                        [attr.aria-label]="(user.isBlocked ? 'OFFICES.UNBLOCK' : 'OFFICES.BLOCK') | translate">
-                        {{ user.isBlocked ? ('OFFICES.UNBLOCK' | translate) : ('OFFICES.BLOCK' | translate) }}
+                        [disabled]="loading || (user.isBlocked && !isOfficeActive())"
+                        [attr.aria-label]="(user.isBlocked ? 'OFFICES.ACTIVATE_USER' : 'OFFICES.DEACTIVATE_USER') | translate">
+                        {{ user.isBlocked ? ('OFFICES.ACTIVATE_USER' | translate) : ('OFFICES.DEACTIVATE_USER' | translate) }}
                       </button>
 
                       @if (!isOfficeAdmin(user)) {

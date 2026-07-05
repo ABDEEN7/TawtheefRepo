@@ -208,7 +208,9 @@ export class OfficesManagement implements OnInit {
     this.isModalLoading.set(true);
     this.officesService.updateOfficeUserBlockStatus(activeOffice.id, change.userId, change.isBlocked).subscribe({
       next: () => {
-        this.notification.success(this.translate.instant('OFFICES.BLOCK_STATUS_UPDATED'));
+        this.notification.success(
+          this.translate.instant(change.isBlocked ? 'OFFICES.USER_DEACTIVATED' : 'OFFICES.USER_ACTIVATED')
+        );
         this.refreshActiveOffice();
       },
       error: () => {
@@ -294,32 +296,26 @@ export class OfficesManagement implements OnInit {
     this.isModalLoading.set(false);
   }
 
-  confirmDelete(office: OfficeDto) {
+  confirmStatusChange(office: OfficeDto, isActive: boolean) {
     this.confirmationService.confirm({
-      message: this.translate.instant('OFFICES.DELETE_CONFIRM'),
-      header: this.translate.instant('OFFICES.DELETE_HEADER'),
+      message: this.translate.instant(isActive ? 'OFFICES.ACTIVATE_CONFIRM' : 'OFFICES.DEACTIVATE_CONFIRM'),
+      header: this.translate.instant(isActive ? 'OFFICES.ACTIVATE_HEADER' : 'OFFICES.DEACTIVATE_HEADER'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: this.translate.instant('OFFICES.DELETE'),
+      acceptLabel: this.translate.instant(isActive ? 'OFFICES.ACTIVATE' : 'OFFICES.DEACTIVATE'),
       rejectLabel: this.translate.instant('OFFICES.CANCEL'),
-      acceptButtonStyleClass: 'btn btn-danger',
+      acceptButtonStyleClass: isActive ? 'btn btn-success' : 'btn btn-danger',
       rejectButtonStyleClass: 'btn btn-outline-secondary',
       defaultFocus: 'reject',
       accept: () => {
-        this.officesService.deleteOffice(office.id).subscribe({
+        this.officesService.updateOfficeStatus(office.id, isActive).subscribe({
           next: () => {
-            this.notification.success(this.translate.instant('OFFICES.DELETE_SUCCESS'));
-            // Remove office from local state
-            this._offices.update(offices => offices.filter(o => o.id !== office.id));
-
-            // Update pagination metadata
-            this._paginationMetadata.update(metadata => {
-              if (!metadata) return metadata;
-              return {
-                ...metadata,
-                totalCount: Math.max(0, metadata.totalCount - 1),
-                totalPages: Math.ceil(Math.max(0, metadata.totalCount - 1) / metadata.pageSize)
-              };
-            });
+            this.notification.success(this.translate.instant('OFFICES.STATUS_UPDATED'));
+            this._offices.update(offices =>
+              offices.map(item => item.id === office.id ? { ...item, isActive } : item)
+            );
+            if (this.editingOffice()?.id === office.id) {
+              this.refreshActiveOffice();
+            }
           }
         });
       }

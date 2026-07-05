@@ -222,7 +222,8 @@
     <p-button styleClass="p-button-text" icon="pi pi-times" type="button" (onClick)="onCancel()"
       [label]="'wizard.buttons.cancel' | translate"></p-button>
 
-    <p-button styleClass="p-button-primary" icon="pi pi-save" type="submit" [disabled]="form.invalid || !!fileError"
+    <p-button styleClass="p-button-primary" icon="pi pi-save" type="submit" 
+    [disabled]="form.invalid || !!fileError"
       [label]="submitLabelKey | translate"></p-button>
   </div>
 </form>

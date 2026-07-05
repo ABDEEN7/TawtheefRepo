@@ -9,7 +9,7 @@
           {{ 'common.refresh' | translate }}
         </button>
         <ng-container *hasPermission="Permissions.OfficeUsers.Manage">
-          <button type="button" class="btn btn-primary" (click)="openAddDialog()">
+          <button type="button" class="btn btn-primary" (click)="openAddDialog()" [disabled]="!isOfficeActive()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
             {{ 'OFFICE_USERS.ADD_USER' | translate }}
           </button>
@@ -20,17 +20,23 @@
     <div class="office-details card card-table mb-4">
       <div class="card-body">
         <div class="row g-3">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <p class="m-0">{{ 'OFFICE_USERS.OFFICE_NAME' | translate }}</p>
             <div class="detail-value">{{ officeName() }}</div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <p class="m-0">{{ 'OFFICE_USERS.OFFICE_PHONE' | translate }}</p>
             <div class="detail-value" style="direction: ltr;">{{ officePhone() }}</div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <p class="m-0">{{ 'OFFICE_USERS.OFFICE_COUNTRY' | translate }}</p>
             <div class="detail-value">{{ officeCountry() }}</div>
+          </div>
+          <div class="col-md-3">
+            <p class="m-0">{{ 'OFFICE_USERS.OFFICE_STATUS' | translate }}</p>
+            <div class="detail-value">
+              {{ isOfficeActive() ? ('OFFICE_USERS.ACTIVE' | translate) : ('OFFICE_USERS.INACTIVE' | translate) }}
+            </div>
           </div>
         </div>
       </div>
@@ -71,7 +77,7 @@
               <td>{{ user.email }}</td>
               <td>
                 <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
-                  {{ user.isBlocked ? ('OFFICE_USERS.BLOCKED' | translate) : ('OFFICE_USERS.ACTIVE' | translate) }}
+                  {{ user.isBlocked ? ('OFFICE_USERS.INACTIVE' | translate) : ('OFFICE_USERS.ACTIVE' | translate) }}
                 </span>
               </td>
               <td>
@@ -84,13 +90,14 @@
                     @if (!isCurrentUser(user)) {
                     <button type="button" class="btn btn-sm"
                       [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
-                      (click)="toggleBlock(user)">
-                      <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                      (click)="toggleBlock(user)"
+                      [disabled]="user.isBlocked && !isOfficeActive()">
+                      <i class="fa" [ngClass]="user.isBlocked ? 'fa-check' : 'fa-ban'"></i>
                       <span class="ms-1">
                         {{
                         user.isBlocked
-                        ? ('OFFICE_USERS.UNBLOCK_USER' | translate)
-                        : ('OFFICE_USERS.BLOCK_USER' | translate)
+                        ? ('OFFICE_USERS.ACTIVATE_USER' | translate)
+                        : ('OFFICE_USERS.DEACTIVATE_USER' | translate)
                         }}
                       </span>
                     </button>

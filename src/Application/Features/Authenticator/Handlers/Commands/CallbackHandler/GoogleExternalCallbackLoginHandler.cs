@@ -149,11 +149,21 @@ public class GoogleExternalCallbackLoginHandler(
 
         _log.Information("Office-not-linked flow. Email={Email}", email);
 
-        var existingUser = await userManager.FindByEmailAsync(email);
+        var existingUser = await FindExistingUserByEmailAsync(email, ct);
         if (existingUser is null)
         {
             _log.Warning("Office-not-linked flow: no user with email. Email={Email}", email);
             return await LogFailureAsync(ErrorsCodes.ExternalLoginNotLinkedOfficeUser, ct: ct);
+        }
+
+        if (existingUser.IsDeleted)
+        {
+            _log.Warning("Office-not-linked flow: user is soft-deleted. UserId={UserId}", existingUser.Id);
+            return await LogFailureAsync(
+                ErrorsCodes.AccountStatusNotAllowedForLogin,
+                existingUser.Id,
+                existingUser.UserTypeId,
+                ct: ct);
         }
         
         if (existingUser.UserTypeId == UserTypeIds.Applicant)
@@ -220,18 +230,9 @@ public class GoogleExternalCallbackLoginHandler(
 
         _log.Information("Applicant-not-linked flow. Email={Email}", email);
 
-        var existingUser = await userManager.FindByEmailAsync(email);
+        var existingUser = await FindExistingUserByEmailAsync(email, ct);
         if (existingUser is not null)
-        {
-            if (existingUser.UserTypeId == UserTypeIds.OfficeUser)
-            {
-                _log.Warning("Office user blocked from applicant login. UserId={UserId}", existingUser.Id);
-                return await LogFailureAsync(ErrorsCodes.UserIsOfficer, existingUser.Id, existingUser.UserTypeId, ct: ct);
-            }
-
-            _log.Information("Applicant-not-linked: user exists by email, attaching provider. UserId={UserId}", existingUser.Id);
-            return await AttachProviderToExistingApplicantAsync(existingUser, info, ct);
-        }
+            return await HandleExistingApplicantEmailUserAsync(existingUser, info, ct);
 
         var newApplicantResult = CreateApplicantFromClaims(info, email);
         if (newApplicantResult.IsFailed)
@@ -246,21 +247,46 @@ public class GoogleExternalCallbackLoginHandler(
 
         var newApplicant = newApplicantResult.Value;
 
-        var create = await userManager.CreateAsync(newApplicant);
+        IdentityResult create;
+        try
+        {
+            create = await userManager.CreateAsync(newApplicant);
+        }
+        catch (DbUpdateException ex) when (IsDuplicateUserEmail(ex))
+        {
+            uow.Context.Entry(newApplicant).State = EntityState.Detached;
+
+            var duplicateUser = await FindExistingUserByEmailAsync(email, ct);
+            if (duplicateUser is not null)
+            {
+                _log.Warning(
+                    "Applicant-not-linked: CreateAsync hit duplicate email index; existing user found on retry. Email={Email} ExistingUserId={ExistingUserId}",
+                    email,
+                    duplicateUser.Id);
+
+                return await HandleExistingApplicantEmailUserAsync(duplicateUser, info, ct);
+            }
+
+            _log.Warning(
+                "Applicant-not-linked: CreateAsync hit duplicate email index, but existing user was not found on retry. Email={Email}",
+                email);
+
+            return await LogFailureAsync(ErrorsCodes.EmailAlreadyInUse, newApplicant.Id, newApplicant.UserTypeId, ct: ct);
+        }
         if (!create.Succeeded)
         {
             // Check if it's a duplicate — another request just created this user
-            var duplicate = create.Errors.Any(e => e.Code is "DuplicateEmail" or "DuplicateUserName");
+            var duplicate = create.Errors.Any(IsDuplicateIdentityEmailError);
             if (duplicate)
             {
-                var raceWinner = await userManager.FindByEmailAsync(email);
+                var raceWinner = await FindExistingUserByEmailAsync(email, ct);
                 if (raceWinner is not null)
                 {
                     _log.Warning(
                         "Applicant-not-linked: CreateAsync failed due to duplicate email, likely a race condition. Email={Email} Errors={Errors}",
                         email,
                         JoinIdentityErrors(create));
-                    return await AttachProviderToExistingApplicantAsync(raceWinner, info, ct);
+                    return await HandleExistingApplicantEmailUserAsync(raceWinner, info, ct);
                 }
 
                 _log.Warning(
@@ -293,6 +319,31 @@ public class GoogleExternalCallbackLoginHandler(
         _log.Information("Applicant-not-linked flow succeeded: new applicant created and signed in. UserId={UserId}", newApplicant.Id);
 
         return await FinalizeLoginAsync(newApplicant, info, ct);
+    }
+
+    private async Task<IResult<AuthResponse>> HandleExistingApplicantEmailUserAsync(
+        User existingUser,
+        ExternalLoginInfo info,
+        CancellationToken ct)
+    {
+        if (existingUser.IsDeleted)
+        {
+            _log.Warning("Applicant-not-linked: existing user is soft-deleted. UserId={UserId}", existingUser.Id);
+            return await LogFailureAsync(
+                ErrorsCodes.AccountStatusNotAllowedForLogin,
+                existingUser.Id,
+                existingUser.UserTypeId,
+                ct: ct);
+        }
+
+        if (existingUser.UserTypeId == UserTypeIds.OfficeUser)
+        {
+            _log.Warning("Office user blocked from applicant login. UserId={UserId}", existingUser.Id);
+            return await LogFailureAsync(ErrorsCodes.UserIsOfficer, existingUser.Id, existingUser.UserTypeId, ct: ct);
+        }
+
+        _log.Information("Applicant-not-linked: user exists by email, attaching provider. UserId={UserId}", existingUser.Id);
+        return await AttachProviderToExistingApplicantAsync(existingUser, info, ct);
     }
 
     private async Task<IResult<AuthResponse>> AttachProviderToExistingApplicantAsync(
@@ -369,6 +420,36 @@ public class GoogleExternalCallbackLoginHandler(
     private static string JoinIdentityErrors(IdentityResult result)
         => string.Join(", ", result.Errors.Select(e => e.Description));
 
+    private async Task<User?> FindExistingUserByEmailAsync(string email, CancellationToken ct)
+    {
+        var trimmedEmail = email.Trim();
+
+        var identityUser = await userManager.FindByEmailAsync(trimmedEmail);
+        if (identityUser is not null)
+            return identityUser;
+
+        var normalizedEmail = userManager.NormalizeEmail(trimmedEmail);
+
+        return await userManager.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u =>
+                u.Email == trimmedEmail ||
+                (normalizedEmail != null && u.NormalizedEmail == normalizedEmail),
+                ct);
+    }
+
+    private static bool IsDuplicateIdentityEmailError(IdentityError error)
+        => string.Equals(error.Code, "DuplicateEmail", StringComparison.OrdinalIgnoreCase)
+           || string.Equals(error.Code, "DuplicateUserName", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsDuplicateUserEmail(DbUpdateException exception)
+    {
+        var message = exception.InnerException?.Message ?? exception.Message;
+
+        return message.Contains("IX_AspNetUsers_Email", StringComparison.OrdinalIgnoreCase)
+               && message.Contains("duplicate", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static Result<ApplicantUser> CreateApplicantFromClaims(ExternalLoginInfo info, string email)
     {
         var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
@@ -399,25 +480,24 @@ public class GoogleExternalCallbackLoginHandler(
     }
 
     /// <summary>
-    /// Office user must exist, be OfficeUser, have OfficeId, and Office must not be deleted.
-    /// Adjust property names (OfficeId/Office.IsDeleted) to your domain model.
+    /// Office user must exist, be OfficeUser, have OfficeId, and the linked office must be active.
     /// </summary>
     private async Task<Result> EnsureActiveOfficeUserAsync(User user, CancellationToken ct)
     {
         if (user.UserTypeId != UserTypeIds.OfficeUser || user is not OfficeUser officeUser)
             return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
 
-        if (officeUser.OfficeId == Guid.Empty)
+        if (officeUser.OfficeId is null || officeUser.OfficeId == Guid.Empty)
             return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserNotLinkedToOffice);
 
         var officeRepo = uow.GetEntityRepository<Office>();
 
-        var officeExists = await officeRepo.DbSet.AsNoTracking()
-            .AnyAsync(o => o.Id == officeUser.OfficeId, ct);
+        var officeIsActive = await officeRepo.DbSet.AsNoTracking()
+            .AnyAsync(o => o.Id == officeUser.OfficeId && o.IsActive, ct);
 
-        return officeExists
+        return officeIsActive
             ? Result.Ok()
-            : Result.Fail(ErrorsCodes.ExternalLoginOfficeUserOfficeDeletedOrNotFound);
+            : Result.Fail(ErrorsCodes.AccountStatusNotAllowedForLogin);
     }
 
     private static async Task UpsertProviderClaimsAsync(UserManager<User> userManager, User user, ExternalLoginInfo info)

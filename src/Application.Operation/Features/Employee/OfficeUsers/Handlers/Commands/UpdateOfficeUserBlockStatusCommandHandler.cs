@@ -27,10 +27,14 @@ public sealed class UpdateOfficeUserBlockStatusCommandHandler(
 
         var officeAdmin = await userManager.Users
             .OfType<OfficeUser>()
+            .Include(user => user.Office)
             .FirstOrDefaultAsync(user => user.Id == currentUserId && !user.IsDeleted, cancellationToken);
 
         if (officeAdmin?.OfficeId is null)
             return Result.Fail<Unit>(ErrorsCodes.OfficeAdminNotFound);
+
+        if (!request.IsBlocked && officeAdmin.Office is not { IsActive: true })
+            return Result.Fail<Unit>(ErrorsCodes.OfficeInactive);
 
         var officeUser = await userManager.Users
             .OfType<OfficeUser>()

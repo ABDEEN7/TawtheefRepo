@@ -8,6 +8,7 @@ export enum CandidateType {
   NonQatari = "NonQatari",
   SonOfQatariMother = "SonOfQatariMother",
   WifeOfQatari = "WifeOfQatari",
+  QidHolder = "QidHolder",
 }
 
 /* ---------------------------------------------

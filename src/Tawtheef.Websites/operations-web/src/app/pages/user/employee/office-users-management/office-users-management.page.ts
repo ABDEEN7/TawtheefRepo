@@ -89,6 +89,7 @@ export class OfficeUsersManagementPage implements OnInit {
     const code = office.phoneCountryCode ? `${office.phoneCountryCode} ` : '';
     return `${code}${office.phoneNumber}`;
   });
+  isOfficeActive = computed(() => this.officeSummary()?.isActive ?? true);
 
   protected readonly Permissions = Permissions;
 
@@ -145,6 +146,11 @@ export class OfficeUsersManagementPage implements OnInit {
   }
 
   openAddDialog(): void {
+    if (!this.isOfficeActive()) {
+      this.notification.error(this.translate.instant('OFFICE_USERS.OFFICE_INACTIVE'));
+      return;
+    }
+
     const ref = this.dialogService.open(OfficeUserDialogComponent, {
       header: this.translate.instant('OFFICE_USERS.ADD_TITLE'),
       styleClass: 'office-user-dialog',
@@ -182,6 +188,11 @@ export class OfficeUsersManagementPage implements OnInit {
   toggleBlock(user: OfficeUserDto): void {
     if (this.isCurrentUser(user)) return;
     const desiredState = !user.isBlocked;
+    if (!desiredState && !this.isOfficeActive()) {
+      this.notification.error(this.translate.instant('OFFICE_USERS.OFFICE_INACTIVE'));
+      return;
+    }
+
     this.officeUsersService.updateBlockStatus(user.id, desiredState).subscribe({
       next: () => {
         this._users.update(users =>
@@ -189,7 +200,7 @@ export class OfficeUsersManagementPage implements OnInit {
         );
         this.notification.success(
           this.translate.instant(
-            desiredState ? 'OFFICE_USERS.BLOCK_SUCCESS' : 'OFFICE_USERS.UNBLOCK_SUCCESS'
+            desiredState ? 'OFFICE_USERS.DEACTIVATE_SUCCESS' : 'OFFICE_USERS.ACTIVATE_SUCCESS'
           )
         );
       }

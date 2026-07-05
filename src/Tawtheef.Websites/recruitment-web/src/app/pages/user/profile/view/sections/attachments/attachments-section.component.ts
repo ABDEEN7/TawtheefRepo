@@ -95,10 +95,7 @@ export class ProfileAttachmentsSectionComponent {
       next: () => {
         this.notify.success(this.translate.instant('profileView.notifications.deleted'));
         this.refresh.emit();
-      },
-      error: () => {
-        this.notify.error(this.translate.instant('profileView.notifications.deleteFailed'));
-      },
+      }
     });
   }
 
@@ -158,7 +155,7 @@ export class ProfileAttachmentsSectionComponent {
     if (!file) return;
 
     const payload: Attachment = {
-      id: att.file?.resourceId,
+      id: att.id ?? undefined,
       title: att.titleKey ?? '',
       fileName: file.name,
       attachmentId: att.file?.resourceId,

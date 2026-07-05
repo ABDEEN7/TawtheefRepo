@@ -20,9 +20,11 @@ using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Extensions;
+using OfficeEntity = Tawtheef.Domain.Entities.Lookups.NoneSeeds.Office;
 using User = Tawtheef.Domain.Entities.Users.User;
 
 namespace Tawtheef.Infrastructure.Services.Identity;
@@ -50,14 +52,9 @@ public class TokenService(
 
     public async Task<IResult<AuthResponse>> IssueTokensAsync(User user, string loginSource, CancellationToken ct)
     {
-        if (user.IsBlocked)
-        {
-            await loginAudit.LogAsync(
-                new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource, false,
-                    ErrorsCodes.AccountStatusNotAllowedForLogin,
-                    IpAddress: httpContextAccessor.HttpContext?.GetClientIpAddress()), ct);
+        var accountStatus = await EnsureUserCanReceiveTokensAsync(user, loginSource, ct);
+        if (accountStatus.IsFailed)
             return Result.Fail<AuthResponse>(ErrorsCodes.AccountStatusNotAllowedForLogin);
-        }
 
         var sid = Guid.NewGuid().ToString("N");
         var device = BuildDeviceInfo(httpContextAccessor.HttpContext);
@@ -94,6 +91,10 @@ public class TokenService(
         
         var swSetup = Stopwatch.StartNew();
         var now = time.GetUtcNow().UtcDateTime;
+
+        var accountStatus = await EnsureUserCanReceiveTokensAsync(user, "RefreshToken", ct);
+        if (accountStatus.IsFailed)
+            return Result.Fail<AuthResponse>(accountStatus.Errors);
 
         // We generate a new session ID (sid) on every rotation. 
         // This ensures that:
@@ -428,5 +429,36 @@ public class TokenService(
     {
         await cache.RemoveAsync($"roles:{userId}", ct);
         await cache.RemoveAsync($"perms:{userId}", ct);
+    }
+
+    private async Task<Result> EnsureUserCanReceiveTokensAsync(
+        User user,
+        string loginSource,
+        CancellationToken ct)
+    {
+        if (user.IsBlocked)
+            return await AccountStatusFailureAsync(user, loginSource, ct);
+
+        if (user is OfficeUser officeUser)
+        {
+            var officeIsActive = await dbContext.Set<OfficeEntity>()
+                .AsNoTracking()
+                .AnyAsync(office => office.Id == officeUser.OfficeId && office.IsActive, ct);
+
+            if (!officeIsActive)
+                return await AccountStatusFailureAsync(user, loginSource, ct);
+        }
+
+        return Result.Ok();
+    }
+
+    private async Task<Result> AccountStatusFailureAsync(User user, string loginSource, CancellationToken ct)
+    {
+        await loginAudit.LogAsync(
+            new LoginAttemptEntry(user.Id, user.UserTypeId, loginSource, false,
+                ErrorsCodes.AccountStatusNotAllowedForLogin,
+                IpAddress: httpContextAccessor.HttpContext?.GetClientIpAddress()), ct);
+
+        return Result.Fail(ErrorsCodes.AccountStatusNotAllowedForLogin);
     }
 }

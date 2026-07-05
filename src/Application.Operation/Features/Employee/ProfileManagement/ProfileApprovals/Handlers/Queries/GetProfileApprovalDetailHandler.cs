@@ -14,6 +14,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Mappers;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -40,6 +41,8 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         }
         else if (profile.Status != UserProfileStatus.UnderReview)
             return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.ProfileNotReadyForReview);
+
+        await ProfileReviewItemSync.EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
 
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();

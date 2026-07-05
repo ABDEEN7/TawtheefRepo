@@ -42,9 +42,11 @@ function addHeadersConditionally(request: HttpRequest<any>): HttpRequest<any> {
     return request;
   }
 
+  const requestId = generateRequestId();
   const headers: Record<string, string> = {
     'Accept-Language': currentLang,
-    'X-Request-ID': generateRequestId(),
+    'X-Correlation-ID': requestId,
+    'X-Request-ID': requestId,
   };
 
   return request.clone({ setHeaders: headers });
@@ -78,6 +80,10 @@ function isExternalRequest(url: string): boolean {
 }
 
 function generateRequestId(): string {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+
   return Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15);
 }
