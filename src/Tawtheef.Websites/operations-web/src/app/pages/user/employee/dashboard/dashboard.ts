@@ -50,6 +50,11 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements OnInit {
+  //Modals
+  showCandidatesModal = false;
+  showJobsModal = false;
+  
+
   private dashboardService = inject(OperationsDashboardService);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
@@ -149,7 +154,59 @@ readonly jobsChartData = {
     }
   ]
 };
-
+readonly latestJobModalRows = [
+  {
+    jobTitle: 'مبرمج',
+    organization: '',
+    category: 'أكاديمي',
+    status: 'متوقفة',
+    invitationsSent: 0,
+    candidatesCount: 0,
+    workflow: [
+      { label: 'الدعوات', value: 0, color: '#488ADA' },
+      { label: 'المتقدمون', value: 0, color: '#2F8A3A' },
+      { label: 'المدعوة', value: 0, color: '#FFB547' },
+      { label: 'المرفوضون', value: 0, color: '#D9182D' },
+      { label: 'ملفات بانتظار الموافقة', value: 0, color: '#94DDBF' },
+      { label: 'ملفات معتمدة', value: 0, color: '#8A1538' }
+    ],
+    action: 'view'
+  },
+  {
+    jobTitle: 'باحث دور حضانات ثاني',
+    organization: 'التعليم العالي',
+    category: 'أكاديمي',
+    status: 'متوقفة',
+    invitationsSent: 1,
+    candidatesCount: 0,
+    workflow: [
+      { label: 'الدعوات', value: 1, color: '#488ADA' },
+      { label: 'المتقدمون', value: 0, color: '#2F8A3A' },
+      { label: 'المدعوة', value: 0, color: '#FFB547' },
+      { label: 'المرفوضون', value: 0, color: '#D9182D' },
+      { label: 'ملفات بانتظار الموافقة', value: 0, color: '#94DDBF' },
+      { label: 'ملفات معتمدة', value: 0, color: '#8A1538' }
+    ],
+    action: 'none'
+  },
+  {
+    jobTitle: 'باحث دور حضانات ثاني',
+    organization: 'التعليم العالي',
+    category: 'أكاديمي',
+    status: 'متوقفة',
+    invitationsSent: 2,
+    candidatesCount: 2,
+    workflow: [
+      { label: 'الدعوات', value: 2, color: '#488ADA' },
+      { label: 'المتقدمون', value: 2, color: '#2F8A3A' },
+      { label: 'المدعوة', value: 2, color: '#FFB547' },
+      { label: 'المرفوضون', value: 0, color: '#D9182D' },
+      { label: 'ملفات بانتظار الموافقة', value: 0, color: '#94DDBF' },
+      { label: 'ملفات معتمدة', value: 0, color: '#8A1538' }
+    ],
+    action: 'none'
+  }
+];
 readonly employeesChartData = {
   labels: [
     'الملفات المرجعة',

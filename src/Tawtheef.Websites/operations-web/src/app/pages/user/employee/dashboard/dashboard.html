@@ -1,29 +1,5 @@
 <section i18nNamespace="pages/employee/dashboard" class="ref-dashboard-wrap">
   <main class="main">
-    <!-- <div class="tabs-shell">
-      <div class="tabs" role="tablist">
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'overview'"
-          (click)="setActiveTab('overview')">
-          <i class="hgi-stroke hgi-dashboard-square-01" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.overview' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'candidates'"
-          (click)="setActiveTab('candidates')">
-          <i class="hgi-stroke hgi-user-multiple" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.candidates' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'jobs'" (click)="setActiveTab('jobs')">
-          <i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.jobs' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'employees'"
-          (click)="setActiveTab('employees')">
-          <i class="hgi-stroke hgi-user-group" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.employees' | translate }}</span>
-        </button>
-      </div>
-    </div> -->
-
     @if (activeTab() === 'overview') {
     <section class="tab-panel active">
       <div class="section-title">
@@ -238,7 +214,7 @@
     </div>
   </div>
 
-  <button class="operation-card-btn" type="button">
+  <button class="operation-card-btn" type="button" (click)="showCandidatesModal = true">
      <i class="hgi-stroke hgi-view"></i>
      <span>عرض التفاصيل</span>
   </button>
@@ -303,7 +279,7 @@
     </div>
   </div>
 
-  <button class="operation-card-btn" type="button">
+  <button class="operation-card-btn" type="button" (click)="showJobsModal = true">
     <i class="hgi-stroke hgi-view"></i>
     <span>عرض التفاصيل</span>
   </button>
@@ -1108,5 +1084,357 @@
       }
     </section>
     }
+
+<!-- Candidates Modal -->
+@if (showCandidatesModal) {
+<div class="candidate-modal-backdrop">
+    <div class="candidate-modal">
+
+        <button class="candidate-modal-close"
+                type="button"
+                (click)="showCandidatesModal = false">
+            <i class="hgi-stroke hgi-cancel-01"></i>
+        </button>
+
+        <div class="candidate-modal-header">
+            <h3>المرشحين</h3>
+            <p>عرض مختصر لحالة ملفات المرشحين وأنواعهم.</p>
+        </div>
+
+        <div class="candidate-modal-grid">
+
+            <!-- ملفات المرشحين -->
+            <div class="candidate-modal-chart-card">
+
+                <h4>ملفات المرشحين</h4>
+
+                <div class="candidate-modal-chart-content">
+
+                    <div class="candidate-chart-wrapper">
+                        <p-chart
+                            type="doughnut"
+                            [data]="candidateChartData"
+                            [options]="chartOptions">
+                        </p-chart>
+
+                        <div class="candidate-chart-center">
+                            <span>إجمالي</span>
+                            <strong>512</strong>
+                        </div>
+                    </div>
+
+                    <div class="operation-legend">
+
+                        <div class="operation-legend-row">
+                            <i style="background:#8A1538"></i>
+                            <span>معتمدة</span>
+                            <strong>100</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#488ADA"></i>
+                            <span>قيد الإنشاء</span>
+                            <strong>12</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#FFB547"></i>
+                            <span>قيد المراجعة</span>
+                            <strong>34</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#2F8A3A"></i>
+                            <span>معتمدة</span>
+                            <strong>56</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#D9182D"></i>
+                            <span>مرفوضة/مرجعة</span>
+                            <strong>20</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- أنواع المرشحين -->
+            <div class="candidate-modal-chart-card">
+
+                <h4>أنواع المرشحين</h4>
+
+                <div class="candidate-modal-chart-content">
+
+                    <div class="candidate-chart-wrapper">
+                        <p-chart
+                            type="doughnut"
+                            [data]="candidateChartData"
+                            [options]="chartOptions">
+                        </p-chart>
+
+                        <div class="candidate-chart-center">
+                            <span>إجمالي</span>
+                            <strong>512</strong>
+                        </div>
+                    </div>
+
+                    <div class="operation-legend">
+
+                        <div class="operation-legend-row">
+                            <i style="background:#8A1538"></i>
+                            <span>مرشحون قطريون</span>
+                            <strong>12</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#488ADA"></i>
+                            <span>أبناء القطريات</span>
+                            <strong>100</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#FFB547"></i>
+                            <span>زوجة قطري</span>
+                            <strong>34</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#2F8A3A"></i>
+                            <span>مرشحون خليجيون</span>
+                            <strong>56</strong>
+                        </div>
+
+                        <div class="operation-legend-row">
+                            <i style="background:#D9182D"></i>
+                            <span>مقيمون في قطر</span>
+                            <strong>20</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="candidate-modal-actions">
+
+            <button class="candidate-modal-btn outline" type="button">
+                <i class="hgi-stroke hgi-download-04"></i>
+                <span>تصدير رسوم بيانية</span>
+            </button>
+
+            <button class="candidate-modal-btn filled" type="button">
+                <i class="hgi-stroke hgi-download-04"></i>
+                <span>تصدير كشف</span>
+            </button>
+
+        </div>
+
+    </div>
+</div>
+}
+
+<!-- Jobs Modal -->
+@if (showJobsModal) {
+<div class="candidate-modal-backdrop">
+  <div class="candidate-modal jobs-modal">
+
+    <button class="candidate-modal-close" type="button" (click)="showJobsModal = false">
+      <i class="hgi-stroke hgi-cancel-01"></i>
+    </button>
+
+    <div class="candidate-modal-header">
+      <h3>الوظائف</h3>
+      <p>عرض مختصر لحالة الوظائف وأحدث الوظائف.</p>
+    </div>
+
+    <!-- حالة الوظائف Card -->
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">حالة الوظائف</h4>
+
+      <div class="candidate-modal-chart-content jobs-chart-content">
+
+        <div class="operation-legend jobs-modal-legend">
+
+          <div class="operation-legend-row">
+            <i style="background:#8A1538"></i>
+            <span>بانتظار توزيع النقاط</span>
+            <strong>89</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#488ADA"></i>
+            <span>جاهزة للإعلان</span>
+            <strong>65</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#FFB547"></i>
+            <span>تحتاج تحديث</span>
+            <strong>34</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#2F8A3A"></i>
+            <span>منشورة</span>
+            <strong>7</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#D9182D"></i>
+            <span>مسودة</span>
+            <strong>23</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#94DDBF"></i>
+            <span>بانتظار الاعتماد</span>
+            <strong>35</strong>
+          </div>
+
+        </div>
+
+        <div class="candidate-chart-wrapper jobs-modal-chart">
+          <p-chart
+            type="doughnut"
+            [data]="jobsChartData"
+            [options]="chartOptions">
+          </p-chart>
+
+          <div class="candidate-chart-center">
+            <span>إجمالي</span>
+            <strong>96</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- أحدث الوظائف Card -->
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">أحدث الوظائف</h4>
+
+      <div class="table-responsive">
+        <p-table class="custom-table" [value]="latestJobModalRows" [rowHover]="true" responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الوظيفة</th>
+              <th>حالة الوظيفة</th>
+              <th>سير العمل</th>
+              <th>الدعوات</th>
+              <th>المتقدمون</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-job>
+            <tr>
+
+              <td>
+                <div class="job-modal-title-cell">
+                  <strong>{{ job.jobTitle }}</strong>
+
+                  <div class="job-details" *ngIf="job.organization">
+                    <span class="job-org">{{ job.organization }}</span>
+                    <small>{{ job.category }}</small>
+                  </div>
+
+                  <small *ngIf="!job.organization">{{ job.category }}</small>
+                </div>
+              </td>
+
+              <td>
+                <span class="badge returned">
+                  {{ job.status }}
+                </span>
+              </td>
+
+              <td>
+                <div class="workflow-status">
+                  <div class="workflow-bar">
+                    <span
+                      *ngFor="let item of job.workflow"
+                      class="workflow-bar-segment"
+                      [style.background]="item.color"
+                      [style.flex]="item.value">
+                    </span>
+                  </div>
+
+                  <div class="workflow-tags">
+                    <span class="workflow-tag" *ngFor="let item of job.workflow">
+                      <i class="workflow-dot" [style.background]="item.color"></i>
+                      <span>{{ item.label }}</span>
+                      <strong>{{ item.value }}</strong>
+                    </span>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <span class="count-badge warning">
+                  {{ job.invitationsSent }}
+                </span>
+              </td>
+
+              <td>
+                <span class="count-badge success">
+                  {{ job.candidatesCount }}
+                </span>
+              </td>
+
+              <td>
+                <ng-container *ngIf="job.action === 'view'; else noAction">
+                  <button type="button" class="view-action-btn">
+                    <i class="hgi hgi-stroke hgi-view view-action"></i>
+                  </button>
+                </ng-container>
+
+                <ng-template #noAction>
+                  <span class="text-muted small">لا يوجد إجراء</span>
+                </ng-template>
+              </td>
+
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-muted no-data">
+                <div class="p-4 d-flex flex-column align-items-center justify-content-center">
+                  <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
+                  <span>لا توجد بيانات</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+    </div>
+
+    <div class="candidate-modal-actions">
+      <button class="candidate-modal-btn outline" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير رسوم بيانية</span>
+      </button>
+
+      <button class="candidate-modal-btn filled" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير كشف</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+
+
   </main>
 </section>
