@@ -28,6 +28,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "20.3.25",
     "@angular/common": "20.3.25",
     "@angular/compiler": "20.3.25",
     "@angular/core": "20.3.25",
@@ -35,7 +36,6 @@
     "@angular/localize": "20.3.25",
     "@angular/platform-browser": "20.3.25",
     "@angular/router": "20.3.25",
-    "@angular/animations": "20.3.25",
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@ng-bootstrap/ng-bootstrap": "19.0.1",

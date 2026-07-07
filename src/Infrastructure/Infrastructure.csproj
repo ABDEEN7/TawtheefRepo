@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <RootNamespace>Tawtheef.Infrastructure</RootNamespace>
@@ -48,6 +48,7 @@
         <PackageReference Include="Microsoft.FeatureManagement" />
         <PackageReference Include="Microsoft.Identity.Web" />
         <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" />
+        <PackageReference Include="Microsoft.OpenApi" />
         <PackageReference Include="MimeKit" />
         <PackageReference Include="Polly" />
         <PackageReference Include="Swashbuckle.AspNetCore" />

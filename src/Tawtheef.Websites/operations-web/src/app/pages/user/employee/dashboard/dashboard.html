@@ -1,6 +1,6 @@
 <section i18nNamespace="pages/employee/dashboard" class="ref-dashboard-wrap">
   <main class="main">
-    <div class="tabs-shell">
+    <!-- <div class="tabs-shell">
       <div class="tabs" role="tablist">
         <button class="tab-button" type="button" [class.active]="activeTab() === 'overview'"
           (click)="setActiveTab('overview')">
@@ -22,184 +22,470 @@
           <span>{{ 'dashboard.tabs.employees' | translate }}</span>
         </button>
       </div>
-    </div>
+    </div> -->
 
     @if (activeTab() === 'overview') {
     <section class="tab-panel active">
       <div class="section-title">
         <div>
-          <h3>{{ 'dashboard.overview.title' | translate }}</h3>
-          <p>{{ 'dashboard.overview.subtitle' | translate }}</p>
+          <h2><b>{{ 'dashboard.overview.title' | translate }}</b></h2>
+          <h6 class="text-muted my-3">{{ 'dashboard.overview.subtitle' | translate }}</h6>
         </div>
       </div>
 
-      @if (overviewLoading()) {
-      <section class="kpi-grid">
-        @for (item of kpiSkeletonItems; track item) {
-        <article class="kpi-card skeleton-card">
-          <div class="skeleton-line skeleton-icon"></div>
-          <div class="skeleton-line skeleton-text"></div>
-          <div class="skeleton-line skeleton-value"></div>
-          <div class="skeleton-line skeleton-help"></div>
-        </article>
-        }
-      </section>
-      } @else {
-      <section class="kpi-grid">
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="hgi-stroke hgi-user-multiple" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().totalProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet"></span><span>{{ 'dashboard.help.totalProfiles' | translate
-              }}</span></div>
-        </article>
+      <section class="dashboard-section main-indicators-section">
+        <div class="dashboard-section-header">
+          <h3>المؤشرات الرئيسية</h3>
 
-        <article class="kpi-card">
-          <div class="kpi-icon purple"><i class="hgi-stroke hgi-file-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet purple"></span><span>{{ 'dashboard.help.unassignedProfiles'
-              | translate }}</span></div>
-        </article>
+          <button type="button" class="export-btn">
+            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+            <span>تصدير</span>
+          </button>
+        </div>
 
-        <article class="kpi-card">
-          <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.pendingProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().underReviewProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet orange"></span><span>{{ 'dashboard.help.pendingProfiles' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.approvedProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().approvedProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.approvedProfiles' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
-          <div class="kpi-value">{{ activeJobKpis().totalJobs | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet"></span><span>{{ 'dashboard.help.totalJobs' | translate
-              }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-megaphone-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.publishedJobs' | translate }}</div>
-          <div class="kpi-value">{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.publishedJobs' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon blue"><i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalInvitations' | translate }}</div>
-          <div class="kpi-value">{{ activeInvitationKpis().totalInvitations | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet blue"></span><span>{{ 'dashboard.help.totalInvitations' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-mail-open-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.acceptedInvitations' | translate }}</div>
-          <div class="kpi-value">{{ activeInvitationKpis().acceptedInvitations | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.acceptedInvitations'
-              | translate }}</span></div>
-        </article>
-      </section>
-      }
-
-      <section class="content-grid">
-        @if (overviewLoading()) {
-        <article class="hero-card skeleton-dark">
-          <div class="skeleton-line skeleton-icon"></div>
-          <div class="skeleton-line skeleton-title"></div>
-          <div class="skeleton-line skeleton-paragraph"></div>
-          <div class="hero-metrics">
-            @for (item of [1,2,3]; track item) {
-            <div class="hero-metric">
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
-            }
-          </div>
-        </article>
-        } @else {
-        <article class="hero-card">
-          <div class="hero-icon"><i class="hgi-stroke hgi-chart-breakout-circle" aria-hidden="true"></i></div>
-          <h3>{{ 'dashboard.hero.title' | translate }}</h3>
-          <p>{{ 'dashboard.hero.text' | translate }}</p>
-          <div class="hero-metrics">
-            <div class="hero-metric">
-              <strong>{{ activeKpis().pendingProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingProfiles' | translate }}</span>
-            </div>
-            <div class="hero-metric">
-              <strong>{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingJobs' | translate }}</span>
-            </div>
-            <div class="hero-metric">
-              <strong>{{ activeInvitationKpis().pendingInvitations | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingInvitations' | translate }}</span>
-            </div>
-          </div>
-        </article>
-        }
 
         @if (overviewLoading()) {
-        <article class="card candidate-types-card">
-          <div class="card-header">
-            <div>
-              <div class="skeleton-line skeleton-title"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
-          </div>
-          <div class="actions-grid">
-            @for (item of miniSkeletonItems; track item) {
-            <div class="action-card skeleton-card">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
-            }
-          </div>
-        </article>
+        <section class="kpi-grid">
+          @for (item of kpiSkeletonItems; track item) {
+          <article class="kpi-card figma-kpi-card skeleton-card">
+            <div class="skeleton-line skeleton-icon"></div>
+            <div class="skeleton-line skeleton-text"></div>
+            <div class="skeleton-line skeleton-value"></div>
+            <div class="skeleton-line skeleton-help"></div>
+          </article>
+          }
+        </section>
         } @else {
-        <article class="card candidate-types-card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
-              <p>{{ 'dashboard.quickActions.subtitle' | translate }}</p>
+        <section class="kpi-grid figma-kpi-grid">
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
+              <div class="kpi-icon blue"><i class="hgi-stroke hgi-file-01" aria-hidden="true"></i></div>
             </div>
-          </div>
-          <div class="actions-grid">
-            <div class="action-card">
+            <div class="kpi-value">{{ activeKpis().totalProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+12.5%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.approvedProfiles' | translate }}</div>
+              <div class="kpi-icon green"><i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i></div>
+            </div>
+            <div class="kpi-value">{{ activeKpis().approvedProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-down"><i class="bi bi-arrow-down-right me-1"></i><span dir="ltr">-1.5%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.pendingProfiles' | translate }}</div>
               <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-              <strong>{{ activeKpis().pendingProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.pendingProfiles' | translate }}</span>
             </div>
-            <div class="action-card">
-              <div class="kpi-icon purple"><i class="hgi-stroke hgi-share-08" aria-hidden="true"></i></div>
-              <strong>{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.unassignedProfiles' | translate }}</span>
+            <div class="kpi-value">{{ activeKpis().underReviewProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+17.2%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
             </div>
-            <div class="action-card">
-              <div class="kpi-icon"><i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i></div>
-              <strong>{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.jobsPending' | translate }}</span>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
+              <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
             </div>
-            <div class="action-card">
-              <div class="kpi-icon blue"><i class="hgi-stroke hgi-star" aria-hidden="true"></i></div>
-              <strong>{{ activeJobKpis().pendingPointApprovalJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.pointsPending' | translate }}</span>
+            <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+17.2%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
             </div>
-          </div>
-        </article>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.pendingDistributionProfiles' | translate }}</div>
+              <div class="kpi-icon red"><i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i></div>
+            </div>
+            <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+16.5%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.publishedJobs' | translate }}</div>
+              <div class="kpi-icon purple"><i class="hgi-stroke hgi-megaphone-01" aria-hidden="true"></i></div>
+            </div>
+            <div class="kpi-value">{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+12%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.totalInvitations' | translate }}</div>
+              <div class="kpi-icon purple"><i class="hgi-stroke hgi-user-add-01" aria-hidden="true"></i></div>
+            </div>
+            <div class="kpi-value">{{ activeInvitationKpis().totalInvitations | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+3.3%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+          <article class="kpi-card figma-kpi-card">
+            <div class="figma-kpi-top">
+              <div class="kpi-label">{{ 'dashboard.kpi.acceptedInvitations' | translate }}</div>
+              <div class="kpi-icon purple"><i class="hgi-stroke hgi-user-add-01" aria-hidden="true"></i></div>
+            </div>
+            <div class="kpi-value">{{ activeInvitationKpis().acceptedInvitations | number:'1.0-0' }}</div>
+            <div class="kpi-status figma-kpi-status">
+              <span class="trend-up"><i class="bi bi-arrow-up-right me-1"></i><span dir="ltr">+3.3%</span></span>
+              <span>{{ 'dashboard.kpi.previousPeriod' | translate }}</span>
+            </div>
+          </article>
+
+        </section>
         }
       </section>
+
+
+   
+      
+
+<section class="dashboard-section operational-summary-section">
+<div class="dashboard-section-header operational-summary-header">
+
+   <h3>الملخص التشغيلي</h3>
+
+    <select class="summary-year-select">
+        <option>2025/2026</option>
+        <option>2024/2025</option>
+        <option>2023/2024</option>
+    </select>
+
+   
+
+</div>
+
+  <div class="operational-summary-grid">
+
+    <!-- المرشحين -->
+    <article class="operation-card">
+  <div class="operation-card-header">
+    <div class="operation-card-title">
+      <div class="operation-card-icon purple">
+        <i class="hgi-stroke hgi-user-add-01"></i>
+      </div>
+      <h4>المرشحين</h4>
+    </div>
+  </div>
+
+
+<div class="candidate-chart-wrapper">
+
+    <p-chart
+        type="doughnut"
+        [data]="candidateChartData"
+        [options]="chartOptions">
+    </p-chart>
+
+    <div class="candidate-chart-center">
+        <span>إجمالي</span>
+        <strong>512</strong>
+    </div>
+
+</div>
+
+  <div class="operation-legend">
+    <div class="operation-legend-row">
+      <i style="background:#8A1538"></i>
+      <span>مرشحون قطريون</span>
+      <strong>12</strong>
+    </div>
+
+    <div class="operation-legend-row">
+      <i style="background:#488ADA"></i>
+      <span>أبناء القطريات</span>
+      <strong>100</strong>
+    </div>
+
+    <div class="operation-legend-row">
+      <i style="background:#FFB547"></i>
+      <span>زوجة قطري</span>
+      <strong>34</strong>
+    </div>
+
+    <div class="operation-legend-row">
+      <i style="background:#2F8A3A"></i>
+      <span>مرشحون خليجيون</span>
+      <strong>56</strong>
+    </div>
+
+    <div class="operation-legend-row">
+      <i style="background:#D9182D"></i>
+      <span>مقيمون في قطر</span>
+      <strong>20</strong>
+    </div>
+  </div>
+
+  <button class="operation-card-btn" type="button">
+     <i class="hgi-stroke hgi-view"></i>
+     <span>عرض التفاصيل</span>
+  </button>
+</article>
+
+  <!-- الوظائف -->
+<article class="operation-card">
+  <div class="operation-card-header">
+    <div class="operation-card-title">
+      <div class="operation-card-icon blue">
+        <i class="hgi-stroke hgi-folder-01"></i>
+      </div>
+      <h4>الوظائف</h4>
+    </div>
+  </div>
+
+<div class="candidate-chart-wrapper">
+
+    <p-chart
+        type="doughnut"
+        [data]="jobsChartData"
+        [options]="chartOptions">
+    </p-chart>
+
+    <div class="candidate-chart-center">
+        <span>إجمالي</span>
+        <strong>96</strong>
+    </div>
+
+</div>
+
+  <div class="operation-legend">
+    <div class="operation-legend-row">
+      <i style="background:#8A1538"></i>
+      <span>بانتظار توزيع النقاط</span>
+      <strong>89</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#488ADA"></i>
+      <span>جاهزة للإعلان</span>
+      <strong>65</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#FFB547"></i>
+      <span>تحتاج تحديث</span>
+      <strong>34</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#2F8A3A"></i>
+      <span>منشورة</span>
+      <strong>7</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#D9182D"></i>
+      <span>مسودة</span>
+      <strong>23</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#94DDBF"></i>
+      <span>بانتظار الاعتماد</span>
+      <strong>35</strong>
+    </div>
+  </div>
+
+  <button class="operation-card-btn" type="button">
+    <i class="hgi-stroke hgi-view"></i>
+    <span>عرض التفاصيل</span>
+  </button>
+</article>
+
+<!-- الموظفين -->
+<article class="operation-card">
+  <div class="operation-card-header">
+    <div class="operation-card-title">
+      <div class="operation-card-icon green">
+        <i class="hgi-stroke hgi-user-group"></i>
+      </div>
+      <h4>الموظفين</h4>
+    </div>
+  </div>
+
+  <div class="candidate-chart-wrapper">
+
+    <p-chart
+        type="doughnut"
+        [data]="employeesChartData"
+        [options]="chartOptions">
+    </p-chart>
+
+    <div class="candidate-chart-center">
+        <span>إجمالي</span>
+        <strong>40</strong>
+    </div>
+
+</div>
+
+  <div class="operation-legend">
+    <div class="operation-legend-row">
+      <i style="background:#488ADA"></i>
+      <span>الملفات المرجعة</span>
+      <strong>2</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#2F8A3A"></i>
+      <span>الملفات المعتمدة</span>
+      <strong>16</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#FFB547"></i>
+      <span>قيد التنفيذ</span>
+      <strong>12</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#D9182D"></i>
+      <span>بانتظار المراجعة</span>
+      <strong>89</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#94DDBF"></i>
+      <span>بانتظار التوزيع</span>
+      <strong>6</strong>
+    </div>
+  </div>
+
+  <button class="operation-card-btn" type="button">
+    <i class="hgi-stroke hgi-view"></i>
+    <span>عرض التفاصيل</span>
+  </button>
+</article>
+
+<!-- الدعوات -->
+<article class="operation-card">
+  <div class="operation-card-header">
+    <div class="operation-card-title">
+      <div class="operation-card-icon orange">
+        <i class="hgi-stroke hgi-mail-01"></i>
+      </div>
+      <h4>الدعوات</h4>
+    </div>
+  </div>
+
+<div class="candidate-chart-wrapper">
+
+    <p-chart
+        type="doughnut"
+        [data]="invitationsChartData"
+        [options]="chartOptions">
+    </p-chart>
+
+    <div class="candidate-chart-center">
+        <span>إجمالي</span>
+        <strong>512</strong>
+    </div>
+
+</div>
+
+  <div class="operation-legend">
+    <div class="operation-legend-row">
+      <i style="background:#488ADA"></i>
+      <span>المرسلة</span>
+      <strong>89</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#2F8A3A"></i>
+      <span>المقبولة</span>
+      <strong>89</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#FFB547"></i>
+      <span>بانتظار الرد</span>
+      <strong>89</strong>
+    </div>
+    <div class="operation-legend-row">
+      <i style="background:#D9182D"></i>
+      <span>المنتهية</span>
+      <strong>89</strong>
+    </div>
+  </div>
+
+  <button class="operation-card-btn" type="button">
+    <i class="hgi-stroke hgi-view"></i>
+    <span>عرض التفاصيل</span>
+  </button>
+</article>
+
+</div>
+</section>
+
+
+
+
+<section class="dashboard-section quick-actions-section">
+
+    <div class="dashboard-section-header">
+        <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
+    </div>
+
+    <div class="quick-actions-grid">
+
+        <button class="quick-action-card" type="button">
+            <div class="quick-action-square">
+                <div class="quick-action-icon">
+                    <i class="hgi-stroke hgi-user-add-01"></i>
+                </div>
+            </div>
+            <span>{{ 'dashboard.quickActions.addCandidate' | translate }}</span>
+        </button>
+
+        <button class="quick-action-card" type="button">
+            <div class="quick-action-square">
+                <div class="quick-action-icon">
+                    <i class="hgi-stroke hgi-task-edit-01"></i>
+                </div>
+            </div>
+            <span>{{ 'dashboard.quickActions.createJob' | translate }}</span>
+        </button>
+
+        <button class="quick-action-card" type="button">
+            <div class="quick-action-square">
+                <div class="quick-action-icon">
+                    <i class="hgi-stroke hgi-sent"></i>
+                </div>
+            </div>
+            <span>{{ 'dashboard.quickActions.sendInvitation' | translate }}</span>
+        </button>
+
+        <button class="quick-action-card" type="button">
+            <div class="quick-action-square">
+                <div class="quick-action-icon">
+                    <i class="hgi-stroke hgi-file-validation"></i>
+                </div>
+            </div>
+            <span>{{ 'dashboard.quickActions.approveProfiles' | translate }}</span>
+        </button>
+
+        <button class="quick-action-card" type="button">
+            <div class="quick-action-square">
+                <div class="quick-action-icon">
+                    <i class="hgi-stroke hgi-settings-02"></i>
+                </div>
+            </div>
+            <span>{{ 'dashboard.quickActions.manageUsers' | translate }}</span>
+        </button>
+
+    </div>
+
+</section>
 
     </section>
     }

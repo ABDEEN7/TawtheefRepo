@@ -93,6 +93,98 @@ export class Dashboard implements OnInit {
     sortDirection: 'asc'
   });
 
+  readonly chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '72%',
+  animation: {
+    animateRotate: true,
+    animateScale: true,
+    duration: 1000,
+    easing: 'easeOutQuart'
+  },
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      enabled: true
+    }
+  }
+};
+
+readonly candidateChartData = {
+  labels: [
+    'مرشحون قطريون',
+    'أبناء القطريات',
+    'زوجة قطري',
+    'مرشحون خليجيون',
+    'مقيمون في قطر'
+  ],
+  datasets: [
+    {
+      data: [12, 100, 34, 56, 20],
+      backgroundColor: ['#8A1538', '#488ADA', '#FFB547', '#2F8A3A', '#D9182D'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }
+  ]
+};
+
+readonly jobsChartData = {
+  labels: [
+    'بانتظار توزيع النقاط',
+    'جاهزة للإعلان',
+    'تحتاج تحديث',
+    'منشورة',
+    'مسودة',
+    'بانتظار الاعتماد'
+  ],
+  datasets: [
+    {
+      data: [89, 65, 34, 7, 23, 35],
+      backgroundColor: ['#8A1538', '#488ADA', '#FFB547', '#2F8A3A', '#D9182D', '#94DDBF'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }
+  ]
+};
+
+readonly employeesChartData = {
+  labels: [
+    'الملفات المرجعة',
+    'الملفات المعتمدة',
+    'قيد التنفيذ',
+    'بانتظار المراجعة',
+    'بانتظار التوزيع'
+  ],
+  datasets: [
+    {
+      data: [2, 16, 12, 89, 6],
+      backgroundColor: ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }
+  ]
+};
+
+readonly invitationsChartData = {
+  labels: [
+    'المرسلة',
+    'المقبولة',
+    'بانتظار الرد',
+    'المنتهية'
+  ],
+  datasets: [
+    {
+      data: [89, 89, 89, 89],
+      backgroundColor: ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }
+  ]
+};
+
   readonly searchStatus = signal<string>('');
   readonly activeTab = signal<'overview' | 'candidates' | 'jobs' | 'employees'>('overview');
   readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
