@@ -1,4 +1,7 @@
-<section i18nNamespace="pages/employee/dashboard" class="ref-dashboard-wrap">
+<section
+  i18nNamespace="pages/employee/dashboard"
+  class="ref-dashboard-wrap"
+  [style.--dashboard-font-scale]="fontScale()">
   <main class="main">
     @if (activeTab() === 'overview') {
     <section class="tab-panel active">
