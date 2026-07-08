@@ -260,6 +260,8 @@
   "dashboard.modals.candidates.subtitle": "عرض مختصر لحالة ملفات المرشحين وأنواعهم.",
   "dashboard.modals.candidates.statusTitle": "ملفات المرشحين",
   "dashboard.modals.candidates.typesTitle": "أنواع المرشحين",
+  "dashboard.modals.table.candidates": "المتقدمون",
+
 
   "dashboard.modals.jobs.title": "الوظائف",
   "dashboard.modals.jobs.subtitle": "عرض مختصر لحالة الوظائف وأحدث الوظائف.",
