@@ -53,7 +53,9 @@ export class Dashboard implements OnInit {
   //Modals
   showCandidatesModal = false;
   showJobsModal = false;
-  
+  showEmployeesModal = false;
+  showInvitationsModal = false;
+
 
   private dashboardService = inject(OperationsDashboardService);
   private destroyRef = inject(DestroyRef);
@@ -207,6 +209,49 @@ readonly latestJobModalRows = [
     action: 'none'
   }
 ];
+
+readonly employeesModalRows = [
+  {
+    name: 'Nawaf Hamad Al_Marri',
+    email: 'Nawaf.H@edu.gov.qa',
+    assigned: 6,
+    completed: 6,
+    remaining: 6,
+    late: 6
+  },
+  {
+    name: 'Nawaf Hamad Al_Marri',
+    email: 'Nawaf.H@edu.gov.qa',
+    assigned: 6,
+    completed: 6,
+    remaining: 6,
+    late: 6
+  },
+  {
+    name: 'Nawaf Hamad Al_Marri',
+    email: 'Nawaf.H@edu.gov.qa',
+    assigned: 6,
+    completed: 6,
+    remaining: 6,
+    late: 6
+  },
+  {
+    name: 'Nawaf Hamad Al_Marri',
+    email: 'Nawaf.H@edu.gov.qa',
+    assigned: 6,
+    completed: 6,
+    remaining: 6,
+    late: 6
+  },
+  {
+    name: 'Nawaf Hamad Al_Marri',
+    email: 'Nawaf.H@edu.gov.qa',
+    assigned: 6,
+    completed: 6,
+    remaining: 6,
+    late: 6
+  }
+];
 readonly employeesChartData = {
   labels: [
     'الملفات المرجعة',
@@ -226,21 +271,19 @@ readonly employeesChartData = {
 };
 
 readonly invitationsChartData = {
-  labels: [
-    'المرسلة',
-    'المقبولة',
-    'بانتظار الرد',
-    'المنتهية'
-  ],
+  labels: ['لا توجد بيانات'],
   datasets: [
     {
-      data: [89, 89, 89, 89],
-      backgroundColor: ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D'],
+      data: [1],
+      backgroundColor: ['#E5E7EB'], // light gray
       borderWidth: 0,
-      hoverOffset: 8
+      hoverOffset: 0
     }
   ]
 };
+
+readonly latestInvitationModalRows: any[] = [];
+
 
   readonly searchStatus = signal<string>('');
   readonly activeTab = signal<'overview' | 'candidates' | 'jobs' | 'employees'>('overview');

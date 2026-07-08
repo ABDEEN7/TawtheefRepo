@@ -2688,7 +2688,28 @@ html[dir="ltr"] .hero-metric strong {
   border-radius: 20px;
   padding: 34px 28px 26px;
   position: relative;
+  // overflow: hidden !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
+}
+
+.candidate-modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+.candidate-modal::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 20px;
+}
+
+.candidate-modal::-webkit-scrollbar-thumb {
+  background: #d2d2d2;
+  border-radius: 20px;
+  border: 2px solid white;
+}
+
+.jobs-modal {
+    width: min(1500px, 96vw);
+    max-width: 1500px;
 }
 
 .candidate-modal-close {
@@ -2734,7 +2755,7 @@ html[dir="ltr"] .hero-metric strong {
 }
 
 .candidate-modal-chart-card h4 {
-  margin: 0 0 16px;
+  margin: 18px;
   font-size: 16px;
   font-weight: 900;
   color: #111827;
@@ -2746,6 +2767,9 @@ html[dir="ltr"] .hero-metric strong {
   grid-template-columns: 1fr 160px;
   align-items: center;
   gap: 18px;
+     
+    place-self: flex-start;
+    padding: 10px;
 }
 
 .candidate-modal-legend {
@@ -2795,7 +2819,7 @@ html[dir="ltr"] .hero-metric strong {
     display: flex;
     justify-content: flex-start;
     gap: 12px;
-    margin-top: 24px;
+    margin: 20px;
 }
 
 .candidate-modal-btn {
@@ -2841,23 +2865,32 @@ html[dir="ltr"] .hero-metric strong {
 
 
 
-
 .jobs-chart-content {
+  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 190px;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 34px;
-  direction: ltr;
-}
-
-.jobs-modal-legend {
-  direction: rtl;
-  margin-bottom: 0;
+  column-gap: 40px;
 }
 
 .jobs-modal-chart {
-  margin: 0 auto;
+  width: 180px;
+  height: 180px;
+  justify-self: start;
 }
+
+.jobs-modal-legend {
+  justify-self: end;
+  width: 360px;
+  max-width: 100%;
+}
+
+.workflow-column {
+  width: 300px; 
+}
+
+
+
 
 
 .candidate-modal-section-title {
@@ -3010,7 +3043,7 @@ html[dir="ltr"] .hero-metric strong {
 .workflow-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 14px; /* row gap, column gap */
+    gap: 8px 14px; 
 }
 
 .workflow-tag {
@@ -3079,3 +3112,123 @@ html[dir="ltr"] .hero-metric strong {
   overflow-y: auto;
   margin: 0 auto;
 }
+
+.employees-modal .candidate-modal-card {
+  margin-top: 18px;
+}
+
+.employees-chart-content {
+  min-height: 210px;
+}
+
+.employees-modal-legend {
+  min-width: 320px;
+}
+
+.employees-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.employees-modal-table ::ng-deep .p-datatable-wrapper {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.employees-modal-table ::ng-deep .p-datatable-thead > tr > th {
+  background: var(--qatar-maroon) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  padding: 14px 12px;
+}
+
+.employees-modal-table ::ng-deep .p-datatable-thead > tr > th:first-child {
+  text-align: right;
+}
+
+.employees-modal-table ::ng-deep .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 13px 12px;
+  border-color: var(--border);
+  vertical-align: middle;
+}
+
+.employees-modal-table ::ng-deep .p-datatable-tbody > tr > td:first-child {
+  text-align: right;
+}
+
+.employee-modal-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.employee-modal-cell strong {
+  color: var(--qatar-maroon);
+  font-size: 0.8125rem;
+  font-weight: 900;
+}
+
+.employee-modal-cell small {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.employee-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+
+    border-radius: 8px; 
+
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.employee-count-badge.assigned {
+  background: #e9ecff;
+  color: #5964c9;
+}
+
+.employee-count-badge.completed {
+  background: #e7f8e8;
+  color: #2f8a3a;
+}
+
+.employee-count-badge.remaining {
+  background: #fff9d8;
+  color: #a37b00;
+}
+
+.employee-count-badge.late {
+  background: #fdecef;
+  color: #d9182d;
+}
+
+
+
+// .custom-table ::ng-deep .p-datatable-thead > tr > th:nth-child(3),
+// .custom-table ::ng-deep .p-datatable-tbody > tr > td:nth-child(3) {
+//     width: 240px;
+//     min-width: 240px;
+// }
+
+
+// .jobs-modal-table ::ng-deep .p-datatable-thead > tr > th:nth-child(4),
+// .jobs-modal-table ::ng-deep .p-datatable-thead > tr > th:nth-child(5),
+// .jobs-modal-table ::ng-deep .p-datatable-tbody > tr > td:nth-child(4),
+// .jobs-modal-table ::ng-deep .p-datatable-tbody > tr > td:nth-child(5) {
+//     width: 60px !important;
+//     min-width: 60px !important;
+//     white-space: nowrap;
+// }

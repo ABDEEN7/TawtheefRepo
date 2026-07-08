@@ -339,7 +339,7 @@
     </div>
   </div>
 
-  <button class="operation-card-btn" type="button">
+  <button class="operation-card-btn" type="button" (click)="showEmployeesModal = true">
     <i class="hgi-stroke hgi-view"></i>
     <span>عرض التفاصيل</span>
   </button>
@@ -366,7 +366,7 @@
 
     <div class="candidate-chart-center">
         <span>إجمالي</span>
-        <strong>512</strong>
+        <strong>0</strong>
     </div>
 
 </div>
@@ -375,26 +375,26 @@
     <div class="operation-legend-row">
       <i style="background:#488ADA"></i>
       <span>المرسلة</span>
-      <strong>89</strong>
+      <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#2F8A3A"></i>
       <span>المقبولة</span>
-      <strong>89</strong>
+      <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#FFB547"></i>
       <span>بانتظار الرد</span>
-      <strong>89</strong>
+      <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#D9182D"></i>
       <span>المنتهية</span>
-      <strong>89</strong>
+      <strong>0</strong>
     </div>
   </div>
 
-  <button class="operation-card-btn" type="button">
+  <button class="operation-card-btn" type="button" (click)="showInvitationsModal = true">
     <i class="hgi-stroke hgi-view"></i>
     <span>عرض التفاصيل</span>
   </button>
@@ -1259,6 +1259,19 @@
 
       <div class="candidate-modal-chart-content jobs-chart-content">
 
+         <div class="candidate-chart-wrapper jobs-modal-chart">
+          <p-chart
+            type="doughnut"
+            [data]="jobsChartData"
+            [options]="chartOptions">
+          </p-chart>
+
+          <div class="candidate-chart-center">
+            <span>إجمالي</span>
+            <strong>96</strong>
+          </div>
+        </div>
+
         <div class="operation-legend jobs-modal-legend">
 
           <div class="operation-legend-row">
@@ -1299,19 +1312,6 @@
 
         </div>
 
-        <div class="candidate-chart-wrapper jobs-modal-chart">
-          <p-chart
-            type="doughnut"
-            [data]="jobsChartData"
-            [options]="chartOptions">
-          </p-chart>
-
-          <div class="candidate-chart-center">
-            <span>إجمالي</span>
-            <strong>96</strong>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -1326,7 +1326,7 @@
             <tr>
               <th>الوظيفة</th>
               <th>حالة الوظيفة</th>
-              <th>سير العمل</th>
+              <th class="workflow-column">سير العمل</th>
               <th>الدعوات</th>
               <th>المتقدمون</th>
               <th>الإجراءات</th>
@@ -1434,7 +1434,278 @@
 </div>
 }
 
+<!-- Employees Modal -->
+@if (showEmployeesModal) {
+<div class="candidate-modal-backdrop">
+  <div class="candidate-modal jobs-modal employees-modal">
 
+    <button class="candidate-modal-close" type="button" (click)="showEmployeesModal = false">
+      <i class="hgi-stroke hgi-cancel-01"></i>
+    </button>
+
+    <div class="candidate-modal-header">
+      <h3>الموظفين</h3>
+      <p>متابعة التوزيع والإنجاز والحجم الحالي للموظفين.</p>
+    </div>
+
+    <!-- ملفات الموظفين -->
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">ملفات الموظفين</h4>
+
+      <div class="candidate-modal-chart-content jobs-chart-content employees-chart-content">
+
+        <div class="candidate-chart-wrapper jobs-modal-chart">
+          <p-chart
+            type="doughnut"
+            [data]="jobsChartData"
+            [options]="chartOptions">
+          </p-chart>
+
+          <div class="candidate-chart-center">
+            <span>إجمالي</span>
+            <strong>96</strong>
+          </div>
+        </div>
+
+        <div class="operation-legend jobs-modal-legend employees-modal-legend">
+
+          <div class="operation-legend-row">
+            <i style="background:#8A1538"></i>
+            <span>بانتظار توزيع النقاط</span>
+            <strong>89</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#488ADA"></i>
+            <span>جاهزة للإعلان</span>
+            <strong>65</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#FFB547"></i>
+            <span>تحتاج تحديث</span>
+            <strong>34</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#2F8A3A"></i>
+            <span>منشورة</span>
+            <strong>7</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#D9182D"></i>
+            <span>مسودة</span>
+            <strong>23</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#94DDBF"></i>
+            <span>بانتظار الاعتماد</span>
+            <strong>35</strong>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- أداء الفريق -->
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">أداء الفريق</h4>
+
+      <div class="table-responsive employees-table-wrap">
+        <p-table class="custom-table employees-modal-table"
+                 [value]="employeesModalRows"
+                 [rowHover]="true"
+                 responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الموظف</th>
+              <th>المهام المسندة</th>
+              <th>المهام المكتملة</th>
+              <th>المهام المتبقية</th>
+              <th>المهام المتأخرة</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-employee>
+            <tr>
+              <td>
+                <div class="employee-modal-cell">
+                  <strong>{{ employee.name }}</strong>
+                  <small>{{ employee.email }}</small>
+                </div>
+              </td>
+
+              <td>
+                <span class="employee-count-badge assigned">
+                  {{ employee.assigned }}
+                </span>
+              </td>
+
+              <td>
+                <span class="employee-count-badge completed">
+                  {{ employee.completed }}
+                </span>
+              </td>
+
+              <td>
+                <span class="employee-count-badge remaining">
+                  {{ employee.remaining }}
+                </span>
+              </td>
+
+              <td>
+                <span class="employee-count-badge late">
+                  {{ employee.late }}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+    </div>
+
+    <div class="candidate-modal-actions">
+      <button class="candidate-modal-btn outline" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير رسوم بيانية</span>
+      </button>
+
+      <button class="candidate-modal-btn filled" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير كشف</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!-- Invitations Modal -->
+@if (showInvitationsModal) {
+<div class="candidate-modal-backdrop">
+  <div class="candidate-modal jobs-modal invitations-modal">
+
+    <button class="candidate-modal-close" type="button" (click)="showInvitationsModal = false">
+      <i class="hgi-stroke hgi-cancel-01"></i>
+    </button>
+
+    <div class="candidate-modal-header">
+      <h3>الدعوات</h3>
+      <p>عرض مختصر لحالة الدعوات وأحدث الدعوات.</p>
+    </div>
+
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">حالة الدعوات</h4>
+
+      <div class="candidate-modal-chart-content jobs-chart-content">
+
+        <div class="candidate-chart-wrapper jobs-modal-chart">
+          <p-chart
+            type="doughnut"
+            [data]="invitationsChartData"
+            [options]="chartOptions">
+          </p-chart>
+
+          <div class="candidate-chart-center">
+            <span>إجمالي</span>
+            <strong>0</strong>
+          </div>
+        </div>
+
+        <div class="operation-legend jobs-modal-legend">
+          <div class="operation-legend-row">
+            <i style="background:#488ADA"></i>
+            <span>المرسلة</span>
+            <strong>0</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#2F8A3A"></i>
+            <span>المقبولة</span>
+            <strong>0</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#FFB547"></i>
+            <span>بانتظار الرد</span>
+            <strong>0</strong>
+          </div>
+
+          <div class="operation-legend-row">
+            <i style="background:#D9182D"></i>
+            <span>المنتهية</span>
+            <strong>0</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="candidate-modal-card">
+      <h4 class="candidate-modal-section-title">أحدث الدعوات</h4>
+
+      <div class="table-responsive">
+        <p-table class="custom-table" [value]="latestInvitationModalRows" [rowHover]="true" responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>الدعوة</th>
+              <th>الحالة</th>
+              <th>تاريخ الإرسال</th>
+              <th>الإجراءات</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-invitation>
+            <tr>
+              <td>{{ invitation.title }}</td>
+              <td>
+                <span class="badge pending">{{ invitation.status }}</span>
+              </td>
+              <td>{{ invitation.sentDate }}</td>
+              <td>
+                <button type="button" class="view-action-btn">
+                  <i class="hgi hgi-stroke hgi-view view-action"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-muted no-data">
+                <div class="p-4 d-flex flex-column align-items-center justify-content-center">
+                  <i class="hgi-stroke hgi-mail-01 fs-32 opacity-25 mb-2"></i>
+                  <span>لا توجد دعوات لعرضها</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+    </div>
+
+    <div class="candidate-modal-actions">
+      <button class="candidate-modal-btn outline" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير رسوم بيانية</span>
+      </button>
+
+      <button class="candidate-modal-btn filled" type="button">
+        <i class="hgi-stroke hgi-download-04"></i>
+        <span>تصدير كشف</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+}
 
   </main>
 </section>
