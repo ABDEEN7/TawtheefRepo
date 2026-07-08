@@ -11,11 +11,11 @@
 
       <section class="dashboard-section main-indicators-section">
         <div class="dashboard-section-header">
-          <h3>المؤشرات الرئيسية</h3>
+          <h3>{{ 'dashboard.mainIndicators.title' | translate }}</h3>
 
           <button type="button" class="export-btn">
             <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
-            <span>تصدير</span>
+            <span>{{ 'dashboard.common.export' | translate }}</span>
           </button>
         </div>
 
@@ -141,7 +141,7 @@
 <section class="dashboard-section operational-summary-section">
 <div class="dashboard-section-header operational-summary-header">
 
-   <h3>الملخص التشغيلي</h3>
+   <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
 
     <select class="summary-year-select">
         <option>2025/2026</option>
@@ -162,7 +162,7 @@
       <div class="operation-card-icon purple">
         <i class="hgi-stroke hgi-user-add-01"></i>
       </div>
-      <h4>المرشحين</h4>
+      <h4>{{ 'dashboard.operationalSummary.candidates' | translate }}</h4>
     </div>
   </div>
 
@@ -176,7 +176,7 @@
     </p-chart>
 
     <div class="candidate-chart-center">
-        <span>إجمالي</span>
+        <span>{{ 'dashboard.common.total' | translate }}</span>
         <strong>512</strong>
     </div>
 
@@ -185,38 +185,38 @@
   <div class="operation-legend">
     <div class="operation-legend-row">
       <i style="background:#8A1538"></i>
-      <span>مرشحون قطريون</span>
+      <span>{{ 'dashboard.legend.candidates.qatari' | translate }}</span>
       <strong>12</strong>
     </div>
 
     <div class="operation-legend-row">
       <i style="background:#488ADA"></i>
-      <span>أبناء القطريات</span>
+      <span>{{ 'dashboard.legend.candidates.childrenOfQatariMothers' | translate }}</span>
       <strong>100</strong>
     </div>
 
     <div class="operation-legend-row">
       <i style="background:#FFB547"></i>
-      <span>زوجة قطري</span>
+      <span>{{ 'dashboard.legend.candidates.wifeOfQatari' | translate }}</span>
       <strong>34</strong>
     </div>
 
     <div class="operation-legend-row">
       <i style="background:#2F8A3A"></i>
-      <span>مرشحون خليجيون</span>
+      <span>{{ 'dashboard.legend.candidates.gcc' | translate }}</span>
       <strong>56</strong>
     </div>
 
     <div class="operation-legend-row">
       <i style="background:#D9182D"></i>
-      <span>مقيمون في قطر</span>
+      <span>{{ 'dashboard.legend.candidates.residentQatar' | translate }}</span>
       <strong>20</strong>
     </div>
   </div>
 
   <button class="operation-card-btn" type="button" (click)="showCandidatesModal = true">
      <i class="hgi-stroke hgi-view"></i>
-     <span>عرض التفاصيل</span>
+     <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
   </button>
 </article>
 
@@ -227,7 +227,7 @@
       <div class="operation-card-icon blue">
         <i class="hgi-stroke hgi-folder-01"></i>
       </div>
-      <h4>الوظائف</h4>
+      <h4>{{ 'dashboard.operationalSummary.jobs' | translate }}</h4>
     </div>
   </div>
 
@@ -240,7 +240,7 @@
     </p-chart>
 
     <div class="candidate-chart-center">
-        <span>إجمالي</span>
+        <span>{{ 'dashboard.common.total' | translate }}</span>
         <strong>96</strong>
     </div>
 
@@ -249,39 +249,39 @@
   <div class="operation-legend">
     <div class="operation-legend-row">
       <i style="background:#8A1538"></i>
-      <span>بانتظار توزيع النقاط</span>
+      <span>{{ 'dashboard.legend.jobs.pendingPointDistribution' | translate }}</span>
       <strong>89</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#488ADA"></i>
-      <span>جاهزة للإعلان</span>
+      <span>{{ 'dashboard.legend.jobs.readyForAnnouncement' | translate }}</span>
       <strong>65</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#FFB547"></i>
-      <span>تحتاج تحديث</span>
+      <span>{{ 'dashboard.legend.jobs.needsUpdate' | translate }}</span>
       <strong>34</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#2F8A3A"></i>
-      <span>منشورة</span>
+      <span>{{ 'dashboard.legend.jobs.published' | translate }}</span>
       <strong>7</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#D9182D"></i>
-      <span>مسودة</span>
+      <span>{{ 'dashboard.legend.jobs.draft' | translate }}</span>
       <strong>23</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#94DDBF"></i>
-      <span>بانتظار الاعتماد</span>
+      <span>{{ 'dashboard.legend.jobs.pendingApproval' | translate }}</span>
       <strong>35</strong>
     </div>
   </div>
 
   <button class="operation-card-btn" type="button" (click)="showJobsModal = true">
     <i class="hgi-stroke hgi-view"></i>
-    <span>عرض التفاصيل</span>
+    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
   </button>
 </article>
 
@@ -292,7 +292,7 @@
       <div class="operation-card-icon green">
         <i class="hgi-stroke hgi-user-group"></i>
       </div>
-      <h4>الموظفين</h4>
+      <h4>{{ 'dashboard.operationalSummary.employees' | translate }}</h4>
     </div>
   </div>
 
@@ -305,7 +305,7 @@
     </p-chart>
 
     <div class="candidate-chart-center">
-        <span>إجمالي</span>
+        <span>{{ 'dashboard.common.total' | translate }}</span>
         <strong>40</strong>
     </div>
 
@@ -314,34 +314,34 @@
   <div class="operation-legend">
     <div class="operation-legend-row">
       <i style="background:#488ADA"></i>
-      <span>الملفات المرجعة</span>
+      <span>{{ 'dashboard.legend.employees.returnedFiles' | translate }}</span>
       <strong>2</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#2F8A3A"></i>
-      <span>الملفات المعتمدة</span>
+      <span>{{ 'dashboard.legend.employees.approvedFiles' | translate }}</span>
       <strong>16</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#FFB547"></i>
-      <span>قيد التنفيذ</span>
+      <span>{{ 'dashboard.legend.employees.inProgress' | translate }}</span>
       <strong>12</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#D9182D"></i>
-      <span>بانتظار المراجعة</span>
+      <span>{{ 'dashboard.legend.employees.pendingReview' | translate }}</span>
       <strong>89</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#94DDBF"></i>
-      <span>بانتظار التوزيع</span>
+      <span>{{ 'dashboard.legend.employees.pendingDistribution' | translate }}</span>
       <strong>6</strong>
     </div>
   </div>
 
   <button class="operation-card-btn" type="button" (click)="showEmployeesModal = true">
     <i class="hgi-stroke hgi-view"></i>
-    <span>عرض التفاصيل</span>
+    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
   </button>
 </article>
 
@@ -352,7 +352,7 @@
       <div class="operation-card-icon orange">
         <i class="hgi-stroke hgi-mail-01"></i>
       </div>
-      <h4>الدعوات</h4>
+      <h4>{{ 'dashboard.operationalSummary.invitations' | translate }}</h4>
     </div>
   </div>
 
@@ -365,7 +365,7 @@
     </p-chart>
 
     <div class="candidate-chart-center">
-        <span>إجمالي</span>
+        <span>{{ 'dashboard.common.total' | translate }}</span>
         <strong>0</strong>
     </div>
 
@@ -374,29 +374,29 @@
   <div class="operation-legend">
     <div class="operation-legend-row">
       <i style="background:#488ADA"></i>
-      <span>المرسلة</span>
+      <span>{{ 'dashboard.legend.invitations.sent' | translate }}</span>
       <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#2F8A3A"></i>
-      <span>المقبولة</span>
+      <span>{{ 'dashboard.legend.invitations.accepted' | translate }}</span>
       <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#FFB547"></i>
-      <span>بانتظار الرد</span>
+      <span>{{ 'dashboard.legend.invitations.pendingResponse' | translate }}</span>
       <strong>0</strong>
     </div>
     <div class="operation-legend-row">
       <i style="background:#D9182D"></i>
-      <span>المنتهية</span>
+      <span>{{ 'dashboard.legend.invitations.expired' | translate }}</span>
       <strong>0</strong>
     </div>
   </div>
 
   <button class="operation-card-btn" type="button" (click)="showInvitationsModal = true">
     <i class="hgi-stroke hgi-view"></i>
-    <span>عرض التفاصيل</span>
+    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
   </button>
 </article>
 
@@ -1097,8 +1097,8 @@
         </button>
 
         <div class="candidate-modal-header">
-            <h3>المرشحين</h3>
-            <p>عرض مختصر لحالة ملفات المرشحين وأنواعهم.</p>
+            <h3>{{ 'dashboard.modals.candidates.title' | translate }}</h3>
+            <p>{{ 'dashboard.modals.candidates.subtitle' | translate }}</p>
         </div>
 
         <div class="candidate-modal-grid">
@@ -1106,7 +1106,7 @@
             <!-- ملفات المرشحين -->
             <div class="candidate-modal-chart-card">
 
-                <h4>ملفات المرشحين</h4>
+                <h4>{{ 'dashboard.modals.candidates.statusTitle' | translate }}</h4>
 
                 <div class="candidate-modal-chart-content">
 
@@ -1118,7 +1118,7 @@
                         </p-chart>
 
                         <div class="candidate-chart-center">
-                            <span>إجمالي</span>
+                            <span>{{ 'dashboard.common.total' | translate }}</span>
                             <strong>512</strong>
                         </div>
                     </div>
@@ -1127,31 +1127,31 @@
 
                         <div class="operation-legend-row">
                             <i style="background:#8A1538"></i>
-                            <span>معتمدة</span>
+                            <span>{{ 'dashboard.status.Approved' | translate }}</span>
                             <strong>100</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#488ADA"></i>
-                            <span>قيد الإنشاء</span>
+                            <span>{{ 'dashboard.status.InCreation' | translate }}</span>
                             <strong>12</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#FFB547"></i>
-                            <span>قيد المراجعة</span>
+                            <span>{{ 'dashboard.status.UnderReview' | translate }}</span>
                             <strong>34</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#2F8A3A"></i>
-                            <span>معتمدة</span>
+                            <span>{{ 'dashboard.status.Approved' | translate }}</span>
                             <strong>56</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#D9182D"></i>
-                            <span>مرفوضة/مرجعة</span>
+                            <span>{{ 'dashboard.candidates.returnedRejected' | translate }}</span>
                             <strong>20</strong>
                         </div>
 
@@ -1164,7 +1164,7 @@
             <!-- أنواع المرشحين -->
             <div class="candidate-modal-chart-card">
 
-                <h4>أنواع المرشحين</h4>
+                <h4>{{ 'dashboard.candidates.typeTitle' | translate }}</h4>
 
                 <div class="candidate-modal-chart-content">
 
@@ -1176,7 +1176,7 @@
                         </p-chart>
 
                         <div class="candidate-chart-center">
-                            <span>إجمالي</span>
+                            <span>{{ 'dashboard.common.total' | translate }}</span>
                             <strong>512</strong>
                         </div>
                     </div>
@@ -1185,31 +1185,31 @@
 
                         <div class="operation-legend-row">
                             <i style="background:#8A1538"></i>
-                            <span>مرشحون قطريون</span>
+                            <span>{{ 'dashboard.legend.candidates.qatari' | translate }}</span>
                             <strong>12</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#488ADA"></i>
-                            <span>أبناء القطريات</span>
+                            <span>{{ 'dashboard.legend.candidates.childrenOfQatariMothers' | translate }}</span>
                             <strong>100</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#FFB547"></i>
-                            <span>زوجة قطري</span>
+                            <span>{{ 'dashboard.legend.candidates.wifeOfQatari' | translate }}</span>
                             <strong>34</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#2F8A3A"></i>
-                            <span>مرشحون خليجيون</span>
+                            <span>{{ 'dashboard.legend.candidates.gcc' | translate }}</span>
                             <strong>56</strong>
                         </div>
 
                         <div class="operation-legend-row">
                             <i style="background:#D9182D"></i>
-                            <span>مقيمون في قطر</span>
+                            <span>{{ 'dashboard.legend.candidates.residentQatar' | translate }}</span>
                             <strong>20</strong>
                         </div>
 
@@ -1225,12 +1225,12 @@
 
             <button class="candidate-modal-btn outline" type="button">
                 <i class="hgi-stroke hgi-download-04"></i>
-                <span>تصدير رسوم بيانية</span>
+                <span>{{ 'dashboard.common.exportCharts' | translate }}</span>
             </button>
 
             <button class="candidate-modal-btn filled" type="button">
                 <i class="hgi-stroke hgi-download-04"></i>
-                <span>تصدير كشف</span>
+                <span>{{ 'dashboard.common.exportList' | translate }}</span>
             </button>
 
         </div>
@@ -1249,13 +1249,13 @@
     </button>
 
     <div class="candidate-modal-header">
-      <h3>الوظائف</h3>
-      <p>عرض مختصر لحالة الوظائف وأحدث الوظائف.</p>
+      <h3>{{ 'dashboard.modals.jobs.title' | translate }}</h3>
+      <p>{{ 'dashboard.modals.jobs.subtitle' | translate }}</p>
     </div>
 
     <!-- حالة الوظائف Card -->
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">حالة الوظائف</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.modals.jobs.statusTitle' | translate }}</h4>
 
       <div class="candidate-modal-chart-content jobs-chart-content">
 
@@ -1267,7 +1267,7 @@
           </p-chart>
 
           <div class="candidate-chart-center">
-            <span>إجمالي</span>
+            <span>{{ 'dashboard.common.total' | translate }}</span>
             <strong>96</strong>
           </div>
         </div>
@@ -1276,37 +1276,37 @@
 
           <div class="operation-legend-row">
             <i style="background:#8A1538"></i>
-            <span>بانتظار توزيع النقاط</span>
+            <span>{{ 'dashboard.legend.jobs.pendingPointDistribution' | translate }}</span>
             <strong>89</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#488ADA"></i>
-            <span>جاهزة للإعلان</span>
+            <span>{{ 'dashboard.legend.jobs.readyForAnnouncement' | translate }}</span>
             <strong>65</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#FFB547"></i>
-            <span>تحتاج تحديث</span>
+            <span>{{ 'dashboard.legend.jobs.needsUpdate' | translate }}</span>
             <strong>34</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#2F8A3A"></i>
-            <span>منشورة</span>
+            <span>{{ 'dashboard.legend.jobs.published' | translate }}</span>
             <strong>7</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#D9182D"></i>
-            <span>مسودة</span>
+            <span>{{ 'dashboard.legend.jobs.draft' | translate }}</span>
             <strong>23</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#94DDBF"></i>
-            <span>بانتظار الاعتماد</span>
+            <span>{{ 'dashboard.legend.jobs.pendingApproval' | translate }}</span>
             <strong>35</strong>
           </div>
 
@@ -1317,19 +1317,19 @@
 
     <!-- أحدث الوظائف Card -->
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">أحدث الوظائف</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.modals.jobs.latestTitle' | translate }}</h4>
 
       <div class="table-responsive">
         <p-table class="custom-table" [value]="latestJobModalRows" [rowHover]="true" responsiveLayout="scroll">
 
           <ng-template pTemplate="header">
             <tr>
-              <th>الوظيفة</th>
-              <th>حالة الوظيفة</th>
-              <th class="workflow-column">سير العمل</th>
-              <th>الدعوات</th>
-              <th>المتقدمون</th>
-              <th>الإجراءات</th>
+              <th>{{ 'dashboard.modals.table.job' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.status' | translate }}</th>
+              <th class="workflow-column">{{ 'dashboard.modals.table.workflow' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.invitations' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.candidates' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.actions' | translate }}</th>
             </tr>
           </ng-template>
 
@@ -1396,7 +1396,7 @@
                 </ng-container>
 
                 <ng-template #noAction>
-                  <span class="text-muted small">لا يوجد إجراء</span>
+                  <span class="text-muted small">{{ 'dashboard.common.noAction' | translate }}</span>
                 </ng-template>
               </td>
 
@@ -1408,7 +1408,7 @@
               <td colspan="6" class="text-muted no-data">
                 <div class="p-4 d-flex flex-column align-items-center justify-content-center">
                   <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
-                  <span>لا توجد بيانات</span>
+                  <span>{{ 'dashboard.common.noData' | translate }}</span>
                 </div>
               </td>
             </tr>
@@ -1421,12 +1421,12 @@
     <div class="candidate-modal-actions">
       <button class="candidate-modal-btn outline" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير رسوم بيانية</span>
+        <span>{{ 'dashboard.common.exportCharts' | translate }}</span>
       </button>
 
       <button class="candidate-modal-btn filled" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير كشف</span>
+        <span>{{ 'dashboard.common.exportList' | translate }}</span>
       </button>
     </div>
 
@@ -1444,13 +1444,13 @@
     </button>
 
     <div class="candidate-modal-header">
-      <h3>الموظفين</h3>
-      <p>متابعة التوزيع والإنجاز والحجم الحالي للموظفين.</p>
+      <h3>{{ 'dashboard.modals.employees.title' | translate }}</h3>
+      <p>{{ 'dashboard.modals.employees.subtitle' | translate }}</p>
     </div>
 
     <!-- ملفات الموظفين -->
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">ملفات الموظفين</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.modals.employees.statusTitle' | translate }}</h4>
 
       <div class="candidate-modal-chart-content jobs-chart-content employees-chart-content">
 
@@ -1462,7 +1462,7 @@
           </p-chart>
 
           <div class="candidate-chart-center">
-            <span>إجمالي</span>
+            <span>{{ 'dashboard.common.total' | translate }}</span>
             <strong>96</strong>
           </div>
         </div>
@@ -1471,37 +1471,37 @@
 
           <div class="operation-legend-row">
             <i style="background:#8A1538"></i>
-            <span>بانتظار توزيع النقاط</span>
+            <span>{{ 'dashboard.legend.jobs.pendingPointDistribution' | translate }}</span>
             <strong>89</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#488ADA"></i>
-            <span>جاهزة للإعلان</span>
+            <span>{{ 'dashboard.legend.jobs.readyForAnnouncement' | translate }}</span>
             <strong>65</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#FFB547"></i>
-            <span>تحتاج تحديث</span>
+            <span>{{ 'dashboard.legend.jobs.needsUpdate' | translate }}</span>
             <strong>34</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#2F8A3A"></i>
-            <span>منشورة</span>
+            <span>{{ 'dashboard.legend.jobs.published' | translate }}</span>
             <strong>7</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#D9182D"></i>
-            <span>مسودة</span>
+            <span>{{ 'dashboard.legend.jobs.draft' | translate }}</span>
             <strong>23</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#94DDBF"></i>
-            <span>بانتظار الاعتماد</span>
+            <span>{{ 'dashboard.legend.jobs.pendingApproval' | translate }}</span>
             <strong>35</strong>
           </div>
 
@@ -1512,7 +1512,7 @@
 
     <!-- أداء الفريق -->
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">أداء الفريق</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.sections.teamPerformance' | translate }}</h4>
 
       <div class="table-responsive employees-table-wrap">
         <p-table class="custom-table employees-modal-table"
@@ -1522,11 +1522,11 @@
 
           <ng-template pTemplate="header">
             <tr>
-              <th>الموظف</th>
-              <th>المهام المسندة</th>
-              <th>المهام المكتملة</th>
-              <th>المهام المتبقية</th>
-              <th>المهام المتأخرة</th>
+              <th>{{ 'dashboard.modals.table.employee' | translate }}</th>
+              <th>{{ 'dashboard.table.assignedTasks' | translate }}</th>
+              <th>{{ 'dashboard.table.completedTasks' | translate }}</th>
+              <th>{{ 'dashboard.table.remainingTasks' | translate }}</th>
+              <th>{{ 'dashboard.table.overdueTasks' | translate }}</th>
             </tr>
           </ng-template>
 
@@ -1572,12 +1572,12 @@
     <div class="candidate-modal-actions">
       <button class="candidate-modal-btn outline" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير رسوم بيانية</span>
+        <span>{{ 'dashboard.common.exportCharts' | translate }}</span>
       </button>
 
       <button class="candidate-modal-btn filled" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير كشف</span>
+        <span>{{ 'dashboard.common.exportList' | translate }}</span>
       </button>
     </div>
 
@@ -1595,12 +1595,12 @@
     </button>
 
     <div class="candidate-modal-header">
-      <h3>الدعوات</h3>
-      <p>عرض مختصر لحالة الدعوات وأحدث الدعوات.</p>
+      <h3>{{ 'dashboard.modals.invitations.title' | translate }}</h3>
+      <p>{{ 'dashboard.modals.invitations.subtitle' | translate }}</p>
     </div>
 
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">حالة الدعوات</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.modals.invitations.statusTitle' | translate }}</h4>
 
       <div class="candidate-modal-chart-content jobs-chart-content">
 
@@ -1612,7 +1612,7 @@
           </p-chart>
 
           <div class="candidate-chart-center">
-            <span>إجمالي</span>
+            <span>{{ 'dashboard.common.total' | translate }}</span>
             <strong>0</strong>
           </div>
         </div>
@@ -1620,25 +1620,25 @@
         <div class="operation-legend jobs-modal-legend">
           <div class="operation-legend-row">
             <i style="background:#488ADA"></i>
-            <span>المرسلة</span>
+            <span>{{ 'dashboard.legend.invitations.sent' | translate }}</span>
             <strong>0</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#2F8A3A"></i>
-            <span>المقبولة</span>
+            <span>{{ 'dashboard.legend.invitations.accepted' | translate }}</span>
             <strong>0</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#FFB547"></i>
-            <span>بانتظار الرد</span>
+            <span>{{ 'dashboard.legend.invitations.pendingResponse' | translate }}</span>
             <strong>0</strong>
           </div>
 
           <div class="operation-legend-row">
             <i style="background:#D9182D"></i>
-            <span>المنتهية</span>
+            <span>{{ 'dashboard.legend.invitations.expired' | translate }}</span>
             <strong>0</strong>
           </div>
         </div>
@@ -1647,17 +1647,17 @@
     </div>
 
     <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">أحدث الدعوات</h4>
+      <h4 class="candidate-modal-section-title">{{ 'dashboard.modals.invitations.latestTitle' | translate }}</h4>
 
       <div class="table-responsive">
         <p-table class="custom-table" [value]="latestInvitationModalRows" [rowHover]="true" responsiveLayout="scroll">
 
           <ng-template pTemplate="header">
             <tr>
-              <th>الدعوة</th>
-              <th>الحالة</th>
-              <th>تاريخ الإرسال</th>
-              <th>الإجراءات</th>
+              <th>{{ 'dashboard.modals.table.invitation' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.status' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.sentDate' | translate }}</th>
+              <th>{{ 'dashboard.modals.table.actions' | translate }}</th>
             </tr>
           </ng-template>
 
@@ -1681,7 +1681,7 @@
               <td colspan="4" class="text-muted no-data">
                 <div class="p-4 d-flex flex-column align-items-center justify-content-center">
                   <i class="hgi-stroke hgi-mail-01 fs-32 opacity-25 mb-2"></i>
-                  <span>لا توجد دعوات لعرضها</span>
+                  <span>{{ 'dashboard.modals.empty.noInvitations' | translate }}</span>
                 </div>
               </td>
             </tr>
@@ -1694,12 +1694,12 @@
     <div class="candidate-modal-actions">
       <button class="candidate-modal-btn outline" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير رسوم بيانية</span>
+        <span>{{ 'dashboard.common.exportCharts' | translate }}</span>
       </button>
 
       <button class="candidate-modal-btn filled" type="button">
         <i class="hgi-stroke hgi-download-04"></i>
-        <span>تصدير كشف</span>
+        <span>{{ 'dashboard.common.exportList' | translate }}</span>
       </button>
     </div>
 

@@ -213,5 +213,85 @@
   "dashboard.help.totalProfiles": "الملفات التي تم إنشاؤها داخل قطر.",
   "dashboard.help.totalJobs": "إجمالي عدد الوظائف.",
   "dashboard.help.pendingReviewJobs": "الوظائف التي بانتظار اكتمال عملية الاعتماد.",
-  "dashboard.status.Submitted": "مقدمة"
+  "dashboard.status.Submitted": "مقدمة",
+
+  
+  "dashboard.mainIndicators.title": "المؤشرات الرئيسية",
+
+  "dashboard.common.export": "تصدير",
+  "dashboard.common.viewDetails": "عرض التفاصيل",
+  "dashboard.common.exportCharts": "تصدير رسوم بيانية",
+  "dashboard.common.exportList": "تصدير كشف",
+  "dashboard.common.noAction": "لا يوجد إجراء",
+  "dashboard.common.noData": "لا توجد بيانات",
+  "dashboard.common.total": "إجمالي",
+
+  "dashboard.operationalSummary.title": "الملخص التشغيلي",
+  "dashboard.operationalSummary.candidates": "المرشحين",
+  "dashboard.operationalSummary.jobs": "الوظائف",
+  "dashboard.operationalSummary.employees": "الموظفين",
+  "dashboard.operationalSummary.invitations": "الدعوات",
+
+  "dashboard.legend.candidates.qatari": "مرشحون قطريون",
+  "dashboard.legend.candidates.childrenOfQatariMothers": "أبناء القطريات",
+  "dashboard.legend.candidates.wifeOfQatari": "زوجة قطري",
+  "dashboard.legend.candidates.gcc": "مرشحون خليجيون",
+  "dashboard.legend.candidates.residentQatar": "مقيمون في قطر",
+
+  "dashboard.legend.jobs.pendingPointDistribution": "بانتظار توزيع النقاط",
+  "dashboard.legend.jobs.readyForAnnouncement": "جاهزة للإعلان",
+  "dashboard.legend.jobs.needsUpdate": "تحتاج تحديث",
+  "dashboard.legend.jobs.published": "منشورة",
+  "dashboard.legend.jobs.draft": "مسودة",
+  "dashboard.legend.jobs.pendingApproval": "بانتظار الاعتماد",
+
+  "dashboard.legend.employees.returnedFiles": "الملفات المرجعة",
+  "dashboard.legend.employees.approvedFiles": "الملفات المعتمدة",
+  "dashboard.legend.employees.inProgress": "قيد التنفيذ",
+  "dashboard.legend.employees.pendingReview": "بانتظار المراجعة",
+  "dashboard.legend.employees.pendingDistribution": "بانتظار التوزيع",
+
+  "dashboard.legend.invitations.sent": "المرسلة",
+  "dashboard.legend.invitations.accepted": "المقبولة",
+  "dashboard.legend.invitations.pendingResponse": "بانتظار الرد",
+  "dashboard.legend.invitations.expired": "المنتهية",
+
+  "dashboard.modals.candidates.title": "المرشحين",
+  "dashboard.modals.candidates.subtitle": "عرض مختصر لحالة ملفات المرشحين وأنواعهم.",
+  "dashboard.modals.candidates.statusTitle": "ملفات المرشحين",
+  "dashboard.modals.candidates.typesTitle": "أنواع المرشحين",
+
+  "dashboard.modals.jobs.title": "الوظائف",
+  "dashboard.modals.jobs.subtitle": "عرض مختصر لحالة الوظائف وأحدث الوظائف.",
+  "dashboard.modals.jobs.statusTitle": "حالة الوظائف",
+  "dashboard.modals.jobs.latestTitle": "أحدث الوظائف",
+
+  "dashboard.modals.employees.title": "الموظفين",
+  "dashboard.modals.employees.subtitle": "متابعة التوزيع والإنجاز والحجم الحالي للموظفين.",
+  "dashboard.modals.employees.statusTitle": "ملفات الموظفين",
+  "dashboard.modals.employees.latestTitle": "أداء الفريق",
+
+  "dashboard.modals.invitations.title": "الدعوات",
+  "dashboard.modals.invitations.subtitle": "عرض مختصر لحالة الدعوات وأحدث الدعوات.",
+  "dashboard.modals.invitations.statusTitle": "حالة الدعوات",
+  "dashboard.modals.invitations.latestTitle": "أحدث الدعوات",
+
+  "dashboard.modals.table.job": "الوظيفة",
+  "dashboard.modals.table.jobStatus": "حالة الوظيفة",
+  "dashboard.modals.table.workflow": "سير العمل",
+  "dashboard.modals.table.invitations": "الدعوات",
+  "dashboard.modals.table.applicants": "المتقدمون",
+  "dashboard.modals.table.actions": "الإجراءات",
+
+  "dashboard.modals.table.employee": "الموظف",
+  "dashboard.modals.table.assignedTasks": "المهام المسندة",
+  "dashboard.modals.table.completedTasks": "المهام المكتملة",
+  "dashboard.modals.table.remainingTasks": "المهام المتبقية",
+  "dashboard.modals.table.overdueTasks": "المهام المتأخرة",
+
+  "dashboard.modals.table.invitation": "الدعوة",
+  "dashboard.modals.table.status": "الحالة",
+  "dashboard.modals.table.sentDate": "تاريخ الإرسال",
+
+  "dashboard.modals.empty.noInvitations": "لا توجد دعوات لعرضها"
 }
