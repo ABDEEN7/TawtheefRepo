@@ -1399,8 +1399,20 @@ td {
 
 .figma-kpi-grid {
   display: grid;
-    grid-template-columns: repeat(4, minmax(180px, 1fr));
-    gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 1024px) {
+  .figma-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .figma-kpi-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .figma-kpi-card {
@@ -1412,6 +1424,33 @@ td {
     box-shadow: none !important;
     gap: 10px !important;
     justify-content: space-between !important;
+}
+
+/* Main Indicators responsiveness */
+.figma-kpi-grid,
+.kpi-grid.figma-kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 18px;
+}
+
+@media (max-width: 1024px) {
+  .figma-kpi-grid,
+  .kpi-grid.figma-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .figma-kpi-grid,
+  .kpi-grid.figma-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.figma-kpi-card {
+  width: 100%;
+  min-width: 0;
 }
 
 .figma-kpi-top {
@@ -1498,6 +1537,18 @@ td {
       width: 100%;
 }
 
+@media (max-width: 1024px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .quick-action-card {
   width: 100%;
       min-width: 0;
@@ -1569,10 +1620,32 @@ td {
   padding: 24px 18px;
 }
 
+/* Operational Summary responsiveness */
 .operational-summary-grid {
   display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+
+/* Operational Summary responsiveness */
+.operational-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1300px) {
+  .operational-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .operational-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .operational-summary-section {
+    padding: 0 !important;
+  }
 }
 
 .operation-card {
@@ -1783,7 +1856,6 @@ td {
 }
 
 .summary-year-select {
-  width: 140px;
   height: 40px;
   border: 1px solid #D8DCE3;
   border-radius: 999px;
@@ -2018,7 +2090,7 @@ td {
       font-weight: 700 !important;
       color: #000 !important;
       line-height: 1.4;
-      text-align: right;
+      text-align: start;
 }
 
 .job-modal-title-cell {
@@ -2026,7 +2098,7 @@ td {
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-    text-align: right;
+    text-align: start;
     line-height: 1.5;
 }
 
@@ -2060,7 +2132,7 @@ td {
   font-size: calc(14px * var(--dashboard-font-scale, 1));
       font-weight: 700;
       color: #1f1f1f;
-      text-align: right;
+      text-align: start;
 }
 
 .job-details {
@@ -2262,7 +2334,7 @@ td {
 }
 
 .employees-modal-table ::ng-deep .p-datatable-thead > tr > th:first-child {
-  text-align: right;
+  text-align: start;
 }
 
 .employees-modal-table ::ng-deep .p-datatable-tbody > tr > td {
@@ -2273,7 +2345,7 @@ td {
 }
 
 .employees-modal-table ::ng-deep .p-datatable-tbody > tr > td:first-child {
-  text-align: right;
+  text-align: start;
 }
 
 .employee-modal-cell {
