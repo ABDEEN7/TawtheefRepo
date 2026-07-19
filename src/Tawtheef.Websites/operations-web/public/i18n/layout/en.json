@@ -36,7 +36,7 @@
   "public.nav.logout": "Logout",
   "public.nav.profile.dashboard": "Dashboard",
   "internal.sidebar.home": "Home",
-  "internal.sidebar.distribution": "Facility Distribution",
+  "internal.sidebar.distribution": "Profile Distribution",
   "internal.sidebar.approve-profile": "Approve Profiles",
   "internal.sidebar.approve-job": "Approve Facilities",
   "internal.sidebar.job": "Job List",
