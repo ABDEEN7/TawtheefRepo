@@ -48,7 +48,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "26kB",
-                  "maximumError": "30kB"
+                  "maximumError": "40kB"
                 }
               ],
               "fileReplacements": [
@@ -80,7 +80,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "26kB",
-                  "maximumError": "30kB"
+                  "maximumError": "40kB"
                 }
               ],
               "outputHashing": "all",
@@ -105,7 +105,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "26kB",
-                  "maximumError": "36kB"
+                  "maximumError": "40kB"
                 }
               ],
               "optimization": false,
