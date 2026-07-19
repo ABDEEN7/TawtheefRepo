@@ -4,5 +4,6 @@ using FluentResults;
 
 namespace Application.Recruitment.Features.Dashboard.Queries;
 
-public sealed record GetCandidateInvitationStatisticsQuery(Guid UserId) : IRequest<IResult<CandidateInvitationStatisticsDto>>;
+public sealed record GetCandidateInvitationStatisticsQuery(Guid UserId) 
+    : IRequest<IResult<CandidateInvitationStatisticsDto>>;
 

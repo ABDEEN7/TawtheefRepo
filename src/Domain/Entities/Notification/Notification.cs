@@ -70,7 +70,6 @@ public class Notification : EventEntity
     public string Language { get; private set; } = "ar";
 
     public void MarkAsRead() => IsRead = true;
-    public void MarkAsUnread() => IsRead = false;
     public void Dismiss() => IsDismissed = true;
 
     public static Notification Create(

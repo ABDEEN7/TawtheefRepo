@@ -73,7 +73,6 @@ export class Dashboard implements OnInit {
 
   loadCandidateInvitations() {
     const searchFilters: CandidateInvitationFilters = {
-      userId: this.authService.getCurrentUser()?.userId as GUID,
       jobCategoryId: this.selectedCategory() || '',
       departmentId: this.selectedDepartment() || '',
       invitationStatusId: this.selectedInvitationStatus() || '',

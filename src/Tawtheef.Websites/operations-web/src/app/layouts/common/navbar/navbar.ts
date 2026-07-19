@@ -6,7 +6,7 @@ import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AvatarUtils } from '../../../core/utils/avatar-utils';
-import { InAppNotificationService, NotificationAction } from '../../../core/services/in-app-notification.service';
+import { InAppNotificationService } from '../../../core/services/in-app-notification.service';
 import { NotificationModel } from '../../../shared/models/notification.model';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -50,7 +50,7 @@ export class Navbar implements OnInit, OnDestroy {
 
   openDetails(notification: NotificationModel): void {
     if (!notification.isRead) {
-      this.notificationsApi.updateState(notification.id, NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
+      this.notificationsApi.markAsRead(notification.id).subscribe(() => this.refreshNotifications(false));
     }
     const modalRef = this.modalService.open(NotificationDetailsDialogComponent, {
       size: 'lg',
@@ -216,17 +216,12 @@ export class Navbar implements OnInit, OnDestroy {
 
   markAsRead(id: string, event: MouseEvent): void {
     event.stopPropagation();
-    this.notificationsApi.updateState(id, NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
-  }
-
-  markAsUnread(id: string, event: MouseEvent): void {
-    event.stopPropagation();
-    this.notificationsApi.updateState(id, NotificationAction.MarkAsUnread).subscribe(() => this.refreshNotifications(false));
+    this.notificationsApi.markAsRead(id).subscribe(() => this.refreshNotifications(false));
   }
 
   dismiss(id: string, event: MouseEvent): void {
     event.stopPropagation();
-    this.notificationsApi.updateState(id, NotificationAction.Dismiss).subscribe(() => {
+    this.notificationsApi.dismiss(id).subscribe(() => {
       this.notifications = this.notifications.filter(n => n.id !== id);
       this.refreshNotifications(false);
     });
@@ -234,12 +229,12 @@ export class Navbar implements OnInit, OnDestroy {
 
   markAllAsRead(event: MouseEvent): void {
     event.stopPropagation();
-    this.notificationsApi.updateManyState(NotificationAction.MarkAsRead).subscribe(() => this.refreshNotifications(false));
+    this.notificationsApi.markManyAsRead().subscribe(() => this.refreshNotifications(false));
   }
 
   dismissAll(event: MouseEvent): void {
     event.stopPropagation();
-    this.notificationsApi.updateManyState(NotificationAction.Dismiss).subscribe(() => {
+    this.notificationsApi.dismissMany().subscribe(() => {
       this.notifications = [];
       this.refreshNotifications(false);
     });

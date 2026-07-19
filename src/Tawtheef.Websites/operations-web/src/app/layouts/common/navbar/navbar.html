@@ -96,10 +96,6 @@
                         </span>
 
                         <div class="notification-item__actions">
-                          <button *ngIf="notification.isRead" class="btn btn-sm btn-link p-0 text-muted me-2"
-                            (click)="markAsUnread(notification.id, $event)" title="Mark as unread">
-                            <i class="hgi hgi-stroke hgi-mail-02"></i>
-                          </button>
                           <button *ngIf="!notification.isRead" class="btn btn-sm btn-link p-0 text-muted me-2"
                             (click)="markAsRead(notification.id, $event)" title="Mark as read">
                             <i class="hgi hgi-stroke hgi-mail-open-02"></i>
