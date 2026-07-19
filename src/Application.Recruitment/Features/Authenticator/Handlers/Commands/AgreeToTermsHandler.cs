@@ -14,6 +14,9 @@ public sealed class AgreeToTermsHandler(IUnitOfWork uow, UserManager<User> userM
 {
     public async Task<IResult<Unit>> Handle(AgreeToTermsCommand request, CancellationToken cancellationToken)
     {
+        if (request.UserId is null)
+            return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+        
         var user = await userManager.Users
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 

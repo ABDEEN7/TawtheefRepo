@@ -4,8 +4,6 @@ using FluentResults;
 
 namespace Application.Recruitment.Features.JobDetails.Queries;
 
-public sealed record GetCandidateJobDetailsQuery(
-    Guid InvitationId,
-    Guid UserId
-) : IRequest<IResult<CandidateJobDetailsDto>>;
+public sealed record GetCandidateJobDetailsQuery(Guid InvitationId, Guid UserId) 
+    : IRequest<IResult<CandidateJobDetailsDto>>;
 

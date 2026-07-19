@@ -79,10 +79,6 @@
                     (click)="markAsRead(n.id)" [title]="'common.markAsRead' | translate">
                     <i class="hgi hgi-stroke hgi-mail-open-02"></i>
                   </button>
-                  <button *ngIf="n.isRead" class="btn btn-sm btn-light border-0 text-muted" (click)="markAsUnread(n.id)"
-                    [title]="'common.markAsUnread' | translate">
-                    <i class="hgi hgi-stroke hgi-mail-02"></i>
-                  </button>
                   <button class="btn btn-sm btn-light border-0 text-danger" (click)="dismiss(n.id)"
                     [title]="'common.dismiss' | translate">
                     <i class="hgi hgi-stroke hgi-delete-02"></i>

@@ -8,8 +8,6 @@ namespace Tawtheef.Infrastructure.Middlewares
 {
     public class RequestSanitizationMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next = next;
-
         private static readonly Regex HtmlRegex = new(
             @"<script|</script|<[^>]+>",
             RegexOptions.IgnoreCase | RegexOptions.Compiled
@@ -17,17 +15,16 @@ namespace Tawtheef.Infrastructure.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            // Only check POST requests
-            if (context.Request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase))
+            // Only check POST, PUT, PATCH requests; we ignored GET, DELETE because they should not have a body and are less likely to be used for XSS attacks.
+            if (context.Request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase) ||
+                context.Request.Method.Equals(HttpMethods.Put, StringComparison.OrdinalIgnoreCase) ||
+                context.Request.Method.Equals(HttpMethods.Patch, StringComparison.OrdinalIgnoreCase))
             {
                 // 1) Check headers
-                foreach (var header in context.Request.Headers)
+                if (context.Request.Headers.Any(header => ContainsHtmlOrScript(header.Value.ToString())))
                 {
-                    if (ContainsHtmlOrScript(header.Value.ToString()))
-                    {
-                        await Reject(context);
-                        return;
-                    }
+                    await Reject(context);
+                    return;
                 }
 
                 var contentType = context.Request.ContentType ?? string.Empty;
@@ -52,27 +49,16 @@ namespace Tawtheef.Infrastructure.Middlewares
                 {
                     var form = await context.Request.ReadFormAsync();
 
-                    foreach (var field in form)
+                    if (form.Any(field => ContainsHtmlOrScript(field.Value.ToString())) || 
+                        form.Files.Any(file => ContainsHtmlOrScript(file.FileName)))
                     {
-                        if (ContainsHtmlOrScript(field.Value.ToString()))
-                        {
-                            await Reject(context);
-                            return;
-                        }
-                    }
-
-                    foreach (var file in form.Files)
-                    {
-                        if (ContainsHtmlOrScript(file.FileName))
-                        {
-                            await Reject(context);
-                            return;
-                        }
+                        await Reject(context);
+                        return;
                     }
                 }
             }
 
-            await _next(context);
+            await next(context);
         }
 
         private static bool ContainsHtmlOrScript(string input)

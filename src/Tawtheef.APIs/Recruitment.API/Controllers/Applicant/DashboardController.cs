@@ -51,7 +51,9 @@ public class DashboardController(IMediator mediator) : ControllerBase
     [HttpGet("get-candidate-invitations")]
     public async Task<IActionResult> GetCandidateInvitations([FromQuery] GetCandidateInvitationsQuery query)
     {
-        var result = await mediator.Send(query);
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        
+        var result = await mediator.Send(query with {UserId = UserId.Value});
         return result.ToActionResult();
     }
 
@@ -83,26 +85,20 @@ public class DashboardController(IMediator mediator) : ControllerBase
     }
     
     [HttpPost("candidate-invitations/{invitationId:guid}/read")]
-    public async Task<IActionResult> ChangeStatusCandidateInvitationRead(
-        Guid invitationId)
+    public async Task<IActionResult> ChangeStatusCandidateInvitationRead(Guid invitationId)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new ChangeStatusCandidateInvitationReadCommand(
-            UserId.Value,
-            invitationId));
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationReadCommand(UserId.Value, invitationId));
         return result.ToActionResult();
     }
     
     [HttpPost("candidate-invitations/{invitationId:guid}/reject")]
-    public async Task<IActionResult> ChangeStatusCandidateInvitationReject(
-        Guid invitationId)
+    public async Task<IActionResult> ChangeStatusCandidateInvitationReject(Guid invitationId)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
-        var result = await mediator.Send(new ChangeStatusCandidateInvitationRejectedCommand(
-            UserId.Value,
-            invitationId));
+        var result = await mediator.Send(new ChangeStatusCandidateInvitationRejectedCommand(UserId.Value, invitationId));
         return result.ToActionResult();
     }
 
@@ -114,24 +110,18 @@ public class DashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetCandidateInvitationStatisticsQuery(UserId.Value));
         return result.ToActionResult();
     }
-    [HttpPost("candidate-invitations/{invitationId}/attachments/{jobRequiredAttachmentId}")]
+    [HttpPost("candidate-invitations/{invitationId:guid}/attachments/{jobRequiredAttachmentId:guid}")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadCandidateInvitationAttachment(
-        Guid invitationId,
-        Guid jobRequiredAttachmentId,
-        IFormFile file)
+    public async Task<IActionResult> UploadCandidateInvitationAttachment(Guid invitationId, Guid jobRequiredAttachmentId, IFormFile file)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 
         var result = await mediator.Send(new UploadInvitationAttachmentCommand(UserId.Value, invitationId, jobRequiredAttachmentId, file));
-        
         return result.ToActionResult();
     }
 
-    [HttpDelete("candidate-invitations/{invitationId}/attachments/{attachmentId}")]
-    public async Task<IActionResult> DeleteCandidateInvitationAttachment(
-        Guid invitationId,
-        Guid attachmentId)
+    [HttpDelete("candidate-invitations/{invitationId:guid}/attachments/{attachmentId:guid}")]
+    public async Task<IActionResult> DeleteCandidateInvitationAttachment(Guid invitationId,Guid attachmentId)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
 

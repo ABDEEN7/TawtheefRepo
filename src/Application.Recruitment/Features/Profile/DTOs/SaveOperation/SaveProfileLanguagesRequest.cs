@@ -9,8 +9,9 @@ public sealed class SaveProfileLanguagesRequest
 
 public sealed class ProfileLanguageUpsertDto
 {
-    public Guid LanguageId { get; set; } // Id من جدول Language
-    public Guid SpeakingLevelId { get; set; }    // Id من جدول LanguageLevel
-    public Guid WritingLevelId { get; set; }     // Id من جدول LanguageLevel
-    public Guid ReadingLevelId { get; set; }     // Id من جدول LanguageLevel
+    public Guid LanguageId { get; set; }
+    // LanguageLevel Table
+    public Guid SpeakingLevelId { get; set; }
+    public Guid WritingLevelId { get; set; }
+    public Guid ReadingLevelId { get; set; }
 }
