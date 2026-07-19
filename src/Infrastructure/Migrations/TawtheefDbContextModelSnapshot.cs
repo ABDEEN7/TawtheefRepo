@@ -17,7 +17,7 @@ namespace Tawtheef.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1643,7 +1643,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContactVerification");
+                    b.ToTable("ContactVerification", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.LoginAttempt", b =>
@@ -1725,7 +1725,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserTypeId");
 
-                    b.ToTable("LoginAttempt");
+                    b.ToTable("LoginAttempt", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Auth.RefreshToken", b =>
@@ -1825,7 +1825,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "SecurityStamp");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Content.FAQ", b =>
@@ -2265,7 +2265,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EntityLog");
+                    b.ToTable("EntityLog", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.AchievementType", b =>
@@ -2542,12 +2542,12 @@ namespace Tawtheef.Infrastructure.Migrations
                             BackendName = "QidHolder",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DescriptionAr = "مرشح يمتلك الوثيقة الشخصية القطرية",
-                            DescriptionEn = "Holders of Qatari Documents",
+                            DescriptionEn = "Candidate with a QID number",
                             DisplayOrder = 7,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "حملة الوثائق القطرية",
-                            NameEn = "Holders of Qatari Documents"
+                            NameAr = "حامل الوثيقة الشخصية القطرية",
+                            NameEn = "Candidate with a QID number"
                         });
                 });
 
@@ -6572,7 +6572,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailQueues");
+                    b.ToTable("EmailQueues", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.EmailTemplate", b =>
@@ -6639,7 +6639,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmailTemplates");
+                    b.ToTable("EmailTemplates", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Notification.Notification", b =>
@@ -6775,7 +6775,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "Channel", "IsDismissed", "IsRead");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.AuditTrailEntry", b =>
@@ -6920,7 +6920,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("HistoryInvitation");
+                    b.ToTable("HistoryInvitation", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>
@@ -8988,7 +8988,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Resources");
+                    b.ToTable("Resources", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Security.Permission", b =>
@@ -10024,7 +10024,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("EmployeeProfile");
+                    b.ToTable("EmployeeProfile", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.SponsorProfile", b =>
@@ -10520,7 +10520,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "SessionId");
 
-                    b.ToTable("UserSession");
+                    b.ToTable("UserSession", (string)null);
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
