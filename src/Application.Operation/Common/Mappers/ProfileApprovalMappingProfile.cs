@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.Spanshot;
 using Mapster;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -28,7 +29,9 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.EntityName, src => src.EntityName)
             .Map(dest => dest.OldValue, src => src.ProfileChange != null ? src.ProfileChange.OldValue : null)
             .Map(dest => dest.NewValue, src => src.ProfileChange != null ? src.ProfileChange.NewValue : null)
-            .Map(dest => dest.ReviewedAtUtc, src => src.ReviewedAtUtc);
+            .Map(dest => dest.ReviewedAtUtc, src =>  src.ReviewedAtUtc.HasValue
+                ? src.ReviewedAtUtc.Value.AsUtcOffset()
+                : (DateTimeOffset?)null);
 
         config.NewConfig<ProfileAdditionalAttachment, AdditionalAttachmentDto>()
             .Map(dest => dest.Title, src => src.FileName)
