@@ -76,5 +76,6 @@
   "layout.internal.termsDialog.points.review": "يرجى مراجعة الشروط المحدّثة بعناية لفهم كيفية تأثيرها على استخدامك للنظام.",
   "layout.internal.termsDialog.points.updates": "قد تتضمن التحديثات تغييرات على السياسات أو الميزات أو الالتزامات القانونية.",
   "layout.internal.termsDialog.later": "مراجعة لاحقًا",
-  "layout.internal.termsDialog.accept": "موافق والمتابعة"
+  "layout.internal.termsDialog.accept": "موافق والمتابعة",
+  "layout.internal.termsDialog.view": "عرض سياسة الجودة وآمن المعلومات"
 }

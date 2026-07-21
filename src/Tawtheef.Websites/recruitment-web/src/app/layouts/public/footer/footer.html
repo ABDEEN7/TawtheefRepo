@@ -30,9 +30,8 @@
       <!-- Left side in RTL (Links) -->
       <div class="col-md-4 text-center text-md-end">
         <div class="footer-links">
-          <a routerLink="/privacy" class="text-white text-decoration-none me-4">{{ 'internal.footer.privacy' | translate
+          <a href="{{ env.policyBaseUrl }}" target="_blank" class="text-white text-decoration-none me-4">{{ 'internal.footer.privacy' | translate
             }}</a>
-          <a routerLink="/terms" class="text-white text-decoration-none">{{ 'internal.footer.terms' | translate }}</a>
         </div>
       </div>
     </div>

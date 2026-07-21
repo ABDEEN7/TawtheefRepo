@@ -77,5 +77,6 @@
   "layout.internal.termsDialog.points.review": "Please review the updated terms carefully to understand how they affect your use of the platform.",
   "layout.internal.termsDialog.points.updates": "Updates may include changes to policies, features, or legal obligations.",
   "layout.internal.termsDialog.later": "Review Later",
-  "layout.internal.termsDialog.accept": "Agree and Continue"
+  "layout.internal.termsDialog.accept": "Agree and Continue",
+  "layout.internal.termsDialog.view": "View Quality and Security Policy"
 }
