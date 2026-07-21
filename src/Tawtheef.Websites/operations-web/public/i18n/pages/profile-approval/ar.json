@@ -349,7 +349,7 @@
   "file_viewer.download": "تحميل",
   "file_viewer.loading_text": "جاري التحميل...",
   "file_viewer.unsupported_preview": "لا يتوفر عرض مسبق لهذا النوع من الملفات",
-  "file_viewer.fetching": "جاري جلب الملف من الخادم...",
+  "file_viewer.fetching": "تحميل الملف ...",
   "file_viewer.select_file": "اختر ملفاً للمعالجة",
   "file_viewer.select_hint": "انقر على أيقونة العرض بجانب أي ملف لفتحه في هذه المساحة.",
   "common.close": "إغلاق"
