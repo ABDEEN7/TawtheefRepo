@@ -1,9 +1,10 @@
 using System.Security.Claims;
 using Application.Operation.Features.Authenticator.Commands;
 using Application.Operation.Features.Authenticator.DTOs;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -12,7 +13,6 @@ using Tawtheef.Application.Features.Authenticator.Handlers.Commands.CallbackHand
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Operation.Features.Authenticator.Handlers.Commands.CallbackHandler;
 
@@ -289,7 +289,9 @@ public sealed class AzureExternalCallbackLoginHandler(
 
     private static bool IsEduGovQaEmail(string? email)
         => !string.IsNullOrWhiteSpace(email)
-           && (email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) || email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase));
+           && (email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) 
+               //|| email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase)
+               );
 
     private static async Task UpsertProviderClaimsAsync(
         UserManager<User> userManager,
