@@ -69,14 +69,14 @@
   "public.footer.rights": "\u00A9 {{year}} Ministry of Education and Higher Education, All rights reserved.",
   "public.footer.ministry": "\u00A9 {{year}} Ministry of Education and Higher Education, All rights reserved.",
 
-  "layout.internal.termsDialog.title": "Updated Terms and Conditions",
-  "layout.internal.termsDialog.description": "We have updated the terms and conditions to improve clarity, enhance security, and improve your overall experience. Please review the updates below before proceeding.",
-  "layout.internal.termsDialog.accepted.detail": "By accepting, you confirm that you have read, understood, and agreed to the updated terms and conditions.",
-  "layout.internal.termsDialog.accepted.summary": "Updated terms and conditions accepted successfully.",
+  "layout.internal.termsDialog.title": "Updated Policy",
+  "layout.internal.termsDialog.description": "We have updated the Quality, Privacy, and Information Security Policy to improve clarity, strengthen data protection, and enhance your overall experience. Please review the updated policy before proceeding.",
+  "layout.internal.termsDialog.accepted.detail": "By accepting, you confirm that you have read, understood, and agreed to the updated policy.",
+  "layout.internal.termsDialog.accepted.summary": "Updated policy accepted successfully.",
   "common.errorGeneric": "An unexpected error occurred. Please try again later.",
-  "layout.internal.termsDialog.points.review": "Please review the updated terms carefully to understand how they affect your use of the platform.",
-  "layout.internal.termsDialog.points.updates": "Updates may include changes to policies, features, or legal obligations.",
+  "layout.internal.termsDialog.points.review": "Please read the policy carefully to understand your responsibilities, the proper use of the system, and the protection of information.",
+  "layout.internal.termsDialog.points.updates": "Updates may include changes to quality procedures, privacy practices, and information security.",
   "layout.internal.termsDialog.later": "Review Later",
   "layout.internal.termsDialog.accept": "Agree and Continue",
-  "layout.internal.termsDialog.view": "View Quality and Security Policy"
+  "layout.internal.termsDialog.view": "View Quality, Privacy, and Information Security Policy"
 }

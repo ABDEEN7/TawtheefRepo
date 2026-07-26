@@ -68,14 +68,14 @@
   "public.footer.privacy": "سياسة الخصوصية",
   "public.footer.rights": "\u00A9 {{year}} وزارة التربية والتعليم والتعليم العالي \u2013 جميع الحقوق محفوظة.",
   "public.footer.ministry": "\u00A9 {{year}} وزارة التربية والتعليم والتعليم العالي \u2013 جميع الحقوق محفوظة.",
-  "layout.internal.termsDialog.title": "تحديث الشروط والأحكام",
-  "layout.internal.termsDialog.description": "قمنا بتحديث الشروط والأحكام لتحسين الوضوح وتعزيز الأمان وتحسين تجربتك العامة. يرجى مراجعة التحديثات أدناه قبل المتابعة.",
-  "layout.internal.termsDialog.accepted.detail": "من خلال الموافقة، فإنك تؤكد أنك قرأت الشروط والأحكام المحدّثة وفهمتها ووافقت عليها.",
-  "layout.internal.termsDialog.accepted.summary": "تمت الموافقة على الشروط والأحكام المحدّثة بنجاح.",
+  "layout.internal.termsDialog.title": "تحديث للسياسات",
+  "layout.internal.termsDialog.description": "قمنا بتحديث سياسة الجودة والخصوصية وأمن المعلومات لتحسين الوضوح، وتعزيز حماية البيانات، وتحسين تجربتك العامة. يرجى مراجعة السياسة المحدثة قبل المتابعة.",
+  "layout.internal.termsDialog.accepted.detail": "من خلال الموافقة، فإنك تؤكد أنك قرأت السياسة المحدثة وفهمتها ووافقت عليها.",
+  "layout.internal.termsDialog.accepted.summary": "تمت الموافقة على السياسة المحدثة بنجاح.",
   "common.errorGeneric": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.",
-  "layout.internal.termsDialog.points.review": "يرجى مراجعة الشروط المحدّثة بعناية لفهم كيفية تأثيرها على استخدامك للنظام.",
-  "layout.internal.termsDialog.points.updates": "قد تتضمن التحديثات تغييرات على السياسات أو الميزات أو الالتزامات القانونية.",
+  "layout.internal.termsDialog.points.review": "يرجى قراءة السياسة بعناية لفهم مسؤولياتك، والاستخدام الصحيح للنظام، وحماية المعلومات.",
+  "layout.internal.termsDialog.points.updates": "قد تتضمن التحديثات تعديلات على إجراءات الجودة، وسياسات الخصوصية، وأمن المعلومات.",
   "layout.internal.termsDialog.later": "مراجعة لاحقًا",
   "layout.internal.termsDialog.accept": "موافق والمتابعة",
-  "layout.internal.termsDialog.view": "عرض سياسة الجودة وآمن المعلومات"
+  "layout.internal.termsDialog.view": "عرض سياسة الجودة والخصوصية وأمن المعلومات"
 }
