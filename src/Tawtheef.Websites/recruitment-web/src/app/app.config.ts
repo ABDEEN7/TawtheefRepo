@@ -1,5 +1,5 @@
 import {
-  ApplicationConfig,
+  ApplicationConfig, ErrorHandler,
   importProvidersFrom, inject, provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection
@@ -24,6 +24,7 @@ import { refreshInterceptor } from './core/interceptors/refresh.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { customHttpInterceptor } from './core/interceptors/http.interceptor';
 import { VersionedMultiTranslateLoader } from './core/http/version-translate.loader';
+import { ChunkErrorHandler } from './core/handlers/chunk-error-handler';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   const resources = [
     { prefix: '/i18n/primeng/', suffix: '.json' },
@@ -35,6 +36,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 }
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: ErrorHandler, useClass: ChunkErrorHandler },
     ConfirmationService,
     MessageService,
     importProvidersFrom(NgbModule),

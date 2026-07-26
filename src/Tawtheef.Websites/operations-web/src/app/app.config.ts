@@ -1,5 +1,5 @@
 import {
-  ApplicationConfig,
+  ApplicationConfig, ErrorHandler,
   importProvidersFrom, inject, provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection
@@ -26,6 +26,7 @@ import {providePrimeNG} from 'primeng/config';
 import {TawtheefPreset} from './shared/themes/twatheef-preset';
 import {customHttpInterceptor} from './core/interceptors/http.interceptor';
 import {VersionedMultiTranslateLoader} from './core/http/version-translate.loader';
+import {ChunkErrorHandler} from './core/handlers/chunk-error-handler';
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   const resources = [
     {prefix: '/i18n/common/', suffix: '.json'},
@@ -35,6 +36,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 }
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: ErrorHandler, useClass: ChunkErrorHandler },
     MessageService,
     DialogService,
     importProvidersFrom(NgbModule),
