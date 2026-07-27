@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Mapster;
 using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -59,6 +60,8 @@ public class JobProfile : IRegister
             .Map(dest => dest.ReviewAttachments, src => src.ReviewAttachment)
             .Map(dest => dest.CreatedByName, src => src.CreatedBy != null ? src.CreatedBy.FullNameEn : string.Empty)
             .Map(dest => dest.LastActionDate, src => src.UpdatedDate ?? src.CreatedDate)
+            .Map(dest => dest.PublishAt, src => src.PublishAt.HasValue ? src.PublishAt.Value.AsUtcOffset() : (DateTimeOffset?)null)
+            .Map(dest => dest.UpdatedDate, src => src.UpdatedDate.HasValue ? src.UpdatedDate.Value.AsUtcOffset() : (DateTimeOffset?)null)
             .Map(dest => dest.AllowedEdit, src => 
                 (((bool)MapContext.Current!.Parameters.GetValueOrDefault("IsHrManager", false)) 
                  || src.CreatedById == ((Guid)MapContext.Current!.Parameters.GetValueOrDefault("CurrentUserId", Guid.Empty))))
