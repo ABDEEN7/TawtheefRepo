@@ -6,8 +6,8 @@ import { SystemRoles } from '../core/constants/systemRoles';
 export let routes = {
   baseUrl: '',
   home: '/index',
-  terms: '/terms',
-  privacy: '/privacy',
+  terms: 'https://www.edu.gov.qa/ar/?file=96ab4af5-88a1-4106-aa11-0643bd14926d',
+  privacy: 'https://www.edu.gov.qa/ar/?file=96ab4af5-88a1-4106-aa11-0643bd14926d',
   portal: { ...portalRoutes },
   auth: { ...authRoutes },
   ...errorRoutes,

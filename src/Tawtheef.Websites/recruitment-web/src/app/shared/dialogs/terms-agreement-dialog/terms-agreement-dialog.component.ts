@@ -5,6 +5,9 @@ import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {finalize} from 'rxjs/operators';
 import {TermsService} from '../../../core/auth/terms.service';
 import {NotificationService} from '../../../core/services/notification.service';
+import { RouterLink } from '@angular/router';
+import { routes } from '../../../routes/routes';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-terms-agreement-dialog',
@@ -17,6 +20,9 @@ import {NotificationService} from '../../../core/services/notification.service';
   styleUrl: './terms-agreement-dialog.component.scss'
 })
 export class TermsAgreementDialogComponent {
+  routes = routes;
+  env = environment;
+  
   private termsService = inject(TermsService);
   private notifier = inject(NotificationService);
   private translate = inject(TranslateService);

@@ -25,9 +25,7 @@
             <div class="col-md-4">
                      <!-- Footer Links -->
                     <div class="footer-links text-end justify-content-end">
-                      <a [routerLink]="routes.privacy">{{'internal.footer.privacy' | translate}}</a>
-                      <span class="separator">|</span>
-                      <a [routerLink]="routes.terms">{{'internal.footer.terms' | translate}}</a>
+                      <a href="{{ env.policyBaseUrl }}" target="_blank">{{'internal.footer.privacy' | translate}}</a>
                     </div>
             </div>
        </div>
