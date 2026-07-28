@@ -90,7 +90,6 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     {
         if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
 
-        // ظپظٹ ظ…ط±ط­ظ„ط© Full Review ظ†ط³ظ…ط­ Approved ط£ظˆ NeedsCorrection ظپظ‚ط·
         if (body.Status == ReviewStatus.NeedsCorrection && string.IsNullOrWhiteSpace(body.Note))
             return BadRequest(Result.Fail(ErrorsCodes.NotesRequiredForCorrection).Errors);
 
