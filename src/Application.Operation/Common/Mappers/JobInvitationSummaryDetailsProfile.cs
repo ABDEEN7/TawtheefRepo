@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Mapster;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Common.Mappers;
@@ -11,7 +12,7 @@ public sealed class JobInvitationSummaryDetailsProfile : IRegister
         config.NewConfig<Job, JobInvitationSummaryDetailsInfoDto>()
             .Map(dest => dest.JobId, src => src.Id)
             .Map(dest => dest.JobName, src => src.JobTitle != null ? src.JobTitle.JobNameEn : string.Empty)
-            .Map(dest => dest.ClosingDate, src => new DateTimeOffset(src.ClosingDate));
+            .Map(dest => dest.ClosingDate, src => src.ClosingDate);
 
         config.NewConfig<Invitation, JobInvitationSummaryDetailsRowDto>()
             .Map(dest => dest.InviteId, src => src.Id)
@@ -19,7 +20,10 @@ public sealed class JobInvitationSummaryDetailsProfile : IRegister
             .Map(dest => dest.BatchNumber, src => src.BatchNumber)
             .Map(dest => dest.SentDate, src => src.CreatedDate)
             .Map(dest => dest.InvitationExpiryDate, src => src.ExpiresOn)
-            .Map(dest => dest.AppliedDate, src => src.AcceptedAt)
+            .Map(dest => dest.AppliedDate, src => 
+                src.AcceptedAt.HasValue ?  
+                src.AcceptedAt.Value.AsUtcOffset() : 
+                (DateTimeOffset?)null)
             .Ignore(dest => dest.Status)
             .Ignore(dest => dest.FullName)
             .Ignore(dest => dest.Nationality)
