@@ -57,6 +57,7 @@
     width: 100%;
     height: clamp(500px, 38vw, 640px);
     object-fit: cover;
+    filter: brightness(0.7);
   }
 }
 
