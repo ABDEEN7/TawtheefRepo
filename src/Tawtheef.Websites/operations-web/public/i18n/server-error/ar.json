@@ -290,7 +290,7 @@
   "server-error.USER_IS_APPLICANT": "المستخدم مسجل كباحث عمل، لا يمكن إضافته كجهة.",
   "server-error.INVALID_QID_FORMAT": "صيغة الرقم الشخصي غير صحيحة. يجب أن يتكون من 11 رقماً.",
   "server-error.INVALID_PHONE_FORMAT": "صيغة رقم الهاتف غير صحيحة. يجب أن يبدأ بـ +974 متبوعاً بـ 8 أرقام.",
-  "server-error.KAWADER_REGISTRATION_REQUIRED": "هذا المرشح قطري الجنسية ويجب أن يكون مسجلاً في منصة كوادر أولاً.",
+  "server-error.KAWADER_REGISTRATION_REQUIRED": "هذا المرشح قطري الجنسية ويجب أن يكون مسجلًا في منصة كوادر أولاً.",
   "server-error.MISSING_REQUIRED_FIELDS": "يرجى استكمال جميع الحقول المطلوبة.",
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "سجل مرشح مكتب سعادة الوزير غير موجود.",
   "server-error.QID_EXPIRY_DATE_REQUIRED": "تاريخ انتهاء البطاقة الشخصية مطلوب للتحقق من الهوية.",

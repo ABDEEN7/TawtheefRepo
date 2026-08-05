@@ -23,12 +23,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 keyColumn: "Id",
                 keyValue: new Guid("48f6d7a2-e821-4ab6-81cf-884ed650d2ec"));
 
-            migrationBuilder.DeleteData(
-                schema: "lkp",
-                table: "UserType",
-                keyColumn: "Id",
-                keyValue: new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d"));
-
             migrationBuilder.UpdateData(
                 table: "AspNetRoleClaims",
                 keyColumn: "Id",
@@ -1257,12 +1251,6 @@ namespace Tawtheef.Infrastructure.Migrations
                 keyValue: new Guid("a8e0f354-2e23-41e1-9e1b-a1501b72dc4b"),
                 column: "UserTypeId",
                 value: new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d"));
-
-            migrationBuilder.InsertData(
-                schema: "lkp",
-                table: "UserType",
-                columns: new[] { "Id", "BackendName", "CreatedById", "CreatedDate", "DeletedById", "DeletedDate", "DescriptionAr", "DescriptionEn", "DisplayOrder", "IsActive", "IsDeleted", "NameAr", "NameEn", "UpdatedById", "UpdatedDate" },
-                values: new object[] { new Guid("c3d4e5f6-a7b8-6a95-0c3d-7e8f9a0b1c2d"), "Admin", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, 3, true, false, "مسؤول النظام", "Administrator", null, null });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
