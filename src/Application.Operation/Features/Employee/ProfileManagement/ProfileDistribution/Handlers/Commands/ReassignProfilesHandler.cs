@@ -13,6 +13,7 @@ using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.Operation.Employee.Profile;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
@@ -119,12 +120,15 @@ public sealed class ReassignProfilesHandler(
             if (employee is null)
                 return Result.Fail<DistributionResultDto>(ErrorsCodes.DistributionEmployeeNotActive);
 
+            ProfileAssignment? notificationAssignment = null;
             foreach (var profile in profiles)
             {
                 if (profile.Status != UserProfileStatus.Approved)
                     profile.Status = UserProfileStatus.UnderReview;
 
-                assignmentRepo.DbSet.Add(ProfileAssignment.Assign(profile.Id, employee.Id));
+                var assignment = ProfileAssignment.Assign(profile.Id, employee.Id, publishNotification: false);
+                assignmentRepo.DbSet.Add(assignment);
+                notificationAssignment ??= assignment;
 
                 await auditRepo.AddAsync(new AuditTrailEntry
                 {
@@ -153,6 +157,12 @@ public sealed class ReassignProfilesHandler(
                     Section = UserProfileLogConstants.Sections.Assignment
                 }, ct);
             }
+
+            notificationAssignment?.AddDomainEvent(new ProfileAssignedEvent(
+                notificationAssignment.UserProfileId,
+                employee.Id,
+                DateTimeOffset.UtcNow,
+                profiles.Count));
 
             await uow.SaveChangesAsync(ct);
             var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);

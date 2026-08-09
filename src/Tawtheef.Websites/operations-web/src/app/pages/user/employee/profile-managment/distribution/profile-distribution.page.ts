@@ -107,6 +107,7 @@ export class ProfileDistributionPage implements OnInit {
   targetEntityId = signal<string>('');
   hasOtherFilter = signal<'all' | 'yes' | 'no'>('all');
   selectedIds = signal<Set<string>>(new Set());
+  selectedRows = signal<Map<string, DistributionFile>>(new Map());
   pageNumber = signal(1);
   pageSize = signal(10);
   sortBy = signal<string | null>(null);
@@ -120,9 +121,7 @@ export class ProfileDistributionPage implements OnInit {
   private searchChanges$ = new Subject<string>();
   private query$ = new Subject<{ force?: boolean }>();
   // computed
-  readonly selectedFiles = computed(() =>
-    this.files().filter(file => this.selectedIds().has(file.profileId))
-  );
+  readonly selectedFiles = computed(() => Array.from(this.selectedRows().values()));
 
   readonly displayedFiles = computed(() => this.files());
 
@@ -156,7 +155,7 @@ export class ProfileDistributionPage implements OnInit {
     { value: 'no', label: 'common.no' }
   ];
 
-  readonly rowsPerPageOptions = [10, 20, 50];
+  readonly rowsPerPageOptions = [10, 20, 50, 100, 500];
 
   ngOnInit(): void {
     this.setupSearchListener();
@@ -330,11 +329,30 @@ export class ProfileDistributionPage implements OnInit {
 
   // selection
   onSelectionChange(selection: DistributionFile[]): void {
-    this.selectedIds.set(new Set(selection.map(item => item.profileId)));
+    const currentPageIds = new Set(this.files().map(item => item.profileId));
+    const nextSelectedIds = new Set(this.selectedIds());
+    const nextSelectedRows = new Map(this.selectedRows());
+
+    // PrimeNG emits only the current page's selected rows. Replace that page's
+    // selection while retaining selections made on every other page.
+    currentPageIds.forEach(id => {
+      nextSelectedIds.delete(id);
+      nextSelectedRows.delete(id);
+    });
+    selection
+      .filter(item => currentPageIds.has(item.profileId))
+      .forEach(item => {
+        nextSelectedIds.add(item.profileId);
+        nextSelectedRows.set(item.profileId, item);
+      });
+
+    this.selectedIds.set(nextSelectedIds);
+    this.selectedRows.set(nextSelectedRows);
   }
 
   clearSelection(): void {
     this.selectedIds.set(new Set());
+    this.selectedRows.set(new Map());
   }
 
   clearSearch(): void {
@@ -356,7 +374,11 @@ export class ProfileDistributionPage implements OnInit {
   openManualDialog(profileId?: string): void {
     if (!this.canManageDistribution()) return;
 
-    if (profileId) this.selectedIds.set(new Set([profileId]));
+    if (profileId) {
+      const profile = this.files().find(item => item.profileId === profileId);
+      this.selectedIds.set(new Set([profileId]));
+      this.selectedRows.set(profile ? new Map([[profileId, profile]]) : new Map());
+    }
 
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) {

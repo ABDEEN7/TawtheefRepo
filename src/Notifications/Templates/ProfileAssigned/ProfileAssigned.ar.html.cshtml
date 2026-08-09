@@ -13,7 +13,7 @@
 
     var profileUrl = $"{website}/portal/approval-profile";
 
-    var title = "تحويل ملف مرشح للمراجعة";
+    var title = "إسناد ملفات مرشحين للمراجعة";
     var badgeText = "إسناد جديد";
 }
 
@@ -53,10 +53,10 @@
       <h1 class="title">@title</h1>
       <p class="text">تحية طيبة،</p>
       <p class="text">
-        تم تحويل ملف المرشح @RazorHelpers.Raw(string.IsNullOrWhiteSpace(m.CandidateName) ? "" : $" «{m.CandidateName}»") إليكم للمراجعة. يرجى الاطلاع واتخاذ الإجراء المناسب (اعتماد أو إرجاع).
+        تم إسناد <strong>@m.AssignedProfileCount</strong> ملف/ملفات مرشحين إليكم للمراجعة. يرجى الاطلاع عليها واتخاذ الإجراء المناسب.
       </p>
       <p class="text" style="margin-top: 24px; text-align: center;">
-        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">مراجعة الملف</a>
+        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">عرض الملفات المسندة</a>
       </p>
       <div class="divider"></div>
       <p class="muted">
