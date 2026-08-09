@@ -15,8 +15,8 @@ internal static class ImportCatalog
         new ImportStep
         {
             Code = "APPLICANTS",
-            Title = "Seed 10k Applicant Users + Profiles (Smart)",
-            DependsOn = ["COUNTRY", "UNIV", "MAJOR", "MSLINK"],
+            Title = "Seed 10k complete Applicant Profiles (all types/statuses)",
+            DependsOn = ["COUNTRY", "UNIV", "MAJOR", "JTITLE", "MSLINK"],
             UseTransaction = false,
             RunAsync = (r, ct) => r.SeedApplicantsAsync(ct)
         },
@@ -41,6 +41,31 @@ internal static class ImportCatalog
             }
         }
 
-        return All.Where(step => selectedCodes.Contains(step.Code)).ToList();
+        // Topologically sort instead of relying on the display order of All. This keeps
+        // individual selections and "ALL" safe when the catalog is rearranged later.
+        var result = new List<ImportStep>(selectedCodes.Count);
+        var visiting = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        void Visit(string code)
+        {
+            if (visited.Contains(code)) return;
+            if (!visiting.Add(code))
+                throw new InvalidOperationException($"Circular seed dependency detected at '{code}'.");
+
+            var step = byCode[code];
+            foreach (var dependency in step.DependsOn)
+                Visit(dependency);
+
+            visiting.Remove(code);
+            visited.Add(code);
+            result.Add(step);
+        }
+
+        // All provides the stable ordering for otherwise independent steps.
+        foreach (var step in All.Where(x => selectedCodes.Contains(x.Code)))
+            Visit(step.Code);
+
+        return result;
     }
 }

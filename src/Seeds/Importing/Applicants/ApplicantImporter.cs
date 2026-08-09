@@ -20,7 +20,7 @@ internal static class ApplicantImporter
             {
                 Count = 10_000,
                 BatchSize = 1_000,
-                CompletionRate = 0.85,
+                CompletionRate = 1.0,
 
                 ProfileAttachmentMode =
                     SmartUserProfileSeeder
