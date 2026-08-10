@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Features.Notifications.Queries;
+using Tawtheef.Application.Features.Notifications.Commands;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
 
@@ -43,29 +44,47 @@ public class NotificationsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPut("{id}/state")]
-    public async Task<IActionResult> UpdateNotificationState(Guid id, [FromQuery] Tawtheef.Application.Features.Notifications.Commands.NotificationAction action)
+    [HttpPut("{id:guid}/read")]
+    public async Task<IActionResult> MarkAsRead(Guid id)
     {
         if (UserId.IsFailed) return Unauthorized(UserId.Errors);
-        var result = await mediator.Send(new Tawtheef.Application.Features.Notifications.Commands.UpdateNotificationStateCommand(UserId.Value, id, action));
+        var result = await mediator.Send(new MarkNotificationAsReadCommand(UserId.Value, id));
         return result.ToActionResult();
     }
 
-    [HttpPut("state")]
-    public async Task<IActionResult> UpdateManyNotificationsState([FromQuery] Tawtheef.Application.Features.Notifications.Commands.NotificationAction action, [FromBody] List<Guid>? notificationIds = null)
+    [HttpPut("read")]
+    public async Task<IActionResult> MarkManyAsRead([FromBody] List<Guid>? notificationIds = null)
     {
         if (UserId.IsFailed) return Unauthorized(UserId.Errors);
         
         IResult<Unit> result;
         if (notificationIds is {Count: > 0})
         {
-            result = await mediator.Send(new Tawtheef.Application.Features.Notifications.Commands.UpdateManyNotificationsStateCommand(UserId.Value, notificationIds, action));
+            result = await mediator.Send(new MarkManyNotificationsAsReadCommand(UserId.Value, notificationIds));
         }
         else
         {
-            result = await mediator.Send(new Tawtheef.Application.Features.Notifications.Commands.UpdateAllNotificationsStateCommand(UserId.Value, action));
+            result = await mediator.Send(new MarkAllNotificationsAsReadCommand(UserId.Value));
         }
         
+        return result.ToActionResult();
+    }
+
+    [HttpPut("{id:guid}/dismiss")]
+    public async Task<IActionResult> Dismiss(Guid id)
+    {
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        var result = await mediator.Send(new DismissNotificationCommand(UserId.Value, id));
+        return result.ToActionResult();
+    }
+
+    [HttpPut("dismiss")]
+    public async Task<IActionResult> DismissMany([FromBody] List<Guid>? notificationIds = null)
+    {
+        if (UserId.IsFailed) return Unauthorized(UserId.Errors);
+        IResult<Unit> result = notificationIds is {Count: > 0}
+            ? await mediator.Send(new DismissManyNotificationsCommand(UserId.Value, notificationIds))
+            : await mediator.Send(new DismissAllNotificationsCommand(UserId.Value));
         return result.ToActionResult();
     }
 }

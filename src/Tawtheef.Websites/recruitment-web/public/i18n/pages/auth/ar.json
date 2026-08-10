@@ -4,7 +4,7 @@
   "auth.login.ministry_name": "وزارة التربية والتعليم والتعليم العالي",
   "auth.login.qatarResidentDialog.resent": "تمت إعادة إرسال رمز التحقق إلى {{phone}}. يرجى إدخاله أدناه.",
   "auth.login.tawtheef": "نظام الاستقطاب والتوظيف وتخطيط القوى العاملة",
-  "auth.login.choose_residency": "يرجى تحديد حالتك:",
+  "auth.login.choose_residency": "تسجيل الدخول:",
   "auth.login.mode_resident": "أنا مقيم في قطر",
   "auth.login.mode_nonresident": "لست مقيمًا في قطر",
   "auth.login.tawtheeq_cta": "الدخول عبر نظام التوثيق الوطني (مقيمون داخل قطر)",
@@ -52,5 +52,5 @@
   "auth.otp.cancel": "إلغاء",
   "auth.otp.securityNote": "لأسباب أمنية، لا تشارك رمز التحقق مع أي شخص.",
   "auth.otp.footer": "© جميع الحقوق محفوظة",
-  "auth.otp.hintPhoneNumber": "يجب أن يكون رقم الجوال مسجلاً تحت الرقم الشخصي"
+  "auth.otp.hintPhoneNumber": "يجب أن يكون رقم الجوال مسجلًا تحت الرقم الشخصي"
 }

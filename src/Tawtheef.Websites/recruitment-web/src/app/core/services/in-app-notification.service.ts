@@ -7,12 +7,6 @@ import {NotificationModel} from '../../shared/models/notification.model';
 import {EndpointsService} from '../http/endpoints.service';
 import {NotificationService} from './notification.service';
 
-export enum NotificationAction {
-  MarkAsRead = 1,
-  MarkAsUnread = 2,
-  Dismiss = 3
-}
-
 @Injectable({providedIn: 'root'})
 export class InAppNotificationService {
   private readonly http = inject(HttpClient);
@@ -70,18 +64,26 @@ export class InAppNotificationService {
     );
   }
 
-  updateState(id: string, action: NotificationAction): Observable<void> {
-    return this.http.put<void>(this.endpoints.notifications.updateStateSingle(id), null, {
-      params: { action }
-    }).pipe(
+  markAsRead(id: string): Observable<void> {
+    return this.http.put<void>(this.endpoints.notifications.markAsRead(id), null).pipe(
       tap(() => this.refreshUnreadCount().subscribe())
     );
   }
 
-  updateManyState(action: NotificationAction, notificationIds?: string[]): Observable<void> {
-    return this.http.put<void>(this.endpoints.notifications.updateStateMany, notificationIds || null, {
-      params: { action }
-    }).pipe(
+  markManyAsRead(notificationIds?: string[]): Observable<void> {
+    return this.http.put<void>(this.endpoints.notifications.markManyAsRead, notificationIds || null).pipe(
+      tap(() => this.refreshUnreadCount().subscribe())
+    );
+  }
+
+  dismiss(id: string): Observable<void> {
+    return this.http.put<void>(this.endpoints.notifications.dismiss(id), null).pipe(
+      tap(() => this.refreshUnreadCount().subscribe())
+    );
+  }
+
+  dismissMany(notificationIds?: string[]): Observable<void> {
+    return this.http.put<void>(this.endpoints.notifications.dismissMany, notificationIds || null).pipe(
       tap(() => this.refreshUnreadCount().subscribe())
     );
   }

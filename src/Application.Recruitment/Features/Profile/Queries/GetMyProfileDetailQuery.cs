@@ -4,8 +4,4 @@ using FluentResults;
 
 namespace Application.Recruitment.Features.Profile.Queries;
 
-public sealed record GetMyProfileDetailQuery : IRequest<Result<MyProfileDetailDto>>
-{
-    public Guid UserId { get; init; }
-}
-
+public sealed record GetMyProfileDetailQuery(Guid UserId) : IRequest<Result<MyProfileDetailDto>>;

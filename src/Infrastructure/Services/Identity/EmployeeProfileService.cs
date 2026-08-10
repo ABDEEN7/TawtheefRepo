@@ -1,6 +1,6 @@
 ﻿using Application.Operation.Common.Interfaces.Services.HttpClients;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models;
@@ -42,8 +42,9 @@ public class EmployeeProfileService(
         if (string.IsNullOrWhiteSpace(user.Email))
             return Result.Fail<Unit>(ErrorsCodes.ExternalLoginEmailNotFound);
 
-        if (!user.Email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) && 
-            !user.Email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase))
+        if (!user.Email.EndsWith("@edu.gov.qa", StringComparison.OrdinalIgnoreCase) 
+            // && !user.Email.EndsWith("@education.qa", StringComparison.OrdinalIgnoreCase)
+            )
             return Result.Fail<Unit>(ErrorsCodes.ExternalLoginEmailDomainNotAllowed);
 
         return Result.Ok(Unit.Value);

@@ -14,8 +14,10 @@ export class EndpointsService {
   notifications = {
     list: this.getFullUrl('/notifications'),
     unreadCount: this.getFullUrl('/notifications/unread-count'),
-    updateStateSingle: (id: string) => this.getFullUrl(`/notifications/${id}/state`),
-    updateStateMany: this.getFullUrl('/notifications/state')
+    markAsRead: (id: string) => this.getFullUrl(`/notifications/${id}/read`),
+    markManyAsRead: this.getFullUrl('/notifications/read'),
+    dismiss: (id: string) => this.getFullUrl(`/notifications/${id}/dismiss`),
+    dismissMany: this.getFullUrl('/notifications/dismiss')
   };
   auth = {
     me: this.getFullUrl(this.getFullUrl(`/auth/me`)),

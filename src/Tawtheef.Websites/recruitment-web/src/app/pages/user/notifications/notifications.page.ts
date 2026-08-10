@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { InAppNotificationService, NotificationAction } from '../../../core/services/in-app-notification.service';
+import { InAppNotificationService } from '../../../core/services/in-app-notification.service';
 import { NotificationModel } from '../../../shared/models/notification.model';
 import { RelativeTimePipe } from '../../../shared/pipes/relative-time.pipe';
 import { NotificationDetailsDialogComponent } from '../../../shared/components/notification-details-dialog/notification-details-dialog.component';
@@ -119,7 +119,7 @@ export class NotificationsPage implements OnInit, OnDestroy {
 
   bulkMarkAsRead() {
     if (this.selectedIds.size === 0) return;
-    this.notificationsApi.updateManyState(NotificationAction.MarkAsRead, Array.from(this.selectedIds))
+    this.notificationsApi.markManyAsRead(Array.from(this.selectedIds))
       .subscribe(() => {
         this.selectedIds.clear();
         this.refresh();
@@ -128,7 +128,7 @@ export class NotificationsPage implements OnInit, OnDestroy {
 
   bulkDismiss() {
     if (this.selectedIds.size === 0) return;
-    this.notificationsApi.updateManyState(NotificationAction.Dismiss, Array.from(this.selectedIds))
+    this.notificationsApi.dismissMany(Array.from(this.selectedIds))
       .subscribe(() => {
         this.selectedIds.clear();
         this.refresh();
@@ -136,15 +136,11 @@ export class NotificationsPage implements OnInit, OnDestroy {
   }
 
   markAsRead(id: string) {
-    this.notificationsApi.updateState(id, NotificationAction.MarkAsRead).subscribe(() => this.refresh());
-  }
-
-  markAsUnread(id: string) {
-    this.notificationsApi.updateState(id, NotificationAction.MarkAsUnread).subscribe(() => this.refresh());
+    this.notificationsApi.markAsRead(id).subscribe(() => this.refresh());
   }
 
   dismiss(id: string) {
-    this.notificationsApi.updateState(id, NotificationAction.Dismiss).subscribe(() => this.refresh());
+    this.notificationsApi.dismiss(id).subscribe(() => this.refresh());
   }
 
   notificationTrackBy(index: number, n: NotificationModel) {

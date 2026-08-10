@@ -36,14 +36,14 @@ public class UserController(IMediator mediator) : ControllerBase
         if(UserId.IsFailed)
             return Unauthorized(UserId.Errors);
         var language = Request.Headers.AcceptLanguage.ToString();
-        var result = await mediator.Send(new GetRecruitmentProfileQuery { UserId = UserId.Value, Language = language});
+        var result = await mediator.Send(new GetRecruitmentProfileQuery(UserId.Value,language));
         return result.ToActionResult();
     }
     [HttpGet("profile/detail")]
     public async Task<IActionResult> GetProfileDetail(CancellationToken ct)
     {
         if (UserId.IsFailed) return Unauthorized(UserId.Errors);
-        var result = await mediator.Send(new GetMyProfileDetailQuery { UserId = UserId.Value }, ct);
+        var result = await mediator.Send(new GetMyProfileDetailQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
 

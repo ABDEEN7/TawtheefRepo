@@ -9,8 +9,8 @@ using Application.Recruitment.Features.Profile.DTOs;
 using Application.Recruitment.Features.Profile.DTOs.ReviseOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Queries;
-using MediatR;
 using FluentResults;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -229,6 +229,17 @@ public class ProfilesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd, ct);
         return result.ToActionResult();
     }
+    
+    [HttpPost("revisions/availability")]
+    public async Task<IActionResult> ReviseAvailability([FromBody] SaveProfileAvailabilityRequest request, CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+
+        var cmd = new ReviseProfileAvailabilityCommand(UserId.Value, request);
+        var result = await mediator.Send(cmd, ct);
+        return result.ToActionResult();
+    }
+    
     [HttpPost("revisions/personal/attachment")]
     public async Task<IActionResult> RevisePersonalAttachment([FromForm] ReviseProfilePersonalAttachmentRequest request, CancellationToken ct)
     {

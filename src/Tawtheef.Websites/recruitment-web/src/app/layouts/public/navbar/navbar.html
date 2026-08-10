@@ -3,7 +3,10 @@
     
     <!-- Right side (RTL): Ministry Logo -->
     <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="" (click)="navigateToHome($event)">
-        <img alt="Ministry Logo" src="../../../../assets/img/logo-en.png" class="logo-qa">
+        <img
+          alt="Ministry Logo"
+          [src]="(language.current$ | async) === 'ar' ? 'assets/img/logo-ar.png' : 'assets/img/logo-en.png'"
+          class="logo-qa">
     </a>
 
     <!-- Center: Main Navigation Links -->

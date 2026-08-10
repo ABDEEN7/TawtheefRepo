@@ -4,9 +4,6 @@ using FluentResults;
 
 namespace Application.Recruitment.Features.Authenticator.Queries;
 
-public record GetRecruitmentProfileQuery : IRequest<IResult<GetRecruitmentProfileDto>>
-{
-    public Guid UserId { get; init; }
-    public string Language { get; init; } = "en";
-}
+public record GetRecruitmentProfileQuery(Guid UserId, string Language = "en") 
+    : IRequest<IResult<GetRecruitmentProfileDto>>;
 
