@@ -1,7 +1,7 @@
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ProfileAssigned.ProfileAssignedModel>
-Profile Sent for Review
+Candidate Profiles Assigned for Review
 
 Dear Employee,
-The candidate profile "@(Model.Model.CandidateName)" has been sent to you for review.
+@Model.Model.AssignedProfileCount candidate profile(s) have been assigned to you for review.
 
 Portal Link: @(Model.Branding.OperationsUrl)/portal/approval-profile

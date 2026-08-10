@@ -7,6 +7,7 @@ using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Utils;
 
 namespace Seeds;
 
@@ -54,13 +55,6 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         var pools = await ResourcePools.BuildAsync(db, createdById, options, ct);
 
         // Weighted distributions
-        var candidateTypeWeighted = new WeightedPicker<Guid>([
-            (CandidateTypeIds.Qatari, 25),
-            (CandidateTypeIds.GCC, 15),
-            (CandidateTypeIds.ResidentQatar, 30),
-            (CandidateTypeIds.NonQatari, 30)
-        ]);
-
         var targetEntityWeighted = new WeightedPicker<Guid>([
             (TargetEntityIds.Schools, 65),
             (TargetEntityIds.Ministry, 35)
@@ -84,12 +78,12 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                 if (options.UseTransactionPerBatch)
                 {
                     await using var tx = await db.Database.BeginTransactionAsync(ct);
-                    await SeedBatchAsync(offset, take, createdById, options, lookups, pools, candidateTypeWeighted, targetEntityWeighted, rnd, ct);
+                    await SeedBatchAsync(offset, take, createdById, options, lookups, pools, targetEntityWeighted, rnd, ct);
                     await tx.CommitAsync(ct);
                 }
                 else
                 {
-                    await SeedBatchAsync(offset, take, createdById, options, lookups, pools, candidateTypeWeighted, targetEntityWeighted, rnd, ct);
+                    await SeedBatchAsync(offset, take, createdById, options, lookups, pools, targetEntityWeighted, rnd, ct);
                 }
 
                 db.ChangeTracker.Clear();
@@ -109,19 +103,29 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         SeedOptions options,
         LookupCache lookups,
         ResourcePools pools,
-        WeightedPicker<Guid> candidateTypeWeighted,
         WeightedPicker<Guid> targetEntityWeighted,
         SmartRandom rnd,
         CancellationToken ct)
     {
         var users = new List<ApplicantUser>(take);
+        var batchEmails = Enumerable.Range(offset + 1, take)
+            .Select(seq => EmailFactory.MakeSeedEmail(options.Seed, seq))
+            .ToArray();
+        var existingEmailRows = await db.Set<ApplicantUser>()
+            .AsNoTracking()
+            .Where(x => batchEmails.Contains(x.Email))
+            .Select(x => x.Email!)
+            .ToListAsync(ct);
+        var existingEmails = new HashSet<string>(existingEmailRows, StringComparer.OrdinalIgnoreCase);
 
         for (var i = 0; i < take; i++)
         {
             var seq = offset + i + 1;
 
             var name = NameFactory.Generate(rnd);
-            var email = EmailFactory.MakeEmail(name, seq);
+            var email = EmailFactory.MakeSeedEmail(options.Seed, seq);
+            if (existingEmails.Contains(email))
+                continue;
             var displayName = $"{name.FirstEn} {name.LastEn}";
 
             var userResult = ApplicantUser.Register(email, displayName);
@@ -137,7 +141,12 @@ public sealed class SmartUserProfileSeeder(DbContext db)
             user.FullNameEn = $"{name.FirstEn} {name.LastEn}";
             user.FullNameAr = $"{name.FirstAr} {name.LastAr}";
 
-            var makeComplete = rnd.NextDouble() < options.CompletionRate;
+            var makeComplete = true;
+            var candidateTypeId = CandidateTypeFactory.All[(seq - 1) % CandidateTypeFactory.All.Length];
+            var provider = ProviderFactory.ForCandidateType(
+                candidateTypeId,
+                seq,
+                allowOutsideQatar: lookups.OfficeIds.Count > 0);
 
             var profile = await BuildProfileAsync(
                 rnd: rnd,
@@ -145,11 +154,12 @@ public sealed class SmartUserProfileSeeder(DbContext db)
                 pools: pools,
                 createdById: createdById,
                 userId: user.Id,
-                candidateTypeId: candidateTypeWeighted.Pick(rnd),
+                candidateTypeId: candidateTypeId,
                 targetEntityId: targetEntityWeighted.Pick(rnd),
-                provider: ProviderFactory.PickProvider(rnd),
+                provider: provider,
                 makeComplete: makeComplete,
                 options: options,
+                status: StatusFactory.All[(seq - 1) % StatusFactory.All.Length],
                 ct: ct
             );
 
@@ -175,6 +185,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         string provider,
         bool makeComplete,
         SeedOptions options,
+        UserProfileStatus status,
         CancellationToken ct)
     {
         var now = DateTime.UtcNow;
@@ -191,18 +202,22 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         var genderId = rnd.NextDouble() < 0.55 ? GenderIds.Male : GenderIds.Female;
         var religionId = ReligionIds.Islam;
 
-        var nationalNumber = NationalIdFactory.MakeNationalNumber(rnd, candidateTypeId);
+        var nationalNumber = NationalIdFactory.MakeNationalNumber(options.Seed, userId);
         var qidExpiry = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(rnd.NextInt(1, 10)).AddDays(rnd.NextInt(0, 60)));
 
         Guid? officeId = null;
-        if (lookups.OfficeIds.Count > 0 && rnd.NextDouble() < 0.35)
+        if (ProfileValidatorUtils.RequiresOffice(candidateTypeId, provider))
+        {
+            if (lookups.OfficeIds.Count == 0)
+                throw new InvalidOperationException("At least one active Office is required for profiles created outside Qatar.");
             officeId = lookups.OfficeIds[rnd.NextInt(0, lookups.OfficeIds.Count)];
+        }
 
         // Attachments (CV + NationalCard) — controlled by ProfileAttachmentMode
         Resource? resume = await pools.GetProfileResumeAsync(options.ProfileAttachmentMode, createdById, rnd, ct);
         Resource? nationalCard = await pools.GetProfileNationalCardAsync(options.ProfileAttachmentMode, createdById, rnd, ct);
 
-        var useResidenceAddress = rnd.NextDouble() < options.ResidenceAddressProbability;
+        var useResidenceAddress = ProfileValidatorUtils.RequiresNationalAddress(candidateTypeId, provider);
         ResidenceAddress? residenceAddress = null;
         string? freeTextAddress = null;
 
@@ -226,8 +241,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
 
         // Sponsor: only for some Resident/NonQatari
         SponsorProfile? sponsor = null;
-        if ((candidateTypeId == CandidateTypeIds.ResidentQatar || candidateTypeId == CandidateTypeIds.NonQatari)
-            && rnd.NextDouble() < options.SponsorProbabilityForNonQatari)
+        if (ProfileValidatorUtils.RequiresSponsor(candidateTypeId, provider))
         {
             var sponsorCard = await pools.GetCertificateAsync(options.CertificateAttachmentMode, createdById, "sponsor-card.jpg", "image/jpeg", rnd, ct);
 
@@ -245,13 +259,14 @@ public sealed class SmartUserProfileSeeder(DbContext db)
         Guid? birthCertId = null;
         Guid? marriageCertId = null;
 
-        if (rnd.NextDouble() < options.BirthCertificateProbability)
+        if (ProfileValidatorUtils.RequiresBirthCertificate(candidateTypeId) || rnd.NextDouble() < options.BirthCertificateProbability)
         {
             var birthCert = await pools.GetCertificateAsync(options.CertificateAttachmentMode, createdById, "birth-certificate.pdf", "application/pdf", rnd, ct);
             birthCertId = birthCert?.Id;
         }
 
-        if (maritalStatusId == MaritalStatusIds.Married && rnd.NextDouble() < options.MarriageCertificateProbabilityIfMarried)
+        if (ProfileValidatorUtils.RequiresMarriageCertificate(candidateTypeId) ||
+            maritalStatusId == MaritalStatusIds.Married && rnd.NextDouble() < options.MarriageCertificateProbabilityIfMarried)
         {
             var marriageCert = await pools.GetCertificateAsync(options.CertificateAttachmentMode, createdById, "marriage-certificate.pdf", "application/pdf", rnd, ct);
             marriageCertId = marriageCert?.Id;
@@ -326,7 +341,7 @@ public sealed class SmartUserProfileSeeder(DbContext db)
             Skills = skills,
             Languages = langs,
 
-            Status = makeComplete ? UserProfileStatus.Submitted : UserProfileStatus.InCreation,
+            Status = status,
             AvailableForRecruitment = rnd.NextDouble() < 0.90
         };
 
@@ -561,8 +576,48 @@ public sealed class SmartUserProfileSeeder(DbContext db)
     // ==========================
     private static class ProviderFactory
     {
-        private static readonly string[] Providers = ["qatar-pass", "azure-ad", "local", "google"];
-        public static string PickProvider(SmartRandom rnd) => Providers[rnd.NextInt(0, Providers.Length)];
+        public static string ForCandidateType(
+            Guid candidateTypeId,
+            int sequence,
+            bool allowOutsideQatar)
+        {
+            if (candidateTypeId is var id &&
+                (id == CandidateTypeIds.Qatari || id == CandidateTypeIds.QidHolder))
+                return nameof(ProviderLoginIds.QatarPass);
+
+            if (candidateTypeId == CandidateTypeIds.NonQatari)
+                return allowOutsideQatar
+                    ? nameof(ProviderLoginIds.Google)
+                    : nameof(ProviderLoginIds.QatarResidentOtp);
+
+            if (candidateTypeId == CandidateTypeIds.GCC)
+                return !allowOutsideQatar || sequence % 2 == 0
+                    ? nameof(ProviderLoginIds.QatarResidentOtp)
+                    : nameof(ProviderLoginIds.Google);
+
+            return sequence % 2 == 0
+                ? nameof(ProviderLoginIds.QatarResidentOtp)
+                : nameof(ProviderLoginIds.QatarPass);
+        }
+    }
+
+    private static class CandidateTypeFactory
+    {
+        public static readonly Guid[] All =
+        [
+            CandidateTypeIds.Qatari,
+            CandidateTypeIds.GCC,
+            CandidateTypeIds.SonOfQatariMother,
+            CandidateTypeIds.WifeOfQatari,
+            CandidateTypeIds.ResidentQatar,
+            CandidateTypeIds.NonQatari,
+            CandidateTypeIds.QidHolder
+        ];
+    }
+
+    private static class StatusFactory
+    {
+        public static readonly UserProfileStatus[] All = Enum.GetValues<UserProfileStatus>();
     }
 
     private static class AgeFactory
@@ -621,18 +676,8 @@ public sealed class SmartUserProfileSeeder(DbContext db)
 
     private static class NationalIdFactory
     {
-        public static string MakeNationalNumber(SmartRandom rnd, Guid candidateTypeId)
-        {
-            if (candidateTypeId == CandidateTypeIds.Qatari || candidateTypeId == CandidateTypeIds.ResidentQatar)
-            {
-                var first = rnd.NextDouble() < 0.7 ? "2" : "3";
-                var rest = string.Concat(Enumerable.Range(0, 10).Select(_ => rnd.NextInt(0, 10).ToString(CultureInfo.InvariantCulture)));
-                return first + rest;
-            }
-
-            var len = rnd.NextInt(8, 13);
-            return string.Concat(Enumerable.Range(0, len).Select(_ => rnd.NextInt(0, 10).ToString(CultureInfo.InvariantCulture)));
-        }
+        public static string MakeNationalNumber(int seed, Guid userId)
+            => $"SEED-{Math.Abs((long)seed)}-{userId:N}";
     }
 
     private static class AddressFactory
@@ -1003,6 +1048,9 @@ public sealed class SmartUserProfileSeeder(DbContext db)
 
     private static class EmailFactory
     {
+        public static string MakeSeedEmail(int seed, int seq)
+            => $"seed.{Math.Abs((long)seed)}.{seq:D6}@example.local";
+
         public static string MakeEmail((string FirstEn, string FirstAr, string LastEn, string LastAr) name, int seq)
         {
             var local = $"{ToSlug(name.FirstEn)}.{ToSlug(name.LastEn)}.{seq:D6}";

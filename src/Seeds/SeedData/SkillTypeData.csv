@@ -1,0 +1,11 @@
+﻿Id,BackendName,NameAr,NameEn,DescriptionAr,DescriptionEn,DisplayOrder
+75C7317E-B6F2-5778-A584-894E4FC24B85,TECHNICAL,مهارات تقنية,Technical Skills,,,1
+FE776C93-5BE0-528D-94AE-5C9A4FBB657F,SOFT,مهارات شخصية,Soft Skills,,,2
+DFC8A9EC-0B84-52C7-B163-F06726624260,LANGUAGE,مهارات لغوية,Language Skills,,,3
+AEBD8C31-643C-5494-AA6C-E085D73E7F5B,MANAGEMENT,مهارات إدارية,Management Skills,,,4
+892ACB9C-C803-57E1-8FDD-598389BFA2C5,LEADERSHIP,مهارات قيادية,Leadership Skills,,,5
+BC7DB3E6-77F9-5ABF-9503-E269299217CC,COMPUTER,مهارات الحاسوب,Computer Skills,,,6
+2AC7B762-960B-5875-9DA1-FDB29F800A37,COMMUNICATION,مهارات التواصل,Communication Skills,,,7
+D7386702-4B2A-5657-A52F-F7BF59A2C5B9,CREATIVE,مهارات إبداعية,Creative Skills,,,8
+36161D68-DE31-5D0F-A6D5-7A703998FE5F,ANALYTICAL,مهارات تحليلية,Analytical Skills,,,9
+30B3A5A2-79D1-50E8-96D7-735ECAD23486,OTHER,مهارات مهنية عامة,Other Professional Skills,,,10

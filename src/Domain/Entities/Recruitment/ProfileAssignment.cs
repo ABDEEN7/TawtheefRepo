@@ -21,7 +21,7 @@ public class ProfileAssignment : EventEntity
     public DateTimeOffset AssignedAtUtc { get; private set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? UnassignedAtUtc { get; private set; }
 
-    public static ProfileAssignment Assign(Guid userProfileId, Guid employeeId)
+    public static ProfileAssignment Assign(Guid userProfileId, Guid employeeId, bool publishNotification = true)
     {
         var assignment = new ProfileAssignment
         {
@@ -30,7 +30,8 @@ public class ProfileAssignment : EventEntity
             IsActive = true,
             AssignedAtUtc = DateTimeOffset.UtcNow
         };
-        assignment.AddDomainEvent(new ProfileAssignedEvent(userProfileId, employeeId, DateTimeOffset.UtcNow));
+        if (publishNotification)
+            assignment.AddDomainEvent(new ProfileAssignedEvent(userProfileId, employeeId, DateTimeOffset.UtcNow));
         return assignment;
     }
 
