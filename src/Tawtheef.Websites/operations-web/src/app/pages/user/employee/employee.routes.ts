@@ -69,7 +69,7 @@ export const employeeRoutes: Routes = [
   {
     path: 'majors-skills-management',
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.MajorSkills.Manage] },
+    data: { permissions: [Permissions.MajorSkills.View, Permissions.MajorSkills.Manage], requiredAll: false },
     loadComponent: () => import('./majors-skills-management/majors-skills-management').then(m => m.MajorsSkillsManagementPage)
   },
   {
@@ -154,7 +154,7 @@ export const employeeRoutes: Routes = [
     path: "universities-management",
     loadComponent: () => import('./universities-management/universities-management').then(m => m.UniversitiesManagement),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.Universities.Manage] },
+    data: { permissions: [Permissions.Universities.View] },
   },
   {
     path: "job-points-configuration",

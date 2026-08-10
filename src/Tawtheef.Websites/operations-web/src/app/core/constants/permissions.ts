@@ -78,6 +78,7 @@ export const Permissions = {
     View: 'jobs.invitations.view',
   },
   MajorSkills: {
+    View: 'major-skill.view',
     Manage: 'major-skill.management',
   },
   OrganizationStructures: {

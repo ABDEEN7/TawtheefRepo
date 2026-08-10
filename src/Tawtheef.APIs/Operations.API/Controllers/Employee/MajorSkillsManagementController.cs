@@ -15,7 +15,7 @@ namespace Operations.API.Controllers.Employee;
 public class MajorSkillsManagementController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
+    [AuthorizePermission(PermissionKeys.MajorSkills.View, PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetAllMajorSkills([FromQuery] GetMajorSkillsQuery query, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
@@ -23,7 +23,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
 
     [HttpGet("{id:guid}")]
-    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
+    [AuthorizePermission(PermissionKeys.MajorSkills.View, PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajorSkillById([FromRoute] GetMajorSkillByIdQuery query, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
@@ -31,6 +31,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
     
     [HttpPost]
+    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> CreateMajorSkill([FromBody] CreateMajorSkillCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -57,7 +58,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     
     
     [HttpGet("lookups/majors")]
-    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
+    [AuthorizePermission(PermissionKeys.MajorSkills.View, PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajors([FromQuery] GetMainMajorsQuery query)
     {
         //get language from header
@@ -67,7 +68,7 @@ public class MajorSkillsManagementController(IMediator mediator) : ControllerBas
     }
 
     [HttpGet("lookups/sub-majors")]
-    [AuthorizePermission(PermissionKeys.MajorSkills.Manage)]
+    [AuthorizePermission(PermissionKeys.MajorSkills.View, PermissionKeys.MajorSkills.Manage)]
     public async Task<IActionResult> GetMajors([FromQuery] GetSubMajorsQuery query)
     {
         var result = await mediator.Send(query);

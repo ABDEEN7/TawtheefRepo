@@ -71,6 +71,7 @@ public static class PermissionCatalog
         Permissions.OfficeUsers.View,
         Permissions.OfficeUsers.Manage,
 
+        Permissions.MajorSkills.View,
         Permissions.MajorSkills.Manage,
         Permissions.OrganizationStructures.Manage,
         

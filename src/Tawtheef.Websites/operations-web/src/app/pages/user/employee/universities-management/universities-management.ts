@@ -20,6 +20,8 @@ import {finalize} from 'rxjs/operators';
 import {UniversityFormPayload} from './models/university-form.payload';
 import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AuthService} from '../../../../core/auth/auth.service';
+import {Permissions} from '../../../../core/constants/permissions';
 
 @Component({
   selector: 'app-universities-management',
@@ -44,6 +46,7 @@ export class UniversitiesManagement implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   private _universities = signal<UniversityDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -67,6 +70,7 @@ export class UniversitiesManagement implements OnInit {
   isRtl = computed(() => this.currentLang() === 'ar');
   sortedCountries = computed(() => this.sortOptionsByCurrentLanguage(this.countries()));
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  canManage = computed(() => this.authService.hasPermission(Permissions.Universities.Manage));
 
   isModalOpen = signal(false);
   modalMode = signal<'create' | 'edit'>('create');
@@ -154,6 +158,7 @@ export class UniversitiesManagement implements OnInit {
   }
 
   openAdd() {
+    if (!this.canManage()) return;
     this.modalMode.set('create');
     this.editingUniversity.set(null);
     this.isModalLoading.set(false);
@@ -161,6 +166,7 @@ export class UniversitiesManagement implements OnInit {
   }
 
   openEdit(university: UniversityDto) {
+    if (!this.canManage()) return;
     if (!university.id) {
       return;
     }
@@ -182,6 +188,7 @@ export class UniversitiesManagement implements OnInit {
   }
 
   toggleStatus(university: UniversityDto) {
+    if (!this.canManage()) return;
     if (!university.id) {
       return;
     }
@@ -199,6 +206,7 @@ export class UniversitiesManagement implements OnInit {
   }
 
   createUniversity(payload: UniversityFormPayload) {
+    if (!this.canManage()) return;
     this.universitiesService.createUniversity(payload).subscribe({
       next: () => {
         this.notification.success(this.translate.instant('UNIVERSITIES.SAVE_SUCCESS'));
@@ -209,6 +217,7 @@ export class UniversitiesManagement implements OnInit {
   }
 
   updateUniversity(payload: { id: string; payload: UniversityFormPayload }) {
+    if (!this.canManage()) return;
     this.universitiesService.updateUniversity(payload.id, payload.payload).subscribe({
       next: () => {
         this.notification.success(this.translate.instant('UNIVERSITIES.SAVE_SUCCESS'));
