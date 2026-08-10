@@ -32,18 +32,8 @@ public class ProfileAssignedEventHandler(
             return;
         }
 
-        var profile = await uow.GetEntityRepository<UserProfile>().DbSet
-            .AsNoTracking()
-            .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == @event.UserProfileId, ct);
-
-        if (profile == null)
-        {
-            _log.Error("Profile with id {ProfileId} not found for ProfileAssignedEvent", @event.UserProfileId);
-            return;
-        }
-
-        var payload = JsonSerializer.Serialize(new ProfileAssignedModel(profile.Id, profile.User?.FullNameEn ?? "Candidate"));
+        var payload = JsonSerializer.Serialize(
+            new ProfileAssignedModel(@event.AssignedProfileCount));
         var notificationEmail = Notification.Create(
             NotificationChannel.Email,
             ProfileAssigned.TemplateKey,

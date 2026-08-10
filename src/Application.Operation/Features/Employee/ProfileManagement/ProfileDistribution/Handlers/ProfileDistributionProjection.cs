@@ -48,10 +48,9 @@ internal sealed class ProfileDistributionProjection(
 
 
         // 2) Base profiles query with eligibility rules + country filter
+        // Keep the paging query free of Includes. Joining collection navigations before
+        // Skip/Take multiplies profile rows and becomes very expensive for large pages.
         var profilesQuery = profileRepo.DbSet
-            .Include(p => p.User)
-            .Include(p => p.CandidateType)
-            .Include(p => p.TargetEntity)
             .WhereIf(user is EmployeeUser,p=> 
                 p.Provider == nameof(ProviderLoginIds.QatarPass) || 
                                               p.Provider == nameof(ProviderLoginIds.QatarResidentOtp))
@@ -65,8 +64,6 @@ internal sealed class ProfileDistributionProjection(
                        c.Status == ProfileChangeRequestStatus.UnderReview)))
                 )
             )
-            .Include(p => p.Qualifications!).ThenInclude(q => q.Major)
-            .Include(p => p.Qualifications!).ThenInclude(q => q.SubMajor)
             .WhereIf(status is not null, p => p.Status == status);
 
         if (user is OfficeUser office)
@@ -139,8 +136,24 @@ internal sealed class ProfileDistributionProjection(
                 profiles.Metadata.PageSize);
         }
 
-        // 6) Load active assignments for returned profile IDs (batched)
+        // 6) Load the navigation data only for the profiles in the requested page.
+        // Split queries avoid a cartesian result when collection navigations are included.
         var profileIds = profiles.Items.Select(p => p.Id).ToList();
+
+        var profileDetails = await profileRepo.DbSet
+            .Where(p => profileIds.Contains(p.Id))
+            .Include(p => p.User)
+            .Include(p => p.CandidateType)
+            .Include(p => p.TargetEntity)
+            .Include(p => p.Qualifications)
+            .AsSplitQuery()
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+        var profileDetailsById = profileDetails.ToDictionary(p => p.Id);
+        var orderedProfiles = profiles.Items
+            .Select(p => profileDetailsById[p.Id])
+            .ToList();
 
         var assignments = await assignmentRepo.DbSet
             .Where(a => a.IsActive && profileIds.Contains(a.UserProfileId))
@@ -150,7 +163,7 @@ internal sealed class ProfileDistributionProjection(
         var assignmentLookup = assignments.ToDictionary(a => a.UserProfileId, a => a);
 
         // 7.1) Load Minister Office Candidates for identifying them (batched)
-        var qids = profiles.Items.Select(p => p.NationalNumber).Where(q => q != null).ToList();
+        var qids = orderedProfiles.Select(p => p.NationalNumber).Where(q => q != null).ToList();
         var ministerOfficeQids = await uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet
             .Where(c => qids.Contains(c.Qid))
             .Select(c => c.Qid)
@@ -158,7 +171,7 @@ internal sealed class ProfileDistributionProjection(
         var ministerOfficeLookup = ministerOfficeQids.ToHashSet();
 
         // 8) Map DTOs
-        var items = profiles.Items
+        var items = orderedProfiles
             .Select(profile =>
             {
                 assignmentLookup.TryGetValue(profile.Id, out var assignment);

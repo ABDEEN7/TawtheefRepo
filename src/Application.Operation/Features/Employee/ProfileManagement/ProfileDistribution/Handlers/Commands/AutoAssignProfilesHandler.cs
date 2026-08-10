@@ -14,6 +14,7 @@ using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.Operation.Employee.Profile;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers.Commands;
 
@@ -100,6 +101,7 @@ public sealed class AutoAssignProfilesHandler(
             .ToDictionary(g => g.Key, g => g.Count());
 
         var newlyAssigned = employees.ToDictionary(e => e.Id, _ => 0);
+        var notificationAssignments = new Dictionary<Guid, ProfileAssignment>();
 
         foreach (var profile in assignableProfiles)
         {
@@ -118,7 +120,12 @@ public sealed class AutoAssignProfilesHandler(
             if (chosen is null)
                 break;
 
-            var assignmentResult = chosen.Employee.CreateProfileAssignmentIfAllowed(profile, chosen.Load, chosen.AssignedThisRound, perEmployeeLimit);
+            var assignmentResult = chosen.Employee.CreateProfileAssignmentIfAllowed(
+                profile,
+                chosen.Load,
+                chosen.AssignedThisRound,
+                perEmployeeLimit,
+                publishNotification: false);
             if (assignmentResult.IsFailed)
                 continue;
 
@@ -132,6 +139,7 @@ public sealed class AutoAssignProfilesHandler(
             });
 
             assignmentRepo.DbSet.Add(assignmentResult.Value);
+            notificationAssignments.TryAdd(chosen.Employee.Id, assignmentResult.Value);
             await auditRepo.AddAsync(new AuditTrailEntry
             {
                 UserProfileId = profile.Id,
@@ -151,6 +159,15 @@ public sealed class AutoAssignProfilesHandler(
             }, ct);
 
             newlyAssigned[chosen.Employee.Id]++;
+        }
+
+        foreach (var (employeeId, assignment) in notificationAssignments)
+        {
+            assignment.AddDomainEvent(new ProfileAssignedEvent(
+                assignment.UserProfileId,
+                employeeId,
+                DateTimeOffset.UtcNow,
+                newlyAssigned[employeeId]));
         }
 
         var assignedCount = newlyAssigned.Values.Sum();

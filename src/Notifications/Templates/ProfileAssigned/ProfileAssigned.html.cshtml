@@ -12,8 +12,8 @@
 
     var profileUrl = $"{website}/portal/approval-profile";
 
-    var title = "Candidate Profile Sent for Review";
-    var badgeText = "New Assignment";
+    var title = "Candidate Profiles Assigned for Review";
+    var badgeText = "New Assignments";
 }
 
 <!DOCTYPE html>
@@ -52,10 +52,11 @@
       <h1 class="title">@title</h1>
       <p class="text">Dear Employee,</p>
       <p class="text">
-        The candidate profile “@m.CandidateName” has been sent to you for review. Please review and take the appropriate action (approve or return).
+        <strong>@m.AssignedProfileCount</strong> candidate profile(s) have been assigned to you for review.
+        Please review them and take the appropriate action.
       </p>
       <p class="text" style="margin-top: 24px; text-align: center;">
-        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">View Profile Details</a>
+        <a class="cta" style="color: white;" href="@profileUrl" target="_blank">View Assigned Profiles</a>
       </p>
       <div class="divider"></div>
       <p class="muted">

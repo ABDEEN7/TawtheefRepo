@@ -84,7 +84,7 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         OtpSendsInWindow++;
     }
 
-    public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit)
+    public Result<ProfileAssignment> CreateProfileAssignmentIfAllowed(UserProfile profile, int currentLoad, int assignedThisRound, int? perEmployeeLimit, bool publishNotification = true)
     {
         // Respect per-employee cap for this distribution run
         if (assignedThisRound >= perEmployeeLimit)
@@ -99,12 +99,10 @@ public class User : IdentityUser<Guid>, IBaseEntity, IHasDomainEvents, ILocalize
         if (profile.Status != UserProfileStatus.Approved)
             profile.Status = UserProfileStatus.UnderReview;
 
-        var assignment = ProfileAssignment.Assign(profile.Id, this.Id);
+        var assignment = ProfileAssignment.Assign(profile.Id, this.Id, publishNotification);
 
         // keep aggregate consistency in memory
         ProfileAssignments.Add(assignment);
-
-        AddDomainEvent(new ProfileAssignedEvent(profile.Id, this.Id, DateTimeOffset.UtcNow));
 
         return Result.Ok(assignment);
     }
