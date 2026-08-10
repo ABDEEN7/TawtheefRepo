@@ -1,38 +1,37 @@
 ﻿JobNumber,JobGroupNumber,JobClassNumber,OrgScope,JobNameAr,JobNameEn
-4321,283,4,1, أخصائي تقييم طلبة لغة عربية أول,Senior Student Assessment Specialist - Arabic
-3788,283,3,1, اخصائي إسكان ,Housing Specialist
-3498,283,3,1, اخصائي تنسيق قاعدة بيانات أول,Senior Database Coordination Specialist
-4026,283,3,1, اخصائي توجيه لغة عربية أول,Senior Arabic Language Supervision Specialist
-3792,283,5,1, استشاري إسكان,Housing Consultant
-3790,283,4,1, خبير إسكان ,Housing Expert
-3765,283,4,1, خبير تدريب رياضيات ,Mathematics Training Expert
-3766,283,4,1, خبير توجيه تربيه خاصه أول,Senior Special Education Supervision Expert
-3726,283,3,1, خبير شؤون مؤسسات التعليم العالي,Higher Education Institutions Affairs Expert
-3767,283,3,1, خبير شؤون ماليه أول,Senior Financial Affairs Expert
-3785,283,3,1," خبير مراكز تعليمية وتدريبية أول
-",First Educational and Training Centers Expert
-3727,283,3,1, خبير مصادر تعلم أول,First Education Resources Expert
-2146,14,3,1, فني كهربائي ثاني,2nd Electric Technician
-2144,14,3,1, فني كهربائي رابع,4th Electric Technician
-2309,15,3,1, كهربائي موتورات ثالث,3rd Motors Electrician
-3764,283,3,1, مدقق داخلي أول,1st Internal Auditor
-2415,22,3,1, مدير مشروع كلية شمال الأطلنطي وجامعة كالجاري – قطر,Project Manager of North Atlantic College and University of Calgary- Qatar 
-2052,64,3,1, مراقب نقليات ثالث,3rd transportation Controller
-2053,64,3,1, مراقب نقليات ثاني,2nd transportation Controller
-2051,64,3,1, مراقب نقليات رابع,4th transportation Controller
-1937,74,3,1, مساعد كاتب شئون مالية أول,Senior Assistant Clerk for Financial Affairs 
-4875,22,3,1, مساعد مدير إدارة التعاون الدولي,Assistant Director of International Cooperation Department
-3728,55,3,1, ملاحظ عمال ملفات خامس,5th Files Clerk Supervisor
-4300,64,5,3, مندوب ثالث,3rd Public Services
-4304,55,5,3, مندوب رابع,4th Representative
-3077,163,5,1, منسق علاقات عامة,PR Coordinator
-4251,163,5,1, منسق مشتريات,Procurement Coordinator
-2801,113,3,1, استشاري  شؤون معلمين,Teachers Affairs Consultant
-2847,283,3,1, باحثة شؤون معلمين ثاني,2nd Teachers Affairs Researcher
+4321,283,4,1,أخصائي تقييم طلبة لغة عربية أول,Senior Student Assessment Specialist - Arabic
+3788,283,3,1,اخصائي إسكان,Housing Specialist
+3498,283,3,1,اخصائي تنسيق قاعدة بيانات أول,Senior Database Coordination Specialist
+4026,283,3,1,اخصائي توجيه لغة عربية أول,Senior Arabic Language Supervision Specialist
+3792,283,5,1,استشاري إسكان,Housing Consultant
+3790,283,4,1,خبير إسكان,Housing Expert
+3765,283,4,1,خبير تدريب رياضيات,Mathematics Training Expert
+3766,283,4,1,خبير توجيه تربيه خاصه أول,Senior Special Education Supervision Expert
+3726,283,3,1,خبير شؤون مؤسسات التعليم العالي,Higher Education Institutions Affairs Expert
+3767,283,3,1,خبير شؤون ماليه أول,Senior Financial Affairs Expert
+3785,283,3,1,خبير مراكز تعليمية وتدريبية أول,First Educational and Training Centers Expert
+3727,283,3,1,خبير مصادر تعلم أول,First Education Resources Expert
+2146,14,3,1,فني كهربائي ثاني,2nd Electric Technician
+2144,14,3,1,فني كهربائي رابع,4th Electric Technician
+2309,15,3,1,كهربائي موتورات ثالث,3rd Motors Electrician
+3764,283,3,1,مدقق داخلي أول,1st Internal Auditor
+2415,22,3,1,مدير مشروع كلية شمال الأطلنطي وجامعة كالجاري – قطر,Project Manager of North Atlantic College and University of Calgary- Qatar
+2052,64,3,1,مراقب نقليات ثالث,3rd transportation Controller
+2053,64,3,1,مراقب نقليات ثاني,2nd transportation Controller
+2051,64,3,1,مراقب نقليات رابع,4th transportation Controller
+1937,74,3,1,مساعد كاتب شئون مالية أول,Senior Assistant Clerk for Financial Affairs
+4875,22,3,1,مساعد مدير إدارة التعاون الدولي,Assistant Director of International Cooperation Department
+3728,55,3,1,ملاحظ عمال ملفات خامس,5th Files Clerk Supervisor
+4300,64,5,3,مندوب ثالث,3rd Public Services
+4304,55,5,3,مندوب رابع,4th Representative
+3077,163,5,1,منسق علاقات عامة,PR Coordinator
+4251,163,5,1,منسق مشتريات,Procurement Coordinator
+2801,113,3,1,استشاري  شؤون معلمين,Teachers Affairs Consultant
+2847,283,3,1,باحثة شؤون معلمين ثاني,2nd Teachers Affairs Researcher
 1797,173,3,1,أخصائي   أعلامي أول,Senior Media  Specialist
-1315,283,3,1,أخصائي  ميدان,Field Specialist 
+1315,283,3,1,أخصائي  ميدان,Field Specialist
 3474,67,5,1,أخصائي أنشطة مدرسية,School Activities Specialist
-4913,63,,1,أخصائي أنظمة أول ,Senior System Specialist
+4913,63,,1,أخصائي أنظمة أول,Senior System Specialist
 3854,283,,1,أخصائي أول,First Specialist
 3210,63,3,1,أخصائي أول أمن تكنولوجيا المعلومات,First Specialist of Information Technology Security
 1195,283,3,1,أخصائي أول مدارس,Senior School Specialist
@@ -47,13 +46,13 @@
 1783,163,3,1,أخصائي اتصال ومعلومات أول,Senior Communication and Information Specialist
 1495,283,3,1,أخصائي اتفاقات,Agreements Specialist
 1320,207,5,2,أخصائي اجتماعي,Social Specialist
-1321,143,3,1,أخصائي اجتماعي أول,Senior Social Specialist 
-1326,283,3,1,أخصائي احصاء أول,Senior Statistic Specialist 
+1321,143,3,1,أخصائي اجتماعي أول,Senior Social Specialist
+1326,283,3,1,أخصائي احصاء أول,Senior Statistic Specialist
 3328,283,3,1,أخصائي احصائي وتحليل بيانات,Statistics and Data Analysis Specialist
 1804,283,3,1,أخصائي ارشاد أول,Senior Guidance Specialist
 3284,283,,1,أخصائي ارشاد اكاديمي ومهني,Academic and Career Counseling Specialist
-4303,283,5,1,أخصائي ارشاد طلابي نفسي ,Psychological and Student Counseling Specialist
-2898,283,5,1,أخصائي ارشاد طلابي نفسي ثالث ,3nd Student Psychiatrist
+4303,283,5,1,أخصائي ارشاد طلابي نفسي,Psychological and Student Counseling Specialist
+2898,283,5,1,أخصائي ارشاد طلابي نفسي ثالث,3nd Student Psychiatrist
 4262,283,5,2,أخصائي اعتماد أكاديمي أول,Senior Academic Accreditation Specialist
 1330,163,3,1,أخصائي اعلام,Media Specialist
 1331,283,3,1,أخصائي اعلام أول,Senior Media Specialist
@@ -62,7 +61,7 @@
 4328,283,3,1,أخصائي الجودة أول,Senior Quality  Specialist
 1397,283,3,1,أخصائي الدعم الأضافي,Additional Support Specialist
 1398,283,3,1,أخصائي الدعم الأضافي أول,Senior Additional Support Specialist
-2870,283,3,1,أخصائي الدعم الإضافي أول,First Additional Support Specialist 
+2870,283,3,1,أخصائي الدعم الإضافي أول,First Additional Support Specialist
 50304,283,3,1,أخصائي انتاج,أخصائي انتاج
 1399,283,3,1,أخصائي بحث علمي,Scientific Research Specialist
 1400,283,3,1,أخصائي بحث علمي أول,Senior Scientific Research Specialist
@@ -70,8 +69,8 @@
 1339,63,3,1,أخصائي برامج,Program Specialist
 1340,63,3,1,أخصائي برامج أول,Senior Program Specialist
 3808,283,,1,أخصائي برامج اجتماعية,Social Programs Specialist
-3604,283,3,1,أخصائي بروتوكول ,Protocol Specialist
-3605,283,3,1,أخصائي بروتوكول  أول ,1st Protocol Specialist
+3604,283,3,1,أخصائي بروتوكول,Protocol Specialist
+3605,283,3,1,أخصائي بروتوكول  أول,1st Protocol Specialist
 1922,283,3,1,أخصائي بعثات,Scholarship Researcher
 1923,283,3,1,أخصائي بعثات أول,Senior Scholarship Specialist
 4217,283,3,2,أخصائي بيانات تدريب أول,Senior Training Data Specialist
@@ -83,7 +82,7 @@
 2195,283,3,1,أخصائي تحليل سياسات أول,Senior Policies Analysis Specialist
 4329,63,3,1,أخصائي تحليل نظم أول,Senior System Analysis Specialist
 3759,283,4,1,أخصائي تخطيط إستراتيجي,Strategic Planning Specialist
-3173,283,,2,أخصائي تخطيط استراتيجي وأبحاث, Strategic Planning and Research Specialist
+3173,283,,2,أخصائي تخطيط استراتيجي وأبحاث,Strategic Planning and Research Specialist
 3508,283,3,1,أخصائي تخطيط برامج تدريبية,Training Programs Planning Specialist
 3509,283,3,1,أخصائي تخطيط برامج تدريبية أول,Senior Training Programs Planning Specialist
 1970,273,3,2,أخصائي تدريب,Training Specialist
@@ -102,15 +101,15 @@
 3141,283,3,1,أخصائي تدقيق لغوي,PROOFREADING SPECIALIST
 3139,283,3,1,أخصائي تدقيق لغوي ثاني,SECOND PROOFREADING SPECIALIST
 4202,263,3,1,أخصائي تدقيق مالي,Financial Audit Specialist
-3308,283,,1,أخصائي تراخيص,
+3308,283,,1,أخصائي تراخيص,Licensing Specialist
 2706,283,5,2,أخصائي تربية خاصة أول,Senior Special Education Specialist
-1275,283,3,1,أخصائي ترجمة,Translation Specialist 
+1275,283,3,1,أخصائي ترجمة,Translation Specialist
 1276,283,3,1,أخصائي ترجمة أول,Senior Translator Specialist
 3114,283,3,1,أخصائي تصميم ديكور,Interior Design Specialist
 1821,283,3,1,أخصائي تصميم رسوم أول,1st Graphic Designing Specialist
-3180,283,3,1,أخصائي تطوير,  Development Specialist
+3180,283,3,1,أخصائي تطوير,Development Specialist
 3692,283,3,1,أخصائي تطوير تربية خاصة,Special Education Development Specialist
-3178,283,3,1,أخصائي تطوير ثاني, Second Development Specialist
+3178,283,3,1,أخصائي تطوير ثاني,Second Development Specialist
 4098,283,3,1,أخصائي تطوير مناهج,Curriculum Development Specialist
 3206,283,3,1,أخصائي تطوير مناهج أول,First Curriculum Development Specialist
 1295,283,3,1,أخصائي تطوير مهني,Professional Development Specialist
@@ -125,9 +124,9 @@
 4111,283,3,1,أخصائي تعليم تربوي أول,Senior Pedagogical Education Specialist
 4123,63,2,1,أخصائي تعليم تقني,Technical Education Specialist
 2520,63,3,1,أخصائي تعليم تكنولوجيا ثالث,3rd IT Education Specialist
-3208,283,5,3,أخصائي تعليم كبار ,Adult Education Specialist
+3208,283,5,3,أخصائي تعليم كبار,Adult Education Specialist
 2838,283,3,1,أخصائي تعليم كبار أول,1st Adult Education Specialist
-3738,283,3,1,أخصائي تعليم لغات ,Language Education Specialist
+3738,283,3,1,أخصائي تعليم لغات,Language Education Specialist
 1379,283,3,1,أخصائي تعليم مبكر,Stages of Early Education Specialist
 3280,283,3,1,أخصائي تعليم مبكر ( مسار أدبي ),Early Years Education Specialist Arts Pathway)
 3281,283,4,3,أخصائي تعليم مبكر ( مسار علمي ),Early Education Specialist (Science Stream)
@@ -140,16 +139,16 @@
 4112,283,3,1,أخصائي تقنية المعلومات أول,Senior Information Technology Specialist
 2440,283,3,1,أخصائي تقييم,Assessment Specialist
 2439,283,3,1,أخصائي تقييم أول,1st Assessment Specialist
-3288,283,3,1,أخصائي تقييم المدارس الخاصة,
+3288,283,3,1,أخصائي تقييم المدارس الخاصة,Private Schools Evaluation Specialist
 2437,283,3,1,أخصائي تقييم ثالث,3rd Assessment Specialist
 2438,283,3,1,أخصائي تقييم ثاني,2nd Assessment Specialist
 1285,283,3,1,أخصائي تقييم طلبة,Students Evaluation Specialist
-50307,283,3,1,أخصائي تقييم طلبة ,أخصائي تقييم طلبة 
+50307,283,3,1,أخصائي تقييم طلبة,أخصائي تقييم طلبة
 1284,283,3,1,أخصائي تقييم طلبة أول,1st Students Evaluation Specialist
 3551,283,4,1,أخصائي تقييم طلبة تربية إسلامية اول,Senior Student Assessment Specialist - Islamic Education
 1282,283,3,1,أخصائي تقييم طلبة ثالث,3rd Students Evaluation Specialist
 1283,283,3,1,أخصائي تقييم طلبة ثاني,2nd Students Evaluation Specialist
-3552,283,4,1,أخصائي تقييم طلبة لغة عربية ,Student Assessment Specialist - Arabic
+3552,283,4,1,أخصائي تقييم طلبة لغة عربية,Student Assessment Specialist - Arabic
 1849,283,3,1,أخصائي تقييم مادة,Subject Evaluation Specialist
 1848,283,3,1,أخصائي تقييم مادة أول,1st Subject Evaluation Specialist
 1847,283,3,1,أخصائي تقييم مادة ثاني,2nd Subject Evaluation Specialist
@@ -167,16 +166,16 @@
 3553,283,4,1,أخصائي توجية فنون بصرية ومسرح,Visual Literary and Drama Supervision Specialist
 4280,283,5,2,أخصائي توجيه  رياضيات أول,Senior Mathematics Supervision Specialist
 4212,113,3,1,أخصائي توجيه أحياء,Supervision Specialist(Biology)
-3554,283,4,1,أخصائي توجيه تربوي أول ,Senior Education Supervision Specialist
-3652,283,4,1,أخصائي توجيه تربية إسلامية ,Islamic Education Supervision Specialist
-3555,283,4,1,أخصائي توجيه تربية إسلامية أول ,Senior Islamic Education Supervision Specialist
+3554,283,4,1,أخصائي توجيه تربوي أول,Senior Education Supervision Specialist
+3652,283,4,1,أخصائي توجيه تربية إسلامية,Islamic Education Supervision Specialist
+3555,283,4,1,أخصائي توجيه تربية إسلامية أول,Senior Islamic Education Supervision Specialist
 3556,283,4,1,أخصائي توجيه تربية بدنية,Physical Education Supervision Specialist
-3557,283,4,1,أخصائي توجيه تربية بدنية أول ,Senior Physical Education Supervision Specialist
-3627,283,4,1,أخصائي توجيه تربية خاصة ,Special Education Supervision Specialist
-3558,283,4,1,أخصائي توجيه تربية خاصة أول ,Senoir Special Education Supervision Specialist
+3557,283,4,1,أخصائي توجيه تربية بدنية أول,Senior Physical Education Supervision Specialist
+3627,283,4,1,أخصائي توجيه تربية خاصة,Special Education Supervision Specialist
+3558,283,4,1,أخصائي توجيه تربية خاصة أول,Senoir Special Education Supervision Specialist
 4286,283,5,2,أخصائي توجيه تربية رياضية,Physical Education Supervision Specialist
 4287,283,5,2,أخصائي توجيه تربية رياضية أول,Senior Physical Education Supervision Specialist
-4885,113,2,1,أخصائي توجيه تعليم مبكر لغة انجليزية ,English Language Early Years Education Supervision Specialist
+4885,113,2,1,أخصائي توجيه تعليم مبكر لغة انجليزية,English Language Early Years Education Supervision Specialist
 4281,283,5,2,أخصائي توجيه تكنولوجيا معلومات,Information Technology Supervision Specialist
 4282,283,5,2,أخصائي توجيه تكنولوجيا معلومات أول,Senior Information Technology Supervision Specialist
 4284,283,5,2,أخصائي توجيه دراسات اجتماعية,Social Studies Supervision Specialist
@@ -185,14 +184,14 @@
 3629,283,4,1,أخصائي توجيه رياض أطفال أول,Senior Kindergarten Supervision Specialist
 4872,283,2,1,أخصائي توجيه رياض أطفال أول,Senior kindergarten Supervision Specialist
 4215,113,3,1,أخصائي توجيه رياضيات,Supervision Specialist(Mathematics)
-3630,283,4,1,أخصائي توجيه علوم ,Science Supervision Specialist
+3630,283,4,1,أخصائي توجيه علوم,Science Supervision Specialist
 3632,283,4,1,أخصائي توجيه فنون بصرية أول,Senior Visual Arts Supervision Specialist
 4288,283,5,2,أخصائي توجيه فنون بصرية ومسرح أول,Senior Visual Arts and Theater Supervision Specialist
 4213,113,3,1,أخصائي توجيه فيزياء,Supervision Specialist(Physics)
 4214,113,3,1,أخصائي توجيه كيمياء,Supervision Specialist(Chemistry)
 4283,283,5,2,أخصائي توجيه كيمياء,Chemistry Supervision Specialist
 4211,113,3,1,أخصائي توجيه لغة إنجليزية,Supervision Specialist(English Language)
-4134,283,3,1,أخصائي توجيه لغة عربية ,Arabic Language Supervision Specialist
+4134,283,3,1,أخصائي توجيه لغة عربية,Arabic Language Supervision Specialist
 3639,283,3,1,أخصائي توجيه مصادر تعلم أول,Senior Learning Sources Supervision Specialist
 3560,283,4,1,أخصائي توجيه مناهج أول,Senior Curriculum Supervision Specialist
 3633,283,4,1,أخصائي توجيه مناهج مختبرات مدرسية أول,Senior School Lab Curriculum Supervision Specialist
@@ -227,12 +226,12 @@
 1250,263,3,1,أخصائي شؤون مالية أول,Senior Financial Affairs Specialist
 3169,283,,1,أخصائي شؤون مدارس,School Affairs Specialist
 4264,283,3,1,أخصائي شؤون موارد بشرية,Human Resources Affairs Specialist
-3644,237,5,2,أخصائي شؤون موظفين ,Personnel Affairs specialist
-3645,237,5,2,أخصائي شؤون موظفين اول ,1st Personnel Affairs specialist
+3644,237,5,2,أخصائي شؤون موظفين,Personnel Affairs specialist
+3645,237,5,2,أخصائي شؤون موظفين اول,1st Personnel Affairs specialist
 1500,283,3,1,أخصائي شئون منظمات,Organization Affairs Specialist
 3650,63,,1,أخصائي شبكات أول,Senior Network Specalist
-3236,283,,1,أخصائي صحة وسلامة, Health and Safety Specialist
-2873,283,3,1,أخصائي صحة وسلامة أول ,Health and Safety Specialist
+3236,283,,1,أخصائي صحة وسلامة,Health and Safety Specialist
+2873,283,3,1,أخصائي صحة وسلامة أول,Health and Safety Specialist
 3299,283,3,1,أخصائي ضمان الجودة,Quality Assurance Specialist
 1917,283,3,1,أخصائي طلبات وتحقق,Application specialist
 858,293,5,2,أخصائي علاج طبيعي,Physiotherapist
@@ -242,7 +241,7 @@
 1790,163,3,1,أخصائي علاقات عامة أول,Senior Public Relations Specialist
 3256,283,3,1,أخصائي علوم أول,First Science Specialist
 3958,283,3,2,أخصائي قاعدة بيانات أول,Senior Database Specialist
-855,283,3,1,أخصائي قانوني,
+855,283,3,1,أخصائي قانوني,Legal Specialist
 1343,53,3,1,أخصائي قانوني,Legal Specialist
 1344,53,3,1,أخصائي قانوني أول,Senior Legal Specialist
 847,67,5,2,أخصائي قياس سمع,Audiologist
@@ -279,7 +278,7 @@
 1396,283,3,2,أخصائي معايير اللغة الانجليزية أول,Senior English Language Standards Specialist
 1389,283,3,2,أخصائي معايير اللغة العربية,Arabic Language Standards Specialist
 1390,283,3,2,أخصائي معايير اللغة العربية أول,Senior Arabic Language Standards Specialist
-3199,283,3,1,أخصائي معايير تربية بصرية, Visual Education Standards Specialist
+3199,283,3,1,أخصائي معايير تربية بصرية,Visual Education Standards Specialist
 3198,283,,1,أخصائي معايير تربية بصرية أول,First Visual Education Standards Specialist
 1391,63,3,1,أخصائي معايير تكنولوجيا المعلومات,IT Standards Specialist
 1392,63,3,1,أخصائي معايير تكنولوجيا المعلومات أول,Senior IT Standards Specialist
@@ -290,17 +289,16 @@
 1381,283,3,1,أخصائي معايير علوم اسلامية,Islamic Studies Standards Specialist
 1382,283,3,1,أخصائي معايير علوم اسلامية أول,Senior Islamic Studies Standards Specialist
 2892,283,3,1,أخصائي معايير لغة عربية ثاني,2nd Arabic Curriculum Standards Specialist
-1310,283,3,1,أخصائي مناهج, Curriculum Specialist
-3693,283,4,1,أخصائي مناهج أحياء,Biology curriculum specialist 
+1310,283,3,1,أخصائي مناهج,Curriculum Specialist
+3693,283,4,1,أخصائي مناهج أحياء,Biology curriculum specialist
 4110,283,3,1,أخصائي مناهج أحياء أول,Senior Biology Curriculum Specialist
 1311,283,3,1,أخصائي مناهج أول,Senior Curriculum Specialist
 3694,283,4,1,أخصائي مناهج تربية إسلامية,Islamic Studies curriculum specialist
 3695,283,4,1,أخصائي مناهج تكنولوجيا معلومات,Information Technology Curriculum specialist
 3696,283,4,1,أخصائي مناهج طفولة مبكرة /علمي,Early childhood curriculum specialist / science track
-3697,283,4,1,أخصائي مناهج فيزياء,Physics  Curriculum specialist 
-3698,283,4,1,أخصائي مناهج كيمياء,Chemistry Curriculum specialist  
-3699,283,4,1,أخصائي مناهج لغة إنجليزية,"English Curriculum specialist
-"
+3697,283,4,1,أخصائي مناهج فيزياء,Physics  Curriculum specialist
+3698,283,4,1,أخصائي مناهج كيمياء,Chemistry Curriculum specialist
+3699,283,4,1,أخصائي مناهج لغة إنجليزية,English Curriculum specialist
 4109,283,3,1,أخصائي مناهج لغة إنجليزية أول,Senior English Language Curriculum Specialist
 3700,283,4,1,أخصائي مناهج لغة عربية,Arabic Curriculum specialist
 3485,283,3,1,أخصائي مناهج مادة الرياضيات,Mathematics Curriculum Specialist
@@ -309,22 +307,22 @@
 1314,283,3,1,أخصائي ميدان أول,1st Field Specialist
 1312,283,3,1,أخصائي ميدان ثالث,3rd Field Specialist
 1313,283,3,1,أخصائي ميدان ثاني,2nd Field Specialist
-50305,283,3,1,أخصائي ميداني  ,أخصائي ميداني  
+50305,283,3,1,أخصائي ميداني,أخصائي ميداني
 3301,63,,1,أخصائي نظم معلومات,Information Systems Specialist
 3278,283,5,2,أخصائي نفسي,Psychiatrist
 4301,13,,2,أخصائي هندسي أول,Senior Engineering Specialist
-4102,283,3,1,أخصائي هندسي انشائي أول ,Senior Structural Engineering Specialist
+4102,283,3,1,أخصائي هندسي انشائي أول,Senior Structural Engineering Specialist
 3960,283,,2,أخصائي هندسي تكييف أول,Senior Air Conditioning Engineering Specialist
 4115,283,3,1,أخصائي هندسي حاسب آلي أول,Senior Computer Engineering Specialist
 4114,283,3,1,أخصائي هندسي شبكات أول,Senior Networks Engineering Specialist
 3962,283,,2,أخصائي هندسي عمارة أول,Senior Architectural Engineering Specialist
-4100,283,3,1,أخصائي هندسي كهرباء أول  ,Senior Electrical Engineering Specialist
+4100,283,3,1,أخصائي هندسي كهرباء أول,Senior Electrical Engineering Specialist
 3961,283,,2,أخصائي هندسي مدني أول,Senior Civil Engineering Specialist
 4113,283,3,1,أخصائي هندسي نظم أول,Senior Systems Engineering Specialist
 4116,283,3,1,أخصائي هندسي وسائط متعددة أول,Multimedia Engineering Specialist
 2234,223,3,1,أخصائي وثائق,Documents Specialist
 2235,223,3,1,أخصائي وثائق أول,Senior Documents Specialist
-3384,67,5,2,أخصائي ومنسق بحث علمى,
+3384,67,5,2,أخصائي ومنسق بحث علمى,Scientific Research Specialist and Coordinator
 3805,63,3,1,أخصائي/مطور برامج ذكاء اصطناعي,Senior BI Developer
 3623,283,4,1,أخصائي  توجيه لغة إنجليزية طفولة,Early Childhood English Supervision Specialist
 3654,283,4,1,أخصائي  توجيه مسار أدبي,Literary Path Supervision Specialist
@@ -340,7 +338,7 @@
 1852,283,3,1,أستشارى تقييم مادة,Subject Evaluation Consultant
 1792,163,3,1,أستشارى علاقات عامة,Public Relations Consultant
 1899,283,3,1,أستشارى مراكز تعليمية وتدريبية,Educational and Training Centers Consultant
-3940,283,3,1,أستشارى مراكز تعليمية وتدريبية اول,Senior Educational and Training Centers Consultant 
+3940,283,3,1,أستشارى مراكز تعليمية وتدريبية اول,Senior Educational and Training Centers Consultant
 1892,283,3,1,أستشارى معادلة شهادات,Certificates Equivalency Consultant
 2237,223,3,1,أستشارى وثائق,Documents Consultant
 3943,283,3,1,أستشارى وثائق اول,Senior Documents Consultant
@@ -355,73 +353,73 @@
 2462,113,3,1,إستشاري تقييم,Assessment Consultant
 2463,113,3,1,إستشاري تقييم مدارس,Schools Assessment Consultant
 2464,113,3,1,إستشاري سياسات وأبحاث,Policies and Researches Consultant
-3086,283,3,1,إستشاري شؤون إدارية, Administrative Affairs Consultant
+3086,283,3,1,إستشاري شؤون إدارية,Administrative Affairs Consultant
 2465,53,3,1,إستشاري عقود,Contracts Consultant
 2826,273,3,1,إستشاري موارد بشرية,Human Resources Consultant
 4143,273,3,1,إستشاري موارد بشرية أول,Senior Human Resources Consultant
-130,13,3,1,اختصاصي دعم فني,Technical Support Specialist 
+130,13,3,1,اختصاصي دعم فني,Technical Support Specialist
 587,283,3,1,اخصائي,Specialist
 4918,67,5,1,اخصائي أنشطة,Activities Specialist
 2701,283,3,1,اخصائي أول علاج طبيعي,1st Physiotherapist Specialist
-3789,283,3,1,اخصائي إسكان أول ,First Housing Specialist
+3789,283,3,1,اخصائي إسكان أول,First Housing Specialist
 4127,283,3,1,اخصائي ارشاد أكاديمي ومهني اول,Senior Academic and Career Counseling Specialist
 3126,283,3,1,اخصائي ارشاد وتطوير مهنى اول,1st Guidance and professional Development Specialist
-50302,283,3,1,اخصائي التربية الخاصة والتعليم الدامج ,اخصائي التربية الخاصة والتعليم الدامج 
+50302,283,3,1,اخصائي التربية الخاصة والتعليم الدامج,اخصائي التربية الخاصة والتعليم الدامج
 3248,283,3,1,اخصائي انشطة كشفية,Scout Activities Specialist
 3249,283,3,1,اخصائي انشطة كشفية أول,First Scout Activities Specialist
 3923,283,3,1,اخصائي برامج اجتماعية اول,Senior Social Programs Specialis
 3330,283,3,1,اخصائي برامج وانشطة,Programs and Activities Specialist
-3341,67,3,2,اخصائي بصريات,
-3334,237,3,2,اخصائي تخاطب,Speech Therapist 
-4209,283,4,1,اخصائي تخطيط قوى عاملة ,Manpower Planning Specialist 
+3341,67,3,2,اخصائي بصريات,Optometrist
+3334,237,3,2,اخصائي تخاطب,Speech Therapist
+4209,283,4,1,اخصائي تخطيط قوى عاملة,Manpower Planning Specialist
 3811,283,3,1,اخصائي تراخيص دور حضانة,Nursery Licensing Specialist
 3812,283,3,1,اخصائي تراخيص دور حضانة أول,1st Nursery Licensing Specialist
 2705,283,5,2,اخصائي تربية خاصة,Special Education Specialist
 4894,283,5,2,اخصائي تربية خاصة ثاني,2nd Special Education Specialist
-4906,283,3,1,اخصائي تسجيل ونقل مدارس ,School Registration and Transfer Specialist
-1357,283,3,1,اخصائي تصميم جرافيك,Graphic Design Specialist 
+4906,283,3,1,اخصائي تسجيل ونقل مدارس,School Registration and Transfer Specialist
+1357,283,3,1,اخصائي تصميم جرافيك,Graphic Design Specialist
 4128,283,3,1,اخصائي تصميم رسوم,Graphic Design Specialist
 3437,283,3,1,اخصائي تعليم الكتروني,E-Learning Specialist
 3901,283,3,1,اخصائي تفتيش دور الحضانات,Nursery Inspection Specialist
 4141,283,3,1,اخصائي تفتيش دور الحضانات أول,Senior  Nursery Inspection Specialist
 4177,283,3,1,اخصائي تنسيق خدمات أول,Senior Services Coordination Specialist
-3464,283,3,1,اخصائي تنسيق قاعدة بيانات,
-50102,283,3,1,اخصائي توجية تعليم مبكر مسار أدبي   ,اخصائي توجية تعليم مبكر مسار أدبي   
-50215,283,3,1,اخصائي توجية فنون بصرية ,اخصائي توجية فنون بصرية 
-4032,283,3,1,اخصائي توجيه إدارة اعمال اول ,Senior Business Management Supervision Specialist
-50207,283,3,1,اخصائي توجيه احياء ,اخصائي توجيه احياء 
-50211,283,3,1,اخصائي توجيه تاريخ ,اخصائي توجيه تاريخ 
-4130,283,3,1,اخصائي توجيه تاريخ قطر أول ,Senior Qatar History Supervision Specialist  
-50208,283,3,1,اخصائي توجيه تربية إسلامية ,اخصائي توجيه تربية إسلامية 
-50213,283,3,1,اخصائي توجيه تربية رياضية ,اخصائي توجيه تربية رياضية 
+3464,283,3,1,اخصائي تنسيق قاعدة بيانات,Database Coordination Specialist
+50102,283,3,1,اخصائي توجية تعليم مبكر مسار أدبي,اخصائي توجية تعليم مبكر مسار أدبي
+50215,283,3,1,اخصائي توجية فنون بصرية,اخصائي توجية فنون بصرية
+4032,283,3,1,اخصائي توجيه إدارة اعمال اول,Senior Business Management Supervision Specialist
+50207,283,3,1,اخصائي توجيه احياء,اخصائي توجيه احياء
+50211,283,3,1,اخصائي توجيه تاريخ,اخصائي توجيه تاريخ
+4130,283,3,1,اخصائي توجيه تاريخ قطر أول,Senior Qatar History Supervision Specialist
+50208,283,3,1,اخصائي توجيه تربية إسلامية,اخصائي توجيه تربية إسلامية
+50213,283,3,1,اخصائي توجيه تربية رياضية,اخصائي توجيه تربية رياضية
 50301,283,3,1,اخصائي توجيه تربيه خاصه,اخصائي توجيه تربيه خاصه
-4219,283,5,2,اخصائي توجيه تعليم مبكر رياض أطفال ,Early Years Education Supervision Specialist (Kindergarten)
-4033,283,3,1,اخصائي توجيه تعليم مبكر رياض أطفال اول ,
-50104,283,3,1,اخصائي توجيه تعليم مبكر رياض أطفال   ,اخصائي توجيه تعليم مبكر رياض أطفال   
-50103,283,3,1,اخصائي توجيه تعليم مبكر لغة إنجليزية   ,اخصائي توجيه تعليم مبكر لغة إنجليزية   
-4034,283,3,1,اخصائي توجيه تعليم مبكر لغة انجليزية اول ,Senior English Language Early Education Supervision Specialist
+4219,283,5,2,اخصائي توجيه تعليم مبكر رياض أطفال,Early Years Education Supervision Specialist (Kindergarten)
+4033,283,3,1,اخصائي توجيه تعليم مبكر رياض أطفال اول,Senior Early Education Kindergarten Supervision Specialist
+50104,283,3,1,اخصائي توجيه تعليم مبكر رياض أطفال,اخصائي توجيه تعليم مبكر رياض أطفال
+50103,283,3,1,اخصائي توجيه تعليم مبكر لغة إنجليزية,اخصائي توجيه تعليم مبكر لغة إنجليزية
+4034,283,3,1,اخصائي توجيه تعليم مبكر لغة انجليزية اول,Senior English Language Early Education Supervision Specialist
 4036,283,3,1,اخصائي توجيه تعليم مبكر مسار أدبي,"Early Education Supervision Specialist, (Arabic, Islamic Studies and Social Sciences)"
-4035,283,3,1,اخصائي توجيه تعليم مبكر مسار ادبي اول ,"Senior Early Education Supervision Specialist, (Arabic, Islamic Studies and Social Sciences)"
+4035,283,3,1,اخصائي توجيه تعليم مبكر مسار ادبي اول,"Senior Early Education Supervision Specialist, (Arabic, Islamic Studies and Social Sciences)"
 4331,283,3,1,اخصائي توجيه تعليم مبكر مسار علمي,"Early Education Supervision Specialist, (Arabic, Islamic Studies and Social Sciences)"
 50101,283,3,1,اخصائي توجيه تعليم مبكر مسار علمي,اخصائي توجيه تعليم مبكر مسار علمي
-50210,283,3,1,اخصائي توجيه جغرافيا ,اخصائي توجيه جغرافيا 
-50214,283,3,1,اخصائي توجيه حاسب الي ,اخصائي توجيه حاسب الي 
-50203,283,3,1,اخصائي توجيه رياضيات ,اخصائي توجيه رياضيات 
-50204,283,3,1,اخصائي توجيه علوم ,اخصائي توجيه علوم 
-50212,283,3,1,اخصائي توجيه علوم اجتماعية ,اخصائي توجيه علوم اجتماعية 
+50210,283,3,1,اخصائي توجيه جغرافيا,اخصائي توجيه جغرافيا
+50214,283,3,1,اخصائي توجيه حاسب الي,اخصائي توجيه حاسب الي
+50203,283,3,1,اخصائي توجيه رياضيات,اخصائي توجيه رياضيات
+50204,283,3,1,اخصائي توجيه علوم,اخصائي توجيه علوم
+50212,283,3,1,اخصائي توجيه علوم اجتماعية,اخصائي توجيه علوم اجتماعية
 50206,283,3,1,اخصائي توجيه فيزياء,اخصائي توجيه فيزياء
-50205,283,3,1,اخصائي توجيه كيمياء ,اخصائي توجيه كيمياء 
-50202,283,3,1,اخصائي توجيه لغة انجليزية  ,اخصائي توجيه لغة انجليزية  
-50201,283,3,1,اخصائي توجيه لغة عربية ,اخصائي توجيه لغة عربية 
-50209,283,3,1,اخصائي توجيه مهارات حياتية ,اخصائي توجيه مهارات حياتية 
+50205,283,3,1,اخصائي توجيه كيمياء,اخصائي توجيه كيمياء
+50202,283,3,1,اخصائي توجيه لغة انجليزية,اخصائي توجيه لغة انجليزية
+50201,283,3,1,اخصائي توجيه لغة عربية,اخصائي توجيه لغة عربية
+50209,283,3,1,اخصائي توجيه مهارات حياتية,اخصائي توجيه مهارات حياتية
 2709,283,3,2,اخصائي ثاني علاج نطق ولغة,2nd Speech and Language Specialist
-3340,67,3,2,اخصائي حركة وتوجه,
+3340,67,3,2,اخصائي حركة وتوجه,Orientation and Mobility Specialist
 4169,283,3,1,اخصائي دعم لوجستي,Logistics Support Specialist
 3436,283,3,1,اخصائي رعاية موهوبين,Gifted Students Care Specialist
 3434,283,3,2,اخصائي صحة فم وأسنان,Oral and dental health specialist
-2715,227,5,2,اخصائي علاج نطق ولغة,Speech and Language Therapy Specialist 
+2715,227,5,2,اخصائي علاج نطق ولغة,Speech and Language Therapy Specialist
 2716,283,3,1,اخصائي قانون اول,1st Law Specialist
-3146,283,3,1,اخصائي كيمياء, CHEMISTRY SPECIALIST
+3146,283,3,1,اخصائي كيمياء,CHEMISTRY SPECIALIST
 3145,283,3,1,اخصائي كيمياء اول,FIRST CHEMISTRY SPECIALIST
 3122,217,5,2,اخصائي لغة الإشارة,Sign Language Specialist
 4185,263,3,1,اخصائي مالي,Finance Specialist
@@ -432,22 +430,22 @@
 4236,283,3,1,اخصائي مشاريع ومتابعات,Projects and Follow-Up Specialist
 2879,283,3,2,اخصائي مصادر تعليم وتعلم,Teaching and Learning Resources Specialist
 4290,283,3,1,اخصائي مناهج دراسية,Curriculum Specialist
-4193,283,3,1,اخصائي مناهج دراسية أول   ,Senior Curriculum Specialist
+4193,283,3,1,اخصائي مناهج دراسية أول,Senior Curriculum Specialist
 4126,283,3,1,اخصائي مناهج مادة الرياضيات اول,Senior Mathematics Curriculum Specialist
 2781,283,5,2,اخصائي نفسي اول,1st Psychologist
 2444,283,3,1,استاذ مشارك,Associate Professor
 2485,283,3,1,استشارى احصاء وتحليل بيانات,Statistic and Data Analysis Consultant
 2197,283,3,1,استشارى تحليل سياسات,Policies Analysis Consultant
-3306,283,,1,استشارى تخطيط استراتيجي,
+3306,283,,1,استشارى تخطيط استراتيجي,Strategic Planning Consultant
 1752,283,3,1,استشارى تربوي,Educational Consultant
 4316,283,3,1,استشارى تربوي أول,Senior Educational Consultant
-3303,283,,1,استشارى تربية خاصة ورعاية الموهوبين,
+3303,283,,1,استشارى تربية خاصة ورعاية الموهوبين,Special Education and Gifted Care Consultant
 2419,283,3,1,استشارى تقييم طلبة,Students Assessment Consultant
-2623,283,,1,استشارى دراسات دولية, International Studies CONSULTANT
+2623,283,,1,استشارى دراسات دولية,International Studies CONSULTANT
 4853,263,3,1,استشارى مالي اول,Senior Financial Consultant
 2565,283,3,2,استشاري,Consultant
-4055,283,3,1,استشاري  بمكتب وكيل الوزارة المساعد لشؤون التقييم ,Consultant at the Office of the Assistant Undersecretary for Evaluation Affairs
-3608,283,3,3,استشاري  بروتوكول ,Protocol Consultant
+4055,283,3,1,استشاري  بمكتب وكيل الوزارة المساعد لشؤون التقييم,Consultant at the Office of the Assistant Undersecretary for Evaluation Affairs
+3608,283,3,3,استشاري  بروتوكول,Protocol Consultant
 3588,283,4,1,استشاري أكاديمي,Academic Consultant
 4083,283,4,1,استشاري أكاديمي أول,Senior Academic Consultant
 3751,283,4,1,استشاري أكاديمي في التربية الإسلامية,Islamic Education Consultant
@@ -455,11 +453,11 @@
 3456,283,3,2,استشاري أول,1st Consultant
 3888,283,3,1,استشاري أول – تقييم طلبة تربية إسلامية,First Islamic Studies Students Evaluation Consultant
 3796,283,5,1,استشاري إداري لشؤون المباني أول,First Building Affairs Administrative Consultant
-2631,283,3,1,استشاري إرشاد طلابي, STUDENTS COUNSELING CONSULTANT
+2631,283,3,1,استشاري إرشاد طلابي,STUDENTS COUNSELING CONSULTANT
 4863,283,3,1,استشاري إرشاد وتطوير مهني أول,Senior Professional Counselling and Development Consultant
 3793,283,5,1,استشاري إسكان أول,First Housing Consultant
 3857,113,3,1,استشاري إشراف ورقابة دور الحضانة,Nurseries Supervision and Monitoring Consultant
-3927,283,3,1,استشاري اتصال ومعلومات اول,Senior Communication and Information Consultant 
+3927,283,3,1,استشاري اتصال ومعلومات اول,Senior Communication and Information Consultant
 3691,283,,1,استشاري اداري لشؤون المباني,Administrative Consultant for Building Affairs
 3924,283,3,1,استشاري ارشاد طلابي اول,Senior Student Counseling Consultant
 4027,283,3,1,استشاري انشطة,Activities  Consultant
@@ -468,81 +466,81 @@
 3524,283,3,1,استشاري بحث علمي,Research Consultant
 3893,283,3,1,استشاري بعثات أول,First Scholarships Consultant
 3118,283,3,1,استشاري تحليل بيانات,DATA ANALYSIS CONSULTANT
-4064,283,3,3,استشاري تحليل سياسات اول ,Senior Policy Analysis Consultant
-3753,283,3,1,استشاري تخطيط إستراتيجي ,Strategic Planning Consultant
+4064,283,3,3,استشاري تحليل سياسات اول,Senior Policy Analysis Consultant
+3753,283,3,1,استشاري تخطيط إستراتيجي,Strategic Planning Consultant
 4149,283,3,1,استشاري تخطيط برامج تدريبية اول,Senior Training Program Planning Consultant
 3511,283,3,3,استشاري تدريب وتنمية قدرات,Training and Capacity Development Consultant
-4025,283,3,3,استشاري تدريب وتنمية قدرات اول ,Senior  Training and capacity Building Consultant
+4025,283,3,3,استشاري تدريب وتنمية قدرات اول,Senior  Training and capacity Building Consultant
 3263,283,,1,استشاري تدقيق لغوي,Proofreading Consultant
 3149,263,3,1,استشاري تدقيق مالي,Financial Audit Consultant
 3890,283,3,1,استشاري تراخيص مؤسسات أكاديمية,Academic Institutions Licensing Consultant
 3891,283,3,1,استشاري تراخيص مؤسسات أكاديمية أول,First Academic Institutions Licensing Consultant
-3614,283,3,3,استشاري تراخيص مدارس خاصة  ,Private School Licensing Consultant  
+3614,283,3,3,استشاري تراخيص مدارس خاصة,Private School Licensing Consultant
 3824,113,2,1,استشاري تربية خاصة,Special Education consultant
 3930,283,3,1,استشاري تربية خاصة ورعاية الموهوبين اول,Senior Special Education and Gifted Students Consultant
 2484,113,3,1,استشاري تعليم,Education Consultant
 3795,283,5,1,استشاري تعليم أول,First Education Consultant
 4037,113,2,1,استشاري تعليم الكتروني,E-Learning Consultant
 3814,283,,1,استشاري تفتيش حضانات,Nursery Inspection Consultant
-3929,283,3,1,استشاري تفتيش دور حضانات اول,
+3929,283,3,1,استشاري تفتيش دور حضانات اول,Senior Nursery Inspection Consultant
 3813,283,3,1,استشاري تفتيش دور حضانة,Nursery Inspection Consultant
 3794,283,5,1,استشاري تقييم أول,First Evaluation Consultant
 4299,283,3,1,استشاري تقييم اجتماعيات أول,Senior Social Studies Assessment Consultant
 3895,283,3,1,استشاري تقييم طلبة أول,First Student Evaluation Consultant
 3526,283,4,1,استشاري تقييم طلبة تربية إسلامية,Student Assessment Consultant - Islamic Education
 3527,283,4,1,استشاري تقييم طلبة دراسات اجتماعية,Student Assessment Consultant - Social Studies
-3935,283,3,1,استشاري تقييم طلبة دراسات اجتماعية اول,Senior Social Studies  Assessment Consultant 
+3935,283,3,1,استشاري تقييم طلبة دراسات اجتماعية اول,Senior Social Studies  Assessment Consultant
 3528,283,4,1,استشاري تقييم طلبة رياضيات,Student Assessment Consultant - Mathematics
 3529,283,4,1,استشاري تقييم طلبة علوم,Student Assessment Consultant - Science
 3925,283,3,1,استشاري تقييم طلبة علوم اول,Senior Science  Assessment Consultant
 3530,283,4,1,استشاري تقييم طلبة لغة انجليزية,Student Assessment Consultant - English
 3936,283,3,1,استشاري تقييم طلبة لغة انجليزية اول,Senior English Language Assessment Consultant
-3531,283,4,1,استشاري تقييم طلبة لغة عربية ,Student Assessment Consultant - Arabic
+3531,283,4,1,استشاري تقييم طلبة لغة عربية,Student Assessment Consultant - Arabic
 3939,283,3,1,استشاري تقييم طلبة لغة عربية اول,Senior Arabic Language Assessment Consultant
 3889,283,3,1,استشاري تقييم مادة أول,First Subject Evaluation Consultant
 4322,283,4,1,استشاري تقييم مادة الدراسات الاجتماعية أول,Senior Social Studies Evaluation Consultant
 3892,283,3,1,استشاري تقييم مدارس أول,First Schools Evaluation Consultant
-3686,283,4,1,استشاري تواصل اجتماعي, Social Communication Consultant
+3686,283,4,1,استشاري تواصل اجتماعي,Social Communication Consultant
 3898,283,3,1,استشاري تواصل استراتيجي,Strategic Communication Consultant
-3532,283,4,1,استشاري توجية تربوي ,Education Supervision Consultant
-3535,283,4,1,استشاري توجيه إدارة اعمال ,Business Administration Supervision Consultant
+3532,283,4,1,استشاري توجية تربوي,Education Supervision Consultant
+3535,283,4,1,استشاري توجيه إدارة اعمال,Business Administration Supervision Consultant
 3533,283,4,1,استشاري توجيه اجتماعيات,Social Sciences Supervision Consultant
 4864,283,3,1,استشاري توجيه اجتماعيات أول,Senior Social Studies Supervision Consultant
 3534,283,4,1,استشاري توجيه ارشاد اكاديمي,Academic Counselling Supervision Consultant
-3536,283,4,1,استشاري توجيه تاريخ قطر ,Qatar History Supervision Consultant
+3536,283,4,1,استشاري توجيه تاريخ قطر,Qatar History Supervision Consultant
 3926,283,3,1,استشاري توجيه تاريخ قطر اول,Senior Qatar History  Supervision Consultant
-3937,283,3,1,استشاري توجيه تربوي اول,Senior Educational  Supervision Consultant 
+3937,283,3,1,استشاري توجيه تربوي اول,Senior Educational  Supervision Consultant
 3932,283,3,1,استشاري توجيه تربية إسلامية اول,Senior Islamic Studies Supervision Consultant
-3537,283,4,1,استشاري توجيه تربية اسلامية ,Islamic Education Supervision Consultant
+3537,283,4,1,استشاري توجيه تربية اسلامية,Islamic Education Supervision Consultant
 3538,283,4,1,استشاري توجيه تربية بدنية,Physical Education Supervision Consultant
-3942,283,3,1,استشاري توجيه تربية بدنية اول,Senior Physical Education Supervision  Consultant 
+3942,283,3,1,استشاري توجيه تربية بدنية اول,Senior Physical Education Supervision  Consultant
 3539,283,4,1,استشاري توجيه تربية خاصة,Special Education Supervision Consultatnt
 4229,283,3,1,استشاري توجيه تربية خاصة أول,Senior Special Education Supervision Consultant
-3621,283,4,1,استشاري توجيه تعليم مبكر ,Early Education Supervision Consultant
-3821,283,4,1,استشاري توجيه تعليم مبكر أول ,Senior Early Education Supervision Consultant
-4887,283,4,1,استشاري توجيه تعليم مبكر رياض أطفال ,Early Years Education Supervision Consultant Kindergarten
+3621,283,4,1,استشاري توجيه تعليم مبكر,Early Education Supervision Consultant
+3821,283,4,1,استشاري توجيه تعليم مبكر أول,Senior Early Education Supervision Consultant
+4887,283,4,1,استشاري توجيه تعليم مبكر رياض أطفال,Early Years Education Supervision Consultant Kindergarten
 4888,283,4,1,استشاري توجيه تعليم مبكر رياض أطفال أول,Senior Early Years Education Supervision Consultant Kindergarten
 4038,113,2,1,استشاري توجيه تعليم مبكر مسار ادبي,"Early Education Supervision Consultant, (Arabic, Islamic Studies and Social Sciences)"
 4039,113,2,1,استشاري توجيه تعليم مبكر مسار علمي,"Early Education Supervision Consultant, (Science, Math and English)"
 3540,283,4,1,استشاري توجيه حاسب آلي,IT Supervision Consultant
-4040,113,2,1,استشاري توجيه دراسات اجتماعية ,Social Sciences Supervision Consultant
+4040,113,2,1,استشاري توجيه دراسات اجتماعية,Social Sciences Supervision Consultant
 4230,283,3,1,استشاري توجيه دراسات اجتماعية أول,Senior Social Studies Supervision Consultant
 3541,283,4,1,استشاري توجيه رياض أطفال,Kindergarten Supervision Consultant
 3542,283,4,1,استشاري توجيه رياضيات,Mathematics Supervision Consultant
 3543,283,4,1,استشاري توجيه علوم,Science Supervision Consultant
 3934,283,3,1,استشاري توجيه علوم اول,Senior Science Supervision  Consultant
-3544,283,4,1,استشاري توجيه فنون بصرية ومسرح ,Visual Atrs and Drama Supervision Consultant
+3544,283,4,1,استشاري توجيه فنون بصرية ومسرح,Visual Atrs and Drama Supervision Consultant
 4228,283,3,1,استشاري توجيه فنون بصرية ومسرح أول,Senior Visual Arts and Theater Supervision Consultant
 3545,283,4,1,استشاري توجيه لغة انجليزية,English Supervision Consultant
 3546,283,4,1,استشاري توجيه لغة عربية,Arabic Supervision Consultant
 3938,283,3,1,استشاري توجيه لغة عربية اول,Senior Arabic Language Supervision Consultant
-3547,283,4,1,استشاري توجيه مسار أدبي ,Literary Stream Supervision Consultant
-3549,283,4,1,استشاري توجيه مسار علمي ,Science Stream Supervision Consultant
+3547,283,4,1,استشاري توجيه مسار أدبي,Literary Stream Supervision Consultant
+3549,283,4,1,استشاري توجيه مسار علمي,Science Stream Supervision Consultant
 3944,283,3,1,استشاري توجيه مسار علمي اول,Senior Science Track Supervision  Consultant
 3622,283,4,1,استشاري توجيه مشاريع الكترونية,E-Projects Supervision Consultant
 3550,283,4,1,استشاري توجيه مصادر تعلم,Learning Resources Supervision Consultant
 4218,283,4,1,استشاري توجيه مصادر تعلم اول,Senior Supervision Consultant (Learning Resources)
-4154,283,4,1,استشاري توجيه مهارات حياتية ,Life Skills Supervision Consultant
+4154,283,4,1,استشاري توجيه مهارات حياتية,Life Skills Supervision Consultant
 3620,283,4,1,استشاري توجيه  لغة إنجليزية طفولة,Early Childhood English supervision Consultant
 3656,283,4,1,استشاري توجيه  مناهج دراسات اجتماعية,Curriculum Social Studies supervision Consultant
 4882,283,3,1,استشاري جودة,Quality Consultant
@@ -556,8 +554,8 @@
 3450,283,3,3,استشاري شؤون تعليم مهني وتقني,Technical and Vocational Education Affairs Consultant
 3734,283,3,1,استشاري شؤون مؤسسات التعليم العالي,Higher Education Institutions Affairs  Consultant
 4152,283,3,1,استشاري شؤون معلمين اول,Senior Teacher Affairs Consultant
-3648,283,4,1,استشاري شؤون موظفين ,Personnel Affairs Consultant
-3649,283,4,1,استشاري شؤون موظفين أول ,1st Personnel Affairs Consultant 
+3648,283,4,1,استشاري شؤون موظفين,Personnel Affairs Consultant
+3649,283,4,1,استشاري شؤون موظفين أول,1st Personnel Affairs Consultant
 3259,283,3,1,استشاري شئون فنية,Technical Affairs Consultant
 3258,283,,1,استشاري شئون منظمات,Organizations Affairs Consultant
 2872,273,3,1,استشاري صحة وسلامة,Health and Safety Consultant
@@ -587,36 +585,36 @@
 3472,22,3,1,القائم بمهام رئيس قسم التوظيف والتنظيم,Acting Head of Recruitment and Organization Section
 4310,22,3,1,القائم بمهام رئيس قسم الخدمات العامة,Acting Head of General Services Section
 4874,22,3,1,القائم بمهام رئيس قسم الشؤون الاوربية والأمريكية,Acting Head of European and American Affairs Section
-4870,22,3,1,القائم بمهام رئيس قسم الشؤون الفنية للمعلمين والاداريين ,Acting Head of the Technical Affairs Section for Teachers and Administrators
+4870,22,3,1,القائم بمهام رئيس قسم الشؤون الفنية للمعلمين والاداريين,Acting Head of the Technical Affairs Section for Teachers and Administrators
 4079,22,3,1,القائم بمهام رئيس قسم العمليات,Acting Head of Operations Section
 4122,22,3,1,القائم بمهام رئيس قسم المشتريات,Acting Head of Procurements Section
 4121,22,3,1,القائم بمهام رئيس قسم المناقصات والعقود,Acting Head of Tenders and Contracts
-3918,22,3,1,القائم بمهام رئيس قسم المنظمات العربية والإسلامية ,Acting Head of Arab and Islamic Organizations Section
-4858,22,3,1,القائم بمهام رئيس قسم الموازنة ,Acting Head of the Budget Section
-4161,22,3,1,القائم بمهام رئيس قسم تخطيط البرامج التدريبية ,Acting Head of Training Program Planning Section
+3918,22,3,1,القائم بمهام رئيس قسم المنظمات العربية والإسلامية,Acting Head of Arab and Islamic Organizations Section
+4858,22,3,1,القائم بمهام رئيس قسم الموازنة,Acting Head of the Budget Section
+4161,22,3,1,القائم بمهام رئيس قسم تخطيط البرامج التدريبية,Acting Head of Training Program Planning Section
 4257,22,3,1,القائم بمهام رئيس قسم خدمة العملاء,Acting Head of Customer Service Section
-4311,22,3,1,القائم بمهام رئيس قسم شؤون المباني   ,Acting Head of Building Affairs Section
+4311,22,3,1,القائم بمهام رئيس قسم شؤون المباني,Acting Head of Building Affairs Section
 3900,22,3,1,القائم بمهام رئيس قسم شؤون الموظفين,Acting Head of Personnel affairs Section
 3487,22,,1,القائم بمهام مدير إدارة البعثات,Acting Director of Scholarship Department
-3845,22,3,1,القائم بمهام مدير إدارة التربية الخاصة ورعاية الموهوبين,Acting Director of Special Education and Gifted Students Department 
-4891,22,3,1,القائم بمهام مدير إدارة التعاون الدولي ,Acting Director of International Cooperation Affairs Department
-4857,22,3,1,القائم بمهام مدير إدارة الشؤون المالية ,Acting Director of the Financial Affairs Department
-4871,22,2,1,القائم بمهام مدير إدارة دور الحضانة,Acting Director of Nursery Department 
+3845,22,3,1,القائم بمهام مدير إدارة التربية الخاصة ورعاية الموهوبين,Acting Director of Special Education and Gifted Students Department
+4891,22,3,1,القائم بمهام مدير إدارة التعاون الدولي,Acting Director of International Cooperation Affairs Department
+4857,22,3,1,القائم بمهام مدير إدارة الشؤون المالية,Acting Director of the Financial Affairs Department
+4871,22,2,1,القائم بمهام مدير إدارة دور الحضانة,Acting Director of Nursery Department
 3484,22,,1,القائم بمهام مدير إدارة شؤون المدارس,Acting Director of School Affairs Department
 3730,22,3,1,القائم بمهام مدير إدارة شؤون مؤسسات التعليم العالي,Acting Director of Higher Education Institutions Affairs Department
-3910,22,3,1,القائم بمهام مدير إدارة مركز معلومات الطلبة  ,Acting Director of the Student Information Center Department
+3910,22,3,1,القائم بمهام مدير إدارة مركز معلومات الطلبة,Acting Director of the Student Information Center Department
 3729,22,3,1,القائم بمهام مدير إدارة معادلة الشهادات الدراسية الجامعية,Acting Director of University Certificates Equivalency Department
 3768,22,3,1,القائم بمهام مدير إدارة نظم المعلومات,Acting Director of Information Systems Department
 3497,22,3,1,القائم بمهام مدير ادارة التدقيق الداخلي,Acting Director of Internal Audit Department
-3897,22,4,1,القائم بمهام مدير ادارة التعليم المهني والتقني والتخصصي,"Department Acting Director of the Vocational, Technical and Specialized Education "
+3897,22,4,1,القائم بمهام مدير ادارة التعليم المهني والتقني والتخصصي,"Department Acting Director of the Vocational, Technical and Specialized Education"
 3651,22,3,1,القائم بمهام مدير ادارة شؤون المدارس الخاصة,Acting Director of Private Schools Affairs Department
 4851,22,3,1,القائم بمهام مدير المكتب الفني,Acting Technical Office Director
 4227,16,4,2,القائم بمهام مدير مدرسة,Acting School Principal
-4323,22,3,1,القائم بمهام مدير مركز خدمات دعم الطلبة ,Acting Director of Student Support Services Centre
+4323,22,3,1,القائم بمهام مدير مركز خدمات دعم الطلبة,Acting Director of Student Support Services Centre
 4247,22,3,1,القائم بمهام مدير مكتب الوزير,Acting Director of the Minister's Office
-4907,22,3,1,القائم بمهام مساعد المفوض العام لجميعة الكشافة والمرشدات القطرية ,Acting Assistant Chief Commissioner of the Qatar Scouts and Guides Association 
+4907,22,3,1,القائم بمهام مساعد المفوض العام لجميعة الكشافة والمرشدات القطرية,Acting Assistant Chief Commissioner of the Qatar Scouts and Guides Association
 4309,22,3,1,القائم بمهام مساعد مدير إدارة التربية الخاصة,Acting Assistant Director of Special Education and Gifted Students Department
-4899,22,3,1,القائم بمهام مساعد مدير مكتب الوزير لإدارة المشاريع ,Acting Assistant Director of the Minister's Office for Project Management
+4899,22,3,1,القائم بمهام مساعد مدير مكتب الوزير لإدارة المشاريع,Acting Assistant Director of the Minister's Office for Project Management
 3517,22,3,1,القائم بمهام وكيل الوزارة المساعد لشؤون التعليم العالي,Acting Assistant Undersecretary for Higher Education Affairs.
 3772,22,3,1,القائم يمهام أمين عام اللجنة الوطنية القطرية للتربية والثقافة والعلوم,Acting  Secretary General of Qatar National Commission
 3619,22,3,1,القائم يمهام مدير إدارة شؤون المدارس الخاصة,"Acting Director,the Private Schools Affairs Departme"
@@ -624,7 +622,7 @@
 4243,16,4,2,المكلف بمهام مدير مدرسة الجالية السورية,Acting Principal of the Syrian Community School
 4919,22,3,1,المكلف بمهام مساعد مدير إدارة التعليم الالكتروني والحلول الرقمية,Acting Assistant Director of E-Learning and Digital Solutions Department
 253,247,5,2,امين مخزن,Store Keeper
-4060,247,5,2,امين مخزن – احتياط ,Reserve  Store Keeper
+4060,247,5,2,امين مخزن – احتياط,Reserve  Store Keeper
 3217,74,3,1,امين مخزن خامس,5th Storekeeper
 261,283,3,1,باحث,Researcher
 2470,53,3,1,باحث   قانوني ثالث,3rd Legal Researcher
@@ -635,28 +633,28 @@
 3732,63,3,1,باحث أمن معلومات ثاني,Second Information Security Researcher
 3760,283,3,1,باحث أو أخصائي منظمات دولية,International Organizations Researcher / Specialist
 3965,283,3,1,باحث أول,Senior Researcher
-4909,283,3,1,باحث إدارة مشاريع ثالث, 3rd Project Management Researcher
+4909,283,3,1,باحث إدارة مشاريع ثالث,3rd Project Management Researcher
 2625,283,3,1,باحث إرشاد طلابي ثالث,STUDENTS COUNSELING CONSULTANT
 2626,283,3,1,باحث إرشاد طلابي ثاني,STUDENTS COUNSELING EXPERT
 3964,283,3,1,باحث إرشاد طلابي نفسي ثالث,Third Researcher of Student Psychological Counselling
 1909,283,3,1,باحث إرشاد وتطوير مهني أول,1st Guidance and professional Development Researcher
 1908,283,3,1,باحث إرشاد وتطوير مهني ثاني,2nd Guidance and professional Development Researcher
 3787,283,3,1,باحث إسكان أول,First Housing Researcher
-3441,283,3,1,باحث إسكان ثالث,3rd Housing Researcher 
+3441,283,3,1,باحث إسكان ثالث,3rd Housing Researcher
 3786,283,3,1,باحث إسكان ثاني,Second Housing Researcher
-3841,283,3,1,باحث اتصال ثاني ,Second Communication Researcher
+3841,283,3,1,باحث اتصال ثاني,Second Communication Researcher
 529,283,3,1,باحث احصاء,Statistic Researcher
 1324,283,3,1,باحث احصاء أول,1st Statistic Researcher
-1322,283,3,1,باحث احصاء ثالث,3rd Statistic Researcher 
-1323,283,3,1,باحث احصاء ثاني,2nd Statistic Researcher 
-1329,163,3,1,باحث اعلامي أول,1st Media Researcher  
-1327,163,3,1,باحث اعلامي ثالث,3rd Media Researcher 
-1328,163,3,1,باحث اعلامي ثاني,2nd Media Researcher  
+1322,283,3,1,باحث احصاء ثالث,3rd Statistic Researcher
+1323,283,3,1,باحث احصاء ثاني,2nd Statistic Researcher
+1329,163,3,1,باحث اعلامي أول,1st Media Researcher
+1327,163,3,1,باحث اعلامي ثالث,3rd Media Researcher
+1328,163,3,1,باحث اعلامي ثاني,2nd Media Researcher
 3963,283,3,1,باحث البحث العلمي أول,Senior Scientific Research Researcher
 1338,63,3,1,باحث برامج أول,1st Program Researcher
 2271,63,3,1,باحث برامج ثالث,3rd Program Researcher
 1337,63,3,1,باحث برامج ثاني,2nd Program Researcher
-4258,283,3,1,باحث بروتوكول ثالث  ,3rd Protocol Researcher
+4258,283,3,1,باحث بروتوكول ثالث,3rd Protocol Researcher
 4186,283,3,1,باحث بعثات ثالث,2nd Researcher
 2469,113,3,1,باحث تحليل بيانات أول,Senior Data Analysis Researcher
 3831,113,3,1,باحث تحليل بيانات ثالث,Third data analysis researcher
@@ -686,9 +684,9 @@
 3817,283,3,1,باحث تراخيص دور حضانة أول,1st Nursery Licensing Researcher
 3816,283,3,1,باحث تراخيص دور حضانة ثاني,2nd Nursery Licensing Researcher
 1901,283,3,1,باحث تراخيص مؤسسات أكاديمية ثاني,2nd Academic Institutions Licenses Researcher
-3611,283,3,1,باحث تراخيص مدارس خاصة أول ,1St Private School Licensing Researcher 
-3609,283,3,1,باحث تراخيص مدارس خاصة ثالث  ,3rd Private School Licensing Researcher
-3610,283,3,1,باحث تراخيص مدارس خاصة ثاني ,2nd Private School Licensing Researcher
+3611,283,3,1,باحث تراخيص مدارس خاصة أول,1St Private School Licensing Researcher
+3609,283,3,1,باحث تراخيص مدارس خاصة ثالث,3rd Private School Licensing Researcher
+3610,283,3,1,باحث تراخيص مدارس خاصة ثاني,2nd Private School Licensing Researcher
 1895,283,3,1,باحث تراخيص مراكز تدريبية وتعليمية أول,1st Training and Educational Centers Licenses Researcher
 4880,283,3,1,باحث تربوي ثالث,3rd Educational Researcher
 4881,283,3,1,باحث تربوي ثاني,2nd Educational Researcher
@@ -696,11 +694,11 @@
 4131,283,3,1,باحث تسجيل ونقل مدارس أول,Senior School Registration and Transfer Researcher
 4226,283,3,1,باحث تسجيل ونقل مدارس ثالث,Third School Registration and Transfer Researcher
 3972,283,3,1,باحث تصميم رسوم أول,Senior Graphic Design Researcher
-3797,273,3,1,باحث تطوير تعاون دولي ثالث ,Third International Cooperation Development Researcher
+3797,273,3,1,باحث تطوير تعاون دولي ثالث,Third International Cooperation Development Researcher
 4867,283,3,1,باحث تطوير تعاون دولي ثاني,2nd International Cooperation Development Researcher
 3973,283,3,1,باحث تطوير مناهج أول,Senior Curriculum Development Researcher
 4296,283,3,1,باحث تعليم أول,Senior Education Researcher
-4279,283,3,1,باحث تعليم تقني اول  ,Senior Technical Education Researcher
+4279,283,3,1,باحث تعليم تقني اول,Senior Technical Education Researcher
 4275,283,3,1,باحث تعليم تقني ثالث,3nd Technical Education Researcher
 4270,283,3,1,باحث تعليم تقني ثاني,2nd Technical Education Researcher
 3974,283,3,1,باحث تعليم كبار أول,Senior Adult Education Researcher
@@ -715,23 +713,22 @@
 3979,283,3,1,باحث تقييم مدارس أول,Senior School Evaluation Researcher
 3980,283,3,1,باحث تقييم مدارس ثالث,Third School Evaluation Researcher
 3981,283,3,1,باحث تقييم مدارس ثاني,Second School Evaluation Researcher
-4089,283,3,1,باحث تقييم مدارس خاصة أول ,Senior Private Schools Evaluation Researcher
+4089,283,3,1,باحث تقييم مدارس خاصة أول,Senior Private Schools Evaluation Researcher
 3982,283,3,1,باحث تقييم مدارس خاصة ثاني,Second Private Schools Evaluation Researcher
 4061,283,3,1,باحث تواصل اجتماعي أول,Senior Social Media Researcher
 4063,283,3,1,باحث تواصل اجتماعي ثالث,3nd Social Media Researcher
 4062,283,3,1,باحث تواصل اجتماعي ثاني,2nd Social Media Researcher
-3983,283,3,1,باحث توجيه إدارة أعمال ثالث,"Third Business Management Supervision Researcher
-"
-4041,283,2,1,باحث توجيه تعليم مبكر رياض أطفال اول ,Second Kindergarten Researcher
-4042,283,2,1,باحث توجيه تعليم مبكر لغة انجليزية اول ,Senior English Language Early Education Supervision Researcher
+3983,283,3,1,باحث توجيه إدارة أعمال ثالث,Third Business Management Supervision Researcher
+4041,283,2,1,باحث توجيه تعليم مبكر رياض أطفال اول,Second Kindergarten Researcher
+4042,283,2,1,باحث توجيه تعليم مبكر لغة انجليزية اول,Senior English Language Early Education Supervision Researcher
 4125,63,3,1,باحث ثالث,3rd Researcher
 4893,283,3,1,باحث ثاني,2nd Researcher
 3493,283,3,1,باحث جودة,Quality Researcher
 4239,283,3,1,باحث جودة اول,Senior Quality Researcher
 3984,283,3,1,باحث جودة ثالث,Third Quality Researcher
-4164,73,3,2,باحث خدمة جمهور أول ,Senior Public Service Researcher
+4164,73,3,2,باحث خدمة جمهور أول,Senior Public Service Researcher
 4086,283,3,1,باحث خدمة جمهور ثالث,Public Services Researcher
-4163,73,3,2,باحث خدمة جمهور ثاني ,2nd Public Service Researcher
+4163,73,3,2,باحث خدمة جمهور ثاني,2nd Public Service Researcher
 4076,283,3,1,باحث دور حضانات,Nurseries Researcher
 4158,283,3,1,باحث دور حضانات ثاني,Second Nurseries Researcher
 4144,283,3,1,باحث رياض أطفال ثاني,Senior Mathematics Training Researcher
@@ -743,7 +740,7 @@
 2218,283,3,1,باحث شؤون استقبال ثاني,2nd Reception Affairs Researcher
 3134,283,3,1,باحث شؤون تربية وثقافة أول,1st Educational Researcher  Affairs and Culture
 3133,283,3,1,باحث شؤون تربية وثقافة ثاني,2nd Educational Researcher  Affairs and Culture
-4221,283,3,1,باحث شؤون توظيف اول ,Senior Recruitment Affairs Researcher
+4221,283,3,1,باحث شؤون توظيف اول,Senior Recruitment Affairs Researcher
 4223,283,3,1,باحث شؤون توظيف ثالث,3rd Recruitment Affairs Researcher
 4222,283,3,1,باحث شؤون توظيف ثاني,2nd Recruitment Affairs Researcher
 2541,283,3,1,باحث شؤون دولية أول,1st International Affaires Researcher
@@ -766,15 +763,15 @@
 2874,283,5,1,باحث صحة وسلامة أول,Health and Safety First Researcher
 3475,283,3,1,باحث صحة وسلامة ثاني,2nd Health and Safety Researcher
 3986,283,3,1,باحث علاج طبيعي أول,Senior Physiotherapy Researcher
-4099,283,3,1,باحث علاج نطق ولغة أول ,Senior Speech and Language Therapy Researcher
+4099,283,3,1,باحث علاج نطق ولغة أول,Senior Speech and Language Therapy Researcher
 3987,283,3,1,باحث علاج نطق ولغة ثاني,Second Speech and Language Therapy Researcher
 3988,283,3,1,باحث علاج وظيفي أول,Senior Occupational Therapy Researcher
-3886,283,3,1,باحث في نظام التعليم الفرنسي ودول المغرب العربي,French and Arab Maghreb Countries Education System Researcher 
+3886,283,3,1,باحث في نظام التعليم الفرنسي ودول المغرب العربي,French and Arab Maghreb Countries Education System Researcher
 3989,283,3,1,باحث في نظام التعليم الفرنسي ودول المغرب العربي ثالث,Third Researcher in French Education System and Arab Maghreb Countries
 4326,53,3,1,باحث قانوني,Legal Researcher
-1342,53,3,1,باحث قانوني أول,1st Legal Researcher 
+1342,53,3,1,باحث قانوني أول,1st Legal Researcher
 1341,53,3,1,باحث قانوني ثاني,2nd Legal Researcher
-4912,53,3,1,باحث قانوني عقود ثالث, rd Legal Researcher (Contracts)3
+4912,53,3,1,باحث قانوني عقود ثالث,rd Legal Researcher (Contracts)3
 4848,283,3,1,باحث مدارس حكومية أول,First Public School’s Researcher
 3990,283,3,1,باحث مدارس حكومية ثالث,Third Public School Researcher
 4088,283,3,1,باحث مدارس حكومية ثاني,2nd Public Schools Researcher
@@ -806,7 +803,7 @@
 1719,283,3,1,باحث معايير مناهج لغة عربية أول,1st Arabic Language Curriculum Standards Researcher
 1717,283,3,1,باحث معايير مناهج لغة عربية ثالث,3rd Arabic Language Curriculum Standards Researcher
 1743,283,3,1,باحث معاييرتكنولوجيا معلومات أول,1st Information Technology Standards Researcher
-3601,283,3,1,باحث معماري ثالث,3rd Architecture Researcher 
+3601,283,3,1,باحث معماري ثالث,3rd Architecture Researcher
 4865,283,3,1,باحث معماري ثاني,2nd Architectural Researcher
 4069,283,3,1,باحث مناهج تاريخ أول,Senior History Curriculum Researcher
 4071,283,3,1,باحث مناهج تاريخ ثالث,3rd History Curriculum Researcher
@@ -841,13 +838,13 @@
 3739,283,4,1,خبير أكاديمي,Academic Expert
 3640,283,3,1,خبير أنشطة,Activities and Events Expert
 3449,283,3,1,خبير أول,Senior Expert
-3613,283,3,1,خبير أول تراخيص مدارس خاصة ,1st Private School Licensing Expert
+3613,283,3,1,خبير أول تراخيص مدارس خاصة,1st Private School Licensing Expert
 3677,283,3,1,خبير إحصاء وتحليل بيانات,Statistics and Data Analysis Expert
 4233,283,2,1,خبير إحصاء وتحليل بيانات أول,Senior Statistics and Data Analysis Expert
 1753,283,3,1,خبير إداري,Administrative Expert
 3409,283,,1,خبير إداري أول,Senior Administrative Expert
 1805,283,3,1,خبير إرشاد,Guidance Expert
-2630,283,3,1,خبير إرشاد طلابي,Student Counseling Expert 
+2630,283,3,1,خبير إرشاد طلابي,Student Counseling Expert
 3791,283,4,1,خبير إسكان أول,First Housing Expert
 4232,283,2,1,خبير إعلامي أول,Senior Media Expert
 1784,163,3,1,خبير اتصال ومعلومات,Communication and Information Expert
@@ -858,16 +855,16 @@
 3714,283,3,1,خبير ارشاد وتطوير مهني,Guidance and Professional Development Expert
 3718,283,3,1,خبير ارشاد وتطوير مهني أول,First Guidance and Professional Development Expert
 3757,283,3,1,خبير استشاري سياسات وأبحاث تربوية,Educational Policy and Research Consultant
-4225,283,4,1,خبير اعتماد أكاديمي أول ,Senior Academic Accreditation Expert
-2868,283,3,1,خبير امن وسلامة ,Security and Safety Expert
+4225,283,4,1,خبير اعتماد أكاديمي أول,Senior Academic Accreditation Expert
+2868,283,3,1,خبير امن وسلامة,Security and Safety Expert
 3615,283,3,1,خبير امن وسلامة أول,First Safety and Security Expert
 3483,283,3,1,خبير انشطة أول,Senior Activity Expert
 3250,283,3,1,خبير انشطة كشفية,Scout Activities Expert
 3401,283,,1,خبير انشطة كشفية أول,1st Scout Activities Expert
 3761,283,4,3,خبير بحث علمي,Scientific Research Expert
 3741,283,3,1,خبير برامج,Software Expert
-3606,283,3,1,خبير بروتوكول ,Protocol Expert
-3607,283,3,1,خبير بروتوكول  أول  ,1st Protocol Expert
+3606,283,3,1,خبير بروتوكول,Protocol Expert
+3607,283,3,1,خبير بروتوكول  أول,1st Protocol Expert
 1924,283,3,1,خبير بعثات,Scholarship Expert
 3406,283,3,1,خبير بعثات أول,Senior Scholarships Expert
 2279,63,3,1,خبير تجهيزات,Supplies Expert
@@ -875,7 +872,7 @@
 3117,283,3,1,خبير تحليل بيانات,DATA ANALYSIS EXPERT
 3754,283,3,1,خبير تحليل بيانات وإحصاء,Data Analysis and Statistics Expert
 2196,283,3,1,خبير تحليل سياسات,Policies Analysis Expert
-3917,283,3,1,خبير تخطيط استراتيجي وحوكمة ,Strategic Planning and Governance Expert
+3917,283,3,1,خبير تخطيط استراتيجي وحوكمة,Strategic Planning and Governance Expert
 4190,283,3,1,خبير تخطيط برامج تدريبية,Training Programs Planning Expert
 3914,283,3,1,خبير تخطيط وسياسات,Planning and Policy Expert
 1972,283,3,1,خبير تدريب,Training Expert
@@ -888,7 +885,7 @@
 3922,283,3,1,خبير تراخيص دور حضانة,Nursery Licensing Expert
 4266,283,3,1,خبير تراخيص دور حضانة أول,Senior Nurseries Licensing Expert
 3372,283,,1,خبير تراخيص مؤسسات اكاديمية أول,First Academic Institutions Licensing Expert
-3612,283,3,1,خبير تراخيص مدارس خاصة ,Private School Licensing Expert
+3612,283,3,1,خبير تراخيص مدارس خاصة,Private School Licensing Expert
 3458,283,3,1,خبير تربوي أول,Senior Educational Expert
 4884,283,2,1,خبير تربية بدنية,Physical Education Expert
 4124,283,2,1,خبير تربية خاصة,Special Education Expert
@@ -903,7 +900,7 @@
 4305,283,3,1,خبير تعليم تقني أول,Senior Technical Education Expert
 3828,113,3,1,خبير تعليم كبار,Adult Education Expert
 4245,113,3,1,خبير تعليم كبار اول,Senior Adult Education Expert
-3840,283,3,1,خبير تفتيش دور حضانة , Nursery Inspection Expert
+3840,283,3,1,خبير تفتيش دور حضانة,Nursery Inspection Expert
 3818,283,3,1,خبير تفتيش دور حضانة أول,1st Nursery Inspection Expert
 1862,283,3,1,خبير تقييم,Evaluation Expert
 3412,283,3,1,خبير تقييم أول,"1,st Evaluation Expert"
@@ -919,32 +916,32 @@
 3400,283,3,1,خبير تقييم مدارس أول,1st School Evaluation Expert
 4074,283,3,1,خبير تنسيق قاعدة بيانات,Database Coordination Expert
 2877,283,3,2,خبير تواصل اجتماعي,Social communication Expert
-3562,283,4,1,خبير توجية تاريخ قطر ,Qatar History Supervision Expert
+3562,283,4,1,خبير توجية تاريخ قطر,Qatar History Supervision Expert
 3590,283,4,1,خبير توجيه إدارة أعمال أول,Senior Business Administration Supervision Expert
 4914,113,3,1,خبير توجيه إدارة اعمال,Business administration supervision expert
 3563,283,4,1,خبير توجيه اجتماعيات,Social Sciences Supervision Expert
 3827,283,4,1,خبير توجيه اجتماعيات أول,First Social Studies Supervision Expert
-3589,283,4,1,خبير توجيه ارشاد أكاديمي أول ,Senior Academic Counselling Supervision Expert
-3635,283,4,1,خبير توجيه ارشاد اكاديمي ,Expert Academic Counseling Supervision
+3589,283,4,1,خبير توجيه ارشاد أكاديمي أول,Senior Academic Counselling Supervision Expert
+3635,283,4,1,خبير توجيه ارشاد اكاديمي,Expert Academic Counseling Supervision
 3596,283,4,1,خبير توجيه تاريخ قطر أول,Senior Qatar History Supervision Expert
-3564,283,4,1,خبير توجيه تربوي ,Education Supervision Expert
+3564,283,4,1,خبير توجيه تربوي,Education Supervision Expert
 3673,283,4,1,خبير توجيه تربوي أول,First Educational Supervision Expert
-3591,283,4,1,خبير توجيه تربية إسلامية ,Islamic Education Supervision Expert
+3591,283,4,1,خبير توجيه تربية إسلامية,Islamic Education Supervision Expert
 3548,283,4,1,خبير توجيه تربية إسلامية أول,Senior Islamic Education Supervision Expert
 3565,283,4,1,خبير توجيه تربية بدنية,Physical Education Supervision Expert
 3592,283,4,1,خبير توجيه تربية بدنية أول,Physical Education Supervision Expert
 3566,283,4,1,خبير توجيه تربية خاصة,Special Education Supervision Expert
-4044,113,2,1,خبير توجيه تعليم مبكر رياض أطفال ,
-4045,113,2,1,خبير توجيه تعليم مبكر رياض أطفال اول ,
-4046,113,2,1,خبير توجيه تعليم مبكر لغة انجليزية ,English Language Early Education Supervision Expert
-4047,113,2,1,خبير توجيه تعليم مبكر لغة انجليزية اول ,Senior English Language Early Education Supervision Expert
+4044,113,2,1,خبير توجيه تعليم مبكر رياض أطفال,Early Education Kindergarten Supervision Expert
+4045,113,2,1,خبير توجيه تعليم مبكر رياض أطفال اول,Senior Early Education Kindergarten Supervision Expert
+4046,113,2,1,خبير توجيه تعليم مبكر لغة انجليزية,English Language Early Education Supervision Expert
+4047,113,2,1,خبير توجيه تعليم مبكر لغة انجليزية اول,Senior English Language Early Education Supervision Expert
 4048,113,2,1,خبير توجيه تعليم مبكر مسار ادبي,"Early Education Supervision Expert, (Arabic, Islamic Studies and Social Sciences)"
-4049,113,2,1,خبير توجيه تعليم مبكر مسار ادبي اول ,"Senior Early Education Supervision Expert, (Arabic, Islamic Studies and Social Sciences)"
-4050,113,2,1,خبير توجيه تعليم مبكر مسار علمي اول ,"Senior Early Education Supervision Expert, (Science, math and English)"
+4049,113,2,1,خبير توجيه تعليم مبكر مسار ادبي اول,"Senior Early Education Supervision Expert, (Arabic, Islamic Studies and Social Sciences)"
+4050,113,2,1,خبير توجيه تعليم مبكر مسار علمي اول,"Senior Early Education Supervision Expert, (Science, math and English)"
 3921,283,4,1,خبير توجيه تكنلوجيا معلومات اول,Senior Information Technology Supervision Expert
 3636,283,4,1,خبير توجيه تكنولوجيا معلومات,Information Technology Supervision Expert
 4051,283,2,1,خبير توجيه دراسات اجتماعية اول,Senior Social Sciences Supervision Expert
-3567,283,4,1,خبير توجيه رياض أطفال ,Kindergarten Supervision Expert
+3567,283,4,1,خبير توجيه رياض أطفال,Kindergarten Supervision Expert
 3771,283,4,1,خبير توجيه رياض أطفال أول,Senior Kindergarten Supervision Expert
 3568,283,4,1,خبير توجيه رياضيات,Mathematics Supervision Expert
 3675,283,4,1,خبير توجيه رياضيات أول,First Mathematics Supervision Expert
@@ -952,21 +949,20 @@
 3825,283,4,1,خبير توجيه علوم أول,First Science supervision Expert
 3569,283,4,1,خبير توجيه فنون بصرية ومسرح,Visual Atrs and Drama Supervision Expert
 3593,283,4,1,خبير توجيه فنون بصرية ومسرح  أول,Senior Visual Atrs and Drama Supervision Expert
-3668,283,4,1,"خبير توجيه فنون بصريه 
-",Visual Art Supervision Expert
+3668,283,4,1,خبير توجيه فنون بصريه,Visual Art Supervision Expert
 4234,283,2,1,خبير توجيه لغة إنجليزية أول,Senior English Language Supervision Expert
 4873,283,2,1,خبير توجيه لغة إنجليزية طفولة,Childhood English Language Supervision Expert
 4878,113,2,1,خبير توجيه لغة إنجليزية طفولة اول,Senior Childhood English Language Supervision Expert
 3669,283,4,1,خبير توجيه لغة انجليزيه,English Supervision Expert
-3570,283,4,1,خبير توجيه لغة عربية ,Arabic Supervision Expert
+3570,283,4,1,خبير توجيه لغة عربية,Arabic Supervision Expert
 3559,283,4,1,خبير توجيه لغة عربية أول,Senior Arabic Supervision Expert
 4308,33,2,1,خبير توجيه مختبرات علوم أول,Senior School Lab Curriculum Science Supervision Expert
 3571,283,4,1,خبير توجيه مسار أدبي,Literary Stream Supervision Expert
 3594,283,4,1,خبير توجيه مسار أدبي أول,Senior Literary Stream Supervision Expert
-3572,283,4,1,خبير توجيه مصادر تعلم ,Learning Resources Supervision Expert
-4052,113,3,1,خبير توجيه مصادر تعلم اول ,Senior Learning Resources Supervision Expert
-3573,283,4,1,خبير توجيه مناهج ,Curriculum Supervsion Expert
-3667,283,4,1,خبير توجيه مناهج أول ,First Curriculum Supervsion Expert
+3572,283,4,1,خبير توجيه مصادر تعلم,Learning Resources Supervision Expert
+4052,113,3,1,خبير توجيه مصادر تعلم اول,Senior Learning Resources Supervision Expert
+3573,283,4,1,خبير توجيه مناهج,Curriculum Supervsion Expert
+3667,283,4,1,خبير توجيه مناهج أول,First Curriculum Supervsion Expert
 4153,283,4,1,خبير توجيه مهارات حياتية أول,Senior Life Skills Supervision Expert
 3634,283,4,1,خبير توجيه  تعليم مبكر,Early Education Supervision Expert
 3820,283,4,1,خبير توجيه  تعليم مبكر أول,Senior Early Education Supervision Expert
@@ -976,7 +972,7 @@
 4147,63,3,1,خبير جرافيك اول,Senior Graphic Expert
 3758,283,3,1,خبير جودة,Quality Expert
 3833,283,3,1,خبير جودة أول,First Quality Expert
-2624,283,,1,خبير دراسات دولية, International Studies expert
+2624,283,,1,خبير دراسات دولية,International Studies expert
 3676,283,3,1,خبير دراسات دوليه أول,First International Studies Expert
 2272,283,3,1,خبير رخص مهنية,Professional Licenses Expert
 2896,283,3,1,خبير رياض أطفال,Kindergarten Expert
@@ -986,7 +982,7 @@
 3856,283,3,1,خبير سياسات وابحاث أول,First Policy and Research Expert
 2533,283,3,1,خبير شؤون إدارية,Administrative Affairs Expert
 3371,283,3,1,خبير شؤون ادارية أول,First Administrative Affairs Expert
-3598,283,3,1,خبير شؤون خدمة الجمهور    ,Public Service Affairs Exper
+3598,283,3,1,خبير شؤون خدمة الجمهور,Public Service Affairs Exper
 3826,283,3,1,خبير شؤون خدمة الجمهور أول,First Customer Service Expert
 2866,283,3,1,خبير شؤون فنية,Technical Affairs Expert
 3115,263,3,1,خبير شؤون مالية,FINANCIL AFFAIRS EXPERT
@@ -995,9 +991,9 @@
 2632,213,3,1,خبير شؤون منظمات دولية,Organizations Expert
 3386,283,3,1,خبير شؤون منظمات دولية أول,First Organizations Expert
 3457,283,3,1,خبير شؤون موظفين,Personnel Affairs Experts
-3646,283,3,1,خبير شؤون موظفين ,Personnel Affairs Expert
-3647,283,3,1,خبير شؤون موظفين أول ,1st Personnel Affairs Expert 
-2871,283,3,1,خبير صحة وسلامة ,Health and Safety Expert
+3646,283,3,1,خبير شؤون موظفين,Personnel Affairs Expert
+3647,283,3,1,خبير شؤون موظفين أول,1st Personnel Affairs Expert
+2871,283,3,1,خبير صحة وسلامة,Health and Safety Expert
 3459,283,3,1,خبير صحة وسلامة أول,Senior Health and Safety Expert
 1791,163,3,1,خبير علاقات عامة,Public Relations Expert
 3414,283,3,1,خبير علاقات عامة اول,Senior Public Relations Expert
@@ -1010,8 +1006,8 @@
 4137,283,3,1,خبير مخازن,Wearhouse Expert
 4175,283,3,1,خبير مخازن أول,Senior Warehouses Expert
 4263,283,4,3,خبير مختبرات علوم أول,Senior Science Laboratory Expert
-1876,283,3,1,خبير مدارس ,Schools Expert
-3507,283,3,1,خبير مدارس اول , 1st Schools Expert
+1876,283,3,1,خبير مدارس,Schools Expert
+3507,283,3,1,خبير مدارس اول,1st Schools Expert
 1877,283,3,1,خبير مدارس خاصة,Private Schools Expert
 3388,283,3,1,خبير مدارس خاصة أول,Senior Private Schools Expert
 1898,283,3,1,خبير مراكز تعليمية وتدريبية,Educational and Training Centers Expert
@@ -1027,11 +1023,11 @@
 1860,283,3,1,خبير مناهج,Curriculum Expert
 4084,283,3,1,خبير مناهج أول,Senior Curriculum Expert
 3659,283,4,1,خبير مناهج دراسات اجتماعية أول,1st Curriculum Social Studies Expert
-3855,283,4,3,خبير مناهج فيزياء ,Physics Curriculum Expert
+3855,283,4,3,خبير مناهج فيزياء,Physics Curriculum Expert
 4255,283,4,3,خبير مناهج فيزياء  أول,Senior Physics Curriculum Expert
 4859,113,3,1,خبير مناهج لغة إنجليزية أول,Senior English Language Curriculum Expert
 3762,283,4,3,خبير مناهج لغة انجليزية,English Curriculum Expert
-3684,283,4,1,خبير مناهج لغة عربية أول ,First Arabic Curriculum Expert
+3684,283,4,1,خبير مناهج لغة عربية أول,First Arabic Curriculum Expert
 4179,13,2,1,خبير مهندسي مباني اول,Senior Building Engineers Expert
 2442,283,3,1,خبير ميدان,Field Expert
 3402,283,3,1,خبير ميدان أول,Senior Field Expert
@@ -1060,7 +1056,7 @@
 3574,22,4,1,رئيس قسم البحث العلمي,Head of Research Section
 3755,22,3,1,رئيس قسم التخطيط الإستراتيجي,Head of the Strategic Planning Section
 3421,22,,1,رئيس قسم التخطيط والدعم,Head of Planning and Support Section
-4187,22,3,1,رئيس قسم التدريب التربوي ,Head of Educational Training Section
+4187,22,3,1,رئيس قسم التدريب التربوي,Head of Educational Training Section
 2819,22,3,1,رئيس قسم التدريب والتطوير,Head of Training and Development Section
 3578,22,4,1,رئيس قسم التدريب وتنمية القدرات,Head of Training and Capacity Building Section
 3579,22,4,1,رئيس قسم التربية البدنية,Head of Physical Education Section
@@ -1075,7 +1071,7 @@
 3756,22,3,1,رئيس قسم الجودة,Head of Quality Section
 1446,22,3,1,رئيس قسم الخدمات العامة,Head of Public Services Section
 1444,22,3,1,رئيس قسم الخزينة والشيكات,Head of Treasury and Checks Section
-3479,22,3,1,رئيس قسم الدراسات القانونية والعقود,
+3479,22,3,1,رئيس قسم الدراسات القانونية والعقود,Head of Legal Studies and Contracts Section
 3422,22,,1,رئيس قسم الرخص والمعايير المهنية,Head of Professional Licences and Standards
 1439,22,3,1,رئيس قسم الرواتب والأجور,Head of Payroll and Wages Section
 308,22,3,1,رئيس قسم السفريات,Head of Travel Section
@@ -1103,7 +1099,7 @@
 3505,22,3,1,رئيس قسم بيانات وسجلات الطلبة,Head of Student Data and Records Section
 2786,22,3,1,رئيس قسم تخطيط البرامج التدريبية,Head of Training Programs Planning Section
 4898,22,3,1,رئيس قسم تدريب إدارى,Head of  Administrative Training Section
-4067,22,3,1,رئيس قسم تراخيص المراكز التعليمية ,Head of Educational Centers Licensing Section
+4067,22,3,1,رئيس قسم تراخيص المراكز التعليمية,Head of Educational Centers Licensing Section
 323,22,3,1,رئيس قسم تعليم الكبار,Head of Adult Education Section
 3502,22,4,1,رئيس قسم تقييم التعليم المبكر,Head of the Early Education Assessment Section
 3503,22,3,1,رئيس قسم تقييم المدارس الحكومية,Head of the Public Schools Evaluation Section
@@ -1120,19 +1116,19 @@
 3420,22,3,1,رئيس قسم رياض الاطفال,Head of Kindergarten Section
 620,22,3,1,رئيس قسم سيارات الدوحة,Head of Doha Automobile Dept.
 3499,22,4,1,رئيس قسم شؤون الاختبارات,Head of Examination Affairs Section
-1438,22,3,1,رئيس قسم شئون الموظفين,Head of Personnels Section 
+1438,22,3,1,رئيس قسم شئون الموظفين,Head of Personnels Section
 3424,22,3,1,رئيس قسم قبول وتسجيل الطلبة,Head of Student Admission and Registration Section
 3687,22,3,1,رئيس قسم مصادر التعلم,Head of Learning Resources Section
 3506,22,3,1,رئيس قسم معادلة وتصديق الشهادات المدرسية,Head of the School Certificates Equivalency and Attestation Section
 331,22,3,1,رئيس مراقبي الحراس,Head of Watchmen Control Section
-3915,283,3,1,رئيس مفتشي صيانة مباني , Inspector Chief Building Maintenance
-3916,283,3,1,رئيس مفتشي صيانة مباني أول ,Senior Building Maintenance Inspector
+3915,283,3,1,رئيس مفتشي صيانة مباني,Inspector Chief Building Maintenance
+3916,283,3,1,رئيس مفتشي صيانة مباني أول,Senior Building Maintenance Inspector
 3580,22,4,1,رئيسة قسم الرياضيات,Head of Mathematics Section
 3581,22,4,1,رئيسة قسم العلوم,Head of Science Section
 1647,74,3,1,رسام أول,1st Artist
 1645,74,3,1,رسام ثالث,3rd Artist
 3769,14,3,1,رسام هندسي أول,Senior Engineering Drafter
-13,19,5,1,سائق ,Driver 
+13,19,5,1,سائق,Driver
 4002,25,3,1,سائق أول,Senior Driver
 4003,25,3,1,سائق خامس,Fifth Driver
 1978,25,3,1,سائق خفيف أول,1st Light Driver
@@ -1150,12 +1146,12 @@
 2737,283,5,2,سكرتير ثان,2nd Secretary
 1216,74,3,1,سكرتير رابع,Fourth Secretary
 333,17,5,2,سكرتير مدرسة,School Secretary
-4058,17,5,2,سكرتير مدرسة – احتياط ,Reserve School Secretary
+4058,17,5,2,سكرتير مدرسة – احتياط,Reserve School Secretary
 4292,163,5,1,ضابط اتصال,Communication  Clerk
 4291,163,5,3,ضابط الفرقة الكشفية والانضباط المدرسي,Scout Group and School Discipline Officer
 1667,64,3,1,طابع أول,1st Typist
-3345,37,7,2,طابع برايل,
-3355,28,5,2,طابع برايل,
+3345,37,7,2,طابع برايل,Braille Typist
+3355,28,5,2,طابع برايل,Braille Typist
 1665,64,3,1,طابع ثالث,3rd Typist
 1666,64,3,1,طابع ثاني,2nd Typist
 1664,64,3,1,طابع رابع,4th Typist
@@ -1193,7 +1189,7 @@
 1928,55,3,1,عامل ملفات ثاني,2nd Files Clerk
 4845,55,3,3,عامل ملفات خامس,5th Files Clerk
 1926,55,3,1,عامل ملفات رابع,4th Files Clerk
-4171,55,3,3,عامل ملفات سادس ,6th Filing Worker
+4171,55,3,3,عامل ملفات سادس,6th Filing Worker
 4030,19,5,1,عاملة العناية بالأطفال,Child Care Worker
 3116,14,3,1,فنى بناء ثالث,3rd Costruction Technician
 4101,283,3,1,فنى بناء ثاني,2nd Construction Technician
@@ -1207,7 +1203,7 @@
 4118,63,5,2,فني تقنية معلومات أول,1st Information Technology Technician
 4008,24,5,2,فني تقنية معلومات ثالث,Third Information Technology Technician
 4009,63,5,2,فني تقنية معلومات ثاني,Second Information Technology Technician
-1505,14,3,1,فني تكييف وتبريد أول,1st  Air condition Technician 
+1505,14,3,1,فني تكييف وتبريد أول,1st  Air condition Technician
 1503,14,3,1,فني تكييف وتبريد ثالث,3rd Air condition Technician
 1504,14,3,1,فني تكييف وتبريد ثاني,2nd Air condition Technician
 1502,14,3,1,فني تكييف وتبريد رابع,4th Air condition Technician
@@ -1217,7 +1213,7 @@
 1511,14,3,1,فني حدادة ثالث,3rd Blacksmith Technician
 2830,15,3,1,فني خراطة وبرادة ثاني,2nd Turning and Filling Technician
 596,55,3,1,فني خياطة وتطريز,Tailoring and embroidery Technecian
-3344,37,7,2,فني سمعيات,
+3344,37,7,2,فني سمعيات,Audiology Technician
 1579,24,3,1,فني شبكات أول,1st Networks Technician
 1577,24,3,1,فني شبكات ثالث,3rd Network Technician
 1578,24,3,1,فني شبكات ثاني,2nd Networks Technician
@@ -1225,10 +1221,10 @@
 2102,14,3,1,فني صيانة مباني ثالث,3rd Building Maintenance Technician
 2170,14,3,1,فني صيانة مباني ثاني,2nd Building Maintenance Technician
 2101,14,3,1,فني صيانة مباني رابع,4th Building Maintenance Technician
-3358,28,5,2,فني عمليات صناعية,
-3360,55,3,3,فني كهرباء ثالث,
+3358,28,5,2,فني عمليات صناعية,Industrial Operations Technician
+3360,55,3,3,فني كهرباء ثالث,Electrical Technician III
 1528,14,3,1,فني لحام ثاني,2nd Welding Technician
-3361,28,,1,فني ميكانيكا,
+3361,28,,1,فني ميكانيكا,Mechanical Technician
 1534,14,3,1,فني نجارة رابع,4th Carpentry Technician
 1563,24,3,1,فني نظم أول,1st Systems Technician
 4136,24,5,2,فني وثائق إلكترونية رابع,4th Electronic Documents Technician
@@ -1258,13 +1254,13 @@
 4075,74,3,1,كاتب تسجيل ونقل مدارس ثالث,3rd School Registration and Transfer Clerk
 4324,74,3,1,كاتب تسجيل ونقل مدارس رابع,4th School registration and transfer clerk
 2434,283,3,1,كاتب تقييم طلبة ثالث,3rd Students Assessment Clerk
-2851,64,3,1,كاتب تواصل أول,1st Communications Clerk 
-2853,64,3,1,كاتب تواصل ثالث,3st Communications Clerk 
-2852,64,3,1,كاتب تواصل ثاني,2st Communications Clerk 
+2851,64,3,1,كاتب تواصل أول,1st Communications Clerk
+2853,64,3,1,كاتب تواصل ثالث,3st Communications Clerk
+2852,64,3,1,كاتب تواصل ثاني,2st Communications Clerk
 4238,74,3,1,كاتب ثاني,2nd Clerk
 4249,74,3,1,كاتب خدمة جمهور,Public Services Clerk
-4167,74,3,1,كاتب خدمة جمهور أول ,Senior Public Service Clerk
-4165,74,3,1,كاتب خدمة جمهور ثالث ,3rd Public Service Clerk
+4167,74,3,1,كاتب خدمة جمهور أول,Senior Public Service Clerk
+4165,74,3,1,كاتب خدمة جمهور ثالث,3rd Public Service Clerk
 4166,74,3,1,كاتب خدمة جمهور ثاني,2nd Public Service Clerk
 4080,74,3,1,كاتب خدمة جمهور رابع,Public Services Clerk
 1637,74,3,1,كاتب سكرتارية أول,1st Secretarial Clerk
@@ -1312,19 +1308,19 @@
 3829,173,3,1,محرر صحفي ثاني,Second Press Editor
 2620,74,,1,محصل رابع,Fourth collector
 373,87,5,2,محضر مختبر,Laboratorian
-3322,87,5,2,محضر مختبر احياء,Laboratory Assistant(Biology) 
+3322,87,5,2,محضر مختبر احياء,Laboratory Assistant(Biology)
 3320,87,5,2,محضر مختبر فيزياء,Laboratory Assistant(Physics)
 3321,87,5,2,محضر مختبر كيمياء,Laboratory Assistant(Chemistry)
-4195,63,3,1,محلل أعمال,Business Analyst 
-3746,63,3,1,محلل أنظمة أعمال ,Business Systems Analyst
+4195,63,3,1,محلل أعمال,Business Analyst
+3746,63,3,1,محلل أنظمة أعمال,Business Systems Analyst
 4021,63,3,1,محلل أنظمة أعمال أول,Senior Business Systems Analyst
-3881,63,3,1,محلل إدارة المخاطر ,Risk Management Analyst
-3871,63,3,1,محلل إدارة الهوية والوصول ,Identity & Access Management Analyst
+3881,63,3,1,محلل إدارة المخاطر,Risk Management Analyst
+3871,63,3,1,محلل إدارة الهوية والوصول,Identity & Access Management Analyst
 3873,63,3,1,محلل استمرارية الاعمال خدمات التعافي من الكوارث,Disaster Recovery Analyst
-3883,63,3,1,محلل الحوكمة الأمنية والمخاطر والامتثال ,GRC Analyst
-3875,63,3,1,محلل خصوصية ,Privacy Analyst
+3883,63,3,1,محلل الحوكمة الأمنية والمخاطر والامتثال,GRC Analyst
+3875,63,3,1,محلل خصوصية,Privacy Analyst
 1264,63,3,1,محلل مبرمج,Senior Developer
-3870,63,3,1,محلل مخاطر وتهديدات ,Risk and Security Analyst
+3870,63,3,1,محلل مخاطر وتهديدات,Risk and Security Analyst
 1265,63,3,1,محلل نظم,System Analyst
 1266,63,3,1,محلل نظم أول,1st System Analyst
 3514,283,3,1,مخرج أفلام,Film Director
@@ -1334,10 +1330,10 @@
 2608,24,3,1,مدخل بيانات ثاني,2nd Data Entry Clerk
 2606,64,3,1,مدخل بيانات رابع,4th Data Entry Clerk
 517,283,3,2,مدرب,Instructor
-3368,28,5,2,مدرب امن وسلامة,
+3368,28,5,2,مدرب امن وسلامة,Security and Safety Trainer
 3031,28,4,2,مدرب تكنولوجيا معلومات,Information Technology Instructor
 566,28,5,2,مدرب رياضة,Clerk
-3253,283,3,1,مدرب فنون موسيقية ثالث,Third Music Arts Instructor 
+3253,283,3,1,مدرب فنون موسيقية ثالث,Third Music Arts Instructor
 860,28,5,2,مدرب مهني مساعد,Assistant professional trainer
 1271,263,3,1,مدقق  مالي,Financial/Auditor
 2573,283,3,1,مدقق داخلي ثالث,Third Internal Auditor
@@ -1348,15 +1344,15 @@
 2796,22,3,1,مدير إدارة التخطيط والجودة,Director of Planning and Quality Department
 4065,22,3,1,مدير إدارة التخطيط والسياسات التربوية والابتكار,"Director of Planning, Educational Policies And Innovation Department"
 2805,22,3,1,مدير إدارة التدقيق الداخلي,Director of Internal Audit Department
-4068,22,3,1,مدير إدارة التربية الخاصة ,Director of Special Education Department
+4068,22,3,1,مدير إدارة التربية الخاصة,Director of Special Education Department
 3160,22,3,1,مدير إدارة التربية الخاصة ورعاية الموهوبين,Director of Special Education and Gifted Students Department
 4081,22,3,1,مدير إدارة التعليم الإلكتروني والحلول الرقمية,Director of e-Learning and Digital Solutions Department
 2797,22,3,1,مدير إدارة التعليم المبكر,Director of Early Years Education Department
 2808,22,4,1,مدير إدارة التوجيه التربوي,Director of Educational Supervision Department
 1445,22,3,1,مدير إدارة الخدمات العامة,Director of General Services Department
 1484,22,3,1,مدير إدارة السياسات والأبحاث التربوية,Director of Educational Policy and Research Department
-1345,22,3,1,مدير إدارة الشؤون القانونية ,Director of Legal Affairs Department
-4142,22,3,1,مدير إدارة الشؤون المالية ,Director of the Financial Affairs Department
+1345,22,3,1,مدير إدارة الشؤون القانونية,Director of Legal Affairs Department
+4142,22,3,1,مدير إدارة الشؤون المالية,Director of the Financial Affairs Department
 1440,22,3,1,مدير إدارة الشؤون المالية والإدارية,Director of Financial and Administrative Affairs Department
 2814,22,3,1,مدير إدارة الصحة والسلامة,Director of Health and Safety Department
 1476,22,3,1,مدير إدارة العلاقات العامة والاتصال,Director of Public Relations and Communications Department
@@ -1382,10 +1378,10 @@
 1064,16,4,2,مدير المجمع وصاحب الترخيص,Complex Manager & License Owner
 4847,22,3,1,مدير المركز العربي للتدريب التربوي لدول الخليج,Director of The Arab Educational Training Center for the Gulf States
 4903,22,3,1,مدير المكتب الفني,Director of the Technical Office
-4253,16,4,2,مدير روضة  ,kindergarten Principal
+4253,16,4,2,مدير روضة,kindergarten Principal
 163,22,3,1,مدير قسم الخدمات العامة,General Services Section Manager
 165,12,3,1,مدير قسم تطبيقات تكنولوجيا المعلومات,IT Apps. Section Manager
-220,12,3,1,مدير قسم عمليات تكنولوجيا المعلومات,IT Operations Section Manager 
+220,12,3,1,مدير قسم عمليات تكنولوجيا المعلومات,IT Operations Section Manager
 91,27,5,2,مدير مالي واداري,Financial & Admin. Manager
 1060,16,4,2,مدير مدرسة,School Manager
 1032,36,5,2,مدير مرحلة,Stage director
@@ -1424,7 +1420,7 @@
 1955,24,3,1,مراقب تكنولوجيا ثالث,3rd Technology Monitor
 1956,24,3,1,مراقب تكنولوجيا ثاني,2nd Technology Monitor
 3129,64,3,1,مراقب تواصل اجتماعي ثالث,3rd Social Media Monitor
-4844,64,3,1,مراقب حراس أول, First Superintendent
+4844,64,3,1,مراقب حراس أول,First Superintendent
 2429,283,3,1,مراقب خدمات مشتركة ثالث,3rd Shared Services Monitor
 3810,64,,1,مراقب دور حضانة ثالث,3rd Nursery Superintendent
 4148,44,3,1,مراقب دور حضانة ثاني,Second Nursery Supervisor
@@ -1439,7 +1435,7 @@
 2251,283,3,1,مراقب مخازن أول,1st Warehouse Superintedent
 4200,74,3,1,مراقب مخازن ثاني,2nd Warehouse Foreman
 2250,283,3,1,مراقب مستودع ثاني,2nd Warehouse Superintedent
-3899,117,5,2,مربية أطفال ,Baby Sitter
+3899,117,5,2,مربية أطفال,Baby Sitter
 1040,187,5,2,مرشد أكاديمي,Academic Advisor
 1801,283,3,1,مرشد ثاني,2nd Guide
 4932,28,4,2,مسؤول البحث والابتكار (معلم بحث وابتكار),Research & Innovation Officer (Research & Innovation Teacher)
@@ -1447,15 +1443,15 @@
 58,27,3,1,مسؤول مالي,Finance Officer
 473,47,5,2,مسؤول مركز  مصادر التعلم,learning sources officer
 2447,64,3,1,مساعد القبول والتسجيل,Admission and Registration Assistant
-3416,287,5,2,مساعد امين مخزن,
-3417,287,5,2,مساعد امين مكتبة,
+3416,287,5,2,مساعد امين مخزن,Assistant Storekeeper
+3417,287,5,2,مساعد امين مكتبة,Assistant Librarian
 2316,15,3,1,مساعد بناء,Construction Assistant
-1998,15,3,1,مساعد حداد,Assistant Blacksmith 
+1998,15,3,1,مساعد حداد,Assistant Blacksmith
 2284,15,3,1,مساعد سباك,Assistant Plumber
-3418,287,5,2,مساعد سكرتير مدرسة,
+3418,287,5,2,مساعد سكرتير مدرسة,Assistant School Secretary
 2006,15,3,1,مساعد صباغ,Assistant Painter
 4273,267,5,2,مساعد عامل خدمات,Assistnat Services Worker
-2332,15,3,1,مساعد عامل فني أسقف, Ceiling Finisher/ Installer Assistant
+2332,15,3,1,مساعد عامل فني أسقف,Ceiling Finisher/ Installer Assistant
 2324,15,3,1,مساعد عامل فني المنيوم,Aluminium Technician Assistant
 2340,15,3,1,مساعد عامل فني زجاج,Glass Worker Assistant
 2348,15,3,1,مساعد عامل فني سيلوتكس,False/Ceiling Installer Assistant
@@ -1472,8 +1468,8 @@
 2189,64,3,1,مساعد كاتب استقبال,Receptionist Assistant
 2835,64,3,1,مساعد كاتب استقبال خامس,5th Archivist Assistant
 1975,74,3,1,مساعد كاتب سكرتارية أول,Senior Secretarial Clerk Assistant
-1934,74,3,1,مساعد كاتب شئون إدارية,Assistant Clerk for Administrative Affairs 
-1935,74,3,1,مساعد كاتب شئون إدارية أول,Senior Assistant Clerk for Administrative Affairs 
+1934,74,3,1,مساعد كاتب شئون إدارية,Assistant Clerk for Administrative Affairs
+1935,74,3,1,مساعد كاتب شئون إدارية أول,Senior Assistant Clerk for Administrative Affairs
 2516,64,3,1,مساعد كاتب وثائق أول,1st Assistant Clerk
 2152,15,3,1,مساعد كهربائي,Electricians Assistant
 1203,22,3,1,مساعد لمدير مكتب نظم المعلومات,Assistant Director of IT Office
@@ -1489,25 +1485,25 @@
 3522,22,3,1,مساعد مدير إدارة شؤون المعلمين,Assistant Director of the Department of Teachers Affairs
 3326,22,3,1,مساعد مدير ادارة التعليم المبكر,Assistant Director of Early Years Education Department
 751,22,3,1,مساعد مدير ادارة الحسابات,Assistant Manager of Accounting Dep.
-4294,22,3,1,مساعد مدير مكتب الوزير لشؤون البحوث والسياسات , Assistant Director of the Minister's Office for Research and Policy Affairs
+4294,22,3,1,مساعد مدير مكتب الوزير لشؤون البحوث والسياسات,Assistant Director of the Minister's Office for Research and Policy Affairs
 2784,22,3,1,مساعد مدير مكتب الوزير لشؤون المتابعة,Assistant Director of the Minister's Office for Follow-Up Affairs
-3822,23,4,1,مساعد مدير مكتب الوزير لشؤون المتابعة ,Assistant Manager of the Minister Office for the Follow up Affairs
+3822,23,4,1,مساعد مدير مكتب الوزير لشؤون المتابعة,Assistant Manager of the Minister Office for the Follow up Affairs
 2783,22,3,1,مساعد مدير مكتب الوزير لشؤون خدمة الجمهور,Assistant Director of the Minister's Office for Public Service
-4293,22,3,1,مساعد مدير مكتب الوزير للشؤون الإعلامية والاتصال ,Assistant Director of the Minister's Office for Media and Communication Affairs
+4293,22,3,1,مساعد مدير مكتب الوزير للشؤون الإعلامية والاتصال,Assistant Director of the Minister's Office for Media and Communication Affairs
 1962,22,3,1,مساعد مدير مكتب تكنولوجيا المعلومات,Assistant Director of Information Technology Office
 2446,22,3,1,مساعد مدير مكتب سعادة الوزير,Assistant Manager of Office of His Excellency the Minister
 3800,47,5,2,مساعد مسؤول مصادر التعلم,Learning Resources Assistant Officer
 3481,147,5,2,مساعد مشرف اداري,Assistant Administrative Superintendent
 2276,24,3,1,مساعد معاين اتصالات,Communication Previewer Assistant
 813,77,5,2,مساعد معلم,assistant teacher
-3343,77,7,2,مساعد معلم برايل,
-3351,77,5,2,مساعد معلم برايل,
+3343,77,7,2,مساعد معلم برايل,Assistant Braille Teacher
+3351,77,5,2,مساعد معلم برايل,Assistant Braille Teacher
 2824,77,5,2,مساعد معلم تربية خاصة,Special Education Assistant Teacher
-3342,77,5,2,مساعد معلم موسيقى,
+3342,77,5,2,مساعد معلم موسيقى,Assistant Music Teacher
 420,22,3,1,مساعد ملحق,Assistant Attache
 1672,64,3,1,مساعد مندوب هجرة,Assistant Immigration Officer
 3415,287,5,2,مساعد موظف استقبال,Assistant Receptionist
-1990,15,3,1,مساعد نجار,Assistant Carpenter  
+1990,15,3,1,مساعد نجار,Assistant Carpenter
 3587,23,4,1,مساعدة مدير مكتب تقييم الطلبة,Assistant Director of Student Assessment Office
 4315,22,3,1,مساعدًا لمدير إدارة نظم المعلومات لشؤون المدارس بالوزارة,Assistant Director of Information Systems Department for Ministry School Affairs
 2283,283,3,1,مستشار,Consultant
@@ -1526,13 +1522,13 @@
 441,283,5,1,مشرف اجتماعي,Social Superintendent
 425,147,5,2,مشرف اداري,Administrative Superintendent
 4056,147,5,2,مشرف اداري- احتياط,Reserve Administrative Supervisor
-2888,74,3,1,مشرف ارشيف, Archive Supervisor
+2888,74,3,1,مشرف ارشيف,Archive Supervisor
 2825,63,3,1,مشرف الموقع الالكتروني,Webmaster
 4156,283,3,1,مشرف تراخيص ثاني,Second Licensing Supervisor
 4157,283,3,1,مشرف تراخيص رابع,Fourth Licensing Supervisor
 1659,24,3,1,مشرف تصوير ثالث,3rd Photography Supervisor
 2120,283,3,1,مشرف تفتيش إسكان أول,Senior Housing Inspection Supervisior
-3815,283,,1,مشرف تفتيش دور حضانة أول, 1 st Nursery Inspection Supervisor
+3815,283,,1,مشرف تفتيش دور حضانة أول,1 st Nursery Inspection Supervisor
 3223,283,3,1,مشرف تفتيش صحة وسلامة,Health and Safety Inspection Supervisor
 3224,283,3,1,مشرف تفتيش صحة وسلامة أول,1rd Health and Safety Inspection Supervisor
 2097,283,3,1,مشرف تفتيش صيانة مباني,Building Maintenance Inspection Supervisor
@@ -1579,10 +1575,10 @@
 3853,14,3,1,مشرف مشتريات ثالث,Third Purchasing Supervisor
 3852,14,3,1,مشرف مشتريات ثاني,Second Purchasing Supervisor
 3847,14,3,1,مشرف مشتريات رابع,Fourth Purchasing Supervisor
-3928,283,3,1,مشرف مفتش دور حضانات ,Nursery Inspector Supervisor
+3928,283,3,1,مشرف مفتش دور حضانات,Nursery Inspector Supervisor
 447,257,5,2,مشرف مقصف,Canteen Superintendent
-4059,147,5,2,مشرف مقصف – احتياط ,Reserve Canteen Supervisor
-3894,283,3,1,مشرف ملاحظ حراسة وأمن ثاني,Second Security Foreman Supervisor 
+4059,147,5,2,مشرف مقصف – احتياط,Reserve Canteen Supervisor
+3894,283,3,1,مشرف ملاحظ حراسة وأمن ثاني,Second Security Foreman Supervisor
 3370,283,3,1,مشرف ملاحظ حراسة وامن ثالث,Third Security Guard Supervisor
 3127,64,3,1,مشرف ملاحظ حراسة وامن رابع,4th Security Guards Supervisor
 4012,14,3,1,مشرف مندوبي خدمات رابع,Fourth Follow-Up Representative Supervisor
@@ -1594,7 +1590,7 @@
 1356,283,3,1,مصمم جرافيك أول,1st Graphic Designer
 1354,283,3,1,مصمم جرافيك ثالث,3rd Graphic Designer
 1355,283,3,1,مصمم جرافيك ثاني,2nd Graphic Designer
-3745,63,3,1,مصممUI-UX ,UI-UX Designer
+3745,63,3,1,مصممUI-UX,UI-UX Designer
 1654,24,3,1,مصور رابع,4th Photographer
 4276,63,3,1,مطور برامج ذكاء اعمال اول,Senior Business Intelligence Software Developer
 3749,63,3,1,مطور ذكاء الأعمال,BI Developer
@@ -1602,11 +1598,11 @@
 4846,55,3,1,معاون سكرتارية,Secretary Assistant
 4184,55,3,1,معاون فني كهرباء,Electrical Technician Assistant
 4013,55,5,2,معاون كاتب وثائق,Assistant Documents Clerk
-4224,55,5,2,معاون مندوب ,Assistant Representative
+4224,55,5,2,معاون مندوب,Assistant Representative
 4188,267,3,1,معاون مندوب اول,Senior Public Services Assistant Officer
 4014,55,5,2,معاون مندوب هجرة,Assistant Immigration Representative
 4194,55,5,2,معاون مندوب هجرة أول,Senior Assistant Passports and Immigration Representative
-3461,283,3,1,معاين علاقات  عامة ثاني,
+3461,283,3,1,معاين علاقات  عامة ثاني,Public Relations Inspector II
 2622,14,,1,معاين مباني ثالث,Third Building Previewer
 516,28,4,2,معلم,Teacher
 897,28,4,1,معلم,Teacher
@@ -1622,14 +1618,14 @@
 2532,28,4,2,معلم المواد التخصصية,Teacher  of specialized subjects
 379,28,4,2,معلم اناشيد,Music Education Teacher
 2616,28,4,2,معلم برامج الهندسة,Engineering Programs Teacher
-3339,28,4,2,معلم برايل,
-3350,28,4,2,معلم برايل,
+3339,28,4,2,معلم برايل,Braille Teacher
+3350,28,4,2,معلم برايل,Braille Teacher
 3920,147,5,2,معلم تاريخ قطر,Qatar History Teacher
 389,28,4,2,معلم تربية خاصة,Special Education Teacher
 377,28,4,2,معلم تربية رياضية,Physical Education Teacher
 2863,28,4,2,معلم تربية مسرحية,Theatre Education Teacher
 3327,28,4,2,معلم تصميم,Interior Design Teacher
-3394,28,4,2,معلم تصميم داخلي,
+3394,28,4,2,معلم تصميم داخلي,Interior Design Teacher
 3486,28,4,1,معلم تقني,Technical Teacher
 4924,28,4,2,معلم تكنولوجيا التصميم (DT),Design Technology (DT) Teacher
 381,28,4,2,معلم حاسب آلي,Computer Teacher
@@ -1640,13 +1636,13 @@
 880,28,4,2,معلم صعوبات تعلم,Learning Difficulties Teacher
 3215,28,4,2,معلم طفولة لغة انجليزية,English Teacher Early Education
 563,28,4,2,معلم علم اجتماع,Social Science eacher
-3445,28,4,2,معلم علم نفس,
+3445,28,4,2,معلم علم نفس,Psychology Teacher
 386,28,4,2,معلم علوم,Science Teacher
 2557,18,4,2,معلم علوم إدارية,Teacher  of Administrative Sciences
 671,28,4,2,معلم علوم اجتماعية,Social Science Teacher
 541,28,4,2,معلم علوم شرعية,Islamic Studies (Sharia) Teacher
-3446,28,4,2,معلم فلسفة,
-3447,28,4,2,معلم فنون عمارة وتصميم,
+3446,28,4,2,معلم فلسفة,Philosophy Teacher
+3447,28,4,2,معلم فنون عمارة وتصميم,Architecture and Design Arts Teacher
 605,28,4,2,معلم فيزياء,Physics Teacher
 3218,28,,2,معلم قانون,Law teacher
 593,28,4,2,معلم كيمياء,Chemistry Teacher
@@ -1660,16 +1656,16 @@
 383,28,4,2,معلم لغةانجليزية,English Language Teacher
 4886,113,4,1,معلم مبتعث,Teacher on Scholarship
 3356,28,5,2,معلم متدرب,Trainee Teacher
-3365,28,4,2,معلم محاسبة,
+3365,28,4,2,معلم محاسبة,Accounting Teacher
 4931,28,4,2,معلم مختبر المحاكاة الطبية,Medical Simulation Lab Instructor
 372,28,4,2,معلم مسار ادبي,literary path teacher
 382,28,4,2,معلم مسار علمي,scientific path teacher
-3346,28,4,2,معلم مسار مهني,
+3346,28,4,2,معلم مسار مهني,Vocational Track Teacher
 740,28,4,2,معلم مهارات بحثية ومكتبية,Research and Office skills teacher
 607,28,4,2,معلم مواد تجارية,Trade subjects teacher
-3347,28,4,2,معلم موسيقى,
-3337,28,4,2,معلم موسيقي,
-3364,28,4,2,معلم نظم وتكنولوجيا معلومات,
+3347,28,4,2,معلم موسيقى,Music Teacher
+3337,28,4,2,معلم موسيقي,Music Teacher
+3364,28,4,2,معلم نظم وتكنولوجيا معلومات,Information Systems and Technology Teacher
 4925,28,4,2,معلم/مهندس مختبر الطب الحيوي / التكنولوجيا الحيوية,Biomedical / Biotechnology Lab Teacher–Engineer
 2117,283,3,1,مفتش إسكان ثاني,2nd Housing Inspector
 3807,283,,1,مفتش دور حضانات أول,1st Nursery Inspector
@@ -1708,17 +1704,17 @@
 1979,25,3,1,ملاحظ سائقين رابع,4th Light Drivers Foreman
 1986,25,3,1,ملاحظ سائقين رابع,4th Heavy Driver Foreman
 2011,15,3,1,ملاحظ صباغة ثالث,3rd painting Foreman
-1005,29,5,2,ملاحظ طلبه, Supervisor
+1005,29,5,2,ملاحظ طلبه,Supervisor
 2130,55,3,1,ملاحظ عمال بدالة رابع,4th Operators Foreman
 4183,55,3,1,ملاحظ عمال خدمات ثالث,3rd Services Workers Supervisor
 4181,55,3,1,ملاحظ عمال خدمات خامس,5th Services Workers Supervisor
-4182,55,3,1,ملاحظ عمال خدمات رابع ,4th Services Workers Supervisor
+4182,55,3,1,ملاحظ عمال خدمات رابع,4th Services Workers Supervisor
 1931,55,3,1,ملاحظ عمال ملفات ثالث,3rd Files Clerks Supervisor
 1930,55,3,1,ملاحظ عمال ملفات رابع,4th Files Clerks Supervisor
 2157,15,3,1,ملاحظ كهربائيين ثالث,3rd Electricians Foreman
-3773,55,3,1,ملاحظ مراسلين أول ,Senior Office Messenger Supervisor
+3773,55,3,1,ملاحظ مراسلين أول,Senior Office Messenger Supervisor
 3775,55,3,1,ملاحظ مراسلين ثالث,Third Office Messenger Supervisor
-3774,55,3,1,ملاحظ مراسلين ثاني ,Second Office Messenger Supervisor
+3774,55,3,1,ملاحظ مراسلين ثاني,Second Office Messenger Supervisor
 3777,55,3,1,ملاحظ مراسلين خامس,Fifth Office Messenger Supervisor
 3776,55,3,1,ملاحظ مراسلين رابع,Fourth Office Messenger Supervisor
 2074,15,3,1,ملاحظ ميكانيكي سيارات أول,1st  Mechanic  Foreman
@@ -1731,7 +1727,7 @@
 2262,44,3,1,ممرض ثالث,3rd Nurse
 3513,54,3,1,منتج أفلام,Film Producer
 4015,54,3,1,منتج أفلام ثالث,Third Film Producer
-4205,54,3,1,منتج أفلام ثاني, 2nd Film Producer
+4205,54,3,1,منتج أفلام ثاني,2nd Film Producer
 965,55,5,3,مندوب,Representative
 4869,64,3,1,مندوب خدمات أول,Senior Representative
 2776,55,5,1,مندوب خدمات ثالث,3rd Correspondant
@@ -1754,7 +1750,7 @@
 1921,283,3,1,منسق  بعثات أول,1st Scholarship Coordinator
 1920,283,3,1,منسق  بعثات ثاني,2nd Scholarship Coordinator
 1052,18,4,2,منسق  تكنولوجيا المعلومات,Information Technology Coordinator
-3396,28,4,2,منسق AP,
+3396,28,4,2,منسق AP,AP Coordinator
 1793,173,3,1,منسق أعلامي  ثالث,3rd Media  Coordinator
 4155,18,4,2,منسق أنشطة,Activities Coordinator
 4317,283,3,1,منسق أنشطة كشفية أول,Senior Scouting Activities Coordinator
@@ -1770,9 +1766,9 @@
 1044,18,4,2,منسق اللغة العربية,Arabic Coordinator
 2537,68,4,2,منسق المشاريع الالكترونية,Electronic Projects Coordinator
 3192,18,4,2,منسق المهارات المهنية,Vocational Skills Coordinator
-3603,283,3,1,منسق بروتوكول أول  ,1st Protocol Coordinator
+3603,283,3,1,منسق بروتوكول أول,1st Protocol Coordinator
 3477,283,3,1,منسق بروتوكول ثالث,Third Protocol Coordinator
-3602,283,3,1,منسق بروتوكول ثاني ,2nd Protocol Coordinator
+3602,283,3,1,منسق بروتوكول ثاني,2nd Protocol Coordinator
 1919,283,3,1,منسق بعثات ثالث,3rd Scholarship Coordinator
 2558,18,4,2,منسق بكالوريا,Baccalaureate Coordinator
 1289,63,3,1,منسق تجهيزات أول,1st Supplies Coordinator
@@ -1791,7 +1787,7 @@
 1853,283,3,1,منسق خدمات ثالث,3rd Service Coordinator
 1043,18,4,2,منسق دراسات اجتماعية,Social Studies Coordinator
 3448,18,4,2,منسق رياض أطفال ثاني,Second kindergarten coordinator
-3440,18,4,1,منسق رياض لأطفال مبادرة,
+3440,18,4,1,منسق رياض لأطفال مبادرة,Kindergarten Initiative Coordinator
 1045,18,4,2,منسق رياضيات,Mathematic Coordinator
 3683,18,4,2,منسق رياضيات ثالث,3rd Mathematic Coordinator
 4908,113,3,1,منسق شؤون مؤسسات التعليم العالي ثالث,3rd Higher Education Institutions Affairs Coordinator
@@ -1831,7 +1827,7 @@
 3397,18,4,2,منسق مواد ادبية,Literary Subject Coordinator
 2531,18,4,2,منسق مواد تخصصية,Coordinator of specialized subjects
 1056,18,4,2,منسق مواد غير اساسية,non-fundamental Coordinator
-3379,18,4,2,منسق مواد وبرامج  STEM,
+3379,18,4,2,منسق مواد وبرامج  STEM,STEM Materials and Programs Coordinator
 4016,63,4,1,منسق موقع إلكتروني ثالث,Third Website Coordinator
 2233,223,3,1,منسق وثائق أول,1st Documents Coordinator
 2231,223,3,1,منسق وثائق ثالث,3rd Documents Coordinator
@@ -1840,22 +1836,22 @@
 1255,13,3,1,مهندس  كهرباء ثالث,3rd Electrical Engineer
 1256,13,3,1,مهندس  كهرباء ثاني,2nd Electrical Engineer
 4135,63,3,1,مهندس أمن معلومات ثاني,Second Information Security Engineer
-3878,63,3,1,مهندس إدارة أجهزة الشبكات وامن المعلومات ,Network and Security Engineer
-3866,63,3,1,مهندس إدارة البريد الالكتروني ,Email Management Engineer
+3878,63,3,1,مهندس إدارة أجهزة الشبكات وامن المعلومات,Network and Security Engineer
+3866,63,3,1,مهندس إدارة البريد الالكتروني,Email Management Engineer
 3865,63,3,1,مهندس إدارة خدمات حماية الأجهزة,Endpoint Protection Services Engineer
-3863,63,3,1,مهندس إدارة وسائل تخزين ,Storage Management Engineer
+3863,63,3,1,مهندس إدارة وسائل تخزين,Storage Management Engineer
 4250,63,3,1,مهندس اتصالات اول,Senior Communication Engineer
 3879,63,3,1,مهندس استراتيجية تكنولوجيا المعلومات,Information Technology Policy Engineer
-3862,63,3,1,مهندس الأنظمة السحابية والبنية التحتية ,Cloud & Infrastructure Architect
-3880,63,3,1,مهندس امن الاعمال ,Business Security Architect
-3876,63,3,1,مهندس امن تطبيقات ,Application Security Engineering
-3877,63,3,1,مهندس امن تقني ,Technical Security Architect 
+3862,63,3,1,مهندس الأنظمة السحابية والبنية التحتية,Cloud & Infrastructure Architect
+3880,63,3,1,مهندس امن الاعمال,Business Security Architect
+3876,63,3,1,مهندس امن تطبيقات,Application Security Engineering
+3877,63,3,1,مهندس امن تقني,Technical Security Architect
 2039,13,3,1,مهندس انشائي أول,1st Structural Engineer
 2037,13,3,1,مهندس انشائي ثالث,3rd Structural Engineer
 3861,63,3,1,مهندس بيانات,Data Architect
 3864,63,3,1,مهندس تشغيل ومراقبة مركز البيانات,Data Center Operations and Monitoring of IT Infrastructure Engineer
 4330,13,3,1,مهندس تعليم تقني اول,Senior Technical Education Engineer
-3383,28,4,2,مهندس تكنولوجيا,
+3383,28,4,2,مهندس تكنولوجيا,Technology Engineer
 2035,13,3,1,مهندس تكييف أول,1st Conditioning Engineer
 2033,13,3,1,مهندس تكييف ثالث,3rd C Engineer
 2034,13,3,1,مهندس تكييف ثاني,2nd Conditioning Engineer
@@ -1864,8 +1860,8 @@
 1938,63,3,1,مهندس حاسب آلي ثالث,3rd IT Engineer
 1939,63,3,1,مهندس حاسب آلي ثاني,2nd IT Engineer
 3747,63,3,1,مهندس حلول,Solution Architect
-3867,63,3,1,مهندس خدمات النسخ الاحتياطي والاستعادة ,Backup and Restore engineer
-3869,63,3,1,مهندس دعم تطبيقات ,Application support engineer
+3867,63,3,1,مهندس خدمات النسخ الاحتياطي والاستعادة,Backup and Restore engineer
+3869,63,3,1,مهندس دعم تطبيقات,Application support engineer
 4017,63,3,1,مهندس دعم تطبيقات أول,Senior Application Support Engineer
 1952,63,3,1,مهندس دعم فني أول,1st Technical Support Engineer
 1950,63,3,1,مهندس دعم فني ثالث,3rd Technical Support Engineer
@@ -1876,8 +1872,8 @@
 1948,63,3,1,مهندس شبكات أول,1st Network Engineer
 3801,63,3,1,مهندس ضبط جودة,Senior QA Engineer
 3312,283,3,1,مهندس ضمان الجودة اول,Senior QA Engineer
-3868,63,3,1,مهندس قواعد بيانات ,Database Administrator/ Database Engineer
-3381,28,4,2,مهندس كهرباء,
+3868,63,3,1,مهندس قواعد بيانات,Database Administrator/ Database Engineer
+3381,28,4,2,مهندس كهرباء,Electrical Engineer
 2475,13,3,1,مهندس كهرباء أول,1st Electrical Engineer
 2476,13,3,1,مهندس كهرباء ثاني,2nd  Electrical Engineer
 4923,28,4,2,مهندس مختبر STEM,STEM Lab Engineer
@@ -1892,18 +1888,18 @@
 1261,13,3,1,مهندس معماري أول,1st Architect
 1259,13,3,1,مهندس معماري ثالث,3rd Architect
 1260,13,3,1,مهندس معماري ثاني,2nd Architect
-3382,28,4,2,مهندس ميكانيكا,
+3382,28,4,2,مهندس ميكانيكا,Mechanical Engineer
 1965,63,3,1,مهندس نظم أول,1st Systems Engineer
 1964,63,3,1,مهندس نظم ثاني,2nd Systems Engineer
-239,13,3,1,مهندس وسائط متعددة,Multimedia Engineer 
+239,13,3,1,مهندس وسائط متعددة,Multimedia Engineer
 1944,63,3,1,مهندس وسائط متعددة أول,1st Multimedia Engineer
 4929,28,4,2,مهندس/معلم مختبر الفيزياء التطبيقية,Applied Physics Lab Teacher / Engineer
 4930,28,4,2,مهندس/معلم مختبر علوم الفضاء والطيران,Aerospace & Space Science Lab Teacher / Engineer
-3860,63,3,1,موثق تقني ,Technical Writer
+3860,63,3,1,موثق تقني,Technical Writer
 50303,283,3,1,موجه  لغة فرنسية,موجه  لغة فرنسية
 3798,283,4,1,موجه إدارة أعمال,Business Administration Supervisor
 3703,283,4,1,موجه إرشاد أكاديمي ومهني,Academic and Carrere Counseling Supervisor
-3848,283,4,1,موجه التربية الإسلامية,Instructor of Islamic education 
+3848,283,4,1,موجه التربية الإسلامية,Instructor of Islamic education
 3701,283,4,1,موجه الفنون البصرية والمسرح,Visual Art and Drama Supervisor
 3702,283,4,1,موجه اللغة الإنجليزية,English Supervisor
 468,283,3,1,موجه تربية رياضية,Inspector Physical Education
@@ -1915,9 +1911,9 @@
 3494,167,3,1,موجه لغة انجليزية-طفولة,English Language Inspector-childhood
 492,13,3,1,موجه مختبرات مدرسية,Laboratories Inspector
 3707,283,4,1,موجه مسار أدبي,Humanities Track Supervisor
-3495,167,3,1,موجه مسار علمي,Scientific Path  Inspector 
+3495,167,3,1,موجه مسار علمي,Scientific Path  Inspector
 84,117,5,2,موظف استقبال,Receptionist
-4057,117,5,2,موظف استقبال – احتياط ,Reserve Receptionist
+4057,117,5,2,موظف استقبال – احتياط,Reserve Receptionist
 3896,117,5,2,موظف امن,Security
 3904,117,5,2,موظف موارد بشرية,HR Officer
 2068,15,3,1,ميكانيكي سيارات ثالث,3rd Mechanic
