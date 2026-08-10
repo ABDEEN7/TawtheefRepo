@@ -38,7 +38,10 @@ export class EmployeesDialog implements OnInit {
   readonly chartOptions = { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { display: false } } };
   readonly items = computed(() => { const colors = ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'];
     return this.monitoring().taskStatusStacked.map((item, index) => ({ labelKey: employeeAssignmentTranslationKey(item.label), count: item.count, color: colors[index % colors.length] })); });
-  readonly chartData = computed<ChartData<'doughnut'>>(() => { const items = this.localizedItems(); return items.every(item => item.count === 0)
+  readonly employeeChartItems = computed<DashboardChartExportItem[]>(() => { this.languageChange(); return [{
+    label: this.translate.instant('dashboard.kpi.totalEmployees'), count: this.kpis().totalEmployees, color: '#488ADA'
+  }]; });
+  readonly chartData = computed<ChartData<'doughnut'>>(() => { const items = this.employeeChartItems(); return items.every(item => item.count === 0)
     ? { labels: [this.translate.instant('common.chart.noData')], datasets: [{ data: [1], backgroundColor: ['#E5E7EB'], borderWidth: 0 }] }
     : { labels: items.map(item => item.label), datasets: [{ data: items.map(item => item.count), backgroundColor: items.map(item => item.color), borderWidth: 0, hoverOffset: 8 }] }; });
 
@@ -53,9 +56,8 @@ export class EmployeesDialog implements OnInit {
   async exportCharts(): Promise<void> { if (!this.canExport() || this.exportInProgress()) return; this.exportInProgress.set(true);
     try { await this.chartExport.download([{ host: this.chart?.nativeElement,
       filename: this.translate.instant('dashboard.export.files.employeeAssignments'), title: this.translate.instant('dashboard.modals.employees.statusTitle'),
-      totalLabel: this.translate.instant('dashboard.common.total'), total: this.kpis().totalEmployees, items: this.localizedItems(),
+      totalLabel: this.translate.instant('dashboard.common.total'), total: this.kpis().totalEmployees, items: this.employeeChartItems(),
       direction: this.translate.currentLang === 'ar' ? 'rtl' : 'ltr' }]); } finally { this.exportInProgress.set(false); } }
-  private localizedItems(): DashboardChartExportItem[] { this.languageChange(); return this.items().map(item => ({ ...item, label: this.translate.instant(item.labelKey) })); }
   private downloadResponse(response: HttpResponse<Blob>): void { const disposition = response.headers.get('content-disposition') ?? '';
     const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1]; const plain = /filename="?([^";]+)"?/i.exec(disposition)?.[1];
     this.files.downloadBlob(response.body ?? new Blob(), encoded ? decodeURIComponent(encoded) : plain ?? 'Employees.xlsx'); }

@@ -3,7 +3,7 @@
   <div class="candidate-modal-header"><h3>{{ 'dashboard.modals.employees.title' | translate }}</h3><p>{{ 'dashboard.modals.employees.subtitle' | translate }}</p></div>
   <div class="candidate-modal-card"><h4 class="candidate-modal-section-title">{{ 'dashboard.modals.employees.statusTitle' | translate }}</h4><div class="candidate-modal-chart-content jobs-chart-content employees-chart-content">
     <div class="candidate-chart-wrapper jobs-modal-chart"><p-chart #chart type="doughnut" [data]="chartData()" [options]="chartOptions" /><div class="candidate-chart-center"><span>{{ 'dashboard.common.total' | translate }}</span><strong>{{ kpis().totalEmployees | number:'1.0-0' }}</strong></div></div>
-    <div class="operation-legend jobs-modal-legend employees-modal-legend">@for (item of items(); track item.labelKey) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.labelKey | translate }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }</div>
+    <div class="operation-legend jobs-modal-legend employees-modal-legend employee-workload-metrics"><div class="employee-workload-title">{{ 'dashboard.employees.assignmentWorkload' | translate }}</div>@for (item of items(); track item.labelKey) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.labelKey | translate }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }</div>
   </div></div>
   <div class="candidate-modal-card"><h4 class="candidate-modal-section-title">{{ 'dashboard.sections.teamPerformance' | translate }}</h4><div class="table-responsive employees-table-wrap">
     <p-table class="custom-table employees-modal-table" [value]="rows()" [rowHover]="true" responsiveLayout="scroll">

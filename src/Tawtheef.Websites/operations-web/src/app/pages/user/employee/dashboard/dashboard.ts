@@ -26,6 +26,7 @@ import { OperationsDashboardService } from './services/operations-dashboard.serv
 type DashboardDialog = 'Candidates' | 'Jobs' | 'Employees' | 'Invitations';
 type QuickActionKey = 'createJob' | 'sendInvitation' | 'approveProfiles' | 'manageUsers';
 interface QuickAction { key: QuickActionKey; labelKey: string; icon: string; route: string; permission: string | string[]; requireAll?: boolean; }
+interface MainIndicator { labelKey: string; value: number; icon: string; color: string; }
 
 @Component({
   selector: 'app-dashboard', standalone: true,
@@ -53,7 +54,7 @@ export class Dashboard implements OnInit {
   readonly dashboardFilters = signal<OperationsDashboardFilters>({ status: '' });
   readonly activeDialog = signal<DashboardDialog | null>(null);
   readonly exportInProgress = signal(false);
-  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
+  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7];
   readonly chartOptions = { responsive: true, maintainAspectRatio: false, cutout: '72%', animation: {
     animateRotate: true, animateScale: true, duration: 1000, easing: 'easeOutQuart' }, plugins: { legend: { display: false }, tooltip: { enabled: true } } };
 
@@ -76,8 +77,22 @@ export class Dashboard implements OnInit {
   readonly activeJobKpis = computed<JobKpis>(() => this.overview()?.jobKpis ?? this.defaultJobKpis());
   readonly activeInvitationKpis = computed(() => this.overview()?.invitationKpis ?? {
     totalInvitations: 0, acceptedInvitations: 0, pendingInvitations: 0, pendingAttachmentApproval: 0, expiredInvitations: 0, rejectedInvitations: 0 });
-  readonly candidateSummaryItems = computed(() => (this.overview()?.profileBreakdown.byCandidateType ?? []).map((item, index) => ({
-    label: this.localizeCandidateType(item.key, item.label), count: item.count, color: this.colors[index % this.colors.length] })));
+  readonly mainIndicators = computed<MainIndicator[]>(() => {
+    const profiles = this.activeKpis();
+    const jobs = this.activeJobKpis();
+    const invitations = this.activeInvitationKpis();
+    return [
+      { labelKey: 'dashboard.kpi.totalProfiles', value: profiles.totalProfiles, icon: 'hgi-file-01', color: 'blue' },
+      { labelKey: 'dashboard.kpi.approvedProfiles', value: profiles.approvedProfiles, icon: 'hgi-checkmark-circle-02', color: 'green' },
+      { labelKey: 'dashboard.kpi.pendingProfiles', value: profiles.underReviewProfiles, icon: 'hgi-clock-01', color: 'orange' },
+      { labelKey: 'dashboard.kpi.pendingDistributionProfiles', value: profiles.unassignedProfiles, icon: 'hgi-mail-01', color: 'red' },
+      { labelKey: 'dashboard.kpi.publishedJobs', value: jobs.publishedJobs, icon: 'hgi-megaphone-01', color: 'purple' },
+      { labelKey: 'dashboard.kpi.totalInvitations', value: invitations.totalInvitations, icon: 'hgi-user-add-01', color: 'purple' },
+      { labelKey: 'dashboard.kpi.acceptedInvitations', value: invitations.acceptedInvitations, icon: 'hgi-user-add-01', color: 'purple' }
+    ];
+  });
+  readonly candidateSummaryItems = computed(() => { this.languageChange(); return (this.overview()?.profileBreakdown.byStatus ?? []).map((item, index) => ({
+    label: this.translate.instant(`dashboard.status.${item.status}`), count: item.count, color: this.colors[index % this.colors.length] })); });
   readonly jobsSummaryItems = computed(() => { const jobs = this.activeJobKpis(); return [
     { labelKey: 'dashboard.legend.jobs.pendingPointDistribution', count: jobs.pendingPointConfigurationJobs + jobs.pendingPointApprovalJobs, color: '#8A1538' },
     { labelKey: 'dashboard.legend.jobs.readyForAnnouncement', count: jobs.readyForAnnouncementJobs, color: '#488ADA' },
@@ -90,6 +105,9 @@ export class Dashboard implements OnInit {
     { labelKey: 'dashboard.status.Cancelled', count: jobs.cancelledJobs, color: '#9CA3AF' }]; });
   readonly employeesSummaryItems = computed(() => { const colors = ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'];
     return (this.overview()?.taskMonitoring.taskStatusStacked ?? []).map((item, index) => ({ labelKey: employeeAssignmentTranslationKey(item.label), count: item.count, color: colors[index % colors.length] })); });
+  readonly employeeChartItems = computed<DashboardChartExportItem[]>(() => { this.languageChange(); return [{
+    label: this.translate.instant('dashboard.kpi.totalEmployees'), count: this.activeKpis().totalEmployees, color: '#488ADA'
+  }]; });
   readonly invitationsSummaryItems = computed(() => { const invitations = this.activeInvitationKpis(); return [
     { labelKey: 'dashboard.legend.invitations.accepted', count: invitations.acceptedInvitations, color: '#2F8A3A' },
     { labelKey: 'dashboard.legend.invitations.pendingResponse', count: invitations.pendingInvitations, color: '#FFB547' },
@@ -97,7 +115,7 @@ export class Dashboard implements OnInit {
     { labelKey: 'dashboard.status.Rejected', count: invitations.rejectedInvitations, color: '#6C4BB6' }]; });
   readonly visibleCandidateChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.candidateSummaryItems()));
   readonly visibleJobsChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.localized(this.jobsSummaryItems())));
-  readonly visibleEmployeesChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.localized(this.employeesSummaryItems())));
+  readonly visibleEmployeesChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.employeeChartItems()));
   readonly visibleInvitationsChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.localized(this.invitationsSummaryItems())));
 
   ngOnInit(): void { this.overviewLoading.set(true); this.api.getOverview(this.dashboardFilters())
@@ -114,7 +132,7 @@ export class Dashboard implements OnInit {
     try { await this.chartExport.download([
       this.exportSpec(this.mainCandidatesChart, 'dashboard.export.files.candidates', 'dashboard.operationalSummary.candidates', this.activeKpis().totalProfiles, this.candidateSummaryItems()),
       this.exportSpec(this.mainJobsChart, 'dashboard.export.files.jobs', 'dashboard.operationalSummary.jobs', this.activeJobKpis().totalJobs, this.localized(this.jobsSummaryItems())),
-      this.exportSpec(this.mainEmployeesChart, 'dashboard.export.files.employees', 'dashboard.operationalSummary.employees', this.activeKpis().totalEmployees, this.localized(this.employeesSummaryItems())),
+      this.exportSpec(this.mainEmployeesChart, 'dashboard.export.files.employees', 'dashboard.operationalSummary.employees', this.activeKpis().totalEmployees, this.employeeChartItems()),
       this.exportSpec(this.mainInvitationsChart, 'dashboard.export.files.invitations', 'dashboard.operationalSummary.invitations', this.activeInvitationKpis().totalInvitations, this.localized(this.invitationsSummaryItems()))
     ]); } finally { this.exportInProgress.set(false); }
   }
@@ -126,8 +144,6 @@ export class Dashboard implements OnInit {
   private exportSpec(host: ElementRef<HTMLElement> | undefined, filenameKey: string, titleKey: string, total: number, items: DashboardChartExportItem[]) { return {
     host: host?.nativeElement, filename: this.translate.instant(filenameKey), title: this.translate.instant(titleKey), totalLabel: this.translate.instant('dashboard.common.total'),
     total, items, direction: this.translate.currentLang === 'ar' ? 'rtl' as const : 'ltr' as const }; }
-  private localizeCandidateType(key: string, fallback: string): string { this.languageChange(); const translationKey = `dashboard.candidateTypes.${key}`;
-    const translated = this.translate.instant(translationKey); return translated === translationKey ? fallback : translated; }
   private defaultKpis(): DashboardKpis { return { totalEmployees: 0, activeEmployees: 0, totalProfiles: 0, newProfilesToday: 0, newProfilesThisWeek: 0,
     newProfilesThisMonth: 0, approvedProfiles: 0, rejectedProfiles: 0, inCreationProfiles: 0, submittedProfiles: 0, underReviewProfiles: 0,
     pendingProfiles: 0, returnedProfiles: 0, approvalRate: 0, rejectionRate: 0, averageApprovalHours: 0, totalAssignedTasks: 0,

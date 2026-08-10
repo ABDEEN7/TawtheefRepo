@@ -40,7 +40,8 @@ internal sealed class DashboardOverviewReader(
         var profileStatuses = await GetProfileStatusesAsync(profiles, ct);
         var jobStatuses = await GetJobStatusesAsync(jobs, ct);
         var tasks = await GetTaskAggregateAsync(assignments, ct);
-        var workload = await GetEmployeeWorkloadAsync(profiles, assignments, ct);
+        var awaitingDistribution = await CountUnassignedAsync(profiles, ct);
+        var workload = await GetEmployeeWorkloadAsync(assignments, awaitingDistribution, ct);
         var employees = context.CanViewProfileDistribution
             ? await scope.DistributionTeam(context).CountAsync(ct)
             : 0;
@@ -58,7 +59,7 @@ internal sealed class DashboardOverviewReader(
                 EmployeeId = request.EmployeeId,
                 Status = request.Status
             },
-            Kpis = await BuildKpisAsync(profiles, profileStatuses, tasks, context, employees, range, ct),
+            Kpis = await BuildKpisAsync(profiles, profileStatuses, tasks, context, employees, awaitingDistribution, range, ct),
             ProfileBreakdown = new ProfileBreakdownDto
             {
                 ByStatus = BuildStatusCounts(profileStatuses),
@@ -72,11 +73,11 @@ internal sealed class DashboardOverviewReader(
             {
                 TaskStatusStacked =
                 [
-                    new GroupCountDto { Label = "AwaitingDistribution", Count = workload.AwaitingDistribution },
-                    new GroupCountDto { Label = "ReturnedFiles", Count = workload.Returned },
-                    new GroupCountDto { Label = "ApprovedFiles", Count = workload.Approved },
-                    new GroupCountDto { Label = "InProgress", Count = workload.InProgress },
-                    new GroupCountDto { Label = "PendingReview", Count = workload.AwaitingReview }
+                    new GroupCountDto { Label = "ProfilesAwaitingDistribution", Count = workload.AwaitingDistribution },
+                    new GroupCountDto { Label = "AssignedRequiringUpdate", Count = workload.Returned },
+                    new GroupCountDto { Label = "CompletedAssignments", Count = workload.Completed },
+                    new GroupCountDto { Label = "ActiveReviewWorkload", Count = workload.InProgress },
+                    new GroupCountDto { Label = "AssignedSubmitted", Count = workload.Submitted }
                 ]
             }
         });
@@ -88,6 +89,7 @@ internal sealed class DashboardOverviewReader(
         TaskCounts tasks,
         DashboardAccessContext context,
         int employees,
+        int awaitingDistribution,
         (DateTime From, DateTime To) range,
         CancellationToken ct)
     {
@@ -118,7 +120,7 @@ internal sealed class DashboardOverviewReader(
             CompletedTasks = tasks.Completed,
             RemainingTasks = tasks.Remaining,
             OverdueTasks = tasks.Overdue,
-            UnassignedProfiles = await CountUnassignedAsync(profiles, ct),
+            UnassignedProfiles = awaitingDistribution,
             FollowedMinisterOfficeCandidates = context.CanViewMinisterOffice
                 ? await uow.GetEntityRepository<Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate>().DbSet
                     .CountAsync(x => !x.IsDeleted && x.IsFollowUpActive, ct)
@@ -175,7 +177,7 @@ internal sealed class DashboardOverviewReader(
     }
 
     private async Task<EmployeeWorkloadCounts> GetEmployeeWorkloadAsync(
-        IQueryable<UserProfile> profiles, IQueryable<ProfileAssignment> assignments, CancellationToken ct)
+        IQueryable<ProfileAssignment> assignments, int awaitingDistribution, CancellationToken ct)
     {
         var changes = uow.GetEntityRepository<ProfileChangeRequest>().DbSet.AsNoTracking();
         var row = await assignments.Where(x => x.IsActive && x.UnassignedAtUtc == null)
@@ -194,8 +196,8 @@ internal sealed class DashboardOverviewReader(
                 group.Where(x => x.Status == UserProfileStatus.UnderReview || x.Status == UserProfileStatus.Approved && x.HasPendingChange).Select(x => x.UserProfileId).Distinct().Count(),
                 group.Where(x => x.Status == UserProfileStatus.Submitted).Select(x => x.UserProfileId).Distinct().Count()))
             .FirstOrDefaultAsync(ct);
-        return new EmployeeWorkloadCounts(await CountUnassignedAsync(profiles, ct), row?.Returned ?? 0,
-            row?.Approved ?? 0, row?.InProgress ?? 0, row?.AwaitingReview ?? 0);
+        return new EmployeeWorkloadCounts(awaitingDistribution, row?.Returned ?? 0,
+            row?.Completed ?? 0, row?.InProgress ?? 0, row?.Submitted ?? 0);
     }
 
     private Task<int> CountUnassignedAsync(IQueryable<UserProfile> profiles, CancellationToken ct)
@@ -304,5 +306,5 @@ internal sealed class DashboardOverviewReader(
     }
     private static DateTime GetWeekStart(DateTime today) => today.AddDays(-(int)today.DayOfWeek);
     private sealed record TaskCounts(int Total, int Completed, int Remaining, int Overdue);
-    private sealed record EmployeeWorkloadCounts(int AwaitingDistribution, int Returned, int Approved, int InProgress, int AwaitingReview);
+    private sealed record EmployeeWorkloadCounts(int AwaitingDistribution, int Returned, int Completed, int InProgress, int Submitted);
 }

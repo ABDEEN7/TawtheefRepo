@@ -1793,6 +1793,13 @@ td {
     margin-bottom: 26px;
 }
 
+.employee-workload-title {
+  color: #111827;
+  font-size: calc(13px * var(--dashboard-font-scale, 1));
+  font-weight: 700;
+  text-align: start;
+}
+
 .operation-legend-row {
   display: grid;
     grid-template-columns: 10px 1fr 20px;

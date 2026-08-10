@@ -37,93 +37,20 @@
         } @else {
         <section class="kpi-grid figma-kpi-grid">
 
+          @for (indicator of mainIndicators(); track indicator.labelKey) {
           <article class="kpi-card figma-kpi-card">
             <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-              <div class="kpi-icon blue"><i class="hgi-stroke hgi-file-01" aria-hidden="true"></i></div>
+              <div class="kpi-label">{{ indicator.labelKey | translate }}</div>
+              <div [class]="'kpi-icon ' + indicator.color">
+                <i [class]="'hgi-stroke ' + indicator.icon" aria-hidden="true"></i>
+              </div>
             </div>
-            <div class="kpi-value">{{ activeKpis().totalProfiles | number:'1.0-0' }}</div>
+            <div class="kpi-value">{{ indicator.value | number:'1.0-0' }}</div>
             <div class="kpi-status figma-kpi-status">
               <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
             </div>
           </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.approvedProfiles' | translate }}</div>
-              <div class="kpi-icon green"><i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeKpis().approvedProfiles | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.pendingProfiles' | translate }}</div>
-              <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeKpis().underReviewProfiles | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
-              <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.pendingDistributionProfiles' | translate }}</div>
-              <div class="kpi-icon red"><i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.publishedJobs' | translate }}</div>
-              <div class="kpi-icon purple"><i class="hgi-stroke hgi-megaphone-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.totalInvitations' | translate }}</div>
-              <div class="kpi-icon purple"><i class="hgi-stroke hgi-user-add-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeInvitationKpis().totalInvitations | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
-
-          <article class="kpi-card figma-kpi-card">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ 'dashboard.kpi.acceptedInvitations' | translate }}</div>
-              <div class="kpi-icon purple"><i class="hgi-stroke hgi-user-add-01" aria-hidden="true"></i></div>
-            </div>
-            <div class="kpi-value">{{ activeInvitationKpis().acceptedInvitations | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
-            </div>
-          </article>
+          }
 
         </section>
         }
@@ -259,7 +186,8 @@
 
 </div>
 
-  <div class="operation-legend">
+  <div class="operation-legend employee-workload-metrics">
+    <div class="employee-workload-title">{{ 'dashboard.employees.assignmentWorkload' | translate }}</div>
     @for (item of employeesSummaryItems(); track item.labelKey) {
     <div class="operation-legend-row">
       <i [style.background]="item.color"></i>
