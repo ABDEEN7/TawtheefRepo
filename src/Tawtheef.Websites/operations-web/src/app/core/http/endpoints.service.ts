@@ -132,15 +132,9 @@ export class EndpointsService {
 
 
   operationsDashboard = {
-    summary: this.getFullUrl('/operations-dashboard'),
-    overview: this.getFullUrl('/operations-dashboard/overview'),
-    candidateStatus: this.getFullUrl('/operations-dashboard/candidates/status'),
-    candidateTypes: this.getFullUrl('/operations-dashboard/candidates/types'),
-    jobsSummary: this.getFullUrl('/operations-dashboard/jobs/summary'),
-    latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
-    employeeIndicators: this.getFullUrl('/operations-dashboard/employees/indicators'),
-    employeeReviewOutcomes: this.getFullUrl('/operations-dashboard/employees/review-outcomes'),
-    teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
+      overview: this.getFullUrl('/operations-dashboard/overview'),
+      latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
+      teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
   };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),

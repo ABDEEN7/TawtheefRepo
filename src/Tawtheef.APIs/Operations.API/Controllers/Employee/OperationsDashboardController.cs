@@ -1,4 +1,8 @@
-using Application.Operation.Features.Employee.Dashboard.Queries;
+using Application.Operation.Features.Employee.Dashboard.Queries.Employees;
+using Application.Operation.Features.Employee.Dashboard.Queries.Export;
+using Application.Operation.Features.Employee.Dashboard.Queries.Invitations;
+using Application.Operation.Features.Employee.Dashboard.Queries.Jobs;
+using Application.Operation.Features.Employee.Dashboard.Queries.Overview;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -20,34 +24,6 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("candidates/status")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetCandidateStatus(
-        [FromQuery] GetCandidateStatusSummaryQuery request,
-        CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("candidates/types")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetCandidateTypes(
-        [FromQuery] GetCandidateTypeSummaryQuery request,
-        CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("jobs/summary")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetJobsSummary([FromQuery] GetJobsSummaryQuery request, CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
     [HttpGet("jobs/latest")]
     [AuthorizePermission(PermissionKeys.Dashboard.View)]
     public async Task<IActionResult> GetLatestJobs([FromQuery] GetLatestJobsQuery request, CancellationToken ct)
@@ -56,21 +32,9 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("employees/indicators")]
+    [HttpGet("invitations/latest")]
     [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetEmployeeIndicators(
-        [FromQuery] GetEmployeeIndicatorsQuery request,
-        CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("employees/review-outcomes")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetEmployeeReviewOutcomes(
-        [FromQuery] GetEmployeeReviewOutcomesQuery request,
-        CancellationToken ct)
+    public async Task<IActionResult> GetLatestInvitations([FromQuery] GetLatestInvitationsQuery request, CancellationToken ct)
     {
         var result = await mediator.Send(request, ct);
         return result.ToActionResult();
@@ -83,5 +47,32 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request, ct);
         return result.ToActionResult();
     }
+
+    [HttpGet("export-list")]
+    [AuthorizePermission(PermissionKeys.Dashboard.View)]
+    public async Task<IActionResult> ExportList([FromQuery] ExportDashboardListQuery request, CancellationToken ct)
+    {
+        var authorized = request.Context switch
+        {
+            DashboardExportContext.Candidates =>
+                HasPermission(PermissionKeys.ProfileDistribution.View) ||
+                HasPermission(PermissionKeys.ProfileApproval.View) ||
+                HasPermission(PermissionKeys.ProfileApproval.Review),
+            DashboardExportContext.Jobs =>
+                HasPermission(PermissionKeys.Jobs.View) || HasPermission(PermissionKeys.Jobs.Edit),
+            DashboardExportContext.Employees => HasPermission(PermissionKeys.ProfileDistribution.View),
+            DashboardExportContext.Invitations => HasPermission(PermissionKeys.JobsInvitations.View),
+            _ => false
+        };
+        if (!authorized) return Forbid();
+
+        var result = await mediator.Send(request, ct);
+        return result.IsFailed
+            ? result.ToActionResult()
+            : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
+    private bool HasPermission(string permission) =>
+        User.HasClaim(RoleClaimTypes.Permission, permission);
 }
 

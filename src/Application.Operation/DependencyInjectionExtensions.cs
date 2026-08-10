@@ -1,7 +1,10 @@
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
-using Application.Operation.Features.Employee.Dashboard.Services;
+using Application.Operation.Features.Employee.Dashboard.Services.Access;
+using Application.Operation.Features.Employee.Dashboard.Services.Export;
+using Application.Operation.Features.Employee.Dashboard.Services.Read;
+using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
 using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +53,13 @@ namespace Application.Operation
                 services.AddScoped<IJobRequirementsService, JobRequirementsService>();
                 services.AddScoped<IJobCandidatesQueryBuilderService, JobCandidatesQueryBuilderService>();
                 services.AddScoped<ICandidateEligibilityEvaluationService, CandidateEligibilityEvaluationService>();
-                services.AddScoped<IDashboardReadService, DashboardReadService>();
+                services.AddScoped<DashboardAccessContextProvider>();
+                services.AddScoped<DashboardQueryScope>();
+                services.AddScoped<DashboardOverviewReader>();
+                services.AddScoped<DashboardJobsReader>();
+                services.AddScoped<DashboardInvitationsReader>();
+                services.AddScoped<DashboardEmployeesReader>();
+                services.AddScoped<DashboardExcelExporter>();
             }
 
             private void RegisterValidators()
