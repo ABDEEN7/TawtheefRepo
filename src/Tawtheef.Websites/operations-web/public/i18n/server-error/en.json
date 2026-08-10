@@ -35,6 +35,7 @@
   "server-error.QATAR_RESIDENT_PHONE_INVALID": "Invalid phone number.",
   "server-error.QATAR_RESIDENT_PHONE_MISMATCH": "Phone number does not match the registered data.",
   "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "Unable to verify QID details. Please check the entered information is correct and try again.",
+  "server-error.QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE": "The request could not be processed at this time. Please try again later.",
   "server-error.EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED": "User type is not allowed for external login.",
   "server-error.ROLE_NOT_FOUND": "Role not found.",
   "server-error.ROLE_NAME_EXISTS": "Role name already exists.",

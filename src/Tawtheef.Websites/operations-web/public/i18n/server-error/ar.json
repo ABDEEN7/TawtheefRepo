@@ -35,6 +35,7 @@
   "server-error.QATAR_RESIDENT_PHONE_INVALID": "رقم الهاتف غير صالح.",
   "server-error.QATAR_RESIDENT_PHONE_MISMATCH": "رقم الهاتف لا يتطابق مع البيانات المسجلة.",
   "server-error.QATAR_RESIDENT_VERIFICATION_FAILED": "تعذر التحقق من بيانات الرقم الشخصي، يرجى التأكد من صحة البيانات المدخلة والمحاولة مرة أخرى",
+  "server-error.QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE": "تعذر معالجة الطلب حاليًا. يرجى المحاولة مرة أخرى لاحقًا.",
   "server-error.EXTERNAL_LOGIN_USER_TYPE_NOT_ALLOWED": "نوع المستخدم غير مسموح لتسجيل الدخول الخارجي.",
   "server-error.ROLE_NOT_FOUND": "الدور غير موجود.",
   "server-error.ROLE_NAME_EXISTS": "اسم الدور موجود بالفعل.",
