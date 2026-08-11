@@ -5,7 +5,7 @@
       <p class="fs-16 m-0">{{ 'MAJORS_SKILLS.MAPPING_HINT' | translate }}</p>
     </div>
 
-    <div class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
+    <div *hasPermission="Permissions.MajorSkills.Manage" class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
       <button
         pButton
         type="button"
@@ -16,7 +16,6 @@
       </button>
       @if (store.showParentMajorInfoButton()) {
         <button
-          *hasPermission="Permissions.MajorSkills.Manage"
           pButton
           type="button"
           class="p-button-outlined"
@@ -120,7 +119,7 @@
 
       <ng-template pTemplate="body" let-item>
         <tr>
-          <td *hasPermission="Permissions.MajorSkills.Manage">
+          <td>
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <!-- Major Name -->
               <span class="fw-semibold">{{ item.major?.name ?? '-' }}</span>
@@ -147,7 +146,7 @@
           </span>
           </td>
 
-          <td>
+          <td *hasPermission="Permissions.MajorSkills.Manage">
               <div  class="d-flex justify-content-start gap-2 align-items-center">
                     <button type="button"
               class="btn btn-outline-primary btn-sm d-flex justify-content-start gap-1 align-items-center"
