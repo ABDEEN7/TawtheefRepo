@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Application.Recruitment.Common.ModelBinding;
 using Application.Recruitment.Common.Validation;
 using Microsoft.AspNetCore.Http;
 
@@ -8,9 +9,11 @@ public sealed class SaveProfilePersonalRequest
 {
     public bool Submit { get; set; }
 
+    [NormalizeText]
     [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Full name contains invalid characters.")]
     public string? FullNameAr { get; set; }
 
+    [NormalizeText]
     [RegularExpression(InputValidationPatterns.Textbox, ErrorMessage = "Full name contains invalid characters.")]
     public string? FullNameEn { get; set; }
 
