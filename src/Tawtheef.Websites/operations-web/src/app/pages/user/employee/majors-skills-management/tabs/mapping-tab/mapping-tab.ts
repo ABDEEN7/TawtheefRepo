@@ -13,6 +13,8 @@ import {MajorsSkillsManagementStore} from '../../majors-skills-management.store'
 import { MajorsSkillsManagementFacade } from '../../majors-skills-management.facade';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
 import {Checkbox} from 'primeng/checkbox';
+import {HasPermissionDirective} from '../../../../../../shared/directives/has-permission.directive';
+import {Permissions} from '../../../../../../core/constants/permissions';
 @Component({
   selector: 'app-mapping-tab',
   standalone: true,
@@ -27,10 +29,12 @@ import {Checkbox} from 'primeng/checkbox';
     ToggleSwitch,
     TooltipModule,
     RemoteSelectComponent,
-    PaginationComponent
+    PaginationComponent,
+    HasPermissionDirective
   ]
 })
 export class MappingTabComponent {
+  readonly Permissions = Permissions;
   store = inject(MajorsSkillsManagementStore);
   service = inject(MajorsSkillsManagementFacade);
 

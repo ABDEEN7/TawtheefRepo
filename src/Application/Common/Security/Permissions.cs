@@ -506,6 +506,15 @@ public static class Permissions
 
     public static class MajorSkills
     {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.MajorSkills.View,
+                nameof(PermissionKeys.MajorSkills),
+                PermissionAction.View,
+                "Major Skills - View",
+                "التخصصات والمهارات - عرض",
+                69);
+
         public static readonly PermissionDefinition Manage =
             Def(
                 PermissionKeys.MajorSkills.Manage,

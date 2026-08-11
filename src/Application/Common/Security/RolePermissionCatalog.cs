@@ -16,6 +16,9 @@ public static class RolePermissionCatalog
                 Permissions.HomeContent.View.Key,
                 Permissions.HomeContent.Manage.Key,
                 Permissions.ProfileLogs.View.Key,
+
+                Permissions.Universities.View.Key,
+                Permissions.Universities.Manage.Key,
                 
             ],
             [SystemRoleIds.HrManager] = [
@@ -58,6 +61,7 @@ public static class RolePermissionCatalog
 
                 Permissions.OrganizationStructures.Manage.Key,
 
+                Permissions.MajorSkills.View.Key,
                 Permissions.MajorSkills.Manage.Key,
                 
                 Permissions.ProfileLogs.View.Key,
@@ -71,7 +75,9 @@ public static class RolePermissionCatalog
                 Permissions.MinisterOffice.View.Key,
                 Permissions.MinisterOffice.Manage.Key,
                 Permissions.Cities.View.Key,
-                Permissions.Cities.Manage.Key
+                Permissions.Cities.Manage.Key,
+                Permissions.Universities.View.Key,
+                Permissions.Universities.Manage.Key
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,
@@ -139,6 +145,7 @@ public static class RolePermissionCatalog
 
                 Permissions.OrganizationStructures.Manage.Key,
 
+                Permissions.MajorSkills.View.Key,
                 Permissions.MajorSkills.Manage.Key,
 
                 Permissions.JobTitles.View.Key,
@@ -150,7 +157,9 @@ public static class RolePermissionCatalog
                 Permissions.MinisterOffice.View.Key,
                 Permissions.MinisterOffice.Manage.Key,
                 Permissions.Cities.View.Key,
-                Permissions.Cities.Manage.Key
+                Permissions.Cities.Manage.Key,
+                Permissions.Universities.View.Key,
+                Permissions.Universities.Manage.Key
             ]
         };
 }

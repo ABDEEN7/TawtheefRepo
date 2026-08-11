@@ -16,6 +16,7 @@
       </button>
       @if (store.showParentMajorInfoButton()) {
         <button
+          *hasPermission="Permissions.MajorSkills.Manage"
           pButton
           type="button"
           class="p-button-outlined"
@@ -113,13 +114,13 @@
           <th>{{ 'MAJORS_SKILLS.MAJOR_SUBMAJOR_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.SKILL_COLUMN' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
-          <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
+          <th *hasPermission="Permissions.MajorSkills.Manage">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-item>
         <tr>
-          <td>
+          <td *hasPermission="Permissions.MajorSkills.Manage">
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <!-- Major Name -->
               <span class="fw-semibold">{{ item.major?.name ?? '-' }}</span>
