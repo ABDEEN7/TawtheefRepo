@@ -89,6 +89,19 @@
                     </ng-template>
                   </p-select>
                 </div>
+                <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
+                  <label class="form-label" style="font-size:12px;">{{ 'distribution.filters.hasOtherUniversity' | translate }}</label>
+                  <p-select class="w-100" [options]="yesNoOptions" optionValue="value"
+                    [ngModel]="hasOtherUniversityFilter()"
+                    (onChange)="onHasOtherUniversityChange($event.value)">
+                    <ng-template pTemplate="selectedItem" let-item>
+                      <span>{{ item?.label | translate }}</span>
+                    </ng-template>
+                    <ng-template let-item pTemplate="item">
+                      <span>{{ item.label | translate }}</span>
+                    </ng-template>
+                  </p-select>
+                </div>
                 <div class="col-lg-2 col-md-6 d-flex gap-2 flex-wrap mb-3 mb-lg-0">
                   <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
                     <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
@@ -142,6 +155,9 @@
                               [pTooltip]="'distribution.table.hasOtherTooltip' | translate"></i>
                             {{ profile.specialization || ('distribution.table.noValue' | translate) }}
                           </span>
+                          <i class="pi pi-exclamation-triangle text-warning ms-2"
+                            *ngIf="profile.hasOtherUniversity"
+                            [pTooltip]="'distribution.table.hasOtherUniversityTooltip' | translate"></i>
                         </td>
                         <td class="candidate-status">
                           <p-tag [severity]="statusSeverity(profile.status)"

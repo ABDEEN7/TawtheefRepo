@@ -106,6 +106,7 @@ export class ProfileDistributionPage implements OnInit {
   search = signal('');
   targetEntityId = signal<string>('');
   hasOtherFilter = signal<'all' | 'yes' | 'no'>('all');
+  hasOtherUniversityFilter = signal<'all' | 'yes' | 'no'>('all');
   selectedIds = signal<Set<string>>(new Set());
   selectedRows = signal<Map<string, DistributionFile>>(new Map());
   pageNumber = signal(1);
@@ -212,6 +213,9 @@ export class ProfileDistributionPage implements OnInit {
     const hasOther = this.hasOtherFilter();
     if (hasOther !== 'all') filters.hasOtherSpecialization = hasOther === 'yes';
 
+    const hasOtherUniversity = this.hasOtherUniversityFilter();
+    if (hasOtherUniversity !== 'all') filters.hasOtherUniversity = hasOtherUniversity === 'yes';
+
     return filters;
   }
 
@@ -224,6 +228,7 @@ export class ProfileDistributionPage implements OnInit {
       f.searchTerm ?? '',
       f.targetEntityId ?? '',
       f.hasOtherSpecialization?.toString() ?? 'all',
+      f.hasOtherUniversity?.toString() ?? 'all',
       f.sortBy ?? '',
       f.sortDirection ?? '',
     ].join('|');
@@ -304,6 +309,11 @@ export class ProfileDistributionPage implements OnInit {
     this.applySearch();
   }
 
+  onHasOtherUniversityChange(value: 'all' | 'yes' | 'no'): void {
+    this.hasOtherUniversityFilter.set(value);
+    this.applySearch();
+  }
+
   // search input
   onSearchChange(value: string): void {
     // keep raw input for UI binding, but the listener will normalize
@@ -360,6 +370,7 @@ export class ProfileDistributionPage implements OnInit {
     this.statusFilter.set('all');
     this.targetEntityId.set('');
     this.hasOtherFilter.set('all');
+    this.hasOtherUniversityFilter.set('all');
     this.applySearch();
   }
 

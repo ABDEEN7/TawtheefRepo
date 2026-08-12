@@ -43,6 +43,29 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
                 x.Section == cmd.Section, ct);
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
+
+        if (cmd.Status == ReviewStatus.Approved)
+        {
+            var hasUnapprovedChildren = await reviewRepo.DbSet
+                .AsNoTracking()
+                .AnyAsync(x =>
+                    x.UserProfileId == profile.Id &&
+                    x.Section == cmd.Section &&
+                    x.TargetType != ReviewTargetType.Section &&
+                    !x.IsDeleted &&
+                    x.Status != ReviewStatus.Approved,
+                    ct);
+            if (hasUnapprovedChildren)
+                return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
+        }
+
+        if (cmd.Status == ReviewStatus.Approved && cmd.Section == ProfileSection.Qualifications)
+        {
+            var universityValidation = await QualificationUniversityReviewGuard.ValidatePersistedProfileAsync(
+                uow, profile.Id, ct);
+            if (universityValidation.IsFailed)
+                return Result.Fail<Unit>(universityValidation.Errors);
+        }
         
         item.Status = cmd.Status;
         item.ReviewerNote = cmd.Note;

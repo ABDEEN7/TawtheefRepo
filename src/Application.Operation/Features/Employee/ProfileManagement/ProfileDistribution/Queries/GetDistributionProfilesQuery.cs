@@ -11,7 +11,8 @@ public sealed record GetDistributionProfilesQuery(
     UserProfileStatus? Status = null,
     string? SearchTerm = null,
     Guid? TargetEntityId = null,
-    bool? HasOtherSpecialization = null)
+    bool? HasOtherSpecialization = null,
+    bool? HasOtherUniversity = null)
     : PaginatedRequest, IRequest<Result<PaginatedResult<DistributionProfileDto>>>
 {
     protected override int MaximumPageSize => 500;

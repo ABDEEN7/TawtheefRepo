@@ -17,6 +17,7 @@ export interface DistributionFile {
   assignedEmployeeId?: string;
   assignedEmployeeName?: string;
   hasOtherSpecialization: boolean;
+  hasOtherUniversity: boolean;
   isMinisterOfficeCandidate: boolean;
   submittedAtUtc: string;
 }
@@ -61,4 +62,5 @@ export interface DistributionProfilesFilters extends PaginatedRequest {
   searchTerm?: string;
   targetEntityId?: string;
   hasOtherSpecialization?: boolean;
+  hasOtherUniversity?: boolean;
 }

@@ -15,6 +15,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.MinisterOffice;
+using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
@@ -32,6 +33,7 @@ internal sealed class ProfileDistributionProjection(
         string? searchTerm,
         Guid? targetEntityId,
         bool? hasOtherSpecialization,
+        bool? hasOtherUniversity,
         CancellationToken ct)
     {
         var profileRepo    = uow.GetEntityRepository<UserProfile>();
@@ -125,6 +127,15 @@ internal sealed class ProfileDistributionProjection(
             }
         }
 
+        if (hasOtherUniversity.HasValue)
+        {
+            profilesQuery = hasOtherUniversity.Value
+                ? profilesQuery.Where(p => p.Qualifications!.Any(q =>
+                    !q.IsDeleted && q.UniversityId == UniversityIds.Other))
+                : profilesQuery.Where(p => !p.Qualifications!.Any(q =>
+                    !q.IsDeleted && q.UniversityId == UniversityIds.Other));
+        }
+
         // 5) Paginate
         var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
         if (profiles.Metadata.TotalCount == 0)
@@ -184,6 +195,8 @@ internal sealed class ProfileDistributionProjection(
                 
                 dto.HasOtherSpecialization = profile.Qualifications?.Any(q =>
                     q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther) ?? false;
+                dto.HasOtherUniversity = profile.Qualifications?.Any(q =>
+                    !q.IsDeleted && UniversityIds.IsOther(q.UniversityId)) ?? false;
 
                 dto.IsMinisterOfficeCandidate = profile.NationalNumber != null && ministerOfficeLookup.Contains(profile.NationalNumber);
                 
@@ -287,6 +300,7 @@ internal sealed class ProfileDistributionProjection(
             searchTerm: null,
             targetEntityId: null,
             hasOtherSpecialization: null,
+            hasOtherUniversity: null,
             ct: ct);
 
         return new DistributionResultDto

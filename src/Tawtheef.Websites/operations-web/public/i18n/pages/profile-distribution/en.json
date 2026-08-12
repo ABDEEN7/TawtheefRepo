@@ -114,6 +114,8 @@
   "distribution.errors.loadFilesFailed": "Failed to load distributable profiles",
   "distribution.filters.hasOther": "Has 'Other' Specialization",
   "distribution.table.hasOtherTooltip": "One of their qualifications contains a 'Other' major or sub-major",
+  "distribution.filters.hasOtherUniversity": "Has Other University",
+  "distribution.table.hasOtherUniversityTooltip": "Contains a qualification with an unlisted university",
   "distribution.table.ministerOfficeCandidate": "Minister Office",
   "distribution.table.ministerOfficeCandidateTooltip": "Candidate selected by the Minister's Office"
 }

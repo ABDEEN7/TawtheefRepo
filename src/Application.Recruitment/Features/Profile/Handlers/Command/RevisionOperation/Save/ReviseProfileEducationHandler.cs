@@ -71,6 +71,14 @@ public sealed class ReviseProfileEducationHandler(
         if (degreesValidation.IsFailed)
             return Result.Fail<Unit>(degreesValidation.Errors);
 
+        foreach (var degree in degrees)
+        {
+            var universityValidation = await EducationUniversityRules.ValidateSelectionAsync(
+                uow, degree.DegreeId, degree.GradCountryId, degree.UniversityId, ct);
+            if (universityValidation.IsFailed)
+                return Result.Fail<Unit>(universityValidation.Errors);
+        }
+
         var filesValidation = ValidateDegreeFiles(degrees, files);
         if (filesValidation.IsFailed)
             return Result.Fail<Unit>(filesValidation.Errors);
@@ -162,17 +170,9 @@ public sealed class ReviseProfileEducationHandler(
 
     private static Result<List<ReviseProfileEducationDegreeDto>> DeserializeDegrees(string json)
     {
-        try
-        {
-            var degrees = JsonSerializer.Deserialize<List<ReviseProfileEducationDegreeDto>>(json, JsonOptions) 
-                          ?? new List<ReviseProfileEducationDegreeDto>();
-
-            return Result.Ok(degrees);
-        }
-        catch (JsonException)
-        {
-            return Result.Fail<List<ReviseProfileEducationDegreeDto>>(ErrorsCodes.InvalidDegreesJson);
-        }
+        var degrees = JsonSerializer.Deserialize<List<ReviseProfileEducationDegreeDto>>(json, JsonOptions)
+                      ?? new List<ReviseProfileEducationDegreeDto>();
+        return Result.Ok(degrees);
     }
 
     private static Result ValidateDegrees(IReadOnlyList<ReviseProfileEducationDegreeDto> degrees)

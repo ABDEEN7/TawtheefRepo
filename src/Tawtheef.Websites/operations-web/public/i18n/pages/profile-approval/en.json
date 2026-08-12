@@ -166,6 +166,7 @@
   "profileApproval.detail.qualifications.attachment": "Attachment",
   "profileApproval.detail.qualifications.otherMajorWarningTitle": "Warning: 'Other' specialization is not accepted",
   "profileApproval.detail.qualifications.otherMajorWarning": "Candidate is required to update qualification data and select the correct specialization from the list.",
+  "profileApproval.detail.qualifications.otherUniversityWarning": "The university is not listed. Review the attached certificate, ensure the correct university is available in the system, then return this qualification to the applicant for correction.",
   "profileApproval.detail.experiences.country": "Country",
   "profileApproval.detail.experiences.period": "Experience Period",
   "profileApproval.detail.experiences.qualification": "Related Qualification",

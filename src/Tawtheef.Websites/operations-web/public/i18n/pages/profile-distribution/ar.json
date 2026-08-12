@@ -114,6 +114,8 @@
   "distribution.errors.loadFilesFailed": "تعذر تحميل الملفات القابلة للتوزيع",
   "distribution.filters.hasOther": "وجود تخصص أخرى",
   "distribution.table.hasOtherTooltip": "تحتوي أحد مؤهلاته على تخصص رئيسي أو فرعي 'أخرى'",
+  "distribution.filters.hasOtherUniversity": "وجود جامعة أخرى",
+  "distribution.table.hasOtherUniversityTooltip": "يوجد مؤهل بجامعة غير مدرجة",
   "distribution.table.ministerOfficeCandidate": "مكتب الوزير",
   "distribution.table.ministerOfficeCandidateTooltip": "مرشح من قبل مكتب سعادة الوزير"
 }

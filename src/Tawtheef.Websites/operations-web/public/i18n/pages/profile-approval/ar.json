@@ -166,6 +166,7 @@
   "profileApproval.detail.qualifications.attachment": "المرفق",
   "profileApproval.detail.qualifications.otherMajorWarningTitle": "تنبيه: تخصص 'أخرى' غير مقبول",
   "profileApproval.detail.qualifications.otherMajorWarning": "يطلب من المرشح تحديث بيانات المؤهل واختيار التخصص الصحيح من القائمة",
+  "profileApproval.detail.qualifications.otherUniversityWarning": "الجامعة غير مدرجة. يرجى مراجعة الشهادة المرفقة والتأكد من إضافة الجامعة الصحيحة إلى النظام، ثم إعادة المؤهل للمتقدم لتصحيحه.",
   "profileApproval.detail.experiences.country": "الدولة",
   "profileApproval.detail.experiences.period": "تاريخ الخبرة",
   "profileApproval.detail.experiences.qualification": "المؤهل المرتبط",

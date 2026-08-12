@@ -237,7 +237,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     if (changes['preloadedOptions']) {
       // don’t wipe current options; merge
       const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
-      this.options.set(this.sortByOptionLabel(this.mergeWithSelected(merged)));
+      this.options.set(this.orderWithPreloadedLast(this.mergeWithSelected(merged)));
     }
 
     if (changes['parentId'] && !changes['parentId'].firstChange) {
@@ -425,12 +425,12 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.lastLoadReturnedEmpty = next.length === 0 && (req.term?.length ?? 0) >= this.minChars;
 
     const mergedBase = req.append
-      ? this.mergeById([...(this.options() ?? []), ...next])
-      : this.mergeById(next);
+      ? this.mergeById([...(this.options() ?? []), ...next, ...(this.preloadedOptions ?? [])])
+      : this.mergeById([...next, ...(this.preloadedOptions ?? [])]);
 
     const mergedWithSelected = this.mergeWithSelected(mergedBase);
 
-    this.options.set(this.sortByOptionLabel(mergedWithSelected));
+    this.options.set(this.orderWithPreloadedLast(mergedWithSelected));
     this.hasMore.set(next.length === this.pageSize);
 
     // emptyMessage داخل القائمة
@@ -513,6 +513,20 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   private sortByOptionLabel(items: any[]): any[] {
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     return [...(items ?? [])].sort((a, b) => collator.compare(this.getOptionLabelValue(a), this.getOptionLabelValue(b)));
+  }
+
+  private orderWithPreloadedLast(items: any[]): any[] {
+    const merged = this.mergeById(items ?? []);
+    const preloadedIds = new Set(
+      (this.preloadedOptions ?? [])
+        .map(option => this.getOptionId(option))
+        .filter((id): id is string => id !== null)
+    );
+    const remoteOptions = merged.filter(option => !preloadedIds.has(this.getOptionId(option) ?? ''));
+    const preloaded = this.mergeById(this.preloadedOptions ?? [])
+      .filter(option => merged.some(item => this.getOptionId(item) === this.getOptionId(option)));
+
+    return [...this.sortByOptionLabel(remoteOptions), ...preloaded];
   }
 
   private appendExtraParams(params: HttpParams): HttpParams {
