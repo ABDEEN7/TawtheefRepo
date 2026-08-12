@@ -8,11 +8,15 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 
 public sealed record GetDistributionProfilesQuery(
     Guid? UserId,
-    UserProfileStatus? Status = null,
     string? SearchTerm = null,
+    IReadOnlyCollection<UserProfileStatus>? Statuses = null,
+    Guid? AssignedEmployeeId = null,
     Guid? TargetEntityId = null,
+    IReadOnlyCollection<Guid>? CandidateTypeIds = null,
     bool? HasOtherSpecialization = null,
-    bool? HasOtherUniversity = null)
+    bool? HasOtherUniversity = null,
+    bool IsQatarGraduate = false,
+    IReadOnlyCollection<Guid>? DegreeIds = null)
     : PaginatedRequest, IRequest<Result<PaginatedResult<DistributionProfileDto>>>
 {
     protected override int MaximumPageSize => 500;

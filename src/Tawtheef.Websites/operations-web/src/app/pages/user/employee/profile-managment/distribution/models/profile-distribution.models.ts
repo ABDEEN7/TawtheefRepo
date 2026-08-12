@@ -57,10 +57,33 @@ export interface DistributionResult {
   profiles: DistributionFile[];
 }
 
+export interface DistributionAppliedFilters {
+  searchTerm: string | null;
+  statuses: ProfileStatusNumber[];
+  assignedEmployeeId: string | null;
+  targetEntityId: string | null;
+  candidateTypeIds: string[];
+  hasOtherSpecialization: boolean | null;
+  hasOtherUniversity: boolean | null;
+  isQatarGraduate: boolean;
+  degreeIds: string[];
+  pageNumber: number;
+  pageSize: number;
+  sortBy: 'CreatedDate';
+  sortDirection: 'asc' | 'desc';
+}
+
+export type DistributionAdvancedFilters = Omit<DistributionAppliedFilters,
+  'searchTerm' | 'statuses' | 'pageNumber' | 'pageSize' | 'sortBy' | 'sortDirection'>;
+
 export interface DistributionProfilesFilters extends PaginatedRequest {
-  status?: ProfileStatusNumber;
   searchTerm?: string;
+  statuses?: ProfileStatusNumber[];
+  assignedEmployeeId?: string;
   targetEntityId?: string;
+  candidateTypeIds?: string[];
   hasOtherSpecialization?: boolean;
   hasOtherUniversity?: boolean;
+  isQatarGraduate?: boolean;
+  degreeIds?: string[];
 }

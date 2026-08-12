@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  ChangeDetectionStrategy,
   DestroyRef,
   OnInit,
   computed,
@@ -15,13 +16,15 @@ import {
   finalize,
   map,
   switchMap,
-  tap, defer,
+  defer,
 } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
@@ -30,6 +33,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { Select } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Ripple } from 'primeng/ripple';
 import { Tooltip } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -39,6 +44,8 @@ import {
   AutoAssignRequest,
   DistributionEmployee,
   DistributionFile,
+  DistributionAdvancedFilters,
+  DistributionAppliedFilters,
   DistributionProfilesFilters,
   DistributionResult,
   EmployeeAvailability,
@@ -59,7 +66,26 @@ import { PaginationComponent } from '../../../../../shared/components/pagination
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import {SortEvent} from 'primeng/api';
-import {ProfileApprovalListFilter} from '../approval-list/models/profile-approval.models';
+
+const DEFAULT_ADVANCED_FILTERS: DistributionAdvancedFilters = {
+  assignedEmployeeId: null,
+  targetEntityId: null,
+  candidateTypeIds: [],
+  hasOtherSpecialization: null,
+  hasOtherUniversity: null,
+  isQatarGraduate: false,
+  degreeIds: [],
+};
+
+const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
+  searchTerm: null,
+  statuses: [ProfileStatusNumber.Submitted],
+  ...DEFAULT_ADVANCED_FILTERS,
+  pageNumber: 1,
+  pageSize,
+  sortBy: 'CreatedDate',
+  sortDirection: 'desc',
+});
 
 @Component({
   selector: 'app-profile-distribution-page',
@@ -70,6 +96,8 @@ import {ProfileApprovalListFilter} from '../approval-list/models/profile-approva
     TranslateModule,
     TableModule,
     InputTextModule,
+    IconFieldModule,
+    InputIconModule,
     ButtonModule,
     TagModule,
     DialogModule,
@@ -79,6 +107,8 @@ import {ProfileApprovalListFilter} from '../approval-list/models/profile-approva
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
+    MultiSelectModule,
+    ToggleSwitchModule,
     Ripple,
     Tooltip,
     ProgressBarModule,
@@ -86,6 +116,7 @@ import {ProfileApprovalListFilter} from '../approval-list/models/profile-approva
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
   styleUrl: './profile-distribution.page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileDistributionPage implements OnInit {
   private api = inject(ProfileDistributionService);
@@ -99,20 +130,17 @@ export class ProfileDistributionPage implements OnInit {
   files = signal<DistributionFile[]>([]);
   employees = signal<DistributionEmployee[]>([]);
   targetEntities = signal<dropdownOptionsModel[]>([]);
+  candidateTypes = signal<dropdownOptionsModel[]>([]);
+  degrees = signal<dropdownOptionsModel[]>([]);
   loading = signal(false);
   paginationMetadata = signal<PaginationMetadata | null>(null);
 
-  statusFilter = signal<ProfileStatusNumber | 'all'>('all');
-  search = signal('');
-  targetEntityId = signal<string>('');
-  hasOtherFilter = signal<'all' | 'yes' | 'no'>('all');
-  hasOtherUniversityFilter = signal<'all' | 'yes' | 'no'>('all');
+  appliedFilters = signal<DistributionAppliedFilters>(createDefaultFilters());
+  draftFilters = signal<DistributionAdvancedFilters>({ ...DEFAULT_ADVANCED_FILTERS });
+  searchInput = signal('');
+  showAdvancedFilters = signal(false);
   selectedIds = signal<Set<string>>(new Set());
   selectedRows = signal<Map<string, DistributionFile>>(new Map());
-  pageNumber = signal(1);
-  pageSize = signal(10);
-  sortBy = signal<string | null>(null);
-  sortDirection = signal<'asc' | 'desc' | null>(null);
 
   manualEmployeeId = signal<string>('');
   autoEmployeeIds = signal<Set<string>>(new Set());
@@ -123,6 +151,16 @@ export class ProfileDistributionPage implements OnInit {
   private query$ = new Subject<{ force?: boolean }>();
   // computed
   readonly selectedFiles = computed(() => Array.from(this.selectedRows().values()));
+  readonly pageNumber = computed(() => this.appliedFilters().pageNumber);
+  readonly pageSize = computed(() => this.appliedFilters().pageSize);
+  readonly activeAdvancedFilterCount = computed(() =>
+    this.countAdvancedFilters(this.getAdvancedFilters(this.appliedFilters()))
+  );
+  readonly hasActiveFilters = computed(() =>
+    !!this.appliedFilters().searchTerm ||
+    this.activeAdvancedFilterCount() > 0 ||
+    !this.hasDefaultStatuses(this.appliedFilters().statuses)
+  );
 
   readonly displayedFiles = computed(() => this.files());
 
@@ -143,17 +181,16 @@ export class ProfileDistributionPage implements OnInit {
     this.employees().filter(e => e.isActive && e.availability === EmployeeAvailability.Available)
   );
 
-  readonly statusOptions: { value: ProfileStatusNumber | 'all'; label: string }[] = [
-    { value: 'all', label: 'distribution.filters.statusAll' },
-    { value: ProfileStatusNumber.Submitted, label: 'distribution.filters.statusSubmitted' },
-    { value: ProfileStatusNumber.UnderReview, label: 'distribution.filters.statusUnderReview' },
-    { value: ProfileStatusNumber.RequiresUpdate, label: 'distribution.filters.statusNeedsChanges' },
+  readonly statusOptions = [
+    { value: ProfileStatusNumber.Submitted, label: 'distribution.status.submitted' },
+    { value: ProfileStatusNumber.UnderReview, label: 'distribution.status.underReview' },
+    { value: ProfileStatusNumber.Approved, label: 'distribution.status.approved' },
   ];
 
-  readonly yesNoOptions: { value: 'all' | 'yes' | 'no'; label: string }[] = [
-    { value: 'all', label: 'distribution.filters.statusAll' },
-    { value: 'yes', label: 'common.yes' },
-    { value: 'no', label: 'common.no' }
+  readonly yesNoOptions = [
+    { value: null, label: 'distribution.filters.all' },
+    { value: true, label: 'distribution.filters.yes' },
+    { value: false, label: 'distribution.filters.no' },
   ];
 
   readonly rowsPerPageOptions = [10, 20, 50, 100, 500];
@@ -165,6 +202,8 @@ export class ProfileDistributionPage implements OnInit {
     // load static/slow-changing data once
     this.loadEmployees();
     this.loadTargetEntities();
+    this.loadCandidateTypes();
+    this.loadDegrees();
 
     // initial table load
     this.loadData();
@@ -180,66 +219,24 @@ export class ProfileDistributionPage implements OnInit {
 
     const newDir = event.order === 1 ? 'asc' : 'desc';
 
-    if (this.sortBy() === event.field && this.sortDirection() === newDir) return; // ✅ ignore duplicate
-
-    this.sortBy.set(event.field);
-    this.sortDirection.set(newDir);
-    this.pageNumber.set(1);
+    const current = this.appliedFilters();
+    if (current.sortDirection === newDir) return;
+    this.appliedFilters.set({ ...current, sortBy: 'CreatedDate', sortDirection: newDir, pageNumber: 1 });
     this.loadData();
   }
 
-  private buildFilters(): DistributionProfilesFilters {
-    const filters: DistributionProfilesFilters = {
-      pageNumber: this.pageNumber(),
-      pageSize: this.pageSize(),
-    };
-
-    const status = this.statusFilter();
-    if (status !== 'all') filters.status = status;
-
-    const term = this.search().trim();
-    if (term) filters.searchTerm = term;
-
-    const entityId = this.targetEntityId();
-    if (entityId) filters.targetEntityId = entityId;
-
-    const sortBy = this.sortBy();
-    const sortDir = this.sortDirection();
-    if (sortBy && sortDir) {
-      filters.sortBy = sortBy;
-      filters.sortDirection = sortDir;
-    }
-
-    const hasOther = this.hasOtherFilter();
-    if (hasOther !== 'all') filters.hasOtherSpecialization = hasOther === 'yes';
-
-    const hasOtherUniversity = this.hasOtherUniversityFilter();
-    if (hasOtherUniversity !== 'all') filters.hasOtherUniversity = hasOtherUniversity === 'yes';
-
-    return filters;
-  }
-
-  private filtersKey(f: DistributionProfilesFilters): string {
-    // stable key for dedupe
-    return [
-      f.pageNumber,
-      f.pageSize,
-      f.status ?? 'all',
-      f.searchTerm ?? '',
-      f.targetEntityId ?? '',
-      f.hasOtherSpecialization?.toString() ?? 'all',
-      f.hasOtherUniversity?.toString() ?? 'all',
-      f.sortBy ?? '',
-      f.sortDirection ?? '',
-    ].join('|');
+  private toRequest(filters: DistributionAppliedFilters): DistributionProfilesFilters {
+    return Object.fromEntries(
+      Object.entries(filters).filter(([, value]) => value !== null && value !== '')
+    ) as unknown as DistributionProfilesFilters;
   }
 
   private setupQueryPipeline(): void {
     this.query$
       .pipe(
         map(({ force }) => {
-          const filters = this.buildFilters();
-          return { filters, key: this.filtersKey(filters), force: !!force };
+          const filters = this.toRequest(this.appliedFilters());
+          return { filters, key: JSON.stringify(filters), force: !!force };
         }),
         // ✅ اسمح بالمرور إذا force=true حتى لو نفس الـ key
         distinctUntilChanged((a, b) => !b.force && a.key === b.key),
@@ -258,8 +255,8 @@ export class ProfileDistributionPage implements OnInit {
         next: (response: PaginatedResult<DistributionFile>) => {
           this.files.set(response.items);
           this.paginationMetadata.set(response.metadata);
-          this.pageNumber.set(response.metadata.currentPage);
-          this.pageSize.set(response.metadata.pageSize);
+          this.appliedFilters.update(filters => ({ ...filters,
+            pageNumber: response.metadata.currentPage, pageSize: response.metadata.pageSize }));
         },
       });
   }
@@ -281,43 +278,32 @@ export class ProfileDistributionPage implements OnInit {
       });
   }
 
+  private loadCandidateTypes(): void {
+    this.api.getCandidateTypes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: values => this.candidateTypes.set(values ?? []) });
+  }
+
+  private loadDegrees(): void {
+    this.api.getDegrees()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: values => this.degrees.set(values ?? []) });
+  }
+
   // pagination
   onPageChange(page: number): void {
-    this.pageNumber.set(page);
+    this.appliedFilters.update(filters => ({ ...filters, pageNumber: page }));
     this.loadData();
   }
 
   onPageSizeChange(size: number): void {
-    this.pageSize.set(size);
-    this.pageNumber.set(1);
+    this.appliedFilters.update(filters => ({ ...filters, pageSize: size, pageNumber: 1 }));
     this.loadData();
-  }
-
-  // filters
-  onStatusChange(value: ProfileStatusNumber | 'all'): void {
-    this.statusFilter.set(value);
-    this.applySearch();
-  }
-
-  onTargetEntityChange(value: string): void {
-    this.targetEntityId.set(value);
-    this.applySearch();
-  }
-
-  onHasOtherChange(value: 'all' | 'yes' | 'no'): void {
-    this.hasOtherFilter.set(value);
-    this.applySearch();
-  }
-
-  onHasOtherUniversityChange(value: 'all' | 'yes' | 'no'): void {
-    this.hasOtherUniversityFilter.set(value);
-    this.applySearch();
   }
 
   // search input
   onSearchChange(value: string): void {
-    // keep raw input for UI binding, but the listener will normalize
-    this.search.set(value);
+    this.searchInput.set(value);
     this.searchChanges$.next(value);
   }
 
@@ -327,14 +313,95 @@ export class ProfileDistributionPage implements OnInit {
         map(v => (v ?? '').trim()),
         // optional: ignore very short terms (uncomment if you want)
         // map(v => (v.length < 2 ? '' : v)),
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(normalized => {
-        this.search.set(normalized);
-        this.applySearch();
+        const searchTerm = normalized || null;
+        if (this.appliedFilters().searchTerm === searchTerm) return;
+        this.appliedFilters.update(filters => ({ ...filters, searchTerm, pageNumber: 1 }));
+        this.clearSelection();
+        this.loadData();
       });
+  }
+
+  toggleAdvancedFilters(): void {
+    if (this.showAdvancedFilters()) return this.cancelAdvancedFilters();
+    this.draftFilters.set(this.getAdvancedFilters(this.appliedFilters()));
+    this.showAdvancedFilters.set(true);
+  }
+
+  updateDraftFilter<K extends keyof DistributionAdvancedFilters>(key: K, value: DistributionAdvancedFilters[K]): void {
+    this.draftFilters.update(filters => ({ ...filters, [key]: value }));
+  }
+
+  onStatusChange(statuses: ProfileStatusNumber[] | null): void {
+    const normalized = statuses?.length ? [...statuses] : [ProfileStatusNumber.Submitted];
+    this.appliedFilters.update(filters => ({ ...filters, statuses: normalized, pageNumber: 1 }));
+    this.clearSelection();
+    this.loadData();
+  }
+
+  onDraftQatarGraduateChange(isQatarGraduate: boolean): void {
+    this.draftFilters.update(filters => ({
+      ...filters,
+      isQatarGraduate,
+      degreeIds: isQatarGraduate ? filters.degreeIds : [],
+    }));
+  }
+
+  applyAdvancedFilters(): void {
+    const draft = this.normalizeAdvancedFilters(this.draftFilters());
+    this.draftFilters.set(draft);
+    this.appliedFilters.update(filters => ({ ...filters, ...draft, pageNumber: 1 }));
+    this.clearSelection();
+    this.loadData();
+  }
+
+  cancelAdvancedFilters(): void {
+    this.draftFilters.set(this.getAdvancedFilters(this.appliedFilters()));
+    this.showAdvancedFilters.set(false);
+  }
+
+  clearFilters(): void {
+    this.appliedFilters.set(createDefaultFilters(this.appliedFilters().pageSize));
+    this.draftFilters.set({ ...DEFAULT_ADVANCED_FILTERS });
+    this.searchInput.set('');
+    this.showAdvancedFilters.set(false);
+    this.clearSelection();
+    this.loadData(true);
+  }
+
+  private getAdvancedFilters(filters: DistributionAppliedFilters): DistributionAdvancedFilters {
+    const { assignedEmployeeId, targetEntityId, candidateTypeIds,
+      hasOtherSpecialization, hasOtherUniversity, isQatarGraduate, degreeIds } = filters;
+    return { assignedEmployeeId, targetEntityId,
+      candidateTypeIds: [...candidateTypeIds], hasOtherSpecialization, hasOtherUniversity,
+      isQatarGraduate, degreeIds: [...degreeIds] };
+  }
+
+  private normalizeAdvancedFilters(filters: DistributionAdvancedFilters): DistributionAdvancedFilters {
+    return {
+      ...filters,
+      candidateTypeIds: [...filters.candidateTypeIds],
+      degreeIds: filters.isQatarGraduate ? [...filters.degreeIds] : [],
+    };
+  }
+
+  private countAdvancedFilters(filters: DistributionAdvancedFilters): number {
+    return [
+      filters.assignedEmployeeId,
+      filters.targetEntityId,
+      filters.candidateTypeIds.length > 0 ? true : null,
+      filters.hasOtherSpecialization,
+      filters.hasOtherUniversity,
+      filters.isQatarGraduate ? true : null,
+    ].filter(value => value !== null && value !== false).length;
+  }
+
+  private hasDefaultStatuses(statuses: ProfileStatusNumber[]): boolean {
+    return statuses.length === 1 && statuses[0] === ProfileStatusNumber.Submitted;
   }
 
   // selection
@@ -363,22 +430,6 @@ export class ProfileDistributionPage implements OnInit {
   clearSelection(): void {
     this.selectedIds.set(new Set());
     this.selectedRows.set(new Map());
-  }
-
-  clearSearch(): void {
-    this.search.set('');
-    this.statusFilter.set('all');
-    this.targetEntityId.set('');
-    this.hasOtherFilter.set('all');
-    this.hasOtherUniversityFilter.set('all');
-    this.applySearch();
-  }
-
-  // resets pagination + triggers query
-  applySearch(): void {
-    this.pageNumber.set(1);
-    this.clearSelection();
-    this.loadData();
   }
 
   // dialogs
