@@ -17,8 +17,8 @@ public sealed class NormalizedTextModelBinder : IModelBinder
         bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
         var normalizedValue = valueProviderResult.FirstValue?
-            .Replace("\u200B", string.Empty)
-            .Replace("\uFEFF", string.Empty)
+            .Replace("\u200B", " ")
+            .Replace("\uFEFF", " ")
             .Replace('\u00A0', ' ')
             .Trim();
 
