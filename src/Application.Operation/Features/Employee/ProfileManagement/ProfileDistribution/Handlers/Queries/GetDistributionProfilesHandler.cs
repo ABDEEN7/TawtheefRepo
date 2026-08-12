@@ -28,10 +28,6 @@ public sealed class GetDistributionProfilesHandler(
         var items = await projection.LoadProfilesAsync(
             request.UserId!.Value,
             request,
-            request.Status,
-            request.SearchTerm,
-            request.TargetEntityId,
-            request.HasOtherSpecialization,
             ct);
         return Result.Ok(items);
     }

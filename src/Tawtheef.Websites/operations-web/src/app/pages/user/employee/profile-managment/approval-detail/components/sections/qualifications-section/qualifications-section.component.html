@@ -84,12 +84,17 @@
         </div>
       </div>
 
+      <div class="alert alert-warning mx-3 mb-3 d-flex align-items-start gap-2" *ngIf="q.isOtherUniversity">
+        <i class="pi pi-exclamation-triangle mt-1"></i>
+        <span>{{ 'profileApproval.detail.qualifications.otherUniversityWarning' | translate }}</span>
+      </div>
+
       <app-item-inline-review
         *ngIf="reviewItemFor(q.id) as review"
         [reviewItemId]="review.reviewItemId"
         [status]="review.status"
         [note]="review.note"
-        [blockApprove]="isOtherSpec(q.major) || isOtherSpec(q.subMajor)"
+        [blockApprove]="q.isOtherUniversity || isOtherSpec(q.major) || isOtherSpec(q.subMajor)"
         (review)="reviewItem.emit($event)"
       ></app-item-inline-review>
     </p-card>

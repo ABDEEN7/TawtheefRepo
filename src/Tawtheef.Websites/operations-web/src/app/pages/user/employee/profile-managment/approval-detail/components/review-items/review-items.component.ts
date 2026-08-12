@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
@@ -26,6 +26,7 @@ import { TooltipModule } from 'primeng/tooltip';
   imports: [CommonModule, TranslateModule, ButtonModule, TagModule, TooltipModule],
   templateUrl: './review-items.component.html',
   styleUrls: ['../../profile-approval-detail.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewItemsComponent {
   private translate = inject(TranslateService);

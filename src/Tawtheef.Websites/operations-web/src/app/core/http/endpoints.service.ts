@@ -145,6 +145,8 @@ export class EndpointsService {
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),
     targetEntities: this.getFullUrl('/profile-distributions/target-entities'),
+    candidateTypes: this.getFullUrl('/profile-distributions/candidate-types'),
+    degrees: this.getFullUrl('/profile-distributions/degrees'),
     employees: this.getFullUrl('/profile-distributions/employees'),
     assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
     assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),

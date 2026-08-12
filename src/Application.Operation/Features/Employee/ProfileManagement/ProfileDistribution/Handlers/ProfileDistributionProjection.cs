@@ -1,4 +1,5 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Queries;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.MinisterOffice;
+using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
@@ -27,11 +29,7 @@ internal sealed class ProfileDistributionProjection(
 {
     public async Task<PaginatedResult<DistributionProfileDto>> LoadProfilesAsync(
         Guid userId,
-        PaginatedRequest paginatedRequest,
-        UserProfileStatus? status,
-        string? searchTerm,
-        Guid? targetEntityId,
-        bool? hasOtherSpecialization,
+        GetDistributionProfilesQuery request,
         CancellationToken ct)
     {
         var profileRepo    = uow.GetEntityRepository<UserProfile>();
@@ -44,13 +42,14 @@ internal sealed class ProfileDistributionProjection(
             .FirstOrDefaultAsync(u => u.Id == userId, ct);
 
         if (user is null)        
-            return new PaginatedResult<DistributionProfileDto>([], 0, paginatedRequest.PageNumber, paginatedRequest.PageSize);
+            return new PaginatedResult<DistributionProfileDto>([], 0, request.PageNumber, request.PageSize);
 
 
         // 2) Base profiles query with eligibility rules + country filter
         // Keep the paging query free of Includes. Joining collection navigations before
         // Skip/Take multiplies profile rows and becomes very expensive for large pages.
         var profilesQuery = profileRepo.DbSet
+            .AsNoTracking()
             .WhereIf(user is EmployeeUser,p=> 
                 p.Provider == nameof(ProviderLoginIds.QatarPass) || 
                                               p.Provider == nameof(ProviderLoginIds.QatarResidentOtp))
@@ -63,8 +62,7 @@ internal sealed class ProfileDistributionProjection(
                       (c.Status == ProfileChangeRequestStatus.Pending ||
                        c.Status == ProfileChangeRequestStatus.UnderReview)))
                 )
-            )
-            .WhereIf(status is not null, p => p.Status == status);
+            );
 
         if (user is OfficeUser office)
         {
@@ -74,14 +72,14 @@ internal sealed class ProfileDistributionProjection(
         }          
 
         // 4) Optional search filter
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
-            var trimmed = searchTerm.Trim();
+            var trimmed = request.SearchTerm.Trim();
             var term = $"%{trimmed}%";
             var compactTerm = trimmed.Replace(" ", string.Empty);
             var compactLike = $"%{compactTerm}%";
             profilesQuery = profilesQuery.Where(p =>
-                (p.User != null &&
+                p.User != null &&
                  (EF.Functions.Like(p.User.FullNameAr, term) ||
                   EF.Functions.Like(p.User.FullNameEn, term) ||
                   (compactTerm.Length > 0 &&
@@ -90,43 +88,16 @@ internal sealed class ProfileDistributionProjection(
                         compactLike) ||
                     EF.Functions.Like(
                         (p.User.FullNameEn).Replace(" ", string.Empty),
-                        compactLike))))) ||
-                (p.CandidateType != null &&
-                 (EF.Functions.Like(p.CandidateType.NameAr, term) ||
-                  EF.Functions.Like(p.CandidateType.NameEn, term))) ||
-                (p.TargetEntity != null &&
-                 (EF.Functions.Like(p.TargetEntity.NameAr, term) ||
-                  EF.Functions.Like(p.TargetEntity.NameEn, term))) ||
-                EF.Functions.Like(p.NationalNumber ?? string.Empty, term) ||
-                assignmentRepo.DbSet.Any(a =>
-                    a.IsActive &&
-                    a.UserProfileId == p.Id &&
-                    a.Employee != null &&
-                    (EF.Functions.Like(a.Employee.FullNameAr, term) ||
-                     EF.Functions.Like(a.Employee.FullNameEn, term))));
+                        compactLike)))) ||
+                EF.Functions.Like(p.NationalNumber ?? string.Empty, term));
         }
 
-        if (targetEntityId.HasValue)
-        {
-            profilesQuery = profilesQuery.Where(p => p.TargetEntityId == targetEntityId.Value);
-        }
+        profilesQuery = ApplyFilters(profilesQuery, request, assignmentRepo.DbSet);
 
-        if (hasOtherSpecialization.HasValue)
-        {
-            if (hasOtherSpecialization.Value)
-            {
-                profilesQuery = profilesQuery.Where(p => p.Qualifications!.Any(q => 
-                    q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther));
-            }
-            else
-            {
-                profilesQuery = profilesQuery.Where(p => !p.Qualifications!.Any(q => 
-                    q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther));
-            }
-        }
+        profilesQuery = ApplySorting(profilesQuery, request);
 
-        // 5) Paginate
-        var profiles = await profilesQuery.ToPaginatedListAsync(paginatedRequest, ct);
+        // 5) Paginate after scope, eligibility, filters, and deterministic sorting.
+        var profiles = await PaginateAsync(profilesQuery, request, ct);
         if (profiles.Metadata.TotalCount == 0)
         {
             return new PaginatedResult<DistributionProfileDto>(
@@ -184,12 +155,13 @@ internal sealed class ProfileDistributionProjection(
                 
                 dto.HasOtherSpecialization = profile.Qualifications?.Any(q =>
                     q.MajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther || q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther) ?? false;
+                dto.HasOtherUniversity = profile.Qualifications?.Any(q =>
+                    !q.IsDeleted && UniversityIds.IsOther(q.UniversityId)) ?? false;
 
                 dto.IsMinisterOfficeCandidate = profile.NationalNumber != null && ministerOfficeLookup.Contains(profile.NationalNumber);
                 
                 return dto;
             })
-            .OrderByDescending(p => p.SubmittedAtUtc)
             .ToList();
 
         return new PaginatedResult<DistributionProfileDto>(
@@ -197,6 +169,79 @@ internal sealed class ProfileDistributionProjection(
             profiles.Metadata.TotalCount,
             profiles.Metadata.CurrentPage,
             profiles.Metadata.PageSize);
+    }
+
+    private static IQueryable<UserProfile> ApplyFilters(
+        IQueryable<UserProfile> query,
+        GetDistributionProfilesQuery request,
+        IQueryable<ProfileAssignment> assignments)
+    {
+        var statuses = request.Statuses?.Distinct().ToArray() ?? [];
+        if (statuses.Length > 0)
+            query = query.Where(p => statuses.Contains(p.Status));
+
+        var candidateTypeIds = request.CandidateTypeIds?.Distinct().ToArray() ?? [];
+
+        query = query
+            .WhereIf(request.AssignedEmployeeId.HasValue, p => assignments.Any(a =>
+                a.IsActive && a.UserProfileId == p.Id && a.EmployeeId == request.AssignedEmployeeId))
+            .WhereIf(request.TargetEntityId.HasValue, p => p.TargetEntityId == request.TargetEntityId)
+            .WhereIf(candidateTypeIds.Length > 0, p =>
+                p.CandidateTypeId.HasValue && candidateTypeIds.Contains(p.CandidateTypeId.Value));
+
+        if (request.HasOtherSpecialization.HasValue)
+            query = request.HasOtherSpecialization.Value
+                ? query.Where(p => p.Qualifications!.Any(q =>
+                    q.MajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther ||
+                    q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther))
+                : query.Where(p => !p.Qualifications!.Any(q =>
+                    q.MajorId == MajorIds.Other || q.MajorId == MajorIds.SubOther ||
+                    q.SubMajorId == MajorIds.Other || q.SubMajorId == MajorIds.SubOther));
+
+        if (request.HasOtherUniversity.HasValue)
+            query = request.HasOtherUniversity.Value
+                ? query.Where(p => p.Qualifications!.Any(q => q.UniversityId == UniversityIds.Other))
+                : query.Where(p => !p.Qualifications!.Any(q => q.UniversityId == UniversityIds.Other));
+
+        if (request.IsQatarGraduate)
+        {
+            query = query.Where(p => p.Qualifications!.Any(q =>
+                !q.IsDeleted && q.CountryId == CountryIds.Qatar));
+
+            foreach (var degreeId in request.DegreeIds?.Distinct() ?? [])
+            {
+                var requiredDegreeId = degreeId;
+                query = query.Where(p => p.Qualifications!.Any(q =>
+                    !q.IsDeleted &&
+                    q.CountryId == CountryIds.Qatar &&
+                    q.DegreeId == requiredDegreeId));
+            }
+        }
+
+        return query;
+    }
+
+    private static IQueryable<UserProfile> ApplySorting(IQueryable<UserProfile> query, PaginatedRequest request)
+    {
+        var descending = !string.Equals(request.SortDirection, "asc", StringComparison.OrdinalIgnoreCase);
+        return request.SortBy?.Trim().ToLowerInvariant() switch
+        {
+            "createddate" => descending
+                ? query.OrderByDescending(p => p.CreatedDate).ThenByDescending(p => p.Id)
+                : query.OrderBy(p => p.CreatedDate).ThenBy(p => p.Id),
+            _ => query.OrderByDescending(p => p.CreatedDate).ThenByDescending(p => p.Id)
+        };
+    }
+
+    private static async Task<PaginatedResult<UserProfile>> PaginateAsync(
+        IQueryable<UserProfile> query, PaginatedRequest request, CancellationToken ct)
+    {
+        var count = await query.CountAsync(ct);
+        var items = await query
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(ct);
+        return new PaginatedResult<UserProfile>(items, count, request.PageNumber, request.PageSize);
     }
 
     public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(Guid userId, CancellationToken ct)
@@ -282,11 +327,7 @@ internal sealed class ProfileDistributionProjection(
         var employees = await LoadEmployeesAsync(userId, ct);
         var profiles = await LoadProfilesAsync(
             userId: userId,
-            paginatedRequest: new PaginatedRequest { PageSize = int.MaxValue },
-            status: null,
-            searchTerm: null,
-            targetEntityId: null,
-            hasOtherSpecialization: null,
+            request: new GetDistributionProfilesQuery(userId) { PageSize = int.MaxValue },
             ct: ct);
 
         return new DistributionResultDto

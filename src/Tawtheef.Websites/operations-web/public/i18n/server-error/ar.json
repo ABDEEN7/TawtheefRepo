@@ -175,6 +175,7 @@
   "server-error.NOTES_REQUIRED_FOR_CORRECTION": "الملاحظات مطلوبة لإجراء التصحيح.",
   "server-error.UNAPPROVED_ITEMS_EXIST": "توجد عناصر غير معتمدة.",
   "server-error.INVALID_DEGREE_UNIVERSITY_ID": "معرّف الجامعة للمؤهل غير صالح.",
+  "server-error.UNIVERSITY_RESOLUTION_REQUIRED": "يجب تحديد الجامعة الرسمية بدلاً من أخرى قبل الاعتماد.",
   "server-error.INVALID_DEGREE_MAJOR_ID": "معرّف التخصص للمؤهل غير صالح.",
   "server-error.INVALID_GPA": "المعدل التراكمي غير صالح.",
   "server-error.INVALID_DEGREE_FILE": "ملف المؤهل غير صالح.",

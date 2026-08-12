@@ -6,7 +6,6 @@
           <div>
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <h3 class="fw-bold mb-0">{{ 'distribution.title' | translate }}</h3>
-              <span class="pill soft">{{ 'distribution.table.title' | translate }}</span>
             </div>
             <p class="text-muted mt-2 mb-0">{{ 'distribution.subtitle' | translate }}</p>
           </div>
@@ -20,8 +19,14 @@
               </div>
             </div>
 
-            <button pButton type="button" class="p-button-outlined" (click)="loadData(true)" [disabled]="loading()">
-              <span pButtonLabel>{{'distribution.actions.refresh' | translate}}</span>
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined"
+              (click)="loadData(true)"
+              [disabled]="loading()"
+            >
+              <span pButtonLabel>{{ 'distribution.actions.refresh' | translate }}</span>
               <i class="hgi hgi-stroke hgi-refresh" pButtonIcon></i>
             </button>
           </div>
@@ -33,74 +38,236 @@
             <div class="card-body">
               <div class="mb-3">
                 <h5 class="mb-0">{{ 'distribution.incoming.title' | translate }}</h5>
-                <p class="mb-0">{{ 'distribution.incoming.subtitle' | translate }}</p>
               </div>
-              <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
-
+              <div
+                class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap"
+              >
                 @if (loading()) {
-                <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
+                  <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
                 }
               </div>
-              <div class="row align-items-end mb-4 gx-2">
-                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                  <label class="form-label">{{ 'distribution.filters.search' | translate }}</label>
-                  <span class="p-input-icon-left w-100">
-                    <i class="pi pi-search ms-2"></i>
-                    <input type="search" class="w-100 form-control"
-                      [placeholder]="'distribution.filters.searchPlaceholder' | translate" [ngModel]="search()"
-                      (ngModelChange)="onSearchChange($event)" />
-                  </span>
+              <div class="filter-toolbar mb-3">
+                <div class="filter-toolbar__search">
+                  <p-iconfield class="search-icon-field w-100">
+                    <p-inputicon styleClass="pi pi-search"></p-inputicon>
+
+                    <input
+                      pInputText
+                      type="search"
+                      class="w-100 form-control"
+                      [placeholder]="'distribution.filters.searchPlaceholder' | translate"
+                      [ngModel]="searchInput()"
+                      (ngModelChange)="onSearchChange($event)"
+                    />
+                  </p-iconfield>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
-                  <label class="form-label">{{ 'distribution.filters.status' | translate }}</label>
-                  <p-select class="w-100" [options]="statusOptions" optionValue="value" [ngModel]="statusFilter()"
-                    (onChange)="onStatusChange($event.value)">
-                    <ng-template pTemplate="selectedItem" let-item>
-                      <span>{{ item?.label | translate }}</span>
+                <div class="filter-field filter-toolbar__status">
+                  <label class="form-label" for="distribution-status">{{
+                    'distribution.filters.status' | translate
+                  }}</label>
+                  <p-multiSelect
+                    inputId="distribution-status"
+                    class="profile-filter-multiselect w-100"
+                    [options]="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [ngModel]="appliedFilters().statuses"
+                    (onChange)="onStatusChange($event.value)"
+                    (onClear)="onStatusChange(null)"
+                    [placeholder]="'distribution.filters.statusPlaceholder' | translate"
+                    [showClear]="true"
+                  >
+                    <ng-template pTemplate="item" let-item>{{ item.label | translate }}</ng-template>
+                    <ng-template pTemplate="selecteditems" let-items>
+                      <span class="profile-filter-multiselect__selection">
+                        @for (item of items; track item.value; let last = $last) {
+                          {{ item.label | translate }}@if (!last) {, }
+                        }
+                      </span>
                     </ng-template>
-                    <ng-template let-item pTemplate="item">
-                      <span>{{ item.label | translate }}</span>
-                    </ng-template>
-                  </p-select>
+                  </p-multiSelect>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                  <label class="form-label">{{ 'distribution.filters.targetEntity' | translate }}</label>
-                  <p-select class="w-100" [options]="targetEntities()" optionValue="id"
-                    [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
-                    [ngModel]="targetEntityId()" (onChange)="onTargetEntityChange($event.value)">
-                    <ng-template pTemplate="selectedItem" let-item>
-                      <span>{{ item?.name }}</span>
-                    </ng-template>
-                    <ng-template let-item pTemplate="item">
-                      <span>{{ item.name }}</span>
-                    </ng-template>
-                  </p-select>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
-                  <label class="form-label" style="font-size:12px;">{{ 'distribution.filters.hasOther' | translate
-                    }}</label>
-                  <p-select class="w-100" [options]="yesNoOptions" optionValue="value" [ngModel]="hasOtherFilter()"
-                    (onChange)="onHasOtherChange($event.value)">
-                    <ng-template pTemplate="selectedItem" let-item>
-                      <span>{{ item?.label | translate }}</span>
-                    </ng-template>
-                    <ng-template let-item pTemplate="item">
-                      <span>{{ item.label | translate }}</span>
-                    </ng-template>
-                  </p-select>
-                </div>
-                <div class="col-lg-2 col-md-6 d-flex gap-2 flex-wrap mb-3 mb-lg-0">
-                  <button pButton type="button" class="p-button-outlined" (click)="clearSearch()">
-                    <span pButtonLabel>{{ 'distribution.filters.clearSearch' | translate }}</span>
-                    <i class="pi pi-times" pButtonIcon></i>
+                <div class="filter-toolbar__actions">
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-outlined"
+                    (click)="toggleAdvancedFilters()"
+                  >
+                    <i
+                      [class]="showAdvancedFilters() ? 'pi pi-chevron-up' : 'pi pi-filter'"
+                      pButtonIcon
+                    ></i>
+                    <span pButtonLabel>{{
+                      'distribution.filters.additionalFilters' | translate
+                    }}</span>
+                    @if (activeAdvancedFilterCount() > 0) {
+                      <span class="filter-count">{{ activeAdvancedFilterCount() }}</span>
+                    }
                   </button>
+                  @if (hasActiveFilters()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-outlined p-button-danger"
+                      (click)="clearFilters()"
+                    >
+                      <i class="pi pi-filter-slash" pButtonIcon></i>
+                      <span pButtonLabel>{{
+                        'distribution.filters.clearFilters' | translate
+                      }}</span>
+                    </button>
+                  }
                 </div>
               </div>
+              @if (showAdvancedFilters()) {
+                <div class="advanced-filters-panel mb-4 p-3 border rounded-4">
+                  <div class="row g-3 align-items-start">
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
+                        'distribution.filters.assignedEmployee' | translate
+                      }}</label>
+                      <p-select
+                        class="w-100"
+                        [options]="employees()"
+                        optionValue="employeeId"
+                        optionLabel="name"
+                        [showClear]="true"
+                        [ngModel]="draftFilters().assignedEmployeeId"
+                        (onChange)="updateDraftFilter('assignedEmployeeId', $event.value)"
+                        [placeholder]="'distribution.filters.assignedEmployeePlaceholder' | translate"
+                      ></p-select>
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
+                        'distribution.filters.targetEntity' | translate
+                      }}</label>
+                      <p-select
+                        class="w-100"
+                        [options]="targetEntities()"
+                        optionValue="id"
+                        optionLabel="name"
+                        [showClear]="true"
+                        [ngModel]="draftFilters().targetEntityId"
+                        (onChange)="updateDraftFilter('targetEntityId', $event.value)"
+                        [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
+                      ></p-select>
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
+                        'distribution.filters.candidateType' | translate
+                      }}</label>
+                      <p-multiSelect
+                        class="profile-filter-multiselect w-100"
+                        [options]="candidateTypes()"
+                        optionValue="id"
+                        optionLabel="name"
+                        [showClear]="true"
+                        [filter]="true"
+                        [ngModel]="draftFilters().candidateTypeIds"
+                        (onChange)="updateDraftFilter('candidateTypeIds', $event.value ?? [])"
+                        (onClear)="updateDraftFilter('candidateTypeIds', [])"
+                        [placeholder]="'distribution.filters.candidateTypePlaceholder' | translate"
+                      ></p-multiSelect>
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
+                        'distribution.filters.hasOther' | translate
+                      }}</label>
+                      <p-select
+                        class="w-100"
+                        [options]="yesNoOptions"
+                        optionValue="value"
+                        [ngModel]="draftFilters().hasOtherSpecialization"
+                        (onChange)="updateDraftFilter('hasOtherSpecialization', $event.value)"
+                        [placeholder]="'distribution.filters.hasOtherSpecializationPlaceholder' | translate"
+                        ><ng-template pTemplate="selectedItem" let-item>{{
+                          item?.label | translate
+                        }}</ng-template
+                        ><ng-template pTemplate="item" let-item>{{
+                          item.label | translate
+                        }}</ng-template></p-select
+                      >
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
+                        'distribution.filters.hasOtherUniversity' | translate
+                      }}</label>
+                      <p-select
+                        class="w-100"
+                        [options]="yesNoOptions"
+                        optionValue="value"
+                        [ngModel]="draftFilters().hasOtherUniversity"
+                        (onChange)="updateDraftFilter('hasOtherUniversity', $event.value)"
+                        [placeholder]="'distribution.filters.hasOtherUniversityPlaceholder' | translate"
+                        ><ng-template pTemplate="selectedItem" let-item>{{
+                          item?.label | translate
+                        }}</ng-template
+                        ><ng-template pTemplate="item" let-item>{{
+                          item.label | translate
+                        }}</ng-template></p-select
+                      >
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label" for="qatar-graduate">{{
+                        'distribution.filters.qatarGraduate' | translate
+                      }}</label>
+                      <div class="toggle-field-control d-flex align-items-center">
+                        <p-toggleswitch
+                          inputId="qatar-graduate"
+                          [ngModel]="draftFilters().isQatarGraduate"
+                          (ngModelChange)="onDraftQatarGraduateChange($event)"
+                        ></p-toggleswitch>
+                      </div>
+                    </div>
+                    @if (draftFilters().isQatarGraduate) {
+                      <div class="col-xl-8 col-md-6 filter-field">
+                        <label class="form-label">{{
+                          'distribution.filters.degree' | translate
+                        }}</label>
+                        <p-multiSelect
+                          class="profile-filter-multiselect w-100"
+                          [options]="degrees()"
+                          optionValue="id"
+                          optionLabel="name"
+                          [ngModel]="draftFilters().degreeIds"
+                          (onChange)="updateDraftFilter('degreeIds', $event.value ?? [])"
+                          (onClear)="updateDraftFilter('degreeIds', [])"
+                          [placeholder]="'distribution.filters.degreePlaceholder' | translate"
+                          [showClear]="true"
+                          [filter]="true"
+                        ></p-multiSelect>
+                      </div>
+                    }
+                  </div>
+                  <div class="advanced-filter-actions d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text"
+                      (click)="cancelAdvancedFilters()"
+                    >
+                      <span pButtonLabel>{{ 'distribution.actions.cancel' | translate }}</span>
+                    </button>
+                    <button pButton type="button" (click)="applyAdvancedFilters()">
+                      <span pButtonLabel>{{ 'distribution.filters.apply' | translate }}</span>
+                    </button>
+                  </div>
+                </div>
+              }
               <div class="table-card rounded overflow-hidden">
                 <div class="table-responsive">
-                  <p-table [value]="displayedFiles()" [customSort]="true" sortMode="single"
-                    (sortFunction)="onSort($event)" dataKey="profileId" [selection]="selectedFiles()"
-                    (selectionChange)="onSelectionChange($event)" selectionMode="multiple" class="distribution-table">
+                  <p-table
+                    [value]="displayedFiles()"
+                    [customSort]="true"
+                    sortMode="single"
+                    (sortFunction)="onSort($event)"
+                    dataKey="profileId"
+                    [selection]="selectedFiles()"
+                    (selectionChange)="onSelectionChange($event)"
+                    selectionMode="multiple"
+                    class="distribution-table"
+                  >
                     <ng-template pTemplate="header">
                       <tr>
                         <th>
@@ -127,25 +294,48 @@
                           <div class="gap-2 candidate-name">
                             <div class="fw-semibold">{{ profile.candidateName }}</div>
                             @if (profile.isMinisterOfficeCandidate) {
-                            <p-tag severity="info" [value]="'distribution.table.ministerOfficeCandidate' | translate"
-                              [rounded]="true"
-                              [pTooltip]="'distribution.table.ministerOfficeCandidateTooltip' | translate">
-                              <i class="pi pi-star-fill me-1" style="font-size: 10px"></i>
-                            </p-tag>
+                              <p-tag
+                                severity="info"
+                                [value]="'distribution.table.ministerOfficeCandidate' | translate"
+                                [rounded]="true"
+                                [pTooltip]="
+                                  'distribution.table.ministerOfficeCandidateTooltip' | translate
+                                "
+                              >
+                                <i class="pi pi-star-fill me-1" style="font-size: 10px"></i>
+                              </p-tag>
                             }
                           </div>
                         </td>
                         <td>
-                          <span class="pill d-inline-flex align-items-center"
-                            [ngClass]="profile.hasOtherSpecialization ? 'text-danger border-danger neutral' : 'neutral'">
-                            <i class="pi pi-exclamation-triangle me-1" *ngIf="profile.hasOtherSpecialization"
-                              [pTooltip]="'distribution.table.hasOtherTooltip' | translate"></i>
-                            {{ profile.specialization || ('distribution.table.noValue' | translate) }}
+                          <span
+                            class="pill d-inline-flex align-items-center"
+                            [ngClass]="
+                              profile.hasOtherSpecialization
+                                ? 'text-danger border-danger neutral'
+                                : 'neutral'
+                            "
+                          >
+                            <i
+                              class="pi pi-exclamation-triangle me-1"
+                              *ngIf="profile.hasOtherSpecialization"
+                              [pTooltip]="'distribution.table.hasOtherTooltip' | translate"
+                            ></i>
+                            {{
+                              profile.specialization || ('distribution.table.noValue' | translate)
+                            }}
                           </span>
+                          <i
+                            class="pi pi-exclamation-triangle text-warning ms-2"
+                            *ngIf="profile.hasOtherUniversity"
+                            [pTooltip]="'distribution.table.hasOtherUniversityTooltip' | translate"
+                          ></i>
                         </td>
                         <td class="candidate-status">
-                          <p-tag [severity]="statusSeverity(profile.status)"
-                            [value]="statusLabel(profile.status) | translate"></p-tag>
+                          <p-tag
+                            [severity]="statusSeverity(profile.status)"
+                            [value]="statusLabel(profile.status) | translate"
+                          ></p-tag>
                         </td>
                         <td>
                           <div class="text-truncate" style="max-width: 180px">
@@ -155,29 +345,46 @@
                         <td>
                           <div class="d-flex align-items-center gap-2">
                             @if (!profile.assignedEmployeeName) {
-                            <p-avatar icon="pi pi-user" shape="circle"
-                              class="bg-light text-muted d-none d-xl-flex"></p-avatar>
+                              <p-avatar
+                                icon="pi pi-user"
+                                shape="circle"
+                                class="bg-light text-muted d-none d-xl-flex"
+                              ></p-avatar>
                             }
                             @if (profile.assignedEmployeeName) {
-                            <p-avatar [label]="profile.assignedEmployeeName[0]" shape="circle"
-                              class="bg-primary text-white"></p-avatar>
+                              <p-avatar
+                                [label]="profile.assignedEmployeeName[0]"
+                                shape="circle"
+                                class="bg-primary text-white"
+                              ></p-avatar>
                             }
                             <div>
                               <div class="fw-semibold">
-                                {{ profile.assignedEmployeeName || ('distribution.table.unassigned' | translate) }}
+                                {{
+                                  profile.assignedEmployeeName ||
+                                    ('distribution.table.unassigned' | translate)
+                                }}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <div class="small fw-semibold">{{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}</div>
-                          <div class="text-muted small">{{ 'distribution.table.receivedLabel' | translate }}</div>
+                          <div class="small fw-semibold">
+                            {{ profile.submittedAtUtc | date: 'dd/MM/yyyy' }}
+                          </div>
+                          <div class="text-muted small">
+                            {{ 'distribution.table.receivedLabel' | translate }}
+                          </div>
                         </td>
                         <td>
                           <div class="action-buttons">
-                            <button pRipple type="button" class="btn"
+                            <button
+                              pRipple
+                              type="button"
+                              class="btn"
                               [pTooltip]="'distribution.actions.assignTo' | translate"
-                              (click)="openManualDialog(profile.profileId)">
+                              (click)="openManualDialog(profile.profileId)"
+                            >
                               <i class="pi pi-user-plus" pButtonIcon></i>
                             </button>
                           </div>
@@ -195,12 +402,17 @@
                 </div>
               </div>
               @if (paginationMetadata()?.totalCount) {
-              <div class="pagination-box mt-3">
-                <app-pagination [currentPage]="pageNumber()" [itemsPerPage]="pageSize()"
-                  [totalItems]="paginationMetadata()?.totalCount || 0" [pageSizeOptions]="rowsPerPageOptions"
-                  (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)">
-                </app-pagination>
-              </div>
+                <div class="pagination-box mt-3">
+                  <app-pagination
+                    [currentPage]="pageNumber()"
+                    [itemsPerPage]="pageSize()"
+                    [totalItems]="paginationMetadata()?.totalCount || 0"
+                    [pageSizeOptions]="rowsPerPageOptions"
+                    (pageChanged)="onPageChange($event)"
+                    (pageSizeChanged)="onPageSizeChange($event)"
+                  >
+                  </app-pagination>
+                </div>
               }
             </div>
           </div>
@@ -212,21 +424,38 @@
               <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
                   <h5 class="fw-semibold">{{ 'distribution.summary.ctaTitle' | translate }}</h5>
-                  <p class="text-muted mt-2 mb-0">{{ 'distribution.summary.ctaSubtitle' | translate }}</p>
+                  <p class="text-muted mt-2 mb-0">
+                    {{ 'distribution.summary.ctaSubtitle' | translate }}
+                  </p>
                 </div>
                 <div class="distribution-actions d-flex align-items-center flex-wrap gap-3">
                   <div class="selection-count">
-                    {{ 'distribution.summary.selectedCountLabel' | translate: { count: selectedIds().size } }}
+                    {{
+                      'distribution.summary.selectedCountLabel'
+                        | translate: { count: selectedIds().size }
+                    }}
                   </div>
                   <div class="d-flex gap-2 flex-wrap">
-                    <button pButton class="distribution-btn distribution-btn--auto" type="button"
-                      (click)="openAutoDialog()" [disabled]="loading()">
-                      <span pButtonLabel>{{'distribution.actions.autoAssign' | translate}}</span>
+                    <button
+                      pButton
+                      class="distribution-btn distribution-btn--auto"
+                      type="button"
+                      (click)="openAutoDialog()"
+                      [disabled]="loading()"
+                    >
+                      <span pButtonLabel>{{ 'distribution.actions.autoAssign' | translate }}</span>
                       <i class="pi pi-sync" pButtonIcon></i>
                     </button>
-                    <button pButton type="button" class="distribution-btn distribution-btn--manual"
-                      (click)="openManualDialog()" [disabled]="loading()">
-                      <span pButtonLabel>{{'distribution.actions.manualAssign' | translate}}</span>
+                    <button
+                      pButton
+                      type="button"
+                      class="distribution-btn distribution-btn--manual"
+                      (click)="openManualDialog()"
+                      [disabled]="loading()"
+                    >
+                      <span pButtonLabel>{{
+                        'distribution.actions.manualAssign' | translate
+                      }}</span>
                       <i class="pi pi-user-plus" pButtonIcon></i>
                     </button>
                   </div>

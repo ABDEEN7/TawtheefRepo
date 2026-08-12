@@ -59,6 +59,13 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         if (!isAssigned)
             return Result.Fail<Unit>(ErrorsCodes.UnauthorizedAction);
 
+        if (cmd.Status == ReviewStatus.Approved)
+        {
+            var universityValidation = await QualificationUniversityReviewGuard.ValidateReviewItemAsync(uow, item, ct);
+            if (universityValidation.IsFailed)
+                return Result.Fail<Unit>(universityValidation.Errors);
+        }
+
         var change = item.ProfileChange;
         var hasChangeRequest = change is not null;
 
@@ -558,17 +565,10 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
 
     private static Result<T> Deserialize<T>(string json)
     {
-        try
-        {
-            var value = JsonSerializer.Deserialize<T>(json, JsonOptions);
-            return value is null
-                ? Result.Fail<T>(ErrorsCodes.UnExpectedError)
-                : Result.Ok(value);
-        }
-        catch (JsonException)
-        {
-            return Result.Fail<T>(ErrorsCodes.UnExpectedError);
-        }
+        var value = JsonSerializer.Deserialize<T>(json, JsonOptions);
+        return value is null
+            ? Result.Fail<T>(ErrorsCodes.UnExpectedError)
+            : Result.Ok(value);
     }
 }
 

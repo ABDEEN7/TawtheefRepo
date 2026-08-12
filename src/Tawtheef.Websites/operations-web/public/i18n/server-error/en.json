@@ -175,6 +175,7 @@
   "server-error.NOTES_REQUIRED_FOR_CORRECTION": "Notes are required for correction.",
   "server-error.UNAPPROVED_ITEMS_EXIST": "Unapproved items exist.",
   "server-error.INVALID_DEGREE_UNIVERSITY_ID": "Invalid degree university id.",
+  "server-error.UNIVERSITY_RESOLUTION_REQUIRED": "Other University must be resolved before approval.",
   "server-error.INVALID_DEGREE_MAJOR_ID": "Invalid degree major id.",
   "server-error.INVALID_GPA": "Invalid GPA.",
   "server-error.INVALID_DEGREE_FILE": "Invalid degree file.",
