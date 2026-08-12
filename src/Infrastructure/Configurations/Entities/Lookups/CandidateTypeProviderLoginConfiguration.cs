@@ -38,6 +38,11 @@ public class CandidateTypeProviderLoginConfiguration
                 ProviderLoginId = ProviderLoginIds.QatarPass,
                 CandidateTypeId = CandidateTypeIds.ResidentQatar,
             },
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarPass,
+                CandidateTypeId = CandidateTypeIds.PermanentResident,
+            },
             
             new CandidateTypeProviderLogin
             {
@@ -59,6 +64,11 @@ public class CandidateTypeProviderLoginConfiguration
             {
                 ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
                 CandidateTypeId = CandidateTypeIds.ResidentQatar,
+            },
+            new CandidateTypeProviderLogin
+            {
+                ProviderLoginId = ProviderLoginIds.QatarResidentOtp,
+                CandidateTypeId = CandidateTypeIds.PermanentResident,
             },
             new CandidateTypeProviderLogin
             {

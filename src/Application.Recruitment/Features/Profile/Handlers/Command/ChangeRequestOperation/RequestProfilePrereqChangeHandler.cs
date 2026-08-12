@@ -37,6 +37,7 @@ public sealed class RequestProfilePrereqChangeHandler(
 
         var r = cmd.Request;
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
+        var isCandidateTypeLocked = CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId);
 
         var currentSnapshot = PrereqSectionSnapshot.From(profile);
 
@@ -58,6 +59,7 @@ public sealed class RequestProfilePrereqChangeHandler(
             idUpload.Value,
             birthUpload.Value,
             marriageUpload.Value,
+            isCandidateTypeLocked,
             isLockedProvider
         );
 
@@ -115,12 +117,13 @@ file sealed record PrereqSectionSnapshot
         Guid? nationalCardId,
         Guid? birthCertificateId,
         Guid? marriageCertificateId,
+        bool isCandidateTypeLocked,
         bool isLockedProvider)
     {
         var nextCandidateTypeId = request.CandidateTypeId;
         var snapshot = this with
         {
-            CandidateTypeId = isLockedProvider ? CandidateTypeId : nextCandidateTypeId,
+            CandidateTypeId = isCandidateTypeLocked ? CandidateTypeId : nextCandidateTypeId,
             TargetEntityId = request.TargetEntityId,
             QidExpiry = isLockedProvider ? QidExpiry ?? request.QIDExpiry : request.QIDExpiry ?? QidExpiry,
             ResumeAttachmentId = resumeAttachmentId ?? ResumeAttachmentId,
