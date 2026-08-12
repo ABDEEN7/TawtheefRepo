@@ -49,6 +49,7 @@ public class ErrorsCodes
     public const string QatarResidentPhoneInvalid = "QATAR_RESIDENT_PHONE_INVALID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
+    public const string QatarResidentVerificationTemporarilyUnavailable = "QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE";
     public const string UserIsOfficer = "USER_IS_OFFICER";
     public const string UserIsApplicant = "USER_IS_APPLICANT";
     #endregion
