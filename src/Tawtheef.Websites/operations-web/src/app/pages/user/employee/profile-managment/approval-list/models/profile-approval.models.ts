@@ -53,6 +53,7 @@ export interface ProfileApprovalItem {
   version: number;
   approvedAtVersion?: number;
   reviewedAtUtc?: string;
+  isOtherUniversity?: boolean;
 }
 
 export interface ProfileApprovalSection {
@@ -232,6 +233,7 @@ export interface QualificationDto {
   gradCountry?: dropdownOptionsModel | null;
   universityId?: string | null;
   university?: dropdownOptionsModel | null;
+  isOtherUniversity: boolean;
   majorId?: string | null;
   major?: dropdownOptionsModel | null;
   subMajorId?: string | null;

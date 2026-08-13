@@ -37,6 +37,7 @@ public sealed class QualificationDto
     public DropdownOptions? SubMajor { get; init; }
     public Guid? UniversityId { get; init; }
     public DropdownOptions? University { get; init; }
+    public bool IsOtherUniversity { get; init; }
     public Guid? StudyTypeId { get; init; }
     public DropdownOptions? StudyType { get; init; }
     public Guid? GradeId { get; init; }

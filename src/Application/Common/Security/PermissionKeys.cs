@@ -140,6 +140,7 @@ public static class PermissionKeys
 
     public static class MajorSkills
     {
+        public const string View = "major-skill.view";
         public const string Manage = "major-skill.management";
     }
 

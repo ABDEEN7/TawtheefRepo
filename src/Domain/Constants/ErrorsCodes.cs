@@ -49,6 +49,7 @@ public class ErrorsCodes
     public const string QatarResidentPhoneInvalid = "QATAR_RESIDENT_PHONE_INVALID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
+    public const string QatarResidentVerificationTemporarilyUnavailable = "QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE";
     public const string UserIsOfficer = "USER_IS_OFFICER";
     public const string UserIsApplicant = "USER_IS_APPLICANT";
     #endregion
@@ -124,6 +125,7 @@ public class ErrorsCodes
     public const string SpecializationRelationRequired = "SPECIALIZATION_RELATION_REQUIRED";
 
     public const string InvalidDegreeUniversityId = "INVALID_DEGREE_UNIVERSITY_ID";
+    public const string UniversityResolutionRequired = "UNIVERSITY_RESOLUTION_REQUIRED";
     public const string InvalidDegreeMajorId = "INVALID_DEGREE_MAJOR_ID";
     public const string InvalidGpa = "INVALID_GPA";
     public const string InvalidDegreeFile = "INVALID_DEGREE_FILE";

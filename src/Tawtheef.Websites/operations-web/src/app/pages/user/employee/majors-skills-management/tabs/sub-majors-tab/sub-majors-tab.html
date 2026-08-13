@@ -4,7 +4,7 @@
       <h4 class="fw-bold mb-0">{{ 'MAJORS_SKILLS.SUB_TITLE' | translate }}</h4>
       <p class="fs-16 m-0">{{ 'MAJORS_SKILLS.SUB_HINT' | translate }}</p>
     </div>
-    <div class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
+    <div *hasPermission="Permissions.MajorSkills.Manage" class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
         <button
           pButton
           type="button"
@@ -66,7 +66,7 @@
                   <th>{{ 'MAJORS_SKILLS.PARENT_MAJOR_COLUMN' | translate }}</th>
                   <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
                   <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
-                  <th class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
+                  <th *hasPermission="Permissions.MajorSkills.Manage" class="text-end">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
                 </tr>
               </ng-template>
 
@@ -85,7 +85,7 @@
           </span>
         </td>
 
-        <td class="text-end d-flex justify-content-end gap-2 align-items-center">
+        <td *hasPermission="Permissions.MajorSkills.Manage" class="text-end d-flex justify-content-end gap-2 align-items-center">
           <button
             pButton
             type="button"

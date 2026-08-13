@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   inject,
@@ -24,6 +25,7 @@ import { UploadedFileRef } from '../../../../../wizard-profile/models/profile-st
 import { Degree } from '../../../../../wizard-profile/models/degree.model';
 import * as Lookups from '../../../../../../../../core/enums/lookups.enum';
 import { I18nNamespaceDirective } from '../../../../../../../../shared/directives/i18n-namespace.directive';
+import { UNIVERSITY_IDS } from '../../../../../../../../core/constants/university-ids.const';
 
 @Component({
   selector: 'app-qualification',
@@ -41,7 +43,8 @@ import { I18nNamespaceDirective } from '../../../../../../../../shared/directive
   ],
   templateUrl: './degree.modal.html',
   styleUrl: './degree.modal.scss',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DegreeModal implements OnInit {
   private fb = inject(FormBuilder);
@@ -64,6 +67,13 @@ export class DegreeModal implements OnInit {
   initialCertificate: UploadedFileRef | null = null;
   private initialId: string | null = null;
   private initialAttachmentId: string | null = null;
+
+  get otherUniversityOptions(): Array<{ id: string; name: string }> {
+    return [{
+      id: UNIVERSITY_IDS.other,
+      name: this.translate.instant('wizard.degrees.otherUniversity'),
+    }];
+  }
 
   get submitLabelKey(): string {
     return this.config.data?.initialValue

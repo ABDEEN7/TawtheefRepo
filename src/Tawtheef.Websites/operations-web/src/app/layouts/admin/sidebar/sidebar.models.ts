@@ -6,7 +6,7 @@ export interface MenuItem {
   label: string;
   icon: string;
   route: string;
-  permission: string;
+  permission: string | string[];
 }
 
 export class Sidebar {
@@ -23,7 +23,7 @@ export class Sidebar {
     { key: 'candidate-users', label: 'internal.sidebar.candidate-users', icon: 'hgi-user-switch', route: routes.portal.candidateUsersManagement, permission: Permissions.CandidateUsers.View },
     { key: 'office-users', label: 'internal.sidebar.office-users', icon: 'hgi-file-star', route: routes.portal.officeUsersManagement, permission: Permissions.OfficeUsers.View },
     { key: 'organization-structures', label: 'internal.sidebar.organization-structures', icon: 'hgi-structure-03', route: routes.portal.organizationStructures, permission: Permissions.OrganizationStructures.Manage },
-    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.portal.majorsSkillsManagement, permission: Permissions.MajorSkills.Manage },
+    { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.portal.majorsSkillsManagement, permission: [Permissions.MajorSkills.View, Permissions.MajorSkills.Manage] },
     { key: 'kawader', label: 'internal.sidebar.kawader', icon: ' hgi-user-multiple', route: routes.portal.kawader, permission: Permissions.Kawader.Manage },
     { key: 'minister-office', label: 'internal.sidebar.ministerOffice', icon: 'hgi-office', route: routes.portal.ministerOfficeManagement, permission: Permissions.MinisterOffice.View },
 
@@ -32,7 +32,7 @@ export class Sidebar {
     { key: 'languages', label: 'admin.sidebar.languages', icon: 'hgi-arrow-data-transfer-horizontal', route: routes.portal.languagesManagement, permission: Permissions.Languages.Manage },
     { key: 'target-entities', label: 'admin.sidebar.targetEntities', icon: 'hgi-arrow-data-transfer-horizontal', route: routes.portal.targetEntitiesManagement, permission: Permissions.TargetEntities.Manage },
     { key: 'religions', label: 'admin.sidebar.religions', icon: 'hgi-structure-03', route: routes.portal.religionsManagement, permission: Permissions.Religions.Manage },
-    { key: 'universities', label: 'admin.sidebar.universities', icon: ' hgi-university', route: routes.portal.universitiesManagement, permission: Permissions.Universities.Manage },
+    { key: 'universities', label: 'admin.sidebar.universities', icon: ' hgi-university', route: routes.portal.universitiesManagement, permission: Permissions.Universities.View },
     { key: 'job-points-configuration', label: 'admin.sidebar.jobPointsConfig', icon: 'hgi-ai-beautify', route: routes.portal.jobPointsConfiguration, permission: Permissions.JobPointsConfiguration.View },
     { key: 'job-category-candidate-settings', label: 'admin.sidebar.jobCategoryCandidateSettings', icon: 'hgi-settings-02', route: routes.portal.jobCategoryCandidateSettings, permission: Permissions.JobCategoryCandidateSettings.View },
     { key: 'invitation-expiry-configuration', label: 'admin.sidebar.invitationExpiryConfiguration', icon: 'hgi-calendar-03', route: routes.portal.invitationExpiryConfiguration, permission: Permissions.InvitationExpiryConfiguration.View },

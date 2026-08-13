@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
@@ -15,7 +16,7 @@ namespace Operations.API.Controllers.Employee;
 [ApiController]
 [Route("api/profile-distributions")]
 [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class ProfileDistributionController(IMediator mediator) : ControllerBase
+public class ProfileDistributionController(IMediator mediator, ILocalizationService localization) : ControllerBase
 {
     private Result<Guid> UserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value switch
     {
@@ -36,7 +37,23 @@ public class ProfileDistributionController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
     public async Task<IActionResult> GetTargetEntities()
     {
-        var result = await mediator.Send(new GetTargetEntitiesQuery());
+        var result = await mediator.Send(new GetTargetEntitiesQuery { Language = localization.GetCurrentLanguage() });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("candidate-types")]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
+    public async Task<IActionResult> GetCandidateTypes()
+    {
+        var result = await mediator.Send(new GetCandidateTypesQuery { Language = localization.GetCurrentLanguage() });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("degrees")]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
+    public async Task<IActionResult> GetDegrees()
+    {
+        var result = await mediator.Send(new GetDegreesQuery { Language = localization.GetCurrentLanguage() });
         return result.ToActionResult();
     }
 

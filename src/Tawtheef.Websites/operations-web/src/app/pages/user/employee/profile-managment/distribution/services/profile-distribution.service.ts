@@ -31,6 +31,14 @@ export class ProfileDistributionService {
     return this.http.get<dropdownOptionsModel[]>(this.endpoints.distribution.targetEntities);
   }
 
+  getCandidateTypes(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.distribution.candidateTypes);
+  }
+
+  getDegrees(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.distribution.degrees);
+  }
+
   assignManually(request: ManualAssignRequest): Observable<DistributionResult> {
     return this.http.post<DistributionResult>(this.endpoints.distribution.assignManual, request);
   }

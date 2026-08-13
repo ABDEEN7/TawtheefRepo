@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -14,6 +14,7 @@ import { TooltipModule } from 'primeng/tooltip';
   imports: [CommonModule, TranslateModule, CardModule, ButtonModule, TagModule, ItemInlineReviewComponent, TooltipModule],
   templateUrl: './qualifications-section.component.html',
   styleUrls: ['../../../profile-approval-detail.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QualificationsSectionComponent {
   @Input() qualifications?: any[] | null = null;

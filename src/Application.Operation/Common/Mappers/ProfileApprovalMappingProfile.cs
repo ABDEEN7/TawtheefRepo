@@ -5,6 +5,7 @@ using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Common.Mappers;
 
@@ -45,6 +46,7 @@ public sealed class ProfileApprovalMappingProfile : IRegister
             .Map(dest => dest.Gpa, src => src.GPA)
             .Map(dest => dest.GradeId, src => src.RatingId)
             .Map(dest => dest.Grade, src => src.Rating)
+            .Map(dest => dest.IsOtherUniversity, src => UniversityIds.IsOther(src.UniversityId))
             .Map(dest => dest.Attachment, src => src.Certificate);
         
         config.NewConfig<Experience, ExperienceDto>()

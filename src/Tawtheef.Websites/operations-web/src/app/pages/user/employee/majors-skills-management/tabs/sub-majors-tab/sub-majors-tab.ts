@@ -10,6 +10,8 @@ import {RemoteSelectComponent} from '../../../../../../shared/components/remote-
 import {MajorsSkillsManagementStore} from '../../majors-skills-management.store';
 import { MajorsSkillsManagementFacade } from '../../majors-skills-management.facade';
 import {PaginationComponent} from '../../../../../../shared/components/pagination/pagination.component';
+import {HasPermissionDirective} from '../../../../../../shared/directives/has-permission.directive';
+import {Permissions} from '../../../../../../core/constants/permissions';
 
 
 @Component({
@@ -24,10 +26,12 @@ import {PaginationComponent} from '../../../../../../shared/components/paginatio
     ButtonModule,
     ToggleSwitch,
     RemoteSelectComponent,
-    PaginationComponent
+    PaginationComponent,
+    HasPermissionDirective
   ]
 })
 export class SubMajorsTabComponent {
+  readonly Permissions = Permissions;
   store = inject(MajorsSkillsManagementStore);
   service = inject(MajorsSkillsManagementFacade);
 }

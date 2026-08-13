@@ -50,6 +50,14 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
 
         var hasCorrections = sectionItems.Any(i => i.Status == ReviewStatus.NeedsCorrection);
+        if (!hasCorrections)
+        {
+            var universityValidation = await QualificationUniversityReviewGuard.ValidatePersistedProfileAsync(
+                uow, profile.Id, ct);
+            if (universityValidation.IsFailed)
+                return Result.Fail<Unit>(universityValidation.Errors);
+        }
+
         profile.FinalizeReviewProfile(hasCorrections);
 
         var finalizeNote = JsonSerializer.Serialize(new

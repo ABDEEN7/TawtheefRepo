@@ -228,7 +228,8 @@
 
                             <app-profile-approval-qualifications-section *ngSwitchCase="4"
                               [qualifications]="profile.qualifications" [reviewItems]="sec.items"
-                              (reviewItem)="onInlineReview($event)" (viewFile)="previewFile($event)">
+                              (reviewItem)="onInlineReview($event)" (viewFile)="previewFile($event)"
+                              >
                             </app-profile-approval-qualifications-section>
 
                             <app-profile-approval-experiences-section *ngSwitchCase="5" [experiences]="profile.experiences"
@@ -477,13 +478,13 @@
 
     <!-- Viewer Side -->
     <div class="viewer-side" *ngIf="!!selectedFile() || loadingFile()">
-      <app-file-viewer 
-        [url]="selectedFile()?.url ?? ''" 
-        [fileName]="selectedFile()?.name ?? ''" 
+      <app-file-viewer
+        [url]="selectedFile()?.url ?? ''"
+        [fileName]="selectedFile()?.name ?? ''"
         [loading]="loadingFile()"
         [mimeType]="selectedFile()?.mimeType || ''"
         (close)="closeFileViewer()">
       </app-file-viewer>
     </div>
   </div>
-</section>
+</section>

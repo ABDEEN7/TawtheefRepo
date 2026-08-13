@@ -90,6 +90,14 @@ public sealed class GetProfilePartialChangesHandler(
             {
                 var dto = mapper.Map<ProfileApprovalItemDto>(item);
 
+                if (item.Section == ProfileSection.Qualifications &&
+                    item.TargetType == ReviewTargetType.Row &&
+                    item.EntityName == ProfileReviewConstants.EntityNames.Qualification)
+                {
+                    var pending = PendingQualificationSnapshotParser.Deserialize(item.ProfileChange?.NewValue);
+                    dto.IsOtherUniversity = UniversityIds.IsOther(pending?.UniversityId);
+                }
+
                 var oldDisplay = EnrichJson(item.ProfileChange?.OldValue, enrichment, resources);
                 var newDisplay = EnrichJson(item.ProfileChange?.NewValue, enrichment, resources);
                 dto = dto with { OldValue = oldDisplay, NewValue = newDisplay };
@@ -282,14 +290,12 @@ public sealed class GetProfilePartialChangesHandler(
             if (string.IsNullOrWhiteSpace(json))
                 return;
 
-            try
-            {
-                using var doc = JsonDocument.Parse(json);
-                if (doc.RootElement.ValueKind != JsonValueKind.Object)
-                    return;
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object)
+                return;
 
-                foreach (var prop in doc.RootElement.EnumerateObject())
-                {
+            foreach (var prop in doc.RootElement.EnumerateObject())
+            {
                     if (prop.Value.ValueKind != JsonValueKind.String)
                         continue;
 
@@ -373,11 +379,6 @@ public sealed class GetProfilePartialChangesHandler(
                             qualificationIds.Add(id);
                             break;
                     }
-                }
-            }
-            catch (JsonException)
-            {
-                // Ignore invalid JSON; UI will show raw strings.
             }
         }
     }
@@ -406,24 +407,17 @@ public sealed class GetProfilePartialChangesHandler(
         if (string.IsNullOrWhiteSpace(json))
             return json;
 
-        try
-        {
-            using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.ValueKind != JsonValueKind.Object)
-                return json;
-
-            var enriched = new Dictionary<string, object?>(StringComparer.Ordinal);
-            foreach (var prop in doc.RootElement.EnumerateObject())
-            {
-                enriched[prop.Name] = ConvertValue(prop.Name, prop.Value, maps, files);
-            }
-
-            return JsonSerializer.Serialize(enriched);
-        }
-        catch (JsonException)
-        {
+        using var doc = JsonDocument.Parse(json);
+        if (doc.RootElement.ValueKind != JsonValueKind.Object)
             return json;
+
+        var enriched = new Dictionary<string, object?>(StringComparer.Ordinal);
+        foreach (var prop in doc.RootElement.EnumerateObject())
+        {
+            enriched[prop.Name] = ConvertValue(prop.Name, prop.Value, maps, files);
         }
+
+        return JsonSerializer.Serialize(enriched);
     }
 
     private static object? ConvertValue(

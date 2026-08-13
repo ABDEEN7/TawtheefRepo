@@ -11,10 +11,12 @@
                    <i class="pi pi-refresh me-1"></i>
                    {{ 'common.refresh' | translate }}
                  </button>
+                 @if (canManage()) {
                  <button type="button" class="btn btn-primary" (click)="openAdd()">
                    <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
                    {{ 'UNIVERSITIES.ADD_UNIVERSITY' | translate }}
                  </button>
+                 }
                </div>
              </div>
               <div class="card card-table mb-3">
@@ -67,14 +69,16 @@
                       <th>{{ 'UNIVERSITIES.PHONE' | translate }}</th>
                       <th>{{ 'UNIVERSITIES.WEBSITE' | translate }}</th>
                       <th>{{ 'UNIVERSITIES.STATUS' | translate }}</th>
-                      <th>{{ 'UNIVERSITIES.ACTIONS' | translate }}</th>
+                      @if (canManage()) {
+                        <th>{{ 'UNIVERSITIES.ACTIONS' | translate }}</th>
+                      }
                     </tr>
                     </thead>
 
                     <tbody>
                       @if (universities().length === 0) {
                         <tr>
-                          <td colspan="10" class="text-muted no-data text-center">
+                          <td [attr.colspan]="canManage() ? 10 : 9" class="text-muted no-data text-center">
                             {{ 'NO_RECORDS' | translate }}
                           </td>
                         </tr>
@@ -94,6 +98,7 @@
                                 {{ university.isActive ? ('UNIVERSITIES.ACTIVE' | translate) : ('UNIVERSITIES.INACTIVE' | translate) }}
                               </span>
                             </td>
+                            @if (canManage()) {
                             <td class="text-nowrap ">
                                 <div class="action-buttons">
                                       <button
@@ -116,6 +121,7 @@
                                 </div>
                               
                             </td>
+                            }
                           </tr>
                         }
                       }
@@ -141,7 +147,7 @@
   </app-pagination>
 </div>
 
-@if (isModalOpen()) {
+@if (canManage() && isModalOpen()) {
   <app-university-modal
     [visible]="isModalOpen()"
     [mode]="modalMode()"

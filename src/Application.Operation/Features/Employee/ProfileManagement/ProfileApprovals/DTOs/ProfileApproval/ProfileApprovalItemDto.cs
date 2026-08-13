@@ -17,4 +17,5 @@ public record ProfileApprovalItemDto
     public string? OldValue { get; init; }
     public string? NewValue { get; init; }
     public DateTimeOffset? ReviewedAtUtc { get; init; }
+    public bool IsOtherUniversity { get; set; }
 }

@@ -4,7 +4,7 @@
     <h3 class="fw-bold mb-0">{{ 'MAJORS_SKILLS.MAIN_TITLE' | translate }}</h3>
     <p class="fs-16 m-0">{{ 'MAJORS_SKILLS.MAIN_HINT' | translate }}</p>
   </div>
-  <div class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
+  <div *hasPermission="Permissions.MajorSkills.Manage" class="col-md-6 text-end d-flex justify-content-end gap-2 align-items-center">
     <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshMainMajors()">
       {{ 'common.refresh' | translate }}
     </button>
@@ -40,7 +40,7 @@
           <th>{{ 'MAJORS_SKILLS.USED_IN_MAPPING' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.NUMBER_SUB_MAJOR' | translate }}</th>
           <th>{{ 'MAJORS_SKILLS.STATUS' | translate }}</th>
-          <th>{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
+          <th *hasPermission="Permissions.MajorSkills.Manage">{{ 'MAJORS_SKILLS.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -61,7 +61,7 @@
             </span>
           </td>
 
-          <td class="justify-content-start gap-2 align-items-center">
+          <td *hasPermission="Permissions.MajorSkills.Manage" class="justify-content-start gap-2 align-items-center">
             <button pButton type="button" class="p-button-outlined p-button-sm" (click)="service.openEditMajor(major)">
               <i class="pi pi-pencil" pButtonIcon></i>
               <span pButtonLabel>{{'common.edit' |translate}}</span>
