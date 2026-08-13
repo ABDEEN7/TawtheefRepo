@@ -25,11 +25,21 @@ export interface DistributionFile {
 export interface DistributionEmployee {
   employeeId: string;
   name: string;
+  email: string;
   totalAssigned: number;
   completed: number;
   inReview: number;
   isActive: boolean;
   availability: EmployeeAvailability;
+}
+
+export type DistributionEmployeeLookup = Pick<
+  DistributionEmployee,
+  'employeeId' | 'name' | 'email' | 'isActive' | 'availability'
+>;
+
+export interface DistributionEmployeeFilters extends PaginatedRequest {
+  searchTerm?: string;
 }
 
 export interface ManualAssignRequest {

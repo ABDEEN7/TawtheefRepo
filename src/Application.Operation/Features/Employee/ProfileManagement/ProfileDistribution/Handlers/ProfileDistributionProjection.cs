@@ -20,7 +20,7 @@ using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 
-internal sealed class ProfileDistributionProjection(
+public sealed class ProfileDistributionProjection(
     IUnitOfWork uow,
     UserManager<User> userManager,
     IUserRepository userRepository,
@@ -201,7 +201,7 @@ internal sealed class ProfileDistributionProjection(
         if (request.HasOtherUniversity.HasValue)
             query = request.HasOtherUniversity.Value
                 ? query.Where(p => p.Qualifications!.Any(q => q.UniversityId == UniversityIds.Other))
-                : query.Where(p => !p.Qualifications!.Any(q => q.UniversityId == UniversityIds.Other));
+                : query.Where(p => p.Qualifications!.All(q => q.UniversityId != UniversityIds.Other));
 
         if (request.IsQatarGraduate)
         {
@@ -244,87 +244,182 @@ internal sealed class ProfileDistributionProjection(
         return new PaginatedResult<UserProfile>(items, count, request.PageNumber, request.PageSize);
     }
 
-    public async Task<IReadOnlyList<DistributionEmployeeDto>> LoadEmployeesAsync(Guid userId, CancellationToken ct)
+    public async Task<PaginatedResult<DistributionEmployeeDto>> LoadEmployeesAsync(
+        GetDistributionEmployeesQuery request,
+        CancellationToken ct)
     {
-        var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
+        var employees = await BuildEligibleEmployeeQueryAsync(request.UserId, ct);
+        if (employees is null)
+            return new PaginatedResult<DistributionEmployeeDto>([], 0, request.PageNumber, request.PageSize);
 
-        var user = await userManager.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+        employees = ApplyEmployeeSearch(employees, request.SearchTerm);
+        var employeeBase = ApplyAvailabilityFilter(
+            ProjectEmployeeBase(employees, request.Language), request.Availability);
+        var projected = ProjectEmployees(employeeBase);
 
-        if (user is null) return [];
-
-        List<User> employees;
-
-        if (user is OfficeUser { OfficeId: not null } officeUser)
-        {
-            employees = await userManager.Users.OfType<OfficeUser>()
-                .Where(u => u.OfficeId == officeUser.OfficeId)
-                .AsNoTracking()
-                .Cast<User>()
-                .ToListAsync(ct);
-        }
-        else
-        {
-            employees = await userManager.Users.OfType<EmployeeUser>()
-                .AsNoTracking()
-                .Cast<User>()
-                .ToListAsync(ct);
-        }
-
-        if (employees.Count == 0) return [];
-
-        // Filter by permission: "profile.distribution.manage"
-        var permEmployees = await userRepository
-            .GetUsersByPermissionAsync(PermissionKeys.ProfileApproval.Review, ct);
-        var permEmployeeIds = permEmployees.Select(u => u.Id).ToHashSet();
-        
-        employees = employees.Where(e => permEmployeeIds.Contains(e.Id)).ToList();
-
-        if (employees.Count == 0) return [];
-
-        var employeeIds = employees.Select(e => e.Id).ToList();
-
-        var assignments = await assignmentRepo.DbSet
-            .Where(a => a.IsActive && employeeIds.Contains(a.EmployeeId))
-            .Include(a => a.UserProfile)
+        var totalCount = await projected.CountAsync(ct);
+        var sorted = ApplyEmployeeSorting(projected, request);
+        var rows = await sorted
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(ToEmployeeDto())
             .ToListAsync(ct);
 
-        var loadLookup = assignments
-            .GroupBy(a => a.EmployeeId)
-            .ToDictionary(
-                g => g.Key,
-                g => new
-                {
-                    Total = g.Count(),
-                    Completed = g.Count(a => a.UserProfile?.Status == UserProfileStatus.Approved),
-                    InReview = g.Count(a => a.UserProfile?.Status == UserProfileStatus.UnderReview)
-                });
+        return new PaginatedResult<DistributionEmployeeDto>(
+            rows, totalCount, request.PageNumber, request.PageSize);
+    }
 
-        return employees
-            .Select(emp =>
+    public async Task<IReadOnlyList<DistributionEmployeeLookupDto>> LoadEmployeeLookupAsync(
+        Guid userId,
+        CancellationToken ct)
+    {
+        var employees = await BuildEligibleEmployeeQueryAsync(userId, ct);
+        if (employees is null) return [];
+
+        return await ProjectEmployeeBase(employees, localizationService.GetCurrentLanguage())
+            .OrderBy(employee => employee.Name)
+            .Select(employee => new DistributionEmployeeLookupDto
             {
-                var availability = ResolveAvailability(emp);
-                loadLookup.TryGetValue(emp.Id, out var load);
-
-                return new DistributionEmployeeDto
-                {
-                    EmployeeId = emp.Id,
-                    Name = localizationService.GetLocalizedFullName(emp),
-                    TotalAssigned = load?.Total ?? 0,
-                    Completed = load?.Completed ?? 0,
-                    InReview = load?.InReview ?? 0,
-                    IsActive = emp is { IsBlocked: false, IsDeleted: false },
-                    Availability = availability
-                };
+                EmployeeId = employee.Employee.Id,
+                Name = employee.Name,
+                Email = employee.Employee.Email ?? string.Empty,
+                IsActive = employee.IsActive,
+                Availability = employee.Availability
             })
-            .OrderBy(e => e.Name)
-            .ToList();
+            .ToListAsync(ct);
+    }
+
+    private async Task<IQueryable<User>?> BuildEligibleEmployeeQueryAsync(Guid userId, CancellationToken ct)
+    {
+        var user = await userManager.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, ct);
+        if (user is null) return null;
+
+        IQueryable<User> employees = user is OfficeUser { OfficeId: not null } officeUser
+            ? userManager.Users.OfType<OfficeUser>().Where(u => u.OfficeId == officeUser.OfficeId).Cast<User>()
+            : userManager.Users.OfType<EmployeeUser>().Cast<User>();
+
+        // Review permission is the eligibility rule for employees who can receive profiles.
+        var permittedEmployeeIds = await userRepository
+            .GetUserIdsByPermissionAsync(PermissionKeys.ProfileApproval.Review, ct);
+        return employees.AsNoTracking().Where(employee => permittedEmployeeIds.Contains(employee.Id));
+    }
+
+    private static IQueryable<EmployeeBaseRow> ProjectEmployeeBase(
+        IQueryable<User> employees,
+        string? language)
+    {
+        var isArabic = string.Equals(language, "ar", StringComparison.OrdinalIgnoreCase);
+        return employees.Select(employee => new EmployeeBaseRow
+        {
+            Employee = employee,
+            Name = isArabic ? employee.FullNameAr : employee.FullNameEn,
+            IsActive = !employee.IsBlocked && !employee.IsDeleted,
+            Availability = employee.IsBlocked
+                ? DistributionEmployeeAvailability.Suspended
+                : employee.IsDeleted
+                    ? DistributionEmployeeAvailability.Inactive
+                    : employee.LockoutEnd.HasValue && employee.LockoutEnd > DateTimeOffset.UtcNow
+                        ? DistributionEmployeeAvailability.OnLeave
+                        : DistributionEmployeeAvailability.Available
+        });
+    }
+
+    private IQueryable<EmployeeLoadRow> ProjectEmployees(IQueryable<EmployeeBaseRow> employees)
+    {
+        var assignments = uow.GetEntityRepository<ProfileAssignment>().DbSet;
+        return employees.Select(employee => new EmployeeLoadRow
+        {
+            Employee = employee.Employee,
+            Name = employee.Name,
+            IsActive = employee.IsActive,
+            Availability = employee.Availability,
+            TotalAssigned = assignments.Count(a => a.IsActive && a.EmployeeId == employee.Employee.Id),
+            Completed = assignments.Count(a => a.IsActive && a.EmployeeId == employee.Employee.Id &&
+                a.UserProfile != null && a.UserProfile.Status == UserProfileStatus.Approved),
+            InReview = assignments.Count(a => a.IsActive && a.EmployeeId == employee.Employee.Id &&
+                a.UserProfile != null && a.UserProfile.Status == UserProfileStatus.UnderReview)
+        });
+    }
+
+    private static System.Linq.Expressions.Expression<Func<EmployeeLoadRow, DistributionEmployeeDto>> ToEmployeeDto() =>
+        row => new DistributionEmployeeDto
+        {
+            EmployeeId = row.Employee.Id,
+            Name = row.Name,
+            Email = row.Employee.Email ?? string.Empty,
+            TotalAssigned = row.TotalAssigned,
+            Completed = row.Completed,
+            InReview = row.InReview,
+            IsActive = row.IsActive,
+            Availability = row.Availability
+        };
+
+    private static IQueryable<User> ApplyEmployeeSearch(
+        IQueryable<User> employees,
+        string? searchTerm)
+    {
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = $"%{searchTerm.Trim()}%";
+            employees = employees.Where(employee =>
+                EF.Functions.Like(employee.FullNameAr, term) ||
+                EF.Functions.Like(employee.FullNameEn, term) ||
+                EF.Functions.Like(employee.Email ?? string.Empty, term));
+        }
+
+        return employees;
+    }
+
+    private static IQueryable<EmployeeBaseRow> ApplyAvailabilityFilter(
+        IQueryable<EmployeeBaseRow> employees,
+        DistributionEmployeeAvailability? availability) =>
+        availability.HasValue
+            ? employees.Where(employee => employee.Availability == availability.Value)
+            : employees;
+
+    private static IOrderedQueryable<EmployeeLoadRow> ApplyEmployeeSorting(
+        IQueryable<EmployeeLoadRow> employees,
+        GetDistributionEmployeesQuery request)
+    {
+        var descending = string.Equals(request.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(request.SortBy, "TotalAssigned", StringComparison.OrdinalIgnoreCase)
+            ? descending
+                ? employees.OrderByDescending(employee => employee.TotalAssigned).ThenBy(employee => employee.Name)
+                : employees.OrderBy(employee => employee.TotalAssigned).ThenBy(employee => employee.Name)
+            : descending
+                ? employees.OrderByDescending(employee => employee.Name)
+                : employees.OrderBy(employee => employee.Name);
+    }
+
+    private sealed class EmployeeBaseRow
+    {
+        public required User Employee { get; init; }
+        public required string Name { get; init; }
+        public bool IsActive { get; init; }
+        public DistributionEmployeeAvailability Availability { get; init; }
+    }
+
+    private sealed class EmployeeLoadRow
+    {
+        public required User Employee { get; init; }
+        public required string Name { get; init; }
+        public bool IsActive { get; init; }
+        public DistributionEmployeeAvailability Availability { get; init; }
+        public int TotalAssigned { get; init; }
+        public int Completed { get; init; }
+        public int InReview { get; init; }
     }
 
     public async Task<DistributionResultDto> BuildResultAsync(Guid userId, int assignedCount, CancellationToken ct)
     {
-        var employees = await LoadEmployeesAsync(userId, ct);
+        var eligibleEmployees = await BuildEligibleEmployeeQueryAsync(userId, ct);
+        IReadOnlyList<DistributionEmployeeDto> employees = eligibleEmployees is null
+            ? []
+            : await ProjectEmployees(ProjectEmployeeBase(
+                    eligibleEmployees, localizationService.GetCurrentLanguage()))
+                .OrderBy(employee => employee.Name)
+                .Select(ToEmployeeDto())
+                .ToListAsync(ct);
         var profiles = await LoadProfilesAsync(
             userId: userId,
             request: new GetDistributionProfilesQuery(userId) { PageSize = int.MaxValue },
@@ -338,13 +433,4 @@ internal sealed class ProfileDistributionProjection(
         };
     }
     
-    private static DistributionEmployeeAvailability ResolveAvailability(User employee)
-    {
-        if (employee.IsBlocked) return DistributionEmployeeAvailability.Suspended;
-        if (employee.IsDeleted) return DistributionEmployeeAvailability.Inactive;
-        if (employee.LockoutEnd.HasValue && employee.LockoutEnd > DateTimeOffset.UtcNow)
-            return DistributionEmployeeAvailability.OnLeave;
-
-        return DistributionEmployeeAvailability.Available;
-    }
 }

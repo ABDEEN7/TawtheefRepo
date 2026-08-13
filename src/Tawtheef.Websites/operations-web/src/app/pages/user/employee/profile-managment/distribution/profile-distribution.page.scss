@@ -240,40 +240,8 @@
   font-weight: 700;
 }
 
-.search-icon-field {
-  display: block;
-  position: relative;
-  width: 100%;
-
-  input {
-    text-align: start;
-    padding-inline-start: 1rem !important;
-    padding-inline-end: 3rem !important;
-  }
-}
-
-:host ::ng-deep .search-icon-field .p-inputicon {
-  position: absolute !important;
-  top: 50% !important;
-  inset-inline-end: 1rem !important;
-  inset-inline-start: auto !important;
-  margin: 0 !important;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
 /* Arabic / RTL → icon at the left */
-:host-context([dir='rtl']) ::ng-deep .search-icon-field .p-inputicon {
-  inset-inline-end: 1rem !important;
-  inset-inline-start: auto !important;
-}
-
 /* English / LTR → icon at the right */
-:host-context([dir='ltr']) ::ng-deep .search-icon-field .p-inputicon {
-  inset-inline-end: 1rem !important;
-  inset-inline-start: auto !important;
-}
-
 .advanced-filters-panel {
   background: #fff9fb;
   border-color: #ecd8e0 !important;
@@ -281,7 +249,7 @@
 
 .filter-toolbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(15rem, 22vw, 19rem) max-content;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem) max-content;
   align-items: end;
   gap: 1rem;
 }
@@ -397,9 +365,9 @@
   border-color: #ecd8e0 !important;
 }
 
-@media (max-width: 1399.98px) {
+@media (max-width: 1199.98px) {
   .filter-toolbar {
-    grid-template-columns: minmax(0, 1fr) clamp(15rem, 32vw, 19rem);
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
   }
 
   .filter-toolbar__actions {
@@ -407,7 +375,7 @@
   }
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
   .filter-toolbar {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -417,5 +385,11 @@
     max-width: 100%;
     flex-wrap: wrap;
     row-gap: 0.75rem;
+  }
+
+  .filter-toolbar__search,
+  .filter-toolbar__status,
+  .filter-toolbar__actions {
+    width: 100%;
   }
 }

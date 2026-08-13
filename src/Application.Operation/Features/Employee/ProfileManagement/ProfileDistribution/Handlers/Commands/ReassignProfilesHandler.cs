@@ -1,13 +1,11 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
@@ -21,13 +19,11 @@ public sealed class ReassignProfilesHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
     IUserRepository userRepository,
-    ILocalizationService localizationService,
-    IMapper mapper)
+    ProfileDistributionProjection projection)
     : IRequestHandler<ReassignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ReassignProfilesCommand request, CancellationToken ct)
     {
-        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
         var profileRepo = uow.GetEntityRepository<UserProfile>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var changeRepo = uow.GetEntityRepository<ProfileChangeRequest>();
@@ -177,7 +173,7 @@ public sealed class ReassignProfilesHandler(
                 request.ProfileIds,
                 request.PerEmployeeCount);
 
-            var handler = new AutoAssignProfilesHandler(uow, userManager, userRepository, localizationService, mapper);
+            var handler = new AutoAssignProfilesHandler(uow, userManager, userRepository, projection);
             return await handler.Handle(autoRequest, ct);
         }
 

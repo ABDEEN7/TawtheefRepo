@@ -2,10 +2,8 @@ using Application.Operation.Features.Employee.Dashboard.DTOs;
 using Application.Operation.Features.Employee.Dashboard.Queries;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 using FluentResults;
-using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -36,8 +34,7 @@ public sealed class DashboardReadService(
     UserManager<User> userManager,
     ILocalizationService localizationService,
     ICurrentUserService currentUserService,
-    IUserRepository userRepository,
-    IMapper mapper) : IDashboardReadService
+    ProfileDistributionProjection profileDistributionProjection) : IDashboardReadService
 {
     private const int DefaultLookbackDays = 30;
     private const int OverdueAfterDays = 3;
@@ -244,8 +241,7 @@ public sealed class DashboardReadService(
         if (string.IsNullOrWhiteSpace(userIdText) || !Guid.TryParse(userIdText, out var currentUserId))
             return Result.Fail("Unauthorized");
 
-        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
-        var employees = await projection.LoadEmployeesAsync(currentUserId, ct);
+        var employees = await profileDistributionProjection.LoadEmployeeLookupAsync(currentUserId, ct);
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         var assignedEmployeeIds = await assignmentRepo.DbSet
             .AsNoTracking()

@@ -9,13 +9,13 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { Select } from 'primeng/select';
 
 import {
-  DistributionEmployee,
+  DistributionEmployeeLookup,
   EmployeeAvailability,
   ManualAssignRequest,
 } from '../../models/profile-distribution.models';
 
 type ManualAssignDialogData = {
-  employees: DistributionEmployee[];
+  employees: DistributionEmployeeLookup[];
   selectedProfileIds: string[];
   initialEmployeeId?: string | null;
 };
