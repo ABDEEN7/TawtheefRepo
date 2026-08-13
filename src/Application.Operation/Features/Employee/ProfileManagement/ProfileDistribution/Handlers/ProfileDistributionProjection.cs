@@ -136,7 +136,7 @@ internal sealed class ProfileDistributionProjection(
         // 7.1) Load Minister Office Candidates for identifying them (batched)
         var qids = orderedProfiles.Select(p => p.NationalNumber).Where(q => q != null).ToList();
         var ministerOfficeQids = await uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet
-            .Where(c => qids.Contains(c.Qid))
+            .Where(c => qids.Contains(c.Qid) && c.IsFollowUpActive)
             .Select(c => c.Qid)
             .ToListAsync(ct);
         var ministerOfficeLookup = ministerOfficeQids.ToHashSet();
