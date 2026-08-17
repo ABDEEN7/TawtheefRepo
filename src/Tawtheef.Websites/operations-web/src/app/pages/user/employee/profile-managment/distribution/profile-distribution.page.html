@@ -46,9 +46,16 @@
                   <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
                 }
               </div>
-              <div class="filter-toolbar mb-3">
-                <div class="filter-toolbar__search">
-                  <p-iconfield class="search-icon-field w-100">
+              <app-page-filters
+                [advancedLabel]="'distribution.filters.additionalFilters' | translate"
+                [clearLabel]="'distribution.filters.clearFilters' | translate"
+                [advancedExpanded]="showAdvancedFilters()"
+                [activeAdvancedCount]="activeAdvancedFilterCount()"
+                [showClear]="hasActiveFilters()"
+                (advancedToggled)="toggleAdvancedFilters()"
+                (filtersCleared)="clearFilters()"
+              >
+                  <p-iconfield filterSearch class="search-icon-field w-100">
                     <p-inputicon styleClass="pi pi-search"></p-inputicon>
 
                     <input
@@ -60,8 +67,7 @@
                       (ngModelChange)="onSearchChange($event)"
                     />
                   </p-iconfield>
-                </div>
-                <div class="filter-field filter-toolbar__status">
+                <div filterSecondary>
                   <label class="form-label" for="distribution-status">{{
                     'distribution.filters.status' | translate
                   }}</label>
@@ -87,41 +93,7 @@
                     </ng-template>
                   </p-multiSelect>
                 </div>
-                <div class="filter-toolbar__actions">
-                  <button
-                    pButton
-                    type="button"
-                    class="p-button-outlined"
-                    (click)="toggleAdvancedFilters()"
-                  >
-                    <i
-                      [class]="showAdvancedFilters() ? 'pi pi-chevron-up' : 'pi pi-filter'"
-                      pButtonIcon
-                    ></i>
-                    <span pButtonLabel>{{
-                      'distribution.filters.additionalFilters' | translate
-                    }}</span>
-                    @if (activeAdvancedFilterCount() > 0) {
-                      <span class="filter-count">{{ activeAdvancedFilterCount() }}</span>
-                    }
-                  </button>
-                  @if (hasActiveFilters()) {
-                    <button
-                      pButton
-                      type="button"
-                      class="p-button-outlined p-button-danger"
-                      (click)="clearFilters()"
-                    >
-                      <i class="pi pi-filter-slash" pButtonIcon></i>
-                      <span pButtonLabel>{{
-                        'distribution.filters.clearFilters' | translate
-                      }}</span>
-                    </button>
-                  }
-                </div>
-              </div>
-              @if (showAdvancedFilters()) {
-                <div class="advanced-filters-panel mb-4 p-3 border rounded-4">
+                <div advancedFilters>
                   <div class="row g-3 align-items-start">
                     <div class="col-xl-4 col-md-6 filter-field">
                       <label class="form-label">{{
@@ -254,7 +226,7 @@
                     </button>
                   </div>
                 </div>
-              }
+              </app-page-filters>
               <div class="table-card rounded overflow-hidden">
                 <div class="table-responsive">
                   <p-table

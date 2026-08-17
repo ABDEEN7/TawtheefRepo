@@ -66,6 +66,7 @@ import { PaginationComponent } from '../../../../../shared/components/pagination
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import {SortEvent} from 'primeng/api';
+import { PageFiltersComponent } from '../../../../../shared/components/page-filters/page-filters.component';
 
 const DEFAULT_ADVANCED_FILTERS: DistributionAdvancedFilters = {
   assignedEmployeeId: null,
@@ -112,6 +113,7 @@ const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
     Ripple,
     Tooltip,
     ProgressBarModule,
+    PageFiltersComponent,
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',

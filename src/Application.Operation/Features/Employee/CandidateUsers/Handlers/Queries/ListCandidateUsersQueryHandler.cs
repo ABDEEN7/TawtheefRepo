@@ -17,6 +17,7 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
         GetCandidateUsersQuery request,
         CancellationToken cancellationToken)
     {
+        var search = request.Search?.Trim();
         var name = request.Name?.Trim();
         var email = request.Email?.Trim();
         var qid = request.Qid?.Trim();
@@ -25,7 +26,17 @@ public sealed class ListCandidateUsersQueryHandler(UserManager<User> userManager
         var queryable = userManager.Users
             .OfType<ApplicantUser>()
             .AsNoTracking()
-            .Include(u => u.Profile)
+            .WhereIf(!string.IsNullOrWhiteSpace(search),
+                u => EF.Functions.Like(u.FullNameEn, $"%{search}%") ||
+                     EF.Functions.Like(u.FullNameAr, $"%{search}%") ||
+                     (u.Email != null && EF.Functions.Like(u.Email, $"%{search}%")) ||
+                     (u.PhoneNumber != null && EF.Functions.Like(u.PhoneNumber, $"%{search}%")) ||
+                     (u.Profile != null &&
+                      u.Profile.NationalNumber != null &&
+                      EF.Functions.Like(u.Profile.NationalNumber, $"%{search}%")))
+            .WhereIf(request.IsBlocked.HasValue, u => u.IsBlocked == request.IsBlocked!.Value)
+            .WhereIf(request.ProfileStatuses is { Count: > 0 },
+                u => u.Profile != null && request.ProfileStatuses!.Contains(u.Profile.Status))
             .WhereIf(!string.IsNullOrWhiteSpace(name),
                 u => EF.Functions.Like(u.FullNameEn, $"%{name}%") ||
                      EF.Functions.Like(u.FullNameAr, $"%{name}%"))

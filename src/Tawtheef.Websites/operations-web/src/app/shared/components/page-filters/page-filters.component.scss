@@ -1,0 +1,159 @@
+:host {
+  display: block;
+}
+
+.filter-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(15rem, 22vw, 19rem) max-content;
+  align-items: end;
+  gap: 1rem;
+}
+
+.filter-toolbar__search,
+.filter-toolbar__secondary {
+  min-width: 0;
+}
+
+.filter-toolbar__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-self: start;
+  gap: 0.75rem;
+
+  .p-button {
+    flex: 0 0 auto;
+    width: max-content;
+    white-space: nowrap;
+  }
+}
+
+.filter-toolbar--without-secondary {
+  grid-template-columns: minmax(0, 1fr) max-content;
+}
+
+.filter-count {
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding-inline: 0.35rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #8a1538;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.advanced-filters-panel {
+  background: #fff9fb;
+  border-color: #ecd8e0 !important;
+}
+
+:host ::ng-deep {
+  .filter-field {
+    min-width: 0;
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+  }
+
+  .search-icon-field {
+    display: block;
+    position: relative;
+    width: 100%;
+
+    input {
+      width: 100%;
+      text-align: start;
+      padding-inline-start: 1rem !important;
+      padding-inline-end: 3rem !important;
+    }
+
+    .p-inputicon {
+      position: absolute !important;
+      top: 50% !important;
+      inset-inline-end: 1rem !important;
+      inset-inline-start: auto !important;
+      margin: 0 !important;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+  }
+
+  .profile-filter-multiselect,
+  .filter-toolbar__secondary .p-select,
+  .advanced-filters-panel .p-select,
+  .advanced-filters-panel .profile-filter-datepicker,
+  .advanced-filters-panel .p-inputtext {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-toolbar__secondary .p-select,
+  .advanced-filters-panel .p-select,
+  .advanced-filters-panel .profile-filter-datepicker .p-datepicker-input,
+  .advanced-filters-panel .p-inputtext {
+    min-height: 2.75rem;
+  }
+
+  .profile-filter-datepicker .p-datepicker-input-icon {
+    color: var(--p-text-muted-color);
+  }
+
+  .profile-filter-multiselect.p-multiselect {
+    height: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: 2rem;
+  }
+
+  .profile-filter-multiselect .p-multiselect-label {
+    display: flex;
+    align-items: center;
+    min-height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding-block: 0.579rem;
+    padding-inline: 0.75rem;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .profile-filter-multiselect__selection {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 1399.98px) {
+  .filter-toolbar {
+    grid-template-columns: minmax(0, 1fr) clamp(15rem, 32vw, 19rem);
+  }
+
+  .filter-toolbar__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .filter-toolbar,
+  .filter-toolbar--without-secondary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filter-toolbar__actions {
+    grid-column: auto;
+    max-width: 100%;
+    flex-wrap: wrap;
+    row-gap: 0.75rem;
+  }
+}
