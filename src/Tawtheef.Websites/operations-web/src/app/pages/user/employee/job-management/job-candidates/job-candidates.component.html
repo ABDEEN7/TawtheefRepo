@@ -298,7 +298,8 @@
           </div>
 
           <!-- Footer Actions -->
-          <div class="row mt-4 border-top pt-3 align-items-center" *ngIf="canSendInvitation()">
+          <div class="row mt-4 border-top pt-3 align-items-center"
+            *ngIf="canSendInvitation() || canExport()">
             <div class="col-md-6">
               <p class="m-0 text-muted" *ngIf="selectedCandidates.length > 0">
                 <span>{{ selectedCandidates.length }} {{ 'JOB_CANDIDATE_SELECTED' | translate }}</span>
@@ -306,13 +307,13 @@
             </div>
             <div class="col-md-6 text-end">
               <div class="d-flex gap-2 justify-content-end">
-                <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button"
-                  (click)="exportToExcel()">
+                <button *ngIf="canExport()" class="btn btn-outline-secondary d-flex align-items-center gap-2"
+                  type="button" (click)="exportToExcel()">
                   <i class="hgi hgi-stroke hgi-file-download"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_EXPORT_TO_EXCEL' | translate }}</span>
                 </button>
 
-                <button class="btn btn-primary d-flex align-items-center gap-2" type="button"
+                <button *ngIf="canSendInvitation()" class="btn btn-primary d-flex align-items-center gap-2" type="button"
                   (click)="sendInvitations()" [disabled]="availableCandidatesCount === 0 || availableVacancies === 0">
                   <i class="hgi hgi-stroke hgi-sent"></i>
                   <span>{{ 'JOB_CANDIDATE_BUTTONS_SEND_INVITATIONS' | translate }}</span>

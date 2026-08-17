@@ -67,6 +67,7 @@ export class JobInvitationSummary implements OnInit {
   currentPage = signal(1);
   itemsPerPage = signal(10);
   isExporting = signal(false);
+  canExport = computed(() => this.authService.hasPermission(Permissions.Dashboard.Export));
   selectedCategory = signal<string>('');
   selectedDepartment = signal<string>('');
   selectedStatus = signal<string>('');

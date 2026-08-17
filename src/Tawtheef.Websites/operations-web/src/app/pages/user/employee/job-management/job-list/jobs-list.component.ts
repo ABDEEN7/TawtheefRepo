@@ -90,6 +90,7 @@ export class JobListComponent implements OnInit {
   readonly canPublish = computed(() => this.authService.hasPermission(Permissions.Jobs.Publish));
   readonly canDelete = computed(() => this.authService.hasPermission(Permissions.Jobs.Delete));
   readonly canClone = computed(() => this.authService.hasPermission(Permissions.Jobs.Clone));
+  readonly canExport = computed(() => this.authService.hasPermission(Permissions.Dashboard.Export));
   readonly isHrManager = computed(() => this.authService.getCurrentUser()?.userRoles.includes(SystemRoles.HrManager) ?? false);
   readonly currentUserId = computed(() => this.authService.getCurrentUser()?.userId);
 

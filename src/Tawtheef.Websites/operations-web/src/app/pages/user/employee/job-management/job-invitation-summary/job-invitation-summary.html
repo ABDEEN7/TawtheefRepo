@@ -18,11 +18,13 @@
               </div>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <button type="button" class="btn btn-outline-primary" (click)="exportSummaries()"
-                [disabled]="isExporting()">
-                <i class="fa fa-file-excel me-1"></i>
-                {{ 'JOB_INVITATION_SUMMARY.EXPORT' | translate }}
-              </button>
+              @if (canExport()) {
+                <button type="button" class="btn btn-outline-primary" (click)="exportSummaries()"
+                  [disabled]="isExporting()">
+                  <i class="fa fa-file-excel me-1"></i>
+                  {{ 'JOB_INVITATION_SUMMARY.EXPORT' | translate }}
+                </button>
+              }
               <button type="button" class="btn btn-outline-primary" (click)="loadSummaries()">
                 <i class="pi pi-refresh me-1"></i>
                 {{ 'common.refresh' | translate }}

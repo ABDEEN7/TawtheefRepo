@@ -202,7 +202,7 @@ public class JobController(
     }
 
     [HttpPost("export")]
-    [AuthorizePermission(PermissionKeys.Jobs.View, PermissionKeys.Jobs.Edit)]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
     public async Task<IActionResult> ExportJobs([FromBody] ExportJobsQuery query)
     {
         var result = await mediator.Send(query);

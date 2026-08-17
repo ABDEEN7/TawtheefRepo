@@ -99,7 +99,7 @@ public sealed class JobCandidatesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("export")]
-    [AuthorizePermission(PermissionKeys.Jobs.View,PermissionKeys.Jobs.Edit)]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
     public async Task<IActionResult> Export([FromBody] ExportJobCandidatesQuery query)
     {
         var result = await mediator.Send(query);
