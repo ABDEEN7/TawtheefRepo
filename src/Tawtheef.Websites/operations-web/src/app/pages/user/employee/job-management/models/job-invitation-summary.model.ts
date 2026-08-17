@@ -1,4 +1,3 @@
-import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
 export interface JobInvitationSummaryModel {
@@ -19,18 +18,4 @@ export interface JobInvitationSummaryModel {
   previousBatchInvitations: number;
   lastBatchNumber: string | null;
   createDate: string;           // ISO date string
-}
-
-export interface JobSummaryFilters extends PaginatedRequest {
-  jobCategoryId?: string | null;
-  departmentId?: string | null;
-  jobStatusId?: string | null;
-  search?: string | null;
-}
-
-/** Pipeline segment descriptor used by the pipeline-bar component */
-export interface PipelineSegment {
-  label: string;
-  value: number;
-  color: string;
 }

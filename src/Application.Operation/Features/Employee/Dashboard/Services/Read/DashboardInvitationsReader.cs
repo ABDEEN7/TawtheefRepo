@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.Dashboard.DTOs.Invitations;
 using Application.Operation.Features.Employee.Dashboard.Queries.Common;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -19,8 +20,10 @@ internal sealed class DashboardInvitationsReader(
         if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
         var context = contextResult.Value;
         if (!context.CanViewInvitations) return Result.Ok<IReadOnlyList<LatestInvitationDto>>([]);
+        var range = DashboardTemporalResolver.ResolveRequestRange(
+            request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
 
-        var rows = await scope.Invitations(request, context)
+        var rows = await scope.Invitations(request, context, range)
             .OrderByDescending(invitation => invitation.CreatedDate)
             .Take(10)
             .Select(invitation => new

@@ -12,8 +12,24 @@ export interface DashboardOverview {
   candidateTypeKpis: CandidateTypeKpis;
   jobKpis: JobKpis;
   invitationKpis: InvitationKpis;
+  kpiTrends: DashboardKpiTrends;
   jobBreakdown: JobBreakdown;
   taskMonitoring: TaskMonitoring;
+}
+
+export interface DashboardMetricTrend {
+  previousValue: number;
+  changePercentage: number | null;
+}
+
+export interface DashboardKpiTrends {
+  totalProfiles: DashboardMetricTrend;
+  approvedProfiles: DashboardMetricTrend;
+  underReviewProfiles: DashboardMetricTrend;
+  unassignedProfiles: DashboardMetricTrend;
+  publishedJobs: DashboardMetricTrend;
+  totalInvitations: DashboardMetricTrend;
+  acceptedInvitations: DashboardMetricTrend;
 }
 
 export interface DashboardKpis {

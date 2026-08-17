@@ -114,7 +114,7 @@ export class CandidateProfileSummaryComponent implements OnInit {
   preview(file?: FileRefDto | null, ev?: Event): void {
     ev?.stopPropagation();
     if (file?.url) {
-      this.fileUtils.previewUrl(file.url, file.fileName || '', false);
+      this.fileUtils.previewUrl(file.url, false);
     }
   }
 

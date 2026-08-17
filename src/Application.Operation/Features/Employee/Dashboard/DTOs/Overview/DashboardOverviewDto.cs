@@ -14,6 +14,7 @@ public sealed class DashboardOverviewDto
     public required CandidateTypeKpisDto CandidateTypeKpis { get; init; }
     public required JobKpisDto JobKpis { get; init; }
     public required InvitationKpisDto InvitationKpis { get; init; }
+    public required DashboardKpiTrendsDto KpiTrends { get; init; }
     public required JobBreakdownDto JobBreakdown { get; init; }
     public required TaskMonitoringDto TaskMonitoring { get; init; }
 }

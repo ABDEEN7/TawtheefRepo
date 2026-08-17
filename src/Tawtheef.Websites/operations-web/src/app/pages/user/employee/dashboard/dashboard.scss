@@ -1375,25 +1375,21 @@ td {
     font-weight: 800;
 }
 
-.export-btn {
+.dashboard-action-btn {
   display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 42px;
-    padding: 0 18px;
-    border: 0;
-    border-radius: 14px;
-    background: #8A1538;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding-inline: 18px;
+  border-radius: 14px;
+  font-size: calc(14px * var(--dashboard-font-scale, 1));
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.export-btn:hover {
-  background: #0D4361;
-}
-
-.export-btn i {
+.dashboard-action-btn i {
   font-size: calc(18px * var(--dashboard-font-scale, 1));
 }
 
@@ -1453,6 +1449,22 @@ td {
   min-width: 0;
 }
 
+.figma-kpi-card.kpi-card-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.figma-kpi-card.kpi-card-clickable:hover {
+  transform: translateY(-2px);
+  border-color: #b8bec8 !important;
+  box-shadow: 0 14px 30px rgba(20, 20, 24, 0.1);
+}
+
+.figma-kpi-card.kpi-card-clickable:focus-visible {
+  outline: 3px solid rgba(72, 138, 218, 0.45);
+  outline-offset: 3px;
+}
+
 .figma-kpi-top {
   display: flex;
     align-items: center;
@@ -1505,11 +1517,11 @@ td {
 }
 
 .trend-up {
-  color: #2f9e5b;
+  color: #2f9e5b !important;
 }
 
 .trend-down {
-  color: #d64545;
+  color: #d64545 !important;
 }
 
 @media (max-width: 1360px) {

@@ -10,4 +10,5 @@ public sealed record GetTeamPerformanceQuery(
     DateTime? ToDateUtc = null,
     Guid? DepartmentId = null,
     Guid? EmployeeId = null,
-    string? Search = null) : PaginatedRequest, IRequest<Result<PaginatedResult<TeamPerformanceRowDto>>>;
+    string? Search = null,
+    int? Year = null) : PaginatedRequest, IRequest<Result<PaginatedResult<TeamPerformanceRowDto>>>;

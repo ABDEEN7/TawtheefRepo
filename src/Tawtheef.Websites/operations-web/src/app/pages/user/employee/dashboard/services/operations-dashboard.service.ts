@@ -10,7 +10,7 @@ import { TeamPerformanceRow } from '../models/dashboard-employees.model';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
-export type DashboardExportContext = 'Candidates' | 'Jobs' | 'Employees' | 'Invitations';
+export type DashboardExportContext = 'Summary' | 'Candidates' | 'Jobs' | 'Employees' | 'Invitations';
 
 @Injectable({ providedIn: 'root' })
 export class OperationsDashboardService {
@@ -24,6 +24,12 @@ export class OperationsDashboardService {
     });
   }
 
+  getYears(): Observable<number[]> {
+    return this.http.get<number[]>(this.endpoints.operationsDashboard.years, undefined, {
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    });
+  }
+
   getLatestJobs(filters: OperationsDashboardFilters): Observable<LatestJob[]> {
     return this.http.get<LatestJob[]>(this.endpoints.operationsDashboard.latestJobs, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
@@ -31,8 +37,7 @@ export class OperationsDashboardService {
   }
 
   getLatestInvitations(filters: OperationsDashboardFilters): Observable<LatestInvitation[]> {
-    const endpoint = this.endpoints.operationsDashboard.overview.replace('/overview', '/invitations/latest');
-    return this.http.get<LatestInvitation[]>(endpoint, filters, {
+    return this.http.get<LatestInvitation[]>(this.endpoints.operationsDashboard.latestInvitations, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
@@ -44,8 +49,7 @@ export class OperationsDashboardService {
   }
 
   exportList(context: DashboardExportContext, filters: OperationsDashboardFilters): Observable<HttpResponse<Blob>> {
-    const endpoint = this.endpoints.operationsDashboard.overview.replace('/overview', '/export-list');
-    return this.httpClient.get(endpoint, {
+    return this.httpClient.get(this.endpoints.operationsDashboard.exportList, {
       params: { ...filters, context },
       responseType: 'blob',
       observe: 'response',

@@ -12,7 +12,8 @@
   "dashboard.kpi.acceptedInvitations": "Accepted invitations",
   "dashboard.kpi.previousPeriod": "vs. previous period",
   "dashboard.kpi.trendUnavailable": "Trend unavailable",
-  "dashboard.filters.yearUnavailable": "Year filter unavailable",
+  "dashboard.kpi.vsPreviousYear": "vs. previous year",
+  "dashboard.filters.year": "Year",
   "dashboard.kpi.totalJobs": "Total jobs",
   "dashboard.kpi.pendingReviewJobs": "Pending approval",
   "dashboard.kpi.activeEmployees": "Employees",
@@ -39,6 +40,7 @@
   "dashboard.common.noAction": "No action",
   "dashboard.common.noData": "No data available",
   "dashboard.common.exportCharts": "Export charts",
+  "dashboard.common.exportChart": "Export Chart",
   "dashboard.export.files.candidateStatus": "candidate-profile-status",
   "dashboard.export.files.candidateTypes": "candidate-types",
   "dashboard.export.files.jobStatus": "job-status",
@@ -190,5 +192,7 @@
   "dashboard.workflow.approvedFiles": "Approved files",
   "common.chart.noData": "No data",
   "common.chart.profiles": "Profiles",
-  "common.chart.tasks": "Tasks"
+  "common.chart.tasks": "Tasks",
+  "dashboard.export.summary": "Export Summary",
+  "dashboard.export.charts": "Export Charts"
 }

@@ -15,11 +15,15 @@
         <div class="dashboard-section-header">
           <h3>{{ 'dashboard.mainIndicators.title' | translate }}</h3>
 
-          <button type="button" class="export-btn" (click)="exportDashboardCharts()"
-                  [disabled]="exportInProgress()">
-            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
-            <span>{{ 'dashboard.common.export' | translate }}</span>
-          </button>
+          @if (canExportDashboard()) {
+            <p-menu #exportMenu [model]="exportActions()" [popup]="true" appendTo="body"></p-menu>
+            <button type="button" class="btn btn-primary dashboard-action-btn" (click)="exportMenu.toggle($event)"
+                    [disabled]="exportInProgress()" aria-haspopup="menu">
+              <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+              <span>{{ 'dashboard.common.export' | translate }}</span>
+              <i class="pi pi-chevron-down" aria-hidden="true"></i>
+            </button>
+          }
         </div>
 
 
@@ -38,7 +42,13 @@
         <section class="kpi-grid figma-kpi-grid">
 
           @for (indicator of mainIndicators(); track indicator.labelKey) {
-          <article class="kpi-card figma-kpi-card">
+          <article class="kpi-card figma-kpi-card"
+                   [class.kpi-card-clickable]="isIndicatorNavigable(indicator)"
+                   [attr.role]="isIndicatorNavigable(indicator) ? 'link' : null"
+                   [attr.tabindex]="isIndicatorNavigable(indicator) ? 0 : null"
+                   (click)="navigateToIndicator(indicator)"
+                   (keydown.enter)="navigateToIndicator(indicator)"
+                   (keydown.space)="$event.preventDefault(); navigateToIndicator(indicator)">
             <div class="figma-kpi-top">
               <div class="kpi-label">{{ indicator.labelKey | translate }}</div>
               <div [class]="'kpi-icon ' + indicator.color">
@@ -46,8 +56,13 @@
               </div>
             </div>
             <div class="kpi-value">{{ indicator.value | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status">
-              <span>{{ 'dashboard.kpi.trendUnavailable' | translate }}</span>
+            <div class="kpi-status figma-kpi-status" [ngClass]="trendClass(indicator.trend)">
+              @if (indicator.trend?.changePercentage != null) {
+              <strong>
+                {{ indicator.trend!.changePercentage! > 0 ? '+' : '' }}{{ indicator.trend!.changePercentage | number:'1.0-1' }}%
+              </strong>
+              <span>{{ 'dashboard.kpi.vsPreviousYear' | translate }}</span>
+              }
             </div>
           </article>
           }
@@ -65,8 +80,15 @@
   <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
 
   <div class="summary-year-select-wrapper">
-    <select class="summary-year-select" disabled aria-disabled="true">
-      <option>{{ 'dashboard.filters.yearUnavailable' | translate }}</option>
+    <select class="summary-year-select" [value]="selectedYear()" [disabled]="yearsLoading()"
+            (change)="onYearChange(+$any($event.target).value)"
+            [attr.aria-label]="'dashboard.filters.year' | translate">
+      @for (year of availableYears(); track year) {
+      <option [value]="year">{{ year }}</option>
+      }
+      @if (availableYears().length === 0) {
+      <option [value]="selectedYear()">{{ selectedYear() }}</option>
+      }
     </select>
 
     <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
@@ -280,19 +302,19 @@
   @switch (activeDialog()) {
     @case ('Candidates') {
       <app-dashboard-candidates-dialog [breakdown]="dashboardOverview.profileBreakdown" [kpis]="dashboardOverview.kpis"
-        [filters]="dashboardFilters()" [canExport]="canExportCandidates()" (closed)="closeDialog()" />
+        [filters]="dashboardFilters()" [canExport]="canExportDashboard()" (closed)="closeDialog()" />
     }
     @case ('Jobs') {
       <app-dashboard-jobs-dialog [kpis]="dashboardOverview.jobKpis" [filters]="dashboardFilters()"
-        [canExport]="canExportJobs()" (closed)="closeDialog()" />
+        [canExport]="canExportDashboard()" (closed)="closeDialog()" />
     }
     @case ('Employees') {
       <app-dashboard-employees-dialog [kpis]="dashboardOverview.kpis" [monitoring]="dashboardOverview.taskMonitoring"
-        [filters]="dashboardFilters()" [canExport]="canExportEmployees()" (closed)="closeDialog()" />
+        [filters]="dashboardFilters()" [canExport]="canExportDashboard()" (closed)="closeDialog()" />
     }
     @case ('Invitations') {
       <app-dashboard-invitations-dialog [kpis]="dashboardOverview.invitationKpis" [filters]="dashboardFilters()"
-        [canExport]="canExportInvitations()" (closed)="closeDialog()" />
+        [canExport]="canExportDashboard()" (closed)="closeDialog()" />
     }
   }
 }

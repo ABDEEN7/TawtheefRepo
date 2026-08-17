@@ -58,14 +58,37 @@ export class CandidatesDialog {
       .subscribe(response => this.downloadResponse(response, 'Candidates.xlsx'));
   }
 
-  async exportCharts(): Promise<void> {
+  exportCandidateStatusChart(): Promise<void> {
+    return this.exportChart(
+      this.statusChart,
+      'dashboard.export.files.candidateStatus',
+      'dashboard.modals.candidates.statusTitle',
+      this.kpis().totalProfiles,
+      this.statusItems()
+    );
+  }
+
+  exportCandidateTypesChart(): Promise<void> {
+    return this.exportChart(
+      this.typeChart,
+      'dashboard.export.files.candidateTypes',
+      'dashboard.candidates.typeTitle',
+      this.typeTotal(),
+      this.typeItems()
+    );
+  }
+
+  private async exportChart(
+    host: ElementRef<HTMLElement> | undefined,
+    filenameKey: string,
+    titleKey: string,
+    total: number,
+    items: DashboardChartExportItem[]
+  ): Promise<void> {
     if (!this.canExport() || this.exportInProgress()) return;
     this.exportInProgress.set(true);
     try {
-      await this.chartExport.download([
-        this.exportSpec(this.statusChart, 'dashboard.export.files.candidateStatus', 'dashboard.modals.candidates.statusTitle', this.kpis().totalProfiles, this.statusItems()),
-        this.exportSpec(this.typeChart, 'dashboard.export.files.candidateTypes', 'dashboard.candidates.typeTitle', this.typeTotal(), this.typeItems())
-      ]);
+      await this.chartExport.download([this.exportSpec(host, filenameKey, titleKey, total, items)]);
     } finally {
       this.exportInProgress.set(false);
     }

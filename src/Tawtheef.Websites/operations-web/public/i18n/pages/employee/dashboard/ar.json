@@ -209,7 +209,8 @@
   "dashboard.kpi.totalProfiles": "إجمالي الملفات",
   "dashboard.kpi.previousPeriod": "عن الفترة السابقة",
   "dashboard.kpi.trendUnavailable": "الاتجاه غير متاح",
-  "dashboard.filters.yearUnavailable": "تصفية السنة غير متاحة",
+  "dashboard.kpi.vsPreviousYear": "مقارنة بالسنة السابقة",
+  "dashboard.filters.year": "السنة",
   "dashboard.kpi.totalJobs": "إجمالي الوظائف",
   "dashboard.kpi.activeEmployees": "الموظفون",
   "dashboard.kpi.remainingTasks": "المهام المتبقية",
@@ -225,6 +226,7 @@
   "dashboard.common.export": "تصدير",
   "dashboard.common.viewDetails": "عرض التفاصيل",
   "dashboard.common.exportCharts": "تصدير رسوم بيانية",
+  "dashboard.common.exportChart": "تصدير الرسم البياني",
   "dashboard.export.files.candidateStatus": "حالات-ملفات-المرشحين",
   "dashboard.export.files.candidateTypes": "أنواع-المرشحين",
   "dashboard.export.files.jobStatus": "حالات-الوظائف",
@@ -311,5 +313,7 @@
   "dashboard.modals.table.status": "الحالة",
   "dashboard.modals.table.sentDate": "تاريخ الإرسال",
 
-  "dashboard.modals.empty.noInvitations": "لا توجد دعوات لعرضها"
+  "dashboard.modals.empty.noInvitations": "لا توجد دعوات لعرضها",
+  "dashboard.export.summary": "تصدير الملخص",
+  "dashboard.export.charts": "تصدير الرسوم البيانية"
 }

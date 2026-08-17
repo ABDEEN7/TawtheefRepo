@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.Dashboard.DTOs.Employees;
 using Application.Operation.Features.Employee.Dashboard.Queries.Employees;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -66,8 +67,10 @@ internal sealed class DashboardEmployeesReader(
         }
 
         var assignments = scope.Assignments(context);
-        if (request.FromDateUtc.HasValue) assignments = assignments.Where(x => x.AssignedAtUtc >= request.FromDateUtc.Value);
-        if (request.ToDateUtc.HasValue) assignments = assignments.Where(x => x.AssignedAtUtc <= request.ToDateUtc.Value);
+        var range = DashboardTemporalResolver.ResolveRequestRange(
+            request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
+        assignments = assignments.Where(x =>
+            x.AssignedAtUtc >= range.FromUtc && x.AssignedAtUtc < range.ToExclusiveUtc);
         var changes = uow.GetEntityRepository<ProfileChangeRequest>().DbSet.AsNoTracking();
         return Result.Ok(new TeamPerformanceQuery(true, employees.Select(employee => new TeamPerformanceRowDto
         {

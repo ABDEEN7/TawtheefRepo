@@ -1,25 +1,25 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { JobLookupService } from '../services/job-lookup.service';
-import { JobInvitationSummaryDetailsService } from '../services/job-invitation-summary-details.service';
 import { JobQueryFilter } from '../models/job-query-filter.model';
 import { JobResponse } from '../models/job-response-model';
 import { GUID } from '../../../../../shared/types/guid.type';
 import { TranslateService } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, Subject, take } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { DialogHelperService } from '../../../../../core/services/dialog-helper.service';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { AuthService } from '../../../../../core/auth/auth.service';
-import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { PaginatedRequest } from '../../../../../core/models/paginated-request.model';
 import { JobStatus } from '../../../../../core/enums/lookups.enum';
 import { routes } from '../../../../../routes/routes';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { SystemRoles } from '../../../../../core/constants/systemRoles';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
+import { parseFilterYear } from '../../../../../core/utils/year-filter.util';
 
 export interface JobAction {
   label: string;
@@ -38,17 +38,19 @@ export interface JobAction {
 export class JobListComponent implements OnInit {
   private readonly jobService = inject(JobService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
   private readonly dialogHelperService = inject(DialogHelperService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly invitationDetailsService = inject(JobInvitationSummaryDetailsService);
+  private readonly fileUtils = inject(FileUtilsService);
   protected readonly lookupService = inject(JobLookupService);
 
   // --- State Signals ---
   readonly jobs = signal<PaginatedResult<JobResponse> | undefined>(undefined);
   readonly isLoading = signal(false);
+  readonly isExporting = signal(false);
   readonly currentPage = signal(1);
   readonly itemsPerPage = signal(10);
   readonly showMoreFilters = signal(false);
@@ -63,6 +65,7 @@ export class JobListComponent implements OnInit {
   readonly filterManagement = signal<GUID | null>(null);
   readonly filterSector = signal<GUID | null>(null);
   readonly filterDepartment = signal<GUID | null>(null);
+  readonly filterYear = signal<number | null>(null);
 
   // --- Statistics Signal ---
   readonly stats = signal({
@@ -106,8 +109,8 @@ export class JobListComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupSearchListener();
+    this.filterYear.set(parseFilterYear(this.route.snapshot.queryParamMap.get('year')) ?? null);
     this.initializeLookups();
-    this.loadData();
   }
 
   private initializeLookups(): void {
@@ -119,7 +122,11 @@ export class JobListComponent implements OnInit {
     // Stats depend on status lookups being loaded
     this.lookupService.loadJobStatus()
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.loadStats());
+      .subscribe(() => {
+        this.resolveStatusFromRoute();
+        this.loadStats();
+        this.loadData();
+      });
   }
 
   loadData(): void {
@@ -132,17 +139,7 @@ export class JobListComponent implements OnInit {
       sortDirection: this.sortDirection(),
     };
 
-    const filter: JobQueryFilter = {
-      searchTerm: this.searchQuery() || undefined,
-      jobCategoryId: this.filterType() || undefined,
-      statusId: this.filterStatus() || undefined,
-      genderId: this.filterGender() || undefined,
-      managementId: this.filterManagement() || undefined,
-      sectorId: this.filterSector() || undefined,
-      departmentId: this.filterDepartment() || undefined,
-    };
-
-    this.jobService.getAll(pagination, filter)
+    this.jobService.getAll(pagination, this.currentFilter())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -171,6 +168,18 @@ export class JobListComponent implements OnInit {
   onFilterChange(): void {
     this.currentPage.set(1);
     this.loadData();
+  }
+
+  onStatusChange(statusId: GUID | null): void {
+    this.filterStatus.set(statusId ?? null);
+    this.syncRouteFilters();
+    this.onFilterChange();
+  }
+
+  clearYear(): void {
+    this.filterYear.set(null);
+    this.syncRouteFilters();
+    this.onFilterChange();
   }
 
   onSectorChange(sectorId: GUID | null): void {
@@ -207,10 +216,35 @@ export class JobListComponent implements OnInit {
     this.filterManagement.set(null);
     this.filterSector.set(null);
     this.filterDepartment.set(null);
+    this.filterYear.set(null);
 
     this.lookupService.resetManagements();
     this.lookupService.resetDepartments();
+    this.syncRouteFilters();
     this.onFilterChange();
+  }
+
+  private resolveStatusFromRoute(): void {
+    const requestedStatus = this.route.snapshot.queryParamMap.get('status');
+    if (!requestedStatus) return;
+
+    const status = this.lookupService.jobStatus().find(option =>
+      option.backendName?.toLowerCase() === requestedStatus.toLowerCase());
+    this.filterStatus.set(status ? status.id as GUID : null);
+  }
+
+  private syncRouteFilters(): void {
+    const selectedStatus = this.lookupService.jobStatus()
+      .find(option => option.id === this.filterStatus());
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        status: selectedStatus?.backendName ?? null,
+        year: this.filterYear()
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   onSort(column: string): void {
@@ -237,6 +271,27 @@ export class JobListComponent implements OnInit {
   refresh(): void {
     this.loadData();
     this.loadStats();
+  }
+
+  exportJobs(): void {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.jobService.exportJobs(this.currentFilter(), this.sortBy(), this.sortDirection())
+      .pipe(finalize(() => this.isExporting.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe(response => void this.fileUtils.downloadResponse(response, 'jobs.xlsx'));
+  }
+
+  private currentFilter(): JobQueryFilter {
+    return {
+      searchTerm: this.searchQuery() || undefined,
+      year: this.filterYear() ?? undefined,
+      jobCategoryId: this.filterType() || undefined,
+      statusId: this.filterStatus() || undefined,
+      genderId: this.filterGender() || undefined,
+      managementId: this.filterManagement() || undefined,
+      sectorId: this.filterSector() || undefined,
+      departmentId: this.filterDepartment() || undefined,
+    };
   }
 
   // --- Job Actions ---

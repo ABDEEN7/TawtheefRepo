@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { Select } from 'primeng/select';
 import { CandidateUsersService } from './services/candidate-users.service';
 import { CandidateUserDto } from './models/candidate-user.dto';
-import { CandidateUserFilters } from './models/candidate-user-filters.dto';
+import {
+  CandidateUserFilters,
+  CandidateUsersResultScope
+} from './models/candidate-user-filters.dto';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
@@ -17,12 +21,14 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { routes } from '../../../../routes/routes';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
-import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
+import { ProfileStatus, ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProfileLogDto } from '../profile-logs/models/profile-log.dto';
 import { ReviewStatus } from '../profile-managment/approval-list/models/profile-approval.models';
+import { FileUtilsService } from '../../../../core/utils/file-utils';
+import { parseFilterYear } from '../../../../core/utils/year-filter.util';
 
 @Component({
   selector: 'app-candidate-users-management',
@@ -36,6 +42,7 @@ import { ReviewStatus } from '../profile-managment/approval-list/models/profile-
     TableModule,
     ButtonModule,
     Dialog,
+    Select,
     PaginationComponent,
     I18nNamespaceDirective,
     HasPermissionDirective
@@ -48,11 +55,14 @@ export class CandidateUsersManagementPage implements OnInit {
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private fileUtils = inject(FileUtilsService);
 
   private _users = signal<CandidateUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _profileLogs = signal<ProfileLogDto[]>([]);
   private _profileLogsLoading = signal(false);
+  readonly exporting = signal(false);
 
   users = this._users.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
@@ -65,13 +75,18 @@ export class CandidateUsersManagementPage implements OnInit {
     name: '',
     email: '',
     qid: '',
-    mobileNumber: ''
+    mobileNumber: '',
+    scope: CandidateUsersResultScope.Default
   });
 
   nameFilter = '';
   emailFilter = '';
   qidFilter = '';
   mobileFilter = '';
+  readonly profileStatusOptions = Object.values(ProfileStatus).map(status => ({
+    value: status,
+    labelKey: `common.${status}`
+  }));
   private searchChanges$ = new Subject<string>();
 
   currentLang = signal<Lang>(this.language.get());
@@ -85,6 +100,10 @@ export class CandidateUsersManagementPage implements OnInit {
 
   ngOnInit(): void {
     this.setupSearchListener();
+    const profileStatus = this.parseProfileStatus(this.route.snapshot.queryParamMap.get('profileStatus'));
+    const scope = this.parseResultScope(this.route.snapshot.queryParamMap.get('scope'));
+    const year = parseFilterYear(this.route.snapshot.queryParamMap.get('year'));
+    this.filters.update(filters => ({ ...filters, profileStatus, scope, year }));
     this.loadUsers();
     this.language.current$.subscribe(lang => this.currentLang.set(lang));
   }
@@ -136,6 +155,40 @@ export class CandidateUsersManagementPage implements OnInit {
     this.loadUsers();
   }
 
+  exportUsers(): void {
+    if (this.exporting()) return;
+    this.exporting.set(true);
+    this.candidateUsersService.exportCandidateUsers(this.filters())
+      .pipe(finalize(() => this.exporting.set(false)))
+      .subscribe(response => void this.fileUtils.downloadResponse(response, 'candidate-users.xlsx'));
+  }
+
+  onProfileStatusChange(profileStatus: ProfileStatus | null): void {
+    this.filters.update(filters => ({
+      ...filters,
+      pageNumber: 1,
+      profileStatus: profileStatus ?? undefined
+    }));
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { profileStatus: profileStatus ?? null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+    this.loadUsers();
+  }
+
+  clearYear(): void {
+    this.filters.update(filters => ({ ...filters, pageNumber: 1, year: undefined }));
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { year: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+    this.loadUsers();
+  }
+
   toggleBlock(user: CandidateUserDto): void {
     const desiredState = !user.isBlocked;
     this.candidateUsersService.updateBlockStatus(user.id, desiredState).subscribe({
@@ -184,6 +237,18 @@ export class CandidateUsersManagementPage implements OnInit {
     this.profileLogsDialogVisible = false;
     this._profileLogs.set([]);
     this.profileLogsCandidateName = '';
+  }
+
+  private parseProfileStatus(value: string | null): ProfileStatus | undefined {
+    return value && Object.values(ProfileStatus).includes(value as ProfileStatus)
+      ? value as ProfileStatus
+      : undefined;
+  }
+
+  private parseResultScope(value: string | null): CandidateUsersResultScope {
+    return value === CandidateUsersResultScope.AccessibleProfiles || value === 'DashboardAccessible'
+      ? CandidateUsersResultScope.AccessibleProfiles
+      : CandidateUsersResultScope.Default;
   }
 
   translateSection(section?: string | null): string {

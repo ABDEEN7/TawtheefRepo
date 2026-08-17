@@ -9,6 +9,7 @@ public static class PermissionKeys
     public static class Dashboard
     {
         public const string View = "dashboard.view";
+        public const string Export = "dashboard.export";
     }
 
     public static class Roles

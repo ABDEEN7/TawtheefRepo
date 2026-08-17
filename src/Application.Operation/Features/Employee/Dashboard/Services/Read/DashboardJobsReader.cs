@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.Dashboard.DTOs.Jobs;
 using Application.Operation.Features.Employee.Dashboard.Queries.Common;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -21,8 +22,10 @@ internal sealed class DashboardJobsReader(
         var contextResult = await accessContextProvider.GetAsync(ct);
         if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
         var context = contextResult.Value;
+        var range = DashboardTemporalResolver.ResolveRequestRange(
+            request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
         var invitations = uow.GetEntityRepository<Invitation>().DbSet;
-        var rows = await scope.Jobs(request, context)
+        var rows = await scope.Jobs(request, context, range)
             .OrderByDescending(job => job.UpdatedDate)
             .ThenByDescending(job => job.CreatedDate)
             .Take(4)

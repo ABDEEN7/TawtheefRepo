@@ -17,6 +17,15 @@
             @for (item of statusItems(); track item.label) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.label }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }
           </div>
         </div>
+        @if (canExport()) {
+        <div class="candidate-chart-card-actions">
+          <button class="btn btn-primary-outline dashboard-chart-export-btn" type="button"
+            (click)="exportCandidateStatusChart()" [disabled]="exportInProgress()">
+            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+            <span>{{ 'dashboard.common.exportChart' | translate }}</span>
+          </button>
+        </div>
+        }
       </div>
       <div class="candidate-modal-chart-card">
         <h4>{{ 'dashboard.candidates.typeTitle' | translate }}</h4>
@@ -29,10 +38,18 @@
             @for (item of typeItems(); track item.label) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.label }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }
           </div>
         </div>
+        @if (canExport()) {
+        <div class="candidate-chart-card-actions">
+          <button class="btn btn-primary-outline dashboard-chart-export-btn" type="button"
+            (click)="exportCandidateTypesChart()" [disabled]="exportInProgress()">
+            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+            <span>{{ 'dashboard.common.exportChart' | translate }}</span>
+          </button>
+        </div>
+        }
       </div>
     </div>
     <div class="candidate-modal-actions" [hidden]="!canExport()">
-      <button class="candidate-modal-btn outline" type="button" (click)="exportCharts()" [disabled]="exportInProgress()"><i class="hgi-stroke hgi-download-04"></i><span>{{ 'dashboard.common.exportCharts' | translate }}</span></button>
       <button class="candidate-modal-btn filled" type="button" (click)="exportList()" [disabled]="exportInProgress()"><i class="hgi-stroke hgi-download-04"></i><span>{{ 'dashboard.common.exportList' | translate }}</span></button>
     </div>
   </div>

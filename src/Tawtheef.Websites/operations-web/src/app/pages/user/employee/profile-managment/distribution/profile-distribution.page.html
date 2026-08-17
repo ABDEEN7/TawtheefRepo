@@ -46,6 +46,16 @@
                   <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
                 }
               </div>
+              @if (appliedFilters().year; as year) {
+                <div class="alert alert-light border d-flex align-items-center gap-2 py-2 mb-3">
+                  <span>{{ 'distribution.filters.year' | translate }}: {{ year }}</span>
+                  <button type="button" class="btn btn-sm p-0 ms-auto" (click)="clearYear()"
+                    [attr.aria-label]="'distribution.filters.clearYear' | translate"
+                    [title]="'distribution.filters.clearYear' | translate">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
+              }
               <div class="filter-toolbar mb-3">
                 <div class="filter-toolbar__search">
                   <p-iconfield class="search-icon-field w-100">
@@ -125,6 +135,25 @@
                   <div class="row g-3 align-items-start">
                     <div class="col-xl-4 col-md-6 filter-field">
                       <label class="form-label">{{
+                        'distribution.filters.assignmentState' | translate
+                      }}</label>
+                      <p-select
+                        class="w-100"
+                        [options]="assignmentStateOptions"
+                        optionValue="value"
+                        [ngModel]="draftFilters().assignmentState"
+                        (onChange)="onDraftAssignmentStateChange($event.value)"
+                      >
+                        <ng-template pTemplate="selectedItem" let-item>{{
+                          item?.label | translate
+                        }}</ng-template>
+                        <ng-template pTemplate="item" let-item>{{
+                          item.label | translate
+                        }}</ng-template>
+                      </p-select>
+                    </div>
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">{{
                         'distribution.filters.assignedEmployee' | translate
                       }}</label>
                       <p-select
@@ -134,7 +163,7 @@
                         optionLabel="name"
                         [showClear]="true"
                         [ngModel]="draftFilters().assignedEmployeeId"
-                        (onChange)="updateDraftFilter('assignedEmployeeId', $event.value)"
+                        (onChange)="onDraftAssignedEmployeeChange($event.value)"
                         [placeholder]="'distribution.filters.assignedEmployeePlaceholder' | translate"
                       ></p-select>
                     </div>

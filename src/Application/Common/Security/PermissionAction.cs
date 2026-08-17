@@ -12,5 +12,6 @@ public enum PermissionAction
     Create,
     Publish,
     Delete,
-    Clone
+    Clone,
+    Export
 }

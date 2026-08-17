@@ -15,7 +15,7 @@ public class GetSkillBySubMajorIdAndRelatedParentSkillQueryHandler(IUnitOfWork u
     {
         IQueryable<Skill> skillsQuery;
         
-        if (request.SubMajorIds is null || !request.SubMajorIds.Any())
+        if (request.SubMajorIds is null || request.SubMajorIds.Count == 0)
         {
             skillsQuery = unitOfWork.GetEntityRepository<Skill>().DbSet
                 .AsNoTracking()

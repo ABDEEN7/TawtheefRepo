@@ -17,6 +17,7 @@ import { PaginatedRequest } from '../../../../../core/models/paginated-request.m
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { JobStatus, Degree } from '../../../../../core/enums/lookups.enum';
 import { JobSpecialization } from '../models/job-specialization.model';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class JobService {
   private notificationService = inject(NotificationService);
   private translationService = inject(TranslateService);
   private lookupService = inject(JobLookupService);
+  private httpClient = inject(HttpClient);
 
   private currentJob = signal<Job | null>(null);
   private currentJobId: GUID | null = null;
@@ -425,6 +427,18 @@ export class JobService {
       this.endpoints.job.searchJob,
       payload
     );
+  }
+
+  exportJobs(
+    filter: JobQueryFilter,
+    sortBy?: string,
+    sortDirection?: string
+  ): Observable<HttpResponse<Blob>> {
+    return this.httpClient.post(this.endpoints.job.exportJobs, { filter, sortBy, sortDirection }, {
+      responseType: 'blob',
+      observe: 'response',
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    });
   }
 
   clearCurrentJob(): void {

@@ -1,6 +1,5 @@
 export interface OperationsDashboardFilters {
-  fromDateUtc?: string;
-  toDateUtc?: string;
+  year?: number;
   departmentId?: string;
   employeeId?: string;
   status?: string;
@@ -12,6 +11,7 @@ export interface OperationsDashboardFilters {
 }
 
 export interface OperationsDashboardFilterSnapshot {
+  year: number;
   fromDateUtc?: string;
   toDateUtc?: string;
   departmentId?: string;

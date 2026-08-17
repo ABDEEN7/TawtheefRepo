@@ -2,6 +2,7 @@ namespace Application.Operation.Features.Employee.Dashboard.DTOs.Overview;
 
 public sealed class DashboardFiltersSnapshotDto
 {
+    public int Year { get; init; }
     public DateTime? FromDateUtc { get; init; }
     public DateTime? ToDateUtc { get; init; }
     public Guid? DepartmentId { get; init; }

@@ -1,4 +1,6 @@
 {
+  "JOB_INVITATION_SUMMARY.YEAR": "السنة",
+  "JOB_INVITATION_SUMMARY.CLEAR_YEAR": "مسح تصفية السنة",
   "JOB_INVITATION_SUMMARY.TITLE": "ملخّص الدعوات لكل وظيفة",
   "JOB_INVITATION_SUMMARY.SUBTITLE": "تعرض هذه الصفحة لكل وظيفة: عدد الدعوات المرسلة، عدد المتقدّمين، عدد الرافضين، وعدد غير المشاهد.",
   "JOB_INVITATION_SUMMARY.JOB_TITLE": "الوظيفة",
@@ -47,5 +49,6 @@
   "JOB_INVITATION_SUMMARY.VIEW_CHART": "عرض الرسم البياني",
   "JOB_INVITATION_SUMMARY.MORE_OPTIONS": "خيارات إضافية",
   "JOB_INVITATION_SUMMARY.PENDING_ATTACHMENT": "مرفقات بانتظار الموافقة",
-  "JOB_INVITATION_SUMMARY.RETURNED_ATTACHMENT": "مرفقات مُعادة"
+  "JOB_INVITATION_SUMMARY.RETURNED_ATTACHMENT": "مرفقات مُعادة",
+  "JOB_INVITATION_SUMMARY.EXPORT": "تصدير"
 }

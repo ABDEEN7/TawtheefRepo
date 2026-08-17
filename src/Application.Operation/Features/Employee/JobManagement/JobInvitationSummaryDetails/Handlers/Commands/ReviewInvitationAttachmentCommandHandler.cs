@@ -3,6 +3,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Application.Operation.Features.Employee.Common.Access;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Logger;
@@ -12,14 +13,21 @@ using Tawtheef.Domain.Events.Operation;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Handlers.Commands;
 
-public class ReviewInvitationAttachmentCommandHandler(IUnitOfWork unitOfWork)
+public class ReviewInvitationAttachmentCommandHandler(
+    IUnitOfWork unitOfWork,
+    EmployeeJobAccessContextProvider accessContextProvider)
     : IRequestHandler<ReviewInvitationAttachmentCommand, Result<Unit>>
 {
     public async Task<Result<Unit>> Handle(ReviewInvitationAttachmentCommand request, CancellationToken cancellationToken)
     {
+        var accessibleJobIds = unitOfWork.GetEntityRepository<Tawtheef.Domain.Entities.Recruitment.Job>().DbSet
+            .AsNoTracking()
+            .ApplyJobAccessScope(accessContextProvider.GetAccess())
+            .Select(job => job.Id);
         var invitation = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .Include(x => x.Attachments).ThenInclude(x => x.JobRequiredAttachment)
-            .FirstOrDefaultAsync(x => x.Id == request.InvitationId, cancellationToken);
+            .FirstOrDefaultAsync(x =>
+                x.Id == request.InvitationId && accessibleJobIds.Contains(x.JobId), cancellationToken);
 
         if (invitation == null)
             return Result.Fail(ErrorsCodes.InvitationNotFound);

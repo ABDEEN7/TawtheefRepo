@@ -296,7 +296,7 @@ export class UniversityModalComponent implements OnInit, OnChanges, OnDestroy {
 
     // 2) Otherwise preview existing URL (protected endpoint => forceAuthFetch)
     if (preview) {
-      await this.fileUtils.previewUrl(preview, '', false);
+      await this.fileUtils.previewUrl(preview, false);
     }
   }
   clearLogo(ev: MouseEvent, type: 'ar' | 'en') {

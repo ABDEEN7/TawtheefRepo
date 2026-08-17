@@ -1,10 +1,11 @@
-using Application.Operation.Features.Employee.Dashboard.DTOs.Export;
 using Application.Operation.Features.Employee.Dashboard.Queries.Employees;
 using Application.Operation.Features.Employee.Dashboard.Queries.Export;
 using Application.Operation.Features.Employee.Dashboard.Services.Export;
 using Application.Operation.Features.Employee.Dashboard.Services.Read;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using FluentResults;
 using MediatR;
+using Tawtheef.Application.Common.Models.Export;
 
 namespace Application.Operation.Features.Employee.Dashboard.Handlers.Queries.Export;
 
@@ -13,49 +14,69 @@ internal sealed class ExportDashboardListQueryHandler(
     DashboardJobsReader jobsReader,
     DashboardInvitationsReader invitationsReader,
     DashboardEmployeesReader employeesReader,
-    DashboardExcelExporter excelExporter)
-    : IRequestHandler<ExportDashboardListQuery, Result<DashboardExportResult>>
+    DashboardSummaryExcelExporter summaryExporter,
+    DashboardCandidatesExcelExporter candidatesExporter,
+    DashboardJobsExcelExporter jobsExporter,
+    DashboardEmployeesExcelExporter employeesExporter,
+    DashboardInvitationsExcelExporter invitationsExporter)
+    : IRequestHandler<ExportDashboardListQuery, Result<FileExportResult>>
 {
-    public Task<Result<DashboardExportResult>> Handle(ExportDashboardListQuery request, CancellationToken ct) =>
+    public Task<Result<FileExportResult>> Handle(ExportDashboardListQuery request, CancellationToken ct) =>
         request.Context switch
         {
+            DashboardExportContext.Summary => ExportSummaryAsync(request, ct),
             DashboardExportContext.Candidates => ExportCandidatesAsync(request, ct),
             DashboardExportContext.Jobs => ExportJobsAsync(request, ct),
             DashboardExportContext.Employees => ExportEmployeesAsync(request, ct),
             DashboardExportContext.Invitations => ExportInvitationsAsync(request, ct),
-            _ => Task.FromResult(Result.Fail<DashboardExportResult>("Unsupported dashboard export context"))
+            _ => Task.FromResult(Result.Fail<FileExportResult>("Unsupported dashboard export context"))
         };
 
-    private async Task<Result<DashboardExportResult>> ExportCandidatesAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportSummaryAsync(ExportDashboardListQuery request, CancellationToken ct)
     {
         var result = await overviewReader.ReadAsync(request, ct);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(excelExporter.ExportCandidates(result.Value));
+        if (result.IsFailed) return Result.Fail(result.Errors);
+
+        var selectedYear = DashboardTemporalResolver.ResolveSelectedYear(
+            request.Year, request.FromDateUtc);
+        return Result.Ok(summaryExporter.Export(result.Value, selectedYear));
     }
 
-    private async Task<Result<DashboardExportResult>> ExportJobsAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportCandidatesAsync(ExportDashboardListQuery request, CancellationToken ct)
+    {
+        var result = await overviewReader.ReadAsync(request, ct);
+        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(candidatesExporter.Export(result.Value));
+    }
+
+    private async Task<Result<FileExportResult>> ExportJobsAsync(ExportDashboardListQuery request, CancellationToken ct)
     {
         var result = await jobsReader.ReadLatestAsync(request, ct);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(excelExporter.ExportJobs(result.Value));
+        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(jobsExporter.Export(result.Value));
     }
 
-    private async Task<Result<DashboardExportResult>> ExportEmployeesAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportEmployeesAsync(ExportDashboardListQuery request, CancellationToken ct)
     {
         var overview = await overviewReader.ReadAsync(request, ct);
         if (overview.IsFailed) return Result.Fail(overview.Errors);
         var employees = await employeesReader.ReadExportAsync(new GetTeamPerformanceQuery(
-            request.FromDateUtc, request.ToDateUtc, request.DepartmentId, request.EmployeeId, request.Search)
+            request.FromDateUtc,
+            request.ToDateUtc,
+            request.DepartmentId,
+            request.EmployeeId,
+            request.Search,
+            request.Year)
         {
             SortBy = request.SortBy,
             SortDirection = request.SortDirection
         }, ct);
         return employees.IsFailed
             ? Result.Fail(employees.Errors)
-            : Result.Ok(excelExporter.ExportEmployees(overview.Value.Kpis, employees.Value));
+            : Result.Ok(employeesExporter.Export(overview.Value.Kpis, employees.Value));
     }
 
-    private async Task<Result<DashboardExportResult>> ExportInvitationsAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportInvitationsAsync(ExportDashboardListQuery request, CancellationToken ct)
     {
         var result = await invitationsReader.ReadLatestAsync(request, ct);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(excelExporter.ExportInvitations(result.Value));
+        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(invitationsExporter.Export(result.Value));
     }
 }

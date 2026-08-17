@@ -2,18 +2,22 @@
   <div class="card card-table">
     <div class="card-body">
       <!-- Header -->
-      <div class="row mb-4">
-        <div class="col-md-9">
+      <div class="row mb-4 g-3 align-items-center">
+        <div class="col-lg-6">
           <h3 class="fw-bold mb-0">{{ 'JOB_LIST_AVAILABLE_JOBS' | translate }}</h3>
           <p class="fs-16 m-0 text-muted">{{ 'JOB_LIST_REVIEW_EDIT_JOBS' | translate }}</p>
         </div>
-        <div class="col-md-3 text-end d-flex justify-content-end gap-2 align-items-center">
-          <button class="btn btn-outline-primary" (click)="refresh()" [disabled]="isLoading()">
+        <div class="col-lg-6 job-list-header-actions">
+          <button class="btn btn-outline-primary job-list-header-action" (click)="refresh()" [disabled]="isLoading()">
             <i class="pi pi-refresh me-1" [class.pi-spin]="isLoading()"></i>
             <span>{{ 'common.refresh' | translate }}</span>
           </button>
+          <button class="btn btn-primary job-list-header-action" (click)="exportJobs()" [disabled]="isExporting()">
+            <i class="fa fa-file-excel me-1"></i>
+            <span>{{ 'JOB_LIST_BUTTONS_EXPORT' | translate }}</span>
+          </button>
           @if (canCreate()) {
-          <button class="btn btn-primary" (click)="createNewJob()">
+          <button class="btn btn-primary job-list-header-action" (click)="createNewJob()">
             <i class="hgi hgi-stroke hgi-plus-sign me-1"></i>
             <span>{{ 'JOB_LIST_BUTTONS_CREATE_JOB' | translate }}</span>
           </button>
@@ -84,6 +88,16 @@
           </div>
 
           <!-- Filters Bar -->
+          @if (filterYear(); as year) {
+          <div class="alert alert-light border d-flex align-items-center gap-2 py-2 mb-3">
+            <span>{{ 'JOB_LIST_FILTERS_YEAR' | translate }}: {{ year }}</span>
+            <button type="button" class="btn btn-sm p-0 ms-auto" (click)="clearYear()"
+              [attr.aria-label]="'JOB_LIST_FILTERS_CLEAR_YEAR' | translate"
+              [title]="'JOB_LIST_FILTERS_CLEAR_YEAR' | translate">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          }
           <div class="row mb-3 align-items-center">
             <div class="col-lg-3 col-md-4 col-sm-12 mb-3">
               <div class="input-group">
@@ -99,7 +113,7 @@
             </div>
             <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
               <p-select class="select w-100" [options]="lookupService.jobStatus()" [ngModel]="filterStatus()"
-                (ngModelChange)="filterStatus.set($event); onFilterChange()" optionLabel="name" optionValue="id"
+                (ngModelChange)="onStatusChange($event)" optionLabel="name" optionValue="id"
                 [showClear]="true" [placeholder]="'JOB_LIST_FILTERS_STATUS' | translate"></p-select>
             </div>
 

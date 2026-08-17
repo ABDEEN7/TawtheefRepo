@@ -3,10 +3,17 @@
   [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [class.table-rtl]="isRtl()">
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="fw-bold mb-0">{{ 'CANDIDATE_USERS.TITLE' | translate }}</h3>
-    <button type="button" class="btn btn-outline-primary" (click)="loadUsers()">
-      <i class="pi pi-refresh me-1"></i>
-      {{ 'common.refresh' | translate }}
-    </button>
+    <div class="d-flex align-items-center gap-2">
+      <button type="button" class="btn btn-outline-primary" (click)="exportUsers()"
+        [disabled]="exporting()">
+        <i class="fa fa-file-excel me-1"></i>
+        {{ 'CANDIDATE_USERS.EXPORT' | translate }}
+      </button>
+      <button type="button" class="btn btn-outline-primary" (click)="loadUsers()">
+        <i class="pi pi-refresh me-1"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
   </div>
 
   <div class="filters card p-3 mb-3">
@@ -30,6 +37,31 @@
         <label class="form-label">{{ 'CANDIDATE_USERS.SEARCH_MOBILE' | translate }}</label>
         <input type="text" class="form-control" [(ngModel)]="mobileFilter" (input)="onSearchChange()"
           [placeholder]="'CANDIDATE_USERS.SEARCH_MOBILE_PLACEHOLDER' | translate" />
+      </div>
+      <div class="col-lg-3 col-md-4 mt-3">
+        <label class="form-label">{{ 'CANDIDATE_USERS.PROFILE_STATUS' | translate }}</label>
+        <p-select class="w-100" [options]="profileStatusOptions" [showClear]="true"
+          [ngModel]="filters().profileStatus" optionLabel="labelKey" optionValue="value"
+          [placeholder]="'CANDIDATE_USERS.PROFILE_STATUS' | translate"
+          (ngModelChange)="onProfileStatusChange($event)">
+          <ng-template #selectedItem let-option>
+            {{ option.labelKey | translate }}
+          </ng-template>
+          <ng-template #item let-option>
+            {{ option.labelKey | translate }}
+          </ng-template>
+        </p-select>
+      </div>
+      <div class="col-lg-3 col-md-4 mt-3" *ngIf="filters().year as year">
+        <label class="form-label">{{ 'CANDIDATE_USERS.YEAR' | translate }}</label>
+        <div class="form-control d-flex align-items-center justify-content-between">
+          <span>{{ year }}</span>
+          <button type="button" class="btn btn-sm p-0" (click)="clearYear()"
+            [attr.aria-label]="'CANDIDATE_USERS.CLEAR_YEAR' | translate"
+            [title]="'CANDIDATE_USERS.CLEAR_YEAR' | translate">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

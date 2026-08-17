@@ -1,24 +1,30 @@
+using Application.Operation.Features.Employee.Common.Access;
 using Application.Operation.Features.Employee.Dashboard.Queries.Common;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Security;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.Dashboard.Services.Scopes;
 
-internal sealed class DashboardQueryScope(IUnitOfWork uow, UserManager<User> userManager)
+internal sealed class DashboardQueryScope(
+    IUnitOfWork uow,
+    UserManager<User> userManager,
+    EmployeeProfileAccessScope profileAccessScope)
 {
-    public IQueryable<UserProfile> Profiles(DashboardQueryBase request, DashboardAccessContext context)
+    public IQueryable<UserProfile> Profiles(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        DashboardDateRange range)
     {
         var assignments = uow.GetEntityRepository<ProfileAssignment>().DbSet;
         var query = AccessibleProfiles(context);
 
-        if (request.FromDateUtc.HasValue) query = query.Where(x => x.CreatedDate >= request.FromDateUtc.Value);
-        if (request.ToDateUtc.HasValue) query = query.Where(x => x.CreatedDate <= request.ToDateUtc.Value);
+        query = query.Where(x => x.CreatedDate >= range.FromUtc && x.CreatedDate < range.ToExclusiveUtc);
         if (request.DepartmentId.HasValue) query = query.Where(x => x.TargetEntityId == request.DepartmentId);
         if (!string.IsNullOrWhiteSpace(request.Status) &&
             Enum.TryParse<UserProfileStatus>(request.Status, true, out var status))
@@ -41,31 +47,45 @@ internal sealed class DashboardQueryScope(IUnitOfWork uow, UserManager<User> use
             : query.Where(_ => false);
     }
 
+    public IQueryable<UserProfile> ProfilesForPeriod(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        DateTime from,
+        DateTime toExclusive) =>
+        Profiles(request, context, new DashboardDateRange(from, toExclusive));
+
     public IQueryable<UserProfile> AccessibleProfiles(DashboardAccessContext context)
-    {
-        var query = ApplyProfilePopulation(
-            uow.GetEntityRepository<UserProfile>().DbSet.AsNoTracking(),
-            context.CurrentUser);
-        if (context.CanViewProfileDistribution) return query;
-        if (!context.CanViewAssignedProfiles) return query.Where(_ => false);
+        => profileAccessScope.AccessibleProfiles(new EmployeeProfileAccessContext(
+            context.CurrentUserId,
+            context.CurrentUser,
+            context.CanViewProfileDistribution,
+            context.CanViewAssignedProfiles));
 
-        return ApplyActiveAssignmentScope(
-            query,
-            uow.GetEntityRepository<ProfileAssignment>().DbSet,
-            context.CurrentUserId);
-    }
-
-    public IQueryable<Job> Jobs(DashboardQueryBase request, DashboardAccessContext context)
+    public IQueryable<Job> Jobs(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        DashboardDateRange range)
     {
-        var query = uow.GetEntityRepository<Job>().DbSet
-            .AsNoTracking()
-            .Where(job => !job.IsDeleted && context.CanViewJobs &&
-                          (context.HasFullJobAccess || job.CreatedById == context.CurrentUserId));
-        if (request.FromDateUtc.HasValue) query = query.Where(x => x.CreatedDate >= request.FromDateUtc.Value);
-        if (request.ToDateUtc.HasValue) query = query.Where(x => x.CreatedDate <= request.ToDateUtc.Value);
+        var query = AccessibleJobs(context);
+        query = query.Where(x => x.CreatedDate >= range.FromUtc && x.CreatedDate < range.ToExclusiveUtc);
         if (request.DepartmentId.HasValue) query = query.Where(x => x.DepartmentId == request.DepartmentId);
         return query;
     }
+
+    public IQueryable<Job> JobsForPeriod(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        DateTime from,
+        DateTime toExclusive) =>
+        Jobs(request, context, new DashboardDateRange(from, toExclusive));
+
+    public IQueryable<Job> AccessibleJobs(DashboardAccessContext context) =>
+        uow.GetEntityRepository<Job>().DbSet
+            .AsNoTracking()
+            .Where(job => !job.IsDeleted && context.CanViewJobs)
+            .ApplyJobAccessScope(new EmployeeJobAccessContext(
+                context.CurrentUserId,
+                context.HasFullJobAccess));
 
     public IQueryable<ProfileAssignment> Assignments(DashboardAccessContext context)
     {
@@ -100,23 +120,15 @@ internal sealed class DashboardQueryScope(IUnitOfWork uow, UserManager<User> use
             .Where(user => reviewers.Contains(user.Id) && !user.IsBlocked && !user.IsDeleted);
     }
 
-    public IQueryable<Invitation> Invitations(DashboardQueryBase request, DashboardAccessContext context)
+    public IQueryable<Invitation> Invitations(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        DashboardDateRange range)
     {
-        var allowedJobs = Jobs(request, context).Select(job => job.Id);
+        var allowedJobs = Jobs(request, context, range).Select(job => job.Id);
         return uow.GetEntityRepository<Invitation>().DbSet.AsNoTracking()
             .Where(invitation => context.CanViewInvitations && !invitation.IsDeleted && allowedJobs.Contains(invitation.JobId));
     }
-
-    private static IQueryable<UserProfile> ApplyProfilePopulation(IQueryable<UserProfile> query, User currentUser) =>
-        currentUser switch
-        {
-            EmployeeUser => query.Where(profile =>
-                profile.Provider == nameof(ProviderLoginIds.QatarPass) ||
-                profile.Provider == nameof(ProviderLoginIds.QatarResidentOtp)),
-            OfficeUser { Office.CountryId: var countryId } => query.Where(profile =>
-                profile.ResidenceCountryId == countryId && profile.Provider == nameof(ProviderLoginIds.Google)),
-            _ => query.Where(_ => false)
-        };
 
     private static IQueryable<User> ApplyTeamMembership(IQueryable<User> query, User currentUser) =>
         currentUser switch

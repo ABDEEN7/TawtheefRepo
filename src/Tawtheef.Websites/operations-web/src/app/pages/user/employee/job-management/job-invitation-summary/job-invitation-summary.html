@@ -17,15 +17,33 @@
                 <p class="fs-16 m-0 text-muted">{{ 'JOB_INVITATION_SUMMARY.SUBTITLE' | translate }}</p>
               </div>
             </div>
-            <button type="button" class="btn btn-outline-primary" (click)="loadSummaries()">
-              <i class="pi pi-refresh me-1"></i>
-              {{ 'common.refresh' | translate }}
-            </button>
+            <div class="d-flex align-items-center gap-2">
+              <button type="button" class="btn btn-outline-primary" (click)="exportSummaries()"
+                [disabled]="isExporting()">
+                <i class="fa fa-file-excel me-1"></i>
+                {{ 'JOB_INVITATION_SUMMARY.EXPORT' | translate }}
+              </button>
+              <button type="button" class="btn btn-outline-primary" (click)="loadSummaries()">
+                <i class="pi pi-refresh me-1"></i>
+                {{ 'common.refresh' | translate }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ═══ Filters ═══ -->
+      @if (selectedYear(); as year) {
+      <div class="alert alert-light border d-flex align-items-center gap-2 py-2 mb-3">
+        <span>{{ 'JOB_INVITATION_SUMMARY.YEAR' | translate }}: {{ year }}</span>
+        <button type="button" class="btn btn-sm p-0 ms-auto" (click)="clearYear()"
+          [attr.aria-label]="'JOB_INVITATION_SUMMARY.CLEAR_YEAR' | translate"
+          [title]="'JOB_INVITATION_SUMMARY.CLEAR_YEAR' | translate">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      }
+
       <div class="card card-table mb-3 filter-card">
         <div class="card-body">
           <div class="row align-items-end">

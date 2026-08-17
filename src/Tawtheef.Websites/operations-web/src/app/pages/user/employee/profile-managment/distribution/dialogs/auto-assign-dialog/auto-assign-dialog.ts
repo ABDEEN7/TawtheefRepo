@@ -9,11 +9,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { AvatarModule } from 'primeng/avatar';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 
-import {
-  AutoAssignRequest,
-  DistributionEmployee,
-  EmployeeAvailability,
-} from '../../models/profile-distribution.models';
+import { DistributionEmployee } from '../../models/profile-distribution.models';
+import { AutoAssignRequest } from '../../models/profile-distribution-assignment.model';
+import { EmployeeAvailability } from '../../models/profile-distribution.enums';
 
 type AutoAssignDialogData = {
   employees: DistributionEmployee[];

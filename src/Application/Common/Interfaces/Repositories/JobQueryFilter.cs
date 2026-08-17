@@ -3,6 +3,7 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 public record JobQueryFilter
 {
     public string? SearchTerm { get; init; }
+    public int? Year { get; init; }
     public Guid? SectorId { get; init; }
     public Guid? ManagementId { get; init; }
     public Guid? DepartmentId { get; init; }             
@@ -20,6 +21,4 @@ public record JobQueryFilter
     public int? MaxVacancies { get; init; }
     public DateTimeOffset? CloseDateFrom { get; init; }
     public DateTimeOffset? CloseDateTo { get; init; }
-    public DateTimeOffset? PublishFrom { get; init; }
-    public DateTimeOffset? PublishTo { get; init; }
 }

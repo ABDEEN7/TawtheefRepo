@@ -28,5 +28,8 @@
   "CANDIDATE_USERS.VIEW_PROFILE": "View Profile",
   "CANDIDATE_USERS.VIEW_PROFILE_LOGS": "View Profile Logs",
   "CANDIDATE_USERS.PROFILE_NOT_FOUND": "Candidate user profile not found or not yet submitted.",
-  "CANDIDATE_USERS.BACK": "Back"
+  "CANDIDATE_USERS.BACK": "Back",
+  "CANDIDATE_USERS.EXPORT": "Export",
+  "CANDIDATE_USERS.YEAR": "Year",
+  "CANDIDATE_USERS.CLEAR_YEAR": "Clear year filter"
 }

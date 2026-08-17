@@ -1,5 +1,6 @@
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Common.Models.Filters;
 using Tawtheef.Application.Extensions;
 using jobEntity = Tawtheef.Domain.Entities.Recruitment.Job;
 
@@ -10,12 +11,15 @@ public static class JobRepositoryExtensions
     extension(IQueryable<jobEntity> query)
     {
         public IQueryable<jobEntity> ApplySorting(PaginatedRequest? pagination)
+            => query.ApplySorting(pagination?.SortBy, pagination?.SortDirection);
+
+        public IQueryable<jobEntity> ApplySorting(string? sortByValue, string? sortDirection)
         {
-            if (pagination == null || string.IsNullOrWhiteSpace(pagination.SortBy))
+            if (string.IsNullOrWhiteSpace(sortByValue))
                 return query.OrderByDescending(j => j.CreatedDate);
 
-            var sortBy = pagination.SortBy.Trim().ToLowerInvariant();
-            var isDescending = string.Equals(pagination.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+            var sortBy = sortByValue.Trim().ToLowerInvariant();
+            var isDescending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
 
             return sortBy switch
             {
@@ -39,6 +43,8 @@ public static class JobRepositoryExtensions
         {
             if (filter is null)
                 return query;
+
+            var hasValidYear = YearRange.TryCreate(filter.Year, out var yearRange);
 
             return query
 
@@ -64,6 +70,8 @@ public static class JobRepositoryExtensions
                 .WhereIf(filter.GenderId.HasValue, j => j.GenderId == filter.GenderId)
                 .WhereIf(filter.MajorId.HasValue, j => j.MajorId == filter.MajorId)
                 .WhereIf(filter.SubMajorId.HasValue, j => j.SubMajorId == filter.SubMajorId)
+                .WhereIf(hasValidYear, j =>
+                    j.CreatedDate >= yearRange.FromUtc && j.CreatedDate < yearRange.ToExclusiveUtc)
 
                 // AGE RANGE
                 .WhereIf(filter.MinAge.HasValue, j => j.MinimumAge >= filter.MinAge)

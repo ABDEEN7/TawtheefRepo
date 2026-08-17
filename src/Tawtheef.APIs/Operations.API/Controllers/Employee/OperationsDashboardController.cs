@@ -24,6 +24,14 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("years")]
+    [AuthorizePermission(PermissionKeys.Dashboard.View)]
+    public async Task<IActionResult> GetYears(CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetDashboardYearsQuery(), ct);
+        return result.ToActionResult();
+    }
+
     [HttpGet("jobs/latest")]
     [AuthorizePermission(PermissionKeys.Dashboard.View)]
     public async Task<IActionResult> GetLatestJobs([FromQuery] GetLatestJobsQuery request, CancellationToken ct)
@@ -49,30 +57,14 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("export-list")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
     public async Task<IActionResult> ExportList([FromQuery] ExportDashboardListQuery request, CancellationToken ct)
     {
-        var authorized = request.Context switch
-        {
-            DashboardExportContext.Candidates =>
-                HasPermission(PermissionKeys.ProfileDistribution.View) ||
-                HasPermission(PermissionKeys.ProfileApproval.View) ||
-                HasPermission(PermissionKeys.ProfileApproval.Review),
-            DashboardExportContext.Jobs =>
-                HasPermission(PermissionKeys.Jobs.View) || HasPermission(PermissionKeys.Jobs.Edit),
-            DashboardExportContext.Employees => HasPermission(PermissionKeys.ProfileDistribution.View),
-            DashboardExportContext.Invitations => HasPermission(PermissionKeys.JobsInvitations.View),
-            _ => false
-        };
-        if (!authorized) return Forbid();
-
         var result = await mediator.Send(request, ct);
         return result.IsFailed
             ? result.ToActionResult()
             : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
     }
 
-    private bool HasPermission(string permission) =>
-        User.HasClaim(RoleClaimTypes.Permission, permission);
 }
 
