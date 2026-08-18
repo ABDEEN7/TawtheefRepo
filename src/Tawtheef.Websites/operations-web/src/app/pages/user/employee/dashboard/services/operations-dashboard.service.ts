@@ -2,31 +2,21 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
 import { HttpService } from '../../../../../core/http/http.service';
-import {
-  CandidateStatusSummary,
-  CandidateTypeSummary,
-  DashboardOverview,
-  EmployeeIndicators,
-  EmployeeReviewOutcomes,
-  JobsSummary,
-  LatestJob,
-  OperationsDashboardFilters,
-  OperationsDashboardResponse,
-  TeamPerformanceRow
-} from '../models/operations-dashboard.model';
+import { DashboardOverview } from '../models/dashboard-overview.model';
+import { LatestInvitation } from '../models/dashboard-invitations.model';
+import { LatestJob } from '../models/dashboard-jobs.model';
+import { OperationsDashboardFilters } from '../models/dashboard-filters.model';
+import { TeamPerformanceRow } from '../models/dashboard-employees.model';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+
+export type DashboardExportContext = 'Summary' | 'Candidates' | 'Jobs' | 'Employees' | 'Invitations';
 
 @Injectable({ providedIn: 'root' })
 export class OperationsDashboardService {
   private endpoints = inject(EndpointsService);
   private http = inject(HttpService);
-
-  getDashboard(filters: OperationsDashboardFilters): Observable<OperationsDashboardResponse> {
-    return this.http.get<OperationsDashboardResponse>(this.endpoints.operationsDashboard.summary, filters, {
-      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
-    });
-  }
+  private httpClient = inject(HttpClient);
 
   getOverview(filters: OperationsDashboardFilters): Observable<DashboardOverview> {
     return this.http.get<DashboardOverview>(this.endpoints.operationsDashboard.overview, filters, {
@@ -34,44 +24,35 @@ export class OperationsDashboardService {
     });
   }
 
-  getCandidateStatus(filters: OperationsDashboardFilters): Observable<CandidateStatusSummary> {
-    return this.http.get<CandidateStatusSummary>(this.endpoints.operationsDashboard.candidateStatus, filters, {
+  getYears(): Observable<number[]> {
+    return this.http.get<number[]>(this.endpoints.operationsDashboard.years, undefined, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
 
-  getCandidateTypes(filters: OperationsDashboardFilters): Observable<CandidateTypeSummary> {
-    return this.http.get<CandidateTypeSummary>(this.endpoints.operationsDashboard.candidateTypes, filters, {
+  getLatestJobs(filters: OperationsDashboardFilters): Observable<PaginatedResult<LatestJob>> {
+    return this.http.get<PaginatedResult<LatestJob>>(this.endpoints.operationsDashboard.latestJobs, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
 
-  getJobsSummary(filters: OperationsDashboardFilters): Observable<JobsSummary> {
-    return this.http.get<JobsSummary>(this.endpoints.operationsDashboard.jobsSummary, filters, {
-      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
-    });
-  }
-
-  getLatestJobs(filters: OperationsDashboardFilters): Observable<LatestJob[]> {
-    return this.http.get<LatestJob[]>(this.endpoints.operationsDashboard.latestJobs, filters, {
-      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
-    });
-  }
-
-  getEmployeeIndicators(filters: OperationsDashboardFilters): Observable<EmployeeIndicators> {
-    return this.http.get<EmployeeIndicators>(this.endpoints.operationsDashboard.employeeIndicators, filters, {
-      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
-    });
-  }
-
-  getEmployeeReviewOutcomes(filters: OperationsDashboardFilters): Observable<EmployeeReviewOutcomes> {
-    return this.http.get<EmployeeReviewOutcomes>(this.endpoints.operationsDashboard.employeeReviewOutcomes, filters, {
+  getLatestInvitations(filters: OperationsDashboardFilters): Observable<PaginatedResult<LatestInvitation>> {
+    return this.http.get<PaginatedResult<LatestInvitation>>(this.endpoints.operationsDashboard.latestInvitations, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
 
   getTeamPerformance(filters: OperationsDashboardFilters): Observable<PaginatedResult<TeamPerformanceRow>> {
     return this.http.get<PaginatedResult<TeamPerformanceRow>>(this.endpoints.operationsDashboard.teamPerformance, filters, {
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    });
+  }
+
+  exportList(context: DashboardExportContext, filters: OperationsDashboardFilters): Observable<HttpResponse<Blob>> {
+    return this.httpClient.get(this.endpoints.operationsDashboard.exportList, {
+      params: { ...filters, context },
+      responseType: 'blob',
+      observe: 'response',
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }

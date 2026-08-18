@@ -23,6 +23,8 @@
   "PROFILE_LOGS.FILTER_FROM": "من تاريخ",
   "PROFILE_LOGS.FILTER_TO": "إلى تاريخ",
   "PROFILE_LOGS.TABLE_DATE": "التاريخ",
+  "CANDIDATE_USERS.FILTER_YEAR": "السنة",
+  "CANDIDATE_USERS.CLEAR_YEAR": "إزالة فلتر السنة",
   "PROFILE_LOGS.TABLE_PROFILE_ID": "معرف الملف",
   "PROFILE_LOGS.TABLE_SOURCE": "المصدر",
   "PROFILE_LOGS.TABLE_ACTION": "الإجراء",

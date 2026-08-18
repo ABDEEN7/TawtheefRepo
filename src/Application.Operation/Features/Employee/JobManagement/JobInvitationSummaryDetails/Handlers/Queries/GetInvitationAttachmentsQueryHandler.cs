@@ -1,3 +1,4 @@
+using Application.Operation.Features.Employee.Common.Access;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using FluentResults;
 using MediatR;
@@ -12,15 +13,20 @@ namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSum
 
 public class GetInvitationAttachmentsQueryHandler(
     IUnitOfWork unitOfWork,
-    IMediaUrlResolver mediaService)
+    IMediaUrlResolver mediaService,
+    EmployeeJobAccessContextProvider accessContextProvider)
     : IRequestHandler<GetInvitationAttachmentsQuery, Result<List<InvitationAttachmentDto>>>
 {
     public async Task<Result<List<InvitationAttachmentDto>>> Handle(GetInvitationAttachmentsQuery request, CancellationToken cancellationToken)
     {
+        var accessibleJobIds = unitOfWork.GetEntityRepository<Job>().DbSet
+            .AsNoTracking()
+            .ApplyJobAccessScope(accessContextProvider.GetAccess())
+            .Select(job => job.Id);
         var invitation = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .Include(i => i.Job).ThenInclude(j => j!.JobRequiredAttachments)
             .Include(i => i.Attachments)
-            .FirstOrDefaultAsync(i => i.Id == request.InvitationId, cancellationToken);
+            .FirstOrDefaultAsync(i => i.Id == request.InvitationId && accessibleJobIds.Contains(i.JobId), cancellationToken);
 
         if (invitation == null)
             return Result.Fail(ErrorsCodes.InvitationNotFound);
@@ -29,7 +35,7 @@ public class GetInvitationAttachmentsQueryHandler(
         
         var dtos = new List<InvitationAttachmentDto>();
 
-        var resourceIds = invitation.Attachments?.Select(a => a.ResourceId).ToList() ?? new List<Guid>();
+        var resourceIds = invitation.Attachments.Select(a => a.ResourceId).ToList();
         var resources = await unitOfWork.GetEntityRepository<Resource>().DbSet
             .Where(r => resourceIds.Contains(r.Id))
             .ToDictionaryAsync(r => r.Id, cancellationToken);

@@ -1,0 +1,56 @@
+<div i18nNamespace="pages/employee/dashboard" class="candidate-modal-backdrop">
+  <div class="candidate-modal">
+    <button class="candidate-modal-close" type="button" (click)="closed.emit()"><i class="hgi-stroke hgi-cancel-01"></i></button>
+    <div class="candidate-modal-header">
+      <h3>{{ 'dashboard.modals.candidates.title' | translate }}</h3>
+      <p>{{ 'dashboard.modals.candidates.subtitle' | translate }}</p>
+    </div>
+    <div class="candidate-modal-grid">
+      <div class="candidate-modal-chart-card">
+        <h4>{{ 'dashboard.modals.candidates.statusTitle' | translate }}</h4>
+        <div class="candidate-modal-chart-content">
+          <div class="candidate-chart-wrapper">
+            <p-chart #statusChart type="doughnut" [data]="statusChartData()" [options]="chartOptions" />
+            <div class="candidate-chart-center"><span>{{ 'dashboard.common.total' | translate }}</span><strong>{{ kpis().totalProfiles | number:'1.0-0' }}</strong></div>
+          </div>
+          <div class="operation-legend">
+            @for (item of statusItems(); track item.label) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.label }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }
+          </div>
+        </div>
+        @if (canExport()) {
+        <div class="candidate-chart-card-actions">
+          <button class="btn btn-primary-outline dashboard-chart-export-btn" type="button"
+            (click)="exportCandidateStatusChart()" [disabled]="exportInProgress()">
+            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+            <span>{{ 'dashboard.common.exportChart' | translate }}</span>
+          </button>
+        </div>
+        }
+      </div>
+      <div class="candidate-modal-chart-card">
+        <h4>{{ 'dashboard.candidates.typeTitle' | translate }}</h4>
+        <div class="candidate-modal-chart-content">
+          <div class="candidate-chart-wrapper">
+            <p-chart #typeChart type="doughnut" [data]="typeChartData()" [options]="chartOptions" />
+            <div class="candidate-chart-center"><span>{{ 'dashboard.common.total' | translate }}</span><strong>{{ typeTotal() | number:'1.0-0' }}</strong></div>
+          </div>
+          <div class="operation-legend">
+            @for (item of typeItems(); track item.label) { <div class="operation-legend-row"><i [style.background]="item.color"></i><span>{{ item.label }}</span><strong>{{ item.count | number:'1.0-0' }}</strong></div> }
+          </div>
+        </div>
+        @if (canExport()) {
+        <div class="candidate-chart-card-actions">
+          <button class="btn btn-primary-outline dashboard-chart-export-btn" type="button"
+            (click)="exportCandidateTypesChart()" [disabled]="exportInProgress()">
+            <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+            <span>{{ 'dashboard.common.exportChart' | translate }}</span>
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+    <div class="candidate-modal-actions" [hidden]="!canExport()">
+      <button class="candidate-modal-btn filled" type="button" (click)="exportList()" [disabled]="exportInProgress()"><i class="hgi-stroke hgi-download-04"></i><span>{{ 'dashboard.common.exportList' | translate }}</span></button>
+    </div>
+  </div>
+</div>

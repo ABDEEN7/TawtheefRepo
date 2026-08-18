@@ -1,4 +1,6 @@
 {
+  "CANDIDATE_USERS.YEAR": "السنة",
+  "CANDIDATE_USERS.CLEAR_YEAR": "مسح تصفية السنة",
   "CANDIDATE_USERS.TITLE": "إدارة مستخدمي المرشحين",
   "CANDIDATE_USERS.SEARCH_PLACEHOLDER": "البحث بالاسم أو الرقم الشخصي أو رقم الهاتف أو البريد الإلكتروني",
   "CANDIDATE_USERS.ADVANCED_FILTERS": "الفلاتر المتقدمة",
@@ -26,6 +28,7 @@
   "CANDIDATE_USERS.VIEW_PROFILE": "عرض الملف الشخصي",
   "CANDIDATE_USERS.VIEW_PROFILE_LOGS": "عرض سجل الملف",
   "CANDIDATE_USERS.PROFILE_NOT_FOUND": "الملف الشخصي للمرشح غير موجود أو لم يتم تقديمه بعد.",
-  "CANDIDATE_USERS.BACK": "رجوع"
+  "CANDIDATE_USERS.BACK": "رجوع",
+  "CANDIDATE_USERS.EXPORT": "تصدير"
 }
 

@@ -46,6 +46,22 @@
                   <div class="small text-muted">{{ 'distribution.loading' | translate }}</div>
                 }
               </div>
+              @if (appliedFilters().year; as year) {
+                <div class="alert alert-light border d-flex align-items-center gap-2 py-2 mb-3">
+                  <span> {{ 'distribution.filters.year' | translate }}: {{ year }} </span>
+
+                  <button
+                    type="button"
+                    class="btn btn-sm p-0 ms-auto"
+                    (click)="clearYear()"
+                    [attr.aria-label]="'distribution.filters.clearYear' | translate"
+                    [title]="'distribution.filters.clearYear' | translate"
+                  >
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
+              }
+
               <app-page-filters
                 [advancedLabel]="'distribution.filters.additionalFilters' | translate"
                 [clearLabel]="'distribution.filters.clearFilters' | translate"
@@ -55,22 +71,26 @@
                 (advancedToggled)="toggleAdvancedFilters()"
                 (filtersCleared)="clearFilters()"
               >
-                  <p-iconfield filterSearch class="search-icon-field w-100">
-                    <p-inputicon styleClass="pi pi-search"></p-inputicon>
+                <!-- Search -->
+                <p-iconfield filterSearch class="search-icon-field w-100">
+                  <p-inputicon styleClass="pi pi-search"></p-inputicon>
 
-                    <input
-                      pInputText
-                      type="search"
-                      class="w-100 form-control"
-                      [placeholder]="'distribution.filters.searchPlaceholder' | translate"
-                      [ngModel]="searchInput()"
-                      (ngModelChange)="onSearchChange($event)"
-                    />
-                  </p-iconfield>
-                <div filterSecondary>
-                  <label class="form-label" for="distribution-status">{{
-                    'distribution.filters.status' | translate
-                  }}</label>
+                  <input
+                    pInputText
+                    type="search"
+                    class="w-100 form-control"
+                    [placeholder]="'distribution.filters.searchPlaceholder' | translate"
+                    [ngModel]="searchInput()"
+                    (ngModelChange)="onSearchChange($event)"
+                  />
+                </p-iconfield>
+
+                <!-- Profile Status -->
+                <div filterSecondary class="filter-field">
+                  <label class="form-label" for="distribution-status">
+                    {{ 'distribution.filters.status' | translate }}
+                  </label>
+
                   <p-multiSelect
                     inputId="distribution-status"
                     class="profile-filter-multiselect w-100"
@@ -83,22 +103,53 @@
                     [placeholder]="'distribution.filters.statusPlaceholder' | translate"
                     [showClear]="true"
                   >
-                    <ng-template pTemplate="item" let-item>{{ item.label | translate }}</ng-template>
+                    <ng-template pTemplate="item" let-item>
+                      {{ item.label | translate }}
+                    </ng-template>
+
                     <ng-template pTemplate="selecteditems" let-items>
                       <span class="profile-filter-multiselect__selection">
                         @for (item of items; track item.value; let last = $last) {
-                          {{ item.label | translate }}@if (!last) {, }
+                          {{ item.label | translate }}
+                          @if (!last) {
+                            ,
+                          }
                         }
                       </span>
                     </ng-template>
                   </p-multiSelect>
                 </div>
+
+                <!-- Advanced Filters -->
                 <div advancedFilters>
                   <div class="row g-3 align-items-start">
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label">{{
-                        'distribution.filters.assignedEmployee' | translate
-                      }}</label>
+                      <label class="form-label">
+                        {{ 'distribution.filters.assignmentState' | translate }}
+                      </label>
+
+                      <p-select
+                        class="w-100"
+                        [options]="assignmentStateOptions"
+                        optionValue="value"
+                        [ngModel]="draftFilters().assignmentState"
+                        (onChange)="onDraftAssignmentStateChange($event.value)"
+                      >
+                        <ng-template pTemplate="selectedItem" let-item>
+                          {{ item?.label | translate }}
+                        </ng-template>
+
+                        <ng-template pTemplate="item" let-item>
+                          {{ item.label | translate }}
+                        </ng-template>
+                      </p-select>
+                    </div>
+
+                    <div class="col-xl-4 col-md-6 filter-field">
+                      <label class="form-label">
+                        {{ 'distribution.filters.assignedEmployee' | translate }}
+                      </label>
+
                       <p-select
                         class="w-100"
                         [options]="employees()"
@@ -106,14 +157,18 @@
                         optionLabel="name"
                         [showClear]="true"
                         [ngModel]="draftFilters().assignedEmployeeId"
-                        (onChange)="updateDraftFilter('assignedEmployeeId', $event.value)"
-                        [placeholder]="'distribution.filters.assignedEmployeePlaceholder' | translate"
+                        (onChange)="onDraftAssignedEmployeeChange($event.value)"
+                        [placeholder]="
+                          'distribution.filters.assignedEmployeePlaceholder' | translate
+                        "
                       ></p-select>
                     </div>
+
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label">{{
-                        'distribution.filters.targetEntity' | translate
-                      }}</label>
+                      <label class="form-label">
+                        {{ 'distribution.filters.targetEntity' | translate }}
+                      </label>
+
                       <p-select
                         class="w-100"
                         [options]="targetEntities()"
@@ -125,10 +180,12 @@
                         [placeholder]="'distribution.filters.targetEntityPlaceholder' | translate"
                       ></p-select>
                     </div>
+
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label">{{
-                        'distribution.filters.candidateType' | translate
-                      }}</label>
+                      <label class="form-label">
+                        {{ 'distribution.filters.candidateType' | translate }}
+                      </label>
+
                       <p-multiSelect
                         class="profile-filter-multiselect w-100"
                         [options]="candidateTypes()"
@@ -142,48 +199,62 @@
                         [placeholder]="'distribution.filters.candidateTypePlaceholder' | translate"
                       ></p-multiSelect>
                     </div>
+
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label">{{
-                        'distribution.filters.hasOther' | translate
-                      }}</label>
+                      <label class="form-label">
+                        {{ 'distribution.filters.hasOther' | translate }}
+                      </label>
+
                       <p-select
                         class="w-100"
                         [options]="yesNoOptions"
                         optionValue="value"
                         [ngModel]="draftFilters().hasOtherSpecialization"
                         (onChange)="updateDraftFilter('hasOtherSpecialization', $event.value)"
-                        [placeholder]="'distribution.filters.hasOtherSpecializationPlaceholder' | translate"
-                        ><ng-template pTemplate="selectedItem" let-item>{{
-                          item?.label | translate
-                        }}</ng-template
-                        ><ng-template pTemplate="item" let-item>{{
-                          item.label | translate
-                        }}</ng-template></p-select
+                        [placeholder]="
+                          'distribution.filters.hasOtherSpecializationPlaceholder' | translate
+                        "
                       >
+                        <ng-template pTemplate="selectedItem" let-item>
+                          {{ item?.label | translate }}
+                        </ng-template>
+
+                        <ng-template pTemplate="item" let-item>
+                          {{ item.label | translate }}
+                        </ng-template>
+                      </p-select>
                     </div>
+
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label">{{
-                        'distribution.filters.hasOtherUniversity' | translate
-                      }}</label>
+                      <label class="form-label">
+                        {{ 'distribution.filters.hasOtherUniversity' | translate }}
+                      </label>
+
                       <p-select
                         class="w-100"
                         [options]="yesNoOptions"
                         optionValue="value"
                         [ngModel]="draftFilters().hasOtherUniversity"
                         (onChange)="updateDraftFilter('hasOtherUniversity', $event.value)"
-                        [placeholder]="'distribution.filters.hasOtherUniversityPlaceholder' | translate"
-                        ><ng-template pTemplate="selectedItem" let-item>{{
-                          item?.label | translate
-                        }}</ng-template
-                        ><ng-template pTemplate="item" let-item>{{
-                          item.label | translate
-                        }}</ng-template></p-select
+                        [placeholder]="
+                          'distribution.filters.hasOtherUniversityPlaceholder' | translate
+                        "
                       >
+                        <ng-template pTemplate="selectedItem" let-item>
+                          {{ item?.label | translate }}
+                        </ng-template>
+
+                        <ng-template pTemplate="item" let-item>
+                          {{ item.label | translate }}
+                        </ng-template>
+                      </p-select>
                     </div>
+
                     <div class="col-xl-4 col-md-6 filter-field">
-                      <label class="form-label" for="qatar-graduate">{{
-                        'distribution.filters.qatarGraduate' | translate
-                      }}</label>
+                      <label class="form-label" for="qatar-graduate">
+                        {{ 'distribution.filters.qatarGraduate' | translate }}
+                      </label>
+
                       <div class="toggle-field-control d-flex align-items-center">
                         <p-toggleswitch
                           inputId="qatar-graduate"
@@ -192,11 +263,13 @@
                         ></p-toggleswitch>
                       </div>
                     </div>
+
                     @if (draftFilters().isQatarGraduate) {
                       <div class="col-xl-8 col-md-6 filter-field">
-                        <label class="form-label">{{
-                          'distribution.filters.degree' | translate
-                        }}</label>
+                        <label class="form-label">
+                          {{ 'distribution.filters.degree' | translate }}
+                        </label>
+
                         <p-multiSelect
                           class="profile-filter-multiselect w-100"
                           [options]="degrees()"
@@ -212,17 +285,25 @@
                       </div>
                     }
                   </div>
-                  <div class="advanced-filter-actions d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+
+                  <div
+                    class="advanced-filter-actions d-flex justify-content-end gap-2 mt-4 pt-3 border-top"
+                  >
                     <button
                       pButton
                       type="button"
                       class="p-button-text"
                       (click)="cancelAdvancedFilters()"
                     >
-                      <span pButtonLabel>{{ 'distribution.actions.cancel' | translate }}</span>
+                      <span pButtonLabel>
+                        {{ 'distribution.actions.cancel' | translate }}
+                      </span>
                     </button>
+
                     <button pButton type="button" (click)="applyAdvancedFilters()">
-                      <span pButtonLabel>{{ 'distribution.filters.apply' | translate }}</span>
+                      <span pButtonLabel>
+                        {{ 'distribution.filters.apply' | translate }}
+                      </span>
                     </button>
                   </div>
                 </div>

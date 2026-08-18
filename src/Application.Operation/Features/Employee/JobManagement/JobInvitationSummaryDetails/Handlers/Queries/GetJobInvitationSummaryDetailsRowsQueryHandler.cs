@@ -1,3 +1,4 @@
+using Application.Operation.Features.Employee.Common.Access;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using MediatR;
@@ -9,6 +10,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 
@@ -17,13 +19,21 @@ namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSum
 public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    EmployeeJobAccessContextProvider accessContextProvider)
     : IRequestHandler<GetJobInvitationSummaryDetailsRowsQuery, IResult<PaginatedResult<JobInvitationSummaryDetailsRowDto>>>
 {
     public async Task<IResult<PaginatedResult<JobInvitationSummaryDetailsRowDto>>> Handle(
         GetJobInvitationSummaryDetailsRowsQuery query,
         CancellationToken cancellationToken)
     {
+        var canAccessJob = await unitOfWork.GetEntityRepository<Job>().DbSet
+            .AsNoTracking()
+            .ApplyJobAccessScope(accessContextProvider.GetAccess())
+            .AnyAsync(job => job.Id == query.JobId, cancellationToken);
+        if (!canAccessJob)
+            return Result.Fail<PaginatedResult<JobInvitationSummaryDetailsRowDto>>(JobMessages.JobNotFound);
+
         var searchTerm = query.Search?.Trim();
 
         var invitations = unitOfWork.GetEntityRepository<Invitation>().DbSet
@@ -95,4 +105,3 @@ public sealed class GetJobInvitationSummaryDetailsRowsQueryHandler(
         return Result.Ok(result);
     }
 }
-

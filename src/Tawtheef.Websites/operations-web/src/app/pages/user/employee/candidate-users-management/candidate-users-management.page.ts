@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +13,10 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { CandidateUsersService } from './services/candidate-users.service';
 import { CandidateUserDto } from './models/candidate-user.dto';
-import { CandidateUserFilters } from './models/candidate-user-filters.dto';
+import {
+  CandidateUserFilters,
+  CandidateUsersResultScope,
+} from './models/candidate-user-filters.dto';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
@@ -22,22 +25,24 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { routes } from '../../../../routes/routes';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
-import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
+import { ProfileStatus, ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import {
   catchError,
   debounceTime,
   defer,
   distinctUntilChanged,
-  EMPTY,
   finalize,
+  EMPTY,
   map,
   Subject,
-  switchMap
+  switchMap,
 } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProfileLogDto } from '../profile-logs/models/profile-log.dto';
 import { ReviewStatus } from '../profile-managment/approval-list/models/profile-approval.models';
+import { FileUtilsService } from '../../../../core/utils/file-utils';
+import { parseFilterYear } from '../../../../core/utils/year-filter.util';
 import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 
 @Component({
@@ -60,8 +65,8 @@ import { PageFiltersComponent } from '../../../../shared/components/page-filters
     PageFiltersComponent,
     PaginationComponent,
     I18nNamespaceDirective,
-    HasPermissionDirective
-  ]
+    HasPermissionDirective,
+  ],
 })
 export class CandidateUsersManagementPage implements OnInit {
   private candidateUsersService = inject(CandidateUsersService);
@@ -70,11 +75,14 @@ export class CandidateUsersManagementPage implements OnInit {
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private fileUtils = inject(FileUtilsService);
 
   private _users = signal<CandidateUserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _profileLogs = signal<ProfileLogDto[]>([]);
   private _profileLogsLoading = signal(false);
+  readonly exporting = signal(false);
   private _profileLogsPaginationMetadata = signal<PaginationMetadata | null>(null);
 
   users = this._users.asReadonly();
@@ -88,7 +96,8 @@ export class CandidateUsersManagementPage implements OnInit {
     pageSize: 10,
     search: null,
     isBlocked: null,
-    profileStatuses: null
+    profileStatuses: null,
+    scope: CandidateUsersResultScope.Default,
   });
 
   private searchChanges$ = new Subject<string>();
@@ -105,22 +114,27 @@ export class CandidateUsersManagementPage implements OnInit {
   profileLogsTotalItems = computed(() => this.profileLogsPaginationMetadata()?.totalCount || 0);
   activeAdvancedFilterCount = computed(() => {
     const filters = this.filters();
-    return Number(filters.isBlocked !== null && filters.isBlocked !== undefined) +
-      Number(!!filters.profileStatuses?.length);
+    return (
+      Number(filters.isBlocked !== null && filters.isBlocked !== undefined) +
+      Number(!!filters.profileStatuses?.length)
+    );
   });
 
   protected readonly Permissions = Permissions;
   protected readonly ProfileStatus = ProfileStatusNumber;
   readonly accountStatusOptions = [
-    { value: false, label: 'CANDIDATE_USERS.ACTIVE' },
-    { value: true, label: 'CANDIDATE_USERS.BLOCKED' }
+    { value: false, label: this.translate.instant('CANDIDATE_USERS.ACTIVE') },
+    { value: true, label: this.translate.instant('CANDIDATE_USERS.BLOCKED') },
   ];
   readonly profileStatusOptions = [
-    { value: ProfileStatusNumber.InCreation, label: 'common.InCreation' },
-    { value: ProfileStatusNumber.Submitted, label: 'common.Submitted' },
-    { value: ProfileStatusNumber.UnderReview, label: 'common.UnderReview' },
-    { value: ProfileStatusNumber.RequiresUpdate, label: 'common.RequiresUpdate' },
-    { value: ProfileStatusNumber.Approved, label: 'common.Approved' }
+    { value: ProfileStatusNumber.InCreation, label: this.translate.instant('common.InCreation') },
+    { value: ProfileStatusNumber.Submitted, label: this.translate.instant('common.Submitted') },
+    { value: ProfileStatusNumber.UnderReview, label: this.translate.instant('common.UnderReview') },
+    {
+      value: ProfileStatusNumber.RequiresUpdate,
+      label: this.translate.instant('common.RequiresUpdate'),
+    },
+    { value: ProfileStatusNumber.Approved, label: this.translate.instant('common.Approved') },
   ];
   showAdvancedFilters = signal(false);
   profileLogsDialogVisible = false;
@@ -132,10 +146,37 @@ export class CandidateUsersManagementPage implements OnInit {
   ngOnInit(): void {
     this.setupUsersRequests();
     this.setupProfileLogsRequests();
+
+    this.initializeFromUrl();
+
     this.loadUsers();
+
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(lang => this.currentLang.set(lang));
+      .subscribe((lang) => this.currentLang.set(lang));
+  }
+
+  private initializeFromUrl(): void {
+    const profileStatus = this.parseProfileStatus(
+      this.route.snapshot.queryParamMap.get('profileStatus'),
+    );
+
+    const scope = this.parseResultScope(this.route.snapshot.queryParamMap.get('scope'));
+
+    const year = parseFilterYear(this.route.snapshot.queryParamMap.get('year'));
+
+    const profileStatuses = this.mapProfileStatusToNumbers(profileStatus);
+
+    this.filters.update((filters) => ({
+      ...filters,
+      pageNumber: 1,
+      profileStatus: undefined,
+      profileStatuses,
+      scope,
+      year,
+    }));
+
+    this.showAdvancedFilters.set(!!profileStatuses?.length);
   }
 
   loadUsers(force = false): void {
@@ -143,34 +184,34 @@ export class CandidateUsersManagementPage implements OnInit {
   }
 
   onSearchChange(value: string): void {
-    this.filters.update(filters => ({ ...filters, search: value }));
+    this.filters.update((filters) => ({ ...filters, search: value }));
     this.searchChanges$.next(value);
   }
 
   private setupUsersRequests(): void {
     this.searchChanges$
       .pipe(
-        map(value => (value ?? '').trim()),
+        map((value) => (value ?? '').trim()),
         debounceTime(400),
         distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(search => {
-        this.filters.update(filters => ({ ...filters, search: search || null, pageNumber: 1 }));
+      .subscribe((search) => {
+        this.filters.update((filters) => ({ ...filters, search: search || null, pageNumber: 1 }));
         this.loadUsers();
       });
 
     this.usersRequests$
       .pipe(
-        map(force => {
+        map((force) => {
           const filters = this.buildCandidateFilters();
           return { filters, key: JSON.stringify(filters), force };
         }),
         distinctUntilChanged((previous, current) => !current.force && previous.key === current.key),
         switchMap(({ filters }) => this.candidateUsersService.getCandidateUsers(filters)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(response => this.applyUsersResponse(response));
+      .subscribe((response) => this.applyUsersResponse(response));
   }
 
   private buildCandidateFilters(): CandidateUserFilters {
@@ -178,54 +219,126 @@ export class CandidateUsersManagementPage implements OnInit {
     return {
       ...filters,
       search: filters.search?.trim() || null,
-      profileStatuses: filters.profileStatuses?.length ? [...filters.profileStatuses] : null
+      profileStatuses: filters.profileStatuses?.length ? [...filters.profileStatuses] : null,
     };
   }
 
   private applyUsersResponse(response: PaginatedResult<CandidateUserDto>): void {
     this._users.set(response.items);
     this._paginationMetadata.set(response.metadata);
-    this.filters.update(filters => ({
+    this.filters.update((filters) => ({
       ...filters,
       pageNumber: response.metadata.currentPage,
-      pageSize: response.metadata.pageSize
+      pageSize: response.metadata.pageSize,
     }));
   }
 
   onAccountStatusChange(isBlocked: boolean | null): void {
-    this.filters.update(filters => ({ ...filters, isBlocked, pageNumber: 1 }));
+    this.filters.update((filters) => ({ ...filters, isBlocked, pageNumber: 1 }));
     this.loadUsers();
   }
 
   onProfileStatusesChange(profileStatuses: ProfileStatusNumber[] | null): void {
-    this.filters.update(filters => ({ ...filters, profileStatuses, pageNumber: 1 }));
+    this.filters.update((filters) => ({
+      ...filters,
+      profileStatuses: profileStatuses?.length ? [...profileStatuses] : null,
+      profileStatus: undefined,
+      pageNumber: 1,
+    }));
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        profileStatus: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+
     this.loadUsers();
   }
 
   toggleAdvancedFilters(): void {
-    this.showAdvancedFilters.update(value => !value);
+    this.showAdvancedFilters.update((value) => !value);
   }
 
-  clearFilters(): void {
-    const pageSize = this.filters().pageSize;
-    this.filters.set({
-      pageNumber: 1,
-      pageSize,
-      search: null,
-      isBlocked: null,
-      profileStatuses: null
-    });
-    this.searchChanges$.next('');
-    this.loadUsers(true);
-  }
+ clearFilters(): void {
+  const current = this.filters();
+
+  this.filters.set({
+    pageNumber: 1,
+    pageSize: current.pageSize,
+    search: null,
+    isBlocked: null,
+    profileStatuses: null,
+    profileStatus: undefined,
+    year: undefined,
+
+    // هذا نحافظ عليه لأنه scope الوصول،
+    // وليس فلتر UI عادي.
+    scope: current.scope,
+  });
+
+  this.searchChanges$.next('');
+  this.showAdvancedFilters.set(false);
+
+  void this.router.navigate([], {
+    relativeTo: this.route,
+    queryParams: {
+      profileStatus: null,
+      year: null,
+    },
+    queryParamsHandling: 'merge',
+    replaceUrl: true,
+  });
+
+  this.loadUsers(true);
+}
 
   onPageChange(page: number): void {
-    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.filters.update((f) => ({ ...f, pageNumber: page }));
     this.loadUsers();
   }
 
   onPageSizeChange(size: number): void {
-    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
+    this.filters.update((f) => ({ ...f, pageSize: size, pageNumber: 1 }));
+    this.loadUsers();
+  }
+
+  exportUsers(): void {
+    if (this.exporting()) return;
+    this.exporting.set(true);
+    this.candidateUsersService
+      .exportCandidateUsers(this.filters())
+      .pipe(finalize(() => this.exporting.set(false)))
+      .subscribe(
+        (response) => void this.fileUtils.downloadResponse(response, 'candidate-users.xlsx'),
+      );
+  }
+
+  onProfileStatusChange(profileStatus: ProfileStatus | null): void {
+    this.filters.update((filters) => ({
+      ...filters,
+      pageNumber: 1,
+      profileStatus: profileStatus ?? undefined,
+    }));
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { profileStatus: profileStatus ?? null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+    this.loadUsers();
+  }
+
+  clearYear(): void {
+    this.filters.update((filters) => ({ ...filters, pageNumber: 1, year: undefined }));
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { year: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
     this.loadUsers();
   }
 
@@ -233,15 +346,15 @@ export class CandidateUsersManagementPage implements OnInit {
     const desiredState = !user.isBlocked;
     this.candidateUsersService.updateBlockStatus(user.id, desiredState).subscribe({
       next: () => {
-        this._users.update(users =>
-          users.map(item => (item.id === user.id ? { ...item, isBlocked: desiredState } : item))
+        this._users.update((users) =>
+          users.map((item) => (item.id === user.id ? { ...item, isBlocked: desiredState } : item)),
         );
         this.notification.success(
           this.translate.instant(
-            desiredState ? 'CANDIDATE_USERS.BLOCK_SUCCESS' : 'CANDIDATE_USERS.UNBLOCK_SUCCESS'
-          )
+            desiredState ? 'CANDIDATE_USERS.BLOCK_SUCCESS' : 'CANDIDATE_USERS.UNBLOCK_SUCCESS',
+          ),
         );
-      }
+      },
     });
   }
 
@@ -250,7 +363,7 @@ export class CandidateUsersManagementPage implements OnInit {
     if (!profileId) return;
 
     this.router.navigate([routes.portal.candidateUserProfile(profileId)], {
-      queryParams: { email: user.email }
+      queryParams: { email: user.email },
     });
   }
 
@@ -269,7 +382,7 @@ export class CandidateUsersManagementPage implements OnInit {
   private setupProfileLogsRequests(): void {
     this.profileLogsRequests$
       .pipe(
-        switchMap(request => {
+        switchMap((request) => {
           if (!request.userId) {
             this._profileLogsLoading.set(false);
             return EMPTY;
@@ -286,19 +399,19 @@ export class CandidateUsersManagementPage implements OnInit {
                   this._profileLogsPaginationMetadata.set(null);
                   return EMPTY;
                 }),
-                finalize(() => this._profileLogsLoading.set(false))
+                finalize(() => this._profileLogsLoading.set(false)),
               );
           });
         }),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: response => {
+        next: (response) => {
           this._profileLogs.set(response.items ?? []);
           this._profileLogsPaginationMetadata.set(response.metadata);
           this.profileLogsPageNumber.set(response.metadata.currentPage);
           this.profileLogsPageSize.set(response.metadata.pageSize);
-        }
+        },
       });
   }
 
@@ -306,7 +419,7 @@ export class CandidateUsersManagementPage implements OnInit {
     this.profileLogsRequests$.next({
       userId: this.selectedProfileLogsUserId,
       pageNumber: this.profileLogsPageNumber(),
-      pageSize: this.profileLogsPageSize()
+      pageSize: this.profileLogsPageSize(),
     });
   }
 
@@ -327,13 +440,25 @@ export class CandidateUsersManagementPage implements OnInit {
     this.profileLogsRequests$.next({
       userId: null,
       pageNumber: 1,
-      pageSize: this.profileLogsPageSize()
+      pageSize: this.profileLogsPageSize(),
     });
     this._profileLogs.set([]);
     this._profileLogsPaginationMetadata.set(null);
     this.profileLogsPageNumber.set(1);
     this.profileLogsPageSize.set(20);
     this.profileLogsCandidateName = '';
+  }
+
+  private parseProfileStatus(value: string | null): ProfileStatus | undefined {
+    return value && Object.values(ProfileStatus).includes(value as ProfileStatus)
+      ? (value as ProfileStatus)
+      : undefined;
+  }
+
+  private parseResultScope(value: string | null): CandidateUsersResultScope {
+    return value === CandidateUsersResultScope.AccessibleProfiles || value === 'DashboardAccessible'
+      ? CandidateUsersResultScope.AccessibleProfiles
+      : CandidateUsersResultScope.Default;
   }
 
   translateSection(section?: string | null): string {
@@ -355,7 +480,11 @@ export class CandidateUsersManagementPage implements OnInit {
     if (normalized === 'rejected' || normalized === String(ReviewStatus.Rejected)) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
     }
-    if (normalized === 'needscorrection' || normalized === 'needs_correction' || normalized === String(ReviewStatus.NeedsCorrection)) {
+    if (
+      normalized === 'needscorrection' ||
+      normalized === 'needs_correction' ||
+      normalized === String(ReviewStatus.NeedsCorrection)
+    ) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION');
     }
     return String(status);
@@ -396,7 +525,10 @@ export class CandidateUsersManagementPage implements OnInit {
       if (parsed?.eventType === 'ReviewSectionDecision') {
         return this.formatReviewSectionDecision(parsed);
       }
-      if (parsed?.eventType === 'ProfileChangeRequested' || parsed?.eventType === 'ProfileChangeUpdated') {
+      if (
+        parsed?.eventType === 'ProfileChangeRequested' ||
+        parsed?.eventType === 'ProfileChangeUpdated'
+      ) {
         return this.formatProfileChangeEvent(parsed);
       }
       if (parsed?.eventType === 'AssignmentCreated') {
@@ -433,7 +565,6 @@ export class CandidateUsersManagementPage implements OnInit {
       return this.formatLegacyNote(log.notes);
     }
   }
-
 
   private tryFormatAssignmentReassigned(source: any): string | null {
     if (!source) return null;
@@ -489,7 +620,7 @@ export class CandidateUsersManagementPage implements OnInit {
       oldAssignedUserName: 'Old Assigned User',
       newAssignedUserName: 'New Assigned User',
       oldAssignedUserId: 'Old Assigned User Id',
-      newAssignedUserId: 'New Assigned User Id'
+      newAssignedUserId: 'New Assigned User Id',
     };
 
     const skipPatterns = /^(id|countryId|cityId|officeId|userId|userProfileId)$/i;
@@ -515,16 +646,14 @@ export class CandidateUsersManagementPage implements OnInit {
 
       let displayVal = '';
       if (Array.isArray(value)) {
-        const filteredArr = value.filter(v => typeof v !== 'string' || !guidPattern.test(v));
+        const filteredArr = value.filter((v) => typeof v !== 'string' || !guidPattern.test(v));
         if (filteredArr.length > 0) {
           displayVal = filteredArr.join(', ');
         } else if (value.length > 0) {
           displayVal = `(${value.length} items)`;
         }
       } else {
-        displayVal = typeof value === 'boolean'
-          ? (value ? 'Yes' : 'No')
-          : String(value);
+        displayVal = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
       }
 
       if (displayVal && displayVal !== 'null' && displayVal !== 'undefined') {
@@ -535,24 +664,33 @@ export class CandidateUsersManagementPage implements OnInit {
   private formatReviewItemDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const itemLabel = note.entityName || note.fieldPath || this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const itemLabel =
+      note.entityName ||
+      note.fieldPath ||
+      this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.ITEM')}: ${itemLabel} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatReviewSectionDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatProfileChangeEvent(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
-    const target = note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
-    const action = note.eventType === 'ProfileChangeRequested'
-      ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
-      : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
+    const target =
+      note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
+    const action =
+      note.eventType === 'ProfileChangeRequested'
+        ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
+        : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
     return `${action} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${target}`;
   }
 
@@ -578,10 +716,36 @@ export class CandidateUsersManagementPage implements OnInit {
     if (changeMatch) {
       const targetType = changeMatch[1];
       const targetValue = changeMatch[2];
-      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue) ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA') : targetValue;
+      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue)
+        ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA')
+        : targetValue;
       return `${this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${targetType} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${sanitizedTarget}`;
     }
 
     return raw;
+  }
+
+  private mapProfileStatusToNumbers(
+    status: ProfileStatus | undefined,
+  ): ProfileStatusNumber[] | null {
+    switch (status) {
+      case ProfileStatus.InCreation:
+        return [ProfileStatusNumber.InCreation];
+
+      case ProfileStatus.Submitted:
+        return [ProfileStatusNumber.Submitted];
+
+      case ProfileStatus.UnderReview:
+        return [ProfileStatusNumber.UnderReview];
+
+      case ProfileStatus.RequiresUpdate:
+        return [ProfileStatusNumber.RequiresUpdate];
+
+      case ProfileStatus.Approved:
+        return [ProfileStatusNumber.Approved];
+
+      default:
+        return null;
+    }
   }
 }

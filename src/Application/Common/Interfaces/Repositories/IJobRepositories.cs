@@ -7,6 +7,10 @@ namespace Tawtheef.Application.Common.Interfaces.Repositories;
 
 public interface IJobRepository : IBaseRepository<Job>
 {
+    IQueryable<Job> GetFilteredJobsQuery(
+        JobQueryFilter filter,
+        Guid? currentUserId,
+        bool hasFullAccess);
     Task<IResult<Job>> GetByIdWithDetailsAsync(Guid id, CancellationToken ct);
     Task<IResult<Job>> GetByIdWithDetailsUnTrackingAsync(Guid id);
     Task<Job?> LoadJobWithPointsAsync(Guid jobId);
@@ -15,5 +19,5 @@ public interface IJobRepository : IBaseRepository<Job>
         JobQueryFilter filter,
         PaginatedRequest pagination,
         Guid? currentUserId,
-        bool isHRManager);
+        bool hasFullAccess);
 }

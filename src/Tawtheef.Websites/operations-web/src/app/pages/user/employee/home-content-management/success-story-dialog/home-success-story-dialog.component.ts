@@ -147,7 +147,7 @@ export class HomeSuccessStoryDialogComponent implements OnInit, OnDestroy {
 
     const preview = this.imagePreview();
     if (preview) {
-      await this.fileUtils.previewUrl(preview, '', false);
+      await this.fileUtils.previewUrl(preview, false);
     }
   }
 

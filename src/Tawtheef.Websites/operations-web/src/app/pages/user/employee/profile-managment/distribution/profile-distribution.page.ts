@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   Subject,
   debounceTime,
@@ -41,17 +42,23 @@ import { DialogService } from 'primeng/dynamicdialog';
 
 import { ProfileDistributionService } from './services/profile-distribution.service';
 import {
-  AutoAssignRequest,
   DistributionEmployee,
   DistributionFile,
+  DistributionResult,
+} from './models/profile-distribution.models';
+import {
   DistributionAdvancedFilters,
   DistributionAppliedFilters,
   DistributionProfilesFilters,
-  DistributionResult,
-  EmployeeAvailability,
+} from './models/profile-distribution-filters.model';
+import {
+  AutoAssignRequest,
   ManualAssignRequest,
-  ReassignRequest,
-} from './models/profile-distribution.models';
+} from './models/profile-distribution-assignment.model';
+import {
+  DistributionAssignmentState,
+  EmployeeAvailability,
+} from './models/profile-distribution.enums';
 
 import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
@@ -65,10 +72,12 @@ import { PaginationMetadata } from '../../../../../core/models/pagination-metada
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { parseFilterYear } from '../../../../../core/utils/year-filter.util';
 import {SortEvent} from 'primeng/api';
 import { PageFiltersComponent } from '../../../../../shared/components/page-filters/page-filters.component';
 
 const DEFAULT_ADVANCED_FILTERS: DistributionAdvancedFilters = {
+  assignmentState: null,
   assignedEmployeeId: null,
   targetEntityId: null,
   candidateTypeIds: [],
@@ -81,6 +90,7 @@ const DEFAULT_ADVANCED_FILTERS: DistributionAdvancedFilters = {
 const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
   searchTerm: null,
   statuses: [ProfileStatusNumber.Submitted],
+  year: null,
   ...DEFAULT_ADVANCED_FILTERS,
   pageNumber: 1,
   pageSize,
@@ -127,6 +137,8 @@ export class ProfileDistributionPage implements OnInit {
   private notifications = inject(NotificationService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // state
   files = signal<DistributionFile[]>([]);
@@ -160,6 +172,7 @@ export class ProfileDistributionPage implements OnInit {
   );
   readonly hasActiveFilters = computed(() =>
     !!this.appliedFilters().searchTerm ||
+    this.appliedFilters().year !== null ||
     this.activeAdvancedFilterCount() > 0 ||
     !this.hasDefaultStatuses(this.appliedFilters().statuses)
   );
@@ -189,6 +202,12 @@ export class ProfileDistributionPage implements OnInit {
     { value: ProfileStatusNumber.Approved, label: 'distribution.status.approved' },
   ];
 
+  readonly assignmentStateOptions = [
+    { value: null, label: 'distribution.filters.all' },
+    { value: DistributionAssignmentState.Assigned, label: 'distribution.filters.assigned' },
+    { value: DistributionAssignmentState.Unassigned, label: 'distribution.filters.unassigned' },
+  ];
+
   readonly yesNoOptions = [
     { value: null, label: 'distribution.filters.all' },
     { value: true, label: 'distribution.filters.yes' },
@@ -198,6 +217,7 @@ export class ProfileDistributionPage implements OnInit {
   readonly rowsPerPageOptions = [10, 20, 50, 100, 500];
 
   ngOnInit(): void {
+    this.initializeFromUrl();
     this.setupSearchListener();
     this.setupQueryPipeline();
 
@@ -338,6 +358,24 @@ export class ProfileDistributionPage implements OnInit {
     this.draftFilters.update(filters => ({ ...filters, [key]: value }));
   }
 
+  onDraftAssignmentStateChange(assignmentState: DistributionAssignmentState | null): void {
+    this.draftFilters.update(filters => ({
+      ...filters,
+      assignmentState,
+      assignedEmployeeId: assignmentState === DistributionAssignmentState.Unassigned
+        ? null
+        : filters.assignedEmployeeId,
+    }));
+  }
+
+  onDraftAssignedEmployeeChange(assignedEmployeeId: string | null): void {
+    this.draftFilters.update(filters => ({
+      ...filters,
+      assignedEmployeeId,
+      assignmentState: assignedEmployeeId ? null : filters.assignmentState,
+    }));
+  }
+
   onStatusChange(statuses: ProfileStatusNumber[] | null): void {
     const normalized = statuses?.length ? [...statuses] : [ProfileStatusNumber.Submitted];
     this.appliedFilters.update(filters => ({ ...filters, statuses: normalized, pageNumber: 1 }));
@@ -356,7 +394,13 @@ export class ProfileDistributionPage implements OnInit {
   applyAdvancedFilters(): void {
     const draft = this.normalizeAdvancedFilters(this.draftFilters());
     this.draftFilters.set(draft);
-    this.appliedFilters.update(filters => ({ ...filters, ...draft, pageNumber: 1 }));
+    this.appliedFilters.update(filters => ({
+      ...filters,
+      ...draft,
+      statuses: this.resolveStatuses(filters, draft.assignmentState),
+      pageNumber: 1,
+    }));
+    this.updateUrlFilters(draft.assignmentState, this.appliedFilters().year);
     this.clearSelection();
     this.loadData();
   }
@@ -372,13 +416,21 @@ export class ProfileDistributionPage implements OnInit {
     this.searchInput.set('');
     this.showAdvancedFilters.set(false);
     this.clearSelection();
+    this.updateUrlFilters(null, null);
     this.loadData(true);
   }
 
+  clearYear(): void {
+    this.appliedFilters.update(filters => ({ ...filters, year: null, pageNumber: 1 }));
+    this.updateUrlFilters(this.appliedFilters().assignmentState, null);
+    this.clearSelection();
+    this.loadData();
+  }
+
   private getAdvancedFilters(filters: DistributionAppliedFilters): DistributionAdvancedFilters {
-    const { assignedEmployeeId, targetEntityId, candidateTypeIds,
+    const { assignmentState, assignedEmployeeId, targetEntityId, candidateTypeIds,
       hasOtherSpecialization, hasOtherUniversity, isQatarGraduate, degreeIds } = filters;
-    return { assignedEmployeeId, targetEntityId,
+    return { assignmentState, assignedEmployeeId, targetEntityId,
       candidateTypeIds: [...candidateTypeIds], hasOtherSpecialization, hasOtherUniversity,
       isQatarGraduate, degreeIds: [...degreeIds] };
   }
@@ -393,6 +445,7 @@ export class ProfileDistributionPage implements OnInit {
 
   private countAdvancedFilters(filters: DistributionAdvancedFilters): number {
     return [
+      filters.assignmentState,
       filters.assignedEmployeeId,
       filters.targetEntityId,
       filters.candidateTypeIds.length > 0 ? true : null,
@@ -404,6 +457,49 @@ export class ProfileDistributionPage implements OnInit {
 
   private hasDefaultStatuses(statuses: ProfileStatusNumber[]): boolean {
     return statuses.length === 1 && statuses[0] === ProfileStatusNumber.Submitted;
+  }
+
+  private initializeFromUrl(): void {
+    const value = this.route.snapshot.queryParamMap.get('assignmentState');
+    const assignmentState = Object.values(DistributionAssignmentState)
+      .find(state => state.toLowerCase() === value?.toLowerCase());
+    const year = parseFilterYear(this.route.snapshot.queryParamMap.get('year'));
+    if (!assignmentState && !year) return;
+
+    this.appliedFilters.set({
+      ...createDefaultFilters(),
+      statuses: assignmentState === DistributionAssignmentState.Unassigned
+        ? []
+        : [ProfileStatusNumber.Submitted],
+      year: year ?? null,
+      assignmentState: assignmentState ?? null,
+      assignedEmployeeId: null,
+    });
+    this.draftFilters.set(this.getAdvancedFilters(this.appliedFilters()));
+    this.showAdvancedFilters.set(!!assignmentState);
+  }
+
+  private resolveStatuses(
+    filters: DistributionAppliedFilters,
+    assignmentState: DistributionAssignmentState | null
+  ): ProfileStatusNumber[] {
+    const wasUnassigned = filters.assignmentState === DistributionAssignmentState.Unassigned;
+    if (!wasUnassigned && assignmentState === DistributionAssignmentState.Unassigned) return [];
+    if (wasUnassigned && assignmentState !== DistributionAssignmentState.Unassigned && !filters.statuses.length)
+      return [ProfileStatusNumber.Submitted];
+    return filters.statuses;
+  }
+
+  private updateUrlFilters(
+    assignmentState: DistributionAssignmentState | null,
+    year: number | null
+  ): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { assignmentState, year },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   // selection
@@ -519,43 +615,6 @@ export class ProfileDistributionPage implements OnInit {
     this.loading.set(true);
     this.api
       .assignAutomatically(payload)
-      .pipe(finalize(() => this.loading.set(false)), takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
-      });
-  }
-
-  private reassignManual(payload: ManualAssignRequest): void {
-    if (!this.canManageDistribution()) return;
-
-    const request: ReassignRequest = {
-      mode: 'manual',
-      profileIds: payload.profileIds,
-      employeeId: payload.employeeId,
-    };
-
-    this.loading.set(true);
-    this.api
-      .reassign(request)
-      .pipe(finalize(() => this.loading.set(false)), takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: result => this.handleResult(result.assignedCount, result),
-      });
-  }
-
-  private reassignAuto(payload: AutoAssignRequest): void {
-    if (!this.canManageDistribution()) return;
-
-    const request: ReassignRequest = {
-      mode: 'auto',
-      profileIds: payload.profileIds ?? [],
-      employeeIds: payload.employeeIds,
-      perEmployeeCount: payload.perEmployeeCount,
-    };
-
-    this.loading.set(true);
-    this.api
-      .reassign(request)
       .pipe(finalize(() => this.loading.set(false)), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: result => this.handleResult(result.assignedCount, result),

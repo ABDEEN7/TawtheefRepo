@@ -8,6 +8,8 @@
   "JOB_LIST_FILTERS_SEARCH_PLACEHOLDER": "Search jobs...",
   "JOB_LIST_FILTERS_JOB_CATEGORY": "Job Category",
   "JOB_LIST_FILTERS_STATUS": "Status",
+  "JOB_LIST_FILTERS_YEAR": "Year",
+  "JOB_LIST_FILTERS_CLEAR_YEAR": "Clear year filter",
   "JOB_LIST_COLUMNS_TITLE": "Job Title",
   "JOB_LIST_COLUMNS_TITLE_AR": "Title (Arabic)",
   "JOB_LIST_COLUMNS_TITLE_EN": "Title (English)",
@@ -78,5 +80,6 @@
   "JOB_LIST_FILTERS_SECTOR": "Sector",
   "JOB_LIST_FILTERS_MANAGEMENT": "Management",
   "JOB_LIST_FILTERS_DEPARTMENT": "Department",
-  "JOB_LIST_BUTTONS_POINTS_REVIEW": "Review Points"
+  "JOB_LIST_BUTTONS_POINTS_REVIEW": "Review Points",
+  "JOB_LIST_BUTTONS_EXPORT": "Export"
 }

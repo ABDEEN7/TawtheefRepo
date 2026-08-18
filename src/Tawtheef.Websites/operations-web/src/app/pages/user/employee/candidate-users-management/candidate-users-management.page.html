@@ -1,13 +1,48 @@
-<div class="candidate-users-container card shadow-sm p-4"
+<div
+  class="candidate-users-container card shadow-sm p-4"
   [i18nNamespace]="['pages/employee/candidate-users-management', 'pages/admin/profile-logs']"
-  [attr.dir]="isRtl() ? 'rtl' : 'ltr'" [class.table-rtl]="isRtl()">
+  [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
+  [class.table-rtl]="isRtl()"
+>
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h3 class="fw-bold mb-0">{{ 'CANDIDATE_USERS.TITLE' | translate }}</h3>
-    <button pButton type="button" class="p-button-outlined" (click)="loadUsers(true)">
-      <i class="pi pi-refresh me-1"></i>
-      {{ 'common.refresh' | translate }}
-    </button>
+    <div class="d-flex align-items-center gap-2">
+      <ng-container *hasPermission="Permissions.Dashboard.Export">
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          (click)="exportUsers()"
+          [disabled]="exporting()"
+        >
+          <i class="fa fa-file-excel me-1"></i>
+          {{ 'CANDIDATE_USERS.EXPORT' | translate }}
+        </button>
+      </ng-container>
+      <button pButton type="button" class="p-button-outlined" (click)="loadUsers(true)">
+        <i class="pi pi-refresh me-1"></i>
+        {{ 'common.refresh' | translate }}
+      </button>
+    </div>
   </div>
+
+  @if (filters().year; as year) {
+    <div class="alert alert-light border d-flex align-items-center gap-2 py-2 mb-3">
+      <span>
+        {{ 'CANDIDATE_USERS.FILTER_YEAR' | translate }}:
+        {{ year }}
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-sm p-0 ms-auto"
+        (click)="clearYear()"
+        [attr.aria-label]="'CANDIDATE_USERS.CLEAR_YEAR' | translate"
+        [title]="'CANDIDATE_USERS.CLEAR_YEAR' | translate"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+  }
 
   <app-page-filters
     [advancedLabel]="'CANDIDATE_USERS.ADVANCED_FILTERS' | translate"
@@ -19,10 +54,16 @@
     (filtersCleared)="clearFilters()"
   >
     <p-iconfield filterSearch class="search-icon-field w-100">
-      <p-inputicon styleClass="pi pi-search"></p-inputicon>
-      <input pInputText id="candidate-users-search" type="search" class="w-100 form-control"
-        [ngModel]="filters().search ?? ''" (ngModelChange)="onSearchChange($event)"
-        [placeholder]="'CANDIDATE_USERS.SEARCH_PLACEHOLDER' | translate" />
+      <p-inputicon class="pi pi-search"></p-inputicon>
+      <input
+        pInputText
+        id="candidate-users-search"
+        type="search"
+        class="w-100 form-control"
+        [ngModel]="filters().search ?? ''"
+        (ngModelChange)="onSearchChange($event)"
+        [placeholder]="'CANDIDATE_USERS.SEARCH_PLACEHOLDER' | translate"
+      />
     </p-iconfield>
 
     <div advancedFilters>
@@ -31,26 +72,43 @@
           <label class="form-label" for="candidate-users-account-status">
             {{ 'CANDIDATE_USERS.ACCOUNT_STATUS' | translate }}
           </label>
-          <p-select inputId="candidate-users-account-status" class="w-100"
-            [options]="accountStatusOptions" optionLabel="label" optionValue="value" [showClear]="true"
-            [ngModel]="filters().isBlocked" (onChange)="onAccountStatusChange($event.value)"
-            [placeholder]="'CANDIDATE_USERS.ALL' | translate">
+          <p-select
+            inputId="candidate-users-account-status"
+            class="w-100"
+            [options]="accountStatusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            [ngModel]="filters().isBlocked"
+            (onChange)="onAccountStatusChange($event.value)"
+            [placeholder]="'CANDIDATE_USERS.ALL' | translate"
+          >
             <ng-template #item let-option>{{ option.label | translate }}</ng-template>
             <ng-template #selecteditem let-option>{{ option.label | translate }}</ng-template>
           </p-select>
         </div>
         <div class="col-xl-4 col-md-6 filter-field">
-          <label class="form-label">{{ 'CANDIDATE_USERS.CANDIDATE_PROFILE_STATUS' | translate }}</label>
-          <p-multiSelect class="profile-filter-multiselect w-100" [options]="profileStatusOptions"
-            optionLabel="label" optionValue="value" [showClear]="true"
+          <label class="form-label">{{
+            'CANDIDATE_USERS.CANDIDATE_PROFILE_STATUS' | translate
+          }}</label>
+          <p-multiSelect
+            class="profile-filter-multiselect w-100"
+            [options]="profileStatusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
             [ngModel]="filters().profileStatuses"
             (onChange)="onProfileStatusesChange($event.value)"
-            [placeholder]="'CANDIDATE_USERS.ALL' | translate">
+            [placeholder]="'CANDIDATE_USERS.ALL' | translate"
+          >
             <ng-template #item let-option>{{ option.label | translate }}</ng-template>
             <ng-template #selecteditems let-options>
               <span class="profile-filter-multiselect__selection">
                 @for (option of options; track option.value; let last = $last) {
-                  {{ option.label | translate }}@if (!last) {, }
+                  {{ option.label | translate }}
+                  @if (!last) {
+                    ,
+                  }
                 }
               </span>
             </ng-template>
@@ -77,7 +135,7 @@
               <div class="user-info-cell">
                 <span class="name-en">{{ user.fullNameEn }}</span>
                 <span class="name-ar">{{ user.fullNameAr }}</span>
-                <div class="email-info mt-1" style="direction: ltr;">
+                <div class="email-info mt-1" style="direction: ltr">
                   <i class="hgi-stroke hgi-mail-01 small opacity-50"></i>
                   <span>{{ user.email }}</span>
                 </div>
@@ -89,7 +147,7 @@
                   <span class="qid-label">{{ 'CANDIDATE_USERS.QID' | translate }}:</span>
                   <span class="qid-value">{{ user.qid || '-' }}</span>
                 </div>
-                <div class="mobile-info" style="direction: ltr;">
+                <div class="mobile-info" style="direction: ltr">
                   <i class="hgi-stroke hgi-smart-phone-01 small opacity-50"></i>
                   <span>{{ user.mobileNumber }}</span>
                 </div>
@@ -97,19 +155,40 @@
             </td>
             <td>
               <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
-                <span class="status-indicator" [class.active]="!user.isBlocked" [class.blocked]="user.isBlocked"></span>
-                {{ user.isBlocked ? ('CANDIDATE_USERS.BLOCKED' | translate) : ('CANDIDATE_USERS.ACTIVE' | translate) }}
+                <span
+                  class="status-indicator"
+                  [class.active]="!user.isBlocked"
+                  [class.blocked]="user.isBlocked"
+                ></span>
+                {{
+                  user.isBlocked
+                    ? ('CANDIDATE_USERS.BLOCKED' | translate)
+                    : ('CANDIDATE_USERS.ACTIVE' | translate)
+                }}
               </span>
             </td>
             <td>
-              <ng-container *ngIf="user.profileStatus !== null && user.profileStatus !== undefined; else noProfile">
-                <span class="pill" [ngClass]="{
-                  'info': user.profileStatus === ProfileStatus.InCreation,
-                  'warning': user.profileStatus === ProfileStatus.UnderReview || user.profileStatus === ProfileStatus.RequiresUpdate,
-                  'success': user.profileStatus === ProfileStatus.Approved,
-                  'danger': user.profileStatus === ProfileStatus.Rejected || user.profileStatus === ProfileStatus.Cancelled || user.profileStatus === ProfileStatus.AdminCancelled,
-                  'primary': user.profileStatus === ProfileStatus.Submitted
-                }">
+              <ng-container
+                *ngIf="
+                  user.profileStatus !== null && user.profileStatus !== undefined;
+                  else noProfile
+                "
+              >
+                <span
+                  class="pill"
+                  [ngClass]="{
+                    info: user.profileStatus === ProfileStatus.InCreation,
+                    warning:
+                      user.profileStatus === ProfileStatus.UnderReview ||
+                      user.profileStatus === ProfileStatus.RequiresUpdate,
+                    success: user.profileStatus === ProfileStatus.Approved,
+                    danger:
+                      user.profileStatus === ProfileStatus.Rejected ||
+                      user.profileStatus === ProfileStatus.Cancelled ||
+                      user.profileStatus === ProfileStatus.AdminCancelled,
+                    primary: user.profileStatus === ProfileStatus.Submitted,
+                  }"
+                >
                   {{ 'common.' + ProfileStatus[user.profileStatus] | translate }}
                 </span>
               </ng-container>
@@ -123,25 +202,41 @@
 
             <td>
               <div class="action-buttons">
-                <button type="button" class="btn btn-action btn-outline-primary"
-                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate" (click)="viewProfile(user)"
-                  *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                <button
+                  type="button"
+                  class="btn btn-action btn-outline-primary"
+                  [title]="'CANDIDATE_USERS.VIEW_PROFILE' | translate"
+                  (click)="viewProfile(user)"
+                  *ngIf="user.profileStatus !== null && user.profileStatus !== undefined"
+                >
                   <i class="hgi hgi-stroke hgi-view fs-18"></i>
                 </button>
 
                 <ng-container *hasPermission="Permissions.ProfileLogs.View">
-                  <button type="button" class="btn btn-action btn-outline-secondary"
-                    [title]="'CANDIDATE_USERS.VIEW_PROFILE_LOGS' | translate" (click)="viewProfileLogs(user)"
-                    *ngIf="user.profileStatus !== null && user.profileStatus !== undefined">
+                  <button
+                    type="button"
+                    class="btn btn-action btn-outline-secondary"
+                    [title]="'CANDIDATE_USERS.VIEW_PROFILE_LOGS' | translate"
+                    (click)="viewProfileLogs(user)"
+                    *ngIf="user.profileStatus !== null && user.profileStatus !== undefined"
+                  >
                     <i class="hgi hgi-stroke hgi-task-02 fs-18"></i>
                   </button>
                 </ng-container>
 
                 <ng-container *hasPermission="Permissions.CandidateUsers.Manage">
-                  <button type="button" class="btn btn-action"
-                    [title]="(user.isBlocked ? 'CANDIDATE_USERS.UNBLOCK_USER' : 'CANDIDATE_USERS.BLOCK_USER') | translate"
+                  <button
+                    type="button"
+                    class="btn btn-action"
+                    [title]="
+                      (user.isBlocked
+                        ? 'CANDIDATE_USERS.UNBLOCK_USER'
+                        : 'CANDIDATE_USERS.BLOCK_USER'
+                      ) | translate
+                    "
                     [ngClass]="user.isBlocked ? 'btn-outline-success' : 'btn-outline-danger'"
-                    (click)="toggleBlock(user)">
+                    (click)="toggleBlock(user)"
+                  >
                     <i class="fa" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
                   </button>
                 </ng-container>
@@ -151,7 +246,12 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="text-muted no-data" [class.text-start]="!isRtl()" [class.text-end]="isRtl()">
+            <td
+              colspan="5"
+              class="text-muted no-data"
+              [class.text-start]="!isRtl()"
+              [class.text-end]="isRtl()"
+            >
               <div class="p-4 d-flex flex-column align-items-center justify-content-center">
                 <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
                 <span>{{ 'NO_RECORDS' | translate }}</span>
@@ -162,17 +262,26 @@
       </p-table>
     </div>
   </div>
-
 </div>
 
-<app-pagination class="w-100" [currentPage]="filters().pageNumber" [totalItems]="totalItems()"
-  [itemsPerPage]="filters().pageSize" (pageChanged)="onPageChange($event)"
-  (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+<app-pagination
+  class="w-100"
+  [currentPage]="filters().pageNumber"
+  [totalItems]="totalItems()"
+  [itemsPerPage]="filters().pageSize"
+  (pageChanged)="onPageChange($event)"
+  (pageSizeChanged)="onPageSizeChange($event)"
+></app-pagination>
 
-<p-dialog [(visible)]="profileLogsDialogVisible" [modal]="true" [draggable]="false" [resizable]="false"
+<p-dialog
+  [(visible)]="profileLogsDialogVisible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
   [style]="{ width: '75rem', maxWidth: '95vw' }"
   [header]="('CANDIDATE_USERS.VIEW_PROFILE_LOGS' | translate) + ' - ' + profileLogsCandidateName"
-  (onHide)="closeProfileLogsDialog()">
+  (onHide)="closeProfileLogsDialog()"
+>
   <div class="table-responsive">
     <table class="table table-bordered table-hover align-middle w-100">
       <thead class="table-light">
@@ -186,7 +295,9 @@
       </thead>
       <tbody>
         <tr *ngIf="profileLogsLoading()">
-          <td colspan="5" class="text-center text-muted py-4">{{ 'common.loading' | translate }}</td>
+          <td colspan="5" class="text-center text-muted py-4">
+            {{ 'common.loading' | translate }}
+          </td>
         </tr>
         <tr *ngIf="!profileLogsLoading() && profileLogs().length === 0">
           <td colspan="5" class="text-center text-muted py-4">{{ 'NO_RECORDS' | translate }}</td>
@@ -194,8 +305,8 @@
         <ng-container *ngIf="!profileLogsLoading()">
           <tr *ngFor="let log of profileLogs()">
             <td>
-              <span>{{ log.createdDate | date:'dd/MM/yyyy' }}</span>
-              <div class="text-muted small">{{ log.createdDate | date:'HH:mm' }}</div>
+              <span>{{ log.createdDate | date: 'dd/MM/yyyy' }}</span>
+              <div class="text-muted small">{{ log.createdDate | date: 'HH:mm' }}</div>
             </td>
             <td>{{ 'PROFILE_LOGS.ACTIONS.' + log.actionType | translate }}</td>
             <td>{{ translateSection(log.section) }}</td>
@@ -207,9 +318,13 @@
     </table>
   </div>
   @if (profileLogsPaginationMetadata() && profileLogsTotalItems() > 0) {
-    <app-pagination class="w-100" [currentPage]="profileLogsPageNumber()"
-      [totalItems]="profileLogsTotalItems()" [itemsPerPage]="profileLogsPageSize()"
+    <app-pagination
+      class="w-100"
+      [currentPage]="profileLogsPageNumber()"
+      [totalItems]="profileLogsTotalItems()"
+      [itemsPerPage]="profileLogsPageSize()"
       (pageChanged)="onProfileLogsPageChange($event)"
-      (pageSizeChanged)="onProfileLogsPageSizeChange($event)"></app-pagination>
+      (pageSizeChanged)="onProfileLogsPageSizeChange($event)"
+    ></app-pagination>
   }
 </p-dialog>

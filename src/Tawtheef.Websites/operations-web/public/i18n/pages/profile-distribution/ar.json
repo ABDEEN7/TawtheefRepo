@@ -1,4 +1,6 @@
 {
+  "distribution.filters.year": "السنة",
+  "distribution.filters.clearYear": "مسح تصفية السنة",
   "distribution.eyebrow": "عمليات التوزيع",
   "distribution.title": "توزيع الملفات الشخصية",
   "distribution.subtitle": "إسناد الملفات يدويًا أو آليًا مع الحفاظ على التوازن بين الموظفين.",
@@ -26,6 +28,7 @@
   "distribution.filters.all": "الكل",
   "distribution.filters.yes": "نعم",
   "distribution.filters.no": "لا",
+  "distribution.filters.assignmentState": "حالة التعيين",
   "distribution.filters.assigned": "معين",
   "distribution.filters.unassigned": "غير معين",
   "distribution.filters.assignedEmployee": "الموظف المعين",

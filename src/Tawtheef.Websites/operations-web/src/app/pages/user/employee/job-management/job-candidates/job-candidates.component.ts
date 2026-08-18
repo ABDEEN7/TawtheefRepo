@@ -64,6 +64,7 @@ export class JobCandidatesComponent implements OnInit {
   pointsAverage = 0;
   currentPage = signal(1);
   itemsPerPage = signal(10);
+  readonly canExport = () => this.authService.hasPermission(Permissions.Dashboard.Export);
 
   candidates: PaginatedResult<JobCandidateListItem> | undefined;
   selectedCandidates: JobCandidateListItem[] = [];

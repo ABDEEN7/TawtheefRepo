@@ -15,21 +15,9 @@ export class FileUtilsService {
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
-  private get isAzure(): boolean {
-    return environment.storageProvider === 'Azure';
-  }
   private isSasUrl(url: string): boolean {
     // Azure SAS غالبًا يحتوي sv + sig
     return /[?&]sv=/.test(url) && /[?&]sig=/.test(url);
-  }
-
-  private isSameOrigin(url: string): boolean {
-    try {
-      const u = new URL(url, window.location.origin);
-      return u.origin === window.location.origin;
-    } catch {
-      return false;
-    }
   }
 
   private isProtectedUrl(url: string): boolean {
@@ -57,6 +45,14 @@ export class FileUtilsService {
     this.triggerDownload(file, name);
   }
 
+  async downloadResponse(response: HttpResponse<Blob>, fallbackFileName: string): Promise<void> {
+    const disposition = response.headers.get('content-disposition') ?? '';
+    const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+    const plain = /filename="?([^";]+)"?/i.exec(disposition)?.[1];
+    const fileName = encoded ? decodeURIComponent(encoded) : plain ?? fallbackFileName;
+    await this.downloadBlob(response.body ?? new Blob(), fileName);
+  }
+
   /**
    * Previews a File/Blob in a new tab (PDF or Image).
    */
@@ -78,7 +74,7 @@ export class FileUtilsService {
    * - If it’s an image, opens directly.
    * - If it’s a protected URL (needs JWT), set `forceAuthFetch=true` to fetch as blob (interceptor applies) then open.
    */
-  async previewUrl(fileUrl: string, fileName = '', forceAuthFetch = false): Promise<void> {
+  async previewUrl(fileUrl: string, forceAuthFetch = false): Promise<void> {
     if (!this.isBrowser) return;
 
     const isProtected = this.isProtectedUrl(fileUrl);

@@ -1,0 +1,13 @@
+import { StatusCount } from './dashboard-common.model';
+
+export interface ProfileBreakdown {
+  byStatus: StatusCount[];
+  byCandidateType: CandidateTypeCount[];
+}
+
+export interface CandidateTypeCount {
+  candidateTypeId?: string;
+  key: string;
+  label: string;
+  count: number;
+}

@@ -1,4 +1,6 @@
 {
+  "JOB_LIST_FILTERS_YEAR": "السنة",
+  "JOB_LIST_FILTERS_CLEAR_YEAR": "مسح تصفية السنة",
   "JOB_BASIC_MODAL.TITLE": "البيانات الأساسية للوظيفة",
   "JOB_LIST_AVAILABLE_JOBS": "الوظائف المتاحة",
   "JOB_LIST_REVIEW_EDIT_JOBS": "مراجعة وتعديل قائمة الوظائف",
@@ -78,5 +80,6 @@
   "JOB_LIST_FILTERS_SECTOR": "القطاع",
   "JOB_LIST_FILTERS_MANAGEMENT": "الإدارة",
   "JOB_LIST_FILTERS_DEPARTMENT": "القسم",
-  "JOB_LIST_BUTTONS_POINTS_REVIEW": "مراجعة النقاط"
+  "JOB_LIST_BUTTONS_POINTS_REVIEW": "مراجعة النقاط",
+  "JOB_LIST_BUTTONS_EXPORT": "تصدير"
 }

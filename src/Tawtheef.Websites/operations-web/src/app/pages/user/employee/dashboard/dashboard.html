@@ -1,826 +1,343 @@
-<section i18nNamespace="pages/employee/dashboard" class="ref-dashboard-wrap">
+<section
+  i18nNamespace="pages/employee/dashboard"
+  class="ref-dashboard-wrap"
+  [style.--dashboard-font-scale]="fontScale()"
+>
   <main class="main">
-    <div class="tabs-shell">
-      <div class="tabs" role="tablist">
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'overview'"
-          (click)="setActiveTab('overview')">
-          <i class="hgi-stroke hgi-dashboard-square-01" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.overview' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'candidates'"
-          (click)="setActiveTab('candidates')">
-          <i class="hgi-stroke hgi-user-multiple" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.candidates' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'jobs'" (click)="setActiveTab('jobs')">
-          <i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.jobs' | translate }}</span>
-        </button>
-        <button class="tab-button" type="button" [class.active]="activeTab() === 'employees'"
-          (click)="setActiveTab('employees')">
-          <i class="hgi-stroke hgi-user-group" aria-hidden="true"></i>
-          <span>{{ 'dashboard.tabs.employees' | translate }}</span>
-        </button>
-      </div>
-    </div>
-
-    @if (activeTab() === 'overview') {
     <section class="tab-panel active">
       <div class="section-title">
         <div>
-          <h3>{{ 'dashboard.overview.title' | translate }}</h3>
-          <p>{{ 'dashboard.overview.subtitle' | translate }}</p>
+          <h2>
+            <b>{{ 'dashboard.overview.title' | translate }}</b>
+          </h2>
+          <h6 class="text-muted my-3">{{ 'dashboard.overview.subtitle' | translate }}</h6>
         </div>
       </div>
 
-      @if (overviewLoading()) {
-      <section class="kpi-grid">
-        @for (item of kpiSkeletonItems; track item) {
-        <article class="kpi-card skeleton-card">
-          <div class="skeleton-line skeleton-icon"></div>
-          <div class="skeleton-line skeleton-text"></div>
-          <div class="skeleton-line skeleton-value"></div>
-          <div class="skeleton-line skeleton-help"></div>
-        </article>
-        }
-      </section>
-      } @else {
-      <section class="kpi-grid">
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="hgi-stroke hgi-user-multiple" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().totalProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet"></span><span>{{ 'dashboard.help.totalProfiles' | translate
-              }}</span></div>
-        </article>
+      <section class="dashboard-section main-indicators-section">
+        <div class="dashboard-section-header">
+          <h3>{{ 'dashboard.mainIndicators.title' | translate }}</h3>
 
-        <article class="kpi-card">
-          <div class="kpi-icon purple"><i class="hgi-stroke hgi-file-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet purple"></span><span>{{ 'dashboard.help.unassignedProfiles'
-              | translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.pendingProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().underReviewProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet orange"></span><span>{{ 'dashboard.help.pendingProfiles' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.approvedProfiles' | translate }}</div>
-          <div class="kpi-value">{{ activeKpis().approvedProfiles | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.approvedProfiles' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
-          <div class="kpi-value">{{ activeJobKpis().totalJobs | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet"></span><span>{{ 'dashboard.help.totalJobs' | translate
-              }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-megaphone-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.publishedJobs' | translate }}</div>
-          <div class="kpi-value">{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.publishedJobs' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon blue"><i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.totalInvitations' | translate }}</div>
-          <div class="kpi-value">{{ activeInvitationKpis().totalInvitations | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet blue"></span><span>{{ 'dashboard.help.totalInvitations' |
-              translate }}</span></div>
-        </article>
-
-        <article class="kpi-card">
-          <div class="kpi-icon green"><i class="hgi-stroke hgi-mail-open-01" aria-hidden="true"></i></div>
-          <div class="kpi-label">{{ 'dashboard.kpi.acceptedInvitations' | translate }}</div>
-          <div class="kpi-value">{{ activeInvitationKpis().acceptedInvitations | number:'1.0-0' }}</div>
-          <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.acceptedInvitations'
-              | translate }}</span></div>
-        </article>
-      </section>
-      }
-
-      <section class="content-grid">
-        @if (overviewLoading()) {
-        <article class="hero-card skeleton-dark">
-          <div class="skeleton-line skeleton-icon"></div>
-          <div class="skeleton-line skeleton-title"></div>
-          <div class="skeleton-line skeleton-paragraph"></div>
-          <div class="hero-metrics">
-            @for (item of [1,2,3]; track item) {
-            <div class="hero-metric">
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
-            }
-          </div>
-        </article>
-        } @else {
-        <article class="hero-card">
-          <div class="hero-icon"><i class="hgi-stroke hgi-chart-breakout-circle" aria-hidden="true"></i></div>
-          <h3>{{ 'dashboard.hero.title' | translate }}</h3>
-          <p>{{ 'dashboard.hero.text' | translate }}</p>
-          <div class="hero-metrics">
-            <div class="hero-metric">
-              <strong>{{ activeKpis().pendingProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingProfiles' | translate }}</span>
-            </div>
-            <div class="hero-metric">
-              <strong>{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingJobs' | translate }}</span>
-            </div>
-            <div class="hero-metric">
-              <strong>{{ activeInvitationKpis().pendingInvitations | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.hero.pendingInvitations' | translate }}</span>
-            </div>
-          </div>
-        </article>
-        }
+          @if (canExportDashboard()) {
+            <p-menu #exportMenu [model]="exportActions()" [popup]="true" appendTo="body"></p-menu>
+            <button
+              type="button"
+              class="btn btn-primary dashboard-action-btn"
+              (click)="exportMenu.toggle($event)"
+              [disabled]="exportInProgress()"
+              aria-haspopup="menu"
+            >
+              <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+              <span>{{ 'dashboard.common.export' | translate }}</span>
+              <i class="pi pi-chevron-down" aria-hidden="true"></i>
+            </button>
+          }
+        </div>
 
         @if (overviewLoading()) {
-        <article class="card candidate-types-card">
-          <div class="card-header">
-            <div>
-              <div class="skeleton-line skeleton-title"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
-          </div>
-          <div class="actions-grid">
-            @for (item of miniSkeletonItems; track item) {
-            <div class="action-card skeleton-card">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-text"></div>
-            </div>
+          <section class="kpi-grid">
+            @for (item of kpiSkeletonItems; track item) {
+              <article class="kpi-card figma-kpi-card skeleton-card">
+                <div class="skeleton-line skeleton-icon"></div>
+                <div class="skeleton-line skeleton-text"></div>
+                <div class="skeleton-line skeleton-value"></div>
+                <div class="skeleton-line skeleton-help"></div>
+              </article>
             }
-          </div>
-        </article>
+          </section>
         } @else {
-        <article class="card candidate-types-card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
-              <p>{{ 'dashboard.quickActions.subtitle' | translate }}</p>
-            </div>
-          </div>
-          <div class="actions-grid">
-            <div class="action-card">
-              <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-              <strong>{{ activeKpis().pendingProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.pendingProfiles' | translate }}</span>
-            </div>
-            <div class="action-card">
-              <div class="kpi-icon purple"><i class="hgi-stroke hgi-share-08" aria-hidden="true"></i></div>
-              <strong>{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.unassignedProfiles' | translate }}</span>
-            </div>
-            <div class="action-card">
-              <div class="kpi-icon"><i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i></div>
-              <strong>{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.jobsPending' | translate }}</span>
-            </div>
-            <div class="action-card">
-              <div class="kpi-icon blue"><i class="hgi-stroke hgi-star" aria-hidden="true"></i></div>
-              <strong>{{ activeJobKpis().pendingPointApprovalJobs | number:'1.0-0' }}</strong>
-              <span>{{ 'dashboard.quickActions.pointsPending' | translate }}</span>
-            </div>
-          </div>
-        </article>
+          <section class="kpi-grid figma-kpi-grid">
+            @for (indicator of mainIndicators(); track indicator.labelKey) {
+              <article
+                class="kpi-card figma-kpi-card"
+                [class.kpi-card-clickable]="isIndicatorNavigable(indicator)"
+                [attr.role]="isIndicatorNavigable(indicator) ? 'link' : null"
+                [attr.tabindex]="isIndicatorNavigable(indicator) ? 0 : null"
+                (click)="navigateToIndicator(indicator)"
+                (keydown.enter)="navigateToIndicator(indicator)"
+                (keydown.space)="$event.preventDefault(); navigateToIndicator(indicator)"
+              >
+                <div class="figma-kpi-top">
+                  <div class="kpi-label">{{ indicator.labelKey | translate }}</div>
+                  <div [class]="'kpi-icon ' + indicator.color">
+                    <i [class]="'hgi-stroke ' + indicator.icon" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <div class="kpi-value">{{ indicator.value | number: '1.0-0' }}</div>
+                <div class="kpi-status figma-kpi-status" [ngClass]="trendClass(indicator.trend)">
+                  @if (indicator.trend?.changePercentage != null) {
+                    <strong>
+                      {{ indicator.trend!.changePercentage! > 0 ? '+' : ''
+                      }}{{ indicator.trend!.changePercentage | number: '1.0-1' }}%
+                    </strong>
+                    <span>{{ 'dashboard.kpi.vsPreviousYear' | translate }}</span>
+                  }
+                </div>
+              </article>
+            }
+          </section>
         }
       </section>
 
-    </section>
-    }
+      <section class="dashboard-section operational-summary-section">
+        <div class="dashboard-section-header operational-summary-header">
+          <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
 
-    @if (activeTab() === 'candidates') {
-    <section class="tab-panel active">
-      <div class="section-title">
-        <div>
-          <h3>{{ 'dashboard.candidates.title' | translate }}</h3>
-          <p>{{ 'dashboard.candidates.subtitle' | translate }}</p>
+          <div class="summary-year-select-wrapper">
+            <select
+              class="summary-year-select"
+              [value]="selectedYear()"
+              [disabled]="yearsLoading()"
+              (change)="onYearChange(+$any($event.target).value)"
+              [attr.aria-label]="'dashboard.filters.year' | translate"
+            >
+              @for (year of availableYears(); track year) {
+                <option [value]="year">{{ year }}</option>
+              }
+              @if (availableYears().length === 0) {
+                <option [value]="selectedYear()">{{ selectedYear() }}</option>
+              }
+            </select>
+
+            <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+          </div>
         </div>
-      </div>
 
-      <section class="content-grid candidate-tab-grid">
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.candidates.statusTitle' | translate }}</h3>
-              <p>{{ 'dashboard.candidates.statusSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (candidateStatusLoading()) {
-          <div class="candidate-overview-layout">
-            <div class="candidate-total-panel skeleton-dark">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-text"></div>
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-paragraph"></div>
-            </div>
-            <div class="candidate-mini-grid-header">
-              <div class="candidate-mini-grid-3">
-                @for (item of [1,2,3]; track item) {
-                <div class="candidate-status-item skeleton-card">
-                  <div class="skeleton-line skeleton-icon"></div>
-                  <div class="skeleton-line skeleton-text"></div>
-                  <div class="skeleton-line skeleton-value"></div>
-                  <div class="skeleton-line skeleton-help"></div>
+        <div class="operational-summary-grid">
+          <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â±Ã˜Â´Ã˜Â­Ã™Å Ã™â€  -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon purple">
+                  <i class="hgi-stroke hgi-user-add-01"></i>
                 </div>
-                }
-              </div>
-              <div class="candidate-mini-grid">
-                @for (item of [1,2]; track item) {
-                <div class="candidate-status-item skeleton-card">
-                  <div class="skeleton-line skeleton-icon"></div>
-                  <div class="skeleton-line skeleton-text"></div>
-                  <div class="skeleton-line skeleton-value"></div>
-                  <div class="skeleton-line skeleton-help"></div>
-                </div>
-                }
-              </div>
-            </div>
-          </div>
-          } @else {
-          <div class="candidate-overview-layout">
-            <div class="candidate-total-panel">
-              <div>
-                <div class="candidate-total-icon"><i class="hgi-stroke hgi-user-multiple" aria-hidden="true"></i></div>
-                <div class="candidate-total-label">{{ 'dashboard.kpi.totalProfiles' | translate }}</div>
-                <div class="candidate-total-number">{{ activeKpis().totalProfiles | number:'1.0-0' }}</div>
-                <div class="candidate-total-note">{{ 'dashboard.candidates.totalNote' | translate }}</div>
-              </div>
-            </div>
-            <div class="candidate-mini-grid-header">
-              <div class="candidate-mini-grid-3">
-                <div class="candidate-status-item">
-                  <div class="candidate-status-icon blue"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i>
-                  </div>
-                  <div class="candidate-status-label">{{ 'dashboard.status.InCreation' | translate }}</div>
-                  <div class="candidate-status-value">{{ activeKpis().inCreationProfiles | number:'1.0-0' }}</div>
-                  <div class="candidate-progress"><span class="blue"
-                      [style.width.%]="progress(activeKpis().inCreationProfiles, activeKpis().totalProfiles)"></span>
-                  </div>
-                </div>
-                <div class="candidate-status-item">
-                  <div class="candidate-status-icon"><i class="hgi-stroke hgi-sent" aria-hidden="true"></i></div>
-                  <div class="candidate-status-label">{{ 'dashboard.status.Submitted' | translate }}</div>
-                  <div class="candidate-status-value">{{ activeKpis().submittedProfiles | number:'1.0-0' }}</div>
-                  <div class="candidate-progress"><span
-                      [style.width.%]="progress(activeKpis().submittedProfiles, activeKpis().totalProfiles)"></span>
-                  </div>
-                </div>
-                <div class="candidate-status-item">
-                  <div class="candidate-status-icon purple"><i class="hgi-stroke hgi-user-account"
-                      aria-hidden="true"></i>
-                  </div>
-                  <div class="candidate-status-label">{{ 'dashboard.status.UnderReview' | translate }}</div>
-                  <div class="candidate-status-value">{{ activeKpis().underReviewProfiles | number:'1.0-0' }}</div>
-                  <div class="candidate-progress"><span class="purple"
-                      [style.width.%]="progress(activeKpis().underReviewProfiles, activeKpis().totalProfiles)"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="candidate-mini-grid">
-                <div class="candidate-status-item">
-                  <div class="candidate-status-icon green"><i class="hgi-stroke hgi-checkmark-circle-02"
-                      aria-hidden="true"></i></div>
-                  <div class="candidate-status-label">{{ 'dashboard.status.Approved' | translate }}</div>
-                  <div class="candidate-status-value">{{ activeKpis().approvedProfiles | number:'1.0-0' }}</div>
-                  <div class="candidate-progress"><span class="green"
-                      [style.width.%]="progress(activeKpis().approvedProfiles, activeKpis().totalProfiles)"></span>
-                  </div>
-                </div>
-                <div class="candidate-status-item">
-                  <div class="candidate-status-icon orange"><i class="hgi-stroke hgi-arrow-turn-backward"
-                      aria-hidden="true"></i></div>
-                  <div class="candidate-status-label">{{ 'dashboard.candidates.returnedRejected' | translate }}</div>
-                  <div class="candidate-status-value">{{ activeKpis().returnedProfiles + activeKpis().rejectedProfiles |
-                    number:'1.0-0' }}</div>
-                  <div class="candidate-progress"><span class="orange"
-                      [style.width.%]="progress(activeKpis().returnedProfiles + activeKpis().rejectedProfiles, activeKpis().totalProfiles)"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          }
-        </article>
-
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.candidates.typeTitle' | translate }}</h3>
-              <p>{{ 'dashboard.candidates.typeSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (candidateTypesLoading()) {
-          <div class="candidate-overview-layout candidate-type-overview-layout">
-            <div class="candidate-total-panel skeleton-dark">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-text"></div>
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-paragraph"></div>
-            </div>
-            <div class="candidate-mini-grid-header">
-              <div class="candidate-mini-grid-3">
-                @for (item of [1,2,3]; track item) {
-                <div class="candidate-type-card skeleton-card">
-                  <div class="skeleton-line skeleton-icon"></div>
-                  <div class="skeleton-line skeleton-text"></div>
-                  <div class="skeleton-line skeleton-value"></div>
-                </div>
-                }
-              </div>
-              <div class="candidate-type-grid">
-                @for (item of [1,2]; track item) {
-                <div class="candidate-type-card skeleton-card">
-                  <div class="skeleton-line skeleton-icon"></div>
-                  <div class="skeleton-line skeleton-text"></div>
-                  <div class="skeleton-line skeleton-value"></div>
-                </div>
-                }
-              </div>
-            </div>
-          </div>
-          } @else {
-          <div class="candidate-overview-layout candidate-type-overview-layout">
-            <div class="candidate-total-panel">
-              <div>
-                <div class="candidate-total-icon"><i class="hgi-stroke hgi-user-group" aria-hidden="true"></i></div>
-                <div class="candidate-total-label">{{ 'dashboard.candidateTypes.total' | translate }}</div>
-                <div class="candidate-total-number">{{ candidateTypeTotal() | number:'1.0-0' }}</div>
-                <div class="candidate-total-note">{{ 'dashboard.candidateTypes.totalNote' | translate }}</div>
+                <h4>{{ 'dashboard.operationalSummary.candidates' | translate }}</h4>
               </div>
             </div>
 
-            <div class="candidate-mini-grid-header">
-              <div class="candidate-mini-grid-3">
-                <div class="candidate-type-card">
-                  <div class="candidate-type-heading">
-                    <div class="candidate-type-icon green"><i class="hgi-stroke hgi-user-id-verification"
-                        aria-hidden="true"></i>
-                    </div>
-                    <div class="candidate-type-label">{{ 'dashboard.candidateTypes.qatari' | translate }}</div>
-                  </div>
-                  <div class="candidate-type-value">{{ candidateTypeCount('qatari') | number:'1.0-0' }}</div>
-                  <div class="candidate-type-note">{{ 'dashboard.candidateTypes.qatariNote' | translate }}</div>
-                </div>
-                <div class="candidate-type-card">
-                  <div class="candidate-type-heading">
-                    <div class="candidate-type-icon orange"><i class="hgi-stroke hgi-kid" aria-hidden="true"></i></div>
-                    <div class="candidate-type-label">{{ 'dashboard.candidateTypes.sonOfQatariMother' | translate }}
-                    </div>
-                  </div>
-                  <div class="candidate-type-value">{{ candidateTypeCount('sonOfQatariMother') | number:'1.0-0' }}
-                  </div>
-                  <div class="candidate-type-note">{{ 'dashboard.candidateTypes.sonOfQatariMotherNote' | translate }}
-                  </div>
-                </div>
-                <div class="candidate-type-card">
-                  <div class="candidate-type-heading">
-                    <div class="candidate-type-icon purple"><i class="hgi-stroke hgi-user-love-01"
-                        aria-hidden="true"></i>
-                    </div>
-                    <div class="candidate-type-label">{{ 'dashboard.candidateTypes.wifeOfQatari' | translate }}</div>
-                  </div>
-                  <div class="candidate-type-value">{{ candidateTypeCount('wifeOfQatari') | number:'1.0-0' }}</div>
-                  <div class="candidate-type-note">{{ 'dashboard.candidateTypes.wifeOfQatariNote' | translate }}</div>
-                </div>
-              </div>
-              <div class="candidate-type-grid">
-                <div class="candidate-type-card">
-                  <div class="candidate-type-heading">
-                    <div class="candidate-type-icon maroon"><i class="hgi-stroke hgi-location-04"
-                        aria-hidden="true"></i>
-                    </div>
-                    <div class="candidate-type-label">{{ 'dashboard.candidateTypes.gcc' | translate }}</div>
-                  </div>
-                  <div class="candidate-type-value">{{ candidateTypeCount('gcc') | number:'1.0-0' }}</div>
-                  <div class="candidate-type-note">{{ 'dashboard.candidateTypes.gccNote' | translate }}</div>
-                </div>
-                <div class="candidate-type-card">
-                  <div class="candidate-type-heading">
-                    <div class="candidate-type-icon red"><i class="hgi-stroke hgi-home-09" aria-hidden="true"></i></div>
-                    <div class="candidate-type-label">{{ 'dashboard.candidateTypes.residentQatar' | translate }}</div>
-                  </div>
-                  <div class="candidate-type-value">{{ candidateTypeCount('residentQatar') | number:'1.0-0' }}</div>
-                  <div class="candidate-type-note">{{ 'dashboard.candidateTypes.residentQatarNote' | translate }}</div>
-                </div>
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainCandidatesChart
+                type="doughnut"
+                [data]="visibleCandidateChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeKpis().totalProfiles | number: '1.0-0' }}</strong>
               </div>
             </div>
-          </div>
-          }
-        </article>
+
+            <div class="operation-legend">
+              @for (item of candidateSummaryItems(); track item.label) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openCandidatesModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ™Ë†Ã˜Â¸Ã˜Â§Ã˜Â¦Ã™Â -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon blue">
+                  <i class="hgi-stroke hgi-folder-01"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.jobs' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainJobsChart
+                type="doughnut"
+                [data]="visibleJobsChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeJobKpis().totalJobs | number: '1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="operation-legend">
+              @for (item of jobsSummaryItems(); track item.label) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openJobsModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â¸Ã™ÂÃ™Å Ã™â€  -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon green">
+                  <i class="hgi-stroke hgi-user-group"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.employees' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainEmployeesChart
+                type="doughnut"
+                [data]="visibleEmployeesChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+
+                <strong>
+                  {{ employeeWorkloadTotal() | number: '1.0-0' }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="operation-legend employee-workload-metrics">
+              <div class="employee-workload-title">
+                {{ 'dashboard.employees.assignmentWorkload' | translate }}
+              </div>
+              @for (item of employeesSummaryItems(); track item.labelKey) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.labelKey | translate }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openEmployeesModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ˜Â¯Ã˜Â¹Ã™Ë†Ã˜Â§Ã˜Âª -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon orange">
+                  <i class="hgi-stroke hgi-mail-01"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.invitations' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainInvitationsChart
+                type="doughnut"
+                [data]="visibleInvitationsChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeInvitationKpis().totalInvitations | number: '1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="operation-legend">
+              @for (item of invitationsSummaryItems(); track item.labelKey) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.labelKey | translate }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openInvitationsModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+        </div>
       </section>
 
-    </section>
-    }
-
-    @if (activeTab() === 'jobs') {
-    <section class="tab-panel active">
-      <div class="section-title">
-        <div>
-          <h3>{{ 'dashboard.jobs.title' | translate }}</h3>
-          <p>{{ 'dashboard.jobs.subtitle' | translate }}</p>
+      <section class="dashboard-section quick-actions-section">
+        <div class="dashboard-section-header">
+          <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
         </div>
-      </div>
-      <section class="content-grid">
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.jobs.statusTitle' | translate }}</h3>
-              <p>{{ 'dashboard.jobs.statusSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (jobsSummaryLoading()) {
-          <div class="status-overview">
-            <div class="donut-chart skeleton-donut"></div>
-            <div class="status-list">
-              @for (item of [1,2,3,4,5,6,7]; track item) {
-              <div class="status-row">
-                <span class="dot draft"></span>
-                <span class="skeleton-line skeleton-text"></span>
-                <strong class="skeleton-line skeleton-number"></strong>
-              </div>
-              }
-            </div>
-          </div>
-          } @else {
-          <div class="status-overview">
-            <div class="donut-chart">
-              <svg viewBox="0 0 178 178" role="img" aria-hidden="true">
-                <circle class="donut-track" cx="89" cy="89" r="70"></circle>
-                @for (segment of jobDonutSegments(); track segment.key) {
-                <circle class="donut-segment" cx="89" cy="89" r="70" [attr.stroke]="segment.color"
-                  [attr.stroke-dasharray]="segment.dasharray" [attr.stroke-dashoffset]="segment.dashoffset"
-                  [pTooltip]="jobDonutTooltip(segment)" tooltipPosition="top"></circle>
-                }
-              </svg>
-              <div class="donut-center">
-                <span>{{ 'dashboard.total' | translate }}</span>
-                <strong>{{ activeJobKpis().totalJobs | number:'1.0-0' }}</strong>
-                <span>{{ 'dashboard.jobs.unit' | translate }}</span>
-              </div>
-            </div>
-            <div class="status-list">
-              <div class="status-row"><span class="dot draft"></span><span>{{ 'dashboard.status.Draft' | translate
-                  }}</span><strong>{{ activeJobKpis().draftJobs | number:'1.0-0' }}</strong></div>
-              <div class="status-row"><span class="dot pending"></span><span>{{ 'dashboard.status.PendingApproval' |
-                  translate }}</span><strong>{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</strong>
-              </div>
-              <div class="status-row"><span class="dot approved"></span><span>{{
-                  'dashboard.status.PendingPointConfiguration' | translate }}</span><strong>{{
-                  activeJobKpis().pendingPointConfigurationJobs | number:'1.0-0' }}</strong></div>
-              <div class="status-row"><span class="dot returned"></span><span>{{ 'dashboard.status.NeedUpdate' |
-                  translate }}</span><strong>{{ activeJobKpis().needUpdateJobs | number:'1.0-0' }}</strong></div>
-              <div class="status-row"><span class="dot ready"></span><span>{{ 'dashboard.status.ReadyForAnnouncement' |
-                  translate }}</span><strong>{{ activeJobKpis().readyForAnnouncementJobs | number:'1.0-0'
-                  }}</strong></div>
-              <div class="status-row"><span class="dot published"></span><span>{{ 'dashboard.status.Published' |
-                  translate }}</span><strong>{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</strong></div>
-              <div class="status-row"><span class="dot closed"></span><span>{{ 'dashboard.status.Closed' | translate
-                  }}</span><strong>{{ activeJobKpis().closedJobs | number:'1.0-0' }}</strong></div>
-            </div>
-          </div>
-          }
-        </article>
 
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.jobs.countsTitle' | translate }}</h3>
-              <p>{{ 'dashboard.jobs.countsSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (jobsSummaryLoading()) {
-          <section class="kpi-grid compact">
-            @for (item of [1,2,3]; track item) {
-            <article class="kpi-card skeleton-card">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-text"></div>
-              <div class="skeleton-line skeleton-value"></div>
-              <div class="skeleton-line skeleton-help"></div>
-            </article>
-            }
-          </section>
-          } @else {
-          <section class="kpi-grid compact">
-            <article class="kpi-card">
-              <div class="kpi-icon"><i class="hgi-stroke hgi-briefcase-02" aria-hidden="true"></i></div>
-              <div class="kpi-label">{{ 'dashboard.kpi.totalJobs' | translate }}</div>
-              <div class="kpi-value">{{ activeJobKpis().totalJobs | number:'1.0-0' }}</div>
-              <div class="kpi-status"><span class="status-bullet"></span><span>{{ 'dashboard.help.totalJobs' | translate
-                  }}</span></div>
-            </article>
-            <article class="kpi-card">
-              <div class="kpi-icon orange"><i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i></div>
-              <div class="kpi-label">{{ 'dashboard.kpi.pendingReviewJobs' | translate }}</div>
-              <div class="kpi-value">{{ activeJobKpis().pendingReviewJobs | number:'1.0-0' }}</div>
-              <div class="kpi-status"><span class="status-bullet orange"></span><span>{{
-                  'dashboard.help.pendingReviewJobs' | translate }}</span></div>
-            </article>
-            <article class="kpi-card">
-              <div class="kpi-icon green"><i class="hgi-stroke hgi-megaphone-01" aria-hidden="true"></i></div>
-              <div class="kpi-label">{{ 'dashboard.kpi.publishedJobs' | translate }}</div>
-              <div class="kpi-value">{{ activeJobKpis().publishedJobs | number:'1.0-0' }}</div>
-              <div class="kpi-status"><span class="status-bullet green"></span><span>{{ 'dashboard.help.publishedJobs' |
-                  translate }}</span></div>
-            </article>
-          </section>
+        <div class="quick-actions-grid">
+          @for (action of quickActions(); track action.key) {
+            <button class="quick-action-card" type="button" (click)="navigateQuickAction(action)">
+              <div class="quick-action-square">
+                <div class="quick-action-icon">
+                  <i class="hgi-stroke" [ngClass]="action.icon"></i>
+                </div>
+              </div>
+              <span>{{ action.labelKey | translate }}</span>
+            </button>
           }
-        </article>
+        </div>
       </section>
-
-      <article class="card table-card latest-jobs-card">
-        <div class="card-header">
-          <div>
-            <h3>{{ 'dashboard.latestJobs.title' | translate }}</h3>
-            <p>{{ 'dashboard.latestJobs.subtitle' | translate }}</p>
-          </div>
-        </div>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>{{ 'dashboard.latestJobs.jobTitle' | translate }}</th>
-                <th>{{ 'dashboard.latestJobs.management' | translate }}</th>
-                <th>{{ 'dashboard.latestJobs.candidates' | translate }}</th>
-                <th>{{ 'dashboard.latestJobs.invitationsSent' | translate }}</th>
-                <th>{{ 'dashboard.latestJobs.status' | translate }}</th>
-                <th>{{ 'dashboard.latestJobs.actionRequired' | translate }}</th>
-              </tr>
-            </thead>
-            @if (latestJobsLoading()) {
-            <tbody>
-              @for (item of tableSkeletonRows; track item) {
-              <tr>
-                @for (cell of [1,2,3,4,5,6]; track cell) {
-                <td><span class="skeleton-line skeleton-table-line"></span></td>
-                }
-              </tr>
-              }
-            </tbody>
-            } @else {
-            <tbody>
-              @for (job of latestJobRows(); track job.jobId) {
-              <tr>
-                <td class="job-title">{{ job.jobTitle }}</td>
-                <td>{{ job.managementName }}</td>
-                <td class="number">{{ job.candidatesCount | number:'1.0-0' }}</td>
-                <td class="number">{{ job.invitationsSent | number:'1.0-0' }}</td>
-                <td>
-                  <span class="badge" [ngClass]="jobStatusClass(job.status)">
-                    {{ 'dashboard.status.' + job.status | translate }}
-                  </span>
-                </td>
-                <td>{{ jobActionKey(job.status) | translate }}</td>
-              </tr>
-              } @empty {
-              <tr>
-                <td colspan="6">{{ 'dashboard.table.noData' | translate }}</td>
-              </tr>
-              }
-            </tbody>
-            }
-          </table>
-        </div>
-      </article>
     </section>
-    }
 
-    @if (activeTab() === 'employees') {
-    <section class="tab-panel active">
-      <div class="section-title">
-        <div>
-          <h3>{{ 'dashboard.employees.title' | translate }}</h3>
-          <p>{{ 'dashboard.employees.subtitle' | translate }}</p>
-        </div>
-      </div>
-      <section class="content-grid">
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.employees.insightsTitle' | translate }}</h3>
-              <p>{{ 'dashboard.employees.insightsSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (employeeIndicatorsLoading()) {
-          <div class="employee-insight-grid">
-            @for (item of miniSkeletonItems; track item) {
-            <div class="employee-insight-card skeleton-card">
-              <div class="skeleton-line skeleton-icon"></div>
-              <div class="skeleton-line skeleton-text"></div>
-              <div class="skeleton-line skeleton-value"></div>
-            </div>
-            }
-          </div>
-          } @else {
-          <div class="employee-insight-grid">
-            <div class="employee-insight-card">
-              <div class="candidate-status-icon purple"><i class="hgi-stroke hgi-user-group" aria-hidden="true"></i>
-              </div>
-              <div class="employee-insight-label">{{ 'dashboard.kpi.activeEmployees' | translate }}</div>
-              <div class="employee-insight-value">{{ activeKpis().activeEmployees | number:'1.0-0' }}</div>
-            </div>
-            <div class="employee-insight-card">
-              <div class="candidate-status-icon blue"><i class="hgi-stroke hgi-chart-average" aria-hidden="true"></i>
-              </div>
-              <div class="employee-insight-label">{{ 'dashboard.kpi.remainingTasks' | translate }}</div>
-              <div class="employee-insight-value">{{ activeKpis().remainingTasks | number:'1.0-0' }}</div>
-            </div>
-            <div class="employee-insight-card">
-              <div class="candidate-status-icon orange"><i class="hgi-stroke hgi-share-08" aria-hidden="true"></i></div>
-              <div class="employee-insight-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
-              <div class="employee-insight-value">{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</div>
-            </div>
-            <div class="employee-insight-card">
-              <div class="candidate-status-icon green"><i class="hgi-stroke hgi-task-done-02" aria-hidden="true"></i>
-              </div>
-              <div class="employee-insight-label">{{ 'dashboard.kpi.completedTasks' | translate }}</div>
-              <div class="employee-insight-value">{{ activeKpis().completedTasks | number:'1.0-0' }}</div>
-            </div>
-          </div>
-          }
-        </article>
-
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h3>{{ 'dashboard.employees.outcomeTitle' | translate }}</h3>
-              <p>{{ 'dashboard.employees.outcomeSubtitle' | translate }}</p>
-            </div>
-          </div>
-          @if (employeeReviewOutcomesLoading()) {
-          <div class="mini-list">
-            @for (item of miniSkeletonItems; track item) {
-            <div>
-              <div class="mini-list-row">
-                <div>
-                  <div class="skeleton-line skeleton-text"></div>
-                  <div class="skeleton-line skeleton-help"></div>
-                </div>
-                <strong class="skeleton-line skeleton-number"></strong>
-              </div>
-              <div class="mini-list-progress skeleton-progress"></div>
-            </div>
-            }
-          </div>
-          } @else {
-          <div class="mini-list">
-            <div>
-              <div class="mini-list-row">
-                <div>
-                  <div class="mini-list-label">{{ 'dashboard.kpi.approvedProfiles' | translate }}</div>
-                  <div class="mini-list-sub">{{ 'dashboard.help.approvedProfiles' | translate }}</div>
-                </div>
-                <strong>{{ activeKpis().approvedProfiles | number:'1.0-0' }}</strong>
-              </div>
-              <div class="mini-list-progress"><span class="green"
-                  [style.width.%]="progress(activeKpis().approvedProfiles, activeKpis().totalProfiles)"></span></div>
-            </div>
-            <div>
-              <div class="mini-list-row">
-                <div>
-                  <div class="mini-list-label">{{ 'dashboard.kpi.returnedProfiles' | translate }}</div>
-                  <div class="mini-list-sub">{{ 'dashboard.help.returnedProfiles' | translate }}</div>
-                </div>
-                <strong>{{ activeKpis().returnedProfiles | number:'1.0-0' }}</strong>
-              </div>
-              <div class="mini-list-progress"><span class="orange"
-                  [style.width.%]="progress(activeKpis().returnedProfiles, activeKpis().totalProfiles)"></span></div>
-            </div>
-            <div>
-              <div class="mini-list-row">
-                <div>
-                  <div class="mini-list-label">{{ 'dashboard.kpi.unassignedProfiles' | translate }}</div>
-                  <div class="mini-list-sub">{{ 'dashboard.help.unassignedProfiles' | translate }}</div>
-                </div>
-                <strong>{{ activeKpis().unassignedProfiles | number:'1.0-0' }}</strong>
-              </div>
-              <div class="mini-list-progress"><span
-                  [style.width.%]="progress(activeKpis().unassignedProfiles, activeKpis().totalProfiles)"></span></div>
-            </div>
-            <div>
-              <div class="mini-list-row">
-                <div>
-                  <div class="mini-list-label">{{ 'dashboard.kpi.pendingProfiles' | translate }}</div>
-                  <div class="mini-list-sub">{{ 'dashboard.help.pendingProfiles' | translate }}</div>
-                </div>
-                <strong>{{ activeKpis().pendingProfiles | number:'1.0-0' }}</strong>
-              </div>
-              <div class="mini-list-progress"><span class="purple"
-                  [style.width.%]="progress(activeKpis().pendingProfiles, activeKpis().totalProfiles)"></span></div>
-            </div>
-          </div>
-          }
-        </article>
-      </section>
-
-      @if (canViewTeamPerformance()) {
-      <article class="card table-card">
-        <div class="card-header">
-          <div>
-            <h3>{{ 'dashboard.sections.teamPerformance' | translate }}</h3>
-            <p>{{ 'dashboard.table.teamStatsSubtitle' | translate }}</p>
-          </div>
-          <div class="table-search">
-            <i class="hgi-stroke hgi-search-01" aria-hidden="true"></i>
-            <input pInputText type="search" [ngModel]="tableSearch()" (ngModelChange)="onSearchChange($event)"
-              [placeholder]="'dashboard.search.placeholder' | translate" />
-          </div>
-        </div>
-        <div class="table-responsive">
-          <p-table class="custom-table team-performance-table" [value]="tableRows()" [rowHover]="true"
-            [customSort]="true" [sortField]="tableSortField()" [sortOrder]="tableSortOrder()" sortMode="single"
-            responsiveLayout="scroll" dataKey="employeeId" (sortFunction)="onTableSort($event)">
-            <ng-template pTemplate="header">
-              <tr>
-                <th pSortableColumn="Name" style="min-width: 220px">
-                  {{ 'dashboard.table.employee' | translate }}
-                  <p-sortIcon field="name"></p-sortIcon>
-                </th>
-                <th pSortableColumn="AssignedTasks">
-                  {{ 'dashboard.table.assignedTasks' | translate }}
-                  <p-sortIcon field="assignedTasks"></p-sortIcon>
-                </th>
-                <th pSortableColumn="CompletedTasks">
-                  {{ 'dashboard.table.completedTasks' | translate }}
-                  <p-sortIcon field="completedTasks"></p-sortIcon>
-                </th>
-                <th pSortableColumn="RemainingTasks">
-                  {{ 'dashboard.table.remainingTasks' | translate }}
-                  <p-sortIcon field="remainingTasks"></p-sortIcon>
-                </th>
-                <th pSortableColumn="OverdueTasks">
-                  {{ 'dashboard.table.overdueTasks' | translate }}
-                  <p-sortIcon field="overdueTasks"></p-sortIcon>
-                </th>
-              </tr>
-            </ng-template>
-
-            <ng-template pTemplate="body" let-row>
-              @if (tableLoading()) {
-              <tr>
-                @for (cell of [1,2,3,4,5]; track cell) {
-                <td><span class="skeleton-line skeleton-table-line"></span></td>
-                }
-              </tr>
-              } @else {
-              <tr>
-                <td>
-                  <div class="employee-cell">
-                    <div class="job-title">{{ row.name }}</div>
-                    <div class="employee-meta">{{ row.employeeNumber || row.departmentName || '-' }}</div>
-                  </div>
-                </td>
-                <td class="number">{{ row.assignedTasks | number:'1.0-0' }}</td>
-                <td class="number">{{ row.completedTasks | number:'1.0-0' }}</td>
-                <td class="number">{{ row.remainingTasks | number:'1.0-0' }}</td>
-                <td><span class="badge pending">{{ row.overdueTasks | number:'1.0-0' }}</span></td>
-              </tr>
-              }
-            </ng-template>
-
-            <ng-template pTemplate="emptymessage">
-              @if (tableLoading()) {
-              @for (item of tableSkeletonRows; track item) {
-              <tr>
-                @for (cell of [1,2,3,4,5]; track cell) {
-                <td><span class="skeleton-line skeleton-table-line"></span></td>
-                }
-              </tr>
-              }
-              } @else {
-              <tr>
-                <td colspan="5" class="text-muted no-data">
-                  <div class="p-4 d-flex flex-column align-items-center justify-content-center">
-                    <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
-                    <span>{{ 'dashboard.table.noData' | translate }}</span>
-                  </div>
-                </td>
-              </tr>
-              }
-            </ng-template>
-          </p-table>
-        </div>
-        <app-pagination class="w-100 mt-3 d-block" [currentPage]="tableCurrentPage()" [totalItems]="tableTotalItems()"
-          [itemsPerPage]="tablePageSize()" (pageChanged)="onPageChange($event)"
-          (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
-      </article>
+    @if (overview(); as dashboardOverview) {
+      @switch (activeDialog()) {
+        @case ('Candidates') {
+          <app-dashboard-candidates-dialog
+            [breakdown]="dashboardOverview.profileBreakdown"
+            [kpis]="dashboardOverview.kpis"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Jobs') {
+          <app-dashboard-jobs-dialog
+            [kpis]="dashboardOverview.jobKpis"
+            [breakdown]="dashboardOverview.jobBreakdown"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Employees') {
+          <app-dashboard-employees-dialog
+            [kpis]="dashboardOverview.kpis"
+            [monitoring]="dashboardOverview.taskMonitoring"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Invitations') {
+          <app-dashboard-invitations-dialog
+            [kpis]="dashboardOverview.invitationKpis"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
       }
-    </section>
     }
   </main>
 </section>

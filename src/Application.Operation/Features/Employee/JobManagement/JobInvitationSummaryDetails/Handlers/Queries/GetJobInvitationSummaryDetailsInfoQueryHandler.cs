@@ -1,4 +1,5 @@
-﻿using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
+﻿using Application.Operation.Features.Employee.Common.Access;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.Queries;
 using MediatR;
 using FluentResults;
@@ -15,15 +16,17 @@ namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSum
 public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    EmployeeJobAccessContextProvider accessContextProvider)
     : IRequestHandler<GetJobInvitationSummaryDetailsInfoQuery, IResult<JobInvitationSummaryDetailsInfoDto>>
 {
     public async Task<IResult<JobInvitationSummaryDetailsInfoDto>> Handle(
         GetJobInvitationSummaryDetailsInfoQuery query,
         CancellationToken cancellationToken)
     {
-        var job = await unitOfWork.GetEntityRepository<Tawtheef.Domain.Entities.Recruitment.Job>().DbSet
+        var job = await unitOfWork.GetEntityRepository<Job>().DbSet
             .AsNoTracking()
+            .ApplyJobAccessScope(accessContextProvider.GetAccess())
             .Include(job => job.JobTitle)
             .Include(job => job.Department)
             .Include(job => job.JobStatus)  
@@ -60,4 +63,3 @@ public sealed class GetJobInvitationSummaryDetailsInfoQueryHandler(
         return Result.Ok(dto);
     }
 }
-

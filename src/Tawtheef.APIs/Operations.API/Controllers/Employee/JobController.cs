@@ -201,6 +201,16 @@ public class JobController(
         return result.ToActionResult();
     }
 
+    [HttpPost("export")]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
+    public async Task<IActionResult> ExportJobs([FromBody] ExportJobsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.IsFailed
+            ? result.ToActionResult()
+            : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
     [HttpDelete("{id:guid}")]
     [AuthorizePermission(PermissionKeys.Jobs.Delete)]
     public async Task<IActionResult> DeleteJob(Guid id)
