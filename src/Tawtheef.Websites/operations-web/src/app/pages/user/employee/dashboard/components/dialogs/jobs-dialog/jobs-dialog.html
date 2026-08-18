@@ -43,7 +43,6 @@
               <th class="workflow-column">{{ 'dashboard.modals.table.workflow' | translate }}</th>
               <th>{{ 'dashboard.modals.table.invitations' | translate }}</th>
               <th>{{ 'dashboard.modals.table.candidates' | translate }}</th>
-              <th>{{ 'dashboard.modals.table.actions' | translate }}</th>
             </tr></ng-template
           >
           <ng-template pTemplate="body" let-job
@@ -85,17 +84,6 @@
               </td>
               <td>
                 <span class="count-badge success">{{ job.candidatesCount }}</span>
-              </td>
-              <td>
-                <ng-container
-                  *ngIf="job.actionKey !== 'dashboard.latestJobs.actions.none'; else noAction"
-                  ><button type="button" class="view-action-btn">
-                    <i class="hgi hgi-stroke hgi-view view-action"></i></button></ng-container
-                ><ng-template #noAction
-                  ><span class="text-muted small">{{
-                    'dashboard.common.noAction' | translate
-                  }}</span></ng-template
-                >
               </td>
             </tr></ng-template
           >
