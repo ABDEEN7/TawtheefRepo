@@ -1,8 +1,9 @@
+import { ProfileStatusNumber } from '../../../../../core/enums/lookups.enum';
+
 export interface CandidateUserFilters {
   pageNumber: number;
   pageSize: number;
-  name?: string;
-  email?: string;
-  qid?: string;
-  mobileNumber?: string;
+  search?: string | null;
+  isBlocked?: boolean | null;
+  profileStatuses?: ProfileStatusNumber[] | null;
 }

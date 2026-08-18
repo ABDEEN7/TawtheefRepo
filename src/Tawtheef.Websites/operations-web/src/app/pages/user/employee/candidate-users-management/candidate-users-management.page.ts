@@ -6,6 +6,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 import { CandidateUsersService } from './services/candidate-users.service';
 import { CandidateUserDto } from './models/candidate-user.dto';
 import { CandidateUserFilters } from './models/candidate-user-filters.dto';
@@ -19,10 +24,21 @@ import { Lang, LanguageService } from '../../../../core/services/language.servic
 import { Permissions } from '../../../../core/constants/permissions';
 import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  defer,
+  distinctUntilChanged,
+  EMPTY,
+  finalize,
+  map,
+  Subject,
+  switchMap
+} from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProfileLogDto } from '../profile-logs/models/profile-log.dto';
 import { ReviewStatus } from '../profile-managment/approval-list/models/profile-approval.models';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 
 @Component({
   selector: 'app-candidate-users-management',
@@ -36,6 +52,12 @@ import { ReviewStatus } from '../profile-managment/approval-list/models/profile-
     TableModule,
     ButtonModule,
     Dialog,
+    Select,
+    MultiSelect,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    PageFiltersComponent,
     PaginationComponent,
     I18nNamespaceDirective,
     HasPermissionDirective
@@ -53,77 +75,148 @@ export class CandidateUsersManagementPage implements OnInit {
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _profileLogs = signal<ProfileLogDto[]>([]);
   private _profileLogsLoading = signal(false);
+  private _profileLogsPaginationMetadata = signal<PaginationMetadata | null>(null);
 
   users = this._users.asReadonly();
   paginationMetadata = this._paginationMetadata.asReadonly();
   profileLogs = this._profileLogs.asReadonly();
   profileLogsLoading = this._profileLogsLoading.asReadonly();
+  profileLogsPaginationMetadata = this._profileLogsPaginationMetadata.asReadonly();
 
   filters = signal<CandidateUserFilters>({
     pageNumber: 1,
     pageSize: 10,
-    name: '',
-    email: '',
-    qid: '',
-    mobileNumber: ''
+    search: null,
+    isBlocked: null,
+    profileStatuses: null
   });
 
-  nameFilter = '';
-  emailFilter = '';
-  qidFilter = '';
-  mobileFilter = '';
   private searchChanges$ = new Subject<string>();
+  private usersRequests$ = new Subject<boolean>();
+  private profileLogsRequests$ = new Subject<{
+    userId: string | null;
+    pageNumber: number;
+    pageSize: number;
+  }>();
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  profileLogsTotalItems = computed(() => this.profileLogsPaginationMetadata()?.totalCount || 0);
+  activeAdvancedFilterCount = computed(() => {
+    const filters = this.filters();
+    return Number(filters.isBlocked !== null && filters.isBlocked !== undefined) +
+      Number(!!filters.profileStatuses?.length);
+  });
 
   protected readonly Permissions = Permissions;
   protected readonly ProfileStatus = ProfileStatusNumber;
+  readonly accountStatusOptions = [
+    { value: false, label: 'CANDIDATE_USERS.ACTIVE' },
+    { value: true, label: 'CANDIDATE_USERS.BLOCKED' }
+  ];
+  readonly profileStatusOptions = [
+    { value: ProfileStatusNumber.InCreation, label: 'common.InCreation' },
+    { value: ProfileStatusNumber.Submitted, label: 'common.Submitted' },
+    { value: ProfileStatusNumber.UnderReview, label: 'common.UnderReview' },
+    { value: ProfileStatusNumber.RequiresUpdate, label: 'common.RequiresUpdate' },
+    { value: ProfileStatusNumber.Approved, label: 'common.Approved' }
+  ];
+  showAdvancedFilters = signal(false);
   profileLogsDialogVisible = false;
   profileLogsCandidateName = '';
+  private selectedProfileLogsUserId: string | null = null;
+  profileLogsPageNumber = signal(1);
+  profileLogsPageSize = signal(20);
 
   ngOnInit(): void {
-    this.setupSearchListener();
+    this.setupUsersRequests();
+    this.setupProfileLogsRequests();
     this.loadUsers();
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.language.current$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => this.currentLang.set(lang));
   }
 
-  loadUsers(): void {
-    this.candidateUsersService.getCandidateUsers(this.filters()).subscribe({
-      next: (response: PaginatedResult<CandidateUserDto>) => {
-        this._users.set(response.items);
-        this._paginationMetadata.set(response.metadata);
-
-        if (response.metadata) {
-          this.filters.update(f => ({
-            ...f,
-            pageNumber: response.metadata.currentPage,
-            pageSize: response.metadata.pageSize
-          }));
-        }
-      }
-    });
+  loadUsers(force = false): void {
+    this.usersRequests$.next(force);
   }
 
-  onSearchChange(): void {
-    this.searchChanges$.next(`${this.nameFilter}|${this.emailFilter}|${this.qidFilter}|${this.mobileFilter}`);
+  onSearchChange(value: string): void {
+    this.filters.update(filters => ({ ...filters, search: value }));
+    this.searchChanges$.next(value);
   }
 
-  private setupSearchListener(): void {
+  private setupUsersRequests(): void {
     this.searchChanges$
-      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.filters.update(f => ({
-          ...f,
-          pageNumber: 1,
-          name: this.nameFilter,
-          email: this.emailFilter,
-          qid: this.qidFilter,
-          mobileNumber: this.mobileFilter
-        }));
+      .pipe(
+        map(value => (value ?? '').trim()),
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(search => {
+        this.filters.update(filters => ({ ...filters, search: search || null, pageNumber: 1 }));
         this.loadUsers();
       });
+
+    this.usersRequests$
+      .pipe(
+        map(force => {
+          const filters = this.buildCandidateFilters();
+          return { filters, key: JSON.stringify(filters), force };
+        }),
+        distinctUntilChanged((previous, current) => !current.force && previous.key === current.key),
+        switchMap(({ filters }) => this.candidateUsersService.getCandidateUsers(filters)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(response => this.applyUsersResponse(response));
+  }
+
+  private buildCandidateFilters(): CandidateUserFilters {
+    const filters = this.filters();
+    return {
+      ...filters,
+      search: filters.search?.trim() || null,
+      profileStatuses: filters.profileStatuses?.length ? [...filters.profileStatuses] : null
+    };
+  }
+
+  private applyUsersResponse(response: PaginatedResult<CandidateUserDto>): void {
+    this._users.set(response.items);
+    this._paginationMetadata.set(response.metadata);
+    this.filters.update(filters => ({
+      ...filters,
+      pageNumber: response.metadata.currentPage,
+      pageSize: response.metadata.pageSize
+    }));
+  }
+
+  onAccountStatusChange(isBlocked: boolean | null): void {
+    this.filters.update(filters => ({ ...filters, isBlocked, pageNumber: 1 }));
+    this.loadUsers();
+  }
+
+  onProfileStatusesChange(profileStatuses: ProfileStatusNumber[] | null): void {
+    this.filters.update(filters => ({ ...filters, profileStatuses, pageNumber: 1 }));
+    this.loadUsers();
+  }
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters.update(value => !value);
+  }
+
+  clearFilters(): void {
+    const pageSize = this.filters().pageSize;
+    this.filters.set({
+      pageNumber: 1,
+      pageSize,
+      search: null,
+      isBlocked: null,
+      profileStatuses: null
+    });
+    this.searchChanges$.next('');
+    this.loadUsers(true);
   }
 
   onPageChange(page: number): void {
@@ -164,25 +257,82 @@ export class CandidateUsersManagementPage implements OnInit {
   viewProfileLogs(user: CandidateUserDto): void {
     if (!user.id) return;
 
+    this.selectedProfileLogsUserId = user.id;
     this.profileLogsCandidateName = user.fullNameEn || user.fullNameAr || user.email;
+    this.profileLogsPageNumber.set(1);
+    this._profileLogs.set([]);
+    this._profileLogsPaginationMetadata.set(null);
     this.profileLogsDialogVisible = true;
-    this._profileLogsLoading.set(true);
+    this.loadProfileLogs();
+  }
 
-    this.candidateUsersService.getCandidateProfileLogs(user.id).subscribe({
-      next: (res) => {
-        this._profileLogs.set(res.items || []);
-        this._profileLogsLoading.set(false);
-      },
-      error: () => {
-        this._profileLogs.set([]);
-        this._profileLogsLoading.set(false);
-      }
+  private setupProfileLogsRequests(): void {
+    this.profileLogsRequests$
+      .pipe(
+        switchMap(request => {
+          if (!request.userId) {
+            this._profileLogsLoading.set(false);
+            return EMPTY;
+          }
+
+          const userId = request.userId;
+          return defer(() => {
+            this._profileLogsLoading.set(true);
+            return this.candidateUsersService
+              .getCandidateProfileLogs(userId, request.pageNumber, request.pageSize)
+              .pipe(
+                catchError(() => {
+                  this._profileLogs.set([]);
+                  this._profileLogsPaginationMetadata.set(null);
+                  return EMPTY;
+                }),
+                finalize(() => this._profileLogsLoading.set(false))
+              );
+          });
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: response => {
+          this._profileLogs.set(response.items ?? []);
+          this._profileLogsPaginationMetadata.set(response.metadata);
+          this.profileLogsPageNumber.set(response.metadata.currentPage);
+          this.profileLogsPageSize.set(response.metadata.pageSize);
+        }
+      });
+  }
+
+  private loadProfileLogs(): void {
+    this.profileLogsRequests$.next({
+      userId: this.selectedProfileLogsUserId,
+      pageNumber: this.profileLogsPageNumber(),
+      pageSize: this.profileLogsPageSize()
     });
+  }
+
+  onProfileLogsPageChange(page: number): void {
+    this.profileLogsPageNumber.set(page);
+    this.loadProfileLogs();
+  }
+
+  onProfileLogsPageSizeChange(pageSize: number): void {
+    this.profileLogsPageNumber.set(1);
+    this.profileLogsPageSize.set(pageSize);
+    this.loadProfileLogs();
   }
 
   closeProfileLogsDialog(): void {
     this.profileLogsDialogVisible = false;
+    this.selectedProfileLogsUserId = null;
+    this.profileLogsRequests$.next({
+      userId: null,
+      pageNumber: 1,
+      pageSize: this.profileLogsPageSize()
+    });
     this._profileLogs.set([]);
+    this._profileLogsPaginationMetadata.set(null);
+    this.profileLogsPageNumber.set(1);
+    this.profileLogsPageSize.set(20);
     this.profileLogsCandidateName = '';
   }
 

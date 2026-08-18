@@ -23,6 +23,7 @@ public sealed class GetProfileLogsQueryHandler(
     {
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
+        var profileQuery = uow.GetEntityRepository<UserProfile>().DbSet.AsNoTracking();
 
         IQueryable<ProfileLogProjection> query = loggerRepo.DbSet
             .AsNoTracking()
@@ -69,6 +70,35 @@ public sealed class GetProfileLogsQueryHandler(
             .WhereIf(request.ReviewStatus.HasValue, log => log.ReviewStatus == request.ReviewStatus)
             .WhereIf(request.From.HasValue, log => log.CreatedDate >= request.From!.Value)
             .WhereIf(request.To.HasValue, log => log.CreatedDate <= request.To!.Value);
+
+        if (!string.IsNullOrWhiteSpace(request.CandidateSearch))
+        {
+            var candidateSearch = request.CandidateSearch.Trim();
+            query = query.Where(log => profileQuery.Any(profile =>
+                profile.Id == log.UserProfileId &&
+                (EF.Functions.Like(profile.User!.FullNameAr, $"%{candidateSearch}%") ||
+                 EF.Functions.Like(profile.User.FullNameEn, $"%{candidateSearch}%") ||
+                 (profile.NationalNumber != null && EF.Functions.Like(profile.NationalNumber, $"%{candidateSearch}%")) ||
+                 (profile.User.PhoneNumber != null && EF.Functions.Like(profile.User.PhoneNumber, $"%{candidateSearch}%")) ||
+                 (profile.User.Email != null && EF.Functions.Like(profile.User.Email, $"%{candidateSearch}%")))));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.NotesSearch))
+        {
+            var notesSearch = request.NotesSearch.Trim();
+            query = query.Where(log => log.Notes != null && EF.Functions.Like(log.Notes, $"%{notesSearch}%"));
+        }
+
+        if (request.Sections is { Count: > 0 })
+        {
+            query = query.Where(log => log.Section != null && request.Sections.Contains(log.Section));
+        }
+
+        if (request.ProfileStatuses is { Count: > 0 })
+        {
+            query = query.Where(log => profileQuery.Any(profile =>
+                profile.Id == log.UserProfileId && request.ProfileStatuses.Contains(profile.Status)));
+        }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
