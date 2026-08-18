@@ -23,11 +23,11 @@ import { PaginatedResult } from '../../../../../../../core/models/paginated-resu
 import { FileUtilsService } from '../../../../../../../core/utils/file-utils';
 import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
 import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i18n-namespace.directive';
-
 import {
-  InvitationKpis,
-  LatestInvitation,
-} from '../../../models/dashboard-invitations.model';
+  DashboardChartColors,
+  invitationSummaryColor,
+} from '../../../constants/dashboard-chart-colors';
+import { InvitationKpis, LatestInvitation } from '../../../models/dashboard-invitations.model';
 import { OperationsDashboardFilters } from '../../../models/dashboard-filters.model';
 import {
   DashboardChartExportItem,
@@ -65,10 +65,7 @@ export class InvitationsDialog implements OnInit {
   private readonly files = inject(FileUtilsService);
   private readonly translate = inject(TranslateService);
 
-  private readonly languageChange = toSignal(
-    this.translate.onLangChange,
-    { initialValue: null },
-  );
+  private readonly languageChange = toSignal(this.translate.onLangChange, { initialValue: null });
 
   readonly invitations = signal<PaginatedResult<LatestInvitation> | null>(null);
 
@@ -79,21 +76,13 @@ export class InvitationsDialog implements OnInit {
 
   readonly exportInProgress = signal(false);
 
-  readonly rows = computed(
-    () => this.invitations()?.items ?? [],
-  );
+  readonly rows = computed(() => this.invitations()?.items ?? []);
 
-  readonly totalItems = computed(
-    () => this.invitations()?.metadata?.totalCount ?? 0,
-  );
+  readonly totalItems = computed(() => this.invitations()?.metadata?.totalCount ?? 0);
 
-  readonly pageNumber = computed(
-    () => this.tableFilters().pageNumber ?? 1,
-  );
+  readonly pageNumber = computed(() => this.tableFilters().pageNumber ?? 1);
 
-  readonly pageSize = computed(
-    () => this.tableFilters().pageSize ?? 10,
-  );
+  readonly pageSize = computed(() => this.tableFilters().pageSize ?? 10);
 
   readonly chartOptions = {
     responsive: true,
@@ -107,49 +96,47 @@ export class InvitationsDialog implements OnInit {
   };
 
   readonly items = computed(() => {
-  const invitations = this.kpis();
+    const invitations = this.kpis();
 
-  return [
-    {
-      labelKey: 'dashboard.legend.invitations.accepted',
-      count: invitations.acceptedInvitations,
-      color: '#2F8A3A',
-    },
-    {
-      labelKey: 'dashboard.legend.invitations.pendingResponse',
-      count: invitations.pendingInvitations,
-      color: '#FFB547',
-    },
-    {
-      labelKey: 'dashboard.status.PendingAttachmentApproval',
-      count: invitations.pendingAttachmentApproval,
-      color: '#488ADA',
-    },
-    {
-      labelKey: 'dashboard.legend.invitations.expired',
-      count: invitations.expiredInvitations,
-      color: '#D9182D',
-    },
-    {
-      labelKey: 'dashboard.status.Rejected',
-      count: invitations.rejectedInvitations,
-      color: '#6C4BB6',
-    },
-  ];
-});
+    return [
+      {
+        labelKey: 'dashboard.legend.invitations.accepted',
+        count: invitations.acceptedInvitations,
+        color: invitationSummaryColor('accepted'),
+      },
+      {
+        labelKey: 'dashboard.legend.invitations.pendingResponse',
+        count: invitations.pendingInvitations,
+        color: invitationSummaryColor('pending'),
+      },
+      {
+        labelKey: 'dashboard.status.PendingAttachmentApproval',
+        count: invitations.pendingAttachmentApproval,
+        color: invitationSummaryColor('pendingAttachmentApproval'),
+      },
+      {
+        labelKey: 'dashboard.legend.invitations.expired',
+        count: invitations.expiredInvitations,
+        color: invitationSummaryColor('expired'),
+      },
+      {
+        labelKey: 'dashboard.status.Rejected',
+        count: invitations.rejectedInvitations,
+        color: invitationSummaryColor('rejected'),
+      },
+    ];
+  });
 
   readonly chartData = computed<ChartData<'doughnut'>>(() => {
     const items = this.localizedItems();
 
     return items.every((item) => item.count === 0)
       ? {
-          labels: [
-            this.translate.instant('common.chart.noData'),
-          ],
+          labels: [this.translate.instant('common.chart.noData')],
           datasets: [
             {
               data: [1],
-              backgroundColor: ['#E5E7EB'],
+              backgroundColor: [DashboardChartColors.noData],
               borderWidth: 0,
             },
           ],
@@ -199,12 +186,8 @@ export class InvitationsDialog implements OnInit {
 
     this.api
       .exportList('Invitations', this.filters())
-      .pipe(
-        finalize(() => this.exportInProgress.set(false)),
-      )
-      .subscribe((response) =>
-        this.downloadResponse(response),
-      );
+      .pipe(finalize(() => this.exportInProgress.set(false)))
+      .subscribe((response) => this.downloadResponse(response));
   }
 
   async exportCharts(): Promise<void> {
@@ -216,21 +199,12 @@ export class InvitationsDialog implements OnInit {
       await this.chartExport.download([
         {
           host: this.chart?.nativeElement,
-          filename: this.translate.instant(
-            'dashboard.export.files.invitationStatus',
-          ),
-          title: this.translate.instant(
-            'dashboard.modals.invitations.statusTitle',
-          ),
-          totalLabel: this.translate.instant(
-            'dashboard.common.total',
-          ),
+          filename: this.translate.instant('dashboard.export.files.invitationStatus'),
+          title: this.translate.instant('dashboard.modals.invitations.statusTitle'),
+          totalLabel: this.translate.instant('dashboard.common.total'),
           total: this.kpis().totalInvitations,
           items: this.localizedItems(),
-          direction:
-            this.translate.currentLang === 'ar'
-              ? 'rtl'
-              : 'ltr',
+          direction: this.translate.currentLang === 'ar' ? 'rtl' : 'ltr',
         },
       ]);
     } finally {
@@ -266,23 +240,16 @@ export class InvitationsDialog implements OnInit {
     }));
   }
 
-  private downloadResponse(
-    response: HttpResponse<Blob>,
-  ): void {
-    const disposition =
-      response.headers.get('content-disposition') ?? '';
+  private downloadResponse(response: HttpResponse<Blob>): void {
+    const disposition = response.headers.get('content-disposition') ?? '';
 
-    const encoded =
-      /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+    const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
 
-    const plain =
-      /filename="?([^";]+)"?/i.exec(disposition)?.[1];
+    const plain = /filename="?([^";]+)"?/i.exec(disposition)?.[1];
 
     this.files.downloadBlob(
       response.body ?? new Blob(),
-      encoded
-        ? decodeURIComponent(encoded)
-        : (plain ?? 'Invitations.xlsx'),
+      encoded ? decodeURIComponent(encoded) : (plain ?? 'Invitations.xlsx'),
     );
   }
 }

@@ -29,7 +29,11 @@ import { OperationsDashboardService } from '../../../services/operations-dashboa
 import { InvitationStatus } from '../../../../../../../core/enums/lookups.enum';
 import { PaginatedResult } from '../../../../../../../core/models/paginated-result.model';
 import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
-
+import {
+  DashboardChartColors,
+  invitationStatusColor,
+  jobStatusColor,
+} from '../../../constants/dashboard-chart-colors';
 @Component({
   selector: 'app-dashboard-jobs-dialog',
   standalone: true,
@@ -74,37 +78,14 @@ export class JobsDialog implements OnInit {
     plugins: { legend: { display: false } },
   };
 
-  private readonly colors = [
-    '#8A1538',
-    '#488ADA',
-    '#FFB547',
-    '#2F8A3A',
-    '#D9182D',
-    '#94DDBF',
-    '#6C4BB6',
-    '#64748B',
-    '#9CA3AF',
-  ];
-
-  private readonly invitationWorkflowColors = [
-    '#488ADA',
-    '#64748B',
-    '#D9182D',
-    '#2F8A3A',
-    '#FFB547',
-    '#94DDBF',
-    '#6C4BB6',
-    '#8A1538',
-  ];
-
   private readonly invitationStatuses = Object.values(InvitationStatus) as InvitationStatus[];
 
   readonly items = computed(() =>
-    this.breakdown().byStatus.map((item, index) => ({
+    this.breakdown().byStatus.map((item) => ({
       jobStatusId: item.jobStatusId,
       label: item.label,
       count: item.count,
-      color: this.colors[index % this.colors.length],
+      color: jobStatusColor(item.status),
     })),
   );
 
@@ -117,11 +98,11 @@ export class JobsDialog implements OnInit {
 
       return {
         ...job,
-        workflow: this.invitationStatuses.map((status, index) => ({
+        workflow: this.invitationStatuses.map((status) => ({
           status,
           labelKey: `dashboard.status.${status}`,
           value: workflowCounts.get(status) ?? 0,
-          color: this.invitationWorkflowColors[index % this.invitationWorkflowColors.length],
+          color: invitationStatusColor(status),
         })),
       };
     }),
@@ -176,7 +157,7 @@ export class JobsDialog implements OnInit {
     return items.every((item) => item.count === 0)
       ? {
           labels: [this.translate.instant('common.chart.noData')],
-          datasets: [{ data: [1], backgroundColor: ['#E5E7EB'], borderWidth: 0 }],
+          datasets: [{ data: [1], backgroundColor: [DashboardChartColors.noData], borderWidth: 0 }],
         }
       : {
           labels: items.map((item) => item.label),

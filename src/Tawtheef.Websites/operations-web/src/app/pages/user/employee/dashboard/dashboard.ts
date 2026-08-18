@@ -44,6 +44,13 @@ import {
 } from './services/dashboard-chart-export.service';
 import { OperationsDashboardService } from './services/operations-dashboard.service';
 import { dashboardDrilldowns } from './navigation/dashboard-drilldown.factory';
+import {
+  DashboardChartColors,
+  employeeWorkloadColor,
+  invitationSummaryColor,
+  jobStatusColor,
+  profileStatusColor,
+} from './constants/dashboard-chart-colors';
 
 @Component({
   selector: 'app-dashboard',
@@ -161,15 +168,6 @@ export class Dashboard implements OnInit {
       this.auth.hasPermission(action.permission, action.requireAll ?? false),
     ),
   );
-  private readonly colors = [
-    '#8A1538',
-    '#488ADA',
-    '#FFB547',
-    '#2F8A3A',
-    '#D9182D',
-    '#94DDBF',
-    '#6C4BB6',
-  ];
 
   readonly activeKpis = computed<DashboardKpis>(() => this.overview()?.kpis ?? this.defaultKpis());
   readonly activeJobKpis = computed<JobKpis>(
@@ -249,33 +247,34 @@ export class Dashboard implements OnInit {
     ];
   });
   readonly candidateSummaryItems = computed(() => {
-    this.languageChange();
-    return (this.overview()?.profileBreakdown.byStatus ?? []).map((item, index) => ({
-      label: this.translate.instant(`dashboard.status.${item.status}`),
-      count: item.count,
-      color: this.colors[index % this.colors.length],
-    }));
-  });
+  this.languageChange();
+
+  return (this.overview()?.profileBreakdown.byStatus ?? []).map((item) => ({
+    label: this.translate.instant(`dashboard.status.${item.status}`),
+    count: item.count,
+    color: profileStatusColor(item.status),
+  }));
+});
 
   readonly employeeWorkloadTotal = computed(() =>
     this.employeesSummaryItems().reduce((total, item) => total + item.count, 0),
   );
 
   readonly jobsSummaryItems = computed<DashboardChartExportItem[]>(() =>
-    (this.overview()?.jobBreakdown.byStatus ?? []).map((item, index) => ({
-      label: item.label,
-      count: item.count,
-      color: this.colors[index % this.colors.length],
-    })),
+  (this.overview()?.jobBreakdown.byStatus ?? []).map((item) => ({
+    label: item.label,
+    count: item.count,
+    color: jobStatusColor(item.status),
+  })),
   );
-  readonly employeesSummaryItems = computed(() => {
-    const colors = ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'];
-    return (this.overview()?.taskMonitoring.taskStatusStacked ?? []).map((item, index) => ({
-      labelKey: employeeAssignmentTranslationKey(item.label),
-      count: item.count,
-      color: colors[index % colors.length],
-    }));
-  });
+
+  readonly employeesSummaryItems = computed(() =>
+  (this.overview()?.taskMonitoring.taskStatusStacked ?? []).map((item) => ({
+    labelKey: employeeAssignmentTranslationKey(item.label),
+    count: item.count,
+    color: employeeWorkloadColor(item.label),
+  })),
+);
 
   readonly employeeWorkloadChartItems = computed<DashboardChartExportItem[]>(() => {
     this.languageChange();
@@ -288,36 +287,36 @@ export class Dashboard implements OnInit {
   });
 
   readonly invitationsSummaryItems = computed(() => {
-    const invitations = this.activeInvitationKpis();
+  const invitations = this.activeInvitationKpis();
 
-    return [
-      {
-        labelKey: 'dashboard.legend.invitations.accepted',
-        count: invitations.acceptedInvitations,
-        color: '#2F8A3A',
-      },
-      {
-        labelKey: 'dashboard.legend.invitations.pendingResponse',
-        count: invitations.pendingInvitations,
-        color: '#FFB547',
-      },
-      {
-        labelKey: 'dashboard.status.PendingAttachmentApproval',
-        count: invitations.pendingAttachmentApproval,
-        color: '#488ADA',
-      },
-      {
-        labelKey: 'dashboard.legend.invitations.expired',
-        count: invitations.expiredInvitations,
-        color: '#D9182D',
-      },
-      {
-        labelKey: 'dashboard.status.Rejected',
-        count: invitations.rejectedInvitations,
-        color: '#6C4BB6',
-      },
-    ];
-  });
+  return [
+    {
+      labelKey: 'dashboard.legend.invitations.accepted',
+      count: invitations.acceptedInvitations,
+      color: invitationSummaryColor('accepted'),
+    },
+    {
+      labelKey: 'dashboard.legend.invitations.pendingResponse',
+      count: invitations.pendingInvitations,
+      color: invitationSummaryColor('pending'),
+    },
+    {
+      labelKey: 'dashboard.status.PendingAttachmentApproval',
+      count: invitations.pendingAttachmentApproval,
+      color: invitationSummaryColor('pendingAttachmentApproval'),
+    },
+    {
+      labelKey: 'dashboard.legend.invitations.expired',
+      count: invitations.expiredInvitations,
+      color: invitationSummaryColor('expired'),
+    },
+    {
+      labelKey: 'dashboard.status.Rejected',
+      count: invitations.rejectedInvitations,
+      color: invitationSummaryColor('rejected'),
+    },
+  ];
+});
   readonly visibleCandidateChartData = computed<ChartData<'doughnut'>>(() =>
     this.chartData(this.candidateSummaryItems()),
   );
@@ -464,7 +463,7 @@ export class Dashboard implements OnInit {
     return total === 0
       ? {
           labels: [this.translate.instant('common.chart.noData')],
-          datasets: [{ data: [1], backgroundColor: ['#E5E7EB'], borderWidth: 0 }],
+          datasets: [{ data: [1], backgroundColor: [DashboardChartColors.noData], borderWidth: 0 }],
         }
       : {
           labels: items.map((item) => item.label),

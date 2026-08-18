@@ -3,6 +3,10 @@
 public sealed class JobStatusCountDto
 {
     public Guid JobStatusId { get; init; }
+
+    public required string Status { get; init; }
+
     public required string Label { get; init; }
+
     public int Count { get; init; }
 }

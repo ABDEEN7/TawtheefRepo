@@ -36,7 +36,10 @@ import {
   DashboardChartExportService,
 } from '../../../services/dashboard-chart-export.service';
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
-
+import {
+  DashboardChartColors,
+  employeeWorkloadColor,
+} from '../../../constants/dashboard-chart-colors';
 @Component({
   selector: 'app-dashboard-employees-dialog',
   standalone: true,
@@ -81,11 +84,8 @@ export class EmployeesDialog implements OnInit {
   });
 
   readonly workloadTotal = computed(() =>
-  this.items().reduce(
-    (total, item) => total + item.count,
-    0,
-  ),
-);
+    this.items().reduce((total, item) => total + item.count, 0),
+  );
 
   readonly exportInProgress = signal(false);
 
@@ -112,15 +112,13 @@ export class EmployeesDialog implements OnInit {
     },
   };
 
-  readonly items = computed(() => {
-    const colors = ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'];
-
-    return this.monitoring().taskStatusStacked.map((item, index) => ({
+  readonly items = computed(() =>
+    this.monitoring().taskStatusStacked.map((item) => ({
       labelKey: employeeAssignmentTranslationKey(item.label),
       count: item.count,
-      color: colors[index % colors.length],
-    }));
-  });
+      color: employeeWorkloadColor(item.label),
+    })),
+  );
 
   readonly employeeWorkloadChartItems = computed<DashboardChartExportItem[]>(() => {
     this.languageChange();
@@ -141,7 +139,7 @@ export class EmployeesDialog implements OnInit {
           datasets: [
             {
               data: [1],
-              backgroundColor: ['#E5E7EB'],
+              backgroundColor: [DashboardChartColors.noData],
               borderWidth: 0,
             },
           ],
@@ -235,35 +233,26 @@ export class EmployeesDialog implements OnInit {
   }
 
   async exportCharts(): Promise<void> {
-  if (!this.canExport() || this.exportInProgress()) return;
+    if (!this.canExport() || this.exportInProgress()) return;
 
-  this.exportInProgress.set(true);
+    this.exportInProgress.set(true);
 
-  try {
-    await this.chartExport.download([
-      {
-        host: this.chart?.nativeElement,
-        filename: this.translate.instant(
-          'dashboard.export.files.employeeAssignments',
-        ),
-        title: this.translate.instant(
-          'dashboard.modals.employees.statusTitle',
-        ),
-        totalLabel: this.translate.instant(
-          'dashboard.common.total',
-        ),
-        total: this.workloadTotal(),
-        items: this.employeeWorkloadChartItems(),
-        direction:
-          this.translate.currentLang === 'ar'
-            ? 'rtl'
-            : 'ltr',
-      },
-    ]);
-  } finally {
-    this.exportInProgress.set(false);
+    try {
+      await this.chartExport.download([
+        {
+          host: this.chart?.nativeElement,
+          filename: this.translate.instant('dashboard.export.files.employeeAssignments'),
+          title: this.translate.instant('dashboard.modals.employees.statusTitle'),
+          totalLabel: this.translate.instant('dashboard.common.total'),
+          total: this.workloadTotal(),
+          items: this.employeeWorkloadChartItems(),
+          direction: this.translate.currentLang === 'ar' ? 'rtl' : 'ltr',
+        },
+      ]);
+    } finally {
+      this.exportInProgress.set(false);
+    }
   }
-}
 
   private downloadResponse(response: HttpResponse<Blob>): void {
     const disposition = response.headers.get('content-disposition') ?? '';

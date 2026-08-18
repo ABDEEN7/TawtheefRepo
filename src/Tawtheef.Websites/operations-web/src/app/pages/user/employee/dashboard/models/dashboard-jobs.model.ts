@@ -1,3 +1,4 @@
+import { JobStatus } from '../../../../../core/enums/lookups.enum';
 import { StatusCount } from './dashboard-common.model';
 
 export interface JobKpis {
@@ -34,6 +35,7 @@ export interface LatestJob {
 
 export interface JobStatusCount {
   jobStatusId: string;
+  status: JobStatus;
   label: string;
   count: number;
 }

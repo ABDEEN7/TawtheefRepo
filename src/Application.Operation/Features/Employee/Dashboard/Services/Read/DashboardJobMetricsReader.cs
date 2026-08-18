@@ -19,6 +19,9 @@ internal sealed class DashboardJobMetricsReader(
             {
                 IsCurrent = job.CreatedDate >= currentFrom,
                 job.JobStatusId,
+                BackendName = job.JobStatus != null
+                    ? job.JobStatus.BackendName
+                    : string.Empty,
                 NameAr = job.JobStatus != null
                     ? job.JobStatus.NameAr
                     : string.Empty,
@@ -30,6 +33,7 @@ internal sealed class DashboardJobMetricsReader(
             {
                 group.Key.IsCurrent,
                 group.Key.JobStatusId,
+                group.Key.BackendName,
                 group.Key.NameAr,
                 group.Key.NameEn,
                 Count = group.Count()
@@ -47,6 +51,7 @@ internal sealed class DashboardJobMetricsReader(
             .Select(row => new JobStatusCountDto
             {
                 JobStatusId = row.JobStatusId,
+                Status = row.BackendName,
                 Label = localizationService.GetLocalizedValue(
                     row.NameAr,
                     row.NameEn),
