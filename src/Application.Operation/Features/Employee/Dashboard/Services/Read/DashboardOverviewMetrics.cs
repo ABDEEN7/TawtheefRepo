@@ -28,10 +28,9 @@ internal sealed record DashboardTaskCounts(int Total, int Completed, int Remaini
 
 internal sealed record DashboardEmployeeWorkload(
     int AwaitingDistribution,
-    int Returned,
-    int Completed,
-    int InProgress,
-    int Submitted);
+    int AssignedSubmitted,
+    int UnderReview,
+    int ChangeReview);
 
 internal sealed record DashboardWorkloadMetrics(
     DashboardTaskCounts Tasks,

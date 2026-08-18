@@ -166,23 +166,18 @@ internal sealed class DashboardOverviewReader(
             },
             new GroupCountDto
             {
-                Label = "AssignedRequiringUpdate",
-                Count = workload.Returned
-            },
-            new GroupCountDto
-            {
-                Label = "CompletedAssignments",
-                Count = workload.Completed
+                Label = "AssignedSubmitted",
+                Count = workload.AssignedSubmitted
             },
             new GroupCountDto
             {
                 Label = "ActiveReviewWorkload",
-                Count = workload.InProgress
+                Count = workload.UnderReview
             },
             new GroupCountDto
             {
-                Label = "AssignedSubmitted",
-                Count = workload.Submitted
+                Label = "ChangeReviewWorkload",
+                Count = workload.ChangeReview
             }
         ]
     };

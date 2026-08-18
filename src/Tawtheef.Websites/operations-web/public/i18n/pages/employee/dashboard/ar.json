@@ -259,13 +259,11 @@
   "dashboard.legend.jobs.published": "منشورة",
   "dashboard.legend.jobs.draft": "مسودة",
   "dashboard.legend.jobs.pendingApproval": "بانتظار الاعتماد",
-
+  
   "dashboard.legend.employees.profilesAwaitingDistribution": "ملفات بانتظار التوزيع",
-  "dashboard.legend.employees.assignedRequiringUpdate": "ملفات مرجعة تتطلب تحديثاً",
-  "dashboard.legend.employees.completedAssignments": "الملفات المعتمدة المسندة",
-  "dashboard.legend.employees.activeReviewWorkload": "ملفات مسندة قيد المراجعة",
   "dashboard.legend.employees.assignedSubmitted": "ملفات مقدمة ومسندة",
-  "dashboard.legend.employees.pendingDistribution": "بانتظار التوزيع",
+  "dashboard.legend.employees.activeReviewWorkload": "ملفات مسندة قيد المراجعة",
+  "dashboard.legend.employees.changeReviewWorkload": "ملفات مسندة لمراجعة طلبات التغيير",
 
   "dashboard.legend.invitations.sent": "المرسلة",
   "dashboard.legend.invitations.accepted": "المقبولة",

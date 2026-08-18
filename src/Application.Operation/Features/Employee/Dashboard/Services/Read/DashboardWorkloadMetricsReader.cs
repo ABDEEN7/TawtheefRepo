@@ -55,35 +55,55 @@ internal sealed class DashboardWorkloadMetricsReader(
         int awaitingDistribution,
         CancellationToken ct)
     {
-        var changes = uow.GetEntityRepository<ProfileChangeRequest>().DbSet.AsNoTracking();
-        var row = await assignments.Where(assignment =>
-                assignment.IsActive && assignment.UnassignedAtUtc == null)
+        var changes = uow.GetEntityRepository<ProfileChangeRequest>()
+            .DbSet
+            .AsNoTracking();
+
+        var row = await assignments
+            .Where(assignment =>
+                assignment.IsActive &&
+                assignment.UnassignedAtUtc == null)
             .Select(assignment => new
             {
                 assignment.UserProfileId,
                 assignment.UserProfile!.Status,
-                HasPendingChange = changes.Any(change => change.UserProfileId == assignment.UserProfileId &&
+
+                HasPendingChange = changes.Any(change =>
+                    change.UserProfileId == assignment.UserProfileId &&
                     (change.Status == ProfileChangeRequestStatus.Pending ||
                      change.Status == ProfileChangeRequestStatus.UnderReview))
             })
             .GroupBy(_ => 1)
             .Select(group => new DashboardEmployeeWorkload(
                 0,
-                group.Where(row => row.Status == UserProfileStatus.RequiresUpdate)
-                    .Select(row => row.UserProfileId).Distinct().Count(),
-                group.Where(row => row.Status == UserProfileStatus.Approved && !row.HasPendingChange)
-                    .Select(row => row.UserProfileId).Distinct().Count(),
-                group.Where(row => row.Status == UserProfileStatus.UnderReview ||
-                    row.Status == UserProfileStatus.Approved && row.HasPendingChange)
-                    .Select(row => row.UserProfileId).Distinct().Count(),
-                group.Where(row => row.Status == UserProfileStatus.Submitted)
-                    .Select(row => row.UserProfileId).Distinct().Count()))
+
+                group
+                    .Where(row =>
+                        row.Status == UserProfileStatus.Submitted)
+                    .Select(row => row.UserProfileId)
+                    .Distinct()
+                    .Count(),
+
+                group
+                    .Where(row =>
+                        row.Status == UserProfileStatus.UnderReview)
+                    .Select(row => row.UserProfileId)
+                    .Distinct()
+                    .Count(),
+
+                group
+                    .Where(row =>
+                        row.Status == UserProfileStatus.Approved &&
+                        row.HasPendingChange)
+                    .Select(row => row.UserProfileId)
+                    .Distinct()
+                    .Count()))
             .FirstOrDefaultAsync(ct);
+
         return new DashboardEmployeeWorkload(
             awaitingDistribution,
-            row?.Returned ?? 0,
-            row?.Completed ?? 0,
-            row?.InProgress ?? 0,
-            row?.Submitted ?? 0);
+            row?.AssignedSubmitted ?? 0,
+            row?.UnderReview ?? 0,
+            row?.ChangeReview ?? 0);
     }
 }

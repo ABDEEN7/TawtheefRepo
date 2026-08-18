@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -69,12 +70,35 @@ internal sealed class DashboardEmployeesReader(
         }
 
         var overdueCutoff = DateTime.UtcNow.AddDays(-7);
-        var assignments = scope.Assignments(context);
+
         var range = DashboardTemporalResolver.ResolveRequestRange(
-            request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
-        assignments = assignments.Where(x =>
-            x.AssignedAtUtc >= range.FromUtc && x.AssignedAtUtc < range.ToExclusiveUtc);
-        var changes = uow.GetEntityRepository<ProfileChangeRequest>().DbSet.AsNoTracking();
+            request.Year,
+            request.FromDateUtc,
+            request.ToDateUtc,
+            DateTime.UtcNow);
+
+        var assignments = scope.Assignments(context)
+            .Where(x =>
+                x.AssignedAtUtc >= range.FromUtc &&
+                x.AssignedAtUtc < range.ToExclusiveUtc);
+        
+        var accessibleProfileIds = scope.AccessibleProfiles(context)
+            .Select(profile => profile.Id);
+
+        var finalizedReviews = uow.GetEntityRepository<UserProfileLogger>()
+            .DbSet
+            .AsNoTracking()
+            .Where(log =>
+                !log.IsDeleted &&
+                log.ActionType == UserProfileLogConstants.ActionTypes.ProfileReviewFinalized &&
+                log.CreatedDate >= range.FromUtc &&
+                log.CreatedDate < range.ToExclusiveUtc &&
+                accessibleProfileIds.Contains(log.UserProfileId));
+        
+        var changes = uow.GetEntityRepository<ProfileChangeRequest>()
+            .DbSet
+            .AsNoTracking();
+        
         return Result.Ok(new TeamPerformanceQuery(true, employees.Select(employee => new TeamPerformanceRowDto
         {
             EmployeeId = employee.Id,
@@ -88,16 +112,10 @@ internal sealed class DashboardEmployeesReader(
             JobDescription = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
                 ? (employee as EmployeeUser)!.EmployeeProfile!.JobTitle
                 : null,
-            AssignedTasks = assignments
-                .Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null)
-                .Select(x => x.UserProfileId).Distinct().Count(),
-            CompletedTasks = assignments.Where(x =>
-                    x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
-                    x.UserProfile!.Status == UserProfileStatus.Approved &&
-                    !changes.Any(change => change.UserProfileId == x.UserProfileId &&
-                                           (change.Status == ProfileChangeRequestStatus.Pending ||
-                                            change.Status == ProfileChangeRequestStatus.UnderReview)))
-                .Select(x => x.UserProfileId).Distinct().Count(),
+            AssignedTasks = assignments.Count(x =>
+                x.EmployeeId == employee.Id),
+            CompletedTasks = finalizedReviews.Count(log =>
+                log.PerformedById == employee.Id),
             RemainingTasks = assignments.Where(x =>
                     x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
                     (x.UserProfile!.Status != UserProfileStatus.Approved ||
