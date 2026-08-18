@@ -30,14 +30,14 @@ export class OperationsDashboardService {
     });
   }
 
-  getLatestJobs(filters: OperationsDashboardFilters): Observable<LatestJob[]> {
-    return this.http.get<LatestJob[]>(this.endpoints.operationsDashboard.latestJobs, filters, {
+  getLatestJobs(filters: OperationsDashboardFilters): Observable<PaginatedResult<LatestJob>> {
+    return this.http.get<PaginatedResult<LatestJob>>(this.endpoints.operationsDashboard.latestJobs, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }
 
-  getLatestInvitations(filters: OperationsDashboardFilters): Observable<LatestInvitation[]> {
-    return this.http.get<LatestInvitation[]>(this.endpoints.operationsDashboard.latestInvitations, filters, {
+  getLatestInvitations(filters: OperationsDashboardFilters): Observable<PaginatedResult<LatestInvitation>> {
+    return this.http.get<PaginatedResult<LatestInvitation>>(this.endpoints.operationsDashboard.latestInvitations, filters, {
       headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
     });
   }

@@ -48,10 +48,15 @@ internal sealed class ExportDashboardListQueryHandler(
         return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(candidatesExporter.Export(result.Value));
     }
 
-    private async Task<Result<FileExportResult>> ExportJobsAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportJobsAsync(
+        ExportDashboardListQuery request,
+        CancellationToken ct)
     {
-        var result = await jobsReader.ReadLatestAsync(request, ct);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(jobsExporter.Export(result.Value));
+        var result = await jobsReader.ReadExportAsync(request, ct);
+
+        return result.IsFailed
+            ? Result.Fail(result.Errors)
+            : Result.Ok(jobsExporter.Export(result.Value));
     }
 
     private async Task<Result<FileExportResult>> ExportEmployeesAsync(ExportDashboardListQuery request, CancellationToken ct)
@@ -73,9 +78,16 @@ internal sealed class ExportDashboardListQueryHandler(
             : Result.Ok(employeesExporter.Export(overview.Value.Kpis, employees.Value));
     }
 
-    private async Task<Result<FileExportResult>> ExportInvitationsAsync(ExportDashboardListQuery request, CancellationToken ct)
+    private async Task<Result<FileExportResult>> ExportInvitationsAsync(
+        ExportDashboardListQuery request,
+        CancellationToken ct)
     {
-        var result = await invitationsReader.ReadLatestAsync(request, ct);
-        return result.IsFailed ? Result.Fail(result.Errors) : Result.Ok(invitationsExporter.Export(result.Value));
+        var result = await invitationsReader.ReadExportAsync(
+            request,
+            ct);
+
+        return result.IsFailed
+            ? Result.Fail(result.Errors)
+            : Result.Ok(invitationsExporter.Export(result.Value));
     }
 }

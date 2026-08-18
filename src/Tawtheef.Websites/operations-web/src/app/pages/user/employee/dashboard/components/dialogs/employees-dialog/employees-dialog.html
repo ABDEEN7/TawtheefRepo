@@ -1,44 +1,107 @@
-<div i18nNamespace="pages/employee/dashboard" class="candidate-modal-backdrop">
+<div
+  i18nNamespace="pages/employee/dashboard"
+  class="candidate-modal-backdrop"
+>
   <div class="candidate-modal jobs-modal employees-modal">
-    <button class="candidate-modal-close" type="button" (click)="closed.emit()">
+
+    <button
+      class="candidate-modal-close"
+      type="button"
+      (click)="closed.emit()"
+    >
       <i class="hgi-stroke hgi-cancel-01"></i>
     </button>
+
     <div class="candidate-modal-header">
-      <h3>{{ 'dashboard.modals.employees.title' | translate }}</h3>
-      <p>{{ 'dashboard.modals.employees.subtitle' | translate }}</p>
+      <h3>
+        {{ 'dashboard.modals.employees.title' | translate }}
+      </h3>
+
+      <p>
+        {{ 'dashboard.modals.employees.subtitle' | translate }}
+      </p>
     </div>
+
     <div class="candidate-modal-card">
+
       <h4 class="candidate-modal-section-title">
         {{ 'dashboard.modals.employees.statusTitle' | translate }}
       </h4>
-      <div class="candidate-modal-chart-content jobs-chart-content employees-chart-content">
+
+      <div
+        class="
+          candidate-modal-chart-content
+          jobs-chart-content
+          employees-chart-content
+        "
+      >
+
         <div class="candidate-chart-wrapper jobs-modal-chart">
-          <p-chart #chart type="doughnut" [data]="chartData()" [options]="chartOptions" />
+
+          <p-chart
+            #chart
+            type="doughnut"
+            [data]="chartData()"
+            [options]="chartOptions"
+          />
+
           <div class="candidate-chart-center">
-            <span>{{ 'dashboard.common.total' | translate }}</span
-            ><strong>{{ kpis().totalEmployees | number: '1.0-0' }}</strong>
+            <span>
+              {{ 'dashboard.common.total' | translate }}
+            </span>
+
+            <strong>
+              {{ kpis().totalEmployees | number: '1.0-0' }}
+            </strong>
           </div>
+
         </div>
+
         <div
-          class="operation-legend jobs-modal-legend employees-modal-legend employee-workload-metrics"
+          class="
+            operation-legend
+            jobs-modal-legend
+            employees-modal-legend
+            employee-workload-metrics
+          "
         >
+
           <div class="employee-workload-title">
-            {{ 'dashboard.employees.assignmentWorkload' | translate }}
+            {{
+              'dashboard.employees.assignmentWorkload'
+                | translate
+            }}
           </div>
+
           @for (item of items(); track item.labelKey) {
             <div class="operation-legend-row">
-              <i [style.background]="item.color"></i><span>{{ item.labelKey | translate }}</span
-              ><strong>{{ item.count | number: '1.0-0' }}</strong>
+
+              <i [style.background]="item.color"></i>
+
+              <span>
+                {{ item.labelKey | translate }}
+              </span>
+
+              <strong>
+                {{ item.count | number: '1.0-0' }}
+              </strong>
+
             </div>
           }
+
         </div>
+
       </div>
     </div>
+
     <div class="candidate-modal-card">
+
       <h4 class="candidate-modal-section-title">
         {{ 'dashboard.sections.teamPerformance' | translate }}
       </h4>
+
       <div class="table-responsive employees-table-wrap">
+
         <p-table
           class="custom-table employees-modal-table"
           [value]="rows()"
@@ -47,87 +110,216 @@
           (sortFunction)="onSort($event)"
           responsiveLayout="scroll"
         >
+
           <ng-template pTemplate="header">
             <tr>
+
               <th pSortableColumn="Name">
                 <div class="d-flex align-items-center gap-2">
-                  <span>{{ 'dashboard.modals.table.employee' | translate }}</span>
+                  <span>
+                    {{
+                      'dashboard.modals.table.employee'
+                        | translate
+                    }}
+                  </span>
+
                   <p-sortIcon field="Name" />
                 </div>
               </th>
 
               <th pSortableColumn="AssignedTasks">
                 <div class="d-flex align-items-center gap-2">
-                  <span>{{ 'dashboard.table.assignedTasks' | translate }}</span>
+                  <span>
+                    {{
+                      'dashboard.table.assignedTasks'
+                        | translate
+                    }}
+                  </span>
+
                   <p-sortIcon field="AssignedTasks" />
                 </div>
               </th>
 
               <th pSortableColumn="CompletedTasks">
                 <div class="d-flex align-items-center gap-2">
-                  <span>{{ 'dashboard.table.completedTasks' | translate }}</span>
+                  <span>
+                    {{
+                      'dashboard.table.completedTasks'
+                        | translate
+                    }}
+                  </span>
+
                   <p-sortIcon field="CompletedTasks" />
                 </div>
               </th>
 
               <th pSortableColumn="RemainingTasks">
                 <div class="d-flex align-items-center gap-2">
-                  <span>{{ 'dashboard.table.remainingTasks' | translate }}</span>
+                  <span>
+                    {{
+                      'dashboard.table.remainingTasks'
+                        | translate
+                    }}
+                  </span>
+
                   <p-sortIcon field="RemainingTasks" />
                 </div>
               </th>
 
               <th pSortableColumn="OverdueTasks">
                 <div class="d-flex align-items-center gap-2">
-                  <span>{{ 'dashboard.table.overdueTasks' | translate }}</span>
+                  <span>
+                    {{
+                      'dashboard.table.overdueTasks'
+                        | translate
+                    }}
+                  </span>
+
                   <p-sortIcon field="OverdueTasks" />
                 </div>
               </th>
+
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-employee
-            ><tr>
+
+          <ng-template
+            pTemplate="body"
+            let-employee
+          >
+            <tr>
+
               <td>
                 <div class="employee-modal-cell">
-                  <strong>{{ employee.name }}</strong
-                  ><small>{{ employee.departmentName || employee.jobDescription || '-' }}</small>
+
+                  <strong>
+                    {{ employee.name }}
+                  </strong>
+
+                  <small>
+                    {{
+                      employee.departmentName ||
+                      employee.jobDescription ||
+                      '-'
+                    }}
+                  </small>
+
                 </div>
               </td>
+
               <td>
-                <span class="employee-count-badge assigned">{{ employee.assignedTasks }}</span>
+                <span class="employee-count-badge assigned">
+                  {{ employee.assignedTasks }}
+                </span>
               </td>
+
               <td>
-                <span class="employee-count-badge completed">{{ employee.completedTasks }}</span>
+                <span class="employee-count-badge completed">
+                  {{ employee.completedTasks }}
+                </span>
               </td>
+
               <td>
-                <span class="employee-count-badge remaining">{{ employee.remainingTasks }}</span>
+                <span class="employee-count-badge remaining">
+                  {{ employee.remainingTasks }}
+                </span>
               </td>
+
               <td>
-                <span class="employee-count-badge late">{{ employee.overdueTasks }}</span>
+                <span class="employee-count-badge late">
+                  {{ employee.overdueTasks }}
+                </span>
               </td>
-            </tr></ng-template
-          >
+
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td
+                colspan="5"
+                class="text-muted no-data"
+              >
+                <div
+                  class="
+                    p-4
+                    d-flex
+                    flex-column
+                    align-items-center
+                    justify-content-center
+                  "
+                >
+                  <i
+                    class="
+                      hgi-stroke
+                      hgi-user-group
+                      fs-32
+                      opacity-25
+                      mb-2
+                    "
+                  ></i>
+
+                  <span>
+                    {{ 'dashboard.common.noData' | translate }}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
         </p-table>
+
       </div>
+
+      @if (totalItems() > 0) {
+        <div class="mt-3">
+
+          <app-pagination
+            class="w-100"
+            [currentPage]="currentPage()"
+            [totalItems]="totalItems()"
+            [itemsPerPage]="itemsPerPage()"
+            (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"
+          >
+          </app-pagination>
+
+        </div>
+      }
+
     </div>
-    <div class="candidate-modal-actions" [hidden]="!canExport()">
+
+    <div
+      class="candidate-modal-actions"
+      [hidden]="!canExport()"
+    >
+
       <button
         class="candidate-modal-btn outline"
         type="button"
         (click)="exportCharts()"
         [disabled]="exportInProgress()"
       >
-        <i class="hgi-stroke hgi-download-04"></i
-        ><span>{{ 'dashboard.common.exportCharts' | translate }}</span></button
-      ><button
+        <i class="hgi-stroke hgi-download-04"></i>
+
+        <span>
+          {{ 'dashboard.common.exportCharts' | translate }}
+        </span>
+      </button>
+
+      <button
         class="candidate-modal-btn filled"
         type="button"
         (click)="exportList()"
         [disabled]="exportInProgress()"
       >
-        <i class="hgi-stroke hgi-download-04"></i
-        ><span>{{ 'dashboard.common.exportList' | translate }}</span>
+        <i class="hgi-stroke hgi-download-04"></i>
+
+        <span>
+          {{ 'dashboard.common.exportList' | translate }}
+        </span>
       </button>
+
     </div>
+
   </div>
 </div>

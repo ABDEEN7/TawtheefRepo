@@ -27,11 +27,20 @@ import {
 } from '../../../services/dashboard-chart-export.service';
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
 import { InvitationStatus } from '../../../../../../../core/enums/lookups.enum';
+import { PaginatedResult } from '../../../../../../../core/models/paginated-result.model';
+import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-dashboard-jobs-dialog',
   standalone: true,
-  imports: [CommonModule, ChartModule, TableModule, TranslatePipe, I18nNamespaceDirective],
+  imports: [
+    CommonModule,
+    ChartModule,
+    TableModule,
+    TranslatePipe,
+    I18nNamespaceDirective,
+    PaginationComponent,
+  ],
   templateUrl: './jobs-dialog.html',
   styleUrl: './jobs-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +56,16 @@ export class JobsDialog implements OnInit {
   private readonly chartExport = inject(DashboardChartExportService);
   private readonly files = inject(FileUtilsService);
   private readonly translate = inject(TranslateService);
-  readonly latestJobs = signal<LatestJob[]>([]);
+  readonly latestJobs = signal<PaginatedResult<LatestJob> | null>(null);
+  readonly tableFilters = signal<OperationsDashboardFilters>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
+  readonly totalItems = computed(() => this.latestJobs()?.metadata?.totalCount ?? 0);
+
+  readonly pageNumber = computed(() => this.tableFilters().pageNumber ?? 1);
+
+  readonly pageSize = computed(() => this.tableFilters().pageSize ?? 10);
   readonly exportInProgress = signal(false);
   readonly chartOptions = {
     responsive: true,
@@ -92,7 +110,7 @@ export class JobsDialog implements OnInit {
 
   readonly chartData = computed<ChartData<'doughnut'>>(() => this.buildChart(this.items()));
   readonly rows = computed(() =>
-    this.latestJobs().map((job) => {
+    (this.latestJobs()?.items ?? []).map((job) => {
       const workflowCounts = new Map(
         job.invitationWorkflow.map((item) => [item.status, item.count]),
       );
@@ -110,9 +128,27 @@ export class JobsDialog implements OnInit {
   );
 
   ngOnInit(): void {
-    this.api.getLatestJobs(this.filters()).subscribe((rows) => this.latestJobs.set(rows));
+    this.loadLatestJobs();
   }
 
+  private loadLatestJobs(): void {
+    this.api
+      .getLatestJobs({
+        ...this.filters(),
+        ...this.tableFilters(),
+      })
+      .subscribe((result) => {
+        this.latestJobs.set(result);
+
+        if (result.metadata) {
+          this.tableFilters.update((filters) => ({
+            ...filters,
+            pageNumber: result.metadata.currentPage,
+            pageSize: result.metadata.pageSize,
+          }));
+        }
+      });
+  }
   exportList(): void {
     this.downloadList('Jobs', 'Jobs.xlsx');
   }
@@ -154,8 +190,7 @@ export class JobsDialog implements OnInit {
           ],
         };
   }
- 
-  
+
   private downloadList(context: 'Jobs', fallback: string): void {
     if (!this.canExport() || this.exportInProgress()) return;
     this.exportInProgress.set(true);
@@ -172,5 +207,26 @@ export class JobsDialog implements OnInit {
       response.body ?? new Blob(),
       encoded ? decodeURIComponent(encoded) : (plain ?? fallback),
     );
+  }
+
+  onPageChange(pageNumber: number): void {
+    if (pageNumber === this.pageNumber()) return;
+
+    this.tableFilters.update((filters) => ({
+      ...filters,
+      pageNumber,
+    }));
+
+    this.loadLatestJobs();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    this.tableFilters.update((filters) => ({
+      ...filters,
+      pageNumber: 1,
+      pageSize,
+    }));
+
+    this.loadLatestJobs();
   }
 }
