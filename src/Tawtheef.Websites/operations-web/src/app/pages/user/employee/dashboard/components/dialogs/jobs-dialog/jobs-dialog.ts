@@ -26,6 +26,7 @@ import {
   DashboardChartExportService,
 } from '../../../services/dashboard-chart-export.service';
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
+import { InvitationStatus } from '../../../../../../../core/enums/lookups.enum';
 
 @Component({
   selector: 'app-dashboard-jobs-dialog',
@@ -67,6 +68,19 @@ export class JobsDialog implements OnInit {
     '#9CA3AF',
   ];
 
+  private readonly invitationWorkflowColors = [
+    '#488ADA',
+    '#64748B',
+    '#D9182D',
+    '#2F8A3A',
+    '#FFB547',
+    '#94DDBF',
+    '#6C4BB6',
+    '#8A1538',
+  ];
+
+  private readonly invitationStatuses = Object.values(InvitationStatus) as InvitationStatus[];
+
   readonly items = computed(() =>
     this.breakdown().byStatus.map((item, index) => ({
       jobStatusId: item.jobStatusId,
@@ -78,18 +92,21 @@ export class JobsDialog implements OnInit {
 
   readonly chartData = computed<ChartData<'doughnut'>>(() => this.buildChart(this.items()));
   readonly rows = computed(() =>
-    this.latestJobs().map((job) => ({
-      ...job,
-      workflow: [
-        {
-          labelKey: 'dashboard.workflow.invitations',
-          value: job.invitationsSent,
-          color: '#488ADA',
-        },
-        { labelKey: 'dashboard.workflow.applicants', value: job.candidatesCount, color: '#2F8A3A' },
-      ],
-      actionKey: this.actionKey(job.status),
-    })),
+    this.latestJobs().map((job) => {
+      const workflowCounts = new Map(
+        job.invitationWorkflow.map((item) => [item.status, item.count]),
+      );
+
+      return {
+        ...job,
+        workflow: this.invitationStatuses.map((status, index) => ({
+          status,
+          labelKey: `dashboard.status.${status}`,
+          value: workflowCounts.get(status) ?? 0,
+          color: this.invitationWorkflowColors[index % this.invitationWorkflowColors.length],
+        })),
+      };
+    }),
   );
 
   ngOnInit(): void {
@@ -119,7 +136,6 @@ export class JobsDialog implements OnInit {
     }
   }
 
-  
   private buildChart(items: DashboardChartExportItem[]): ChartData<'doughnut'> {
     return items.every((item) => item.count === 0)
       ? {
@@ -138,16 +154,8 @@ export class JobsDialog implements OnInit {
           ],
         };
   }
-  private actionKey(status: string): string {
-    const value = status.toLowerCase();
-    return value.includes('pendingapproval')
-      ? 'dashboard.latestJobs.actions.review'
-      : value.includes('need')
-        ? 'dashboard.latestJobs.actions.update'
-        : value.includes('published')
-          ? 'dashboard.latestJobs.actions.followInvitations'
-          : 'dashboard.latestJobs.actions.none';
-  }
+ 
+  
   private downloadList(context: 'Jobs', fallback: string): void {
     if (!this.canExport() || this.exportInProgress()) return;
     this.exportInProgress.set(true);

@@ -2100,7 +2100,8 @@ td {
 }
 
 .workflow-column {
-  width: 300px;
+  width: 380px;
+  min-width: 380px;
 }
 
 .candidate-modal-section-title {
@@ -2248,18 +2249,36 @@ td {
 }
 
 .workflow-tags {
-  display: flex;
-      flex-wrap: wrap;
-      gap: 8px 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
 }
 
 .workflow-tag {
-  display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: calc(12px * var(--dashboard-font-scale, 1));
-      color: #667085;
-      white-space: nowrap;
+  display: grid;
+  grid-template-columns: 6px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: calc(12px * var(--dashboard-font-scale, 1));
+  color: #667085;
+}
+
+.workflow-tag-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+}
+
+.workflow-tag strong {
+  color: #1d2939;
+  font-weight: 700;
+}
+
+.workflow-tag-zero {
+  opacity: 0.55;
 }
 
 .workflow-dot {

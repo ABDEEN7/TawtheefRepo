@@ -36,23 +36,66 @@ internal sealed class DashboardJobsReader(
                 JobTitleEn = job.JobTitle != null ? job.JobTitle.JobNameEn : string.Empty,
                 job.Management,
                 Status = job.JobStatus != null ? job.JobStatus.BackendName : "N/A",
-                CandidatesCount = invitations.Where(invitation => !invitation.IsDeleted && invitation.JobId == job.Id && invitation.IsAccepted)
-                    .Select(invitation => invitation.ApplicantId).Distinct().Count(),
+                CandidatesCount = invitations
+                    .Where(invitation =>
+                        !invitation.IsDeleted &&
+                        invitation.JobId == job.Id &&
+                        invitation.IsAccepted)
+                    .Select(invitation => invitation.ApplicantId)
+                    .Distinct()
+                    .Count(),
                 InvitationsSent = context.CanViewInvitations
-                    ? invitations.Count(invitation => !invitation.IsDeleted && invitation.JobId == job.Id)
+                    ? invitations.Count(invitation =>
+                        !invitation.IsDeleted &&
+                        invitation.JobId == job.Id)
                     : 0
             })
             .ToListAsync(ct);
+        
+        var jobIds = rows
+            .Select(job => job.Id)
+            .ToList();
+        
+        var invitationWorkflow = context.CanViewInvitations && jobIds.Count > 0
+            ? await invitations
+                .AsNoTracking()
+                .Where(invitation =>
+                    !invitation.IsDeleted &&
+                    jobIds.Contains(invitation.JobId))
+                .GroupBy(invitation => new
+                {
+                    invitation.JobId,
+                    Status = invitation.InvitationStatus != null
+                        ? invitation.InvitationStatus.BackendName
+                        : "N/A"
+                })
+                .Select(group => new
+                {
+                    group.Key.JobId,
+                    group.Key.Status,
+                    Count = group.Count()
+                })
+                .ToListAsync(ct)
+            : [];
 
         return Result.Ok<IReadOnlyList<LatestJobDto>>([
             .. rows.Select(job => new LatestJobDto
             {
                 JobId = job.Id,
-                JobTitle = localizationService.GetLocalizedValue(job.JobTitleAr, job.JobTitleEn),
+                JobTitle = localizationService.GetLocalizedValue(
+                    job.JobTitleAr,
+                    job.JobTitleEn),
                 ManagementName = localizationService.GetLocalizedName(job.Management),
                 Status = job.Status,
                 CandidatesCount = job.CandidatesCount,
-                InvitationsSent = job.InvitationsSent
+                InvitationsSent = job.InvitationsSent,
+
+                InvitationWorkflow =
+                [
+                    .. invitationWorkflow
+                        .Where(item => item.JobId == job.Id)
+                        .Select(item => new InvitationStatusCountDto { Status = item.Status, Count = item.Count })
+                ]
             })
         ]);
     }

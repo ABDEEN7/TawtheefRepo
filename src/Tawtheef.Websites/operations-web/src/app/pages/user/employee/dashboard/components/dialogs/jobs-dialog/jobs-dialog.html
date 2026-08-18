@@ -70,12 +70,21 @@
                       [style.flex]="item.value"
                     ></span>
                   </div>
+
                   <div class="workflow-tags">
-                    <span class="workflow-tag" *ngFor="let item of job.workflow"
-                      ><i class="workflow-dot" [style.background]="item.color"></i
-                      ><span>{{ item.labelKey | translate }}</span
-                      ><strong>{{ item.value }}</strong></span
+                    <span
+                      class="workflow-tag"
+                      *ngFor="let item of job.workflow"
+                      [class.workflow-tag-zero]="item.value === 0"
                     >
+                      <i class="workflow-dot" [style.background]="item.color"></i>
+
+                      <span class="workflow-tag-label">
+                        {{ item.labelKey | translate }}
+                      </span>
+
+                      <strong>{{ item.value | number: '1.0-0' }}</strong>
+                    </span>
                   </div>
                 </div>
               </td>
@@ -89,7 +98,7 @@
           >
           <ng-template pTemplate="emptymessage"
             ><tr>
-              <td colspan="6" class="text-muted no-data">
+              <td colspan="5" class="text-muted no-data">
                 <div class="p-4 d-flex flex-column align-items-center justify-content-center">
                   <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i
                   ><span>{{ 'dashboard.common.noData' | translate }}</span>

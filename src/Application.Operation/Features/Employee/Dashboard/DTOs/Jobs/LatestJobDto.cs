@@ -8,4 +8,6 @@ public sealed class LatestJobDto
     public required string Status { get; init; }
     public int CandidatesCount { get; init; }
     public int InvitationsSent { get; init; }
+    
+    public IReadOnlyList<InvitationStatusCountDto> InvitationWorkflow { get; init; } = [];
 }
