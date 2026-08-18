@@ -271,16 +271,17 @@ export class Dashboard implements OnInit {
       color: colors[index % colors.length],
     }));
   });
-  readonly employeeChartItems = computed<DashboardChartExportItem[]>(() => {
+
+  readonly employeeWorkloadChartItems = computed<DashboardChartExportItem[]>(() => {
     this.languageChange();
-    return [
-      {
-        label: this.translate.instant('dashboard.kpi.totalEmployees'),
-        count: this.activeKpis().totalEmployees,
-        color: '#488ADA',
-      },
-    ];
+
+    return this.employeesSummaryItems().map((item) => ({
+      label: this.translate.instant(item.labelKey),
+      count: item.count,
+      color: item.color,
+    }));
   });
+
   readonly invitationsSummaryItems = computed(() => {
     const invitations = this.activeInvitationKpis();
     return [
@@ -314,7 +315,7 @@ export class Dashboard implements OnInit {
   );
 
   readonly visibleEmployeesChartData = computed<ChartData<'doughnut'>>(() =>
-    this.chartData(this.employeeChartItems()),
+    this.chartData(this.employeeWorkloadChartItems()),
   );
   readonly visibleInvitationsChartData = computed<ChartData<'doughnut'>>(() =>
     this.chartData(this.localized(this.invitationsSummaryItems())),
@@ -431,7 +432,7 @@ export class Dashboard implements OnInit {
           'dashboard.export.files.employees',
           'dashboard.operationalSummary.employees',
           this.activeKpis().totalEmployees,
-          this.employeeChartItems(),
+          this.employeeWorkloadChartItems(),
         ),
         this.exportSpec(
           this.mainInvitationsChart,

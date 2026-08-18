@@ -30,10 +30,7 @@ import {
   TeamPerformanceRow,
 } from '../../../models/dashboard-employees.model';
 import { OperationsDashboardFilters } from '../../../models/dashboard-filters.model';
-import {
-  DashboardKpis,
-  TaskMonitoring,
-} from '../../../models/dashboard-overview.model';
+import { DashboardKpis, TaskMonitoring } from '../../../models/dashboard-overview.model';
 import {
   DashboardChartExportItem,
   DashboardChartExportService,
@@ -71,13 +68,9 @@ export class EmployeesDialog implements OnInit {
   private readonly files = inject(FileUtilsService);
   private readonly translate = inject(TranslateService);
 
-  private readonly languageChange = toSignal(
-    this.translate.onLangChange,
-    { initialValue: null },
-  );
+  private readonly languageChange = toSignal(this.translate.onLangChange, { initialValue: null });
 
-  readonly teamPerformance =
-    signal<PaginatedResult<TeamPerformanceRow> | null>(null);
+  readonly teamPerformance = signal<PaginatedResult<TeamPerformanceRow> | null>(null);
 
   readonly tableFilters = signal<OperationsDashboardFilters>({
     pageNumber: 1,
@@ -89,26 +82,16 @@ export class EmployeesDialog implements OnInit {
 
   readonly exportInProgress = signal(false);
 
-  readonly rows = computed(
-    () => this.teamPerformance()?.items ?? [],
-  );
+  readonly rows = computed(() => this.teamPerformance()?.items ?? []);
 
-  readonly totalItems = computed(
-    () => this.teamPerformance()?.metadata?.totalCount ?? 0,
-  );
+  readonly totalItems = computed(() => this.teamPerformance()?.metadata?.totalCount ?? 0);
 
   readonly currentPage = computed(
-    () =>
-      this.teamPerformance()?.metadata?.currentPage ??
-      this.tableFilters().pageNumber ??
-      1,
+    () => this.teamPerformance()?.metadata?.currentPage ?? this.tableFilters().pageNumber ?? 1,
   );
 
   readonly itemsPerPage = computed(
-    () =>
-      this.teamPerformance()?.metadata?.pageSize ??
-      this.tableFilters().pageSize ??
-      10,
+    () => this.teamPerformance()?.metadata?.pageSize ?? this.tableFilters().pageSize ?? 10,
   );
 
   readonly chartOptions = {
@@ -123,46 +106,31 @@ export class EmployeesDialog implements OnInit {
   };
 
   readonly items = computed(() => {
-    const colors = [
-      '#488ADA',
-      '#2F8A3A',
-      '#FFB547',
-      '#D9182D',
-      '#94DDBF',
-    ];
+    const colors = ['#488ADA', '#2F8A3A', '#FFB547', '#D9182D', '#94DDBF'];
 
-    return this.monitoring().taskStatusStacked.map(
-      (item, index) => ({
-        labelKey: employeeAssignmentTranslationKey(item.label),
-        count: item.count,
-        color: colors[index % colors.length],
-      }),
-    );
+    return this.monitoring().taskStatusStacked.map((item, index) => ({
+      labelKey: employeeAssignmentTranslationKey(item.label),
+      count: item.count,
+      color: colors[index % colors.length],
+    }));
   });
 
-  readonly employeeChartItems =
-    computed<DashboardChartExportItem[]>(() => {
-      this.languageChange();
+  readonly employeeWorkloadChartItems = computed<DashboardChartExportItem[]>(() => {
+    this.languageChange();
 
-      return [
-        {
-          label: this.translate.instant(
-            'dashboard.kpi.totalEmployees',
-          ),
-          count: this.kpis().totalEmployees,
-          color: '#488ADA',
-        },
-      ];
-    });
+    return this.items().map((item) => ({
+      label: this.translate.instant(item.labelKey),
+      count: item.count,
+      color: item.color,
+    }));
+  });
 
   readonly chartData = computed<ChartData<'doughnut'>>(() => {
-    const items = this.employeeChartItems();
+    const items = this.employeeWorkloadChartItems();
 
     return items.every((item) => item.count === 0)
       ? {
-          labels: [
-            this.translate.instant('common.chart.noData'),
-          ],
+          labels: [this.translate.instant('common.chart.noData')],
           datasets: [
             {
               data: [1],
@@ -255,12 +223,8 @@ export class EmployeesDialog implements OnInit {
         sortBy: tableFilters.sortBy,
         sortDirection: tableFilters.sortDirection,
       })
-      .pipe(
-        finalize(() => this.exportInProgress.set(false)),
-      )
-      .subscribe((response) =>
-        this.downloadResponse(response),
-      );
+      .pipe(finalize(() => this.exportInProgress.set(false)))
+      .subscribe((response) => this.downloadResponse(response));
   }
 
   async exportCharts(): Promise<void> {
@@ -272,21 +236,12 @@ export class EmployeesDialog implements OnInit {
       await this.chartExport.download([
         {
           host: this.chart?.nativeElement,
-          filename: this.translate.instant(
-            'dashboard.export.files.employeeAssignments',
-          ),
-          title: this.translate.instant(
-            'dashboard.modals.employees.statusTitle',
-          ),
-          totalLabel: this.translate.instant(
-            'dashboard.common.total',
-          ),
+          filename: this.translate.instant('dashboard.export.files.employeeAssignments'),
+          title: this.translate.instant('dashboard.modals.employees.statusTitle'),
+          totalLabel: this.translate.instant('dashboard.common.total'),
           total: this.kpis().totalEmployees,
-          items: this.employeeChartItems(),
-          direction:
-            this.translate.currentLang === 'ar'
-              ? 'rtl'
-              : 'ltr',
+          items: this.employeeWorkloadChartItems(),
+          direction: this.translate.currentLang === 'ar' ? 'rtl' : 'ltr',
         },
       ]);
     } finally {
@@ -294,23 +249,16 @@ export class EmployeesDialog implements OnInit {
     }
   }
 
-  private downloadResponse(
-    response: HttpResponse<Blob>,
-  ): void {
-    const disposition =
-      response.headers.get('content-disposition') ?? '';
+  private downloadResponse(response: HttpResponse<Blob>): void {
+    const disposition = response.headers.get('content-disposition') ?? '';
 
-    const encoded =
-      /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+    const encoded = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
 
-    const plain =
-      /filename="?([^";]+)"?/i.exec(disposition)?.[1];
+    const plain = /filename="?([^";]+)"?/i.exec(disposition)?.[1];
 
     this.files.downloadBlob(
       response.body ?? new Blob(),
-      encoded
-        ? decodeURIComponent(encoded)
-        : (plain ?? 'Employees.xlsx'),
+      encoded ? decodeURIComponent(encoded) : (plain ?? 'Employees.xlsx'),
     );
   }
 }
