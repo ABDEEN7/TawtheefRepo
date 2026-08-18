@@ -35,5 +35,13 @@
   "home.contact.desc": "نحن هنا لمساعدتك والإجابة عن جميع استفساراتك المتعلقة بالمنصة.",
   "home.contact.mapAlt": "موقع وزارة التربية والتعليم والتعليم العالي",
   "home.contact.items.hotline.label": "الخط الساخن",
-  "home.contact.items.email.label": "البريد الإلكتروني"
+  "home.contact.items.email.label": "البريد الإلكتروني",
+  "home.contact.find.my.school": "أين مدرستي؟",
+  "home.statistics.title": "بيانات إحصائية",
+  "home.statistics.public.schools": "عدد المدارس الحكومية",
+  "home.statistics.academic": "عدد الكادر الأكاديمي",
+  "home.statistics.management": "عدد الكادر الإداري",
+  "home.statistics.male": "الذكور",
+  "home.statistics.female": "الإناث"
 }
+ 

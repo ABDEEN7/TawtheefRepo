@@ -35,5 +35,14 @@
   "home.contact.desc": "We are here to help you and answer all your inquiries related to the platform.",
   "home.contact.mapAlt": "Ministry of Education and Higher Education location",
   "home.contact.items.hotline.label": "Hotline",
-  "home.contact.items.email.label": "Email"
+    "home.contact.items.email.label": "Email",
+  "home.contact.find.my.school": "Where Is My School?",
+  "home.statistics.title": "Statistical Data",
+  "home.statistics.public.schools": "Public Schools",
+  "home.statistics.academic": "Academic Staff",
+  "home.statistics.management": "Administrative Staff",
+  "home.statistics.male": "Male",
+  "home.statistics.female": "Female"
+ 
+
 }

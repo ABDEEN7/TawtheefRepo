@@ -1,0 +1,171 @@
+<div class="organization-page" i18nNamespace="pages/schools-structure">
+  <div class="page-header">
+    <div>
+      <div class="page-title">{{ 'OrganizationalStructure.Title' | translate }}</div>
+
+      <div class="page-subtitle">{{ 'OrganizationalStructure.Subtitle' | translate }}</div>
+    </div>
+    <!-- 
+    <div class="header-actions">
+      <button type="button" class="header-button">
+        <i class="pi pi-search"></i>
+
+        Search
+      </button>
+    </div> -->
+  </div>
+
+  @if (!isMobile) {
+    <div
+      class="organization-container"
+      [class.is-dragging]="isDragging"
+      (pointerdown)="startDragging($event)"
+      (pointermove)="dragMap($event)"
+      (pointerup)="stopDragging($event)"
+      (pointercancel)="stopDragging($event)"
+      (pointerleave)="stopDragging($event)"
+    >
+      <p-organization-chart
+        [value]="organizationData"
+        [collapsible]="true"
+        (onNodeExpand)="onNodeExpand($event)"
+        (onNodeCollapse)="onNodeCollapse($event)"
+      >
+        <!-- NODE -->
+
+        <ng-template pTemplate="default" let-node>
+          <div
+            class="organization-card"
+            [class]="'organization-card--level-' + node.data.level"
+            [class.is-focused]="node.key === focusedNodeKey"
+            [attr.data-node-key]="node.key"
+          >
+            <!-- CONTENT -->
+
+            <div class="node-content">
+              <div class="node-title">
+                {{ node.data.title | translate }}
+              </div>
+            </div>
+
+            <!-- INFO ICON (end of card, not inline with the title) -->
+
+            <i
+              class="pi pi-info-circle node-info-icon"
+              [pTooltip]="node.data.description | translate"
+              tooltipPosition="top"
+              (click)="openNodeDetails(node, $event)"
+            >
+            </i>
+          </div>
+        </ng-template>
+
+        <!-- ===============================================
+               CUSTOM + / - TOGGLER
+               =============================================== -->
+
+        <ng-template #togglericon let-expanded>
+          @if (expanded) {
+            <i class="pi pi-minus"></i>
+          } @else {
+            <i class="pi pi-plus"></i>
+          }
+        </ng-template>
+      </p-organization-chart>
+    </div>
+  } @else {
+    <!--
+      Mobile: PrimeNG's org chart is a <table>-based horizontal layout and
+      can't reflow into a vertical accordion via CSS, so below the same
+      767.98px breakpoint pages/home/structure uses, this renders a plain
+      recursive list instead — matching that page's own mobile fallback,
+      which drops connector lines entirely and relies on indentation.
+    -->
+
+    <div class="mobile-tree">
+      <ng-container
+        *ngTemplateOutlet="mobileNodeList; context: { $implicit: organizationData }"
+      ></ng-container>
+    </div>
+  }
+
+  <p-dialog
+    [visible]="!!selectedNode"
+    (visibleChange)="onDialogVisibleChange($event)"
+    [modal]="true"
+    [dismissableMask]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closeOnEscape]="true"
+    styleClass="node-details-dialog"
+    [style]="{ width: '420px' }"
+    [breakpoints]="{ '575px': '92vw' }"
+  >
+    <ng-template pTemplate="header">
+      <div class="node-dialog-header">
+        <div class="node-dialog-heading">
+          <div class="node-dialog-title">{{ selectedNode?.data?.title | translate }}</div>
+        </div>
+      </div>
+    </ng-template>
+
+    @if (selectedNode?.data?.description) {
+      <p class="node-dialog-description">{{ selectedNode?.data?.description | translate }}</p>
+    }
+    
+  </p-dialog>
+
+  <!--
+    Recursive mobile node list — one level of the tree per call, calling
+    itself for a node's children when expanded. Reuses node.data.level
+    (already computed in buildNode for the desktop cards) to pick the
+    same per-level color via .mobile-node--level-N.
+  -->
+
+  <ng-template #mobileNodeList let-nodes>
+    <div class="mobile-tree-list">
+      @for (node of nodes; track node.key) {
+        <div class="mobile-tree-item">
+          <div
+            class="mobile-node"
+            [class]="'mobile-node--level-' + node.data.level"
+            [class.is-focused]="node.key === focusedNodeKey"
+            [attr.data-node-key]="node.key"
+          >
+            @if (!node.leaf) {
+              <button
+                type="button"
+                class="mobile-node-toggle"
+                [class.is-expanded]="node.expanded"
+                [attr.aria-expanded]="node.expanded"
+                [attr.aria-label]="node.data.title | translate"
+                (click)="toggleMobileNode(node, $event)"
+              >
+                <i class="pi pi-chevron-down"></i>
+              </button>
+            }
+
+            <span class="mobile-node-title">{{ node.data.title | translate }}</span>
+
+            <button
+              type="button"
+              class="mobile-node-info"
+              [attr.aria-label]="node.data.title | translate"
+              (click)="openNodeDetails(node, $event)"
+            >
+              <i class="pi pi-eye"></i>
+            </button>
+          </div>
+
+          @if (node.expanded && node.children?.length) {
+            <div class="mobile-tree-children">
+              <ng-container
+                *ngTemplateOutlet="mobileNodeList; context: { $implicit: node.children }"
+              ></ng-container>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </ng-template>
+</div>

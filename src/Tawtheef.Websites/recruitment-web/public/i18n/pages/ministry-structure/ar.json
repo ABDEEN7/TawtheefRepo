@@ -1,0 +1,96 @@
+{
+  "structure.title": "الهيكل التنظيمي",
+  "structure.subtitle": "استعرض الهيكل التنظيمي لوزارة التربية والتعليم والتعليم العالي.",
+  "structure.expandAll": "توسيع الكل",
+  "structure.collapseAll": "طي الكل",
+
+  "structure.nodes.minister": "الوزير",
+  "structure.nodes.minister-office": "مكتب الوزير",
+  "structure.nodes.technical-office": "المكتب الفني",
+  "structure.nodes.internal-audit": "إدارة التدقيق الداخلي",
+
+  "structure.nodes.planning": "إدارة التخطيط والسياسات التربوية والابتكار",
+  "structure.nodes.strategic-planning": "قسم التخطيط الاستراتيجي",
+  "structure.nodes.educational-policies-research": "قسم السياسات والأبحاث التربوية",
+  "structure.nodes.quality-development-innovation": "قسم الجودة والتطوير والابتكار",
+  "structure.nodes.statistical-studies": "قسم الدراسات الإحصائية",
+
+  "structure.nodes.legal-affairs": "إدارة الشؤون القانونية",
+  "structure.nodes.legal-studies": "قسم الدراسات القانونية",
+  "structure.nodes.investigations-cases": "قسم التحقيقات والقضايا",
+
+  "structure.nodes.undersecretary": "وكيل الوزارة",
+  "structure.nodes.undersecretary-office": "مكتب وكيل الوزارة",
+
+  "structure.nodes.training-center": "مركز التدريب والتطوير",
+  "structure.nodes.training-program-planning": "قسم تخطيط البرامج التدريبية",
+  "structure.nodes.educational-training": "قسم التدريب التربوي",
+  "structure.nodes.administrative-training": "قسم التدريب الإداري",
+  "structure.nodes.professional-licenses": "قسم الرخص المهنية",
+  "structure.nodes.training-systems": "قسم النظم التدريبية",
+
+  "structure.nodes.international-cooperation": "إدارة التعاون الدولي",
+
+  "structure.nodes.public-relations": "إدارة العلاقات العامة والاتصال",
+  "structure.nodes.communication": "قسم الاتصال",
+  "structure.nodes.public-relations-section": "قسم العلاقات العامة",
+  "structure.nodes.customer-service": "قسم خدمة العملاء",
+  "structure.nodes.content-translation": "قسم المحتوى والترجمة",
+
+  "structure.nodes.information-systems": "إدارة نظم المعلومات",
+  "structure.nodes.information-security": "قسم أمن المعلومات",
+  "structure.nodes.project-management": "قسم إدارة المشاريع",
+  "structure.nodes.applications": "قسم التطبيقات",
+  "structure.nodes.technology-infrastructure": "قسم البنية التحتية التكنولوجية",
+  "structure.nodes.it-policies-quality": "قسم سياسات وجودة تكنولوجيا المعلومات",
+  "structure.nodes.technology-equipment-support": "قسم التجهيزات التكنولوجية ودعم المستخدمين",
+
+  "structure.nodes.education-affairs": "وكيل الوزارة المساعد للشؤون التعليمية",
+  "structure.nodes.private-education-affairs": "وكيل الوزارة المساعد لشؤون التعليم الخاص",
+  "structure.nodes.evaluation-affairs": "وكيل الوزارة المساعد لشؤون التقييم",
+  "structure.nodes.higher-education-affairs": "وكيل الوزارة المساعد لشؤون التعليم العالي",
+  "structure.nodes.shared-services-affairs": "وكيل الوزارة المساعد لشؤون الخدمات المشتركة",
+
+  "structure.nodes.assistant-undersecretary-office": "مكتب وكيل الوزارة المساعد",
+
+  "structure.nodes.vocational-technical-education": "إدارة التعليم المهني والتقني والتخصصي",
+  "structure.nodes.vocational-education-development": "قسم تطوير التعليم المهني والتقني والتخصصي",
+  "structure.nodes.vocational-education-supervision": "قسم الإشراف والتوجيه على التعليم المهني والتقني والتخصصي",
+
+  "structure.nodes.digital-education": "إدارة التعليم الإلكتروني والحلول الرقمية",
+  "structure.nodes.digital-education-development": "قسم تطوير التعليم الإلكتروني",
+  "structure.nodes.digital-education-support": "قسم الإشراف والدعم للتعليم الإلكتروني",
+
+  "structure.nodes.curriculum-learning-resources": "إدارة المناهج الدراسية ومصادر التعلم",
+  "structure.nodes.curriculum": "قسم المناهج الدراسية",
+  "structure.nodes.learning-resources": "قسم مصادر التعلم",
+  "structure.nodes.research-talent-innovation": "قسم البحث والموهبة والابتكار",
+  "structure.nodes.school-laboratories": "قسم المختبرات المدرسية",
+
+  "structure.nodes.educational-guidance": "إدارة التوجيه التربوي",
+  "structure.nodes.islamic-education": "قسم التربية الإسلامية",
+  "structure.nodes.arabic-language": "قسم اللغة العربية",
+  "structure.nodes.mathematics": "قسم الرياضيات",
+  "structure.nodes.science": "قسم العلوم",
+  "structure.nodes.english-language": "قسم اللغة الإنجليزية",
+  "structure.nodes.social-sciences": "قسم العلوم الاجتماعية",
+  "structure.nodes.information-technology": "قسم تكنولوجيا المعلومات",
+  "structure.nodes.physical-education": "قسم التربية الرياضية",
+  "structure.nodes.arts-theater": "قسم الفنون والمسرح",
+
+  "structure.nodes.early-education": "إدارة التعليم المبكر",
+  "structure.nodes.kindergarten-stage": "قسم مرحلة رياض الأطفال",
+  "structure.nodes.foundation-stage": "قسم المرحلة التأسيسية",
+
+  "structure.nodes.special-inclusive-education": "إدارة التربية الخاصة والتعليم الدامج",
+  "structure.nodes.special-schools-inclusion": "قسم مدارس التربية الخاصة وطلبة الدمج",
+  "structure.nodes.student-support-center": "مركز خدمات دعم الطلبة",
+
+  "structure.nodes.schools-students-affairs": "إدارة شؤون المدارس والطلبة",
+  "structure.nodes.student-admission-registration": "قسم قبول وتسجيل الطلبة",
+  "structure.nodes.academic-guidance": "قسم الإرشاد الأكاديمي",
+  "structure.nodes.student-protection-care": "قسم حماية ورعاية الطلبة",
+  "structure.nodes.programs-activities": "قسم البرامج والأنشطة",
+  "structure.nodes.school-management-support": "قسم دعم الإدارة المدرسية",
+  "structure.nodes.continuing-education": "قسم التعليم المستمر"
+}
