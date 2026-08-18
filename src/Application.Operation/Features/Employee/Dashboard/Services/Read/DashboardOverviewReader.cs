@@ -54,16 +54,17 @@ internal sealed class DashboardOverviewReader(
         var currentKpis = BuildKpis(profileMetrics, workloadMetrics);
         return Result.Ok(new DashboardOverviewDto
         {
-            Role = ResolveRole(context),
-            Filters = BuildFilterSnapshot(request, period.SelectedYear),
             Kpis = currentKpis,
             ProfileBreakdown = new ProfileBreakdownDto
             {
                 ByStatus = BuildStatusCounts(profileMetrics.Statuses.Current),
                 ByCandidateType = profileMetrics.CandidateTypes
             },
-            CandidateTypeKpis = BuildCandidateTypeKpis(profileMetrics.CandidateTypes),
             JobKpis = jobMetrics.Kpis.Current,
+            JobBreakdown = new JobBreakdownDto
+            {
+                ByStatus = jobMetrics.CurrentStatusBreakdown
+            },
             InvitationKpis = invitationMetrics.Kpis.Current,
             KpiTrends = BuildKpiTrends(
                 currentKpis,
@@ -72,10 +73,6 @@ internal sealed class DashboardOverviewReader(
                 jobMetrics.Kpis.Previous,
                 invitationMetrics.Kpis.Current,
                 invitationMetrics.Kpis.Previous),
-            JobBreakdown = new JobBreakdownDto
-            {
-                ByStatus = BuildStatusCounts(jobMetrics.Statuses.Current)
-            },
             TaskMonitoring = BuildTaskMonitoring(workloadMetrics.Workload)
         });
     }
@@ -100,8 +97,6 @@ internal sealed class DashboardOverviewReader(
             InCreationProfiles = statuses.GetValueOrDefault(nameof(UserProfileStatus.InCreation)),
             SubmittedProfiles = statuses.GetValueOrDefault(nameof(UserProfileStatus.Submitted)),
             UnderReviewProfiles = statuses.GetValueOrDefault(nameof(UserProfileStatus.UnderReview)),
-            PendingProfiles = statuses.GetValueOrDefault(nameof(UserProfileStatus.Submitted)) +
-                statuses.GetValueOrDefault(nameof(UserProfileStatus.UnderReview)),
             ReturnedProfiles = statuses.GetValueOrDefault(nameof(UserProfileStatus.RequiresUpdate)),
             ApprovalRate = total == 0 ? 0 : Math.Round(approved * 100m / total, 2),
             RejectionRate = total == 0 ? 0 : Math.Round(profiles.Rejected * 100m / total, 2),
@@ -112,27 +107,6 @@ internal sealed class DashboardOverviewReader(
             OverdueTasks = workload.Tasks.Overdue,
             UnassignedProfiles = profiles.Unassigned.Current,
             FollowedMinisterOfficeCandidates = profiles.FollowedMinisterOfficeCandidates
-        };
-    }
-
-    private static CandidateTypeKpisDto BuildCandidateTypeKpis(
-        IReadOnlyCollection<CandidateTypeCountDto> types)
-    {
-        var counts = types.GroupBy(type => type.Key).ToDictionary(
-            group => group.Key,
-            group => group.Sum(value => value.Count),
-            StringComparer.OrdinalIgnoreCase);
-        int Count(string key) => counts.TryGetValue(key, out var value) ? value : 0;
-        return new CandidateTypeKpisDto
-        {
-            Total = types.Sum(type => type.Count),
-            Qatari = Count("qatari"),
-            NonQatari = Count("nonQatari"),
-            SonOfQatariMother = Count("sonOfQatariMother"),
-            WifeOfQatari = Count("wifeOfQatari"),
-            Gcc = Count("gcc"),
-            ResidentQatar = Count("residentQatar"),
-            Unknown = Count("unknown")
         };
     }
 
@@ -174,41 +148,42 @@ internal sealed class DashboardOverviewReader(
             : Math.Round((current - previous) * 100m / previous, 1)
     };
 
-    private static TaskMonitoringDto BuildTaskMonitoring(DashboardEmployeeWorkload workload) => new()
+    private static List<StatusCountDto> BuildStatusCounts(
+        IReadOnlyDictionary<string, int> statuses) =>
+    [
+        .. statuses.Select(item => new StatusCountDto { Status = item.Key, Count = item.Value })
+    ];
+    
+    private static TaskMonitoringDto BuildTaskMonitoring(
+        DashboardEmployeeWorkload workload) => new()
     {
         TaskStatusStacked =
         [
-            new GroupCountDto { Label = "ProfilesAwaitingDistribution", Count = workload.AwaitingDistribution },
-            new GroupCountDto { Label = "AssignedRequiringUpdate", Count = workload.Returned },
-            new GroupCountDto { Label = "CompletedAssignments", Count = workload.Completed },
-            new GroupCountDto { Label = "ActiveReviewWorkload", Count = workload.InProgress },
-            new GroupCountDto { Label = "AssignedSubmitted", Count = workload.Submitted }
+            new GroupCountDto
+            {
+                Label = "ProfilesAwaitingDistribution",
+                Count = workload.AwaitingDistribution
+            },
+            new GroupCountDto
+            {
+                Label = "AssignedRequiringUpdate",
+                Count = workload.Returned
+            },
+            new GroupCountDto
+            {
+                Label = "CompletedAssignments",
+                Count = workload.Completed
+            },
+            new GroupCountDto
+            {
+                Label = "ActiveReviewWorkload",
+                Count = workload.InProgress
+            },
+            new GroupCountDto
+            {
+                Label = "AssignedSubmitted",
+                Count = workload.Submitted
+            }
         ]
     };
-
-    private static List<StatusCountDto> BuildStatusCounts(
-        IReadOnlyDictionary<string, int> statuses) =>
-        statuses.Select(item => new StatusCountDto
-        {
-            Status = item.Key,
-            Count = item.Value
-        }).ToList();
-
-    private static DashboardFiltersSnapshotDto BuildFilterSnapshot(
-        DashboardQueryBase request,
-        int selectedYear) => new()
-    {
-        Year = selectedYear,
-        FromDateUtc = request.FromDateUtc,
-        ToDateUtc = request.ToDateUtc,
-        DepartmentId = request.DepartmentId,
-        EmployeeId = request.EmployeeId,
-        Status = request.Status
-    };
-
-    private static string ResolveRole(DashboardAccessContext context) =>
-        context.CanViewProfileDistribution ? nameof(SystemRoleIds.HrManager)
-        : context.CanViewAssignedProfiles ? nameof(SystemRoleIds.DepartmentManager)
-        : nameof(SystemRoleIds.Employee);
-
 }

@@ -61,7 +61,6 @@ internal sealed class ExportDashboardListQueryHandler(
         var employees = await employeesReader.ReadExportAsync(new GetTeamPerformanceQuery(
             request.FromDateUtc,
             request.ToDateUtc,
-            request.DepartmentId,
             request.EmployeeId,
             request.Search,
             request.Year)

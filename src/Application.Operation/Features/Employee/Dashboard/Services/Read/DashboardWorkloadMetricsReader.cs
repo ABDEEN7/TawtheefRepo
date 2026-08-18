@@ -2,7 +2,6 @@ using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 

@@ -19,7 +19,7 @@ export interface JobKpis {
 }
 
 export interface JobBreakdown {
-  byStatus: StatusCount[];
+  byStatus: JobStatusCount[];
 }
 
 export interface LatestJob {
@@ -29,4 +29,10 @@ export interface LatestJob {
   status: string;
   candidatesCount: number;
   invitationsSent: number;
+}
+
+export interface JobStatusCount {
+  jobStatusId: string;
+  label: string;
+  count: number;
 }

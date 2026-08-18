@@ -43,9 +43,13 @@ export class CandidatesDialog {
   readonly statusItems = computed(() => { this.languageChange(); return this.breakdown().byStatus.map((item, index) => ({
     label: this.translate.instant(`dashboard.status.${item.status}`), count: item.count, color: this.colors[index % this.colors.length]
   })); });
-  readonly typeItems = computed(() => { this.languageChange(); return this.breakdown().byCandidateType.map((item, index) => ({
-    label: this.localizeCandidateType(item.key, item.label), count: item.count, color: this.colors[index % this.colors.length]
-  })); });
+  readonly typeItems = computed(() =>
+  this.breakdown().byCandidateType.map((item, index) => ({
+    label: item.label,
+    count: item.count,
+    color: this.colors[index % this.colors.length]
+  }))
+);
   readonly statusChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.statusItems()));
   readonly typeChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.typeItems()));
   readonly typeTotal = computed(() => this.typeItems().reduce((total, item) => total + item.count, 0));
@@ -104,12 +108,6 @@ export class CandidatesDialog {
     return { host: host?.nativeElement, filename: this.translate.instant(filenameKey), title: this.translate.instant(titleKey),
       totalLabel: this.translate.instant('dashboard.common.total'), total, items,
       direction: this.translate.currentLang === 'ar' ? 'rtl' as const : 'ltr' as const };
-  }
-
-  private localizeCandidateType(key: string, fallback: string): string {
-    const translationKey = `dashboard.candidateTypes.${key}`;
-    const translated = this.translate.instant(translationKey);
-    return translated === translationKey ? fallback : translated;
   }
 
   private downloadResponse(response: import('@angular/common/http').HttpResponse<Blob>, fallback: string): void {

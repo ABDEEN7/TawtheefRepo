@@ -11,14 +11,3 @@ export interface CandidateTypeCount {
   label: string;
   count: number;
 }
-
-export interface CandidateTypeKpis {
-  total: number;
-  qatari: number;
-  nonQatari: number;
-  sonOfQatariMother: number;
-  wifeOfQatari: number;
-  gcc: number;
-  residentQatar: number;
-  unknown: number;
-}

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -57,11 +56,15 @@ internal sealed class DashboardProfileMetricsReader(
         IQueryable<UserProfile> profiles,
         CancellationToken ct)
     {
-        var rows = await profiles.GroupBy(profile => new
+        var rows = await profiles
+            .Where(profile =>
+                profile.CandidateTypeId.HasValue &&
+                profile.CandidateType != null)
+            .GroupBy(profile => new
             {
-                profile.CandidateTypeId,
-                NameAr = profile.CandidateType != null ? profile.CandidateType.NameAr : string.Empty,
-                NameEn = profile.CandidateType != null ? profile.CandidateType.NameEn : string.Empty
+                CandidateTypeId = profile.CandidateTypeId!.Value,
+                profile.CandidateType!.NameAr,
+                profile.CandidateType.NameEn
             })
             .Select(group => new
             {
@@ -71,13 +74,13 @@ internal sealed class DashboardProfileMetricsReader(
                 Count = group.Count()
             })
             .ToListAsync(ct);
+
         return rows.Select(row => new CandidateTypeCountDto
         {
             CandidateTypeId = row.CandidateTypeId,
-            Key = GetCandidateTypeKey(row.CandidateTypeId),
-            Label = row.CandidateTypeId.HasValue
-                ? localizationService.GetLocalizedValue(row.NameAr, row.NameEn)
-                : string.Empty,
+            Label = localizationService.GetLocalizedValue(
+                row.NameAr,
+                row.NameEn),
             Count = row.Count
         }).ToList();
     }
@@ -167,13 +170,4 @@ internal sealed class DashboardProfileMetricsReader(
         rows.ToDictionary(row => row.Status, row => row.Count, StringComparer.OrdinalIgnoreCase);
 
     private static DateTime GetWeekStart(DateTime today) => today.AddDays(-(int)today.DayOfWeek);
-
-    private static string GetCandidateTypeKey(Guid? id) => id == CandidateTypeIds.Qatari ? "qatari"
-        : id == CandidateTypeIds.NonQatari ? "nonQatari"
-        : id == CandidateTypeIds.SonOfQatariMother ? "sonOfQatariMother"
-        : id == CandidateTypeIds.WifeOfQatari ? "wifeOfQatari"
-        : id == CandidateTypeIds.GCC ? "gcc"
-        : id == CandidateTypeIds.ResidentQatar ? "residentQatar"
-        : id == CandidateTypeIds.QidHolder ? "qidHolder"
-        : "unknown";
 }

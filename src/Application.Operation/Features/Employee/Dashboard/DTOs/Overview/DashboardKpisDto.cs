@@ -13,7 +13,6 @@ public sealed class DashboardKpisDto
     public int InCreationProfiles { get; init; }
     public int SubmittedProfiles { get; init; }
     public int UnderReviewProfiles { get; init; }
-    public int PendingProfiles { get; init; }
     public int ReturnedProfiles { get; init; }
     public decimal ApprovalRate { get; init; }
     public decimal RejectionRate { get; init; }

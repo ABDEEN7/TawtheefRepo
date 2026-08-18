@@ -1,12 +1,15 @@
 <section
   i18nNamespace="pages/employee/dashboard"
   class="ref-dashboard-wrap"
-  [style.--dashboard-font-scale]="fontScale()">
+  [style.--dashboard-font-scale]="fontScale()"
+>
   <main class="main">
     <section class="tab-panel active">
       <div class="section-title">
         <div>
-          <h2><b>{{ 'dashboard.overview.title' | translate }}</b></h2>
+          <h2>
+            <b>{{ 'dashboard.overview.title' | translate }}</b>
+          </h2>
           <h6 class="text-muted my-3">{{ 'dashboard.overview.subtitle' | translate }}</h6>
         </div>
       </div>
@@ -17,8 +20,13 @@
 
           @if (canExportDashboard()) {
             <p-menu #exportMenu [model]="exportActions()" [popup]="true" appendTo="body"></p-menu>
-            <button type="button" class="btn btn-primary dashboard-action-btn" (click)="exportMenu.toggle($event)"
-                    [disabled]="exportInProgress()" aria-haspopup="menu">
+            <button
+              type="button"
+              class="btn btn-primary dashboard-action-btn"
+              (click)="exportMenu.toggle($event)"
+              [disabled]="exportInProgress()"
+              aria-haspopup="menu"
+            >
               <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
               <span>{{ 'dashboard.common.export' | translate }}</span>
               <i class="pi pi-chevron-down" aria-hidden="true"></i>
@@ -26,298 +34,307 @@
           }
         </div>
 
-
         @if (overviewLoading()) {
-        <section class="kpi-grid">
-          @for (item of kpiSkeletonItems; track item) {
-          <article class="kpi-card figma-kpi-card skeleton-card">
-            <div class="skeleton-line skeleton-icon"></div>
-            <div class="skeleton-line skeleton-text"></div>
-            <div class="skeleton-line skeleton-value"></div>
-            <div class="skeleton-line skeleton-help"></div>
-          </article>
-          }
-        </section>
+          <section class="kpi-grid">
+            @for (item of kpiSkeletonItems; track item) {
+              <article class="kpi-card figma-kpi-card skeleton-card">
+                <div class="skeleton-line skeleton-icon"></div>
+                <div class="skeleton-line skeleton-text"></div>
+                <div class="skeleton-line skeleton-value"></div>
+                <div class="skeleton-line skeleton-help"></div>
+              </article>
+            }
+          </section>
         } @else {
-        <section class="kpi-grid figma-kpi-grid">
-
-          @for (indicator of mainIndicators(); track indicator.labelKey) {
-          <article class="kpi-card figma-kpi-card"
-                   [class.kpi-card-clickable]="isIndicatorNavigable(indicator)"
-                   [attr.role]="isIndicatorNavigable(indicator) ? 'link' : null"
-                   [attr.tabindex]="isIndicatorNavigable(indicator) ? 0 : null"
-                   (click)="navigateToIndicator(indicator)"
-                   (keydown.enter)="navigateToIndicator(indicator)"
-                   (keydown.space)="$event.preventDefault(); navigateToIndicator(indicator)">
-            <div class="figma-kpi-top">
-              <div class="kpi-label">{{ indicator.labelKey | translate }}</div>
-              <div [class]="'kpi-icon ' + indicator.color">
-                <i [class]="'hgi-stroke ' + indicator.icon" aria-hidden="true"></i>
-              </div>
-            </div>
-            <div class="kpi-value">{{ indicator.value | number:'1.0-0' }}</div>
-            <div class="kpi-status figma-kpi-status" [ngClass]="trendClass(indicator.trend)">
-              @if (indicator.trend?.changePercentage != null) {
-              <strong>
-                {{ indicator.trend!.changePercentage! > 0 ? '+' : '' }}{{ indicator.trend!.changePercentage | number:'1.0-1' }}%
-              </strong>
-              <span>{{ 'dashboard.kpi.vsPreviousYear' | translate }}</span>
-              }
-            </div>
-          </article>
-          }
-
-        </section>
+          <section class="kpi-grid figma-kpi-grid">
+            @for (indicator of mainIndicators(); track indicator.labelKey) {
+              <article
+                class="kpi-card figma-kpi-card"
+                [class.kpi-card-clickable]="isIndicatorNavigable(indicator)"
+                [attr.role]="isIndicatorNavigable(indicator) ? 'link' : null"
+                [attr.tabindex]="isIndicatorNavigable(indicator) ? 0 : null"
+                (click)="navigateToIndicator(indicator)"
+                (keydown.enter)="navigateToIndicator(indicator)"
+                (keydown.space)="$event.preventDefault(); navigateToIndicator(indicator)"
+              >
+                <div class="figma-kpi-top">
+                  <div class="kpi-label">{{ indicator.labelKey | translate }}</div>
+                  <div [class]="'kpi-icon ' + indicator.color">
+                    <i [class]="'hgi-stroke ' + indicator.icon" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <div class="kpi-value">{{ indicator.value | number: '1.0-0' }}</div>
+                <div class="kpi-status figma-kpi-status" [ngClass]="trendClass(indicator.trend)">
+                  @if (indicator.trend?.changePercentage != null) {
+                    <strong>
+                      {{ indicator.trend!.changePercentage! > 0 ? '+' : ''
+                      }}{{ indicator.trend!.changePercentage | number: '1.0-1' }}%
+                    </strong>
+                    <span>{{ 'dashboard.kpi.vsPreviousYear' | translate }}</span>
+                  }
+                </div>
+              </article>
+            }
+          </section>
         }
       </section>
 
+      <section class="dashboard-section operational-summary-section">
+        <div class="dashboard-section-header operational-summary-header">
+          <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
 
-   
-      
+          <div class="summary-year-select-wrapper">
+            <select
+              class="summary-year-select"
+              [value]="selectedYear()"
+              [disabled]="yearsLoading()"
+              (change)="onYearChange(+$any($event.target).value)"
+              [attr.aria-label]="'dashboard.filters.year' | translate"
+            >
+              @for (year of availableYears(); track year) {
+                <option [value]="year">{{ year }}</option>
+              }
+              @if (availableYears().length === 0) {
+                <option [value]="selectedYear()">{{ selectedYear() }}</option>
+              }
+            </select>
 
-<section class="dashboard-section operational-summary-section">
-<div class="dashboard-section-header operational-summary-header">
-  <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
+            <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+          </div>
+        </div>
 
-  <div class="summary-year-select-wrapper">
-    <select class="summary-year-select" [value]="selectedYear()" [disabled]="yearsLoading()"
-            (change)="onYearChange(+$any($event.target).value)"
-            [attr.aria-label]="'dashboard.filters.year' | translate">
-      @for (year of availableYears(); track year) {
-      <option [value]="year">{{ year }}</option>
-      }
-      @if (availableYears().length === 0) {
-      <option [value]="selectedYear()">{{ selectedYear() }}</option>
-      }
-    </select>
-
-    <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
-  </div>
-</div>
-
-  <div class="operational-summary-grid">
-
-    <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â±Ã˜Â´Ã˜Â­Ã™Å Ã™â€  -->
-    <article class="operation-card">
-  <div class="operation-card-header">
-    <div class="operation-card-title">
-      <div class="operation-card-icon purple">
-        <i class="hgi-stroke hgi-user-add-01"></i>
-      </div>
-      <h4>{{ 'dashboard.operationalSummary.candidates' | translate }}</h4>
-    </div>
-  </div>
-
-
-<div class="candidate-chart-wrapper">
-
-    <p-chart #mainCandidatesChart
-        type="doughnut"
-        [data]="visibleCandidateChartData()"
-        [options]="chartOptions">
-    </p-chart>
-
-    <div class="candidate-chart-center">
-        <span>{{ 'dashboard.common.total' | translate }}</span>
-        <strong>{{ activeKpis().totalProfiles | number:'1.0-0' }}</strong>
-    </div>
-
-</div>
-
-  <div class="operation-legend">
-    @for (item of candidateSummaryItems(); track item.label) {
-    <div class="operation-legend-row">
-      <i [style.background]="item.color"></i>
-      <span>{{ item.label }}</span>
-      <strong>{{ item.count | number:'1.0-0' }}</strong>
-    </div>
-    }
-  </div>
-
-  <button class="operation-card-btn" type="button" (click)="openCandidatesModal()">
-     <i class="hgi-stroke hgi-view"></i>
-     <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
-  </button>
-</article>
-
-  <!-- Ã˜Â§Ã™â€žÃ™Ë†Ã˜Â¸Ã˜Â§Ã˜Â¦Ã™Â -->
-<article class="operation-card">
-  <div class="operation-card-header">
-    <div class="operation-card-title">
-      <div class="operation-card-icon blue">
-        <i class="hgi-stroke hgi-folder-01"></i>
-      </div>
-      <h4>{{ 'dashboard.operationalSummary.jobs' | translate }}</h4>
-    </div>
-  </div>
-
-<div class="candidate-chart-wrapper">
-
-    <p-chart #mainJobsChart
-        type="doughnut"
-        [data]="visibleJobsChartData()"
-        [options]="chartOptions">
-    </p-chart>
-
-    <div class="candidate-chart-center">
-        <span>{{ 'dashboard.common.total' | translate }}</span>
-        <strong>{{ activeJobKpis().totalJobs | number:'1.0-0' }}</strong>
-    </div>
-
-</div>
-
-  <div class="operation-legend">
-    @for (item of jobsSummaryItems(); track item.labelKey) {
-    <div class="operation-legend-row">
-      <i [style.background]="item.color"></i>
-      <span>{{ item.labelKey | translate }}</span>
-      <strong>{{ item.count | number:'1.0-0' }}</strong>
-    </div>
-    }
-  </div>
-
-  <button class="operation-card-btn" type="button" (click)="openJobsModal()">
-    <i class="hgi-stroke hgi-view"></i>
-    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
-  </button>
-</article>
-
-<!-- Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â¸Ã™ÂÃ™Å Ã™â€  -->
-<article class="operation-card">
-  <div class="operation-card-header">
-    <div class="operation-card-title">
-      <div class="operation-card-icon green">
-        <i class="hgi-stroke hgi-user-group"></i>
-      </div>
-      <h4>{{ 'dashboard.operationalSummary.employees' | translate }}</h4>
-    </div>
-  </div>
-
-  <div class="candidate-chart-wrapper">
-
-    <p-chart #mainEmployeesChart
-        type="doughnut"
-        [data]="visibleEmployeesChartData()"
-        [options]="chartOptions">
-    </p-chart>
-
-    <div class="candidate-chart-center">
-        <span>{{ 'dashboard.common.total' | translate }}</span>
-        <strong>{{ activeKpis().totalEmployees | number:'1.0-0' }}</strong>
-    </div>
-
-</div>
-
-  <div class="operation-legend employee-workload-metrics">
-    <div class="employee-workload-title">{{ 'dashboard.employees.assignmentWorkload' | translate }}</div>
-    @for (item of employeesSummaryItems(); track item.labelKey) {
-    <div class="operation-legend-row">
-      <i [style.background]="item.color"></i>
-      <span>{{ item.labelKey | translate }}</span>
-      <strong>{{ item.count | number:'1.0-0' }}</strong>
-    </div>
-    }
-  </div>
-
-  <button class="operation-card-btn" type="button" (click)="openEmployeesModal()">
-    <i class="hgi-stroke hgi-view"></i>
-    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
-  </button>
-</article>
-
-<!-- Ã˜Â§Ã™â€žÃ˜Â¯Ã˜Â¹Ã™Ë†Ã˜Â§Ã˜Âª -->
-<article class="operation-card">
-  <div class="operation-card-header">
-    <div class="operation-card-title">
-      <div class="operation-card-icon orange">
-        <i class="hgi-stroke hgi-mail-01"></i>
-      </div>
-      <h4>{{ 'dashboard.operationalSummary.invitations' | translate }}</h4>
-    </div>
-  </div>
-
-<div class="candidate-chart-wrapper">
-
-    <p-chart #mainInvitationsChart
-        type="doughnut"
-        [data]="visibleInvitationsChartData()"
-        [options]="chartOptions">
-    </p-chart>
-
-    <div class="candidate-chart-center">
-        <span>{{ 'dashboard.common.total' | translate }}</span>
-        <strong>{{ activeInvitationKpis().totalInvitations | number:'1.0-0' }}</strong>
-    </div>
-
-</div>
-
-  <div class="operation-legend">
-    @for (item of invitationsSummaryItems(); track item.labelKey) {
-    <div class="operation-legend-row">
-      <i [style.background]="item.color"></i>
-      <span>{{ item.labelKey | translate }}</span>
-      <strong>{{ item.count | number:'1.0-0' }}</strong>
-    </div>
-    }
-  </div>
-
-  <button class="operation-card-btn" type="button" (click)="openInvitationsModal()">
-    <i class="hgi-stroke hgi-view"></i>
-    <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
-  </button>
-</article>
-
-</div>
-</section>
-
-
-
-
-<section class="dashboard-section quick-actions-section">
-
-    <div class="dashboard-section-header">
-        <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
-    </div>
-
-    <div class="quick-actions-grid">
-
-        @for (action of quickActions(); track action.key) {
-        <button class="quick-action-card" type="button" (click)="navigateQuickAction(action)">
-            <div class="quick-action-square">
-                <div class="quick-action-icon">
-                    <i class="hgi-stroke" [ngClass]="action.icon"></i>
+        <div class="operational-summary-grid">
+          <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â±Ã˜Â´Ã˜Â­Ã™Å Ã™â€  -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon purple">
+                  <i class="hgi-stroke hgi-user-add-01"></i>
                 </div>
+                <h4>{{ 'dashboard.operationalSummary.candidates' | translate }}</h4>
+              </div>
             </div>
-            <span>{{ action.labelKey | translate }}</span>
-        </button>
-        }
 
-    </div>
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainCandidatesChart
+                type="doughnut"
+                [data]="visibleCandidateChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
 
-</section>
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeKpis().totalProfiles | number: '1.0-0' }}</strong>
+              </div>
+            </div>
 
+            <div class="operation-legend">
+              @for (item of candidateSummaryItems(); track item.label) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openCandidatesModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ™Ë†Ã˜Â¸Ã˜Â§Ã˜Â¦Ã™Â -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon blue">
+                  <i class="hgi-stroke hgi-folder-01"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.jobs' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainJobsChart
+                type="doughnut"
+                [data]="visibleJobsChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeJobKpis().totalJobs | number: '1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="operation-legend">
+              @for (item of jobsSummaryItems(); track item.label) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openJobsModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â¸Ã™ÂÃ™Å Ã™â€  -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon green">
+                  <i class="hgi-stroke hgi-user-group"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.employees' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainEmployeesChart
+                type="doughnut"
+                [data]="visibleEmployeesChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeKpis().totalEmployees | number: '1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="operation-legend employee-workload-metrics">
+              <div class="employee-workload-title">
+                {{ 'dashboard.employees.assignmentWorkload' | translate }}
+              </div>
+              @for (item of employeesSummaryItems(); track item.labelKey) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.labelKey | translate }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openEmployeesModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+
+          <!-- Ã˜Â§Ã™â€žÃ˜Â¯Ã˜Â¹Ã™Ë†Ã˜Â§Ã˜Âª -->
+          <article class="operation-card">
+            <div class="operation-card-header">
+              <div class="operation-card-title">
+                <div class="operation-card-icon orange">
+                  <i class="hgi-stroke hgi-mail-01"></i>
+                </div>
+                <h4>{{ 'dashboard.operationalSummary.invitations' | translate }}</h4>
+              </div>
+            </div>
+
+            <div class="candidate-chart-wrapper">
+              <p-chart
+                #mainInvitationsChart
+                type="doughnut"
+                [data]="visibleInvitationsChartData()"
+                [options]="chartOptions"
+              >
+              </p-chart>
+
+              <div class="candidate-chart-center">
+                <span>{{ 'dashboard.common.total' | translate }}</span>
+                <strong>{{ activeInvitationKpis().totalInvitations | number: '1.0-0' }}</strong>
+              </div>
+            </div>
+
+            <div class="operation-legend">
+              @for (item of invitationsSummaryItems(); track item.labelKey) {
+                <div class="operation-legend-row">
+                  <i [style.background]="item.color"></i>
+                  <span>{{ item.labelKey | translate }}</span>
+                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                </div>
+              }
+            </div>
+
+            <button class="operation-card-btn" type="button" (click)="openInvitationsModal()">
+              <i class="hgi-stroke hgi-view"></i>
+              <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <section class="dashboard-section quick-actions-section">
+        <div class="dashboard-section-header">
+          <h3>{{ 'dashboard.quickActions.title' | translate }}</h3>
+        </div>
+
+        <div class="quick-actions-grid">
+          @for (action of quickActions(); track action.key) {
+            <button class="quick-action-card" type="button" (click)="navigateQuickAction(action)">
+              <div class="quick-action-square">
+                <div class="quick-action-icon">
+                  <i class="hgi-stroke" [ngClass]="action.icon"></i>
+                </div>
+              </div>
+              <span>{{ action.labelKey | translate }}</span>
+            </button>
+          }
+        </div>
+      </section>
     </section>
 
-@if (overview(); as dashboardOverview) {
-  @switch (activeDialog()) {
-    @case ('Candidates') {
-      <app-dashboard-candidates-dialog [breakdown]="dashboardOverview.profileBreakdown" [kpis]="dashboardOverview.kpis"
-        [filters]="dashboardFilters()" [canExport]="canExportDashboard()" (closed)="closeDialog()" />
+    @if (overview(); as dashboardOverview) {
+      @switch (activeDialog()) {
+        @case ('Candidates') {
+          <app-dashboard-candidates-dialog
+            [breakdown]="dashboardOverview.profileBreakdown"
+            [kpis]="dashboardOverview.kpis"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Jobs') {
+          <app-dashboard-jobs-dialog
+            [kpis]="dashboardOverview.jobKpis"
+            [breakdown]="dashboardOverview.jobBreakdown"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Employees') {
+          <app-dashboard-employees-dialog
+            [kpis]="dashboardOverview.kpis"
+            [monitoring]="dashboardOverview.taskMonitoring"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+        @case ('Invitations') {
+          <app-dashboard-invitations-dialog
+            [kpis]="dashboardOverview.invitationKpis"
+            [filters]="dashboardFilters()"
+            [canExport]="canExportDashboard()"
+            (closed)="closeDialog()"
+          />
+        }
+      }
     }
-    @case ('Jobs') {
-      <app-dashboard-jobs-dialog [kpis]="dashboardOverview.jobKpis" [filters]="dashboardFilters()"
-        [canExport]="canExportDashboard()" (closed)="closeDialog()" />
-    }
-    @case ('Employees') {
-      <app-dashboard-employees-dialog [kpis]="dashboardOverview.kpis" [monitoring]="dashboardOverview.taskMonitoring"
-        [filters]="dashboardFilters()" [canExport]="canExportDashboard()" (closed)="closeDialog()" />
-    }
-    @case ('Invitations') {
-      <app-dashboard-invitations-dialog [kpis]="dashboardOverview.invitationKpis" [filters]="dashboardFilters()"
-        [canExport]="canExportDashboard()" (closed)="closeDialog()" />
-    }
-  }
-}
-
   </main>
 </section>

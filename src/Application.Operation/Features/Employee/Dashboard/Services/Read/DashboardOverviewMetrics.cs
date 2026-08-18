@@ -19,7 +19,8 @@ internal sealed record DashboardProfileMetrics(
 
 internal sealed record DashboardJobMetrics(
     PeriodValues<Dictionary<string, int>> Statuses,
-    PeriodValues<JobKpisDto> Kpis);
+    PeriodValues<JobKpisDto> Kpis,
+    IReadOnlyList<JobStatusCountDto> CurrentStatusBreakdown);
 
 internal sealed record DashboardInvitationMetrics(PeriodValues<InvitationKpisDto> Kpis);
 

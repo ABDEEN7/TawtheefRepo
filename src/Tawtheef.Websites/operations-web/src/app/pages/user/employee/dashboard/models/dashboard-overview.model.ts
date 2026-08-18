@@ -1,4 +1,4 @@
-import { CandidateTypeKpis, ProfileBreakdown } from './dashboard-candidates.model';
+import { ProfileBreakdown } from './dashboard-candidates.model';
 import { GroupCount } from './dashboard-common.model';
 import { OperationsDashboardFilterSnapshot } from './dashboard-filters.model';
 import { InvitationKpis } from './dashboard-invitations.model';
@@ -9,11 +9,10 @@ export interface DashboardOverview {
   filters: OperationsDashboardFilterSnapshot;
   kpis: DashboardKpis;
   profileBreakdown: ProfileBreakdown;
-  candidateTypeKpis: CandidateTypeKpis;
   jobKpis: JobKpis;
+  jobBreakdown: JobBreakdown;
   invitationKpis: InvitationKpis;
   kpiTrends: DashboardKpiTrends;
-  jobBreakdown: JobBreakdown;
   taskMonitoring: TaskMonitoring;
 }
 
@@ -44,7 +43,6 @@ export interface DashboardKpis {
   inCreationProfiles: number;
   submittedProfiles: number;
   underReviewProfiles: number;
-  pendingProfiles: number;
   returnedProfiles: number;
   approvalRate: number;
   rejectionRate: number;

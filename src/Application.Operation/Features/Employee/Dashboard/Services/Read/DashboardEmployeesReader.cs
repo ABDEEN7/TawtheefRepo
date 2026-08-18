@@ -19,7 +19,8 @@ internal sealed class DashboardEmployeesReader(
     DashboardAccessContextProvider accessContextProvider,
     DashboardQueryScope scope)
 {
-    public async Task<Result<PaginatedResult<TeamPerformanceRowDto>>> ReadAsync(GetTeamPerformanceQuery request, CancellationToken ct)
+    public async Task<Result<PaginatedResult<TeamPerformanceRowDto>>> ReadAsync(GetTeamPerformanceQuery request,
+        CancellationToken ct)
     {
         var queryResult = await CreateQueryAsync(request, ct);
         if (queryResult.IsFailed) return Result.Fail(queryResult.Errors);
@@ -32,7 +33,8 @@ internal sealed class DashboardEmployeesReader(
         return Result.Ok(new PaginatedResult<TeamPerformanceRowDto>(rows, total, request.PageNumber, request.PageSize));
     }
 
-    public async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(GetTeamPerformanceQuery request, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(GetTeamPerformanceQuery request,
+        CancellationToken ct)
     {
         var queryResult = await CreateQueryAsync(request, ct);
         if (queryResult.IsFailed) return Result.Fail(queryResult.Errors);
@@ -66,6 +68,7 @@ internal sealed class DashboardEmployeesReader(
                  EF.Functions.Like((user as EmployeeUser)!.EmployeeProfile!.JobTitle ?? string.Empty, term)));
         }
 
+        var overdueCutoff = DateTime.UtcNow.AddDays(-7);
         var assignments = scope.Assignments(context);
         var range = DashboardTemporalResolver.ResolveRequestRange(
             request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
@@ -77,24 +80,36 @@ internal sealed class DashboardEmployeesReader(
             EmployeeId = employee.Id,
             Name = isArabic ? employee.FullNameAr : employee.FullNameEn,
             EmployeeNumber = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.EmployeeNumber : null,
+                ? (employee as EmployeeUser)!.EmployeeProfile!.EmployeeNumber
+                : null,
             DepartmentName = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.Department : null,
+                ? (employee as EmployeeUser)!.EmployeeProfile!.Department
+                : null,
             JobDescription = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.JobTitle : null,
-            AssignedTasks = assignments.Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null)
+                ? (employee as EmployeeUser)!.EmployeeProfile!.JobTitle
+                : null,
+            AssignedTasks = assignments
+                .Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null)
                 .Select(x => x.UserProfileId).Distinct().Count(),
-            CompletedTasks = assignments.Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
+            CompletedTasks = assignments.Where(x =>
+                    x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
                     x.UserProfile!.Status == UserProfileStatus.Approved &&
                     !changes.Any(change => change.UserProfileId == x.UserProfileId &&
-                        (change.Status == ProfileChangeRequestStatus.Pending || change.Status == ProfileChangeRequestStatus.UnderReview)))
+                                           (change.Status == ProfileChangeRequestStatus.Pending ||
+                                            change.Status == ProfileChangeRequestStatus.UnderReview)))
                 .Select(x => x.UserProfileId).Distinct().Count(),
-            RemainingTasks = assignments.Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
+            RemainingTasks = assignments.Where(x =>
+                    x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
                     (x.UserProfile!.Status != UserProfileStatus.Approved ||
                      changes.Any(change => change.UserProfileId == x.UserProfileId &&
-                         (change.Status == ProfileChangeRequestStatus.Pending || change.Status == ProfileChangeRequestStatus.UnderReview))))
+                                           (change.Status == ProfileChangeRequestStatus.Pending ||
+                                            change.Status == ProfileChangeRequestStatus.UnderReview))))
                 .Select(x => x.UserProfileId).Distinct().Count(),
-            OverdueTasks = 0
+            OverdueTasks = assignments
+                .Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
+                            x.AssignedAtUtc < overdueCutoff)
+                .Distinct()
+                .Count()
         })));
     }
 
@@ -104,11 +119,21 @@ internal sealed class DashboardEmployeesReader(
         var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
         return sortBy switch
         {
-            nameof(TeamPerformanceRowDto.Name) => descending ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name),
-            nameof(TeamPerformanceRowDto.EmployeeNumber) => descending ? query.OrderByDescending(x => x.EmployeeNumber) : query.OrderBy(x => x.EmployeeNumber),
-            nameof(TeamPerformanceRowDto.AssignedTasks) => descending ? query.OrderByDescending(x => x.AssignedTasks) : query.OrderBy(x => x.AssignedTasks),
-            nameof(TeamPerformanceRowDto.CompletedTasks) => descending ? query.OrderByDescending(x => x.CompletedTasks) : query.OrderBy(x => x.CompletedTasks),
-            nameof(TeamPerformanceRowDto.OverdueTasks) => descending ? query.OrderByDescending(x => x.OverdueTasks) : query.OrderBy(x => x.OverdueTasks),
+            nameof(TeamPerformanceRowDto.Name) => descending
+                ? query.OrderByDescending(x => x.Name)
+                : query.OrderBy(x => x.Name),
+            nameof(TeamPerformanceRowDto.EmployeeNumber) => descending
+                ? query.OrderByDescending(x => x.EmployeeNumber)
+                : query.OrderBy(x => x.EmployeeNumber),
+            nameof(TeamPerformanceRowDto.AssignedTasks) => descending
+                ? query.OrderByDescending(x => x.AssignedTasks)
+                : query.OrderBy(x => x.AssignedTasks),
+            nameof(TeamPerformanceRowDto.CompletedTasks) => descending
+                ? query.OrderByDescending(x => x.CompletedTasks)
+                : query.OrderBy(x => x.CompletedTasks),
+            nameof(TeamPerformanceRowDto.OverdueTasks) => descending
+                ? query.OrderByDescending(x => x.OverdueTasks)
+                : query.OrderBy(x => x.OverdueTasks),
             _ => query.OrderBy(x => x.Name)
         };
     }
