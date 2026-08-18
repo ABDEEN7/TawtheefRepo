@@ -2015,12 +2015,11 @@ td {
 
 .candidate-modal-chart-content {
   display: grid;
-    grid-template-columns: 1fr 160px;
-    align-items: center;
-    gap: 18px;
-  
-      place-self: flex-start;
-      padding: 10px;
+  grid-template-columns: 1fr 160px;
+  align-items: center;
+  gap: 18px;
+  place-self: flex-start;
+  padding: 10px;
 }
 
 .candidate-chart-wrapper.modal-chart {
@@ -2081,10 +2080,10 @@ td {
 
 .jobs-chart-content {
   width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    column-gap: 40px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 40px;
 }
 
 .jobs-modal-chart {
@@ -2340,14 +2339,6 @@ td {
 
 .employees-modal .candidate-modal-card {
   margin-top: 18px;
-}
-
-.employees-chart-content {
-  min-height: 210px;
-}
-
-.employees-modal-legend {
-  min-width: 320px;
 }
 
 .employees-table-wrap {

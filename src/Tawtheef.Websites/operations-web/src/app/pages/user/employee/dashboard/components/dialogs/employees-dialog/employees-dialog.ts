@@ -104,10 +104,58 @@ export class EmployeesDialog implements OnInit {
   readonly chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '72%',
+
+    layout: {
+      padding: {
+        top: 4,
+        right: 8,
+        bottom: 0,
+        left: 4,
+      },
+    },
+
     plugins: {
       legend: {
         display: false,
+      },
+      tooltip: {
+        enabled: true,
+      },
+    },
+
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          display: true,
+          font: {
+            size: 13,
+            weight: 500,
+          },
+          padding: 10,
+        },
+      },
+
+      y: {
+        beginAtZero: true,
+        border: {
+          display: false,
+        },
+        grid: {
+          color: '#E5E7EB',
+        },
+        ticks: {
+          precision: 0,
+          font: {
+            size: 12,
+          },
+          padding: 8,
+        },
       },
     },
   };
@@ -130,7 +178,7 @@ export class EmployeesDialog implements OnInit {
     }));
   });
 
-  readonly chartData = computed<ChartData<'doughnut'>>(() => {
+  readonly chartData = computed<ChartData<'bar'>>(() => {
     const items = this.employeeWorkloadChartItems();
 
     return items.every((item) => item.count === 0)
@@ -138,7 +186,7 @@ export class EmployeesDialog implements OnInit {
           labels: [this.translate.instant('common.chart.noData')],
           datasets: [
             {
-              data: [1],
+              data: [0],
               backgroundColor: [DashboardChartColors.noData],
               borderWidth: 0,
             },
@@ -150,8 +198,16 @@ export class EmployeesDialog implements OnInit {
             {
               data: items.map((item) => item.count),
               backgroundColor: items.map((item) => item.color),
+
               borderWidth: 0,
-              hoverOffset: 8,
+              borderRadius: 7,
+              borderSkipped: false,
+
+              maxBarThickness: 72,
+              minBarLength: 7,
+
+              categoryPercentage: 0.55,
+              barPercentage: 0.8,
             },
           ],
         };

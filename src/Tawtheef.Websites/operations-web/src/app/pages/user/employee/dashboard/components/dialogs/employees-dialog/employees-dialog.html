@@ -1,6 +1,13 @@
-<div i18nNamespace="pages/employee/dashboard" class="candidate-modal-backdrop">
+<div
+  i18nNamespace="pages/employee/dashboard"
+  class="candidate-modal-backdrop"
+>
   <div class="candidate-modal jobs-modal employees-modal">
-    <button class="candidate-modal-close" type="button" (click)="closed.emit()">
+    <button
+      class="candidate-modal-close"
+      type="button"
+      (click)="closed.emit()"
+    >
       <i class="hgi-stroke hgi-cancel-01"></i>
     </button>
 
@@ -14,48 +21,24 @@
       </p>
     </div>
 
-    <div class="candidate-modal-card">
+    <!-- Employee workload chart -->
+    <div class="candidate-modal-card employee-workload-card">
       <h4 class="candidate-modal-section-title">
         {{ 'dashboard.modals.employees.statusTitle' | translate }}
       </h4>
 
-      <div class="candidate-modal-chart-content jobs-chart-content employees-chart-content">
-        <div class="candidate-chart-wrapper jobs-modal-chart">
-          <p-chart #chart type="doughnut" [data]="chartData()" [options]="chartOptions" />
-
-          <div class="candidate-chart-center">
-            <span>{{ 'dashboard.common.total' | translate }}</span>
-
-            <strong>
-              {{ workloadTotal() | number: '1.0-0' }}
-            </strong>
-          </div>
-        </div>
-
-        <div
-          class="operation-legend jobs-modal-legend employees-modal-legend employee-workload-metrics"
-        >
-          <div class="employee-workload-title">
-            {{ 'dashboard.employees.assignmentWorkload' | translate }}
-          </div>
-
-          @for (item of items(); track item.labelKey) {
-            <div class="operation-legend-row">
-              <i [style.background]="item.color"></i>
-
-              <span>
-                {{ item.labelKey | translate }}
-              </span>
-
-              <strong>
-                {{ item.count | number: '1.0-0' }}
-              </strong>
-            </div>
-          }
-        </div>
+      <div class="employee-bar-chart-wrapper">
+        <p-chart
+          #chart
+          type="bar"
+          styleClass="employee-bar-chart"
+          [data]="chartData()"
+          [options]="chartOptions"
+        />
       </div>
     </div>
 
+    <!-- Team performance -->
     <div class="candidate-modal-card">
       <h4 class="candidate-modal-section-title">
         {{ 'dashboard.sections.teamPerformance' | translate }}
@@ -124,7 +107,10 @@
             </tr>
           </ng-template>
 
-          <ng-template pTemplate="body" let-employee>
+          <ng-template
+            pTemplate="body"
+            let-employee
+          >
             <tr>
               <td>
                 <div class="employee-modal-cell">
@@ -133,7 +119,11 @@
                   </strong>
 
                   <small>
-                    {{ employee.departmentName || employee.jobDescription || '-' }}
+                    {{
+                      employee.departmentName ||
+                        employee.jobDescription ||
+                        '-'
+                    }}
                   </small>
                 </div>
               </td>
@@ -166,9 +156,16 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="5" class="text-muted no-data">
-                <div class="p-4 d-flex flex-column align-items-center justify-content-center">
-                  <i class="hgi-stroke hgi-user-group fs-32 opacity-25 mb-2"></i>
+              <td
+                colspan="5"
+                class="text-muted no-data"
+              >
+                <div
+                  class="p-4 d-flex flex-column align-items-center justify-content-center"
+                >
+                  <i
+                    class="hgi-stroke hgi-user-group fs-32 opacity-25 mb-2"
+                  ></i>
 
                   <span>
                     {{ 'dashboard.common.noData' | translate }}
@@ -195,7 +192,11 @@
       }
     </div>
 
-    <div class="candidate-modal-actions" [hidden]="!canExport()">
+    <!-- Export actions -->
+    <div
+      class="candidate-modal-actions"
+      [hidden]="!canExport()"
+    >
       <button
         class="candidate-modal-btn outline"
         type="button"
