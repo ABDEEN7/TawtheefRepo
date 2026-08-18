@@ -107,31 +107,36 @@ export class InvitationsDialog implements OnInit {
   };
 
   readonly items = computed(() => {
-    const invitations = this.kpis();
+  const invitations = this.kpis();
 
-    return [
-      {
-        labelKey: 'dashboard.legend.invitations.accepted',
-        count: invitations.acceptedInvitations,
-        color: '#2F8A3A',
-      },
-      {
-        labelKey: 'dashboard.legend.invitations.pendingResponse',
-        count: invitations.pendingInvitations,
-        color: '#FFB547',
-      },
-      {
-        labelKey: 'dashboard.legend.invitations.expired',
-        count: invitations.expiredInvitations,
-        color: '#D9182D',
-      },
-      {
-        labelKey: 'dashboard.status.Rejected',
-        count: invitations.rejectedInvitations,
-        color: '#6C4BB6',
-      },
-    ];
-  });
+  return [
+    {
+      labelKey: 'dashboard.legend.invitations.accepted',
+      count: invitations.acceptedInvitations,
+      color: '#2F8A3A',
+    },
+    {
+      labelKey: 'dashboard.legend.invitations.pendingResponse',
+      count: invitations.pendingInvitations,
+      color: '#FFB547',
+    },
+    {
+      labelKey: 'dashboard.status.PendingAttachmentApproval',
+      count: invitations.pendingAttachmentApproval,
+      color: '#488ADA',
+    },
+    {
+      labelKey: 'dashboard.legend.invitations.expired',
+      count: invitations.expiredInvitations,
+      color: '#D9182D',
+    },
+    {
+      labelKey: 'dashboard.status.Rejected',
+      count: invitations.rejectedInvitations,
+      color: '#6C4BB6',
+    },
+  ];
+});
 
   readonly chartData = computed<ChartData<'doughnut'>>(() => {
     const items = this.localizedItems();

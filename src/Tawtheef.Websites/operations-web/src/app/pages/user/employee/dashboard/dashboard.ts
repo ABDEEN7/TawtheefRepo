@@ -284,6 +284,7 @@ export class Dashboard implements OnInit {
 
   readonly invitationsSummaryItems = computed(() => {
     const invitations = this.activeInvitationKpis();
+
     return [
       {
         labelKey: 'dashboard.legend.invitations.accepted',
@@ -294,6 +295,11 @@ export class Dashboard implements OnInit {
         labelKey: 'dashboard.legend.invitations.pendingResponse',
         count: invitations.pendingInvitations,
         color: '#FFB547',
+      },
+      {
+        labelKey: 'dashboard.status.PendingAttachmentApproval',
+        count: invitations.pendingAttachmentApproval,
+        color: '#488ADA',
       },
       {
         labelKey: 'dashboard.legend.invitations.expired',
