@@ -191,5 +191,10 @@
   "common.chart.profiles": "Profiles",
   "common.chart.tasks": "Tasks",
   "dashboard.export.summary": "Export Summary",
-  "dashboard.export.charts": "Export Charts"
+  "dashboard.export.charts": "Export Charts",
+    "dashboard.status.NewInvitation": "New Invitation",
+  "dashboard.status.Read": "Read",
+  "dashboard.status.ReturnedAttachment": "Attachment Returned for Update",
+  "dashboard.status.PendingAttachmentApproval": "Pending Attachment Approval",
+  "dashboard.status.ExamEligible": "Exam Eligible"
 }

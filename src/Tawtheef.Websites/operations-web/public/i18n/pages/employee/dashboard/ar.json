@@ -291,6 +291,12 @@
   "dashboard.modals.invitations.statusTitle": "حالة الدعوات",
   "dashboard.modals.invitations.latestTitle": "أحدث الدعوات",
 
+  "dashboard.status.NewInvitation": "دعوة جديدة",
+  "dashboard.status.Read": "تمت القراءة",
+  "dashboard.status.ReturnedAttachment": "مرفق مُعاد للتعديل",
+  "dashboard.status.PendingAttachmentApproval": "بانتظار اعتماد المرفق",
+  "dashboard.status.ExamEligible": "مؤهل للاختبار",
+
   "dashboard.modals.table.job": "الوظيفة",
   "dashboard.modals.table.jobStatus": "حالة الوظيفة",
   "dashboard.modals.table.workflow": "سير العمل",
