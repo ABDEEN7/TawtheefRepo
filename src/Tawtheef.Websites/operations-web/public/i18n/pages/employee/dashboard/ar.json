@@ -218,7 +218,7 @@
   "dashboard.help.pendingReviewJobs": "الوظائف التي بانتظار اكتمال عملية الاعتماد.",
   "dashboard.status.Submitted": "مقدمة",
 
-  
+
   "dashboard.mainIndicators.title": "المؤشرات الرئيسية",
 
   "dashboard.common.export": "تصدير",
@@ -259,9 +259,8 @@
   "dashboard.legend.jobs.published": "منشورة",
   "dashboard.legend.jobs.draft": "مسودة",
   "dashboard.legend.jobs.pendingApproval": "بانتظار الاعتماد",
-  
+
   "dashboard.legend.employees.profilesAwaitingDistribution": "ملفات بانتظار التوزيع",
-  "dashboard.legend.employees.assignedSubmitted": "ملفات مقدمة ومسندة",
   "dashboard.legend.employees.activeReviewWorkload": "ملفات مسندة قيد المراجعة",
   "dashboard.legend.employees.changeReviewWorkload": "ملفات مسندة لمراجعة طلبات التغيير",
 

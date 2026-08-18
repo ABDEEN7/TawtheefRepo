@@ -76,14 +76,7 @@ internal sealed class DashboardWorkloadMetricsReader(
             .GroupBy(_ => 1)
             .Select(group => new DashboardEmployeeWorkload(
                 0,
-
-                group
-                    .Where(row =>
-                        row.Status == UserProfileStatus.Submitted)
-                    .Select(row => row.UserProfileId)
-                    .Distinct()
-                    .Count(),
-
+                
                 group
                     .Where(row =>
                         row.Status == UserProfileStatus.UnderReview)
@@ -102,7 +95,6 @@ internal sealed class DashboardWorkloadMetricsReader(
 
         return new DashboardEmployeeWorkload(
             awaitingDistribution,
-            row?.AssignedSubmitted ?? 0,
             row?.UnderReview ?? 0,
             row?.ChangeReview ?? 0);
     }

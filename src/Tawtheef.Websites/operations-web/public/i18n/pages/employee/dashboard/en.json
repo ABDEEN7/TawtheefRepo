@@ -175,7 +175,6 @@
   "dashboard.legend.jobs.draft": "Draft",
   "dashboard.legend.jobs.pendingApproval": "Pending approval",
   "dashboard.legend.employees.profilesAwaitingDistribution": "Profiles Awaiting Distribution",
-  "dashboard.legend.employees.assignedSubmitted": "Assigned Submitted Profiles",
   "dashboard.legend.employees.activeReviewWorkload": "Assigned Profiles Under Review",
   "dashboard.legend.employees.changeReviewWorkload": "Assigned Profiles Under Change Review",
   "dashboard.legend.invitations.sent": "Sent",
