@@ -43,17 +43,48 @@
           class="custom-table employees-modal-table"
           [value]="rows()"
           [rowHover]="true"
+          [customSort]="true"
+          (sortFunction)="onSort($event)"
           responsiveLayout="scroll"
         >
-          <ng-template pTemplate="header"
-            ><tr>
-              <th>{{ 'dashboard.modals.table.employee' | translate }}</th>
-              <th>{{ 'dashboard.table.assignedTasks' | translate }}</th>
-              <th>{{ 'dashboard.table.completedTasks' | translate }}</th>
-              <th>{{ 'dashboard.table.remainingTasks' | translate }}</th>
-              <th>{{ 'dashboard.table.overdueTasks' | translate }}</th>
-            </tr></ng-template
-          >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="Name">
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ 'dashboard.modals.table.employee' | translate }}</span>
+                  <p-sortIcon field="Name" />
+                </div>
+              </th>
+
+              <th pSortableColumn="AssignedTasks">
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ 'dashboard.table.assignedTasks' | translate }}</span>
+                  <p-sortIcon field="AssignedTasks" />
+                </div>
+              </th>
+
+              <th pSortableColumn="CompletedTasks">
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ 'dashboard.table.completedTasks' | translate }}</span>
+                  <p-sortIcon field="CompletedTasks" />
+                </div>
+              </th>
+
+              <th pSortableColumn="RemainingTasks">
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ 'dashboard.table.remainingTasks' | translate }}</span>
+                  <p-sortIcon field="RemainingTasks" />
+                </div>
+              </th>
+
+              <th pSortableColumn="OverdueTasks">
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ 'dashboard.table.overdueTasks' | translate }}</span>
+                  <p-sortIcon field="OverdueTasks" />
+                </div>
+              </th>
+            </tr>
+          </ng-template>
           <ng-template pTemplate="body" let-employee
             ><tr>
               <td>

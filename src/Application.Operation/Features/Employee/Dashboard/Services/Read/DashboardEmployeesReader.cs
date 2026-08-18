@@ -132,26 +132,41 @@ internal sealed class DashboardEmployeesReader(
     }
 
     private static IQueryable<TeamPerformanceRowDto> ApplySorting(
-        IQueryable<TeamPerformanceRowDto> query, string? sortBy, string? sortDirection)
+        IQueryable<TeamPerformanceRowDto> query,
+        string? sortBy,
+        string? sortDirection)
     {
-        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        var descending = string.Equals(
+            sortDirection,
+            "desc",
+            StringComparison.OrdinalIgnoreCase);
+
         return sortBy switch
         {
             nameof(TeamPerformanceRowDto.Name) => descending
                 ? query.OrderByDescending(x => x.Name)
                 : query.OrderBy(x => x.Name),
+
             nameof(TeamPerformanceRowDto.EmployeeNumber) => descending
                 ? query.OrderByDescending(x => x.EmployeeNumber)
                 : query.OrderBy(x => x.EmployeeNumber),
+
             nameof(TeamPerformanceRowDto.AssignedTasks) => descending
                 ? query.OrderByDescending(x => x.AssignedTasks)
                 : query.OrderBy(x => x.AssignedTasks),
+
             nameof(TeamPerformanceRowDto.CompletedTasks) => descending
                 ? query.OrderByDescending(x => x.CompletedTasks)
                 : query.OrderBy(x => x.CompletedTasks),
+
+            nameof(TeamPerformanceRowDto.RemainingTasks) => descending
+                ? query.OrderByDescending(x => x.RemainingTasks)
+                : query.OrderBy(x => x.RemainingTasks),
+
             nameof(TeamPerformanceRowDto.OverdueTasks) => descending
                 ? query.OrderByDescending(x => x.OverdueTasks)
                 : query.OrderBy(x => x.OverdueTasks),
+
             _ => query.OrderBy(x => x.Name)
         };
     }
