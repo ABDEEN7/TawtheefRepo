@@ -4,11 +4,15 @@ namespace Application.Operation.Features.Employee.CandidateUsers.Contracts;
 
 public interface ICandidateUsersFilter
 {
-    string? Name { get; }
-    string? Email { get; }
-    string? Qid { get; }
-    string? MobileNumber { get; }
+    string? Search { get; }
+
+    bool? IsBlocked { get; }
+
+    List<UserProfileStatus>? ProfileStatuses { get; }
+
     UserProfileStatus? ProfileStatus { get; }
+
     int? Year { get; }
+
     CandidateUsersResultScope Scope { get; }
 }

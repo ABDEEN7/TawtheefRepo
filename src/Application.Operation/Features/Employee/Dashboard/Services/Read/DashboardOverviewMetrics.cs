@@ -29,7 +29,7 @@ internal sealed record DashboardTaskCounts(int Total, int Completed, int Remaini
 internal sealed record DashboardEmployeeWorkload(
     int AwaitingDistribution,
     int UnderReview,
-    int ChangeReview);
+    int Completed);
 
 internal sealed record DashboardWorkloadMetrics(
     DashboardTaskCounts Tasks,

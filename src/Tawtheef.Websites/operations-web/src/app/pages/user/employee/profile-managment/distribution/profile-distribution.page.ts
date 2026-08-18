@@ -74,6 +74,7 @@ import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-opti
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { parseFilterYear } from '../../../../../core/utils/year-filter.util';
 import {SortEvent} from 'primeng/api';
+import { PageFiltersComponent } from '../../../../../shared/components/page-filters/page-filters.component';
 
 const DEFAULT_ADVANCED_FILTERS: DistributionAdvancedFilters = {
   assignmentState: null,
@@ -122,6 +123,7 @@ const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
     Ripple,
     Tooltip,
     ProgressBarModule,
+    PageFiltersComponent,
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',

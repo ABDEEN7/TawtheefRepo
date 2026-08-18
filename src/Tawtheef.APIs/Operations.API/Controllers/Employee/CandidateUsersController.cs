@@ -50,7 +50,7 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}/profile-logs")]
-    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
+    [AuthorizePermission(PermissionKeys.ProfileLogs.View)]
     public async Task<IActionResult> GetCandidateUserProfileLogs(Guid id, [FromQuery] GetCandidateUserProfileLogsQuery query)
     {
         var result = await mediator.Send(query with { UserId = id });

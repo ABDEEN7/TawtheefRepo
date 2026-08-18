@@ -256,6 +256,11 @@ export class Dashboard implements OnInit {
       color: this.colors[index % this.colors.length],
     }));
   });
+
+  readonly employeeWorkloadTotal = computed(() =>
+    this.employeesSummaryItems().reduce((total, item) => total + item.count, 0),
+  );
+
   readonly jobsSummaryItems = computed<DashboardChartExportItem[]>(() =>
     (this.overview()?.jobBreakdown.byStatus ?? []).map((item, index) => ({
       label: item.label,
@@ -437,7 +442,7 @@ export class Dashboard implements OnInit {
           this.mainEmployeesChart,
           'dashboard.export.files.employees',
           'dashboard.operationalSummary.employees',
-          this.activeKpis().totalEmployees,
+          this.employeeWorkloadTotal(),
           this.employeeWorkloadChartItems(),
         ),
         this.exportSpec(

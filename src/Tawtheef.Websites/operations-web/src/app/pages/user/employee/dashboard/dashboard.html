@@ -210,7 +210,10 @@
 
               <div class="candidate-chart-center">
                 <span>{{ 'dashboard.common.total' | translate }}</span>
-                <strong>{{ activeKpis().totalEmployees | number: '1.0-0' }}</strong>
+
+                <strong>
+                  {{ employeeWorkloadTotal() | number: '1.0-0' }}
+                </strong>
               </div>
             </div>
 

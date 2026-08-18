@@ -10,10 +10,9 @@ namespace Application.Operation.Features.Employee.CandidateUsers.Queries;
 public sealed record ExportCandidateUsersQuery
     : ICandidateUsersFilter, IRequest<IResult<FileExportResult>>
 {
-    public string? Name { get; init; }
-    public string? Email { get; init; }
-    public string? Qid { get; init; }
-    public string? MobileNumber { get; init; }
+    public string? Search { get; init; }
+    public bool? IsBlocked { get; init; }
+    public List<UserProfileStatus>? ProfileStatuses { get; init; }
     public UserProfileStatus? ProfileStatus { get; init; }
     public int? Year { get; init; }
     public CandidateUsersResultScope Scope { get; init; } = CandidateUsersResultScope.Default;

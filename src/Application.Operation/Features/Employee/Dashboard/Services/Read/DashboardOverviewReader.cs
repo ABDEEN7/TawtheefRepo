@@ -47,7 +47,12 @@ internal sealed class DashboardOverviewReader(
             ct);
         var jobMetrics = await jobMetricsReader.ReadAsync(periodJobs, period.CurrentFrom, ct);
         var workloadMetrics = await workloadMetricsReader.ReadAsync(
-            assignments, context, profileMetrics.Unassigned.Current, ct);
+            assignments,
+            context,
+            profileMetrics.Unassigned.Current,
+            requestRange.FromUtc,
+            requestRange.ToExclusiveUtc,
+            ct);
         var invitationMetrics = await invitationMetricsReader.ReadAsync(
             periodJobs, period.CurrentFrom, context.CanViewInvitations, ct);
 
@@ -171,8 +176,8 @@ internal sealed class DashboardOverviewReader(
             },
             new GroupCountDto
             {
-                Label = "ChangeReviewWorkload",
-                Count = workload.ChangeReview
+                Label = "CompletedAssignments",
+                Count = workload.Completed
             }
         ]
     };

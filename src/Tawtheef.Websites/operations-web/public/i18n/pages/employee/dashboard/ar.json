@@ -232,7 +232,7 @@
   "dashboard.export.files.invitationStatus": "حالات-الدعوات",
   "dashboard.export.files.candidates": "لوحة-المرشحين",
   "dashboard.export.files.jobs": "لوحة-الوظائف",
-  "dashboard.export.files.employees": "لوحة-الموظفين",
+  "dashboard.export.files.employees": "لوحة-الموظفين (الملفات)",
   "dashboard.export.files.invitations": "لوحة-الدعوات",
   "dashboard.workflow.invitations": "الدعوات",
   "dashboard.workflow.applicants": "المتقدمون",
@@ -262,7 +262,7 @@
 
   "dashboard.legend.employees.profilesAwaitingDistribution": "ملفات بانتظار التوزيع",
   "dashboard.legend.employees.activeReviewWorkload": "ملفات مسندة قيد المراجعة",
-  "dashboard.legend.employees.changeReviewWorkload": "ملفات مسندة لمراجعة طلبات التغيير",
+  "dashboard.legend.employees.completedAssignments": "مهام مكتملة",
 
   "dashboard.legend.invitations.sent": "المرسلة",
   "dashboard.legend.invitations.accepted": "المقبولة",

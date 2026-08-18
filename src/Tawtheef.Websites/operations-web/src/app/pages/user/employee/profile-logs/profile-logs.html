@@ -3,76 +3,104 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
       <h3 class="fw-bold">{{ 'PROFILE_LOGS.TITLE' | translate }}</h3>
-      <button type="button" class="btn btn-outline-primary" (click)="loadLogs()">
-        <i class="pi pi-refresh me-1"></i>
-        {{ 'common.refresh' | translate }}
+      <button pButton type="button" class="p-button-outlined" (click)="loadLogs(true)">
+        <span pButtonLabel>{{ 'common.refresh' | translate }}</span>
+        <i class="pi pi-refresh" pButtonIcon></i>
       </button>
     </div>
 
-    <div class="card card-table mb-3">
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_PROFILE_ID' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="profileIdFilter" (input)="onFiltersChanged()"
-              [placeholder]="'PROFILE_LOGS.FILTER_PROFILE_ID_PLACEHOLDER' | translate" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
-            <p-select [options]="userOptions()" [showClear]="true"
-              [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate" optionLabel="label" optionValue="id"
-              name="performedBy" [ngModel]="userIdFilter" (onChange)="userIdFilter = $event.value; onFiltersChanged()"
-              (onClear)="userIdFilter = null; onFiltersChanged()" class="form-select p-0"></p-select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_ACTION' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="actionTypeFilter" (input)="onFiltersChanged()"
-              [placeholder]="'PROFILE_LOGS.FILTER_ACTION_PLACEHOLDER' | translate" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_SEARCH' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="searchFilter" (input)="onFiltersChanged()"
-              [placeholder]="'PROFILE_LOGS.FILTER_SEARCH_PLACEHOLDER' | translate" />
-          </div>
-        </div>
+    @if (invalidProfileId()) {
+      <div class="alert alert-danger" role="alert">
+        {{ 'PROFILE_LOGS.INVALID_PROFILE_ID' | translate }}
+      </div>
+    }
 
-        <div class="row g-3 mt-1">
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_REVIEW_STATUS' | translate }}</label>
-            <p-select [options]="reviewStatusOptions" [showClear]="true"
-              [placeholder]="'PROFILE_LOGS.FILTER_REVIEW_STATUS_PLACEHOLDER' | translate" optionLabel="label"
-              optionValue="id" name="reviewStatus" [ngModel]="reviewStatusFilter"
-              (onChange)="reviewStatusFilter = $event.value; onFiltersChanged()"
-              (onClear)="reviewStatusFilter = null; onFiltersChanged()" class="form-select p-0">
-              <ng-template #selectedItem let-option>
-                {{ option.label | translate }}
-              </ng-template>
-              <ng-template #item let-option>
-                {{ option.label | translate }}
-              </ng-template>
-            </p-select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
-            <p-datepicker [ngModel]="fromDate" (ngModelChange)="onFromDateChange($event)" [showTime]="true"
-              [showSeconds]="false" dateFormat="dd/mm/yy" class="w-100" styleClass="w-100 p-0"
+    <app-page-filters
+      [advancedLabel]="'PROFILE_LOGS.ADVANCED_FILTERS' | translate"
+      [clearLabel]="'PROFILE_LOGS.CLEAR_FILTERS' | translate"
+      [advancedExpanded]="showAdvancedFilters()"
+      [activeAdvancedCount]="activeAdvancedFilterCount()"
+      (advancedToggled)="toggleAdvancedFilters()"
+      (filtersCleared)="clearFilters()"
+    >
+      <p-iconfield filterSearch class="search-icon-field w-100">
+        <p-inputicon styleClass="pi pi-search"></p-inputicon>
+        <input pInputText id="profile-logs-candidate-search" type="search" class="w-100 form-control"
+              [ngModel]="candidateSearch" (ngModelChange)="onCandidateSearchChange($event)"
+              [placeholder]="'PROFILE_LOGS.CANDIDATE_SEARCH_PLACEHOLDER' | translate" />
+      </p-iconfield>
+
+      <div filterSecondary>
+            <label class="form-label" for="profile-logs-performed-by">{{ 'PROFILE_LOGS.FILTER_USER_ID' | translate }}</label>
+            <p-select [options]="userOptions()" [showClear]="true" [filter]="true" filterBy="label"
+              inputId="profile-logs-performed-by"
+              [placeholder]="'PROFILE_LOGS.FILTER_USER_ID_PLACEHOLDER' | translate" optionLabel="label" optionValue="id"
+              name="performedBy" [ngModel]="userIdFilter" (onChange)="onPerformedByChange($event.value)"
+              class="w-100"></p-select>
+      </div>
+
+      <div advancedFilters>
+        <div class="row g-3 align-items-start">
+          <div class="col-xl-4 col-md-6 filter-field">
+            <label class="form-label" for="profile-logs-from">{{ 'PROFILE_LOGS.FILTER_FROM' | translate }}</label>
+            <p-datepicker #fromDatePicker inputId="profile-logs-from" [ngModel]="fromDate"
+              (ngModelChange)="onFromDateChange($event)" [showTime]="true"
+              (onShow)="alignDatePickerOverlay(fromDatePicker)"
+              [showSeconds]="false" [showIcon]="true" [iconDisplay]="'input'" appendTo="body"
+              dateFormat="dd/mm/yy" class="profile-filter-datepicker w-100" styleClass="w-100"
               [placeholder]="'PROFILE_LOGS.FILTER_FROM' | translate"></p-datepicker>
           </div>
-          <div class="col-md-3">
-            <label class="form-label">{{ 'PROFILE_LOGS.FILTER_TO' | translate }}</label>
-            <p-datepicker [ngModel]="toDate" (ngModelChange)="onToDateChange($event)" [showTime]="true"
-              [showSeconds]="false" dateFormat="dd/mm/yy" class="w-100" styleClass="w-100 p-0"
+          <div class="col-xl-4 col-md-6 filter-field">
+            <label class="form-label" for="profile-logs-to">{{ 'PROFILE_LOGS.FILTER_TO' | translate }}</label>
+            <p-datepicker #toDatePicker inputId="profile-logs-to" [ngModel]="toDate"
+              (ngModelChange)="onToDateChange($event)" [showTime]="true"
+              (onShow)="alignDatePickerOverlay(toDatePicker)"
+              [showSeconds]="false" [showIcon]="true" [iconDisplay]="'input'" appendTo="body"
+              dateFormat="dd/mm/yy" class="profile-filter-datepicker w-100" styleClass="w-100"
               [placeholder]="'PROFILE_LOGS.FILTER_TO' | translate"></p-datepicker>
           </div>
-          <div class="col-md-3 d-flex align-items-end">
-            <button class="btn btn-primary ng-star-inserted" type="button" (click)="clearFilters()">
-              <i class="hgi hgi-stroke hgi-cancel-01"></i>
-              <span class="fw-bold">{{ 'PROFILE_LOGS.CLEAR_SEARCH' | translate }}</span>
-            </button>
+          <div class="col-xl-4 col-md-6 filter-field">
+            <label class="form-label">{{ 'PROFILE_LOGS.PROFILE_STATUS_FILTER' | translate }}</label>
+            <p-multiSelect class="profile-filter-multiselect w-100" [options]="profileStatusOptions"
+              optionLabel="label" optionValue="value" [showClear]="true" [ngModel]="selectedProfileStatuses"
+              (onChange)="onProfileStatusesChange($event.value)"
+              [placeholder]="'PROFILE_LOGS.PROFILE_STATUS_FILTER_PLACEHOLDER' | translate">
+              <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+              <ng-template #selecteditems let-options>
+                @for (option of options; track option.value; let last = $last) {
+                  {{ option.label | translate }}@if (!last) {, }
+                }
+              </ng-template>
+            </p-multiSelect>
+          </div>
+          <div class="col-xl-7 col-md-6 filter-field">
+            <label class="form-label" for="profile-logs-notes-search">
+              {{ 'PROFILE_LOGS.NOTES_SEARCH' | translate }}
+            </label>
+            <input pInputText id="profile-logs-notes-search" type="search" class="w-100 form-control"
+              [ngModel]="notesSearch" (ngModelChange)="onNotesSearchChange($event)"
+              [placeholder]="'PROFILE_LOGS.NOTES_SEARCH_PLACEHOLDER' | translate" />
+          </div>
+          <div class="col-xl-5 col-md-6 filter-field">
+            <label class="form-label">{{ 'PROFILE_LOGS.SECTION_FILTER' | translate }}</label>
+            <p-multiSelect class="profile-filter-multiselect w-100" [options]="sectionOptions"
+              optionLabel="label" optionValue="value" [filter]="true" [showClear]="true"
+              [ngModel]="selectedSections" (onChange)="onSectionsChange($event.value)"
+              [placeholder]="'PROFILE_LOGS.SECTION_FILTER_PLACEHOLDER' | translate">
+              <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+              <ng-template #selecteditems let-options>
+                @for (option of options; track option.value; let last = $last) {
+                  {{ option.label | translate }}@if (!last) {, }
+                }
+              </ng-template>
+            </p-multiSelect>
           </div>
         </div>
+        @if (invalidDateRange()) {
+          <div class="text-danger small mt-2">{{ 'PROFILE_LOGS.INVALID_DATE_RANGE' | translate }}</div>
+        }
       </div>
-    </div>
+    </app-page-filters>
     <div class="table-card rounded overflow-hidden">
       <div class="table-responsive table-wrapper">
         <table class="table table-bordered table-hover align-middle w-100">
