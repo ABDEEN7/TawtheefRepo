@@ -40,32 +40,11 @@ const MOBILE_BREAKPOINT_PX = 767.98;
   styleUrl: './structure-schools.scss',
 })
 export class StructureSchools {
-  /**
-   * PrimeNG renders a node's children with `visibility: hidden` while
-   * collapsed instead of removing them from the DOM, so a collapsed subtree
-   * still reserves its full expanded footprint. To make the page's width
-   * and height actually track what's expanded, collapsed nodes get an
-   * empty `children` array here, and their real children (cached below)
-   * are swapped back in on expand.
-   */
-  private readonly childrenByKey = new Map<string, OrgChartNode[]>();
 
-  /**
-   * Built once — the tree's shape doesn't vary by language, only the
-   * displayed text does (title/description are translation keys, resolved
-   * reactively in the template via `| translate`), so there's no need to
-   * rebuild on language change like this used to.
-   */
+  private readonly childrenByKey = new Map<string, OrgChartNode[]>();
   organizationData: OrgChartNode[] = this.buildTree(SCHOOLS_STRUCTURE);
 
   selectedNode: OrgChartNode | null = null;
-
-  /**
-   * Desktop keeps the PrimeNG chart; below the Ministry chart's own
-   * breakpoint we swap to a plain recursive accordion instead (PrimeNG's
-   * org chart is a <table>-based horizontal layout and can't reflow into
-   * a vertical list via CSS alone).
-   */
   isMobile = this.matchesMobile();
 
   @HostListener('window:resize')
@@ -126,12 +105,6 @@ export class StructureSchools {
     event.node.children = [];
   }
 
-  /**
-   * Mobile accordion's own toggle — mirrors onNodeExpand/onNodeCollapse
-   * above so `node.children`/`node.expanded` stay consistent with the
-   * PrimeNG chart's expectations if the viewport crosses the breakpoint
-   * mid-session (both views share the same organizationData objects).
-   */
   toggleMobileNode(node: OrgChartNode, event: Event): void {
     event.stopPropagation();
 
@@ -147,14 +120,6 @@ export class StructureSchools {
     }
   }
 
-  /**
-   * Only one level-3+ ("below the branches") path stays open anywhere in
-   * the tree at a time. Runs on every expand, including a branch itself
-   * (e.g. expanding "Kindergartens" also collapses "School Principal" left
-   * open under "Schools") — collapseOtherDeepNodes only ever touches
-   * level 3+ nodes, so branches (level 1-2) themselves are never collapsed
-   * by this, only stale deeper content under *other* branches.
-   */
   private focusExpandedNode(node: OrgChartNode): void {
         if ((node.data?.level ?? 0) <= 2 || !node.key) {
       return;
@@ -164,12 +129,6 @@ export class StructureSchools {
     this.scrollNodeIntoView(node.key);
     this.highlightNode(node.key);
   }
-
-  /**
-   * Briefly marks the just-expanded node as "focused" (see .is-focused in
-   * the stylesheet — a short pulse ring) so it's visually obvious which
-   * node the auto-scroll/pan just centered on.
-   */
   focusedNodeKey: string | null = null;
 
   private focusHighlightTimeout?: ReturnType<typeof setTimeout>;
@@ -200,14 +159,6 @@ export class StructureSchools {
       }
     });
   }
-
-  /**
-   * Brings the just-expanded node into view — smoothly on mobile (plain
-   * page scroll), or by panning .organization-container on desktop
-   * (same eased-scroll approach as pages/home/structure's
-   * animateMapToElement). Waits two animation frames so Angular/PrimeNG
-   * have actually painted the newly revealed children before measuring.
-   */
   private scrollNodeIntoView(key: string): void {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -273,13 +224,6 @@ export class StructureSchools {
   private matchesMobile(): boolean {
     return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT_PX}px)`).matches;
   }
-
-  /**
-   * Drag-to-pan for the desktop chart, ported from pages/home/structure's
-   * .structure-map. No mobile check needed here (unlike that page): this
-   * only ever binds to .organization-container, which is already inside
-   * an `@if (!isMobile)` branch.
-   */
   isDragging = false;
 
   private dragStartX = 0;

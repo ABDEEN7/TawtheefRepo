@@ -82,19 +82,6 @@
 /* ============================================================
    ORGANIZATION CONTAINER
    ============================================================ */
-
-/*
- * Shrink-wraps to the chart's actual rendered size (which shrinks/grows as
- * nodes are collapsed/expanded) instead of always spanning the full page
- * width. `max-width: 100%` + `overflow-x: auto` is the fallback for trees
- * wider than the page once fully expanded.
- *
- * `display: block` + `width: fit-content` (not `inline-flex`) is
- * deliberate: `margin: 0 auto` only centers block-level boxes. An
- * inline-level box like `inline-flex` instead follows the parent's
- * `text-align`, which flips between left/right when the page's `dir`
- * switches between ltr/rtl — so it would drift off-center per language.
- */
 .organization-container {
   display: block;
 
@@ -116,23 +103,11 @@
 
   box-shadow: 0 3px 12px rgb(0 0 0 / 4%);
 
-  /*
-   * Drag-to-pan, same as pages/home/structure's .structure-map: grab
-   * cursor + hidden scrollbar, panned via JS-driven scrollLeft/scrollTop
-   * instead (see startDragging/dragMap/stopDragging).
-   */
   cursor: grab;
 
   user-select: none;
 
-  /*
-   * pan-y (not none): this container only ever scrolls horizontally
-   * (overflow-x above) — horizontal panning is handled ourselves via
-   * startDragging/dragMap. `touch-action: none` would also block the
-   * browser's default vertical scroll/wheel handling while the pointer
-   * is over this element, trapping the page scroll until the mouse
-   * leaves it. pan-y explicitly leaves vertical scrolling to the browser.
-   */
+
   touch-action: pan-y;
 
   overscroll-behavior-x: contain;
@@ -179,9 +154,6 @@
     transform 0.2s ease,
     box-shadow 0.2s ease,
     border-color 0.2s ease;
-
-  /* Plays once whenever a node is newly inserted into the DOM — i.e.
-     every time a parent expands and reveals its children. */
   animation: node-reveal 0.3s ease both;
 }
 
@@ -193,11 +165,6 @@
   box-shadow: 0 8px 20px rgb(15 23 42 / 10%);
 }
 
-/*
- * Briefly rings the node the auto-scroll/pan just centered on (see
- * StructureSchools.highlightNode), so it's obvious which node became
- * active after other branches collapsed.
- */
 .organization-card.is-focused {
   animation: node-focus-pulse 0.9s ease-out;
 }
@@ -224,13 +191,6 @@
   }
 }
 
-/*
- * Card color follows tree depth (1-indexed, set on node.data.level in
- * SchoolsStructure.buildNode): levels 1-2 (Institutions, Schools/
- * Kindergartens/Specialized) keep the brand color, level 3 (Principal)
- * and level 4 (Deputy/Category) get their own accents, and the last
- * level (leaf job titles) stays plain white with black text.
- */
 %organization-card--tinted {
   .node-title {
     color: #ffffff;
@@ -382,9 +342,6 @@
   line-height: 1.75;
 
   color: #475569;
-
-  /* Descriptions are authored as newline-separated lines (see
-     structure.en.ts/structure.ar.ts) — preserve those breaks. */
   white-space: pre-line;
 }
 
@@ -511,23 +468,9 @@
   }
 }
 
-/* ============================================================
-   MOBILE ACCORDION
-   Ported from pages/home/structure/structure.scss's own mobile
-   fallback: full-width pills, indentation instead of connector lines,
-   plain vertical stacking. Colors reuse this page's own level palette
-   (.organization-card--level-*) instead of the Ministry's semantic
-   leadership/department/special/section classes, since this tree is
-   colored by depth rather than by role.
-   ============================================================ */
 
 .mobile-tree {
-  /*
-   * Safety net: the deepest nodes (job titles, 4 levels in) shift ~80px
-   * right via the margin-compensation trick below without losing width,
-   * so on very narrow phones with long titles they could edge past the
-   * viewport. Scroll rather than clip in that case.
-   */
+
   overflow-x: auto;
 }
 
@@ -539,15 +482,6 @@
   gap: 10px;
 }
 
-/*
- * A small indent toward the reading direction's "start" — physically
- * right in English, physically left in Arabic — so children read as
- * nested under their parent instead of all starting at the same x
- * position. Kept small (not width-preserving like an earlier attempt
- * here) so it doesn't push deep levels past the viewport edge; a few
- * levels of 14px each is a modest, expected amount of shrinkage for an
- * indented list.
- */
 .mobile-tree-children {
   margin-inline-start: 14px;
   padding-block-start: 10px;
