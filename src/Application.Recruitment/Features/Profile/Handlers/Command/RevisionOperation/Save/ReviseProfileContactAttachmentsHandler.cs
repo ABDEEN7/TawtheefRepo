@@ -1,7 +1,8 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using MediatR;
 using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Constants;
@@ -23,8 +24,10 @@ public sealed class ReviseProfileContactAttachmentsHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var vr = validationService.ValidateAttachments(profile);
         if (vr.IsFailed)
@@ -37,6 +40,20 @@ public sealed class ReviseProfileContactAttachmentsHandler(
         {
             var current = profile.ResidenceAddress.CertificateId;
             var oldResourceId = current;
+
+            var reviewItemExists = await reviewRepo.DbSet
+                .AsNoTracking()
+                .AnyAsync(r =>
+                    r.UserProfileId == profile.Id &&
+                    r.Section == ProfileSection.Contact &&
+                    r.TargetType == ReviewTargetType.Attachment &&
+                    r.ResourceId == oldResourceId &&
+                    (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Solved),
+                    ct);
+
+            if (!reviewItemExists)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
