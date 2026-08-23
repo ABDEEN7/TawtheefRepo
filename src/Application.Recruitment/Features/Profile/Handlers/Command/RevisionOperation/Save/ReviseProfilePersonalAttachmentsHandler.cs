@@ -1,7 +1,8 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
-using MediatR;
 using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Constants;
@@ -22,9 +23,9 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         // Validate step (if your validator expects these props already set, do it after updates)
         var vr = validationService.ValidateAttachments(profile);
         if (vr.IsFailed)
@@ -34,6 +35,23 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
         if (cmd.Request.Resume is not null)
         {
             var oldResourceId = profile.ResumeAttachmentId;
+            if (oldResourceId == Guid.Empty || oldResourceId is null)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var allowed = await reviewRepo.DbSet
+                .AsNoTracking()
+                .AnyAsync(r =>
+                    r.UserProfileId == profile.Id &&
+                    r.Section == ProfileSection.Prerequisites &&
+                    r.TargetType == ReviewTargetType.Attachment &&
+                    r.ResourceId == oldResourceId &&
+                    (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Solved),
+                    ct);
+
+            if (!allowed)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -54,6 +72,23 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
         if (cmd.Request.NationalCard is not null)
         {
             var oldResourceId = profile.NationalCardId;
+            if (oldResourceId == Guid.Empty || oldResourceId is null)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var allowed = await reviewRepo.DbSet
+                .AsNoTracking()
+                .AnyAsync(r =>
+                    r.UserProfileId == profile.Id &&
+                    r.Section == ProfileSection.Prerequisites &&
+                    r.TargetType == ReviewTargetType.Attachment &&
+                    r.ResourceId == oldResourceId &&
+                    (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Solved),
+                    ct);
+
+            if (!allowed)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -78,6 +113,22 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             var current = profile.SponsorProfile.SponsorCardId;
             var oldResourceId = current;
+            if (oldResourceId == Guid.Empty || oldResourceId is null)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var allowed = await reviewRepo.DbSet
+                .AsNoTracking()
+                .AnyAsync(r =>
+                    r.UserProfileId == profile.Id &&
+                    r.Section == ProfileSection.Personal &&
+                    r.TargetType == ReviewTargetType.Attachment &&
+                    r.ResourceId == oldResourceId &&
+                    (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Solved),
+                    ct);
+
+            if (!allowed)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(

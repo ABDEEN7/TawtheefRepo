@@ -32,9 +32,25 @@ public sealed class ReviseProfilePersonalHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
+
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
+        var personalSectionReviewItemExists = await reviewRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(r =>
+                r.UserProfileId == profile.Id &&
+                r.Section == ProfileSection.Personal &&
+                r.TargetType == ReviewTargetType.Field &&
+                r.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Solved),
+                ct);
+
+        if (!personalSectionReviewItemExists)
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
         var validationResult = validationService.ValidatePersonal(profile, new(cmd.Request.SponsorEmployerName, cmd.Request.SponsorEmployerNumber, cmd.Request.SponsorCardFileName, cmd.Request.SponsorCard));
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);

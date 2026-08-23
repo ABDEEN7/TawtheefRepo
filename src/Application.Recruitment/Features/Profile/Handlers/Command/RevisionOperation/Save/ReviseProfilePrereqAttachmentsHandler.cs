@@ -1,4 +1,5 @@
-﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+﻿using Microsoft.EntityFrameworkCore;
+using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
 using FluentResults;
@@ -23,9 +24,9 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
 
-        if (profile.Status is not UserProfileStatus.RequiresUpdate && profile.Status is not UserProfileStatus.Submitted)
+        if (profile.Status is not UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var vr = validationService.ValidateAttachments(profile);
         if (vr.IsFailed)
             return Result.Fail<Unit>(vr.Errors);
@@ -33,6 +34,24 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
         if (cmd.Request.Birthday is not null)
         {
             var oldResourceId = profile.BirthdayCertificateId;
+
+            if (oldResourceId is null || oldResourceId == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var reviewAllowed = await reviewRepo.DbSet.AnyAsync(x =>
+                x.UserProfileId == profile.Id &&
+                x.Section == ProfileSection.Prerequisites &&
+                x.TargetType == ReviewTargetType.Attachment &&
+                x.ResourceId == oldResourceId &&
+                (x.Status == ReviewStatus.NeedsCorrection ||
+                 x.Status == ReviewStatus.Solved),
+                ct);
+
+            if (!reviewAllowed)
+                return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
+
+
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -45,13 +64,37 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.BirthdayCertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            {
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow,
+                    profile,
+                    ProfileSection.Prerequisites,
+                    oldResourceId.Value,
+                    ct);
+            }
         }
 
         if (cmd.Request.Marriage is not null)
         {
             var oldResourceId = profile.MarriageCertificateId;
+
+            if (oldResourceId is null || oldResourceId == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var reviewAllowed = await reviewRepo.DbSet
+                .Where(x =>
+                    x.UserProfileId == profile.Id &&
+                    x.Section == ProfileSection.Prerequisites &&
+                    x.TargetType == ReviewTargetType.Attachment &&
+                    x.ResourceId == oldResourceId &&
+                    (x.Status == ReviewStatus.NeedsCorrection ||
+                     x.Status == ReviewStatus.Solved))
+                .AnyAsync(ct);
+
+            if (!reviewAllowed)
+                return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
+
             var saver = new ProfileBasicAttachmentSaver(uow, mediator);
             var newId = await saver.SaveOrReplaceAsync(
                 profile,
@@ -64,8 +107,15 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.MarriageCertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            {
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow,
+                    profile,
+                    ProfileSection.Prerequisites,
+                    oldResourceId.Value,
+                    ct);
+            }
         }
 
         await uow.SaveChangesAsync(ct);

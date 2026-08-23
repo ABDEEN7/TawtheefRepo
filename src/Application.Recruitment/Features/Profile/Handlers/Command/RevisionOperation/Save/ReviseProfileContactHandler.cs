@@ -39,8 +39,22 @@ public sealed class ReviseProfileContactHandler(
 
         var r = cmd.Request;
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
+
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+
+        var contactReviewItemExists = await reviewRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(r =>
+                r.UserProfileId == profile.Id &&
+                r.Section == ProfileSection.Contact &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Solved),
+                ct);
+
+        if (!contactReviewItemExists)
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var needsOffice = ProfileValidatorUtils.RequiresOffice(profile.CandidateTypeId, profile.Provider);
 
