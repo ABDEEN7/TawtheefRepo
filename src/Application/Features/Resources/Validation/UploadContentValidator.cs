@@ -5,7 +5,7 @@ using Tawtheef.Domain.Constants;
 
 namespace Tawtheef.Application.Features.Resources.Validation;
 
-internal static class ProfileUploadValidator
+internal static class UploadContentValidator
 {
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
@@ -47,10 +47,32 @@ internal static class ProfileUploadValidator
             [".webp"] = IsWebP
         });
 
-    public static Result Validate(string blobPath, IFormFile file)
+    private static readonly UploadPolicy InvitationExceptionProofPolicy = new(
+        new HashSet<string>(Comparer) { ".pdf" },
+        new Dictionary<string, Func<Stream, bool>>(Comparer)
+        {
+            [".pdf"] = IsPdf
+        },
+        new HashSet<string>(Comparer) { "application/pdf" },
+        ProfileLimits.MaxExperienceFileSizeBytes,
+        ErrorsCodes.ExceptionProofFileTooLarge);
+
+    public static Result Validate(string blobPath, IFormFile? file)
     {
+        if (file is null or { Length: 0 })
+            return Result.Fail(ErrorsCodes.EmptyFile);
+
         if (!TryResolvePolicy(blobPath, out var policy))
             return Result.Ok();
+
+        if (policy.MaxFileSizeBytes.HasValue && file.Length > policy.MaxFileSizeBytes.Value)
+            return Result.Fail(policy.FileTooLargeErrorCode ?? ErrorsCodes.InvalidFileType);
+
+        if (policy.AllowedContentTypes is not null &&
+            !policy.AllowedContentTypes.Contains(file.ContentType))
+        {
+            return Result.Fail(ErrorsCodes.InvalidFileType);
+        }
 
         var fileName = Path.GetFileName(file.FileName).Trim();
         var extension = Path.GetExtension(fileName);
@@ -74,15 +96,19 @@ internal static class ProfileUploadValidator
         policy = default!;
 
         var segments = blobPath.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        if (segments.Length < 7)
-            return false;
 
-        var isRecruitmentProfilePath =
-            segments[1].Equals("recruitment", StringComparison.OrdinalIgnoreCase) &&
-            segments[4].Equals("profile", StringComparison.OrdinalIgnoreCase);
+        if (IsInvitationExceptionProofPath(segments))
+        {
+            policy = InvitationExceptionProofPolicy;
+            return true;
+        }
 
-        if (!isRecruitmentProfilePath)
+        if (segments.Length < 7 ||
+            !segments[1].Equals("recruitment", StringComparison.OrdinalIgnoreCase) ||
+            !segments[4].Equals("profile", StringComparison.OrdinalIgnoreCase))
+        {
             return false;
+        }
 
         var resolvedPolicy = segments[5] switch
         {
@@ -108,6 +134,14 @@ internal static class ProfileUploadValidator
         policy = resolvedPolicy;
         return true;
     }
+
+    private static bool IsInvitationExceptionProofPath(IReadOnlyList<string> segments) =>
+        segments.Count == 6 &&
+        segments[0].Equals("private", StringComparison.OrdinalIgnoreCase) &&
+        segments[1].Equals("operation", StringComparison.OrdinalIgnoreCase) &&
+        segments[2].Equals("exceptions", StringComparison.OrdinalIgnoreCase) &&
+        Guid.TryParse(segments[3], out _) &&
+        segments[4].Equals("proof", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsPdf(Stream stream)
         => HasPrefix(stream, "%PDF-"u8);
@@ -196,5 +230,8 @@ internal static class ProfileUploadValidator
 
     private sealed record UploadPolicy(
         HashSet<string> AllowedExtensions,
-        IReadOnlyDictionary<string, Func<Stream, bool>> SignatureValidators);
+        IReadOnlyDictionary<string, Func<Stream, bool>> SignatureValidators,
+        HashSet<string>? AllowedContentTypes = null,
+        long? MaxFileSizeBytes = null,
+        string? FileTooLargeErrorCode = null);
 }

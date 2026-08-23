@@ -17,6 +17,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
 
 import { PaginatedResult } from '../../../../../../../core/models/paginated-result.model';
@@ -34,6 +35,7 @@ import {
   DashboardChartExportService,
 } from '../../../services/dashboard-chart-export.service';
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
+import { InvitationSource } from '../../../../../../../core/enums/invitation-source.enum';
 
 @Component({
   selector: 'app-dashboard-invitations-dialog',
@@ -42,6 +44,7 @@ import { OperationsDashboardService } from '../../../services/operations-dashboa
     CommonModule,
     ChartModule,
     TableModule,
+    TagModule,
     TranslatePipe,
     I18nNamespaceDirective,
     PaginationComponent,
@@ -51,6 +54,7 @@ import { OperationsDashboardService } from '../../../services/operations-dashboa
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvitationsDialog implements OnInit {
+  readonly InvitationSource = InvitationSource;
   @ViewChild('chart', { read: ElementRef })
   private chart?: ElementRef<HTMLElement>;
 

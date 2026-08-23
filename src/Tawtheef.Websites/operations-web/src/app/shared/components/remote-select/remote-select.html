@@ -1,5 +1,5 @@
 <div class="select-with-loading">
-  <p-select [options]="options()" [filter]="true" filterBy="additionalData.nameAr,additionalData.nameEn,name"
+  <p-select [options]="options()" [filter]="true"
     [optionLabel]="optionLabel" [optionValue]="optionValue" [placeholder]="computedPlaceholder"
     [disabled]="isDisabledComputed" (onFilter)="onFilter($event)" (onLazyLoad)="onLazyLoad($event)" (onShow)="onOpen()"
     (onHide)="onClose()" (onChange)="handleChange($event)" (onClear)="onClearSelection()" [ngModel]="value()"
@@ -7,8 +7,11 @@
     [showClear]="showClear" [virtualScroll]="true" [virtualScrollItemSize]="virtualScrollItemSize" [lazy]="true"
     [class]="invalid ? 'p-invalid' : 'panelStyle'">
     <ng-template pTemplate="item" let-option>
-      <div class="text-truncate" style="width: 100%; max-width: 100%; box-sizing: border-box; min-width: 0;" [title]="getOptionLabelValue(option)">
-        {{ getOptionLabelValue(option) }}
+      <div class="remote-select-option" [title]="getOptionLabelValue(option)">
+        <span class="text-truncate">{{ getOptionLabelValue(option) }}</span>
+        @if (getSecondaryOptionLabelValue(option); as secondaryLabel) {
+          <small class="remote-select-option__secondary text-truncate">{{ secondaryLabel }}</small>
+        }
       </div>
     </ng-template>
   </p-select>

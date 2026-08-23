@@ -17,6 +17,9 @@ public static class LocalPathBuilder
     public static string JobReview( Guid jobId, Guid fileId, string ext, string hash, bool isPublic)
         => Key( Scope(isPublic), "operation", "j", jobId.ToString(), "reviews", FileName(fileId, hash, ext));
 
+    public static string InvitationExceptionProof(Guid exceptionId, Guid fileId, string ext, string hash)
+        => Key("private", "operation", "exceptions", exceptionId.ToString(), "proof", FileName(fileId, hash, ext));
+
     public static string UniversityLogo(Guid universityId, string logoType, Guid fileId, string ext, string hash, bool isPublic)
         => Key(Scope(isPublic), "operation", "universities", universityId.ToString(), "logos", logoType, FileName(fileId, hash, ext));
 

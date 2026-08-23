@@ -7026,6 +7026,13 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Normal");
+
                     b.Property<Guid?>("UpdatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(95);
@@ -7051,6 +7058,11 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("JobId");
 
                     b.HasIndex("UpdatedById");
+
+                    b.HasIndex("ApplicantId", "JobId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Invitation_ApplicantId_JobId_Active")
+                        .HasFilter("[IsDeleted] = 0 AND [InvitationStatusId] IN ('F0BC801D-F54C-4A0E-8AAE-00694E4FC80D','64236C6A-167A-4213-B1D6-80C2C8C86DDE','6608F560-4DC0-4F2A-A190-6743A9A8C5CB','9B86FA2C-D295-46D7-9092-23AD8AB7B10C','22EF7E86-28CB-4A30-98BC-7D45F9B44DE3')");
 
                     b.ToTable("Invitation", "hr");
                 });
@@ -7138,6 +7150,98 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("InvitationAttachment", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.InvitationException", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApplicantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid?>("InvitationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProofResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("ReadyToSend");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicantId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("InvitationId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("ProofResourceId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("ApplicantId", "JobId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_InvitationException_ApplicantId_JobId_InFlight")
+                        .HasFilter("[Status] IN (N'ReadyToSend', N'InvitationSent') AND [IsDeleted] = 0");
+
+                    b.ToTable("InvitationException", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Job", b =>
@@ -9145,6 +9249,18 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("516e22df-2e71-f752-8abe-5f9998e26117"),
+                            BackendName = "dashboard.export",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "لوحة التحكم - تصدير",
+                            NameEn = "Dashboard - Export"
+                        },
+                        new
+                        {
                             Id = new Guid("6748978c-f5d7-7155-bba0-d992051bfa0f"),
                             BackendName = "roles.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -9862,6 +9978,54 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "Invitation Expiry Configuration - Manage",
                             NameEn = "Invitation Expiry Configuration - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("8d47f7d5-7ea1-bc51-8c09-eaf6d00d7d90"),
+                            BackendName = "exceptions.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 102,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "الاستثناءات - عرض",
+                            NameEn = "Exceptions - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("49c0e32d-20fd-7551-b5ab-ec3498123be0"),
+                            BackendName = "exceptions.create",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 103,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "الاستثناءات - إضافة",
+                            NameEn = "Exceptions - Create"
+                        },
+                        new
+                        {
+                            Id = new Guid("affbbe6c-d76a-9b5f-9308-d24d5a0f978b"),
+                            BackendName = "exceptions.send-invitation",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 104,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "الاستثناءات - إرسال دعوة",
+                            NameEn = "Exceptions - Send Invitation"
+                        },
+                        new
+                        {
+                            Id = new Guid("39e706ac-4288-0053-8d56-9cf1d23b3f8c"),
+                            BackendName = "exceptions.cancel",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 105,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "الاستثناءات - إلغاء",
+                            NameEn = "Exceptions - Cancel"
                         });
                 });
 
@@ -12675,6 +12839,61 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("JobRequiredAttachment");
 
                     b.Navigation("Resource");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.InvitationException", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.ApplicantUser", "Applicant")
+                        .WithMany()
+                        .HasForeignKey("ApplicantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Invitation", "Invitation")
+                        .WithMany()
+                        .HasForeignKey("InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "ProofResource")
+                        .WithMany()
+                        .HasForeignKey("ProofResourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Applicant");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Invitation");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("ProofResource");
 
                     b.Navigation("UpdatedBy");
                 });

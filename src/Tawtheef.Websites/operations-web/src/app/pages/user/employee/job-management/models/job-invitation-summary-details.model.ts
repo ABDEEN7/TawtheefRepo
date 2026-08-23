@@ -1,3 +1,5 @@
+import { InvitationSource } from '../../../../../core/enums/invitation-source.enum';
+
 export type SortDirection = 'asc' | 'desc';
 
 export interface JobInfoVM {
@@ -17,6 +19,7 @@ export interface StatusVM {
 
 export interface InviteRowVM {
   inviteId: string;
+  source: InvitationSource;
   fullName: string;
   nationality: string;
   personalNumber: string;

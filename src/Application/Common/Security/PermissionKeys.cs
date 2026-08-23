@@ -179,4 +179,12 @@ public static class PermissionKeys
         public const string View = "invitation-expiry-configuration.view";
         public const string Manage = "invitation-expiry-configuration.manage";
     }
+
+    public static class Exceptions
+    {
+        public const string View = "exceptions.view";
+        public const string Create = "exceptions.create";
+        public const string SendInvitation = "exceptions.send-invitation";
+        public const string Cancel = "exceptions.cancel";
+    }
 }

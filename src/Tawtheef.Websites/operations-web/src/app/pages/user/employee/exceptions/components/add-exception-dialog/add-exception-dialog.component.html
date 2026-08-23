@@ -1,0 +1,401 @@
+<form
+  class="add-exception-dialog"
+  [formGroup]="form"
+  i18nNamespace="pages/employee/exceptions"
+  (ngSubmit)="createException()"
+>
+  <div class="dialog-intro">
+    <p class="text-muted mb-0">
+      {{ 'EXCEPTIONS.ADD_DIALOG.SUBTITLE' | translate }}
+    </p>
+  </div>
+
+  <!-- Candidate lookup -->
+  <section class="candidate-lookup">
+    <label
+      class="form-label fw-semibold"
+      for="exception-candidate-qid"
+    >
+      {{ 'EXCEPTIONS.ADD_DIALOG.QID_LABEL' | translate }}
+    </label>
+
+    <div class="candidate-lookup__controls">
+      <div class="candidate-lookup__input">
+        <input
+          pInputText
+          id="exception-candidate-qid"
+          type="text"
+          class="form-control w-100"
+          formControlName="qid"
+          inputmode="numeric"
+          autocomplete="off"
+          maxlength="11"
+          [placeholder]="'EXCEPTIONS.ADD_DIALOG.QID_PLACEHOLDER' | translate"
+          [attr.aria-invalid]="
+            form.controls.qid.invalid &&
+            form.controls.qid.touched
+          "
+        />
+
+        @if (
+          form.controls.qid.touched &&
+          form.controls.qid.hasError('required')
+        ) {
+          <small class="text-danger d-block mt-1">
+            {{ 'EXCEPTIONS.ADD_DIALOG.QID_REQUIRED' | translate }}
+          </small>
+        } @else if (
+          form.controls.qid.touched &&
+          form.controls.qid.hasError('pattern')
+        ) {
+          <small class="text-danger d-block mt-1">
+            {{ 'EXCEPTIONS.ADD_DIALOG.QID_INVALID' | translate }}
+          </small>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-outline-primary lookup-button"
+        [disabled]="
+          form.controls.qid.invalid ||
+          lookupLoading() ||
+          createLoading()
+        "
+        [attr.aria-busy]="lookupLoading()"
+        (click)="lookupCandidate()"
+      >
+        @if (lookupLoading()) {
+          <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+        } @else {
+          <i class="hgi hgi-stroke hgi-search-01" aria-hidden="true"></i>
+        }
+
+        <span>
+          {{
+            (
+              lookupLoading()
+                ? 'EXCEPTIONS.ADD_DIALOG.SEARCHING'
+                : 'EXCEPTIONS.ADD_DIALOG.SEARCH'
+            ) | translate
+          }}
+        </span>
+      </button>
+    </div>
+  </section>
+
+  @if (candidate(); as selectedCandidate) {
+    <!-- Candidate summary -->
+    <section
+      class="candidate-summary"
+      aria-labelledby="candidate-summary-title"
+    >
+      <div class="candidate-summary__header">
+        <div class="candidate-summary__title">
+          <span class="candidate-summary__icon" aria-hidden="true">
+            <i class="hgi hgi-stroke hgi-user-id-verification"></i>
+          </span>
+
+          <div>
+            <h6
+              id="candidate-summary-title"
+              class="fw-bold mb-1"
+            >
+              {{ 'EXCEPTIONS.ADD_DIALOG.CANDIDATE_INFORMATION' | translate }}
+            </h6>
+
+            <span class="text-muted small">
+              {{ 'EXCEPTIONS.ADD_DIALOG.QID_LABEL' | translate }}:
+              <span class="candidate-summary__qid">
+                {{ selectedCandidate.qid }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        @if (selectedCandidate.profileStatus === approvedProfileStatus) {
+          <span class="pill success candidate-summary__status">
+            <i class="pi pi-check-circle" aria-hidden="true"></i>
+            {{ 'EXCEPTIONS.ADD_DIALOG.APPROVED' | translate }}
+          </span>
+        }
+      </div>
+
+      <div class="candidate-summary__body">
+        <span class="text-muted small">
+          {{ 'EXCEPTIONS.ADD_DIALOG.CANDIDATE_NAME' | translate }}
+        </span>
+
+        <strong>
+          {{ selectedCandidate.candidateName }}
+        </strong>
+      </div>
+    </section>
+
+    <!-- Job -->
+    <div class="form-section">
+      <div class="form-section__label">
+        <span class="form-section__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-briefcase-01"></i>
+        </span>
+
+        <label
+          class="form-label fw-semibold mb-0"
+          for="exception-job"
+        >
+          {{ 'EXCEPTIONS.ADD_DIALOG.JOB_LABEL' | translate }}
+        </label>
+      </div>
+
+      <app-remote-select
+        id="exception-job"
+        formControlName="jobId"
+        [optionsLoader]="loadJobs"
+        optionLabel="jobTitle"
+        secondaryOptionLabel="jobNumber"
+        optionValue="jobId"
+        optionId="jobId"
+        [pageSize]="10"
+        [showClear]="true"
+        [placeholder]="'EXCEPTIONS.ADD_DIALOG.JOB_PLACEHOLDER' | translate"
+        [noResultsPlaceholder]="'EXCEPTIONS.ADD_DIALOG.NO_JOBS' | translate"
+        [invalid]="
+          form.controls.jobId.invalid &&
+          form.controls.jobId.touched
+        "
+      />
+
+      @if (
+        form.controls.jobId.invalid &&
+        form.controls.jobId.touched
+      ) {
+        <small class="text-danger d-block mt-1">
+          {{ 'EXCEPTIONS.ADD_DIALOG.JOB_REQUIRED' | translate }}
+        </small>
+      }
+    </div>
+
+    <!-- Reason -->
+    <div class="form-section">
+      <div class="form-section__label">
+        <span class="form-section__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-note-01"></i>
+        </span>
+
+        <label
+          class="form-label fw-semibold mb-0"
+          for="exception-reason"
+        >
+          {{ 'EXCEPTIONS.ADD_DIALOG.REASON_LABEL' | translate }}
+          <span class="text-danger">*</span>
+        </label>
+      </div>
+
+      <textarea
+        pInputTextarea
+        id="exception-reason"
+        class="form-control w-100 exception-reason"
+        rows="4"
+        formControlName="reason"
+        [maxlength]="reasonMaxLength"
+        [placeholder]="'EXCEPTIONS.ADD_DIALOG.REASON_PLACEHOLDER' | translate"
+        [attr.aria-invalid]="
+          form.controls.reason.invalid &&
+          form.controls.reason.touched
+        "
+      ></textarea>
+
+      <div class="reason-meta">
+        <small class="text-muted">
+          {{ form.controls.reason.value.length }} / {{ reasonMaxLength }}
+        </small>
+      </div>
+
+      @if (
+        form.controls.reason.touched &&
+        (
+          form.controls.reason.hasError('required') ||
+          form.controls.reason.hasError('pattern')
+        )
+      ) {
+        <small class="text-danger d-block mt-1">
+          {{ 'EXCEPTIONS.ADD_DIALOG.REASON_REQUIRED' | translate }}
+        </small>
+      } @else if (
+        form.controls.reason.touched &&
+        form.controls.reason.hasError('maxlength')
+      ) {
+        <small class="text-danger d-block mt-1">
+          {{
+            'EXCEPTIONS.ADD_DIALOG.REASON_TOO_LONG'
+              | translate:{ max: reasonMaxLength }
+          }}
+        </small>
+      }
+    </div>
+
+    <!-- Proof -->
+    <div class="form-section proof-section">
+      <div class="form-section__label">
+        <span class="form-section__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-attachment-01"></i>
+        </span>
+
+        <label
+          class="form-label fw-semibold mb-0"
+          for="exception-proof"
+        >
+          {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_LABEL' | translate }}
+          <span class="text-danger">*</span>
+        </label>
+      </div>
+
+      <input
+        #proofInput
+        id="exception-proof"
+        type="file"
+        class="visually-hidden"
+        accept=".pdf,application/pdf"
+        (change)="selectProof($event)"
+      />
+
+      <div
+        class="proof-uploader"
+        [class.proof-uploader--dragging]="proofDragging()"
+        [class.proof-uploader--invalid]="
+          form.controls.proof.invalid &&
+          form.controls.proof.touched
+        "
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'EXCEPTIONS.ADD_DIALOG.SELECT_PROOF' | translate"
+        (click)="proofInput.click()"
+        (keydown.enter)="proofInput.click()"
+        (keydown.space)="$event.preventDefault(); proofInput.click()"
+        (dragover)="onProofDragOver($event)"
+        (dragleave)="onProofDragLeave($event)"
+        (drop)="onProofDrop($event)"
+      >
+        <div class="proof-uploader__icon" aria-hidden="true">
+          <i class="pi pi-file-pdf"></i>
+        </div>
+
+        <div class="proof-uploader__content">
+          <strong>
+            {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_DROP_TITLE' | translate }}
+          </strong>
+
+          <span class="proof-uploader__action">
+            {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_DROP_ACTION' | translate }}
+          </span>
+
+          <small class="text-muted">
+            {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_HELP' | translate }}
+          </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary proof-uploader__button"
+          (click)="$event.stopPropagation(); proofInput.click()"
+        >
+          <i class="pi pi-upload" aria-hidden="true"></i>
+          <span>
+            {{ 'EXCEPTIONS.ADD_DIALOG.SELECT_PROOF' | translate }}
+          </span>
+        </button>
+      </div>
+
+      @if (form.controls.proof.value; as proof) {
+        <div class="selected-proof">
+          <div class="selected-proof__file">
+            <span class="selected-proof__icon" aria-hidden="true">
+              <i class="pi pi-file-pdf"></i>
+            </span>
+
+            <div class="selected-proof__details">
+              <span
+                class="selected-proof__name"
+                [title]="proof.name"
+              >
+                {{ proof.name }}
+              </span>
+
+              <small class="text-muted">
+                {{ getFileSize(proof.size) }}
+              </small>
+            </div>
+          </div>
+
+          <div class="selected-proof__actions">
+            <i
+              class="pi pi-check-circle text-success"
+              aria-hidden="true"
+            ></i>
+
+            <button
+              type="button"
+              class="btn btn-action btn-outline-danger"
+              [attr.aria-label]="'EXCEPTIONS.ADD_DIALOG.REMOVE_FILE' | translate"
+              [title]="'EXCEPTIONS.ADD_DIALOG.REMOVE_FILE' | translate"
+              (click)="removeProof(proofInput)"
+            >
+              <i class="hgi hgi-stroke hgi-delete-02" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (
+        form.controls.proof.touched &&
+        form.controls.proof.hasError('required')
+      ) {
+        <small class="text-danger d-block mt-1">
+          {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_REQUIRED' | translate }}
+        </small>
+      } @else if (
+        form.controls.proof.touched &&
+        form.controls.proof.hasError('invalidPdf')
+      ) {
+        <small class="text-danger d-block mt-1">
+          {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_INVALID' | translate }}
+        </small>
+      }
+    </div>
+  }
+
+  <!-- Footer -->
+  <div class="dialog-actions">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      [disabled]="createLoading()"
+      (click)="close()"
+    >
+      {{ 'common.cancel' | translate }}
+    </button>
+
+    @if (candidate()) {
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!canCreate()"
+        [attr.aria-busy]="createLoading()"
+      >
+        @if (createLoading()) {
+          <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+        }
+
+        <span>
+          {{
+            (
+              createLoading()
+                ? 'EXCEPTIONS.ADD_DIALOG.CREATING'
+                : 'EXCEPTIONS.ADD_DIALOG.CREATE'
+            ) | translate
+          }}
+        </span>
+      </button>
+    }
+  </div>
+</form>

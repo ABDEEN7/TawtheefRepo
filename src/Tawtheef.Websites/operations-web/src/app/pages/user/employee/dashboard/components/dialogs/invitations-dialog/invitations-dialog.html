@@ -116,7 +116,15 @@
             <tr>
 
               <td>
-                {{ invitation.title }}
+                <div class="d-flex flex-column align-items-start gap-1">
+                  <span>{{ invitation.title }}</span>
+                  @if (invitation.source === InvitationSource.Exceptional) {
+                    <p-tag severity="info" [rounded]="true"
+                      [value]="'common.invitationSource.exceptional' | translate">
+                      <i class="pi pi-star-fill me-1" style="font-size: 10px" aria-hidden="true"></i>
+                    </p-tag>
+                  }
+                </div>
               </td>
 
               <td>

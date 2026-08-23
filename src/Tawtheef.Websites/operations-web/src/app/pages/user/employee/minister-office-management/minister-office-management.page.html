@@ -278,6 +278,12 @@
             <td>
               <div class="fw-bold">{{ inv.jobTitleAr }}</div>
               <div class="text-muted small">{{ inv.jobTitleEn }}</div>
+              @if (inv.source === InvitationSource.Exceptional) {
+                <p-tag severity="info" [rounded]="true"
+                  [value]="'common.invitationSource.exceptional' | translate">
+                  <i class="pi pi-star-fill me-1" style="font-size: 10px" aria-hidden="true"></i>
+                </p-tag>
+              }
             </td>
             <td>
               <div class="fw-bold">{{ inv.organizationNameAr }}</div>

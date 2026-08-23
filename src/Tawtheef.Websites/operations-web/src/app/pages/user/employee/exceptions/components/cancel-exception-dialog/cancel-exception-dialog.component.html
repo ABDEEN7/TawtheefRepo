@@ -1,0 +1,87 @@
+<div class="cancel-exception-dialog" i18nNamespace="pages/employee/exceptions">
+  <div class="cancel-header">
+    <div class="cancel-header__icon" aria-hidden="true">
+      <i class="hgi hgi-stroke hgi-alert-02"></i>
+    </div>
+
+    <div class="cancel-header__content">
+      <p class="cancel-header__question">
+        {{ 'EXCEPTIONS.ACTIONS.CANCEL_QUESTION' | translate }}
+      </p>
+
+      <strong class="d-block">
+        {{ data.candidateName }}
+      </strong>
+
+      <span class="text-muted">
+        {{ data.jobTitle }}
+      </span>
+
+      <div class="cancel-status mt-2">
+        <span class="text-muted"> {{ 'EXCEPTIONS.ACTIONS.CURRENT_STATUS' | translate }}: </span>
+
+        <strong>
+          {{ data.statusLabel }}
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  @if (data.invitationSent) {
+    <div class="cancel-info">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+
+      <div>
+        <p class="mb-1">
+          {{ 'EXCEPTIONS.ACTIONS.CANCEL_PENDING_INVITATION_NOTE' | translate }}
+        </p>
+
+        <p class="mb-0">
+          {{ 'EXCEPTIONS.ACTIONS.CANCEL_APPLICATION_NOTE' | translate }}
+        </p>
+      </div>
+    </div>
+  }
+
+  <div class="cancel-reason">
+    <div class="cancel-reason__header">
+      <label class="form-label fw-semibold mb-0" for="exception-cancellation-reason">
+        {{ 'EXCEPTIONS.ACTIONS.CANCELLATION_REASON' | translate }}
+        <span class="text-danger">*</span>
+      </label>
+    </div>
+
+    <textarea
+      pInputTextarea
+      id="exception-cancellation-reason"
+      class="form-control w-100"
+      rows="5"
+      [formControl]="reason"
+      [maxlength]="reasonMaxLength"
+      [placeholder]="'EXCEPTIONS.ACTIONS.CANCELLATION_REASON_PLACEHOLDER' | translate"
+      [attr.aria-invalid]="reason.invalid && reason.touched"
+    ></textarea>
+
+    <div class="cancel-reason__meta">
+      <small class="text-muted"> {{ reason.value.length }} / {{ reasonMaxLength }} </small>
+    </div>
+
+    @if (reason.touched && (reason.hasError('required') || reason.hasError('pattern'))) {
+      <small class="text-danger d-block mt-1">
+        {{ 'EXCEPTIONS.ACTIONS.CANCELLATION_REASON_REQUIRED' | translate }}
+      </small>
+    }
+  </div>
+
+  <div class="cancel-actions">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      {{ 'common.cancel' | translate }}
+    </button>
+
+    <button type="button" class="btn btn-primary" [disabled]="reason.invalid" (click)="confirm()">
+      <span>
+        {{ 'EXCEPTIONS.ACTIONS.CONFIRM_CANCEL' | translate }}
+      </span>
+    </button>
+  </div>
+</div>

@@ -8,6 +8,19 @@
   width: 100%;
 }
 
+.remote-select-option {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.remote-select-option__secondary {
+  color: var(--bs-secondary-color);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
 .select-loading-overlay {
   position: absolute;
   inset: 0;

@@ -12,12 +12,14 @@ export class DialogHelperService {
     type: 'delete' | 'submit' | 'warning';
     title: string;
     description: string;
+    descriptionParams?: Record<string, string>;
     cancelText?: string;
     confirmText?: string;
     showInputField?: boolean;
     inputType?: 'text' | 'textarea';
     inputLabel?: string;
     inputPlaceholder?: string;
+    inputMaxLength?: number;
   }) {
     return this.dialogService.open(ConfirmationDialogComponent, {
       header: this.translateService.instant(options.title),

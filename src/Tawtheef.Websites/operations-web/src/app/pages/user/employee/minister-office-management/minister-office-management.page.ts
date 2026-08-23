@@ -32,6 +32,7 @@ import { SelectModule } from 'primeng/select';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { DropdownOptionVM } from '../../../../shared/models/dropdown-options.model';
 import { InvitationStatus } from '../../../../core/enums/lookups.enum';
+import { InvitationSource } from '../../../../core/enums/invitation-source.enum';
 
 @Component({
   selector: 'app-minister-office-management',
@@ -70,6 +71,7 @@ export class MinisterOfficeManagementPage implements OnInit {
 
   readonly Permissions = Permissions;
   readonly CandidateStatus = MinisterOfficeCandidateStatus;
+  readonly InvitationSource = InvitationSource;
 
   // Table State
   items = signal<MinisterOfficeCandidateDto[]>([]);

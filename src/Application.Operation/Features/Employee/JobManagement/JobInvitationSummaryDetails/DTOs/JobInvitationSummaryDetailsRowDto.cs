@@ -1,10 +1,12 @@
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobInvitationSummaryDetails.DTOs;
 
 public sealed class JobInvitationSummaryDetailsRowDto
 {
     public Guid InviteId { get; init; }
+    public InvitationSource Source { get; init; }
     public string FullName { get; set; } = string.Empty;
     public string Nationality { get; set; } = string.Empty;
     public string PersonalNumber { get; set; } = string.Empty;

@@ -1,0 +1,67 @@
+using Application.Operation.Features.Employee.Exceptions.DTOs;
+using Application.Operation.Features.Employee.Exceptions.Queries;
+using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
+using Tawtheef.Application.Common.Utils;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Users;
+
+namespace Application.Operation.Features.Employee.Exceptions.Handlers.Queries;
+
+public sealed class GetExceptionCandidateByQidQueryHandler(
+    IUnitOfWork unitOfWork,
+    ILocalizationService localizationService)
+    : IRequestHandler<GetExceptionCandidateByQidQuery, IResult<ExceptionCandidateLookupDto>>
+{
+    public async Task<IResult<ExceptionCandidateLookupDto>> Handle(
+        GetExceptionCandidateByQidQuery request,
+        CancellationToken cancellationToken)
+    {
+        var normalizedQid = QidUtilities.Normalize(request.Qid);
+        if (!QidUtilities.IsValid(normalizedQid))
+            return Failure(ErrorsCodes.InvalidQidFormat, 400);
+
+        var candidate = await unitOfWork.GetEntityRepository<UserProfile>().DbSet
+            .AsNoTracking()
+            .Where(profile =>
+                profile.NationalNumber == normalizedQid &&
+                profile.User != null)
+            .Select(profile => new CandidateLookupRow(
+                profile.UserId,
+                profile.Id,
+                profile.User!.FullNameAr,
+                profile.User.FullNameEn,
+                profile.Status))
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (candidate is null)
+            return Failure(ErrorsCodes.ExceptionCandidateNotFound, 404);
+
+        if (candidate.ProfileStatus != UserProfileStatus.Approved)
+            return Failure(ErrorsCodes.ExceptionCandidateProfileNotApproved, 409);
+
+        return Result.Ok(new ExceptionCandidateLookupDto(
+            candidate.ApplicantId,
+            candidate.ProfileId,
+            normalizedQid,
+            localizationService.GetLocalizedValue(candidate.FullNameAr, candidate.FullNameEn),
+            candidate.ProfileStatus));
+    }
+
+    private static Result<ExceptionCandidateLookupDto> Failure(string code, int statusCode) =>
+        Result.Fail<ExceptionCandidateLookupDto>(
+            new Error(code)
+                .WithMetadata("Code", code)
+                .WithMetadata("UserMessage", code)
+                .WithMetadata("StatusCode", statusCode));
+
+    private sealed record CandidateLookupRow(
+        Guid ApplicantId,
+        Guid ProfileId,
+        string FullNameAr,
+        string FullNameEn,
+        UserProfileStatus ProfileStatus);
+}

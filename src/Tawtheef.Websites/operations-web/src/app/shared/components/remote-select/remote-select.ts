@@ -14,12 +14,18 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Subject, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { catchError, debounceTime, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
 
 type LoadRequest = { term: string; page: number; append: boolean };
+
+export interface RemoteSelectLoadRequest {
+  searchTerm: string;
+  pageNumber: number;
+  pageSize: number;
+}
 
 type QueryParamValue =
   | string
@@ -56,13 +62,16 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Output() onObjectChange = new EventEmitter<any>();
 
   @Input() searchUrl!: string;
+  @Input('optionsLoader') optionsLoader?: (request: RemoteSelectLoadRequest) => Observable<readonly object[]>;
   @Input() minChars = 1;
   @Input() searchParamName = 'search';
   @Input() idParamName = 'id';
   @Input() pageSize = 10;
 
   @Input() optionLabel = 'name';
+  @Input('secondaryOptionLabel') secondaryOptionLabel?: string;
   @Input() optionValue?: string;
+  @Input('optionId') optionId = 'id';
   @Input() placeholder = '';
   @Input() noResultsPlaceholder = '';
   private lastLoadReturnedEmpty = false;
@@ -193,22 +202,29 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       .pipe(
         debounceTime(300),
         switchMap(req => {
-          if (!this.searchUrl || (this.requireParent && this.isParentMissing())) {
+          if ((!this.searchUrl && !this.optionsLoader) || (this.requireParent && this.isParentMissing())) {
             this.isLoading.set(false);
-            return of({ req, res: [] as any[] });
+            return of({ req, res: [] as object[] });
           }
 
           this.isLoading.set(true);
           const params = this.buildParams(req.term, req.page, this.pageSize);
 
-          return this.http
-            .get<any[]>(this.searchUrl, {
+          const response$: Observable<readonly object[]> = this.optionsLoader
+            ? this.optionsLoader({
+              searchTerm: req.term,
+              pageNumber: req.page + 1,
+              pageSize: this.pageSize
+            })
+            : this.http.get<readonly object[]>(this.searchUrl, {
               params,
               headers: new HttpHeaders({ 'X-Skip-Loading': 'true' }),
-            })
+            });
+
+          return response$
             .pipe(
-              map(res => ({ req, res: res ?? [] })),
-              catchError(() => of({ req, res: [] as any[] })),
+              map(res => ({ req, res: [...(res ?? [])] })),
+              catchError(() => of({ req, res: [] as object[] })),
               finalize(() => this.isLoading.set(false))
             );
         }),
@@ -377,7 +393,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private load(req: LoadRequest): void {
-    if (!this.searchUrl) return;
+    if (!this.searchUrl && !this.optionsLoader) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     this.currentTerm = (req.term ?? '').trim();
@@ -498,19 +514,36 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return Array.from(seen.values());
   }
 
-  private getOptionId(option: any): string | null {
-    const id = option?.id ?? option?.Id;
+  private getOptionId(option: unknown): string | null {
+    const optionId = this.optionId.trim();
+    const id = this.getByPath(option, optionId)
+      ?? (optionId === 'id' ? this.getByPath(option, 'Id') : undefined);
     return id ? String(id) : null;
   }
 
-  private getByPath(obj: any, path: string): any {
-    if (!obj || !path) return undefined;
-    return path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+  private getByPath(value: unknown, path: string): unknown {
+    if (value === null || typeof value !== 'object' || !path) return undefined;
+
+    let current: unknown = value;
+    for (const key of path.split('.')) {
+      if (current === null || typeof current !== 'object') return undefined;
+      current = (current as Record<string, unknown>)[key];
+    }
+
+    return current;
   }
 
   getOptionLabelValue(option: any): string {
     const key = (this.optionLabel ?? '').trim();
     const raw = key.includes('.') ? this.getByPath(option, key) : option?.[key];
+    return (raw ?? '').toString().trim();
+  }
+
+  getSecondaryOptionLabelValue(option: unknown): string {
+    const key = (this.secondaryOptionLabel ?? '').trim();
+    if (!key) return '';
+
+    const raw = this.getByPath(option, key);
     return (raw ?? '').toString().trim();
   }
 
@@ -529,7 +562,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
       if (Array.isArray(value)) {
         for (const v of value) {
-          if (v === null || v === undefined || v === ('' as any)) continue;
+          if (v === null || v === undefined || v === '') continue;
           params = params.append(key, String(v));
         }
         continue;

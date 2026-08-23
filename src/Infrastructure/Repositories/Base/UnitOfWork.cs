@@ -102,19 +102,21 @@ public class UnitOfWork(TawtheefDbContext dbContext) : IUnitOfWork, IAsyncDispos
     }
     
     public async Task<T> ExecuteInTransactionAsync<T>(
-        Func<CancellationToken, Task<T>> operation, 
+        Func<CancellationToken, Task<T>> operation,
         CancellationToken cancellationToken = default)
     {
         var strategy = dbContext.Database.CreateExecutionStrategy();
-        
+
         return await strategy.ExecuteAsync(async () =>
         {
-            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            await using var transaction =
+                await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
             try
             {
                 var result = await operation(cancellationToken);
 
-                if (result is Result { IsFailed: true })
+                if (result is IResultBase { IsFailed: true })
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     return result;

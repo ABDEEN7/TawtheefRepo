@@ -1,3 +1,5 @@
+import { InvitationSource } from '../../../../../core/enums/invitation-source.enum';
+
 export interface InvitationKpis {
   totalInvitations: number;
   acceptedInvitations: number;
@@ -9,6 +11,7 @@ export interface InvitationKpis {
 
 export interface LatestInvitation {
   invitationId: string;
+  source: InvitationSource;
   title: string;
   status: string;
   sentDate: string;
