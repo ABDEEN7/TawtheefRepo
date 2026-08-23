@@ -1,7 +1,5 @@
 import { DashboardMetricTrend } from './dashboard-overview.model';
 
-export type DashboardDialog = 'Candidates' | 'Jobs' | 'Employees' | 'Invitations';
-
 export type QuickActionKey = 'createJob' | 'sendInvitation' | 'approveProfiles' | 'manageUsers';
 
 export interface QuickAction {

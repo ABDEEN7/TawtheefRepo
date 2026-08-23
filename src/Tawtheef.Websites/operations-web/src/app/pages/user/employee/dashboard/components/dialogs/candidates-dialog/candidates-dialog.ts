@@ -2,19 +2,14 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  ViewChild,
   computed,
   inject,
-  input,
-  output,
   signal,
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
-import { ChartData } from 'chart.js';
-import { ChartModule } from 'primeng/chart';
 import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i18n-namespace.directive';
 import { FileUtilsService } from '../../../../../../../core/utils/file-utils';
 import { ProfileBreakdown } from '../../../models/dashboard-candidates.model';
@@ -23,49 +18,50 @@ import { OperationsDashboardFilters } from '../../../models/dashboard-filters.mo
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
 import {
   DashboardChartExportItem,
+  DashboardChartExportSpec,
   DashboardChartExportService,
 } from '../../../services/dashboard-chart-export.service';
 import {
-  DashboardChartColors,
   profileStatusColor,
 } from '../../../constants/dashboard-chart-colors';
+interface CandidatesDialogData {
+  breakdown: ProfileBreakdown;
+  kpis: DashboardKpis;
+  filters: OperationsDashboardFilters;
+  canExport: boolean;
+}
+
+interface CandidateCohortItem {
+  key: string;
+  count: number;
+}
 @Component({
   selector: 'app-dashboard-candidates-dialog',
   standalone: true,
-  imports: [CommonModule, ChartModule, TranslatePipe, I18nNamespaceDirective],
+  imports: [CommonModule, TranslatePipe, I18nNamespaceDirective],
   templateUrl: './candidates-dialog.html',
   styleUrl: './candidates-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CandidatesDialog {
-  @ViewChild('statusChart', { read: ElementRef }) private statusChart?: ElementRef<HTMLElement>;
-  @ViewChild('typeChart', { read: ElementRef }) private typeChart?: ElementRef<HTMLElement>;
-
-  readonly breakdown = input.required<ProfileBreakdown>();
-  readonly kpis = input.required<DashboardKpis>();
-  readonly filters = input.required<OperationsDashboardFilters>();
-  readonly canExport = input.required<boolean>();
-  readonly closed = output<void>();
-
+  private readonly config = inject(DynamicDialogConfig<CandidatesDialogData>);
+  readonly breakdown = computed<ProfileBreakdown>(() => this.config.data.breakdown);
+  readonly kpis = computed<DashboardKpis>(() => this.config.data.kpis);
+  readonly filters = computed<OperationsDashboardFilters>(() => this.config.data.filters);
+  readonly canExport = computed<boolean>(() => this.config.data.canExport);
   private readonly dashboardService = inject(OperationsDashboardService);
   private readonly chartExport = inject(DashboardChartExportService);
   private readonly fileUtils = inject(FileUtilsService);
   private readonly translate = inject(TranslateService);
   private readonly languageChange = toSignal(this.translate.onLangChange, { initialValue: null });
   readonly exportInProgress = signal(false);
-  readonly chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '72%',
-    plugins: { legend: { display: false } },
-  };
   private readonly candidateTypeColors = [
+    '#D9182D',
+    '#FFB547',
+    '#94DDBF',
     '#8A1538',
     '#488ADA',
-    '#FFB547',
     '#2F8A3A',
-    '#D9182D',
-    '#94DDBF',
     '#6C4BB6',
   ];
 
@@ -85,13 +81,27 @@ export class CandidatesDialog {
       color: this.candidateTypeColors[index % this.candidateTypeColors.length],
     })),
   );
-  readonly statusChartData = computed<ChartData<'doughnut'>>(() =>
-    this.chartData(this.statusItems()),
-  );
-  readonly typeChartData = computed<ChartData<'doughnut'>>(() => this.chartData(this.typeItems()));
   readonly typeTotal = computed(() =>
     this.typeItems().reduce((total, item) => total + item.count, 0),
   );
+  readonly cohortItems = computed<CandidateCohortItem[]>(() => {
+    const cohorts = this.breakdown().cohorts;
+    const items: Array<[string, number]> = [
+      ['registeredKawaderProfiles', cohorts.registeredKawaderProfiles],
+      ['registeredMinisterOfficeProfiles', cohorts.registeredMinisterOfficeProfiles],
+      ['qatarGraduateProfiles', cohorts.qatarGraduateProfiles],
+    ];
+    if (cohorts.includeOfficeProfiles) items.push(['officeProfiles', cohorts.officeProfiles]);
+    return items.map(([key, count]) => ({ key, count: Number(count) }));
+  });
+  readonly cohortMaximum = computed(() => Math.max(0, ...this.cohortItems().map(item => item.count)));
+
+  percent(count: number, total: number): number {
+    return total > 0 ? Math.round((count / total) * 1000) / 10 : 0;
+  }
+  cohortWidth(count: number): number {
+    return this.cohortMaximum() > 0 ? count / this.cohortMaximum() * 100 : 0;
+  }
 
   exportList(): void {
     if (!this.canExport() || this.exportInProgress()) return;
@@ -102,82 +112,48 @@ export class CandidatesDialog {
       .subscribe((response) => this.downloadResponse(response, 'Candidates.xlsx'));
   }
 
-  exportCandidateStatusChart(): Promise<void> {
-    return this.exportChart(
-      this.statusChart,
-      'dashboard.export.files.candidateStatus',
-      'dashboard.modals.candidates.statusTitle',
-      this.kpis().totalProfiles,
-      this.statusItems(),
-    );
-  }
-
-  exportCandidateTypesChart(): Promise<void> {
-    return this.exportChart(
-      this.typeChart,
-      'dashboard.export.files.candidateTypes',
-      'dashboard.candidates.typeTitle',
-      this.typeTotal(),
-      this.typeItems(),
-    );
-  }
-
-  private async exportChart(
-    host: ElementRef<HTMLElement> | undefined,
-    filenameKey: string,
-    titleKey: string,
-    total: number,
-    items: DashboardChartExportItem[],
-  ): Promise<void> {
+  async exportCharts(): Promise<void> {
     if (!this.canExport() || this.exportInProgress()) return;
     this.exportInProgress.set(true);
     try {
-      await this.chartExport.download([this.exportSpec(host, filenameKey, titleKey, total, items)]);
+      await this.chartExport.downloadReport({
+        filename: this.translate.instant('dashboard.export.files.candidates'),
+        sections: [
+          this.exportSpec(
+            'dashboard.modals.candidates.statusTitle',
+            this.kpis().totalProfiles,
+            this.statusItems(),
+          ),
+          this.exportSpec('dashboard.candidates.typeTitle', this.typeTotal(), this.typeItems()),
+          this.exportSpec(
+            'dashboard.cohorts.title',
+            undefined,
+            this.cohortItems().map((item) => ({
+              label: this.translate.instant(`dashboard.cohorts.${item.key}`),
+              count: item.count,
+              color: '#8A1538',
+            })),
+          ),
+        ],
+      });
     } finally {
       this.exportInProgress.set(false);
     }
   }
 
-  private chartData(items: DashboardChartExportItem[]): ChartData<'doughnut'> {
-    return items.length === 0
-      ? {
-          labels: [this.translate.instant('common.chart.noData')],
-          datasets: [
-            {
-              data: [1],
-              backgroundColor: [DashboardChartColors.noData],
-              borderWidth: 0,
-            },
-          ],
-        }
-      : {
-          labels: items.map((item) => item.label),
-          datasets: [
-            {
-              data: items.map((item) => item.count),
-              backgroundColor: items.map((item) => item.color),
-              borderWidth: 0,
-              hoverOffset: 8,
-            },
-          ],
-        };
-  }
-
   private exportSpec(
-    host: ElementRef<HTMLElement> | undefined,
-    filenameKey: string,
     titleKey: string,
-    total: number,
+    total: number | undefined,
     items: DashboardChartExportItem[],
-  ) {
+  ): DashboardChartExportSpec {
     return {
-      host: host?.nativeElement,
-      filename: this.translate.instant(filenameKey),
+      filename: this.translate.instant('dashboard.export.files.candidates'),
       title: this.translate.instant(titleKey),
       totalLabel: this.translate.instant('dashboard.common.total'),
       total,
       items,
       direction: this.translate.currentLang === 'ar' ? ('rtl' as const) : ('ltr' as const),
+      locale: 'en-US',
     };
   }
 

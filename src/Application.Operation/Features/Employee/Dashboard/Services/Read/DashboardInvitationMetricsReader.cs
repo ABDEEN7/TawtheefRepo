@@ -10,17 +10,21 @@ internal sealed class DashboardInvitationMetricsReader
     public async Task<DashboardInvitationMetrics> ReadAsync(
         IQueryable<Job> jobs,
         DateTime currentFrom,
-        bool canViewInvitations,
+        DateTime previousFrom,
+        DateTime currentToExclusive,
         CancellationToken ct)
     {
-        if (!canViewInvitations) jobs = jobs.Where(_ => false);
         var rows = await jobs
             .SelectMany(job => job.Invitations
                 .Where(invitation => !invitation.IsDeleted)
                 .Select(invitation => new
                 {
-                    IsCurrent = job.CreatedDate >= currentFrom, invitation.InvitationStatusId, invitation.IsAccepted
+                    IsCurrent = invitation.CreatedDate >= currentFrom,
+                    invitation.CreatedDate,
+                    invitation.InvitationStatusId,
+                    invitation.IsAccepted
                 }))
+            .Where(row => row.CreatedDate >= previousFrom && row.CreatedDate < currentToExclusive)
             .GroupBy(row => new { row.IsCurrent, row.InvitationStatusId, row.IsAccepted })
             .Select(group => new
             {

@@ -6,6 +6,9 @@ import { UsersService } from './services/users.service';
 import { UserDto } from './models/user.dto';
 import { UserFilters } from './models/user-filters.dto';
 import { Select } from 'primeng/select';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 import { RoleSummaryDto } from './models/role-summary.dto';
 import { Tooltip } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -19,6 +22,7 @@ import { PaginatedResult } from '../../../../core/models/paginated-result.model'
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 
 @Component({
   selector: 'app-users-management',
@@ -32,6 +36,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     PaginationComponent,
     I18nNamespaceDirective,
     Select,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    PageFiltersComponent,
     Tooltip,
   ],
   providers: [DialogService],
@@ -44,7 +52,6 @@ export class UsersManagement implements OnInit {
   private language = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
 
-  // Component now manages its own state
   private _users = signal<UserDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
 
@@ -54,19 +61,17 @@ export class UsersManagement implements OnInit {
   filters = signal<UserFilters>({
     pageNumber: 1,
     pageSize: 10,
-    name: '',
-    email: '',
-    isBlocked: undefined
+    search: null,
+    isBlocked: null,
   });
 
-  nameFilter = '';
-  emailFilter = '';
   roleLookups = signal<RoleSummaryDto[]>([]);
   private searchChanges$ = new Subject<string>();
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
 
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  activeFilterCount = computed(() => Number(this.filters().isBlocked != null));
   blockedStatusOptions = [
     { id: false, name: 'USERS.BLOCKED_NO' },
     { id: true, name: 'USERS.BLOCKED_YES' }
@@ -76,7 +81,18 @@ export class UsersManagement implements OnInit {
     this.setupSearchListener();
     this.loadUsers();
     this.loadRoleLookups();
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    let isInitialLanguage = true;
+    this.language.current$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => {
+        this.currentLang.set(lang);
+        if (isInitialLanguage) {
+          isInitialLanguage = false;
+          return;
+        }
+
+        this.loadUsers();
+      });
   }
 
   loadUsers() {
@@ -102,31 +118,26 @@ export class UsersManagement implements OnInit {
     });
   }
 
-  onSearchChange() {
-    this.searchChanges$.next(`${this.nameFilter}|${this.emailFilter}`);
+  onSearchChange(search: string) {
+    this.filters.update(f => ({ ...f, search }));
+    this.searchChanges$.next(search);
   }
 
   private setupSearchListener() {
     this.searchChanges$
-      .pipe(debounceTime(1000), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(search => {
         this.filters.update(f => ({
           ...f,
           pageNumber: 1,
-          name: this.nameFilter,
-          email: this.emailFilter
+          search: search.trim() || null,
         }));
         this.loadUsers();
       });
   }
 
-  private applySearchImmediately() {
-    this.filters.update(f => ({
-      ...f,
-      pageNumber: 1,
-      name: this.nameFilter,
-      email: this.emailFilter
-    }));
+  clearFilters() {
+    this.filters.update(f => ({ ...f, pageNumber: 1, search: null, isBlocked: null }));
     this.loadUsers();
   }
 
@@ -170,8 +181,8 @@ export class UsersManagement implements OnInit {
   }
 
   onBlockedFilterChange(value: boolean | null) {
-    this.filters.update(f => ({ ...f, isBlocked: value ?? null }));
-    this.applySearchImmediately();
+    this.filters.update(f => ({ ...f, pageNumber: 1, isBlocked: value ?? null }));
+    this.loadUsers();
   }
 
   hasSystemAdminRole(user: UserDto) {

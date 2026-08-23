@@ -63,7 +63,7 @@
                     <i [class]="'hgi-stroke ' + indicator.icon" aria-hidden="true"></i>
                   </div>
                 </div>
-                <div class="kpi-value">{{ indicator.value | number: '1.0-0' }}</div>
+                <div class="kpi-value" [title]="(indicator.value | number:'1.0-0') ?? ''" [attr.aria-label]="(indicator.labelKey | translate) + ': ' + (indicator.value | number:'1.0-0')">{{ indicator.value | number:'1.0-0' }}</div>
                 <div class="kpi-status figma-kpi-status" [ngClass]="trendClass(indicator.trend)">
                   @if (indicator.trend?.changePercentage != null) {
                     <strong>
@@ -88,7 +88,7 @@
               class="summary-year-select"
               [value]="selectedYear()"
               [disabled]="yearsLoading()"
-              (change)="onYearChange(+$any($event.target).value)"
+              (change)="onYearSelectionChange($event)"
               [attr.aria-label]="'dashboard.filters.year' | translate"
             >
               @for (year of availableYears(); track year) {
@@ -117,7 +117,6 @@
 
             <div class="candidate-chart-wrapper">
               <p-chart
-                #mainCandidatesChart
                 type="doughnut"
                 [data]="visibleCandidateChartData()"
                 [options]="chartOptions"
@@ -159,7 +158,6 @@
 
             <div class="candidate-chart-wrapper">
               <p-chart
-                #mainJobsChart
                 type="doughnut"
                 [data]="visibleJobsChartData()"
                 [options]="chartOptions"
@@ -201,31 +199,23 @@
 
             <div class="candidate-chart-wrapper">
               <p-chart
-                #mainEmployeesChart
                 type="doughnut"
                 [data]="visibleEmployeesChartData()"
                 [options]="chartOptions"
               >
               </p-chart>
-
               <div class="candidate-chart-center">
-                <span>{{ 'dashboard.common.total' | translate }}</span>
-
-                <strong>
-                  {{ employeeWorkloadTotal() | number: '1.0-0' }}
-                </strong>
+                <span>{{ 'dashboard.employees.assignmentWorkload' | translate }}</span>
+                <strong>{{ employeeWorkloadTotal() | number:'1.0-0' }}</strong>
               </div>
             </div>
 
-            <div class="operation-legend employee-workload-metrics">
-              <div class="employee-workload-title">
-                {{ 'dashboard.employees.assignmentWorkload' | translate }}
-              </div>
-              @for (item of employeesSummaryItems(); track item.labelKey) {
+            <div class="operation-legend">
+              @for (item of employeeWorkloadItems(); track item.label) {
                 <div class="operation-legend-row">
                   <i [style.background]="item.color"></i>
-                  <span>{{ item.labelKey | translate }}</span>
-                  <strong>{{ item.count | number: '1.0-0' }}</strong>
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.count | number:'1.0-0' }}</strong>
                 </div>
               }
             </div>
@@ -249,7 +239,6 @@
 
             <div class="candidate-chart-wrapper">
               <p-chart
-                #mainInvitationsChart
                 type="doughnut"
                 [data]="visibleInvitationsChartData()"
                 [options]="chartOptions"
@@ -300,44 +289,5 @@
       </section>
     </section>
 
-    @if (overview(); as dashboardOverview) {
-      @switch (activeDialog()) {
-        @case ('Candidates') {
-          <app-dashboard-candidates-dialog
-            [breakdown]="dashboardOverview.profileBreakdown"
-            [kpis]="dashboardOverview.kpis"
-            [filters]="dashboardFilters()"
-            [canExport]="canExportDashboard()"
-            (closed)="closeDialog()"
-          />
-        }
-        @case ('Jobs') {
-          <app-dashboard-jobs-dialog
-            [kpis]="dashboardOverview.jobKpis"
-            [breakdown]="dashboardOverview.jobBreakdown"
-            [filters]="dashboardFilters()"
-            [canExport]="canExportDashboard()"
-            (closed)="closeDialog()"
-          />
-        }
-        @case ('Employees') {
-          <app-dashboard-employees-dialog
-            [kpis]="dashboardOverview.kpis"
-            [monitoring]="dashboardOverview.taskMonitoring"
-            [filters]="dashboardFilters()"
-            [canExport]="canExportDashboard()"
-            (closed)="closeDialog()"
-          />
-        }
-        @case ('Invitations') {
-          <app-dashboard-invitations-dialog
-            [kpis]="dashboardOverview.invitationKpis"
-            [filters]="dashboardFilters()"
-            [canExport]="canExportDashboard()"
-            (closed)="closeDialog()"
-          />
-        }
-      }
-    }
   </main>
 </section>

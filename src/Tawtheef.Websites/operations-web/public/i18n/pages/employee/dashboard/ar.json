@@ -41,7 +41,7 @@
   "dashboard.table.employee": "الموظف",
   "dashboard.table.department": "القسم",
   "dashboard.table.activeTasks": "المهام النشطة",
-  "dashboard.table.completedTasks": "المهام المكتملة",
+  "dashboard.table.completedTasks": "المراجعات المكتملة",
   "dashboard.table.remainingTasks": "المهام المتبقية",
   "dashboard.table.approval": "الاعتماد",
   "dashboard.table.responseTime": "متوسط الاستجابة",
@@ -103,14 +103,15 @@
   "dashboard.table.productivityScore": "نقطة الأداء",
   "dashboard.help.tableEmployee": "اسم الموظف والقسم التابع له.",
   "dashboard.help.tableAssignedTasks": "مجموع المهام التي أُسندت للموظف.",
-  "dashboard.help.tableCompletedTasks": "عدد المهام التي أنجزها الموظف.",
-  "dashboard.help.tableOverdueTasks": "عدد المهام التي تأخرت وتجاوزت اتفاقية مستوى الخدمة (3ايام).",
+  "dashboard.help.tableCompletedTasks": "عدد المراجعات النهائية التي أجراها الموظف.",
+  "dashboard.help.tableOverdueTasks": "عدد المهام التي تجاوزت مدة سبعة أيام منذ الإسناد.",
   "dashboard.help.tableApproval": "نسبة القرارات المعتمدة إلى إجمالي القرارات المتخذة.",
   "dashboard.help.tableResponseTime": "متوسط الوقت المستغرق لإنجاز المهام بالكامل.",
   "dashboard.help.tableProductivityScore": "مؤشر ذكي لتقييم أداء الموظف التراكمي.",
   "dashboard.filters.allStatuses": "جميع الحالات",
   "dashboard.table.teamStatsSubtitle": "أداء الفريق في الموافقة على الملفات الشخصية",
   "dashboard.search.placeholder": "البحث بالاسم أو رقم الموظف أو القسم...",
+  "dashboard.search.employeeWorkLoadDialog.placeholder":"البحث بالاسم...",
   "dashboard.help.tableWorkload": "مؤشر تحليلي لحالة توازن الأحمال على الموظف.",
   "dashboard.table.noData": "لا توجد بيانات متاحة لهذا العرض.",
   "dashboard.tabs.overview": "نظرة عامة",
@@ -129,7 +130,7 @@
   "dashboard.kpi.acceptedInvitations": "الدعوات المقبولة",
   "dashboard.kpi.returnedProfiles": "الملفات المرجعة",
   "dashboard.kpi.rejectedProfiles": "الملفات المرفوضة",
-  "dashboard.kpi.completedTasks": "الملفات المعتمدة",
+  "dashboard.kpi.completedTasks": "الملفات المسندة المعتمدة",
   "dashboard.help.unassignedProfiles": "الملفات التي لا يوجد لها توزيع نشط على موظف حاليا.",
   "dashboard.help.pendingProfiles": "ملفات قيد المراجعة وتحتاج إلى إجراء.",
   "dashboard.help.approvedProfiles": "ملفات معتمدة وجاهزة لمسارات الترشيح.",
@@ -223,10 +224,7 @@
 
   "dashboard.common.export": "تصدير",
   "dashboard.common.viewDetails": "عرض التفاصيل",
-  "dashboard.common.exportCharts": "تصدير رسوم بيانية",
-  "dashboard.common.exportChart": "تصدير الرسم البياني",
-  "dashboard.export.files.candidateStatus": "حالات-ملفات-المرشحين",
-  "dashboard.export.files.candidateTypes": "أنواع-المرشحين",
+  "dashboard.common.exportCharts": "تصدير الرسوم البيانية",
   "dashboard.export.files.jobStatus": "حالات-الوظائف",
   "dashboard.export.files.employeeAssignments": "توزيع-ملفات-الموظفين",
   "dashboard.export.files.invitationStatus": "حالات-الدعوات",
@@ -239,6 +237,7 @@
   "dashboard.common.exportList": "تصدير كشف",
   "dashboard.common.noAction": "لا يوجد إجراء",
   "dashboard.common.noData": "لا توجد بيانات",
+  "dashboard.common.loading": "جارٍ تحميل أداء الفريق",
   "dashboard.common.total": "إجمالي",
 
   "dashboard.operationalSummary.title": "الملخص التشغيلي",
@@ -262,7 +261,7 @@
 
   "dashboard.legend.employees.profilesAwaitingDistribution": "ملفات بانتظار التوزيع",
   "dashboard.legend.employees.activeReviewWorkload": "ملفات مسندة قيد المراجعة",
-  "dashboard.legend.employees.completedAssignments": "مهام مكتملة",
+  "dashboard.legend.employees.completedReviews": "المراجعات النهائية",
 
   "dashboard.legend.invitations.sent": "المرسلة",
   "dashboard.legend.invitations.accepted": "المقبولة",
@@ -317,4 +316,13 @@
   "dashboard.modals.empty.noInvitations": "لا توجد دعوات لعرضها",
   "dashboard.export.summary": "تصدير الملخص",
   "dashboard.export.charts": "تصدير الرسوم البيانية"
+, "dashboard.sort.label": "الترتيب حسب"
+, "dashboard.cohorts.title": "فئات المرشحين التشغيلية"
+, "dashboard.cohorts.registeredKawaderProfiles": "ملفات كوادر "
+, "dashboard.cohorts.registeredMinisterOfficeProfiles": "ملفات مكتب سعادة الوزير "
+, "dashboard.cohorts.qatarGraduateProfiles": "خريجو قطر"
+, "dashboard.cohorts.officeProfiles": "ملفات المكاتب الخارجية"
+, "dashboard.teamPerformance.finalizedReviews": "المراجعات النهائية"
+, "dashboard.teamPerformance.remainingWorkload": "عبء العمل المتبقي"
+, "dashboard.teamPerformance.overdueWorkload": "عبء العمل المتأخر"
 }

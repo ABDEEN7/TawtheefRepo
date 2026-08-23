@@ -28,7 +28,14 @@ internal sealed class DashboardOverviewReader(
         var contextResult = await accessContextProvider.GetAsync(ct);
         if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
 
-        var context = contextResult.Value;
+        return await ReadAsync(request, contextResult.Value, ct);
+    }
+
+    internal async Task<Result<DashboardOverviewDto>> ReadAsync(
+        DashboardQueryBase request,
+        DashboardAccessContext context,
+        CancellationToken ct)
+    {
         var period = DashboardYearPeriod.FromRequest(request.Year, request.FromDateUtc);
         var requestRange = DashboardTemporalResolver.ResolveRequestRange(
             request.Year, request.FromDateUtc, request.ToDateUtc, DateTime.UtcNow);
@@ -37,7 +44,10 @@ internal sealed class DashboardOverviewReader(
             request, context, period.PreviousFrom, period.CurrentToExclusive);
         var periodJobs = scope.JobsForPeriod(
             request, context, period.PreviousFrom, period.CurrentToExclusive);
-        var assignments = scope.Assignments(context);
+        var invitationJobs = scope.AccessibleJobs(context);
+        if (request.DepartmentId.HasValue)
+            invitationJobs = invitationJobs.Where(job => job.DepartmentId == request.DepartmentId.Value);
+        var assignments = scope.Assignments(context, request.EmployeeId);
         var profileMetrics = await profileMetricsReader.ReadAsync(
             profiles,
             periodProfiles,
@@ -49,12 +59,17 @@ internal sealed class DashboardOverviewReader(
         var workloadMetrics = await workloadMetricsReader.ReadAsync(
             assignments,
             context,
+            request.EmployeeId,
             profileMetrics.Unassigned.Current,
             requestRange.FromUtc,
             requestRange.ToExclusiveUtc,
             ct);
         var invitationMetrics = await invitationMetricsReader.ReadAsync(
-            periodJobs, period.CurrentFrom, context.CanViewInvitations, ct);
+            invitationJobs,
+            period.CurrentFrom,
+            period.PreviousFrom,
+            period.CurrentToExclusive,
+            ct);
 
         var currentKpis = BuildKpis(profileMetrics, workloadMetrics);
         return Result.Ok(new DashboardOverviewDto
@@ -63,7 +78,8 @@ internal sealed class DashboardOverviewReader(
             ProfileBreakdown = new ProfileBreakdownDto
             {
                 ByStatus = BuildStatusCounts(profileMetrics.Statuses.Current),
-                ByCandidateType = profileMetrics.CandidateTypes
+                ByCandidateType = profileMetrics.CandidateTypes,
+                Cohorts = profileMetrics.Cohorts
             },
             JobKpis = jobMetrics.Kpis.Current,
             JobBreakdown = new JobBreakdownDto
@@ -176,8 +192,8 @@ internal sealed class DashboardOverviewReader(
             },
             new GroupCountDto
             {
-                Label = "CompletedAssignments",
-                Count = workload.Completed
+                Label = "CompletedReviews",
+                Count = workload.CompletedReviews
             }
         ]
     };

@@ -15,7 +15,8 @@ internal sealed record DashboardProfileMetrics(
     int NewThisWeek,
     int NewThisMonth,
     decimal AverageApprovalHours,
-    int FollowedMinisterOfficeCandidates);
+    int FollowedMinisterOfficeCandidates,
+    CandidateCohortsDto Cohorts);
 
 internal sealed record DashboardJobMetrics(
     PeriodValues<Dictionary<string, int>> Statuses,
@@ -29,7 +30,7 @@ internal sealed record DashboardTaskCounts(int Total, int Completed, int Remaini
 internal sealed record DashboardEmployeeWorkload(
     int AwaitingDistribution,
     int UnderReview,
-    int Completed);
+    int CompletedReviews);
 
 internal sealed record DashboardWorkloadMetrics(
     DashboardTaskCounts Tasks,

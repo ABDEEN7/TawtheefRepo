@@ -48,7 +48,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         }
 
         // 2) Get id_token + validate
-        var principalResult = await GetExternalPrincipalAsync(ct);
+        var principalResult = await GetExternalPrincipalAsync();
         if (principalResult.IsFailed || principalResult.Value is null)
         {
             _log.Warning(
@@ -131,12 +131,6 @@ public sealed class AzureExternalCallbackLoginHandler(
         }
 
         return tokenResult;
-    }
-
-    private async Task<string?> GetExternalIdTokenAsync()
-    {
-        var info = await signInManager.GetExternalLoginInfoAsync();
-        return info?.AuthenticationTokens?.FirstOrDefault(t => t.Name == "id_token")?.Value;
     }
 
     private async Task<Result<User>> ResolveUserAsync(AzureClaims claims)
@@ -313,6 +307,15 @@ public sealed class AzureExternalCallbackLoginHandler(
         var existingClaims = await userManager.GetClaimsAsync(user);
         var prefix = provider.ToLowerInvariant();
 
+        await Upsert("email", data.Email);
+        await Upsert("name", data.FullName);
+        await Upsert("picture", data.Picture);
+        await Upsert("profile", data.Profile);
+        await Upsert("locale", data.Locale);
+
+        await userManager.UpdateAsync(user);
+        return;
+
         async Task Upsert(string type, string? value)
         {
             var key = $"{prefix}:{type}";
@@ -329,16 +332,8 @@ public sealed class AzureExternalCallbackLoginHandler(
             else if (!string.Equals(old.Value, value, StringComparison.Ordinal))
                 await userManager.ReplaceClaimAsync(user, old, newer);
         }
-
-        await Upsert("email", data.Email);
-        await Upsert("name", data.FullName);
-        await Upsert("picture", data.Picture);
-        await Upsert("profile", data.Profile);
-        await Upsert("locale", data.Locale);
-
-        await userManager.UpdateAsync(user);
     }
-    private async Task<Result<ClaimsPrincipal?>> GetExternalPrincipalAsync(CancellationToken ct)
+    private async Task<Result<ClaimsPrincipal?>> GetExternalPrincipalAsync()
     {
         var info = await signInManager.GetExternalLoginInfoAsync();
         await signInManager.SignOutAsync();
