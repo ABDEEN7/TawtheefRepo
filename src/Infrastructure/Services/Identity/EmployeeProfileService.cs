@@ -29,12 +29,28 @@ public class EmployeeProfileService(
             return Result.Fail<EmployeeProfileInfo>(profileResult.Errors);
 
         var profile = profileResult.Value;
-        var needsUpdate =
-            UpsertEmployeeProfile(user, profile) |
-            SynchronizeUserFields(user, profile);
 
-        if (needsUpdate)
-            await userManager.UpdateAsync(user);
+        var profileChanged = UpsertEmployeeProfile(user, profile);
+        var userChanged = SynchronizeUserFields(user, profile);
+
+        if (!profileChanged && !userChanged)
+            return Result.Ok(profile);
+
+        var updateResult = await userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            var errors = updateResult.Errors
+                .Select(x => x.Description)
+                .ToArray();
+
+            logger.Error(
+                "Failed to persist HR employee profile. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(" | ", errors));
+
+            return Result.Fail<EmployeeProfileInfo>(errors);
+        }
 
         return Result.Ok(profile);
     }
