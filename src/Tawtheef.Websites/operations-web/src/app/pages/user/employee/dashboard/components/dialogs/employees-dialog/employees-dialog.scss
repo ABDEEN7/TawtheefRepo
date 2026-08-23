@@ -1,0 +1,30 @@
+@use '../../../dashboard';
+
+.employee-bar-chart-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+:host ::ng-deep .employee-bar-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:host ::ng-deep .employee-bar-chart > div {
+  width: 100%;
+  height: 100%;
+}
+
+:host ::ng-deep .employee-bar-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .employee-bar-chart-wrapper {
+    height: 200px;
+  }
+}

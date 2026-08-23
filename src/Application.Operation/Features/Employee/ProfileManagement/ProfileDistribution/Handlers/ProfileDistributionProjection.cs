@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Common.Models.Filters;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
@@ -127,7 +128,7 @@ public sealed class ProfileDistributionProjection(
             .ToList();
 
         var assignments = await assignmentRepo.DbSet
-            .Where(a => a.IsActive && profileIds.Contains(a.UserProfileId))
+            .Where(a => a.IsActive && a.UnassignedAtUtc == null && profileIds.Contains(a.UserProfileId))
             .Include(a => a.Employee)
             .ToListAsync(ct);
 
@@ -136,7 +137,7 @@ public sealed class ProfileDistributionProjection(
         // 7.1) Load Minister Office Candidates for identifying them (batched)
         var qids = orderedProfiles.Select(p => p.NationalNumber).Where(q => q != null).ToList();
         var ministerOfficeQids = await uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet
-            .Where(c => qids.Contains(c.Qid))
+            .Where(c => qids.Contains(c.Qid) && c.IsFollowUpActive)
             .Select(c => c.Qid)
             .ToListAsync(ct);
         var ministerOfficeLookup = ministerOfficeQids.ToHashSet();
@@ -176,15 +177,31 @@ public sealed class ProfileDistributionProjection(
         GetDistributionProfilesQuery request,
         IQueryable<ProfileAssignment> assignments)
     {
+        var hasValidYear = YearRange.TryCreate(request.Year, out var yearRange);
+
+        query = query.WhereIf(hasValidYear,
+            profile => profile.CreatedDate >= yearRange.FromUtc &&
+                       profile.CreatedDate < yearRange.ToExclusiveUtc);
+
         var statuses = request.Statuses?.Distinct().ToArray() ?? [];
         if (statuses.Length > 0)
             query = query.Where(p => statuses.Contains(p.Status));
+
+        query = request.AssignmentState switch
+        {
+            DistributionAssignmentState.Assigned => query.Where(p => assignments.Any(a =>
+                a.UserProfileId == p.Id && a.IsActive && a.UnassignedAtUtc == null)),
+            DistributionAssignmentState.Unassigned => query.Where(p => !assignments.Any(a =>
+                a.UserProfileId == p.Id && a.IsActive && a.UnassignedAtUtc == null)),
+            _ => query
+        };
 
         var candidateTypeIds = request.CandidateTypeIds?.Distinct().ToArray() ?? [];
 
         query = query
             .WhereIf(request.AssignedEmployeeId.HasValue, p => assignments.Any(a =>
-                a.IsActive && a.UserProfileId == p.Id && a.EmployeeId == request.AssignedEmployeeId))
+                a.IsActive && a.UnassignedAtUtc == null && p.Id == a.UserProfileId &&
+                a.EmployeeId == request.AssignedEmployeeId))
             .WhereIf(request.TargetEntityId.HasValue, p => p.TargetEntityId == request.TargetEntityId)
             .WhereIf(candidateTypeIds.Length > 0, p =>
                 p.CandidateTypeId.HasValue && candidateTypeIds.Contains(p.CandidateTypeId.Value));

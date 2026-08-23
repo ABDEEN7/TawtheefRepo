@@ -1,16 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  AutoAssignRequest,
   DistributionEmployee,
   DistributionEmployeeLookup,
   DistributionEmployeeFilters,
   DistributionFile,
-  DistributionProfilesFilters,
   DistributionResult,
+} from '../models/profile-distribution.models';
+import { DistributionProfilesFilters } from '../models/profile-distribution-filters.model';
+import {
+  AutoAssignRequest,
   ManualAssignRequest,
   ReassignRequest,
-} from '../models/profile-distribution.models';
+} from '../models/profile-distribution-assignment.model';
 import { HttpService } from '../../../../../../core/http/http.service';
 import { EndpointsService } from '../../../../../../core/http/endpoints.service';
 import { PaginatedResult } from '../../../../../../core/models/paginated-result.model';

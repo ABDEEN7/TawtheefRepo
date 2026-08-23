@@ -1,13 +1,13 @@
 {
+  "CANDIDATE_USERS.YEAR": "السنة",
+  "CANDIDATE_USERS.CLEAR_YEAR": "مسح تصفية السنة",
   "CANDIDATE_USERS.TITLE": "إدارة مستخدمي المرشحين",
-  "CANDIDATE_USERS.SEARCH_NAME": "الاسم (عربي أو إنجليزي)",
-  "CANDIDATE_USERS.SEARCH_NAME_PLACEHOLDER": "ابحث بالاسم",
-  "CANDIDATE_USERS.SEARCH_EMAIL": "البريد الإلكتروني",
-  "CANDIDATE_USERS.SEARCH_EMAIL_PLACEHOLDER": "ابحث بالبريد الإلكتروني",
-  "CANDIDATE_USERS.SEARCH_QID": "الرقم الشخصي",
-  "CANDIDATE_USERS.SEARCH_QID_PLACEHOLDER": "ابحث بالرقم الشخصي",
-  "CANDIDATE_USERS.SEARCH_MOBILE": "رقم الجوال",
-  "CANDIDATE_USERS.SEARCH_MOBILE_PLACEHOLDER": "ابحث برقم الجوال",
+  "CANDIDATE_USERS.SEARCH_PLACEHOLDER": "البحث بالاسم أو الرقم الشخصي أو رقم الهاتف أو البريد الإلكتروني",
+  "CANDIDATE_USERS.ADVANCED_FILTERS": "الفلاتر المتقدمة",
+  "CANDIDATE_USERS.CLEAR_FILTERS": "مسح الفلاتر",
+  "CANDIDATE_USERS.ACCOUNT_STATUS": "حالة الحساب",
+  "CANDIDATE_USERS.CANDIDATE_PROFILE_STATUS": "حالة ملف المرشح",
+  "CANDIDATE_USERS.ALL": "الكل",
   "CANDIDATE_USERS.NAME_EN": "الاسم بالإنجليزية",
   "CANDIDATE_USERS.NAME_AR": "الاسم بالعربية",
   "CANDIDATE_USERS.EMAIL": "البريد الإلكتروني",
@@ -28,6 +28,7 @@
   "CANDIDATE_USERS.VIEW_PROFILE": "عرض الملف الشخصي",
   "CANDIDATE_USERS.VIEW_PROFILE_LOGS": "عرض سجل الملف",
   "CANDIDATE_USERS.PROFILE_NOT_FOUND": "الملف الشخصي للمرشح غير موجود أو لم يتم تقديمه بعد.",
-  "CANDIDATE_USERS.BACK": "رجوع"
+  "CANDIDATE_USERS.BACK": "رجوع",
+  "CANDIDATE_USERS.EXPORT": "تصدير"
 }
 

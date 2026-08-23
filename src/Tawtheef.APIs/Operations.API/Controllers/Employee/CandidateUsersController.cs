@@ -21,6 +21,16 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("export")]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
+    public async Task<IActionResult> ExportUsers([FromQuery] ExportCandidateUsersQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.IsFailed
+            ? result.ToActionResult()
+            : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
     [HttpPut("{id:guid}/block-status")]
     [AuthorizePermission(PermissionKeys.CandidateUsers.Manage)]
     public async Task<IActionResult> UpdateUserBlockStatus(
@@ -40,7 +50,7 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}/profile-logs")]
-    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
+    [AuthorizePermission(PermissionKeys.ProfileLogs.View)]
     public async Task<IActionResult> GetCandidateUserProfileLogs(Guid id, [FromQuery] GetCandidateUserProfileLogsQuery query)
     {
         var result = await mediator.Send(query with { UserId = id });

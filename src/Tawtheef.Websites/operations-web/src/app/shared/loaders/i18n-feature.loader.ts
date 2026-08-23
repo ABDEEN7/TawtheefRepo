@@ -17,7 +17,17 @@ export class I18nFeatureLoader {
   async ensureLoaded(namespace: string, lang?: string): Promise<void> {
     const current = lang ?? this.translate.currentLang ?? this.translate.getDefaultLang() ?? 'ar';
     const key: BundleKey = `${namespace}:${current}`;
-    const url = `/i18n/${namespace}/${current}.json`;
+    const yymmddhh = new Date()
+      .toLocaleString('sv-SE', {
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        hour12: false,
+      })
+      .replace(/\D/g, '');
+
+    const url = `/i18n/${namespace}/${current}.json?v=${encodeURIComponent(yymmddhh)}`;
 
     if (!this.cache.has(key)) {
       // ✅ firstValueFrom + catchError -> never undefined

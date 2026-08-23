@@ -1,34 +1,98 @@
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpService} from '../../../../../core/http/http.service';
-import {EndpointsService} from '../../../../../core/http/endpoints.service';
-import {PaginatedResult} from '../../../../../core/models/paginated-result.model';
-import {CandidateUserDto} from '../models/candidate-user.dto';
-import {CandidateUserFilters} from '../models/candidate-user-filters.dto';
-import {ProfileApprovalDetail} from '../../profile-managment/approval-list/models/profile-approval.models';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { HttpService } from '../../../../../core/http/http.service';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { ProfileApprovalDetail } from '../../profile-managment/approval-list/models/profile-approval.models';
 import { ProfileLogDto } from '../../profile-logs/models/profile-log.dto';
+import { CandidateUserDto } from '../models/candidate-user.dto';
+import { CandidateUserFilters } from '../models/candidate-user-filters.dto';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateUsersService {
-  private http = inject(HttpService);
-  private endpoints = inject(EndpointsService);
+  private readonly http = inject(HttpService);
+  private readonly endpoints = inject(EndpointsService);
+  private readonly httpClient = inject(HttpClient);
 
-  getCandidateUsers(filters: CandidateUserFilters): Observable<PaginatedResult<CandidateUserDto>> {
-    return this.http.get<PaginatedResult<CandidateUserDto>>(this.endpoints.candidateUsers.list, filters);
+  getCandidateUsers(
+    filters: CandidateUserFilters,
+  ): Observable<PaginatedResult<CandidateUserDto>> {
+    return this.http.get<PaginatedResult<CandidateUserDto>>(
+      this.endpoints.candidateUsers.list,
+      filters,
+    );
   }
 
-  updateBlockStatus(userId: string, isBlocked: boolean): Observable<void> {
-    return this.http.put<void>(this.endpoints.candidateUsers.blockStatus(userId), { isBlocked });
-  }
+  exportCandidateUsers(
+    filters: CandidateUserFilters,
+  ): Observable<HttpResponse<Blob>> {
+    let params = new HttpParams()
+      .set('scope', filters.scope);
 
-  getCandidateProfile(userId: string): Observable<ProfileApprovalDetail> {
-    return this.http.get<ProfileApprovalDetail>(this.endpoints.candidateUsers.profile(userId));
-  }
+    if (filters.search) {
+      params = params.set('search', filters.search);
+    }
 
-  getCandidateProfileLogs(userId: string, pageNumber = 1, pageSize = 20): Observable<PaginatedResult<ProfileLogDto>> {
-    return this.http.get<PaginatedResult<ProfileLogDto>>(this.endpoints.candidateUsers.profileLogs(userId), {
-      pageNumber,
-      pageSize
+    if (filters.isBlocked !== null && filters.isBlocked !== undefined) {
+      params = params.set('isBlocked', filters.isBlocked);
+    }
+
+    filters.profileStatuses?.forEach(status => {
+      params = params.append('profileStatuses', status);
     });
+
+    if (filters.profileStatus) {
+      params = params.set('profileStatus', filters.profileStatus);
+    }
+
+    if (filters.year) {
+      params = params.set('year', filters.year);
+    }
+
+    return this.httpClient.get(
+      this.endpoints.candidateUsers.export,
+      {
+        params,
+        responseType: 'blob',
+        observe: 'response',
+        headers: new HttpHeaders({
+          'X-Skip-Loading': 'true',
+        }),
+      },
+    );
+  }
+
+  updateBlockStatus(
+    userId: string,
+    isBlocked: boolean,
+  ): Observable<void> {
+    return this.http.put<void>(
+      this.endpoints.candidateUsers.blockStatus(userId),
+      { isBlocked },
+    );
+  }
+
+  getCandidateProfile(
+    userId: string,
+  ): Observable<ProfileApprovalDetail> {
+    return this.http.get<ProfileApprovalDetail>(
+      this.endpoints.candidateUsers.profile(userId),
+    );
+  }
+
+  getCandidateProfileLogs(
+    userId: string,
+    pageNumber = 1,
+    pageSize = 20,
+  ): Observable<PaginatedResult<ProfileLogDto>> {
+    return this.http.get<PaginatedResult<ProfileLogDto>>(
+      this.endpoints.candidateUsers.profileLogs(userId),
+      {
+        pageNumber,
+        pageSize,
+      },
+    );
   }
 }

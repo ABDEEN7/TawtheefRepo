@@ -5,6 +5,7 @@ using Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
@@ -12,6 +13,7 @@ using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.TestData;
 using Tawtheef.Notifications.Templates.QatarResidentOtp;
@@ -52,7 +54,19 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                 return Result.Fail<Unit>(ErrorsCodes.UserPhoneRequired);
             }
 
-            if(TestData.QID_TEST().Contains(long.Parse(normalizedQid)))
+            var canBypassVerification = await CanBypassResidentVerificationAsync(
+                normalizedQid,
+                request.QidExpiry,
+                normalizedPhone,
+                cancellationToken);
+
+            if (canBypassVerification)
+            {
+                _log.Information(
+                    "Reusing recent successful Qatar resident verification. Qid={QidMasked}",
+                    qidMasked);
+            }
+            else if(TestData.QID_TEST().Contains(long.Parse(normalizedQid)))
             {
                 _log.Information("Test QID detected, skipping verification. Qid={QidMasked}", qidMasked);
             }
@@ -249,6 +263,51 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
             _log.Information("Request Qatar resident OTP succeeded. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
 
             return Result.Ok(Unit.Value);
+        }
+
+        private async Task<bool> CanBypassResidentVerificationAsync(
+            string qid,
+            DateOnly qidExpiry,
+            string phone,
+            CancellationToken ct)
+        {
+            const string provider = QatarResidentOtpConstants.Provider;
+
+            var user = await userManager.FindByLoginAsync(provider, qid);
+
+            if (user is null || user.IsBlocked || user.IsDeleted)
+                return false;
+
+            if (!string.Equals(
+                    MoiUtils.NormalizePhone(user.PhoneNumber ?? string.Empty),
+                    phone,
+                    StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var profileMatches = await uow.GetEntityRepository<UserProfile>().DbSet
+                .AsNoTracking()
+                .AnyAsync(x =>
+                        x.UserId == user.Id &&
+                        x.Provider == provider &&
+                        x.NationalNumber == qid &&
+                        x.QIDExpiry == qidExpiry,
+                    ct);
+
+            if (!profileMatches)
+                return false;
+
+            var cutoff = timeProvider.GetUtcNow().UtcDateTime.AddDays(-7);
+
+            return await uow.GetEntityRepository<LoginAttempt>().DbSet
+                .AsNoTracking()
+                .AnyAsync(x =>
+                        x.UserId == user.Id &&
+                        x.Source == provider &&
+                        x.Succeeded &&
+                        x.AttemptedAtUtc > cutoff,
+                    ct);
         }
 
         private static string GenerateCode(int length)

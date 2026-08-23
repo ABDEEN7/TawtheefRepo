@@ -1,3 +1,26 @@
+.job-list-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.job-list-header-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .job-list-header-actions {
+    justify-content: flex-start;
+  }
+}
+
 .filter-drawer {
   :host ::v-deep .p-drawer {
     width: 380px !important;

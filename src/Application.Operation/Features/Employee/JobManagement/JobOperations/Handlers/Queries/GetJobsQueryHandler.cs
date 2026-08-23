@@ -1,6 +1,7 @@
+using Application.Operation.Features.Employee.Common.Access;
+using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.DTOs;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Queries;
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using MediatR;
 using FluentResults;
@@ -8,37 +9,29 @@ using MapsterMapper;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Tawtheef.Application.Common.Interfaces.Services.Security;
-using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Recruitment;
 
 
 namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Queries;
 
-public class GetJobsQueryHandler(
+internal sealed class GetJobsQueryHandler(
     IJobRepository jobRepository,
     IMapper mapper,
     IUnitOfWork unitOfWork,
     IJobTargetCandidateCalculatorService targetCandidateCalculator,
-    ICurrentUserService currentUserService,
-    IHttpContextAccessor httpContextAccessor)
+    EmployeeJobAccessContextProvider accessProvider)
     : IRequestHandler<GetJobsQuery, IResult<PaginatedResult<JobResponseDto>>>
 {
     public async Task<IResult<PaginatedResult<JobResponseDto>>> Handle(
     GetJobsQuery request, CancellationToken cancellationToken)
     {
-        var user = httpContextAccessor.HttpContext?.User;
-        var canViewAllJobs = user?.HasFullJobAccess() ?? false;
-
-        Guid.TryParse(currentUserService.UserId, out var parsedUserId);
+        var access = accessProvider.GetAccess();
         var result = await jobRepository.GetFilteredJobsAsync(
             filter: request.Filter ?? new JobQueryFilter(),
             pagination: request.Pagination,
-            currentUserId: parsedUserId,
-            isHRManager: canViewAllJobs
+            currentUserId: access.CurrentUserId,
+            hasFullAccess: access.HasFullAccess
         );
 
         if (result.IsFailed)
@@ -48,8 +41,8 @@ public class GetJobsQueryHandler(
 
         
         var dtoItems = mapper.From(jobs.Items)
-            .AddParameters("IsHrManager", canViewAllJobs)
-            .AddParameters("CurrentUserId", parsedUserId)
+            .AddParameters("IsHrManager", access.HasFullAccess)
+            .AddParameters("CurrentUserId", access.CurrentUserId ?? Guid.Empty)
             .AdaptToType<List<JobResponseDto>>();
 
         await SetAvailableVacanciesAsync(jobs.Items, dtoItems, cancellationToken);
@@ -65,7 +58,7 @@ public class GetJobsQueryHandler(
     }
 
     private async Task SetAvailableVacanciesAsync(
-        IReadOnlyList<Tawtheef.Domain.Entities.Recruitment.Job> jobs,
+        IReadOnlyList<Job> jobs,
         List<JobResponseDto> dtoItems,
         CancellationToken cancellationToken)
     {
@@ -84,17 +77,17 @@ public class GetJobsQueryHandler(
             .Select(group => new { JobId = group.Key, Count = group.Count() })
             .ToDictionaryAsync(group => group.JobId, group => group.Count, cancellationToken);
 
+        var targetCounts = await targetCandidateCalculator.GetTargetCountsAsync(
+            jobs,
+            cancellationToken);
         var dtoMap = dtoItems.ToDictionary(job => job.Id);
 
         foreach (var job in jobs)
         {
-            var targetCount = await targetCandidateCalculator.GetTargetCountAsync(
-                job.JobCategoryId,
-                job.NumberOfVacancies);
+            var targetCount = targetCounts[job.Id];
             var activeInvitationCount = activeInvitationCounts.GetValueOrDefault(job.Id);
 
             dtoMap[job.Id].AvailableVacancies = Math.Max(targetCount - activeInvitationCount, 0);
         }
     }
 }
-

@@ -1,4 +1,4 @@
-﻿import { AutoAssignRequest, ManualAssignRequest } from './profile-distribution.models';
+﻿import { AutoAssignRequest, ManualAssignRequest } from './profile-distribution-assignment.model';
 
 export type DistributionDialogResult =
   | { kind: 'manual'; payload: ManualAssignRequest }

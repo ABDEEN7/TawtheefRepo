@@ -14,11 +14,11 @@ import { SelectModule } from 'primeng/select';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
 import {
-  AutoAssignRequest,
   DistributionEmployee,
   DistributionEmployeeFilters,
-  EmployeeAvailability,
 } from '../../models/profile-distribution.models';
+import { AutoAssignRequest } from '../../models/profile-distribution-assignment.model';
+import { EmployeeAvailability } from '../../models/profile-distribution.enums';
 import { PaginationMetadata } from '../../../../../../../core/models/pagination-metadata.model';
 import { ProfileDistributionService } from '../../services/profile-distribution.service';
 import { SearchInputComponent } from '../../../../../../../shared/components/search-input/search-input.component';

@@ -1,4 +1,8 @@
-using Application.Operation.Features.Employee.Dashboard.Queries;
+using Application.Operation.Features.Employee.Dashboard.Queries.Employees;
+using Application.Operation.Features.Employee.Dashboard.Queries.Export;
+using Application.Operation.Features.Employee.Dashboard.Queries.Invitations;
+using Application.Operation.Features.Employee.Dashboard.Queries.Jobs;
+using Application.Operation.Features.Employee.Dashboard.Queries.Overview;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -20,31 +24,11 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("candidates/status")]
+    [HttpGet("years")]
     [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetCandidateStatus(
-        [FromQuery] GetCandidateStatusSummaryQuery request,
-        CancellationToken ct)
+    public async Task<IActionResult> GetYears(CancellationToken ct)
     {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("candidates/types")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetCandidateTypes(
-        [FromQuery] GetCandidateTypeSummaryQuery request,
-        CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("jobs/summary")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetJobsSummary([FromQuery] GetJobsSummaryQuery request, CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
+        var result = await mediator.Send(new GetDashboardYearsQuery(), ct);
         return result.ToActionResult();
     }
 
@@ -56,21 +40,9 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpGet("employees/indicators")]
+    [HttpGet("invitations/latest")]
     [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetEmployeeIndicators(
-        [FromQuery] GetEmployeeIndicatorsQuery request,
-        CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
-        return result.ToActionResult();
-    }
-
-    [HttpGet("employees/review-outcomes")]
-    [AuthorizePermission(PermissionKeys.Dashboard.View)]
-    public async Task<IActionResult> GetEmployeeReviewOutcomes(
-        [FromQuery] GetEmployeeReviewOutcomesQuery request,
-        CancellationToken ct)
+    public async Task<IActionResult> GetLatestInvitations([FromQuery] GetLatestInvitationsQuery request, CancellationToken ct)
     {
         var result = await mediator.Send(request, ct);
         return result.ToActionResult();
@@ -83,5 +55,16 @@ public class OperationsDashboardController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request, ct);
         return result.ToActionResult();
     }
+
+    [HttpGet("export-list")]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
+    public async Task<IActionResult> ExportList([FromQuery] ExportDashboardListQuery request, CancellationToken ct)
+    {
+        var result = await mediator.Send(request, ct);
+        return result.IsFailed
+            ? result.ToActionResult()
+            : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
+
 }
 

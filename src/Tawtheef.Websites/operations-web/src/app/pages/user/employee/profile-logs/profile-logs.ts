@@ -1,10 +1,17 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
+import { MultiSelect } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { debounceTime, distinctUntilChanged, map, Subject, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProfileLogsService } from './services/profile-logs.service';
 import { ProfileLogDto } from './models/profile-log.dto';
 import { ProfileLogFilters } from './models/profile-log-filters.dto';
@@ -13,8 +20,9 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { PaginatedResult } from '../../../../core/models/paginated-result.model';
 import { PaginationMetadata } from '../../../../core/models/pagination-metadata.model';
-import { UsersService } from '../users-management/services/users.service';
 import { ReviewStatus } from '../profile-managment/approval-list/models/profile-approval.models';
+import { ProfileStatusNumber } from '../../../../core/enums/lookups.enum';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 
 @Component({
   selector: 'app-profile-logs',
@@ -29,6 +37,12 @@ import { ReviewStatus } from '../profile-managment/approval-list/models/profile-
     I18nNamespaceDirective,
     Select,
     DatePicker,
+    MultiSelect,
+    ButtonModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    PageFiltersComponent,
   ]
 })
 export class ProfileLogsComponent implements OnInit {
@@ -36,6 +50,7 @@ export class ProfileLogsComponent implements OnInit {
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   private _logs = signal<ProfileLogDto[]>([]);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
@@ -50,38 +65,57 @@ export class ProfileLogsComponent implements OnInit {
     pageSize: 10,
   });
 
-  profileIdFilter = '';
+  private profileId: string | null = null;
   userIdFilter: string | null = null;
-  actionTypeFilter = '';
-  searchFilter = '';
-  reviewStatusFilter: ReviewStatus | null = null;
+  candidateSearch = '';
+  notesSearch = '';
+  selectedSections: string[] = [];
+  selectedProfileStatuses: ProfileStatusNumber[] = [];
   fromDate: Date | null = null;
   toDate: Date | null = null;
+  showAdvancedFilters = signal(false);
+  invalidProfileId = signal(false);
+  invalidDateRange = signal(false);
+
+  private candidateSearchChanges$ = new Subject<string>();
+  private notesSearchChanges$ = new Subject<string>();
+  private queryChanges$ = new Subject<boolean>();
 
   currentLang = signal<Lang>(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
+  readonly sectionOptions = [
+    'Prerequisites', 'Personal', 'Contact', 'Qualifications', 'Experience',
+    'TrainingCourses', 'CertificatesAndAwards', 'Skills', 'Languages', 'Attachments', 'Assignment',
+  ].map(value => ({ value, label: `PROFILE_LOGS.SECTIONS.${value}` }));
 
-  reviewStatusOptions = [
-    { id: ReviewStatus.NotReviewed, label: 'PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED' },
-    { id: ReviewStatus.Pending, label: 'PROFILE_LOGS.REVIEW_STATUS.PENDING' },
-    { id: ReviewStatus.Approved, label: 'PROFILE_LOGS.REVIEW_STATUS.APPROVED' },
-    { id: ReviewStatus.Rejected, label: 'PROFILE_LOGS.REVIEW_STATUS.REJECTED' },
-    { id: ReviewStatus.NeedsCorrection, label: 'PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION' },
+  readonly profileStatusOptions = [
+    { value: ProfileStatusNumber.InCreation, label: 'PROFILE_LOGS.PROFILE_STATUS.IN_CREATION' },
+    { value: ProfileStatusNumber.Submitted, label: 'PROFILE_LOGS.PROFILE_STATUS.SUBMITTED' },
+    { value: ProfileStatusNumber.UnderReview, label: 'PROFILE_LOGS.PROFILE_STATUS.UNDER_REVIEW' },
+    { value: ProfileStatusNumber.RequiresUpdate, label: 'PROFILE_LOGS.PROFILE_STATUS.REQUIRES_UPDATE' },
+    { value: ProfileStatusNumber.Approved, label: 'PROFILE_LOGS.PROFILE_STATUS.APPROVED' },
   ];
 
   ngOnInit(): void {
+    this.setupRequestOrchestration();
     this.loadUserOptions();
     const routeProfileId = this.route.snapshot.queryParamMap.get('profileId');
     if (routeProfileId) {
-      this.profileIdFilter = routeProfileId;
+      if (this.isGuid(routeProfileId)) {
+        this.profileId = routeProfileId;
+      } else {
+        this.invalidProfileId.set(true);
+      }
     }
-    this.loadLogs();
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    if (!this.invalidProfileId()) this.loadLogs();
+    this.language.current$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => this.currentLang.set(lang));
   }
 
   loadUserOptions() {
-    this.profileLogsService.getUsersLookup().subscribe({
+    this.profileLogsService.getUsersLookup().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (users) => {
         const options = (users || []).map(u => ({
           id: u.id,
@@ -92,40 +126,114 @@ export class ProfileLogsComponent implements OnInit {
     });
   }
 
-  loadLogs() {
-    const updatedFilters: ProfileLogFilters = {
-      ...this.filters(),
-      userProfileId: this.profileIdFilter.trim() || null,
-      userId: this.userIdFilter || null,
-      actionType: this.actionTypeFilter.trim() || null,
-      source: 'UserProfileLogger',
-      reviewStatus: this.reviewStatusFilter,
-      from: this.fromDate ? this.fromDate.toISOString() : null,
-      to: this.toDate ? this.toDate.toISOString() : null,
-      search: this.searchFilter.trim() || null,
-    };
+  private setupRequestOrchestration(): void {
+    this.setupTextFilter(this.candidateSearchChanges$, value => {
+      if (this.candidateSearch.trim() === value) return false;
+      this.candidateSearch = value;
+      return true;
+    });
+    this.setupTextFilter(this.notesSearchChanges$, value => {
+      if (this.notesSearch.trim() === value) return false;
+      this.notesSearch = value;
+      return true;
+    });
 
-    this.filters.set(updatedFilters);
+    this.queryChanges$
+      .pipe(
+        map(force => {
+          const filters = this.buildFilters();
+          return { filters, key: JSON.stringify(filters), force };
+        }),
+        distinctUntilChanged((previous, current) => !current.force && previous.key === current.key),
+        switchMap(({ filters }) => this.profileLogsService.getLogs(filters)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({ next: response => this.applyResponse(response) });
+  }
 
-    this.profileLogsService.getLogs(this.filters()).subscribe({
-      next: (response: PaginatedResult<ProfileLogDto>) => {
-        this._logs.set(response.items);
-        this._paginationMetadata.set(response.metadata);
-
-        if (response.metadata) {
-          this.filters.update(f => ({
-            ...f,
-            pageNumber: response.metadata.currentPage,
-            pageSize: response.metadata.pageSize,
-          }));
-        }
-      }
+  private setupTextFilter(changes$: Subject<string>, apply: (value: string) => boolean): void {
+    changes$.pipe(
+      map(value => (value ?? '').trim()),
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(value => {
+      if (!apply(value)) return;
+      this.filters.update(filters => ({ ...filters, pageNumber: 1 }));
+      this.loadLogs();
     });
   }
 
-  onFiltersChanged() {
+  private buildFilters(): ProfileLogFilters {
+    const updatedFilters: ProfileLogFilters = {
+      ...this.filters(),
+      userProfileId: this.profileId,
+      userId: this.userIdFilter || null,
+      source: 'UserProfileLogger',
+      from: this.fromDate ? this.fromDate.toISOString() : null,
+      to: this.toDate ? this.toDate.toISOString() : null,
+      candidateSearch: this.candidateSearch.trim() || null,
+      notesSearch: this.notesSearch.trim() || null,
+      sections: this.selectedSections.length ? [...this.selectedSections] : null,
+      profileStatuses: this.selectedProfileStatuses.length ? [...this.selectedProfileStatuses] : null,
+    };
+    this.filters.set(updatedFilters);
+    return updatedFilters;
+  }
+
+  private applyResponse(response: PaginatedResult<ProfileLogDto>): void {
+    this._logs.set(response.items);
+    this._paginationMetadata.set(response.metadata);
+    if (response.metadata) {
+      this.filters.update(filters => ({ ...filters,
+        pageNumber: response.metadata.currentPage, pageSize: response.metadata.pageSize }));
+    }
+  }
+
+  loadLogs(force = false): void {
+    if (!this.invalidProfileId() && !this.invalidDateRange()) this.queryChanges$.next(force);
+  }
+
+  onFiltersChanged(): void {
     this.filters.update(f => ({ ...f, pageNumber: 1 }));
     this.loadLogs();
+  }
+
+  onCandidateSearchChange(value: string): void {
+    this.candidateSearchChanges$.next(value);
+  }
+
+  onNotesSearchChange(value: string): void {
+    this.notesSearchChanges$.next(value);
+  }
+
+  onPerformedByChange(value: string | null): void {
+    this.userIdFilter = value;
+    this.onFiltersChanged();
+  }
+
+  onSectionsChange(value: string[] | null): void {
+    this.selectedSections = value ?? [];
+    this.onFiltersChanged();
+  }
+
+  onProfileStatusesChange(value: ProfileStatusNumber[] | null): void {
+    this.selectedProfileStatuses = value ?? [];
+    this.onFiltersChanged();
+  }
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters.update(value => !value);
+  }
+
+  activeAdvancedFilterCount(): number {
+    return [
+      this.fromDate,
+      this.toDate,
+      this.notesSearch.trim() || null,
+      this.selectedSections.length ? true : null,
+      this.selectedProfileStatuses.length ? true : null,
+    ].filter(Boolean).length;
   }
 
   onPageChange(page: number) {
@@ -140,23 +248,50 @@ export class ProfileLogsComponent implements OnInit {
 
   onFromDateChange(value: Date | null) {
     this.fromDate = value;
-    this.onFiltersChanged();
+    this.onDateRangeChange();
   }
 
   onToDateChange(value: Date | null) {
     this.toDate = value;
-    this.onFiltersChanged();
+    this.onDateRangeChange();
+  }
+
+  private onDateRangeChange(): void {
+    const invalid = !!this.fromDate && !!this.toDate && this.fromDate > this.toDate;
+    this.invalidDateRange.set(invalid);
+    if (!invalid) this.onFiltersChanged();
+  }
+
+  alignDatePickerOverlay(datePicker: DatePicker): void {
+    if (!this.isRtl() || !datePicker.overlay || !datePicker.inputfieldViewChild) return;
+
+    const input = datePicker.inputfieldViewChild.nativeElement as HTMLElement;
+    const inputBounds = input.getBoundingClientRect();
+    const overlayWidth = datePicker.overlay.offsetWidth;
+    const viewportStart = window.scrollX;
+    const rightAlignedPosition = inputBounds.right + window.scrollX - overlayWidth;
+
+    datePicker.overlay.style.left = `${Math.max(viewportStart, rightAlignedPosition)}px`;
   }
 
   clearFilters() {
-    this.profileIdFilter = '';
     this.userIdFilter = null;
-    this.actionTypeFilter = '';
-    this.searchFilter = '';
-    this.reviewStatusFilter = null;
+    this.candidateSearch = '';
+    this.notesSearch = '';
+    this.candidateSearchChanges$.next('');
+    this.notesSearchChanges$.next('');
+    this.selectedSections = [];
+    this.selectedProfileStatuses = [];
     this.fromDate = null;
     this.toDate = null;
-    this.onFiltersChanged();
+    this.invalidDateRange.set(false);
+    const pageSize = this.filters().pageSize;
+    this.filters.set({ pageNumber: 1, pageSize });
+    this.loadLogs(true);
+  }
+
+  private isGuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
   }
 
   translateAction(log: any): string {

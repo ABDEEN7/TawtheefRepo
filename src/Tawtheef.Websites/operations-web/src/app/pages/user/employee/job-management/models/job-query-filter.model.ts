@@ -2,6 +2,7 @@ import { GUID } from "../../../../../shared/types/guid.type";
 
 export interface JobQueryFilter {
   searchTerm?: string;
+  year?: number;
 
   sectorId?: GUID;
   managementId?: GUID;
@@ -22,6 +23,4 @@ export interface JobQueryFilter {
 
   closeDateFrom?: Date;
   closeDateTo?: Date;
-  publishFrom?: Date;
-  publishTo?: Date;
 }

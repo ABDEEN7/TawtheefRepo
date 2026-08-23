@@ -49,6 +49,17 @@ public class JobInvitationSummaryController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return result.ToActionResult();
     }
+
+    [HttpGet("export")]
+    [AuthorizePermission(PermissionKeys.Dashboard.Export)]
+    public async Task<IActionResult> ExportInvitationsSummary(
+        [FromQuery] ExportJobInvitationSummaryQuery query)
+    {
+        var result = await mediator.Send(query);
+        return result.IsFailed
+            ? result.ToActionResult()
+            : File(result.Value.Content, result.Value.ContentType, result.Value.FileName);
+    }
     
     
     [HttpGet("{jobId:guid}/info")]

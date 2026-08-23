@@ -23,6 +23,7 @@ export enum InvitationStatus {
   PendingAttachmentApproval = "PendingAttachmentApproval",
   Rejected = "Rejected",
   ExamEligible = "ExamEligible",
+  Expired = 'Expired',
 }
 
 /* ---------------------------------------------

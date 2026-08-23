@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '../services/api-config.service';
 import { CaseUtils } from '../utils/case-utils';
-import { ReviewStatus } from '../../pages/user/employee/profile-managment/approval-list/models/profile-approval.models';
 import { GUID } from '../../shared/types/guid.type';
 
 @Injectable({ providedIn: 'root' })
@@ -65,6 +64,7 @@ export class EndpointsService {
     approveJobPoints: (jobId: GUID) => this.getFullUrl(`/jobPoints/${jobId}/approve`),
     rejectJobPoints: (jobId: GUID) => this.getFullUrl(`/jobPoints/${jobId}/reject`),
     searchJob: this.getFullUrl('/job/search'),
+    exportJobs: this.getFullUrl('/job/export'),
     CountByStatus: (jobStatusId: GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
     copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
     copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
@@ -132,15 +132,12 @@ export class EndpointsService {
 
 
   operationsDashboard = {
-    summary: this.getFullUrl('/operations-dashboard'),
-    overview: this.getFullUrl('/operations-dashboard/overview'),
-    candidateStatus: this.getFullUrl('/operations-dashboard/candidates/status'),
-    candidateTypes: this.getFullUrl('/operations-dashboard/candidates/types'),
-    jobsSummary: this.getFullUrl('/operations-dashboard/jobs/summary'),
-    latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
-    employeeIndicators: this.getFullUrl('/operations-dashboard/employees/indicators'),
-    employeeReviewOutcomes: this.getFullUrl('/operations-dashboard/employees/review-outcomes'),
-    teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
+      overview: this.getFullUrl('/operations-dashboard/overview'),
+      years: this.getFullUrl('/operations-dashboard/years'),
+      latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
+      latestInvitations: this.getFullUrl('/operations-dashboard/invitations/latest'),
+      teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
+      exportList: this.getFullUrl('/operations-dashboard/export-list'),
   };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),
@@ -156,6 +153,7 @@ export class EndpointsService {
 
   JobInvitationSummary = {
     invitationsSummary: this.getFullUrl(`/jobInvitationSummary/get-invitations-summary`),
+    export: this.getFullUrl(`/jobInvitationSummary/export`),
     details: {
       jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
       stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
@@ -190,6 +188,7 @@ export class EndpointsService {
 
   candidateUsers = {
     list: this.getFullUrl('/candidateUsers'),
+    export: this.getFullUrl('/candidateUsers/export'),
     blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`),
     profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`),
     profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`)

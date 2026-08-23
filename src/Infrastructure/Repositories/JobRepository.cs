@@ -1,4 +1,5 @@
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Extensions;
+using Application.Operation.Features.Employee.Common.Access;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -15,15 +16,24 @@ namespace Tawtheef.Infrastructure.Repositories;
 public class JobRepository(IGenericRepository<Job> repository)
     : BaseRepository<Job>(repository), IJobRepository
 {
+    public IQueryable<Job> GetFilteredJobsQuery(
+        JobQueryFilter filter,
+        Guid? currentUserId,
+        bool hasFullAccess)
+    {
+        return Repository.DbSet
+            .AsNoTracking()
+            .ApplyJobAccessScope(new EmployeeJobAccessContext(currentUserId, hasFullAccess))
+            .ApplyJobFilter(filter);
+    }
 
     public async Task<IResult<PaginatedResult<Job>>> GetFilteredJobsAsync(
     JobQueryFilter filter,
     PaginatedRequest pagination,
     Guid? currentUserId,
-    bool isHRManager)
+    bool hasFullAccess)
     {
-        var baseQuery = Repository.DbSet
-            .AsNoTracking()
+        var baseQuery = GetFilteredJobsQuery(filter, currentUserId, hasFullAccess)
             .Include(j => j.Department)
             .Include(j => j.JobCategory)
             .Include(j => j.JobTitle)
@@ -38,9 +48,7 @@ public class JobRepository(IGenericRepository<Job> repository)
             .Include(j => j.WorkLocation)
             .Include(j => j.JobPoints);
 
-        var filteredQuery = baseQuery.ApplyJobFilter(filter);
-
-        var sortedQuery = filteredQuery.ApplySorting(pagination);
+        var sortedQuery = baseQuery.ApplySorting(pagination);
 
         var result = await sortedQuery.ToPaginatedListAsync(pagination);
 

@@ -1,9 +1,10 @@
 import { Component, DestroyRef, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { JobInvitationSummaryModel, JobSummaryFilters } from '../models/job-invitation-summary.model';
+import { JobInvitationSummaryModel } from '../models/job-invitation-summary.model';
+import { JobSummaryCriteria, JobSummaryFilters } from '../models/job-invitation-summary-filters.model';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { Select } from 'primeng/select';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
@@ -12,7 +13,7 @@ import { routes } from '../../../../../routes/routes';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
 import { PipelineBarComponent, PipelineSegment } from '../../../../../shared/components/pipeline-bar/pipeline-bar.component';
@@ -23,6 +24,8 @@ import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { Tooltip } from 'primeng/tooltip';
 import { Lang, LanguageService } from '../../../../../core/services/language.service';
+import { FileUtilsService } from '../../../../../core/utils/file-utils';
+import { parseFilterYear } from '../../../../../core/utils/year-filter.util';
 
 @Component({
   selector: 'app-job-invitation-summary',
@@ -48,11 +51,13 @@ import { Lang, LanguageService } from '../../../../../core/services/language.ser
 })
 export class JobInvitationSummary implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private fileUtils = inject(FileUtilsService);
 
   jobInvitationSummaryService = inject(JobInvitationSummaryService);
   private searchChanges$ = new Subject<string>();
@@ -61,10 +66,13 @@ export class JobInvitationSummary implements OnInit {
   // Signals
   currentPage = signal(1);
   itemsPerPage = signal(10);
+  isExporting = signal(false);
+  canExport = computed(() => this.authService.hasPermission(Permissions.Dashboard.Export));
   selectedCategory = signal<string>('');
   selectedDepartment = signal<string>('');
   selectedStatus = signal<string>('');
   searchText = signal<string>('');
+  selectedYear = signal<number | null>(null);
 
   // Sorting
   sortColumn = signal<string>('CreateDate');
@@ -99,16 +107,14 @@ export class JobInvitationSummary implements OnInit {
 
   ngOnInit(): void {
     this.setupSearchListener();
+    this.selectedYear.set(parseFilterYear(this.route.snapshot.queryParamMap.get('year')) ?? null);
     this.jobInvitationSummaryService.loadLookups();
     this.loadSummaries();
   }
 
   loadSummaries() {
     const filters: JobSummaryFilters = {
-      jobCategoryId: this.selectedCategory() || '',
-      departmentId: this.selectedDepartment() || '',
-      jobStatusId: this.selectedStatus() || '',
-      search: this.searchText() || '',
+      ...this.currentCriteria(),
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
       sortBy: this.sortColumn(),
@@ -116,6 +122,28 @@ export class JobInvitationSummary implements OnInit {
     };
 
     this.jobInvitationSummaryService.getInvitationSummaries(filters);
+  }
+
+  exportSummaries(): void {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.jobInvitationSummaryService.exportInvitationSummaries({
+      ...this.currentCriteria(), sortBy: this.sortColumn(), sortDirection: this.sortDirection()
+    }).pipe(
+      finalize(() => this.isExporting.set(false)),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(response =>
+      void this.fileUtils.downloadResponse(response, 'job-invitation-summary.xlsx'));
+  }
+
+  private currentCriteria(): JobSummaryCriteria {
+    return {
+      year: this.selectedYear() ?? undefined,
+      jobCategoryId: this.selectedCategory() || undefined,
+      departmentId: this.selectedDepartment() || undefined,
+      jobStatusId: this.selectedStatus() || undefined,
+      search: this.searchText() || undefined
+    };
   }
 
   onFilterChange() {
@@ -133,8 +161,26 @@ export class JobInvitationSummary implements OnInit {
     this.selectedCategory.set('');
     this.selectedDepartment.set('');
     this.selectedStatus.set('');
+    this.selectedYear.set(null);
     this.currentPage.set(1);
+    this.syncYearQueryParam();
     this.loadSummaries();
+  }
+
+  clearYear(): void {
+    this.selectedYear.set(null);
+    this.currentPage.set(1);
+    this.syncYearQueryParam();
+    this.loadSummaries();
+  }
+
+  private syncYearQueryParam(): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { year: this.selectedYear() },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   // ─── Sorting ───────────────────────────────────────

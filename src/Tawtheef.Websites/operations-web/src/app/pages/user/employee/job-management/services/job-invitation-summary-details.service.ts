@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import {
   InviteRowVM,

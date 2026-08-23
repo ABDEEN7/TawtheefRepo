@@ -1,12 +1,14 @@
 import { inject, Injectable, isDevMode, signal } from '@angular/core';
-import { JobInvitationSummaryModel, JobSummaryFilters } from '../models/job-invitation-summary.model';
+import { JobInvitationSummaryModel } from '../models/job-invitation-summary.model';
+import { JobSummaryExportRequest, JobSummaryFilters } from '../models/job-invitation-summary-filters.model';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { HttpService } from '../../../../../core/http/http.service';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
 import { PaginationMetadata } from '../../../../../core/models/pagination-metadata.model';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +16,7 @@ export class JobInvitationSummaryService {
 
   private http = inject(HttpService);
   private endpoints = inject(EndpointsService);
+  private httpClient = inject(HttpClient);
   private _paginationMetadata = signal<PaginationMetadata | null>(null);
   private _jobInvitationSummary = signal<JobInvitationSummaryModel[]>([]);
 
@@ -60,5 +63,22 @@ export class JobInvitationSummaryService {
         this._paginationMetadata.set(response.metadata);
       }),
     ).subscribe();
+  }
+
+  exportInvitationSummaries(request: JobSummaryExportRequest): Observable<HttpResponse<Blob>> {
+    let params = new HttpParams();
+    if (request.year) params = params.set('year', request.year);
+    if (request.search) params = params.set('search', request.search);
+    if (request.jobCategoryId) params = params.set('jobCategoryId', request.jobCategoryId);
+    if (request.departmentId) params = params.set('departmentId', request.departmentId);
+    if (request.jobStatusId) params = params.set('jobStatusId', request.jobStatusId);
+    if (request.sortBy) params = params.set('sortBy', request.sortBy);
+    if (request.sortDirection) params = params.set('sortDirection', request.sortDirection);
+    return this.httpClient.get(this.endpoints.JobInvitationSummary.export, {
+      params,
+      responseType: 'blob',
+      observe: 'response',
+      headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+    });
   }
 }
