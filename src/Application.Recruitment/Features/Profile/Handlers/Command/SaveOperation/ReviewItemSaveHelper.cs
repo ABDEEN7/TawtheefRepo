@@ -101,7 +101,7 @@ internal static class ReviewItemSaveHelper
         CancellationToken ct,
         bool force = false)
     {
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return;
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();

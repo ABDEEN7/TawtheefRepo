@@ -77,9 +77,7 @@ export class LanguageService {
   private resolveInitialLang(): Lang {
     const stored = LanguageService.safeGet(APP_LANGUAGE_KEY)?.toLowerCase();
     if (stored === 'ar' || stored === 'en') return stored as Lang;
-
-    const nav = (navigator?.language || (navigator as any)?.languages?.[0] || DEFAULT_LANG).toLowerCase();
-    return nav.startsWith('ar') ? 'ar' : 'en';
+    return DEFAULT_LANG;
   }
 
   private async apply(lang: Lang, opts: { emit: boolean; persist: boolean }): Promise<void> {

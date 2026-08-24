@@ -29,12 +29,13 @@ public sealed class ReviseProfileExperienceHandler(
     {
         var experienceRepo = uow.GetEntityRepository<Experience>();
         var trainingRepo = uow.GetEntityRepository<TrainingCourse>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateExperience(profile);
@@ -71,6 +72,30 @@ public sealed class ReviseProfileExperienceHandler(
         var existingTrainings = await trainingRepo.DbSet
             .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
+        var allowedExperienceIds = await reviewRepo.DbSet
+    .AsNoTracking()
+    .Where(r =>
+        r.UserProfileId == profile.Id &&
+        r.Section == ProfileSection.Experience &&
+        r.TargetType == ReviewTargetType.Row &&
+        (r.Status == ReviewStatus.NeedsCorrection ||
+         r.Status == ReviewStatus.Solved) &&
+        r.EntityId != null)
+    .Select(r => r.EntityId!.Value)
+    .ToHashSetAsync(ct);
+
+        var allowedTrainingIds = await reviewRepo.DbSet
+            .AsNoTracking()
+            .Where(r =>
+                r.UserProfileId == profile.Id &&
+                r.Section == ProfileSection.TrainingCourses &&
+                r.TargetType == ReviewTargetType.Row &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Solved) &&
+                r.EntityId != null)
+            .Select(r => r.EntityId!.Value)
+            .ToHashSetAsync(ct);
+
 
         // ===== Experiences UPSERT =====
         foreach (var dto in experiences)
@@ -89,32 +114,21 @@ public sealed class ReviseProfileExperienceHandler(
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
-            var existing = dto.Id.HasValue && dto.Id.Value != Guid.Empty
-                ? existingExperiences.FirstOrDefault(x => x.Id == dto.Id.Value)
-                : null;
+            if (!dto.Id.HasValue || dto.Id.Value == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            if (!allowedExperienceIds.Contains(dto.Id.Value))
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var existing = existingExperiences
+                .FirstOrDefault(x => x.Id == dto.Id.Value);
+
+            if (existing is null)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var finalCertId = certResult.Value ?? dto.CertificateId; // keep null if no file/no existing
             // If you require certificate always, enforce it here (similar to education logic).
 
-            if (existing is null)
-            {
-                var entity = new Experience
-                {
-                    UserProfileId = profile.Id,
-                    EmployerName = dto.EmployerName,
-                    JobTitle = dto.JobTitle,
-                    StartDate = dto.StartDate,
-                    EndDate = dto.EndDate,
-                    CountryId = dto.CountryId,
-                    Description = dto.Description,
-                    QualificationId = dto.QualificationId,
-                    CertificateId = finalCertId ?? Guid.Empty // or null if your column is nullable
-                };
-
-                await experienceRepo.DbSet.AddAsync(entity, ct);
-            }
-            else
-            {
                 existing.EmployerName = dto.EmployerName;
                 existing.JobTitle = dto.JobTitle;
                 existing.StartDate = dto.StartDate;
@@ -129,7 +143,7 @@ public sealed class ReviseProfileExperienceHandler(
                     existing.CertificateId = certResult.Value.Value;
                 else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
                     existing.CertificateId = dto.CertificateId.Value;
-            }
+            
         }
 
         // ===== Trainings UPSERT =====
@@ -149,42 +163,29 @@ public sealed class ReviseProfileExperienceHandler(
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
-            var existing = dto.Id.HasValue && dto.Id.Value != Guid.Empty
-                ? existingTrainings.FirstOrDefault(x => x.Id == dto.Id.Value)
-                : null;
+            if (!dto.Id.HasValue || dto.Id.Value == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            var finalCertId = certResult.Value ?? dto.CertificateId;
+            if (!allowedTrainingIds.Contains(dto.Id.Value))
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            var existing = existingTrainings
+                .FirstOrDefault(x => x.Id == dto.Id.Value);
 
             if (existing is null)
-            {
-                var entity = new TrainingCourse
-                {
-                    UserProfileId = profile.Id,
-                    Title = dto.Title,
-                    Provider = dto.Provider,
-                    StartDate = dto.StartDate,
-                    EndDate = dto.EndDate,
-                    CountryId = dto.CountryId,
-                    Description = dto.Description,
-                    CertificateId = finalCertId ?? Guid.Empty // or null if nullable
-                };
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-                await trainingRepo.DbSet.AddAsync(entity, ct);
-            }
-            else
-            {
-                existing.Title = dto.Title;
-                existing.Provider = dto.Provider;
-                existing.StartDate = dto.StartDate;
-                existing.EndDate = dto.EndDate;
-                existing.CountryId = dto.CountryId;
-                existing.Description = dto.Description;
+            existing.Title = dto.Title;
+            existing.Provider = dto.Provider;
+            existing.StartDate = dto.StartDate;
+            existing.EndDate = dto.EndDate;
+            existing.CountryId = dto.CountryId;
+            existing.Description = dto.Description;
 
-                if (certResult.Value is not null)
-                    existing.CertificateId = certResult.Value.Value;
-                else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
-                    existing.CertificateId = dto.CertificateId.Value;
-            }
+            if (certResult.Value is not null)
+                existing.CertificateId = certResult.Value.Value;
+            else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
+                existing.CertificateId = dto.CertificateId.Value;
         }
 
         foreach (var dto in experiences)
