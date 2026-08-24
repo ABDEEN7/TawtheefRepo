@@ -36,6 +36,8 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
                 profile.Gender,
                 profile.User!.FullNameAr,
                 profile.User.FullNameEn,
+                profile.User.Email,
+                profile.User.PhoneNumber,
                 profile.Status))
             .SingleOrDefaultAsync(cancellationToken);
 
@@ -52,6 +54,8 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
             localizationService.GetLocalizedValue(candidate.Gender?.NameAr ?? string.Empty,
                 candidate.Gender?.NameEn ?? string.Empty),
             localizationService.GetLocalizedValue(candidate.FullNameAr, candidate.FullNameEn),
+            candidate.Email ?? string.Empty,
+            candidate.PhoneNumber ?? string.Empty,
             candidate.ProfileStatus));
     }
 
@@ -68,5 +72,7 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
         Gender? Gender,
         string FullNameAr,
         string FullNameEn,
+        string? Email,
+        string? PhoneNumber,
         UserProfileStatus ProfileStatus);
 }

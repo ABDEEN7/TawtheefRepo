@@ -8,4 +8,6 @@ public sealed record ExceptionCandidateLookupDto(
     string Qid,
     string Gender,
     string CandidateName,
+    string Email,
+    string PhoneNumber,
     UserProfileStatus ProfileStatus);

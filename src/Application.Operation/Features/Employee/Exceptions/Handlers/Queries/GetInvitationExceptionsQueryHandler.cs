@@ -91,6 +91,12 @@ public sealed class GetInvitationExceptionsQueryHandler(
                 invitationException.Applicant.Profile != null
                     ? invitationException.Applicant.Profile.NationalNumber ?? string.Empty
                     : string.Empty,
+                invitationException.Applicant != null
+                    ? invitationException.Applicant.Email ?? string.Empty
+                    : string.Empty,
+                invitationException.Applicant != null
+                    ? invitationException.Applicant.PhoneNumber ?? string.Empty
+                    : string.Empty,
                 invitationException.JobId,
                 invitationException.Job != null &&
                 invitationException.Job.JobTitle != null

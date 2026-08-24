@@ -15,6 +15,8 @@ export interface InvitationExceptionListItem {
   candidateName: string;
   gender : string;
   qid: string;
+  email: string;
+  phoneNumber: string;
   jobId: GUID;
   jobNumber: string;
   jobTitle: string;
@@ -77,6 +79,8 @@ export interface ExceptionCandidateLookup {
   qid: string;
   candidateName: string;
   gender: string;
+  email: string;
+  phoneNumber: string;
   profileStatus: ProfileStatusNumber;
 }
 

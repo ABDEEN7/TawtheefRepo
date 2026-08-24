@@ -8,6 +8,8 @@ public sealed record InvitationExceptionListItemDto(
     string CandidateName,
     string Gender,
     string Qid,
+    string Email,
+    string PhoneNumber,
     Guid JobId,
     string JobNumber,
     string JobTitle,

@@ -12,10 +12,7 @@
 
   <!-- Candidate lookup -->
   <section class="candidate-lookup">
-    <label
-      class="form-label fw-semibold"
-      for="exception-candidate-qid"
-    >
+    <label class="form-label fw-semibold" for="exception-candidate-qid">
       {{ 'EXCEPTIONS.ADD_DIALOG.QID_LABEL' | translate }}
     </label>
 
@@ -31,23 +28,14 @@
           autocomplete="off"
           maxlength="11"
           [placeholder]="'EXCEPTIONS.ADD_DIALOG.QID_PLACEHOLDER' | translate"
-          [attr.aria-invalid]="
-            form.controls.qid.invalid &&
-            form.controls.qid.touched
-          "
+          [attr.aria-invalid]="form.controls.qid.invalid && form.controls.qid.touched"
         />
 
-        @if (
-          form.controls.qid.touched &&
-          form.controls.qid.hasError('required')
-        ) {
+        @if (form.controls.qid.touched && form.controls.qid.hasError('required')) {
           <small class="text-danger d-block mt-1">
             {{ 'EXCEPTIONS.ADD_DIALOG.QID_REQUIRED' | translate }}
           </small>
-        } @else if (
-          form.controls.qid.touched &&
-          form.controls.qid.hasError('pattern')
-        ) {
+        } @else if (form.controls.qid.touched && form.controls.qid.hasError('pattern')) {
           <small class="text-danger d-block mt-1">
             {{ 'EXCEPTIONS.ADD_DIALOG.QID_INVALID' | translate }}
           </small>
@@ -57,11 +45,7 @@
       <button
         type="button"
         class="btn btn-outline-primary lookup-button"
-        [disabled]="
-          form.controls.qid.invalid ||
-          lookupLoading() ||
-          createLoading()
-        "
+        [disabled]="form.controls.qid.invalid || lookupLoading() || createLoading()"
         [attr.aria-busy]="lookupLoading()"
         (click)="lookupCandidate()"
       >
@@ -73,11 +57,8 @@
 
         <span>
           {{
-            (
-              lookupLoading()
-                ? 'EXCEPTIONS.ADD_DIALOG.SEARCHING'
-                : 'EXCEPTIONS.ADD_DIALOG.SEARCH'
-            ) | translate
+            (lookupLoading() ? 'EXCEPTIONS.ADD_DIALOG.SEARCHING' : 'EXCEPTIONS.ADD_DIALOG.SEARCH')
+              | translate
           }}
         </span>
       </button>
@@ -86,10 +67,7 @@
 
   @if (candidate(); as selectedCandidate) {
     <!-- Candidate summary -->
-    <section
-      class="candidate-summary"
-      aria-labelledby="candidate-summary-title"
-    >
+    <section class="candidate-summary" aria-labelledby="candidate-summary-title">
       <div class="candidate-summary__header">
         <div class="candidate-summary__title">
           <span class="candidate-summary__icon" aria-hidden="true">
@@ -97,10 +75,7 @@
           </span>
 
           <div>
-            <h6
-              id="candidate-summary-title"
-              class="fw-bold mb-1"
-            >
+            <h6 id="candidate-summary-title" class="fw-bold mb-1">
               {{ 'EXCEPTIONS.ADD_DIALOG.CANDIDATE_INFORMATION' | translate }}
             </h6>
 
@@ -122,13 +97,69 @@
       </div>
 
       <div class="candidate-summary__body">
-        <span class="text-muted small">
-          {{ 'EXCEPTIONS.ADD_DIALOG.CANDIDATE_NAME' | translate }}
-        </span>
+        <div class="candidate-summary__detail candidate-summary__detail--name">
+          <span class="candidate-summary__detail-icon">
+            <i class="hgi hgi-stroke hgi-user"></i>
+          </span>
 
-        <strong>
-          {{ selectedCandidate.candidateName }} - {{ selectedCandidate.gender }}
-        </strong>
+          <div class="candidate-summary__detail-content">
+            <span class="candidate-summary__label">
+              {{ 'EXCEPTIONS.ADD_DIALOG.CANDIDATE_NAME' | translate }}
+            </span>
+
+            <strong class="candidate-summary__value">
+              {{ selectedCandidate.candidateName }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="candidate-summary__detail">
+          <span class="candidate-summary__detail-icon">
+            <i class="hgi hgi-stroke hgi-user-circle"></i>
+          </span>
+
+          <div class="candidate-summary__detail-content">
+            <span class="candidate-summary__label">
+              {{ 'EXCEPTIONS.ADD_DIALOG.GENDER' | translate }}
+            </span>
+
+            <span class="candidate-summary__value">
+              {{ selectedCandidate.gender || '—' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="candidate-summary__detail">
+          <span class="candidate-summary__detail-icon">
+            <i class="hgi hgi-stroke hgi-mail-01"></i>
+          </span>
+
+          <div class="candidate-summary__detail-content">
+            <span class="candidate-summary__label">
+              {{ 'EXCEPTIONS.ADD_DIALOG.EMAIL' | translate }}
+            </span>
+
+            <span class="candidate-summary__value candidate-summary__value--ltr">
+              {{ selectedCandidate.email || '—' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="candidate-summary__detail">
+          <span class="candidate-summary__detail-icon">
+            <i class="hgi hgi-stroke hgi-call"></i>
+          </span>
+
+          <div class="candidate-summary__detail-content">
+            <span class="candidate-summary__label">
+              {{ 'EXCEPTIONS.ADD_DIALOG.PHONE_NUMBER' | translate }}
+            </span>
+
+            <span class="candidate-summary__value candidate-summary__value--ltr">
+              {{ selectedCandidate.phoneNumber || '—' }}
+            </span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -139,10 +170,7 @@
           <i class="hgi hgi-stroke hgi-briefcase-01"></i>
         </span>
 
-        <label
-          class="form-label fw-semibold mb-0"
-          for="exception-job"
-        >
+        <label class="form-label fw-semibold mb-0" for="exception-job">
           {{ 'EXCEPTIONS.ADD_DIALOG.JOB_LABEL' | translate }}
         </label>
       </div>
@@ -159,16 +187,10 @@
         [showClear]="true"
         [placeholder]="'EXCEPTIONS.ADD_DIALOG.JOB_PLACEHOLDER' | translate"
         [noResultsPlaceholder]="'EXCEPTIONS.ADD_DIALOG.NO_JOBS' | translate"
-        [invalid]="
-          form.controls.jobId.invalid &&
-          form.controls.jobId.touched
-        "
+        [invalid]="form.controls.jobId.invalid && form.controls.jobId.touched"
       />
 
-      @if (
-        form.controls.jobId.invalid &&
-        form.controls.jobId.touched
-      ) {
+      @if (form.controls.jobId.invalid && form.controls.jobId.touched) {
         <small class="text-danger d-block mt-1">
           {{ 'EXCEPTIONS.ADD_DIALOG.JOB_REQUIRED' | translate }}
         </small>
@@ -182,10 +204,7 @@
           <i class="hgi hgi-stroke hgi-note-01"></i>
         </span>
 
-        <label
-          class="form-label fw-semibold mb-0"
-          for="exception-reason"
-        >
+        <label class="form-label fw-semibold mb-0" for="exception-reason">
           {{ 'EXCEPTIONS.ADD_DIALOG.REASON_LABEL' | translate }}
           <span class="text-danger">*</span>
         </label>
@@ -199,10 +218,7 @@
         formControlName="reason"
         [maxlength]="reasonMaxLength"
         [placeholder]="'EXCEPTIONS.ADD_DIALOG.REASON_PLACEHOLDER' | translate"
-        [attr.aria-invalid]="
-          form.controls.reason.invalid &&
-          form.controls.reason.touched
-        "
+        [attr.aria-invalid]="form.controls.reason.invalid && form.controls.reason.touched"
       ></textarea>
 
       <div class="reason-meta">
@@ -213,23 +229,14 @@
 
       @if (
         form.controls.reason.touched &&
-        (
-          form.controls.reason.hasError('required') ||
-          form.controls.reason.hasError('pattern')
-        )
+        (form.controls.reason.hasError('required') || form.controls.reason.hasError('pattern'))
       ) {
         <small class="text-danger d-block mt-1">
           {{ 'EXCEPTIONS.ADD_DIALOG.REASON_REQUIRED' | translate }}
         </small>
-      } @else if (
-        form.controls.reason.touched &&
-        form.controls.reason.hasError('maxlength')
-      ) {
+      } @else if (form.controls.reason.touched && form.controls.reason.hasError('maxlength')) {
         <small class="text-danger d-block mt-1">
-          {{
-            'EXCEPTIONS.ADD_DIALOG.REASON_TOO_LONG'
-              | translate:{ max: reasonMaxLength }
-          }}
+          {{ 'EXCEPTIONS.ADD_DIALOG.REASON_TOO_LONG' | translate: { max: reasonMaxLength } }}
         </small>
       }
     </div>
@@ -241,10 +248,7 @@
           <i class="hgi hgi-stroke hgi-attachment-01"></i>
         </span>
 
-        <label
-          class="form-label fw-semibold mb-0"
-          for="exception-proof"
-        >
+        <label class="form-label fw-semibold mb-0" for="exception-proof">
           {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_LABEL' | translate }}
           <span class="text-danger">*</span>
         </label>
@@ -262,10 +266,7 @@
       <div
         class="proof-uploader"
         [class.proof-uploader--dragging]="proofDragging()"
-        [class.proof-uploader--invalid]="
-          form.controls.proof.invalid &&
-          form.controls.proof.touched
-        "
+        [class.proof-uploader--invalid]="form.controls.proof.invalid && form.controls.proof.touched"
         role="button"
         tabindex="0"
         [attr.aria-label]="'EXCEPTIONS.ADD_DIALOG.SELECT_PROOF' | translate"
@@ -314,10 +315,7 @@
             </span>
 
             <div class="selected-proof__details">
-              <span
-                class="selected-proof__name"
-                [title]="proof.name"
-              >
+              <span class="selected-proof__name" [title]="proof.name">
                 {{ proof.name }}
               </span>
 
@@ -328,10 +326,7 @@
           </div>
 
           <div class="selected-proof__actions">
-            <i
-              class="pi pi-check-circle text-success"
-              aria-hidden="true"
-            ></i>
+            <i class="pi pi-check-circle text-success" aria-hidden="true"></i>
 
             <button
               type="button"
@@ -346,17 +341,11 @@
         </div>
       }
 
-      @if (
-        form.controls.proof.touched &&
-        form.controls.proof.hasError('required')
-      ) {
+      @if (form.controls.proof.touched && form.controls.proof.hasError('required')) {
         <small class="text-danger d-block mt-1">
           {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_REQUIRED' | translate }}
         </small>
-      } @else if (
-        form.controls.proof.touched &&
-        form.controls.proof.hasError('invalidPdf')
-      ) {
+      } @else if (form.controls.proof.touched && form.controls.proof.hasError('invalidPdf')) {
         <small class="text-danger d-block mt-1">
           {{ 'EXCEPTIONS.ADD_DIALOG.PROOF_INVALID' | translate }}
         </small>
@@ -388,11 +377,8 @@
 
         <span>
           {{
-            (
-              createLoading()
-                ? 'EXCEPTIONS.ADD_DIALOG.CREATING'
-                : 'EXCEPTIONS.ADD_DIALOG.CREATE'
-            ) | translate
+            (createLoading() ? 'EXCEPTIONS.ADD_DIALOG.CREATING' : 'EXCEPTIONS.ADD_DIALOG.CREATE')
+              | translate
           }}
         </span>
       </button>
