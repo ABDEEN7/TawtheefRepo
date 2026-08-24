@@ -15,6 +15,6 @@ public sealed record InvitationExceptionListItemDto(
     Guid? InvitationId,
     Guid? InvitationStatusId,
     string? InvitationStatusName,
-    DateTime CreatedDate,
+    DateTimeOffset CreatedDate,
     string? CancellationReason,
     bool HasProof);
