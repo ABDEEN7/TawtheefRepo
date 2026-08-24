@@ -111,7 +111,15 @@ public sealed class ReviseProfilePersonalHandler(
 
         if (!string.IsNullOrWhiteSpace(r.SponsorEmployerName) && !string.IsNullOrWhiteSpace(r.SponsorEmployerNumber))
         {
-            var idResult = await UploadIfNeededAsync(r.SponsorCard, profile.SponsorProfile?.SponsorCardId);
+            var oldResourceId = profile.SponsorProfile?.SponsorCardId;
+            if (HasFile(r.SponsorCard))
+            {
+                var editable = await EnsureSponsorCardEditableAsync(oldResourceId);
+                if (editable.IsFailed)
+                    return Result.Fail<Unit>(editable.Errors);
+            }
+
+            var idResult = await UploadIfNeededAsync(r.SponsorCard, oldResourceId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
             
@@ -134,8 +142,15 @@ public sealed class ReviseProfilePersonalHandler(
                 profile.SponsorProfile.QIDExpiry = r.SponsorQidExpiry;
                 profile.SponsorProfile.SponsorCardId = idResult.Value;
             }
+
+            if (HasFile(r.SponsorCard))
+            {
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow, profile, ProfileSection.Personal, oldResourceId, ct);
+            }
         }
 
+        await ProfileReviewItemSync.EnsureSponsorAttachmentItemAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Personal, ct);
         var result = await uow.SaveChangesAsync(ct);
         return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);
@@ -155,6 +170,29 @@ public sealed class ReviseProfilePersonalHandler(
                 return Result.Fail<Guid?>(uploadResult.Errors);
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        }
+
+        static bool HasFile(IFormFile? file) => file is { Length: > 0 };
+
+        async Task<Result> EnsureSponsorCardEditableAsync(Guid? resourceId)
+        {
+            if (resourceId is null || resourceId == Guid.Empty)
+                return Result.Ok();
+
+            var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
+                item.UserProfileId == profile.Id &&
+                item.Section == ProfileSection.Personal &&
+                item.TargetType == ReviewTargetType.Attachment &&
+                item.ResourceId == resourceId &&
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved),
+                ct);
+
+            if (allowed)
+                return Result.Ok();
+
+            return Result.Fail(new Error("Forbidden")
+                .WithMetadata("Code", ErrorsCodes.AttachmentNotEditableInRevision)
+                .WithMetadata("StatusCode", StatusCodes.Status403Forbidden));
         }
     }
 }
