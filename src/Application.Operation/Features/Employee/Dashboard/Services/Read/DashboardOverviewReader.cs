@@ -127,7 +127,8 @@ internal sealed class DashboardOverviewReader(
             RemainingTasks = workload.Tasks.Remaining,
             OverdueTasks = workload.Tasks.Overdue,
             UnassignedProfiles = profiles.Unassigned.Current,
-            FollowedMinisterOfficeCandidates = profiles.FollowedMinisterOfficeCandidates
+            FollowedMinisterOfficeCandidates = profiles.FollowedMinisterOfficeCandidates,
+            KawaderFiles = profiles.KawaderFiles
         };
     }
 

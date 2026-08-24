@@ -16,6 +16,7 @@ internal sealed record DashboardProfileMetrics(
     int NewThisMonth,
     decimal AverageApprovalHours,
     int FollowedMinisterOfficeCandidates,
+    int KawaderFiles,
     CandidateCohortsDto Cohorts);
 
 internal sealed record DashboardJobMetrics(

@@ -90,7 +90,7 @@ export class Dashboard implements OnInit {
     status: '',
   });
   readonly exportInProgress = signal(false);
-  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7];
+  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
   readonly chartOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -231,11 +231,26 @@ export class Dashboard implements OnInit {
         navigation: dashboardDrilldowns.totalInvitations(this.selectedYear()),
       },
       {
-        labelKey: 'dashboard.kpi.acceptedInvitations',
-        value: invitations.acceptedInvitations,
-        icon: 'hgi-user-add-01',
-        color: 'purple',
-        trend: this.overview()?.kpiTrends.acceptedInvitations,
+        labelKey: 'dashboard.kpi.ministerOffice',
+        value: profiles.followedMinisterOfficeCandidates ?? 0,
+        icon: 'hgi-office',
+        color: 'blue',
+        navigation: {
+          route: routes.portal.ministerOfficeManagement,
+          requiredPermission: Permissions.MinisterOffice.View,
+          requiresDashboardManage: false,
+        },
+      },
+      {
+        labelKey: 'dashboard.kpi.cadresFiles',
+        value: profiles.kawaderFiles ?? 0,
+        icon: 'hgi-user-multiple',
+        color: 'green',
+        navigation: {
+          route: routes.portal.kawader,
+          requiredPermission: Permissions.Kawader.Manage,
+          requiresDashboardManage: false,
+        },
       },
     ];
   });
@@ -416,8 +431,8 @@ export class Dashboard implements OnInit {
   }
   isIndicatorNavigable(indicator: MainIndicator): boolean {
     return (
-      this.canManageDashboard() &&
       indicator.navigation != null &&
+      (indicator.navigation.requiresDashboardManage === false || this.canManageDashboard()) &&
       this.auth.hasPermission(indicator.navigation.requiredPermission)
     );
   }
@@ -554,6 +569,7 @@ export class Dashboard implements OnInit {
       overdueTasks: 0,
       unassignedProfiles: 0,
       followedMinisterOfficeCandidates: 0,
+      kawaderFiles: 0,
     };
   }
   private defaultJobKpis(): JobKpis {

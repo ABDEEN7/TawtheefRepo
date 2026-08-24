@@ -6,6 +6,7 @@ using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -40,6 +41,8 @@ internal sealed class DashboardProfileMetricsReader(
             ? await uow.GetEntityRepository<MinisterOfficeCandidate>()
                 .DbSet.CountAsync(candidate => !candidate.IsDeleted && candidate.IsFollowUpActive, ct)
             : 0;
+        var kawaderFiles = await uow.GetEntityRepository<KawaderQid>()
+            .DbSet.AsNoTracking().CountAsync(ct);
 
         return new DashboardProfileMetrics(
             candidateTypes,
@@ -51,6 +54,7 @@ internal sealed class DashboardProfileMetricsReader(
             newProfiles.ThisMonth,
             averageApprovalHours,
             followedMinisterOfficeCandidates,
+            kawaderFiles,
             cohorts);
     }
 

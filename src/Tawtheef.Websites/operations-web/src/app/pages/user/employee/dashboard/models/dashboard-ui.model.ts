@@ -15,6 +15,7 @@ export interface IndicatorNavigation {
   route: string;
   queryParams?: Record<string, unknown>;
   requiredPermission: string | string[];
+  requiresDashboardManage?: boolean;
 }
 
 export interface MainIndicator {
