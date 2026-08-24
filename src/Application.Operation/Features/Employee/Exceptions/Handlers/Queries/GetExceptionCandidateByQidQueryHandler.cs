@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Utils;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.Exceptions.Handlers.Queries;
@@ -32,6 +33,7 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
             .Select(profile => new CandidateLookupRow(
                 profile.UserId,
                 profile.Id,
+                profile.Gender,
                 profile.User!.FullNameAr,
                 profile.User.FullNameEn,
                 profile.Status))
@@ -47,6 +49,8 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
             candidate.ApplicantId,
             candidate.ProfileId,
             normalizedQid,
+            localizationService.GetLocalizedValue(candidate.Gender?.NameAr ?? string.Empty,
+                candidate.Gender?.NameEn ?? string.Empty),
             localizationService.GetLocalizedValue(candidate.FullNameAr, candidate.FullNameEn),
             candidate.ProfileStatus));
     }
@@ -61,6 +65,7 @@ public sealed class GetExceptionCandidateByQidQueryHandler(
     private sealed record CandidateLookupRow(
         Guid ApplicantId,
         Guid ProfileId,
+        Gender? Gender,
         string FullNameAr,
         string FullNameEn,
         UserProfileStatus ProfileStatus);

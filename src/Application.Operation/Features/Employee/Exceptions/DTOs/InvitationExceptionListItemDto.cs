@@ -6,6 +6,7 @@ public sealed record InvitationExceptionListItemDto(
     Guid ExceptionId,
     Guid ApplicantId,
     string CandidateName,
+    string Gender,
     string Qid,
     Guid JobId,
     string JobNumber,

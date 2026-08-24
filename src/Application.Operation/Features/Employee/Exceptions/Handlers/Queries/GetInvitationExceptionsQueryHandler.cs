@@ -44,16 +44,29 @@ public sealed class GetInvitationExceptionsQueryHandler(
         {
             exceptions = exceptions.Where(invitationException =>
                 (invitationException.Applicant != null &&
-                 (invitationException.Applicant.FullNameAr.Contains(search) ||
-                  invitationException.Applicant.FullNameEn.Contains(search) ||
-                  (invitationException.Applicant.Profile != null &&
-                   invitationException.Applicant.Profile.NationalNumber != null &&
-                   invitationException.Applicant.Profile.NationalNumber.Contains(search)))) ||
+                 (
+                     invitationException.Applicant.FullNameAr.Contains(search) ||
+                     invitationException.Applicant.FullNameEn.Contains(search) ||
+
+                     (invitationException.Applicant.Profile != null &&
+                      invitationException.Applicant.Profile.Gender != null &&
+                      (
+                          invitationException.Applicant.Profile.Gender.NameAr.Contains(search) ||
+                          invitationException.Applicant.Profile.Gender.NameEn.Contains(search)
+                      )) ||
+
+                     (invitationException.Applicant.Profile != null &&
+                      invitationException.Applicant.Profile.NationalNumber != null &&
+                      invitationException.Applicant.Profile.NationalNumber.Contains(search))
+                 )) ||
+
                 (invitationException.Job != null &&
                  invitationException.Job.JobTitle != null &&
-                 (invitationException.Job.JobTitle.JobNameAr.Contains(search) ||
-                  invitationException.Job.JobTitle.JobNameEn.Contains(search) ||
-                  invitationException.Job.JobTitle.JobNumber.Contains(search))));
+                 (
+                     invitationException.Job.JobTitle.JobNameAr.Contains(search) ||
+                     invitationException.Job.JobTitle.JobNameEn.Contains(search) ||
+                     invitationException.Job.JobTitle.JobNumber.Contains(search)
+                 )));
         }
 
         if (string.IsNullOrWhiteSpace(request.SortBy))
@@ -67,6 +80,12 @@ public sealed class GetInvitationExceptionsQueryHandler(
                     ? (isArabic
                         ? invitationException.Applicant.FullNameAr
                         : invitationException.Applicant.FullNameEn)
+                    : string.Empty,
+                invitationException.Applicant != null && invitationException.Applicant.Profile != null &&
+                invitationException.Applicant.Profile.Gender != null
+                    ? (isArabic
+                        ? invitationException.Applicant.Profile.Gender.NameAr
+                        : invitationException.Applicant.Profile.Gender.NameEn)
                     : string.Empty,
                 invitationException.Applicant != null &&
                 invitationException.Applicant.Profile != null

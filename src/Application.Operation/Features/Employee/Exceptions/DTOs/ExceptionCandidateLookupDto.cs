@@ -6,5 +6,6 @@ public sealed record ExceptionCandidateLookupDto(
     Guid ApplicantId,
     Guid ProfileId,
     string Qid,
+    string Gender,
     string CandidateName,
     UserProfileStatus ProfileStatus);
