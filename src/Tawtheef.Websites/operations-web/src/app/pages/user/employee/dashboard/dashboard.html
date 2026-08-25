@@ -79,6 +79,7 @@
         }
       </section>
 
+      @if (canViewOperationalSummary()) {
       <section class="dashboard-section operational-summary-section">
         <div class="dashboard-section-header operational-summary-header">
           <h3>{{ 'dashboard.operationalSummary.title' | translate }}</h3>
@@ -105,6 +106,7 @@
 
         <div class="operational-summary-grid">
           <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â±Ã˜Â´Ã˜Â­Ã™Å Ã™â€  -->
+          @if (canViewCandidatesSummary()) {
           <article class="operation-card">
             <div class="operation-card-header">
               <div class="operation-card-title">
@@ -144,8 +146,10 @@
               <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
             </button>
           </article>
+          }
 
           <!-- Ã˜Â§Ã™â€žÃ™Ë†Ã˜Â¸Ã˜Â§Ã˜Â¦Ã™Â -->
+          @if (canViewJobsSummary()) {
           <article class="operation-card">
             <div class="operation-card-header">
               <div class="operation-card-title">
@@ -185,8 +189,10 @@
               <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
             </button>
           </article>
+          }
 
           <!-- Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â¸Ã™ÂÃ™Å Ã™â€  -->
+          @if (canViewEmployeesSummary()) {
           <article class="operation-card">
             <div class="operation-card-header">
               <div class="operation-card-title">
@@ -225,8 +231,10 @@
               <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
             </button>
           </article>
+          }
 
           <!-- Ã˜Â§Ã™â€žÃ˜Â¯Ã˜Â¹Ã™Ë†Ã˜Â§Ã˜Âª -->
+          @if (canViewInvitationsSummary()) {
           <article class="operation-card">
             <div class="operation-card-header">
               <div class="operation-card-title">
@@ -266,8 +274,10 @@
               <span>{{ 'dashboard.common.viewDetails' | translate }}</span>
             </button>
           </article>
+          }
         </div>
       </section>
+      }
 
       <section class="dashboard-section quick-actions-section">
         <div class="dashboard-section-header">

@@ -111,6 +111,54 @@ export class Dashboard implements OnInit {
   readonly canManageDashboard = computed(() =>
     this.auth.hasPermission(Permissions.Dashboard.Manage),
   );
+  readonly canViewCandidatesSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.CandidateUsers.View,
+      Permissions.ProfileDistribution.View,
+      Permissions.ProfileDistribution.Manage,
+      Permissions.ProfileApproval.View,
+      Permissions.ProfileApproval.Review,
+      Permissions.ProfileApproval.Changes,
+    ]),
+  );
+  readonly canViewJobsSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.Jobs.View,
+      Permissions.Jobs.Edit,
+      Permissions.Jobs.Approve,
+      Permissions.Jobs.SendInvitation,
+      Permissions.Jobs.Cancel,
+      Permissions.Jobs.Create,
+      Permissions.Jobs.Publish,
+      Permissions.Jobs.Delete,
+      Permissions.Jobs.Clone,
+    ]),
+  );
+  readonly canViewEmployeesSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.ProfileDistribution.View,
+      Permissions.ProfileDistribution.Manage,
+      Permissions.ProfileApproval.View,
+      Permissions.ProfileApproval.Review,
+      Permissions.ProfileApproval.Changes,
+    ]),
+  );
+  readonly canViewInvitationsSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.JobInvitations.View,
+      Permissions.Jobs.SendInvitation,
+    ]),
+  );
+  readonly canViewOperationalSummary = computed(() =>
+    this.canViewCandidatesSummary() ||
+    this.canViewJobsSummary() ||
+    this.canViewEmployeesSummary() ||
+    this.canViewInvitationsSummary(),
+  );
   readonly exportActions = computed<MenuItem[]>(() => {
     return [
       {
