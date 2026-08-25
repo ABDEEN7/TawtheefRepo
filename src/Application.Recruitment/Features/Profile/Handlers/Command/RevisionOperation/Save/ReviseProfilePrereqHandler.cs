@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -37,25 +38,39 @@ public sealed class ReviseProfilePrereqHandler(
         if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
-        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
-        var previouslyRequiredSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
+        var prerequisiteSectionDataIsActionable = await reviewRepo.DbSet
+            .AsNoTracking()
+            .AnyAsync(item =>
+                item.UserProfileId == profile.Id &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
+                item.Section == ProfileSection.Prerequisites &&
+                item.TargetType == ReviewTargetType.Field &&
+                item.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+                (item.Status == ReviewStatus.NeedsCorrection ||
+                 item.Status == ReviewStatus.Rejected ||
+                 item.Status == ReviewStatus.Solved),
+                ct);
+
+        if (!prerequisiteSectionDataIsActionable)
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+        var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
+        var previousRequirements = ConditionalRequirements.For(profile.CandidateTypeId, profile.Provider);
 
         if (!isLockedProvider || !CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId))
             profile.CandidateTypeId = r.CandidateTypeId;
 
         profile.TargetEntityId  = r.TargetEntityId;
 
-        var needsSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
-        var needsBirthCertificate = ProfileValidatorUtils.RequiresBirthCertificate(profile.CandidateTypeId);
-        var needsMarriageCertificate = ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId);
-        var requiresNationalAddress = ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider);
+        var requirements = ConditionalRequirements.For(profile.CandidateTypeId, profile.Provider);
 
         if (!isLockedProvider)
         {
-            profile.QIDExpiry = requiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
+            profile.QIDExpiry = requirements.RequiresNationalAddress ? r.QIDExpiry ?? profile.QIDExpiry : null;
         }
-        else if (requiresNationalAddress)
+        else if (requirements.RequiresNationalAddress)
         {
             profile.QIDExpiry = profile.QIDExpiry ?? r.QIDExpiry;
         }
@@ -91,7 +106,7 @@ public sealed class ReviseProfilePrereqHandler(
         }
 
         // Birth Certificate
-        if (needsBirthCertificate && HasFile(r.BirthCertificateFile))
+        if (requirements.RequiresBirthCertificate && HasFile(r.BirthCertificateFile))
         {
             var oldResourceId = profile.BirthdayCertificateId;
             var editable = await EnsureAttachmentEditableAsync(oldResourceId);
@@ -105,7 +120,7 @@ public sealed class ReviseProfilePrereqHandler(
         }
 
         // Marriage Certificate
-        if (needsMarriageCertificate && HasFile(r.MarriageCertificateFile))
+        if (requirements.RequiresMarriageCertificate && HasFile(r.MarriageCertificateFile))
         {
             var oldResourceId = profile.MarriageCertificateId;
             var editable = await EnsureAttachmentEditableAsync(oldResourceId);
@@ -119,14 +134,56 @@ public sealed class ReviseProfilePrereqHandler(
                 uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
+        var removedSponsor = previousRequirements.RequiresSponsor && !requirements.RequiresSponsor
+            ? profile.SponsorProfile
+            : null;
+        var removedResidenceAddress = !requirements.RequiresNationalAddress
+            ? profile.ResidenceAddress
+            : null;
         CleanCandidateTypeDependents();
+        if (removedSponsor is not null)
+            await uow.GetEntityRepository<SponsorProfile>().DeleteAsync(removedSponsor);
+        if (removedResidenceAddress is not null)
+            await uow.GetEntityRepository<ResidenceAddress>().DeleteAsync(removedResidenceAddress);
 
-        if (!previouslyRequiredSponsor && needsSponsor)
+        if (!previousRequirements.RequiresSponsor && requirements.RequiresSponsor)
         {
             await ReviewItemSaveHelper.ReopenSectionDataForCorrectionAsync(
                 uow,
                 profile,
                 ProfileSection.Personal,
+                ct);
+        }
+        else if (previousRequirements.RequiresSponsor && !requirements.RequiresSponsor)
+        {
+            await ReviewItemSaveHelper.MarkSystemAppliedSectionDataSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.Personal,
+                ct);
+        }
+
+        var introducesContactRequirement =
+            !previousRequirements.RequiresNationalAddress && requirements.RequiresNationalAddress ||
+            !previousRequirements.RequiresOffice && requirements.RequiresOffice;
+        var removesContactRequirement =
+            previousRequirements.RequiresNationalAddress && !requirements.RequiresNationalAddress ||
+            previousRequirements.RequiresOffice && !requirements.RequiresOffice;
+
+        if (introducesContactRequirement)
+        {
+            await ReviewItemSaveHelper.ReopenSectionDataForCorrectionAsync(
+                uow,
+                profile,
+                ProfileSection.Contact,
+                ct);
+        }
+        else if (removesContactRequirement)
+        {
+            await ReviewItemSaveHelper.MarkSystemAppliedSectionDataSolvedAsync(
+                uow,
+                profile,
+                ProfileSection.Contact,
                 ct);
         }
 
@@ -137,23 +194,23 @@ public sealed class ReviseProfilePrereqHandler(
 
         void CleanCandidateTypeDependents()
         {
-            if (!needsBirthCertificate)
+            if (!requirements.RequiresBirthCertificate)
             {
                 profile.BirthdayCertificateId = null;
             }
 
-            if (!needsMarriageCertificate)
+            if (!requirements.RequiresMarriageCertificate)
             {
                 profile.MarriageCertificateId = null;
             }
 
-            if (!needsSponsor)
+            if (!requirements.RequiresSponsor)
             {
                 profile.SponsorProfile = null;
                 profile.SponsorProfileId = null;
             }
 
-            if (!requiresNationalAddress)
+            if (!requirements.RequiresNationalAddress)
             {
                 profile.ResidenceAddress = null;
                 profile.ResidenceAddressId = null;
@@ -162,6 +219,9 @@ public sealed class ReviseProfilePrereqHandler(
             {
                 profile.Address = null;
             }
+
+            if (!requirements.RequiresOffice)
+                profile.OfficeId = null;
         }
 
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId, string category)
@@ -191,10 +251,13 @@ public sealed class ReviseProfilePrereqHandler(
             var allowed = await reviewRepo.DbSet
                 .Where(x =>
                     x.UserProfileId == profile.Id &&
+                    x.ProfileChangeId == null &&
+                    !x.IsDeleted &&
                     x.Section == ProfileSection.Prerequisites &&
                     x.TargetType == ReviewTargetType.Attachment &&
                     x.ResourceId == resourceId &&
                     (x.Status == ReviewStatus.NeedsCorrection ||
+                     x.Status == ReviewStatus.Rejected ||
                      x.Status == ReviewStatus.Solved))
                 .AnyAsync(ct);
 
@@ -209,6 +272,21 @@ public sealed class ReviseProfilePrereqHandler(
         }
 
 
+    }
+
+    private readonly record struct ConditionalRequirements(
+        bool RequiresSponsor,
+        bool RequiresBirthCertificate,
+        bool RequiresMarriageCertificate,
+        bool RequiresNationalAddress,
+        bool RequiresOffice)
+    {
+        public static ConditionalRequirements For(Guid? candidateTypeId, string provider) => new(
+            ProfileValidatorUtils.RequiresSponsor(candidateTypeId, provider),
+            ProfileValidatorUtils.RequiresBirthCertificate(candidateTypeId),
+            ProfileValidatorUtils.RequiresMarriageCertificate(candidateTypeId),
+            ProfileValidatorUtils.RequiresNationalAddress(candidateTypeId, provider),
+            ProfileValidatorUtils.RequiresOffice(candidateTypeId, provider));
     }
 }
 

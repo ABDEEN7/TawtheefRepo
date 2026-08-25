@@ -41,10 +41,13 @@ public sealed class ReviseProfilePersonalHandler(
             .AsNoTracking()
             .AnyAsync(r =>
                 r.UserProfileId == profile.Id &&
+                r.ProfileChangeId == null &&
+                !r.IsDeleted &&
                 r.Section == ProfileSection.Personal &&
                 r.TargetType == ReviewTargetType.Field &&
                 r.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
                 (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Rejected ||
                  r.Status == ReviewStatus.Solved),
                 ct);
 
@@ -181,10 +184,12 @@ public sealed class ReviseProfilePersonalHandler(
 
             var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
                 item.UserProfileId == profile.Id &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == ProfileSection.Personal &&
                 item.TargetType == ReviewTargetType.Attachment &&
                 item.ResourceId == resourceId &&
-                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved),
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved),
                 ct);
 
             if (allowed)

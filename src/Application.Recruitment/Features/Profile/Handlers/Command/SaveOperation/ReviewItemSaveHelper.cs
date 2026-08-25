@@ -8,6 +8,85 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 
 internal static class ReviewItemSaveHelper
 {
+    public static async Task CreateSolvedRowAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        string entityName,
+        Guid entityId,
+        CancellationToken ct)
+    {
+        var item = ReviewItem.Create(
+            profile.Id,
+            section,
+            ReviewTargetType.Row,
+            entityName: entityName,
+            entityId: entityId,
+            currentValue: ReviewItemSnapshotBuilder.GetRowSnapshot(profile, section, entityId, new ReviewItem()));
+
+        item.Status = ReviewStatus.Solved;
+        item.IsOutdated = false;
+        await uow.GetEntityRepository<ReviewItem>().AddAsync(item, ct);
+    }
+
+    public static async Task CreateSolvedAttachmentAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        string entityName,
+        Guid entityId,
+        Guid resourceId,
+        string title,
+        CancellationToken ct)
+    {
+        var item = ReviewItem.Create(
+            profile.Id,
+            ProfileSection.Attachments,
+            ReviewTargetType.Attachment,
+            ProfileReviewConstants.FieldPaths.AdditionalAttachments,
+            entityName,
+            entityId,
+            resourceId,
+            new { resourceId });
+
+        item.AttachmentTitle = title;
+        item.Status = ReviewStatus.Solved;
+        item.IsOutdated = false;
+        await uow.GetEntityRepository<ReviewItem>().AddAsync(item, ct);
+    }
+
+    public static async Task MarkSectionChangedByAdditionAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        var item = await uow.GetEntityRepository<ReviewItem>().DbSet
+            .FirstOrDefaultAsync(candidate =>
+                candidate.UserProfileId == profile.Id &&
+                candidate.ProfileChangeId == null &&
+                !candidate.IsDeleted &&
+                candidate.Section == section &&
+                candidate.TargetType == ReviewTargetType.Section,
+                ct);
+
+        var currentValue = ReviewItemSnapshotBuilder.GetSectionSnapshot(profile.User!, profile, section);
+        if (item is null)
+        {
+            item = ReviewItem.Create(profile.Id, section, ReviewTargetType.Section, currentValue: currentValue);
+            await uow.GetEntityRepository<ReviewItem>().AddAsync(item, ct);
+        }
+        else
+        {
+            item.UpdateHash(currentValue);
+        }
+
+        item.Status = ReviewStatus.Solved;
+        item.IsOutdated = false;
+        item.ReviewerNote = null;
+        item.ReviewedById = null;
+        item.ReviewedAtUtc = null;
+    }
+
     public static async Task ReopenSectionDataForCorrectionAsync(
         IUnitOfWork uow,
         UserProfile profile,
@@ -20,10 +99,11 @@ internal static class ReviewItemSaveHelper
             candidate.Section == section &&
             candidate.TargetType == ReviewTargetType.Field &&
             candidate.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
-            candidate.ProfileChangeId == null,
+            candidate.ProfileChangeId == null &&
+            !candidate.IsDeleted,
             ct);
 
-        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Solved)
+        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected or ReviewStatus.Solved)
             return;
 
         item.Status = ReviewStatus.NeedsCorrection;
@@ -48,7 +128,44 @@ internal static class ReviewItemSaveHelper
             ct);
     }
 
-    public static Task MarkSectionSolvedAsync(
+    public static async Task MarkSystemAppliedSectionDataSolvedAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
+            return;
+
+        var item = await uow.GetEntityRepository<ReviewItem>().DbSet
+            .FirstOrDefaultAsync(candidate =>
+                candidate.UserProfileId == profile.Id &&
+                candidate.ProfileChangeId == null &&
+                !candidate.IsDeleted &&
+                candidate.Section == section &&
+                candidate.TargetType == ReviewTargetType.Field &&
+                candidate.FieldPath == ProfileReviewConstants.FieldPaths.SectionData,
+                ct);
+
+        if (item is null)
+            return;
+
+        var previousHash = item.CurrentHash;
+        var currentValue = ReviewItemSnapshotBuilder.GetCurrentValue(profile, item);
+        item.UpdateHash(currentValue);
+
+        var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
+        if (!valueChanged)
+            return;
+
+        if (item.Status == ReviewStatus.Approved)
+            item.Status = ReviewStatus.Solved;
+
+        if (item.Status == ReviewStatus.Solved)
+            item.IsOutdated = false;
+    }
+
+    private static Task MarkSectionSolvedAsync(
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
@@ -133,9 +250,13 @@ internal static class ReviewItemSaveHelper
         var candidates = await reviewRepo.DbSet
             .Where(item =>
                 item.UserProfileId == profile.Id &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == section &&
                 item.TargetType == targetType &&
-                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved))
+                (item.Status == ReviewStatus.NeedsCorrection ||
+                 item.Status == ReviewStatus.Rejected ||
+                 item.Status == ReviewStatus.Solved))
             .ToListAsync(ct);
 
         var item = candidates.FirstOrDefault(match);

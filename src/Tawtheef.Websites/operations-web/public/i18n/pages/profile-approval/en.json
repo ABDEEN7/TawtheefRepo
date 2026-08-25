@@ -353,5 +353,20 @@
   "profileApproval.detail.snapshot.buildingNo": "Building No",
   "profileApproval.detail.snapshot.streetNo": "Street No",
   "profileApproval.detail.snapshot.zoneNo": "Zone No",
-  "profileApproval.detail.snapshot.unitNo": "Unit No"
+  "profileApproval.detail.snapshot.unitNo": "Unit No",
+  "profileApproval.actions.approve": "Approve",
+  "profileApproval.actions.requestCorrection": "Request correction",
+  "profileApproval.internalNote.title": "Internal reviewer note",
+  "profileApproval.internalNote.help": "This note is internal and will not be shown to the candidate.",
+  "profileApproval.internalNote.previous": "Previous review note",
+  "profileApproval.internalNote.new": "New internal note",
+  "profileApproval.internalNote.placeholder": "Add an optional note for the next review round...",
+  "profileApproval.internalNote.save": "Save note",
+  "profileApproval.internalNote.saved": "Internal note saved.",
+  "profileApproval.final.confirmReturnTitle": "Confirm profile return",
+  "profileApproval.final.confirmReturnMessage": "Are you sure you want to return the profile to the candidate to complete the required corrections?",
+  "profileApproval.final.confirmReturn": "Confirm return",
+  "profileApproval.final.confirmApprovalTitle": "Confirm profile approval",
+  "profileApproval.final.confirmApprovalMessage": "Are you sure you want to approve the profile?",
+  "profileApproval.final.approveProfile": "Approve profile"
 }

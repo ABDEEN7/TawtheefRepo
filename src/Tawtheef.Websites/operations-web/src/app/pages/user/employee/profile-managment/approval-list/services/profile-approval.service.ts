@@ -48,6 +48,12 @@ export class ProfileApprovalService {
   decideSection(userProfileId: string, section: string, body: { status: ReviewStatus; note: string | null }) {
     return this.http.put(this.endpoints.approvals.decision(userProfileId, section), body);
   }
+  saveSectionInternalNote(userProfileId: string, section: number, note: string | null): Observable<void> {
+    return this.http.put<void>(
+      this.endpoints.approvals.sectionInternalNote(userProfileId, section.toString()),
+      { note },
+    );
+  }
   startReview(profileId: string): Observable<void> {
     return this.http.post<void>(this.endpoints.approvals.startReview(profileId), null);
   }

@@ -126,6 +126,17 @@
     }
 
     @if (ds.isNeedSponsor) {
+    @if (isNewSponsorRequirement) {
+    <div class="col-12">
+      <div class="border rounded-3 p-3 d-flex align-items-start gap-2 bg-light" role="status">
+        <i class="pi pi-info-circle mt-1 text-primary" aria-hidden="true"></i>
+        <div>
+          <strong class="d-block text-primary">{{ 'wizard.correction.additionalRequirement.title' | translate }}</strong>
+          <span>{{ 'wizard.correction.additionalRequirement.hint' | translate }}</span>
+        </div>
+      </div>
+    </div>
+    }
     <!-- Sponsor Type -->
     <div class="col-md-4 d-flex flex-column">
       <label class="form-label required">

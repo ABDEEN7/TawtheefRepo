@@ -32,7 +32,9 @@ public sealed class ReviseProfileContactHandler(
         var validationResult = validationService.ValidateContact(profile, cmd.Request.Address, 
             cmd.Request.NationalAddress is null ? null :
                 new (cmd.Request.NationalAddress.Zone, cmd.Request.NationalAddress.Street, cmd.Request.NationalAddress.Building, 
-                    cmd.Request.NationalAddress.Unit, cmd.Request.NationalAddress.NationalAddressFileName));
+                    cmd.Request.NationalAddress.Unit,
+                    cmd.Request.NationalAddress.NationalAddressFileName ??
+                    cmd.Request.NationalAddress.NationalAddress?.FileName));
 
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
@@ -46,11 +48,16 @@ public sealed class ReviseProfileContactHandler(
 
         var contactReviewItemExists = await reviewRepo.DbSet
             .AsNoTracking()
-            .AnyAsync(r =>
-                r.UserProfileId == profile.Id &&
-                r.Section == ProfileSection.Contact &&
-                (r.Status == ReviewStatus.NeedsCorrection ||
-                 r.Status == ReviewStatus.Solved),
+            .AnyAsync(reviewItem =>
+                reviewItem.UserProfileId == profile.Id &&
+                reviewItem.ProfileChangeId == null &&
+                !reviewItem.IsDeleted &&
+                reviewItem.Section == ProfileSection.Contact &&
+                reviewItem.TargetType == ReviewTargetType.Field &&
+                reviewItem.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+                (reviewItem.Status == ReviewStatus.NeedsCorrection ||
+                 reviewItem.Status == ReviewStatus.Rejected ||
+                 reviewItem.Status == ReviewStatus.Solved),
                 ct);
 
         if (!contactReviewItemExists)
@@ -90,12 +97,15 @@ public sealed class ReviseProfileContactHandler(
             var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, oldResourceId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
+
+            if (idResult.Value is null || idResult.Value == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.NationalAddressCertificateRequired);
             
             if (profile.ResidenceAddress is null)
             {
                 profile.ResidenceAddress =
                     ResidenceAddress.Create(r.NationalAddress.Building, r.NationalAddress.Street,
-                        r.NationalAddress.Zone, r.NationalAddress.Unit, idResult.Value!.Value);
+                        r.NationalAddress.Zone, r.NationalAddress.Unit, idResult.Value.Value);
             }
             else
             {
@@ -123,7 +133,9 @@ public sealed class ReviseProfileContactHandler(
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
         {
             if (file is null || file.Length == 0)
-                return Result.Ok(existingId);
+                return existingId is null || existingId == Guid.Empty
+                    ? Result.Fail<Guid?>(ErrorsCodes.NationalAddressCertificateRequired)
+                    : Result.Ok(existingId);
 
             var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.NationalAddress, file, false, ct);
             var uploadResult = await mediator.Send(
@@ -144,10 +156,12 @@ public sealed class ReviseProfileContactHandler(
 
             var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
                 item.UserProfileId == profile.Id &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == ProfileSection.Contact &&
                 item.TargetType == ReviewTargetType.Attachment &&
                 item.ResourceId == resourceId &&
-                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved),
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved),
                 ct);
 
             if (allowed)

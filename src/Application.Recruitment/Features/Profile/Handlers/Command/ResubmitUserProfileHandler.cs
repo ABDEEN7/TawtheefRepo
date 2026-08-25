@@ -31,7 +31,22 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         var assignmentRepo  = uow.GetEntityRepository<ProfileAssignment>();
         var loggerRepo      = uow.GetEntityRepository<UserProfileLogger>();
 
-        await ProfileReviewItemSync.EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
+        await ProfileReviewItemSync.EnsureConditionalAttachmentItemsAsync(uow, profile, ct);
+
+        var items = await reviewRepo.DbSet
+            .Where(x =>
+                x.UserProfileId == profile.Id &&
+                x.ProfileChangeId == null &&
+                !x.IsDeleted)
+            .ToListAsync(ct);
+
+        var activeItems = items
+            .Where(item => item.IsActiveInCurrentProfile(profile))
+            .ToList();
+
+        if (activeItems.Any(item => item.IsOutstandingCandidateCorrection()) ||
+            !items.Any(item => item.IsCandidateCorrectedItem()))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         // -----------------------------------------
         // 1) Deactivate assignments (same behavior)
@@ -63,63 +78,33 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
             }, ct);
         }
 
-        // ---------------------------------------------------------
-        // 2) RESUBMIT RULE: DO NOT CREATE new review items
-        //    Only reopen "Solved" items to "Pending" when changed
-        // ---------------------------------------------------------
-        var items = await reviewRepo.DbSet
-            .Where(x => x.UserProfileId == profile.Id)
-            .ToListAsync(ct);
-
+        // Reopen corrected active items for the next reviewer pass.
         var correctedSections = items
             .Where(item => item.Status == ReviewStatus.Solved)
             .Select(item => item.Section)
             .ToHashSet();
 
-        foreach (var item in items)
+        foreach (var item in activeItems)
         {
-            var previousHash = item.CurrentHash;
-
             var currentValue = ReviewItemSnapshotBuilder.GetCurrentValue(profile, item);
             item.UpdateHash(currentValue);
 
-            // Important: update resource ID for attachments so they remain findable by the UI
             if (item.TargetType == ReviewTargetType.Attachment)
             {
                 item.ResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
             }
 
-            var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
-
-            if (item.TargetType == ReviewTargetType.Attachment)
-            {
-                var currentResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
-                if (currentResourceId.HasValue)
-                {
-                    item.ResourceId = currentResourceId;
-                }
-            }
-
-            // Required: convert Solved -> Pending (so it shows up for re-review after fixing correction)
             if (item.Status == ReviewStatus.Solved)
             {
                 Reopen(item);
                 continue;
             }
 
-            if (item.TargetType == ReviewTargetType.Section &&
-                item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected &&
+            if (item is { TargetType: ReviewTargetType.Section, Status: ReviewStatus.NeedsCorrection or ReviewStatus.Rejected } &&
                 correctedSections.Contains(item.Section))
             {
                 Reopen(item);
-                continue;
             }
-
-            if (!valueChanged)
-                continue;
-
-            // ... if it was approved and changed, move to Pending if needed (usually handled by IsOutdated)
-            // But for initial resubmit flow, we just mark as Outdated and reopen if it was solved.
         }
 
         // ---------------------------------------------------------
@@ -136,10 +121,8 @@ public sealed class ResubmitUserProfileHandler(IUnitOfWork uow)
         item.Status = ReviewStatus.Pending;
         item.IsOutdated = true;
 
-        // Clear review metadata because we reopened
         item.ReviewedAtUtc = null;
         item.ReviewedById  = null;
-        // Keep ReviewerNote so the reviewer remembers why they requested changes
     }
 }
 

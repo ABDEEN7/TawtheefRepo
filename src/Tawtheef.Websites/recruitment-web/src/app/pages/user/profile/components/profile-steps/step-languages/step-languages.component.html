@@ -51,7 +51,7 @@
                 <td><span class="pill soft">{{ r.readingLevel.name }}</span></td>
                 <td>
                   <div class="action-buttons">
-                    <button class="btn" (click)="removeLang(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+                    <button *ngIf="!additionOnly() || !r.id" class="btn" (click)="removeLang(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
                       <i class="hgi hgi-stroke hgi-delete-02"></i>
                     </button>
                   </div>

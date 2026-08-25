@@ -40,12 +40,6 @@ public sealed class ReviseProfileEducationDeleteHandler(IUnitOfWork uow) :
         if (!canDelete)
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
 
-        var qualificationsCount = await qualificationRepo.DbSet
-            .CountAsync(x => x.UserProfileId == profile.Id, ct);
-
-        if (qualificationsCount <= 1)
-            return Result.Fail<Unit>(ErrorsCodes.AtLeastOneQualificationRequired);
-
         var experiencesRepo = uow.GetEntityRepository<Experience>();
         var isLinkedToExperience = await experiencesRepo.DbSet
             .AnyAsync(x => x.QualificationId == target.Id && x.UserProfileId == profile.Id, ct);

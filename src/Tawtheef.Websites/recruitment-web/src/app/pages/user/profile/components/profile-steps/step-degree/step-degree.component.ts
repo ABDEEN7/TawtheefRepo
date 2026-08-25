@@ -169,7 +169,7 @@ export class StepDegreeComponent implements OnInit {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('degrees')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(4)) {
         const msg = this.ds.hasUnsolvedCorrections(4)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notify.error(msg);
         return;

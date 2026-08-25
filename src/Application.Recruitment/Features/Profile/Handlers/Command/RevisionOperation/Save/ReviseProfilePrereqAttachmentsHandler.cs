@@ -40,10 +40,13 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             var reviewAllowed = await reviewRepo.DbSet.AnyAsync(x =>
                 x.UserProfileId == profile.Id &&
+                x.ProfileChangeId == null &&
+                !x.IsDeleted &&
                 x.Section == ProfileSection.Prerequisites &&
                 x.TargetType == ReviewTargetType.Attachment &&
                 x.ResourceId == oldResourceId &&
                 (x.Status == ReviewStatus.NeedsCorrection ||
+                 x.Status == ReviewStatus.Rejected ||
                  x.Status == ReviewStatus.Solved),
                 ct);
 
@@ -85,10 +88,13 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             var reviewAllowed = await reviewRepo.DbSet
                 .Where(x =>
                     x.UserProfileId == profile.Id &&
+                    x.ProfileChangeId == null &&
+                    !x.IsDeleted &&
                     x.Section == ProfileSection.Prerequisites &&
                     x.TargetType == ReviewTargetType.Attachment &&
                     x.ResourceId == oldResourceId &&
                     (x.Status == ReviewStatus.NeedsCorrection ||
+                     x.Status == ReviewStatus.Rejected ||
                      x.Status == ReviewStatus.Solved))
                 .AnyAsync(ct);
 

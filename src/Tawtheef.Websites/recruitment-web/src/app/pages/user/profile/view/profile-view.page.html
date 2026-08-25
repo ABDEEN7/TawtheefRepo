@@ -98,39 +98,51 @@
           </div>
         </div>
 
-    <div class="card-body mt-3" *ngIf="!summaryLoading() && canResubmit()">
-      <div class="resubmit-cta">
-        <div class="resubmit-cta__content">
-          <div class="resubmit-cta__icon">
-            <i class="pi pi-send" aria-hidden="true"></i>
-          </div>
-          <div class="resubmit-cta__copy">
-            <div class="resubmit-cta__eyebrow">{{ 'profileOverview.resubmit.readyLabel' | translate }}</div>
-            <div class="resubmit-cta__title">{{ 'profileOverview.resubmit.title' | translate }}</div>
-            <div class="resubmit-cta__subtitle">
-              {{ 'profileOverview.resubmit.subtitle' | translate }}
-              @if (changedSectionLabels().length) {
-              <span>{{ changedSectionLabels().join('، ') }}</span>
-              }
+        @if (!summaryLoading() && isCorrectionMode()) {
+        <section class="correction-workspace" aria-labelledby="correctionWorkspaceTitle">
+          <div class="correction-workspace__intro">
+            <div class="correction-workspace__icon" aria-hidden="true"><i class="pi pi-pencil"></i></div>
+            <div class="correction-workspace__copy">
+              <div class="correction-workspace__eyebrow">{{ 'profileOverview.correctionWorkspace.eyebrow' | translate }}</div>
+              <h5 id="correctionWorkspaceTitle" class="correction-workspace__title">
+                {{ 'profileOverview.correctionWorkspace.title' | translate }}
+              </h5>
+              <p class="correction-workspace__subtitle">{{ 'profileOverview.correctionWorkspace.subtitle' | translate }}</p>
             </div>
           </div>
-        </div>
-        <button
-          pButton
-          type="button"
-          class="btn btn-primary resubmit-cta__button"
-          [disabled]="resubmitting()"
-          (click)="resubmitProfile()"
-        >
-          @if (resubmitting()) {
-          <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
-          } @else {
-          <i class="pi pi-send" aria-hidden="true"></i>
-          }
-          <span>{{ 'profileOverview.resubmit.action' | translate }}</span>
-        </button>
-        </div>
-    </div>
+
+          <div class="correction-summary" aria-live="polite">
+            <div class="correction-summary__item">
+              <span class="correction-summary__value">{{ correctionItemsCount() }}</span>
+              <span>{{ 'profileOverview.correctionWorkspace.total' | translate }}</span>
+            </div>
+            <div class="correction-summary__item correction-summary__item--required">
+              <span class="correction-summary__value">{{ outstandingCorrectionsCount() }}</span>
+              <span>{{ 'profileOverview.correctionWorkspace.remaining' | translate }}</span>
+            </div>
+            <div class="correction-summary__item correction-summary__item--done">
+              <span class="correction-summary__value">{{ correctedCorrectionsCount() }}</span>
+              <span>{{ 'profileOverview.correctionWorkspace.corrected' | translate }}</span>
+            </div>
+          </div>
+
+          <div class="correction-workspace__footer">
+            <div class="resubmit-readiness" [class.resubmit-readiness--ready]="canResubmit()">
+              <i class="pi" [ngClass]="canResubmit() ? 'pi-check-circle' : 'pi-info-circle'" aria-hidden="true"></i>
+              <span>{{ (canResubmit() ? 'profileOverview.correctionWorkspace.ready' : resubmitBlockerKey()) | translate }}</span>
+            </div>
+            <button pButton type="button" class="btn btn-primary resubmit-cta__button"
+              [disabled]="!canResubmit() || resubmitting()" (click)="resubmitProfile()">
+              @if (resubmitting()) {
+              <p-progressSpinner styleClass="spinner-xs" strokeWidth="4"></p-progressSpinner>
+              } @else {
+              <i class="pi pi-send" aria-hidden="true"></i>
+              }
+              <span>{{ 'profileOverview.resubmit.action' | translate }}</span>
+            </button>
+          </div>
+        </section>
+        }
         <div class="row ">
           <div class="col-12 col-md-6">
             <div class="card card-table mb-3 lift-on-hover">
@@ -172,8 +184,23 @@
         <!-- Section tiles -->
         <div class="card card-table pb-0">
           <div class="card-body pb-0">
+            @if (isCorrectionMode()) {
+            <div class="section-filter">
+              <div>
+                <div class="section-filter__title">{{ 'profileOverview.correctionWorkspace.sectionsTitle' | translate }}</div>
+                <div class="section-filter__hint">{{ 'profileOverview.correctionWorkspace.sectionsHint' | translate }}</div>
+              </div>
+              <button type="button" class="btn btn-outline-primary section-filter__button"
+                [attr.aria-pressed]="showRequiredOnly()" (click)="toggleCorrectionFocus()">
+                <i class="pi pi-filter" aria-hidden="true"></i>
+                {{ (showRequiredOnly()
+                    ? 'profileOverview.correctionWorkspace.showAll'
+                    : 'profileOverview.correctionWorkspace.showRequiredOnly') | translate }}
+              </button>
+            </div>
+            }
             <div class="row gx-3">
-              @for (card of cards; track card.section) {
+              @for (card of visibleCards(); track card.section) {
               <div class="col-md-2 mb-4">
                 <div class="card card-table bg-light lift-on-hover" role="button" tabindex="0"
                   [ngClass]="expanded() === card.section ? 'active' : ''" (click)="openCard(card.section)"
@@ -195,10 +222,17 @@
                         </span>
                         }
                         @else if(profileStatus() == UserProfileStatusEnum.RequiresUpdate){
-                        <span class="pill warning tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
-                          <i class="hgi hgi-stroke fw-normal hgi-hourglass fs-16"></i>
-                          {{ 'profileOverview.status.readyForResubmit' | translate }}
-                        </span>
+                          @if (sectionCorrectionState(card.section) === 'corrected') {
+                          <span class="pill success tile-badge">
+                            <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
+                            {{ 'profileOverview.correctionWorkspace.correctedStatus' | translate }}
+                          </span>
+                          } @else if (sectionCorrectionState(card.section) === 'none') {
+                          <span class="pill secondary tile-badge">
+                            <i class="hgi hgi-stroke fw-normal hgi-checkmark-circle-02 fs-16"></i>
+                            {{ 'profileOverview.correctionWorkspace.noCorrection' | translate }}
+                          </span>
+                          }
                         }
                         @else{
                         <span class="pill secondary tile-badge" *ngIf="!reviewNotes()?.sectionIndex?.[card.section]">
@@ -239,7 +273,7 @@
         <span>{{ 'common.loading' | translate }}</span>
       </div>
     </div>
-    @if (!summaryLoading() && (activeSectionReviewNotes().length > 0 || activeSectionTargetNotes().length > 0 || activeSectionResolvedCorrections())) {
+    @if (!summaryLoading() && (activeSectionReviewNotes().length > 0 || activeSectionTargetNotes().length > 0 || activeSectionChangedItems().length > 0)) {
     <div class="card-body mt-3">
       <section
         class="review-panel"
@@ -268,6 +302,13 @@
               }}
             </div>
           </div>
+          @if (!activeSectionResolvedCorrections() && canEditSections(expanded())) {
+          <button type="button" class="btn btn-outline-primary btn-sm review-panel__action"
+            (click)="openEditDialog(expanded())">
+            <i class="pi pi-pencil" aria-hidden="true"></i>
+            {{ 'profileOverview.review.editSection' | translate }}
+          </button>
+          }
         </div>
 
         @if (activeSectionTargetNotes().length > 0) {
@@ -306,6 +347,28 @@
               </span>
               <span class="review-context__text">{{ note.note || ('profileOverview.review.noNote' | translate) }}</span>
             </div>
+            }
+          </div>
+        </div>
+        }
+
+        @if (activeSectionChangedItems().length > 0) {
+        <div class="review-note-group">
+          <div class="review-note-group__label">
+            <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+            {{ 'profileOverview.correctionWorkspace.savedItemsTitle' | translate }}
+          </div>
+          <div class="review-note-list">
+            @for (item of activeSectionChangedItems(); track item.reviewItemId) {
+            <article class="review-note review-note--done">
+              <div class="review-note__meta">
+                <span class="status-chip chip-ok">
+                  {{ 'profileOverview.correctionWorkspace.correctedStatus' | translate }}
+                </span>
+                <span class="review-note__target">{{ correctedItemTitle(item) }}</span>
+              </div>
+              <p class="review-note__body">{{ 'profileOverview.correctionWorkspace.savedHint' | translate }}</p>
+            </article>
             }
           </div>
         </div>
@@ -393,14 +456,16 @@
 
           <app-profile-skills-section *ngSwitchCase="ProfileSectionEnum.Skills" [profile]="sectionValue(active)"
             [isProfileApproved]="canReplaceAttachment" [canEdit]="canEditSections(ProfileSectionEnum.Skills)"
+            [canAdd]="canAddCorrectionItems"
             [changesRequest]="changes(ProfileSectionEnum.Skills)" [notes]="activeSectionNotes()"
-            (edit)="openEditDialog(ProfileSectionEnum.Skills)">
+            (edit)="openEditDialog(ProfileSectionEnum.Skills)" (add)="openAddDialog(ProfileSectionEnum.Skills)">
           </app-profile-skills-section>
 
           <app-profile-languages-section *ngSwitchCase="ProfileSectionEnum.Languages" [profile]="sectionValue(active)"
             [isProfileApproved]="canReplaceAttachment" [canEdit]="canEditSections(ProfileSectionEnum.Languages)"
+            [canAdd]="canAddCorrectionItems"
             [changesRequest]="changes(ProfileSectionEnum.Languages)" [notes]="activeSectionNotes()"
-            (edit)="openEditDialog(ProfileSectionEnum.Languages)">
+            (edit)="openEditDialog(ProfileSectionEnum.Languages)" (add)="openAddDialog(ProfileSectionEnum.Languages)">
           </app-profile-languages-section>
 
           <app-profile-attachments-section *ngSwitchCase="ProfileSectionEnum.Attachments"

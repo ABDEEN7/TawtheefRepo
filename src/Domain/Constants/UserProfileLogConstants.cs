@@ -12,6 +12,7 @@ public static class UserProfileLogConstants
         public const string OpenProfileChangeReview = "OpenProfileChangeReview";
         public const string ReviewItemDecision = "ReviewItemDecision";
         public const string ReviewSectionDecision = "ReviewSectionDecision";
+        public const string ProfileSectionInternalNote = "ProfileSectionInternalNote";
         public const string ProfileChangeRequested = "ProfileChangeRequested";
         public const string ProfileChangeUpdated = "ProfileChangeUpdated";
     }

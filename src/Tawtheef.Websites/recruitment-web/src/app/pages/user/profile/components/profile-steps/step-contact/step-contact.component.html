@@ -194,6 +194,16 @@
   <hr class="my-4">
   <div class="mb-2 fw-bold" style="color:#8a1538">{{ 'wizard.nationalAddress.title' | translate }}</div>
 
+  @if (isNewNationalAddressRequirement) {
+  <div class="border rounded-3 p-3 d-flex align-items-start gap-2 bg-light" role="status">
+    <i class="pi pi-info-circle mt-1 text-primary" aria-hidden="true"></i>
+    <div>
+      <strong class="d-block text-primary">{{ 'wizard.correction.additionalRequirement.title' | translate }}</strong>
+      <span>{{ 'wizard.correction.additionalRequirement.hint' | translate }}</span>
+    </div>
+  </div>
+  }
+
   <div class="row g-3">
     <div class="col-md-3"><label class="form-label required">{{ 'wizard.nationalAddress.zone' | translate }}</label>
       <input class="form-control" inputmode="numeric" autocomplete="off" pattern="^[0-9]+$" maxlength="6"
@@ -220,7 +230,7 @@
         placeholder="{{ 'wizard.placeholders.typeHere' | translate }}" />
     </div>
   </div>
-  @if (!profileService.isChangeRequestMode() && !profileService.isRevisionMode()) {
+  @if (showNationalAddressUploader) {
   <div class="col-md-6 mt-3">
     <label class="form-label required">
       {{ 'wizard.nationalAddress.document' | translate }}

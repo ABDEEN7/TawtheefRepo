@@ -1,9 +1,8 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import {FileRefDto, LanguageDto, ProfileStatusDto} from '../../../../../../core/models/auth/auth-response.model';
+import {LanguageDto, ProfileStatusDto} from '../../../../../../core/models/auth/auth-response.model';
 import { MyProfileReviewNoteDto } from '../../models/profile-overview.model';
-import {changeRequestDto} from '../../dtos/change-request-dto';
 import {FieldChange} from '../../utils/detect-change-fields';
 import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lookups.service';
 
@@ -18,10 +17,12 @@ import {ProfileLookupsService} from '../../../wizard-profile/services/profile-lo
 export class ProfileLanguagesSectionComponent {
   @Input() profile: ProfileStatusDto | null = null;
   @Input() canEdit = false;
+  @Input() canAdd = false;
   @Input() notes: MyProfileReviewNoteDto[] = [];
   @Input() changesRequest!: FieldChange[];
   @Input() isProfileApproved!: boolean;
   @Output() edit = new EventEmitter<void>();
+  @Output() add = new EventEmitter<void>();
 
   lookups = inject(ProfileLookupsService);
 

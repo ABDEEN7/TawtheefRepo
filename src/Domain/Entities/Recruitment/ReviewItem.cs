@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Recruitment;
@@ -203,6 +204,68 @@ public class ReviewItem : EventEntity
     }
 
     public bool NeedsReview() => IsOutdated || Status is ReviewStatus.Pending or ReviewStatus.NeedsCorrection;
+
+    public bool IsOutstandingCandidateCorrection() =>
+        (Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected) &&
+        IsCandidateActionableTarget();
+
+    public bool IsCandidateCorrectedItem() =>
+        Status == ReviewStatus.Solved && IsCandidateActionableTarget();
+
+    public bool IsActiveInCurrentProfile(UserProfile profile)
+    {
+        return TargetType switch
+        {
+            ReviewTargetType.Section => true,
+            ReviewTargetType.Field => true,
+            ReviewTargetType.Row => IsActiveRow(profile),
+            ReviewTargetType.Attachment => IsActiveAttachment(profile),
+            _ => true
+        };
+    }
+
+    private bool IsActiveRow(UserProfile profile)
+    {
+        if (!EntityId.HasValue || EntityId.Value == Guid.Empty)
+            return false;
+
+        var entityId = EntityId.Value;
+        return EntityName switch
+        {
+            ProfileReviewConstants.EntityNames.Qualification => profile.Qualifications?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.Experience => profile.Experiences?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.TrainingCourse => profile.TrainingCourses?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.Achievement => profile.Achievements?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.Skill => profile.Skills?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.Language => profile.Languages?.Any(item => item.Id == entityId) == true,
+            ProfileReviewConstants.EntityNames.Attachment or ProfileReviewConstants.EntityNames.ProfileAdditionalAttachment =>
+                profile.AdditionalAttachments?.Any(item => item.Id == entityId) == true,
+            _ => true
+        };
+    }
+
+    private bool IsActiveAttachment(UserProfile profile)
+    {
+        if (!ResourceId.HasValue || ResourceId.Value == Guid.Empty)
+            return false;
+
+        var resourceId = ResourceId.Value;
+        return profile.ResumeAttachmentId == resourceId ||
+               profile.NationalCardId == resourceId ||
+               profile.BirthdayCertificateId == resourceId ||
+               profile.MarriageCertificateId == resourceId ||
+               profile.SponsorProfile?.SponsorCardId == resourceId ||
+               profile.ResidenceAddress?.CertificateId == resourceId ||
+               profile.Qualifications?.Any(item => item.CertificateId == resourceId) == true ||
+               profile.Experiences?.Any(item => item.CertificateId == resourceId) == true ||
+               profile.TrainingCourses?.Any(item => item.CertificateId == resourceId) == true ||
+               profile.Achievements?.Any(item => item.AttachmentId == resourceId) == true ||
+               profile.AdditionalAttachments?.Any(item => item.AttachmentId == resourceId) == true;
+    }
+
+    private bool IsCandidateActionableTarget() =>
+        TargetType != ReviewTargetType.Section ||
+        Section is ProfileSection.Skills or ProfileSection.Languages;
 
     // 🔐 Utility for Hash Calculation
     private static string ComputeHash(object? value)

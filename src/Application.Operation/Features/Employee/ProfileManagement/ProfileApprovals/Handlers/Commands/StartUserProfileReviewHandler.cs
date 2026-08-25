@@ -25,6 +25,17 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
+        var isAssigned = await uow.GetEntityRepository<ProfileAssignment>().DbSet
+            .AsNoTracking()
+            .AnyAsync(assignment =>
+                assignment.UserProfileId == profile.Id &&
+                assignment.EmployeeId == cmd.OfficerId &&
+                assignment.IsActive,
+                ct);
+
+        if (!isAssigned)
+            return Result.Fail<Unit>(ErrorsCodes.UnauthorizedAction);
+
         if (profile.Status != UserProfileStatus.Submitted)
             return Result.Fail<Unit>(ErrorsCodes.NotSubmitted);
 

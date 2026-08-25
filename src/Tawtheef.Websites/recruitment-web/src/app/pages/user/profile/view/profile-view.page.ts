@@ -53,12 +53,15 @@ import { AuthStateService } from '../../../../core/auth/auth-state.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { finalize, take } from 'rxjs';
 import { ResubmitConfirmDialogComponent, ResubmitConfirmSectionVm } from './dialogs/resubmit-confirm-dialog/resubmit-confirm-dialog.component';
+import { PROFILE_REVIEW_SECTION_DATA_FIELD } from '../wizard-profile/models/profile-correction.model';
 
 interface SectionCard {
   section: ProfileSectionEnum;
   icon: string;
   labelKey: string;
 }
+
+type CorrectionSectionState = 'required' | 'corrected' | 'none';
 // Base (non-generic) rxResource instance type
 type AnyRxRes = ReturnType<typeof rxResource>;
 // Generic wrapper: same shape, but value() is strongly typed
@@ -106,9 +109,9 @@ export class ProfileViewPage {
   private readonly authState = inject(AuthStateService);
   private readonly notify = inject(NotificationService);
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
-  private readonly sectionDataFieldPath = 'SectionData';
   protected readonly resubmitting = signal(false);
   protected readonly availabilitySaving = signal(false);
+  protected readonly showRequiredOnly = signal(true);
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
     isResident: false,
@@ -125,7 +128,7 @@ export class ProfileViewPage {
     const status = this.profileStatus();
     if (status === UserProfileStatusEnum.Approved) {
       this.profileService.setWriteMode('change-request');
-    } else if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) {
+    } else if (status === UserProfileStatusEnum.RequiresUpdate) {
       this.profileService.setWriteMode('review-edit');
     } else {
       this.profileService.setWriteMode('create');
@@ -249,6 +252,34 @@ export class ProfileViewPage {
   });
 
   readonly profileStatus = computed(() => (this.review.value() as MyProfileReviewSummaryDto | undefined)?.profileStatus ?? null);
+  readonly isCorrectionMode = computed(() => this.profileStatus() === UserProfileStatusEnum.RequiresUpdate);
+  readonly outstandingCorrectionsCount = computed(() =>
+    Object.values(this.reviewNotes()?.sectionIndex ?? {}).reduce((total, count) => total + count, 0)
+  );
+  readonly correctedCorrectionsCount = computed(() => this.reviewNotes()?.changedItems?.length ?? 0);
+  readonly correctionItemsCount = computed(() =>
+    this.outstandingCorrectionsCount() + this.correctedCorrectionsCount()
+  );
+  readonly visibleCards = computed(() => {
+    if (!this.isCorrectionMode() || !this.showRequiredOnly()) return this.cards;
+    return this.cards.filter(card => this.sectionCorrectionState(card.section) !== 'none');
+  });
+  private readonly correctionFocusEffect = effect(() => {
+    if (!this.isCorrectionMode() || !this.showRequiredOnly()) return;
+    if (this.sectionCorrectionState(this.expanded()) !== 'none') return;
+
+    const firstRelevantSection = this.visibleCards()[0]?.section;
+    if (firstRelevantSection) this.expanded.set(firstRelevantSection);
+  });
+  readonly resubmitBlockerKey = computed(() => {
+    if (this.outstandingCorrectionsCount() > 0) {
+      return 'profileOverview.correctionWorkspace.blockedByCorrections';
+    }
+    if (!this.reviewNotes()?.hasSavedChanges) {
+      return 'profileOverview.correctionWorkspace.blockedByUnsavedChanges';
+    }
+    return 'profileOverview.correctionWorkspace.blockedByRequirements';
+  });
 
   readonly statusVm = computed(() => {
     const status = this.profileStatus();
@@ -312,7 +343,10 @@ export class ProfileViewPage {
   });
 
   get canAddAttachments() {
-    return this.enableChangeMode;
+    return this.isCorrectionMode();
+  }
+  get canAddCorrectionItems() {
+    return this.isCorrectionMode();
   }
   canEditSections(section: ProfileSectionEnum) {
     const status = this.profileStatus();
@@ -360,16 +394,14 @@ export class ProfileViewPage {
     return notes.filter(n => n.targetType !== ReviewTargetTypeEnum.Section);
   });
 
-  readonly activeSectionResolvedCorrections = computed(() => {
-    const active = this.expanded();
-    if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate) return false;
-    if (this.isSectionNoteActionable(active)) return false;
-    if (this.activeSectionTargetNotes().length > 0) return false;
+  readonly activeSectionChangedItems = computed(() =>
+    this.editableItemsForSection(this.expanded())
+  );
 
-    const notes = this.activeSectionNotes();
-    const hasSectionContextNote = notes.some(note => note.targetType === ReviewTargetTypeEnum.Section);
-    const hasSavedCorrection = (this.reviewNotes()?.changedSections ?? []).some(section => section === active);
-    return hasSectionContextNote && hasSavedCorrection;
+  readonly activeSectionResolvedCorrections = computed(() => {
+    if (this.profileStatus() !== UserProfileStatusEnum.RequiresUpdate) return false;
+    if (this.activeSectionTargetNotes().length > 0) return false;
+    return this.activeSectionChangedItems().length > 0;
   });
 
   readonly canResubmit = computed(() =>
@@ -402,6 +434,26 @@ export class ProfileViewPage {
     const res = this.sections.get(section);
     this.expanded.set(section);
     res?.reload();
+  }
+
+  toggleCorrectionFocus(): void {
+    this.showRequiredOnly.update(current => !current);
+    if (!this.showRequiredOnly()) return;
+
+    const firstRelevantSection = this.visibleCards()[0]?.section;
+    if (firstRelevantSection && this.sectionCorrectionState(this.expanded()) === 'none') {
+      this.openCard(firstRelevantSection);
+    }
+  }
+
+  sectionCorrectionState(section: ProfileSectionEnum): CorrectionSectionState {
+    if ((this.reviewNotes()?.sectionIndex?.[section] ?? 0) > 0) return 'required';
+    if ((this.reviewNotes()?.changedSections ?? []).includes(section)) return 'corrected';
+    return 'none';
+  }
+
+  correctedItemTitle(item: MyProfileReviewChangedItemDto): string {
+    return this.translatedReviewTitle(item);
   }
 
   reloadSection(section: ProfileSectionEnum) {
@@ -503,9 +555,11 @@ export class ProfileViewPage {
 
   openEditDialog(section: ProfileSectionEnum) {
     const status = this.profileStatus();
+    if (status !== UserProfileStatusEnum.RequiresUpdate && status !== UserProfileStatusEnum.Approved) return;
+
     const mode = status === UserProfileStatusEnum.Approved
       ? 'change-request'
-      : (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted)
+      : status === UserProfileStatusEnum.RequiresUpdate
         ? 'review-edit'
         : 'create';
     this.dialogService.open(ProfileEditDialogComponent, {
@@ -517,6 +571,20 @@ export class ProfileViewPage {
     })?.onClose.subscribe(result => {
       if (!result) return;
       this.reloadSection(section);
+    });
+  }
+
+  openAddDialog(section: ProfileSectionEnum) {
+    if (!this.isCorrectionMode()) return;
+
+    this.dialogService.open(ProfileEditDialogComponent, {
+      header: this.i18n.instant('wizard.buttons.add'),
+      data: { section, mode: 'review-edit', notes: this.activeSectionNotes(), additionOnly: true },
+      draggable: true,
+      closable: true,
+      styleClass: 'modal-dialog modal-xl'
+    })?.onClose.subscribe(result => {
+      if (result) this.reloadSection(section);
     });
   }
 
@@ -625,7 +693,7 @@ export class ProfileViewPage {
     const notes = this.sectionNotes(section);
     const hasSectionData = notes.some(note =>
       note.targetType === ReviewTargetTypeEnum.Field &&
-      note.fieldPath === this.sectionDataFieldPath
+      note.fieldPath === PROFILE_REVIEW_SECTION_DATA_FIELD
     );
 
     if (hasSectionData) return true;
@@ -636,7 +704,7 @@ export class ProfileViewPage {
   private hasSolvedSectionDataCorrection(section: ProfileSectionEnum): boolean {
     return this.editableItemsForSection(section).some(item =>
       item.targetType === ReviewTargetTypeEnum.Field &&
-      item.fieldPath === this.sectionDataFieldPath
+      item.fieldPath === PROFILE_REVIEW_SECTION_DATA_FIELD
     );
   }
 
@@ -659,7 +727,7 @@ export class ProfileViewPage {
     return section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages;
   }
 
-  private translatedReviewTitle(note: MyProfileReviewNoteDto): string {
+  private translatedReviewTitle(note: MyProfileReviewNoteDto | MyProfileReviewChangedItemDto): string {
     const key = REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.title)] ??
       REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.fieldPath)] ??
       REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(note.entityName)] ??

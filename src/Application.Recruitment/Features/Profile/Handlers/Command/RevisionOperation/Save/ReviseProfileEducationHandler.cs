@@ -89,24 +89,29 @@ public sealed class ReviseProfileEducationHandler(
             .Where(q => q.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        var duplicateValidation = ProfileDuplicateValidation.ValidateEducation(degrees, existingQualifications);
+        if (duplicateValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateValidation.Errors);
+
         var allowedEntityIds = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r =>
-        r.UserProfileId == profile.Id &&
-        r.Section == ProfileSection.Qualifications &&
-        r.TargetType == ReviewTargetType.Row &&
-        (r.Status == ReviewStatus.NeedsCorrection ||
-         r.Status == ReviewStatus.Solved) &&
-        r.EntityId != null)
-    .Select(r => r.EntityId!.Value)
-    .ToHashSetAsync(ct);
+                r.UserProfileId == profile.Id &&
+                r.ProfileChangeId == null &&
+                !r.IsDeleted &&
+                r.Section == ProfileSection.Qualifications &&
+                r.TargetType == ReviewTargetType.Row &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Rejected ||
+                 r.Status == ReviewStatus.Solved) &&
+                r.EntityId != null)
+            .Select(r => r.EntityId!.Value)
+            .ToHashSetAsync(ct);
 
         foreach (var dto in degrees)
         {
-            if (dto.Id is null || dto.Id == Guid.Empty)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
-
-            if (!allowedEntityIds.Contains(dto.Id.Value))
+            var isNew = !dto.Id.HasValue || dto.Id == Guid.Empty;
+            if (!isNew && !allowedEntityIds.Contains(dto.Id!.Value))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var file = ResolveFile(dto, files);
@@ -135,8 +140,31 @@ public sealed class ReviseProfileEducationHandler(
 
             if (existingQualification is null)
             {
-                // INSERT NOT ALLOWED
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+                if (!isNew)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+                var qualification = new Qualification
+                {
+                    Id = Guid.NewGuid(),
+                    UserProfileId = profile.Id,
+                    DegreeId = dto.DegreeId,
+                    CountryId = dto.GradCountryId,
+                    UniversityId = dto.UniversityId,
+                    MajorId = dto.MajorId,
+                    SubMajorId = dto.SubMajorId,
+                    StudyTypeId = dto.StudyTypeId,
+                    RatingId = dto.GradeId,
+                    GraduationYear = dto.GradYear,
+                    GPA = dto.Gpa,
+                    CertificateId = certificateId
+                };
+
+                await educationRepo.DbSet.AddAsync(qualification, ct);
+                profile.Qualifications ??= [];
+                profile.Qualifications.Add(qualification);
+                await ReviewItemSaveHelper.CreateSolvedRowAsync(
+                    uow, profile, ProfileSection.Qualifications,
+                    ProfileReviewConstants.EntityNames.Qualification, qualification.Id, ct);
             }
             else
             {
@@ -156,6 +184,9 @@ public sealed class ReviseProfileEducationHandler(
 
         foreach (var dto in degrees)
         {
+            if (!dto.Id.HasValue || dto.Id == Guid.Empty)
+                continue;
+
             await ReviewItemSaveHelper.MarkRowSolvedAsync(
                 uow,
                 profile,

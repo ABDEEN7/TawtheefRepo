@@ -64,6 +64,7 @@ export interface ProfileApprovalSection {
   reviewedAtUtc?: string | null;
   items: ProfileApprovalItem[] | null;
   hasAttachments?: boolean;
+  internalReviewerNote?: string | null;
 }
 
 export interface BasicInformationSnapshot {

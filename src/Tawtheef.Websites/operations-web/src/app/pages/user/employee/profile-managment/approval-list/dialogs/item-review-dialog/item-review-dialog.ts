@@ -24,8 +24,6 @@ export interface ItemDialogResult {
   imports: [CommonModule, FormsModule, TranslateModule, DynamicDialogModule],
   template: `
     <div class="dialog-body">
-      <div class="muted small" *ngIf="data?.item">{{ data?.item?.title }}</div>
-
       <textarea
         *ngIf="data?.action !== 'approve'"
         rows="4"

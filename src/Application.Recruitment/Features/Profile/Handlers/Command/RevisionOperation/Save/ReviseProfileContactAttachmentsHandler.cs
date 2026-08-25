@@ -45,10 +45,13 @@ public sealed class ReviseProfileContactAttachmentsHandler(
                 .AsNoTracking()
                 .AnyAsync(r =>
                     r.UserProfileId == profile.Id &&
+                    r.ProfileChangeId == null &&
+                    !r.IsDeleted &&
                     r.Section == ProfileSection.Contact &&
                     r.TargetType == ReviewTargetType.Attachment &&
                     r.ResourceId == oldResourceId &&
                     (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Rejected ||
                      r.Status == ReviewStatus.Solved),
                     ct);
 

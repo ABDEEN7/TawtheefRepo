@@ -127,6 +127,8 @@ export class EndpointsService {
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
     startReview: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
     decision: (profileId: string, section: string) => this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
+    sectionInternalNote: (profileId: string, section: string) =>
+      this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/internal-note`),
     finalize: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
