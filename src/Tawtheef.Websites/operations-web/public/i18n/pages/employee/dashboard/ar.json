@@ -83,6 +83,8 @@
   "dashboard.status.readyForAnnouncement": "جاهزة للإعلان",
   "dashboard.status.Published": "منشورة",
   "dashboard.status.published": "منشورة",
+  "dashboard.status.Expired":"منتهية",
+  "dashboard.status.expired":"منتهية",
   "dashboard.validation.invalidEmployeeIdTitle": "رقم موظف غير صالح",
   "dashboard.validation.invalidEmployeeIdDescription": "يجب أن يكون رقم الموظف بصيغة GUID صحيحة (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).",
   "dashboard.workload.high": "مرتفع",
