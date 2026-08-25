@@ -114,6 +114,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     // Recruitment Tables
     public DbSet<Job> Jobs { get; set; }
     public DbSet<Invitation> Invitations { get; set; }
+    public DbSet<InvitationException> InvitationExceptions { get; set; }
     public DbSet<JobCondition> JobConditions { get; set; }
     public DbSet<JobDegree> JobDegrees { get; set; }
     public DbSet<JobPointConfiguration> JobPointConfigurations { get; set; }

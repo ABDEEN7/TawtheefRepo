@@ -8,6 +8,7 @@ import { Select } from 'primeng/select';
 import { DrawerModule } from 'primeng/drawer';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
 
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { PaginationComponent } from '../../../../../shared/components/pagination/pagination.component';
@@ -28,6 +29,7 @@ import { LanguageService } from '../../../../../core/services/language.service';
 import { MetricChipComponent } from '../../../../../shared/components/metric-chip/metric-chip.component';
 import { StatusBadgeComponent } from '../../../../../shared/components/status-badge/status-badge.component';
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import { InvitationSource } from '../../../../../core/enums/invitation-source.enum';
 
 
 @Component({
@@ -46,6 +48,7 @@ import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-opti
     DrawerModule,
     TextareaModule,
     TooltipModule,
+    TagModule,
     MetricChipComponent,
     StatusBadgeComponent
   ],
@@ -53,6 +56,7 @@ import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-opti
   styleUrl: './job-invitation-summary-details.component.scss',
 })
 export class JobInvitationSummaryDetailsComponent implements OnInit {
+  protected readonly InvitationSource = InvitationSource;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   detailsService = inject(JobInvitationSummaryDetailsService);

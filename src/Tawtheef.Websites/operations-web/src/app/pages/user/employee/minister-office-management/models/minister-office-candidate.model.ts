@@ -1,4 +1,6 @@
 import { PaginatedRequest } from "../../../../../core/models/paginated-request.model";
+import { InvitationSource } from '../../../../../core/enums/invitation-source.enum';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
 export enum MinisterOfficeCandidateStatus {
   NoProfile = 0,
@@ -49,11 +51,12 @@ export interface UpdateMinisterOfficeCandidatePhoneRequest {
 
 export interface MinisterOfficeCandidateInvitationDto {
   invitationId: string;
+  source: InvitationSource;
   jobTitleEn: string;
   jobTitleAr: string;
   organizationNameEn: string;
   organizationNameAr: string;
-  invitationStatus: any; 
+  invitationStatus: dropdownOptionsModel;
   invitedAt: string;
 }
 

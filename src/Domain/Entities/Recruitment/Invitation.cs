@@ -24,6 +24,8 @@ public class Invitation : EventEntity
     public Guid InvitationStatusId { get; set; }
     public InvitationStatus? InvitationStatus { get; init; }
 
+    public InvitationSource Source { get; init; } = InvitationSource.Normal;
+
     public Guid BatchNumber { get; init; }
     public DateOnly ExpiresOn  { get; init; }
     

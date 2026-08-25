@@ -55,6 +55,7 @@ public sealed class GetMinisterOfficeCandidateInvitationsQueryHandler(IUnitOfWor
             .Select(i => new MinisterOfficeCandidateInvitationDto
             {
                 InvitationId = i.Id,
+                Source = i.Source,
                 JobTitleEn = i.Job != null ? i.Job.JobTitle!.JobNameEn : string.Empty,
                 JobTitleAr = i.Job != null ? i.Job.JobTitle!.JobNameAr : string.Empty,
                 OrganizationNameEn = (i.Job != null && i.Job.WorkLocation != null) ? i.Job.WorkLocation.NameEn : string.Empty,

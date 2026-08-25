@@ -15,12 +15,13 @@
       }"></i>
   </span>
       <div>
-        <p class="mb-3">{{ config.data.description | translate }}</p>
+        <p class="mb-3">{{ config.data.description | translate: config.data.descriptionParams }}</p>
 
         <div class="form-group text-start mb-3" *ngIf="config.data.showInputField">
           <label class="form-label">{{ config.data.inputLabel | translate }}</label>
           <textarea class="form-control" rows="4"
                     [(ngModel)]="inputValue"
+                    [attr.maxlength]="config.data.inputMaxLength || null"
                     [placeholder]="config.data.inputPlaceholder | translate"
                     *ngIf="config.data.inputType === 'textarea'"></textarea>
           <input class="form-control" type="text"
@@ -35,7 +36,7 @@
           </button>
           <button class="btn rounded-pill"
                   (click)="onConfirm()"
-                  [disabled]="config.data.showInputField && !inputValue"
+                  [disabled]="isConfirmDisabled()"
                   [ngClass]="{
                 'btn-danger': config.data.type === 'delete',
                 'btn-primary': config.data.type === 'submit',

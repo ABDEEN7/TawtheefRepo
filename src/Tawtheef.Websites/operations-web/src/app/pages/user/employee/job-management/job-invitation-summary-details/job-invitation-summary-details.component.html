@@ -135,7 +135,17 @@
             <tbody>
               @for (row of rows(); track row.inviteId) {
               <tr>
-                <td class="fw-bold">{{ row.fullName }}</td>
+                <td>
+                  <div class="d-flex flex-column align-items-start gap-1">
+                    <span class="fw-bold">{{ row.fullName }}</span>
+                    @if (row.source === InvitationSource.Exceptional) {
+                    <p-tag severity="info" [rounded]="true"
+                      [value]="'common.invitationSource.exceptional' | translate">
+                      <i class="pi pi-star-fill me-1" style="font-size: 10px" aria-hidden="true"></i>
+                    </p-tag>
+                    }
+                  </div>
+                </td>
                 <td>{{ row.nationality }}</td>
                 <td>{{ row.personalNumber || '-' }}</td>
                 <td dir="ltr">{{ row.phone }}</td>

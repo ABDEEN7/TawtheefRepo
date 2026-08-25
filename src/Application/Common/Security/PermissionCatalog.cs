@@ -93,6 +93,11 @@ public static class PermissionCatalog
 
         Permissions.InvitationExpiryConfiguration.View,
         Permissions.InvitationExpiryConfiguration.Manage,
+
+        Permissions.Exceptions.View,
+        Permissions.Exceptions.Create,
+        Permissions.Exceptions.SendInvitation,
+        Permissions.Exceptions.Cancel,
     ]);
 
     public static readonly ISet<string> Keys =
