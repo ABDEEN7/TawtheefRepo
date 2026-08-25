@@ -9,6 +9,7 @@ export enum CandidateType {
   SonOfQatariMother = "SonOfQatariMother",
   WifeOfQatari = "WifeOfQatari",
   QidHolder = "QidHolder",
+  PermanentResident = "PermanentResident",
 }
 
 /* ---------------------------------------------
