@@ -286,7 +286,7 @@ export class Dashboard implements OnInit {
         navigation: {
           route: routes.portal.ministerOfficeManagement,
           requiredPermission: Permissions.MinisterOffice.View,
-          requiresDashboardManage: false,
+          requiresDashboardManage: true,
         },
       },
       {
@@ -297,7 +297,7 @@ export class Dashboard implements OnInit {
         navigation: {
           route: routes.portal.kawader,
           requiredPermission: Permissions.Kawader.Manage,
-          requiresDashboardManage: false,
+          requiresDashboardManage: true,
         },
       },
     ];
