@@ -1,3 +1,43 @@
+
+  <!-- ===== Personal Info Header ===== -->
+<div class="profile-header mb-4" i18nNamespace="pages/user/dashboard">
+  <div class="d-flex align-items-center gap-3">
+
+    <div id="profile-avatar" class="profile-avatar">
+                  <img
+          [src]="candidate()?.photoUrl || defaultAvatar"
+          [alt]="candidate()?.fullName"
+          (error)="onPhotoError($event)"
+        />
+              </div>
+
+    <div class="profile-info">
+      <h3 class="profile-name mb-2">{{ candidate()?.fullName }}</h3>
+
+      <ul class="profile-meta list-unstyled d-flex flex-wrap align-items-center mb-0">
+        <li>
+          <i class="pi pi-envelope"></i>
+          <span dir="ltr">{{ candidate()?.email }}</span>
+        </li>
+                <li>
+          <i class="pi pi-phone"></i>
+          <span dir="ltr">{{ candidate()?.phone }}</span>
+        </li>
+                <li>
+          <i class="pi pi-map-marker"></i>
+          <span>{{ candidate()?.country }}</span>
+        </li>
+        <li>
+          <i class="pi pi-map"></i>
+          <span>{{ candidate()?.address }}</span>
+        </li>       
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+
 <div class="card card-table mb-4" i18nNamespace="pages/user/dashboard">
   <div class="card-body">
     <div class="container-fluid">
@@ -47,7 +87,7 @@
                         <div class="h2 fw-bold text-danger">{{ getRejectedCount() }}</div>
                         <p class="m-0">{{ 'candidate_dashboard.kpi_rejected' | translate }}</p>
                       </div>
-                      <div><i class="hgi hgi-stroke hgi-cancel-01 text-danger h2"></i></div>
+                      <div><i class="hgi hgi-stroke hgi-cancel-circle text-danger h2"></i></div>
                     </div>
                   </div>
                 </div>
@@ -61,6 +101,9 @@
         <div class="col-12">
           <div class="card card-table">
             <div class="card-body">
+              <div class="col-md-9">
+                <h6 class="mb-1 fw-bold">{{ 'candidate_dashboard.joblist' | translate }}</h6>
+              </div>
               <div class="row align-items-center">
                 <div class="col-md-3">
                   <label class="form-label">{{ 'candidate_dashboard.filter_status' | translate }}</label>

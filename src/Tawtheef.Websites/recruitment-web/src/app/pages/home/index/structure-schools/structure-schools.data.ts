@@ -1,27 +1,4 @@
 import { OrgChartNode } from './structure-schools.model';
-
-/**
- * Static placeholder mirroring structure.md. Replace with an API call
- * returning the same OrgChartNode[] shape once the backend is ready.
- *
- * Plain literal tree, no generator functions — `key` identifies each node
- * (used for childrenByKey caching, data-node-key, and
- * StructureSchools.collapseOtherDeepNodes' ancestor matching, which
- * depends on its hierarchical underscore-prefix format, e.g. '0_0_p' is
- * an ancestor of '0_0_p_0') and must stay as-is.
- *
- * `title`/`description` are translation keys, not literal text — but
- * deliberately *not* named after `key` (e.g. "0_0_p_1_9" told you nothing
- * about which node it was). Each uses a readable slug instead (e.g.
- * "schoolsAdminSocialWorker"), prefixed by branch/role to stay unique
- * where job titles repeat across branches (e.g. "IT Technician" exists
- * under both Schools and Specialized Schools). Real copy lives in
- * public/i18n/pages/schools-structure/{en,ar}.json under
- * "OrganizationalStructure.nodes.<slug>.title" / ".description" — edit
- * those JSON files to change what's shown, not this file. One language
- * for both — ngx-translate's `| translate` pipe resolves the active
- * language reactively, so there's no separate EN/AR tree anymore.
- */
 export const SCHOOLS_STRUCTURE: OrgChartNode[] = [
   {
     key: '0',

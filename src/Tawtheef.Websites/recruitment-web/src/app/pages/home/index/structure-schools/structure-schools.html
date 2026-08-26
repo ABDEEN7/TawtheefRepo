@@ -74,14 +74,6 @@
       </p-organization-chart>
     </div>
   } @else {
-    <!--
-      Mobile: PrimeNG's org chart is a <table>-based horizontal layout and
-      can't reflow into a vertical accordion via CSS, so below the same
-      767.98px breakpoint pages/home/structure uses, this renders a plain
-      recursive list instead — matching that page's own mobile fallback,
-      which drops connector lines entirely and relies on indentation.
-    -->
-
     <div class="mobile-tree">
       <ng-container
         *ngTemplateOutlet="mobileNodeList; context: { $implicit: organizationData }"
@@ -115,12 +107,7 @@
     
   </p-dialog>
 
-  <!--
-    Recursive mobile node list — one level of the tree per call, calling
-    itself for a node's children when expanded. Reuses node.data.level
-    (already computed in buildNode for the desktop cards) to pick the
-    same per-level color via .mobile-node--level-N.
-  -->
+
 
   <ng-template #mobileNodeList let-nodes>
     <div class="mobile-tree-list">
