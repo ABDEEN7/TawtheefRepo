@@ -156,7 +156,6 @@
   gap: 1rem;
   padding: 1rem;
   border: 1px solid rgba($brand, .2);
-  border-inline-start: 4px solid $brand;
   border-radius: $radius;
   background: rgba($brand, .035);
 }
@@ -273,6 +272,8 @@
 }
 
 .resubmit-cta__button {
+  margin-inline-start: auto;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -301,6 +302,7 @@
     width: 100%;
   }
 }
+
 
 @media (max-width: 576px) {
   .correction-summary {
@@ -430,13 +432,11 @@
   background: #fff;
 
   &--action {
-    border-inline-start: 4px solid #d97706;
-    background: linear-gradient(90deg, rgba(217, 119, 6, .07), #fff 38%);
+    background: linear-gradient(rgba(217, 119, 6, .07), #fff 100%);
   }
 
   &--done {
-    border-inline-start: 4px solid $ok;
-    background: linear-gradient(90deg, rgba($ok, .08), #fff 38%);
+    background: linear-gradient(rgba(31, 146, 84, 0.08), #fff 100%);
   }
 }
 

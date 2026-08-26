@@ -103,7 +103,7 @@ internal static class ReviewItemSaveHelper
             !candidate.IsDeleted,
             ct);
 
-        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected or ReviewStatus.Solved)
+        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected)
             return;
 
         item.Status = ReviewStatus.NeedsCorrection;

@@ -57,7 +57,7 @@ public sealed class ReviseProfilePrereqHandler(
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
-        var previousRequirements = ConditionalRequirements.For(profile.CandidateTypeId, profile.Provider);
+        var previouslyRequiredSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
 
         if (!isLockedProvider || !CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId))
             profile.CandidateTypeId = r.CandidateTypeId;
@@ -134,7 +134,7 @@ public sealed class ReviseProfilePrereqHandler(
                 uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
-        var removedSponsor = previousRequirements.RequiresSponsor && !requirements.RequiresSponsor
+        var removedSponsor = previouslyRequiredSponsor && !requirements.RequiresSponsor
             ? profile.SponsorProfile
             : null;
         var removedResidenceAddress = !requirements.RequiresNationalAddress
@@ -146,7 +146,9 @@ public sealed class ReviseProfilePrereqHandler(
         if (removedResidenceAddress is not null)
             await uow.GetEntityRepository<ResidenceAddress>().DeleteAsync(removedResidenceAddress);
 
-        if (!previousRequirements.RequiresSponsor && requirements.RequiresSponsor)
+        if (!previouslyRequiredSponsor &&
+            requirements.RequiresSponsor &&
+            SponsorRequiresCandidateWork())
         {
             await ReviewItemSaveHelper.ReopenSectionDataForCorrectionAsync(
                 uow,
@@ -154,36 +156,12 @@ public sealed class ReviseProfilePrereqHandler(
                 ProfileSection.Personal,
                 ct);
         }
-        else if (previousRequirements.RequiresSponsor && !requirements.RequiresSponsor)
+        else if (previouslyRequiredSponsor && !requirements.RequiresSponsor)
         {
             await ReviewItemSaveHelper.MarkSystemAppliedSectionDataSolvedAsync(
                 uow,
                 profile,
                 ProfileSection.Personal,
-                ct);
-        }
-
-        var introducesContactRequirement =
-            !previousRequirements.RequiresNationalAddress && requirements.RequiresNationalAddress ||
-            !previousRequirements.RequiresOffice && requirements.RequiresOffice;
-        var removesContactRequirement =
-            previousRequirements.RequiresNationalAddress && !requirements.RequiresNationalAddress ||
-            previousRequirements.RequiresOffice && !requirements.RequiresOffice;
-
-        if (introducesContactRequirement)
-        {
-            await ReviewItemSaveHelper.ReopenSectionDataForCorrectionAsync(
-                uow,
-                profile,
-                ProfileSection.Contact,
-                ct);
-        }
-        else if (removesContactRequirement)
-        {
-            await ReviewItemSaveHelper.MarkSystemAppliedSectionDataSolvedAsync(
-                uow,
-                profile,
-                ProfileSection.Contact,
                 ct);
         }
 
@@ -222,6 +200,18 @@ public sealed class ReviseProfilePrereqHandler(
 
             if (!requirements.RequiresOffice)
                 profile.OfficeId = null;
+        }
+
+        bool SponsorRequiresCandidateWork()
+        {
+            var sponsor = profile.SponsorProfile;
+            return sponsor is null ||
+                   sponsor.SponsorTypeId == Guid.Empty ||
+                   string.IsNullOrWhiteSpace(sponsor.SponsorName) ||
+                   string.IsNullOrWhiteSpace(sponsor.SponsorNumber) ||
+                   sponsor.QIDExpiry is null ||
+                   sponsor.SponsorCardId is null ||
+                   sponsor.SponsorCardId == Guid.Empty;
         }
 
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId, string category)

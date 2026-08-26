@@ -53,7 +53,7 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
             ActionType = UserProfileLogConstants.ActionTypes.ProfileReviewStarted,
             Notes = startReviewNote,
             Section = nameof(ProfileSection.Personal)
-        });
+        }, ct);
 
         await loggerRepo.AddAsync(new UserProfileLogger
         {
@@ -63,7 +63,7 @@ public sealed class StartUserProfileReviewHandler(IUnitOfWork uow)
             Notes = startReviewNote,
             Section = nameof(ProfileSection.Personal),
             ReviewStatus = ReviewStatus.Pending
-        });
+        }, ct);
 
         await uow.SaveChangesAsync(ct);
 

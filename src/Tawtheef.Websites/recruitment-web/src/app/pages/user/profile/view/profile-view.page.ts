@@ -111,7 +111,7 @@ export class ProfileViewPage {
   protected readonly ProfileSectionEnum = ProfileSectionEnum;
   protected readonly resubmitting = signal(false);
   protected readonly availabilitySaving = signal(false);
-  protected readonly showRequiredOnly = signal(true);
+  protected readonly showRequiredOnly = signal(false);
   private readonly emptyVisibility: ProfileOverviewVisibility = {
     type: undefined,
     isResident: false,
@@ -264,21 +264,13 @@ export class ProfileViewPage {
     if (!this.isCorrectionMode() || !this.showRequiredOnly()) return this.cards;
     return this.cards.filter(card => this.sectionCorrectionState(card.section) !== 'none');
   });
+  
   private readonly correctionFocusEffect = effect(() => {
     if (!this.isCorrectionMode() || !this.showRequiredOnly()) return;
     if (this.sectionCorrectionState(this.expanded()) !== 'none') return;
 
     const firstRelevantSection = this.visibleCards()[0]?.section;
     if (firstRelevantSection) this.expanded.set(firstRelevantSection);
-  });
-  readonly resubmitBlockerKey = computed(() => {
-    if (this.outstandingCorrectionsCount() > 0) {
-      return 'profileOverview.correctionWorkspace.blockedByCorrections';
-    }
-    if (!this.reviewNotes()?.hasSavedChanges) {
-      return 'profileOverview.correctionWorkspace.blockedByUnsavedChanges';
-    }
-    return 'profileOverview.correctionWorkspace.blockedByRequirements';
   });
 
   readonly statusVm = computed(() => {

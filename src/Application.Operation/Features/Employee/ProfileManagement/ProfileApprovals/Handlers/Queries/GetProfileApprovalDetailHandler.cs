@@ -21,14 +21,16 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Handlers.Queries;
 
-public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper, 
-    IMediaUrlResolver media, ILocalizationService localization)
+public class GetProfileApprovalDetailHandler(
+    IUnitOfWork uow,
+    IMapper mapper,
+    IMediaUrlResolver media,
+    ILocalizationService localization)
     : IRequestHandler<GetProfileApprovalDetailQuery, Result<GetProfileApprovalDetailDto>>
 {
     public async Task<Result<GetProfileApprovalDetailDto>> Handle(GetProfileApprovalDetailQuery request,
         CancellationToken ct)
     {
-        
         var profile = await UserProfileLoader.GetFullProfileByProfileId(uow, request.UserProfileId, ct: ct);
         if (profile is null)
             return Result.Fail<GetProfileApprovalDetailDto>(ErrorsCodes.UserProfileNotFound);
@@ -50,9 +52,9 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             var isAssigned = await uow.GetEntityRepository<ProfileAssignment>().DbSet
                 .AsNoTracking()
                 .AnyAsync(assignment =>
-                    assignment.UserProfileId == profile.Id &&
-                    assignment.EmployeeId == request.OfficerId &&
-                    assignment.IsActive,
+                        assignment.UserProfileId == profile.Id &&
+                        assignment.EmployeeId == request.OfficerId &&
+                        assignment.IsActive,
                     ct);
 
             if (!isAssigned)
@@ -96,6 +98,7 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
             await FullReviewSectionStateSync.SyncAsync(
                 uow, profile, section, request.OfficerId, DateTime.UtcNow, ct);
         }
+
         await uow.SaveChangesAsync(ct);
 
         // ===== Reviews =====
@@ -200,26 +203,27 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         };
         var openProfileNote = JsonSerializer.Serialize(new
         {
-            eventType = "OpenProfile",
-            message = UserProfileLogConstants.Notes.ProfileOpenedForReview
+            eventType = "OpenProfile", message = UserProfileLogConstants.Notes.ProfileOpenedForReview
         });
 
-        await auditRepo.AddAsync(new AuditTrailEntry
-        {
-            UserProfileId = profile.Id,
-            UserId = request.OfficerId,
-            ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
-            Notes = openProfileNote,
-            Section = nameof(ProfileSection.Personal)
-        }, ct);
-        await loggerRepo.AddAsync(new UserProfileLogger
-        {
-            UserProfileId = profile.Id,
-            PerformedById = request.OfficerId,
-            ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
-            Notes = openProfileNote,
-            Section = nameof(ProfileSection.Personal)
-        }, ct);
+        await auditRepo.AddAsync(
+            new AuditTrailEntry
+            {
+                UserProfileId = profile.Id,
+                UserId = request.OfficerId,
+                ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
+                Notes = openProfileNote,
+                Section = nameof(ProfileSection.Personal)
+            }, ct);
+        await loggerRepo.AddAsync(
+            new UserProfileLogger
+            {
+                UserProfileId = profile.Id,
+                PerformedById = request.OfficerId,
+                ActionType = UserProfileLogConstants.ActionTypes.OpenProfile,
+                Notes = openProfileNote,
+                Section = nameof(ProfileSection.Personal)
+            }, ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(dto);
@@ -230,7 +234,8 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
 
             if (source.Any(i => i.Status == ReviewStatus.NeedsCorrection)) return ReviewStatus.NeedsCorrection;
             if (source.Any(i => i.Status == ReviewStatus.Rejected)) return ReviewStatus.Rejected;
-            if (source.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed or ReviewStatus.Solved)) return ReviewStatus.Pending;
+            if (source.Any(i => i.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed or ReviewStatus.Solved))
+                return ReviewStatus.Pending;
 
             return source.Count == 0 ? ReviewStatus.Pending : ReviewStatus.Approved;
         }
@@ -283,4 +288,3 @@ public class GetProfileApprovalDetailHandler(IUnitOfWork uow, IMapper mapper,
         }
     }
 }
-
