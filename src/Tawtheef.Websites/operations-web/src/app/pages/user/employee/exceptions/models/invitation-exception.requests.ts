@@ -8,7 +8,14 @@ export interface InvitationExceptionsRequest extends PaginatedRequest {
 }
 
 export interface ExceptionJobsRequest extends PaginatedRequest {
+  managementId: GUID;
+  departmentId?: GUID;
   searchTerm?: string;
+}
+
+export interface ExceptionOrganizationLookupRequest extends PaginatedRequest {
+  search?: string;
+  managementId?: GUID;
 }
 
 export interface CreateInvitationExceptionRequest {
