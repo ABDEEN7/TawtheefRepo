@@ -58,8 +58,6 @@ export class InvitationsDialog implements OnInit {
   readonly filters = computed<OperationsDashboardFilters>(() => this.config.data.filters);
   readonly canExport = computed<boolean>(() => this.config.data.canExport);
   readonly InvitationSource = InvitationSource;
-  @ViewChild('chart', { read: ElementRef })
-  private chart?: ElementRef<HTMLElement>;
 
   private readonly api = inject(OperationsDashboardService);
   private readonly chartExport = inject(DashboardChartExportService);
