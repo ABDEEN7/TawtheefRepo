@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.Dashboard.Queries.Employees;
 using Application.Operation.Features.Employee.Dashboard.Queries.Export;
+using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Export;
 using Application.Operation.Features.Employee.Dashboard.Services.Read;
 using Application.Operation.Features.Employee.Dashboard.Services.Time;
@@ -10,6 +11,7 @@ using Tawtheef.Application.Common.Models.Export;
 namespace Application.Operation.Features.Employee.Dashboard.Handlers.Queries.Export;
 
 internal sealed class ExportDashboardListQueryHandler(
+    DashboardAccessContextProvider accessContextProvider,
     DashboardOverviewReader overviewReader,
     DashboardJobsReader jobsReader,
     DashboardInvitationsReader invitationsReader,
@@ -61,7 +63,11 @@ internal sealed class ExportDashboardListQueryHandler(
 
     private async Task<Result<FileExportResult>> ExportEmployeesAsync(ExportDashboardListQuery request, CancellationToken ct)
     {
-        var overview = await overviewReader.ReadAsync(request, ct);
+        var contextResult = await accessContextProvider.GetAsync(ct);
+        if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
+
+        var context = contextResult.Value;
+        var overview = await overviewReader.ReadAsync(request, context, ct);
         if (overview.IsFailed) return Result.Fail(overview.Errors);
         var employees = await employeesReader.ReadExportAsync(new GetTeamPerformanceQuery(
             request.FromDateUtc,
@@ -72,7 +78,7 @@ internal sealed class ExportDashboardListQueryHandler(
         {
             SortBy = request.SortBy,
             SortDirection = request.SortDirection
-        }, ct);
+        }, context, ct);
         return employees.IsFailed
             ? Result.Fail(employees.Errors)
             : Result.Ok(employeesExporter.Export(overview.Value.Kpis, employees.Value));

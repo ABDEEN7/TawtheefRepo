@@ -10,6 +10,7 @@ public static class PermissionKeys
     {
         public const string View = "dashboard.view";
         public const string Export = "dashboard.export";
+        public const string Manage = "dashboard.manage";
     }
 
     public static class Roles

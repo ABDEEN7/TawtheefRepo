@@ -10,13 +10,17 @@
   }
 
   <div class="filter-toolbar__actions">
-    <button pButton type="button" class="p-button-outlined" (click)="advancedToggled.emit()">
-      <i [class]="advancedExpanded() ? 'pi pi-chevron-up' : 'pi pi-filter'" pButtonIcon></i>
-      <span pButtonLabel>{{ advancedLabel() }}</span>
-      @if (activeAdvancedCount() > 0) {
-        <span class="filter-count">{{ activeAdvancedCount() }}</span>
-      }
-    </button>
+    @if (showAdvanced()) {
+      <button pButton type="button" class="p-button-outlined" (click)="advancedToggled.emit()">
+        <i [class]="advancedExpanded() ? 'pi pi-chevron-up' : 'pi pi-filter'" pButtonIcon></i>
+        <span pButtonLabel>{{ advancedLabel() }}</span>
+        @if (activeAdvancedCount() > 0) {
+          <span class="filter-count">{{ activeAdvancedCount() }}</span>
+        }
+      </button>
+    } @else if (activeAdvancedCount() > 0) {
+      <span class="filter-count">{{ activeAdvancedCount() }}</span>
+    }
 
     @if (showClear()) {
       <button

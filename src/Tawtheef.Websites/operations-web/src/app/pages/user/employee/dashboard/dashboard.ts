@@ -3,9 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   OnInit,
-  ViewChild,
   computed,
   inject,
   signal,
@@ -13,12 +11,13 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { ChartData } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
 import 'chart.js/auto';
 import { ChartModule } from 'primeng/chart';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
-import { catchError, finalize, of } from 'rxjs';
+import { DialogService, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { catchError, finalize, map, merge, of } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { FontSizeService } from '../../../../core/services/font-size.service';
@@ -36,7 +35,7 @@ import {
 } from './models/dashboard-overview.model';
 import { JobKpis } from './models/dashboard-jobs.model';
 import { OperationsDashboardFilters } from './models/dashboard-filters.model';
-import { DashboardDialog, MainIndicator, QuickAction } from './models/dashboard-ui.model';
+import { MainIndicator, QuickAction } from './models/dashboard-ui.model';
 import { employeeAssignmentTranslationKey } from './models/dashboard-employees.model';
 import {
   DashboardChartExportItem,
@@ -61,24 +60,13 @@ import {
     ChartModule,
     Menu,
     TranslatePipe,
-    CandidatesDialog,
-    JobsDialog,
-    EmployeesDialog,
-    InvitationsDialog,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DialogService],
 })
 export class Dashboard implements OnInit {
-  @ViewChild('mainCandidatesChart', { read: ElementRef })
-  private mainCandidatesChart?: ElementRef<HTMLElement>;
-  @ViewChild('mainJobsChart', { read: ElementRef }) private mainJobsChart?: ElementRef<HTMLElement>;
-  @ViewChild('mainEmployeesChart', { read: ElementRef })
-  private mainEmployeesChart?: ElementRef<HTMLElement>;
-  @ViewChild('mainInvitationsChart', { read: ElementRef })
-  private mainInvitationsChart?: ElementRef<HTMLElement>;
-
   private readonly api = inject(OperationsDashboardService);
   private readonly chartExport = inject(DashboardChartExportService);
   private readonly translate = inject(TranslateService);
@@ -86,7 +74,10 @@ export class Dashboard implements OnInit {
   private readonly router = inject(Router);
   private readonly fontSize = inject(FontSizeService);
   private readonly files = inject(FileUtilsService);
+  private readonly dialogs = inject(DialogService);
   private readonly languageChange = toSignal(this.translate.onLangChange, { initialValue: null });
+  private readonly exportSummaryLabel = this.translationSignal('dashboard.export.summary');
+  private readonly exportChartsLabel = this.translationSignal('dashboard.export.charts');
 
   readonly fontScale = toSignal(this.fontSize.scale$, { initialValue: 1 as number });
   readonly overview = signal<DashboardOverview | null>(null);
@@ -98,12 +89,12 @@ export class Dashboard implements OnInit {
     year: this.selectedYear(),
     status: '',
   });
-  readonly activeDialog = signal<DashboardDialog | null>(null);
   readonly exportInProgress = signal(false);
-  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7];
-  readonly chartOptions = {
+  readonly kpiSkeletonItems = [1, 2, 3, 4, 5, 6, 7, 8];
+  readonly chartOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     maintainAspectRatio: false,
+    locale: 'en-US',
     cutout: '72%',
     animation: {
       animateRotate: true,
@@ -117,16 +108,66 @@ export class Dashboard implements OnInit {
   readonly canExportDashboard = computed(() =>
     this.auth.hasPermission(Permissions.Dashboard.Export),
   );
+  readonly canManageDashboard = computed(() =>
+    this.auth.hasPermission(Permissions.Dashboard.Manage),
+  );
+  readonly canViewCandidatesSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.CandidateUsers.View,
+      Permissions.ProfileDistribution.View,
+      Permissions.ProfileDistribution.Manage,
+      Permissions.ProfileApproval.View,
+      Permissions.ProfileApproval.Review,
+      Permissions.ProfileApproval.Changes,
+    ]),
+  );
+  readonly canViewJobsSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.Jobs.View,
+      Permissions.Jobs.Edit,
+      Permissions.Jobs.Approve,
+      Permissions.Jobs.SendInvitation,
+      Permissions.Jobs.Cancel,
+      Permissions.Jobs.Create,
+      Permissions.Jobs.Publish,
+      Permissions.Jobs.Delete,
+      Permissions.Jobs.Clone,
+    ]),
+  );
+  readonly canViewEmployeesSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.ProfileDistribution.View,
+      Permissions.ProfileDistribution.Manage,
+      Permissions.ProfileApproval.View,
+      Permissions.ProfileApproval.Review,
+      Permissions.ProfileApproval.Changes,
+    ]),
+  );
+  readonly canViewInvitationsSummary = computed(() =>
+    this.canManageDashboard() ||
+    this.auth.hasPermission([
+      Permissions.JobInvitations.View,
+      Permissions.Jobs.SendInvitation,
+    ]),
+  );
+  readonly canViewOperationalSummary = computed(() =>
+    this.canViewCandidatesSummary() ||
+    this.canViewJobsSummary() ||
+    this.canViewEmployeesSummary() ||
+    this.canViewInvitationsSummary(),
+  );
   readonly exportActions = computed<MenuItem[]>(() => {
-    this.languageChange();
     return [
       {
-        label: this.translate.instant('dashboard.export.summary'),
+        label: this.exportSummaryLabel(),
         icon: 'pi pi-file-excel',
         command: () => this.exportDashboardSummary(),
       },
       {
-        label: this.translate.instant('dashboard.export.charts'),
+        label: this.exportChartsLabel(),
         icon: 'pi pi-images',
         command: () => void this.exportDashboardCharts(),
       },
@@ -238,11 +279,26 @@ export class Dashboard implements OnInit {
         navigation: dashboardDrilldowns.totalInvitations(this.selectedYear()),
       },
       {
-        labelKey: 'dashboard.kpi.acceptedInvitations',
-        value: invitations.acceptedInvitations,
-        icon: 'hgi-user-add-01',
-        color: 'purple',
-        trend: this.overview()?.kpiTrends.acceptedInvitations,
+        labelKey: 'dashboard.kpi.ministerOffice',
+        value: profiles.followedMinisterOfficeCandidates ?? 0,
+        icon: 'hgi-office',
+        color: 'blue',
+        navigation: {
+          route: routes.portal.ministerOfficeManagement,
+          requiredPermission: Permissions.MinisterOffice.View,
+          requiresDashboardManage: true,
+        },
+      },
+      {
+        labelKey: 'dashboard.kpi.cadresFiles',
+        value: profiles.kawaderFiles ?? 0,
+        icon: 'hgi-user-multiple',
+        color: 'green',
+        navigation: {
+          route: routes.portal.kawader,
+          requiredPermission: Permissions.Kawader.Manage,
+          requiresDashboardManage: true,
+        },
       },
     ];
   });
@@ -256,10 +312,6 @@ export class Dashboard implements OnInit {
   }));
 });
 
-  readonly employeeWorkloadTotal = computed(() =>
-    this.employeesSummaryItems().reduce((total, item) => total + item.count, 0),
-  );
-
   readonly jobsSummaryItems = computed<DashboardChartExportItem[]>(() =>
   (this.overview()?.jobBreakdown.byStatus ?? []).map((item) => ({
     label: item.label,
@@ -268,23 +320,18 @@ export class Dashboard implements OnInit {
   })),
   );
 
-  readonly employeesSummaryItems = computed(() =>
-  (this.overview()?.taskMonitoring.taskStatusStacked ?? []).map((item) => ({
-    labelKey: employeeAssignmentTranslationKey(item.label),
-    count: item.count,
-    color: employeeWorkloadColor(item.label),
-  })),
-);
-
-  readonly employeeWorkloadChartItems = computed<DashboardChartExportItem[]>(() => {
+  readonly employeeWorkloadItems = computed<DashboardChartExportItem[]>(() => {
     this.languageChange();
 
-    return this.employeesSummaryItems().map((item) => ({
-      label: this.translate.instant(item.labelKey),
+    return (this.overview()?.taskMonitoring.taskStatusStacked ?? []).map((item) => ({
+      label: this.translate.instant(employeeAssignmentTranslationKey(item.label)),
       count: item.count,
-      color: item.color,
+      color: employeeWorkloadColor(item.label),
     }));
   });
+  readonly employeeWorkloadTotal = computed(() =>
+    this.employeeWorkloadItems().reduce((total, item) => total + item.count, 0),
+  );
 
   readonly invitationsSummaryItems = computed(() => {
   const invitations = this.activeInvitationKpis();
@@ -325,8 +372,9 @@ export class Dashboard implements OnInit {
   );
 
   readonly visibleEmployeesChartData = computed<ChartData<'doughnut'>>(() =>
-    this.chartData(this.employeeWorkloadChartItems()),
+    this.chartData(this.employeeWorkloadItems()),
   );
+
   readonly visibleInvitationsChartData = computed<ChartData<'doughnut'>>(() =>
     this.chartData(this.localized(this.invitationsSummaryItems())),
   );
@@ -354,8 +402,11 @@ export class Dashboard implements OnInit {
     if (!Number.isInteger(year) || year === this.selectedYear()) return;
     this.selectedYear.set(year);
     this.applyYearFilter();
-    this.activeDialog.set(null);
     this.loadOverview();
+  }
+  onYearSelectionChange(event: Event): void {
+    if (!(event.target instanceof HTMLSelectElement)) return;
+    this.onYearChange(Number(event.target.value));
   }
 
   trendClass(trend?: DashboardMetricTrend): string {
@@ -378,19 +429,49 @@ export class Dashboard implements OnInit {
       .subscribe((result) => this.overview.set(result));
   }
   openCandidatesModal(): void {
-    this.activeDialog.set('Candidates');
+    const overview = this.overview();
+    if (!overview) return;
+    this.dialogs.open(CandidatesDialog, this.dialogConfig(
+      'dashboard.modals.candidates.title', 'min(1100px, 92vw)',
+      { breakdown: overview.profileBreakdown, kpis: overview.kpis, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
+    ));
   }
   openJobsModal(): void {
-    this.activeDialog.set('Jobs');
+    const overview = this.overview();
+    if (!overview) return;
+    this.dialogs.open(JobsDialog, this.dialogConfig(
+      'dashboard.modals.jobs.title', 'min(1200px, 94vw)',
+      { kpis: overview.jobKpis, breakdown: overview.jobBreakdown, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
+    ));
   }
   openEmployeesModal(): void {
-    this.activeDialog.set('Employees');
+    const overview = this.overview();
+    if (!overview) return;
+    this.dialogs.open(EmployeesDialog, this.dialogConfig(
+      'dashboard.modals.employees.title', 'min(1250px, 95vw)',
+      { kpis: overview.kpis, monitoring: overview.taskMonitoring, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
+    ));
   }
   openInvitationsModal(): void {
-    this.activeDialog.set('Invitations');
+    const overview = this.overview();
+    if (!overview) return;
+    this.dialogs.open(InvitationsDialog, this.dialogConfig(
+      'dashboard.modals.invitations.title', 'min(1150px, 92vw)',
+      { kpis: overview.invitationKpis, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
+    ));
   }
-  closeDialog(): void {
-    this.activeDialog.set(null);
+  private dialogConfig<TData extends object>(
+    headerKey: string,
+    width: string,
+    data: TData,
+  ): DynamicDialogConfig<TData> {
+    return {
+      header: this.translate.instant(headerKey), width, modal: true, closable: true,
+      closeOnEscape: true, dismissableMask: true, draggable: false,
+      styleClass: 'dashboard-dynamic-dialog',
+      contentStyle: { padding: '0', 'overflow-y': 'auto', 'max-height': 'calc(100dvh - 8rem)' },
+      breakpoints: { '768px': '96vw' }, data,
+    };
   }
   navigateQuickAction(action: QuickAction): void {
     if (this.auth.hasPermission(action.permission, action.requireAll ?? false))
@@ -399,6 +480,7 @@ export class Dashboard implements OnInit {
   isIndicatorNavigable(indicator: MainIndicator): boolean {
     return (
       indicator.navigation != null &&
+      (indicator.navigation.requiresDashboardManage === false || this.canManageDashboard()) &&
       this.auth.hasPermission(indicator.navigation.requiredPermission)
     );
   }
@@ -408,7 +490,6 @@ export class Dashboard implements OnInit {
       queryParams: indicator.navigation!.queryParams,
     });
   }
-
   exportDashboardSummary(): void {
     if (this.exportInProgress()) return;
     this.exportInProgress.set(true);
@@ -424,28 +505,24 @@ export class Dashboard implements OnInit {
     try {
       await this.chartExport.download([
         this.exportSpec(
-          this.mainCandidatesChart,
           'dashboard.export.files.candidates',
           'dashboard.operationalSummary.candidates',
           this.activeKpis().totalProfiles,
           this.candidateSummaryItems(),
         ),
         this.exportSpec(
-          this.mainJobsChart,
           'dashboard.export.files.jobs',
           'dashboard.operationalSummary.jobs',
           this.activeJobKpis().totalJobs,
           this.jobsSummaryItems(),
         ),
         this.exportSpec(
-          this.mainEmployeesChart,
           'dashboard.export.files.employees',
           'dashboard.operationalSummary.employees',
           this.employeeWorkloadTotal(),
-          this.employeeWorkloadChartItems(),
+          this.employeeWorkloadItems(),
         ),
         this.exportSpec(
-          this.mainInvitationsChart,
           'dashboard.export.files.invitations',
           'dashboard.operationalSummary.invitations',
           this.activeInvitationKpis().totalInvitations,
@@ -483,21 +560,29 @@ export class Dashboard implements OnInit {
     this.languageChange();
     return items.map((item) => ({ ...item, label: this.translate.instant(item.labelKey) }));
   }
+  private translationSignal(key: string) {
+    return toSignal(
+      merge(
+        this.translate.stream(key),
+        this.translate.getStreamOnTranslationChange(key),
+      ).pipe(map((value) => (typeof value === 'string' ? value : key))),
+      { initialValue: key },
+    );
+  }
   private exportSpec(
-    host: ElementRef<HTMLElement> | undefined,
     filenameKey: string,
     titleKey: string,
-    total: number,
+    total: number | undefined,
     items: DashboardChartExportItem[],
   ) {
     return {
-      host: host?.nativeElement,
       filename: this.translate.instant(filenameKey),
       title: this.translate.instant(titleKey),
       totalLabel: this.translate.instant('dashboard.common.total'),
       total,
       items,
       direction: this.translate.currentLang === 'ar' ? ('rtl' as const) : ('ltr' as const),
+      locale: 'en-US',
     };
   }
   private downloadExport(response: HttpResponse<Blob>): void {
@@ -532,6 +617,7 @@ export class Dashboard implements OnInit {
       overdueTasks: 0,
       unassignedProfiles: 0,
       followedMinisterOfficeCandidates: 0,
+      kawaderFiles: 0,
     };
   }
   private defaultJobKpis(): JobKpis {

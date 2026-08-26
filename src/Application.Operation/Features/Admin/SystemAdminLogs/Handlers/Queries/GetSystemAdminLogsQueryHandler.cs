@@ -6,6 +6,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Logger;
@@ -16,7 +17,8 @@ namespace Application.Operation.Features.Admin.SystemAdminLogs.Handlers.Queries;
 
 public sealed class GetSystemAdminLogsQueryHandler(
     IUnitOfWork uow,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    ILocalizationService localizationService)
     : IRequestHandler<GetSystemAdminLogsQuery, IResult<PaginatedResult<SystemAdminLogDto>>>
 {
     public async Task<IResult<PaginatedResult<SystemAdminLogDto>>> Handle(
@@ -141,11 +143,7 @@ public sealed class GetSystemAdminLogsQueryHandler(
 
         return users.ToDictionary(
             u => u.Id,
-            u => !string.IsNullOrWhiteSpace(u.FullNameAr)
-                ? u.FullNameAr
-                : !string.IsNullOrWhiteSpace(u.FullNameEn)
-                    ? u.FullNameEn
-                    : u.Email ?? string.Empty);
+            u => GetLocalizedName(u.FullNameAr, u.FullNameEn, u.Email));
     }
 
     private async Task<Dictionary<Guid, string>> BuildProfileOwnerLookupAsync(
@@ -169,11 +167,17 @@ public sealed class GetSystemAdminLogsQueryHandler(
 
         return profiles.ToDictionary(
             p => p.Id,
-            p => !string.IsNullOrWhiteSpace(p.FullNameAr)
-                ? p.FullNameAr
-                : !string.IsNullOrWhiteSpace(p.FullNameEn)
-                    ? p.FullNameEn
-                    : p.Email ?? string.Empty);
+            p => GetLocalizedName(p.FullNameAr, p.FullNameEn, p.Email));
+    }
+
+    private string GetLocalizedName(string fullNameAr, string fullNameEn, string? email)
+    {
+        var localizedName = localizationService.GetLocalizedValue(fullNameAr, fullNameEn);
+        if (!string.IsNullOrWhiteSpace(localizedName))
+            return localizedName;
+
+        var fallbackName = localizationService.GetLocalizedValue(fullNameEn, fullNameAr);
+        return !string.IsNullOrWhiteSpace(fallbackName) ? fallbackName : email ?? string.Empty;
     }
 
     private sealed record SystemAdminLogProjection

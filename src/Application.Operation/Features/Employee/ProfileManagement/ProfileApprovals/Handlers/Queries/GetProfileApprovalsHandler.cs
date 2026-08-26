@@ -1,4 +1,3 @@
-using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.DTOs.ProfileApproval;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileApprovals.Queries;
 using FluentResults;
@@ -10,7 +9,8 @@ using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
-using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Kawader;
+using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -27,17 +27,20 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
 
         // 1) Build base DB query with minimal filters
         var profileRepo = uow.GetEntityRepository<UserProfile>();
+        var ministerOfficeCandidates = uow.GetEntityRepository<MinisterOfficeCandidate>().DbSet.AsNoTracking();
+        var kawaaderCandidates = uow.GetEntityRepository<KawaderQid>().DbSet.AsNoTracking();
 
         var baseQuery = profileRepo.DbSet
             .AsNoTracking()
             .Where(p => p.ProfileAssignments.Any(a => a.IsActive && a.EmployeeId == request.OfficerId))
-            .Where(p =>
-                p.Status == UserProfileStatus.Submitted ||
-                p.Status == UserProfileStatus.UnderReview ||
-                p.ReviewItems.Any(r => r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Pending));
+            .Where(p => p.Status == UserProfileStatus.Submitted || p.Status == UserProfileStatus.UnderReview);
 
         // 2) Apply DB-level filters
-        baseQuery = ApplyDatabaseFilters(baseQuery, request);
+        baseQuery = ApplyDatabaseFilters(
+            baseQuery,
+            request,
+            ministerOfficeCandidates,
+            kawaaderCandidates);
 
         // 3) Project and Paginate in ONE query
         // This avoids 3 sequential roundtrips and loading 300+ columns from UserProfile
@@ -49,20 +52,21 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
                 User = p.User,
                 CandidateType = p.CandidateType,
                 TargetEntity = p.TargetEntity,
+                TargetEntityId = p.TargetEntityId,
                 Status = p.Status,
                 CreatedDate = p.CreatedDate,
                 UpdatedDate = p.UpdatedDate,
+                IsMinisterOfficeCandidate = p.NationalNumber != null && ministerOfficeCandidates.Any(candidate =>
+                    !candidate.IsDeleted && candidate.IsFollowUpActive && candidate.Qid == p.NationalNumber),
+                IsKawaaderCandidate = p.NationalNumber != null && kawaaderCandidates.Any(candidate =>
+                    candidate.Qid == p.NationalNumber),
 
                 // Phase 1 summary (Full Review)
+                HasP1AnyReview = p.ReviewItems.Any(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field),
                 HasP1Pending = p.ReviewItems.Any(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field && (r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved)),
                 HasP1Flagged = p.ReviewItems.Any(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field && r.Status == ReviewStatus.NeedsCorrection),
-                P1MaxDate = p.ReviewItems.Where(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field).Max(r => (DateTimeOffset?)(r.UpdatedDate ?? r.CreatedDate)),
-
-                // Phase 2 summary (Change Requests)
-                HasP2Outstanding = p.ReviewItems.Any(r => r.ProfileChangeId != null && r.Status != ReviewStatus.Approved),
-                HasP2Pending = p.ReviewItems.Any(r => r.ProfileChangeId != null && (r.Status == ReviewStatus.Pending || r.Status == ReviewStatus.NotReviewed || r.Status == ReviewStatus.Solved)),
-                HasP2Flagged = p.ReviewItems.Any(r => r.ProfileChangeId != null && r.Status == ReviewStatus.NeedsCorrection),
-                HasP2Rejected = p.ReviewItems.Any(r => r.ProfileChangeId != null && r.Status == ReviewStatus.Rejected)
+                HasP1Rejected = p.ReviewItems.Any(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field && r.Status == ReviewStatus.Rejected),
+                P1MaxDate = p.ReviewItems.Where(r => r.ProfileChangeId == null && r.TargetType != ReviewTargetType.Field).Max(r => (DateTimeOffset?)(r.UpdatedDate ?? r.CreatedDate))
             })
             .ToPaginatedListAsync(request, ct);
 
@@ -80,10 +84,15 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         ));
     }
 
-    private static IQueryable<UserProfile> ApplyDatabaseFilters(IQueryable<UserProfile> query, GetProfileApprovalsQuery request)
+    private static IQueryable<UserProfile> ApplyDatabaseFilters(
+        IQueryable<UserProfile> query,
+        GetProfileApprovalsQuery request,
+        IQueryable<MinisterOfficeCandidate> ministerOfficeCandidates,
+        IQueryable<KawaderQid> kawaaderCandidates)
     {
-        if (request.TargetEntityId.HasValue)
-            query = query.Where(p => p.TargetEntityId == request.TargetEntityId);
+        var targetEntityIds = request.TargetEntityIds?.Distinct().ToArray() ?? [];
+        if (targetEntityIds.Length > 0)
+            query = query.Where(p => p.TargetEntityId.HasValue && targetEntityIds.Contains(p.TargetEntityId.Value));
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
@@ -91,71 +100,81 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             query = query.Where(p =>
                 p.User!.FullNameAr.Contains(search) ||
                 p.User.FullNameEn.Contains(search) ||
-                (p.TargetEntity != null && (p.TargetEntity.NameAr.Contains(search) || p.TargetEntity.NameEn.Contains(search))) ||
-                (p.CandidateType != null && (p.CandidateType.NameAr.Contains(search) || p.CandidateType.NameEn.Contains(search))));
+                (p.NationalNumber != null && p.NationalNumber.Contains(search)) ||
+                (p.User.Email != null && p.User.Email.Contains(search)));
         }
         
-        if (!string.IsNullOrWhiteSpace(request.CandidateType))
+        var candidateTypeIds = request.CandidateTypeIds?.Distinct().ToArray() ?? [];
+        if (candidateTypeIds.Length > 0)
+            query = query.Where(p => p.CandidateTypeId.HasValue && candidateTypeIds.Contains(p.CandidateTypeId.Value));
+
+        var candidateSources = request.CandidateSources?.Distinct().ToArray() ?? [];
+        if (candidateSources.Length > 0)
         {
-            var ctValue = request.CandidateType.Trim();
-            query = query.Where(p => p.CandidateType != null &&  (p.CandidateType.NameAr.Contains(ctValue) || p.CandidateType.NameEn.Contains(ctValue)));
+            var includeMinisterOffice = candidateSources.Contains(ProfileApprovalCandidateSource.MinisterOffice);
+            var includeKawaader = candidateSources.Contains(ProfileApprovalCandidateSource.Kawaader);
+
+            query = query.Where(profile => profile.NationalNumber != null &&
+                (includeMinisterOffice && ministerOfficeCandidates.Any(candidate =>
+                    !candidate.IsDeleted && candidate.IsFollowUpActive && candidate.Qid == profile.NationalNumber) ||
+                 includeKawaader && kawaaderCandidates.Any(candidate =>
+                    candidate.Qid == profile.NationalNumber)));
         }
+
+        query = ApplyReviewStatusFilter(query, request.Statuses);
 
 
         return query;
     }
 
-    private static List<ProfileApprovalListItemDto> BuildDtos(ILocalizationService localization, List<ProfileRowData> data)
+    private static IQueryable<UserProfile> ApplyReviewStatusFilter(
+        IQueryable<UserProfile> query,
+        IReadOnlyCollection<ReviewStatus>? requestedStatuses)
     {
-        var result = new List<ProfileApprovalListItemDto>(data.Count);
+        var statuses = requestedStatuses?.Distinct().ToArray() ?? [];
+        if (statuses.Length == 0) return query;
 
-        foreach (var row in data)
-        {
-            // Phase 2 logic (Approved with outstanding changes)
-            if (row.Status == UserProfileStatus.Approved && row.HasP2Outstanding)
-            {
-                result.Add(MapPhase2(localization, row));
-                continue;
-            }
+        var includePending = statuses.Contains(ReviewStatus.Pending);
+        var includeApproved = statuses.Contains(ReviewStatus.Approved);
+        var includeRejected = statuses.Contains(ReviewStatus.Rejected);
+        var includeNeedsCorrection = statuses.Contains(ReviewStatus.NeedsCorrection);
 
-            // Phase 1 logic (Submitted / UnderReview)
-            if (row.Status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
-            {
-                result.Add(MapPhase1(localization, row));
-            }
-        }
-
-        return result;
+        return query.Where(profile =>
+            includeNeedsCorrection && profile.ReviewItems.Any(review =>
+                review.ProfileChangeId == null && review.TargetType != ReviewTargetType.Field && review.Status == ReviewStatus.NeedsCorrection)
+            || includeRejected
+               && !profile.ReviewItems.Any(review => review.ProfileChangeId == null &&
+                   review.TargetType != ReviewTargetType.Field && review.Status == ReviewStatus.NeedsCorrection)
+               && profile.ReviewItems.Any(review => review.ProfileChangeId == null &&
+                   review.TargetType != ReviewTargetType.Field && review.Status == ReviewStatus.Rejected)
+            || includePending
+               && !profile.ReviewItems.Any(review => review.ProfileChangeId == null &&
+                   review.TargetType != ReviewTargetType.Field &&
+                   (review.Status == ReviewStatus.NeedsCorrection || review.Status == ReviewStatus.Rejected))
+               && (profile.ReviewItems.Any(review => review.ProfileChangeId == null &&
+                       review.TargetType != ReviewTargetType.Field &&
+                       (review.Status == ReviewStatus.Pending || review.Status == ReviewStatus.NotReviewed || review.Status == ReviewStatus.Solved))
+                   || !profile.ReviewItems.Any(review => review.ProfileChangeId == null && review.TargetType != ReviewTargetType.Field))
+            || includeApproved
+               && profile.ReviewItems.Any(review => review.ProfileChangeId == null && review.TargetType != ReviewTargetType.Field)
+               && !profile.ReviewItems.Any(review => review.ProfileChangeId == null &&
+                   review.TargetType != ReviewTargetType.Field &&
+                   (review.Status == ReviewStatus.NeedsCorrection || review.Status == ReviewStatus.Rejected ||
+                    review.Status == ReviewStatus.Pending || review.Status == ReviewStatus.NotReviewed || review.Status == ReviewStatus.Solved)));
     }
 
-    private static ProfileApprovalListItemDto MapPhase2(ILocalizationService localization, ProfileRowData row)
+    private static List<ProfileApprovalListItemDto> BuildDtos(ILocalizationService localization, List<ProfileRowData> data)
     {
-        var overallStatus = row.HasP2Flagged ? ReviewStatus.NeedsCorrection
-                          : row.HasP2Rejected ? ReviewStatus.Rejected
-                          : row.HasP2Pending ? ReviewStatus.Pending
-                          : ReviewStatus.Approved;
-
-        return new ProfileApprovalListItemDto
-        {
-            UserProfileId = row.Id,
-            UserId = row.UserId,
-            FullName = localization.GetLocalizedFullName(row.User),
-            CandidateType = localization.GetLocalizedName(row.CandidateType),
-            TargetEntity = localization.GetLocalizedName(row.TargetEntity),
-            SubmittedAtUtc = row.UpdatedDate ?? row.CreatedDate,
-            ProfileStatus = row.Status,
-            OverallStatus = overallStatus,
-            LastUpdatedAtUtc = row.UpdatedDate ?? row.CreatedDate,
-            AllowedOperations = ResolveAllowedOperations(row.Status)
-        };
+        return data.Select(row => MapPhase1(localization, row)).ToList();
     }
 
     private static ProfileApprovalListItemDto MapPhase1(ILocalizationService localization, ProfileRowData row)
     {
         // Fallback for brand new profiles without review tracking items yet
-        var hasAnyReview = row.HasP1Pending || row.HasP1Flagged;
+        var hasAnyReview = row.HasP1AnyReview;
         
         var overallStatus = row.HasP1Flagged ? ReviewStatus.NeedsCorrection
+                          : row.HasP1Rejected ? ReviewStatus.Rejected
                           : (row.HasP1Pending || !hasAnyReview) ? ReviewStatus.Pending
                           : ReviewStatus.Approved;
 
@@ -166,11 +185,13 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
             FullName = localization.GetLocalizedFullName(row.User),
             CandidateType = localization.GetLocalizedName(row.CandidateType),
             TargetEntity = localization.GetLocalizedName(row.TargetEntity),
+            IsMinisterOfficeCandidate = row.IsMinisterOfficeCandidate,
+            IsKawaaderCandidate = row.IsKawaaderCandidate,
             SubmittedAtUtc = row.CreatedDate,
             ProfileStatus = row.Status,
             OverallStatus = overallStatus,
             LastUpdatedAtUtc = row.P1MaxDate ?? row.UpdatedDate ?? row.CreatedDate,
-            AllowedOperations = ResolveAllowedOperations(row.Status)
+            AllowedOperations = ResolveAllowedOperations()
         };
     }
 
@@ -181,36 +202,28 @@ public sealed class GetProfileApprovalsHandler(IUnitOfWork uow, ILocalizationSer
         public ApplicantUser? User { get; init; }
         public CandidateType? CandidateType { get; init; }
         public TargetEntity? TargetEntity { get; init; }
+        public Guid? TargetEntityId { get; init; }
         public UserProfileStatus Status { get; init; }
         public DateTimeOffset CreatedDate { get; init; }
         public DateTimeOffset? UpdatedDate { get; init; }
+        public bool IsMinisterOfficeCandidate { get; init; }
+        public bool IsKawaaderCandidate { get; init; }
         
+        public bool HasP1AnyReview { get; init; }
         public bool HasP1Pending { get; init; }
         public bool HasP1Flagged { get; init; }
+        public bool HasP1Rejected { get; init; }
         public DateTimeOffset? P1MaxDate { get; init; }
-
-        public bool HasP2Outstanding { get; init; }
-        public bool HasP2Pending { get; init; }
-        public bool HasP2Flagged { get; init; }
-        public bool HasP2Rejected { get; init; }
     }
 
-    private static IReadOnlyList<string> ResolveAllowedOperations(UserProfileStatus status)
+    private static IReadOnlyList<string> ResolveAllowedOperations()
     {
-        var ops = new List<string> { ProfileApprovalOperations.View };
-
-        // Phase 1: reviewer can review/finalize
-        if (status is UserProfileStatus.Submitted or UserProfileStatus.UnderReview)
-        {
-            ops.Add(ProfileApprovalOperations.Review);
-            ops.Add(ProfileApprovalOperations.Finalize);
-        }
-
-        // Phase 2: view only (optional marker)
-        if (status == UserProfileStatus.Approved)
-            ops.Add(ProfileApprovalOperations.ViewOnly);
-
-        return ops;
+        return
+        [
+            ProfileApprovalOperations.View,
+            ProfileApprovalOperations.Review,
+            ProfileApprovalOperations.Finalize
+        ];
     }
 
     // ----------------------------

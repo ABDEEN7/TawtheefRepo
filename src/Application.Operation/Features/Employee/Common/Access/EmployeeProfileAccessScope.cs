@@ -10,7 +10,7 @@ internal sealed class EmployeeProfileAccessScope(IUnitOfWork unitOfWork)
 {
     public IQueryable<UserProfile> AccessibleProfiles(EmployeeProfileAccessContext context)
     {
-        var profiles = ApplyProfilePopulation(
+        var profiles = ProfilePopulation(
             unitOfWork.GetEntityRepository<UserProfile>().DbSet.AsNoTracking(),
             context.CurrentUser);
         if (context.CanViewProfileDistribution) return profiles;
@@ -24,7 +24,7 @@ internal sealed class EmployeeProfileAccessScope(IUnitOfWork unitOfWork)
             assignment.UnassignedAtUtc == null));
     }
 
-    private static IQueryable<UserProfile> ApplyProfilePopulation(
+    internal static IQueryable<UserProfile> ProfilePopulation(
         IQueryable<UserProfile> profiles,
         User currentUser) =>
         currentUser switch

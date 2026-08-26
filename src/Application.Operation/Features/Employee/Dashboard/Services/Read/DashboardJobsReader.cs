@@ -47,7 +47,6 @@ internal sealed class DashboardJobsReader(
 
         var items = await ReadJobsAsync(
             pagedQuery,
-            context,
             ct);
 
         return Result.Ok(
@@ -78,15 +77,14 @@ internal sealed class DashboardJobsReader(
             .OrderByDescending(job => job.UpdatedDate)
             .ThenByDescending(job => job.CreatedDate);
 
-        var jobs = await ReadJobsAsync(query, context, ct);
+        var jobs = await ReadJobsAsync(query, ct);
 
         return Result.Ok<IReadOnlyList<LatestJobDto>>(jobs);
     }
     
     private async Task<List<LatestJobDto>> ReadJobsAsync(
-    IQueryable<Job> jobsQuery,
-    DashboardAccessContext context,
-    CancellationToken ct)
+        IQueryable<Job> jobsQuery,
+        CancellationToken ct)
 {
     var invitations = uow.GetEntityRepository<Invitation>()
         .DbSet
@@ -114,45 +112,39 @@ internal sealed class DashboardJobsReader(
                 ? job.JobStatus.BackendName
                 : "N/A",
 
-            CandidatesCount = context.CanViewInvitations
-                ? invitations
-                    .Where(invitation =>
-                        !invitation.IsDeleted &&
-                        invitation.JobId == job.Id &&
-                        invitation.IsAccepted)
-                    .Select(invitation => invitation.ApplicantId)
-                    .Distinct()
-                    .Count()
-                : 0,
-
-            InvitationsSent = context.CanViewInvitations
-                ? invitations.Count(invitation =>
+            CandidatesCount = invitations
+                .Where(invitation =>
                     !invitation.IsDeleted &&
-                    invitation.JobId == job.Id)
-                : 0
+                    invitation.JobId == job.Id &&
+                    invitation.IsAccepted)
+                .Select(invitation => invitation.ApplicantId)
+                .Distinct()
+                .Count(),
+
+            InvitationsSent = invitations.Count(invitation =>
+                !invitation.IsDeleted &&
+                invitation.JobId == job.Id)
         })
         .ToListAsync(ct);
 
-    var invitationWorkflow = context.CanViewInvitations
-        ? await invitations
-            .Where(invitation =>
-                !invitation.IsDeleted &&
-                jobIdsQuery.Contains(invitation.JobId))
-            .GroupBy(invitation => new
-            {
-                invitation.JobId,
-                Status = invitation.InvitationStatus != null
-                    ? invitation.InvitationStatus.BackendName
-                    : "N/A"
-            })
-            .Select(group => new
-            {
-                group.Key.JobId,
-                group.Key.Status,
-                Count = group.Count()
-            })
-            .ToListAsync(ct)
-        : [];
+    var invitationWorkflow = await invitations
+        .Where(invitation =>
+            !invitation.IsDeleted &&
+            jobIdsQuery.Contains(invitation.JobId))
+        .GroupBy(invitation => new
+        {
+            invitation.JobId,
+            Status = invitation.InvitationStatus != null
+                ? invitation.InvitationStatus.BackendName
+                : "N/A"
+        })
+        .Select(group => new
+        {
+            group.Key.JobId,
+            group.Key.Status,
+            Count = group.Count()
+        })
+        .ToListAsync(ct);
 
     return
     [
