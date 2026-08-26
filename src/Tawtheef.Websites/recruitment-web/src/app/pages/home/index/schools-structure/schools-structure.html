@@ -1,0 +1,131 @@
+<div class="organization-page" i18nNamespace="pages/schools-structure">
+  <div class="page-header">
+    <div>
+      <div class="page-title">{{ 'OrganizationalStructure.Title' | translate }}</div>
+ 
+      <div class="page-subtitle">{{ 'OrganizationalStructure.Subtitle' | translate }}</div>
+    </div>
+ 
+    <div class="header-actions">
+      <button type="button" class="header-button">
+        <i class="pi pi-search"></i>
+ 
+        Search
+      </button>
+    </div>
+  </div>
+ 
+  <div class="organization-container">
+    <p-organization-chart
+      [value]="organizationData"
+      [collapsible]="true"
+      (onNodeExpand)="onNodeExpand($event)"
+      (onNodeCollapse)="onNodeCollapse($event)"
+    >
+      <!-- NODE -->
+ 
+      <ng-template pTemplate="default" let-node>
+        <div class="organization-card" [class]="'organization-card--level-' + node.data.level">
+          <!-- IMAGE (disabled)
+ 
+          <div class="node-image">
+            <img [src]="node.data.image" [alt]="node.data.title" class="organization-image" />
+          </div>
+ 
+          -->
+ 
+          <!-- CONTENT -->
+ 
+          <div class="node-content">
+            <div class="node-title">
+              {{ node.data.title }}
+ 
+              <!-- INFO ICON (only when a description exists) -->
+ 
+              @if (node.data.description) {
+                <i
+                  class="pi pi-eye node-info-icon"
+                  [pTooltip]="node.data.description"
+                  tooltipPosition="top"
+                  (click)="openNodeDetails(node, $event)"
+                >
+                </i>
+              }
+            </div>
+ 
+            @if (node.data.subtitle) {
+              <div class="node-type">
+                {{ node.data.subtitle }}
+              </div>
+            }
+          </div>
+ 
+          <!-- CHILDREN COUNT -->
+ 
+          @if (node.children?.length) {
+            <div class="children-count">
+              <i class="pi pi-sitemap"></i>
+ 
+              {{ node.children.length }}
+            </div>
+          }
+        </div>
+      </ng-template>
+ 
+      <!-- ===============================================
+             CUSTOM + / - TOGGLER
+             =============================================== -->
+ 
+      <ng-template #togglericon let-expanded>
+        @if (expanded) {
+          <i class="pi pi-minus"></i>
+        } @else {
+          <i class="pi pi-plus"></i>
+        }
+      </ng-template>
+    </p-organization-chart>
+  </div>
+ 
+  <p-dialog
+    [visible]="!!selectedNode"
+    (visibleChange)="onDialogVisibleChange($event)"
+    [modal]="true"
+    [dismissableMask]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closeOnEscape]="true"
+    styleClass="node-details-dialog"
+    [style]="{ width: '420px' }"
+    [breakpoints]="{ '575px': '92vw' }"
+  >
+    <ng-template pTemplate="header">
+      <div class="node-dialog-header">
+        <div class="node-dialog-icon" [class]="selectedNode?.data?.accent">
+          <img [src]="selectedNode?.data?.image" [alt]="selectedNode?.data?.title" />
+        </div>
+ 
+        <div class="node-dialog-heading">
+          <div class="node-dialog-title">{{ selectedNode?.data?.title }}</div>
+ 
+          @if (selectedNode?.data?.subtitle) {
+            <div class="node-dialog-subtitle">{{ selectedNode?.data?.subtitle }}</div>
+          }
+        </div>
+      </div>
+    </ng-template>
+ 
+    @if (selectedNode?.data?.description) {
+      <p class="node-dialog-description">{{ selectedNode?.data?.description }}</p>
+    }
+ 
+    @if (selectedNode?.children?.length) {
+      <div class="node-dialog-meta">
+        <i class="pi pi-sitemap"></i>
+ 
+        {{ selectedNode?.children?.length }} {{ 'OrganizationalStructure.SubUnits' | translate }}
+      </div>
+    }
+  </p-dialog>
+</div>
+ 
+ 

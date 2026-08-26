@@ -1,0 +1,601 @@
+<section
+  class="structure-page"
+  i18nNamespace="pages/ministry-structure"
+>
+  <div
+    class="structure-map"
+    [class.is-dragging]="isDragging"
+    (pointerdown)="startDragging($event)"
+    (pointermove)="dragMap($event)"
+    (pointerup)="stopDragging($event)"
+    (pointercancel)="stopDragging($event)"
+    (pointerleave)="stopDragging($event)"
+  >
+    <div class="structure-tree">
+
+      <!-- الوزير -->
+      <div class="minister-level">
+        <div
+          #ministerNode
+          class="structure-node structure-node-leadership"
+        >
+          <button
+            type="button"
+            class="node-toggle"
+            [class.is-expanded]="minister.expanded"
+            [attr.aria-expanded]="minister.expanded"
+            [attr.aria-label]="minister.title | translate"
+            (click)="toggleMinister($event)"
+          >
+            <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+          </button>
+
+          <span class="node-title">
+            {{ minister.title | translate }}
+          </span>
+
+          <button
+            type="button"
+            class="node-info"
+            [attr.aria-label]="minister.title | translate"
+            (click)="showNodeInformation(minister, $event)"
+          >
+            <i class="hgi hgi-stroke hgi-information-circle"></i>
+          </button>
+        </div>
+
+        <!-- فروع الوزير -->
+        <div
+          class="minister-branches"
+          [class.is-expanded]="minister.expanded"
+          [class.has-expanded-left-department]="
+            hasExpandedMinisterLeftDepartment()
+          "
+        >
+          <!-- يسار الوزير -->
+          <div
+            *ngIf="minister.expanded"
+            class="minister-side minister-side-left"
+            [class.has-first-node-expanded]="isPlanningExpanded()"
+          >
+            <div class="side-vertical-line"></div>
+
+            <div
+              *ngFor="
+                let department of ministerLeftDepartments;
+                trackBy: trackByNodeId
+              "
+              class="side-node-row"
+            >
+              <div
+                class="department-node-wrapper"
+                [class.has-expanded-children]="department.expanded"
+              >
+                <div class="structure-node structure-node-department">
+                  <button
+                    *ngIf="department.children?.length"
+                    type="button"
+                    class="node-toggle department-toggle"
+                    [class.is-expanded]="department.expanded"
+                    [attr.aria-expanded]="department.expanded"
+                    [attr.aria-label]="department.title | translate"
+                    (click)="toggleNode(department, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-arrow-left-01"></i>
+                  </button>
+
+                  <span class="node-title">
+                    {{ department.title | translate }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="node-info"
+                    [attr.aria-label]="department.title | translate"
+                    (click)="showNodeInformation(department, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                  </button>
+                </div>
+
+                <ng-container
+                  *ngTemplateOutlet="
+                    leftChildren;
+                    context: { $implicit: department }
+                  "
+                ></ng-container>
+              </div>
+            </div>
+          </div>
+
+          <!-- وكيل الوزارة -->
+          <div class="undersecretary-column">
+            <div class="structure-node structure-node-leadership">
+              <button
+                type="button"
+                class="node-toggle"
+                [class.is-expanded]="undersecretary.expanded"
+                [attr.aria-expanded]="undersecretary.expanded"
+                [attr.aria-label]="undersecretary.title | translate"
+                (click)="toggleUndersecretary($event)"
+              >
+                <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+              </button>
+
+              <span class="node-title">
+                {{ undersecretary.title | translate }}
+              </span>
+
+              <button
+                type="button"
+                class="node-info"
+                [attr.aria-label]="undersecretary.title | translate"
+                (click)="showNodeInformation(undersecretary, $event)"
+              >
+                <i class="hgi hgi-stroke hgi-information-circle"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- يمين الوزير -->
+          <div
+            *ngIf="minister.expanded"
+            class="minister-side minister-side-right"
+          >
+            <div class="side-vertical-line"></div>
+
+            <div
+              *ngFor="
+                let department of ministerRightDepartments;
+                trackBy: trackByNodeId
+              "
+              class="side-node-row"
+            >
+              <div class="structure-node structure-node-department">
+                <span class="node-title">
+                  {{ department.title | translate }}
+                </span>
+
+                <button
+                  type="button"
+                  class="node-info"
+                  [attr.aria-label]="department.title | translate"
+                  (click)="showNodeInformation(department, $event)"
+                >
+                  <i class="hgi hgi-stroke hgi-information-circle"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- فروع وكيل الوزارة -->
+      <div
+        *ngIf="undersecretary.expanded"
+        class="undersecretary-branches"
+        [class.has-expanded-department]="
+          hasExpandedUndersecretaryDepartment()
+        "
+      >
+        <!-- يسار وكيل الوزارة -->
+        <div
+          class="undersecretary-side undersecretary-side-left"
+          [class.has-first-node-expanded]="
+            isPublicRelationsExpanded()
+          "
+        >
+          <div class="side-vertical-line"></div>
+
+          <div
+            *ngFor="
+              let department of undersecretaryLeftDepartments;
+              trackBy: trackByNodeId
+            "
+            class="side-node-row"
+          >
+            <div
+              class="department-node-wrapper"
+              [class.has-expanded-children]="department.expanded"
+            >
+              <div class="structure-node structure-node-department">
+                <button
+                  *ngIf="department.children?.length"
+                  type="button"
+                  class="node-toggle department-toggle"
+                  [class.is-expanded]="department.expanded"
+                  [attr.aria-expanded]="department.expanded"
+                  [attr.aria-label]="department.title | translate"
+                  (click)="toggleNode(department, $event)"
+                >
+                  <i class="hgi hgi-stroke hgi-arrow-left-01"></i>
+                </button>
+
+                <span class="node-title">
+                  {{ department.title | translate }}
+                </span>
+
+                <button
+                  type="button"
+                  class="node-info"
+                  [attr.aria-label]="department.title | translate"
+                  (click)="showNodeInformation(department, $event)"
+                >
+                  <i class="hgi hgi-stroke hgi-information-circle"></i>
+                </button>
+              </div>
+
+              <ng-container
+                *ngTemplateOutlet="
+                  leftChildren;
+                  context: { $implicit: department }
+                "
+              ></ng-container>
+            </div>
+          </div>
+        </div>
+
+        <!-- يمين وكيل الوزارة -->
+        <div class="undersecretary-side undersecretary-side-right">
+          <div class="side-vertical-line"></div>
+
+          <div
+            *ngFor="
+              let department of undersecretaryRightDepartments;
+              trackBy: trackByNodeId
+            "
+            class="side-node-row"
+          >
+            <div
+              class="department-node-wrapper"
+              [class.has-expanded-children-right]="department.expanded"
+            >
+              <div class="structure-node structure-node-department">
+                <span class="node-title">
+                  {{ department.title | translate }}
+                </span>
+
+                <button
+                  type="button"
+                  class="node-info"
+                  [attr.aria-label]="department.title | translate"
+                  (click)="showNodeInformation(department, $event)"
+                >
+                  <i class="hgi hgi-stroke hgi-information-circle"></i>
+                </button>
+
+                <button
+                  *ngIf="department.children?.length"
+                  type="button"
+                  class="node-toggle department-toggle-right"
+                  [class.is-expanded]="department.expanded"
+                  [attr.aria-expanded]="department.expanded"
+                  [attr.aria-label]="department.title | translate"
+                  (click)="toggleNode(department, $event)"
+                >
+                  <i class="hgi hgi-stroke hgi-arrow-right-01"></i>
+                </button>
+              </div>
+
+              <ng-container
+                *ngTemplateOutlet="
+                  rightChildren;
+                  context: { $implicit: department }
+                "
+              ></ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- وكلاء الوزارة المساعدون -->
+      <div
+        class="assistant-level"
+        [class.has-education-expanded]="isEducationAffairsExpanded()"
+        [style.--education-height.px]="getEducationBranchHeight()"
+      >
+        <div class="assistant-horizontal-line"></div>
+
+        <div
+          *ngFor="
+            let assistant of assistantUndersecretaries;
+            trackBy: trackByNodeId
+          "
+          class="assistant-branch"
+        >
+          <div class="assistant-vertical-line"></div>
+
+          <div
+            class="
+              structure-node
+              structure-node-leadership
+              assistant-node
+            "
+          >
+            <button
+              *ngIf="assistant.children?.length"
+              type="button"
+              class="node-toggle"
+              [class.is-expanded]="assistant.expanded"
+              [attr.aria-expanded]="assistant.expanded"
+              [attr.aria-label]="assistant.title | translate"
+              (click)="toggleNode(assistant, $event)"
+            >
+              <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+            </button>
+
+            <span class="node-title">
+              {{ assistant.title | translate }}
+            </span>
+
+            <button
+              type="button"
+              class="node-info"
+              [attr.aria-label]="assistant.title | translate"
+              (click)="showNodeInformation(assistant, $event)"
+            >
+              <i class="hgi hgi-stroke hgi-information-circle"></i>
+            </button>
+          </div>
+
+          <!-- الشؤون التعليمية -->
+          <div
+            *ngIf="
+              assistant.id === 'education-affairs' &&
+              assistant.expanded &&
+              assistant.children?.length
+            "
+            class="education-affairs-tree"
+          >
+            <div class="education-main-line"></div>
+
+            <div
+              *ngFor="
+                let department of assistant.children;
+                trackBy: trackByNodeId
+              "
+              class="education-department-group"
+              [class.is-expanded]="department.expanded"
+            >
+              <div class="education-department-row">
+                <span class="education-main-connector"></span>
+
+                <!-- مكتب وكيل الوزارة المساعد -->
+                <div
+                  *ngIf="department.type === 'special'"
+                  class="
+                    structure-node
+                    structure-node-special
+                    education-department-node
+                  "
+                >
+                  <span class="node-title">
+                    {{ department.title | translate }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="node-info"
+                    [attr.aria-label]="department.title | translate"
+                    (click)="showNodeInformation(department, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                  </button>
+                </div>
+
+                <!-- الإدارات -->
+                <div
+                  *ngIf="department.type === 'department'"
+                  class="
+                    structure-node
+                    structure-node-department
+                    education-department-node
+                  "
+                >
+                  <button
+                    *ngIf="department.children?.length"
+                    type="button"
+                    class="node-toggle education-department-toggle"
+                    [class.is-expanded]="department.expanded"
+                    [attr.aria-expanded]="department.expanded"
+                    [attr.aria-label]="department.title | translate"
+                    (click)="toggleNode(department, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+                  </button>
+
+                  <span class="node-title">
+                    {{ department.title | translate }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="node-info"
+                    [attr.aria-label]="department.title | translate"
+                    (click)="showNodeInformation(department, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- الأقسام -->
+              <div
+                *ngIf="
+                  department.expanded &&
+                  department.children?.length
+                "
+                class="education-children"
+              >
+                <div class="education-children-line"></div>
+
+                <div
+                  *ngFor="
+                    let child of department.children;
+                    trackBy: trackByNodeId
+                  "
+                  class="education-child-row"
+                >
+                  <span class="education-child-connector"></span>
+
+                  <div class="structure-node structure-node-section">
+                    <span class="node-title">
+                      {{ child.title | translate }}
+                    </span>
+
+                    <button
+                      type="button"
+                      class="node-info"
+                      [attr.aria-label]="child.title | translate"
+                      (click)="showNodeInformation(child, $event)"
+                    >
+                      <i
+                        class="
+                          hgi
+                          hgi-stroke
+                          hgi-information-circle
+                        "
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+@if (selectedNode) {
+  <div
+    class="structure-modal-backdrop"
+    (click)="closeNodeInformation()"
+  >
+    <section
+      class="structure-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="structure-modal-title"
+      (click)="stopModalClick($event)"
+    >
+      <button
+        type="button"
+        class="structure-modal-close"
+        aria-label="Close"
+        (click)="closeNodeInformation()"
+      >
+        <i class="hgi hgi-stroke hgi-cancel-01"></i>
+      </button>
+
+      <header class="structure-modal-header">
+        <h2 id="structure-modal-title">
+          {{ selectedNode.title | translate }}
+        </h2>
+
+        @if (selectedNode.description) {
+          <p>{{ selectedNode.description }}</p>
+        }
+      </header>
+
+      @if (selectedNode.responsibilities?.length) {
+        <div class="structure-modal-content">
+          <ol>
+            @for (
+              responsibility of selectedNode.responsibilities;
+              track $index
+            ) {
+              <li>{{ responsibility }}</li>
+            }
+          </ol>
+        </div>
+      }
+    </section>
+  </div>
+}
+
+<!-- Children opening toward the left -->
+
+<ng-template
+  #leftChildren
+  let-department
+>
+  <div
+    *ngIf="
+      department.expanded &&
+      department.children?.length
+    "
+    class="department-children department-children-left"
+  >
+    <div class="department-children-spine"></div>
+
+    <div
+      *ngFor="
+        let child of department.children;
+        trackBy: trackByNodeId
+      "
+      class="department-child-row department-child-row-left"
+    >
+      <div class="structure-node structure-node-section">
+        <span class="node-title">
+          {{ child.title | translate }}
+        </span>
+
+        <button
+          type="button"
+          class="node-info"
+          [attr.aria-label]="child.title | translate"
+          (click)="showNodeInformation(child, $event)"
+        >
+          <i class="hgi hgi-stroke hgi-information-circle"></i>
+        </button>
+      </div>
+
+      <span class="department-child-connector"></span>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Children opening toward the right -->
+
+<ng-template
+  #rightChildren
+  let-department
+>
+  <div
+    *ngIf="
+      department.expanded &&
+      department.children?.length
+    "
+    class="department-children department-children-right"
+  >
+    <div class="department-children-spine"></div>
+
+    <div
+      *ngFor="
+        let child of department.children;
+        trackBy: trackByNodeId
+      "
+      class="department-child-row department-child-row-right"
+    >
+      <span class="department-child-connector"></span>
+
+      <div class="structure-node structure-node-section">
+        <span class="node-title">
+          {{ child.title | translate }}
+        </span>
+
+        <button
+          type="button"
+          class="node-info"
+          [attr.aria-label]="child.title | translate"
+          (click)="showNodeInformation(child, $event)"
+        >
+          <i class="hgi hgi-stroke hgi-information-circle"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
