@@ -34,13 +34,13 @@
                       <div>
                         <h3 class="fw-bold mb-1">{{ info.fullName || ('profileApproval.list.anonymous' | translate) }}</h3>
                         <div class="d-flex flex-wrap gap-2">
-                          <span class="d-flex align-items-center gap-1 mx-1" *ngIf="info.profile?.basicInformation?.email">
+                          <span class="d-flex align-items-center gap-1 mx-1" *ngIf="info.profile.basicInformation.email">
                             <i class="hgi hgi-stroke hgi-mail-01"></i>
                             <span> {{ 'profileApproval.detail.snapshot.email' | translate }}: {{
                               info.profile.basicInformation.email }}</span>
                           </span>
                           <span class="d-flex align-items-center gap-1 mx-1"
-                            *ngIf="info.profile?.basicInformation?.phoneNumber">
+                            *ngIf="info.profile.basicInformation.phoneNumber">
                             <i class="hgi hgi-stroke hgi-call-02"></i>
                             <span>
                               {{ 'profileApproval.detail.snapshot.phoneNumber' | translate }}:
@@ -48,7 +48,7 @@
                             </span>
                           </span>
                           <span class="d-flex align-items-center gap-1 mx-1"
-                            *ngIf="info.profile?.basicInformation?.residenceCountry">
+                            *ngIf="info.profile.basicInformation.residenceCountry">
                             <i class="hgi hgi-stroke hgi-globe-02"></i>
                             <span>{{ info.profile.basicInformation.residenceCountry }}</span>
                           </span>
@@ -92,7 +92,6 @@
 
           <!-- Loading (initial) -->
           <div class="wizard-loading" *ngIf="!detail() && loadingDetail()" role="status" aria-live="polite">
-            <p-progressSpinner styleClass="h-3rem w-3rem"></p-progressSpinner>
             <p class="loading-text">{{ 'profileApproval.wizard.loading' | translate }}</p>
           </div>
 

@@ -80,7 +80,6 @@ import {
     AvatarModule,
     ButtonModule,
     ProgressBarModule,
-    ProgressSpinnerModule,
     ToggleSwitchModule,
     Textarea,
     DialogModule,
