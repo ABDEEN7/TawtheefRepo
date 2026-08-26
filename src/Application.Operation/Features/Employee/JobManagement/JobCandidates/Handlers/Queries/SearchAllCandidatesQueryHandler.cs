@@ -8,11 +8,15 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobCandidates.Handlers.Queries;
 
-public class SearchAllCandidatesQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<SearchAllCandidatesQuery, IResult<List<CandidateSearchDto>>>
+public class SearchAllCandidatesQueryHandler(
+    IUnitOfWork unitOfWork,
+    ILocalizationService localizationService)
+    : IRequestHandler<SearchAllCandidatesQuery, IResult<List<CandidateSearchDto>>>
 {
     public async Task<IResult<List<CandidateSearchDto>>> Handle(SearchAllCandidatesQuery request, CancellationToken cancellationToken)
     {
@@ -32,13 +36,18 @@ public class SearchAllCandidatesQueryHandler(IUnitOfWork unitOfWork) : IRequestH
             );
         }
 
+        var isArabic = string.Equals(
+            localizationService.GetCurrentLanguage(),
+            "ar",
+            StringComparison.OrdinalIgnoreCase);
+
         var results = await query
-            .OrderBy(p => p.User!.FullNameAr ?? p.User!.FullNameEn)
+            .OrderBy(p => isArabic ? p.User!.FullNameAr : p.User!.FullNameEn)
             .Take(50)
             .Select(p => new CandidateSearchDto
             {
                 CandidateId = p.UserId,
-                FullName = p.User!.FullNameAr ?? p.User!.FullNameEn ?? "Unknown",
+                FullName = isArabic ? p.User!.FullNameAr : p.User!.FullNameEn,
                 NationalId = p.NationalNumber ?? string.Empty,
                 Email = p.User.Email ?? string.Empty
             })

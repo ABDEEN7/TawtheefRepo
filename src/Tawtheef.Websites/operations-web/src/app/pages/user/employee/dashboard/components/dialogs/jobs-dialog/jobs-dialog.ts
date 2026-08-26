@@ -3,18 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   OnInit,
-  ViewChild,
   computed,
   inject,
-  input,
-  output,
   signal,
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { ChartData } from 'chart.js';
-import { ChartModule } from 'primeng/chart';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
 import { finalize } from 'rxjs';
 import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i18n-namespace.directive';
@@ -30,16 +25,20 @@ import { InvitationStatus } from '../../../../../../../core/enums/lookups.enum';
 import { PaginatedResult } from '../../../../../../../core/models/paginated-result.model';
 import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
 import {
-  DashboardChartColors,
   invitationStatusColor,
   jobStatusColor,
 } from '../../../constants/dashboard-chart-colors';
+interface JobsDialogData {
+  kpis: JobKpis;
+  breakdown: JobBreakdown;
+  filters: OperationsDashboardFilters;
+  canExport: boolean;
+}
 @Component({
   selector: 'app-dashboard-jobs-dialog',
   standalone: true,
   imports: [
     CommonModule,
-    ChartModule,
     TableModule,
     TranslatePipe,
     I18nNamespaceDirective,
@@ -50,12 +49,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobsDialog implements OnInit {
-  @ViewChild('chart', { read: ElementRef }) private chart?: ElementRef<HTMLElement>;
-  readonly kpis = input.required<JobKpis>();
-  readonly breakdown = input.required<JobBreakdown>();
-  readonly filters = input.required<OperationsDashboardFilters>();
-  readonly canExport = input.required<boolean>();
-  readonly closed = output<void>();
+  private readonly config = inject(DynamicDialogConfig<JobsDialogData>);
+  readonly kpis = computed<JobKpis>(() => this.config.data.kpis);
+  readonly breakdown = computed<JobBreakdown>(() => this.config.data.breakdown);
+  readonly filters = computed<OperationsDashboardFilters>(() => this.config.data.filters);
+  readonly canExport = computed<boolean>(() => this.config.data.canExport);
   private readonly api = inject(OperationsDashboardService);
   private readonly chartExport = inject(DashboardChartExportService);
   private readonly files = inject(FileUtilsService);
@@ -71,12 +69,6 @@ export class JobsDialog implements OnInit {
 
   readonly pageSize = computed(() => this.tableFilters().pageSize ?? 10);
   readonly exportInProgress = signal(false);
-  readonly chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '72%',
-    plugins: { legend: { display: false } },
-  };
 
   private readonly invitationStatuses = Object.values(InvitationStatus) as InvitationStatus[];
 
@@ -89,7 +81,6 @@ export class JobsDialog implements OnInit {
     })),
   );
 
-  readonly chartData = computed<ChartData<'doughnut'>>(() => this.buildChart(this.items()));
   readonly rows = computed(() =>
     (this.latestJobs()?.items ?? []).map((job) => {
       const workflowCounts = new Map(
@@ -107,6 +98,9 @@ export class JobsDialog implements OnInit {
       };
     }),
   );
+  percent(count: number): number {
+    return this.kpis().totalJobs > 0 ? Math.round(count / this.kpis().totalJobs * 1000) / 10 : 0;
+  }
 
   ngOnInit(): void {
     this.loadLatestJobs();
@@ -139,37 +133,18 @@ export class JobsDialog implements OnInit {
     try {
       await this.chartExport.download([
         {
-          host: this.chart?.nativeElement,
           filename: this.translate.instant('dashboard.export.files.jobStatus'),
           title: this.translate.instant('dashboard.modals.jobs.statusTitle'),
           totalLabel: this.translate.instant('dashboard.common.total'),
           total: this.kpis().totalJobs,
           items: this.items(),
           direction: this.translate.currentLang === 'ar' ? 'rtl' : 'ltr',
+          locale: 'en-US',
         },
       ]);
     } finally {
       this.exportInProgress.set(false);
     }
-  }
-
-  private buildChart(items: DashboardChartExportItem[]): ChartData<'doughnut'> {
-    return items.every((item) => item.count === 0)
-      ? {
-          labels: [this.translate.instant('common.chart.noData')],
-          datasets: [{ data: [1], backgroundColor: [DashboardChartColors.noData], borderWidth: 0 }],
-        }
-      : {
-          labels: items.map((item) => item.label),
-          datasets: [
-            {
-              data: items.map((item) => item.count),
-              backgroundColor: items.map((item) => item.color),
-              borderWidth: 0,
-              hoverOffset: 8,
-            },
-          ],
-        };
   }
 
   private downloadList(context: 'Jobs', fallback: string): void {

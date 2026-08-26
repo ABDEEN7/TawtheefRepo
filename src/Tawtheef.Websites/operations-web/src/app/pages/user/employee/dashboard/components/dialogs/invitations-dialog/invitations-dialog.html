@@ -1,241 +1,153 @@
 <div
   i18nNamespace="pages/employee/dashboard"
-  class="candidate-modal-backdrop"
+  class="dashboard-dialog-content invitations-dialog-content"
 >
-  <div class="candidate-modal jobs-modal invitations-modal">
+  <div class="dashboard-dialog-intro">
+    <p>
+      {{ 'dashboard.modals.invitations.subtitle' | translate }}
+    </p>
+  </div>
 
-    <button
-      class="candidate-modal-close"
-      type="button"
-      (click)="closed.emit()"
-    >
-      <i class="hgi-stroke hgi-cancel-01"></i>
-    </button>
+  <section class="dashboard-section-card status-section">
+    <h4 class="dashboard-section-title">
+      {{ 'dashboard.modals.invitations.statusTitle' | translate }}
+    </h4>
 
-    <div class="candidate-modal-header">
-      <h3>
-        {{ 'dashboard.modals.invitations.title' | translate }}
-      </h3>
+    <div class="distribution-list compact-status-grid">
+      @for (item of items(); track item.labelKey) {
+        <div class="distribution-row">
+          <div class="distribution-label">
+            <i [style.background]="item.color"></i>
 
-      <p>
-        {{ 'dashboard.modals.invitations.subtitle' | translate }}
-      </p>
-    </div>
-
-    <!-- Invitation status chart -->
-    <div class="candidate-modal-card">
-
-      <h4 class="candidate-modal-section-title">
-        {{ 'dashboard.modals.invitations.statusTitle' | translate }}
-      </h4>
-
-      <div class="candidate-modal-chart-content jobs-chart-content">
-
-        <div class="candidate-chart-wrapper jobs-modal-chart">
-
-          <p-chart
-            #chart
-            type="doughnut"
-            [data]="chartData()"
-            [options]="chartOptions"
-          />
-
-          <div class="candidate-chart-center">
             <span>
-              {{ 'dashboard.common.total' | translate }}
+              {{ item.labelKey | translate }}
             </span>
 
             <strong>
-              {{ kpis().totalInvitations | number: '1.0-0' }}
+              {{ item.count | number: '1.0-0' }} <small>({{ percent(item.count) }}%)</small>
             </strong>
           </div>
-
-        </div>
-
-        <div class="operation-legend jobs-modal-legend">
-
-          @for (item of items(); track item.labelKey) {
-            <div class="operation-legend-row">
-
-              <i [style.background]="item.color"></i>
-
-              <span>
-                {{ item.labelKey | translate }}
-              </span>
-
-              <strong>
-                {{ item.count | number: '1.0-0' }}
-              </strong>
-
-            </div>
-          }
-
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Invitations table -->
-    <div class="candidate-modal-card">
-
-      <h4 class="candidate-modal-section-title">
-        {{ 'dashboard.modals.invitations.latestTitle' | translate }}
-      </h4>
-
-      <div class="table-responsive">
-
-        <p-table
-          class="custom-table"
-          [value]="rows()"
-          [rowHover]="true"
-          responsiveLayout="scroll"
-        >
-
-          <ng-template pTemplate="header">
-            <tr>
-
-              <th>
-                {{ 'dashboard.modals.table.invitation' | translate }}
-              </th>
-
-              <th>
-                {{ 'dashboard.modals.table.status' | translate }}
-              </th>
-
-              <th>
-                {{ 'dashboard.modals.table.sentDate' | translate }}
-              </th>
-
-            </tr>
-          </ng-template>
-
-          <ng-template
-            pTemplate="body"
-            let-invitation
-          >
-            <tr>
-
-              <td>
-                <div class="d-flex flex-column align-items-start gap-1">
-                  <span>{{ invitation.title }}</span>
-                  @if (invitation.source === InvitationSource.Exceptional) {
-                    <p-tag severity="info" [rounded]="true"
-                      [value]="'common.invitationSource.exceptional' | translate">
-                      <i class="pi pi-star-fill me-1" style="font-size: 10px" aria-hidden="true"></i>
-                    </p-tag>
-                  }
-                </div>
-              </td>
-
-              <td>
-                <span class="badge pending">
-                  {{
-                    'dashboard.status.' + invitation.status
-                      | translate
-                  }}
-                </span>
-              </td>
-
-              <td>
-                {{ invitation.sentDate | date: 'yyyy-MM-dd' }}
-              </td>
-
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-
-              <td
-                colspan="3"
-                class="text-muted no-data"
-              >
-                <div
-                  class="
-                    p-4
-                    d-flex
-                    flex-column
-                    align-items-center
-                    justify-content-center
-                  "
-                >
-                  <i
-                    class="
-                      hgi-stroke
-                      hgi-mail-01
-                      fs-32
-                      opacity-25
-                      mb-2
-                    "
-                  ></i>
-
-                  <span>
-                    {{
-                      'dashboard.modals.empty.noInvitations'
-                        | translate
-                    }}
-                  </span>
-                </div>
-              </td>
-
-            </tr>
-          </ng-template>
-
-        </p-table>
-
-      </div>
-
-      @if (totalItems() > 0) {
-        <div class="mt-3">
-
-          <app-pagination
-            class="w-100"
-            [currentPage]="pageNumber()"
-            [totalItems]="totalItems()"
-            [itemsPerPage]="pageSize()"
-            (pageChanged)="onPageChange($event)"
-            (pageSizeChanged)="onPageSizeChange($event)"
-          >
-          </app-pagination>
-
+          <div class="distribution-track">
+            <span
+              [style.background]="item.color"
+              [style.inline-size.%]="percent(item.count)"
+            ></span>
+          </div>
         </div>
       }
+    </div>
+  </section>
 
+  <!-- Invitations table -->
+  <section class="dashboard-section-card">
+    <h4 class="dashboard-section-title">
+      {{ 'dashboard.modals.invitations.latestTitle' | translate }}
+    </h4>
+
+    <div class="dashboard-table-scroll">
+      <p-table class="custom-table" [value]="rows()" [rowHover]="true" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              {{ 'dashboard.modals.table.invitation' | translate }}
+            </th>
+
+            <th>
+              {{ 'dashboard.modals.table.status' | translate }}
+            </th>
+
+            <th>
+              {{ 'dashboard.modals.table.sentDate' | translate }}
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-invitation>
+          <tr>
+            <td>
+              <div class="d-flex flex-column align-items-start gap-1">
+                <span>{{ invitation.title }}</span>
+                @if (invitation.source === InvitationSource.Exceptional) {
+                  <p-tag
+                    severity="info"
+                    [rounded]="true"
+                    [value]="'common.invitationSource.exceptional' | translate"
+                  >
+                    <i class="pi pi-star-fill me-1" style="font-size: 10px" aria-hidden="true"></i>
+                  </p-tag>
+                }
+              </div>
+            </td>
+
+            <td>
+              <span class="badge pending">
+                {{ 'dashboard.status.' + invitation.status | translate }}
+              </span>
+            </td>
+
+            <td>
+              {{ invitation.sentDate | date: 'yyyy-MM-dd' }}
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-muted no-data">
+              <div class="p-4 d-flex flex-column align-items-center justify-content-center">
+                <i class="hgi-stroke hgi-mail-01 fs-32 opacity-25 mb-2"></i>
+
+                <span>
+                  {{ 'dashboard.modals.empty.noInvitations' | translate }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
 
-    <!-- Export -->
-    <div
-      class="candidate-modal-actions"
-      [hidden]="!canExport()"
+    @if (totalItems() > 0) {
+      <div class="mt-3">
+        <app-pagination
+          class="w-100"
+          [currentPage]="pageNumber()"
+          [totalItems]="totalItems()"
+          [itemsPerPage]="pageSize()"
+          (pageChanged)="onPageChange($event)"
+          (pageSizeChanged)="onPageSizeChange($event)"
+        >
+        </app-pagination>
+      </div>
+    }
+  </section>
+
+  <!-- Export -->
+  <div class="dashboard-dialog-actions" [hidden]="!canExport()">
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="exportList()"
+      [disabled]="exportInProgress()"
     >
+      <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
 
-      <button
-        class="candidate-modal-btn outline"
-        type="button"
-        (click)="exportCharts()"
-        [disabled]="exportInProgress()"
-      >
-        <i class="hgi-stroke hgi-download-04"></i>
+      <span>
+        {{ 'dashboard.common.exportList' | translate }}
+      </span>
+    </button>
 
-        <span>
-          {{ 'dashboard.common.exportCharts' | translate }}
-        </span>
-      </button>
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      (click)="exportCharts()"
+      [disabled]="exportInProgress()"
+    >
+      <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
 
-      <button
-        class="candidate-modal-btn filled"
-        type="button"
-        (click)="exportList()"
-        [disabled]="exportInProgress()"
-      >
-        <i class="hgi-stroke hgi-download-04"></i>
-
-        <span>
-          {{ 'dashboard.common.exportList' | translate }}
-        </span>
-      </button>
-
-    </div>
-
+      <span>
+        {{ 'dashboard.common.exportCharts' | translate }}
+      </span>
+    </button>
   </div>
 </div>

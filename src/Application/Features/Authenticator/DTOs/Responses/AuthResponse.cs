@@ -32,6 +32,7 @@ public sealed class ProfileStatusDto
     public bool AgreedToTerms { get; init; }
     public UserProfileStatus Status { get; init; }
     public bool AvailableForRecruitment { get; init; }
+    public string? Provider { get; init; }
 
     // ===== Scalars من UserProfile =====
     public Guid? CandidateTypeId { get; init; }

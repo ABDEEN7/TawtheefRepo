@@ -39,7 +39,7 @@ export interface ProfileStatusDto {
   isDraft: boolean;
   avatar?: string | null;
   availableForRecruitment?: boolean | null;
-  provider: string;
+  provider?: string | null;
   fullNameAr?: string | null;
   fullNameEn?: string | null;
   email?: string | null;

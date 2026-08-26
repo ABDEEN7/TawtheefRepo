@@ -53,6 +53,7 @@ export interface DashboardKpis {
   overdueTasks: number;
   unassignedProfiles: number;
   followedMinisterOfficeCandidates: number;
+  kawaderFiles: number;
 }
 
 export interface TaskMonitoring {

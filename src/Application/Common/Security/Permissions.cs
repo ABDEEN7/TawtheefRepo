@@ -37,6 +37,15 @@ public static class Permissions
                 "Dashboard - Export",
                 "لوحة التحكم - تصدير",
                 2);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.Dashboard.Manage,
+                nameof(PermissionKeys.Dashboard),
+                PermissionAction.Manage,
+                "Dashboard - Manage",
+                "لوحة التحكم - إدارة",
+                3);
     }
 
     public static class Roles

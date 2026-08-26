@@ -1,185 +1,216 @@
 <section class="approval-shell" i18nNamespace="pages/profile-approval">
   <div class="card card-table approval-card">
     <div class="card-body">
-
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
-          <p class="text-primary small mb-1 fw-semibold">
-            {{ 'profileApproval.list.eyebrow' | translate }}
-          </p>
-
-          <h3 class="fw-bold m-0">
-            {{ 'profileApproval.list.title' | translate }}
-          </h3>
-
-          <p class="text-muted m-0">
-            {{ 'profileApproval.list.subtitle' | translate }}
-          </p>
+          <p class="text-primary small mb-1 fw-semibold">{{ 'profileApproval.list.eyebrow' | translate }}</p>
+          <h3 class="fw-bold m-0">{{ 'profileApproval.list.title' | translate }}</h3>
+          <p class="text-muted m-0">{{ 'profileApproval.list.subtitle' | translate }}</p>
         </div>
-
-        <button class="btn btn-outline-primary d-flex align-items-center gap-2" type="button" (click)="loadList()"
-          [disabled]="loading()">
-          <i class="hgi-stroke hgi-refresh" [class.fa-spin]="loading()"></i>
-          {{ 'common.refresh' | translate }}
+        <button pButton class="p-button-outlined" type="button" (click)="refresh()" [disabled]="loading()">
+          <i class="pi pi-refresh" [class.fa-spin]="loading()" pButtonIcon></i>
+          <span pButtonLabel>{{ 'common.refresh' | translate }}</span>
         </button>
       </div>
 
-      <!-- Filters -->
-      <div class="card card-table mb-3">
-        <div class="card-body">
+      <app-page-filters
+        [advancedLabel]="'profileApproval.list.filter.advanced' | translate"
+        [clearLabel]="'profileApproval.list.filter.clear' | translate"
+        [advancedExpanded]="advancedExpanded()"
+        [activeAdvancedCount]="activeFilterCount()"
+        (advancedToggled)="toggleAdvancedFilters()"
+        (filtersCleared)="clearFilters()"
+      >
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon class="pi pi-search"></p-inputicon>
+          <input
+            pInputText
+            id="approval-profile-search"
+            type="search"
+            class="w-100"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="onSearchChange($event)"
+            [attr.aria-label]="'profileApproval.list.searchPlaceholder' | translate"
+            [placeholder]="'profileApproval.list.searchPlaceholder' | translate"
+          />
+        </p-iconfield>
 
-          <form class="row align-items-end" (ngSubmit)="applyFilters()">
-
-            <!-- Search -->
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <label class="form-label">
-                {{ 'profileApproval.list.searchPlaceholder' | translate }}
-              </label>
-
-              <input pInputText type="search" class="w-100 form-control"
-                [placeholder]="'profileApproval.list.searchPlaceholder' | translate" [ngModel]="filters().search"
-                (ngModelChange)="updateFilter('search', $event)" name="search" />
-            </div>
-
-            <!-- Target -->
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-              <label class="form-label">
-                {{ 'profileApproval.list.filter.targetEntity' | translate }}
-              </label>
-
-              <p-select class="w-100" [options]="targetEntities()" optionValue="id" [showClear]="true"
-                [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
-                [ngModel]="filters().targetEntityId" (ngModelChange)="updateFilter('targetEntityId', $event)"
-                name="targetEntityId">
-                <ng-template pTemplate="selectedItem" let-item>
-                  <span>{{ item?.name }}</span>
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                  <span>{{ item.name }}</span>
-                </ng-template>
-              </p-select>
-            </div>
-
-            <!-- Actions -->
-            <div class="col-lg-4 col-md-6">
-              <div class="d-flex gap-2 mb-3 mb-lg-0 mt-0 mt-lg-3">
-                <button class="btn btn-primary" type="submit" [disabled]="loading()">
-                  {{ 'profileApproval.list.filter.apply' | translate }}
-                </button>
-                <div class="action-buttons">
-                  <button class="btn-text" type="button" (click)="resetFilters()">
-                    {{ 'profileApproval.list.filter.reset' | translate }}
-                  </button>
-                </div>
-
-              </div>
-            </div>
-
-          </form>
-        </div>
-      </div>
-
-      <!-- List -->
-      <div *ngIf="!loading(); else loadingTpl">
-
-        <div class="empty text-center py-4 text-muted" *ngIf="items().length === 0">
-          {{ 'profileApproval.list.empty' | translate }}
-        </div>
-        <div class="table-card rounded overflow-hidden">
-
-
-          <div class="table-responsive" *ngIf="items().length > 0">
-
-            <p-table [value]="items()" dataKey="userProfileId" styleClass="approval-table">
-
-              <!-- Header -->
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>
-                    {{ 'profileApproval.list.columns.name' | translate }}
-                  </th>
-
-                  <th>
-                    {{ 'profileApproval.list.columns.status' | translate }}
-                  </th>
-
-                  <th>
-                    {{ 'profileApproval.list.columns.targetEntity' | translate }}
-                  </th>
-
-                  <th>
-                    {{ 'profileApproval.list.columns.submissionDate' | translate }}
-                  </th>
-
-                  <!-- NEW -->
-                  <th>
-                    {{ 'common.actions' | translate }}
-                  </th>
-                </tr>
+        <div filterSecondary class="approval-main-filters">
+          <div class="filter-field">
+            <label class="form-label" for="approval-review-status">{{ 'profileApproval.list.filter.status' | translate }}</label>
+            <p-multiSelect
+              inputId="approval-review-status"
+              class="profile-filter-multiselect w-100"
+              [options]="statusOptions"
+              optionValue="value"
+              [showClear]="true"
+              [ngModel]="filters().statuses"
+              (onChange)="onStatusesChange($event.value)"
+              (onClear)="onStatusesChange(null)"
+              [placeholder]="'profileApproval.list.filter.statusPlaceholder' | translate"
+            >
+              <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+              <ng-template #selecteditems let-options>
+                <span class="profile-filter-multiselect__selection">
+                  @for (option of options; track option.value; let last = $last) {
+                    {{ option.label | translate }}@if (!last) {, }
+                  }
+                </span>
               </ng-template>
+            </p-multiSelect>
+          </div>
 
-              <!-- Body -->
-              <ng-template pTemplate="body" let-row>
-                <tr>
-
-                  <td>
-                    <div class="fw-semibold">
-                      {{ row.fullName || ('profileApproval.list.anonymous' | translate) }}
-                    </div>
-                    <div class="text-muted small">
-                      {{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}
-                    </div>
-                  </td>
-
-                  <td>
-                    <div class="d-flex gap-2">
-                      <span class="pill" [ngClass]="statusClass(row.overallStatus)">
-                        {{ statusLabel(row.overallStatus) | translate }}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td>{{ row.targetEntity }}</td>
-
-                  <td>
-                    {{ row.submittedAtUtc | date:'dd/MM/yyyy' }}
-                  </td>
-
-                  <!-- ✅ View Button -->
-                  <td>
-                    <div class="action-buttons">
-                      <button *hasPermission="[Permissions.ProfileApproval.Review, Permissions.ProfileApproval.Changes]"
-                        class="btn-text d-flex gap-1 align-items-center" type="button"
-                        (click)="openProfile(row); $event.stopPropagation()">
-                        <i class="hgi hgi-stroke hgi-view"></i>
-                        {{ 'common.view' | translate }}
-                      </button>
-                    </div>
-
-                  </td>
-
-                </tr>
-              </ng-template>
-            </p-table>
-
-            <app-pagination class="w-100 mt-3 d-block" [currentPage]="currentPage()" [itemsPerPage]="pageSize()"
-              [totalItems]="totalItems()" (pageChanged)="onPageChanged($event)"
-              (pageSizeChanged)="onPageSizeChanged($event)">
-            </app-pagination>
-
+          <div class="filter-field">
+            <label class="form-label" for="approval-target-entity">{{ 'profileApproval.list.filter.targetEntity' | translate }}</label>
+            <p-multiSelect
+              inputId="approval-target-entity"
+              class="profile-filter-multiselect w-100"
+              [options]="targetEntities()"
+              optionValue="id"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="additionalData.nameAr,additionalData.nameEn,name"
+              [showClear]="true"
+              [ngModel]="filters().targetEntityIds"
+              (onChange)="onTargetEntitiesChange($event.value)"
+              (onClear)="onTargetEntitiesChange(null)"
+              [placeholder]="'profileApproval.list.filter.targetEntityPlaceholder' | translate"
+            ></p-multiSelect>
           </div>
         </div>
 
+        <div advancedFilters>
+          <div class="row g-3 align-items-start">
+            <div class="col-xl-4 col-md-6 filter-field">
+              <label class="form-label" for="approval-candidate-type">{{ 'profileApproval.list.filter.candidateType' | translate }}</label>
+              <p-multiSelect
+                inputId="approval-candidate-type"
+                class="profile-filter-multiselect w-100"
+                [options]="candidateTypes()"
+                optionValue="id"
+                optionLabel="name"
+                [filter]="true"
+                filterBy="additionalData.nameAr,additionalData.nameEn,name"
+                [showClear]="true"
+                [ngModel]="filters().candidateTypeIds"
+                (onChange)="onCandidateTypesChange($event.value)"
+                (onClear)="onCandidateTypesChange(null)"
+                [placeholder]="'profileApproval.list.filter.candidateTypePlaceholder' | translate"
+              ></p-multiSelect>
+            </div>
 
-      </div>
-      <ng-template #loadingTpl>
-        <div class="text-center py-5 text-muted">
-          <i class="hgi-stroke hgi-loading-01 fa-spin me-2"></i>
-          {{ 'common.loading' | translate }}
+            <div class="col-xl-4 col-md-6 filter-field">
+              <label class="form-label" for="approval-candidate-source">{{ 'profileApproval.list.filter.candidateSource' | translate }}</label>
+              <p-multiSelect
+                inputId="approval-candidate-source"
+                class="profile-filter-multiselect w-100"
+                [options]="candidateSourceOptions"
+                optionValue="value"
+                [showClear]="true"
+                [ngModel]="filters().candidateSources"
+                (onChange)="onCandidateSourcesChange($event.value)"
+                (onClear)="onCandidateSourcesChange(null)"
+                [placeholder]="'profileApproval.list.filter.candidateSourcePlaceholder' | translate"
+              >
+                <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+                <ng-template #selecteditems let-options>
+                  <span class="profile-filter-multiselect__selection">
+                    @for (option of options; track option.value; let last = $last) {
+                      {{ option.label | translate }}@if (!last) {, }
+                    }
+                  </span>
+                </ng-template>
+              </p-multiSelect>
+            </div>
+          </div>
         </div>
-      </ng-template>
+      </app-page-filters>
 
+      @if (loading()) {
+        <div class="text-center py-5 text-muted">
+          <i class="hgi-stroke hgi-loading-01 fa-spin me-2"></i>{{ 'common.loading' | translate }}
+        </div>
+      } @else {
+        <div class="table-card rounded overflow-hidden">
+          <div class="table-responsive">
+            <p-table
+              [value]="items()"
+              dataKey="userProfileId"
+              styleClass="approval-table"
+              [customSort]="true"
+              sortMode="single"
+              (sortFunction)="onSort($event)"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{ 'profileApproval.list.columns.name' | translate }}</th>
+                  <th>{{ 'profileApproval.list.columns.status' | translate }}</th>
+                  <th pSortableColumn="targetEntity">
+                    {{ 'profileApproval.list.columns.targetEntity' | translate }}
+                    <p-sortIcon field="targetEntity"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="submittedAtUtc">
+                    {{ 'profileApproval.list.columns.submissionDate' | translate }}
+                    <p-sortIcon field="submittedAtUtc"></p-sortIcon>
+                  </th>
+                  <th>{{ 'common.actions' | translate }}</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>
+                    <div class="candidate-info">
+                      <div class="fw-semibold">{{ row.fullName || ('profileApproval.list.anonymous' | translate) }}</div>
+                      <div class="text-muted small">{{ row.candidateType || ('profileApproval.list.typeUnknown' | translate) }}</div>
+                      @if (row.isMinisterOfficeCandidate || row.isKawaaderCandidate) {
+                        <div class="candidate-source-tags">
+                          @if (row.isMinisterOfficeCandidate) {
+                            <p-tag severity="info" [rounded]="true" [value]="'profileApproval.list.source.ministerOffice' | translate"></p-tag>
+                          }
+                          @if (row.isKawaaderCandidate) {
+                            <p-tag severity="secondary" [rounded]="true" [value]="'profileApproval.list.source.kawaader' | translate"></p-tag>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </td>
+                  <td><span class="pill" [ngClass]="statusClass(row.overallStatus)">{{ statusLabel(row.overallStatus) | translate }}</span></td>
+                  <td>{{ row.targetEntity || ('profileApproval.list.entityUnknown' | translate) }}</td>
+                  <td>{{ row.submittedAtUtc | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button
+                        *hasPermission="[Permissions.ProfileApproval.Review, Permissions.ProfileApproval.Changes]"
+                        class="btn-text d-flex gap-1 align-items-center"
+                        type="button"
+                        (click)="openProfile(row)"
+                      >
+                        <i class="hgi hgi-stroke hgi-view"></i>{{ 'common.view' | translate }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="emptymessage">
+                <tr><td [attr.colspan]="5" class="text-center py-4 text-muted">{{ 'profileApproval.list.empty' | translate }}</td></tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+
+        @if (totalItems() > 0) {
+          <app-pagination
+            class="w-100 mt-3 d-block"
+            [currentPage]="currentPage()"
+            [itemsPerPage]="pageSize()"
+            [totalItems]="totalItems()"
+            (pageChanged)="onPageChanged($event)"
+            (pageSizeChanged)="onPageSizeChanged($event)"
+          ></app-pagination>
+        }
+      }
     </div>
   </div>
 </section>

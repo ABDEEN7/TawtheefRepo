@@ -212,6 +212,15 @@ export class StepPersonalComponent implements OnInit {
       : 'wizard.personal.sponsor.individual.qidInvalid11';
   }
 
+  get showSponsorCardUploader(): boolean {
+    if (this.profileService.isChangeRequestMode()) return false;
+    if (!this.profileService.isRevisionMode()) return true;
+
+    const resourceId = this.ds.state().sponsorCard?.resourceId;
+    const hasPersistedSponsorCard = !!resourceId && resourceId !== 'local';
+    return this.ds.isNeedSponsor && !hasPersistedSponsorCard;
+  }
+
   onSponsorEmployerNumberChange(raw: string) {
     // keep digits only + enforce max length while typing
     const digitsOnly = (raw ?? '').replace(/\D/g, '');

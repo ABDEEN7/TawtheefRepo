@@ -41,6 +41,7 @@ public class TokenService(
     ILoginAuditService loginAudit,
     IDistributedCache cache,
     IAppLogger logger,
+    ILocalizationService localizationService,
     TawtheefDbContext dbContext) : ITokenService
 {
     private readonly SymmetricSecurityKey _securityKey = new(Encoding.UTF8.GetBytes(
@@ -239,7 +240,14 @@ public class TokenService(
 
         return Result.Ok(new AuthResponse(
             !profileComplete,
-            new UserInfoResponse(user.Id, user.FullNameEn, user.Email!, user.Avatar, user.AgreedToTerms, providerName, prefill),
+            new UserInfoResponse(
+                user.Id,
+                localizationService.GetLocalizedFullName(user),
+                user.Email!,
+                user.Avatar,
+                user.AgreedToTerms,
+                providerName,
+                prefill),
             new TokenResponse(
                 accessToken.Token,
                 DateTime.SpecifyKind(accessToken.Expires, DateTimeKind.Utc),

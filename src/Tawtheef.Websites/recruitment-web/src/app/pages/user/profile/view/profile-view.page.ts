@@ -260,6 +260,13 @@ export class ProfileViewPage {
           severity: 'chip-ok'
         };
       case UserProfileStatusEnum.RequiresUpdate:
+        if (!this.canResubmit()) {
+          return {
+            labelKey: 'profileOverview.status.correctionsRequired',
+            hintKey: 'profileOverview.statusHint.correctionsRequired',
+            severity: 'chip-warn'
+          };
+        }
         return {
           labelKey: 'profileOverview.status.readyForResubmit',
           hintKey: 'profileOverview.statusHint.readyForResubmit',

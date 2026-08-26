@@ -197,7 +197,7 @@
     </div>
     }
     <!-- Establishment Registration Card -->
-    @if (!profileService.isChangeRequestMode() && !profileService.isRevisionMode()) {
+    @if (showSponsorCardUploader) {
     <div class="col-md-6">
       <label class="form-label required">
         {{ `wizard.personal.sponsor.${ds.state().sponsorType?.backendName}.card`| lowercase | translate }}

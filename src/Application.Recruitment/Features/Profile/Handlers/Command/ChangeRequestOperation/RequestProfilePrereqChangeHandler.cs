@@ -31,11 +31,16 @@ public sealed class RequestProfilePrereqChangeHandler(
         if (profile.Status == UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.NotSubmitted);
 
-        var validationResult = validationService.ValidatePrerequisites(profile, cmd.Request.CandidateTypeId);
+        var r = cmd.Request;
+        var isCandidateTypeLocked = CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId);
+        var effectiveCandidateTypeId = isCandidateTypeLocked
+            ? profile.CandidateTypeId.GetValueOrDefault()
+            : r.CandidateTypeId;
+
+        var validationResult = validationService.ValidatePrerequisites(profile, effectiveCandidateTypeId);
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
-        var r = cmd.Request;
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
 
         var currentSnapshot = PrereqSectionSnapshot.From(profile);
@@ -58,6 +63,7 @@ public sealed class RequestProfilePrereqChangeHandler(
             idUpload.Value,
             birthUpload.Value,
             marriageUpload.Value,
+            effectiveCandidateTypeId,
             isLockedProvider
         );
 
@@ -115,19 +121,19 @@ file sealed record PrereqSectionSnapshot
         Guid? nationalCardId,
         Guid? birthCertificateId,
         Guid? marriageCertificateId,
+        Guid effectiveCandidateTypeId,
         bool isLockedProvider)
     {
-        var nextCandidateTypeId = request.CandidateTypeId;
         var snapshot = this with
         {
-            CandidateTypeId = isLockedProvider ? CandidateTypeId : nextCandidateTypeId,
+            CandidateTypeId = effectiveCandidateTypeId,
             TargetEntityId = request.TargetEntityId,
             QidExpiry = isLockedProvider ? QidExpiry ?? request.QIDExpiry : request.QIDExpiry ?? QidExpiry,
             ResumeAttachmentId = resumeAttachmentId ?? ResumeAttachmentId,
             NationalCardId = nationalCardId ?? NationalCardId
         };
 
-        if (RequiresBirthCertificate(nextCandidateTypeId))
+        if (RequiresBirthCertificate(effectiveCandidateTypeId))
         {
             snapshot = snapshot with { BirthCertificateId = birthCertificateId ?? BirthCertificateId };
         }
@@ -136,7 +142,7 @@ file sealed record PrereqSectionSnapshot
             snapshot = snapshot with { BirthCertificateId = null };
         }
 
-        if (RequiresMarriageCertificate(nextCandidateTypeId))
+        if (RequiresMarriageCertificate(effectiveCandidateTypeId))
         {
             snapshot = snapshot with { MarriageCertificateId = marriageCertificateId ?? MarriageCertificateId };
         }
@@ -145,12 +151,12 @@ file sealed record PrereqSectionSnapshot
             snapshot = snapshot with { MarriageCertificateId = null };
         }
 
-        if (!RequiresOffice(nextCandidateTypeId))
+        if (!RequiresOffice(effectiveCandidateTypeId))
         {
             snapshot = snapshot with { OfficeId = null };
         }
 
-        if (!RequiresNationalAddress(nextCandidateTypeId))
+        if (!RequiresNationalAddress(effectiveCandidateTypeId))
         {
             snapshot = snapshot with { QidExpiry = null };
         }

@@ -78,6 +78,16 @@ public class CandidateTypeConfiguration : LookupBaseConfiguration<CandidateType>
                 DescriptionAr = "مرشح يمتلك الوثيقة الشخصية القطرية",
                 DescriptionEn = "Holders of Qatari Documents",
                 DisplayOrder = 7
+            },
+            new CandidateType
+            {
+                Id = CandidateTypeIds.PermanentResident,
+                BackendName = nameof(CandidateTypeIds.PermanentResident),
+                NameEn = "Permanent Resident",
+                NameAr = "حامل الإقامة الدائمة",
+                DescriptionAr = "حامل الإقامة الدائمة",
+                DescriptionEn = "Permanent Resident",
+                DisplayOrder = 8
             }
         );
     }

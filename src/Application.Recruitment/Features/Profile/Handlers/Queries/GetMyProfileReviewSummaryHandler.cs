@@ -17,9 +17,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
     public async Task<IResult<MyProfileReviewSummaryDto>> Handle(
         GetMyProfileReviewSummaryQuery request, CancellationToken ct)
     {
-        var profile = await uow.GetEntityRepository<UserProfile>()
-            .DbSet.AsNoTracking()
-            .FirstOrDefaultAsync(p => p.UserId == request.UserId, ct);
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, request.UserId, ct: ct);
 
         if (profile is null)
             return Result.Fail<MyProfileReviewSummaryDto>(ErrorsCodes.ProfileNotFound);
@@ -77,7 +75,8 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         var canResubmit = profile.Status == UserProfileStatus.RequiresUpdate &&
                           changed.Count > 0 &&
-                          !items.Any(IsOutstandingActionableCorrection);
+                          !items.Any(IsOutstandingActionableCorrection) &&
+                          profile.IsCompleted();
         
         if (profile.Status is not UserProfileStatus.InCreation && 
             profile.Status is not UserProfileStatus.RequiresUpdate &&
@@ -154,7 +153,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
         return Result.Ok(dto);
 
         bool IsReviewerNote(ReviewItem x) =>
-            x is { ReviewedAtUtc: not null, Status: ReviewStatus.NeedsCorrection or ReviewStatus.Rejected };
+            x.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected;
 
         bool IsUserChanged(ReviewItem x) => x.IsOutdated || x.Status == ReviewStatus.Solved;
 
