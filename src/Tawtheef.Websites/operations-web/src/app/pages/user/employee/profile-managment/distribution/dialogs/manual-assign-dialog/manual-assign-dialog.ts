@@ -46,7 +46,7 @@ export class ManualAssignDialog {
 
   selectedCount = signal<number>(this.data?.selectedProfileIds?.length ?? 0);
 
-  employeeId = signal<string>(this.data?.initialEmployeeId ?? '');
+  employeeId = signal<string | null>(this.data?.initialEmployeeId ?? null);
   count = signal<number | null>(this.data?.selectedProfileIds?.length ?? null);
 
   cancel(): void {

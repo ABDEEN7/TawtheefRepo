@@ -23,6 +23,7 @@ public static class RolePermissionCatalog
             ],
             [SystemRoleIds.HrManager] = [
                 Permissions.Dashboard.View.Key,
+                Permissions.Dashboard.Manage.Key,
                 
                 Permissions.Users.View.Key,
                 Permissions.Users.Manage.Key,

@@ -23,6 +23,7 @@ public class CandidateUsersController(IMediator mediator) : ControllerBase
 
     [HttpGet("export")]
     [AuthorizePermission(PermissionKeys.Dashboard.Export)]
+    [AuthorizePermission(PermissionKeys.CandidateUsers.View)]
     public async Task<IActionResult> ExportUsers([FromQuery] ExportCandidateUsersQuery query)
     {
         var result = await mediator.Send(query);

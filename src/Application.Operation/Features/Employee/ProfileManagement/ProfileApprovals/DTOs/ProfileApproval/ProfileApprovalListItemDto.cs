@@ -10,6 +10,8 @@ public record ProfileApprovalListItemDto
     public string FullName { get; init; } = string.Empty;
     public string? CandidateType { get; init; }
     public string? TargetEntity { get; init; }
+    public bool IsMinisterOfficeCandidate { get; init; }
+    public bool IsKawaaderCandidate { get; init; }
     public DateTimeOffset SubmittedAtUtc { get; init; }
     public UserProfileStatus ProfileStatus { get; init; }
     public ReviewStatus OverallStatus { get; init; }

@@ -9,45 +9,51 @@
       </button>
     </div>
 
-    <div class="card card-table bg-light mb-3">
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">{{ 'USERS.SEARCH_NAME' | translate }}</label>
-            <input type="text" class="form-control" [(ngModel)]="nameFilter" (input)="this.onSearchChange()"
-              [placeholder]="'USERS.SEARCH_NAME_PLACEHOLDER' | translate" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">{{ 'USERS.SEARCH_EMAIL' | translate }}</label>
-            <input type="email" class="form-control" [(ngModel)]="emailFilter" (input)="this.onSearchChange()"
-              [placeholder]="'USERS.SEARCH_EMAIL_PLACEHOLDER' | translate" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">{{ 'USERS.FILTER_BLOCKED' | translate }}</label>
-            <p-select [options]="blockedStatusOptions" [showClear]="true"
-              [placeholder]="'USERS.BLOCKED_ANY' | translate" name="blockedStatuses"
-              (onChange)="onBlockedFilterChange($event.value)" (onClear)="onBlockedFilterChange(null)" [filter]="true"
-              filterBy="additionalData.nameAr,additionalData.nameEn,name" [ngModel]="filters().isBlocked"
-              optionLabel="name" optionValue="id" class="form-select">
-              <ng-template #selectedItem let-option>
-                {{ option.name | translate }}
-              </ng-template>
-              <ng-template #item let-option>
-                {{ option.name | translate }}
-              </ng-template>
-            </p-select>
-          </div>
-        </div>
-      </div>
+    <app-page-filters
+      [advancedLabel]="'USERS.FILTERS' | translate"
+      [clearLabel]="'USERS.CLEAR_FILTERS' | translate"
+      [activeAdvancedCount]="activeFilterCount()"
+      [showAdvanced]="false"
+      (filtersCleared)="clearFilters()"
+    >
+      <p-iconfield filterSearch class="search-icon-field w-100">
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input
+          pInputText
+          id="users-search"
+          type="search"
+          class="w-100 form-control"
+          [ngModel]="filters().search ?? ''"
+          (ngModelChange)="onSearchChange($event)"
+          [placeholder]="'USERS.SEARCH_PLACEHOLDER' | translate"
+        />
+      </p-iconfield>
 
-    </div>
+      <div filterSecondary>
+        <label class="form-label" for="users-status">{{ 'USERS.STATUS' | translate }}</label>
+        <p-select
+          inputId="users-status"
+          class="w-100"
+          [options]="blockedStatusOptions"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [ngModel]="filters().isBlocked"
+          (onChange)="onBlockedFilterChange($event.value)"
+          [placeholder]="'USERS.ALL' | translate"
+        >
+          <ng-template #selectedItem let-option>{{ option.name | translate }}</ng-template>
+          <ng-template #item let-option>{{ option.name | translate }}</ng-template>
+        </p-select>
+      </div>
+    </app-page-filters>
     <div class="table-card rounded overflow-hidden">
       <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle w-100">
           <thead class="table-light">
             <tr>
-              <th>{{ 'USERS.NAME' | translate }}</th>
-              <th>{{ 'USERS.EMAIL' | translate }}</th>
+              <th>{{ 'USERS.USER' | translate }}</th>
+              <th>{{ 'USERS.SECTION' | translate }}</th>
               <th>{{ 'USERS.LAST_LOGIN' | translate }}</th>
               <th>{{ 'USERS.IS_BLOCKED' | translate }}</th>
               <th>{{ 'USERS.ROLES' | translate }}</th>
@@ -65,8 +71,11 @@
             } @else {
             @for (user of this.users(); track user.id; let i = $index) {
             <tr [ngClass]="{ 'row-even': i % 2 === 0, 'row-odd': i % 2 !== 0 }">
-              <td>{{ user.name }}</td>
-              <td>{{ user.email }}</td>
+              <td>
+                <div class="fw-semibold">{{ user.name }}</div>
+                <div class="text-muted small" dir="ltr">{{ user.email }}</div>
+              </td>
+              <td>{{ user.section || '' }}</td>
               <td>{{ user.lastLoginDate ? (user.lastLoginDate | date:'short') : ('USERS.NEVER' | translate) }}</td>
               <td>
                 <span class="pill" [class.soft]="user.isBlocked" [class.success]="!user.isBlocked">
@@ -77,7 +86,7 @@
                 @if (user.roles && user.roles!.length > 0) {
                 @for (role of user.roles; track role) {
                 <span class="pill m-1" [class.neutral]="!role.isSystemRole" [class.info]="role.isSystemRole">
-                  {{ this.currentLang() === 'ar' ? (role.nameAr || role.nameEn) : (role.nameEn || role.nameAr) }}
+                  {{ role.name }}
                 </span>
                 }
                 } @else {

@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
+using Application.Operation.Features.Employee.Dashboard.Services.Time;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
@@ -15,6 +16,7 @@ internal sealed class DashboardWorkloadMetricsReader(
     public async Task<DashboardWorkloadMetrics> ReadAsync(
         IQueryable<ProfileAssignment> assignments,
         DashboardAccessContext context,
+        Guid? requestedEmployeeId,
         int awaitingDistribution,
         DateTime fromUtc,
         DateTime toExclusiveUtc,
@@ -25,14 +27,17 @@ internal sealed class DashboardWorkloadMetricsReader(
         var workload = await GetEmployeeWorkloadAsync(
             assignments,
             context,
+            requestedEmployeeId,
             awaitingDistribution,
             fromUtc,
             toExclusiveUtc,
             ct);
 
-        var employees = context.CanViewProfileDistribution
-            ? await scope.DistributionTeam(context).CountAsync(ct)
-            : 0;
+        var employeesQuery = scope.DashboardEmployees(context);
+        if (context.Scope != DashboardScope.User && requestedEmployeeId.HasValue)
+            employeesQuery = employeesQuery.Where(employee => employee.Id == requestedEmployeeId.Value);
+
+        var employees = await employeesQuery.CountAsync(ct);
 
         return new DashboardWorkloadMetrics(
             tasks,
@@ -44,6 +49,7 @@ internal sealed class DashboardWorkloadMetricsReader(
         IQueryable<ProfileAssignment> assignments,
         CancellationToken ct)
     {
+        var overdueCutoff = DashboardWorkloadRules.ResolveOverdueCutoff(DateTime.UtcNow);
         var changes = uow
             .GetEntityRepository<ProfileChangeRequest>()
             .DbSet
@@ -82,7 +88,14 @@ internal sealed class DashboardWorkloadMetricsReader(
                     .Distinct()
                     .Count(),
 
-                0))
+                group
+                    .Where(assignment =>
+                        assignment.IsActive &&
+                        assignment.UnassignedAtUtc == null &&
+                        assignment.AssignedAtUtc < overdueCutoff)
+                    .Select(assignment => assignment.UserProfileId)
+                    .Distinct()
+                    .Count()))
             .FirstOrDefaultAsync(ct);
 
         return row ?? new DashboardTaskCounts(0, 0, 0, 0);
@@ -91,6 +104,7 @@ internal sealed class DashboardWorkloadMetricsReader(
     private async Task<DashboardEmployeeWorkload> GetEmployeeWorkloadAsync(
         IQueryable<ProfileAssignment> assignments,
         DashboardAccessContext context,
+        Guid? requestedEmployeeId,
         int awaitingDistribution,
         DateTime fromUtc,
         DateTime toExclusiveUtc,
@@ -107,6 +121,7 @@ internal sealed class DashboardWorkloadMetricsReader(
 
         var completed = await CountCompletedReviewsAsync(
             context,
+            requestedEmployeeId,
             fromUtc,
             toExclusiveUtc,
             ct);
@@ -119,42 +134,18 @@ internal sealed class DashboardWorkloadMetricsReader(
 
     private async Task<int> CountCompletedReviewsAsync(
         DashboardAccessContext context,
+        Guid? requestedEmployeeId,
         DateTime fromUtc,
         DateTime toExclusiveUtc,
         CancellationToken ct)
     {
-        var logs = uow
-            .GetEntityRepository<UserProfileLogger>()
-            .DbSet
-            .AsNoTracking()
+        var logs = scope.CompletedReviews(context, requestedEmployeeId)
             .Where(log =>
-                !log.IsDeleted &&
                 log.ActionType ==
                     UserProfileLogConstants.ActionTypes.ProfileReviewFinalized &&
                 log.CreatedDate >= fromUtc &&
                 log.CreatedDate < toExclusiveUtc);
 
-        if (context.CanViewProfileDistribution)
-        {
-            var employeeIds = scope
-                .DistributionTeam(context)
-                .Select(employee => employee.Id);
-
-            return await logs
-                .Where(log =>
-                    log.PerformedById.HasValue &&
-                    employeeIds.Contains(log.PerformedById.Value))
-                .CountAsync(ct);
-        }
-
-        if (context.CanViewAssignedProfiles)
-        {
-            return await logs
-                .Where(log =>
-                    log.PerformedById == context.CurrentUserId)
-                .CountAsync(ct);
-        }
-
-        return 0;
+        return await logs.CountAsync(ct);
     }
 }

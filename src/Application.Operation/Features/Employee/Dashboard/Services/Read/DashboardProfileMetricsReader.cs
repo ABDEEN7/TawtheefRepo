@@ -1,10 +1,13 @@
 using Application.Operation.Features.Employee.Dashboard.DTOs.Candidates;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
-using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
+using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
+using Tawtheef.Domain.Entities.Kawader;
+using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -12,8 +15,7 @@ namespace Application.Operation.Features.Employee.Dashboard.Services.Read;
 
 internal sealed class DashboardProfileMetricsReader(
     IUnitOfWork uow,
-    ILocalizationService localizationService,
-    DashboardQueryScope scope)
+    ILocalizationService localizationService)
 {
     public async Task<DashboardProfileMetrics> ReadAsync(
         IQueryable<UserProfile> profiles,
@@ -27,29 +29,33 @@ internal sealed class DashboardProfileMetricsReader(
         var statuses = await GetPeriodStatusesAsync(periodProfiles, currentFrom, ct);
         var unassigned = await CountUnassignedByPeriodAsync(periodProfiles, currentFrom, ct);
         var rejected = await CountRejectedAsync(profiles, range.From, range.To, ct);
-        var accessibleProfiles = scope.AccessibleProfiles(context);
         var now = DateTime.UtcNow;
-        var newToday = await CountNewProfilesAsync(accessibleProfiles, now.Date, now, ct);
-        var newThisWeek = await CountNewProfilesAsync(accessibleProfiles, GetWeekStart(now.Date), now, ct);
-        var newThisMonth = await CountNewProfilesAsync(
-            accessibleProfiles, new DateTime(now.Year, now.Month, 1), now, ct);
+        var newProfiles = await CountNewProfilesAsync(profiles, now, ct);
         var averageApprovalHours = await CalculateAverageApprovalHoursAsync(
-            accessibleProfiles, range.From, range.To, ct);
-        var followedMinisterOfficeCandidates = context.CanViewMinisterOffice
-            ? await uow.GetEntityRepository<Tawtheef.Domain.Entities.MinisterOffice.MinisterOfficeCandidate>()
+            profiles, range.From, range.To, ct);
+        var cohorts = await GetCohortsAsync(
+            profiles,
+            context.Scope == DashboardScope.Organization,
+            ct);
+        var followedMinisterOfficeCandidates = context.Scope == DashboardScope.Organization
+            ? await uow.GetEntityRepository<MinisterOfficeCandidate>()
                 .DbSet.CountAsync(candidate => !candidate.IsDeleted && candidate.IsFollowUpActive, ct)
             : 0;
+        var kawaderFiles = await uow.GetEntityRepository<KawaderQid>()
+            .DbSet.AsNoTracking().CountAsync(ct);
 
         return new DashboardProfileMetrics(
             candidateTypes,
             statuses,
             unassigned,
             rejected,
-            newToday,
-            newThisWeek,
-            newThisMonth,
+            newProfiles.Today,
+            newProfiles.ThisWeek,
+            newProfiles.ThisMonth,
             averageApprovalHours,
-            followedMinisterOfficeCandidates);
+            followedMinisterOfficeCandidates,
+            kawaderFiles,
+            cohorts);
     }
 
     private async Task<List<CandidateTypeCountDto>> GetCandidateTypesAsync(
@@ -75,14 +81,19 @@ internal sealed class DashboardProfileMetricsReader(
             })
             .ToListAsync(ct);
 
-        return rows.Select(row => new CandidateTypeCountDto
-        {
-            CandidateTypeId = row.CandidateTypeId,
-            Label = localizationService.GetLocalizedValue(
-                row.NameAr,
-                row.NameEn),
-            Count = row.Count
-        }).ToList();
+        return rows
+            .OrderByDescending(row => row.CandidateTypeId == CandidateTypeIds.Qatari)
+            .ThenByDescending(row => row.Count)
+            .ThenBy(row => row.NameEn)
+            .Select(row => new CandidateTypeCountDto
+            {
+                CandidateTypeId = row.CandidateTypeId,
+                Label = localizationService.GetLocalizedValue(
+                    row.NameAr,
+                    row.NameEn),
+                Count = row.Count
+            })
+            .ToList();
     }
 
     private static async Task<PeriodValues<Dictionary<string, int>>> GetPeriodStatusesAsync(
@@ -142,12 +153,31 @@ internal sealed class DashboardProfileMetricsReader(
             .Select(item => item.UserProfileId).Distinct().CountAsync(ct);
     }
 
-    private static Task<int> CountNewProfilesAsync(
+    private static async Task<(int Today, int ThisWeek, int ThisMonth)> CountNewProfilesAsync(
         IQueryable<UserProfile> profiles,
-        DateTime from,
-        DateTime to,
-        CancellationToken ct) =>
-        profiles.CountAsync(profile => profile.CreatedDate >= from && profile.CreatedDate < to, ct);
+        DateTime now,
+        CancellationToken ct)
+    {
+        var today = now.Date;
+        var weekStart = GetWeekStart(today);
+        var monthStart = new DateTime(now.Year, now.Month, 1);
+        var earliestStart = new[] { today, weekStart, monthStart }.Min();
+
+        var counts = await profiles
+            .Where(profile => profile.CreatedDate >= earliestStart && profile.CreatedDate < now)
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Today = group.Count(profile => profile.CreatedDate >= today),
+                ThisWeek = group.Count(profile => profile.CreatedDate >= weekStart),
+                ThisMonth = group.Count(profile => profile.CreatedDate >= monthStart)
+            })
+            .FirstOrDefaultAsync(ct);
+
+        return counts is null
+            ? (0, 0, 0)
+            : (counts.Today, counts.ThisWeek, counts.ThisMonth);
+    }
 
     private static async Task<decimal> CalculateAverageApprovalHoursAsync(
         IQueryable<UserProfile> profiles,
@@ -158,12 +188,41 @@ internal sealed class DashboardProfileMetricsReader(
         var approvals = profiles.Where(profile => profile.CreatedDate >= from &&
             profile.CreatedDate < to && profile.Status == UserProfileStatus.Approved &&
             profile.UpdatedDate != null);
-        var count = await approvals.CountAsync(ct);
-        if (count == 0) return 0m;
-        var hours = await approvals.Select(profile =>
-            EF.Functions.DateDiffSecond(profile.CreatedDate, profile.UpdatedDate!.Value) / 3600.0)
-            .SumAsync(ct);
-        return Math.Round((decimal)(hours / count), 2);
+        var hours = await approvals
+            .Select(profile => (double?)(EF.Functions.DateDiffSecond(
+                profile.CreatedDate,
+                profile.UpdatedDate!.Value) / 3600.0))
+            .AverageAsync(ct);
+        return hours.HasValue ? Math.Round((decimal)hours.Value, 2) : 0m;
+    }
+
+    private async Task<CandidateCohortsDto> GetCohortsAsync(
+        IQueryable<UserProfile> profiles,
+        bool includeOfficeProfiles,
+        CancellationToken ct)
+    {
+        var ministerOfficeCandidates = uow.GetEntityRepository<MinisterOfficeCandidate>()
+            .DbSet.AsNoTracking();
+
+        return await profiles
+            .GroupBy(_ => 1)
+            .Select(group => new CandidateCohortsDto
+            {
+                IncludeOfficeProfiles = includeOfficeProfiles,
+                RegisteredKawaderProfiles = group.Count(profile =>
+                    profile.User != null && profile.User.IsUserKawader),
+                RegisteredMinisterOfficeProfiles = group.Count(profile =>
+                    profile.NationalNumber != null && ministerOfficeCandidates.Any(candidate =>
+                        !candidate.IsDeleted && candidate.IsFollowUpActive &&
+                        candidate.Qid == profile.NationalNumber)),
+                QatarGraduateProfiles = group.Count(profile => profile.Qualifications!.Any(qualification =>
+                    !qualification.IsDeleted && qualification.CountryId == CountryIds.Qatar)),
+                OfficeProfiles = group.Count(profile => profile.OfficeId.HasValue)
+            })
+            .FirstOrDefaultAsync(ct) ?? new CandidateCohortsDto
+            {
+                IncludeOfficeProfiles = includeOfficeProfiles
+            };
     }
 
     private static Dictionary<string, int> ToStatusDictionary(IEnumerable<(string Status, int Count)> rows) =>

@@ -22,9 +22,6 @@ public sealed class GetMainMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper ma
             .Where(m=> m.ParentId == null)
             .WhereIf(!request.IncludeOrphanMajors, m => m.SubMajors!.Count > 0);
         var normalizedSearch = request.Search?.Trim();
-        var isPaged = request.PaginatedRequest is not null;
-
-
         List<Major> byId = [];
         if (request.Id.HasValue)
         {
@@ -33,21 +30,28 @@ public sealed class GetMainMajorsQueryHandler(IUnitOfWork unitOfWork, IMapper ma
                 .ToListAsync(cancellationToken);
         }
 
-        var bySearch = new List<Major>();
-        if (!string.IsNullOrWhiteSpace(normalizedSearch) || isPaged)
+        var searchQuery = baseQuery;
+        if (!string.IsNullOrWhiteSpace(normalizedSearch))
         {
-            var searchQuery = baseQuery;
-            if (!string.IsNullOrWhiteSpace(normalizedSearch))
-            {
-                searchQuery = searchQuery.Where(m =>
-                    EF.Functions.Like(m.NameAr, $"%{normalizedSearch}%") ||
-                    EF.Functions.Like(m.NameEn, $"%{normalizedSearch}%") ||
-                    EF.Functions.Like(m.DescriptionAr ?? "", $"%{normalizedSearch}%") ||
-                    EF.Functions.Like(m.DescriptionEn ?? "", $"%{normalizedSearch}%"));
-            }
+            searchQuery = searchQuery.Where(m =>
+                EF.Functions.Like(m.NameAr, $"%{normalizedSearch}%") ||
+                EF.Functions.Like(m.NameEn, $"%{normalizedSearch}%") ||
+                EF.Functions.Like(m.DescriptionAr ?? "", $"%{normalizedSearch}%") ||
+                EF.Functions.Like(m.DescriptionEn ?? "", $"%{normalizedSearch}%"));
+        }
 
-            if (request.PaginatedRequest != null)
-                bySearch = await searchQuery.ToPaginatedResultAsync(request.PaginatedRequest, cancellationToken);
+        List<Major> bySearch;
+        if (request.PaginatedRequest is not null)
+        {
+            bySearch = await searchQuery.ToPaginatedResultAsync(request.PaginatedRequest, cancellationToken);
+        }
+        else if (!string.IsNullOrWhiteSpace(normalizedSearch) || !request.Id.HasValue)
+        {
+            bySearch = await searchQuery.ToListAsync(cancellationToken);
+        }
+        else
+        {
+            bySearch = [];
         }
 
         var merged = byId

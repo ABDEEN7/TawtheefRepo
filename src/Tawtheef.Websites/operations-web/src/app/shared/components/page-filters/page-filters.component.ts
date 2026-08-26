@@ -16,6 +16,7 @@ export class PageFiltersComponent {
   activeAdvancedCount = input(0);
   showClear = input(true);
   showSecondary = input(true);
+  showAdvanced = input(true);
 
   advancedToggled = output<void>();
   filtersCleared = output<void>();
