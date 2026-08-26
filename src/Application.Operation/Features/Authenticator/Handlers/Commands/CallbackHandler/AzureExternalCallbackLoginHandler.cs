@@ -136,6 +136,9 @@ public sealed class AzureExternalCallbackLoginHandler(
         var linkedUser = await userManager.FindByLoginAsync(Provider, claims.ProviderKey);
         if (linkedUser is not null)
         {
+            if (linkedUser is not EmployeeUser)
+                return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+
             _log.Information("Azure resolve: already linked. UserId={UserId}", linkedUser.Id);
             return Result.Ok(linkedUser);
         }
@@ -144,6 +147,9 @@ public sealed class AzureExternalCallbackLoginHandler(
         var existingUser = await userManager.FindByEmailAsync(claims.Email);
         if (existingUser is not null)
         {
+            if (existingUser is not EmployeeUser)
+                return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+
             _log.Information("Azure resolve: found by email; linking provider. UserId={UserId}", existingUser.Id);
             return await LinkProviderToExistingUserAsync(existingUser, claims.ProviderKey);
         }
@@ -247,9 +253,6 @@ public sealed class AzureExternalCallbackLoginHandler(
         User user,
         CancellationToken ct)
     {
-        if (user is AdminUser)
-            return Result.Ok(Unit.Value);
-
         if (user is not EmployeeUser employee)
             return Result.Fail<Unit>(
                 ErrorsCodes.ExternalLoginOfficeUserInvalidType);
