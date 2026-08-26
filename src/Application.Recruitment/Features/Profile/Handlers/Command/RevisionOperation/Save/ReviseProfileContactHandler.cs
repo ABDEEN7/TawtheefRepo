@@ -79,7 +79,15 @@ public sealed class ReviseProfileContactHandler(
 
         if (r.NationalAddress is not null)
         {
-            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddress?.CertificateId);
+            var oldResourceId = profile.ResidenceAddress?.CertificateId;
+            if (HasFile(r.NationalAddress.NationalAddress))
+            {
+                var editable = await EnsureAttachmentEditableAsync(oldResourceId);
+                if (editable.IsFailed)
+                    return Result.Fail<Unit>(editable.Errors);
+            }
+
+            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, oldResourceId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
             
@@ -99,8 +107,15 @@ public sealed class ReviseProfileContactHandler(
                 profile.ResidenceAddress.CertificateId = idResult.Value!.Value;
             }
 
+            if (HasFile(r.NationalAddress.NationalAddress))
+            {
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                    uow, profile, ProfileSection.Contact, oldResourceId, ct);
+            }
+
         }
-        
+
+        await ProfileReviewItemSync.EnsureNationalAddressAttachmentItemAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
@@ -118,6 +133,29 @@ public sealed class ReviseProfileContactHandler(
                 return Result.Fail<Guid?>(uploadResult.Errors);
 
             return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        }
+
+        static bool HasFile(IFormFile? file) => file is { Length: > 0 };
+
+        async Task<Result> EnsureAttachmentEditableAsync(Guid? resourceId)
+        {
+            if (resourceId is null || resourceId == Guid.Empty)
+                return Result.Ok();
+
+            var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
+                item.UserProfileId == profile.Id &&
+                item.Section == ProfileSection.Contact &&
+                item.TargetType == ReviewTargetType.Attachment &&
+                item.ResourceId == resourceId &&
+                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Solved),
+                ct);
+
+            if (allowed)
+                return Result.Ok();
+
+            return Result.Fail(new Error("Forbidden")
+                .WithMetadata("Code", ErrorsCodes.AttachmentNotEditableInRevision)
+                .WithMetadata("StatusCode", StatusCodes.Status403Forbidden));
         }
     }
 }

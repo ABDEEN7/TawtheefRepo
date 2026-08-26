@@ -8,6 +8,31 @@ namespace Application.Recruitment.Features.Profile.Handlers.Command.SaveOperatio
 
 internal static class ReviewItemSaveHelper
 {
+    public static async Task ReopenSectionDataForCorrectionAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        ProfileSection section,
+        CancellationToken ct)
+    {
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
+        var item = await reviewRepo.DbSet.FirstOrDefaultAsync(candidate =>
+            candidate.UserProfileId == profile.Id &&
+            candidate.Section == section &&
+            candidate.TargetType == ReviewTargetType.Field &&
+            candidate.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+            candidate.ProfileChangeId == null,
+            ct);
+
+        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Solved)
+            return;
+
+        item.Status = ReviewStatus.NeedsCorrection;
+        item.IsOutdated = false;
+        item.ReviewedAtUtc = null;
+        item.ReviewedById = null;
+        item.ReviewerNote = null;
+    }
+
     public static Task MarkSectionDataSolvedAsync(
         IUnitOfWork uow,
         UserProfile profile,

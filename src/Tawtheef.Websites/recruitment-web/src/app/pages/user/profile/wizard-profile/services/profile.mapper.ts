@@ -120,7 +120,7 @@ export function mapProfileStatusToState(
       : null;
 
   return {
-    provider: (dto.provider as ProfileState['provider']) ?? 'Google',
+    provider: (dto.provider ?? prefill?.provider ?? 'Google') as ProfileState['provider'],
     isKawaderQid,
     // ----------- Prereq -----------
     candidateType: mapIdToDropdown(lookups, 'candidateType', dto.candidateTypeId) as DropdownOptionVM,
