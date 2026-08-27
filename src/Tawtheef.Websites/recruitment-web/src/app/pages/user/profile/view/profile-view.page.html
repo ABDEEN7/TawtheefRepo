@@ -274,6 +274,7 @@
       !summaryLoading() &&
       (activeSectionReviewNotes().length > 0 ||
         activeSectionTargetNotes().length > 0 ||
+        activeSectionHistoricalTargetNotes().length > 0 ||
         activeSectionChangedItems().length > 0)
     ) {
       <div class="card-body mt-3">
@@ -377,6 +378,37 @@
             </div>
           }
         </section>
+
+        @if (activeSectionHistoricalTargetNotes().length > 0) {
+          <section class="review-panel review-panel--done mt-3">
+            <div class="review-panel__header">
+              <div class="review-panel__icon">
+                <i class="hgi hgi-stroke hgi-checkmark-circle-02"></i>
+              </div>
+              <div class="review-panel__heading">
+                <div class="review-panel__title">
+                  {{ 'profileOverview.review.sectionCorrectionsSaved' | translate }}
+                </div>
+              </div>
+            </div>
+            <div class="review-context">
+              <div class="review-context__label">
+                <i class="hgi hgi-stroke hgi-notebook-02"></i>
+                {{ 'profileOverview.review.generalNoteTitle' | translate }}
+              </div>
+              <div class="review-context__items">
+                @for (note of activeSectionHistoricalTargetNotes(); track note.reviewItemId) {
+                  <div class="review-context__item">
+                    <span class="review-context__text">{{ note.note }}</span>
+                    <span class="status-chip" [ngClass]="noteSeverityClass(note.status)">
+                      {{ noteStatusLabelKey(note.status) | translate }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+        }
       </div>
     }
     <div class="card-body">

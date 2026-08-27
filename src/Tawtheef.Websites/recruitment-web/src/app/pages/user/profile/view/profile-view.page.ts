@@ -383,7 +383,18 @@ export class ProfileViewPage {
 
   readonly activeSectionTargetNotes = computed(() => {
     const notes = this.activeSectionNotes();
-    return notes.filter(n => n.targetType !== ReviewTargetTypeEnum.Section);
+    return notes.filter(n =>
+      n.targetType !== ReviewTargetTypeEnum.Section &&
+      this.isOutstandingReviewNote(n)
+    );
+  });
+
+  readonly activeSectionHistoricalTargetNotes = computed(() => {
+    const notes = this.activeSectionNotes();
+    return notes.filter(n =>
+      n.targetType !== ReviewTargetTypeEnum.Section &&
+      !this.isOutstandingReviewNote(n)
+    );
   });
 
   readonly activeSectionChangedItems = computed(() =>
@@ -707,12 +718,19 @@ export class ProfileViewPage {
   }
 
   private actionableNotesCount(section: ProfileSectionEnum, notes: MyProfileReviewNoteDto[]): number {
+    const outstandingNotes = notes.filter(note => this.isOutstandingReviewNote(note));
+
     if (section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages) {
-      return notes.filter(note => note.targetType === ReviewTargetTypeEnum.Section).length;
+      return outstandingNotes.filter(note => note.targetType === ReviewTargetTypeEnum.Section).length;
     }
 
-    const detailNotes = notes.filter(note => note.targetType !== ReviewTargetTypeEnum.Section);
+    const detailNotes = outstandingNotes.filter(note => note.targetType !== ReviewTargetTypeEnum.Section);
     return detailNotes.length;
+  }
+
+  private isOutstandingReviewNote(note: MyProfileReviewNoteDto): boolean {
+    return note.status === ReviewStatusEnum.NeedsCorrection ||
+      note.status === ReviewStatusEnum.Rejected;
   }
 
   private isSectionNoteActionable(section: ProfileSectionEnum): boolean {

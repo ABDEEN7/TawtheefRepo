@@ -263,7 +263,7 @@ public class ReviewItem : EventEntity
                profile.AdditionalAttachments?.Any(item => item.AttachmentId == resourceId) == true;
     }
 
-    private bool IsCandidateActionableTarget() =>
+    public bool IsCandidateActionableTarget() =>
         TargetType != ReviewTargetType.Section ||
         Section is ProfileSection.Skills or ProfileSection.Languages;
 

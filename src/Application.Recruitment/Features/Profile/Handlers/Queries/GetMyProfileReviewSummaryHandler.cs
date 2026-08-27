@@ -38,6 +38,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
         var outstandingItems = activeItems
             .Where(item => item.IsOutstandingCandidateCorrection())
             .ToList();
+
         var visibleItems = activeItems
             .Where(item => item.Status != ReviewStatus.Solved)
             .ToList();
@@ -76,7 +77,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         var canResubmit = profile.Status == UserProfileStatus.RequiresUpdate &&
                           correctedReviewItems.Count > 0 &&
-                          !activeItems.Any(item => item.IsOutstandingCandidateCorrection()) &&
+                          !outstandingItems.Any() &&
                           profile.IsCompleted();
         
         if (profile.Status is not UserProfileStatus.InCreation && 
@@ -94,7 +95,13 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             });
         
 
-        var notes = outstandingItems
+        var noteItems = activeItems
+            .Where(item =>
+                item.IsCandidateActionableTarget() &&
+                !string.IsNullOrWhiteSpace(item.ReviewerNote))
+            .ToList();
+
+        var notes = noteItems
             .Select(x => new MyProfileReviewNoteDto {
                 ReviewItemId = x.Id,
                 TargetType   = x.TargetType,
