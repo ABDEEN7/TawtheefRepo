@@ -290,7 +290,7 @@ export class Dashboard implements OnInit {
         },
       },
       {
-        labelKey: 'dashboard.kpi.cadresFiles',
+        labelKey: 'dashboard.kpi.kawaderFiles',
         value: profiles.kawaderFiles ?? 0,
         icon: 'hgi-user-multiple',
         color: 'green',
