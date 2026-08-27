@@ -2,12 +2,12 @@ using Application.Operation.Features.Employee.Common.Access;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Application.Common.Security;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.Dashboard.Services.Access;
 
 internal sealed class DashboardAccessContextProvider(
     EmployeeProfileAccessContextProvider profileAccessContextProvider,
-    EmployeeJobAccessContextProvider jobAccessContextProvider,
     IHttpContextAccessor httpContextAccessor)
 {
     public async Task<Result<DashboardAccessContext>> GetAsync(CancellationToken ct)
@@ -18,18 +18,23 @@ internal sealed class DashboardAccessContextProvider(
             return Result.Fail(profileAccessResult.Errors);
 
         var profileAccess = profileAccessResult.Value;
-        var jobAccess = jobAccessContextProvider.GetAccess();
+        var canManageDashboard = HasPermission(PermissionKeys.Dashboard.Manage);
+        var scope = ResolveScope(profileAccess.CurrentUser, canManageDashboard);
 
         return Result.Ok(new DashboardAccessContext(
             profileAccess.CurrentUserId,
             profileAccess.CurrentUser,
-            profileAccess.CanViewProfileDistribution,
-            profileAccess.CanViewAssignedProfiles,
-            HasPermission(PermissionKeys.Jobs.View) || HasPermission(PermissionKeys.Jobs.Edit),
-            HasPermission(PermissionKeys.JobsInvitations.View),
-            HasPermission(PermissionKeys.MinisterOffice.View),
-            jobAccess.HasFullAccess));
+            canManageDashboard,
+            scope));
 
         bool HasPermission(string permission) => principal!.HasClaim(RoleClaimTypes.Permission, permission);
     }
+
+    private static DashboardScope ResolveScope(User currentUser, bool canManageDashboard) =>
+        currentUser switch
+        {
+            EmployeeUser when canManageDashboard => DashboardScope.Organization,
+            OfficeUser { OfficeId: not null } => DashboardScope.Office,
+            _ => DashboardScope.User
+        };
 }

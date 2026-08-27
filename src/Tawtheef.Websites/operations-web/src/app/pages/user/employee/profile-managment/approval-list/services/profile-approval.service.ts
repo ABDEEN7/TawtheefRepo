@@ -25,6 +25,10 @@ export class ProfileApprovalService {
     return this.http.get<dropdownOptionsModel[]>(this.endpoints.approvals.targetEntities);
   }
 
+  getCandidateTypes(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.approvals.candidateTypes);
+  }
+
   getProfile(profileId: string): Observable<ProfileApprovalDetail> {
     return this.http.get<ProfileApprovalDetail>(this.endpoints.approvals.detail(profileId));
   }

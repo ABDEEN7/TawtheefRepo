@@ -1,45 +1,30 @@
 using Application.Operation.Features.Employee.CandidateUsers.Contracts;
 using Application.Operation.Features.Employee.CandidateUsers.DTOs;
-using Application.Operation.Features.Employee.Common.Access;
 using FluentResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Models.Filters;
 using Tawtheef.Application.Extensions;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.CandidateUsers.Services;
 
-internal sealed class CandidateUsersQueryBuilder(
-    UserManager<User> userManager,
-    EmployeeProfileAccessContextProvider profileAccessContextProvider,
-    EmployeeProfileAccessScope profileAccessScope)
+internal sealed class CandidateUsersQueryBuilder(CandidateUsersAccessScope accessScope)
 {
     public async Task<Result<IQueryable<CandidateUserListItemDto>>> BuildAsync(
         ICandidateUsersFilter filter,
         CancellationToken cancellationToken)
     {
-        IQueryable<ApplicantUser> users = userManager.Users
-            .OfType<ApplicantUser>()
-            .AsNoTracking();
+        var populationResult = await accessScope.GetPopulationAsync(cancellationToken);
+        if (populationResult.IsFailed)
+            return Result.Fail<IQueryable<CandidateUserListItemDto>>(populationResult.Errors);
 
+        var population = populationResult.Value;
+        var users = population.Users;
+
+        // Request scope may narrow the server-authorized population, never widen it.
         if (filter.Scope == CandidateUsersResultScope.AccessibleProfiles)
         {
-            var contextResult =
-                await profileAccessContextProvider.GetAsync(cancellationToken);
-
-            if (contextResult.IsFailed)
-            {
-                return Result.Fail<IQueryable<CandidateUserListItemDto>>(
-                    contextResult.Errors);
-            }
-
-            var accessibleUserIds = profileAccessScope
-                .AccessibleProfiles(contextResult.Value)
-                .Select(profile => profile.UserId);
-
-            users = users.Where(user =>
-                accessibleUserIds.Contains(user.Id));
+            var authorizedProfileUserIds = population.Profiles.Select(profile => profile.UserId);
+            users = users.Where(user => authorizedProfileUserIds.Contains(user.Id));
         }
 
         var search = filter.Search?.Trim();

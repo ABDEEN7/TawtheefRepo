@@ -25,10 +25,8 @@ internal sealed class DashboardEmployeesReader(
     {
         var queryResult = await CreateQueryAsync(request, ct);
         if (queryResult.IsFailed) return Result.Fail(queryResult.Errors);
-        if (!queryResult.Value.IsAuthorized)
-            return Result.Ok(new PaginatedResult<TeamPerformanceRowDto>([], 0, request.PageNumber, request.PageSize));
 
-        var query = ApplySorting(queryResult.Value.Query, request.SortBy, request.SortDirection);
+        var query = ApplySorting(queryResult.Value, request.SortBy, request.SortDirection);
         var total = await query.CountAsync(ct);
         var rows = await query.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize).ToListAsync(ct);
         return Result.Ok(new PaginatedResult<TeamPerformanceRowDto>(rows, total, request.PageNumber, request.PageSize));
@@ -37,39 +35,56 @@ internal sealed class DashboardEmployeesReader(
     public async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(GetTeamPerformanceQuery request,
         CancellationToken ct)
     {
-        var queryResult = await CreateQueryAsync(request, ct);
-        if (queryResult.IsFailed) return Result.Fail(queryResult.Errors);
-        if (!queryResult.Value.IsAuthorized) return Result.Ok<IReadOnlyList<TeamPerformanceRowDto>>([]);
+        var contextResult = await accessContextProvider.GetAsync(ct);
+        if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
 
-        var rows = await ApplySorting(queryResult.Value.Query, request.SortBy, request.SortDirection).ToListAsync(ct);
+        return await ReadExportAsync(request, contextResult.Value, ct);
+    }
+
+    internal async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(
+        GetTeamPerformanceQuery request,
+        DashboardAccessContext context,
+        CancellationToken ct)
+    {
+        var queryResult = CreateQuery(request, context);
+        if (queryResult.IsFailed) return Result.Fail(queryResult.Errors);
+
+        var rows = await ApplySorting(queryResult.Value, request.SortBy, request.SortDirection).ToListAsync(ct);
         return Result.Ok<IReadOnlyList<TeamPerformanceRowDto>>(rows);
     }
 
-    private async Task<Result<TeamPerformanceQuery>> CreateQueryAsync(
+    private async Task<Result<IQueryable<TeamPerformanceRowDto>>> CreateQueryAsync(
         GetTeamPerformanceQuery request, CancellationToken ct)
     {
         var contextResult = await accessContextProvider.GetAsync(ct);
         if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
-        var context = contextResult.Value;
-        if (!context.CanViewProfileDistribution)
-            return Result.Ok(new TeamPerformanceQuery(false, Array.Empty<TeamPerformanceRowDto>().AsQueryable()));
 
-        var employees = scope.DistributionTeam(context);
-        if (request.EmployeeId.HasValue) employees = employees.Where(user => user.Id == request.EmployeeId.Value);
+        return CreateQuery(request, contextResult.Value);
+    }
+
+    private Result<IQueryable<TeamPerformanceRowDto>> CreateQuery(
+        GetTeamPerformanceQuery request,
+        DashboardAccessContext context)
+    {
+
+        var employees = scope.DashboardEmployees(context);
+        if (context.Scope != DashboardScope.User && request.EmployeeId.HasValue)
+            employees = employees.Where(user => user.Id == request.EmployeeId.Value);
         var isArabic = localizationService.GetCurrentLanguage() == "ar";
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             var term = $"%{request.Search.Trim()}%";
             employees = employees.Where(user =>
-                EF.Functions.Like(isArabic ? user.FullNameAr : user.FullNameEn, term) ||
+                EF.Functions.Like(user.FullNameAr, term) ||
+                EF.Functions.Like(user.FullNameEn, term) ||
                 user is EmployeeUser && (user as EmployeeUser)!.EmployeeProfile != null &&
                 (EF.Functions.Like((user as EmployeeUser)!.EmployeeProfile!.EmployeeNumber ?? string.Empty, term) ||
                  EF.Functions.Like((user as EmployeeUser)!.EmployeeProfile!.Department ?? string.Empty, term) ||
                  EF.Functions.Like((user as EmployeeUser)!.EmployeeProfile!.JobTitle ?? string.Empty, term)));
         }
 
-        var overdueCutoff = DateTime.UtcNow.AddDays(-7);
+        var overdueCutoff = DashboardWorkloadRules.ResolveOverdueCutoff(DateTime.UtcNow);
 
         var range = DashboardTemporalResolver.ResolveRequestRange(
             request.Year,
@@ -77,29 +92,22 @@ internal sealed class DashboardEmployeesReader(
             request.ToDateUtc,
             DateTime.UtcNow);
 
-        var assignments = scope.Assignments(context)
+        var assignments = scope.Assignments(context, request.EmployeeId)
             .Where(x =>
                 x.AssignedAtUtc >= range.FromUtc &&
                 x.AssignedAtUtc < range.ToExclusiveUtc);
         
-        var accessibleProfileIds = scope.AccessibleProfiles(context)
-            .Select(profile => profile.Id);
-
-        var finalizedReviews = uow.GetEntityRepository<UserProfileLogger>()
-            .DbSet
-            .AsNoTracking()
+        var finalizedReviews = scope.CompletedReviews(context)
             .Where(log =>
-                !log.IsDeleted &&
                 log.ActionType == UserProfileLogConstants.ActionTypes.ProfileReviewFinalized &&
                 log.CreatedDate >= range.FromUtc &&
-                log.CreatedDate < range.ToExclusiveUtc &&
-                accessibleProfileIds.Contains(log.UserProfileId));
+                log.CreatedDate < range.ToExclusiveUtc);
         
         var changes = uow.GetEntityRepository<ProfileChangeRequest>()
             .DbSet
             .AsNoTracking();
         
-        return Result.Ok(new TeamPerformanceQuery(true, employees.Select(employee => new TeamPerformanceRowDto
+        return Result.Ok(employees.Select(employee => new TeamPerformanceRowDto
         {
             EmployeeId = employee.Id,
             Name = isArabic ? employee.FullNameAr : employee.FullNameEn,
@@ -126,9 +134,10 @@ internal sealed class DashboardEmployeesReader(
             OverdueTasks = assignments
                 .Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
                             x.AssignedAtUtc < overdueCutoff)
+                .Select(x => x.UserProfileId)
                 .Distinct()
                 .Count()
-        })));
+        }));
     }
 
     private static IQueryable<TeamPerformanceRowDto> ApplySorting(
@@ -170,6 +179,4 @@ internal sealed class DashboardEmployeesReader(
             _ => query.OrderBy(x => x.Name)
         };
     }
-
-    private sealed record TeamPerformanceQuery(bool IsAuthorized, IQueryable<TeamPerformanceRowDto> Query);
 }

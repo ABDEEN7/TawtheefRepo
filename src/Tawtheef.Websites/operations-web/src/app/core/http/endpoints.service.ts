@@ -122,6 +122,7 @@ export class EndpointsService {
   approvals = {
     list: this.getFullUrl('/profile-approvals'),
     targetEntities: this.getFullUrl('/profile-approvals/target-entities'),
+    candidateTypes: this.getFullUrl('/profile-approvals/candidate-types'),
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
     changesDetail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/changes`),
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),

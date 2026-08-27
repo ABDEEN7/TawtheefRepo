@@ -5,11 +5,12 @@ using FluentResults;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Constants;
 
 namespace Application.Operation.Features.Employee.JobManagement.JobOperations.Handlers.Queries;
 
-public class GetJobByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
+public class GetJobByIdQueryHandler(IUnitOfWork uow, IMapper mapper, ILocalizationService localizationService)
     : IRequestHandler<GetJobByIdQuery, IResult<JobResponseDto>>
 {
     public async Task<IResult<JobResponseDto>> Handle(GetJobByIdQuery request, CancellationToken cancellationToken)
@@ -47,7 +48,9 @@ public class GetJobByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
             return Result.Fail<JobResponseDto>(JobMessages.JobNotFound);
 
         var jobDto = mapper.Map<JobResponseDto>(job);
-        jobDto.CreatedByName = job.CreatedBy?.FullNameEn ?? "System";
+        jobDto.CreatedByName = job.CreatedBy is null
+            ? "System"
+            : localizationService.GetLocalizedFullName(job.CreatedBy);
         jobDto.LastActionDate = job.UpdatedDate ?? job.CreatedDate;
         
         return Result.Ok(jobDto);

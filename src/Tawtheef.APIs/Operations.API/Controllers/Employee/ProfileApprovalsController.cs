@@ -50,10 +50,24 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.ProfileApproval.View)]
     public async Task<IActionResult> GetTargetEntities()
     {
-        var result = await mediator.Send(new GetTargetEntitiesQuery());
+        var result = await mediator.Send(new GetTargetEntitiesQuery
+        {
+            Language = Request.Headers.AcceptLanguage.ToString()
+        });
         return result.ToActionResult();
     }
-    
+
+    [HttpGet("candidate-types")]
+    [AuthorizePermission(PermissionKeys.ProfileApproval.View)]
+    public async Task<IActionResult> GetCandidateTypes()
+    {
+        var result = await mediator.Send(new GetCandidateTypesQuery
+        {
+            Language = Request.Headers.AcceptLanguage.ToString()
+        });
+        return result.ToActionResult();
+    }
+
     [HttpGet("{userProfileId:guid}/changes")]
     [AuthorizePermission(PermissionKeys.ProfileApproval.Changes)]
     public async Task<IActionResult> GetChangesDetail(Guid userProfileId, CancellationToken ct = default)

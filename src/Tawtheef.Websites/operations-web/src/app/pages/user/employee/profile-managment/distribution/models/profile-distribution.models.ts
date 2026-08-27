@@ -18,6 +18,7 @@ export interface DistributionFile {
 export interface DistributionEmployee {
   employeeId: string;
   name: string;
+  searchText: string;
   totalAssigned: number;
   completed: number;
   inReview: number;

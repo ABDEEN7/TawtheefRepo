@@ -328,6 +328,11 @@ internal sealed class ProfileDistributionProjection(
                 {
                     EmployeeId = emp.Id,
                     Name = localizationService.GetLocalizedFullName(emp),
+                    SearchText = string.Join(
+                        " ",
+                        new[] { emp.FullNameAr, emp.FullNameEn }
+                            .Where(name => !string.IsNullOrWhiteSpace(name))
+                            .Select(name => name.Trim())),
                     TotalAssigned = load?.Total ?? 0,
                     Completed = load?.Completed ?? 0,
                     InReview = load?.InReview ?? 0,

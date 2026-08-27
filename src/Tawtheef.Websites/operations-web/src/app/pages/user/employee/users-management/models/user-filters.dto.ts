@@ -1,7 +1,6 @@
 export interface UserFilters {
   pageNumber: number;
   pageSize: number;
-  name?: string;
-  email?: string;
+  search?: string | null;
   isBlocked?: boolean | null;
 }
