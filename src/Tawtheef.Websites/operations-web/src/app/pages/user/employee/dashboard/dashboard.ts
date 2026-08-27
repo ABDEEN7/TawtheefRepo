@@ -54,13 +54,7 @@ import {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    I18nNamespaceDirective,
-    ChartModule,
-    Menu,
-    TranslatePipe,
-  ],
+  imports: [CommonModule, I18nNamespaceDirective, ChartModule, Menu, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -111,53 +105,55 @@ export class Dashboard implements OnInit {
   readonly canManageDashboard = computed(() =>
     this.auth.hasPermission(Permissions.Dashboard.Manage),
   );
-  readonly canViewCandidatesSummary = computed(() =>
-    this.canManageDashboard() ||
-    this.auth.hasPermission([
-      Permissions.CandidateUsers.View,
-      Permissions.ProfileDistribution.View,
-      Permissions.ProfileDistribution.Manage,
-      Permissions.ProfileApproval.View,
-      Permissions.ProfileApproval.Review,
-      Permissions.ProfileApproval.Changes,
-    ]),
+  readonly canViewCandidatesSummary = computed(
+    () =>
+      this.canManageDashboard() ||
+      this.auth.hasPermission([
+        Permissions.CandidateUsers.View,
+        Permissions.ProfileDistribution.View,
+        Permissions.ProfileDistribution.Manage,
+        Permissions.ProfileApproval.View,
+        Permissions.ProfileApproval.Review,
+        Permissions.ProfileApproval.Changes,
+      ]),
   );
-  readonly canViewJobsSummary = computed(() =>
-    this.canManageDashboard() ||
-    this.auth.hasPermission([
-      Permissions.Jobs.View,
-      Permissions.Jobs.Edit,
-      Permissions.Jobs.Approve,
-      Permissions.Jobs.SendInvitation,
-      Permissions.Jobs.Cancel,
-      Permissions.Jobs.Create,
-      Permissions.Jobs.Publish,
-      Permissions.Jobs.Delete,
-      Permissions.Jobs.Clone,
-    ]),
+  readonly canViewJobsSummary = computed(
+    () =>
+      this.canManageDashboard() ||
+      this.auth.hasPermission([
+        Permissions.Jobs.View,
+        Permissions.Jobs.Edit,
+        Permissions.Jobs.Approve,
+        Permissions.Jobs.SendInvitation,
+        Permissions.Jobs.Cancel,
+        Permissions.Jobs.Create,
+        Permissions.Jobs.Publish,
+        Permissions.Jobs.Delete,
+        Permissions.Jobs.Clone,
+      ]),
   );
-  readonly canViewEmployeesSummary = computed(() =>
-    this.canManageDashboard() ||
-    this.auth.hasPermission([
-      Permissions.ProfileDistribution.View,
-      Permissions.ProfileDistribution.Manage,
-      Permissions.ProfileApproval.View,
-      Permissions.ProfileApproval.Review,
-      Permissions.ProfileApproval.Changes,
-    ]),
+  readonly canViewEmployeesSummary = computed(
+    () =>
+      this.canManageDashboard() ||
+      this.auth.hasPermission([
+        Permissions.ProfileDistribution.View,
+        Permissions.ProfileDistribution.Manage,
+        Permissions.ProfileApproval.View,
+        Permissions.ProfileApproval.Review,
+        Permissions.ProfileApproval.Changes,
+      ]),
   );
-  readonly canViewInvitationsSummary = computed(() =>
-    this.canManageDashboard() ||
-    this.auth.hasPermission([
-      Permissions.JobInvitations.View,
-      Permissions.Jobs.SendInvitation,
-    ]),
+  readonly canViewInvitationsSummary = computed(
+    () =>
+      this.canManageDashboard() ||
+      this.auth.hasPermission([Permissions.JobInvitations.View, Permissions.Jobs.SendInvitation]),
   );
-  readonly canViewOperationalSummary = computed(() =>
-    this.canViewCandidatesSummary() ||
-    this.canViewJobsSummary() ||
-    this.canViewEmployeesSummary() ||
-    this.canViewInvitationsSummary(),
+  readonly canViewOperationalSummary = computed(
+    () =>
+      this.canViewCandidatesSummary() ||
+      this.canViewJobsSummary() ||
+      this.canViewEmployeesSummary() ||
+      this.canViewInvitationsSummary(),
   );
   readonly exportActions = computed<MenuItem[]>(() => {
     return [
@@ -229,7 +225,8 @@ export class Dashboard implements OnInit {
     const profiles = this.activeKpis();
     const jobs = this.activeJobKpis();
     const invitations = this.activeInvitationKpis();
-    return [
+
+    const indicators: MainIndicator[] = [
       {
         labelKey: 'dashboard.kpi.totalProfiles',
         value: profiles.totalProfiles,
@@ -278,7 +275,10 @@ export class Dashboard implements OnInit {
         trend: this.overview()?.kpiTrends.totalInvitations,
         navigation: dashboardDrilldowns.totalInvitations(this.selectedYear()),
       },
-      {
+    ];
+
+    if (this.auth.hasPermission(Permissions.MinisterOffice.View)) {
+      indicators.push({
         labelKey: 'dashboard.kpi.ministerOffice',
         value: profiles.followedMinisterOfficeCandidates ?? 0,
         icon: 'hgi-office',
@@ -286,38 +286,43 @@ export class Dashboard implements OnInit {
         navigation: {
           route: routes.portal.ministerOfficeManagement,
           requiredPermission: Permissions.MinisterOffice.View,
-          requiresDashboardManage: true,
+          requiresDashboardManage: false,
         },
-      },
-      {
-        labelKey: 'dashboard.kpi.kawaderFiles',
+      });
+    }
+
+    if (this.auth.hasPermission(Permissions.Kawader.Manage)) {
+      indicators.push({
+        labelKey: 'dashboard.kpi.KawaderFiles',
         value: profiles.kawaderFiles ?? 0,
         icon: 'hgi-user-multiple',
         color: 'green',
         navigation: {
           route: routes.portal.kawader,
           requiredPermission: Permissions.Kawader.Manage,
-          requiresDashboardManage: true,
+          requiresDashboardManage: false,
         },
-      },
-    ];
+      });
+    }
+
+    return indicators;
   });
   readonly candidateSummaryItems = computed(() => {
-  this.languageChange();
+    this.languageChange();
 
-  return (this.overview()?.profileBreakdown.byStatus ?? []).map((item) => ({
-    label: this.translate.instant(`dashboard.status.${item.status}`),
-    count: item.count,
-    color: profileStatusColor(item.status),
-  }));
-});
+    return (this.overview()?.profileBreakdown.byStatus ?? []).map((item) => ({
+      label: this.translate.instant(`dashboard.status.${item.status}`),
+      count: item.count,
+      color: profileStatusColor(item.status),
+    }));
+  });
 
   readonly jobsSummaryItems = computed<DashboardChartExportItem[]>(() =>
-  (this.overview()?.jobBreakdown.byStatus ?? []).map((item) => ({
-    label: item.label,
-    count: item.count,
-    color: jobStatusColor(item.status),
-  })),
+    (this.overview()?.jobBreakdown.byStatus ?? []).map((item) => ({
+      label: item.label,
+      count: item.count,
+      color: jobStatusColor(item.status),
+    })),
   );
 
   readonly employeeWorkloadItems = computed<DashboardChartExportItem[]>(() => {
@@ -334,36 +339,36 @@ export class Dashboard implements OnInit {
   );
 
   readonly invitationsSummaryItems = computed(() => {
-  const invitations = this.activeInvitationKpis();
+    const invitations = this.activeInvitationKpis();
 
-  return [
-    {
-      labelKey: 'dashboard.legend.invitations.accepted',
-      count: invitations.acceptedInvitations,
-      color: invitationSummaryColor('accepted'),
-    },
-    {
-      labelKey: 'dashboard.legend.invitations.pendingResponse',
-      count: invitations.pendingInvitations,
-      color: invitationSummaryColor('pending'),
-    },
-    {
-      labelKey: 'dashboard.status.PendingAttachmentApproval',
-      count: invitations.pendingAttachmentApproval,
-      color: invitationSummaryColor('pendingAttachmentApproval'),
-    },
-    {
-      labelKey: 'dashboard.legend.invitations.expired',
-      count: invitations.expiredInvitations,
-      color: invitationSummaryColor('expired'),
-    },
-    {
-      labelKey: 'dashboard.status.Rejected',
-      count: invitations.rejectedInvitations,
-      color: invitationSummaryColor('rejected'),
-    },
-  ];
-});
+    return [
+      {
+        labelKey: 'dashboard.legend.invitations.accepted',
+        count: invitations.acceptedInvitations,
+        color: invitationSummaryColor('accepted'),
+      },
+      {
+        labelKey: 'dashboard.legend.invitations.pendingResponse',
+        count: invitations.pendingInvitations,
+        color: invitationSummaryColor('pending'),
+      },
+      {
+        labelKey: 'dashboard.status.PendingAttachmentApproval',
+        count: invitations.pendingAttachmentApproval,
+        color: invitationSummaryColor('pendingAttachmentApproval'),
+      },
+      {
+        labelKey: 'dashboard.legend.invitations.expired',
+        count: invitations.expiredInvitations,
+        color: invitationSummaryColor('expired'),
+      },
+      {
+        labelKey: 'dashboard.status.Rejected',
+        count: invitations.rejectedInvitations,
+        color: invitationSummaryColor('rejected'),
+      },
+    ];
+  });
   readonly visibleCandidateChartData = computed<ChartData<'doughnut'>>(() =>
     this.chartData(this.candidateSummaryItems()),
   );
@@ -431,34 +436,53 @@ export class Dashboard implements OnInit {
   openCandidatesModal(): void {
     const overview = this.overview();
     if (!overview) return;
-    this.dialogs.open(CandidatesDialog, this.dialogConfig(
-      'dashboard.modals.candidates.title', 'min(1100px, 92vw)',
-      { breakdown: overview.profileBreakdown, kpis: overview.kpis, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
-    ));
+    this.dialogs.open(
+      CandidatesDialog,
+      this.dialogConfig('dashboard.modals.candidates.title', 'min(1100px, 92vw)', {
+        breakdown: overview.profileBreakdown,
+        kpis: overview.kpis,
+        filters: this.dashboardFilters(),
+        canExport: this.canExportDashboard(),
+      }),
+    );
   }
   openJobsModal(): void {
     const overview = this.overview();
     if (!overview) return;
-    this.dialogs.open(JobsDialog, this.dialogConfig(
-      'dashboard.modals.jobs.title', 'min(1200px, 94vw)',
-      { kpis: overview.jobKpis, breakdown: overview.jobBreakdown, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
-    ));
+    this.dialogs.open(
+      JobsDialog,
+      this.dialogConfig('dashboard.modals.jobs.title', 'min(1200px, 94vw)', {
+        kpis: overview.jobKpis,
+        breakdown: overview.jobBreakdown,
+        filters: this.dashboardFilters(),
+        canExport: this.canExportDashboard(),
+      }),
+    );
   }
   openEmployeesModal(): void {
     const overview = this.overview();
     if (!overview) return;
-    this.dialogs.open(EmployeesDialog, this.dialogConfig(
-      'dashboard.modals.employees.title', 'min(1250px, 95vw)',
-      { kpis: overview.kpis, monitoring: overview.taskMonitoring, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
-    ));
+    this.dialogs.open(
+      EmployeesDialog,
+      this.dialogConfig('dashboard.modals.employees.title', 'min(1250px, 95vw)', {
+        kpis: overview.kpis,
+        monitoring: overview.taskMonitoring,
+        filters: this.dashboardFilters(),
+        canExport: this.canExportDashboard(),
+      }),
+    );
   }
   openInvitationsModal(): void {
     const overview = this.overview();
     if (!overview) return;
-    this.dialogs.open(InvitationsDialog, this.dialogConfig(
-      'dashboard.modals.invitations.title', 'min(1150px, 92vw)',
-      { kpis: overview.invitationKpis, filters: this.dashboardFilters(), canExport: this.canExportDashboard() },
-    ));
+    this.dialogs.open(
+      InvitationsDialog,
+      this.dialogConfig('dashboard.modals.invitations.title', 'min(1150px, 92vw)', {
+        kpis: overview.invitationKpis,
+        filters: this.dashboardFilters(),
+        canExport: this.canExportDashboard(),
+      }),
+    );
   }
   private dialogConfig<TData extends object>(
     headerKey: string,
@@ -466,11 +490,17 @@ export class Dashboard implements OnInit {
     data: TData,
   ): DynamicDialogConfig<TData> {
     return {
-      header: this.translate.instant(headerKey), width, modal: true, closable: true,
-      closeOnEscape: true, dismissableMask: true, draggable: false,
+      header: this.translate.instant(headerKey),
+      width,
+      modal: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+      draggable: false,
       styleClass: 'dashboard-dynamic-dialog',
       contentStyle: { padding: '0', 'overflow-y': 'auto', 'max-height': 'calc(100dvh - 8rem)' },
-      breakpoints: { '768px': '96vw' }, data,
+      breakpoints: { '768px': '96vw' },
+      data,
     };
   }
   navigateQuickAction(action: QuickAction): void {
@@ -562,10 +592,9 @@ export class Dashboard implements OnInit {
   }
   private translationSignal(key: string) {
     return toSignal(
-      merge(
-        this.translate.stream(key),
-        this.translate.getStreamOnTranslationChange(key),
-      ).pipe(map((value) => (typeof value === 'string' ? value : key))),
+      merge(this.translate.stream(key), this.translate.getStreamOnTranslationChange(key)).pipe(
+        map((value) => (typeof value === 'string' ? value : key)),
+      ),
       { initialValue: key },
     );
   }

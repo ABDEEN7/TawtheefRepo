@@ -83,8 +83,8 @@
   "dashboard.status.readyForAnnouncement": "جاهزة للإعلان",
   "dashboard.status.Published": "منشورة",
   "dashboard.status.published": "منشورة",
-  "dashboard.status.Expired":"منتهية",
-  "dashboard.status.expired":"منتهية",
+  "dashboard.status.Expired": "منتهية",
+  "dashboard.status.expired": "منتهية",
   "dashboard.validation.invalidEmployeeIdTitle": "رقم موظف غير صالح",
   "dashboard.validation.invalidEmployeeIdDescription": "يجب أن يكون رقم الموظف بصيغة GUID صحيحة (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).",
   "dashboard.workload.high": "مرتفع",
@@ -113,7 +113,7 @@
   "dashboard.filters.allStatuses": "جميع الحالات",
   "dashboard.table.teamStatsSubtitle": "أداء الفريق في الموافقة على الملفات الشخصية",
   "dashboard.search.placeholder": "البحث بالاسم أو رقم الموظف أو القسم...",
-  "dashboard.search.employeeWorkLoadDialog.placeholder":"البحث بالاسم...",
+  "dashboard.search.employeeWorkLoadDialog.placeholder": "البحث بالاسم...",
   "dashboard.help.tableWorkload": "مؤشر تحليلي لحالة توازن الأحمال على الموظف.",
   "dashboard.table.noData": "لا توجد بيانات متاحة لهذا العرض.",
   "dashboard.tabs.overview": "نظرة عامة",
@@ -221,7 +221,6 @@
   "dashboard.help.pendingReviewJobs": "الوظائف التي بانتظار اكتمال عملية الاعتماد.",
   "dashboard.status.Submitted": "مقدمة",
 
-
   "dashboard.mainIndicators.title": "المؤشرات الرئيسية",
 
   "dashboard.common.export": "تصدير",
@@ -276,7 +275,6 @@
   "dashboard.modals.candidates.typesTitle": "أنواع المرشحين",
   "dashboard.modals.table.candidates": "المتقدمون",
 
-
   "dashboard.modals.jobs.title": "الوظائف",
   "dashboard.modals.jobs.subtitle": "عرض مختصر لحالة الوظائف وأحدث الوظائف.",
   "dashboard.modals.jobs.statusTitle": "حالة الوظائف",
@@ -317,16 +315,16 @@
 
   "dashboard.modals.empty.noInvitations": "لا توجد دعوات لعرضها",
   "dashboard.export.summary": "تصدير الملخص",
-  "dashboard.export.charts": "تصدير الرسوم البيانية"
-, "dashboard.sort.label": "الترتيب حسب"
-, "dashboard.cohorts.title": "فئات المرشحين التشغيلية"
-, "dashboard.cohorts.registeredKawaderProfiles": "ملفات كوادر "
-, "dashboard.cohorts.registeredMinisterOfficeProfiles": "ملفات مكتب سعادة الوزير "
-, "dashboard.cohorts.qatarGraduateProfiles": "خريجو قطر"
-, "dashboard.cohorts.officeProfiles": "ملفات المكاتب الخارجية"
-, "dashboard.teamPerformance.finalizedReviews": "المراجعات النهائية"
-, "dashboard.teamPerformance.remainingWorkload": "عبء العمل المتبقي"
-, "dashboard.teamPerformance.overdueWorkload": "عبء العمل المتأخر"
-, "dashboard.kpi.ministerOffice": "مكتب سعادة الوزير"
-, "dashboard.kpi.KawaderFiles": "ملفات كوادر"
+  "dashboard.export.charts": "تصدير الرسوم البيانية",
+  "dashboard.sort.label": "الترتيب حسب",
+  "dashboard.cohorts.title": "فئات المرشحين التشغيلية",
+  "dashboard.cohorts.registeredKawaderProfiles": "ملفات كوادر ",
+  "dashboard.cohorts.registeredMinisterOfficeProfiles": "ملفات مكتب سعادة الوزير ",
+  "dashboard.cohorts.qatarGraduateProfiles": "خريجو قطر",
+  "dashboard.cohorts.officeProfiles": "ملفات المكاتب الخارجية",
+  "dashboard.teamPerformance.finalizedReviews": "المراجعات النهائية",
+  "dashboard.teamPerformance.remainingWorkload": "عبء العمل المتبقي",
+  "dashboard.teamPerformance.overdueWorkload": "عبء العمل المتأخر",
+  "dashboard.kpi.ministerOffice": "مكتب سعادة الوزير",
+  "dashboard.kpi.KawaderFiles": "ملفات كوادر"
 }
