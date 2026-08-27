@@ -48,7 +48,7 @@ public sealed class ReviseProfileEducationDeleteHandler(IUnitOfWork uow) :
             return Result.Fail<Unit>(ErrorsCodes.DegreeLinkedToExperience);
 
         await qualificationRepo.DeleteAsync(target);
-        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.Qualifications, cmd.Id, ct, force: true);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.Qualifications, cmd.Id, ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

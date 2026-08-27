@@ -24,10 +24,8 @@ public sealed class ReviseProfileAchievementHandler(
     IProfileStepValidationService validationService
 ) : IRequestHandler<ReviseProfileAchievementCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     public async Task<IResult<Unit>> Handle(ReviseProfileAchievementCommand cmd, CancellationToken ct)
     {
         var achievementRepo = uow.GetEntityRepository<Achievement>();
@@ -131,8 +129,6 @@ public sealed class ReviseProfileAchievementHandler(
             }
 
 
-            var finalAttachmentId = certResult.Value ?? dto.AttachmentId;
-
             // UPDATE
             row.AchievementTypeId = dto.AchievementTypeId;
             row.Title = dto.Title;
@@ -147,7 +143,6 @@ public sealed class ReviseProfileAchievementHandler(
                 row.AttachmentId = certResult.Value.Value;
             else if (dto.AttachmentId is not null && dto.AttachmentId != Guid.Empty)
                 row.AttachmentId = dto.AttachmentId.Value;
-
         }
 
         foreach (var dto in dtos)
@@ -206,28 +201,22 @@ public sealed class ReviseProfileAchievementHandler(
         if (file.Length > maxFileSizeBytes)
             return Result.Fail<Guid?>(fileTooLargeError);
 
-        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
+        var uploadPath =
+            await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             cancellationToken);
-        if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
-
-        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 
     static Result ValidateTextLengths(IEnumerable<AchievementUpsertDto> achievements)
     {
-        foreach (var achievement in achievements)
-        {
-            if (!string.IsNullOrEmpty(achievement.Description) && achievement.Description.Length > ProfileLimits.AchievementDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.AchievementDescriptionTooLong);
-            }
-        }
-
-        return Result.Ok();
+        return achievements.Any(achievement => !string.IsNullOrEmpty(achievement.Description) &&
+                                               achievement.Description.Length >
+                                               ProfileLimits.AchievementDescriptionMaxLength)
+            ? Result.Fail(ErrorsCodes.AchievementDescriptionTooLong)
+            : Result.Ok();
     }
 }
-
-

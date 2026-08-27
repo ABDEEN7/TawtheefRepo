@@ -29,9 +29,11 @@ public sealed class ReviseProfileContactHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        var validationResult = validationService.ValidateContact(profile, cmd.Request.Address, 
-            cmd.Request.NationalAddress is null ? null :
-                new (cmd.Request.NationalAddress.Zone, cmd.Request.NationalAddress.Street, cmd.Request.NationalAddress.Building, 
+        var validationResult = validationService.ValidateContact(profile, cmd.Request.Address,
+            cmd.Request.NationalAddress is null
+                ? null
+                : new(cmd.Request.NationalAddress.Zone, cmd.Request.NationalAddress.Street,
+                    cmd.Request.NationalAddress.Building,
                     cmd.Request.NationalAddress.Unit,
                     cmd.Request.NationalAddress.NationalAddressFileName ??
                     cmd.Request.NationalAddress.NationalAddress?.FileName));
@@ -49,15 +51,15 @@ public sealed class ReviseProfileContactHandler(
         var contactReviewItemExists = await reviewRepo.DbSet
             .AsNoTracking()
             .AnyAsync(reviewItem =>
-                reviewItem.UserProfileId == profile.Id &&
-                reviewItem.ProfileChangeId == null &&
-                !reviewItem.IsDeleted &&
-                reviewItem.Section == ProfileSection.Contact &&
-                reviewItem.TargetType == ReviewTargetType.Field &&
-                reviewItem.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
-                (reviewItem.Status == ReviewStatus.NeedsCorrection ||
-                 reviewItem.Status == ReviewStatus.Rejected ||
-                 reviewItem.Status == ReviewStatus.Solved),
+                    reviewItem.UserProfileId == profile.Id &&
+                    reviewItem.ProfileChangeId == null &&
+                    !reviewItem.IsDeleted &&
+                    reviewItem.Section == ProfileSection.Contact &&
+                    reviewItem.TargetType == ReviewTargetType.Field &&
+                    reviewItem.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+                    (reviewItem.Status == ReviewStatus.NeedsCorrection ||
+                     reviewItem.Status == ReviewStatus.Rejected ||
+                     reviewItem.Status == ReviewStatus.Solved),
                 ct);
 
         if (!contactReviewItemExists)
@@ -100,7 +102,7 @@ public sealed class ReviseProfileContactHandler(
 
             if (idResult.Value is null || idResult.Value == Guid.Empty)
                 return Result.Fail<Unit>(ErrorsCodes.NationalAddressCertificateRequired);
-            
+
             if (profile.ResidenceAddress is null)
             {
                 profile.ResidenceAddress =
@@ -109,7 +111,6 @@ public sealed class ReviseProfileContactHandler(
             }
             else
             {
-
                 profile.ResidenceAddress.ZoneNo = r.NationalAddress.Zone;
                 profile.ResidenceAddress.StreetNo = r.NationalAddress.Street;
                 profile.ResidenceAddress.BuildingNo = r.NationalAddress.Building;
@@ -122,14 +123,13 @@ public sealed class ReviseProfileContactHandler(
                 await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
                     uow, profile, ProfileSection.Contact, oldResourceId, ct);
             }
-
         }
 
         await ProfileReviewItemSync.EnsureNationalAddressAttachmentItemAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
-        
+
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
         {
             if (file is null || file.Length == 0)
@@ -137,7 +137,8 @@ public sealed class ReviseProfileContactHandler(
                     ? Result.Fail<Guid?>(ErrorsCodes.NationalAddressCertificateRequired)
                     : Result.Ok(existingId);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.NationalAddress, file, false, ct);
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId,
+                ProfileFileCategories.NationalAddress, file, false, ct);
             var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
@@ -155,13 +156,14 @@ public sealed class ReviseProfileContactHandler(
                 return Result.Ok();
 
             var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
-                item.UserProfileId == profile.Id &&
-                item.ProfileChangeId == null &&
-                !item.IsDeleted &&
-                item.Section == ProfileSection.Contact &&
-                item.TargetType == ReviewTargetType.Attachment &&
-                item.ResourceId == resourceId &&
-                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved),
+                    item.UserProfileId == profile.Id &&
+                    item.ProfileChangeId == null &&
+                    !item.IsDeleted &&
+                    item.Section == ProfileSection.Contact &&
+                    item.TargetType == ReviewTargetType.Attachment &&
+                    item.ResourceId == resourceId &&
+                    (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected ||
+                     item.Status == ReviewStatus.Solved),
                 ct);
 
             if (allowed)
@@ -173,5 +175,3 @@ public sealed class ReviseProfileContactHandler(
         }
     }
 }
-
-

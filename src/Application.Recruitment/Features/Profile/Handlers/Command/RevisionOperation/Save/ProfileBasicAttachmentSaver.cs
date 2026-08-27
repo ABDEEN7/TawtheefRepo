@@ -67,7 +67,8 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
         return Result.Ok(newId);
     }
 
-    private async Task<bool> IsAllowedByReviewAsync(Guid userProfileId, ProfileSection section, Guid resourceId, CancellationToken ct)
+    private async Task<bool> IsAllowedByReviewAsync(Guid userProfileId, ProfileSection section, Guid resourceId,
+        CancellationToken ct)
     {
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
@@ -79,9 +80,8 @@ public sealed class ProfileBasicAttachmentSaver(IUnitOfWork uow, IMediator media
                 !r.IsDeleted &&
                 r.Section == section &&
                 r.TargetType == ReviewTargetType.Attachment &&
-                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Rejected || r.Status == ReviewStatus.Solved) &&
+                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Rejected ||
+                 r.Status == ReviewStatus.Solved) &&
                 r.ResourceId == resourceId, ct);
     }
 }
-
-

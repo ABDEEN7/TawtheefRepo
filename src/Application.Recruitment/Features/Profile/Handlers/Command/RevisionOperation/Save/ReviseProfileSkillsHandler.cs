@@ -1,4 +1,5 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
 using FluentResults;
@@ -73,7 +74,7 @@ public sealed class ReviseProfileSkillsHandler(
         var added = false;
 
         // 1) Update existing + Add missing
-        foreach (var (skillId, incoming) in incomingBySkillId)
+        foreach ((Guid skillId, SkillUpsertDto incoming) in incomingBySkillId)
         {
             if (existingBySkillId.TryGetValue(skillId, out var row))
             {
@@ -89,7 +90,7 @@ public sealed class ReviseProfileSkillsHandler(
                     SkillId = incoming.SkillId,
                     LevelId = incoming.LevelId
                 };
-                await skillRepo.AddAsync(entity);
+                await skillRepo.AddAsync(entity, ct);
                 existing.Add(entity);
                 added = true;
             }

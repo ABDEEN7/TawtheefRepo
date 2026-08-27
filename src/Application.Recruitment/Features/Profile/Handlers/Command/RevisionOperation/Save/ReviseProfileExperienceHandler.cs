@@ -183,7 +183,6 @@ public sealed class ReviseProfileExperienceHandler(
                 else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
                     existing.CertificateId = dto.CertificateId.Value;
             }
-            
         }
 
         // ===== Trainings UPSERT =====
@@ -338,35 +337,27 @@ public sealed class ReviseProfileExperienceHandler(
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             cancellationToken);
-        if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
-
-        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 
     static Result ValidateTextLengths(
         IEnumerable<ExperienceUpsertDto> experiencesToValidate,
         IEnumerable<TrainingCourseUpsertDto> trainingsToValidate)
     {
-        foreach (var experience in experiencesToValidate)
+        if (experiencesToValidate.Any(experience => !string.IsNullOrEmpty(experience.Description) &&
+                                                    experience.Description.Length >
+                                                    ProfileLimits.ExperienceDescriptionMaxLength))
         {
-            if (!string.IsNullOrEmpty(experience.Description) &&
-                experience.Description.Length > ProfileLimits.ExperienceDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.ExperienceDescriptionTooLong);
-            }
+            return Result.Fail(ErrorsCodes.ExperienceDescriptionTooLong);
         }
 
-        foreach (var training in trainingsToValidate)
-        {
-            if (!string.IsNullOrEmpty(training.Description) &&
-                training.Description.Length > ProfileLimits.TrainingDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.TrainingDescriptionTooLong);
-            }
-        }
-
-        return Result.Ok();
+        return trainingsToValidate.Any(training => !string.IsNullOrEmpty(training.Description) &&
+                                                   training.Description.Length >
+                                                   ProfileLimits.TrainingDescriptionMaxLength)
+            ? Result.Fail(ErrorsCodes.TrainingDescriptionTooLong)
+            : Result.Ok();
     }
 
     static Result ValidateQualifications(
@@ -394,5 +385,3 @@ public sealed class ReviseProfileExperienceHandler(
         return Result.Ok();
     }
 }
-
-

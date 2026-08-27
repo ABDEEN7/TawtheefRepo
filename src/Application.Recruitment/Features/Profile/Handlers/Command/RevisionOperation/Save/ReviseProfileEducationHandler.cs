@@ -25,11 +25,7 @@ public sealed class ReviseProfileEducationHandler(
     IProfileStepValidationService validationService)
     : IRequestHandler<ReviseProfileEducationCommand, IResult<Unit>>
 {
-    // JSON options ظ…ط±ط© ظˆط§ط­ط¯ط© ط¨ط¯ظ„ ظ…ط§ ظ†ط¹ظٹط¯ ط¥ظ†ط´ط§ط¦ظ‡ط§
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private static readonly HashSet<Guid> DegreesWithoutQualificationInfo =
     [
@@ -204,7 +200,7 @@ public sealed class ReviseProfileEducationHandler(
     private static Result<List<ReviseProfileEducationDegreeDto>> DeserializeDegrees(string json)
     {
         var degrees = JsonSerializer.Deserialize<List<ReviseProfileEducationDegreeDto>>(json, JsonOptions)
-                      ?? new List<ReviseProfileEducationDegreeDto>();
+                      ?? [];
         return Result.Ok(degrees);
     }
 
@@ -291,16 +287,15 @@ public sealed class ReviseProfileEducationHandler(
         if (!FileValidationHelpers.HasFile(file))
             return Result.Ok<Guid?>(null);
 
-        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
+        var uploadPath =
+            await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false,
+                ct);
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);
 
-        if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
-
-        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 }
-
-

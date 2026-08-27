@@ -24,10 +24,7 @@ public sealed class ReviseProfileAttachmentsHandler(
     IProfileStepValidationService validationService
 ) : IRequestHandler<ReviseProfileAttachmentsCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<IResult<Unit>> Handle(ReviseProfileAttachmentsCommand cmd, CancellationToken ct)
     {
@@ -68,7 +65,8 @@ public sealed class ReviseProfileAttachmentsHandler(
                 !r.IsDeleted &&
                 r.Section == ProfileSection.Attachments &&
                 r.TargetType == ReviewTargetType.Attachment &&
-                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Rejected || r.Status == ReviewStatus.Solved) &&
+                (r.Status == ReviewStatus.NeedsCorrection || r.Status == ReviewStatus.Rejected ||
+                 r.Status == ReviewStatus.Solved) &&
                 r.ResourceId != null)
             .Select(r => r.ResourceId!.Value)
             .ToHashSetAsync(ct);
@@ -141,8 +139,7 @@ public sealed class ReviseProfileAttachmentsHandler(
                     profile,
                     ProfileSection.Attachments,
                     oldResourceId,
-                    ct,
-                    force: true);
+                    ct);
             }
             else
             {
@@ -152,8 +149,7 @@ public sealed class ReviseProfileAttachmentsHandler(
                     profile,
                     ProfileSection.Attachments,
                     row.AttachmentId,
-                    ct,
-                    force: true);
+                    ct);
             }
         }
 
@@ -199,13 +195,9 @@ public sealed class ReviseProfileAttachmentsHandler(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
 
-            if (uploadResult.IsFailed)
-                return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
-
-            return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
+            return uploadResult.IsFailed
+                ? Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors)
+                : Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
         }
-
     }
 }
-
-

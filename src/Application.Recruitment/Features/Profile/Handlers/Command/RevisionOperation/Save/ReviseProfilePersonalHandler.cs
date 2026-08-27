@@ -21,13 +21,13 @@ public sealed class ReviseProfilePersonalHandler(
     IMediator mediator,
     UserManager<User> userManager,
     IProfileStepValidationService validationService
-    ) : IRequestHandler<ReviseProfilePersonalCommand, IResult<Unit>>
+) : IRequestHandler<ReviseProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReviseProfilePersonalCommand cmd, CancellationToken ct)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == cmd.UserId, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
-        
+
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
@@ -40,21 +40,23 @@ public sealed class ReviseProfilePersonalHandler(
         var personalSectionReviewItemExists = await reviewRepo.DbSet
             .AsNoTracking()
             .AnyAsync(r =>
-                r.UserProfileId == profile.Id &&
-                r.ProfileChangeId == null &&
-                !r.IsDeleted &&
-                r.Section == ProfileSection.Personal &&
-                r.TargetType == ReviewTargetType.Field &&
-                r.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
-                (r.Status == ReviewStatus.NeedsCorrection ||
-                 r.Status == ReviewStatus.Rejected ||
-                 r.Status == ReviewStatus.Solved),
+                    r.UserProfileId == profile.Id &&
+                    r.ProfileChangeId == null &&
+                    !r.IsDeleted &&
+                    r.Section == ProfileSection.Personal &&
+                    r.TargetType == ReviewTargetType.Field &&
+                    r.FieldPath == ProfileReviewConstants.FieldPaths.SectionData &&
+                    (r.Status == ReviewStatus.NeedsCorrection ||
+                     r.Status == ReviewStatus.Rejected ||
+                     r.Status == ReviewStatus.Solved),
                 ct);
 
         if (!personalSectionReviewItemExists)
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-        var validationResult = validationService.ValidatePersonal(profile, new(cmd.Request.SponsorEmployerName, cmd.Request.SponsorEmployerNumber, cmd.Request.SponsorCardFileName, cmd.Request.SponsorCard));
+        var validationResult = validationService.ValidatePersonal(profile,
+            new ValueTuple<string?, string?, string?, object?>(cmd.Request.SponsorEmployerName,
+                cmd.Request.SponsorEmployerNumber, cmd.Request.SponsorCardFileName, cmd.Request.SponsorCard));
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
@@ -67,16 +69,20 @@ public sealed class ReviseProfilePersonalHandler(
 
         if (!isLockedProvider)
         {
-            user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
+            user.FullNameAr = r.FullNameAr ?? user.FullNameAr;
             user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
             profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
-            profile.BirthDate      = r.BirthDate ?? profile.BirthDate;
-            profile.QIDExpiry      = r.QIDExpiry ?? profile.QIDExpiry;
+            profile.BirthDate = r.BirthDate ?? profile.BirthDate;
+            profile.QIDExpiry = r.QIDExpiry ?? profile.QIDExpiry;
         }
         else
         {
-            user.FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr) ? r.FullNameAr ?? user.FullNameAr : user.FullNameAr;
-            user.FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn) ? r.FullNameEn ?? user.FullNameEn : user.FullNameEn;
+            user.FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr)
+                ? r.FullNameAr ?? user.FullNameAr
+                : user.FullNameAr;
+            user.FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn)
+                ? r.FullNameEn ?? user.FullNameEn
+                : user.FullNameEn;
             profile.NationalNumber = string.IsNullOrWhiteSpace(profile.NationalNumber)
                 ? r.NationalNumber ?? profile.NationalNumber
                 : profile.NationalNumber;
@@ -87,7 +93,8 @@ public sealed class ReviseProfilePersonalHandler(
         if (!string.IsNullOrWhiteSpace(profile.NationalNumber) && profile.NationalityId.HasValue)
         {
             var checkNationalNumber = await uow.GetEntityRepository<UserProfile>()
-                .DbSet.AnyAsync(p => p.NationalNumber == profile.NationalNumber && p.NationalityId == profile.NationalityId
+                .DbSet.AnyAsync(p => p.NationalNumber == profile.NationalNumber &&
+                                     p.NationalityId == profile.NationalityId
                                      && p.Id != profile.Id, ct);
             if (checkNationalNumber)
                 return Result.Fail<Unit>(ErrorsCodes.DuplicateNationalNumber);
@@ -103,11 +110,12 @@ public sealed class ReviseProfilePersonalHandler(
             profile.NationalityId = profile.NationalityId ?? r.NationalityId;
             profile.GenderId = profile.GenderId ?? r.GenderId;
         }
-        profile.ReligionId      = r.ReligionId;
-        profile.MaritalStatusId = r.MaritalStatusId ?? profile.MaritalStatusId;
-        profile.ChildrenCount   = r.ChildrenCount ?? profile.ChildrenCount;
 
-        profile.HasDisability    = r.HasDisability;
+        profile.ReligionId = r.ReligionId;
+        profile.MaritalStatusId = r.MaritalStatusId ?? profile.MaritalStatusId;
+        profile.ChildrenCount = r.ChildrenCount ?? profile.ChildrenCount;
+
+        profile.HasDisability = r.HasDisability;
         profile.DisabilityDetails = r.HasDisability
             ? r.DisabilityDetails
             : null;
@@ -125,7 +133,7 @@ public sealed class ReviseProfilePersonalHandler(
             var idResult = await UploadIfNeededAsync(r.SponsorCard, oldResourceId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
-            
+
             if (profile.SponsorProfile is null)
             {
                 profile.SponsorProfile = new SponsorProfile
@@ -155,24 +163,24 @@ public sealed class ReviseProfilePersonalHandler(
 
         await ProfileReviewItemSync.EnsureSponsorAttachmentItemAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Personal, ct);
-        var result = await uow.SaveChangesAsync(ct);
-        return result == 0 ? Result.Fail<Unit>(ErrorsCodes.NoChangesMade) : Result.Ok(Unit.Value);
+        await uow.SaveChangesAsync(ct);
+        return Result.Ok(Unit.Value);
 
-        
-        
+
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
         {
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.SponsorCard, file, false, ct);
+            var uploadPath =
+                await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.SponsorCard, file,
+                    false, ct);
             var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
-            if (uploadResult.IsFailed)
-                return Result.Fail<Guid?>(uploadResult.Errors);
-
-            return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+            return uploadResult.IsFailed
+                ? Result.Fail<Guid?>(uploadResult.Errors)
+                : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
 
         static bool HasFile(IFormFile? file) => file is { Length: > 0 };
@@ -183,13 +191,14 @@ public sealed class ReviseProfilePersonalHandler(
                 return Result.Ok();
 
             var allowed = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
-                item.UserProfileId == profile.Id &&
-                item.ProfileChangeId == null &&
-                !item.IsDeleted &&
-                item.Section == ProfileSection.Personal &&
-                item.TargetType == ReviewTargetType.Attachment &&
-                item.ResourceId == resourceId &&
-                (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved),
+                    item.UserProfileId == profile.Id &&
+                    item.ProfileChangeId == null &&
+                    !item.IsDeleted &&
+                    item.Section == ProfileSection.Personal &&
+                    item.TargetType == ReviewTargetType.Attachment &&
+                    item.ResourceId == resourceId &&
+                    (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected ||
+                     item.Status == ReviewStatus.Solved),
                 ct);
 
             if (allowed)
@@ -201,5 +210,3 @@ public sealed class ReviseProfilePersonalHandler(
         }
     }
 }
-
-

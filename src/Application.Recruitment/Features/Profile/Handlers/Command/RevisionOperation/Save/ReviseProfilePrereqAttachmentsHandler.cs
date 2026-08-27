@@ -67,7 +67,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.BirthdayCertificateId = newId.Value;
-            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            if (oldResourceId.Value != Guid.Empty)
             {
                 await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
                     uow,
@@ -113,7 +113,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.MarriageCertificateId = newId.Value;
-            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            if (oldResourceId.Value != Guid.Empty)
             {
                 await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
                     uow,

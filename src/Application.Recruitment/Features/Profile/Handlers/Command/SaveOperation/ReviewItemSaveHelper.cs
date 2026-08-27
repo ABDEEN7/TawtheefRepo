@@ -119,7 +119,7 @@ internal static class ReviewItemSaveHelper
         ProfileSection section,
         CancellationToken ct)
     {
-        return MarkTargetSolvedAsync(
+        return MarkCandidateSavedTargetSolvedAsync(
             uow,
             profile,
             section,
@@ -169,17 +169,15 @@ internal static class ReviewItemSaveHelper
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
-        CancellationToken ct,
-        bool force = false)
+        CancellationToken ct)
     {
-        return MarkTargetSolvedAsync(
+        return MarkCandidateSavedTargetSolvedAsync(
             uow,
             profile,
             section,
             ReviewTargetType.Section,
             _ => true,
-            ct,
-            force);
+            ct);
     }
 
     public static Task MarkRowSolvedAsync(
@@ -187,20 +185,18 @@ internal static class ReviewItemSaveHelper
         UserProfile profile,
         ProfileSection section,
         Guid? entityId,
-        CancellationToken ct,
-        bool force = false)
+        CancellationToken ct)
     {
         if (entityId is null || entityId == Guid.Empty)
             return Task.CompletedTask;
 
-        return MarkTargetSolvedAsync(
+        return MarkCandidateSavedTargetSolvedAsync(
             uow,
             profile,
             section,
             ReviewTargetType.Row,
             item => item.EntityId == entityId,
-            ct,
-            force);
+            ct);
     }
 
     public static Task MarkAttachmentSolvedAsync(
@@ -208,40 +204,36 @@ internal static class ReviewItemSaveHelper
         UserProfile profile,
         ProfileSection section,
         Guid? oldResourceId,
-        CancellationToken ct,
-        bool force = false)
+        CancellationToken ct)
     {
         if (oldResourceId is null || oldResourceId == Guid.Empty)
             return Task.CompletedTask;
 
-        return MarkTargetSolvedAsync(
+        return MarkCandidateSavedTargetSolvedAsync(
             uow,
             profile,
             section,
             ReviewTargetType.Attachment,
             item => item.ResourceId == oldResourceId,
-            ct,
-            force);
+            ct);
     }
 
     public static async Task UpdateSectionStatusAsync(
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
-        CancellationToken ct,
-        bool force = false)
+        CancellationToken ct)
     {
-        await MarkSectionSolvedAsync(uow, profile, section, ct, force);
+        await MarkSectionSolvedAsync(uow, profile, section, ct);
     }
 
-    private static async Task MarkTargetSolvedAsync(
+    private static async Task MarkCandidateSavedTargetSolvedAsync(
         IUnitOfWork uow,
         UserProfile profile,
         ProfileSection section,
         ReviewTargetType targetType,
         Func<ReviewItem, bool> match,
-        CancellationToken ct,
-        bool force = false)
+        CancellationToken ct)
     {
         if (profile.Status != UserProfileStatus.RequiresUpdate)
             return;
@@ -263,7 +255,6 @@ internal static class ReviewItemSaveHelper
         if (item is null)
             return;
 
-        var previousHash = item.CurrentHash;
         var currentValue = ReviewItemSnapshotBuilder.GetCurrentValue(profile, item);
         item.UpdateHash(currentValue);
 
@@ -271,10 +262,6 @@ internal static class ReviewItemSaveHelper
         {
             item.ResourceId = ReviewItemSnapshotBuilder.GetAttachmentResourceId(profile, item);
         }
-
-        var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
-        if (!force && !valueChanged)
-            return;
 
         item.Status = ReviewStatus.Solved;
         item.IsOutdated = false;

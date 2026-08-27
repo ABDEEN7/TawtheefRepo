@@ -1,4 +1,5 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
 using FluentResults;
@@ -11,7 +12,6 @@ using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOperation.Save;
-
 
 public sealed class ReviseProfileLanguagesHandler(
     IUnitOfWork uow,
@@ -77,7 +77,7 @@ public sealed class ReviseProfileLanguagesHandler(
         var added = false;
 
         // Upsert
-        foreach (var (languageId, dto) in incomingByLanguageId)
+        foreach ((Guid languageId, ProfileLanguageUpsertDto dto) in incomingByLanguageId)
         {
             if (existingByLanguageId.TryGetValue(languageId, out var row))
             {
@@ -117,4 +117,3 @@ public sealed class ReviseProfileLanguagesHandler(
         return Result.Ok(Unit.Value);
     }
 }
-

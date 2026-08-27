@@ -432,11 +432,11 @@
   background: #fff;
 
   &--action {
-    background: linear-gradient(rgba(217, 119, 6, .07), #fff 100%);
+    background: rgba(217, 119, 6, .07);
   }
 
   &--done {
-    background: linear-gradient(rgba(31, 146, 84, 0.08), #fff 100%);
+    background: rgba(31, 146, 84, 0.08);
   }
 }
 
