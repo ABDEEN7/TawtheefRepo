@@ -364,6 +364,11 @@ public sealed class ProfileDistributionProjection(
             EmployeeId = row.Employee.Id,
             Name = row.Name,
             Email = row.Employee.Email ?? string.Empty,
+             SearchText = string.Join(
+                        " ",
+                        new[] { emp.FullNameAr, emp.FullNameEn }
+                            .Where(name => !string.IsNullOrWhiteSpace(name))
+                            .Select(name => name.Trim())),
             TotalAssigned = row.TotalAssigned,
             Completed = row.Completed,
             InReview = row.InReview,

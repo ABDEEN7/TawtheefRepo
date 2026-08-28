@@ -28,6 +28,30 @@ public static class ProfileReviewItemSync
             ct);
     }
 
+    public static Task EnsureSponsorAttachmentItemAsync(IUnitOfWork uow, UserProfile profile, CancellationToken ct)
+    {
+        return EnsureProfileAttachmentItemAsync(
+            uow,
+            profile,
+            ProfileSection.Personal,
+            ProfileReviewConstants.FieldPaths.SponsorCardResourceId,
+            profile.SponsorProfile?.SponsorCardId,
+            ProfileReviewConstants.AttachmentTitles.SponsorCard,
+            ct);
+    }
+
+    public static Task EnsureNationalAddressAttachmentItemAsync(IUnitOfWork uow, UserProfile profile, CancellationToken ct)
+    {
+        return EnsureProfileAttachmentItemAsync(
+            uow,
+            profile,
+            ProfileSection.Contact,
+            ProfileReviewConstants.FieldPaths.NationalAddressCertificateId,
+            profile.ResidenceAddress?.CertificateId,
+            ProfileReviewConstants.AttachmentTitles.NationalAddressCertificate,
+            ct);
+    }
+
     private static async Task EnsureProfileAttachmentItemAsync(
         IUnitOfWork uow,
         UserProfile profile,

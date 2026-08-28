@@ -4,6 +4,7 @@
   position: relative;
   width: 100%;
   min-width: 0;
+  height: 220px;
 }
 
 :host ::ng-deep .employee-bar-chart {
@@ -23,8 +24,37 @@
   height: 100% !important;
 }
 
+.team-performance-filters { display: block; }
+.team-performance-sort-field { min-width: 0; }
+.performance-list { display: grid; gap: .65rem; min-block-size: 8rem; }
+.performance-row { display: grid; grid-template-columns: minmax(14rem, .72fr) minmax(30rem, 1.75fr); gap: 1.75rem; align-items: center; padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.performance-identity { display: grid; min-width: 0; }
+.performance-identity strong { color: #101828; font-size: 1rem; font-weight: 800; line-height: 1.45; overflow-wrap: anywhere; }
+.performance-meta { display: flex; flex-wrap: wrap; gap: .35rem .75rem; margin-block-start: .35rem; color: var(--bs-secondary-color); font-size: .875rem; line-height: 1.4; }
+.performance-meta span + span::before { content: '·'; margin-inline-end: .75rem; }
+.performance-workload { display: grid; gap: .65rem; }
+.assigned-reference { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; padding-block-end: .55rem; border-block-end: 1px solid var(--border); color: #344054; font-size: .925rem; font-weight: 700; }
+.assigned-reference strong { color: var(--bs-primary); font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.independent-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .85rem; }
+.independent-metric { display: grid; gap: .35rem; min-width: 0; }
+.metric-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .4rem; min-width: 0; }
+.metric-heading span { color: #667085; font-size: .9rem; font-weight: 600; line-height: 1.4; }
+.metric-heading strong { color: var(--metric-color); font-size: 1rem; font-variant-numeric: tabular-nums; }
+.metric-track { inline-size: 100%; block-size: .5rem; overflow: hidden; border-radius: 999px; background: #eef1f4; direction: ltr; }
+.metric-track span { display: block; block-size: 100%; min-inline-size: 2px; border-radius: inherit; background: var(--metric-color); }
+.independent-metric.completed { --metric-color: #2f8a3a; }
+.independent-metric.remaining { --metric-color: #ffb547; }
+.independent-metric.overdue { --metric-color: #64748b; }
+.independent-metric.overdue.has-overdue { --metric-color: #d9182d; }
+
+@media (max-width: 960px) {
+  .performance-row { grid-template-columns: 1fr; gap: 1rem; }
+}
+
 @media (max-width: 768px) {
   .employee-bar-chart-wrapper {
-    height: 200px;
+    height: 220px;
   }
+
+  .independent-metrics { grid-template-columns: 1fr; gap: .6rem; }
 }

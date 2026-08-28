@@ -41,12 +41,13 @@ public sealed class ReviseProfileEducationHandler(
     public async Task<IResult<Unit>> Handle(ReviseProfileEducationCommand cmd, CancellationToken ct)
     {
         var educationRepo = uow.GetEntityRepository<Qualification>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
 
         var validationResult = validationService.ValidateEducation(profile);
@@ -88,8 +89,26 @@ public sealed class ReviseProfileEducationHandler(
             .Where(q => q.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        var allowedEntityIds = await reviewRepo.DbSet
+            .AsNoTracking()
+            .Where(r =>
+        r.UserProfileId == profile.Id &&
+        r.Section == ProfileSection.Qualifications &&
+        r.TargetType == ReviewTargetType.Row &&
+        (r.Status == ReviewStatus.NeedsCorrection ||
+         r.Status == ReviewStatus.Solved) &&
+        r.EntityId != null)
+    .Select(r => r.EntityId!.Value)
+    .ToHashSetAsync(ct);
+
         foreach (var dto in degrees)
         {
+            if (dto.Id is null || dto.Id == Guid.Empty)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+            if (!allowedEntityIds.Contains(dto.Id.Value))
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
             var file = ResolveFile(dto, files);
 
             var existingQualification = dto.Id.HasValue && dto.Id.Value != Guid.Empty
@@ -116,25 +135,8 @@ public sealed class ReviseProfileEducationHandler(
 
             if (existingQualification is null)
             {
-                // INSERT
-                var edu = new Qualification
-                {
-                    UserProfileId = profile.Id,
-                    DegreeId = dto.DegreeId,
-                    CountryId = dto.GradCountryId,
-                    UniversityId = dto.UniversityId,
-                    MajorId = dto.MajorId,
-                    SubMajorId = dto.SubMajorId,
-                    StudyTypeId = dto.StudyTypeId,
-                    RatingId = dto.GradeId,
-                    GraduationYear = dto.GradYear,
-                    GPA = dto.Gpa,
-                    CertificateId = certificateId
-                };
-
-                // If repo AddAsync has no CT: use EF Core directly
-                await educationRepo.DbSet.AddAsync(edu, ct);
-                // or: educationRepo.DbSet.Add(edu);
+                // INSERT NOT ALLOWED
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
             }
             else
             {
@@ -258,7 +260,7 @@ public sealed class ReviseProfileEducationHandler(
         if (!FileValidationHelpers.HasFile(file))
             return Result.Ok<Guid?>(null);
 
-        var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
+        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.Education, file!, false, ct);
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file!),
             ct);

@@ -20,6 +20,7 @@ export interface DistributionEmployee {
   employeeId: string;
   name: string;
   email: string;
+  searchText: string;
   totalAssigned: number;
   completed: number;
   inReview: number;

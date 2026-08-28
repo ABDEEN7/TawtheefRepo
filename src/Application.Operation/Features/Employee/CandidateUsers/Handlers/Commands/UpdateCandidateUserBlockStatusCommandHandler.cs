@@ -1,4 +1,5 @@
 using Application.Operation.Features.Employee.CandidateUsers.Commands;
+using Application.Operation.Features.Employee.CandidateUsers.Services;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -9,18 +10,26 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.CandidateUsers.Handlers.Commands;
 
-public sealed class UpdateCandidateUserBlockStatusCommandHandler(
+internal sealed class UpdateCandidateUserBlockStatusCommandHandler(
     UserManager<User> userManager,
-    ITokenService tokenService)
+    ITokenService tokenService,
+    CandidateUsersAccessScope accessScope)
     : IRequestHandler<UpdateCandidateUserBlockStatusCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(
         UpdateCandidateUserBlockStatusCommand request,
         CancellationToken cancellationToken)
     {
+        var populationResult = await accessScope.GetPopulationAsync(cancellationToken);
+        if (populationResult.IsFailed)
+            return Result.Fail<Unit>(populationResult.Errors);
+
+        var authorizedUserIds = populationResult.Value.Users.Select(candidate => candidate.Id);
         var user = await userManager.Users
             .OfType<ApplicantUser>()
-            .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+            .FirstOrDefaultAsync(
+                candidate => candidate.Id == request.UserId && authorizedUserIds.Contains(candidate.Id),
+                cancellationToken);
 
         if (user is null)
             return Result.Fail<Unit>(ErrorsCodes.UserNotFound);

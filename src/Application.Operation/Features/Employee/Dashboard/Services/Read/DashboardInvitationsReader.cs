@@ -29,16 +29,6 @@ internal sealed class DashboardInvitationsReader(
 
         var context = contextResult.Value;
 
-        if (!context.CanViewInvitations)
-        {
-            return Result.Ok(
-                new PaginatedResult<LatestInvitationDto>(
-                    [],
-                    0,
-                    request.PageNumber,
-                    request.PageSize));
-        }
-
         var range = DashboardTemporalResolver.ResolveRequestRange(
             request.Year,
             request.FromDateUtc,
@@ -79,9 +69,6 @@ internal sealed class DashboardInvitationsReader(
             return Result.Fail(contextResult.Errors);
 
         var context = contextResult.Value;
-
-        if (!context.CanViewInvitations)
-            return Result.Ok<IReadOnlyList<LatestInvitationDto>>([]);
 
         var range = DashboardTemporalResolver.ResolveRequestRange(
             request.Year,

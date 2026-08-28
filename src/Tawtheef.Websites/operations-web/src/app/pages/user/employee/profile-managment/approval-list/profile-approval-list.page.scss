@@ -1,39 +1,64 @@
+.approval-card .card-body {
+  padding: 1.25rem;
+}
+
+.table-card {
+  background: #fff;
+}
+
 .approval-table tr:hover {
   background: #f7f9fb;
 }
 
-.pill {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  background: #eef2f6;
+.approval-main-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(14rem, 1fr));
+  gap: 1rem;
+  min-width: 0;
 }
 
-.pill.warning {
-  background: #fff3cd;
-}
-.approval-card .card-body { padding: 1.25rem; }
-
-.approval-filters .card-body { padding: 1rem; }
-
-.table-card { background: #fff; }
-
-.clickable-row { cursor: pointer; }
-.clickable-row:hover { background: rgba(0,0,0,.02); }
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  padding: .28rem .6rem;
-  border-radius: 999px;
-  font-size: .82rem;
-  line-height: 1;
-  border: 1px solid rgba(0,0,0,.08);
+.candidate-info {
+  display: grid;
+  gap: 0.2rem;
 }
 
-.pill.neutral { background: rgba(0,0,0,.04); }
-.pill.warning { background: rgba(255,193,7,.15); border-color: rgba(255,193,7,.35); }
+.candidate-source-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
 
-.min-w-170 { min-width: 170px; }
-.min-w-200 { min-width: 200px; }
-.min-w-250 { min-width: 250px; }
+:host ::ng-deep {
+  app-page-filters .filter-toolbar {
+    grid-template-columns: minmax(16rem, 1fr) minmax(29rem, 1.5fr) max-content;
+  }
+
+  .candidate-source-tags .p-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+// The portal sidebar keeps this card narrower than the viewport at desktop widths.
+@media (max-width: 1599.98px) {
+  :host ::ng-deep app-page-filters .filter-toolbar {
+    grid-template-columns: minmax(14rem, 1fr) minmax(28rem, 1.5fr);
+  }
+
+  :host ::ng-deep app-page-filters .filter-toolbar__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 991.98px) {
+  :host ::ng-deep app-page-filters .filter-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .approval-main-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

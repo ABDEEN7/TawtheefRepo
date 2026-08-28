@@ -89,6 +89,7 @@ namespace Application.Operation
 
             private void RegisterCandidateUsersServices()
             {
+                services.AddScoped<CandidateUsersAccessScope>();
                 services.AddScoped<CandidateUsersQueryBuilder>();
                 services.AddScoped<CandidateUsersExcelExporter>();
             }

@@ -74,6 +74,7 @@ public class JobCandidatesQueryBuilderService(IUnitOfWork unitOfWork) : IJobCand
                 p.User != null &&
                 (
                     p.User.FullNameAr.Contains(searchTerm) ||
+                    p.User.FullNameEn.Contains(searchTerm) ||
                     (p.User.Email != null && p.User.Email.Contains(searchTerm)) ||
                     (p.NationalNumber != null && p.NationalNumber.Contains(searchTerm))
                 ));

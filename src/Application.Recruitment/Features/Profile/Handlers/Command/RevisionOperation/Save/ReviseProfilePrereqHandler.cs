@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Application.Recruitment.Features.Profile.Policies;
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
@@ -33,10 +34,12 @@ public sealed class ReviseProfilePrereqHandler(
             return Result.Fail<Unit>(validationResult.Errors);
 
         var r = cmd.Request;
-        if (profile.Status != UserProfileStatus.RequiresUpdate && profile.Status != UserProfileStatus.Submitted)
+        if (profile.Status != UserProfileStatus.RequiresUpdate)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
         var isLockedProvider = VerifiedIdentityProviders.IsLockedProvider(profile.Provider);
+
+        var previouslyRequiredSponsor = ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider);
 
         if (!isLockedProvider || !CandidateTypeIds.IsVerifiedIdentityLocked(profile.CandidateTypeId))
             profile.CandidateTypeId = r.CandidateTypeId;
@@ -57,33 +60,75 @@ public sealed class ReviseProfilePrereqHandler(
             profile.QIDExpiry = profile.QIDExpiry ?? r.QIDExpiry;
         }
 
-        // CV
-        var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, ProfileFileCategories.Cv);
-        if (cvResult.IsFailed)  return Result.Fail<Unit>(cvResult.Errors);
-        profile.ResumeAttachmentId = cvResult.Value;
+        if (HasFile(r.CvFile))
+        {
+            var oldResourceId = profile.ResumeAttachmentId;
+            var editableCv = await EnsureAttachmentEditableAsync(oldResourceId);
+            if (editableCv.IsFailed)
+                return Result.Fail<Unit>(editableCv.Errors);
 
-        // ID
-        var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, ProfileFileCategories.NationalId);
-        if (idResult.IsFailed) return Result.Fail<Unit>(idResult.Errors);
-        profile.NationalCardId = idResult.Value;
+            var cvResult = await UploadIfNeededAsync(r.CvFile, profile.ResumeAttachmentId, ProfileFileCategories.Cv);
+            if (cvResult.IsFailed)
+                return Result.Fail<Unit>(cvResult.Errors);
+            profile.ResumeAttachmentId = cvResult.Value;
+            await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+        }
+
+        if (HasFile(r.IdFile))
+        {
+            var oldResourceId = profile.NationalCardId;
+            var editableId = await EnsureAttachmentEditableAsync(oldResourceId);
+            if (editableId.IsFailed)
+                return Result.Fail<Unit>(editableId.Errors);
+
+            var idResult = await UploadIfNeededAsync(r.IdFile, profile.NationalCardId, ProfileFileCategories.NationalId);
+            if (idResult.IsFailed)
+                return Result.Fail<Unit>(idResult.Errors);
+            profile.NationalCardId = idResult.Value;
+            await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+        }
 
         // Birth Certificate
-        if (needsBirthCertificate)
+        if (needsBirthCertificate && HasFile(r.BirthCertificateFile))
         {
+            var oldResourceId = profile.BirthdayCertificateId;
+            var editable = await EnsureAttachmentEditableAsync(oldResourceId);
+            if (editable.IsFailed)
+                return Result.Fail<Unit>(editable.Errors);
             var birthResult = await UploadIfNeededAsync(r.BirthCertificateFile, profile.BirthdayCertificateId, ProfileFileCategories.BirthCertificate);
             if (birthResult.IsFailed) return Result.Fail<Unit>(birthResult.Errors);
             profile.BirthdayCertificateId = birthResult.Value;
+            await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         // Marriage Certificate
-        if (needsMarriageCertificate)
+        if (needsMarriageCertificate && HasFile(r.MarriageCertificateFile))
         {
+            var oldResourceId = profile.MarriageCertificateId;
+            var editable = await EnsureAttachmentEditableAsync(oldResourceId);
+            if (editable.IsFailed)
+                return Result.Fail<Unit>(editable.Errors);
+
             var marriageResult = await UploadIfNeededAsync(r.MarriageCertificateFile, profile.MarriageCertificateId, ProfileFileCategories.MarriageCertificate);
             if (marriageResult.IsFailed) return Result.Fail<Unit>(marriageResult.Errors);
             profile.MarriageCertificateId = marriageResult.Value;
+            await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
+                uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
         }
 
         CleanCandidateTypeDependents();
+
+        if (!previouslyRequiredSponsor && needsSponsor)
+        {
+            await ReviewItemSaveHelper.ReopenSectionDataForCorrectionAsync(
+                uow,
+                profile,
+                ProfileSection.Personal,
+                ct);
+        }
 
         await ProfileReviewItemSync.EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
         await ReviewItemSaveHelper.MarkSectionDataSolvedAsync(uow, profile, ProfileSection.Prerequisites, ct);
@@ -135,6 +180,35 @@ public sealed class ReviseProfilePrereqHandler(
             
             return Result.Ok<Guid?>(uploadResult.Value!.ResourceId);
         }
+
+        static bool HasFile(IFormFile? file) => file is { Length: > 0 };
+
+        async Task<Result> EnsureAttachmentEditableAsync(Guid? resourceId)
+        {
+            if (resourceId is null || resourceId == Guid.Empty)
+                return Result.Ok(); // no existing attachment = nothing to check
+
+            var allowed = await reviewRepo.DbSet
+                .Where(x =>
+                    x.UserProfileId == profile.Id &&
+                    x.Section == ProfileSection.Prerequisites &&
+                    x.TargetType == ReviewTargetType.Attachment &&
+                    x.ResourceId == resourceId &&
+                    (x.Status == ReviewStatus.NeedsCorrection ||
+                     x.Status == ReviewStatus.Solved))
+                .AnyAsync(ct);
+
+            if (!allowed)
+            {
+                return Result.Fail(new Error("Forbidden")
+                    .WithMetadata("Code", ErrorsCodes.AttachmentNotEditableInRevision)
+                    .WithMetadata("StatusCode", StatusCodes.Status403Forbidden));
+            }
+
+            return Result.Ok();
+        }
+
+
     }
 }
 
