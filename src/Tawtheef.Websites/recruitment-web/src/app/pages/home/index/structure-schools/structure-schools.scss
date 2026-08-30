@@ -1,32 +1,33 @@
-.organization-page {
+:host {
+  display: block;
   width: 100%;
-  min-height: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+@media (max-width: 768px) {
+  .organization-page {
+    padding: 12px;
+  }
 
-.page-header {
-  display: flex;
+  .page-header {
+    align-items: flex-start;
 
-  align-items: center;
+    flex-direction: column;
 
-  justify-content: space-between;
+    gap: 15px;
 
-  margin-bottom: 24px;
+    padding: 16px;
+  }
 
-  padding: 20px 24px;
+  .organization-container {
+    padding: 20px;
+  }
 
-  background: #ffffff;
-
-  border: 1px solid #e5e7eb;
-
-  border-radius: 14px;
-
-  box-shadow: 0 2px 6px rgb(0 0 0 / 4%);
+  .organization-card {
+    width: 220px;
+  }
 }
-
 .page-title {
   font-size: 22px;
 
@@ -43,75 +44,30 @@
   color: #6b7280;
 }
 
-/* ============================================================
-   HEADER BUTTON
-   ============================================================ */
-
-.header-actions {
-  display: flex;
-
-  gap: 8px;
-}
-
-.header-button {
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  padding: 9px 15px;
-
-  border: 1px solid #dfe3e8;
-
-  border-radius: 8px;
-
+.structure-page {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   background: #ffffff;
-
-  color: #374151;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
 }
 
-.header-button:hover {
-  background: #f3f4f6;
-}
-
-/* ============================================================
-   ORGANIZATION CONTAINER
-   ============================================================ */
-.organization-container {
-  display: block;
-
-  width: fit-content;
-
-  max-width: 100%;
-
-  margin: 0 auto;
-
-  padding: 40px;
-
-  overflow-x: auto;
-
+.structure-map {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
   background: #ffffff;
-
-  border: 1px solid #e5e7eb;
-
-  border-radius: 16px;
-
-  box-shadow: 0 3px 12px rgb(0 0 0 / 4%);
-
   cursor: grab;
-
   user-select: none;
 
-
+  /*
+   * pan-y (not none): `touch-action: none` also suppresses the browser's
+   * default mouse-wheel scroll handling while the pointer is over this
+   * element, not just touch gestures — trapping vertical wheel-scroll
+   * here. Horizontal panning is handled ourselves via dragMap, so only
+   * vertical needs to stay native.
+   */
   touch-action: pan-y;
-
-  overscroll-behavior-x: contain;
-
+  overscroll-behavior: contain;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -123,11 +79,17 @@
   }
 }
 
-/* ============================================================
-   ORGANIZATION CARD
-   ============================================================ */
+.structure-tree {
+  position: relative;
+  width: max-content;
+  min-width: 100%;
+  min-height: 100%;
+  padding: 60px 800px 140px 550px;
+}
 
-.organization-card {
+/* Shared nodes */
+
+.structure-node {
   position: relative;
 
   width: 250px;
@@ -155,24 +117,666 @@
     box-shadow 0.2s ease,
     border-color 0.2s ease;
   animation: node-reveal 0.3s ease both;
+  //   position: relative;
+  //   z-index: 3;
+  //   display: inline-flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   gap: 8px;
+  //   min-width: 180px;
+  //   max-width: 350px;
+  //   min-height: 44px;
+  //   padding: 9px 15px;
+  //   border: 1px solid transparent;
+  //   border-radius: 999px;
+  //   font-size: 14px;
+  //   line-height: 1.5;
+  //   text-align: center;
+  //   white-space: normal;
+  //   transition:
+  //     transform 0.2s ease,
+  //     box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+
+    border-color: #cbd5e1;
+
+    box-shadow: 0 8px 20px rgb(15 23 42 / 10%);
+    // transform: translateY(-2px);
+    // box-shadow: 0 8px 20px rgba(16, 24, 40, 0.12);
+  }
 }
 
-.organization-card:hover {
-  transform: translateY(-2px);
-
-  border-color: #cbd5e1;
-
-  box-shadow: 0 8px 20px rgb(15 23 42 / 10%);
+.structure-node-leadership {
+  border-color: #8a1538;
+  background: #8a1538;
+  color: #ffffff;
 }
 
-.organization-card.is-focused {
-  animation: node-focus-pulse 0.9s ease-out;
+.structure-node-department {
+  border-color: #0d4f6c;
+  background: #0d4f6c;
+  color: #ffffff;
+  // width: fit-content;
+  width: 300px;
 }
 
-@keyframes node-reveal {
+.structure-node-special {
+  border-color: #aa9663;
+  background: #aa9663;
+  color: #ffffff;
+}
+
+.structure-node-section {
+  flex-shrink: 0;
+  min-width: 260px;
+  max-width: 330px;
+  border-color: #b8b8b8;
+  background: #ffffff;
+  color: #161616;
+}
+
+.node-title {
+  flex: 1;
+}
+
+.node-toggle,
+.node-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.node-toggle i {
+  transition: transform 0.25s ease;
+}
+
+.node-toggle.is-expanded i {
+  transform: rotate(180deg);
+}
+
+.department-toggle.is-expanded i {
+  transform: rotate(-90deg);
+}
+
+.department-toggle-right.is-expanded i {
+  transform: rotate(90deg);
+}
+
+.node-info {
+  opacity: 0.9;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* Minister */
+
+.minister-level {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 1500px;
+}
+
+.minister-level > .structure-node {
+  min-width: 180px;
+}
+
+.minister-branches {
+  position: relative;
+  width: 1100px;
+  height: 390px;
+  margin-inline: auto;
+  transition: height 0.3s ease;
+
+  &.has-expanded-left-department {
+    height: 720px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: #0d4f6c;
+    transform: translateX(-50%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 110px;
+    left: 420px;
+    right: 420px;
+    height: 1px;
+    background: #0d4f6c;
+  }
+
+  &:not(.is-expanded)::after {
+    display: none;
+  }
+}
+
+/* Shared side layouts */
+
+.minister-side,
+.undersecretary-side {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 420px;
+  gap: 28px;
+  animation: reveal-branch 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.minister-side-left,
+.undersecretary-side-left {
+  top: 52px;
+  left: 0;
+
+  &.has-first-node-expanded {
+    gap: 280px;
+  }
+}
+
+.minister-side-right,
+.undersecretary-side-right {
+  top: 0;
+  right: 0;
+}
+
+.minister-side-left .side-vertical-line,
+.undersecretary-side-left .side-vertical-line {
+  position: absolute;
+  top: 22px;
+  right: 0;
+  bottom: 22px;
+  width: 1px;
+  background: #0d4f6c;
+}
+
+.minister-side-right .side-vertical-line,
+.undersecretary-side-right .side-vertical-line {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  bottom: 22px;
+  width: 1px;
+  background: #0d4f6c;
+}
+
+.minister-side-left .side-node-row,
+.undersecretary-side-left .side-node-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  direction: ltr;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #0d4f6c;
+  }
+}
+
+.minister-side-right .side-node-row,
+.undersecretary-side-right .side-node-row {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  width: 100%;
+  direction: ltr;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #0d4f6c;
+  }
+}
+
+.side-node-row .structure-node {
+  z-index: 3;
+  flex-shrink: 0;
+}
+
+/* Expandable department wrappers */
+
+.department-node-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  &.has-expanded-children::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 70px;
+    height: 1px;
+    background: #0d4f6c;
+  }
+
+  &.has-expanded-children-right::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 70px;
+    height: 1px;
+    background: #0d4f6c;
+  }
+}
+
+/* White child groups */
+
+.department-children {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 410px;
+}
+
+.department-children-left {
+  top: 50%;
+  right: calc(100% + 70px);
+  transform: translateY(-50%);
+  transform-origin: right center;
+  animation: reveal-from-right 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  .department-children-spine {
+    right: 0;
+  }
+}
+
+.department-children-right {
+  top: 50%;
+  left: calc(100% + 70px);
+  transform: translateY(-50%);
+  transform-origin: left center;
+  animation: reveal-from-left 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  .department-children-spine {
+    left: 0;
+  }
+}
+
+.department-children-spine {
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  width: 1px;
+  background: #0d4f6c;
+}
+
+.department-child-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  direction: ltr;
+}
+
+.department-child-connector {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: #0d4f6c;
+}
+
+.department-child-row-left {
+  .department-child-connector::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -1px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid #0d4f6c;
+    transform: translateY(-50%);
+  }
+}
+
+.department-child-row-right {
+  .department-child-connector::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -1px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #0d4f6c;
+    transform: translateY(-50%);
+  }
+}
+
+/* Undersecretary */
+
+.undersecretary-column {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.undersecretary-branches {
+  position: relative;
+  width: 1100px;
+  height: 430px;
+  margin-inline: auto;
+  transition: height 0.3s ease;
+
+  &.has-expanded-department {
+    height: 850px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: #0d4f6c;
+    transform: translateX(-50%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 110px;
+    left: 420px;
+    right: 420px;
+    height: 1px;
+    background: #0d4f6c;
+  }
+}
+
+/* Assistant undersecretaries */
+
+.assistant-level {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 42px;
+  min-width: 1500px;
+  padding-block-start: 100px;
+  padding-block-end: 60px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 51px;
+    background: #0d4f6c;
+    transform: translateX(-50%);
+  }
+}
+
+.assistant-horizontal-line {
+  position: absolute;
+  top: 50px;
+  left: 15.8%;
+  right: 15.8%;
+  height: 1px;
+  background: #0d4f6c;
+}
+
+.assistant-branch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.assistant-vertical-line {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 50px;
+  background: #0d4f6c;
+  transform: translateX(-50%);
+}
+
+.assistant-node {
+  min-width: 260px;
+  max-width: 310px;
+}
+
+/* Category (Schools/Kindergartens/Specialized) + its Principal, stacked vertically */
+
+.category-principal-stack {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.principal-connector {
+  position: relative;
+  width: 1px;
+  height: 50px;
+  background: #0d4f6c;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    width: 0;
+    height: 0;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-top: 8px solid #0d4f6c;
+    transform: translateX(-50%);
+  }
+}
+
+/* Deputies / titles: new row under the principal, siblings side by side */
+
+.deputies-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  margin-inline: auto;
+  padding-block-start: 32px;
+  gap: 32px;
+  padding-block-start: 34px;
+  animation: reveal-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.deputies-horizontal-line {
+  position: absolute;
+  top: 2px;
+  left: 150px;
+  right: 150px;
+  height: 1px;
+  background: #0d4f6c;
+}
+
+.deputy-branch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deputy-vertical-line {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 32px;
+  background: #0d4f6c;
+  transform: translateX(-50%);
+}
+
+.education-children.deputy-staff-list {
+  width: 0px;
+  min-width: 0;
+  max-width: none;
+  margin-inline-start: 0;
+  padding-block-start: 20px;
+  gap: 20px;
+}
+
+.deputy-staff-list .education-child-connector {
+  flex: 0 0 20px;
+}
+
+.deputy-staff-list.education-children .education-child-row .structure-node-section {
+  min-width: 200px;
+  max-width: 260px;
+}
+
+/* Educational department sections (still used for a deputy's own staff list) */
+
+.education-children {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 650px;
+  margin-inline-start: 230px;
+  padding-block-start: 44px;
+  transform-origin: top left;
+  animation: reveal-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.education-children-line {
+  position: absolute;
+  top: 0;
+  bottom: 22px;
+  left: 0;
+  width: 1px;
+  background: #0d4f6c;
+}
+
+.education-child-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  direction: ltr;
+
+  .structure-node-section {
+    min-width: 300px;
+    max-width: 520px;
+  }
+}
+
+.education-child-connector {
+  position: relative;
+  flex: 0 0 85px;
+  height: 1px;
+  background: #0d4f6c;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -1px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #0d4f6c;
+    transform: translateY(-50%);
+  }
+}
+
+.undersecretary-side-left.has-first-node-expanded {
+  gap: 350px;
+}
+
+/* Branch animations */
+
+.department-child-row,
+.education-child-row,
+.deputy-branch {
+  opacity: 0;
+  animation: reveal-item 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@for $item from 1 through 10 {
+  .department-child-row:nth-child(#{$item + 1}),
+  .education-child-row:nth-child(#{$item + 1}),
+  .deputy-branch:nth-child(#{$item + 1}) {
+    animation-delay: #{0.06s * $item};
+  }
+}
+
+@keyframes reveal-branch {
   from {
     opacity: 0;
-    transform: translateY(-6px) scale(0.96);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes reveal-from-right {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(28px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+@keyframes reveal-from-left {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-28px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+@keyframes reveal-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.97);
   }
 
   to {
@@ -181,431 +785,435 @@
   }
 }
 
-@keyframes node-focus-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgb(138 21 56 / 45%);
+@keyframes reveal-item {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
   }
 
-  100% {
-    box-shadow: 0 0 0 14px rgb(138 21 56 / 0%);
-  }
-}
-
-%organization-card--tinted {
-  .node-title {
-    color: #ffffff;
-  }
-
-  .node-info-icon {
-    color: rgb(255 255 255 / 75%);
-  }
-
-  .node-info-icon:hover {
-    color: #ffffff;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-.organization-card--level-1,
-.organization-card--level-2 {
-  @extend %organization-card--tinted;
+/* Node information modal */
 
-  background: var(--brand);
-
-  border-color: var(--brand);
-
-  &:hover {
-    border-color: var(--brand);
-  }
-}
-
-.organization-card--level-3 {
-  @extend %organization-card--tinted;
-
-  background: #a39161;
-
-  border-color: #a39161;
-
-  &:hover {
-    border-color: #a39161;
-  }
-}
-
-.organization-card--level-4 {
-  @extend %organization-card--tinted;
-
-  background: #0d4361;
-
-  border-color: #0d4361;
-
-  &:hover {
-    border-color: #0d4361;
-  }
-}
-
-.organization-card--level-5 {
-  background: #ffffff;
-
-  .node-title {
-    color: #000000;
-  }
-}
-
-/* ============================================================
-   NODE CONTENT
-   ============================================================ */
-
-.node-content {
-  min-width: 0;
-
-  flex: 1;
-
+.structure-modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
   display: flex;
-
-  flex-direction: column;
-
   align-items: center;
-
-  gap: 4px;
-}
-
-.node-title {
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-
   justify-content: center;
-
-  gap: 5px;
-
-  font-size: 14px;
-
-  font-weight: 700;
-
-  line-height: 1.4;
-
-  color: #172033;
-
-  text-align: center;
+  padding: 32px;
+  background: rgba(20, 25, 30, 0.34);
+  backdrop-filter: blur(1px);
+  animation: modal-backdrop-in 0.25s ease both;
 }
 
-.node-info-icon {
-  flex-shrink: 0;
-
-  font-size: 12px;
-
-  color: #94a3b8;
-
-  cursor: help;
-
-  transition: color 0.2s ease;
+.structure-modal {
+  position: relative;
+  width: min(1280px, 94vw);
+  max-height: 86vh;
+  padding: 48px 28px 44px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(16, 24, 40, 0.2);
+  animation: modal-content-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.node-info-icon:hover {
-  color: #2563eb;
-}
-
-/* ============================================================
-   NODE DETAILS DIALOG
-   ============================================================ */
-
-.node-dialog-header {
-  width: 100%;
-
-  display: flex;
-
+.structure-modal-close {
+  position: absolute;
+  inset-block-start: 42px;
+  inset-inline-end: 30px;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #161616;
+  font-size: 28px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 
-  gap: 14px;
+  &:hover {
+    color: #8a1538;
+    transform: rotate(90deg);
+  }
 }
 
-.node-dialog-heading {
-  min-width: 0;
+.structure-modal-header {
+  padding-inline-end: 56px;
+  text-align: start;
+
+  h2 {
+    margin: 0 0 12px;
+    color: #8a1538;
+    font-size: clamp(25px, 2vw, 34px);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  p {
+    margin: 0;
+    color: #666666;
+    font-size: 17px;
+    line-height: 1.7;
+  }
 }
 
-.node-dialog-title {
+.structure-modal-content {
+  margin-block-start: 24px;
+  padding: 24px 32px;
+  border: 1px solid #d0d0d0;
+  border-radius: 18px;
+  color: #161616;
   font-size: 16px;
+  line-height: 1.9;
 
-  font-weight: 700;
-
-  line-height: 1.4;
-
-  color: var(--brand);
-}
-
-.node-dialog-description {
-  margin: 0 0 16px;
-
-  font-size: 13px;
-
-  line-height: 1.75;
-
-  color: #475569;
-  white-space: pre-line;
-}
-
-:host ::ng-deep .node-details-dialog {
-  .p-dialog-header {
-    padding: 20px 24px 12px;
+  ol {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding-inline-start: 28px;
   }
 
-  .p-dialog-content {
-    padding: 4px 24px 24px;
+  li {
+    padding-inline-start: 4px;
   }
 
-  .p-dialog-header-icons {
-    align-self: flex-start;
+  li::marker {
+    font-weight: 700;
   }
 }
 
-/* ============================================================
-   PRIMENG ORGANIZATION CHART
-   ============================================================ */
-
-:host ::ng-deep {
-  .p-organizationchart {
-    width: max-content;
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
   }
 
-  /*
-   * Remove PrimeNG default node styling.
-   */
-
-  .p-organizationchart-node-content {
-    padding: 0;
-
-    border: 0;
-
-    background: transparent;
-
-    box-shadow: none;
-  }
-
-  /*
-   * Connection lines
-   */
-
-  .p-organizationchart-line-down {
-    background: #cbd5e1;
-  }
-
-  .p-organizationchart-line-left {
-    border-right-color: #cbd5e1;
-  }
-
-  .p-organizationchart-line-right {
-    border-left-color: #cbd5e1;
-  }
-
-  .p-organizationchart-line-top {
-    border-top-color: #cbd5e1;
-  }
-
-  /*
-   * + / - button
-   */
-
-  .p-organizationchart-node-toggler {
-    width: 22px;
-
-    height: 22px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #ffffff;
-
-    border: 1px solid #dbe2ea;
-
-    color: #64748b;
-
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
-  }
-
-  .p-organizationchart-node-toggler:hover {
-    background: #eff6ff;
-
-    border-color: #93c5fd;
-
-    color: #2563eb;
+  to {
+    opacity: 1;
   }
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-@media (max-width: 768px) {
-  .organization-page {
-    padding: 12px;
+@keyframes modal-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
   }
 
-  .page-header {
-    align-items: flex-start;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-    flex-direction: column;
+/* Tablet */
 
-    gap: 15px;
+@media (max-width: 991.98px) {
+  .structure-tree {
+    padding: 50px 500px 120px;
+  }
 
+  .structure-node {
+    min-width: 165px;
+    max-width: 280px;
+    font-size: 13px;
+  }
+}
+
+/* Modal mobile */
+
+@media (max-width: 767px) {
+  .structure-modal-backdrop {
     padding: 16px;
   }
 
-  .organization-container {
+  .structure-modal {
+    width: 100%;
+    max-height: 90vh;
+    padding: 72px 18px 24px;
+    border-radius: 22px;
+  }
+
+  .structure-modal-close {
+    inset-block-start: 18px;
+    inset-inline-end: 18px;
+  }
+
+  .structure-modal-header {
+    padding-inline-end: 0;
+  }
+
+  .structure-modal-content {
     padding: 20px;
-  }
-
-  .organization-card {
-    width: 220px;
+    font-size: 15px;
   }
 }
 
+/* Mobile vertical accordion */
 
-.mobile-tree {
+@media (max-width: 767.98px) {
+  :host,
+  .structure-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
 
-  overflow-x: auto;
+  .structure-map {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: visible;
+    cursor: default;
+    touch-action: auto;
+  }
+
+  .structure-tree {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .minister-level {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .structure-node,
+  .minister-level > .structure-node,
+  .assistant-node,
+  .education-child-row .structure-node-section {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .minister-branches,
+  .minister-branches.has-expanded-left-department,
+  .undersecretary-branches,
+  .undersecretary-branches.has-expanded-department {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    gap: 12px;
+    margin: 0;
+    padding-block-start: 12px;
+  }
+
+  .minister-side,
+  .undersecretary-side,
+  .minister-side-left,
+  .minister-side-right,
+  .undersecretary-side-left,
+  .undersecretary-side-right {
+    position: static;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    animation: mobile-accordion-in 0.35s ease both;
+  }
+
+  .minister-side-left.has-first-node-expanded,
+  .undersecretary-side-left.has-first-node-expanded {
+    gap: 10px;
+  }
+
+  .side-node-row,
+  .minister-side-left .side-node-row,
+  .minister-side-right .side-node-row,
+  .undersecretary-side-left .side-node-row,
+  .undersecretary-side-right .side-node-row {
+    display: block;
+    width: 100%;
+    direction: inherit;
+  }
+
+  .department-node-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .undersecretary-column {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
+
+  .assistant-level {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    gap: 12px;
+    padding-block-start: 12px;
+    padding-block-end: 0 !important;
+  }
+
+  .assistant-branch {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .category-principal-stack {
+    width: 100%;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .department-children,
+  .department-children-left,
+  .department-children-right {
+    position: static;
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    padding-block-start: 8px;
+    padding-inline-start: 16px;
+    transform: none;
+    transform-origin: top center;
+    animation: mobile-accordion-in 0.35s ease both;
+  }
+
+  .department-child-row,
+  .department-child-row-left,
+  .department-child-row-right {
+    display: block;
+    width: 100%;
+    direction: inherit;
+    opacity: 1;
+    animation: none;
+  }
+
+  .deputies-row {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    padding-block-start: 10px;
+    padding-inline-start: 16px;
+    animation: mobile-accordion-in 0.35s ease both;
+  }
+
+  .deputy-branch {
+    width: 100%;
+    opacity: 1;
+    animation: none;
+  }
+
+  .education-children {
+    position: static;
+    width: 100%;
+    gap: 8px;
+    margin: 0;
+    padding-block-start: 8px;
+    padding-inline-start: 16px;
+    transform: none;
+    animation: mobile-accordion-in 0.35s ease both;
+  }
+
+  .education-child-row {
+    display: block;
+    width: 100%;
+    direction: inherit;
+    opacity: 1;
+    animation: none;
+  }
+
+  .minister-branches::before,
+  .minister-branches::after,
+  .undersecretary-branches::before,
+  .undersecretary-branches::after,
+  .side-vertical-line,
+  .side-node-row::after,
+  .department-node-wrapper::before,
+  .department-children-spine,
+  .department-child-connector,
+  .assistant-level::before,
+  .assistant-horizontal-line,
+  .assistant-vertical-line,
+  .principal-connector,
+  .deputies-horizontal-line,
+  .deputy-vertical-line,
+  .education-children-line,
+  .education-child-connector {
+    display: none;
+  }
+
+  .structure-node-department,
+  .structure-node-special,
+  .structure-node-section {
+    min-height: 48px;
+  }
+
+  .structure-node-section {
+    border-color: #d8d8d8;
+    background: #f9f9f9;
+  }
+
+  .node-toggle,
+  .node-info {
+    width: 28px;
+    height: 28px;
+  }
+
+  .department-toggle i,
+  .department-toggle-right i {
+    transform: rotate(90deg);
+  }
+
+  .department-toggle.is-expanded i,
+  .department-toggle-right.is-expanded i {
+    transform: rotate(-90deg);
+  }
+  .minister-branches > .minister-side {
+    order: 1;
+  }
+
+  .minister-branches > .undersecretary-column {
+    order: 2;
+  }
 }
 
-.mobile-tree-list {
-  display: flex;
+@keyframes mobile-accordion-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 
-  flex-direction: column;
-
-  gap: 10px;
-}
-
-.mobile-tree-children {
-  margin-inline-start: 14px;
-  padding-block-start: 10px;
-}
-
-.mobile-node {
-  position: relative;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  width: 100%;
-
-  min-height: 48px;
-
-  padding: 9px 15px;
-
-  border: 1px solid transparent;
-
-  border-radius: 999px;
-
-  background: #ffffff;
-
-  color: #172033;
-
-  font-size: 14px;
-
-  font-weight: 700;
-
-  line-height: 1.4;
-
-  animation: node-reveal 0.3s ease both;
-}
-
-.mobile-node.is-focused {
-  animation: node-focus-pulse 0.9s ease-out;
-}
-
-.mobile-node-title {
-  flex: 1;
-
-  text-align: start;
-}
-
-.mobile-node-toggle,
-.mobile-node-info {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  flex: 0 0 auto;
-
-  width: 28px;
-
-  height: 28px;
-
-  padding: 0;
-
-  border: 0;
-
-  border-radius: 50%;
-
-  background: transparent;
-
-  color: inherit;
-
-  font-size: 13px;
-
-  cursor: pointer;
-}
-
-.mobile-node-toggle i {
-  transition: transform 0.25s ease;
-}
-
-.mobile-node-toggle.is-expanded i {
-  transform: rotate(180deg);
-}
-
-.mobile-node-info {
-  opacity: 0.85;
-}
-
-.mobile-node--level-1,
-.mobile-node--level-2 {
-  border-color: var(--brand);
-
-  background: var(--brand);
-
-  color: #ffffff;
-}
-
-.mobile-node--level-3 {
-  border-color: #a39161;
-
-  background: #a39161;
-
-  color: #ffffff;
-}
-
-.mobile-node--level-4 {
-  border-color: #0d4361;
-
-  background: #0d4361;
-
-  color: #ffffff;
-}
-
-.mobile-node--level-5 {
-  border-color: #e2e8f0;
-
-  background: #ffffff;
-
-  color: #000000;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .organization-card,
-  .mobile-node {
+  .minister-side,
+  .undersecretary-side,
+  .department-children,
+  .deputies-row,
+  .education-children,
+  .department-child-row,
+  .education-child-row,
+  .deputy-branch,
+  .structure-modal-backdrop,
+  .structure-modal {
     animation: none;
+    opacity: 1;
   }
 }

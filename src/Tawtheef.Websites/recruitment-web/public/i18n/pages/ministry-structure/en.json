@@ -1,5 +1,4 @@
 {
-
   "structure.title": "Organizational Structure",
   "OrganizationalStructure.Ministry.Subtitle": "Browse Ministry Organizational Structure",
   "structure.subtitle": "Explore the organizational structure of the Ministry of Education and Higher Education.",
@@ -48,10 +47,10 @@
   "structure.nodes.technology-equipment-support": "Technology Equipment and User Support Section",
 
   "structure.nodes.education-affairs": "Assistant Undersecretary for Educational Affairs",
-  "structure.nodes.private-education-affairs": "Assistant Undersecretary for Private Education Affairs",
+  "structure.nodes.private-education-affairs": "Assistant Undersecretary for Private Education",
   "structure.nodes.evaluation-affairs": "Assistant Undersecretary for Evaluation Affairs",
-  "structure.nodes.higher-education-affairs": "Assistant Undersecretary for Higher Education Affairs",
-  "structure.nodes.shared-services-affairs": "Assistant Undersecretary for Shared Services Affairs",
+  "structure.nodes.higher-education-affairs": "Assistant Undersecretary for Higher Education",
+  "structure.nodes.shared-services-affairs": "Assistant Undersecretary for Shared Services",
 
   "structure.nodes.assistant-undersecretary-office": "Office of the Assistant Undersecretary",
 
@@ -94,5 +93,77 @@
   "structure.nodes.student-protection-care": "Student Protection and Care Section",
   "structure.nodes.programs-activities": "Programs and Activities Section",
   "structure.nodes.school-management-support": "School Administration Support Section",
-  "structure.nodes.continuing-education": "Continuing Education Section"
+  "structure.nodes.continuing-education": "Continuing Education Section",
+
+  "structure.nodes.daycare-centers": "Administration of Daycare Centers",
+  "structure.nodes.daycare-licensing": "Section of Daycare Licensing",
+  "structure.nodes.daycare-supervision-control": "Section of Supervision and Control",
+
+  "structure.nodes.private-school-licensing": "Administration of Private School Licensing",
+  "structure.nodes.licensing-tuition-fees": "Section of Licensing and Tuition Fees",
+  "structure.nodes.private-school-registration": "Section of Registration",
+
+  "structure.nodes.private-schools-kindergartens": "Administration of Private Schools and Kindergartens",
+  "structure.nodes.private-admin-supervision": "Section of Administrative Supervision",
+  "structure.nodes.private-academic-supervision": "Section of Academic Supervision",
+
+  "structure.nodes.educational-service-centers": "Administration of Educational Service Centers",
+  "structure.nodes.educational-centers-licensing": "Section of Educational Centers Licensing",
+  "structure.nodes.educational-centers-supervision": "Section of Supervision of Educational Centers",
+
+  "structure.nodes.student-assessment": "Administration of Student Assessment",
+  "structure.nodes.examination-affairs": "Section of Examination Affairs",
+  "structure.nodes.international-examinations": "Section of International Examinations",
+  "structure.nodes.literary-subjects-assessment": "Section of Literary Subjects Assessment",
+  "structure.nodes.scientific-subjects-assessment": "Section of Scientific Subjects Assessment",
+
+  "structure.nodes.school-assessment": "Administration of School Assessment",
+  "structure.nodes.daycare-kindergarten-assessment": "Section of Government and Private Daycare and Kindergarten Assessment",
+  "structure.nodes.government-schools-assessment": "Section of Government Schools Assessment",
+  "structure.nodes.private-schools-assessment": "Section of Private Schools Assessment",
+
+  "structure.nodes.student-information-center": "Administration of Student Information Center",
+  "structure.nodes.examination-support": "Section of Examination Support",
+  "structure.nodes.certificate-equivalence-authentication": "Section of School Certificate Equivalence and Authentication",
+
+  "structure.nodes.higher-education-institutions-affairs": "Administration of Higher Education Institutions Affairs",
+  "structure.nodes.higher-education-licensing": "Section of Higher Education Institutions and Programs Licensing",
+  "structure.nodes.higher-education-supervision": "Section of Supervision and Follow-up of Higher Education Institutions",
+
+  "structure.nodes.scholarships": "Administration of Scholarships",
+  "structure.nodes.scholarships-admission-guidance": "Section of Admission and Guidance",
+  "structure.nodes.domestic-scholarships": "Section of Domestic Scholarships",
+  "structure.nodes.external-scholarships": "Section of External Scholarships",
+  "structure.nodes.scholarships-admin-financial-support": "Section of Administrative and Financial Support",
+
+  "structure.nodes.university-degree-equivalence": "Administration of University Degree Equivalence",
+  "structure.nodes.degree-equivalence": "Section of University Degree Equivalence",
+  "structure.nodes.degree-authentication": "Section of University Degree Authentication",
+
+  "structure.nodes.human-resources": "Administration of Human Resources",
+  "structure.nodes.hr-planning": "Section of Human Resources Planning",
+  "structure.nodes.staff-affairs": "Section of Staff Affairs",
+  "structure.nodes.teachers-admin-technical-affairs": "Section of Technical Affairs for Teachers and Administrators",
+  "structure.nodes.salaries-wages": "Section of Salaries and Wages",
+  "structure.nodes.recruitment-employment": "Section of Recruitment and Employment",
+  "structure.nodes.hr-services": "Section of Human Resources Services",
+
+  "structure.nodes.financial-affairs": "Administration of Financial Affairs",
+  "structure.nodes.financial-accounting": "Section of Financial Accounting",
+  "structure.nodes.budget": "Section of Budget",
+  "structure.nodes.treasury": "Section of Treasury",
+
+  "structure.nodes.procurement-tenders": "Administration of Procurement and Tenders",
+  "structure.nodes.procurement": "Section of Procurement",
+  "structure.nodes.tenders-bidding-contracts": "Section of Tenders, Bidding and Contracts",
+
+  "structure.nodes.general-services": "Administration of General Services",
+  "structure.nodes.admin-services": "Section of Administrative Services",
+  "structure.nodes.building-services": "Section of Building Services",
+  "structure.nodes.waste-management": "Section of Waste Management",
+  "structure.nodes.warehouses": "Section of Transportation",
+
+  "structure.nodes.health-safety": "Administration of Health and Safety",
+  "structure.nodes.security-safety": "Section of Security and Safety",
+  "structure.nodes.health-nutrition": "Section of Health and Nutrition"
 }
