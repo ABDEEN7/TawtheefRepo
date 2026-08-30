@@ -132,7 +132,7 @@ export function employeeWorkloadColor(key: string): string {
     case 'ActiveReviewWorkload':
       return DashboardChartColors.info;
 
-    case 'CompletedAssignments':
+    case 'CompletedReviews':
       return DashboardChartColors.success;
 
     default:

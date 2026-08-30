@@ -7,6 +7,7 @@ public static class PermissionCatalog
     public static readonly ReadOnlyCollection<PermissionDefinition> All = new([
         Permissions.Dashboard.View,
         Permissions.Dashboard.Export,
+        Permissions.Dashboard.Manage,
 
         Permissions.Roles.View,
         Permissions.Roles.Manage,

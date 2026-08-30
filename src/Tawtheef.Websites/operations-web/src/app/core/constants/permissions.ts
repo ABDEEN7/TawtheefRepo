@@ -2,6 +2,7 @@ export const Permissions = {
   Dashboard: {
     View: 'dashboard.view',
     Export: 'dashboard.export',
+    Manage: 'dashboard.manage',
   },
   Roles: {
     View: 'roles.view',

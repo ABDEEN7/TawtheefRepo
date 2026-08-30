@@ -1,180 +1,104 @@
-<div
-  i18nNamespace="pages/employee/dashboard"
-  class="candidate-modal-backdrop"
->
-  <div class="candidate-modal jobs-modal employees-modal">
-    <button
-      class="candidate-modal-close"
-      type="button"
-      (click)="closed.emit()"
-    >
-      <i class="hgi-stroke hgi-cancel-01"></i>
-    </button>
-
-    <div class="candidate-modal-header">
-      <h3>
-        {{ 'dashboard.modals.employees.title' | translate }}
-      </h3>
-
+<div i18nNamespace="pages/employee/dashboard" class="dashboard-dialog-content employees-dialog-content">
+    <div class="dashboard-dialog-intro">
       <p>
         {{ 'dashboard.modals.employees.subtitle' | translate }}
       </p>
     </div>
 
-    <!-- Employee workload chart -->
-    <div class="candidate-modal-card employee-workload-card">
-      <h4 class="candidate-modal-section-title">
+    <section class="dashboard-section-card employee-workload-card">
+      <h4 class="dashboard-section-title">
         {{ 'dashboard.modals.employees.statusTitle' | translate }}
       </h4>
 
       <div class="employee-bar-chart-wrapper">
         <p-chart
-          #chart
           type="bar"
           styleClass="employee-bar-chart"
           [data]="chartData()"
-          [options]="chartOptions"
+          [options]="chartOptions()"
         />
       </div>
-    </div>
+    </section>
 
     <!-- Team performance -->
-    <div class="candidate-modal-card">
-      <h4 class="candidate-modal-section-title">
+    <section class="dashboard-section-card">
+      <h4 class="dashboard-section-title">
         {{ 'dashboard.sections.teamPerformance' | translate }}
       </h4>
 
-      <div class="table-responsive employees-table-wrap">
-        <p-table
-          class="custom-table employees-modal-table"
-          [value]="rows()"
-          [rowHover]="true"
-          [customSort]="true"
-          (sortFunction)="onSort($event)"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="Name">
-                <div class="d-flex align-items-center gap-2">
-                  <span>
-                    {{ 'dashboard.modals.table.employee' | translate }}
-                  </span>
+      <app-page-filters
+        class="team-performance-filters"
+        [advancedLabel]="'dashboard.sort.label' | translate"
+        [clearLabel]="'dashboard.search.employeeWorkLoadDialog.placeholder' | translate"
+        [showAdvanced]="false"
+        [showClear]="false"
+      >
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon
+            [class]="teamPerformanceLoading() ? 'pi pi-spin pi-spinner' : 'pi pi-search'"
+          />
+          <input
+            pInputText
+            type="search"
+            class="w-100 form-control"
+            [ngModel]="searchValue()"
+            (ngModelChange)="onSearchChange($event)"
+            [placeholder]="'dashboard.search.employeeWorkLoadDialog.placeholder' | translate"
+            [attr.aria-label]="'dashboard.search.employeeWorkLoadDialog.placeholder' | translate"
+          />
+        </p-iconfield>
 
-                  <p-sortIcon field="Name" />
-                </div>
-              </th>
-
-              <th pSortableColumn="AssignedTasks">
-                <div class="d-flex align-items-center gap-2">
-                  <span>
-                    {{ 'dashboard.table.assignedTasks' | translate }}
-                  </span>
-
-                  <p-sortIcon field="AssignedTasks" />
-                </div>
-              </th>
-
-              <th pSortableColumn="CompletedTasks">
-                <div class="d-flex align-items-center gap-2">
-                  <span>
-                    {{ 'dashboard.table.completedTasks' | translate }}
-                  </span>
-
-                  <p-sortIcon field="CompletedTasks" />
-                </div>
-              </th>
-
-              <th pSortableColumn="RemainingTasks">
-                <div class="d-flex align-items-center gap-2">
-                  <span>
-                    {{ 'dashboard.table.remainingTasks' | translate }}
-                  </span>
-
-                  <p-sortIcon field="RemainingTasks" />
-                </div>
-              </th>
-
-              <th pSortableColumn="OverdueTasks">
-                <div class="d-flex align-items-center gap-2">
-                  <span>
-                    {{ 'dashboard.table.overdueTasks' | translate }}
-                  </span>
-
-                  <p-sortIcon field="OverdueTasks" />
-                </div>
-              </th>
-            </tr>
-          </ng-template>
-
-          <ng-template
-            pTemplate="body"
-            let-employee
+        <div filterSecondary class="team-performance-sort-field">
+          <label class="form-label" for="team-performance-sort">
+            {{ 'dashboard.sort.label' | translate }}
+          </label>
+          <p-select
+            inputId="team-performance-sort"
+            class="w-100"
+            [options]="sortOptions"
+            optionValue="value"
+            [ngModel]="selectedSort()"
+            (onChange)="onSortSelection($event.value)"
           >
-            <tr>
-              <td>
-                <div class="employee-modal-cell">
-                  <strong>
-                    {{ employee.name }}
-                  </strong>
+            <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+            <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+          </p-select>
+        </div>
+      </app-page-filters>
 
-                  <small>
-                    {{
-                      employee.departmentName ||
-                        employee.jobDescription ||
-                        '-'
-                    }}
-                  </small>
-                </div>
-              </td>
+      <span class="visually-hidden" role="status" aria-live="polite">
+        @if (teamPerformanceLoading()) {
+          {{ 'dashboard.common.loading' | translate }}
+        }
+      </span>
 
-              <td>
-                <span class="employee-count-badge assigned">
-                  {{ employee.assignedTasks }}
-                </span>
-              </td>
-
-              <td>
-                <span class="employee-count-badge completed">
-                  {{ employee.completedTasks }}
-                </span>
-              </td>
-
-              <td>
-                <span class="employee-count-badge remaining">
-                  {{ employee.remainingTasks }}
-                </span>
-              </td>
-
-              <td>
-                <span class="employee-count-badge late">
-                  {{ employee.overdueTasks }}
-                </span>
-              </td>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td
-                colspan="5"
-                class="text-muted no-data"
-              >
-                <div
-                  class="p-4 d-flex flex-column align-items-center justify-content-center"
-                >
-                  <i
-                    class="hgi-stroke hgi-user-group fs-32 opacity-25 mb-2"
-                  ></i>
-
-                  <span>
-                    {{ 'dashboard.common.noData' | translate }}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+      <div class="performance-list" [attr.aria-busy]="teamPerformanceLoading()">
+        @for (employee of rows(); track employee.employeeId) {
+          <article class="performance-row">
+            <div class="performance-identity">
+              <strong>{{ employee.name }}</strong>
+              <div class="performance-meta">
+                @if (employee.employeeNumber) { <span>{{ employee.employeeNumber }}</span> }
+                @if (employee.departmentName || employee.jobDescription) {
+                  <span>{{ employee.departmentName || employee.jobDescription }}</span>
+                }
+              </div>
+            </div>
+            <div class="performance-workload">
+              <div class="assigned-reference">
+                <span>{{ 'dashboard.table.assignedTasks' | translate }}</span>
+                <strong>{{ employee.assignedTasks | number:'1.0-0' }}</strong>
+              </div>
+              <div class="independent-metrics">
+                <div class="independent-metric completed"><div class="metric-heading"><span>{{ 'dashboard.teamPerformance.finalizedReviews' | translate }}</span><strong>{{ employee.completedTasks | number:'1.0-0' }}</strong></div><div class="metric-track" role="img" [attr.aria-label]="('dashboard.teamPerformance.finalizedReviews' | translate) + ': ' + employee.completedTasks"><span [style.inline-size.%]="metricScale(employee.completedTasks, 'completed')"></span></div></div>
+                <div class="independent-metric remaining"><div class="metric-heading"><span>{{ 'dashboard.teamPerformance.remainingWorkload' | translate }}</span><strong>{{ employee.remainingTasks | number:'1.0-0' }}</strong></div><div class="metric-track" role="img" [attr.aria-label]="('dashboard.teamPerformance.remainingWorkload' | translate) + ': ' + employee.remainingTasks"><span [style.inline-size.%]="metricScale(employee.remainingTasks, 'remaining')"></span></div></div>
+                <div class="independent-metric overdue" [class.has-overdue]="employee.overdueTasks > 0"><div class="metric-heading"><span>{{ 'dashboard.teamPerformance.overdueWorkload' | translate }}</span><strong>{{ employee.overdueTasks | number:'1.0-0' }}</strong></div><div class="metric-track" role="img" [attr.aria-label]="('dashboard.teamPerformance.overdueWorkload' | translate) + ': ' + employee.overdueTasks"><span [style.inline-size.%]="metricScale(employee.overdueTasks, 'overdue')"></span></div></div>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <div class="text-muted no-data p-4 text-center">{{ 'dashboard.common.noData' | translate }}</div>
+        }
       </div>
 
       @if (totalItems() > 0) {
@@ -190,38 +114,37 @@
           </app-pagination>
         </div>
       }
-    </div>
+    </section>
 
     <!-- Export actions -->
     <div
-      class="candidate-modal-actions"
+      class="dashboard-dialog-actions"
       [hidden]="!canExport()"
     >
       <button
-        class="candidate-modal-btn outline"
-        type="button"
-        (click)="exportCharts()"
-        [disabled]="exportInProgress()"
-      >
-        <i class="hgi-stroke hgi-download-04"></i>
-
-        <span>
-          {{ 'dashboard.common.exportCharts' | translate }}
-        </span>
-      </button>
-
-      <button
-        class="candidate-modal-btn filled"
+        class="btn btn-primary"
         type="button"
         (click)="exportList()"
         [disabled]="exportInProgress()"
       >
-        <i class="hgi-stroke hgi-download-04"></i>
+        <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
 
         <span>
           {{ 'dashboard.common.exportList' | translate }}
         </span>
       </button>
+
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        (click)="exportCharts()"
+        [disabled]="exportInProgress()"
+      >
+        <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+
+        <span>
+          {{ 'dashboard.common.exportCharts' | translate }}
+        </span>
+      </button>
     </div>
-  </div>
 </div>

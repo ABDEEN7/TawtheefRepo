@@ -2,6 +2,7 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Constants;
@@ -11,7 +12,8 @@ namespace Tawtheef.Infrastructure.Services.Identity;
 
 public class EmployeeProfileService(
     IEmployeeDirectoryClient directoryClient,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    IAppLogger logger)
     : IEmployeeProfileService
 {
     public async Task<IResult<EmployeeProfileInfo>> SyncFromDirectoryAsync(
@@ -27,12 +29,28 @@ public class EmployeeProfileService(
             return Result.Fail<EmployeeProfileInfo>(profileResult.Errors);
 
         var profile = profileResult.Value;
-        var needsUpdate =
-            UpsertEmployeeProfile(user, profile) |
-            FillMissingUserFields(user, profile);
 
-        if (needsUpdate)
-            await userManager.UpdateAsync(user);
+        var profileChanged = UpsertEmployeeProfile(user, profile);
+        var userChanged = SynchronizeUserFields(user, profile);
+
+        if (!profileChanged && !userChanged)
+            return Result.Ok(profile);
+
+        var updateResult = await userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            var errors = updateResult.Errors
+                .Select(x => x.Description)
+                .ToArray();
+
+            logger.Error(
+                "Failed to persist HR employee profile. UserId={UserId} Errors={Errors}",
+                user.Id,
+                string.Join(" | ", errors));
+
+            return Result.Fail<EmployeeProfileInfo>(errors);
+        }
 
         return Result.Ok(profile);
     }
@@ -51,24 +69,26 @@ public class EmployeeProfileService(
     }
 
     /// <summary>
-    /// Updates the user primitive fields ONLY if they are currently empty.
+    /// Synchronizes authoritative HR names and fills the phone number when it is missing.
     /// Returns true if any field changed.
     /// </summary>
-    private static bool FillMissingUserFields(EmployeeUser user, EmployeeProfileInfo profile)
+    private bool SynchronizeUserFields(EmployeeUser user, EmployeeProfileInfo profile)
     {
         var changed = false;
 
-        if (IsEmpty(user.FullNameEn) && IsNotEmpty(profile.FullNameEn))
-        {
-            user.FullNameEn = profile.FullNameEn;
-            changed = true;
-        }
+        changed |= SynchronizeName(
+            profile.FullNameEn,
+            user.FullNameEn,
+            value => user.FullNameEn = value,
+            nameof(User.FullNameEn),
+            user.Id);
 
-        if (IsEmpty(user.FullNameAr) && IsNotEmpty(profile.FullNameAr))
-        {
-            user.FullNameAr = profile.FullNameAr;
-            changed = true;
-        }
+        changed |= SynchronizeName(
+            profile.FullNameAr,
+            user.FullNameAr,
+            value => user.FullNameAr = value,
+            nameof(User.FullNameAr),
+            user.Id);
 
         if (IsEmpty(user.PhoneNumber) && IsNotEmpty(profile.MobileNumber))
         {
@@ -77,6 +97,34 @@ public class EmployeeProfileService(
         }
 
         return changed;
+    }
+
+    private bool SynchronizeName(
+        string? hrValue,
+        string currentValue,
+        Action<string> assign,
+        string fieldName,
+        Guid userId)
+    {
+        const int employeNameMaxLength = 100;
+
+        if (string.IsNullOrWhiteSpace(hrValue) ||
+            string.Equals(currentValue, hrValue, StringComparison.Ordinal))
+            return false;
+
+        if (hrValue.Length > employeNameMaxLength)
+        {
+            logger.Warning(
+                "HR employee name exceeds the supported length and was not synchronized. UserId={UserId} Field={Field} Length={Length} MaxLength={MaxLength}",
+                userId,
+                fieldName,
+                hrValue.Length,
+                employeNameMaxLength);
+            return false;
+        }
+
+        assign(hrValue);
+        return true;
     }
 
     private static bool IsEmpty(string? value)

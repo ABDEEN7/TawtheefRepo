@@ -23,4 +23,5 @@ public sealed class DashboardKpisDto
     public int OverdueTasks { get; init; }
     public int UnassignedProfiles { get; init; }
     public int FollowedMinisterOfficeCandidates { get; init; }
+    public int KawaderFiles { get; init; }
 }

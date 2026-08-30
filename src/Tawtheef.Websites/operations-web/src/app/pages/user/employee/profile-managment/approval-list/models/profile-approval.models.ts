@@ -25,6 +25,11 @@ export enum SpecializationRelationLevel {
   Weak = 3,
 }
 
+export enum ProfileApprovalCandidateSource {
+  MinisterOffice = 1,
+  Kawaader = 2,
+}
+
 export interface FileRefDto {
   resourceId: string;
   fileName: string;
@@ -143,23 +148,23 @@ export interface ProfileApprovalListItem {
   userProfileId: string;
   userId: string;
   fullName: string;
-  candidateType?: string;
-  targetEntity?: string;
-  specialization?: string;
+  candidateType: string | null;
+  targetEntity: string | null;
+  isMinisterOfficeCandidate: boolean;
+  isKawaaderCandidate: boolean;
   submittedAtUtc: string;
-  profileStatus?: number;
-  pendingCount: number;
+  profileStatus: ProfileStatusNumber;
   overallStatus: ReviewStatus;
-  lastUpdatedAtUtc?: string;
-  allowedOperations?: string[];
+  lastUpdatedAtUtc: string | null;
+  allowedOperations: string[];
 }
 
 export interface ProfileApprovalListFilter extends PaginatedRequest {
   search?: string;
-  specialization?: string;
-  status?: ReviewStatus | '';
-  targetEntityId?: string;
-  candidateType?: string;
+  statuses?: ReviewStatus[];
+  targetEntityIds?: string[];
+  candidateTypeIds?: string[];
+  candidateSources?: ProfileApprovalCandidateSource[];
 }
 
 export type FinalApprovalAction =
