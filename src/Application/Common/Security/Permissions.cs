@@ -14,6 +14,27 @@ public static class Permissions
         bool canBeAssignedToRole = true)
         => new(new PermissionKey(key), module, action, nameEn, nameAr, order, canBeAssignedToRole);
 
+    public static class Rooms
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Rooms.View,
+                nameof(PermissionKeys.Rooms),
+                PermissionAction.View,
+                "Rooms - View",
+                "القاعات - عرض",
+                80);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.Rooms.Manage,
+                nameof(PermissionKeys.Rooms),
+                PermissionAction.Manage,
+                "Rooms - Manage",
+                "إدارة القاعات",
+                81);
+    }
+
     // =========================
     // Admin Console
     // =========================

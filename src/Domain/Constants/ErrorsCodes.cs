@@ -20,6 +20,8 @@ public class ErrorsCodes
     public const string RequestContainsInvalidOrUnsafeContent = "REQUEST_CONTAINS_INVALID_OR_UNSAFE_CONTENT";
     public const string ValidationError = "VALIDATION_ERROR";
     public const string ItemNotFound = "ITEM_NOT_FOUND";
+    public const string RoomNameExistsInLocation = "ROOM_NAME_EXISTS_IN_LOCATION";
+    public const string RoomNotFound = "ROOM_NOT_FOUND";
     #endregion
 
     // =========================================================

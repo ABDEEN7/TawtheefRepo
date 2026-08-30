@@ -1,0 +1,71 @@
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="room-name-ar" class="form-label">{{ 'ROOMS.NAME_AR' | translate }}</label>
+      <input id="room-name-ar" pInputText formControlName="nameAr" maxlength="200" class="w-100" />
+      @if (showError('nameAr')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.NAME_AR' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label for="room-name-en" class="form-label">{{ 'ROOMS.NAME_EN' | translate }}</label>
+      <input id="room-name-en" pInputText formControlName="nameEn" maxlength="200" class="w-100" />
+      @if (showError('nameEn')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.NAME_EN' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label for="room-location" class="form-label">{{ 'ROOMS.LOCATION' | translate }}</label>
+      <input id="room-location" pInputText formControlName="location" maxlength="500" class="w-100" />
+      @if (showError('location')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.MAX_500' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label for="room-type" class="form-label">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
+      <p-select inputId="room-type" [options]="roomTypeOptions" optionLabel="labelKey" optionValue="value"
+        formControlName="roomType" [placeholder]="'ROOMS.SELECT_ROOM_TYPE' | translate" class="w-100">
+        <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+        <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+      </p-select>
+      @if (showError('roomType')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.REQUIRED' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label for="room-capacity" class="form-label">{{ 'ROOMS.CAPACITY' | translate }}</label>
+      <p-inputnumber inputId="room-capacity" formControlName="capacity" [min]="1" [useGrouping]="false"
+        class="w-100" styleClass="w-100" />
+      @if (showError('capacity')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.CAPACITY' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label for="room-status" class="form-label">{{ 'ROOMS.STATUS_LABEL' | translate }}</label>
+      <p-select inputId="room-status" [options]="statusOptions" optionLabel="labelKey" optionValue="value"
+        formControlName="status" [placeholder]="'ROOMS.SELECT_STATUS' | translate" class="w-100">
+        <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
+        <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+      </p-select>
+      @if (showError('status')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.REQUIRED' | translate }}</small>
+      }
+    </div>
+    <div class="col-12">
+      <label for="room-notes" class="form-label">{{ 'ROOMS.NOTES' | translate }}</label>
+      <textarea id="room-notes" pTextarea formControlName="notes" maxlength="2000" rows="4" class="w-100"></textarea>
+      @if (showError('notes')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.MAX_2000' | translate }}</small>
+      }
+    </div>
+  </div>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-light" [disabled]="saving()" (click)="cancel()">
+      {{ 'ROOMS.CANCEL' | translate }}
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      @if (saving()) { <i class="fa-solid fa-spinner fa-spin me-2"></i> }
+      {{ (isEditMode ? 'ROOMS.UPDATE' : 'ROOMS.SAVE') | translate }}
+    </button>
+  </div>
+</form>

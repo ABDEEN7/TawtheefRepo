@@ -354,4 +354,9 @@ export class EndpointsService {
     send: this.getFullUrl('/notification-tester/send'),
     preview: this.getFullUrl('/notification-tester/preview'),
   };
+  rooms = {
+    create: this.getFullUrl('/rooms'),
+    list: this.getFullUrl('/rooms'),
+    update: (id: string) => this.getFullUrl(`/rooms/${id}`)
+  };
 }

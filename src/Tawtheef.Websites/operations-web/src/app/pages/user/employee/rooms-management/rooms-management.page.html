@@ -1,0 +1,114 @@
+<section class="rooms-shell" i18nNamespace="pages/employee/rooms-management">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+          <h3 class="fw-bold mb-0">{{ 'ROOMS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'ROOMS.LIST_DESCRIPTION' | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <button pButton type="button" *hasPermission="Permissions.Rooms.Manage" (click)="openCreateRoom()">
+              <span pButtonLabel>{{ 'ROOMS.ADD_ROOM' | translate }}</span>
+              <i class="hgi hgi-stroke hgi-add-01" pButtonIcon></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-3 filter-field">
+          <label class="form-label" for="room-name-filter">{{ 'ROOMS.SEARCH_NAME' | translate }}</label>
+          <p-iconfield class="search-icon-field w-100">
+            <p-inputicon styleClass="pi pi-search"></p-inputicon>
+            <input pInputText id="room-name-filter" type="search" class="w-100 form-control"
+              [(ngModel)]="nameFilter" (ngModelChange)="onTextFilterChange()"
+              [placeholder]="'ROOMS.SEARCH_NAME_PLACEHOLDER' | translate" />
+          </p-iconfield>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3 filter-field">
+          <label class="form-label" for="room-location-filter">{{ 'ROOMS.LOCATION' | translate }}</label>
+          <input pInputText id="room-location-filter" type="search" class="w-100 form-control"
+            [(ngModel)]="locationFilter" (ngModelChange)="onTextFilterChange()"
+            [placeholder]="'ROOMS.SEARCH_LOCATION_PLACEHOLDER' | translate" />
+        </div>
+        <div class="col-12 col-md-6 col-xl-3 filter-field">
+          <label class="form-label" for="room-type-filter">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
+          <p-select inputId="room-type-filter" class="w-100" [options]="roomTypeOptions"
+            optionLabel="labelKey" optionValue="value" [(ngModel)]="selectedRoomType"
+            (ngModelChange)="onSelectFilterChange()" [showClear]="true"
+            [placeholder]="'ROOMS.ALL_TYPES' | translate" appendTo="body">
+            <ng-template pTemplate="selectedItem" let-option>{{ option.labelKey | translate }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ option.labelKey | translate }}</ng-template>
+          </p-select>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3 filter-field">
+          <label class="form-label" for="room-status-filter">{{ 'ROOMS.STATUS_LABEL' | translate }}</label>
+          <p-select inputId="room-status-filter" class="w-100" [options]="statusOptions"
+            optionLabel="labelKey" optionValue="value" [(ngModel)]="selectedStatus"
+            (ngModelChange)="onSelectFilterChange()" [showClear]="true"
+            [placeholder]="'ROOMS.ALL_STATUSES' | translate" appendTo="body">
+            <ng-template pTemplate="selectedItem" let-option>{{ option.labelKey | translate }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ option.labelKey | translate }}</ng-template>
+          </p-select>
+        </div>
+      </div>
+
+      <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
+        @if (loading()) {
+          <div class="small text-muted">{{ 'ROOMS.LOADING' | translate }}</div>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="rooms()" dataKey="id" class="rooms-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'ROOMS.ROOM_NAME' | translate }}</th>
+                <th>{{ 'ROOMS.LOCATION' | translate }}</th>
+                <th>{{ 'ROOMS.ROOM_TYPE' | translate }}</th>
+                <th>{{ 'ROOMS.CAPACITY' | translate }}</th>
+                <th>{{ 'ROOMS.STATUS_LABEL' | translate }}</th>
+                <th>{{ 'ROOMS.LAST_UPDATED' | translate }}</th>
+                <th *hasPermission="Permissions.Rooms.Manage" style="width: 120px">{{ 'ROOMS.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-room>
+              <tr>
+                <td class="fw-semibold">{{ currentLang() === 'ar' ? room.nameAr : room.nameEn }}</td>
+                <td>{{ room.location || ('ROOMS.NOT_AVAILABLE' | translate) }}</td>
+                <td>{{ roomTypeLabel(room.roomType) | translate }}</td>
+                <td>{{ room.capacity }}</td>
+                <td><p-tag severity="secondary" [value]="statusLabel(room.status) | translate"></p-tag></td>
+                <td>{{ room.lastUpdated | date: 'medium' }}</td>
+                <td *hasPermission="Permissions.Rooms.Manage">
+                  <div class="action-buttons">
+                    <button pRipple type="button" class="btn" (click)="openEditRoom(room)"
+                      [pTooltip]="'ROOMS.EDIT_ROOM' | translate"
+                      [attr.aria-label]="'ROOMS.EDIT_ROOM' | translate">
+                      <i class="hgi hgi-stroke hgi-edit-02" pButtonIcon></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td [attr.colspan]="7" class="text-center py-4 text-muted" [class.d-none]="loading()">
+                  {{ 'ROOMS.NO_ROOMS' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination [currentPage]="filters().pageNumber" [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalItems()" (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+        </div>
+      }
+    </div>
+  </div>
+</section>

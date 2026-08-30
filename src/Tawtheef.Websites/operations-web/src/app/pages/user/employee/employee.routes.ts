@@ -222,4 +222,10 @@ export const employeeRoutes: Routes = [
     path: "notification-tester",
     loadComponent: () => import('./notification-tester/notification-tester.page').then(m => m.NotificationTesterPage),
   },
+  {
+    path: 'rooms-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Rooms.View] },
+    loadComponent: () => import('./rooms-management/rooms-management.page').then(m => m.RoomsManagementPage)
+  },
 ];

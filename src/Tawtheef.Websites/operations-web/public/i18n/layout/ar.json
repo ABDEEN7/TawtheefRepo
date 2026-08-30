@@ -82,4 +82,5 @@
   "common.relativeTime.minutesAgo": "منذ {{count}} دقيقة",
   "common.relativeTime.hoursAgo": "منذ {{count}} ساعة",
   "common.relativeTime.daysAgo": "منذ {{count}} يوم"
+  ,"internal.sidebar.rooms": "إدارة القاعات"
 }

@@ -297,4 +297,6 @@
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "سجل مرشح مكتب سعادة الوزير غير موجود.",
   "server-error.QID_EXPIRY_DATE_REQUIRED": "تاريخ انتهاء البطاقة الشخصية مطلوب للتحقق من الهوية.",
   "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "نقاط الوظيفة ليست في حالة انتظار الموافقة."
+  ,"server-error.ROOM_NAME_EXISTS_IN_LOCATION": "توجد قاعة بالاسم العربي أو الإنجليزي نفسه في هذا الموقع.",
+  "server-error.ROOM_NOT_FOUND": "القاعة غير موجودة."
 }

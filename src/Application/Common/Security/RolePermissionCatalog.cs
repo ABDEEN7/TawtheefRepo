@@ -77,7 +77,10 @@ public static class RolePermissionCatalog
                 Permissions.Cities.View.Key,
                 Permissions.Cities.Manage.Key,
                 Permissions.Universities.View.Key,
-                Permissions.Universities.Manage.Key
+                Permissions.Universities.Manage.Key,
+
+                Permissions.Rooms.View.Key,
+                Permissions.Rooms.Manage.Key
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,

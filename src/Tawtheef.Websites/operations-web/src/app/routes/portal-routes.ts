@@ -126,5 +126,8 @@ export const portalRoutes = {
   },
   get notificationTester() {
     return this.portal + '/notification-tester'
+  },
+  get roomsManagement() {
+    return this.portal + '/rooms-management';
   }
 }
