@@ -363,5 +363,18 @@
   "profileOverview.changeRequests.status.canceled": "ملغي",
   "profileOverview.sections.personalInfo": "المعلومات الشخصية",
   "profileView.hrNotes.title": "ملاحظات الموارد البشرية",
-  "profileView.sections.openFirst": "اضغط لتنقل بين التبويبات"
+  "profileView.sections.openFirst": "اضغط لتنقل بين التبويبات",
+  "profileOverview.correctionWorkspace.title": "الملف بحاجة إلى تعديلات",
+  "profileOverview.correctionWorkspace.subtitle": "راجع العناصر المطلوبة واحفظ كل تصحيح، ثم أعد إرسال الملف للمراجعة.",
+  "profileOverview.correctionWorkspace.total": "إجمالي العناصر",
+  "profileOverview.correctionWorkspace.remaining": "متبقي",
+  "profileOverview.correctionWorkspace.corrected": "تم حفظها",
+  "profileOverview.correctionWorkspace.sectionsTitle": "أقسام الملف",
+  "profileOverview.correctionWorkspace.sectionsHint": "ركّز على الأقسام المطلوبة أو اعرض الملف كاملاً للرجوع إليه.",
+  "profileOverview.correctionWorkspace.showRequiredOnly": "عرض المطلوب فقط",
+  "profileOverview.correctionWorkspace.showAll": "عرض الملف كاملاً",
+  "profileOverview.correctionWorkspace.correctedStatus": "تم التعديل",
+  "profileOverview.correctionWorkspace.noCorrection": "لا يوجد تعديل مطلوب",
+  "profileOverview.correctionWorkspace.savedItemsTitle": "التصحيحات المحفوظة",
+  "profileOverview.correctionWorkspace.savedHint": "تم حفظ التعديل وسيتم مراجعته بعد إعادة إرسال الملف."
 }

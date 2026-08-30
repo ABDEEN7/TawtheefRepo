@@ -118,6 +118,24 @@ public class ProfileApprovalsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPut("{userProfileId:guid}/sections/{section}/internal-note")]
+    [AuthorizePermission(PermissionKeys.ProfileApproval.Review)]
+    public async Task<IActionResult> SaveSectionInternalNote(
+        Guid userProfileId,
+        ProfileSection section,
+        [FromBody] SaveProfileSectionInternalNoteRequest body,
+        CancellationToken ct)
+    {
+        if (OfficerId.IsFailed) return BadRequest(OfficerId.Errors);
+
+        var result = await mediator.Send(new SaveProfileSectionInternalNoteCommand(
+            OfficerId.Value,
+            userProfileId,
+            section,
+            body.Note), ct);
+        return result.ToActionResult();
+    }
+
     [HttpPut("review-items/{reviewItemId:guid}")]
     [AuthorizePermission(PermissionKeys.ProfileApproval.Review)]
     public async Task<IActionResult> DecideReviewItem(

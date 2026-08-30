@@ -108,9 +108,8 @@ public sealed class GetMyProfileDetailHandler(
 
     private static ProfileEditPermissionsDto ResolvePermissions(UserProfileStatus status)
     {
-        // Your rule: allow change (Prereq/Personal/Contact), and allow add-only elsewhere.
-        // Locking is optional; adapt to your workflow.
         var locked = status is UserProfileStatus.UnderReview;
+        var canAdd = status is UserProfileStatus.InCreation or UserProfileStatus.RequiresUpdate;
 
         return new ProfileEditPermissionsDto
         {
@@ -120,14 +119,14 @@ public sealed class GetMyProfileDetailHandler(
             CanEditPersonal = !locked,
             CanEditContact = !locked,
 
-            CanAddQualifications = !locked,
-            CanAddExperiences = !locked,
-            CanAddTrainingCourses = !locked,
-            CanAddCertificatesAndAwards = !locked,
+            CanAddQualifications = canAdd,
+            CanAddExperiences = canAdd,
+            CanAddTrainingCourses = canAdd,
+            CanAddCertificatesAndAwards = canAdd,
 
             CanEditSkills = !locked,
             CanEditLanguages = !locked,
-            CanAddAttachments = !locked,
+            CanAddAttachments = canAdd,
 
             CanSubmit = !locked
         };

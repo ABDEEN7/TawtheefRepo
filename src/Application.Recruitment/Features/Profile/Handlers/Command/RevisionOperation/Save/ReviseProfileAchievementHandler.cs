@@ -2,6 +2,7 @@
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Validators;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -23,10 +24,8 @@ public sealed class ReviseProfileAchievementHandler(
     IProfileStepValidationService validationService
 ) : IRequestHandler<ReviseProfileAchievementCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
     public async Task<IResult<Unit>> Handle(ReviseProfileAchievementCommand cmd, CancellationToken ct)
     {
         var achievementRepo = uow.GetEntityRepository<Achievement>();
@@ -60,17 +59,24 @@ public sealed class ReviseProfileAchievementHandler(
             .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
 
+        var duplicateValidation = ProfileDuplicateValidation.ValidateAchievements(dtos, existing);
+        if (duplicateValidation.IsFailed)
+            return Result.Fail<Unit>(duplicateValidation.Errors);
+
         var allowedEntityIds = await reviewRepo.DbSet
-    .AsNoTracking()
-    .Where(r =>
-        r.UserProfileId == profile.Id &&
-        r.Section == ProfileSection.CertificatesAndAwards &&
-        r.TargetType == ReviewTargetType.Row &&
-        (r.Status == ReviewStatus.NeedsCorrection ||
-         r.Status == ReviewStatus.Solved) &&
-        r.EntityId != null)
-    .Select(r => r.EntityId!.Value)
-    .ToHashSetAsync(ct);
+            .AsNoTracking()
+            .Where(r =>
+                r.UserProfileId == profile.Id &&
+                r.ProfileChangeId == null &&
+                !r.IsDeleted &&
+                r.Section == ProfileSection.CertificatesAndAwards &&
+                r.TargetType == ReviewTargetType.Row &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Rejected ||
+                 r.Status == ReviewStatus.Solved) &&
+                r.EntityId != null)
+            .Select(r => r.EntityId!.Value)
+            .ToHashSetAsync(ct);
 
         // Upsert
         foreach (var dto in dtos)
@@ -89,19 +95,39 @@ public sealed class ReviseProfileAchievementHandler(
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
-            if (!dto.Id.HasValue || dto.Id.Value == Guid.Empty)
+            var isNew = !dto.Id.HasValue || dto.Id == Guid.Empty;
+            if (!isNew && !allowedEntityIds.Contains(dto.Id!.Value))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            if (!allowedEntityIds.Contains(dto.Id.Value))
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
-
-            var row = existing.FirstOrDefault(x => x.Id == dto.Id.Value);
+            var row = isNew ? null : existing.FirstOrDefault(x => x.Id == dto.Id!.Value);
 
             if (row is null)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+            {
+                if (!isNew)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
+                var entity = new Achievement
+                {
+                    Id = Guid.NewGuid(),
+                    UserProfileId = profile.Id,
+                    AchievementTypeId = dto.AchievementTypeId,
+                    Title = dto.Title,
+                    IssuingAuthority = dto.IssuingAuthority,
+                    CountryId = dto.CountryId,
+                    IssueDate = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
+                    Description = dto.Description,
+                    RelatedToSpecialization = dto.RelatedToSpecialization,
+                    AttachmentId = certResult.Value ?? dto.AttachmentId ?? Guid.Empty
+                };
+                await achievementRepo.DbSet.AddAsync(entity, ct);
+                profile.Achievements ??= [];
+                profile.Achievements.Add(entity);
+                await ReviewItemSaveHelper.CreateSolvedRowAsync(
+                    uow, profile, ProfileSection.CertificatesAndAwards,
+                    ProfileReviewConstants.EntityNames.Achievement, entity.Id, ct);
+                continue;
+            }
 
-            var finalAttachmentId = certResult.Value ?? dto.AttachmentId;
 
             // UPDATE
             row.AchievementTypeId = dto.AchievementTypeId;
@@ -117,11 +143,13 @@ public sealed class ReviseProfileAchievementHandler(
                 row.AttachmentId = certResult.Value.Value;
             else if (dto.AttachmentId is not null && dto.AttachmentId != Guid.Empty)
                 row.AttachmentId = dto.AttachmentId.Value;
-
         }
 
         foreach (var dto in dtos)
         {
+            if (!dto.Id.HasValue || dto.Id == Guid.Empty)
+                continue;
+
             await ReviewItemSaveHelper.MarkRowSolvedAsync(
                 uow,
                 profile,
@@ -173,28 +201,22 @@ public sealed class ReviseProfileAchievementHandler(
         if (file.Length > maxFileSizeBytes)
             return Result.Fail<Guid?>(fileTooLargeError);
 
-        var uploadPath = await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
+        var uploadPath =
+            await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             cancellationToken);
-        if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
-
-        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 
     static Result ValidateTextLengths(IEnumerable<AchievementUpsertDto> achievements)
     {
-        foreach (var achievement in achievements)
-        {
-            if (!string.IsNullOrEmpty(achievement.Description) && achievement.Description.Length > ProfileLimits.AchievementDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.AchievementDescriptionTooLong);
-            }
-        }
-
-        return Result.Ok();
+        return achievements.Any(achievement => !string.IsNullOrEmpty(achievement.Description) &&
+                                               achievement.Description.Length >
+                                               ProfileLimits.AchievementDescriptionMaxLength)
+            ? Result.Fail(ErrorsCodes.AchievementDescriptionTooLong)
+            : Result.Ok();
     }
 }
-
-

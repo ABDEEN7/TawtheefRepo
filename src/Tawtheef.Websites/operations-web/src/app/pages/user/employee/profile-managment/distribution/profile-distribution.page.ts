@@ -23,9 +23,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
@@ -39,10 +36,12 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Ripple } from 'primeng/ripple';
 import { Tooltip } from 'primeng/tooltip';
 import { DialogService } from 'primeng/dynamicdialog';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 import { ProfileDistributionService } from './services/profile-distribution.service';
 import {
-  DistributionEmployee,
+  DistributionEmployeeLookup,
   DistributionFile,
   DistributionResult,
 } from './models/profile-distribution.models';
@@ -106,9 +105,6 @@ const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
     FormsModule,
     TranslateModule,
     TableModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
     ButtonModule,
     TagModule,
     DialogModule,
@@ -124,6 +120,8 @@ const createDefaultFilters = (pageSize = 10): DistributionAppliedFilters => ({
     Tooltip,
     ProgressBarModule,
     PageFiltersComponent,
+    IconFieldModule,
+    InputIconModule,
   ],
   providers: [DialogService],
   templateUrl: './profile-distribution.page.html',
@@ -142,7 +140,7 @@ export class ProfileDistributionPage implements OnInit {
 
   // state
   files = signal<DistributionFile[]>([]);
-  employees = signal<DistributionEmployee[]>([]);
+  employees = signal<DistributionEmployeeLookup[]>([]);
   targetEntities = signal<dropdownOptionsModel[]>([]);
   candidateTypes = signal<dropdownOptionsModel[]>([]);
   degrees = signal<dropdownOptionsModel[]>([]);
@@ -191,10 +189,6 @@ export class ProfileDistributionPage implements OnInit {
       needsChanges: displayedFiles.filter(file => file.status === ProfileStatusNumber.RequiresUpdate).length,
     };
   });
-
-  readonly availableEmployees = computed(() =>
-    this.employees().filter(e => e.isActive && e.availability === EmployeeAvailability.Available)
-  );
 
   readonly statusOptions = [
     { value: ProfileStatusNumber.Submitted, label: 'distribution.status.submitted' },
@@ -284,7 +278,7 @@ export class ProfileDistributionPage implements OnInit {
   }
   private loadEmployees(): void {
     this.api
-      .getEmployees()
+      .getEmployeeLookup()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: employees => this.employees.set(employees ?? []),
@@ -578,12 +572,12 @@ export class ProfileDistributionPage implements OnInit {
     this.dialogService
       .open(AutoAssignDialog, {
         header: this.translate.instant('distribution.dialog.auto.title'),
-        width: '640px',
+        width: 'min(1000px, 96vw)',
+        contentStyle: { overflow: 'auto' },
         modal: true,
         draggable: false,
         dismissableMask: false,
         data: {
-          employees: this.employees(),
           selectedProfileIds: ids,
           initialLimit: this.autoLimit(),
           initialEmployeeIds: Array.from(this.autoEmployeeIds()),

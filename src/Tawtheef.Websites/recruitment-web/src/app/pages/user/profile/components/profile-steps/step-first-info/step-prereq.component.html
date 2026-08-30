@@ -107,17 +107,21 @@
   <div class="col-12">
     <div class="required-documents-banner">
       <div class="required-documents-banner__title">
-        {{ 'wizard.prereq.documents.title' | translate }}
+        {{ (profile.isRevisionMode()
+            ? 'wizard.correction.additionalRequirement.title'
+            : 'wizard.prereq.documents.title') | translate }}
       </div>
       <div class="required-documents-banner__hint">
-        {{ 'wizard.prereq.documents.hint' | translate }}
+        {{ (profile.isRevisionMode()
+            ? 'wizard.correction.additionalRequirement.hint'
+            : 'wizard.prereq.documents.hint') | translate }}
       </div>
     </div>
   </div>
   }
   @if (!profile.isChangeRequestMode()) {
   <!-- Birth Certificate -->
-  @if (ds.isNeedBirthCertificate) {
+  @if (ds.isNeedBirthCertificate && showConditionalDocumentUploader('birth')) {
   <div class="col-md-6">
     <label class="form-label required document-label d-flex align-items-center gap-2">
       <span class="d-flex align-items-center gap-2">
@@ -159,7 +163,7 @@
 
   @if (!profile.isChangeRequestMode()) {
   <!-- Marriage Certificate -->
-  @if (ds.isNeedMarriageCertificate) {
+  @if (ds.isNeedMarriageCertificate && showConditionalDocumentUploader('marriage')) {
   <div class="col-md-6">
     <label class="form-label required document-label d-flex align-items-center gap-2">
       <span class="d-flex align-items-center gap-2">

@@ -15,18 +15,20 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
 {
     public async Task<IResult<Unit>> Handle(DecideProfileSectionCommand cmd, CancellationToken ct)
     {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
 
-        var profile = await profileRepo.DbSet
-            .FirstOrDefaultAsync(p => p.Id == cmd.UserProfileId, ct);
+        var profile = await UserProfileLoader.GetFullProfileByProfileId(
+            uow, cmd.UserProfileId, tracking: true, ct: ct);
 
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         if (profile.Status != UserProfileStatus.UnderReview)
             return Result.Fail<Unit>(ErrorsCodes.ProfileNotUnderReview);
+
+        if (cmd.Section is not (ProfileSection.Skills or ProfileSection.Languages))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         if (cmd.Status != ReviewStatus.Approved && cmd.Status != ReviewStatus.NeedsCorrection)
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
@@ -36,37 +38,28 @@ public sealed class DecideProfileSectionHandler(IUnitOfWork uow, TimeProvider ti
 
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
-        var item = await reviewRepo.DbSet
-            .FirstOrDefaultAsync(x =>
+        var sectionReviewItems = await reviewRepo.DbSet
+            .Where(x =>
                 x.UserProfileId == profile.Id &&
-                x.TargetType == ReviewTargetType.Section &&
-                x.Section == cmd.Section, ct);
+                x.ProfileChangeId == null &&
+                !x.IsDeleted &&
+                x.Section == cmd.Section)
+            .ToListAsync(ct);
+
+        var activeSectionReviewItems = ActiveProfileReviewItems.ForFullReview(profile, sectionReviewItems);
+        var item = activeSectionReviewItems.FirstOrDefault(x => x.TargetType == ReviewTargetType.Section);
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
 
         if (cmd.Status == ReviewStatus.Approved)
         {
-            var hasUnapprovedChildren = await reviewRepo.DbSet
-                .AsNoTracking()
-                .AnyAsync(x =>
-                    x.UserProfileId == profile.Id &&
-                    x.Section == cmd.Section &&
-                    x.TargetType != ReviewTargetType.Section &&
-                    !x.IsDeleted &&
-                    x.Status != ReviewStatus.Approved,
-                    ct);
+            var hasUnapprovedChildren = activeSectionReviewItems.Any(x =>
+                x.TargetType != ReviewTargetType.Section &&
+                x.Status != ReviewStatus.Approved);
             if (hasUnapprovedChildren)
                 return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
         }
 
-        if (cmd.Status == ReviewStatus.Approved && cmd.Section == ProfileSection.Qualifications)
-        {
-            var universityValidation = await QualificationUniversityReviewGuard.ValidatePersistedProfileAsync(
-                uow, profile.Id, ct);
-            if (universityValidation.IsFailed)
-                return Result.Fail<Unit>(universityValidation.Errors);
-        }
-        
         item.Status = cmd.Status;
         item.ReviewerNote = cmd.Note;
         item.ReviewedById = cmd.OfficerId;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -11,7 +11,6 @@ import { DialogModule } from 'primeng/dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { DialogService } from 'primeng/dynamicdialog';
 
@@ -81,9 +80,7 @@ import {
     AvatarModule,
     ButtonModule,
     ProgressBarModule,
-    ProgressSpinnerModule,
     ToggleSwitchModule,
-    Select,
     Textarea,
     DialogModule,
 
@@ -129,18 +126,16 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   isChangesMode = signal(false);
   changesFocusMode = signal(true);
 
-  draftStatus: Record<number, ReviewStatus> = {};
-  draftNote: Record<number, string> = {};
-  draftDirty: Record<number, boolean> = {};
+  sectionInternalNoteDrafts: Record<number, string> = {};
 
-  finalizeSummary = '';
-  finalizeNote = '';
+  @ViewChild('reviewContent') private reviewContent?: ElementRef<HTMLElement>;
 
   finalDialogVisible = signal(false);
   private finalDialogAutoShown = false;
 
   loadingDetail = signal(false);
   savingSection = signal<number | null>(null);
+  savingInternalNote = signal<number | null>(null);
 
   selectedProfileId = signal<string | null>(null);
   detail = signal<ProfileApprovalDetail | null>(null);
@@ -152,32 +147,6 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
 
   currentLang = signal(this.language.get());
   isRtl = computed(() => this.currentLang() === 'ar');
-
-  isNeedsCorrectionDisabled = computed(() => {
-    const sectionId = this.activeSection();
-    if (sectionId == null) return false;
-
-    // Target sections: Qualifications (4), Experiences (5), Training (6), Certificates (7), Attachments (10)
-    const targetSections = [4, 5, 6, 7, 10];
-    if (!targetSections.includes(sectionId)) return false;
-
-    const info = this.detail();
-    if (!info) return false;
-
-    const sec = (info.sections ?? []).find(s => s.section === sectionId);
-    if (!sec || !sec.items?.length) return false;
-
-    return sec.items.every(item => item.status === ReviewStatus.Approved);
-  });
-
-  reviewStatusOptions = computed(() => [
-    { labelKey: 'profileApproval.status.approved', value: ReviewStatus.Approved, disabled: false },
-    {
-      labelKey: 'profileApproval.status.needsCorrection',
-      value: ReviewStatus.NeedsCorrection,
-      disabled: this.isNeedsCorrectionDisabled()
-    },
-  ]);
 
   total = computed(() => this.orderedSections(this.detail()).length || this.flowSections.length);
   current = computed(() => {
@@ -221,6 +190,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       const loadKey = `${profileId}|${isChanges ? 'changes' : 'review'}`;
       if (loadKey !== this.lastLoadedKey) {
         this.lastLoadedKey = loadKey;
+        this.sectionInternalNoteDrafts = {};
         this.loadDetail();
       } else if (!this.detail()) {
         this.loadDetail();
@@ -242,44 +212,53 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     this.router.navigate([routes.portal.approvalProfile]);
   }
 
-  hasUnsavedCurrent(): boolean {
-    const current = this.activeSection();
-    return current != null && !!this.draftDirty[current];
-  }
-
   onStepperChange(nextSection: number) {
     if (this.savingSection() != null) return;
-
-    const current = this.activeSection();
-    if (current != null && this.draftDirty[current]) {
-      this.saveSectionDecision(current, nextSection);
-      return;
-    }
     this.activeSection.set(nextSection);
+    this.reviewContent?.nativeElement.scrollIntoView({ block: 'start' });
   }
 
   go(step: number): void {
     this.onStepperChange(step);
   }
 
-  next(): void {
+  goPrevious(): void {
     const sections = this.orderedSections(this.detail());
-    const current = this.activeSection();
-    if (!sections.length || current == null) return;
-
-    const idx = sections.findIndex(s => s.section === current);
-    const nextSection = sections[Math.min(idx + 1, sections.length - 1)]?.section;
-    if (nextSection != null && nextSection !== current) this.onStepperChange(nextSection);
+    const index = sections.findIndex(section => section.section === this.activeSection());
+    if (index > 0) this.onStepperChange(sections[index - 1].section);
   }
 
-  prev(): void {
+  goNext(): void {
     const sections = this.orderedSections(this.detail());
-    const current = this.activeSection();
-    if (!sections.length || current == null) return;
+    const index = sections.findIndex(section => section.section === this.activeSection());
+    if (index >= 0 && index < sections.length - 1) this.onStepperChange(sections[index + 1].section);
+  }
 
-    const idx = sections.findIndex(s => s.section === current);
-    const prevSection = sections[Math.max(idx - 1, 0)]?.section;
-    if (prevSection != null && prevSection !== current) this.onStepperChange(prevSection);
+  hasPreviousSection(): boolean {
+    return this.sectionPosition(this.activeSection() ?? -1) > 1;
+  }
+
+  hasNextSection(): boolean {
+    const active = this.activeSection();
+    if (active == null) return false;
+    return this.sectionPosition(active) < this.orderedSections(this.detail()).length;
+  }
+
+  saveSectionInternalNote(section: number): void {
+    const profileId = this.selectedProfileId();
+    if (!profileId || this.savingInternalNote() != null) return;
+
+    const note = this.sectionInternalNoteDrafts[section]?.trim() || null;
+    this.savingInternalNote.set(section);
+    this.api.saveSectionInternalNote(profileId, section, note)
+      .pipe(finalize(() => this.savingInternalNote.set(null)))
+      .subscribe({
+        next: () => {
+          this.updateSectionInternalNote(section, note);
+          this.sectionInternalNoteDrafts[section] = '';
+          this.notifications.success(this.translate.instant('profileApproval.internalNote.saved'));
+        },
+      });
   }
 
   canGoTo(target: number): boolean {
@@ -311,7 +290,6 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           const merged = this.mergeDetail(this.detail(), ordered);
 
           this.detail.set(merged);
-          this.initDraft(merged);
 
           const current = this.activeSection();
           if (current == null || !(merged.sections ?? []).some(s => s.section === current)) {
@@ -392,11 +370,16 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
   }
 
   private submitReviewItem(reviewItemId: string, status: ReviewStatus, note: string | null, specializationRelation?: number | null): void {
+    if (this.savingSection() != null) return;
+
+    this.savingSection.set(this.activeSection());
     this.api.decideReviewItem(reviewItemId, { status, note, specializationRelation }).subscribe({
       next: () => {
         this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
         this.loadDetail();
-      }
+      },
+      complete: () => this.savingSection.set(null),
+      error: () => this.savingSection.set(null),
     });
   }
 
@@ -422,156 +405,52 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     if (sub) this.subscriptions.push(sub);
   }
 
-  onSectionStatusChange(section: number, status: ReviewStatus | null) {
-    if (status === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
-      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
-      this.markDirty(section);
-      return;
-    }
-
-    this.draftStatus[section] = status ?? ReviewStatus.Pending;
-    this.markDirty(section);
-  }
-
-  onSectionNoteChange(section: number, note: string) {
-    this.draftNote[section] = note ?? '';
-    this.markDirty(section);
-  }
-
   isSaving(section: number): boolean {
     return this.savingSection() === section;
   }
 
-  sectionIsAutoApprovedEmpty(section: number): boolean {
-    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
-    if (!sec) return false;
-
-    const review = this.sectionReviewFor(sec);
-    return (sec.items?.length ?? 0) === 0 && review.status === ReviewStatus.Approved;
+  isSectionDecisionTarget(section: number): boolean {
+    return section === 8 || section === 9;
   }
 
-  sectionHasUndecidedItems(section: number): boolean {
-    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
-    return (sec?.items ?? []).some(item =>
-      item.status === ReviewStatus.Pending || item.status === ReviewStatus.NotReviewed,
-    );
-  }
-
-  sectionHasCorrections(section: number): boolean {
-    const sec = (this.detail()?.sections ?? []).find(s => s.section === section);
-    return (sec?.items ?? []).some(item => item.status === ReviewStatus.NeedsCorrection);
-  }
-
-  sectionApprovalBlocked(section: number): boolean {
-    const st = this.draftStatus[section];
-
-    // Block Approved if there are corrections
-    if (st === ReviewStatus.Approved && this.sectionHasCorrections(section)) return true;
-
-    // Block Needs Correction if all items are approved (for target sections)
-    if (st === ReviewStatus.NeedsCorrection && section === this.activeSection() && this.isNeedsCorrectionDisabled()) return true;
-
-    return false;
-  }
-
-  private markDirty(section: number) {
-    this.draftDirty[section] = true;
-  }
-
-  resetDraft(section: number): void {
+  decideSection(section: number, status: ReviewStatus): void {
     const info = this.detail();
     if (!info) return;
 
-    const sec = (info.sections ?? []).find(s => s.section === section);
-    const review = this.sectionReviewFor(sec);
+    if (status === ReviewStatus.NeedsCorrection) {
+      const sectionReview = this.sectionReviewFor(
+        (info.sections ?? []).find(candidate => candidate.section === section),
+      );
+      const placeholder = this.buildPlaceholderItem('');
+      const ref = this.dialogService.open(ItemReviewDialogComponent, {
+        header: this.translate.instant('profileApproval.actions.requestCorrection'),
+        data: { item: placeholder, action: 'changes', note: sectionReview.note },
+        width: '520px',
+        modal: true,
+        draggable: false,
+        dismissableMask: false,
+      });
+      const sub = ref?.onClose.subscribe((result: ItemDialogResult | undefined) => {
+        if (result?.note) this.persistSectionDecision(info.userProfileId, section, status, result.note);
+      });
+      if (sub) this.subscriptions.push(sub);
+      return;
+    }
 
-    this.draftStatus[section] = review.status ?? ReviewStatus.Pending;
-    this.draftNote[section] = review.note ?? '';
-    this.draftDirty[section] = false;
+    this.persistSectionDecision(info.userProfileId, section, status, null);
   }
 
-  initDraft(info: ProfileApprovalDetail) {
-    for (const sec of info.sections ?? []) {
-      const sectionId = sec.section;
-      if (this.draftDirty[sectionId]) continue;
-
-      const review = this.sectionReviewFor(sec);
-      this.draftStatus[sectionId] = review.status ?? ReviewStatus.Pending;
-      this.draftNote[sectionId] = review.note ?? '';
-    }
-  }
-
-  saveSectionDecision(section: number, targetStep?: number) {
-    const info = this.detail();
-    if (!info) return;
-
-    const st = this.draftStatus[section];
-    const note = (this.draftNote[section] ?? '').trim();
-
-    if (this.sectionIsAutoApprovedEmpty(section)) {
-      this.notifications.success(
-        this.translate.instant('profileApproval.detail.sectionApproval.autoApprovedLocked'),
-      );
-      return;
-    }
-
-    if (st !== ReviewStatus.Approved && st !== ReviewStatus.NeedsCorrection) {
-       if (targetStep != null) {
-          this.notifications.warn(this.translate.instant('profileApproval.detail.unsavedChangesWarning'));
-       }
-       return;
-    }
-
-    if (this.sectionHasUndecidedItems(section)) {
-      this.notifications.error(
-        this.translate.instant('profileApproval.detail.sectionApproval.pendingItemsBlock'),
-      );
-      return;
-    }
-
-    if (st === ReviewStatus.Approved && this.sectionHasCorrections(section)) {
-      this.notifications.error(
-        this.translate.instant('profileApproval.detail.sectionApproval.correctionBlock'),
-      );
-      this.draftStatus[section] = ReviewStatus.NeedsCorrection;
-      this.markDirty(section);
-      return;
-    }
-
-    if (st === ReviewStatus.NeedsCorrection && note.length === 0) {
-      this.notifications.error(this.translate.instant('profileApproval.errors.notesRequired'));
-      return;
-    }
-
+  private persistSectionDecision(profileId: string, section: number, status: ReviewStatus, note: string | null): void {
     this.savingSection.set(section);
-
     this.api
-      .decideSection(info.userProfileId, section.toString(), { status: st, note: note || null })
+      .decideSection(profileId, section.toString(), { status, note })
       .pipe(finalize(() => this.savingSection.set(null)))
       .subscribe({
         next: () => {
-          this.draftDirty[section] = false;
           this.notifications.success(this.translate.instant('profileApproval.detail.sectionSaved'));
           this.loadDetail();
-
-          if (targetStep != null) {
-            this.activeSection.set(targetStep);
-          } else {
-             //move to next section
-            const current = this.activeSection();
-            if (current === section) {
-              this.next();
-            }
-          }
         }
       });
-  }
-
-  noteRequired(section: number): boolean {
-    return (
-      this.draftStatus[section] === ReviewStatus.NeedsCorrection &&
-      (this.draftNote[section] ?? '').trim().length === 0
-    );
   }
 
   canFinalize(): boolean {
@@ -581,16 +460,17 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     return (info.sections ?? []).every(s => {
       const review = this.sectionReviewFor(s);
       const st = review.status ?? ReviewStatus.Pending;
-      if (st === ReviewStatus.Approved) return true;
-      if (st === ReviewStatus.NeedsCorrection) return !!(review.note ?? '').trim();
-      return false;
+      return st === ReviewStatus.Approved || st === ReviewStatus.NeedsCorrection;
     });
   }
 
-  finalize(): void {
-    const summary = this.finalizeSummary.trim() || null;
-    const note = this.finalizeNote.trim() || null;
+  hasFinalCorrections(): boolean {
+    return (this.detail()?.sections ?? []).some(
+      section => this.sectionReviewFor(section).status === ReviewStatus.NeedsCorrection,
+    );
+  }
 
+  finalize(): void {
     const info = this.detail();
     const id = this.selectedProfileId();
     if (!info || !id) return;
@@ -603,7 +483,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
     this.loadingDetail.set(true);
 
     this.api
-      .finalizeProfile(id, { summary, note, exceptionalFile: null })
+      .finalizeProfile(id, { note: null, exceptionalFile: null })
       .pipe(finalize(() => this.loadingDetail.set(false)))
       .subscribe({
         next: () => {
@@ -666,6 +546,7 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
           reviewedAtUtc: reviewedAtUtc ?? undefined,
           items: existing?.items ?? [],
           hasAttachments: existing?.hasAttachments ?? false,
+          internalReviewerNote: existing?.internalReviewerNote ?? null,
         };
       });
 
@@ -726,6 +607,18 @@ export class ProfileApprovalWizardPage implements OnInit, OnDestroy {
       profile: this.normalizeProfileData(normalizedIncoming.profile ?? current.profile),
       sections: normalizedIncoming.sections?.length ? normalizedIncoming.sections : current.sections ?? [],
     };
+  }
+
+  private updateSectionInternalNote(section: number, note: string | null): void {
+    const current = this.detail();
+    if (!current) return;
+
+    this.detail.set({
+      ...current,
+      sections: (current.sections ?? []).map(item =>
+        item.section === section ? { ...item, internalReviewerNote: note } : item,
+      ),
+    });
   }
 
   sectionName(section: number): string {

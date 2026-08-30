@@ -55,7 +55,7 @@ internal sealed class DashboardQueryScope(
 
         if (context.Scope == DashboardScope.Organization) return profiles;
 
-        if (context.Scope == DashboardScope.Office && context.CurrentUser is OfficeUser { OfficeId: not null } officeUser)
+        if (context is { Scope: DashboardScope.Office, CurrentUser: OfficeUser { OfficeId: not null } officeUser })
             return profiles.Where(profile => profile.OfficeId == officeUser.OfficeId);
 
         var assignments = uow.GetEntityRepository<ProfileAssignment>().DbSet;
@@ -63,7 +63,6 @@ internal sealed class DashboardQueryScope(
             !assignment.IsDeleted &&
             assignment.UserProfileId == profile.Id &&
             assignment.EmployeeId == context.CurrentUserId &&
-            assignment.IsActive &&
             assignment.UnassignedAtUtc == null));
     }
 
@@ -107,8 +106,15 @@ internal sealed class DashboardQueryScope(
         DashboardAccessContext context,
         Guid? requestedEmployeeId = null)
     {
-        var allowedProfiles = AccessibleProfiles(context).Select(profile => profile.Id);
         var allowedEmployees = DashboardEmployees(context).Select(user => user.Id);
+
+        var allowedProfiles = context.Scope == DashboardScope.User
+            ? uow.GetEntityRepository<UserProfile>().DbSet
+                .AsNoTracking()
+                .Where(profile => !profile.IsDeleted)
+                .Select(profile => profile.Id)
+            : AccessibleProfiles(context).Select(profile => profile.Id);
+
         var query = uow.GetEntityRepository<ProfileAssignment>().DbSet
             .AsNoTracking()
             .Where(assignment =>
@@ -146,11 +152,14 @@ internal sealed class DashboardQueryScope(
         DashboardAccessContext context,
         Guid? requestedEmployeeId = null)
     {
-        var allowedProfiles = AccessibleProfiles(context).Select(profile => profile.Id);
         var allowedEmployees = DashboardEmployees(context).Select(user => user.Id);
-        var effectiveEmployeeId = context.Scope == DashboardScope.User
-            ? context.CurrentUserId
-            : requestedEmployeeId;
+
+        var allowedProfiles = context.Scope == DashboardScope.User
+            ? uow.GetEntityRepository<UserProfile>().DbSet
+                .AsNoTracking()
+                .Where(profile => !profile.IsDeleted)
+                .Select(profile => profile.Id)
+            : AccessibleProfiles(context).Select(profile => profile.Id);
 
         var query = uow.GetEntityRepository<UserProfileLogger>().DbSet
             .AsNoTracking()
@@ -160,19 +169,13 @@ internal sealed class DashboardQueryScope(
                 log.PerformedById.HasValue &&
                 allowedEmployees.Contains(log.PerformedById.Value));
 
+        var effectiveEmployeeId = context.Scope == DashboardScope.User
+            ? context.CurrentUserId
+            : requestedEmployeeId;
+
         return effectiveEmployeeId.HasValue
             ? query.Where(log => log.PerformedById == effectiveEmployeeId.Value)
             : query;
-    }
-
-    public IQueryable<Invitation> Invitations(
-        DashboardQueryBase request,
-        DashboardAccessContext context,
-        DashboardDateRange range)
-    {
-        var allowedJobs = Jobs(request, context, range).Select(job => job.Id);
-        return uow.GetEntityRepository<Invitation>().DbSet.AsNoTracking()
-            .Where(invitation => !invitation.IsDeleted && allowedJobs.Contains(invitation.JobId));
     }
 
     private static IQueryable<UserProfile> ApplyActiveAssignmentScope(

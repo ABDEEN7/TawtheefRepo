@@ -3,33 +3,53 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Utils;
 
 namespace Tawtheef.Application.Common.Services;
 
 public static class ProfileReviewItemSync
 {
+    public static async Task EnsureConditionalAttachmentItemsAsync(
+        IUnitOfWork uow,
+        UserProfile profile,
+        CancellationToken ct)
+    {
+        await EnsurePrerequisiteAttachmentItemsAsync(uow, profile, ct);
+        await EnsureSponsorAttachmentItemAsync(uow, profile, ct);
+        await EnsureNationalAddressAttachmentItemAsync(uow, profile, ct);
+    }
+
     public static async Task EnsurePrerequisiteAttachmentItemsAsync(IUnitOfWork uow, UserProfile profile, CancellationToken ct)
     {
-        await EnsureProfileAttachmentItemAsync(
-            uow, profile,
-            ProfileSection.Prerequisites,
-            ProfileReviewConstants.FieldPaths.BirthdayCertificateId,
-            profile.BirthdayCertificateId,
-            ProfileReviewConstants.AttachmentTitles.BirthCertificate,
-            ct);
+        if (ProfileValidatorUtils.RequiresBirthCertificate(profile.CandidateTypeId))
+        {
+            await EnsureProfileAttachmentItemAsync(
+                uow, profile,
+                ProfileSection.Prerequisites,
+                ProfileReviewConstants.FieldPaths.BirthdayCertificateId,
+                profile.BirthdayCertificateId,
+                ProfileReviewConstants.AttachmentTitles.BirthCertificate,
+                ct);
+        }
 
-        await EnsureProfileAttachmentItemAsync(
-            uow,
-            profile,
-            ProfileSection.Prerequisites,
-            ProfileReviewConstants.FieldPaths.MarriageCertificateId,
-            profile.MarriageCertificateId,
-            ProfileReviewConstants.AttachmentTitles.MarriageCertificate,
-            ct);
+        if (ProfileValidatorUtils.RequiresMarriageCertificate(profile.CandidateTypeId))
+        {
+            await EnsureProfileAttachmentItemAsync(
+                uow,
+                profile,
+                ProfileSection.Prerequisites,
+                ProfileReviewConstants.FieldPaths.MarriageCertificateId,
+                profile.MarriageCertificateId,
+                ProfileReviewConstants.AttachmentTitles.MarriageCertificate,
+                ct);
+        }
     }
 
     public static Task EnsureSponsorAttachmentItemAsync(IUnitOfWork uow, UserProfile profile, CancellationToken ct)
     {
+        if (!ProfileValidatorUtils.RequiresSponsor(profile.CandidateTypeId, profile.Provider))
+            return Task.CompletedTask;
+
         return EnsureProfileAttachmentItemAsync(
             uow,
             profile,
@@ -42,6 +62,9 @@ public static class ProfileReviewItemSync
 
     public static Task EnsureNationalAddressAttachmentItemAsync(IUnitOfWork uow, UserProfile profile, CancellationToken ct)
     {
+        if (!ProfileValidatorUtils.RequiresNationalAddress(profile.CandidateTypeId, profile.Provider))
+            return Task.CompletedTask;
+
         return EnsureProfileAttachmentItemAsync(
             uow,
             profile,
@@ -70,6 +93,7 @@ public static class ProfileReviewItemSync
             .Where(item =>
                 item.UserProfileId == profile.Id &&
                 item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == section &&
                 item.TargetType == ReviewTargetType.Attachment &&
                 item.FieldPath == fieldPath)
@@ -87,11 +111,12 @@ public static class ProfileReviewItemSync
             .OrderBy(item => item.Status switch
             {
                 ReviewStatus.NeedsCorrection => 0,
-                ReviewStatus.Solved => 1,
-                ReviewStatus.Pending => 2,
-                ReviewStatus.NotReviewed => 3,
-                ReviewStatus.Approved => 4,
-                _ => 5
+                ReviewStatus.Rejected => 1,
+                ReviewStatus.Solved => 2,
+                ReviewStatus.Pending => 3,
+                ReviewStatus.NotReviewed => 4,
+                ReviewStatus.Approved => 5,
+                _ => 6
             })
             .FirstOrDefault();
 

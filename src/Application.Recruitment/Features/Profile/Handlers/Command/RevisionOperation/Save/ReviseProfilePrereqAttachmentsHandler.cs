@@ -40,10 +40,13 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             var reviewAllowed = await reviewRepo.DbSet.AnyAsync(x =>
                 x.UserProfileId == profile.Id &&
+                x.ProfileChangeId == null &&
+                !x.IsDeleted &&
                 x.Section == ProfileSection.Prerequisites &&
                 x.TargetType == ReviewTargetType.Attachment &&
                 x.ResourceId == oldResourceId &&
                 (x.Status == ReviewStatus.NeedsCorrection ||
+                 x.Status == ReviewStatus.Rejected ||
                  x.Status == ReviewStatus.Solved),
                 ct);
 
@@ -64,7 +67,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.BirthdayCertificateId = newId.Value;
-            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            if (oldResourceId.Value != Guid.Empty)
             {
                 await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
                     uow,
@@ -85,10 +88,13 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
             var reviewAllowed = await reviewRepo.DbSet
                 .Where(x =>
                     x.UserProfileId == profile.Id &&
+                    x.ProfileChangeId == null &&
+                    !x.IsDeleted &&
                     x.Section == ProfileSection.Prerequisites &&
                     x.TargetType == ReviewTargetType.Attachment &&
                     x.ResourceId == oldResourceId &&
                     (x.Status == ReviewStatus.NeedsCorrection ||
+                     x.Status == ReviewStatus.Rejected ||
                      x.Status == ReviewStatus.Solved))
                 .AnyAsync(ct);
 
@@ -107,7 +113,7 @@ public sealed class ReviseProfilePrereqAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.MarriageCertificateId = newId.Value;
-            if (oldResourceId.HasValue && oldResourceId.Value != Guid.Empty)
+            if (oldResourceId.Value != Guid.Empty)
             {
                 await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(
                     uow,

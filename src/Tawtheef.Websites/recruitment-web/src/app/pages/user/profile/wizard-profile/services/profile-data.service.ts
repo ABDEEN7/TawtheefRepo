@@ -24,6 +24,7 @@ import { take, tap } from 'rxjs';
 import { mapProfileStatusToState } from './profile.mapper';
 import { UserService } from '../../../../../core/auth/user.service';
 import { CandidateType, SponsorType } from '../../../../../core/enums/lookups.enum';
+import { ProfileCorrectionContext } from '../models/profile-correction.model';
 
 @Injectable()
 export class ProfileDataService {
@@ -134,7 +135,7 @@ export class ProfileDataService {
   }
 
   get isNeedSponsor() {
-    return candidateTypeNeedsSponsor(candidateTypeFromState(this.state()));
+    return candidateTypeNeedsSponsor(candidateTypeFromState(this.state()), this.state().provider);
   }
   get isNeedBirthCertificate() {
     const t = candidateTypeFromState(this.state());
@@ -148,7 +149,7 @@ export class ProfileDataService {
     return candidateTypeNeedsMarriageCertificate(t);
   }
   get isResidentQatar(): boolean {
-    return candidateTypeIsResident(candidateTypeFromState(this.state()), this.state().provider);
+    return candidateTypeIsResident(this.state().provider);
   }
   get isIndividualSponsor(): boolean {
     return this.state().sponsorType?.backendName === SponsorType.Individual;
@@ -159,43 +160,15 @@ export class ProfileDataService {
   }
 
   private locked = signal<Partial<Record<keyof ProfileState, boolean>>>({});
-  private corrections = signal<any[]>([]);
+  private corrections = signal<readonly ProfileCorrectionContext[]>([]);
 
-  setCorrections(notes: any[]): void {
+  setCorrections(notes: readonly ProfileCorrectionContext[]): void {
     this.corrections.set(notes);
-  }
-
-  getCorrectionNote(key: keyof ProfileState): string | null {
-    if (!this.profileService.isRevisionMode()) return null;
-    return this.corrections().find(n => n.fieldPath === key)?.note ?? null;
-  }
-
-  getCorrectionRowNote(section: number, entityId: any): string | undefined {
-    if (!this.profileService.isRevisionMode()) return undefined;
-    return this.corrections().find(n =>
-      n.section === section &&
-      n.targetType === 3 /* Row */ &&
-      (n.entityId === entityId || (entityId && n.entityId?.toString().toLowerCase() === entityId?.toString().toLowerCase()))
-    )?.note ?? undefined;
-  }
-
-  isCorrectionField(key: keyof ProfileState): boolean {
-    if (!this.profileService.isRevisionMode()) return false;
-    return this.corrections().some(n => n.fieldPath === key);
   }
 
   hasUnsolvedCorrections(section: number): boolean {
     if (!this.profileService.isRevisionMode()) return false;
     return this.corrections().some(n => n.section === section);
-  }
-
-  isCorrectionRow(section: number, entityId: any): boolean {
-    if (!this.profileService.isRevisionMode()) return false;
-    return this.corrections().some(n =>
-      n.section === section &&
-      n.targetType === 3 /* Row */ &&
-      (n.entityId === entityId || (entityId && n.entityId?.toString().toLowerCase() === entityId?.toString().toLowerCase()))
-    );
   }
 
   isLocked<K extends keyof ProfileState>(key: K): boolean {
@@ -207,108 +180,7 @@ export class ProfileDataService {
     if (this.isIndividualSponsor && key === 'sponsorEmployerName') return true;
     if (this.shouldLockCandidateType() && key === 'candidateType') return true;
 
-    // Enforcement for review-edit mode
-    // if (this.profileService.isRevisionMode()) {
-    //   // Rule 1: Prerequisites (Section 1) is SPECIAL.
-    //   // Based on user feedback, it should always be editable even if it was approved.
-    //   const section = this.MapKeyToSection(key);
-    //   if (section === 1) return false;
-
-    //   // Rule 2: If there's a correction for the specific field, it's NOT locked
-    //   const hasFieldCorrection = this.corrections().some(n => n.fieldPath === key);
-    //   if (hasFieldCorrection) return false;
-
-    //   // Rule 3: If the whole section is marked for correction, all its standard fields are NOT locked
-    //   const hasSectionCorrection = this.corrections().some(n => n.section === section && n.targetType === 1 /* Section */);
-    //   if (hasSectionCorrection) return false;
-
-    //   // Otherwise, it's locked
-    //   return true;
-    // }
-
     return false;
-  }
-
-  isRowLocked(section: number, entityId: any): boolean {
-    if (!this.profileService.isRevisionMode()) return false;
-
-    // Rule 1: Section 1 is always editable
-    if (section === 1) return false;
-
-    // Rule 2: Check if there is a correction for this specific row
-    const hasRowCorrection = this.corrections().some(n =>
-      n.section === section &&
-      n.targetType === 3 /* Row */ &&
-      (n.entityId === entityId || (entityId && n.entityId?.toString().toLowerCase() === entityId?.toString().toLowerCase()))
-    );
-    if (hasRowCorrection) return false;
-
-    // Rule 3: Check if the whole section is marked for correction
-    const hasSectionCorrection = this.corrections().some(n =>
-      n.section === section &&
-      n.targetType === 1 /* Section */
-    );
-    if (hasSectionCorrection) return false;
-
-    return true;
-  }
-
-  isAttachmentLocked(section: number, fieldPath?: string, resourceId?: any): boolean {
-    if (!this.profileService.isRevisionMode()) return false;
-
-    // Rule 1: Section 1 is always editable
-    if (section === 1) return false;
-
-    // Rule 2: Check if there is a correction for this specific attachment
-    const hasAttachmentCorrection = this.corrections().some(n =>
-      n.section === section &&
-      n.targetType === 4 /* Attachment */ &&
-      (n.fieldPath === fieldPath || n.resourceId === resourceId)
-    );
-    if (hasAttachmentCorrection) return false;
-
-    // Rule 3: Check if the whole section is marked for correction
-    const hasSectionCorrection = this.corrections().some(n =>
-      n.section === section &&
-      n.targetType === 1 /* Section */
-    );
-    if (hasSectionCorrection) return false;
-
-    return true;
-  }
-
-  private MapKeyToSection(key: keyof ProfileState): number {
-    switch (key) {
-      case 'candidateType': case 'targetEntity':
-      case 'cvFile': case 'idFile': case 'birthCertificateFile': case 'marriageCertificateFile':
-        return 1; // Prerequisites
-      case 'fullNameAr': case 'fullNameEn': case 'qid': case 'dob':
-      case 'nationality': case 'gender': case 'religion': case 'marital':
-      case 'hasDisability': case 'disabilityDetails':
-      case 'sponsorType': case 'sponsorEmployerName': case 'sponsorEmployerNumber':
-      case 'sponsorQidExpiry': case 'sponsorCard':
-        return 2; // Personal
-      case 'country': case 'interviewPlace': case 'address':
-      case 'naZone': case 'naStreet': case 'naBuilding': case 'naUnit': case 'naFile':
-      case 'phone': case 'email':
-        return 3; // Contact
-      case 'degrees':
-        return 4; // Qualifications
-      case 'experiences':
-        return 5; // Experience
-      case 'courses':
-        return 6; // Training
-      case 'achievements':
-        return 7; // Achievements
-      case 'skills':
-        return 8; // Skills
-      case 'languages':
-        return 9; // Languages
-      case 'attachments':
-        return 10; // Attachments
-      default:
-        return 0;
-    }
   }
 
   private lockableKeys: (keyof ProfileState)[] = ['qid', 'dob', 'nationality', 'gender', 'phone', 'email', 'fullNameAr', 'fullNameEn', 'sponsorEmployerName', 'sponsorEmployerNumber', 'candidateType'];
@@ -462,7 +334,7 @@ export class ProfileDataService {
     const type = candidateTypeFromState(state);
     const next: ProfileState = { ...state };
 
-    if (!candidateTypeNeedsSponsor(type)) {
+    if (!candidateTypeNeedsSponsor(type, state.provider)) {
       next.sponsorType = null;
       next.sponsorEmployerName = null;
       next.sponsorEmployerNumber = null;
@@ -481,7 +353,7 @@ export class ProfileDataService {
       next.marriageCertificateFile = null;
     }
 
-    if (!candidateTypeIsResident(type, state.provider)) {
+    if (!candidateTypeIsResident(state.provider)) {
       next.naZone = null;
       next.naStreet = null;
       next.naBuilding = null;

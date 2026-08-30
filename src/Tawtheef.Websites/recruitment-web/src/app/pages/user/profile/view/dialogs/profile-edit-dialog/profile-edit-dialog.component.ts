@@ -10,7 +10,7 @@ import { ProfileService } from '../../../wizard-profile/services/profile.service
 import { ProfileDataService } from '../../../wizard-profile/services/profile-data.service';
 import { PhoneMapperService } from '../../../wizard-profile/services/phone-mapper.service';
 import { mapProfileStatusToState } from '../../../wizard-profile/services/profile.mapper';
-import { ProfileSectionEnum, UserProfileStatusEnum } from '../../models/profile-overview.model';
+import { MyProfileReviewNoteDto, ProfileSectionEnum, UserProfileStatusEnum } from '../../models/profile-overview.model';
 
 // Step components
 import { StepPrereqComponent } from '../../../components/profile-steps/step-first-info/step-prereq.component';
@@ -25,6 +25,7 @@ import { StepAttachmentsComponent } from '../../../components/profile-steps/step
 import { PROFILE_WRITE_MODE, ProfileWriteMode } from '../../../wizard-profile/services/profile-write-mode.token';
 import { UserService } from '../../../../../../core/auth/user.service';
 import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
+import { ProfileCorrectionContext } from '../../../wizard-profile/models/profile-correction.model';
 
 type EditSection =
   | 'prerequisites' | 'personal' | 'contact' | 'qualifications'
@@ -70,6 +71,7 @@ export class ProfileEditDialogComponent {
 
   private readonly section = signal<EditSection>('personal');
   private readonly mode = signal<ProfileWriteMode>('create');
+  readonly additionOnly = signal(false);
 
   data = rxResource({
     stream: () => forkJoin({
@@ -86,11 +88,23 @@ export class ProfileEditDialogComponent {
   constructor() {
     const dialogSection = this.config.data?.['section'] as ProfileSectionEnum | undefined;
     const dialogMode = this.config.data?.['mode'] as ProfileWriteMode | undefined;
-    const dialogNotes = this.config.data?.['notes'] as any[] | undefined;
+    const dialogNotes = this.config.data?.['notes'] as MyProfileReviewNoteDto[] | undefined;
+    this.additionOnly.set(this.config.data?.['additionOnly'] === true);
     this.section.set(this.mapSection(dialogSection ?? ProfileSectionEnum.Personal));
     this.mode.set(dialogMode ?? 'create');
     this.profile.setWriteMode(this.mode());
-    if (dialogNotes) this.ds.setCorrections(dialogNotes);
+    if (dialogNotes && dialogSection) {
+      const correctionContext: ProfileCorrectionContext[] = dialogNotes.map(note => ({
+        section: dialogSection,
+        targetType: note.targetType,
+        fieldPath: note.fieldPath,
+        entityId: note.entityId,
+        resourceId: note.resourceId,
+        note: note.note,
+        status: note.status,
+      }));
+      this.ds.setCorrections(correctionContext);
+    }
 
     effect(() => {
       const res = this.data.value();
@@ -150,7 +164,7 @@ export class ProfileEditDialogComponent {
 
   private resolveWriteMode(status: number | null | undefined): ProfileWriteMode {
     if (status === UserProfileStatusEnum.Approved) return 'change-request';
-    if (status === UserProfileStatusEnum.RequiresUpdate || status === UserProfileStatusEnum.Submitted) return 'review-edit';
+    if (status === UserProfileStatusEnum.RequiresUpdate) return 'review-edit';
     return 'create';
   }
 }
