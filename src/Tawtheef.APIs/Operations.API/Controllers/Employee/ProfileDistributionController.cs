@@ -59,10 +59,23 @@ public class ProfileDistributionController(IMediator mediator, ILocalizationServ
 
     [HttpGet("employees")]
     [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
-    public async Task<IActionResult> GetEmployees(CancellationToken ct)
+    public async Task<IActionResult> GetEmployees([FromQuery] GetDistributionEmployeesQuery query, CancellationToken ct)
     {
         if (UserId.IsFailed) return BadRequest(UserId.Errors);
-        var result = await mediator.Send(new GetDistributionEmployeesQuery(UserId.Value), ct);
+        var result = await mediator.Send(query with
+        {
+            UserId = UserId.Value,
+            Language = localization.GetCurrentLanguage()
+        }, ct);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("employees/lookup")]
+    [AuthorizePermission(PermissionKeys.ProfileDistribution.View)]
+    public async Task<IActionResult> GetEmployeeLookup(CancellationToken ct)
+    {
+        if (UserId.IsFailed) return BadRequest(UserId.Errors);
+        var result = await mediator.Send(new GetDistributionEmployeeLookupQuery(UserId.Value), ct);
         return result.ToActionResult();
     }
 

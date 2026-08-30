@@ -346,7 +346,7 @@ export class StepAttachmentsComponent implements OnInit {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('attachments')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(10)) {
         const msg = this.ds.hasUnsolvedCorrections(10)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         return;

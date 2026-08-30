@@ -44,12 +44,15 @@ public sealed class ReviseProfileContactAttachmentsHandler(
             var reviewItemExists = await reviewRepo.DbSet
                 .AsNoTracking()
                 .AnyAsync(r =>
-                    r.UserProfileId == profile.Id &&
-                    r.Section == ProfileSection.Contact &&
-                    r.TargetType == ReviewTargetType.Attachment &&
-                    r.ResourceId == oldResourceId &&
-                    (r.Status == ReviewStatus.NeedsCorrection ||
-                     r.Status == ReviewStatus.Solved),
+                        r.UserProfileId == profile.Id &&
+                        r.ProfileChangeId == null &&
+                        !r.IsDeleted &&
+                        r.Section == ProfileSection.Contact &&
+                        r.TargetType == ReviewTargetType.Attachment &&
+                        r.ResourceId == oldResourceId &&
+                        (r.Status == ReviewStatus.NeedsCorrection ||
+                         r.Status == ReviewStatus.Rejected ||
+                         r.Status == ReviewStatus.Solved),
                     ct);
 
             if (!reviewItemExists)
@@ -67,12 +70,12 @@ public sealed class ReviseProfileContactAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResidenceAddress.CertificateId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Contact, oldResourceId, ct);
+            if (profile.Status is UserProfileStatus.RequiresUpdate or UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Contact,
+                    oldResourceId, ct);
         }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
 }
-

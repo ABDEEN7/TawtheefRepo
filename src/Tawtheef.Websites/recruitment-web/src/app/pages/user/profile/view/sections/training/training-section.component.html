@@ -1,83 +1,23 @@
-
 <p-confirmDialog appendTo="body"></p-confirmDialog>
-
-    <div class="d-flex align-items-center justify-content-between mb-3">
-     
-      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-verified"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span></h5>
-      <div *ngIf="canAddAttachment">
-         <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"  (click)="addCourseTraining()"><i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addCourseTraining' | translate }}</span></button>
-      </div>
-    </div>
-
-    <div class="row g-3">
-      @if (profile?.trainingCourses?.length || coursesUnderReview().length) {
-        @for (course of profile?.trainingCourses; track course.id) {
-          <ng-container *ngTemplateOutlet="courseTemplate; context: { $implicit: course }"></ng-container>
-        }
-        @for (course of coursesUnderReview(); track course.id) {
-          <ng-container *ngTemplateOutlet="courseTemplate; context: { $implicit: course }"></ng-container>
-        }
-      } @else {
-        <div class="col-12">
-          <div class="text-muted">{{ 'common.none' | translate }}</div>
-        </div>
-      }
-    </div>
-
-<ng-template #courseTemplate let-course>
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="text-primary d-flex gap-2 align-items-center"><i class="pi pi-verified"></i><span>{{ 'profileOverview.sections.trainingCourses' | translate }}</span></h5>
+  <button *ngIf="canAddAttachment" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="addCourseTraining()"><i class="pi pi-plus"></i><span>{{ 'profileView.actions.addCourseTraining' | translate }}</span></button>
+</div>
+@if (profile?.trainingCourses?.length || coursesUnderReview().length) {
+<div class="table-card rounded overflow-hidden"><div class="table-responsive"><table class="table table-bordered table-hover align-middle w-100">
+  <thead class="table-light"><tr><th>{{ 'profileOverview.table.title' | translate }}</th><th>{{ 'profileOverview.table.provider' | translate }}</th><th>{{ 'profile.field.startDate' | translate }}</th><th>{{ 'profile.field.endDate' | translate }}</th><th>{{ 'profileOverview.table.attachment' | translate }}</th><th *ngIf="notes?.length || editableItems?.length">{{ 'profileOverview.table.actions' | translate }}</th></tr></thead>
+  <tbody>
+    @for (course of profile?.trainingCourses; track course.id) { <ng-container *ngTemplateOutlet="courseRow; context: { $implicit: course }"></ng-container> }
+    @for (course of coursesUnderReview(); track course.id) { <ng-container *ngTemplateOutlet="courseRow; context: { $implicit: course }"></ng-container> }
+  </tbody>
+</table></div></div>
+} @else { <div class="text-muted">{{ 'common.none' | translate }}</div> }
+<ng-template #courseRow let-course>
   @let fileNote = noteForRaw(course);
-  <div class="col-12 col-lg-6">
-    <div class="card h-100 card-table"  [ngClass]="{ 'attach-card--warn': fileNote }">
-      <div class="card-body  d-flex flex-column gap-2 h-100">
-        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-          <div class="fw-semibold text-body">{{ course.title || '-' }}</div>
-          <span class="badge status-pill status-pill--info" *ngIf="!course.id">
-            {{ 'profileOverview.status.pending' | translate }}
-          </span>
-        </div>
-        <div class="text-muted small">{{ course.provider }} · {{ course.country?.name }}</div>
-        <div class="text-muted small">{{ course.startDate }} - {{ course.endDate }}</div>
-        <div class="mt-2">
-          @if (course.attachment) {
-            <a
-              class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
-              [ngClass]="{ 'attach-link--warn': fileNote }"
-              (click)="open(course.attachment)">
-              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-              <span class="text-truncate d-inline-block">
-                        {{ course.attachment.fileName }}
-                      </span>
-              @if (fileNote) {
-                <i
-                  class="pi pi-exclamation-triangle text-warning"
-                  [pTooltip]="fileNote.note || fileNote.title"
-                  tooltipPosition="top"
-                  aria-hidden="true"></i>
-              }
-            </a>
-          } @else {
-            <span class="text-muted">{{ 'common.none' | translate }}</span>
-          }
-        </div>
-        <div class="d-flex align-items-center gap-2 mt-auto" *ngIf="canEditRaw(course) || canDeleteRaw(course)">
-          <button *ngIf="canEditRaw(course)"
-            type="button"
-            class="btn btn-sm btn-outline-secondary rounded-pill"
-            (click)="editCourseTraining(course)">
-            <i class="pi pi-pencil" aria-hidden="true"></i>
-          </button>
-          <button
-            *ngIf="canDeleteRaw(course)"
-            type="button"
-            class="btn btn-sm btn-outline-danger rounded-pill"
-            [attr.aria-label]="'profileView.actions.deleteItem' | translate"
-            [pTooltip]="'profileView.actions.deleteItem' | translate"
-            tooltipPosition="top"
-            (click)="deleteCourseTraining(course)">
-            <i class="pi pi-trash" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <tr [class.table-warning]="fileNote">
+    <td><div class="d-flex align-items-center gap-2">{{ course.title || '-' }}<span class="badge status-pill status-pill--info" *ngIf="!course.id">{{ 'profileOverview.status.pending' | translate }}</span></div></td>
+    <td>{{ course.provider || '-' }}</td><td>{{ course.startDate || '-' }}</td><td>{{ course.endDate || '-' }}</td>
+    <td>@if (course.attachment) {<a class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link" [ngClass]="{ 'attach-link--warn': fileNote }" (click)="open(course.attachment)"><i class="pi pi-paperclip text-muted"></i><span class="text-truncate d-inline-block">{{ course.attachment.fileName }}</span><i *ngIf="fileNote" class="pi pi-exclamation-triangle text-warning" [pTooltip]="fileNote.note || fileNote.title"></i></a>} @else {<span class="text-muted">{{ 'common.none' | translate }}</span>}</td>
+    <td *ngIf="notes?.length || editableItems?.length"><div class="d-flex align-items-center gap-2"><button *ngIf="canEditRaw(course)" type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="editCourseTraining(course)"><i class="pi pi-pencil"></i></button><button *ngIf="canDeleteRaw(course)" type="button" class="btn btn-sm btn-outline-danger rounded-pill" [attr.aria-label]="'profileView.actions.deleteItem' | translate" [pTooltip]="'profileView.actions.deleteItem' | translate" (click)="deleteCourseTraining(course)"><i class="pi pi-trash"></i></button></div></td>
+  </tr>
 </ng-template>

@@ -61,6 +61,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
   submitLabelKey = input<string>('wizard.buttons.next');
   showBack = input<boolean>(true);
   requireChanges = input<boolean>(false);
+  additionOnly = input<boolean>(false);
 
   protected readonly ds = inject(ProfileDataService);
   protected readonly lookups = inject(ProfileLookupsService);
@@ -223,7 +224,7 @@ export class StepSkillsComponent implements OnInit, OnDestroy {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('skills')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(8)) {
         const msg = this.ds.hasUnsolvedCorrections(8)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         return;

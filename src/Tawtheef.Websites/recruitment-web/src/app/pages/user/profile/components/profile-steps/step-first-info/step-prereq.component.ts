@@ -38,6 +38,7 @@ import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { normalizeMoiResponse } from '../../../wizard-profile/services/moi-response-normalizer';
 import { of } from 'rxjs';
 import { NotificationService } from '../../../../../../core/services/notification.service';
+import { DropdownOptionVM } from '../../../../../../shared/models/dropdown-options.model';
 
 
 @Component({
@@ -115,15 +116,24 @@ export class StepPrereqComponent implements OnInit {
     this.lastSubmittedSignature = this.buildSignature(payload);
   }
 
-  onCandidateTypeChange(option: any) {
+  onCandidateTypeChange(option: DropdownOptionVM | null) {
     if (this.ds.isCandidateTypeLocked || this.profile.isChangeRequestMode()) return;
     this.ds.up('candidateType', option);
     this.hasCheckedProfile.set(false);
   }
 
   showCandidateTypeDocuments(): boolean {
-    return !this.profile.isChangeRequestMode() &&
-      (this.ds.isNeedBirthCertificate || this.ds.isNeedMarriageCertificate);
+    if (this.profile.isChangeRequestMode()) return false;
+    return (this.ds.isNeedBirthCertificate && this.showConditionalDocumentUploader('birth')) ||
+      (this.ds.isNeedMarriageCertificate && this.showConditionalDocumentUploader('marriage'));
+  }
+
+  showConditionalDocumentUploader(kind: 'birth' | 'marriage'): boolean {
+    if (!this.profile.isRevisionMode()) return true;
+    const resourceId = kind === 'birth'
+      ? this.ds.state().birthCertificateFile?.resourceId
+      : this.ds.state().marriageCertificateFile?.resourceId;
+    return !resourceId || resourceId === 'local';
   }
 
   isDocumentMissing(kind: 'birth' | 'marriage'): boolean {
@@ -243,7 +253,7 @@ export class StepPrereqComponent implements OnInit {
     if (signature && signature === this.lastSubmittedSignature && !needsCheckNow && this.ds.isStepSubmitted('basic')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(1)) {
         const msg = this.ds.hasUnsolvedCorrections(1)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         return;
@@ -300,7 +310,7 @@ export class StepPrereqComponent implements OnInit {
         finalize(() => (this.saving.set(false)))
       )
       .subscribe({
-        next: (canProceed: any) => {
+        next: canProceed => {
           this.lastSubmittedSignature = signature;
           if (canProceed) {
             this.ds.markStepSubmitted('basic');

@@ -91,9 +91,9 @@ export class StepPersonalComponent implements OnInit {
     d.setFullYear(d.getFullYear() - 25);
     return d;
   })();
-  updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K]) {
-    if (this.ds.isLocked(key as any)) return;
-    this.ds.up(key as any, value as any);
+  updateField<K extends keyof ProfileState>(key: K, value: ProfileState[K] | null) {
+    if (this.ds.isLocked(key)) return;
+    this.ds.up(key, value);
   }
   get sponsorEmployerNumberMaxLen(): number {
     const t = this.ds.state().sponsorType?.backendName;
@@ -127,7 +127,7 @@ export class StepPersonalComponent implements OnInit {
     const date = this.toDate(value);
     if (!date) {
       this.setDobInvalid('wizard.personal.dobInvalid');
-      this.updateField('dob', null as any);
+      this.updateField('dob', null);
       return;
     }
 
@@ -137,20 +137,20 @@ export class StepPersonalComponent implements OnInit {
     // validate logical range
     if (date < this.minBirthDate) {
       this.setDobInvalid('wizard.personal.dobTooOld'); // e.g. older than 100
-      this.updateField('dob', null as any);
+      this.updateField('dob', null);
       return;
     }
 
     if (date > this.maxBirthDate) {
       this.setDobInvalid('wizard.personal.dobTooYoung'); // e.g. younger than 18
-      this.updateField('dob', null as any);
+      this.updateField('dob', null);
       return;
     }
 
     // good => store as DateOnly string
     this.dobInvalid.set(false);
     this.dobErrorKey.set('');
-    this.updateField('dob', dateToDateOnly(date)! as any);
+    this.updateField('dob', dateToDateOnly(date));
   }
 
   private setDobInvalid(key: string) {
@@ -221,6 +221,11 @@ export class StepPersonalComponent implements OnInit {
     return this.ds.isNeedSponsor && !hasPersistedSponsorCard;
   }
 
+  get isNewSponsorRequirement(): boolean {
+    if (!this.profileService.isRevisionMode() || !this.ds.isNeedSponsor) return false;
+    return !this.ds.state().sponsorType || this.showSponsorCardUploader;
+  }
+
   onSponsorEmployerNumberChange(raw: string) {
     // keep digits only + enforce max length while typing
     const digitsOnly = (raw ?? '').replace(/\D/g, '');
@@ -228,7 +233,7 @@ export class StepPersonalComponent implements OnInit {
     const trimmed = digitsOnly.slice(0, maxLen);
 
     // Bypass isLocked check to allow editing even if previously verified
-    this.ds.up('sponsorEmployerNumber', trimmed as any);
+    this.ds.up('sponsorEmployerNumber', trimmed);
 
     // If the number changes, any previously verified name is no longer valid
     if (this.ds.state().sponsorType?.backendName === SponsorType.Individual) {
@@ -239,7 +244,7 @@ export class StepPersonalComponent implements OnInit {
     if (this.ds.isLocked('qid')) return;
 
     const normalized = (raw ?? '').replace(/\D/g, '').slice(0, 20);
-    this.updateField('qid', normalized as any);
+    this.updateField('qid', normalized);
   }
 
   onQidKeyDown(event: KeyboardEvent, maxLen: number) {
@@ -274,7 +279,7 @@ export class StepPersonalComponent implements OnInit {
     if (this.ds.isLocked('qid')) return;
 
     const sanitized = (raw ?? '').replace(/\D/g, '').slice(0, maxLen);
-    this.updateField('qid', sanitized as any);
+    this.updateField('qid', sanitized);
   }
 
   onQidPaste(event: ClipboardEvent, currentValue: string | null | undefined, maxLen: number) {
@@ -303,13 +308,13 @@ export class StepPersonalComponent implements OnInit {
     queueMicrotask(() => this.onQidInput(this.ds.state().qid, maxLen));
   }
 
-  onSponsorTypeChange(value: any) {
+  onSponsorTypeChange(value: ProfileState['sponsorType']) {
     this.updateField('sponsorType', value);
 
     // trim sponsorEmployerNumber to new max and remove non-digits
     const current = this.ds.state().sponsorEmployerNumber ?? '';
     const digits = current.replace(/\D/g, '').slice(0, this.sponsorEmployerNumberMaxLen);
-    this.ds.up('sponsorEmployerNumber', digits as any);
+    this.ds.up('sponsorEmployerNumber', digits);
     this.ds.up('sponsorEmployerName', null);
   }
   verifySponsorProfile() {
@@ -331,7 +336,7 @@ export class StepPersonalComponent implements OnInit {
       .checkProfile(state.sponsorEmployerNumber, state.sponsorQidExpiry)
       .pipe(finalize(() => this.verifyingSponsor.set(false)))
       .subscribe({
-        next: (res: any) => {
+        next: res => {
           this.ds.applySponsorPersonalInfo(normalizeMoiResponse(res));
           this.notificationService.success(this.translate.instant('wizard.personal.verify.success'), this.translate.instant('wizard.personal.verify.title'));
         },
@@ -345,9 +350,9 @@ export class StepPersonalComponent implements OnInit {
   }
 
   updateDisability(value: boolean) {
-    this.updateField('hasDisability', value as any);
+    this.updateField('hasDisability', value);
     if (!value) {
-      this.updateField('disabilityDetails', null as any);
+      this.updateField('disabilityDetails', null);
     }
   }
 
@@ -384,7 +389,7 @@ export class StepPersonalComponent implements OnInit {
     if (!file) return;
     setLocalFile(this.sponsorCard, file);
     this.ds.up('sponsorCardName', file.name);
-    this.ds.up('sponsorCard', { resourceId: 'local', fileName: file.name, file: file } as any);
+    this.ds.up('sponsorCard', { resourceId: 'local', resourceName: file.name, file });
     input.value = '';
   }
   onNext() {
@@ -402,7 +407,7 @@ export class StepPersonalComponent implements OnInit {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('personal')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(2)) {
         const msg = this.ds.hasUnsolvedCorrections(2)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         return;

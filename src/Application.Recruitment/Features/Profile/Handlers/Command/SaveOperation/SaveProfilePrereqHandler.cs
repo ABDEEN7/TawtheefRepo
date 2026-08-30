@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
@@ -92,7 +93,10 @@ public sealed class SaveProfilePrereqHandler(
             profile.MarriageCertificateId = marriageResult.Value;
         }
 
+        var removedResidenceAddress = !requiresNationalAddress ? profile.ResidenceAddress : null;
         CleanCandidateTypeDependents();
+        if (removedResidenceAddress is not null)
+            await uow.GetEntityRepository<ResidenceAddress>().DeleteAsync(removedResidenceAddress);
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Prerequisites, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

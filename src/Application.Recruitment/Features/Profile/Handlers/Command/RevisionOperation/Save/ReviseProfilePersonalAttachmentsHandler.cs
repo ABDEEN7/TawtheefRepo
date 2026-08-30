@@ -41,12 +41,15 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             var allowed = await reviewRepo.DbSet
                 .AsNoTracking()
                 .AnyAsync(r =>
-                    r.UserProfileId == profile.Id &&
-                    r.Section == ProfileSection.Prerequisites &&
-                    r.TargetType == ReviewTargetType.Attachment &&
-                    r.ResourceId == oldResourceId &&
-                    (r.Status == ReviewStatus.NeedsCorrection ||
-                     r.Status == ReviewStatus.Solved),
+                        r.UserProfileId == profile.Id &&
+                        r.ProfileChangeId == null &&
+                        !r.IsDeleted &&
+                        r.Section == ProfileSection.Prerequisites &&
+                        r.TargetType == ReviewTargetType.Attachment &&
+                        r.ResourceId == oldResourceId &&
+                        (r.Status == ReviewStatus.NeedsCorrection ||
+                         r.Status == ReviewStatus.Rejected ||
+                         r.Status == ReviewStatus.Solved),
                     ct);
 
             if (!allowed)
@@ -64,8 +67,9 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.ResumeAttachmentId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+            if (profile.Status is UserProfileStatus.RequiresUpdate or UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites,
+                    oldResourceId, ct);
         }
 
         // National card
@@ -78,12 +82,15 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             var allowed = await reviewRepo.DbSet
                 .AsNoTracking()
                 .AnyAsync(r =>
-                    r.UserProfileId == profile.Id &&
-                    r.Section == ProfileSection.Prerequisites &&
-                    r.TargetType == ReviewTargetType.Attachment &&
-                    r.ResourceId == oldResourceId &&
-                    (r.Status == ReviewStatus.NeedsCorrection ||
-                     r.Status == ReviewStatus.Solved),
+                        r.UserProfileId == profile.Id &&
+                        r.ProfileChangeId == null &&
+                        !r.IsDeleted &&
+                        r.Section == ProfileSection.Prerequisites &&
+                        r.TargetType == ReviewTargetType.Attachment &&
+                        r.ResourceId == oldResourceId &&
+                        (r.Status == ReviewStatus.NeedsCorrection ||
+                         r.Status == ReviewStatus.Rejected ||
+                         r.Status == ReviewStatus.Solved),
                     ct);
 
             if (!allowed)
@@ -101,8 +108,9 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.NationalCardId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites, oldResourceId, ct);
+            if (profile.Status is UserProfileStatus.RequiresUpdate or UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Prerequisites,
+                    oldResourceId, ct);
         }
 
         // Sponsor card (nested)
@@ -119,12 +127,15 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
             var allowed = await reviewRepo.DbSet
                 .AsNoTracking()
                 .AnyAsync(r =>
-                    r.UserProfileId == profile.Id &&
-                    r.Section == ProfileSection.Personal &&
-                    r.TargetType == ReviewTargetType.Attachment &&
-                    r.ResourceId == oldResourceId &&
-                    (r.Status == ReviewStatus.NeedsCorrection ||
-                     r.Status == ReviewStatus.Solved),
+                        r.UserProfileId == profile.Id &&
+                        r.ProfileChangeId == null &&
+                        !r.IsDeleted &&
+                        r.Section == ProfileSection.Personal &&
+                        r.TargetType == ReviewTargetType.Attachment &&
+                        r.ResourceId == oldResourceId &&
+                        (r.Status == ReviewStatus.NeedsCorrection ||
+                         r.Status == ReviewStatus.Rejected ||
+                         r.Status == ReviewStatus.Solved),
                     ct);
 
             if (!allowed)
@@ -142,12 +153,12 @@ public sealed class ReviseProfilePersonalAttachmentsHandler(
 
             if (newId.IsFailed) return Result.Fail<Unit>(newId.Errors);
             profile.SponsorProfile.SponsorCardId = newId.Value;
-            if (profile.Status == UserProfileStatus.RequiresUpdate || profile.Status == UserProfileStatus.Submitted)
-                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Personal, oldResourceId, ct);
+            if (profile.Status is UserProfileStatus.RequiresUpdate or UserProfileStatus.Submitted)
+                await ReviewItemSaveHelper.MarkAttachmentSolvedAsync(uow, profile, ProfileSection.Personal,
+                    oldResourceId, ct);
         }
 
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
 }
-

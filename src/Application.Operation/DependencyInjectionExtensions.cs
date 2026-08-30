@@ -9,6 +9,7 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Servic
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Services;
+using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 using FluentValidation;
 using Mapster;
 using Microsoft.Extensions.Configuration;
@@ -106,6 +107,7 @@ namespace Application.Operation
             {
                 services.AddScoped<JobInvitationSummaryQueryBuilder>();
                 services.AddScoped<JobInvitationSummaryExcelExporter>();
+                services.AddScoped<ProfileDistributionProjection>();
             }
 
             private void RegisterValidators()

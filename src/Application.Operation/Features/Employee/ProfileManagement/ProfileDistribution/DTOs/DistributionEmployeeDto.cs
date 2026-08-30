@@ -4,6 +4,7 @@ public sealed class DistributionEmployeeDto
 {
     public Guid EmployeeId { get; init; }
     public string Name { get; init; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
     public string SearchText { get; init; } = string.Empty;
     public int TotalAssigned { get; init; }
     public int Completed { get; init; }
