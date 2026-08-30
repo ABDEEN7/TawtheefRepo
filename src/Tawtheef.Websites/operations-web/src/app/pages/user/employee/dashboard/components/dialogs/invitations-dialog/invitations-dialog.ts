@@ -29,13 +29,13 @@ import {
   DashboardChartExportService,
 } from '../../../services/dashboard-chart-export.service';
 import { OperationsDashboardService } from '../../../services/operations-dashboard.service';
-import { InvitationSource } from '../../../../../../../core/enums/invitation-source.enum';
 
 interface InvitationsDialogData {
   kpis: InvitationKpis;
   filters: OperationsDashboardFilters;
   canExport: boolean;
 }
+import { InvitationSource } from '../../../../../../../core/enums/invitation-source.enum';
 
 @Component({
   selector: 'app-dashboard-invitations-dialog',
@@ -53,11 +53,11 @@ interface InvitationsDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvitationsDialog implements OnInit {
+  readonly InvitationSource = InvitationSource;
   private readonly config = inject(DynamicDialogConfig<InvitationsDialogData>);
   readonly kpis = computed<InvitationKpis>(() => this.config.data.kpis);
   readonly filters = computed<OperationsDashboardFilters>(() => this.config.data.filters);
   readonly canExport = computed<boolean>(() => this.config.data.canExport);
-  readonly InvitationSource = InvitationSource;
 
   private readonly api = inject(OperationsDashboardService);
   private readonly chartExport = inject(DashboardChartExportService);

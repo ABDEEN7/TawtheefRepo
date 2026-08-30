@@ -34,6 +34,8 @@ public sealed class GetExceptionJobsQueryHandler(
             .AsNoTracking()
             .ApplyJobAccessScope(accessContextProvider.GetAccess())
             .Where(job =>
+                job.ManagementId == request.ManagementId &&
+                (!request.DepartmentId.HasValue || job.DepartmentId == request.DepartmentId) &&
                 job.JobStatusId == JobStatusIds.Published &&
                 job.ClosingDate > utcNow);
 

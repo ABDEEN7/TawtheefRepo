@@ -5,7 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
-import { Observable, finalize, map, takeUntil } from 'rxjs';
+import { Observable, finalize, map, of, takeUntil } from 'rxjs';
 
 import { ProfileStatusNumber } from '../../../../../../core/enums/lookups.enum';
 import { LanguageService } from '../../../../../../core/services/language.service';
@@ -49,6 +49,8 @@ export class AddExceptionDialogComponent {
       Validators.required,
       Validators.pattern(/^\d{11}$/),
     ]),
+    managementId: new FormControl<GUID | null>(null, Validators.required),
+    departmentId: new FormControl<GUID | null>(null),
     jobId: new FormControl<GUID | null>(null, Validators.required),
     reason: this.formBuilder.nonNullable.control('', [
       Validators.required,
@@ -67,14 +69,56 @@ export class AddExceptionDialogComponent {
   protected readonly isRtl = this.languageService.isRtl;
   protected readonly reasonMaxLength = 2000;
 
-  protected readonly loadJobs = (request: RemoteSelectLoadRequest): Observable<readonly object[]> =>
+  protected jobDependencyKey(): string | null {
+    const managementId = this.form.controls.managementId.value;
+    if (managementId === null) {
+      return null;
+    }
+
+    return `${managementId}:${this.form.controls.departmentId.value ?? ''}`;
+  }
+
+  protected readonly loadManagements = (request: RemoteSelectLoadRequest): Observable<readonly object[]> =>
     this.exceptionsService
+      .getManagements({
+        search: request.searchTerm || undefined,
+        pageNumber: request.pageNumber,
+        pageSize: request.pageSize,
+      })
+      .pipe(map((response) => response.items));
+
+  protected readonly loadDepartments = (request: RemoteSelectLoadRequest): Observable<readonly object[]> => {
+    const managementId = this.form.controls.managementId.value;
+    if (managementId === null) {
+      return of([]);
+    }
+
+    return this.exceptionsService
+      .getDepartments({
+        managementId,
+        search: request.searchTerm || undefined,
+        pageNumber: request.pageNumber,
+        pageSize: request.pageSize,
+      })
+      .pipe(map((response) => response.items));
+  };
+
+  protected readonly loadJobs = (request: RemoteSelectLoadRequest): Observable<readonly object[]> => {
+    const managementId = this.form.controls.managementId.value;
+    if (managementId === null) {
+      return of([]);
+    }
+
+    return this.exceptionsService
       .getJobs({
+        managementId,
+        departmentId: this.form.controls.departmentId.value ?? undefined,
         searchTerm: request.searchTerm || undefined,
         pageNumber: request.pageNumber,
         pageSize: request.pageSize,
       })
       .pipe(map((response) => response.items));
+  };
 
   private readonly resolvedQid = signal<string | null>(null);
 
@@ -89,6 +133,17 @@ export class AddExceptionDialogComponent {
           this.resetCreationFields();
         }
       });
+
+    this.form.controls.managementId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.form.controls.departmentId.reset();
+        this.form.controls.jobId.reset();
+      });
+
+    this.form.controls.departmentId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.form.controls.jobId.reset());
   }
 
   protected lookupCandidate(): void {
@@ -270,6 +325,8 @@ export class AddExceptionDialogComponent {
   }
 
   private resetCreationFields(): void {
+    this.form.controls.managementId.reset();
+    this.form.controls.departmentId.reset();
     this.form.controls.jobId.reset();
     this.form.controls.reason.reset();
     this.form.controls.proof.reset();

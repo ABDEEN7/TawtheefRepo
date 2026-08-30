@@ -83,7 +83,10 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() showClear = false;
   @Input() preloadedOptions: any[] = [];
 
+  @Input() virtualScroll = true;
   @Input() virtualScrollItemSize = 38;
+  @Input() virtualScrollMaxHeight = 200;
+  @Input() scrollHeight = '200px';
   @Input() parentId: string | number | null | undefined;
   @Input() parentParamName = 'parentId';
   @Input() requireParent = false;
@@ -95,6 +98,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   value = signal<any>(null);
 
   isLoading = signal(false);
+  isPageLoading = signal(false);
   hasMore = signal(true);
   emptyMessage = signal('');
 
@@ -130,6 +134,15 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   get computedPlaceholder(): string {
     return this.placeholder;
+  }
+
+  get effectiveScrollHeight(): string {
+    if (!this.virtualScroll) {
+      return this.scrollHeight;
+    }
+
+    const contentHeight = Math.max(1, this.options().length) * this.virtualScrollItemSize;
+    return `${Math.min(contentHeight, this.virtualScrollMaxHeight)}px`;
   }
 
   // =============================
@@ -207,7 +220,8 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
             return of({ req, res: [] as object[] });
           }
 
-          this.isLoading.set(true);
+          const loading = req.append ? this.isPageLoading : this.isLoading;
+          loading.set(true);
           const params = this.buildParams(req.term, req.page, this.pageSize);
 
           const response$: Observable<readonly object[]> = this.optionsLoader
@@ -225,7 +239,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
             .pipe(
               map(res => ({ req, res: [...(res ?? [])] })),
               catchError(() => of({ req, res: [] as object[] })),
-              finalize(() => this.isLoading.set(false))
+              finalize(() => loading.set(false))
             );
         }),
         takeUntil(this.destroy$)
@@ -254,7 +268,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     if (changes['preloadedOptions']) {
       // don’t wipe current options; merge
       const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
-      this.options.set(this.sortByOptionLabel(this.mergeWithSelected(merged)));
+      this.options.set(this.mergeWithSelected(merged));
     }
 
     if (changes['parentId'] && !changes['parentId'].firstChange) {
@@ -328,7 +342,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
    * ✅ PrimeNG correct lazy paging: derive page from first/rows
    */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading() || !this.hasMore) return;
+    if (this.isLoading() || this.isPageLoading() || !this.hasMore()) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
@@ -399,7 +413,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     this.currentTerm = (req.term ?? '').trim();
     this.pageNumber = req.page;
 
-    this.isLoading.set(true);
+    (req.append ? this.isPageLoading : this.isLoading).set(true);
     this.request$.next(req);
   }
 
@@ -450,7 +464,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     const mergedWithSelected = this.mergeWithSelected(mergedBase);
 
-    this.options.set(this.sortByOptionLabel(mergedWithSelected));
+    this.options.set(mergedWithSelected);
     this.hasMore.set(next.length === this.pageSize);
 
     // emptyMessage داخل القائمة
@@ -545,11 +559,6 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     const raw = this.getByPath(option, key);
     return (raw ?? '').toString().trim();
-  }
-
-  private sortByOptionLabel(items: any[]): any[] {
-    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    return [...(items ?? [])].sort((a, b) => collator.compare(this.getOptionLabelValue(a), this.getOptionLabelValue(b)));
   }
 
   private appendExtraParams(params: HttpParams): HttpParams {

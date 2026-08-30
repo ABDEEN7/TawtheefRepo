@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.Exceptions.Commands;
 using Application.Operation.Features.Employee.Exceptions.DTOs;
 using Application.Operation.Features.Employee.Exceptions.Queries;
+using Application.Operation.Features.Employee.OrganizationStructures.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -88,9 +89,31 @@ public sealed class ExceptionsController(IMediator mediator) : ControllerBase
 
     [HttpGet("jobs")]
     [AuthorizePermission(PermissionKeys.Exceptions.Create)]
-    public async Task<IActionResult> GetJobs([FromQuery] GetExceptionJobsQuery query)
+    public async Task<IActionResult> GetJobs(
+        [FromQuery] GetExceptionJobsQuery query,
+        CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(query);
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("managements")]
+    [AuthorizePermission(PermissionKeys.Exceptions.Create)]
+    public async Task<IActionResult> GetManagements(
+        [FromQuery] GetManagementsPagedQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("departments")]
+    [AuthorizePermission(PermissionKeys.Exceptions.Create)]
+    public async Task<IActionResult> GetDepartments(
+        [FromQuery] GetDepartmentsPagedQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();
     }
 

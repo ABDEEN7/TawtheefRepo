@@ -1,10 +1,11 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
 import { HttpService } from '../../../../../core/http/http.service';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { GUID } from '../../../../../shared/types/guid.type';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 import {
   CancelInvitationExceptionResult,
   CreateInvitationExceptionResult,
@@ -19,6 +20,7 @@ import {
   CancelInvitationExceptionRequest,
   CreateInvitationExceptionRequest,
   ExceptionJobsRequest,
+  ExceptionOrganizationLookupRequest,
   InvitationExceptionsRequest
 } from '../models/invitation-exception.requests';
 
@@ -27,6 +29,9 @@ export class ExceptionsService {
   private readonly http = inject(HttpService);
   private readonly httpClient = inject(HttpClient);
   private readonly endpoints = inject(EndpointsService);
+  private readonly lookupRequestOptions = {
+    headers: new HttpHeaders({ 'X-Skip-Loading': 'true' })
+  };
 
   getExceptions(request: InvitationExceptionsRequest): Observable<PaginatedResult<InvitationExceptionListItem>> {
     return this.http.get<PaginatedResult<InvitationExceptionListItem>>(
@@ -60,7 +65,24 @@ export class ExceptionsService {
   getJobs(request: ExceptionJobsRequest): Observable<PaginatedResult<ExceptionJobLookup>> {
     return this.http.get<PaginatedResult<ExceptionJobLookup>>(
       this.endpoints.exceptions.jobs,
-      { ...request, searchTerm: request.searchTerm?.trim() || undefined }
+      { ...request, searchTerm: request.searchTerm?.trim() || undefined },
+      this.lookupRequestOptions
+    );
+  }
+
+  getManagements(request: ExceptionOrganizationLookupRequest): Observable<PaginatedResult<dropdownOptionsModel>> {
+    return this.http.get<PaginatedResult<dropdownOptionsModel>>(
+      this.endpoints.exceptions.managements,
+      { ...request, search: request.search?.trim() || undefined },
+      this.lookupRequestOptions
+    );
+  }
+
+  getDepartments(request: ExceptionOrganizationLookupRequest): Observable<PaginatedResult<dropdownOptionsModel>> {
+    return this.http.get<PaginatedResult<dropdownOptionsModel>>(
+      this.endpoints.exceptions.departments,
+      { ...request, search: request.search?.trim() || undefined },
+      this.lookupRequestOptions
     );
   }
 

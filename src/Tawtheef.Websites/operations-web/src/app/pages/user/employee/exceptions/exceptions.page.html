@@ -93,6 +93,7 @@
                     class="w-100"
                     [options]="statusOptions"
                     optionValue="value"
+                    optionLabel="labelKey"
                     [showClear]="true"
                     [ngModel]="selectedStatus()"
                     (onChange)="onStatusChange($event.value)"
@@ -102,8 +103,8 @@
                       {{ option.labelKey | translate }}
                     </ng-template>
 
-                    <ng-template #selecteditem let-option>
-                      {{ option.labelKey | translate }}
+                    <ng-template #selectedItem let-value>
+                      {{ value.labelKey | translate }}
                     </ng-template>
                   </p-select>
                 </div>

@@ -10,6 +10,9 @@ public sealed record GetExceptionJobsQuery
     : PaginatedRequest,
         IRequest<IResult<PaginatedResult<ExceptionJobLookupDto>>>
 {
+    public Guid ManagementId { get; init; }
+    public Guid? DepartmentId { get; init; }
+
     [MaxLength(200)]
     public string? SearchTerm { get; init; }
 }

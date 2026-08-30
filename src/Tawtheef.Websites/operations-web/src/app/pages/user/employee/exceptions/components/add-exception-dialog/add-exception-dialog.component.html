@@ -163,6 +163,65 @@
       </div>
     </section>
 
+    <!-- Management -->
+    <div class="form-section">
+      <div class="form-section__label">
+        <span class="form-section__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-building-03"></i>
+        </span>
+
+        <label class="form-label fw-semibold mb-0" for="exception-management">
+          {{ 'EXCEPTIONS.ADD_DIALOG.MANAGEMENT_LABEL' | translate }}
+        </label>
+      </div>
+
+      <app-remote-select
+        id="exception-management"
+        formControlName="managementId"
+        [optionsLoader]="loadManagements"
+        optionLabel="name"
+        optionValue="id"
+        [pageSize]="10"
+        [virtualScroll]="false"
+        [showClear]="true"
+        [placeholder]="'EXCEPTIONS.ADD_DIALOG.MANAGEMENT_PLACEHOLDER' | translate"
+        [invalid]="form.controls.managementId.invalid && form.controls.managementId.touched"
+      />
+
+      @if (form.controls.managementId.invalid && form.controls.managementId.touched) {
+        <small class="text-danger d-block mt-1">
+          {{ 'EXCEPTIONS.ADD_DIALOG.MANAGEMENT_REQUIRED' | translate }}
+        </small>
+      }
+    </div>
+
+    <!-- Department -->
+    <div class="form-section">
+      <div class="form-section__label">
+        <span class="form-section__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-hierarchy-square-02"></i>
+        </span>
+
+        <label class="form-label fw-semibold mb-0" for="exception-department">
+          {{ 'EXCEPTIONS.ADD_DIALOG.DEPARTMENT_LABEL' | translate }}
+        </label>
+      </div>
+
+      <app-remote-select
+        id="exception-department"
+        formControlName="departmentId"
+        [optionsLoader]="loadDepartments"
+        optionLabel="name"
+        optionValue="id"
+        [pageSize]="10"
+        [virtualScroll]="false"
+        [parentId]="form.controls.managementId.value"
+        [requireParent]="true"
+        [showClear]="true"
+        [placeholder]="'EXCEPTIONS.ADD_DIALOG.DEPARTMENT_PLACEHOLDER' | translate"
+      />
+    </div>
+
     <!-- Job -->
     <div class="form-section">
       <div class="form-section__label">
@@ -184,6 +243,10 @@
         optionValue="jobId"
         optionId="jobId"
         [pageSize]="10"
+        [virtualScroll]="true"
+        [virtualScrollItemSize]="56"
+        [parentId]="jobDependencyKey()"
+        [requireParent]="true"
         [showClear]="true"
         [placeholder]="'EXCEPTIONS.ADD_DIALOG.JOB_PLACEHOLDER' | translate"
         [noResultsPlaceholder]="'EXCEPTIONS.ADD_DIALOG.NO_JOBS' | translate"
