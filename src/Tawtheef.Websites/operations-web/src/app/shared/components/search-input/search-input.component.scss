@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input__control {
+  width: 100%;
+  padding-inline-end: 3rem;
+  text-align: start;
+}
+
+.search-input__icon {
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 50%;
+  color: var(--text-color-secondary);
+  pointer-events: none;
+  transform: translateY(-50%);
+}

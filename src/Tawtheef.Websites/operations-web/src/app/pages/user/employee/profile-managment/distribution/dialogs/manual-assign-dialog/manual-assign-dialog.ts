@@ -8,12 +8,12 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Select } from 'primeng/select';
 
-import { DistributionEmployee } from '../../models/profile-distribution.models';
+import { DistributionEmployeeLookup } from '../../models/profile-distribution.models';
 import { ManualAssignRequest } from '../../models/profile-distribution-assignment.model';
 import { EmployeeAvailability } from '../../models/profile-distribution.enums';
 
 type ManualAssignDialogData = {
-  employees: DistributionEmployee[];
+  employees: DistributionEmployeeLookup[];
   selectedProfileIds: string[];
   initialEmployeeId?: string | null;
 };

@@ -1,14 +1,11 @@
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Commands;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.DTOs;
 using FluentResults;
-using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
-using Tawtheef.Application.Common.Interfaces.Repositories;
-using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Domain.Configurations.Rules;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -20,9 +17,7 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileDistr
 public sealed class ManualAssignProfilesHandler(
     IUnitOfWork uow,
     UserManager<User> userManager,
-    IUserRepository userRepository,
-    ILocalizationService localizationService,
-    IMapper mapper)
+    ProfileDistributionProjection projection)
     : IRequestHandler<ManualAssignProfilesCommand, Result<DistributionResultDto>>
 {
     public async Task<Result<DistributionResultDto>> Handle(ManualAssignProfilesCommand request, CancellationToken ct)
@@ -37,8 +32,8 @@ public sealed class ManualAssignProfilesHandler(
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == request.UserId, ct);
 
-        User? employee = null;
-        if (callerUser is OfficeUser callerOfficeUser && callerOfficeUser.OfficeId is not null)
+        User? employee;
+        if (callerUser is OfficeUser { OfficeId: not null } callerOfficeUser)
         {
             employee = await userManager.Users.OfType<OfficeUser>()
                 .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && e.OfficeId == callerOfficeUser.OfficeId && !e.IsDeleted && !e.IsBlocked, ct);
@@ -154,7 +149,6 @@ public sealed class ManualAssignProfilesHandler(
 
         await uow.SaveChangesAsync(ct);
 
-        var projection = new ProfileDistributionProjection(uow, userManager, userRepository, localizationService, mapper);
         var result = await projection.BuildResultAsync(request.UserId, profiles.Count, ct);
 
         return Result.Ok(result);

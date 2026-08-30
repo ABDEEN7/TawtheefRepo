@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   DistributionEmployee,
+  DistributionEmployeeLookup,
+  DistributionEmployeeFilters,
   DistributionFile,
   DistributionResult,
 } from '../models/profile-distribution.models';
@@ -25,8 +27,12 @@ export class ProfileDistributionService {
     return this.http.get<PaginatedResult<DistributionFile>>(this.endpoints.distribution.files, filters);
   }
 
-  getEmployees(): Observable<DistributionEmployee[]> {
-    return this.http.get<DistributionEmployee[]>(this.endpoints.distribution.employees);
+  getEmployees(filters: DistributionEmployeeFilters): Observable<PaginatedResult<DistributionEmployee>> {
+    return this.http.get<PaginatedResult<DistributionEmployee>>(this.endpoints.distribution.employees, filters);
+  }
+
+  getEmployeeLookup(): Observable<DistributionEmployeeLookup[]> {
+    return this.http.get<DistributionEmployeeLookup[]>(this.endpoints.distribution.employeeLookup);
   }
 
   getTargetEntities(): Observable<dropdownOptionsModel[]> {

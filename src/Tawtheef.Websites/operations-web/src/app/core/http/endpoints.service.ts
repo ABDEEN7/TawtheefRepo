@@ -146,6 +146,7 @@ export class EndpointsService {
     candidateTypes: this.getFullUrl('/profile-distributions/candidate-types'),
     degrees: this.getFullUrl('/profile-distributions/degrees'),
     employees: this.getFullUrl('/profile-distributions/employees'),
+    employeeLookup: this.getFullUrl('/profile-distributions/employees/lookup'),
     assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
     assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),
     reassign: this.getFullUrl('/profile-distributions/reassign')

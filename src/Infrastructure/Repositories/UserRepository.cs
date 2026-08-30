@@ -94,6 +94,16 @@ public class UserRepository(TawtheefDbContext dbContext, IGenericRepository<User
             .Where(u => userIds.Contains(u.Id))
             .ToListAsync(ct);
     }
+
+    public async Task<IReadOnlyList<Guid>> GetUserIdsByPermissionAsync(string permission, CancellationToken ct)
+    {
+        return await (
+            from userRole in dbContext.UserRoles.AsNoTracking()
+            join roleClaim in dbContext.RoleClaims.AsNoTracking() on userRole.RoleId equals roleClaim.RoleId
+            where roleClaim.ClaimType == RoleClaimTypes.Permission && roleClaim.ClaimValue == permission
+            select userRole.UserId
+        ).Distinct().ToListAsync(ct);
+    }
     
     public async Task<IReadOnlyList<User>> GetUsersByRoleAsync(string roleName, CancellationToken ct)
     {
