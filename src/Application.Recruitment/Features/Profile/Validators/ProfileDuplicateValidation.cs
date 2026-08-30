@@ -1,4 +1,5 @@
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
+using Application.Recruitment.Features.Profile.DTOs.ReviseOperation;
 using FluentResults;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
@@ -9,6 +10,18 @@ internal static class ProfileDuplicateValidation
 {
     public static Result ValidateEducation(
         IReadOnlyList<SaveProfileEducationDegreeDto> incoming,
+        IReadOnlyList<Qualification> existing)
+    {
+        return Validate(
+            incoming,
+            existing,
+            DegreeKey.From,
+            DegreeKey.From,
+            ErrorsCodes.DuplicateEducation);
+    }
+
+    public static Result ValidateEducation(
+        IReadOnlyList<ReviseProfileEducationDegreeDto> incoming,
         IReadOnlyList<Qualification> existing)
     {
         return Validate(
@@ -88,6 +101,7 @@ internal static class ProfileDuplicateValidation
         return value switch
         {
             SaveProfileEducationDegreeDto dto => NormalizeId(dto.Id),
+            ReviseProfileEducationDegreeDto dto => NormalizeId(dto.Id),
             ExperienceUpsertDto dto => NormalizeId(dto.Id),
             TrainingCourseUpsertDto dto => NormalizeId(dto.Id),
             AchievementUpsertDto dto => NormalizeId(dto.Id),
@@ -121,6 +135,17 @@ internal static class ProfileDuplicateValidation
         decimal? Gpa)
     {
         public static DegreeKey From(SaveProfileEducationDegreeDto dto) => new(
+            dto.DegreeId,
+            dto.GradCountryId,
+            NormalizeGuid(dto.UniversityId),
+            NormalizeGuid(dto.MajorId),
+            NormalizeGuid(dto.SubMajorId),
+            NormalizeGuid(dto.StudyTypeId),
+            NormalizeGuid(dto.GradeId),
+            dto.GradYear,
+            dto.Gpa);
+
+        public static DegreeKey From(ReviseProfileEducationDegreeDto dto) => new(
             dto.DegreeId,
             dto.GradCountryId,
             NormalizeGuid(dto.UniversityId),

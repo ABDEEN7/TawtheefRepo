@@ -1,4 +1,3 @@
-using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Users;
@@ -7,12 +6,6 @@ namespace Application.Operation.Features.Employee.ProfileManagement;
 
 public static class UserProfileLoader
 {
-    public static async Task<IResult<UserProfile?>> GetSummaryAsync(IUnitOfWork uow, Guid userId, CancellationToken ct) {
-        var repo = uow.GetEntityRepository<UserProfile>();
-        var profile = await repo.DbSet.OrderBy(p => p.Id).FirstOrDefaultAsync(p => p.UserId == userId, ct);
-        return Result.Ok(profile);
-    }
-
     public static async Task<UserProfile?> GetFullProfileByUserId(IUnitOfWork uow, 
         Guid userId,bool tracking = false, CancellationToken ct = default)
     {

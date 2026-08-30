@@ -16,26 +16,35 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
 {
     public async Task<IResult<Unit>> Handle(FinalizeUserProfileReviewCommand cmd, CancellationToken ct)
     {
-        var profileRepo = uow.GetEntityRepository<UserProfile>();
         var auditRepo = uow.GetEntityRepository<AuditTrailEntry>();
         var loggerRepo = uow.GetEntityRepository<UserProfileLogger>();
         var assignmentRepo = uow.GetEntityRepository<ProfileAssignment>();
         
-        var profile = await profileRepo.DbSet.FirstOrDefaultAsync(p => p.Id == cmd.UserProfileId, ct);
+        var profile = await UserProfileLoader.GetFullProfileByProfileId(
+            uow, cmd.UserProfileId, tracking: true, ct: ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         if (profile.Status != UserProfileStatus.UnderReview)
             return Result.Fail<Unit>(ErrorsCodes.ProfileNotUnderReview);
 
+        foreach (var section in ProfileApprovalFlow.Sections)
+        {
+            await FullReviewSectionStateSync.SyncAsync(
+                uow, profile, section, cmd.OfficerId, DateTime.UtcNow, ct);
+        }
+
         var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
-        // All sections items should be Approved
-        var sectionItems = await reviewRepo.DbSet
+        var fullReviewItems = await reviewRepo.DbSet
             .Where(x => x.UserProfileId == profile.Id &&
-                        x.TargetType == ReviewTargetType.Section &&
+                        x.ProfileChangeId == null &&
                         !x.IsDeleted)
             .ToListAsync(ct);
+        var activeReviewItems = ActiveProfileReviewItems.ForFullReview(profile, fullReviewItems);
+        var sectionItems = activeReviewItems
+            .Where(x => x.TargetType == ReviewTargetType.Section)
+            .ToList();
 
         // Check if all sections exist (some section could be deleted!!)
         var missing = ProfileApprovalFlow.Sections
@@ -45,13 +54,23 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         if (missing.Count > 0)
             return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
 
-        // Finalize only if all sections are Approved or NeedsCorrection
-        if (sectionItems.Any(i => i.Status == ReviewStatus.Pending))
+        if (sectionItems.Any(item =>
+                item.Status is not (ReviewStatus.Approved or ReviewStatus.NeedsCorrection)))
+            return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
+
+        var activeChildItems = activeReviewItems
+            .Where(item => item.TargetType != ReviewTargetType.Section)
+            .ToList();
+        if (activeChildItems.Any(item =>
+                item.Status is ReviewStatus.Pending or ReviewStatus.NotReviewed or ReviewStatus.Solved))
             return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
 
         var hasCorrections = sectionItems.Any(i => i.Status == ReviewStatus.NeedsCorrection);
         if (!hasCorrections)
         {
+            if (activeChildItems.Any(item => item.Status != ReviewStatus.Approved))
+                return Result.Fail<Unit>(ErrorsCodes.UnapprovedItemsExist);
+
             var universityValidation = await QualificationUniversityReviewGuard.ValidatePersistedProfileAsync(
                 uow, profile.Id, ct);
             if (universityValidation.IsFailed)
@@ -64,6 +83,7 @@ public sealed class FinalizeUserProfileReviewHandler(IUnitOfWork uow)
         {
             eventType = "ProfileReviewFinalized",
             result = hasCorrections ? "NeedsCorrection" : "Approved",
+            internalReviewerNote = string.IsNullOrWhiteSpace(cmd.Notes) ? null : cmd.Notes.Trim(),
             message = hasCorrections
                 ? UserProfileLogConstants.Notes.ProfileReviewFinalizedWithCorrections
                 : UserProfileLogConstants.Notes.ProfileReviewFinalizedApproved

@@ -1,16 +1,17 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Recruitment.Features.Profile.Handlers.Command.RevisionOperation.Save;
-
 
 public sealed class ReviseProfileLanguagesHandler(
     IUnitOfWork uow,
@@ -20,6 +21,7 @@ public sealed class ReviseProfileLanguagesHandler(
     public async Task<IResult<Unit>> Handle(ReviseProfileLanguagesCommand cmd, CancellationToken ct)
     {
         var langRepo = uow.GetEntityRepository<ProfileLanguage>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
@@ -34,9 +36,22 @@ public sealed class ReviseProfileLanguagesHandler(
 
         profile.Languages ??= new List<ProfileLanguage>();
 
+        var sectionCorrectionIsActionable = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
+            item.UserProfileId == profile.Id &&
+            item.ProfileChangeId == null &&
+            !item.IsDeleted &&
+            item.Section == ProfileSection.Languages &&
+            item.TargetType == ReviewTargetType.Section &&
+            (item.Status == ReviewStatus.NeedsCorrection ||
+             item.Status == ReviewStatus.Rejected ||
+             (item.Status == ReviewStatus.Solved && item.ReviewedAtUtc != null)), ct);
+
         // Clear all
         if (cmd.Request.Languages.Count == 0)
         {
+            if (!sectionCorrectionIsActionable && profile.Languages.Count > 0)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
             if (profile.Languages.Count > 0)
                 langRepo.DbSet.RemoveRange(profile.Languages);
 
@@ -52,9 +67,17 @@ public sealed class ReviseProfileLanguagesHandler(
 
         var existing = profile.Languages;
         var existingByLanguageId = existing.ToDictionary(x => x.LanguageId);
+        if (!sectionCorrectionIsActionable && existing.Any(row =>
+                !incomingByLanguageId.TryGetValue(row.LanguageId, out var incoming) ||
+                incoming.SpeakingLevelId != row.SpeakingLevelId ||
+                incoming.WritingLevelId != row.WritingLevelId ||
+                incoming.ReadingLevelId != row.ReadingLevelId))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+        var added = false;
 
         // Upsert
-        foreach (var (languageId, dto) in incomingByLanguageId)
+        foreach ((Guid languageId, ProfileLanguageUpsertDto dto) in incomingByLanguageId)
         {
             if (existingByLanguageId.TryGetValue(languageId, out var row))
             {
@@ -64,16 +87,17 @@ public sealed class ReviseProfileLanguagesHandler(
             }
             else
             {
-                // If your repo AddAsync doesn't take CT, use DbSet.Add or DbSet.AddAsync(entity, ct)
-                await langRepo.DbSet.AddAsync(
-                    new ProfileLanguage
-                    {
-                        UserProfileId = profile.Id,
-                        LanguageId = dto.LanguageId,
-                        SpeakingLevelId = dto.SpeakingLevelId,
-                        WritingLevelId = dto.WritingLevelId,
-                        ReadingLevelId = dto.ReadingLevelId
-                    }, ct);
+                var entity = new ProfileLanguage
+                {
+                    UserProfileId = profile.Id,
+                    LanguageId = dto.LanguageId,
+                    SpeakingLevelId = dto.SpeakingLevelId,
+                    WritingLevelId = dto.WritingLevelId,
+                    ReadingLevelId = dto.ReadingLevelId
+                };
+                await langRepo.DbSet.AddAsync(entity, ct);
+                existing.Add(entity);
+                added = true;
             }
         }
 
@@ -85,9 +109,11 @@ public sealed class ReviseProfileLanguagesHandler(
         if (toRemove.Count > 0)
             langRepo.DbSet.RemoveRange(toRemove);
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct);
+        if (sectionCorrectionIsActionable)
+            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Languages, ct);
+        else if (added)
+            await ReviewItemSaveHelper.MarkSectionChangedByAdditionAsync(uow, profile, ProfileSection.Languages, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
 }
-

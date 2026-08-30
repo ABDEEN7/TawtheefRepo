@@ -4,6 +4,7 @@ import { ButtonDirective } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MyProfileReviewChangedItemDto, ReviewTargetTypeEnum } from '../../models/profile-overview.model';
+import { PROFILE_REVIEW_SECTION_DATA_FIELD } from '../../../wizard-profile/models/profile-correction.model';
 
 export interface ResubmitConfirmSectionVm {
   section: number;
@@ -39,7 +40,7 @@ export class ResubmitConfirmDialogComponent {
   }
 
   protected itemTitleKey(item: MyProfileReviewChangedItemDto): string | null {
-    if (item.fieldPath === 'SectionData') {
+    if (item.fieldPath === PROFILE_REVIEW_SECTION_DATA_FIELD) {
       return 'profileOverview.resubmitConfirm.sectionData';
     }
 

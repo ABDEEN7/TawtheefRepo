@@ -41,7 +41,7 @@ public sealed class ReviseProfileAchievementDeleteHandler(IUnitOfWork uow)
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.CertificatesAndAwards, cmd.Id, ct, force: true);
+        await ReviewItemSaveHelper.MarkRowSolvedAsync(uow, profile, ProfileSection.CertificatesAndAwards, cmd.Id, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

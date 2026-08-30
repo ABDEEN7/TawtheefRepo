@@ -1,51 +1,17 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="text-primary d-flex gap-2 align-items-center ">
-        <i class="pi pi-sparkles" aria-hidden="true"></i>
-        <span>{{ 'profileOverview.sections.skills' | translate }}</span>
-      </h5>
-       <button *ngIf="canEdit" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-               type="button" (click)="onEdit()">
-         <i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i>
-         {{ 'common.edit' | translate }}
-       </button>
-</div>
-
-
-    <!-- Skills Cards -->
-    @if (profile?.skills?.length || skillsUnderReview().length) {
-      <div class="row g-3">
-
-        @for (skill of profile?.skills; track skill.id) {
-          <div class="col-12 col-sm-6 col-lg-4">
-            <ng-container
-              *ngTemplateOutlet="skillCardTemplate; context: { $implicit: skill }">
-            </ng-container>
-          </div>
-        }
-
-        @for (skill of skillsUnderReview(); track skill.id) {
-          <div class="col-12 col-sm-6 col-lg-4">
-            <ng-container
-              *ngTemplateOutlet="skillCardTemplate; context: { $implicit: skill }">
-            </ng-container>
-          </div>
-        }
-
-      </div>
-    } @else {
-      <div class="text-muted">{{ 'common.none' | translate }}</div>
-    }
-
-
-<!-- Skill Card Template -->
-<ng-template #skillCardTemplate let-option>
-  <div class="card card-table">
-    <div class="card-body">
-         <div class="d-flex align-items-center justify-content-between">
-              <label class="text-light w-100 fs-16">{{ option.skill?.name }}</label>
-              <span class="pill info" *ngIf="!option.id">{{ 'profileOverview.status.pending' | translate }}</span>
-         </div>
-      <label class="fw-semibold text-dark text-nowrap fs-16">{{ option.level.name }}</label>
-    </div>
+  <h5 class="text-primary d-flex gap-2 align-items-center"><i class="pi pi-sparkles"></i><span>{{ 'profileOverview.sections.skills' | translate }}</span></h5>
+  <div class="d-flex gap-2">
+    <button *ngIf="canAdd" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="add.emit()"><i class="pi pi-plus"></i>{{ 'wizard.buttons.add' | translate }}</button>
+    <button *ngIf="canEdit" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="onEdit()"><i class="pi pi-pencil"></i>{{ 'common.edit' | translate }}</button>
   </div>
-</ng-template>
+</div>
+@if (profile?.skills?.length || skillsUnderReview().length) {
+<div class="table-card rounded overflow-hidden"><div class="table-responsive"><table class="table table-bordered table-hover align-middle w-100">
+  <thead class="table-light"><tr><th>{{ 'profile.field.skill' | translate }}</th><th>{{ 'profile.field.skillLevel' | translate }}</th></tr></thead>
+  <tbody>
+    @for (skill of profile?.skills; track skill.id) {<ng-container *ngTemplateOutlet="skillRow; context: { $implicit: skill }"></ng-container>}
+    @for (skill of skillsUnderReview(); track skill.id) {<ng-container *ngTemplateOutlet="skillRow; context: { $implicit: skill }"></ng-container>}
+  </tbody>
+</table></div></div>
+} @else {<div class="text-muted">{{ 'common.none' | translate }}</div>}
+<ng-template #skillRow let-option><tr><td><div class="d-flex align-items-center gap-2">{{ option.skill?.name || '-' }}<span class="badge status-pill status-pill--info" *ngIf="!option.id">{{ 'profileOverview.status.pending' | translate }}</span></div></td><td>{{ option.level?.name || '-' }}</td></tr></ng-template>

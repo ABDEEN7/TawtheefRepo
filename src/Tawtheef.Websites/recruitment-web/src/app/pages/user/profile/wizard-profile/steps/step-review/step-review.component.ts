@@ -8,7 +8,6 @@ import { TableModule } from 'primeng/table';
 import { ProfileDataService } from '../../services/profile-data.service';
 import { ProfileService } from '../../services/profile.service';
 import { Skill } from '../../models/skill.model';
-import { CandidateType } from '../../../../../../core/enums/lookups.enum';
 import { FileUtilsService } from '../../../../../../core/utils/file-utils';
 import { createStepValiditySignal } from '../../state/profile-step-validity.signal';
 import { UploadedFileRef } from '../../models/profile-state.model';
@@ -49,8 +48,7 @@ export class StepReviewComponent {
   canSubmit = computed(() => this.missing().length === 0);
 
   get isResidentQatar(): boolean {
-    const provider = this.ds.state().provider;
-    return ['QatarPass', 'QatarResidentOtp'].includes(provider);
+    return this.ds.isResidentQatar;
   }
 
   hasSponsor = computed(() => {

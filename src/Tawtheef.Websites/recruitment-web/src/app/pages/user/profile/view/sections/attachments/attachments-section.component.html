@@ -1,82 +1,20 @@
 <p-confirmDialog appendTo="body"></p-confirmDialog>
-
 <div class="d-flex align-items-center justify-content-between mb-3">
-  <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-attachment-square"
-      aria-hidden="true"></i> <span>{{ 'profileOverview.sections.attachments' | translate }}</span></h5>
-  <div *ngIf="canAddAttachment"><button type="button" class="btn btn-outline-primary d-flex align-items-center gap-1"
-      (click)="addAttachment()">
-      <i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i>
-      <span>{{ 'profileView.actions.addAttachment' |
-        translate }}</span></button></div>
+  <h5 class="text-primary d-flex gap-2 align-items-center"><i class="pi pi-paperclip"></i><span>{{ 'profileOverview.sections.attachments' | translate }}</span></h5>
+  <button *ngIf="canAddAttachment" type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" (click)="addAttachment()"><i class="pi pi-plus"></i><span>{{ 'profileView.actions.addAttachment' | translate }}</span></button>
 </div>
-
-<div class="row g-3">
-  @if (attachments().length) {
-  @for (att of attachments(); track att.key) {
-  @let fileNote = noteForFile(att.file);
-  <div class="col-12 col-lg-6">
-    <div class="card h-100 attach-card" [ngClass]="{ 'attach-card--warn': fileNote }">
-      <div class="card-body py-3 px-3 d-flex align-items-center gap-3">
-        <div class="attach-icon border rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0">
-          <i class="pi pi-external-link" aria-hidden="true"></i>
-        </div>
-
-        <div class="flex-grow-1 min-w-0">
-          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-            <div class="text-muted small fw-semibold">
-              {{ att.titleKey || ('profileOverview.fields.attachment' | translate) }}
-            </div>
-
-            <span class="badge status-pill status-pill--info" *ngIf="fieldUnderReview(att.file?.resourceId)">
-              {{ 'profileOverview.status.pending' | translate }}
-            </span>
-          </div>
-
-          <div class="min-w-0">
-            @if (att.file) {
-            <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none text-body min-w-0 attach-link"
-              [ngClass]="{ 'attach-link--warn': fileNote }" (click)="open(att.file)">
-              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-              <span class="text-truncate d-inline-block">
-                {{ att.file.fileName }}
-              </span>
-              @if (fileNote) {
-              <i class="pi pi-exclamation-triangle text-warning" [pTooltip]="fileNote.note || fileNote.title"
-                tooltipPosition="top" aria-hidden="true"></i>
-              }
-            </a>
-            <div class="d-flex align-items-center gap-2 mt-2" *ngIf="canReplaceFile(att.file) || canDeleteAttachment(att)">
-              <button *ngIf="canReplaceFile(att.file)" type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
-                (click)="replaceInput.click()">
-                {{ 'profileView.actions.replaceFile' | translate }}
-              </button>
-              <button
-                *ngIf="canDeleteAttachment(att)"
-                type="button"
-                class="btn btn-sm btn-outline-danger rounded-pill"
-                [attr.aria-label]="'profileView.actions.deleteItem' | translate"
-                [pTooltip]="'profileView.actions.deleteItem' | translate"
-                tooltipPosition="top"
-                (click)="deleteAttachment(att)">
-                <i class="pi pi-trash" aria-hidden="true"></i>
-              </button>
-              <input #replaceInput type="file" class="d-none" accept=".pdf,.png,.jpeg,.jpg,.webp"
-                (change)="replaceAttachment(att, $event)" />
-            </div>
-            } @else {
-            <span class="text-muted">
-              {{ 'common.none' | translate }}
-            </span>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  }
-  } @else {
-  <div class="col-12">
-    <div class="text-muted">{{ 'common.none' | translate }}</div>
-  </div>
-  }
-</div>
+@if (attachments().length) {
+<div class="table-card rounded overflow-hidden"><div class="table-responsive"><table class="table table-bordered table-hover align-middle w-100">
+  <thead class="table-light"><tr><th>{{ 'profileOverview.fields.attachment' | translate }}</th><th>{{ 'profile.field.file' | translate }}</th><th>{{ 'profileOverview.table.actions' | translate }}</th></tr></thead>
+  <tbody>
+    @for (att of attachments(); track att.key) {
+      @let fileNote = noteForFile(att.file);
+      <tr [class.table-warning]="fileNote">
+        <td>{{ att.titleKey || ('profileOverview.fields.attachment' | translate) }}</td>
+        <td>@if (att.file) {<a class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link" [ngClass]="{ 'attach-link--warn': fileNote }" (click)="open(att.file)"><i class="pi pi-paperclip text-muted"></i><span class="text-truncate d-inline-block">{{ att.file.fileName }}</span><i *ngIf="fileNote" class="pi pi-exclamation-triangle text-warning" [pTooltip]="fileNote.note || fileNote.title"></i></a>} @else {<span class="text-muted">{{ 'common.none' | translate }}</span>}</td>
+        <td><div class="d-flex align-items-center gap-2"><button *ngIf="canReplaceFile(att.file)" type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="replaceInput.click()">{{ 'profileView.actions.replaceFile' | translate }}</button><button *ngIf="canDeleteAttachment(att)" type="button" class="btn btn-sm btn-outline-danger rounded-pill" [attr.aria-label]="'profileView.actions.deleteItem' | translate" [pTooltip]="'profileView.actions.deleteItem' | translate" (click)="deleteAttachment(att)"><i class="pi pi-trash"></i></button><input #replaceInput type="file" class="d-none" accept=".pdf,.png,.jpeg,.jpg,.webp" (change)="replaceAttachment(att, $event)" /></div></td>
+      </tr>
+    }
+  </tbody>
+</table></div></div>
+} @else {<div class="text-muted">{{ 'common.none' | translate }}</div>}

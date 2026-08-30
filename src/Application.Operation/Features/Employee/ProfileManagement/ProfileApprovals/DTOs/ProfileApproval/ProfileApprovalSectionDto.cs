@@ -11,4 +11,5 @@ public record ProfileApprovalSectionDto
     public ProfileApprovalItemDto? SectionReview { get; init; }
     public IReadOnlyList<ProfileApprovalItemDto> Items { get; init; } = [];
     public bool HasAttachments { get; init; }
+    public string? InternalReviewerNote { get; init; }
 }

@@ -162,7 +162,7 @@ export class StepAchievementsComponent implements OnInit {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('achievements')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(7)) {
         const msg = this.ds.hasUnsolvedCorrections(7)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notify.error(msg);
         return;

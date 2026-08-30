@@ -126,8 +126,18 @@ export function candidateTypeFromState(state: ProfileState): CandidateType | und
   return state.candidateType?.backendName as CandidateType | undefined;
 }
 
-export function candidateTypeNeedsSponsor(type: CandidateType | undefined): boolean {
-  return !!type && [CandidateType.ResidentQatar, CandidateType.WifeOfQatari].includes(type);
+export function isResidentProvider(provider: ProfileState['provider'] | string | null | undefined): boolean {
+  const normalizedProvider = (provider ?? '').toLowerCase();
+  return normalizedProvider === 'qatarpass' || normalizedProvider === 'qatarresidentotp';
+}
+
+export function candidateTypeNeedsSponsor(
+  type: CandidateType | undefined,
+  provider: ProfileState['provider'] | string | null | undefined
+): boolean {
+  return isResidentProvider(provider) &&
+    !!type &&
+    [CandidateType.ResidentQatar, CandidateType.WifeOfQatari].includes(type);
 }
 
 export function candidateTypeNeedsBirthCertificate(type: CandidateType | undefined): boolean {
@@ -139,22 +149,9 @@ export function candidateTypeNeedsMarriageCertificate(type: CandidateType | unde
 }
 
 export function candidateTypeIsResident(
-  type: CandidateType | undefined,
-  provider: 'Google' | 'QatarPass' | 'QatarResidentOtp'
+  provider: ProfileState['provider'] | string | null | undefined
 ): boolean {
-  if (!type) return false;
-
-  const normalizedProvider = (provider ?? '').toString().toLowerCase();
-  const providerAllowsGcc = ['qatarpass', 'qatarresidentotp'].includes(normalizedProvider);
-
-  return [
-    CandidateType.ResidentQatar,
-    CandidateType.PermanentResident,
-    CandidateType.QidHolder,
-    CandidateType.Qatari,
-    CandidateType.SonOfQatariMother,
-    CandidateType.WifeOfQatari
-  ].includes(type) || (type == CandidateType.GCC && providerAllowsGcc);
+  return isResidentProvider(provider);
 }
 
 /** Small helper to push a "required" error using VALIDATION_KEYS */
@@ -184,7 +181,7 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
   const backendType = candidateTypeFromState(s);
   const needsMarriageCertificate = candidateTypeNeedsMarriageCertificate(backendType);
   const needsBirthCertificate = candidateTypeNeedsBirthCertificate(backendType);
-  const isResident = candidateTypeIsResident(backendType, s.provider);
+  const isResident = candidateTypeIsResident(s.provider);
 
   if (!isFilledField(s.candidateType)) {
     addRequiredError(errors, 'basic', 'candidateType');
@@ -232,7 +229,7 @@ function validateBasicStep(s: ProfileState): StepValidationResult {
 function validatePersonalStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
 
-  const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s));
+  const needsSponsor = candidateTypeNeedsSponsor(candidateTypeFromState(s), s.provider);
   const isIndividualSponsor = s.sponsorType?.backendName === SponsorType.Individual;
 
   if (!isFilledField(s.fullNameAr)) {
@@ -328,8 +325,7 @@ function validatePersonalStep(s: ProfileState): StepValidationResult {
 /* ========== CONTACT STEP ========== */
 function validateContactStep(s: ProfileState): StepValidationResult {
   const errors: FieldError[] = [];
-  const backendType = candidateTypeFromState(s);
-  const isResident = candidateTypeIsResident(backendType, s.provider);
+  const isResident = candidateTypeIsResident(s.provider);
   const phoneE164 = s.phone?.e164Number ?? '';
   const isQatarPhone = phoneE164.startsWith('+974');
 

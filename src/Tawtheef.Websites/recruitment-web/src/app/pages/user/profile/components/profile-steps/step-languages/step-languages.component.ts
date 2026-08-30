@@ -52,6 +52,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
   submitLabelKey = input<string>('wizard.buttons.next');
   showBack = input<boolean>(true);
   requireChanges = input<boolean>(false);
+  additionOnly = input<boolean>(false);
 
   ds = inject(ProfileDataService);
   lookups = inject(ProfileLookupsService);
@@ -149,7 +150,7 @@ export class StepLanguagesComponent implements OnInit, OnDestroy {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('languages')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(9)) {
         const msg = this.ds.hasUnsolvedCorrections(9)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         return;

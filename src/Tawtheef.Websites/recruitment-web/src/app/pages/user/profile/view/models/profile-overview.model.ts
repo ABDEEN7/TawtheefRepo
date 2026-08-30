@@ -1,4 +1,7 @@
 import {GUID} from '../../../../../shared/types/guid.type';
+import { ProfileReviewTargetType } from '../../wizard-profile/models/profile-correction.model';
+
+export { ProfileReviewTargetType as ReviewTargetTypeEnum } from '../../wizard-profile/models/profile-correction.model';
 
 export enum UserProfileStatusEnum {
   InCreation = 0,
@@ -28,14 +31,8 @@ export enum ReviewStatusEnum {
   Pending = 1,
   Approved = 2,
   Rejected = 3,
-  NeedsCorrection = 4
-}
-
-export enum ReviewTargetTypeEnum {
-  Section = 1,
-  Field = 2,
-  Row = 3,
-  Attachment = 4
+  NeedsCorrection = 4,
+  Solved = 5
 }
 
 export enum ProfileChangeActionEnum {
@@ -54,7 +51,7 @@ export enum ProfileChangeRequestStatusEnum {
 
 export type UserProfileStatusCode = number;  // API returns enum as number
 export type ProfileSectionCode = number;     // API returns enum as number
-export type ReviewTargetTypeCode = number;   // API returns enum as number
+export type ReviewTargetTypeCode = ProfileReviewTargetType;
 export type ReviewStatusCode = number;       // API returns enum as number
 
 export interface MyProfileReviewSummaryDto {
@@ -86,6 +83,8 @@ export interface MyProfileReviewSectionDto {
   section: ProfileSectionCode; // numeric
   notesCount: number;
   notes: MyProfileReviewNoteDto[];
+  hasUserChanges?: boolean;
+  pendingItemsCount?: number;
 }
 
 export interface MyProfileReviewNoteDto {
