@@ -20,12 +20,15 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.QatarResidentOtp;
 
 public sealed class VerifyQatarResidentOtpCommandHandler(
-    IUnitOfWork uow, IMoiService moiService, UserManager<User> userManager,
-    ITokenService tokenService, TimeProvider timeProvider, IAppLogger logger,
+    IUnitOfWork uow,
+    IMoiService moiService,
+    UserManager<User> userManager,
+    ITokenService tokenService,
+    TimeProvider timeProvider,
+    IAppLogger logger,
     IIdentityFieldProtectionContext identityFieldProtectionContext
 ) : IRequestHandler<VerifyQatarResidentOtpCommand, IResult<AuthResponse>>
 {
-
     private readonly IAppLogger _log = logger.ForContext(typeof(VerifyQatarResidentOtpCommandHandler));
 
     public async Task<IResult<AuthResponse>> Handle(
@@ -63,8 +66,19 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             return Result.Fail<AuthResponse>(ErrorsCodes.UserNotFound);
         }
 
-        var storedPhone = NormalizePhone(user.PhoneNumber ?? string.Empty);
-        if (!string.Equals(storedPhone, normalizedPhone, StringComparison.Ordinal))
+        var pendingPhone = await userManager.GetAuthenticationTokenAsync(
+            user,
+            QatarResidentOtpConstants.Provider,
+            QatarResidentOtpConstants.PendingPhoneTokenName);
+
+        if (string.IsNullOrWhiteSpace(pendingPhone))
+        {
+            _log.Warning("Pending phone not found for QID. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
+            return Result.Fail<AuthResponse>(ErrorsCodes.InvalidCode);
+        }
+
+        var normalizedPendingPhone = NormalizePhone(pendingPhone);
+        if (!string.Equals(normalizedPendingPhone, normalizedPhone, StringComparison.Ordinal))
         {
             _log.Warning("Phone mismatch for QID. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
             return Result.Fail<AuthResponse>(ErrorsCodes.QatarResidentPhoneMismatch);
@@ -79,19 +93,19 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             QatarResidentOtpConstants.MaxOtpAttempts,
             QatarResidentOtpConstants.OtpLockDuration);
 
-        var persistOtp = await userManager.UpdateAsync(user);
-        if (!persistOtp.Succeeded)
-        {
-            _log.Error(
-                "Failed to persist OTP state after validation. UserId={UserId} Errors={Errors}",
-                user.Id,
-                string.Join(", ", persistOtp.Errors.Select(e => e.Description)));
-
-            return FailureFromIdentity<AuthResponse>(persistOtp);
-        }
-
         if (otpCheck.IsFailed)
         {
+            var persistOtp = await userManager.UpdateAsync(user);
+            if (!persistOtp.Succeeded)
+            {
+                _log.Error(
+                    "Failed to persist OTP state after validation. UserId={UserId} Errors={Errors}",
+                    user.Id,
+                    string.Join(", ", persistOtp.Errors.Select(e => e.Description)));
+
+                return FailureFromIdentity<AuthResponse>(persistOtp);
+            }
+
             _log.Warning(
                 "OTP validation failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
                 user.Id,
@@ -99,18 +113,6 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
                 string.Join(" | ", otpCheck.Errors.Select(e => e.Message)));
 
             return Result.Fail<AuthResponse>(otpCheck.Errors);
-        }
-
-        user.PhoneNumberConfirmed = true;
-        var update = await userManager.UpdateAsync(user);
-        if (!update.Succeeded)
-        {
-            _log.Error(
-                "Failed to confirm phone after OTP success. UserId={UserId} Errors={Errors}",
-                user.Id,
-                string.Join(", ", update.Errors.Select(e => e.Description)));
-
-            return FailureFromIdentity<AuthResponse>(update);
         }
 
         var personalInfoResult = await moiService.GetMoiPersonalInfoWithKawaderCheckAsync(
@@ -130,32 +132,40 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         }
 
         var personalInfo = personalInfoResult.Value;
-        using var trustedIdentityWriteScope = identityFieldProtectionContext.BeginTrustedIdentityWriteScope();
+        var synchronization = await uow.ExecuteInTransactionAsync<IResult<Unit>>(async ct =>
+        {
+            using (identityFieldProtectionContext.BeginTrustedIdentityWriteScope())
+            {
+                var userUpdate = await SynchronizeUserAsync(user, personalInfo, normalizedPhone);
+                if (userUpdate.IsFailed)
+                    return userUpdate;
 
-        var nameUpdate = await UpdateUserAsync(user, personalInfo);
-        if (nameUpdate.IsFailed)
+                await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, personalInfo, ct);
+            }
+
+            var claimsUpdate = await UpsertQatarResidentClaimsAsync(user, request, normalizedPhone);
+            if (claimsUpdate.IsFailed)
+                return claimsUpdate;
+
+            var removePendingPhone = await userManager.RemoveAuthenticationTokenAsync(
+                user,
+                QatarResidentOtpConstants.Provider,
+                QatarResidentOtpConstants.PendingPhoneTokenName);
+
+            return removePendingPhone.Succeeded
+                ? Result.Ok(Unit.Value)
+                : FailureFromIdentity<Unit>(removePendingPhone);
+        }, cancellationToken);
+
+        if (synchronization.IsFailed)
         {
             _log.Error(
-                "Failed to update user name after MOI lookup. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                "Qatar resident identity synchronization failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
                 user.Id,
                 qidMasked,
-                string.Join(" | ", nameUpdate.Errors.Select(e => e.Message)));
+                string.Join(" | ", synchronization.Errors.Select(e => e.Message)));
 
-            return Result.Fail<AuthResponse>(nameUpdate.Errors);
-        }
-
-        await UpdateUserProfileAsync(user.Id, normalizedQid, request.QidExpiry, personalInfo, cancellationToken);
-
-        var upsert = await UpsertQatarPassClaimsAsync(user, request, normalizedPhone);
-        if (upsert.IsFailed)
-        {
-            _log.Error(
-                "Upsert qatarresidentotp claims failed. UserId={UserId} Qid={QidMasked} Errors={Errors}",
-                user.Id,
-                qidMasked,
-                string.Join(" | ", upsert.Errors.Select(e => e.Message)));
-
-            return Result.Fail<AuthResponse>(upsert.Errors);
+            return Result.Fail<AuthResponse>(synchronization.Errors);
         }
 
         var tokens = await tokenService.IssueTokensAsync(user, QatarResidentOtpConstants.Provider, cancellationToken);
@@ -187,11 +197,7 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         if (userProfile is null)
         {
             // create new profile and fill data
-            userProfile = new UserProfile()
-            {
-                UserId = userId,
-                Provider = QatarResidentOtpConstants.Provider,
-            };
+            userProfile = new UserProfile() { UserId = userId, Provider = QatarResidentOtpConstants.Provider, };
             await repo.DbSet.AddAsync(userProfile, cancellationToken);
         }
 
@@ -203,34 +209,37 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
         var nationalityId = await ResolveNationalityIdAsync(personalInfo.NationalityCode, cancellationToken);
         userProfile.NationalityId = nationalityId ?? userProfile.NationalityId;
 
-        if (personalInfo.NationalityCode == MoiUtils.QatarNationalityCode)
-            userProfile.CandidateTypeId = CandidateTypeIds.Qatari;
-        else if (personalInfo.NationalityCode == MoiUtils.QidHolderNationalityCode)
-            userProfile.CandidateTypeId = CandidateTypeIds.QidHolder;
+        userProfile.CandidateTypeId = personalInfo.NationalityCode switch
+        {
+            MoiUtils.QatarNationalityCode => CandidateTypeIds.Qatari,
+            MoiUtils.QidHolderNationalityCode => CandidateTypeIds.QidHolder,
+            _ => userProfile.CandidateTypeId
+        };
 
         await uow.SaveChangesAsync(cancellationToken);
 
-        _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked, expiryDate);
+        _log.Information("UserProfile updated. UserId={UserId} Qid={QidMasked} Expiry={Expiry}", userId, qidMasked,
+            expiryDate);
     }
 
-    private async Task<IResult<Unit>> UpdateUserAsync(User user, MOEPersonalInfo personalInfo)
+    private async Task<IResult<Unit>> SynchronizeUserAsync(
+        User user,
+        MOEPersonalInfo personalInfo,
+        string normalizedPhone)
     {
         var englishName = personalInfo.EnglishFullName.Trim();
         var arabicName = personalInfo.ArabicFullName.Trim();
-        var updated = false;
 
         if (!string.IsNullOrWhiteSpace(englishName) &&
             !string.Equals(user.FullNameEn, englishName, StringComparison.Ordinal))
         {
             user.FullNameEn = englishName;
-            updated = true;
         }
 
         if (!string.IsNullOrWhiteSpace(arabicName) &&
             !string.Equals(user.FullNameAr, arabicName, StringComparison.Ordinal))
         {
             user.FullNameAr = arabicName;
-            updated = true;
         }
 
         if (user is ApplicantUser applicantUser)
@@ -239,32 +248,30 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             if (applicantUser.IsUserKawader != newIsKawader)
             {
                 applicantUser.IsUserKawader = newIsKawader;
-                updated = true;
             }
         }
 
-        if (!updated)
-            return Result.Ok(Unit.Value);
+        user.PhoneNumber = normalizedPhone;
+        user.PhoneNumberConfirmed = true;
 
         var update = await userManager.UpdateAsync(user);
         return update.Succeeded ? Result.Ok(Unit.Value) : FailureFromIdentity<Unit>(update);
     }
 
-    private async Task<IResult<Unit>> UpsertQatarPassClaimsAsync(
+    private async Task<IResult<Unit>> UpsertQatarResidentClaimsAsync(
         User user,
         VerifyQatarResidentOtpCommand data,
-        string? normalizedPhone)
+        string normalizedPhone)
     {
         var existing = await userManager.GetClaimsAsync(user);
 
         var claims = new (string Key, string? Value)[]
         {
-            ("qid", data.Qid),
-            ("qidExpiry", data.QidExpiry.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+            ("qid", data.Qid), ("qidExpiry", data.QidExpiry.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
             ("mobile", normalizedPhone)
         };
 
-        foreach (var (key, value) in claims)
+        foreach ((string key, string? value) in claims)
         {
             var type = $"qatarresidentotp:{key}";
             var current = existing.FirstOrDefault(c => c.Type == type);
@@ -272,21 +279,32 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
             if (string.IsNullOrWhiteSpace(value))
             {
                 if (current is not null)
-                    await userManager.RemoveClaimAsync(user, current);
+                {
+                    var remove = await userManager.RemoveClaimAsync(user, current);
+                    if (!remove.Succeeded)
+                        return FailureFromIdentity<Unit>(remove);
+                }
+
                 continue;
             }
 
             var next = new Claim(type, value);
 
             if (current is null)
-                await userManager.AddClaimAsync(user, next);
+            {
+                var add = await userManager.AddClaimAsync(user, next);
+                if (!add.Succeeded)
+                    return FailureFromIdentity<Unit>(add);
+            }
             else if (current.Value != value)
-                await userManager.ReplaceClaimAsync(user, current, next);
+            {
+                var replace = await userManager.ReplaceClaimAsync(user, current, next);
+                if (!replace.Succeeded)
+                    return FailureFromIdentity<Unit>(replace);
+            }
         }
 
-        user.PhoneNumberConfirmed = true;
-        var update = await userManager.UpdateAsync(user);
-        return update.Succeeded ? Result.Ok() : FailureFromIdentity<Unit>(update);
+        return Result.Ok(Unit.Value);
     }
 
     private static string NormalizePhone(string phone)
@@ -305,14 +323,13 @@ public sealed class VerifyQatarResidentOtpCommandHandler(
 
     private Guid ResolveGenderId(string genderCode)
     {
-        return genderCode == "MALE"? GenderIds.Male : GenderIds.Female;
+        return genderCode == "MALE" ? GenderIds.Male : GenderIds.Female;
     }
 
-    public async Task<Guid?> ResolveNationalityIdAsync(int nationalityCode, CancellationToken cancellationToken)
+    private async Task<Guid?> ResolveNationalityIdAsync(int nationalityCode, CancellationToken cancellationToken)
     {
         var nationality = await uow.GetEntityRepository<Country>()
             .DbSet.AsNoTracking().FirstOrDefaultAsync(country => country.Code == nationalityCode, cancellationToken);
         return nationality?.Id;
     }
 }
-

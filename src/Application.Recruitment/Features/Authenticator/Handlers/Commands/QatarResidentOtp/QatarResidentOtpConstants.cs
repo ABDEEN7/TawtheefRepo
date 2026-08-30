@@ -5,6 +5,7 @@ internal static class QatarResidentOtpConstants
     public const string Provider = "QatarResidentOtp";
     public const string DisplayName = "Qatar Resident";
     public const string PlaceholderEmailDomain = "@login.local";
+    public const string PendingPhoneTokenName = "PendingPhoneNumber";
     public const int OtpLength = 6;
     public const int OtpExpiryMinutes = 10;
     public const int MaxOtpAttempts = 5;
