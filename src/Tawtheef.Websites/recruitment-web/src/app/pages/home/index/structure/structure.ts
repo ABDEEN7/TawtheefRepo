@@ -450,24 +450,382 @@ export class Structure implements AfterViewInit {
       title: 'structure.nodes.private-education-affairs',
       type: 'leadership',
       expanded: false,
+      children: [
+        {
+          id: 'private-education-office',
+          title: 'structure.nodes.assistant-undersecretary-office',
+          type: 'special',
+        },
+        {
+          id: 'daycare-centers',
+          title: 'structure.nodes.daycare-centers',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'daycare-licensing',
+              title: 'structure.nodes.daycare-licensing',
+              type: 'section',
+            },
+            {
+              id: 'daycare-supervision-control',
+              title: 'structure.nodes.daycare-supervision-control',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'private-school-licensing',
+          title: 'structure.nodes.private-school-licensing',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'licensing-tuition-fees',
+              title: 'structure.nodes.licensing-tuition-fees',
+              type: 'section',
+            },
+            {
+              id: 'private-school-registration',
+              title: 'structure.nodes.private-school-registration',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'private-schools-kindergartens',
+          title: 'structure.nodes.private-schools-kindergartens',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'private-admin-supervision',
+              title: 'structure.nodes.private-admin-supervision',
+              type: 'section',
+            },
+            {
+              id: 'private-academic-supervision',
+              title: 'structure.nodes.private-academic-supervision',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'educational-service-centers',
+          title: 'structure.nodes.educational-service-centers',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'educational-centers-licensing',
+              title: 'structure.nodes.educational-centers-licensing',
+              type: 'section',
+            },
+            {
+              id: 'educational-centers-supervision',
+              title: 'structure.nodes.educational-centers-supervision',
+              type: 'section',
+            },
+          ],
+        },
+      ],
     },
     {
       id: 'evaluation-affairs',
       title: 'structure.nodes.evaluation-affairs',
       type: 'leadership',
       expanded: false,
+      children: [
+        {
+          id: 'evaluation-office',
+          title: 'structure.nodes.assistant-undersecretary-office',
+          type: 'special',
+        },
+        {
+          id: 'student-assessment',
+          title: 'structure.nodes.student-assessment',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'examination-affairs',
+              title: 'structure.nodes.examination-affairs',
+              type: 'section',
+            },
+            {
+              id: 'international-examinations',
+              title: 'structure.nodes.international-examinations',
+              type: 'section',
+            },
+            {
+              id: 'literary-subjects-assessment',
+              title: 'structure.nodes.literary-subjects-assessment',
+              type: 'section',
+            },
+            {
+              id: 'scientific-subjects-assessment',
+              title: 'structure.nodes.scientific-subjects-assessment',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'school-assessment',
+          title: 'structure.nodes.school-assessment',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'daycare-kindergarten-assessment',
+              title: 'structure.nodes.daycare-kindergarten-assessment',
+              type: 'section',
+            },
+            {
+              id: 'government-schools-assessment',
+              title: 'structure.nodes.government-schools-assessment',
+              type: 'section',
+            },
+            {
+              id: 'private-schools-assessment',
+              title: 'structure.nodes.private-schools-assessment',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'student-information-center',
+          title: 'structure.nodes.student-information-center',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'examination-support',
+              title: 'structure.nodes.examination-support',
+              type: 'section',
+            },
+            {
+              id: 'certificate-equivalence-authentication',
+              title: 'structure.nodes.certificate-equivalence-authentication',
+              type: 'section',
+            },
+          ],
+        },
+      ],
     },
     {
       id: 'higher-education-affairs',
       title: 'structure.nodes.higher-education-affairs',
       type: 'leadership',
       expanded: false,
+      children: [
+        {
+          id: 'higher-education-office',
+          title: 'structure.nodes.assistant-undersecretary-office',
+          type: 'special',
+        },
+        {
+          id: 'higher-education-institutions-affairs',
+          title: 'structure.nodes.higher-education-institutions-affairs',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'higher-education-licensing',
+              title: 'structure.nodes.higher-education-licensing',
+              type: 'section',
+            },
+            {
+              id: 'higher-education-supervision',
+              title: 'structure.nodes.higher-education-supervision',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'scholarships',
+          title: 'structure.nodes.scholarships',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'scholarships-admission-guidance',
+              title: 'structure.nodes.scholarships-admission-guidance',
+              type: 'section',
+            },
+            {
+              id: 'domestic-scholarships',
+              title: 'structure.nodes.domestic-scholarships',
+              type: 'section',
+            },
+            {
+              id: 'external-scholarships',
+              title: 'structure.nodes.external-scholarships',
+              type: 'section',
+            },
+            {
+              id: 'scholarships-admin-financial-support',
+              title: 'structure.nodes.scholarships-admin-financial-support',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'university-degree-equivalence',
+          title: 'structure.nodes.university-degree-equivalence',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'degree-equivalence',
+              title: 'structure.nodes.degree-equivalence',
+              type: 'section',
+            },
+            {
+              id: 'degree-authentication',
+              title: 'structure.nodes.degree-authentication',
+              type: 'section',
+            },
+          ],
+        },
+      ],
     },
     {
       id: 'shared-services-affairs',
       title: 'structure.nodes.shared-services-affairs',
       type: 'leadership',
       expanded: false,
+      children: [
+        {
+          id: 'shared-services-office',
+          title: 'structure.nodes.assistant-undersecretary-office',
+          type: 'special',
+        },
+        {
+          id: 'human-resources',
+          title: 'structure.nodes.human-resources',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'hr-planning',
+              title: 'structure.nodes.hr-planning',
+              type: 'section',
+            },
+            {
+              id: 'staff-affairs',
+              title: 'structure.nodes.staff-affairs',
+              type: 'section',
+            },
+            {
+              id: 'teachers-admin-technical-affairs',
+              title: 'structure.nodes.teachers-admin-technical-affairs',
+              type: 'section',
+            },
+            {
+              id: 'salaries-wages',
+              title: 'structure.nodes.salaries-wages',
+              type: 'section',
+            },
+            {
+              id: 'recruitment-employment',
+              title: 'structure.nodes.recruitment-employment',
+              type: 'section',
+            },
+            {
+              id: 'hr-services',
+              title: 'structure.nodes.hr-services',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'financial-affairs',
+          title: 'structure.nodes.financial-affairs',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'financial-accounting',
+              title: 'structure.nodes.financial-accounting',
+              type: 'section',
+            },
+            {
+              id: 'budget',
+              title: 'structure.nodes.budget',
+              type: 'section',
+            },
+            {
+              id: 'treasury',
+              title: 'structure.nodes.treasury',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'procurement-tenders',
+          title: 'structure.nodes.procurement-tenders',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'procurement',
+              title: 'structure.nodes.procurement',
+              type: 'section',
+            },
+            {
+              id: 'tenders-bidding-contracts',
+              title: 'structure.nodes.tenders-bidding-contracts',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'general-services',
+          title: 'structure.nodes.general-services',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'admin-services',
+              title: 'structure.nodes.admin-services',
+              type: 'section',
+            },
+            {
+              id: 'building-services',
+              title: 'structure.nodes.building-services',
+              type: 'section',
+            },
+            {
+              id: 'waste-management',
+              title: 'structure.nodes.waste-management',
+              type: 'section',
+            },
+            {
+              id: 'warehouses',
+              title: 'structure.nodes.warehouses',
+              type: 'section',
+            },
+          ],
+        },
+        {
+          id: 'health-safety',
+          title: 'structure.nodes.health-safety',
+          type: 'department',
+          expanded: false,
+          children: [
+            {
+              id: 'security-safety',
+              title: 'structure.nodes.security-safety',
+              type: 'section',
+            },
+            {
+              id: 'health-nutrition',
+              title: 'structure.nodes.health-nutrition',
+              type: 'section',
+            },
+          ],
+        },
+      ],
     },
   ];
 
@@ -556,21 +914,21 @@ export class Structure implements AfterViewInit {
   }
 
   isEducationAffairsExpanded(): boolean {
-    return this.isNodeExpanded(this.assistantUndersecretaries, 'education-affairs');
+    return this.assistantUndersecretaries.some((assistant) => assistant.expanded);
   }
 
   getEducationBranchHeight(): number {
-    const educationAffairs = this.assistantUndersecretaries.find(
-      (assistant) => assistant.id === 'education-affairs',
+    const expandedAssistant = this.assistantUndersecretaries.find(
+      (assistant) => assistant.expanded,
     );
 
-    if (!educationAffairs?.expanded) {
+    if (!expandedAssistant?.children?.length) {
       return 0;
     }
 
     let height = 160;
 
-    educationAffairs.children?.forEach((node) => {
+    expandedAssistant.children.forEach((node) => {
       height += 96;
 
       if (node.expanded && node.children?.length) {
