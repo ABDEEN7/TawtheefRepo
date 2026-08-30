@@ -213,7 +213,7 @@ export class StepExperienceComponent implements OnInit {
       const hasNotes = this.ds.hasUnsolvedCorrections(5) || this.ds.hasUnsolvedCorrections(6);
       if (this.requireChanges() || hasNotes) {
         const msg = hasNotes
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notify.error(msg);
         return;

@@ -1,9 +1,11 @@
 ﻿using Application.Recruitment.Features.Profile.Command.RevisionOperation;
+using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
 using MediatR;
 using FluentResults;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Validations;
+using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -19,6 +21,7 @@ public sealed class ReviseProfileSkillsHandler(
     public async Task<IResult<Unit>> Handle(ReviseProfileSkillsCommand cmd, CancellationToken ct)
     {
         var skillRepo = uow.GetEntityRepository<ProfileSkill>();
+        var reviewRepo = uow.GetEntityRepository<ReviewItem>();
 
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
@@ -31,9 +34,21 @@ public sealed class ReviseProfileSkillsHandler(
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
-        // If user cleared the list in edit mode => remove all existing skills.
+        var sectionCorrectionIsActionable = await reviewRepo.DbSet.AsNoTracking().AnyAsync(item =>
+            item.UserProfileId == profile.Id &&
+            item.ProfileChangeId == null &&
+            !item.IsDeleted &&
+            item.Section == ProfileSection.Skills &&
+            item.TargetType == ReviewTargetType.Section &&
+            (item.Status == ReviewStatus.NeedsCorrection ||
+             item.Status == ReviewStatus.Rejected ||
+             (item.Status == ReviewStatus.Solved && item.ReviewedAtUtc != null)), ct);
+
         if (cmd.Request.Skills.Count == 0)
         {
+            if (!sectionCorrectionIsActionable && profile.Skills is { Count: > 0 })
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
             if (profile.Skills is { Count: > 0 })
                 skillRepo.DbSet.RemoveRange(profile.Skills);
 
@@ -51,9 +66,15 @@ public sealed class ReviseProfileSkillsHandler(
         // Existing skills indexed by SkillId
         var existing = profile.Skills ?? new List<ProfileSkill>();
         var existingBySkillId = existing.ToDictionary(x => x.SkillId);
+        if (!sectionCorrectionIsActionable && existing.Any(row =>
+                !incomingBySkillId.TryGetValue(row.SkillId, out var incoming) ||
+                incoming.LevelId != row.LevelId))
+            return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+
+        var added = false;
 
         // 1) Update existing + Add missing
-        foreach (var (skillId, incoming) in incomingBySkillId)
+        foreach ((Guid skillId, SkillUpsertDto incoming) in incomingBySkillId)
         {
             if (existingBySkillId.TryGetValue(skillId, out var row))
             {
@@ -63,12 +84,15 @@ public sealed class ReviseProfileSkillsHandler(
             }
             else
             {
-                await skillRepo.AddAsync(new ProfileSkill
+                var entity = new ProfileSkill
                 {
                     UserProfileId = profile.Id,
                     SkillId = incoming.SkillId,
                     LevelId = incoming.LevelId
-                });
+                };
+                await skillRepo.AddAsync(entity, ct);
+                existing.Add(entity);
+                added = true;
             }
         }
 
@@ -80,7 +104,10 @@ public sealed class ReviseProfileSkillsHandler(
         if (toRemove.Count > 0)
             skillRepo.DbSet.RemoveRange(toRemove);
 
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
+        if (sectionCorrectionIsActionable)
+            await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
+        else if (added)
+            await ReviewItemSaveHelper.MarkSectionChangedByAdditionAsync(uow, profile, ProfileSection.Skills, ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

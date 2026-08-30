@@ -32,15 +32,6 @@ internal sealed class DashboardEmployeesReader(
         return Result.Ok(new PaginatedResult<TeamPerformanceRowDto>(rows, total, request.PageNumber, request.PageSize));
     }
 
-    public async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(GetTeamPerformanceQuery request,
-        CancellationToken ct)
-    {
-        var contextResult = await accessContextProvider.GetAsync(ct);
-        if (contextResult.IsFailed) return Result.Fail(contextResult.Errors);
-
-        return await ReadExportAsync(request, contextResult.Value, ct);
-    }
-
     internal async Task<Result<IReadOnlyList<TeamPerformanceRowDto>>> ReadExportAsync(
         GetTeamPerformanceQuery request,
         DashboardAccessContext context,
@@ -66,7 +57,6 @@ internal sealed class DashboardEmployeesReader(
         GetTeamPerformanceQuery request,
         DashboardAccessContext context)
     {
-
         var employees = scope.DashboardEmployees(context);
         if (context.Scope != DashboardScope.User && request.EmployeeId.HasValue)
             employees = employees.Where(user => user.Id == request.EmployeeId.Value);
@@ -92,51 +82,75 @@ internal sealed class DashboardEmployeesReader(
             request.ToDateUtc,
             DateTime.UtcNow);
 
-        var assignments = scope.Assignments(context, request.EmployeeId)
-            .Where(x =>
-                x.AssignedAtUtc >= range.FromUtc &&
-                x.AssignedAtUtc < range.ToExclusiveUtc);
-        
+        var assignments = scope.Assignments(context, request.EmployeeId);
+
         var finalizedReviews = scope.CompletedReviews(context)
             .Where(log =>
                 log.ActionType == UserProfileLogConstants.ActionTypes.ProfileReviewFinalized &&
                 log.CreatedDate >= range.FromUtc &&
                 log.CreatedDate < range.ToExclusiveUtc);
-        
+
         var changes = uow.GetEntityRepository<ProfileChangeRequest>()
             .DbSet
             .AsNoTracking();
-        
-        return Result.Ok(employees.Select(employee => new TeamPerformanceRowDto
+
+        var metrics = employees.Select(employee => new
         {
-            EmployeeId = employee.Id,
-            Name = isArabic ? employee.FullNameAr : employee.FullNameEn,
-            EmployeeNumber = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.EmployeeNumber
-                : null,
-            DepartmentName = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.Department
-                : null,
-            JobDescription = employee is EmployeeUser && (employee as EmployeeUser)!.EmployeeProfile != null
-                ? (employee as EmployeeUser)!.EmployeeProfile!.JobTitle
-                : null,
-            AssignedTasks = assignments.Count(x =>
-                x.EmployeeId == employee.Id),
+            Employee = employee,
             CompletedTasks = finalizedReviews.Count(log =>
                 log.PerformedById == employee.Id),
-            RemainingTasks = assignments.Where(x =>
-                    x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
+            RemainingTasks = assignments
+                .Where(x =>
+                    x.EmployeeId == employee.Id &&
+                    x.IsActive &&
+                    x.UnassignedAtUtc == null &&
                     (x.UserProfile!.Status != UserProfileStatus.Approved ||
-                     changes.Any(change => change.UserProfileId == x.UserProfileId &&
-                                           (change.Status == ProfileChangeRequestStatus.Pending ||
-                                            change.Status == ProfileChangeRequestStatus.UnderReview))))
-                .Select(x => x.UserProfileId).Distinct().Count(),
+                     changes.Any(change =>
+                         change.UserProfileId == x.UserProfileId &&
+                         (change.Status == ProfileChangeRequestStatus.Pending ||
+                          change.Status == ProfileChangeRequestStatus.UnderReview))))
+                .Select(x => x.UserProfileId)
+                .Distinct()
+                .Count(),
             OverdueTasks = assignments
-                .Where(x => x.EmployeeId == employee.Id && x.IsActive && x.UnassignedAtUtc == null &&
-                            x.AssignedAtUtc < overdueCutoff)
+                .Where(x =>
+                    x.EmployeeId == employee.Id &&
+                    x.IsActive &&
+                    x.UnassignedAtUtc == null &&
+                    x.AssignedAtUtc < overdueCutoff &&
+                    (x.UserProfile!.Status != UserProfileStatus.Approved ||
+                     changes.Any(change =>
+                         change.UserProfileId == x.UserProfileId &&
+                         (change.Status == ProfileChangeRequestStatus.Pending ||
+                          change.Status == ProfileChangeRequestStatus.UnderReview))))
                 .Select(x => x.UserProfileId)
                 .Distinct()
                 .Count()
+        });
+
+        return Result.Ok(metrics.Select(x => new TeamPerformanceRowDto
+        {
+            EmployeeId = x.Employee.Id,
+            Name = isArabic ? x.Employee.FullNameAr : x.Employee.FullNameEn,
+            EmployeeNumber =
+                x.Employee is EmployeeUser &&
+                (x.Employee as EmployeeUser)!.EmployeeProfile != null
+                    ? (x.Employee as EmployeeUser)!.EmployeeProfile!.EmployeeNumber
+                    : null,
+            DepartmentName =
+                x.Employee is EmployeeUser &&
+                (x.Employee as EmployeeUser)!.EmployeeProfile != null
+                    ? (x.Employee as EmployeeUser)!.EmployeeProfile!.Department
+                    : null,
+            JobDescription =
+                x.Employee is EmployeeUser &&
+                (x.Employee as EmployeeUser)!.EmployeeProfile != null
+                    ? (x.Employee as EmployeeUser)!.EmployeeProfile!.JobTitle
+                    : null,
+            CompletedTasks = x.CompletedTasks,
+            RemainingTasks = x.RemainingTasks,
+            OverdueTasks = x.OverdueTasks,
+            AssignedTasks = x.CompletedTasks + x.RemainingTasks
         }));
     }
 

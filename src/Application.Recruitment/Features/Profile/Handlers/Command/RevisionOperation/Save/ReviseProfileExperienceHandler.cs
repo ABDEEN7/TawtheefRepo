@@ -2,6 +2,7 @@
 using Application.Recruitment.Features.Profile.Command.RevisionOperation;
 using Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 using Application.Recruitment.Features.Profile.Handlers.Command.SaveOperation;
+using Application.Recruitment.Features.Profile.Validators;
 using MediatR;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
@@ -72,25 +73,42 @@ public sealed class ReviseProfileExperienceHandler(
         var existingTrainings = await trainingRepo.DbSet
             .Where(x => x.UserProfileId == profile.Id)
             .ToListAsync(ct);
+
+        var experienceDuplicateValidation =
+            ProfileDuplicateValidation.ValidateExperiences(experiences, existingExperiences);
+        if (experienceDuplicateValidation.IsFailed)
+            return Result.Fail<Unit>(experienceDuplicateValidation.Errors);
+
+        var trainingDuplicateValidation =
+            ProfileDuplicateValidation.ValidateTrainingCourses(trainings, existingTrainings);
+        if (trainingDuplicateValidation.IsFailed)
+            return Result.Fail<Unit>(trainingDuplicateValidation.Errors);
+
         var allowedExperienceIds = await reviewRepo.DbSet
-    .AsNoTracking()
-    .Where(r =>
-        r.UserProfileId == profile.Id &&
-        r.Section == ProfileSection.Experience &&
-        r.TargetType == ReviewTargetType.Row &&
-        (r.Status == ReviewStatus.NeedsCorrection ||
-         r.Status == ReviewStatus.Solved) &&
-        r.EntityId != null)
-    .Select(r => r.EntityId!.Value)
-    .ToHashSetAsync(ct);
+            .AsNoTracking()
+            .Where(r =>
+                r.UserProfileId == profile.Id &&
+                r.ProfileChangeId == null &&
+                !r.IsDeleted &&
+                r.Section == ProfileSection.Experience &&
+                r.TargetType == ReviewTargetType.Row &&
+                (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Rejected ||
+                 r.Status == ReviewStatus.Solved) &&
+                r.EntityId != null)
+            .Select(r => r.EntityId!.Value)
+            .ToHashSetAsync(ct);
 
         var allowedTrainingIds = await reviewRepo.DbSet
             .AsNoTracking()
             .Where(r =>
                 r.UserProfileId == profile.Id &&
+                r.ProfileChangeId == null &&
+                !r.IsDeleted &&
                 r.Section == ProfileSection.TrainingCourses &&
                 r.TargetType == ReviewTargetType.Row &&
                 (r.Status == ReviewStatus.NeedsCorrection ||
+                 r.Status == ReviewStatus.Rejected ||
                  r.Status == ReviewStatus.Solved) &&
                 r.EntityId != null)
             .Select(r => r.EntityId!.Value)
@@ -114,21 +132,42 @@ public sealed class ReviseProfileExperienceHandler(
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
-            if (!dto.Id.HasValue || dto.Id.Value == Guid.Empty)
+            var isNew = !dto.Id.HasValue || dto.Id == Guid.Empty;
+            if (!isNew && !allowedExperienceIds.Contains(dto.Id!.Value))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            if (!allowedExperienceIds.Contains(dto.Id.Value))
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
-
-            var existing = existingExperiences
-                .FirstOrDefault(x => x.Id == dto.Id.Value);
-
-            if (existing is null)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+            var existing = isNew
+                ? null
+                : existingExperiences.FirstOrDefault(x => x.Id == dto.Id!.Value);
 
             var finalCertId = certResult.Value ?? dto.CertificateId; // keep null if no file/no existing
-            // If you require certificate always, enforce it here (similar to education logic).
+            if (existing is null)
+            {
+                if (!isNew)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
+                var entity = new Experience
+                {
+                    Id = Guid.NewGuid(),
+                    UserProfileId = profile.Id,
+                    EmployerName = dto.EmployerName,
+                    JobTitle = dto.JobTitle,
+                    StartDate = dto.StartDate,
+                    EndDate = dto.EndDate,
+                    CountryId = dto.CountryId,
+                    Description = dto.Description,
+                    QualificationId = dto.QualificationId,
+                    CertificateId = finalCertId ?? Guid.Empty
+                };
+                await experienceRepo.DbSet.AddAsync(entity, ct);
+                profile.Experiences ??= [];
+                profile.Experiences.Add(entity);
+                await ReviewItemSaveHelper.CreateSolvedRowAsync(
+                    uow, profile, ProfileSection.Experience,
+                    ProfileReviewConstants.EntityNames.Experience, entity.Id, ct);
+            }
+            else
+            {
                 existing.EmployerName = dto.EmployerName;
                 existing.JobTitle = dto.JobTitle;
                 existing.StartDate = dto.StartDate;
@@ -143,7 +182,7 @@ public sealed class ReviseProfileExperienceHandler(
                     existing.CertificateId = certResult.Value.Value;
                 else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
                     existing.CertificateId = dto.CertificateId.Value;
-            
+            }
         }
 
         // ===== Trainings UPSERT =====
@@ -163,33 +202,59 @@ public sealed class ReviseProfileExperienceHandler(
             if (certResult.IsFailed)
                 return Result.Fail<Unit>(certResult.Errors);
 
-            if (!dto.Id.HasValue || dto.Id.Value == Guid.Empty)
+            var isNew = !dto.Id.HasValue || dto.Id == Guid.Empty;
+            if (!isNew && !allowedTrainingIds.Contains(dto.Id!.Value))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            if (!allowedTrainingIds.Contains(dto.Id.Value))
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
-
-            var existing = existingTrainings
-                .FirstOrDefault(x => x.Id == dto.Id.Value);
+            var existing = isNew
+                ? null
+                : existingTrainings.FirstOrDefault(x => x.Id == dto.Id!.Value);
 
             if (existing is null)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+            {
+                if (!isNew)
+                    return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            existing.Title = dto.Title;
-            existing.Provider = dto.Provider;
-            existing.StartDate = dto.StartDate;
-            existing.EndDate = dto.EndDate;
-            existing.CountryId = dto.CountryId;
-            existing.Description = dto.Description;
+                var entity = new TrainingCourse
+                {
+                    Id = Guid.NewGuid(),
+                    UserProfileId = profile.Id,
+                    Title = dto.Title,
+                    Provider = dto.Provider,
+                    StartDate = dto.StartDate,
+                    EndDate = dto.EndDate,
+                    CountryId = dto.CountryId,
+                    Description = dto.Description,
+                    CertificateId = certResult.Value ?? dto.CertificateId ?? Guid.Empty
+                };
+                await trainingRepo.DbSet.AddAsync(entity, ct);
+                profile.TrainingCourses ??= [];
+                profile.TrainingCourses.Add(entity);
+                await ReviewItemSaveHelper.CreateSolvedRowAsync(
+                    uow, profile, ProfileSection.TrainingCourses,
+                    ProfileReviewConstants.EntityNames.TrainingCourse, entity.Id, ct);
+            }
+            else
+            {
+                existing.Title = dto.Title;
+                existing.Provider = dto.Provider;
+                existing.StartDate = dto.StartDate;
+                existing.EndDate = dto.EndDate;
+                existing.CountryId = dto.CountryId;
+                existing.Description = dto.Description;
 
-            if (certResult.Value is not null)
-                existing.CertificateId = certResult.Value.Value;
-            else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
-                existing.CertificateId = dto.CertificateId.Value;
+                if (certResult.Value is not null)
+                    existing.CertificateId = certResult.Value.Value;
+                else if (dto.CertificateId is not null && dto.CertificateId != Guid.Empty)
+                    existing.CertificateId = dto.CertificateId.Value;
+            }
         }
 
         foreach (var dto in experiences)
         {
+            if (!dto.Id.HasValue || dto.Id == Guid.Empty)
+                continue;
+
             await ReviewItemSaveHelper.MarkRowSolvedAsync(
                 uow,
                 profile,
@@ -200,6 +265,9 @@ public sealed class ReviseProfileExperienceHandler(
 
         foreach (var dto in trainings)
         {
+            if (!dto.Id.HasValue || dto.Id == Guid.Empty)
+                continue;
+
             await ReviewItemSaveHelper.MarkRowSolvedAsync(
                 uow,
                 profile,
@@ -269,35 +337,27 @@ public sealed class ReviseProfileExperienceHandler(
         var uploadResult = await mediator.Send(
             new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
             cancellationToken);
-        if (uploadResult.IsFailed)
-            return Result.Fail<Guid?>(uploadResult.Errors);
-
-        return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
     }
 
     static Result ValidateTextLengths(
         IEnumerable<ExperienceUpsertDto> experiencesToValidate,
         IEnumerable<TrainingCourseUpsertDto> trainingsToValidate)
     {
-        foreach (var experience in experiencesToValidate)
+        if (experiencesToValidate.Any(experience => !string.IsNullOrEmpty(experience.Description) &&
+                                                    experience.Description.Length >
+                                                    ProfileLimits.ExperienceDescriptionMaxLength))
         {
-            if (!string.IsNullOrEmpty(experience.Description) &&
-                experience.Description.Length > ProfileLimits.ExperienceDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.ExperienceDescriptionTooLong);
-            }
+            return Result.Fail(ErrorsCodes.ExperienceDescriptionTooLong);
         }
 
-        foreach (var training in trainingsToValidate)
-        {
-            if (!string.IsNullOrEmpty(training.Description) &&
-                training.Description.Length > ProfileLimits.TrainingDescriptionMaxLength)
-            {
-                return Result.Fail(ErrorsCodes.TrainingDescriptionTooLong);
-            }
-        }
-
-        return Result.Ok();
+        return trainingsToValidate.Any(training => !string.IsNullOrEmpty(training.Description) &&
+                                                   training.Description.Length >
+                                                   ProfileLimits.TrainingDescriptionMaxLength)
+            ? Result.Fail(ErrorsCodes.TrainingDescriptionTooLong)
+            : Result.Ok();
     }
 
     static Result ValidateQualifications(
@@ -325,5 +385,3 @@ public sealed class ReviseProfileExperienceHandler(
         return Result.Ok();
     }
 }
-
-

@@ -110,6 +110,24 @@ export class StepContactComponent implements OnInit, OnDestroy {
   private readonly GOOGLE_PROVIDER = 'google';
   private readonly QATAR_PASS_PROVIDER = 'qatarpass';
   private readonly QATAR_RESIDENT_PROVIDER = 'qatarresidentotp';
+
+  get showNationalAddressUploader(): boolean {
+    if (this.profileService.isChangeRequestMode()) return false;
+    if (!this.profileService.isRevisionMode()) return true;
+    return !this.hasPersistedNationalAddressCertificate;
+  }
+
+  get isNewNationalAddressRequirement(): boolean {
+    return this.profileService.isRevisionMode() &&
+      this.ds.isResidentQatar &&
+      !this.hasPersistedNationalAddressCertificate;
+  }
+
+  private get hasPersistedNationalAddressCertificate(): boolean {
+    const resourceId = this.ds.state().naFile?.resourceId;
+    return !!resourceId && resourceId !== 'local';
+  }
+
   // state
   phoneValue = signal<string | null>(null);
   phoneOtp = signal('');
@@ -653,7 +671,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     this.naFileError.set(null);
     setLocalFile(this.naLocalFile, file);
     this.ds.up('naFileName', file.name);
-    this.ds.up('naFile', { resourceId: 'local', fileName: file.name, file: file } as any);
+    this.ds.up('naFile', { resourceId: 'local', resourceName: file.name, file });
     input.value = '';
   }
   async onNext(): Promise<void> {
@@ -685,7 +703,7 @@ export class StepContactComponent implements OnInit, OnDestroy {
     if (signature && signature === this.lastSubmittedSignature && this.ds.isStepSubmitted('contact')) {
       if (this.requireChanges() || this.ds.hasUnsolvedCorrections(3)) {
         const msg = this.ds.hasUnsolvedCorrections(3)
-          ? 'يجب عمل التعديلات المذكورة في ملاحظات المراجع'
+          ? this.translate.instant('wizard.correction.applyReviewerNotes')
           : this.translate.instant('profileView.notifications.noChanges');
         this.notificationService.error(msg);
         this.savingContact.set(false);

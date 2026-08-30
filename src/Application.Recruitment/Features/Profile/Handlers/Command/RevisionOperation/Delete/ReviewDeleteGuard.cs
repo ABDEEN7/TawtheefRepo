@@ -65,11 +65,13 @@ internal static class ReviewDeleteGuard
             .AsNoTracking()
             .AnyAsync(item =>
                 item.UserProfileId == userProfileId &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == section &&
                 item.TargetType == targetType &&
-                item.ReviewedAtUtc != null &&
-                !string.IsNullOrWhiteSpace(item.ReviewerNote) &&
                 (item.Status == ReviewStatus.NeedsCorrection || item.Status == ReviewStatus.Rejected || item.Status == ReviewStatus.Solved) &&
+                ((item.ReviewedAtUtc != null && !string.IsNullOrWhiteSpace(item.ReviewerNote)) ||
+                 (item.Status == ReviewStatus.Solved && item.ReviewedAtUtc == null && item.ReviewerNote == null)) &&
                 (targetType == ReviewTargetType.Attachment
                     ? item.ResourceId == targetId
                     : item.EntityId == targetId),
@@ -88,6 +90,8 @@ internal static class ReviewDeleteGuard
             .AsNoTracking()
             .AnyAsync(item =>
                 item.UserProfileId == userProfileId &&
+                item.ProfileChangeId == null &&
+                !item.IsDeleted &&
                 item.Section == section &&
                 item.TargetType == ReviewTargetType.Section &&
                 item.ReviewedAtUtc != null &&

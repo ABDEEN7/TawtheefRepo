@@ -41,7 +41,7 @@ public sealed class ReviseProfileSkillDeleteHandler(IUnitOfWork uow) :
             return Result.Fail<Unit>(ErrorsCodes.AttachmentNotEditableInRevision);
 
         await repo.DeleteAsync(target);
-        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct, force: true);
+        await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Skills, ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

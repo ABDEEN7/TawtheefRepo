@@ -1,79 +1,226 @@
-<p class="text-muted mb-3">{{ 'distribution.dialog.auto.subtitle' | translate }}</p>
+<div class="auto-assign-dialog">
+  <header class="dialog-header">
+    <p class="text-muted mb-0">
+      {{ 'distribution.dialog.auto.subtitle' | translate }}
+    </p>
+  </header>
 
-<div class="row g-3 mb-3">
-  <div class="col-md-6">
-    <label class="form-label">{{ 'distribution.dialog.auto.count' | translate }}</label>
-    <p-input-number
-      [ngModel]="limit()"
-      (onInput)="limit.set($event.value)"
-      mode="decimal"
-      inputStyleClass="form-control"
-      [placeholder]="'distribution.auto.limitPlaceholder' | translate"
-      [min]="1"
-    ></p-input-number>
-  </div>
+  <section
+    class="distribution-summary border rounded bg-light p-3"
+    [attr.aria-label]="'distribution.dialog.auto.summaryLabel' | translate"
+  >
+    <div class="summary-metric">
+      <span class="summary-label">
+        {{ 'distribution.dialog.auto.selectedFiles' | translate }}
+      </span>
 
-  <div class="col-md-6">
-    <div class="selection-summary">
-      <div class="fw-semibold">{{ 'distribution.summary.selected' | translate }}</div>
-      <div class="fs-22 fw-semibold">{{ selectedCount() }}</div>
-      <div class="small text-muted">{{ 'distribution.dialog.auto.selectionHint' | translate }}</div>
+      <strong class="summary-value">
+        {{ selectedProfileCount }}
+      </strong>
     </div>
-  </div>
-</div>
 
-<div class="auto-grid">
-  <div class="card card-table auto-tile  mb-3" *ngFor="let employee of employees()">
-       <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                <div class="d-flex align-items-center gap-2">
-                  <p-avatar
-                    [label]="employee.name[0]"
-                    shape="circle"
-                    class="bg-primary text-white"
-                  ></p-avatar>
-                  <div>
-                    <div class="fw-semibold">{{ employee.name }}</div>
-                    <div class="small text-muted">
-                      {{ availabilityLabel(employee.availability) | translate }}
-                    </div>
-                  </div>
-                </div>
+    <div class="summary-limit">
+      <label class="form-label mb-0" for="auto-files-per-employee">
+        {{ 'distribution.dialog.auto.filesPerEmployee' | translate }}
+      </label>
 
-                <p-toggle-switch
-                  [ngModel]="selectedEmployeeIds().has(employee.employeeId)"
-                  (onChange)="toggleEmployee(employee.employeeId)"
-                  [disabled]="!available(employee)"
-                ></p-toggle-switch>
+      <p-input-number
+        inputId="auto-files-per-employee"
+        [ngModel]="limit()"
+        (onInput)="limit.set($event.value)"
+        mode="decimal"
+        [placeholder]="'distribution.dialog.auto.optional' | translate"
+        [min]="1"
+        [showButtons]="false"
+        fluid
+      ></p-input-number>
+    </div>
+  </section>
+
+  <section
+    class="employee-toolbar"
+    [attr.aria-label]="'distribution.dialog.auto.filtersLabel' | translate"
+  >
+    <div class="employee-toolbar__search">
+      <app-search-input
+        [value]="searchInput()"
+        [placeholder]="'distribution.dialog.auto.searchPlaceholder' | translate"
+        [ariaLabel]="'distribution.dialog.auto.searchPlaceholder' | translate"
+        (valueChange)="onSearch($event)"
+      ></app-search-input>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      class="employee-toolbar__clear p-button-outlined p-button-danger"
+      (click)="clearFilters()"
+    >
+      <i class="pi pi-filter-slash" pButtonIcon aria-hidden="true"></i>
+
+      <span pButtonLabel>
+        {{ 'distribution.dialog.auto.clear' | translate }}
+      </span>
+    </button>
+  </section>
+
+  <div class="employee-table-shell">
+    <p-table
+      class="distribution-table auto-employee-table"
+      [value]="employees()"
+      dataKey="employeeId"
+      [rowHover]="true"
+      [paginator]="true"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      [loading]="employeeLoading()"
+      [totalRecords]="employeePagination()?.totalCount ?? 0"
+      [rows]="employeeFilters().pageSize"
+      [first]="first()"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'distribution.dialog.auto.pageReport' | translate"
+      (onLazyLoad)="onTableChange($event)"
+      responsiveLayout="scroll"
+      sortField="totalAssigned"
+      [sortOrder]="1"
+    >
+      <ng-template #header>
+        <tr>
+          <th class="selection-column">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="allPageEmployeesSelected()"
+              (ngModelChange)="setPageSelected($event)"
+              [indeterminate]="somePageEmployeesSelected()"
+              [disabled]="selectablePageEmployees().length === 0"
+              inputId="select-all-page-employees"
+              [attr.aria-label]="'distribution.dialog.auto.selectEmployee' | translate"
+            ></p-checkbox>
+            <span class="visually-hidden">
+              {{ 'distribution.dialog.auto.selectEmployee' | translate }}
+            </span>
+          </th>
+
+          <th>
+            {{ 'distribution.dialog.auto.employee' | translate }}
+          </th>
+
+          <th>
+            {{ 'distribution.dialog.auto.email' | translate }}
+          </th>
+
+          <th pSortableColumn="totalAssigned" class="assignment-column">
+            <span>
+              {{ 'distribution.dialog.auto.assignmentCount' | translate }}
+            </span>
+
+            <p-sortIcon field="totalAssigned"></p-sortIcon>
+          </th>
+
+          <th>
+            {{ 'distribution.dialog.auto.status' | translate }}
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-employee>
+        <tr
+          [class.employee-row--selected]="isSelected(employee.employeeId)"
+          [class.employee-row--disabled]="!isAvailable(employee)"
+        >
+          <td class="selection-column">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="isSelected(employee.employeeId)"
+              (ngModelChange)="setEmployeeSelected(employee, $event)"
+              [disabled]="!isAvailable(employee)"
+              [inputId]="'employee-' + employee.employeeId"
+              [attr.aria-label]="
+                'distribution.dialog.auto.selectEmployeeNamed' | translate: { name: employee.name }
+              "
+            ></p-checkbox>
+          </td>
+
+          <td>
+            <label class="employee-cell" [for]="'employee-' + employee.employeeId">
+              <p-avatar [label]="initials(employee.name)" shape="circle"></p-avatar>
+
+              <span class="employee-name" [title]="employee.name">
+                {{ employee.name }}
+              </span>
+            </label>
+          </td>
+
+          <td>
+            <span class="employee-email" [title]="employee.email">
+              {{ employee.email || '—' }}
+            </span>
+          </td>
+
+          <td class="assignment-column">
+            <strong>
+              {{ employee.totalAssigned }}
+            </strong>
+          </td>
+
+          <td>
+            <span class="pill" [ngClass]="availabilityClass(employee.availability)">
+              <span aria-hidden="true"></span>
+
+              {{ availabilityLabel(employee.availability) | translate }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="pi pi-users" aria-hidden="true"></i>
+
+              <span>
+                {{ 'distribution.dialog.auto.empty' | translate }}
+              </span>
             </div>
-
-    <div class="d-flex gap-2 flex-wrap mt-2">
-      <span class="pill neutral small-pill">
-        {{ 'distribution.employees.total' | translate }} {{ employee.totalAssigned }}
-      </span>
-      <span class="pill success small-pill">
-        {{ 'distribution.employees.completed' | translate }} {{ employee.completed }}
-      </span>
-      <span class="pill info small-pill">
-        {{ 'distribution.employees.inReview' | translate }} {{ employee.inReview }}
-      </span>
-    </div>
-       </div>
-    
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
-</div>
 
-<div class="d-flex justify-content-end gap-2 flex-wrap mt-4">
-  <button pButton class="p-button-text" type="button" (click)="cancel()">
-    {{ 'distribution.actions.cancel' | translate }}
-  </button>
+  <footer class="dialog-footer border-top">
+    <p class="distribution-outcome">
+      {{
+        'distribution.dialog.auto.outcome'
+          | translate
+            : {
+                fileCount: selectedProfileCount,
+                employeeCount: selectedCount(),
+              }
+      }}
+    </p>
 
-  <button
-    pButton
-    type="button"
-    (click)="confirm()"
-    [disabled]="pickedCount() === 0 || selectedCount() === 0">
-    <span pButtonLabel>{{'distribution.auto.assign' | translate}}</span>
-    <i class="pi pi-play" pButtonIcon></i>
-  </button>
+    <div class="dialog-actions">
+      <button pButton class="p-button-text" type="button" (click)="cancel()">
+        <span pButtonLabel>
+          {{ 'distribution.actions.cancel' | translate }}
+        </span>
+      </button>
+
+      <button
+        pButton
+        type="button"
+        (click)="confirm()"
+        [disabled]="selectedCount() === 0 || selectedProfileCount === 0"
+      >
+        <span pButtonLabel>
+          {{ 'distribution.auto.assign' | translate }}
+        </span>
+
+        <i class="pi pi-play" pButtonIcon aria-hidden="true"></i>
+      </button>
+    </div>
+  </footer>
 </div>

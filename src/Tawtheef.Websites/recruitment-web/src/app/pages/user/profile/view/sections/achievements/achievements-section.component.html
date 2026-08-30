@@ -1,85 +1,20 @@
-
 <p-confirmDialog appendTo="body"></p-confirmDialog>
-
-    <div class="d-flex align-items-center justify-content-between mb-3">
-
-          <h5 class="text-primary d-flex gap-2 align-items-center "><i class="pi pi-book"  aria-hidden="true"></i> <span>{{ 'profileOverview.sections.certificatesAndAwards' | translate }}</span></h5>
-
-      <div  *ngIf="canAddAttachment">
-           <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button"  (click)="addAchievement()"><i class="hgi hgi-stroke hgi-plus-sign me-1" aria-hidden="true"></i><span>{{ 'profileView.actions.addAchievement' | translate }}</span></button>
-        
-      </div>
-    </div>
-
-    <div class="row g-3">
-      @if (profile?.achievements?.length || achievementsUnderReview().length) {
-        @for (ach of profile?.achievements; track ach.id) {
-          <ng-container *ngTemplateOutlet="achievementTemplate; context: { $implicit: ach }"></ng-container>
-        }
-        @for (ach of achievementsUnderReview(); track ach.id) {
-          <ng-container *ngTemplateOutlet="achievementTemplate; context: { $implicit: ach }"></ng-container>
-        }
-      } @else {
-        <div class="col-12">
-          <div class="text-muted">{{ 'common.none' | translate }}</div>
-        </div>
-      }
-    </div>
-
-<ng-template #achievementTemplate let-ach>
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h5 class="text-primary d-flex gap-2 align-items-center"><i class="pi pi-book"></i><span>{{ 'profileOverview.sections.certificatesAndAwards' | translate }}</span></h5>
+  <button *ngIf="canAddAttachment" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="addAchievement()"><i class="pi pi-plus"></i><span>{{ 'profileView.actions.addAchievement' | translate }}</span></button>
+</div>
+@if (profile?.achievements?.length || achievementsUnderReview().length) {
+<div class="table-card rounded overflow-hidden"><div class="table-responsive"><table class="table table-bordered table-hover align-middle w-100">
+  <thead class="table-light"><tr><th>{{ 'profileOverview.table.title' | translate }}</th><th>{{ 'profileOverview.table.issuer' | translate }}</th><th>{{ 'profileOverview.table.issueDate' | translate }}</th><th>{{ 'profile.field.description' | translate }}</th><th>{{ 'profileOverview.table.attachment' | translate }}</th><th *ngIf="notes?.length || editableItems?.length">{{ 'profileOverview.table.actions' | translate }}</th></tr></thead>
+  <tbody>@for (ach of profile?.achievements; track ach.id) {<ng-container *ngTemplateOutlet="achievementRow; context: { $implicit: ach }"></ng-container>} @for (ach of achievementsUnderReview(); track ach.id) {<ng-container *ngTemplateOutlet="achievementRow; context: { $implicit: ach }"></ng-container>}</tbody>
+</table></div></div>
+} @else {<div class="text-muted">{{ 'common.none' | translate }}</div>}
+<ng-template #achievementRow let-ach>
   @let fileNote = noteForRaw(ach);
-  <div class="col-12 col-lg-6">
-    <div class="card h-100 card-table" [ngClass]="{ 'attach-card--warn': fileNote }">
-      <div class="card-body h-100 d-flex flex-column gap-2">
-        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-          <div class="fw-semibold text-body">{{ ach.title }}</div>
-          <span class="badge status-pill status-pill--info" *ngIf="!ach.id">
-            {{ 'profileOverview.status.pending' | translate }}
-          </span>
-        </div>
-        <div class="text-muted small">{{ ach.issuingAuthority }} · {{ ach.issueDate }}</div>
-        <div class="text-muted small">{{ ach.description }}</div>
-        <div class="mt-2">
-          @if (ach.attachment) {
-            <a
-              class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link"
-              [ngClass]="{ 'attach-link--warn': fileNote }"
-              (click)="open(ach.attachment)">
-              <i class="pi pi-paperclip text-muted" aria-hidden="true"></i>
-              <span class="text-truncate d-inline-block">
-                        {{ ach.attachment.fileName }}
-                      </span>
-              @if (fileNote) {
-                <i
-                  class="pi pi-exclamation-triangle text-warning"
-                  [pTooltip]="fileNote.note || fileNote.title"
-                  tooltipPosition="top"
-                  aria-hidden="true"></i>
-              }
-            </a>
-          } @else {
-            <span class="text-muted">{{ 'common.none' | translate }}</span>
-          }
-        </div>
-        <div class="d-flex align-items-center gap-2 mt-auto" *ngIf="canEditRaw(ach) || canDeleteRaw(ach)">
-          <button *ngIf="canEditRaw(ach)"
-                  type="button"
-                  class="btn btn-sm btn-outline-secondary rounded-pill"
-                  (click)="editAchievement(ach)">
-            <i class="pi pi-pencil" aria-hidden="true"></i>
-          </button>
-          <button
-            *ngIf="canDeleteRaw(ach)"
-            type="button"
-            class="btn btn-sm btn-outline-danger rounded-pill"
-            [attr.aria-label]="'profileView.actions.deleteItem' | translate"
-            [pTooltip]="'profileView.actions.deleteItem' | translate"
-            tooltipPosition="top"
-            (click)="deleteAchievement(ach)">
-            <i class="pi pi-trash" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <tr [class.table-warning]="fileNote">
+    <td><div class="d-flex align-items-center gap-2">{{ ach.title || '-' }}<span class="badge status-pill status-pill--info" *ngIf="!ach.id">{{ 'profileOverview.status.pending' | translate }}</span></div></td>
+    <td>{{ ach.issuingAuthority || '-' }}</td><td>{{ ach.issueDate || '-' }}</td><td>{{ ach.description || '-' }}</td>
+    <td>@if (ach.attachment) {<a class="d-inline-flex align-items-center gap-2 fw-semibold text-decoration-none text-body attach-link" [ngClass]="{ 'attach-link--warn': fileNote }" (click)="open(ach.attachment)"><i class="pi pi-paperclip text-muted"></i><span class="text-truncate d-inline-block">{{ ach.attachment.fileName }}</span><i *ngIf="fileNote" class="pi pi-exclamation-triangle text-warning" [pTooltip]="fileNote.note || fileNote.title"></i></a>} @else {<span class="text-muted">{{ 'common.none' | translate }}</span>}</td>
+    <td *ngIf="notes?.length || editableItems?.length"><div class="d-flex align-items-center gap-2"><button *ngIf="canEditRaw(ach)" type="button" class="btn btn-sm btn-outline-secondary rounded-pill" (click)="editAchievement(ach)"><i class="pi pi-pencil"></i></button><button *ngIf="canDeleteRaw(ach)" type="button" class="btn btn-sm btn-outline-danger rounded-pill" [attr.aria-label]="'profileView.actions.deleteItem' | translate" [pTooltip]="'profileView.actions.deleteItem' | translate" (click)="deleteAchievement(ach)"><i class="pi pi-trash"></i></button></div></td>
+  </tr>
 </ng-template>

@@ -50,7 +50,7 @@
                 </td>
                 <td class="text-end">
                   <div class="action-buttons">
-                    <button class="btn" (click)="removeSkill(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
+                    <button *ngIf="!additionOnly() || !r.id" class="btn" (click)="removeSkill(i)" pTooltip="{{ 'wizard.buttons.delete' | translate }}">
                       <i class="hgi hgi-stroke hgi-delete-02"></i>
                     </button>
                   </div>

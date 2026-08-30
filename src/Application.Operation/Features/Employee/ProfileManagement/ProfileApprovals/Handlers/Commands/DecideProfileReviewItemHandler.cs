@@ -153,6 +153,17 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             await UpdateEntityRelevance(item, cmd.SpecializationRelation, ct);
         }
 
+        if (!hasChangeRequest)
+        {
+            var profile = await UserProfileLoader.GetFullProfileByProfileId(
+                uow, item.UserProfileId, tracking: true, ct: ct);
+            if (profile is null)
+                return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+
+            await FullReviewSectionStateSync.SyncAsync(
+                uow, profile, item.Section, cmd.OfficerId, now, ct);
+        }
+
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }
