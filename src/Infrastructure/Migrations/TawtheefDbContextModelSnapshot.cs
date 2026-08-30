@@ -10121,10 +10121,6 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("Qid")
-                        .IsUnique()
-                        .HasFilter("[Qid] IS NOT NULL AND [Qid] <> N''");
-
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("EmployeeProfile");
