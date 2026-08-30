@@ -10,7 +10,6 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
-using Tawtheef.Domain.Events.Operation.Employee.Profile;
 using Tawtheef.Domain.Events.User;
 using Tawtheef.Domain.ValueObjects.User;
 
