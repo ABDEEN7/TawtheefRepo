@@ -16,5 +16,6 @@ public class GetProfileApprovalDetailDto
     /// </summary>
     public ProfileApprovalDataDto Profile { get; set; } = default!;
     public int? ProfileStatus { get; set; }
+    public string? InternalReviewerNote { get; set; }
     public List<ProfileApprovalSectionDto> Sections { get; set; } = [];
 }

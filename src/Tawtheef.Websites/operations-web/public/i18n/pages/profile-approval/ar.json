@@ -358,5 +358,20 @@
   "file_viewer.fetching": "تحميل الملف ...",
   "file_viewer.select_file": "اختر ملفاً للمعالجة",
   "file_viewer.select_hint": "انقر على أيقونة العرض بجانب أي ملف لفتحه في هذه المساحة.",
-  "common.close": "إغلاق"
+  "common.close": "إغلاق",
+  "profileApproval.actions.approve": "اعتماد",
+  "profileApproval.actions.requestCorrection": "طلب تعديل",
+  "profileApproval.internalNote.title": "ملاحظة داخلية للمراجع",
+  "profileApproval.internalNote.help": "هذه الملاحظة داخلية ولن تظهر للمرشح.",
+  "profileApproval.internalNote.previous": "ملاحظة المراجعة السابقة",
+  "profileApproval.internalNote.new": "ملاحظة داخلية جديدة",
+  "profileApproval.internalNote.placeholder": "أضف ملاحظة اختيارية لجولة المراجعة القادمة...",
+  "profileApproval.internalNote.save": "حفظ الملاحظة",
+  "profileApproval.internalNote.saved": "تم حفظ الملاحظة الداخلية.",
+  "profileApproval.final.confirmReturnTitle": "تأكيد إعادة الملف للتصحيح",
+  "profileApproval.final.confirmReturnMessage": "هل أنت متأكد من إعادة الملف إلى المرشح لاستكمال التصحيحات المطلوبة؟",
+  "profileApproval.final.confirmReturn": "تأكيد الإرجاع",
+  "profileApproval.final.confirmApprovalTitle": "تأكيد اعتماد الملف",
+  "profileApproval.final.confirmApprovalMessage": "هل أنت متأكد من اعتماد الملف؟",
+  "profileApproval.final.approveProfile": "اعتماد الملف"
 }

@@ -1,42 +1,11 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="text-primary d-flex gap-2 align-items-center "><i class="hgi hgi-stroke hgi-language-square" aria-hidden="true"></i> <span>{{ 'profileOverview.sections.languages' | translate }}</span></h5>
-      <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" *ngIf="canEdit" (click)="onEdit()"><i class="hgi hgi-stroke hgi-edit-01 me-1 fs-16"></i> {{ 'common.edit' | translate }}</button>
+  <h5 class="text-primary d-flex gap-2 align-items-center"><i class="pi pi-language"></i><span>{{ 'profileOverview.sections.languages' | translate }}</span></h5>
+  <div class="d-flex gap-2"><button *ngIf="canAdd" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="add.emit()"><i class="pi pi-plus"></i>{{ 'wizard.buttons.add' | translate }}</button><button *ngIf="canEdit" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" type="button" (click)="onEdit()"><i class="pi pi-pencil"></i>{{ 'common.edit' | translate }}</button></div>
 </div>
-
-
-
-
-    <div class="row g-3">
-      @if (profile?.languages?.length || languageUnderReview().length) {
-        @for (lang of profile?.languages; track lang.id) {
-          <ng-container *ngTemplateOutlet="languageTemplate; context: { $implicit: lang }"></ng-container>
-        }
-        @for (lang of languageUnderReview(); track lang.id) {
-          <ng-container *ngTemplateOutlet="languageTemplate; context: { $implicit: lang }"></ng-container>
-        }
-      } @else {
-        <div class="col-12">
-          <div class="text-muted">{{ 'common.none' | translate }}</div>
-        </div>
-      }
-    </div>
-
-
-<ng-template #languageTemplate let-lang>
-  <div class="col-12 col-lg-6">
-    <div class="card h-100 card-table">
-      <div class="card-body py-3 px-3 d-flex flex-column gap-2 h-100">
-          <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-              <label class="text-light w-100 fs-16">{{ lang.language.name }}</label>
-              <span class="pill info" *ngIf="!lang.id"> {{ 'profileOverview.status.pending' | translate }}</span>
-          </div>
-        <label class="fw-semibold text-dark text-nowrap fs-16">
-          {{ 'profileOverview.fields.speakingLevel' | translate }}: {{ lang.speakingLevel.name }}</label>
-        <label class="fw-semibold text-dark text-nowrap fs-16">
-          {{ 'profileOverview.fields.writingLevel' | translate }}: {{ lang.writingLevel.name }}</label>
-        <label class="fw-semibold text-dark text-nowrap fs-16">
-          {{ 'profileOverview.fields.readingLevel' | translate }}: {{ lang.readingLevel.name }}</label>
-      </div>
-    </div>
-  </div>
-</ng-template>
+@if (profile?.languages?.length || languageUnderReview().length) {
+<div class="table-card rounded overflow-hidden"><div class="table-responsive"><table class="table table-bordered table-hover align-middle w-100">
+  <thead class="table-light"><tr><th>{{ 'profileOverview.table.language' | translate }}</th><th>{{ 'profileOverview.table.speaking' | translate }}</th><th>{{ 'profileOverview.table.writing' | translate }}</th><th>{{ 'profileOverview.table.reading' | translate }}</th></tr></thead>
+  <tbody>@for (lang of profile?.languages; track lang.id) {<ng-container *ngTemplateOutlet="languageRow; context: { $implicit: lang }"></ng-container>} @for (lang of languageUnderReview(); track lang.id) {<ng-container *ngTemplateOutlet="languageRow; context: { $implicit: lang }"></ng-container>}</tbody>
+</table></div></div>
+} @else {<div class="text-muted">{{ 'common.none' | translate }}</div>}
+<ng-template #languageRow let-lang><tr><td><div class="d-flex align-items-center gap-2">{{ lang.language?.name || '-' }}<span class="badge status-pill status-pill--info" *ngIf="!lang.id">{{ 'profileOverview.status.pending' | translate }}</span></div></td><td>{{ lang.speakingLevel?.name || '-' }}</td><td>{{ lang.writingLevel?.name || '-' }}</td><td>{{ lang.readingLevel?.name || '-' }}</td></tr></ng-template>

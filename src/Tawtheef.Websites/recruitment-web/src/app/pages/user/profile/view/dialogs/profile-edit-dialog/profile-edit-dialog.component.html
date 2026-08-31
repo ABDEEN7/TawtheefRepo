@@ -59,6 +59,7 @@
       </app-step-achievements>
 
       <app-step-skills *ngSwitchCase="'skills'"
+                       [additionOnly]="additionOnly()"
                        [submitLabelKey]="'common.save'"
                        [showBack]="false"
                        [requireChanges]="true"
@@ -67,6 +68,7 @@
       </app-step-skills>
 
       <app-step-languages *ngSwitchCase="'languages'"
+                          [additionOnly]="additionOnly()"
                           [submitLabelKey]="'common.save'"
                           [showBack]="false"
                           [requireChanges]="true"

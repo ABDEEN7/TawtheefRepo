@@ -48,8 +48,7 @@ public sealed class ReviseProfileAttachmentDeleteHandler(IUnitOfWork uow) :
             profile,
             ProfileSection.Attachments,
             oldResourceId,
-            ct,
-            force: true);
+            ct);
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);

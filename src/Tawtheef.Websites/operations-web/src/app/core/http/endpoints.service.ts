@@ -128,6 +128,8 @@ export class EndpointsService {
     reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
     startReview: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
     decision: (profileId: string, section: string) => this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
+    sectionInternalNote: (profileId: string, section: string) =>
+      this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/internal-note`),
     finalize: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
@@ -146,6 +148,7 @@ export class EndpointsService {
     candidateTypes: this.getFullUrl('/profile-distributions/candidate-types'),
     degrees: this.getFullUrl('/profile-distributions/degrees'),
     employees: this.getFullUrl('/profile-distributions/employees'),
+    employeeLookup: this.getFullUrl('/profile-distributions/employees/lookup'),
     assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
     assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),
     reassign: this.getFullUrl('/profile-distributions/reassign')

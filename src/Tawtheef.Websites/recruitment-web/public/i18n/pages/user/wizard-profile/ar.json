@@ -397,5 +397,8 @@
   "wizard.personal.sponsor.individual.qidInvalid11": "رقم البطاقة الشخصية يجب أن يكون 11 رقمًا بالضبط.",
   "wizard.personal.sponsor.company.numberHint8": "رقم المنشأة يجب أن يتكوّن من 8 أرقام.",
   "wizard.personal.sponsor.company.numberInvalid8": "رقم المنشأة يجب أن يكون 8 أرقام بالضبط.",
-  "wizard.validation.invalidCharacters": "الأحرف الخاصة غير مسموح بها."
+  "wizard.validation.invalidCharacters": "الأحرف الخاصة غير مسموح بها.",
+  "wizard.correction.additionalRequirement.title": "متطلبات إضافية بسبب التعديل",
+  "wizard.correction.additionalRequirement.hint": "أصبحت هذه البيانات مطلوبة بسبب التعديل الذي أجريته. أكملها قبل الحفظ.",
+  "wizard.correction.applyReviewerNotes": "يجب تطبيق التعديلات المذكورة في ملاحظات المراجع قبل الحفظ."
 }

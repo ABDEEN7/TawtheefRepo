@@ -290,6 +290,7 @@ public class ErrorsCodes
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
     public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
+    public const string EmployeeProfileIdentityConflict = "EMPLOYEE_PROFILE_IDENTITY_CONFLICT";
     public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
 
     // =========================================================

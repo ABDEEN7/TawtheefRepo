@@ -30,12 +30,12 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
     } as ProfileState;
 
     const type = candidateTypeFromState(s);
-    const isResident = candidateTypeIsResident(type, s.provider);
+    const isResident = candidateTypeIsResident(s.provider);
 
     return {
       type,
       isResident,
-      needsSponsor: candidateTypeNeedsSponsor(type),
+      needsSponsor: candidateTypeNeedsSponsor(type, s.provider),
       needsBirth: candidateTypeNeedsBirthCertificate(type),
       needsMarriage: candidateTypeNeedsMarriageCertificate(type),
 
@@ -43,7 +43,7 @@ export function createProfileOverviewVisibility(p: ProfileStatusDto) {
       showQidExpiry: isResident,
       showNationalAddress: isResident,
       showForeignAddress: !isResident,
-      showSponsorSection: candidateTypeNeedsSponsor(type)
+      showSponsorSection: candidateTypeNeedsSponsor(type, s.provider)
     } as ProfileOverviewVisibility;
   });
 }

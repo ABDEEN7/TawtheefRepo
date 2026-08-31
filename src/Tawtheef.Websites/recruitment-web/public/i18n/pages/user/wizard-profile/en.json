@@ -396,5 +396,8 @@
   "wizard.personal.sponsor.individual.qidInvalid11": "QID must be exactly 11 digits.",
   "wizard.personal.sponsor.company.numberHint8": "Establishment number must be 8 digits.",
   "wizard.personal.sponsor.company.numberInvalid8": "Establishment number must be exactly 8 digits.",
-  "wizard.validation.invalidCharacters": "Invalid characters are not allowed."
+  "wizard.validation.invalidCharacters": "Invalid characters are not allowed.",
+  "wizard.correction.additionalRequirement.title": "Additional requirement from your correction",
+  "wizard.correction.additionalRequirement.hint": "This information is now required because of the change you made. Complete it before saving.",
+  "wizard.correction.applyReviewerNotes": "Apply the changes described in the reviewer's notes before saving."
 }

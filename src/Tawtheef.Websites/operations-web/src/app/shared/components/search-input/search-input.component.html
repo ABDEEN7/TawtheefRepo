@@ -1,0 +1,13 @@
+<div class="search-input">
+  <input
+    pInputText
+    class="search-input__control form-control"
+    type="search"
+    [ngModel]="value()"
+    (ngModelChange)="valueChange.emit($event)"
+    [placeholder]="placeholder()"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="disabled()"
+  />
+  <i class="search-input__icon pi pi-search" aria-hidden="true"></i>
+</div>
