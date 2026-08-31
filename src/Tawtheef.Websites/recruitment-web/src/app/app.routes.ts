@@ -5,37 +5,57 @@ import { authGuard } from './core/guards/route-guard/auth-guard';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./layouts/public/public-layout/public-layout').then(m => m.PublicLayout),
+    loadComponent: () =>
+      import('./layouts/public/public-layout/public-layout').then((m) => m.PublicLayout),
     children: [
       {
         path: '',
-        loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+        loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
       },
       {
         path: 'index',
-        loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+        loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
       },
+
+      {
+        path: 'structure-schools',
+        loadComponent: () =>
+          import('./pages/home/index/structure-schools/structure-schools').then(
+            (m) => m.StructureSchools,
+          ),
+      },
+      {
+        path: 'ministry-structure',
+        loadComponent: () =>
+          import('./pages/home/index/structure/structure').then((m) => m.Structure),
+      },
+
+      // {
+      // path : 'schools-structure',
+      // loadComponent: () => import('./pages/home/index/schools-structure/schools-structure').then(m => m.SchoolsStructure),
+      // },
+
       {
         path: 'auth',
         canMatch: [loggedOutOnlyGuard],
-        loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthModule),
+        loadChildren: () => import('./pages/auth/auth.module').then((m) => m.AuthModule),
       },
       {
         path: 'error',
-        loadChildren: () => import('./pages/error/error.module').then(m => m.ErrorModule),
+        loadChildren: () => import('./pages/error/error.module').then((m) => m.ErrorModule),
       },
     ],
   },
   {
     path: '',
-    loadComponent: () => import('./layouts/internal/user-layout/user-layout').then(m => m.UserLayout),
+    loadComponent: () =>
+      import('./layouts/internal/user-layout/user-layout').then((m) => m.UserLayout),
     canActivateChild: [authGuard],
     children: [
       {
         path: 'user',
-        loadChildren: () =>
-          import('./pages/user/user.module').then(m => m.UserModule),
-      }
+        loadChildren: () => import('./pages/user/user.module').then((m) => m.UserModule),
+      },
     ],
   },
 

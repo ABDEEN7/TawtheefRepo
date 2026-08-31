@@ -26,6 +26,9 @@ export const portalRoutes = {
   get jobInvitationSummary() {
     return this.portal + '/job-invitation-summary';
   },
+  get exceptions() {
+    return this.portal + '/exceptions';
+  },
   jobInvitationSummaryDetails(id: string) {
     return this.portal + `/job-invitation-summary-details/${id}`;
   },

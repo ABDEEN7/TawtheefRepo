@@ -1,0 +1,169 @@
+{
+  "structure.title": "الهيكل التنظيمي",
+  "OrganizationalStructure.Ministry.Subtitle": "تصفح الهيكل التنظيمي للوزارة",
+  "structure.subtitle": "استعرض الهيكل التنظيمي لوزارة التربية والتعليم والتعليم العالي.",
+  "structure.expandAll": "توسيع الكل",
+  "structure.collapseAll": "طي الكل",
+
+  "structure.nodes.minister": "الوزير",
+  "structure.nodes.minister-office": "مكتب الوزير",
+  "structure.nodes.technical-office": "المكتب الفني",
+  "structure.nodes.internal-audit": "إدارة التدقيق الداخلي",
+
+  "structure.nodes.planning": "إدارة التخطيط والسياسات التربوية والابتكار",
+  "structure.nodes.strategic-planning": "قسم التخطيط الاستراتيجي",
+  "structure.nodes.educational-policies-research": "قسم السياسات والأبحاث التربوية",
+  "structure.nodes.quality-development-innovation": "قسم الجودة والتطوير والابتكار",
+  "structure.nodes.statistical-studies": "قسم الدراسات الإحصائية",
+
+  "structure.nodes.legal-affairs": "إدارة الشؤون القانونية",
+  "structure.nodes.legal-studies": "قسم الدراسات القانونية",
+  "structure.nodes.investigations-cases": "قسم التحقيقات والقضايا",
+
+  "structure.nodes.undersecretary": "وكيل الوزارة",
+  "structure.nodes.undersecretary-office": "مكتب وكيل الوزارة",
+
+  "structure.nodes.training-center": "مركز التدريب والتطوير",
+  "structure.nodes.training-program-planning": "قسم تخطيط البرامج التدريبية",
+  "structure.nodes.educational-training": "قسم التدريب التربوي",
+  "structure.nodes.administrative-training": "قسم التدريب الإداري",
+  "structure.nodes.professional-licenses": "قسم الرخص المهنية",
+  "structure.nodes.training-systems": "قسم النظم التدريبية",
+
+  "structure.nodes.international-cooperation": "إدارة التعاون الدولي",
+
+  "structure.nodes.public-relations": "إدارة العلاقات العامة والاتصال",
+  "structure.nodes.communication": "قسم الاتصال",
+  "structure.nodes.public-relations-section": "قسم العلاقات العامة",
+  "structure.nodes.customer-service": "قسم خدمة العملاء",
+  "structure.nodes.content-translation": "قسم المحتوى والترجمة",
+
+  "structure.nodes.information-systems": "إدارة نظم المعلومات",
+  "structure.nodes.information-security": "قسم أمن المعلومات",
+  "structure.nodes.project-management": "قسم إدارة المشاريع",
+  "structure.nodes.applications": "قسم التطبيقات",
+  "structure.nodes.technology-infrastructure": "قسم البنية التحتية التكنولوجية",
+  "structure.nodes.it-policies-quality": "قسم سياسات وجودة تكنولوجيا المعلومات",
+  "structure.nodes.technology-equipment-support": "قسم التجهيزات التكنولوجية ودعم المستخدمين",
+
+  "structure.nodes.education-affairs": "وكيل الوزارة المساعد للشؤون التعليمية",
+  "structure.nodes.private-education-affairs": "وكيل الوزارة المساعد لشؤون التعليم الخاص",
+  "structure.nodes.evaluation-affairs": "وكيل الوزارة المساعد لشؤون التقييم",
+  "structure.nodes.higher-education-affairs": "وكيل الوزارة المساعد لشؤون التعليم العالي",
+  "structure.nodes.shared-services-affairs": "وكيل الوزارة المساعد لشؤون الخدمات المشتركة",
+
+  "structure.nodes.assistant-undersecretary-office": "مكتب وكيل الوزارة المساعد",
+
+  "structure.nodes.vocational-technical-education": "إدارة التعليم المهني والتقني والتخصصي",
+  "structure.nodes.vocational-education-development": "قسم تطوير التعليم المهني والتقني والتخصصي",
+  "structure.nodes.vocational-education-supervision": "قسم الإشراف والتوجيه على التعليم المهني والتقني والتخصصي",
+
+  "structure.nodes.digital-education": "إدارة التعليم الإلكتروني والحلول الرقمية",
+  "structure.nodes.digital-education-development": "قسم تطوير التعليم الإلكتروني",
+  "structure.nodes.digital-education-support": "قسم الإشراف والدعم للتعليم الإلكتروني",
+
+  "structure.nodes.curriculum-learning-resources": "إدارة المناهج الدراسية ومصادر التعلم",
+  "structure.nodes.curriculum": "قسم المناهج الدراسية",
+  "structure.nodes.learning-resources": "قسم مصادر التعلم",
+  "structure.nodes.research-talent-innovation": "قسم البحث والموهبة والابتكار",
+  "structure.nodes.school-laboratories": "قسم المختبرات المدرسية",
+
+  "structure.nodes.educational-guidance": "إدارة التوجيه التربوي",
+  "structure.nodes.islamic-education": "قسم التربية الإسلامية",
+  "structure.nodes.arabic-language": "قسم اللغة العربية",
+  "structure.nodes.mathematics": "قسم الرياضيات",
+  "structure.nodes.science": "قسم العلوم",
+  "structure.nodes.english-language": "قسم اللغة الإنجليزية",
+  "structure.nodes.social-sciences": "قسم العلوم الاجتماعية",
+  "structure.nodes.information-technology": "قسم تكنولوجيا المعلومات",
+  "structure.nodes.physical-education": "قسم التربية الرياضية",
+  "structure.nodes.arts-theater": "قسم الفنون والمسرح",
+
+  "structure.nodes.early-education": "إدارة التعليم المبكر",
+  "structure.nodes.kindergarten-stage": "قسم مرحلة رياض الأطفال",
+  "structure.nodes.foundation-stage": "قسم المرحلة التأسيسية",
+
+  "structure.nodes.special-inclusive-education": "إدارة التربية الخاصة والتعليم الدامج",
+  "structure.nodes.special-schools-inclusion": "قسم مدارس التربية الخاصة وطلبة الدمج",
+  "structure.nodes.student-support-center": "مركز خدمات دعم الطلبة",
+
+  "structure.nodes.schools-students-affairs": "إدارة شؤون المدارس والطلبة",
+  "structure.nodes.student-admission-registration": "قسم قبول وتسجيل الطلبة",
+  "structure.nodes.academic-guidance": "قسم الإرشاد الأكاديمي",
+  "structure.nodes.student-protection-care": "قسم حماية ورعاية الطلبة",
+  "structure.nodes.programs-activities": "قسم البرامج والأنشطة",
+  "structure.nodes.school-management-support": "قسم دعم الإدارة المدرسية",
+  "structure.nodes.continuing-education": "قسم التعليم المستمر",
+
+  "structure.nodes.daycare-centers": "إدارة دور الحضانة",
+  "structure.nodes.daycare-licensing": "قسم تراخيص دور الحضانة",
+  "structure.nodes.daycare-supervision-control": "قسم الإشراف والرقابة",
+
+  "structure.nodes.private-school-licensing": "إدارة تراخيص المدارس الخاصة",
+  "structure.nodes.licensing-tuition-fees": "قسم التراخيص والرسوم الدراسية",
+  "structure.nodes.private-school-registration": "قسم التسجيل",
+
+  "structure.nodes.private-schools-kindergartens": "إدارة المدارس ورياض الأطفال الخاصة",
+  "structure.nodes.private-admin-supervision": "قسم الإشراف الإداري",
+  "structure.nodes.private-academic-supervision": "قسم الإشراف الأكاديمي",
+
+  "structure.nodes.educational-service-centers": "إدارة مراكز الخدمات التعليمية",
+  "structure.nodes.educational-centers-licensing": "قسم تراخيص المراكز التعليمية",
+  "structure.nodes.educational-centers-supervision": "قسم الإشراف على المراكز التعليمية",
+
+  "structure.nodes.student-assessment": "إدارة تقييم الطلبة",
+  "structure.nodes.examination-affairs": "قسم شؤون الاختبارات",
+  "structure.nodes.international-examinations": "قسم الاختبارات الدولية",
+  "structure.nodes.literary-subjects-assessment": "قسم تقييم المواد الأدبية",
+  "structure.nodes.scientific-subjects-assessment": "قسم تقييم المواد العلمية",
+
+  "structure.nodes.school-assessment": "إدارة تقييم المدارس",
+  "structure.nodes.daycare-kindergarten-assessment": "قسم تقييم دور الحضانة ورياض الأطفال الحكومية والخاصة",
+  "structure.nodes.government-schools-assessment": "قسم تقييم المدارس الحكومية",
+  "structure.nodes.private-schools-assessment": "قسم تقييم المدارس الخاصة",
+
+  "structure.nodes.student-information-center": "إدارة مركز معلومات الطلبة",
+  "structure.nodes.examination-support": "قسم دعم الاختبارات",
+  "structure.nodes.certificate-equivalence-authentication": "قسم معادلة وتصديق الشهادات المدرسية",
+
+  "structure.nodes.higher-education-institutions-affairs": "إدارة شؤون مؤسسات التعليم العالي",
+  "structure.nodes.higher-education-licensing": "قسم تراخيص مؤسسات وبرامج التعليم العالي",
+  "structure.nodes.higher-education-supervision": "قسم الإشراف والمتابعة لمؤسسات التعليم العالي",
+
+  "structure.nodes.scholarships": "إدارة البعثات",
+  "structure.nodes.scholarships-admission-guidance": "قسم القبول والإرشاد",
+  "structure.nodes.domestic-scholarships": "قسم البعثات الداخلية",
+  "structure.nodes.external-scholarships": "قسم البعثات الخارجية",
+  "structure.nodes.scholarships-admin-financial-support": "قسم الدعم الإداري والمالي",
+
+  "structure.nodes.university-degree-equivalence": "إدارة معادلة الشهادات الدراسية الجامعية",
+  "structure.nodes.degree-equivalence": "قسم معادلة الشهادات الجامعية",
+  "structure.nodes.degree-authentication": "قسم تصديق الشهادات الجامعية",
+
+  "structure.nodes.human-resources": "إدارة الموارد البشرية",
+  "structure.nodes.hr-planning": "قسم تخطيط الموارد البشرية",
+  "structure.nodes.staff-affairs": "قسم شؤون الموظفين",
+  "structure.nodes.teachers-admin-technical-affairs": "قسم الشؤون الفنية للمعلمين والإداريين",
+  "structure.nodes.salaries-wages": "قسم الرواتب والأجور",
+  "structure.nodes.recruitment-employment": "قسم الاستقطاب والتوظيف",
+  "structure.nodes.hr-services": "قسم خدمات الموارد البشرية",
+
+  "structure.nodes.financial-affairs": "إدارة الشؤون المالية",
+  "structure.nodes.financial-accounting": "قسم المحاسبة المالية",
+  "structure.nodes.budget": "قسم الموازنة",
+  "structure.nodes.treasury": "قسم الخزينة",
+
+  "structure.nodes.procurement-tenders": "إدارة المشتريات والمناقصات",
+  "structure.nodes.procurement": "قسم المشتريات",
+  "structure.nodes.tenders-bidding-contracts": "قسم المناقصات والمزايدات والعقود",
+
+  "structure.nodes.general-services": "إدارة الخدمات العامة",
+  "structure.nodes.admin-services": "قسم الخدمات الإدارية",
+  "structure.nodes.building-services": "قسم خدمات المباني",
+  "structure.nodes.waste-management": "قسم النقليات",
+  "structure.nodes.warehouses": "قسم المخازن",
+
+  "structure.nodes.health-safety": "إدارة الصحة والسلامة",
+  "structure.nodes.security-safety": "قسم الأمن والسلامة",
+  "structure.nodes.health-nutrition": "قسم الصحة والتغذية"
+}

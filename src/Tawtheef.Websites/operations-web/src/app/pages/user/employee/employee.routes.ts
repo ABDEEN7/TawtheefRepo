@@ -50,6 +50,12 @@ export const employeeRoutes: Routes = [
     loadComponent: () => import('./job-management/job-invitation-summary/job-invitation-summary').then(m => m.JobInvitationSummary)
   },
   {
+    path: 'exceptions',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exceptions.View] },
+    loadComponent: () => import('./exceptions/exceptions.page').then(m => m.ExceptionsPage)
+  },
+  {
     path: 'job-invitation-summary-details/:jobId',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobInvitations.View] },

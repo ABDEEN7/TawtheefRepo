@@ -5,7 +5,6 @@
       <h1>{{ 'home.hero.title' | translate }}</h1>
     </div>
   </header>
-
   <section class="section employment-system" id="about">
     <div class="container">
       <div class="row align-items-center g-4 g-lg-5">
@@ -13,14 +12,18 @@
           <div class="section-copy">
             <h2>{{ 'home.system.title' | translate }}</h2>
             <p class="system-subtitle">{{ 'home.system.subtitle' | translate }}</p>
-
             <div class="system-group">
-              <h3>{{ 'home.system.ministry.title' | translate }}</h3>
+              <h3 class="system-group-title" [routerLink]="['/ministry-structure']">
+                <span>{{ 'home.system.ministry.title' | translate }}</span>
+                <i class="hgi-stroke hgi-arrow-left-02"></i>
+              </h3>
               <p>{{ 'home.system.ministry.body' | translate }}</p>
             </div>
-
             <div class="system-group">
-              <h3>{{ 'home.system.schools.title' | translate }}</h3>
+              <h3 class="system-group-title" [routerLink]="['/structure-schools']">
+                <span>{{ 'home.system.schools.title' | translate }}</span>
+                <i class="hgi-stroke hgi-arrow-left-02"></i>
+              </h3>
               <p>{{ 'home.system.schools.body' | translate }}</p>
             </div>
 
@@ -32,8 +35,11 @@
         </div>
 
         <div class="col-12 col-lg-6 join-image-col">
-          <img class="system-image" src="assets/img/home-final/employment-system.jpg"
-            [attr.alt]="'home.system.imageAlt' | translate" />
+          <img
+            class="system-image"
+            src="assets/img/home-final/employment-system.jpg"
+            [attr.alt]="'home.system.imageAlt' | translate"
+          />
         </div>
       </div>
     </div>
@@ -48,27 +54,87 @@
 
       <div class="values-grid">
         @for (item of values; track item.key; let last = $last) {
-        <article class="value-card">
-          <span class="value-card__icon">
-            <i class="hgi hgi-stroke" [ngClass]="item.icon"></i>
-          </span>
-          <h3>{{ ('home.values.items.' + item.key + '.title') | translate }}</h3>
-          <p>{{ ('home.values.items.' + item.key + '.desc') | translate }}</p>
-        </article>
+          <article class="value-card">
+            <span class="value-card__icon">
+              <i class="hgi hgi-stroke" [ngClass]="item.icon"></i>
+            </span>
+            <h3>{{ 'home.values.items.' + item.key + '.title' | translate }}</h3>
+            <p>{{ 'home.values.items.' + item.key + '.desc' | translate }}</p>
+          </article>
         }
       </div>
     </div>
   </section>
 
+  <!-- <section class="section structure-section" id="structure">
+    <div class="container">
+      <div class="section-heading text-center">
+        <h2>{{ 'home.structure.title' | translate }}</h2>
+        <p class="values-subtitle">{{ 'home.structure.subtitle' | translate }}</p>
+      </div>
+
+      <div class="structure-grid">
+        <a class="structure-card" [routerLink]="['/structure-schools']">
+          <span class="structure-card__icon">
+            <i class="hgi hgi-stroke hgi-school-01"></i>
+          </span>
+          <h3>{{ 'home.structure.schools.title' | translate }}</h3>
+          <p>{{ 'home.structure.schools.desc' | translate }}</p>
+          <span class="structure-card__cta">
+            {{ 'home.structure.schools.cta' | translate }}
+            <i class="hgi hgi-stroke hgi-arrow-left-01"></i>
+          </span>
+        </a>
+
+        <a class="structure-card" [routerLink]="['/ministry-structure']">
+          <span class="structure-card__icon">
+            <i class="hgi hgi-stroke hgi-building-06"></i>
+          </span>
+          <h3>{{ 'home.structure.ministry.title' | translate }}</h3>
+          <p>{{ 'home.structure.ministry.desc' | translate }}</p>
+          <span class="structure-card__cta">
+            {{ 'home.structure.ministry.cta' | translate }}
+            <i class="hgi hgi-stroke hgi-arrow-left-01"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section> -->
+
   <section class="section contact-section" id="contact">
     <div class="container">
       <div class="row align-items-center g-4 g-lg-5">
-        <div class="col-12 col-lg-6 contact-map-col">
-          <iframe class="contact-map"
+        <!-- <div class="col-12 col-lg-6 contact-map-col">
+          <iframe
+            class="contact-map"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3605.147465051403!2d51.49593467593114!3d25.366373777602504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e45dcdc64a231ad%3A0x5e42253e9ba94db1!2sMinistry%20of%20Education%20and%20Higher%20Education%20HQ!5e0!3m2!1sen!2sqa!4v1779102705872!5m2!1sen!2sqa%22"
-            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade" [attr.title]="'home.contact.mapAlt' | translate">
+            width="600"
+            height="450"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            [attr.title]="'home.contact.mapAlt' | translate"
+          >
           </iframe>
+        </div> -->
+
+        <div class="col-12 col-lg-6 contact-map-col">
+          <h5 class="contact-map-title">{{ 'home.contact.find.my.school' | translate }}</h5>
+          <div class="contact-map-wrapper">
+            <iframe
+              class="contact-map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3605.147465051403!2d51.49593467593114!3d25.366373777602504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e45dcdc64a231ad%3A0x5e42253e9ba94db1!2sMinistry%20of%20Education%20and%20Higher%20Education%20HQ!5e0!3m2!1sen!2sqa!4v1779102705872!5m2!1sen!2sqa%22"
+              width="600"
+              height="450"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              [attr.title]="'home.contact.mapAlt' | translate"
+            >
+            </iframe>
+          </div>
         </div>
 
         <div class="col-12 col-lg-6 contact-info-col">
@@ -87,7 +153,7 @@
                   <i class="hgi hgi-stroke hgi-rounded hgi-calling-02"></i>
                 </span>
                 <span>
-                  <strong>{{ ('home.contact.items.hotline.label') | translate }}</strong>
+                  <strong>{{ 'home.contact.items.hotline.label' | translate }}</strong>
                   <!--phone number call-->
                   <a [href]="'tel:44044444'">44044444</a>
                 </span>
@@ -97,7 +163,7 @@
                   <i class="hgi hgi-stroke hgi-mail-01"></i>
                 </span>
                 <span>
-                  <strong>{{ ('home.contact.items.email.label') | translate }}</strong>
+                  <strong>{{ 'home.contact.items.email.label' | translate }}</strong>
                   <!--email address mailto-->
                   <a [href]="'mailto:info@edu.gov.qa'">info@edu.gov.qa</a>
                 </span>
@@ -105,6 +171,86 @@
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statistics-section">
+    <div class="container">
+      <h2 class="statistics-title">{{ 'home.statistics.title' | translate }}</h2>
+
+      <div class="statistics-grid">
+        <!-- Government Schools -->
+        <article class="statistics-card">
+          <div class="statistics-details">
+            <h3>{{ 'home.statistics.public.schools' | translate }}</h3>
+
+            <div class="statistics-item">
+              <span class="statistics-dot male"></span>
+              <span>{{ 'home.statistics.male' | translate }}</span>
+              <strong>11278</strong>
+            </div>
+
+            <div class="statistics-item">
+              <span class="statistics-dot female"></span>
+              <span>{{ 'home.statistics.female' | translate }}</span>
+              <strong>7278</strong>
+            </div>
+          </div>
+
+          <div class="pie-chart">
+            <span class="pie-percentage pie-percentage-male">22%</span>
+            <span class="pie-percentage pie-percentage-female">78%</span>
+          </div>
+        </article>
+
+        <!-- Academic Staff -->
+        <article class="statistics-card">
+          <div class="statistics-details">
+            <h3>{{ 'home.statistics.academic' | translate }}</h3>
+
+            <div class="statistics-item">
+              <span class="statistics-dot male"></span>
+              <span>{{ 'home.statistics.male' | translate }}</span>
+              <strong>11278</strong>
+            </div>
+
+            <div class="statistics-item">
+              <span class="statistics-dot female"></span>
+              <span>{{ 'home.statistics.female' | translate }}</span>
+              <strong>7278</strong>
+            </div>
+          </div>
+
+          <div class="pie-chart">
+            <span class="pie-percentage pie-percentage-male">22%</span>
+            <span class="pie-percentage pie-percentage-female">78%</span>
+          </div>
+        </article>
+
+        <!-- Administrative Staff -->
+        <article class="statistics-card">
+          <div class="statistics-details">
+            <h3>{{ 'home.statistics.management' | translate }}</h3>
+
+            <div class="statistics-item">
+              <span class="statistics-dot male"></span>
+              <span>{{ 'home.statistics.male' | translate }}</span>
+              <strong>11278</strong>
+            </div>
+
+            <div class="statistics-item">
+              <span class="statistics-dot female"></span>
+              <span>{{ 'home.statistics.female' | translate }}</span>
+              <strong>7278</strong>
+            </div>
+          </div>
+
+          <div class="pie-chart">
+            <span class="pie-percentage pie-percentage-male">22%</span>
+            <span class="pie-percentage pie-percentage-female">78%</span>
+          </div>
+        </article>
       </div>
     </div>
   </section>

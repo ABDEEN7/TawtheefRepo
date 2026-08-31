@@ -112,5 +112,11 @@ export const Permissions = {
   InvitationExpiryConfiguration: {
     View: 'invitation-expiry-configuration.view',
     Manage: 'invitation-expiry-configuration.manage',
+  },
+  Exceptions: {
+    View: 'exceptions.view',
+    Create: 'exceptions.create',
+    SendInvitation: 'exceptions.send-invitation',
+    Cancel: 'exceptions.cancel',
   }
 } as const;

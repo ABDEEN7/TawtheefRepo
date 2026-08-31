@@ -45,21 +45,64 @@ public sealed class InvitationExpiryService(
     private async Task ExpireInvitationsAsync(CancellationToken ct)
     {
         using var scope = scopeFactory.CreateScope();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+        var unitOfWork =
+            scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
         var today = DateOnly.FromDateTime(DateTime.Now);
 
-        var expirableStatuses = new[]
-        {
-            InvitationStatusIds.NewInvitation,
-            InvitationStatusIds.Read
-        };
+        var expirableStatuses = new[] { InvitationStatusIds.NewInvitation, InvitationStatusIds.Read };
 
-        var updated = await unitOfWork.GetEntityRepository<Invitation>().DbSet
-            .Where(i => expirableStatuses.Contains(i.InvitationStatusId) && i.ExpiresOn < today)
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(i => i.InvitationStatusId, InvitationStatusIds.Expired)
-                .SetProperty(i => i.UpdatedDate, DateTime.UtcNow), ct);
+        var updatedAt = DateTime.UtcNow;
 
-        _logger.Information("Expired {Count} invitations.", updated);
+        var updated = await unitOfWork.ExecuteInTransactionAsync(
+            async transactionCt =>
+            {
+                await unitOfWork
+                    .GetEntityRepository<InvitationException>()
+                    .DbSet
+                    .Where(invitationException =>
+                        invitationException.Status ==
+                        InvitationExceptionStatus.InvitationSent &&
+                        invitationException.Invitation != null &&
+                        expirableStatuses.Contains(
+                            invitationException.Invitation.InvitationStatusId) &&
+                        invitationException.Invitation.ExpiresOn < today)
+                    .ExecuteUpdateAsync(
+                        setters => setters
+                            .SetProperty(
+                                invitationException =>
+                                    invitationException.Status,
+                                InvitationExceptionStatus.Expired)
+                            .SetProperty(
+                                invitationException =>
+                                    invitationException.UpdatedDate,
+                                updatedAt),
+                        transactionCt);
+
+                return await unitOfWork
+                    .GetEntityRepository<Invitation>()
+                    .DbSet
+                    .Where(invitation =>
+                        expirableStatuses.Contains(
+                            invitation.InvitationStatusId) &&
+                        invitation.ExpiresOn < today)
+                    .ExecuteUpdateAsync(
+                        setters => setters
+                            .SetProperty(
+                                invitation =>
+                                    invitation.InvitationStatusId,
+                                InvitationStatusIds.Expired)
+                            .SetProperty(
+                                invitation =>
+                                    invitation.UpdatedDate,
+                                updatedAt),
+                        transactionCt);
+            },
+            ct);
+
+        _logger.Information(
+            "Expired {Count} invitations.",
+            updated);
     }
 }

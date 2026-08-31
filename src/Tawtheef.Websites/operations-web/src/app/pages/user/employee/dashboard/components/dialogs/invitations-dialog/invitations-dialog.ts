@@ -12,6 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
 
 import { PaginatedResult } from '../../../../../../../core/models/paginated-result.model';
@@ -34,6 +35,7 @@ interface InvitationsDialogData {
   filters: OperationsDashboardFilters;
   canExport: boolean;
 }
+import { InvitationSource } from '../../../../../../../core/enums/invitation-source.enum';
 
 @Component({
   selector: 'app-dashboard-invitations-dialog',
@@ -41,6 +43,7 @@ interface InvitationsDialogData {
   imports: [
     CommonModule,
     TableModule,
+    TagModule,
     TranslatePipe,
     I18nNamespaceDirective,
     PaginationComponent,
@@ -50,6 +53,7 @@ interface InvitationsDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvitationsDialog implements OnInit {
+  readonly InvitationSource = InvitationSource;
   private readonly config = inject(DynamicDialogConfig<InvitationsDialogData>);
   readonly kpis = computed<InvitationKpis>(() => this.config.data.kpis);
   readonly filters = computed<OperationsDashboardFilters>(() => this.config.data.filters);

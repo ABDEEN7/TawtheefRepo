@@ -5,7 +5,6 @@ using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Validation;
-using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
 
 namespace Tawtheef.Application.Features.Resources.Handlers.Commands;
@@ -17,9 +16,7 @@ public class UploadAttachmentHandler(
 {
     public async Task<IResult<UploadAttachmentRequest>> Handle(UploadAttachmentCommand cmd, CancellationToken ct)
     {
-        if (cmd.File.Length == 0) return Result.Fail<UploadAttachmentRequest>(ErrorsCodes.EmptyFile);
-
-        var validationResult = ProfileUploadValidator.Validate(cmd.BlobPath, cmd.File);
+        var validationResult = UploadContentValidator.Validate(cmd.BlobPath, cmd.File);
         if (validationResult.IsFailed)
             return Result.Fail<UploadAttachmentRequest>(validationResult.Errors);
 

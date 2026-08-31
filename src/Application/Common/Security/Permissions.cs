@@ -681,4 +681,43 @@ public static class Permissions
                 "Invitation Expiry Configuration - Manage",
                 101);
     }
+
+    public static class Exceptions
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Exceptions.View,
+                nameof(PermissionKeys.Exceptions),
+                PermissionAction.View,
+                "Exceptions - View",
+                "الاستثناءات - عرض",
+                102);
+
+        public static readonly PermissionDefinition Create =
+            Def(
+                PermissionKeys.Exceptions.Create,
+                nameof(PermissionKeys.Exceptions),
+                PermissionAction.Create,
+                "Exceptions - Create",
+                "الاستثناءات - إضافة",
+                103);
+
+        public static readonly PermissionDefinition SendInvitation =
+            Def(
+                PermissionKeys.Exceptions.SendInvitation,
+                nameof(PermissionKeys.Exceptions),
+                PermissionAction.SendInvitation,
+                "Exceptions - Send Invitation",
+                "الاستثناءات - إرسال دعوة",
+                104);
+
+        public static readonly PermissionDefinition Cancel =
+            Def(
+                PermissionKeys.Exceptions.Cancel,
+                nameof(PermissionKeys.Exceptions),
+                PermissionAction.Cancel,
+                "Exceptions - Cancel",
+                "الاستثناءات - إلغاء",
+                105);
+    }
 }

@@ -1,0 +1,291 @@
+
+<div class="organization-page" i18nNamespace="pages/schools-structure">
+  <div class="page-header">
+    <div>
+      <div class="page-title">{{ 'OrganizationalStructure.Title' | translate }}</div>
+      <div class="page-subtitle">{{ 'OrganizationalStructure.Subtitle' | translate }}</div>
+    </div>
+  </div>
+
+<section
+  class="structure-page"
+  i18nNamespace="pages/schools-structure"
+>
+  <div
+    class="structure-map"
+    [class.is-dragging]="isDragging"
+    (pointerdown)="startDragging($event)"
+    (pointermove)="dragMap($event)"
+    (pointerup)="stopDragging($event)"
+    (pointercancel)="stopDragging($event)"
+    (pointerleave)="stopDragging($event)"
+  >
+    <div class="structure-tree">
+
+      <!-- المؤسسات (الجذر) -->
+      <div class="minister-level">
+        <div
+          #rootNode
+          class="structure-node structure-node-leadership"
+        >
+          <button
+            type="button"
+            class="node-toggle"
+            [class.is-expanded]="root.expanded"
+            [attr.aria-expanded]="root.expanded"
+            [attr.aria-label]="root.title | translate"
+            (click)="toggleRoot($event)"
+          >
+            <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+          </button>
+
+          <span class="node-title">
+            {{ root.title | translate }}
+          </span>
+
+          <button
+            type="button"
+            class="node-info"
+            [attr.aria-label]="root.title | translate"
+            (click)="showNodeInformation(root, $event)"
+          >
+            <i class="hgi hgi-stroke hgi-information-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- المدارس / رياض الأطفال / المدارس المتخصصة -->
+      <div
+        *ngIf="root.expanded"
+        class="assistant-level"
+      >
+        <div class="assistant-horizontal-line"></div>
+
+        <div
+          *ngFor="
+            let category of categories;
+            trackBy: trackByNodeId
+          "
+          class="assistant-branch"
+        >
+          <div class="assistant-vertical-line"></div>
+
+          <!-- المدرسة/الروضة ومديرها في صف جديد أسفلها (عمودي) -->
+          <div class="category-principal-stack">
+            <div
+              class="
+                structure-node
+                structure-node-leadership
+                assistant-node
+              "
+            >
+              <button
+                *ngIf="category.children?.length"
+                type="button"
+                class="node-toggle"
+                [class.is-expanded]="category.expanded"
+                [attr.aria-expanded]="category.expanded"
+                [attr.aria-label]="category.title | translate"
+                (click)="toggleNode(category, $event)"
+              >
+                <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+              </button>
+
+              <span class="node-title">
+                {{ category.title | translate }}
+              </span>
+
+              <button
+                type="button"
+                class="node-info"
+                [attr.aria-label]="category.title | translate"
+                (click)="showNodeInformation(category, $event)"
+              >
+                <i class="hgi hgi-stroke hgi-information-circle"></i>
+              </button>
+            </div>
+
+            <ng-container
+              *ngFor="
+                let principal of category.children;
+                trackBy: trackByNodeId
+              "
+            >
+              <ng-container *ngIf="category.expanded">
+                <span class="principal-connector"></span>
+
+                <div
+                  class="
+                    structure-node
+                    structure-node-special
+                    assistant-node
+                  "
+                >
+                  <button
+                    *ngIf="principal.children?.length"
+                    type="button"
+                    class="node-toggle"
+                    [class.is-expanded]="principal.expanded"
+                    [attr.aria-expanded]="principal.expanded"
+                    [attr.aria-label]="principal.title | translate"
+                    (click)="toggleNode(principal, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+                  </button>
+
+                  <span class="node-title">
+                    {{ principal.title | translate }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="node-info"
+                    [attr.aria-label]="principal.title | translate"
+                    (click)="showNodeInformation(principal, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                  </button>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <!-- الوكلاء / المسميات: صف جديد أسفل مدير المدرسة، أفقي بينهم -->
+          <ng-container
+            *ngFor="
+              let principal of category.children;
+              trackBy: trackByNodeId
+            "
+          >
+            <span
+              *ngIf="
+                category.expanded &&
+                principal.expanded &&
+                principal.children?.length
+              "
+              class="principal-connector"
+            ></span>
+
+            <div
+              *ngIf="
+                category.expanded &&
+                principal.expanded &&
+                principal.children?.length
+              "
+              class="deputies-row"
+            >
+              <div class="deputies-horizontal-line"></div>
+
+              <div
+                *ngFor="
+                  let deputy of principal.children;
+                  trackBy: trackByNodeId
+                "
+                class="deputy-branch"
+              >
+                <div class="deputy-vertical-line"></div>
+
+                <div class="structure-node structure-node-department">
+                  <button
+                    *ngIf="deputy.children?.length"
+                    type="button"
+                    class="node-toggle"
+                    [class.is-expanded]="deputy.expanded"
+                    [attr.aria-expanded]="deputy.expanded"
+                    [attr.aria-label]="deputy.title | translate"
+                    (click)="toggleNode(deputy, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+                  </button>
+
+                  <span class="node-title">
+                    {{ deputy.title | translate }}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="node-info"
+                    [attr.aria-label]="deputy.title | translate"
+                    (click)="showNodeInformation(deputy, $event)"
+                  >
+                    <i class="hgi hgi-stroke hgi-information-circle"></i>
+                  </button>
+                </div>
+
+                <!-- الوظائف تحت هذا الوكيل تحديدًا (رأسي، بدون تغيير الشكل) -->
+                <div
+                  *ngIf="deputy.expanded && deputy.children?.length"
+                  class="education-children deputy-staff-list"
+                >
+                  <div class="education-children-line"></div>
+
+                  <div
+                    *ngFor="
+                      let staff of deputy.children;
+                      trackBy: trackByNodeId
+                    "
+                    class="education-child-row"
+                  >
+                    <span class="education-child-connector"></span>
+
+                    <div class="structure-node structure-node-section">
+                      <span class="node-title">
+                        {{ staff.title | translate }}
+                      </span>
+
+                      <button
+                        type="button"
+                        class="node-info"
+                        [attr.aria-label]="staff.title | translate"
+                        (click)="showNodeInformation(staff, $event)"
+                      >
+                        <i class="hgi hgi-stroke hgi-information-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+@if (selectedNode) {
+  <div
+    class="structure-modal-backdrop"
+    (click)="closeNodeInformation()"
+  >
+    <section
+      class="structure-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="structure-modal-title"
+      (click)="stopModalClick($event)"
+    >
+      <button
+        type="button"
+        class="structure-modal-close"
+        aria-label="Close"
+        (click)="closeNodeInformation()"
+      >
+        <i class="hgi hgi-stroke hgi-cancel-01"></i>
+      </button>
+
+      <header class="structure-modal-header">
+        <h2 id="structure-modal-title">
+          {{ selectedNode.title | translate }}
+        </h2>
+
+        @if (selectedNode.description) {
+          <p>{{ selectedNode.description | translate }}</p>
+        }
+      </header>
+    </section>
+  </div>
+}
+
+</div>

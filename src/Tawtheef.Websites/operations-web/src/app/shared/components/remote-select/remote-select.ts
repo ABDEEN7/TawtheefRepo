@@ -14,12 +14,18 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Subject, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { catchError, debounceTime, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { TranslateService } from '@ngx-translate/core';
 
 type LoadRequest = { term: string; page: number; append: boolean };
+
+export interface RemoteSelectLoadRequest {
+  searchTerm: string;
+  pageNumber: number;
+  pageSize: number;
+}
 
 type QueryParamValue =
   | string
@@ -56,13 +62,16 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Output() onObjectChange = new EventEmitter<any>();
 
   @Input() searchUrl!: string;
+  @Input('optionsLoader') optionsLoader?: (request: RemoteSelectLoadRequest) => Observable<readonly object[]>;
   @Input() minChars = 1;
   @Input() searchParamName = 'search';
   @Input() idParamName = 'id';
   @Input() pageSize = 10;
 
   @Input() optionLabel = 'name';
+  @Input('secondaryOptionLabel') secondaryOptionLabel?: string;
   @Input() optionValue?: string;
+  @Input('optionId') optionId = 'id';
   @Input() placeholder = '';
   @Input() noResultsPlaceholder = '';
   private lastLoadReturnedEmpty = false;
@@ -74,7 +83,10 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   @Input() showClear = false;
   @Input() preloadedOptions: any[] = [];
 
+  @Input() virtualScroll = true;
   @Input() virtualScrollItemSize = 38;
+  @Input() virtualScrollMaxHeight = 200;
+  @Input() scrollHeight = '200px';
   @Input() parentId: string | number | null | undefined;
   @Input() parentParamName = 'parentId';
   @Input() requireParent = false;
@@ -86,6 +98,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   value = signal<any>(null);
 
   isLoading = signal(false);
+  isPageLoading = signal(false);
   hasMore = signal(true);
   emptyMessage = signal('');
 
@@ -121,6 +134,15 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
   get computedPlaceholder(): string {
     return this.placeholder;
+  }
+
+  get effectiveScrollHeight(): string {
+    if (!this.virtualScroll) {
+      return this.scrollHeight;
+    }
+
+    const contentHeight = Math.max(1, this.options().length) * this.virtualScrollItemSize;
+    return `${Math.min(contentHeight, this.virtualScrollMaxHeight)}px`;
   }
 
   // =============================
@@ -193,23 +215,31 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
       .pipe(
         debounceTime(300),
         switchMap(req => {
-          if (!this.searchUrl || (this.requireParent && this.isParentMissing())) {
+          if ((!this.searchUrl && !this.optionsLoader) || (this.requireParent && this.isParentMissing())) {
             this.isLoading.set(false);
-            return of({ req, res: [] as any[] });
+            return of({ req, res: [] as object[] });
           }
 
-          this.isLoading.set(true);
+          const loading = req.append ? this.isPageLoading : this.isLoading;
+          loading.set(true);
           const params = this.buildParams(req.term, req.page, this.pageSize);
 
-          return this.http
-            .get<any[]>(this.searchUrl, {
+          const response$: Observable<readonly object[]> = this.optionsLoader
+            ? this.optionsLoader({
+              searchTerm: req.term,
+              pageNumber: req.page + 1,
+              pageSize: this.pageSize
+            })
+            : this.http.get<readonly object[]>(this.searchUrl, {
               params,
               headers: new HttpHeaders({ 'X-Skip-Loading': 'true' }),
-            })
+            });
+
+          return response$
             .pipe(
-              map(res => ({ req, res: res ?? [] })),
-              catchError(() => of({ req, res: [] as any[] })),
-              finalize(() => this.isLoading.set(false))
+              map(res => ({ req, res: [...(res ?? [])] })),
+              catchError(() => of({ req, res: [] as object[] })),
+              finalize(() => loading.set(false))
             );
         }),
         takeUntil(this.destroy$)
@@ -238,7 +268,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     if (changes['preloadedOptions']) {
       // don’t wipe current options; merge
       const merged = this.mergeById([...(this.options() ?? []), ...(this.preloadedOptions ?? [])]);
-      this.options.set(this.sortByOptionLabel(this.mergeWithSelected(merged)));
+      this.options.set(this.mergeWithSelected(merged));
     }
 
     if (changes['parentId'] && !changes['parentId'].firstChange) {
@@ -312,7 +342,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
    * ✅ PrimeNG correct lazy paging: derive page from first/rows
    */
   onLazyLoad(event: { first?: number; rows?: number }): void {
-    if (this.isLoading() || !this.hasMore) return;
+    if (this.isLoading() || this.isPageLoading() || !this.hasMore()) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     const first = event?.first ?? 0;
@@ -377,13 +407,13 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
   }
 
   private load(req: LoadRequest): void {
-    if (!this.searchUrl) return;
+    if (!this.searchUrl && !this.optionsLoader) return;
     if (this.requireParent && this.isParentMissing()) return;
 
     this.currentTerm = (req.term ?? '').trim();
     this.pageNumber = req.page;
 
-    this.isLoading.set(true);
+    (req.append ? this.isPageLoading : this.isLoading).set(true);
     this.request$.next(req);
   }
 
@@ -434,7 +464,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
     const mergedWithSelected = this.mergeWithSelected(mergedBase);
 
-    this.options.set(this.sortByOptionLabel(mergedWithSelected));
+    this.options.set(mergedWithSelected);
     this.hasMore.set(next.length === this.pageSize);
 
     // emptyMessage داخل القائمة
@@ -498,14 +528,23 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return Array.from(seen.values());
   }
 
-  private getOptionId(option: any): string | null {
-    const id = option?.id ?? option?.Id;
+  private getOptionId(option: unknown): string | null {
+    const optionId = this.optionId.trim();
+    const id = this.getByPath(option, optionId)
+      ?? (optionId === 'id' ? this.getByPath(option, 'Id') : undefined);
     return id ? String(id) : null;
   }
 
-  private getByPath(obj: any, path: string): any {
-    if (!obj || !path) return undefined;
-    return path.split('.').reduce((acc, key) => (acc == null ? undefined : acc[key]), obj);
+  private getByPath(value: unknown, path: string): unknown {
+    if (value === null || typeof value !== 'object' || !path) return undefined;
+
+    let current: unknown = value;
+    for (const key of path.split('.')) {
+      if (current === null || typeof current !== 'object') return undefined;
+      current = (current as Record<string, unknown>)[key];
+    }
+
+    return current;
   }
 
   getOptionLabelValue(option: any): string {
@@ -514,9 +553,12 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
     return (raw ?? '').toString().trim();
   }
 
-  private sortByOptionLabel(items: any[]): any[] {
-    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    return [...(items ?? [])].sort((a, b) => collator.compare(this.getOptionLabelValue(a), this.getOptionLabelValue(b)));
+  getSecondaryOptionLabelValue(option: unknown): string {
+    const key = (this.secondaryOptionLabel ?? '').trim();
+    if (!key) return '';
+
+    const raw = this.getByPath(option, key);
+    return (raw ?? '').toString().trim();
   }
 
   private appendExtraParams(params: HttpParams): HttpParams {
@@ -529,7 +571,7 @@ export class RemoteSelectComponent implements OnInit, OnDestroy, OnChanges, Cont
 
       if (Array.isArray(value)) {
         for (const v of value) {
-          if (v === null || v === undefined || v === ('' as any)) continue;
+          if (v === null || v === undefined || v === '') continue;
           params = params.append(key, String(v));
         }
         continue;

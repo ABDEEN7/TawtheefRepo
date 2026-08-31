@@ -197,6 +197,20 @@ export class EndpointsService {
     profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`)
   };
 
+  exceptions = {
+    list: this.getFullUrl('/exceptions'),
+    summary: this.getFullUrl('/exceptions/summary'),
+    details: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}`),
+    proof: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/proof`),
+    candidateByQid: this.getFullUrl('/exceptions/candidates/by-qid'),
+    managements: this.getFullUrl('/exceptions/managements'),
+    departments: this.getFullUrl('/exceptions/departments'),
+    jobs: this.getFullUrl('/exceptions/jobs'),
+    create: this.getFullUrl('/exceptions'),
+    sendInvitation: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/send-invitation`),
+    cancel: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/cancel`)
+  };
+
   officeUsers = {
     list: this.getFullUrl('/officeUsers'),
     create: this.getFullUrl('/officeUsers'),

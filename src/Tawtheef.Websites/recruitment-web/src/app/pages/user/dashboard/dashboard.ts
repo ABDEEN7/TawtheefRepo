@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -17,7 +17,9 @@ import { ActionConfig } from './types/action-config.type';
 import { STATUS_PILL_CLASSES, TYPE_BADGE_CLASSES, ACTION_CONFIGS } from './constants/constants';
 import { CandidateDashboardService } from './services/candidate-dashboard.service';
 import { InvitationStatus } from '../../../core/enums/lookups.enum';
-
+import { ProfileViewCqrs } from '../profile/view/profile-view.cqrs';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { AvatarUtils } from '../../../core/utils/avatar-utils';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -35,6 +37,11 @@ import { InvitationStatus } from '../../../core/enums/lookups.enum';
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
+
+ //private readonly languageService = Inject(LanguageService)
+  private readonly profileCqrs = inject(ProfileViewCqrs)  // Re-use an exsisting profile data instead of duplicate services
+  
+
   candidateService = inject(CandidateDashboardService);
   authService = inject(AuthService);
   translate = inject(TranslateService);
@@ -44,6 +51,36 @@ export class Dashboard implements OnInit {
   isRefreshing = signal(false);
 
   // Reactive signals
+
+    private readonly profileBasic = rxResource ({
+    params: () => true,
+    stream: ()=> this.profileCqrs.basics(),
+    })
+
+  candidate = computed(() => {
+    const p = this.profileBasic.value();
+    if(!p) return null;
+    const isAr = this.translate.getCurrentLang() === 'ar';
+    return {
+      fullName : isAr ?  p.fullNameAr : p.fullNameEn,
+      photoUrl : p.avatar || AvatarUtils.build((isAr ?  p.fullNameAr : p.fullNameEn) ?? null),
+      address: [
+      p.address,
+      p.naZone && (isAr ? `منطقة ${p.naZone}` : `Zone: ${p.naZone}`),
+      p.naStreet && (isAr ? `شارع ${p.naStreet}` : `Street: ${p.naStreet}`),
+      p.naBuilding && (isAr ? `مبنى ${p.naBuilding}` : `Building: ${p.naBuilding}`),
+     // p.naUnit && (isAr ? `وحدة ${p.naUnit}` : `Unit: ${p.naUnit}`),
+  ]
+    .filter(Boolean)
+    .join(' - '), // Joined with a dash (-) as in your example
+      country: p.residenceCountry?.name,
+      phone : p.phone,
+      email : p.email     
+    }
+  });
+
+ defaultAvatar = AvatarUtils.default;
+  
   candidateInvitations = this.candidateService.candidateInvitations;
   paginationMetadata = this.candidateService.paginationMetadata;
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
@@ -61,6 +98,7 @@ export class Dashboard implements OnInit {
     this.candidateService.loadCandidateLookups();
     this.candidateService.loadCandidateInvitationStatistics();
     this.loadCandidateInvitations();
+    console.log('candidaaaaaaaat :' , this.candidate);
   }
 
   // Refresh data
@@ -138,5 +176,9 @@ export class Dashboard implements OnInit {
 
   onFilterChange() {
     this.loadCandidateInvitations();
+  }
+
+  onPhotoError(event: Event): void {
+  (event.target as HTMLImageElement).src = AvatarUtils.default;
   }
 }

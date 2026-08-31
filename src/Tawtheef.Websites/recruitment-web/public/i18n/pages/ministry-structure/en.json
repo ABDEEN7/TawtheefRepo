@@ -1,0 +1,169 @@
+{
+  "structure.title": "Organizational Structure",
+  "OrganizationalStructure.Ministry.Subtitle": "Browse Ministry Organizational Structure",
+  "structure.subtitle": "Explore the organizational structure of the Ministry of Education and Higher Education.",
+  "structure.expandAll": "Expand all",
+  "structure.collapseAll": "Collapse all",
+
+  "structure.nodes.minister": "Minister",
+  "structure.nodes.minister-office": "Office of the Minister",
+  "structure.nodes.technical-office": "Technical Office",
+  "structure.nodes.internal-audit": "Internal Audit Department",
+
+  "structure.nodes.planning": "Educational Planning, Policies and Innovation Department",
+  "structure.nodes.strategic-planning": "Strategic Planning Section",
+  "structure.nodes.educational-policies-research": "Educational Policies and Research Section",
+  "structure.nodes.quality-development-innovation": "Quality, Development and Innovation Section",
+  "structure.nodes.statistical-studies": "Statistical Studies Section",
+
+  "structure.nodes.legal-affairs": "Legal Affairs Department",
+  "structure.nodes.legal-studies": "Legal Studies Section",
+  "structure.nodes.investigations-cases": "Investigations and Cases Section",
+
+  "structure.nodes.undersecretary": "Undersecretary",
+  "structure.nodes.undersecretary-office": "Office of the Undersecretary",
+
+  "structure.nodes.training-center": "Training and Development Center",
+  "structure.nodes.training-program-planning": "Training Program Planning Section",
+  "structure.nodes.educational-training": "Educational Training Section",
+  "structure.nodes.administrative-training": "Administrative Training Section",
+  "structure.nodes.professional-licenses": "Professional Licensing Section",
+  "structure.nodes.training-systems": "Training Systems Section",
+
+  "structure.nodes.international-cooperation": "International Cooperation Department",
+
+  "structure.nodes.public-relations": "Public Relations and Communications Department",
+  "structure.nodes.communication": "Communications Section",
+  "structure.nodes.public-relations-section": "Public Relations Section",
+  "structure.nodes.customer-service": "Customer Service Section",
+  "structure.nodes.content-translation": "Content and Translation Section",
+
+  "structure.nodes.information-systems": "Information Systems Department",
+  "structure.nodes.information-security": "Information Security Section",
+  "structure.nodes.project-management": "Project Management Section",
+  "structure.nodes.applications": "Applications Section",
+  "structure.nodes.technology-infrastructure": "Technology Infrastructure Section",
+  "structure.nodes.it-policies-quality": "Information Technology Policies and Quality Section",
+  "structure.nodes.technology-equipment-support": "Technology Equipment and User Support Section",
+
+  "structure.nodes.education-affairs": "Assistant Undersecretary for Educational Affairs",
+  "structure.nodes.private-education-affairs": "Assistant Undersecretary for Private Education",
+  "structure.nodes.evaluation-affairs": "Assistant Undersecretary for Evaluation Affairs",
+  "structure.nodes.higher-education-affairs": "Assistant Undersecretary for Higher Education",
+  "structure.nodes.shared-services-affairs": "Assistant Undersecretary for Shared Services",
+
+  "structure.nodes.assistant-undersecretary-office": "Office of the Assistant Undersecretary",
+
+  "structure.nodes.vocational-technical-education": "Vocational, Technical and Specialized Education Department",
+  "structure.nodes.vocational-education-development": "Vocational, Technical and Specialized Education Development Section",
+  "structure.nodes.vocational-education-supervision": "Vocational, Technical and Specialized Education Supervision and Guidance Section",
+
+  "structure.nodes.digital-education": "E-Learning and Digital Solutions Department",
+  "structure.nodes.digital-education-development": "E-Learning Development Section",
+  "structure.nodes.digital-education-support": "E-Learning Supervision and Support Section",
+
+  "structure.nodes.curriculum-learning-resources": "Curriculum and Learning Resources Department",
+  "structure.nodes.curriculum": "Curriculum Section",
+  "structure.nodes.learning-resources": "Learning Resources Section",
+  "structure.nodes.research-talent-innovation": "Research, Talent and Innovation Section",
+  "structure.nodes.school-laboratories": "School Laboratories Section",
+
+  "structure.nodes.educational-guidance": "Educational Guidance Department",
+  "structure.nodes.islamic-education": "Islamic Education Section",
+  "structure.nodes.arabic-language": "Arabic Language Section",
+  "structure.nodes.mathematics": "Mathematics Section",
+  "structure.nodes.science": "Science Section",
+  "structure.nodes.english-language": "English Language Section",
+  "structure.nodes.social-sciences": "Social Sciences Section",
+  "structure.nodes.information-technology": "Information Technology Section",
+  "structure.nodes.physical-education": "Physical Education Section",
+  "structure.nodes.arts-theater": "Arts and Theater Section",
+
+  "structure.nodes.early-education": "Early Education Department",
+  "structure.nodes.kindergarten-stage": "Kindergarten Stage Section",
+  "structure.nodes.foundation-stage": "Foundation Stage Section",
+
+  "structure.nodes.special-inclusive-education": "Special and Inclusive Education Department",
+  "structure.nodes.special-schools-inclusion": "Special Education Schools and Inclusion Students Section",
+  "structure.nodes.student-support-center": "Student Support Services Center",
+
+  "structure.nodes.schools-students-affairs": "Schools and Student Affairs Department",
+  "structure.nodes.student-admission-registration": "Student Admission and Registration Section",
+  "structure.nodes.academic-guidance": "Academic Guidance Section",
+  "structure.nodes.student-protection-care": "Student Protection and Care Section",
+  "structure.nodes.programs-activities": "Programs and Activities Section",
+  "structure.nodes.school-management-support": "School Administration Support Section",
+  "structure.nodes.continuing-education": "Continuing Education Section",
+
+  "structure.nodes.daycare-centers": "Administration of Daycare Centers",
+  "structure.nodes.daycare-licensing": "Section of Daycare Licensing",
+  "structure.nodes.daycare-supervision-control": "Section of Supervision and Control",
+
+  "structure.nodes.private-school-licensing": "Administration of Private School Licensing",
+  "structure.nodes.licensing-tuition-fees": "Section of Licensing and Tuition Fees",
+  "structure.nodes.private-school-registration": "Section of Registration",
+
+  "structure.nodes.private-schools-kindergartens": "Administration of Private Schools and Kindergartens",
+  "structure.nodes.private-admin-supervision": "Section of Administrative Supervision",
+  "structure.nodes.private-academic-supervision": "Section of Academic Supervision",
+
+  "structure.nodes.educational-service-centers": "Administration of Educational Service Centers",
+  "structure.nodes.educational-centers-licensing": "Section of Educational Centers Licensing",
+  "structure.nodes.educational-centers-supervision": "Section of Supervision of Educational Centers",
+
+  "structure.nodes.student-assessment": "Administration of Student Assessment",
+  "structure.nodes.examination-affairs": "Section of Examination Affairs",
+  "structure.nodes.international-examinations": "Section of International Examinations",
+  "structure.nodes.literary-subjects-assessment": "Section of Literary Subjects Assessment",
+  "structure.nodes.scientific-subjects-assessment": "Section of Scientific Subjects Assessment",
+
+  "structure.nodes.school-assessment": "Administration of School Assessment",
+  "structure.nodes.daycare-kindergarten-assessment": "Section of Government and Private Daycare and Kindergarten Assessment",
+  "structure.nodes.government-schools-assessment": "Section of Government Schools Assessment",
+  "structure.nodes.private-schools-assessment": "Section of Private Schools Assessment",
+
+  "structure.nodes.student-information-center": "Administration of Student Information Center",
+  "structure.nodes.examination-support": "Section of Examination Support",
+  "structure.nodes.certificate-equivalence-authentication": "Section of School Certificate Equivalence and Authentication",
+
+  "structure.nodes.higher-education-institutions-affairs": "Administration of Higher Education Institutions Affairs",
+  "structure.nodes.higher-education-licensing": "Section of Higher Education Institutions and Programs Licensing",
+  "structure.nodes.higher-education-supervision": "Section of Supervision and Follow-up of Higher Education Institutions",
+
+  "structure.nodes.scholarships": "Administration of Scholarships",
+  "structure.nodes.scholarships-admission-guidance": "Section of Admission and Guidance",
+  "structure.nodes.domestic-scholarships": "Section of Domestic Scholarships",
+  "structure.nodes.external-scholarships": "Section of External Scholarships",
+  "structure.nodes.scholarships-admin-financial-support": "Section of Administrative and Financial Support",
+
+  "structure.nodes.university-degree-equivalence": "Administration of University Degree Equivalence",
+  "structure.nodes.degree-equivalence": "Section of University Degree Equivalence",
+  "structure.nodes.degree-authentication": "Section of University Degree Authentication",
+
+  "structure.nodes.human-resources": "Administration of Human Resources",
+  "structure.nodes.hr-planning": "Section of Human Resources Planning",
+  "structure.nodes.staff-affairs": "Section of Staff Affairs",
+  "structure.nodes.teachers-admin-technical-affairs": "Section of Technical Affairs for Teachers and Administrators",
+  "structure.nodes.salaries-wages": "Section of Salaries and Wages",
+  "structure.nodes.recruitment-employment": "Section of Recruitment and Employment",
+  "structure.nodes.hr-services": "Section of Human Resources Services",
+
+  "structure.nodes.financial-affairs": "Administration of Financial Affairs",
+  "structure.nodes.financial-accounting": "Section of Financial Accounting",
+  "structure.nodes.budget": "Section of Budget",
+  "structure.nodes.treasury": "Section of Treasury",
+
+  "structure.nodes.procurement-tenders": "Administration of Procurement and Tenders",
+  "structure.nodes.procurement": "Section of Procurement",
+  "structure.nodes.tenders-bidding-contracts": "Section of Tenders, Bidding and Contracts",
+
+  "structure.nodes.general-services": "Administration of General Services",
+  "structure.nodes.admin-services": "Section of Administrative Services",
+  "structure.nodes.building-services": "Section of Building Services",
+  "structure.nodes.waste-management": "Section of Waste Management",
+  "structure.nodes.warehouses": "Section of Transportation",
+
+  "structure.nodes.health-safety": "Administration of Health and Safety",
+  "structure.nodes.security-safety": "Section of Security and Safety",
+  "structure.nodes.health-nutrition": "Section of Health and Nutrition"
+}

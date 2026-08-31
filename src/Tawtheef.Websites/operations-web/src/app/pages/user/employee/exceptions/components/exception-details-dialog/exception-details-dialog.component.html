@@ -1,0 +1,296 @@
+<div
+  class="exception-details"
+  i18nNamespace="pages/employee/exceptions"
+>
+  @if (loading()) {
+    <div class="details-loading" aria-hidden="true">
+      <p-skeleton width="100%" height="5.5rem" styleClass="mb-3" />
+
+      <div class="details-grid mb-3">
+        <p-skeleton width="100%" height="10rem" />
+        <p-skeleton width="100%" height="10rem" />
+      </div>
+
+      <p-skeleton width="100%" height="16rem" styleClass="mb-3" />
+      <p-skeleton width="100%" height="8rem" />
+    </div>
+
+    <span class="visually-hidden" role="status">
+      {{ 'common.loading' | translate }}
+    </span>
+  } @else if (details(); as item) {
+
+    <!-- Invitation status -->
+    <section class="invitation-status-banner">
+      <div class="invitation-status-banner__icon" aria-hidden="true">
+        <i class="hgi hgi-stroke hgi-sent"></i>
+      </div>
+
+      <div class="invitation-status-banner__content">
+        <span class="invitation-status-banner__label">
+          {{ 'EXCEPTIONS.DETAILS.INVITATION_STATUS' | translate }}
+        </span>
+
+        <strong class="invitation-status-banner__value">
+          {{
+            item.invitationId
+              ? (item.invitationStatusName || '-')
+              : ('EXCEPTIONS.DETAILS.NOT_SENT' | translate)
+          }}
+        </strong>
+      </div>
+    </section>
+
+    <!-- Candidate + Job -->
+    <div class="details-grid">
+
+      <section
+        class="details-card"
+        aria-labelledby="exception-candidate-heading"
+      >
+        <div class="details-card__header">
+          <span class="details-card__icon" aria-hidden="true">
+            <i class="hgi hgi-stroke hgi-user"></i>
+          </span>
+
+          <h6
+            id="exception-candidate-heading"
+            class="details-card__title"
+          >
+            {{ 'EXCEPTIONS.DETAILS.CANDIDATE_INFORMATION' | translate }}
+          </h6>
+        </div>
+
+        <dl class="details-card__fields mb-0">
+          <div class="details-field">
+            <dt>
+              {{ 'EXCEPTIONS.DETAILS.CANDIDATE_NAME' | translate }}
+            </dt>
+            <dd>
+              {{ item.candidate.candidateName }}
+            </dd>
+          </div>
+
+          <div class="details-field">
+            <dt>
+              {{ 'EXCEPTIONS.DETAILS.QID' | translate }}
+            </dt>
+            <dd class="details-ltr-value">
+              {{ item.candidate.qid }}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="details-card"
+        aria-labelledby="exception-job-heading"
+      >
+        <div class="details-card__header">
+          <span class="details-card__icon" aria-hidden="true">
+            <i class="hgi hgi-stroke hgi-briefcase-01"></i>
+          </span>
+
+          <h6
+            id="exception-job-heading"
+            class="details-card__title"
+          >
+            {{ 'EXCEPTIONS.DETAILS.JOB_INFORMATION' | translate }}
+          </h6>
+        </div>
+
+        <dl class="details-card__fields mb-0">
+          <div class="details-field">
+            <dt>
+              {{ 'EXCEPTIONS.DETAILS.JOB_TITLE' | translate }}
+            </dt>
+            <dd>
+              {{ item.job.jobTitle }}
+            </dd>
+          </div>
+
+          <div class="details-field">
+            <dt>
+              {{ 'EXCEPTIONS.DETAILS.JOB_NUMBER' | translate }}
+            </dt>
+            <dd>
+              {{ item.job.jobNumber }}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+    </div>
+
+    <!-- Exception information -->
+    <section
+      class="details-card details-card--wide"
+      aria-labelledby="exception-information-heading"
+    >
+      <div class="details-card__header">
+        <span class="details-card__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-file-02"></i>
+        </span>
+
+        <h6
+          id="exception-information-heading"
+          class="details-card__title"
+        >
+          {{ 'EXCEPTIONS.DETAILS.EXCEPTION_INFORMATION' | translate }}
+        </h6>
+      </div>
+
+      <dl class="exception-meta mb-0">
+
+        <div class="details-field">
+          <dt>
+            {{ 'EXCEPTIONS.DETAILS.EXCEPTION_STATUS' | translate }}
+          </dt>
+          <dd>
+            <span
+              class="pill"
+              [ngClass]="statusPresentations[item.status].className"
+            >
+              {{
+                statusPresentations[item.status].labelKey
+                  | translate
+              }}
+            </span>
+          </dd>
+        </div>
+
+        <div class="details-field">
+          <dt>
+            {{ 'EXCEPTIONS.DETAILS.CREATED_DATE' | translate }}
+          </dt>
+          <dd class="text-nowrap">
+            {{ item.createdDate | date: 'dd/MM/yyyy, HH:mm' }}
+          </dd>
+        </div>
+
+        @if (item.updatedDate) {
+          <div class="details-field">
+            <dt>
+              {{ 'EXCEPTIONS.DETAILS.UPDATED_DATE' | translate }}
+            </dt>
+            <dd class="text-nowrap">
+              {{ item.updatedDate | date: 'dd/MM/yyyy, HH:mm' }}
+            </dd>
+          </div>
+        }
+
+      </dl>
+
+      <div class="exception-reason">
+        <div class="exception-reason__label">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+
+          <span>
+            {{ 'EXCEPTIONS.DETAILS.REASON' | translate }}
+          </span>
+        </div>
+
+        <div class="exception-reason__content">
+          {{ item.reason }}
+        </div>
+      </div>
+
+      @if (item.cancellationReason) {
+        <div class="exception-reason exception-reason--cancelled">
+          <div class="exception-reason__label">
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+
+            <span>
+              {{
+                'EXCEPTIONS.DETAILS.CANCELLATION_REASON'
+                  | translate
+              }}
+            </span>
+          </div>
+
+          <div class="exception-reason__content">
+            {{ item.cancellationReason }}
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Proof -->
+    <section
+      class="details-card details-card--proof"
+      aria-labelledby="exception-proof-heading"
+    >
+      <div class="details-card__header">
+        <span class="details-card__icon" aria-hidden="true">
+          <i class="hgi hgi-stroke hgi-attachment-01"></i>
+        </span>
+
+        <h6
+          id="exception-proof-heading"
+          class="details-card__title"
+        >
+          {{ 'EXCEPTIONS.DETAILS.PROOF' | translate }}
+        </h6>
+      </div>
+
+      @if (item.proof; as proof) {
+        <div class="proof-row">
+
+          <div class="proof-row__file">
+            <span class="proof-row__icon" aria-hidden="true">
+              <i class="pi pi-file-pdf"></i>
+            </span>
+
+            <span
+              class="proof-row__name"
+              [title]="proof.fileName"
+            >
+              {{ proof.fileName }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary proof-row__download"
+            [disabled]="downloading()"
+            [attr.aria-busy]="downloading()"
+            (click)="downloadProof()"
+          >
+            <i
+              class="pi"
+              [class.pi-download]="!downloading()"
+              [class.pi-spinner]="downloading()"
+              [class.pi-spin]="downloading()"
+              aria-hidden="true"
+            ></i>
+
+            <span>
+              {{
+                (
+                  downloading()
+                    ? 'EXCEPTIONS.DETAILS.DOWNLOADING'
+                    : 'common.download'
+                ) | translate
+              }}
+            </span>
+          </button>
+
+        </div>
+      } @else {
+        <p class="text-muted mb-0">
+          {{ 'EXCEPTIONS.DETAILS.NO_PROOF' | translate }}
+        </p>
+      }
+    </section>
+  }
+
+  <div class="dialog-actions">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="close()"
+    >
+      {{ 'common.close' | translate }}
+    </button>
+  </div>
+</div>

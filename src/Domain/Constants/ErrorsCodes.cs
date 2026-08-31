@@ -266,6 +266,24 @@ public class ErrorsCodes
     #endregion
 
     // =========================================================
+    // EXCEPTIONS
+    // =========================================================
+    #region Exceptions
+    public const string ExceptionCandidateNotFound = "EXCEPTION_CANDIDATE_NOT_FOUND";
+    public const string ExceptionCandidateProfileNotApproved = "EXCEPTION_CANDIDATE_PROFILE_NOT_APPROVED";
+    public const string ExceptionProofFileTooLarge = "EXCEPTION_PROOF_FILE_TOO_LARGE";
+    public const string ExceptionReasonRequired = "EXCEPTION_REASON_REQUIRED";
+    public const string ExceptionReasonTooLong = "EXCEPTION_REASON_TOO_LONG";
+    public const string ExceptionJobNotOpen = "EXCEPTION_JOB_NOT_OPEN";
+    public const string ExceptionInvitationAlreadyExists = "EXCEPTION_INVITATION_ALREADY_EXISTS";
+    public const string ExceptionRequestAlreadyExists = "EXCEPTION_REQUEST_ALREADY_EXISTS";
+    public const string InvitationExceptionNotFound = "INVITATION_EXCEPTION_NOT_FOUND";
+    public const string InvitationExceptionNotReadyToSend = "INVITATION_EXCEPTION_NOT_READY_TO_SEND";
+    public const string InvitationExceptionProofNotFound = "INVITATION_EXCEPTION_PROOF_NOT_FOUND";
+    public const string InvitationExceptionCannotBeCancelled = "INVITATION_EXCEPTION_CANNOT_BE_CANCELLED";
+    #endregion
+
+    // =========================================================
     // ORGANIZATION
     // =========================================================
     #region Organization Structures

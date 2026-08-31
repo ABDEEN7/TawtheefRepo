@@ -127,6 +127,7 @@ internal sealed class DashboardInvitationsReader(
             .Select(invitation => new
             {
                 invitation.Id,
+                invitation.Source,
                 invitation.CreatedDate,
 
                 JobTitleAr =
@@ -174,6 +175,7 @@ internal sealed class DashboardInvitationsReader(
                     return new LatestInvitationDto
                     {
                         InvitationId = invitation.Id,
+                        Source = invitation.Source,
                         Title = string.IsNullOrWhiteSpace(applicantName)
                             ? jobTitle
                             : $"{jobTitle} - {applicantName}",

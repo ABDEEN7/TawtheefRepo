@@ -7,6 +7,7 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Servic
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Utilities;
 using FluentResults;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Repositories;
@@ -30,6 +31,9 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     IAppLogger logger)
     : IRequestHandler<SendJobCandidateInvitationsCommand, IResult<SendJobCandidateInvitationsResult>>
 {
+    private const string ActiveInvitationUniqueIndexName =
+        "IX_Invitation_ApplicantId_JobId_Active";
+
     public async Task<IResult<SendJobCandidateInvitationsResult>> Handle(
         SendJobCandidateInvitationsCommand request,
         CancellationToken cancellationToken)
@@ -95,7 +99,7 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
     }
 
     private IQueryable<JobCandidateRecord> BuildEligibleCandidatesQuery(
-        Tawtheef.Domain.Entities.Recruitment.Job job,
+        Job job,
         SendJobCandidateInvitationsCommand request,
         JobRequirements req)
     {
@@ -273,7 +277,15 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
 
         await repo.AddRangeAsync(invitations, ct);
 
-        var saved = await unitOfWork.SaveChangesAsync(ct);
+        int saved;
+        try
+        {
+            saved = await unitOfWork.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException exception) when (IsActiveInvitationDuplicate(exception))
+        {
+            return Failure(JobCandidatesMessages.JobCandidateInvitationConflict, 409);
+        }
 
         return Result.Ok(new SendJobCandidateInvitationsResult
         {
@@ -291,6 +303,21 @@ public sealed class SendJobCandidateInvitationsCommandHandler(
         SentSmsCount = 0,
         UpdatedStatusCount = 0
     };
+
+    private static bool IsActiveInvitationDuplicate(DbUpdateException exception)
+    {
+        return exception.InnerException is SqlException sqlException &&
+               sqlException.Errors.Cast<SqlError>().Any(error =>
+                   (error.Number is 2601 or 2627) &&
+                   error.Message.Contains(ActiveInvitationUniqueIndexName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static Result<SendJobCandidateInvitationsResult> Failure(string code, int statusCode) =>
+        Result.Fail<SendJobCandidateInvitationsResult>(
+            new Error(code)
+                .WithMetadata("Code", code)
+                .WithMetadata("UserMessage", code)
+                .WithMetadata("StatusCode", statusCode));
 
     private async Task<int> GetInvitationExpiryDaysAsync()
     {
