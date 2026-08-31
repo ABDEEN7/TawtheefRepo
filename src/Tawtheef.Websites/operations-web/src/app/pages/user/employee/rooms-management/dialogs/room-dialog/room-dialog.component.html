@@ -16,19 +16,23 @@
     </div>
     <div class="col-md-6">
       <label for="room-location" class="form-label">{{ 'ROOMS.LOCATION' | translate }}</label>
-      <input id="room-location" pInputText formControlName="location" maxlength="500" class="w-100" />
-      @if (showError('location')) {
-        <small class="text-danger">{{ 'ROOMS.VALIDATION.MAX_500' | translate }}</small>
+      <p-select inputId="room-location" [options]="locationOptions" optionValue="id"
+        formControlName="locationId" [placeholder]="'ROOMS.LOCATION' | translate" class="w-100">
+        <ng-template #selectedItem let-option>{{ locationName(option) }}</ng-template>
+        <ng-template #item let-option>{{ locationName(option) }}</ng-template>
+      </p-select>
+      @if (showError('locationId')) {
+        <small class="text-danger">{{ 'ROOMS.VALIDATION.REQUIRED' | translate }}</small>
       }
     </div>
     <div class="col-md-6">
       <label for="room-type" class="form-label">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
-      <p-select inputId="room-type" [options]="roomTypeOptions" optionLabel="labelKey" optionValue="value"
-        formControlName="roomType" [placeholder]="'ROOMS.SELECT_ROOM_TYPE' | translate" class="w-100">
-        <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
-        <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+      <p-select inputId="room-type" [options]="roomTypeOptions" optionLabel="name" optionValue="id"
+        formControlName="roomTypeId" [placeholder]="'ROOMS.SELECT_ROOM_TYPE' | translate" class="w-100">
+        <ng-template #selectedItem let-option>{{ option.name }}</ng-template>
+        <ng-template #item let-option>{{ option.name }}</ng-template>
       </p-select>
-      @if (showError('roomType')) {
+      @if (showError('roomTypeId')) {
         <small class="text-danger">{{ 'ROOMS.VALIDATION.REQUIRED' | translate }}</small>
       }
     </div>
@@ -42,12 +46,12 @@
     </div>
     <div class="col-md-6">
       <label for="room-status" class="form-label">{{ 'ROOMS.STATUS_LABEL' | translate }}</label>
-      <p-select inputId="room-status" [options]="statusOptions" optionLabel="labelKey" optionValue="value"
-        formControlName="status" [placeholder]="'ROOMS.SELECT_STATUS' | translate" class="w-100">
-        <ng-template #selectedItem let-option>{{ option.labelKey | translate }}</ng-template>
-        <ng-template #item let-option>{{ option.labelKey | translate }}</ng-template>
+      <p-select inputId="room-status" [options]="statusOptions" optionLabel="name" optionValue="id"
+        formControlName="statusId" [placeholder]="'ROOMS.SELECT_STATUS' | translate" class="w-100">
+        <ng-template #selectedItem let-option>{{ option.name }}</ng-template>
+        <ng-template #item let-option>{{ option.name }}</ng-template>
       </p-select>
-      @if (showError('status')) {
+      @if (showError('statusId')) {
         <small class="text-danger">{{ 'ROOMS.VALIDATION.REQUIRED' | translate }}</small>
       }
     </div>

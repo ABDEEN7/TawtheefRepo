@@ -5,6 +5,8 @@ import { HttpService } from '../../../../../core/http/http.service';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import { CreateRoomRequest } from '../models/create-room-request.dto';
 import { RoomFilters, RoomListItemDto } from '../models/room-list-item.dto';
+import { RoomLocationDto } from '../models/room-list-item.dto';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoomsService {
@@ -21,5 +23,17 @@ export class RoomsService {
 
   list(filters: RoomFilters): Observable<PaginatedResult<RoomListItemDto>> {
     return this.http.get<PaginatedResult<RoomListItemDto>>(this.endpoints.rooms.list, filters);
+  }
+
+  getRoomTypes(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.rooms.lookups.roomTypes);
+  }
+
+  getRoomStatuses(): Observable<dropdownOptionsModel[]> {
+    return this.http.get<dropdownOptionsModel[]>(this.endpoints.rooms.lookups.roomStatuses);
+  }
+
+  getLocations(): Observable<RoomLocationDto[]> {
+    return this.http.get<RoomLocationDto[]>(this.endpoints.rooms.lookups.locations);
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -13,20 +13,15 @@ import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { Tooltip } from 'primeng/tooltip';
-import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
-import {
-  ROOM_STATUS_OPTIONS,
-  ROOM_TYPE_OPTIONS,
-  RoomStatus,
-  RoomType
-} from '../../../../core/enums/lookups.enum';
+import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { Permissions } from '../../../../core/constants/permissions';
-import { RoomFilters, RoomListItemDto } from './models/room-list-item.dto';
+import { RoomFilters, RoomListItemDto, RoomLocationDto } from './models/room-list-item.dto';
 import { RoomsService } from './services/rooms.service';
 import { RoomDialogComponent } from './dialogs/room-dialog/room-dialog.component';
 
@@ -68,15 +63,15 @@ export class RoomsManagementPage implements OnInit {
   readonly currentLang = signal<Lang>(this.language.get());
   readonly totalItems = signal(0);
   readonly filters = signal<RoomFilters>({ pageNumber: 1, pageSize: 10 });
-  readonly roomTypeOptions = ROOM_TYPE_OPTIONS;
-  readonly statusOptions = ROOM_STATUS_OPTIONS;
+  readonly roomTypeOptions = signal<dropdownOptionsModel[]>([]);
+  readonly statusOptions = signal<dropdownOptionsModel[]>([]);
+  readonly locationOptions = signal<RoomLocationDto[]>([]);
   protected readonly Permissions = Permissions;
-  readonly hasRooms = computed(() => this.rooms().length > 0);
 
   nameFilter = '';
-  locationFilter = '';
-  selectedRoomType: RoomType | undefined;
-  selectedStatus: RoomStatus | undefined;
+  selectedLocationId: string | undefined;
+  selectedRoomTypeId: string | undefined;
+  selectedStatusId: string | undefined;
 
   ngOnInit(): void {
     this.filterChanges$
@@ -85,7 +80,7 @@ export class RoomsManagementPage implements OnInit {
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(lang => this.currentLang.set(lang));
-    this.loadRooms();
+    this.loadLookups();
   }
 
   openCreateRoom(): void {
@@ -95,7 +90,8 @@ export class RoomsManagementPage implements OnInit {
       modal: true,
       closable: true,
       dismissableMask: false,
-      breakpoints: { '768px': '95vw' }
+      breakpoints: { '768px': '95vw' },
+      data: this.dialogLookupData()
     });
 
     ref?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(id => {
@@ -111,7 +107,7 @@ export class RoomsManagementPage implements OnInit {
       closable: true,
       dismissableMask: false,
       breakpoints: { '768px': '95vw' },
-      data: { room }
+      data: { room, ...this.dialogLookupData() }
     });
 
     ref?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(id => {
@@ -120,7 +116,7 @@ export class RoomsManagementPage implements OnInit {
   }
 
   onTextFilterChange(): void {
-    this.filterChanges$.next(`${this.nameFilter}|${this.locationFilter}`);
+    this.filterChanges$.next(this.nameFilter);
   }
 
   onSelectFilterChange(): void {
@@ -137,12 +133,8 @@ export class RoomsManagementPage implements OnInit {
     this.loadRooms();
   }
 
-  roomTypeLabel(value: RoomType): string {
-    return this.roomTypeOptions.find(option => option.value === value)?.labelKey ?? '';
-  }
-
-  statusLabel(value: RoomStatus): string {
-    return this.statusOptions.find(option => option.value === value)?.labelKey ?? '';
+  locationName(location: RoomLocationDto): string {
+    return this.currentLang() === 'ar' ? location.nameAr : (location.nameEn || location.nameAr);
   }
 
   private applyFilters(): void {
@@ -150,11 +142,35 @@ export class RoomsManagementPage implements OnInit {
       ...filters,
       pageNumber: 1,
       search: this.nameFilter.trim() || undefined,
-      location: this.locationFilter.trim() || undefined,
-      roomType: this.selectedRoomType,
-      status: this.selectedStatus
+      locationId: this.selectedLocationId,
+      roomTypeId: this.selectedRoomTypeId,
+      statusId: this.selectedStatusId
     }));
     this.loadRooms();
+  }
+
+  private loadLookups(): void {
+    forkJoin({
+      roomTypes: this.roomsService.getRoomTypes(),
+      statuses: this.roomsService.getRoomStatuses(),
+      locations: this.roomsService.getLocations()
+    }).subscribe({
+      next: lookups => {
+        this.roomTypeOptions.set(lookups.roomTypes);
+        this.statusOptions.set(lookups.statuses);
+        this.locationOptions.set(lookups.locations);
+        this.loadRooms();
+      },
+      error: () => this.notification.error(this.translate.instant('ROOMS.LOAD_ERROR'))
+    });
+  }
+
+  private dialogLookupData(): object {
+    return {
+      roomTypes: this.roomTypeOptions(),
+      statuses: this.statusOptions(),
+      locations: this.locationOptions()
+    };
   }
 
   private loadRooms(): void {

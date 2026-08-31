@@ -17,17 +17,17 @@ public sealed class UpdateRoomCommandValidator : AbstractValidator<UpdateRoomCom
             .NotEmpty()
             .MaximumLength(200);
 
-        RuleFor(x => x.Room.RoomType)
-            .IsInEnum();
+        RuleFor(x => x.Room.RoomTypeId)
+            .NotEmpty();
 
         RuleFor(x => x.Room.Capacity)
             .GreaterThan(0);
 
-        RuleFor(x => x.Room.Location)
-            .MaximumLength(500);
+        RuleFor(x => x.Room.LocationId)
+            .NotEmpty();
 
-        RuleFor(x => x.Room.Status)
-            .IsInEnum();
+        RuleFor(x => x.Room.StatusId)
+            .NotEmpty();
 
         RuleFor(x => x.Room.Notes)
             .MaximumLength(2000);

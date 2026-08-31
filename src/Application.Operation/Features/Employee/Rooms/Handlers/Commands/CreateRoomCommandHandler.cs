@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Rooms;
+using Tawtheef.Domain.Entities.Exams;
 
 namespace Application.Operation.Features.Employee.Rooms.Handlers.Commands;
 
@@ -20,7 +20,7 @@ public sealed class CreateRoomCommandHandler(IUnitOfWork unitOfWork)
         var room = request.Room.Adapt<Room>();
 
         var duplicateExists = await roomRepository.DbSet.AnyAsync(
-            existingRoom => existingRoom.Location == room.Location &&
+            existingRoom => existingRoom.LocationId == room.LocationId &&
                             (existingRoom.NameAr == room.NameAr || existingRoom.NameEn == room.NameEn),
             cancellationToken);
 

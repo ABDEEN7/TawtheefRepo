@@ -361,6 +361,11 @@ export class EndpointsService {
   rooms = {
     create: this.getFullUrl('/rooms'),
     list: this.getFullUrl('/rooms'),
-    update: (id: string) => this.getFullUrl(`/rooms/${id}`)
+    update: (id: string) => this.getFullUrl(`/rooms/${id}`),
+    lookups: {
+      roomTypes: this.getFullUrl('/rooms/lookups/room-types'),
+      roomStatuses: this.getFullUrl('/rooms/lookups/room-statuses'),
+      locations: this.getFullUrl('/rooms/lookups/locations')
+    }
   };
 }

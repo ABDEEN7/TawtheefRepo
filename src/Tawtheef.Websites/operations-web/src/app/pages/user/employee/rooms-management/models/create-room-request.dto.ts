@@ -1,11 +1,9 @@
-import { RoomStatus, RoomType } from '../../../../../core/enums/lookups.enum';
-
 export interface CreateRoomRequest {
   nameAr: string;
   nameEn: string;
-  roomType: RoomType;
+  roomTypeId: string;
   capacity: number;
-  location: string | null;
-  status: RoomStatus;
+  locationId: string;
+  statusId: string;
   notes: string | null;
 }

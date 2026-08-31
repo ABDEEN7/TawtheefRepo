@@ -1,13 +1,23 @@
-import { RoomStatus, RoomType } from '../../../../../core/enums/lookups.enum';
+import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+
+export interface RoomLocationDto {
+  id: string;
+  nameAr: string;
+  nameEn: string | null;
+  locationLink: string;
+}
 
 export interface RoomListItemDto {
   id: string;
   nameAr: string;
   nameEn: string;
-  location: string | null;
-  roomType: RoomType;
+  locationId: string;
+  location: RoomLocationDto;
+  roomTypeId: string;
+  roomType: dropdownOptionsModel;
   capacity: number;
-  status: RoomStatus;
+  statusId: string;
+  status: dropdownOptionsModel;
   notes: string | null;
   lastUpdated: string;
 }
@@ -16,7 +26,7 @@ export interface RoomFilters {
   pageNumber: number;
   pageSize: number;
   search?: string;
-  location?: string;
-  roomType?: RoomType;
-  status?: RoomStatus;
+  locationId?: string;
+  roomTypeId?: string;
+  statusId?: string;
 }

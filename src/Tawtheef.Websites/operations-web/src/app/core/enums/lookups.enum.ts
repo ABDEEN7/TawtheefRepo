@@ -203,35 +203,3 @@ export enum WorkType {
   FullTime = "FullTime",
   PartTime = "PartTime",
 }
-
-/* ---------------------------------------------
-   Room Type
----------------------------------------------- */
-export enum RoomType {
-  ExamRoom = 0,
-  InterviewRoom = 1,
-  LabRoom = 2,
-  Other = 3,
-}
-
-export const ROOM_TYPE_OPTIONS = [
-  { value: RoomType.ExamRoom, labelKey: 'ROOMS.TYPE.EXAM_ROOM' },
-  { value: RoomType.InterviewRoom, labelKey: 'ROOMS.TYPE.INTERVIEW_ROOM' },
-  { value: RoomType.LabRoom, labelKey: 'ROOMS.TYPE.LAB_ROOM' },
-  { value: RoomType.Other, labelKey: 'ROOMS.TYPE.OTHER' },
-];
-
-/* ---------------------------------------------
-   Room Status
----------------------------------------------- */
-export enum RoomStatus {
-  Available = 0,
-  Unavailable = 1,
-  UnderMaintenance = 2,
-}
-
-export const ROOM_STATUS_OPTIONS = [
-  { value: RoomStatus.Available, labelKey: 'ROOMS.STATUS.AVAILABLE' },
-  { value: RoomStatus.Unavailable, labelKey: 'ROOMS.STATUS.UNAVAILABLE' },
-  { value: RoomStatus.UnderMaintenance, labelKey: 'ROOMS.STATUS.UNDER_MAINTENANCE' },
-];

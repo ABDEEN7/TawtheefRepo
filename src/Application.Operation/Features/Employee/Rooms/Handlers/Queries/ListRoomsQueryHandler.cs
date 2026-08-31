@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Models.Pagination;
 using Tawtheef.Application.Extensions;
-using Tawtheef.Domain.Entities.Rooms;
+using Tawtheef.Domain.Entities.Exams;
 
 namespace Application.Operation.Features.Employee.Rooms.Handlers.Queries;
 
@@ -19,21 +19,20 @@ public sealed class ListRoomsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
         CancellationToken cancellationToken)
     {
         var searchTerm = request.Search?.Trim();
-        var location = request.Location?.Trim();
-
         var rooms = await unitOfWork
             .GetEntityRepository<Room>()
             .DbSet
             .AsNoTracking()
+            .Include(room => room.Location)
+            .Include(room => room.RoomType)
+            .Include(room => room.Status)
             .WhereIf(
                 !string.IsNullOrWhiteSpace(searchTerm),
                 room => EF.Functions.Like(room.NameAr, $"%{searchTerm}%") ||
                         EF.Functions.Like(room.NameEn, $"%{searchTerm}%"))
-            .WhereIf(
-                !string.IsNullOrWhiteSpace(location),
-                room => room.Location != null && EF.Functions.Like(room.Location, $"%{location}%"))
-            .WhereIf(request.RoomType.HasValue, room => room.RoomType == request.RoomType)
-            .WhereIf(request.Status.HasValue, room => room.Status == request.Status)
+            .WhereIf(request.LocationId.HasValue, room => room.LocationId == request.LocationId)
+            .WhereIf(request.RoomTypeId.HasValue, room => room.RoomTypeId == request.RoomTypeId)
+            .WhereIf(request.StatusId.HasValue, room => room.StatusId == request.StatusId)
             .OrderByDescending(room => room.UpdatedDate ?? room.CreatedDate)
             .ThenBy(room => room.NameEn)
             .ToPaginatedListAsync<Room, RoomDto>(mapper, request, cancellationToken);

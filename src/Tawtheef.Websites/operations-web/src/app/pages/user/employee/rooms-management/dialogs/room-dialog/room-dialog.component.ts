@@ -10,14 +10,9 @@ import { TextareaModule } from 'primeng/textarea';
 import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotificationService } from '../../../../../../core/services/notification.service';
-import {
-  ROOM_STATUS_OPTIONS,
-  ROOM_TYPE_OPTIONS,
-  RoomStatus,
-  RoomType
-} from '../../../../../../core/enums/lookups.enum';
+import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 import { CreateRoomRequest } from '../../models/create-room-request.dto';
-import { RoomListItemDto } from '../../models/room-list-item.dto';
+import { RoomListItemDto, RoomLocationDto } from '../../models/room-list-item.dto';
 import { RoomsService } from '../../services/rooms.service';
 
 
@@ -50,16 +45,17 @@ export class RoomDialogComponent {
 
   readonly saving = signal(false);
   readonly submitted = signal(false);
-  readonly roomTypeOptions = ROOM_TYPE_OPTIONS;
-  readonly statusOptions = ROOM_STATUS_OPTIONS;
+  readonly roomTypeOptions = this.dialogConfig.data?.roomTypes as dropdownOptionsModel[] ?? [];
+  readonly statusOptions = this.dialogConfig.data?.statuses as dropdownOptionsModel[] ?? [];
+  readonly locationOptions = this.dialogConfig.data?.locations as RoomLocationDto[] ?? [];
 
   readonly form = this.formBuilder.group({
     nameAr: [this.room?.nameAr ?? '', [Validators.required, Validators.maxLength(200)]],
     nameEn: [this.room?.nameEn ?? '', [Validators.required, Validators.maxLength(200)]],
-    location: [this.room?.location ?? '', Validators.maxLength(500)],
-    roomType: [this.room?.roomType ?? null as RoomType | null, Validators.required],
+    locationId: [this.room?.locationId ?? null as string | null, Validators.required],
+    roomTypeId: [this.room?.roomTypeId ?? null as string | null, Validators.required],
     capacity: [this.room?.capacity ?? null as number | null, [Validators.required, Validators.min(1)]],
-    status: [this.room?.status ?? null as RoomStatus | null, Validators.required],
+    statusId: [this.room?.statusId ?? null as string | null, Validators.required],
     notes: [this.room?.notes ?? '', Validators.maxLength(2000)]
   });
 
@@ -74,10 +70,10 @@ export class RoomDialogComponent {
     const request: CreateRoomRequest = {
       nameAr: value.nameAr!.trim(),
       nameEn: value.nameEn!.trim(),
-      location: value.location?.trim() || null,
-      roomType: value.roomType!,
+      locationId: value.locationId!,
+      roomTypeId: value.roomTypeId!,
       capacity: value.capacity!,
-      status: value.status!,
+      statusId: value.statusId!,
       notes: value.notes?.trim() || null
     };
 
@@ -95,6 +91,12 @@ export class RoomDialogComponent {
           this.dialogRef.close(this.room?.id ?? true);
         }
       });
+  }
+
+  locationName(location: RoomLocationDto): string {
+    return this.translate.currentLang === 'ar'
+      ? location.nameAr
+      : (location.nameEn || location.nameAr);
   }
 
   cancel(): void {

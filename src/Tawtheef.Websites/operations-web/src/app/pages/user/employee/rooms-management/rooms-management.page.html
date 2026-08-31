@@ -28,28 +28,31 @@
         </div>
         <div class="col-12 col-md-6 col-xl-3 filter-field">
           <label class="form-label" for="room-location-filter">{{ 'ROOMS.LOCATION' | translate }}</label>
-          <input pInputText id="room-location-filter" type="search" class="w-100 form-control"
-            [(ngModel)]="locationFilter" (ngModelChange)="onTextFilterChange()"
-            [placeholder]="'ROOMS.SEARCH_LOCATION_PLACEHOLDER' | translate" />
+          <p-select inputId="room-location-filter" class="w-100" [options]="locationOptions()"
+            optionValue="id" [(ngModel)]="selectedLocationId" (ngModelChange)="onSelectFilterChange()"
+            [showClear]="true" [placeholder]="'ROOMS.SEARCH_LOCATION_PLACEHOLDER' | translate" appendTo="body">
+            <ng-template pTemplate="selectedItem" let-option>{{ locationName(option) }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ locationName(option) }}</ng-template>
+          </p-select>
         </div>
         <div class="col-12 col-md-6 col-xl-3 filter-field">
           <label class="form-label" for="room-type-filter">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
-          <p-select inputId="room-type-filter" class="w-100" [options]="roomTypeOptions"
-            optionLabel="labelKey" optionValue="value" [(ngModel)]="selectedRoomType"
+          <p-select inputId="room-type-filter" class="w-100" [options]="roomTypeOptions()"
+            optionLabel="name" optionValue="id" [(ngModel)]="selectedRoomTypeId"
             (ngModelChange)="onSelectFilterChange()" [showClear]="true"
             [placeholder]="'ROOMS.ALL_TYPES' | translate" appendTo="body">
-            <ng-template pTemplate="selectedItem" let-option>{{ option.labelKey | translate }}</ng-template>
-            <ng-template pTemplate="item" let-option>{{ option.labelKey | translate }}</ng-template>
+            <ng-template pTemplate="selectedItem" let-option>{{ option.name }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ option.name }}</ng-template>
           </p-select>
         </div>
         <div class="col-12 col-md-6 col-xl-3 filter-field">
           <label class="form-label" for="room-status-filter">{{ 'ROOMS.STATUS_LABEL' | translate }}</label>
-          <p-select inputId="room-status-filter" class="w-100" [options]="statusOptions"
-            optionLabel="labelKey" optionValue="value" [(ngModel)]="selectedStatus"
+          <p-select inputId="room-status-filter" class="w-100" [options]="statusOptions()"
+            optionLabel="name" optionValue="id" [(ngModel)]="selectedStatusId"
             (ngModelChange)="onSelectFilterChange()" [showClear]="true"
             [placeholder]="'ROOMS.ALL_STATUSES' | translate" appendTo="body">
-            <ng-template pTemplate="selectedItem" let-option>{{ option.labelKey | translate }}</ng-template>
-            <ng-template pTemplate="item" let-option>{{ option.labelKey | translate }}</ng-template>
+            <ng-template pTemplate="selectedItem" let-option>{{ option.name }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ option.name }}</ng-template>
           </p-select>
         </div>
       </div>
@@ -76,10 +79,10 @@
             <ng-template pTemplate="body" let-room>
               <tr>
                 <td class="fw-semibold">{{ currentLang() === 'ar' ? room.nameAr : room.nameEn }}</td>
-                <td>{{ room.location || ('ROOMS.NOT_AVAILABLE' | translate) }}</td>
-                <td>{{ roomTypeLabel(room.roomType) | translate }}</td>
+                <td>{{ locationName(room.location) }}</td>
+                <td>{{ room.roomType.name }}</td>
                 <td>{{ room.capacity }}</td>
-                <td><p-tag severity="secondary" [value]="statusLabel(room.status) | translate"></p-tag></td>
+                <td><p-tag severity="secondary" [value]="room.status.name"></p-tag></td>
                 <td>{{ room.lastUpdated | date: 'medium' }}</td>
                 <td *hasPermission="Permissions.Rooms.Manage">
                   <div class="action-buttons">

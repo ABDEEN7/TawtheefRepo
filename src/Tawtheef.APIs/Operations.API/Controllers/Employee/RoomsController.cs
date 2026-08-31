@@ -22,6 +22,36 @@ public sealed class RoomsController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpGet("lookups/room-types")]
+    [AuthorizePermission(PermissionKeys.Rooms.View, PermissionKeys.Rooms.Manage)]
+    public async Task<IActionResult> GetRoomTypes()
+    {
+        var result = await mediator.Send(new GetRoomTypesQuery
+        {
+            Language = Request.Headers.AcceptLanguage.ToString()
+        });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/room-statuses")]
+    [AuthorizePermission(PermissionKeys.Rooms.View, PermissionKeys.Rooms.Manage)]
+    public async Task<IActionResult> GetRoomStatuses()
+    {
+        var result = await mediator.Send(new GetRoomStatusesQuery
+        {
+            Language = Request.Headers.AcceptLanguage.ToString()
+        });
+        return result.ToActionResult();
+    }
+
+    [HttpGet("lookups/locations")]
+    [AuthorizePermission(PermissionKeys.Rooms.View, PermissionKeys.Rooms.Manage)]
+    public async Task<IActionResult> GetLocations()
+    {
+        var result = await mediator.Send(new GetRoomLocationsQuery());
+        return result.ToActionResult();
+    }
+
     [HttpPost]
     [AuthorizePermission(PermissionKeys.Rooms.Manage)]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomDto room)
