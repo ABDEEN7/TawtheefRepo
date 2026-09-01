@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -23,7 +22,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
             .OfType<ApplicantUser>()
             .FirstOrDefaultAsync(u => u.Id == cmd.UserId && !u.IsDeleted, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
-        
+
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
@@ -53,15 +52,16 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
                 message = UserProfileLogConstants.Notes.ProfileResubmittedToDistribution
             });
 
-            await loggerRepo.AddAsync(new UserProfileLogger
-            {
-                UserProfileId = profile.Id,
-                PerformedById = cmd.UserId,
-                ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
-                Notes = unassignNote,
-                Section = UserProfileLogConstants.Sections.Assignment,
-                EntityId = assignment.Id
-            }, ct);
+            await loggerRepo.AddAsync(
+                new UserProfileLogger
+                {
+                    UserProfileId = profile.Id,
+                    PerformedById = cmd.UserId,
+                    ActionType = UserProfileLogConstants.ActionTypes.ProfileUnassigned,
+                    Notes = unassignNote,
+                    Section = UserProfileLogConstants.Sections.Assignment,
+                    EntityId = assignment.Id
+                }, ct);
         }
 
         foreach (var sec in ProfileApprovalFlow.Sections)
@@ -80,13 +80,13 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
 
         profile.Status = UserProfileStatus.Submitted;
         user.IsCompletedProfile = true;
-        
+
         var updateResult = await userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)
         {
             return Result.Fail<Unit>(ErrorsCodes.UserUpdateFailed);
         }
-        
+
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);
@@ -140,7 +140,8 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
             ProfileSection.CertificatesAndAwards => profile.Achievements is null || profile.Achievements.Count == 0,
             ProfileSection.Skills => profile.Skills is null || profile.Skills.Count == 0,
             ProfileSection.Languages => profile.Languages is null || profile.Languages.Count == 0,
-            ProfileSection.Attachments => profile.AdditionalAttachments is null || profile.AdditionalAttachments.Count == 0,
+            ProfileSection.Attachments => profile.AdditionalAttachments is null ||
+                                          profile.AdditionalAttachments.Count == 0,
             _ => false
         };
     }
@@ -150,7 +151,6 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
     // -----------------------
     private static IEnumerable<ReviewItem> BuildProfileFiles(UserProfile profile)
     {
-
         if (profile.BirthdayCertificateId is not null)
             yield return NewFile(
                 profile.Id,
@@ -166,7 +166,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
                 nameof(profile.MarriageCertificateId),
                 profile.MarriageCertificateId.Value,
                 ProfileReviewConstants.AttachmentTitles.MarriageCertificate);
-        
+
         if (profile.ResumeAttachmentId is not null)
             yield return NewFile(
                 profile.Id,
@@ -190,7 +190,7 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
                 ProfileReviewConstants.FieldPaths.SponsorCardResourceId,
                 profile.SponsorProfile.SponsorCardId.Value,
                 ProfileReviewConstants.AttachmentTitles.SponsorCard,
-               nameof(profile.SponsorProfile),
+                nameof(profile.SponsorProfile),
                 profile.SponsorProfile.Id);
 
         if (profile.ResidenceAddress?.CertificateId is not null)
@@ -251,23 +251,31 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
     {
         if (profile.Qualifications is not null)
             foreach (var q in profile.Qualifications)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification, q.Id,
-                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Qualifications, q.Id, new ReviewItem())));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Qualifications,
+                    ProfileReviewConstants.EntityNames.Qualification, q.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Qualifications, q.Id,
+                        new ReviewItem())));
 
         if (profile.Experiences is not null)
             foreach (var e in profile.Experiences)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience, e.Id,
-                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Experience, e.Id, new ReviewItem())));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.Experience,
+                    ProfileReviewConstants.EntityNames.Experience, e.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.Experience, e.Id,
+                        new ReviewItem())));
 
         if (profile.TrainingCourses is not null)
             foreach (var t in profile.TrainingCourses)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse, t.Id,
-                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.TrainingCourses, t.Id, new ReviewItem())));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.TrainingCourses,
+                    ProfileReviewConstants.EntityNames.TrainingCourse, t.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.TrainingCourses, t.Id,
+                        new ReviewItem())));
 
         if (profile.Achievements is not null)
             foreach (var a in profile.Achievements)
-                await repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement, a.Id,
-                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.CertificatesAndAwards, a.Id, new ReviewItem())));
+                await repo.AddAsync(NewRow(profile.Id, ProfileSection.CertificatesAndAwards,
+                    ProfileReviewConstants.EntityNames.Achievement, a.Id,
+                    ReviewItemSnapshotBuilder.GetRowSnapshot(profile, ProfileSection.CertificatesAndAwards, a.Id,
+                        new ReviewItem())));
     }
 
     private static ReviewItem NewRow(
@@ -300,4 +308,3 @@ public sealed class SubmitUserProfileHandler(IUnitOfWork uow, UserManager<User> 
         item.ReviewerNote = null;
     }
 }
-

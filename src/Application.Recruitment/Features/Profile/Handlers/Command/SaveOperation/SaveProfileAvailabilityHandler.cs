@@ -19,7 +19,7 @@ public sealed class SaveProfileAvailabilityHandler(
         if (profile is null)
         {
             var user = await userManager.FindByIdAsync($"{cmd.UserId}");
-            if(user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
+            if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
             var logins = await userManager.GetLoginsAsync(user);
             var providerName = logins.FirstOrDefault()?.ProviderDisplayName?.Replace(" ", "") ?? "Unknown";
             profile = new UserProfile
@@ -40,4 +40,3 @@ public sealed class SaveProfileAvailabilityHandler(
         return Result.Ok(Unit.Value);
     }
 }
-

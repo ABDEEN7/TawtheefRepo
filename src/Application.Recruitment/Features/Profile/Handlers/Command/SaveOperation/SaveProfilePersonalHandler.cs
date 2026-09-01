@@ -20,21 +20,24 @@ public sealed class SaveProfilePersonalHandler(
     IMediator mediator,
     UserManager<User> userManager,
     IProfileStepValidationService validationService
-    ) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
+) : IRequestHandler<SaveProfilePersonalCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(SaveProfilePersonalCommand cmd, CancellationToken ct)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(p => p.Id == cmd.UserId, ct);
         if (user is null) return Result.Fail<Unit>(ErrorsCodes.UserNotFound);
-        
+
         var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
-        
-        var validationResult = validationService.ValidatePersonal(profile, new(cmd.Request.SponsorEmployerName, cmd.Request.SponsorEmployerNumber, cmd.Request.SponsorCardFileName, cmd.Request.SponsorCard));
+
+        var validationResult = validationService.ValidatePersonal(profile,
+            new ValueTuple<string?, string?, string?, object?>(cmd.Request.SponsorEmployerName,
+                cmd.Request.SponsorEmployerNumber, cmd.Request.SponsorCardFileName,
+                cmd.Request.SponsorCard));
         if (validationResult.IsFailed)
             return Result.Fail<Unit>(validationResult.Errors);
 
@@ -47,27 +50,32 @@ public sealed class SaveProfilePersonalHandler(
 
         if (!isLockedProvider)
         {
-            user.FullNameAr  = r.FullNameAr ?? user.FullNameAr;
+            user.FullNameAr = r.FullNameAr ?? user.FullNameAr;
             user.FullNameEn = r.FullNameEn ?? user.FullNameEn;
             profile.NationalNumber = r.NationalNumber ?? profile.NationalNumber;
-            profile.BirthDate      = r.BirthDate ?? profile.BirthDate;
-            profile.QIDExpiry      = r.QIDExpiry ?? profile.QIDExpiry;
+            profile.BirthDate = r.BirthDate ?? profile.BirthDate;
+            profile.QIDExpiry = r.QIDExpiry ?? profile.QIDExpiry;
         }
         else
         {
-            user.FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr) ? r.FullNameAr ?? user.FullNameAr : user.FullNameAr;
-            user.FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn) ? r.FullNameEn ?? user.FullNameEn : user.FullNameEn;
+            user.FullNameAr = string.IsNullOrWhiteSpace(user.FullNameAr)
+                ? r.FullNameAr ?? user.FullNameAr
+                : user.FullNameAr;
+            user.FullNameEn = string.IsNullOrWhiteSpace(user.FullNameEn)
+                ? r.FullNameEn ?? user.FullNameEn
+                : user.FullNameEn;
             profile.NationalNumber = string.IsNullOrWhiteSpace(profile.NationalNumber)
                 ? r.NationalNumber ?? profile.NationalNumber
                 : profile.NationalNumber;
-            profile.BirthDate = profile.BirthDate ?? r.BirthDate;
-            profile.QIDExpiry = profile.QIDExpiry ?? r.QIDExpiry;
+            profile.BirthDate ??= r.BirthDate;
+            profile.QIDExpiry ??= r.QIDExpiry;
         }
 
         if (!string.IsNullOrWhiteSpace(profile.NationalNumber) && profile.NationalityId.HasValue)
         {
             var checkNationalNumber = await uow.GetEntityRepository<UserProfile>()
-                .DbSet.AnyAsync(p => p.NationalNumber == profile.NationalNumber && p.NationalityId == profile.NationalityId
+                .DbSet.AnyAsync(p => p.NationalNumber == profile.NationalNumber &&
+                                     p.NationalityId == profile.NationalityId
                                      && p.Id != profile.Id, ct);
             if (checkNationalNumber)
                 return Result.Fail<Unit>(ErrorsCodes.DuplicateNationalNumber);
@@ -80,14 +88,15 @@ public sealed class SaveProfilePersonalHandler(
         }
         else
         {
-            profile.NationalityId = profile.NationalityId ?? r.NationalityId;
-            profile.GenderId = profile.GenderId ?? r.GenderId;
+            profile.NationalityId ??= r.NationalityId;
+            profile.GenderId ??= r.GenderId;
         }
-        profile.ReligionId      = r.ReligionId;
-        profile.MaritalStatusId = r.MaritalStatusId ?? profile.MaritalStatusId;
-        profile.ChildrenCount   = r.ChildrenCount ?? profile.ChildrenCount;
 
-        profile.HasDisability    = r.HasDisability;
+        profile.ReligionId = r.ReligionId;
+        profile.MaritalStatusId = r.MaritalStatusId ?? profile.MaritalStatusId;
+        profile.ChildrenCount = r.ChildrenCount ?? profile.ChildrenCount;
+
+        profile.HasDisability = r.HasDisability;
         profile.DisabilityDetails = r.HasDisability
             ? r.DisabilityDetails
             : null;
@@ -97,7 +106,7 @@ public sealed class SaveProfilePersonalHandler(
             var idResult = await UploadIfNeededAsync(r.SponsorCard, profile.SponsorProfile?.SponsorCardId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
-            
+
             if (profile.SponsorProfile is null)
             {
                 profile.SponsorProfile = new SponsorProfile
@@ -122,14 +131,16 @@ public sealed class SaveProfilePersonalHandler(
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Personal, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
-        
-        
+
+
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
         {
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.SponsorCard, file, false, ct);
+            var uploadPath =
+                await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.SponsorCard, file,
+                    false, ct);
             var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
@@ -140,5 +151,3 @@ public sealed class SaveProfilePersonalHandler(
         }
     }
 }
-
-

@@ -16,10 +16,7 @@ namespace Application.Operation.Features.Employee.ProfileManagement.ProfileAppro
 public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider time)
     : IRequestHandler<DecideProfileReviewItemCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<IResult<Unit>> Handle(DecideProfileReviewItemCommand cmd, CancellationToken ct)
     {
@@ -44,8 +41,9 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         if (item is null)
             return Result.Fail<Unit>(ErrorsCodes.ReviewItemNotFound);
 
-        if (cmd.Status == ReviewStatus.Approved && 
-            (item.EntityName == ProfileReviewConstants.EntityNames.Experience || item.EntityName == ProfileReviewConstants.EntityNames.TrainingCourse) &&
+        if (cmd.Status == ReviewStatus.Approved &&
+            (item.EntityName == ProfileReviewConstants.EntityNames.Experience ||
+             item.EntityName == ProfileReviewConstants.EntityNames.TrainingCourse) &&
             cmd.SpecializationRelation == null)
         {
             return Result.Fail<Unit>(ErrorsCodes.SpecializationRelationRequired);
@@ -125,28 +123,30 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             reviewerNote = cmd.Note
         });
 
-        await auditRepo.AddAsync(new AuditTrailEntry
-        {
-            UserProfileId = item.UserProfileId,
-            UserId = cmd.OfficerId,
-            ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
-            Notes = decisionNote,
-            Section = item.Section.ToString(),
-            EntityId = item.EntityId ?? item.Id,
-            AttachmentId = item.ResourceId
-        });
+        await auditRepo.AddAsync(
+            new AuditTrailEntry
+            {
+                UserProfileId = item.UserProfileId,
+                UserId = cmd.OfficerId,
+                ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
+                Notes = decisionNote,
+                Section = item.Section.ToString(),
+                EntityId = item.EntityId ?? item.Id,
+                AttachmentId = item.ResourceId
+            }, ct);
 
-        await loggerRepo.AddAsync(new UserProfileLogger
-        {
-            UserProfileId = item.UserProfileId,
-            PerformedById = cmd.OfficerId,
-            ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
-            Notes = decisionNote,
-            Section = item.Section.ToString(),
-            EntityId = item.EntityId ?? item.Id,
-            AttachmentId = item.ResourceId,
-            ReviewStatus = cmd.Status
-        });
+        await loggerRepo.AddAsync(
+            new UserProfileLogger
+            {
+                UserProfileId = item.UserProfileId,
+                PerformedById = cmd.OfficerId,
+                ActionType = UserProfileLogConstants.ActionTypes.ReviewItemDecision,
+                Notes = decisionNote,
+                Section = item.Section.ToString(),
+                EntityId = item.EntityId ?? item.Id,
+                AttachmentId = item.ResourceId,
+                ReviewStatus = cmd.Status
+            }, ct);
 
         if (cmd.Status == ReviewStatus.Approved)
         {
@@ -168,27 +168,29 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         return Result.Ok(Unit.Value);
     }
 
-    private async Task UpdateEntityRelevance(ReviewItem item, SpecializationRelationLevel? relevance, CancellationToken ct)
+    private async Task UpdateEntityRelevance(ReviewItem item, SpecializationRelationLevel? relevance,
+        CancellationToken ct)
     {
         if (relevance == null) return;
 
-        if (item.EntityName == ProfileReviewConstants.EntityNames.Experience)
+        switch (item.EntityName)
         {
-            var repo = uow.GetEntityRepository<Experience>();
-            var entity = await repo.DbSet.FirstOrDefaultAsync(e => e.Id == item.EntityId, ct);
-            if (entity != null)
-            {
-                entity.SpecializationRelation = relevance;
-            }
-        }
-        else if (item.EntityName == ProfileReviewConstants.EntityNames.TrainingCourse)
-        {
-            var repo = uow.GetEntityRepository<TrainingCourse>();
-            var entity = await repo.DbSet.FirstOrDefaultAsync(t => t.Id == item.EntityId, ct);
-            if (entity != null)
-            {
-                entity.SpecializationRelation = relevance;
-            }
+            case ProfileReviewConstants.EntityNames.Experience:
+                {
+                    var repo = uow.GetEntityRepository<Experience>();
+                    var entity = await repo.DbSet.FirstOrDefaultAsync(e => e.Id == item.EntityId, ct);
+                    entity?.SpecializationRelation = relevance;
+
+                    break;
+                }
+            case ProfileReviewConstants.EntityNames.TrainingCourse:
+                {
+                    var repo = uow.GetEntityRepository<TrainingCourse>();
+                    var entity = await repo.DbSet.FirstOrDefaultAsync(t => t.Id == item.EntityId, ct);
+                    entity?.SpecializationRelation = relevance;
+
+                    break;
+                }
         }
     }
 
@@ -200,7 +202,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         return item.TargetType switch
         {
             ReviewTargetType.Section => ApplySectionChange(profile, item.Section, change.NewValue),
-            ReviewTargetType.Row => ApplyRowChange(profile, item.Section, item.EntityName, item.EntityId, change.NewValue),
+            ReviewTargetType.Row => ApplyRowChange(profile, item.Section, item.EntityName, item.EntityId,
+                change.NewValue),
             _ => Result.Fail(ErrorsCodes.UnExpectedError)
         };
     }
@@ -228,13 +231,20 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
 
         return (section, entityName) switch
         {
-            (ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification) => AddQualification(profile, entityId.Value, newValueJson),
-            (ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience) => AddExperience(profile, entityId.Value, newValueJson),
-            (ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse) => AddTrainingCourse(profile, entityId.Value, newValueJson),
-            (ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement) => AddAchievement(profile, entityId.Value, newValueJson),
-            (ProfileSection.Skills, ProfileReviewConstants.EntityNames.Skill) => AddSkill(profile, entityId.Value, newValueJson),
-            (ProfileSection.Languages, ProfileReviewConstants.EntityNames.Language) => AddLanguage(profile, entityId.Value, newValueJson),
-            (ProfileSection.Attachments, ProfileReviewConstants.EntityNames.Attachment) => AddAdditionalAttachment(profile, entityId.Value, newValueJson),
+            (ProfileSection.Qualifications, ProfileReviewConstants.EntityNames.Qualification) => AddQualification(
+                profile, entityId.Value, newValueJson),
+            (ProfileSection.Experience, ProfileReviewConstants.EntityNames.Experience) => AddExperience(profile,
+                entityId.Value, newValueJson),
+            (ProfileSection.TrainingCourses, ProfileReviewConstants.EntityNames.TrainingCourse) => AddTrainingCourse(
+                profile, entityId.Value, newValueJson),
+            (ProfileSection.CertificatesAndAwards, ProfileReviewConstants.EntityNames.Achievement) => AddAchievement(
+                profile, entityId.Value, newValueJson),
+            (ProfileSection.Skills, ProfileReviewConstants.EntityNames.Skill) => AddSkill(profile, entityId.Value,
+                newValueJson),
+            (ProfileSection.Languages, ProfileReviewConstants.EntityNames.Language) => AddLanguage(profile,
+                entityId.Value, newValueJson),
+            (ProfileSection.Attachments, ProfileReviewConstants.EntityNames.Attachment) => AddAdditionalAttachment(
+                profile, entityId.Value, newValueJson),
             _ => Result.Fail(ErrorsCodes.UnExpectedError)
         };
     }
@@ -246,9 +256,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (s.CandidateTypeId is null || s.CandidateTypeId == Guid.Empty)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.TargetEntityId is null || s.TargetEntityId == Guid.Empty)
+        if (s.CandidateTypeId is null || s.CandidateTypeId == Guid.Empty || s.TargetEntityId is null ||
+            s.TargetEntityId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.CandidateTypeId = s.CandidateTypeId.Value;
@@ -328,11 +337,13 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
         profile.InterviewLocationId = s.InterviewLocationId;
         profile.Address = s.Address;
 
-        var hasNationalAddress = s.Zone.HasValue || s.Street.HasValue || s.Building.HasValue || s.Unit.HasValue || s.NationalAddressCertificateId.HasValue;
+        var hasNationalAddress = s.Zone.HasValue || s.Street.HasValue || s.Building.HasValue || s.Unit.HasValue ||
+                                 s.NationalAddressCertificateId.HasValue;
         if (!hasNationalAddress)
             return Result.Ok();
 
-        if (!s.Zone.HasValue || !s.Street.HasValue || !s.Building.HasValue || !s.Unit.HasValue || !s.NationalAddressCertificateId.HasValue)
+        if (!s.Zone.HasValue || !s.Street.HasValue || !s.Building.HasValue || !s.Unit.HasValue ||
+            !s.NationalAddressCertificateId.HasValue)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.ResidenceAddress ??= new ResidenceAddress();
@@ -352,9 +363,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (s.DegreeId is null || s.DegreeId == Guid.Empty)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.GradCountryId is null || s.GradCountryId == Guid.Empty)
+        if (s.DegreeId is null || s.DegreeId == Guid.Empty || s.GradCountryId is null || s.GradCountryId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.Qualifications ??= [];
@@ -387,13 +396,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (string.IsNullOrWhiteSpace(s.EmployerName))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (string.IsNullOrWhiteSpace(s.JobTitle))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (!s.StartDate.HasValue)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.CountryId is null || s.CountryId == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(s.EmployerName) || string.IsNullOrWhiteSpace(s.JobTitle) ||
+            !s.StartDate.HasValue || s.CountryId is null || s.CountryId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.Experiences ??= [];
@@ -424,13 +428,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (string.IsNullOrWhiteSpace(s.Title))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (string.IsNullOrWhiteSpace(s.Provider))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (!s.StartDate.HasValue)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.CountryId is null || s.CountryId == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(s.Title) || string.IsNullOrWhiteSpace(s.Provider) || !s.StartDate.HasValue ||
+            s.CountryId is null || s.CountryId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.TrainingCourses ??= [];
@@ -460,15 +459,9 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (s.AchievementTypeId == Guid.Empty)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (string.IsNullOrWhiteSpace(s.Title))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (string.IsNullOrWhiteSpace(s.IssuingAuthority))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.CountryId is null || s.CountryId == Guid.Empty)
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (!s.IssueDate.HasValue)
+        if (s.AchievementTypeId == Guid.Empty || string.IsNullOrWhiteSpace(s.Title) ||
+            string.IsNullOrWhiteSpace(s.IssuingAuthority) || s.CountryId is null || s.CountryId == Guid.Empty ||
+            !s.IssueDate.HasValue)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.Achievements ??= [];
@@ -508,10 +501,7 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
 
         profile.Skills.Add(new ProfileSkill
         {
-            Id = entityId,
-            UserProfileId = profile.Id,
-            SkillId = dto.SkillId,
-            LevelId = dto.LevelId
+            Id = entityId, UserProfileId = profile.Id, SkillId = dto.SkillId, LevelId = dto.LevelId
         });
 
         return Result.Ok();
@@ -554,9 +544,8 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             return Result.Fail(snapshotResult.Errors);
 
         var s = snapshotResult.Value;
-        if (string.IsNullOrWhiteSpace(s.Title))
-            return Result.Fail(ErrorsCodes.UnExpectedError);
-        if (s.AttachmentResourceId is null || s.AttachmentResourceId == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(s.Title) || s.AttachmentResourceId is null ||
+            s.AttachmentResourceId == Guid.Empty)
             return Result.Fail(ErrorsCodes.UnExpectedError);
 
         profile.AdditionalAttachments ??= [];
@@ -582,4 +571,3 @@ public sealed class DecideProfileReviewItemHandler(IUnitOfWork uow, TimeProvider
             : Result.Ok(value);
     }
 }
-
