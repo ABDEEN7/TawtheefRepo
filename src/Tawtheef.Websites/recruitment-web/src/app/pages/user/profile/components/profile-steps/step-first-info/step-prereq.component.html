@@ -1,223 +1,302 @@
 <div class="row">
   <div class="col-12">
     <div class="d-flex justify-content-between align-items-center">
-      <h5 class="text-primary mb-4">{{'wizard.prereq.titleStep' | translate}} <span class="text-danger ms-1">*</span></h5>
+      <h5 class="text-primary mb-4">
+        {{ 'wizard.prereq.titleStep' | translate }} <span class="text-danger ms-1">*</span>
+      </h5>
     </div>
   </div>
 </div>
 <div class="row g-3">
   <div class="col-md-6">
-    <label for="candidateType" class="form-label required">{{ 'wizard.prereq.candidateType' | translate }}</label>
-    <p-select [options]="lookups.candidateTypes()" [(ngModel)]="ds.state().candidateType" [filter]="false"
-      [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" optionLabel="name"
-      class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
-      (ngModelChange)="onCandidateTypeChange($event)" [appendTo]="'body'"
-      [disabled]="ds.isCandidateTypeLocked || profile.isChangeRequestMode()" fluid></p-select>
+    <label for="candidateType" class="form-label required">{{
+      'wizard.prereq.candidateType' | translate
+    }}</label>
+    <p-select
+      [options]="lookups.candidateTypes()"
+      [(ngModel)]="ds.state().candidateType"
+      [filter]="false"
+      [loading]="false"
+      filterBy="additionalData.nameAr,additionalData.nameEn,name"
+      optionLabel="name"
+      class="w-full md:w-56"
+      [placeholder]="'wizard.placeholders.selectCandidateType' | translate"
+      (ngModelChange)="onCandidateTypeChange($event)"
+      [appendTo]="'body'"
+      [disabled]="ds.isCandidateTypeLocked || profile.isChangeRequestMode()"
+      fluid
+    ></p-select>
   </div>
   <div class="col-md-6">
-    <label for="targetEntity" class="form-label required">{{ 'wizard.prereq.targetEntity' | translate }}</label>
-    <p-select [options]="lookups.targetEntities()" [(ngModel)]="ds.state().targetEntity" [filter]="false"
-      [loading]="false" filterBy="additionalData.nameAr,additionalData.nameEn,name" [appendTo]="'body'"
-      optionLabel="name" class="w-full md:w-56" [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
-      (ngModelChange)="ds.up('targetEntity',$event)" fluid></p-select>
+    <label for="targetEntity" class="form-label required">{{
+      'wizard.prereq.targetEntity' | translate
+    }}</label>
+    <p-select
+      [options]="lookups.targetEntities()"
+      [(ngModel)]="ds.state().targetEntity"
+      [filter]="false"
+      [loading]="false"
+      filterBy="additionalData.nameAr,additionalData.nameEn,name"
+      [appendTo]="'body'"
+      optionLabel="name"
+      class="w-full md:w-56"
+      [placeholder]="'wizard.placeholders.selectTargetEntity' | translate"
+      (ngModelChange)="ds.up('targetEntity', $event)"
+      fluid
+    ></p-select>
   </div>
 
   @if (ds.isResidentQatar) {
-  <div class="col-md-6">
-    <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
-    <p-date-picker name="qidExpiry" placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
-      [ngModel]="ds.state().qidExpiry" (onSelect)="onQidExpirySelect($event)" [minDate]="today" [showOnFocus]="true"
-      dateFormat="yy-mm-dd" [dataType]="'string'" [disabled]="profile.isChangeRequestMode()" fluid>
-    </p-date-picker>
-  </div>
+    <div class="col-md-6">
+      <label class="form-label required">{{ 'wizard.personal.qidExpiry' | translate }}</label>
+      <p-date-picker
+        name="qidExpiry"
+        placeholder="{{ 'wizard.personal.qidExpiry' | translate }}"
+        [ngModel]="ds.state().qidExpiry"
+        (onSelect)="onQidExpirySelect($event)"
+        [minDate]="today"
+        [showOnFocus]="true"
+        dateFormat="yy-mm-dd"
+        [dataType]="'string'"
+        [disabled]="profile.isChangeRequestMode()"
+        fluid
+      >
+      </p-date-picker>
+    </div>
   }
 
   <div class="col-12">
-    <hr>
+    <hr />
   </div>
   @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
-  <!-- CV -->
-  <div class="col-md-6">
-    <label class="form-label required d-flex align-items-center">
-      <span class="d-flex align-items-center gap-2">
-        {{ 'wizard.prereq.cvLabel' | translate }}
-      </span>
-    </label>
+    <!-- CV -->
+    <div class="col-md-6">
+      <label class="form-label required d-flex align-items-center">
+        <span class="d-flex align-items-center gap-2">
+          {{ 'wizard.prereq.cvLabel' | translate }}
+        </span>
+      </label>
 
-    <div class="upload-field" (click)="cvInput.click()">
-      <div class="upload-field__text">
-        {{ ds.state().cvName || ('wizard.prereq.cvLabel' | translate) }}
+      <div class="upload-field" (click)="cvInput.click()">
+        <div class="upload-field__text">
+          {{ ds.state().cvName || ('wizard.prereq.cvLabel' | translate) }}
+        </div>
+
+        <input
+          #cvInput
+          type="file"
+          class="d-none"
+          [attr.accept]="acceptFor('cv')"
+          (change)="onFileSelected('cv', $event)"
+        />
+
+        <div class="upload-field__icon">
+          @if (!ds.state().cvName) {
+            <img src="assets/img/icons/file-upload.svg" alt="upload" />
+          } @else {
+            <img
+              src="assets/img/icons/file-eye.svg"
+              alt="view"
+              class="cursor-pointer"
+              (click)="previewFile('cv', $event)"
+            />
+          }
+        </div>
       </div>
-
-      <input #cvInput type="file" class="d-none" [attr.accept]="acceptFor('cv')"
-        (change)="onFileSelected('cv', $event)" />
-
-      <div class="upload-field__icon">
-        @if (!ds.state().cvName) {
-        <img src="assets/img/icons/file-upload.svg" alt="upload" />
-        } @else {
-        <img src="assets/img/icons/file-eye.svg" alt="view" class="cursor-pointer"
-          (click)="previewFile('cv', $event)" />
-        }
-      </div>
+      <small class="text-muted fz-2xs"> {{ formatsLabel('cv') }} – Max 1MB </small>
     </div>
-    <small class="text-muted fz-2xs">
-      {{ formatsLabel('cv') }} – Max 1MB
-    </small>
-  </div>
   }
   @if (!profile.isChangeRequestMode() && !profile.isRevisionMode()) {
-  <!-- ID -->
-  @if (ds.state().candidateType) {
-  <div class="col-md-6">
-    <label class="form-label required d-flex align-items-center">
-      <span class="d-flex align-items-center gap-2">
-        @if(!ds.isResidentQatar){
-        {{ `wizard.prereq.id.${ds.state().candidateType?.backendName}.label` | translate }}
-        } @else {
-        {{ 'wizard.prereq.idLabel' | translate }}
-        }
-      </span>
-    </label>
+    <!-- ID -->
+    @if (ds.state().candidateType) {
+      <div class="col-md-6">
+        <label class="form-label required d-flex align-items-center">
+          <span class="d-flex align-items-center gap-2">
+            @if (!ds.isResidentQatar) {
+              {{ `wizard.prereq.id.${ds.state().candidateType?.backendName}.label` | translate }}
+            } @else {
+              {{ 'wizard.prereq.idLabel' | translate }}
+            }
+          </span>
+        </label>
 
-    <div class="upload-field" (click)="idInput.click()">
-      <div class="upload-field__text">
-        {{ ds.state().idName || ('wizard.prereq.idLabel' | translate) }}
+        <div class="upload-field" (click)="idInput.click()">
+          <div class="upload-field__text">
+            {{ ds.state().idName || ('wizard.prereq.idLabel' | translate) }}
+          </div>
+
+          <input
+            #idInput
+            type="file"
+            class="d-none"
+            [attr.accept]="acceptFor('id')"
+            (change)="onFileSelected('id', $event)"
+          />
+
+          <div class="upload-field__icon">
+            @if (!ds.state().idName) {
+              <img src="assets/img/icons/file-upload.svg" alt="upload" />
+            } @else {
+              <img
+                src="assets/img/icons/file-eye.svg"
+                alt="view"
+                class="cursor-pointer"
+                (click)="previewFile('id', $event)"
+              />
+            }
+          </div>
+        </div>
+        <small class="text-muted fz-2xs"> {{ formatsLabel('id') }} – Max 1MB </small>
       </div>
-
-      <input #idInput type="file" class="d-none" [attr.accept]="acceptFor('id')"
-        (change)="onFileSelected('id', $event)" />
-
-      <div class="upload-field__icon">
-        @if (!ds.state().idName) {
-        <img src="assets/img/icons/file-upload.svg" alt="upload" />
-        } @else {
-        <img src="assets/img/icons/file-eye.svg" alt="view" class="cursor-pointer"
-          (click)="previewFile('id', $event)" />
-        }
-      </div>
-    </div>
-    <small class="text-muted fz-2xs">
-      {{ formatsLabel('id') }} – Max 1MB
-    </small>
-  </div>
-  }
+    }
   }
   @if (showCandidateTypeDocuments()) {
-  <div class="col-12">
-    <div class="required-documents-banner">
-      <div class="required-documents-banner__title">
-        {{ (profile.isRevisionMode()
-            ? 'wizard.correction.additionalRequirement.title'
-            : 'wizard.prereq.documents.title') | translate }}
-      </div>
-      <div class="required-documents-banner__hint">
-        {{ (profile.isRevisionMode()
-            ? 'wizard.correction.additionalRequirement.hint'
-            : 'wizard.prereq.documents.hint') | translate }}
+    <div class="col-12">
+      <div class="required-documents-banner">
+        <div class="required-documents-banner__title">
+          {{
+            (profile.isRevisionMode()
+              ? 'wizard.correction.additionalRequirement.title'
+              : 'wizard.prereq.documents.title'
+            ) | translate
+          }}
+        </div>
+        <div class="required-documents-banner__hint">
+          {{
+            (profile.isRevisionMode()
+              ? 'wizard.correction.additionalRequirement.hint'
+              : 'wizard.prereq.documents.hint'
+            ) | translate
+          }}
+        </div>
       </div>
     </div>
-  </div>
   }
   @if (!profile.isChangeRequestMode()) {
-  <!-- Birth Certificate -->
-  @if (ds.isNeedBirthCertificate && showConditionalDocumentUploader('birth')) {
-  <div class="col-md-6">
-    <label class="form-label required document-label d-flex align-items-center gap-2">
-      <span class="d-flex align-items-center gap-2">
-        {{ 'wizard.prereq.birthCertificate' | translate }}
-      </span>
-      <span class="document-status"
-        [ngClass]="isDocumentMissing('birth') ? 'document-status--required' : 'document-status--done'">
-        {{
-          (isDocumentMissing('birth')
-            ? 'wizard.prereq.documents.required'
-            : 'wizard.prereq.documents.attached') | translate
-        }}
-      </span>
-    </label>
+    <!-- Birth Certificate -->
+    @if (ds.isNeedBirthCertificate && showConditionalDocumentUploader('birth')) {
+      <div class="col-md-6">
+        <label class="form-label required document-label d-flex align-items-center gap-2">
+          <span class="d-flex align-items-center gap-2">
+            {{ 'wizard.prereq.birthCertificate' | translate }}
+          </span>
+          <span
+            class="document-status"
+            [ngClass]="
+              isDocumentMissing('birth') ? 'document-status--required' : 'document-status--done'
+            "
+          >
+            {{
+              (isDocumentMissing('birth')
+                ? 'wizard.prereq.documents.required'
+                : 'wizard.prereq.documents.attached'
+              ) | translate
+            }}
+          </span>
+        </label>
 
-    <div class="upload-field" (click)="birthInput.click()">
-      <div class="upload-field__text">
-        {{ ds.state().birthCertificateName || ('wizard.prereq.birthCertificate' | translate) }}
+        <div class="upload-field" (click)="birthInput.click()">
+          <div class="upload-field__text">
+            {{ ds.state().birthCertificateName || ('wizard.prereq.birthCertificate' | translate) }}
+          </div>
+
+          <input
+            #birthInput
+            type="file"
+            class="d-none"
+            [attr.accept]="acceptFor('birth')"
+            (change)="onFileSelected('birth', $event)"
+          />
+
+          <div class="upload-field__icon">
+            @if (!ds.state().birthCertificateName) {
+              <img src="assets/img/icons/file-upload.svg" alt="upload" />
+            } @else {
+              <img
+                src="assets/img/icons/file-eye.svg"
+                alt="view"
+                class="cursor-pointer"
+                (click)="previewFile('birth', $event)"
+              />
+            }
+          </div>
+        </div>
+        <small class="text-muted fz-2xs"> {{ formatsLabel('birth') }} – Max 1MB </small>
       </div>
-
-      <input #birthInput type="file" class="d-none" [attr.accept]="acceptFor('birth')"
-        (change)="onFileSelected('birth', $event)" />
-
-      <div class="upload-field__icon">
-        @if (!ds.state().birthCertificateName) {
-        <img src="assets/img/icons/file-upload.svg" alt="upload" />
-        } @else {
-        <img src="assets/img/icons/file-eye.svg" alt="view" class="cursor-pointer"
-          (click)="previewFile('birth', $event)" />
-        }
-      </div>
-    </div>
-    <small class="text-muted fz-2xs">
-      {{ formatsLabel('birth') }} – Max 1MB
-    </small>
-  </div>
-  }
+    }
   }
 
   @if (!profile.isChangeRequestMode()) {
-  <!-- Marriage Certificate -->
-  @if (ds.isNeedMarriageCertificate && showConditionalDocumentUploader('marriage')) {
-  <div class="col-md-6">
-    <label class="form-label required document-label d-flex align-items-center gap-2">
-      <span class="d-flex align-items-center gap-2">
-        {{ 'wizard.prereq.marriageCertificate' | translate }}
-      </span>
-      <span class="document-status"
-        [ngClass]="isDocumentMissing('marriage') ? 'document-status--required' : 'document-status--done'">
-        {{
-          (isDocumentMissing('marriage')
-            ? 'wizard.prereq.documents.required'
-            : 'wizard.prereq.documents.attached') | translate
-        }}
-      </span>
-    </label>
+    <!-- Marriage Certificate -->
+    @if (ds.isNeedMarriageCertificate && showConditionalDocumentUploader('marriage')) {
+      <div class="col-md-6">
+        <label class="form-label required document-label d-flex align-items-center gap-2">
+          <span class="d-flex align-items-center gap-2">
+            {{ 'wizard.prereq.marriageCertificate' | translate }}
+          </span>
+          <span
+            class="document-status"
+            [ngClass]="
+              isDocumentMissing('marriage') ? 'document-status--required' : 'document-status--done'
+            "
+          >
+            {{
+              (isDocumentMissing('marriage')
+                ? 'wizard.prereq.documents.required'
+                : 'wizard.prereq.documents.attached'
+              ) | translate
+            }}
+          </span>
+        </label>
 
-    <div class="upload-field" (click)="marriageInput.click()">
-      <div class="upload-field__text">
-        {{ ds.state().marriageCertificateName || ('wizard.prereq.marriageCertificate' | translate) }}
+        <div class="upload-field" (click)="marriageInput.click()">
+          <div class="upload-field__text">
+            {{
+              ds.state().marriageCertificateName ||
+                ('wizard.prereq.marriageCertificate' | translate)
+            }}
+          </div>
+
+          <input
+            #marriageInput
+            type="file"
+            class="d-none"
+            [attr.accept]="acceptFor('marriage')"
+            (change)="onFileSelected('marriage', $event)"
+          />
+
+          <div class="upload-field__icon">
+            @if (!ds.state().marriageCertificateName) {
+              <img src="assets/img/icons/file-upload.svg" alt="upload" />
+            } @else {
+              <img
+                src="assets/img/icons/file-eye.svg"
+                alt="view"
+                class="cursor-pointer"
+                (click)="previewFile('marriage', $event)"
+              />
+            }
+          </div>
+        </div>
+        <small class="text-muted fz-2xs"> {{ formatsLabel('marriage') }} – Max 1MB </small>
       </div>
-
-      <input #marriageInput type="file" class="d-none" [attr.accept]="acceptFor('marriage')"
-        (change)="onFileSelected('marriage', $event)" />
-
-      <div class="upload-field__icon">
-        @if (!ds.state().marriageCertificateName) {
-        <img src="assets/img/icons/file-upload.svg" alt="upload" />
-        } @else {
-        <img src="assets/img/icons/file-eye.svg" alt="view" class="cursor-pointer"
-          (click)="previewFile('marriage', $event)" />
-        }
-      </div>
-    </div>
-    <small class="text-muted fz-2xs">
-      {{ formatsLabel('marriage') }} – Max 1MB
-    </small>
-  </div>
-  }
+    }
   }
 </div>
 <div class="row text-end mt-4">
   <div class="col-12">
     <button class="btn btn-primary" type="button" (click)="onNext()" [disabled]="saving()">
       @if (!saving()) {
-      <span class=" d-flex align-items-center">
-        <span>{{ submitLabelKey() | translate }}</span>
-        <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
-      </span>
+        <span class="d-flex align-items-center">
+          <span>{{ submitLabelKey() | translate }}</span>
+          <i class="hgi fs-18 lh-1" faDirArrow="end"></i>
+        </span>
       } @else {
-      <span class="d-flex align-items-center">
-        <i class="fa-solid fa-spinner fa-spin me-1"></i>
-        <span>{{ 'wizard.buttons.saving' | translate }}</span>
-      </span>
+        <span class="d-flex align-items-center">
+          <i class="fa-solid fa-spinner fa-spin me-1"></i>
+          <span>{{ 'wizard.buttons.saving' | translate }}</span>
+        </span>
       }
     </button>
   </div>
-
 </div>

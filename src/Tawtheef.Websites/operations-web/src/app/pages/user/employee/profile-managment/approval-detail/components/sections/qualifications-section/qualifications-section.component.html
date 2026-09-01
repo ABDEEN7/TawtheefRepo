@@ -35,7 +35,10 @@
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.university' | translate }}</div>
-          <div class="fw-semibold">{{ q.university?.name || '-' }}</div>
+          <div class="fw-semibold" [ngClass]="{'text-danger': q.isOtherUniversity}">
+            {{ q.university?.name || '-' }}
+            <i class="pi pi-exclamation-triangle ms-1" *ngIf="q.isOtherUniversity"></i>
+          </div>
         </div>
         <div class="detail-tile">
           <div class="text-muted small">{{ 'profileApproval.detail.qualifications.major' | translate }}</div>

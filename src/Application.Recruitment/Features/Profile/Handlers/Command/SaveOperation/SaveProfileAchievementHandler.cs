@@ -23,17 +23,15 @@ public sealed class SaveProfileAchievementHandler(
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAchievementCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, CancellationToken ct)
-{
-    var achievementRepo = uow.GetEntityRepository<Achievement>();
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-    var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
-    if (profile is null)
-        return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
+    public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, CancellationToken ct)
+    {
+        var achievementRepo = uow.GetEntityRepository<Achievement>();
+
+        var profile = await UserProfileLoader.GetFullProfileByUserId(uow, cmd.UserId, true, ct);
+        if (profile is null)
+            return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
         if (profile.Status != UserProfileStatus.InCreation)
             return Result.Fail<Unit>(ErrorsCodes.ProfileLockedUnderReview);
@@ -92,15 +90,14 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
                 var entity = new Achievement
                 {
                     UserProfileId = profile.Id,
-
-                    AchievementTypeId        = dto.AchievementTypeId,
-                    Title                    = dto.Title,
-                    IssuingAuthority         = dto.IssuingAuthority,
-                    CountryId                = dto.CountryId,
-                    IssueDate                = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
-                    Description              = dto.Description,
-                    RelatedToSpecialization  = dto.RelatedToSpecialization,
-                    AttachmentId             = finalAttachmentId ?? Guid.Empty // or null if your column is nullable
+                    AchievementTypeId = dto.AchievementTypeId,
+                    Title = dto.Title,
+                    IssuingAuthority = dto.IssuingAuthority,
+                    CountryId = dto.CountryId,
+                    IssueDate = dto.IssueDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
+                    Description = dto.Description,
+                    RelatedToSpecialization = dto.RelatedToSpecialization,
+                    AttachmentId = finalAttachmentId ?? Guid.Empty // or null if your column is nullable
                 };
 
                 await achievementRepo.DbSet.AddAsync(entity, ct);
@@ -108,12 +105,12 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
             else
             {
                 // UPDATE
-                row.AchievementTypeId       = dto.AchievementTypeId;
-                row.Title                   = dto.Title;
-                row.IssuingAuthority        = dto.IssuingAuthority;
-                row.CountryId               = dto.CountryId;
-                row.IssueDate               = dto.IssueDate ?? row.IssueDate; // keep existing if not provided
-                row.Description             = dto.Description;
+                row.AchievementTypeId = dto.AchievementTypeId;
+                row.Title = dto.Title;
+                row.IssuingAuthority = dto.IssuingAuthority;
+                row.CountryId = dto.CountryId;
+                row.IssueDate = dto.IssueDate ?? row.IssueDate; // keep existing if not provided
+                row.Description = dto.Description;
                 row.RelatedToSpecialization = dto.RelatedToSpecialization;
 
                 // Only overwrite attachment if a new upload happened OR dto sends a new attachment id
@@ -128,68 +125,67 @@ public async Task<IResult<Unit>> Handle(SaveProfileAchievementCommand cmd, Cance
         await uow.SaveChangesAsync(ct);
 
         return Result.Ok(Unit.Value);
+    }
+
+
+    static Result<List<AchievementUpsertDto>> DeserializeAchievements(string json)
+    {
+        try
+        {
+            var data = JsonSerializer.Deserialize<List<AchievementUpsertDto>>(json, JsonOptions) ?? [];
+            return Result.Ok(data);
+        }
+        catch (JsonException)
+        {
+            return Result.Fail<List<AchievementUpsertDto>>(ErrorsCodes.InvalidAchievementsJson);
+        }
+    }
+
+    async Task<Result<Guid?>> UploadIfNeededAsync(
+        Guid userId,
+        int? fileIndex,
+        IReadOnlyList<IFormFile> files,
+        string invalidIndexError,
+        string invalidFileError,
+        string fileTooLargeError,
+        long maxFileSizeBytes,
+        string category,
+        CancellationToken cancellationToken)
+    {
+        if (fileIndex is null)
+            return Result.Ok<Guid?>(null);
+
+        if (fileIndex < 0 || fileIndex >= files.Count)
+            return Result.Fail<Guid?>(invalidIndexError);
+
+        var file = files[fileIndex.Value];
+        if (file is not { Length: > 0 })
+            return Result.Fail<Guid?>(invalidFileError);
+
+        if (file.Length > maxFileSizeBytes)
+            return Result.Fail<Guid?>(fileTooLargeError);
+
+        var uploadPath =
+            await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
+        var uploadResult = await mediator.Send(
+            new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
+            cancellationToken);
+        return uploadResult.IsFailed
+            ? Result.Fail<Guid?>(uploadResult.Errors)
+            : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+    }
+
+    static Result ValidateTextLengths(IEnumerable<AchievementUpsertDto> achievements)
+    {
+        foreach (var achievement in achievements)
+        {
+            if (!string.IsNullOrEmpty(achievement.Description) &&
+                achievement.Description.Length > ProfileLimits.AchievementDescriptionMaxLength)
+            {
+                return Result.Fail(ErrorsCodes.AchievementDescriptionTooLong);
+            }
+        }
+
+        return Result.Ok();
+    }
 }
-
-    
-        static Result<List<AchievementUpsertDto>> DeserializeAchievements(string json)
-        {
-            try
-            {
-                var data = JsonSerializer.Deserialize<List<AchievementUpsertDto>>(json, JsonOptions) ?? [];
-                return Result.Ok(data);
-            }
-            catch (JsonException)
-            {
-                return Result.Fail<List<AchievementUpsertDto>>(ErrorsCodes.InvalidAchievementsJson);
-            }
-        }
-
-        async Task<Result<Guid?>> UploadIfNeededAsync(
-            Guid userId,
-            int? fileIndex,
-            IReadOnlyList<IFormFile> files,
-            string invalidIndexError,
-            string invalidFileError,
-            string fileTooLargeError,
-            long maxFileSizeBytes,
-            string category,
-            CancellationToken cancellationToken)
-        {
-            if (fileIndex is null)
-                return Result.Ok<Guid?>(null);
-
-            if (fileIndex < 0 || fileIndex >= files.Count)
-                return Result.Fail<Guid?>(invalidIndexError);
-
-            var file = files[fileIndex.Value];
-            if (file is not { Length: > 0 })
-                return Result.Fail<Guid?>(invalidFileError);
-
-            if (file.Length > maxFileSizeBytes)
-                return Result.Fail<Guid?>(fileTooLargeError);
-
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(userId, category, file, false, cancellationToken);
-            var uploadResult = await mediator.Send(
-                new UploadAttachmentCommand(userId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
-                cancellationToken);
-            if (uploadResult.IsFailed)
-                return Result.Fail<Guid?>(uploadResult.Errors);
-
-            return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
-        }
-
-        static Result ValidateTextLengths(IEnumerable<AchievementUpsertDto> achievements)
-        {
-            foreach (var achievement in achievements)
-            {
-                if (!string.IsNullOrEmpty(achievement.Description) && achievement.Description.Length > ProfileLimits.AchievementDescriptionMaxLength)
-                {
-                    return Result.Fail(ErrorsCodes.AchievementDescriptionTooLong);
-                }
-            }
-
-            return Result.Ok();
-        }
-}
-
-

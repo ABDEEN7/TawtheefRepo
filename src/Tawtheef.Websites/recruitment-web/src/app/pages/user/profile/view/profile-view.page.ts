@@ -244,7 +244,7 @@ export class ProfileViewPage {
     if (!review) return undefined;
 
     const sectionIndex = (review.sections ?? []).reduce((acc, section) => {
-      acc[section.section] = this.actionableNotesCount(section.section as ProfileSectionEnum, section.notes ?? []);
+      acc[section.section] = section.pendingItemsCount ?? 0;
       return acc;
     }, {} as Record<number, number>);
 
@@ -344,7 +344,7 @@ export class ProfileViewPage {
     const status = this.profileStatus();
     if (status === UserProfileStatusEnum.RequiresUpdate) {
       if (this.isMixedSection(section)) {
-        return this.hasSectionDataNote(section) || this.hasSolvedSectionDataCorrection(section);
+        return this.hasActionableSectionData(section) || this.hasSolvedSectionDataCorrection(section);
       }
 
       if (section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages) {
@@ -367,6 +367,10 @@ export class ProfileViewPage {
     const notes = review?.sections?.find(s => s.section === active)?.notes ?? [];
     return notes as MyProfileReviewNoteDto[];
   });
+
+  readonly activeSectionOutstandingNotes = computed(() =>
+    this.activeSectionNotes().filter(note => this.isOutstandingReviewNote(note))
+  );
 
   readonly activeSectionReviewNotes = computed(() => {
     const active = this.expanded();
@@ -692,16 +696,9 @@ export class ProfileViewPage {
     return (review?.sections ?? []).find(item => item.section === section)?.notes ?? [];
   }
 
-  private hasSectionDataNote(section: ProfileSectionEnum): boolean {
-    const notes = this.sectionNotes(section);
-    const hasSectionData = notes.some(note =>
-      note.targetType === ReviewTargetTypeEnum.Field &&
-      note.fieldPath === PROFILE_REVIEW_SECTION_DATA_FIELD
-    );
-
-    if (hasSectionData) return true;
-
-    return false;
+  private hasActionableSectionData(section: ProfileSectionEnum): boolean {
+    const review = this.review.value() as MyProfileReviewSummaryDto | undefined;
+    return review?.sections?.find(item => item.section === section)?.hasActionableSectionData === true;
   }
 
   private hasSolvedSectionDataCorrection(section: ProfileSectionEnum): boolean {
@@ -715,17 +712,6 @@ export class ProfileViewPage {
     return section === ProfileSectionEnum.Prerequisites ||
       section === ProfileSectionEnum.Personal ||
       section === ProfileSectionEnum.Contact;
-  }
-
-  private actionableNotesCount(section: ProfileSectionEnum, notes: MyProfileReviewNoteDto[]): number {
-    const outstandingNotes = notes.filter(note => this.isOutstandingReviewNote(note));
-
-    if (section === ProfileSectionEnum.Skills || section === ProfileSectionEnum.Languages) {
-      return outstandingNotes.filter(note => note.targetType === ReviewTargetTypeEnum.Section).length;
-    }
-
-    const detailNotes = outstandingNotes.filter(note => note.targetType !== ReviewTargetTypeEnum.Section);
-    return detailNotes.length;
   }
 
   private isOutstandingReviewNote(note: MyProfileReviewNoteDto): boolean {

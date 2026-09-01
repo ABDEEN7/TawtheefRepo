@@ -266,10 +266,6 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                 await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
                 await uow.SaveChangesAsync(cancellationToken);
 
-#if DEBUG
-                Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");
-#endif
-
                 user.MarkOtpSent();
 
                 update = await userManager.UpdateAsync(user);
