@@ -103,7 +103,17 @@ internal static class ReviewItemSaveHelper
             !candidate.IsDeleted,
             ct);
 
-        if (item is null || item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected)
+        if (item is null)
+        {
+            item = ReviewItem.Create(
+                profile.Id,
+                section,
+                ReviewTargetType.Field,
+                ProfileReviewConstants.FieldPaths.SectionData,
+                currentValue: ReviewItemSnapshotBuilder.GetSectionDataSnapshot(profile, section));
+            await reviewRepo.AddAsync(item, ct);
+        }
+        else if (item.Status is ReviewStatus.NeedsCorrection or ReviewStatus.Rejected)
             return;
 
         item.Status = ReviewStatus.NeedsCorrection;
@@ -153,6 +163,19 @@ internal static class ReviewItemSaveHelper
         var previousHash = item.CurrentHash;
         var currentValue = ReviewItemSnapshotBuilder.GetCurrentValue(profile, item);
         item.UpdateHash(currentValue);
+
+        var isSystemGeneratedCorrection =
+            item.Status == ReviewStatus.NeedsCorrection &&
+            item.ReviewedById is null &&
+            item.ReviewedAtUtc is null &&
+            string.IsNullOrWhiteSpace(item.ReviewerNote);
+
+        if (isSystemGeneratedCorrection)
+        {
+            item.Status = ReviewStatus.Solved;
+            item.IsOutdated = false;
+            return;
+        }
 
         var valueChanged = !string.Equals(previousHash, item.CurrentHash, StringComparison.Ordinal);
         if (!valueChanged)

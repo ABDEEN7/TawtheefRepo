@@ -83,6 +83,7 @@ export interface MyProfileReviewSectionDto {
   section: ProfileSectionCode; // numeric
   notesCount: number;
   notes: MyProfileReviewNoteDto[];
+  hasActionableSectionData: boolean;
   hasUserChanges?: boolean;
   pendingItemsCount?: number;
 }
