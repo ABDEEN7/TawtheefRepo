@@ -44,14 +44,17 @@ export class ResubmitConfirmDialogComponent {
       return 'profileOverview.resubmitConfirm.sectionData';
     }
 
-    return REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.title)] ??
-      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.fieldPath)] ??
-      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.entityName)] ??
-      null;
+    const titleKey = REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.title)] ??
+      REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.fieldPath)] ?? null;
+    if (titleKey || cleanReviewTitle(item.title)) {
+      return titleKey;
+    }
+
+    return REVIEW_TITLE_TRANSLATION_KEYS[normalizeReviewTitle(item.entityName)] ?? null;
   }
 
-  protected itemTitle(item: MyProfileReviewChangedItemDto): string {
-    return item.entityName || item.title;
+  protected itemTitle(item: MyProfileReviewChangedItemDto): string | null {
+    return cleanReviewTitle(item.title) ?? cleanReviewTitle(item.entityName);
   }
 
   protected confirm(): void {
@@ -65,6 +68,11 @@ export class ResubmitConfirmDialogComponent {
 
 function normalizeReviewTitle(value?: string | null): string {
   return (value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function cleanReviewTitle(value?: string | null): string | null {
+  const normalized = value?.trim();
+  return normalized && normalized !== '?' ? normalized : null;
 }
 
 const REVIEW_TITLE_TRANSLATION_KEYS: Record<string, string> = {
