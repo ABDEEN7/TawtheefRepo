@@ -13,10 +13,7 @@ public class GetPersonalInformationByQidQueryHandler(IMoiClient client) :
         CancellationToken cancellationToken)
     { 
         var result = await client.GetPersonalInfoAsync(query.Request.QID, query.Request.ExpiryDate, cancellationToken);
-        if (result.IsFailed)
-            return Result.Fail<MOEPersonalInfo>(result.Errors);
-        
-        return Result.Ok(result.Value);
+        return result.IsFailed ? Result.Fail<MOEPersonalInfo>(result.Errors) : Result.Ok(result.Value);
     }
 }
 

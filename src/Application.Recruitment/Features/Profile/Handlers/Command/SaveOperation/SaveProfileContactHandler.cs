@@ -28,9 +28,11 @@ public sealed class SaveProfileContactHandler(
         if (profile is null)
             return Result.Fail<Unit>(ErrorsCodes.UserProfileNotFound);
 
-        var validationResult = validationService.ValidateContact(profile, cmd.Request.Address, 
-            cmd.Request.NationalAddress is null ? null :
-                new (cmd.Request.NationalAddress.Zone, cmd.Request.NationalAddress.Street, cmd.Request.NationalAddress.Building, 
+        var validationResult = validationService.ValidateContact(profile, cmd.Request.Address,
+            cmd.Request.NationalAddress is null
+                ? null
+                : new ValueTuple<int, int, int, int, string?>(cmd.Request.NationalAddress.Zone,
+                    cmd.Request.NationalAddress.Street, cmd.Request.NationalAddress.Building,
                     cmd.Request.NationalAddress.Unit, cmd.Request.NationalAddress.NationalAddressFileName));
 
         if (validationResult.IsFailed)
@@ -64,10 +66,11 @@ public sealed class SaveProfileContactHandler(
 
         if (r.NationalAddress is not null)
         {
-            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress, profile.ResidenceAddress?.CertificateId);
+            var idResult = await UploadIfNeededAsync(r.NationalAddress.NationalAddress,
+                profile.ResidenceAddress?.CertificateId);
             if (idResult.IsFailed)
                 return Result.Fail<Unit>(idResult.Errors);
-            
+
             if (profile.ResidenceAddress is null)
             {
                 profile.ResidenceAddress =
@@ -76,35 +79,31 @@ public sealed class SaveProfileContactHandler(
             }
             else
             {
-
                 profile.ResidenceAddress.ZoneNo = r.NationalAddress.Zone;
                 profile.ResidenceAddress.StreetNo = r.NationalAddress.Street;
                 profile.ResidenceAddress.BuildingNo = r.NationalAddress.Building;
                 profile.ResidenceAddress.UnitNo = r.NationalAddress.Unit;
                 profile.ResidenceAddress.CertificateId = idResult.Value!.Value;
             }
-
         }
-        
+
         await ReviewItemSaveHelper.UpdateSectionStatusAsync(uow, profile, ProfileSection.Contact, ct);
         await uow.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
-        
+
         async Task<Result<Guid?>> UploadIfNeededAsync(IFormFile? file, Guid? existingId)
         {
             if (file is null || file.Length == 0)
                 return Result.Ok(existingId);
 
-            var uploadPath   = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId, ProfileFileCategories.NationalAddress, file, false, ct);
+            var uploadPath = await UserProfileUploadPathFactory.CreateAsync(cmd.UserId,
+                ProfileFileCategories.NationalAddress, file, false, ct);
             var uploadResult = await mediator.Send(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 ct);
-            if (uploadResult.IsFailed)
-                return Result.Fail<Guid?>(uploadResult.Errors);
-
-            return Result.Ok<Guid?>(uploadResult.Value.ResourceId);
+            return uploadResult.IsFailed
+                ? Result.Fail<Guid?>(uploadResult.Errors)
+                : Result.Ok<Guid?>(uploadResult.Value.ResourceId);
         }
     }
 }
-
-

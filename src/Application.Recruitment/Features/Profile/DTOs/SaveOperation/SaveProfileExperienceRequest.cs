@@ -6,8 +6,6 @@ namespace Application.Recruitment.Features.Profile.DTOs.SaveOperation;
 
 public sealed class SaveProfileExperienceRequest
 {
-    public bool Submit { get; set; }
-
     [RegularExpression(@"^[^\<\>]*$", ErrorMessage = "Invalid characters.")]
     public string ExperiencesJson { get; set; } = string.Empty;
 
