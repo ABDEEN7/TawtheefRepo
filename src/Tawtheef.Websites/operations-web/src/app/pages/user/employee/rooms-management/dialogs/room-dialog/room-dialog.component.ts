@@ -12,7 +12,8 @@ import { Observable } from 'rxjs';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { dropdownOptionsModel } from '../../../../../../shared/models/dropdown-options.model';
 import { CreateRoomRequest } from '../../models/create-room-request.dto';
-import { RoomListItemDto, RoomLocationDto } from '../../models/room-list-item.dto';
+import { RoomListItemDto } from '../../models/room-list-item.dto';
+import { LocationDto } from '../../../locations-management/models/location.dto';
 import { RoomsService } from '../../services/rooms.service';
 
 
@@ -47,7 +48,7 @@ export class RoomDialogComponent {
   readonly submitted = signal(false);
   readonly roomTypeOptions = this.dialogConfig.data?.roomTypes as dropdownOptionsModel[] ?? [];
   readonly statusOptions = this.dialogConfig.data?.statuses as dropdownOptionsModel[] ?? [];
-  readonly locationOptions = this.dialogConfig.data?.locations as RoomLocationDto[] ?? [];
+  readonly locationOptions = (this.dialogConfig.data?.locations as LocationDto[]) ?? [];
 
   readonly form = this.formBuilder.group({
     nameAr: [this.room?.nameAr ?? '', [Validators.required, Validators.maxLength(200)]],
@@ -93,7 +94,7 @@ export class RoomDialogComponent {
       });
   }
 
-  locationName(location: RoomLocationDto): string {
+  locationName(location: LocationDto): string {
     return this.translate.currentLang === 'ar'
       ? location.nameAr
       : (location.nameEn || location.nameAr);

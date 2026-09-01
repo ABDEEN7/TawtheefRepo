@@ -21,7 +21,8 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { Permissions } from '../../../../core/constants/permissions';
-import { RoomFilters, RoomListItemDto, RoomLocationDto } from './models/room-list-item.dto';
+import { RoomFilters, RoomListItemDto } from './models/room-list-item.dto';
+import { LocationDto } from '../locations-management/models/location.dto';
 import { RoomsService } from './services/rooms.service';
 import { RoomDialogComponent } from './dialogs/room-dialog/room-dialog.component';
 
@@ -65,7 +66,7 @@ export class RoomsManagementPage implements OnInit {
   readonly filters = signal<RoomFilters>({ pageNumber: 1, pageSize: 10 });
   readonly roomTypeOptions = signal<dropdownOptionsModel[]>([]);
   readonly statusOptions = signal<dropdownOptionsModel[]>([]);
-  readonly locationOptions = signal<RoomLocationDto[]>([]);
+  readonly locationOptions = signal<LocationDto[]>([]);
   protected readonly Permissions = Permissions;
 
   nameFilter = '';
@@ -133,7 +134,7 @@ export class RoomsManagementPage implements OnInit {
     this.loadRooms();
   }
 
-  locationName(location: RoomLocationDto): string {
+  locationName(location: LocationDto): string {
     return this.currentLang() === 'ar' ? location.nameAr : (location.nameEn || location.nameAr);
   }
 

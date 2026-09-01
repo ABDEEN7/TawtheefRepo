@@ -1,4 +1,4 @@
-using Application.Operation.Features.Employee.Rooms.DTOs;
+using Application.Operation.Features.Employee.Locations.DTOs;
 using Application.Operation.Features.Employee.Rooms.Queries;
 using FluentResults;
 using MediatR;
@@ -9,21 +9,22 @@ using Tawtheef.Domain.Entities.Exams;
 namespace Application.Operation.Features.Employee.Rooms.Handlers.Queries;
 
 public sealed class GetRoomLocationsQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetRoomLocationsQuery, IResult<List<RoomLocationDto>>>
+    : IRequestHandler<GetRoomLocationsQuery, IResult<List<LocationDto>>>
 {
-    public async Task<IResult<List<RoomLocationDto>>> Handle(
+    public async Task<IResult<List<LocationDto>>> Handle(
         GetRoomLocationsQuery request,
         CancellationToken cancellationToken)
     {
         var locations = await unitOfWork.GetEntityRepository<Location>().DbSet
             .AsNoTracking()
             .OrderBy(x => x.NameEn ?? x.NameAr)
-            .Select(x => new RoomLocationDto
+            .Select(x => new LocationDto
             {
                 Id = x.Id,
                 NameAr = x.NameAr,
                 NameEn = x.NameEn,
-                LocationLink = x.LocationLink
+                LocationLink = x.LocationLink,
+                Notes = x.Notes
             })
             .ToListAsync(cancellationToken);
 

@@ -16,6 +16,5 @@ public sealed class RoomProfile : IRegister
         config.NewConfig<Room, RoomDto>()
             .Map(dest => dest.LastUpdated, src => src.UpdatedDate ?? src.CreatedDate);
 
-        config.NewConfig<Location, RoomLocationDto>();
     }
 }
