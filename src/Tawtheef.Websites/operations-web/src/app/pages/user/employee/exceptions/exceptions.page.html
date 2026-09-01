@@ -148,8 +148,12 @@
                       <th>{{ 'EXCEPTIONS.TABLE.CANDIDATE' | translate }}</th>
                       <th>{{ 'EXCEPTIONS.TABLE.JOB' | translate }}</th>
                       <th>{{ 'EXCEPTIONS.TABLE.REASON' | translate }}</th>
-                      <th>{{ 'EXCEPTIONS.TABLE.EXCEPTION_STATUS' | translate }}</th>
-                      <th>{{ 'EXCEPTIONS.TABLE.INVITATION_STATUS' | translate }}</th>
+                      <th class="exceptions-status-column">
+                        {{ 'EXCEPTIONS.TABLE.EXCEPTION_STATUS' | translate }}
+                      </th>
+                      <th class="exceptions-status-column">
+                        {{ 'EXCEPTIONS.TABLE.INVITATION_STATUS' | translate }}
+                      </th>
                       <th>{{ 'EXCEPTIONS.TABLE.CREATED_DATE' | translate }}</th>
                       <th class="text-center">{{ 'EXCEPTIONS.TABLE.ACTIONS' | translate }}</th>
                     </tr>
@@ -177,12 +181,19 @@
                           >{{ item.reason }}</span
                         >
                       </td>
-                      <td>
-                        <span class="pill" [ngClass]="getStatusPresentation(item.status).className">
+                      <td class="exceptions-status-column">
+                        <span
+                          class="pill exceptions-status-value"
+                          [ngClass]="getStatusPresentation(item.status).className"
+                        >
                           {{ getStatusPresentation(item.status).labelKey | translate }}
                         </span>
                       </td>
-                      <td>{{ item.invitationStatusName || '-' }}</td>
+                      <td class="exceptions-status-column">
+                        <span class="exceptions-status-value">
+                          {{ item.invitationStatusName || '-' }}
+                        </span>
+                      </td>
                       <td class="text-nowrap">{{ item.createdDate | date: 'dd/MM/yyyy' }}</td>
                       <td class="text-center">
                         <div
