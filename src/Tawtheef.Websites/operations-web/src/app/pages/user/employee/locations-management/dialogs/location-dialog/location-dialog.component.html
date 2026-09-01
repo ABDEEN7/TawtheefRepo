@@ -1,0 +1,77 @@
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="location-name-ar" class="form-label">
+        {{ 'LOCATIONS.NAME_AR' | translate }}
+      </label>
+      <input
+        id="location-name-ar"
+        pInputText
+        formControlName="nameAr"
+        maxlength="200"
+        class="w-100" />
+      @if (showError('nameAr')) {
+        <small class="text-danger">{{ 'LOCATIONS.VALIDATION.NAME_AR' | translate }}</small>
+      }
+    </div>
+
+    <div class="col-md-6">
+      <label for="location-name-en" class="form-label">
+        {{ 'LOCATIONS.NAME_EN' | translate }}
+      </label>
+      <input
+        id="location-name-en"
+        pInputText
+        formControlName="nameEn"
+        maxlength="200"
+        class="w-100" />
+      @if (showError('nameEn')) {
+        <small class="text-danger">{{ 'LOCATIONS.VALIDATION.MAX_200' | translate }}</small>
+      }
+    </div>
+
+    <div class="col-12">
+      <label for="location-link" class="form-label">
+        {{ 'LOCATIONS.LOCATION_LINK' | translate }}
+      </label>
+      <input
+        id="location-link"
+        pInputText
+        formControlName="locationLink"
+        data-skip-input-sanitization
+        maxlength="500"
+        class="w-100" />
+      @if (showError('locationLink')) {
+        <small class="text-danger">{{ 'LOCATIONS.VALIDATION.LOCATION_LINK' | translate }}</small>
+      }
+    </div>
+
+    <div class="col-12">
+      <label for="location-notes" class="form-label">
+        {{ 'LOCATIONS.NOTES' | translate }}
+      </label>
+      <textarea
+        id="location-notes"
+        pTextarea
+        formControlName="notes"
+        maxlength="2000"
+        rows="4"
+        class="w-100"></textarea>
+      @if (showError('notes')) {
+        <small class="text-danger">{{ 'LOCATIONS.VALIDATION.MAX_2000' | translate }}</small>
+      }
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-light" [disabled]="saving()" (click)="cancel()">
+      {{ 'LOCATIONS.CANCEL' | translate }}
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      @if (saving()) {
+        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+      }
+      {{ (isEditMode ? 'LOCATIONS.UPDATE' : 'LOCATIONS.SAVE') | translate }}
+    </button>
+  </div>
+</form>

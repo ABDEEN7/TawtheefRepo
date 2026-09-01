@@ -1,0 +1,124 @@
+<section class="locations-shell" i18nNamespace="pages/employee/locations-management">
+  <p-confirmDialog></p-confirmDialog>
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+          <h3 class="fw-bold mb-0">{{ 'LOCATIONS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'LOCATIONS.LIST_DESCRIPTION' | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <button
+              pButton
+              type="button"
+              *hasPermission="Permissions.Locations.Manage"
+              (click)="openCreateLocation()">
+              <span pButtonLabel>{{ 'LOCATIONS.ADD_LOCATION' | translate }}</span>
+              <i class="hgi hgi-stroke hgi-add-01" pButtonIcon></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 filter-field">
+          <label class="form-label" for="location-name-filter">
+            {{ 'LOCATIONS.SEARCH' | translate }}
+          </label>
+          <p-iconfield class="search-icon-field w-100">
+            <p-inputicon styleClass="pi pi-search"></p-inputicon>
+            <input
+              pInputText
+              id="location-name-filter"
+              type="search"
+              class="w-100 form-control"
+              [(ngModel)]="search"
+              (ngModelChange)="onSearchChange()"
+              [placeholder]="'LOCATIONS.SEARCH_PLACEHOLDER' | translate" />
+          </p-iconfield>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="small text-muted mb-2">{{ 'LOCATIONS.LOADING' | translate }}</div>
+      }
+
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="locations()" dataKey="id" class="locations-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'LOCATIONS.NAME_AR' | translate }}</th>
+                <th>{{ 'LOCATIONS.NAME_EN' | translate }}</th>
+                <th>{{ 'LOCATIONS.LOCATION_LINK' | translate }}</th>
+                <th>{{ 'LOCATIONS.NOTES' | translate }}</th>
+                <th *hasPermission="Permissions.Locations.Manage" style="width: 120px">
+                  {{ 'LOCATIONS.ACTIONS' | translate }}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-location>
+              <tr>
+                <td class="fw-semibold">{{ location.nameAr }}</td>
+                <td>{{ location.nameEn || ('LOCATIONS.NOT_AVAILABLE' | translate) }}</td>
+                <td>
+                  <a
+                    [attr.href]="location.locationLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    (click)="openLocationLink(location.locationLink, $event)">
+                    {{ 'LOCATIONS.OPEN_LINK' | translate }}
+                  </a>
+                </td>
+                <td>{{ location.notes || ('LOCATIONS.NOT_AVAILABLE' | translate) }}</td>
+                <td *hasPermission="Permissions.Locations.Manage">
+                  <div class="action-buttons">
+                    <button
+                      pRipple
+                      type="button"
+                      class="btn"
+                      (click)="openEditLocation(location)"
+                      [pTooltip]="'LOCATIONS.EDIT_LOCATION' | translate"
+                      [attr.aria-label]="'LOCATIONS.EDIT_LOCATION' | translate">
+                      <i class="hgi hgi-stroke hgi-edit-02" pButtonIcon></i>
+                    </button>
+                    <button
+                      pRipple
+                      type="button"
+                      class="btn"
+                      *hasPermission="Permissions.Locations.Manage"
+                      (click)="confirmDeleteLocation(location)"
+                      [disabled]="deletingLocationId() === location.id"
+                      [pTooltip]="'common.delete' | translate"
+                      [attr.aria-label]="'common.delete' | translate">
+                      <i class="hgi hgi-stroke hgi-delete-02" pButtonIcon></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center py-4 text-muted" [class.d-none]="loading()">
+                  {{ 'LOCATIONS.NO_LOCATIONS' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination
+            [currentPage]="filters().pageNumber"
+            [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalItems()"
+            (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+        </div>
+      }
+    </div>
+  </div>
+</section>

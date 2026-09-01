@@ -296,5 +296,10 @@
   "server-error.MISSING_REQUIRED_FIELDS": "يرجى استكمال جميع الحقول المطلوبة.",
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "سجل مرشح مكتب سعادة الوزير غير موجود.",
   "server-error.QID_EXPIRY_DATE_REQUIRED": "تاريخ انتهاء البطاقة الشخصية مطلوب للتحقق من الهوية.",
-  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "نقاط الوظيفة ليست في حالة انتظار الموافقة."
+  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "نقاط الوظيفة ليست في حالة انتظار الموافقة.",
+  "server-error.ROOM_NAME_EXISTS_IN_LOCATION": "توجد قاعة بالاسم العربي أو الإنجليزي نفسه في هذا الموقع.",
+  "server-error.LOCATION_NAME_EXISTS_FOR_LINK": "يوجد موقع بالاسم العربي أو الإنجليزي نفسه لرابط الموقع هذا.",
+  "server-error.ROOM_NOT_FOUND": "القاعة غير موجودة.",
+  "server-error.LOCATION_NOT_FOUND": "الموقع غير موجود.",
+  "server-error.LOCATION_ALREADY_USED": "لا يمكن حذف الموقع لأنه مستخدم في قاعة واحدة أو أكثر."
 }

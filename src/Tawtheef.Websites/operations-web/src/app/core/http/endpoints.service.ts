@@ -358,4 +358,21 @@ export class EndpointsService {
     send: this.getFullUrl('/notification-tester/send'),
     preview: this.getFullUrl('/notification-tester/preview'),
   };
+  rooms = {
+    create: this.getFullUrl('/rooms'),
+    list: this.getFullUrl('/rooms'),
+    update: (id: string) => this.getFullUrl(`/rooms/${id}`),
+    lookups: {
+      roomTypes: this.getFullUrl('/rooms/lookups/room-types'),
+      roomStatuses: this.getFullUrl('/rooms/lookups/room-statuses'),
+      locations: this.getFullUrl('/rooms/lookups/locations')
+    }
+  };
+
+  locations = {
+    list: this.getFullUrl('/locations'),
+    create: this.getFullUrl('/locations'),
+    update: (id: string) => this.getFullUrl(`/locations/${id}`),
+    delete: (id: string) => this.getFullUrl(`/locations/${id}`)
+  };
 }

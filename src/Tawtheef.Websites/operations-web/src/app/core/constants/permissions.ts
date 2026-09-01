@@ -112,5 +112,13 @@ export const Permissions = {
   InvitationExpiryConfiguration: {
     View: 'invitation-expiry-configuration.view',
     Manage: 'invitation-expiry-configuration.manage',
-  }
+  },
+  Rooms: {
+    View: 'rooms.view',
+    Manage: 'rooms.manage',
+  },
+  Locations: {
+    View: 'locations.view',
+    Manage: 'locations.manage',
+  },
 } as const;
