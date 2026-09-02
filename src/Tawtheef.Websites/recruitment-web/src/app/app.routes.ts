@@ -17,6 +17,19 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
       },
 
+      {
+        path: 'structure-schools',
+        loadComponent: () =>
+          import('./pages/home/index/structure-schools/structure-schools').then(
+            (m) => m.StructureSchools,
+          ),
+      },
+      {
+        path: 'ministry-structure',
+        loadComponent: () =>
+          import('./pages/home/index/structure/structure').then((m) => m.Structure),
+      },
+
       // {
       // path : 'schools-structure',
       // loadComponent: () => import('./pages/home/index/schools-structure/schools-structure').then(m => m.SchoolsStructure),

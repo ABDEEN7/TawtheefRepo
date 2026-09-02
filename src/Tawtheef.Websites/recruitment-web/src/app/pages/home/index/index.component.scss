@@ -602,11 +602,48 @@
 }
 
 .system-group-title {
+  position: relative;
+  inset-inline-start: 0;
   width: fit-content;
   margin-bottom: 0.75rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   color: #174d69 !important;
   font-size: clamp(0.95rem, 1.2vw, 1.05rem) !important;
   font-weight: 800;
+  cursor: pointer;
+  transition: inset-inline-start 0.3s ease;
+
+  span {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  i {
+    color: #174d69;
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    color: #89153d !important;
+    inset-inline-start: 16px;
+    i {
+      transform: translateX(-10px);
+      color: #89153d !important;
+    }
+  }
+}
+
+:host-context([dir='ltr']) {
+  .system-group-title i {
+    transform: scaleX(-1);
+  }
+
+  .system-group-title:hover i {
+    transform: scaleX(-1) translateX(-12px);
+  }
 }
 
 :host-context([dir='ltr']) {
