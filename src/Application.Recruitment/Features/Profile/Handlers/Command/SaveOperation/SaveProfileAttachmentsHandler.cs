@@ -22,10 +22,7 @@ public sealed class SaveProfileAttachmentsHandler(
     IProfileStepValidationService validationService
 ) : IRequestHandler<SaveProfileAttachmentsCommand, IResult<Unit>>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<IResult<Unit>> Handle(SaveProfileAttachmentsCommand cmd, CancellationToken ct)
     {
@@ -100,9 +97,7 @@ public sealed class SaveProfileAttachmentsHandler(
 
                 var newRow = new ProfileAdditionalAttachment
                 {
-                    FileName      = dto.Title,
-                    AttachmentId  = finalAttachmentId.Value,
-                    UserProfileId = profile.Id
+                    FileName = dto.Title, AttachmentId = finalAttachmentId.Value, UserProfileId = profile.Id
                 };
 
                 await attachRepo.DbSet.AddAsync(newRow, ct);
@@ -151,12 +146,9 @@ public sealed class SaveProfileAttachmentsHandler(
                 new UploadAttachmentCommand(cmd.UserId, uploadPath.FileId, uploadPath.Path, uploadPath.Hash, file),
                 cancellationToken);
 
-            if (uploadResult.IsFailed)
-                return Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors);
-
-            return Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
+            return uploadResult.IsFailed
+                ? Result.Fail<UploadAttachmentRequest?>(uploadResult.Errors)
+                : Result.Ok<UploadAttachmentRequest?>(uploadResult.Value);
         }
     }
 }
-
-

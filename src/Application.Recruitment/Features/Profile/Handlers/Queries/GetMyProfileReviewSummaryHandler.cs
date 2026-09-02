@@ -43,7 +43,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .Where(item => item.Status != ReviewStatus.Solved)
             .ToList();
 
-        var correctedReviewItems = items
+        var correctedReviewItems = activeItems
             .Where(item => item.IsCandidateCorrectedItem())
             .ToList();
         var correctedItems = correctedReviewItems
@@ -130,7 +130,11 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .Select(sec => {
                 var secNotes = notesBySection.TryGetValue(sec, out var list) ? list : [];
 
-                var secPendingCount = correctedReviewItems.Count(i => i.Section == sec);
+                var secPendingCount = outstandingItems.Count(i => i.Section == sec);
+                var hasActionableSectionData = outstandingItems.Any(item =>
+                    item.Section == sec &&
+                    item.TargetType == ReviewTargetType.Field &&
+                    item.FieldPath == ProfileReviewConstants.FieldPaths.SectionData);
                 return new MyProfileReviewSectionDto
                 {
                     Section = sec,
@@ -138,7 +142,8 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                     Notes = secNotes
                         .OrderByDescending(n => n.ReviewedAtUtc)
                         .ToArray(),
-                    HasUserChanges = secPendingCount > 0,
+                    HasActionableSectionData = hasActionableSectionData,
+                    HasUserChanges = correctedReviewItems.Any(item => item.Section == sec),
                     PendingItemsCount = secPendingCount
                 };
             })
