@@ -13,6 +13,28 @@ public static class Permissions
         int order,
         bool canBeAssignedToRole = true)
         => new(new PermissionKey(key), module, action, nameEn, nameAr, order, canBeAssignedToRole);
+    
+
+    public static class Locations
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Locations.View,
+                nameof(PermissionKeys.Locations),
+                PermissionAction.View,
+                "Locations - View",
+                "المواقع - عرض",
+                82);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.Locations.Manage,
+                nameof(PermissionKeys.Locations),
+                PermissionAction.Manage,
+                "Locations - Manage",
+                "إدارة المواقع",
+                83);
+    }
 
     public static class Rooms
     {

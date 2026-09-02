@@ -24,6 +24,10 @@ export class App {
         return;
       }
 
+      if (target.hasAttribute('data-skip-input-sanitization')) {
+        return;
+      }
+
       const initialValue = target.value;
       const sanitizedValue = this.sanitizeValue(target, initialValue);
 

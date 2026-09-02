@@ -94,6 +94,9 @@ public static class PermissionCatalog
 
         Permissions.InvitationExpiryConfiguration.View,
         Permissions.InvitationExpiryConfiguration.Manage,
+        
+        Permissions.Locations.View,
+        Permissions.Locations.Manage,
 
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,

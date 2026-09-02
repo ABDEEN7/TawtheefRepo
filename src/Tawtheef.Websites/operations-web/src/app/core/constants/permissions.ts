@@ -117,4 +117,8 @@ export const Permissions = {
     View: 'rooms.view',
     Manage: 'rooms.manage',
   },
+  Locations: {
+    View: 'locations.view',
+    Manage: 'locations.manage',
+  },
 } as const;

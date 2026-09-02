@@ -223,6 +223,14 @@ export const employeeRoutes: Routes = [
     loadComponent: () => import('./notification-tester/notification-tester.page').then(m => m.NotificationTesterPage),
   },
   {
+    path: 'locations-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Locations.View] },
+    loadComponent: () =>
+      import('./locations-management/locations-management.page')
+        .then(m => m.LocationsManagementPage)
+  },
+  {
     path: 'rooms-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Rooms.View] },

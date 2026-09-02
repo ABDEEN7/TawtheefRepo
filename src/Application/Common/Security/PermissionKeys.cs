@@ -180,6 +180,12 @@ public static class PermissionKeys
         public const string View = "invitation-expiry-configuration.view";
         public const string Manage = "invitation-expiry-configuration.manage";
     }
+    
+    public static class Locations
+    {
+        public const string View = "locations.view";
+        public const string Manage = "locations.manage";
+    }
 
     public static class Rooms
     {

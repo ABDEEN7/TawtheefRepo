@@ -344,6 +344,12 @@ public class ErrorsCodes
     public const string OfficeAdminEmailChangeNotAllowed = "OFFICE_ADMIN_EMAIL_CHANGE_NOT_ALLOWED";
     #endregion
 
+    #region Locations
+    public const string LocationNotFound = "LOCATION_NOT_FOUND";
+    public const string LocationNameExistsForLink = "LOCATION_NAME_EXISTS_FOR_LINK";
+    public const string LocationAlreadyUsed = "LOCATION_ALREADY_USED";
+    #endregion
+
     #region Major Managements
     public const string MajorNotFound = "MAJOR_NOT_FOUND";
     public const string MajorAlreadyUsed = "MAJOR_ALREADY_USED";
