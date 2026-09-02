@@ -6,4 +6,3 @@ namespace Application.Recruitment.Features.Authenticator.Commands.QatarLogin;
 
 public sealed record VerifyQatarResidentOtpCommand(string Qid, string PhoneNumber, DateOnly QidExpiry, string Otp)
     : IRequest<IResult<AuthResponse>>;
-

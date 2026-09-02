@@ -118,8 +118,6 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                     }
 
                     user = newUser.Value;
-                    user.PhoneNumber = normalizedPhone;
-                    user.PhoneNumberConfirmed = false;
 
                     var createRes = await userManager.CreateAsync(user);
                     if (!createRes.Succeeded)
@@ -132,6 +130,10 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                         return FailureFromIdentity<Unit>(createRes);
                     }
                 }
+
+                var candidateCheck = EnsureCandidateUser(user);
+                if (candidateCheck.IsFailed)
+                    return candidateCheck;
 
                 var addLogin = await userManager.AddLoginAsync(
                     user,
@@ -154,8 +156,10 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
             else
             {
                 _log.Information("User found by login. UserId={UserId} Qid={QidMasked}", user.Id, qidMasked);
-                user.PhoneNumber = normalizedPhone;
-                user.PhoneNumberConfirmed = false;
+
+                var candidateCheck = EnsureCandidateUser(user);
+                if (candidateCheck.IsFailed)
+                    return candidateCheck;
             }
 
             var personalInfoResult = await moiService.GetMoiPersonalInfoWithKawaderCheckAsync(normalizedQid, request.QidExpiry,
@@ -185,6 +189,23 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                 return Result.Fail<Unit>(canSend.Errors);
             }
 
+            var pendingPhone = await userManager.SetAuthenticationTokenAsync(
+                user,
+                QatarResidentOtpConstants.Provider,
+                QatarResidentOtpConstants.PendingPhoneTokenName,
+                normalizedPhone);
+
+            if (!pendingPhone.Succeeded)
+            {
+                _log.Error(
+                    "Failed to store pending Qatar resident phone. UserId={UserId} Qid={QidMasked} Errors={Errors}",
+                    user.Id,
+                    qidMasked,
+                    string.Join(", ", pendingPhone.Errors.Select(e => e.Description)));
+
+                return FailureFromIdentity<Unit>(pendingPhone);
+            }
+
             if(TestData.QID_TEST().Contains(long.Parse(normalizedQid)))
             {
                 _log.Information("Test QID detected, skipping OTP sending. Qid={QidMasked}", qidMasked);
@@ -195,6 +216,8 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                     _log.Error(
                         "UpdateAsync failed after setting OTP reference. UserId={UserId} Errors={Errors}",
                         user.Id, string.Join(", ", update.Errors.Select(e => e.Description)));
+
+                    return FailureFromIdentity<Unit>(update);
                 }
                 user.MarkOtpSent();
                 update = await userManager.UpdateAsync(user);
@@ -242,10 +265,6 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                     idempotencyKey: $"qatar-otp-{user.Id}-{Guid.NewGuid()}");
                 await uow.GetEntityRepository<Notification>().AddAsync(notification, cancellationToken);
                 await uow.SaveChangesAsync(cancellationToken);
-
-#if DEBUG
-                Console.WriteLine($"[DEBUG] OTP for UserId={user.Id} Qid={qidMasked}: {otp}");
-#endif
 
                 user.MarkOtpSent();
 
@@ -319,6 +338,16 @@ namespace Application.Recruitment.Features.Authenticator.Handlers.Commands.Qatar
                 chars[i] = digits[bytes[i] % digits.Length];
 
             return new string(chars);
+        }
+
+        private static IResult<Unit> EnsureCandidateUser(User user)
+        {
+            if (user.UserTypeId == UserTypeIds.Applicant)
+                return Result.Ok(Unit.Value);
+
+            return Result.Fail<Unit>(user.UserTypeId == UserTypeIds.OfficeUser
+                ? ErrorsCodes.UserIsOfficer
+                : ErrorsCodes.UnauthorizedAction);
         }
 
         private static Result<T> FailureFromIdentity<T>(IdentityResult res) =>

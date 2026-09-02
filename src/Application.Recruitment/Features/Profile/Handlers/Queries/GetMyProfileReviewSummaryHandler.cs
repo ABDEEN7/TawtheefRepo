@@ -3,6 +3,7 @@ using Application.Recruitment.Features.Profile.Queries;
 using MediatR;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
@@ -11,7 +12,9 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Recruitment.Features.Profile.Handlers.Queries;
 
 
-public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
+public sealed class GetMyProfileReviewSummaryHandler(
+    IUnitOfWork uow,
+    ILocalizationService localizationService)
     : IRequestHandler<GetMyProfileReviewSummaryQuery, IResult<MyProfileReviewSummaryDto>>
 {
     public async Task<IResult<MyProfileReviewSummaryDto>> Handle(
@@ -43,7 +46,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .Where(item => item.Status != ReviewStatus.Solved)
             .ToList();
 
-        var correctedReviewItems = items
+        var correctedReviewItems = activeItems
             .Where(item => item.IsCandidateCorrectedItem())
             .ToList();
         var correctedItems = correctedReviewItems
@@ -55,7 +58,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                 ReviewItemId = x.Id,
                 Section = x.Section,
                 TargetType = x.TargetType,
-                Title = x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? "?",
+                Title = ResolveDisplayTitle(profile, x),
                 Note = x.ReviewerNote,
                 FieldPath = x.FieldPath,
                 EntityId = x.EntityId,
@@ -106,7 +109,7 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                 ReviewItemId = x.Id,
                 TargetType   = x.TargetType,
                 Status       = x.Status,
-                Title        = x.AttachmentTitle ?? x.FieldPath ?? x.EntityName ?? "?",
+                Title        = ResolveDisplayTitle(profile, x),
                 Note         = x.ReviewerNote,
                 FieldPath    = x.FieldPath,
                 EntityId     = x.EntityId,
@@ -130,7 +133,11 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
             .Select(sec => {
                 var secNotes = notesBySection.TryGetValue(sec, out var list) ? list : [];
 
-                var secPendingCount = correctedReviewItems.Count(i => i.Section == sec);
+                var secPendingCount = outstandingItems.Count(i => i.Section == sec);
+                var hasActionableSectionData = outstandingItems.Any(item =>
+                    item.Section == sec &&
+                    item.TargetType == ReviewTargetType.Field &&
+                    item.FieldPath == ProfileReviewConstants.FieldPaths.SectionData);
                 return new MyProfileReviewSectionDto
                 {
                     Section = sec,
@@ -138,7 +145,8 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
                     Notes = secNotes
                         .OrderByDescending(n => n.ReviewedAtUtc)
                         .ToArray(),
-                    HasUserChanges = secPendingCount > 0,
+                    HasActionableSectionData = hasActionableSectionData,
+                    HasUserChanges = correctedReviewItems.Any(item => item.Section == sec),
                     PendingItemsCount = secPendingCount
                 };
             })
@@ -159,6 +167,112 @@ public sealed class GetMyProfileReviewSummaryHandler(IUnitOfWork uow)
 
         return Result.Ok(dto);
 
+    }
+
+    private string ResolveDisplayTitle(UserProfile profile, ReviewItem item)
+    {
+        return CleanLabel(item.AttachmentTitle) ??
+               ResolveCurrentTargetTitle(profile, item) ??
+               CleanLabel(item.FieldPath) ??
+               CleanLabel(item.EntityName) ??
+               string.Empty;
+    }
+
+    private string? ResolveCurrentTargetTitle(UserProfile profile, ReviewItem item)
+    {
+        if (item.TargetType == ReviewTargetType.Section)
+        {
+            return item.Section switch
+            {
+                ProfileSection.Skills => JoinLabels(profile.Skills?
+                    .Select(skill => localizationService.GetLocalizedName(skill.Skill))),
+                ProfileSection.Languages => JoinLabels(profile.Languages?
+                    .Select(language => localizationService.GetLocalizedName(language.Language))),
+                _ => null
+            };
+        }
+
+        if (item.TargetType != ReviewTargetType.Row || item.EntityId is null)
+            return null;
+
+        return item.Section switch
+        {
+            ProfileSection.Qualifications => ResolveQualificationTitle(profile, item.EntityId.Value),
+            ProfileSection.Experience => ResolveExperienceTitle(profile, item.EntityId.Value),
+            ProfileSection.TrainingCourses => ResolveTrainingTitle(profile, item.EntityId.Value),
+            ProfileSection.CertificatesAndAwards => ResolveAchievementTitle(profile, item.EntityId.Value),
+            ProfileSection.Skills => CleanLabel(localizationService.GetLocalizedName(
+                profile.Skills?.FirstOrDefault(skill => skill.Id == item.EntityId)?.Skill)),
+            ProfileSection.Languages => CleanLabel(localizationService.GetLocalizedName(
+                profile.Languages?.FirstOrDefault(language => language.Id == item.EntityId)?.Language)),
+            ProfileSection.Attachments => CleanLabel(profile.AdditionalAttachments?
+                .FirstOrDefault(attachment => attachment.Id == item.EntityId)?.FileName),
+            _ => null
+        };
+    }
+
+    private string? ResolveQualificationTitle(UserProfile profile, Guid entityId)
+    {
+        var qualification = profile.Qualifications?.FirstOrDefault(item => item.Id == entityId);
+        if (qualification is null)
+            return null;
+
+        var specialization = JoinLabels([
+            localizationService.GetLocalizedName(qualification.Major),
+            localizationService.GetLocalizedName(qualification.SubMajor)
+        ], " / ");
+
+        return JoinLabels([
+            localizationService.GetLocalizedName(qualification.Degree),
+            localizationService.GetLocalizedName(qualification.University),
+            specialization,
+            qualification.GraduationYear?.ToString()
+        ]);
+    }
+
+    private static string? ResolveExperienceTitle(UserProfile profile, Guid entityId)
+    {
+        var experience = profile.Experiences?.FirstOrDefault(item => item.Id == entityId);
+        return experience is null
+            ? null
+            : JoinLabels([experience.JobTitle, experience.EmployerName]);
+    }
+
+    private static string? ResolveTrainingTitle(UserProfile profile, Guid entityId)
+    {
+        var training = profile.TrainingCourses?.FirstOrDefault(item => item.Id == entityId);
+        return training is null
+            ? null
+            : JoinLabels([training.Title, training.Provider]);
+    }
+
+    private static string? ResolveAchievementTitle(UserProfile profile, Guid entityId)
+    {
+        var achievement = profile.Achievements?.FirstOrDefault(item => item.Id == entityId);
+        return achievement is null
+            ? null
+            : JoinLabels([achievement.Title, achievement.IssuingAuthority]);
+    }
+
+    private static string? JoinLabels(IEnumerable<string?>? values, string separator = " - ")
+    {
+        if (values is null)
+            return null;
+
+        var labels = values
+            .Select(CleanLabel)
+            .Where(label => label is not null)
+            .Cast<string>()
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        return labels.Length == 0 ? null : string.Join(separator, labels);
+    }
+
+    private static string? CleanLabel(string? value)
+    {
+        var normalized = value?.Trim();
+        return string.IsNullOrWhiteSpace(normalized) || normalized == "?" ? null : normalized;
     }
 }
 
