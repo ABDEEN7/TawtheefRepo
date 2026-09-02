@@ -85,6 +85,20 @@
   -webkit-line-clamp: 2;
 }
 
+.exceptions-status-column {
+  min-width: 9rem;
+  vertical-align: middle;
+}
+
+.exceptions-status-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+}
+
 .exceptions-empty {
   padding-block: 2.5rem !important;
 }
