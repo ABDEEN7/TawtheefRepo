@@ -28,8 +28,10 @@
           <span class="resubmit-confirm__item-title">
             @if (itemTitleKey(item); as titleKey) {
             {{ titleKey | translate }}
+            } @else if (itemTitle(item); as title) {
+            {{ title }}
             } @else {
-            {{ itemTitle(item) }}
+            {{ section.labelKey | translate }}
             }
           </span>
         </div>
