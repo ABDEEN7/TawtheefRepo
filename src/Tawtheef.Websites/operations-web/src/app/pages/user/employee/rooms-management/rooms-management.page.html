@@ -16,36 +16,22 @@
         </div>
       </div>
 
-      <div class="row g-3 mb-4">
-        <div class="col-12 col-md-6 col-xl-3 filter-field">
-          <label class="form-label" for="room-name-filter">{{ 'ROOMS.SEARCH_NAME' | translate }}</label>
-          <p-iconfield class="search-icon-field w-100">
-            <p-inputicon styleClass="pi pi-search"></p-inputicon>
-            <input pInputText id="room-name-filter" type="search" class="w-100 form-control"
-              [(ngModel)]="nameFilter" (ngModelChange)="onTextFilterChange()"
-              [placeholder]="'ROOMS.SEARCH_NAME_PLACEHOLDER' | translate" />
-          </p-iconfield>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3 filter-field">
-          <label class="form-label" for="room-location-filter">{{ 'ROOMS.LOCATION' | translate }}</label>
-          <p-select inputId="room-location-filter" class="w-100" [options]="locationOptions()"
-            optionValue="id" [(ngModel)]="selectedLocationId" (ngModelChange)="onSelectFilterChange()"
-            [showClear]="true" [placeholder]="'ROOMS.SEARCH_LOCATION_PLACEHOLDER' | translate" appendTo="body">
-            <ng-template pTemplate="selectedItem" let-option>{{ locationName(option) }}</ng-template>
-            <ng-template pTemplate="item" let-option>{{ locationName(option) }}</ng-template>
-          </p-select>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3 filter-field">
-          <label class="form-label" for="room-type-filter">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
-          <p-select inputId="room-type-filter" class="w-100" [options]="roomTypeOptions()"
-            optionLabel="name" optionValue="id" [(ngModel)]="selectedRoomTypeId"
-            (ngModelChange)="onSelectFilterChange()" [showClear]="true"
-            [placeholder]="'ROOMS.ALL_TYPES' | translate" appendTo="body">
-            <ng-template pTemplate="selectedItem" let-option>{{ option.name }}</ng-template>
-            <ng-template pTemplate="item" let-option>{{ option.name }}</ng-template>
-          </p-select>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3 filter-field">
+      <app-page-filters
+        [advancedLabel]="'ROOMS.ADVANCED_FILTERS' | translate"
+        [clearLabel]="'ROOMS.ADVANCED_FILTERS' | translate"
+        [advancedExpanded]="advancedFiltersExpanded()"
+        [activeAdvancedCount]="activeAdvancedFilterCount()"
+        [showClear]="false"
+        (advancedToggled)="toggleAdvancedFilters()">
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="pi pi-search"></p-inputicon>
+          <input pInputText id="room-name-filter" type="search" class="w-100 form-control"
+            [(ngModel)]="nameFilter" (ngModelChange)="onTextFilterChange()"
+            [attr.aria-label]="'ROOMS.SEARCH_NAME' | translate"
+            [placeholder]="'ROOMS.SEARCH_NAME_PLACEHOLDER' | translate" />
+        </p-iconfield>
+
+        <div filterSecondary class="filter-field">
           <label class="form-label" for="room-status-filter">{{ 'ROOMS.STATUS_LABEL' | translate }}</label>
           <p-select inputId="room-status-filter" class="w-100" [options]="statusOptions()"
             optionLabel="name" optionValue="id" [(ngModel)]="selectedStatusId"
@@ -55,7 +41,29 @@
             <ng-template pTemplate="item" let-option>{{ option.name }}</ng-template>
           </p-select>
         </div>
-      </div>
+
+        <div advancedFilters class="row g-3">
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="room-location-filter">{{ 'ROOMS.LOCATION' | translate }}</label>
+            <p-select inputId="room-location-filter" class="w-100" [options]="locationOptions()"
+              optionValue="id" [(ngModel)]="selectedLocationId" (ngModelChange)="onSelectFilterChange()"
+              [showClear]="true" [placeholder]="'ROOMS.SEARCH_LOCATION_PLACEHOLDER' | translate" appendTo="body">
+              <ng-template pTemplate="selectedItem" let-option>{{ locationName(option) }}</ng-template>
+              <ng-template pTemplate="item" let-option>{{ locationName(option) }}</ng-template>
+            </p-select>
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="room-type-filter">{{ 'ROOMS.ROOM_TYPE' | translate }}</label>
+            <p-select inputId="room-type-filter" class="w-100" [options]="roomTypeOptions()"
+              optionLabel="name" optionValue="id" [(ngModel)]="selectedRoomTypeId"
+              (ngModelChange)="onSelectFilterChange()" [showClear]="true"
+              [placeholder]="'ROOMS.ALL_TYPES' | translate" appendTo="body">
+              <ng-template pTemplate="selectedItem" let-option>{{ option.name }}</ng-template>
+              <ng-template pTemplate="item" let-option>{{ option.name }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+      </app-page-filters>
 
       <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
         @if (loading()) {
@@ -85,12 +93,19 @@
                 <td><p-tag severity="secondary" [value]="room.status.name"></p-tag></td>
                 <td>{{ room.lastUpdated | date: 'medium' }}</td>
                 <td *hasPermission="Permissions.Rooms.Manage">
-                  <div class="action-buttons">
+                  <div class="action-buttons align-items-center">
                     <button pRipple type="button" class="btn" (click)="openEditRoom(room)"
                       [pTooltip]="'ROOMS.EDIT_ROOM' | translate"
                       [attr.aria-label]="'ROOMS.EDIT_ROOM' | translate">
                       <i class="hgi hgi-stroke hgi-edit-02" pButtonIcon></i>
                     </button>
+                    <p-toggleswitch [ngModel]="isRoomActive(room)"
+                      (ngModelChange)="updateRoomStatus(room, $event)"
+                      [disabled]="updatingStatusIds().has(room.id)"
+                      [pTooltip]="(isRoomActive(room) ? 'ROOMS.MARK_INACTIVE' : 'ROOMS.MARK_ACTIVE') | translate"
+                      tooltipPosition="top"
+                      [attr.aria-label]="(isRoomActive(room) ? 'ROOMS.MARK_INACTIVE' : 'ROOMS.MARK_ACTIVE') | translate">
+                    </p-toggleswitch>
                   </div>
                 </td>
               </tr>

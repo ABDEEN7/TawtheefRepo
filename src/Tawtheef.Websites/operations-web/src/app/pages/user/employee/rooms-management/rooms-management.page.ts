@@ -12,12 +12,14 @@ import { Ripple } from 'primeng/ripple';
 import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Tooltip } from 'primeng/tooltip';
 import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
 import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { Permissions } from '../../../../core/constants/permissions';
@@ -38,6 +40,7 @@ import { RoomDialogComponent } from './dialogs/room-dialog/room-dialog.component
     I18nNamespaceDirective,
     HasPermissionDirective,
     PaginationComponent,
+    PageFiltersComponent,
     Select,
     TableModule,
     ButtonModule,
@@ -45,6 +48,7 @@ import { RoomDialogComponent } from './dialogs/room-dialog/room-dialog.component
     InputIconModule,
     InputTextModule,
     TagModule,
+    ToggleSwitchModule,
     Ripple,
     Tooltip
   ],
@@ -67,6 +71,8 @@ export class RoomsManagementPage implements OnInit {
   readonly roomTypeOptions = signal<dropdownOptionsModel[]>([]);
   readonly statusOptions = signal<dropdownOptionsModel[]>([]);
   readonly locationOptions = signal<LocationDto[]>([]);
+  readonly updatingStatusIds = signal<Set<string>>(new Set());
+  readonly advancedFiltersExpanded = signal(false);
   protected readonly Permissions = Permissions;
 
   nameFilter = '';
@@ -124,6 +130,14 @@ export class RoomsManagementPage implements OnInit {
     this.applyFilters();
   }
 
+  toggleAdvancedFilters(): void {
+    this.advancedFiltersExpanded.update(expanded => !expanded);
+  }
+
+  activeAdvancedFilterCount(): number {
+    return Number(!!this.selectedLocationId) + Number(!!this.selectedRoomTypeId);
+  }
+
   onPageChange(pageNumber: number): void {
     this.filters.update(filters => ({ ...filters, pageNumber }));
     this.loadRooms();
@@ -136,6 +150,60 @@ export class RoomsManagementPage implements OnInit {
 
   locationName(location: LocationDto): string {
     return this.currentLang() === 'ar' ? location.nameAr : (location.nameEn || location.nameAr);
+  }
+
+  isRoomActive(room: RoomListItemDto): boolean {
+    return room.status.backendName === 'Active';
+  }
+
+  updateRoomStatus(room: RoomListItemDto, active: boolean): void {
+    if (this.updatingStatusIds().has(room.id)) return;
+
+    const status = this.statusOptions().find(
+      option => option.backendName === (active ? 'Active' : 'Inactive')
+    );
+
+    if (!status) {
+      this.notification.error(this.translate.instant('ROOMS.STATUS_UPDATE_ERROR'));
+      return;
+    }
+
+    this.updatingStatusIds.update(ids => new Set(ids).add(room.id));
+    this.roomsService
+      .update(room.id, {
+        nameAr: room.nameAr,
+        nameEn: room.nameEn,
+        locationId: room.locationId,
+        roomTypeId: room.roomTypeId,
+        capacity: room.capacity,
+        statusId: status.id,
+        notes: room.notes
+      })
+      .pipe(
+        finalize(() =>
+          this.updatingStatusIds.update(ids => {
+            const updatedIds = new Set(ids);
+            updatedIds.delete(room.id);
+            return updatedIds;
+          })
+        )
+      )
+      .subscribe({
+        next: () => {
+          this.rooms.update(rooms =>
+            rooms.map(item =>
+              item.id === room.id ? { ...item, statusId: status.id, status } : item
+            )
+          );
+          this.notification.success(this.translate.instant('ROOMS.STATUS_UPDATE_SUCCESS'));
+        },
+        error: () => {
+          this.rooms.update(rooms =>
+            rooms.map(item => (item.id === room.id ? { ...item } : item))
+          );
+          this.notification.error(this.translate.instant('ROOMS.STATUS_UPDATE_ERROR'));
+        }
+      });
   }
 
   private applyFilters(): void {

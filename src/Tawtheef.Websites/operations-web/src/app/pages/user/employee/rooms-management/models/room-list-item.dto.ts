@@ -1,18 +1,12 @@
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
-
-export interface RoomLocationDto {
-  id: string;
-  nameAr: string;
-  nameEn: string | null;
-  locationLink: string;
-}
+import { LocationDto } from '../../locations-management/models/location.dto';
 
 export interface RoomListItemDto {
   id: string;
   nameAr: string;
   nameEn: string;
   locationId: string;
-  location: RoomLocationDto;
+  location: LocationDto;
   roomTypeId: string;
   roomType: dropdownOptionsModel;
   capacity: number;

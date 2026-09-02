@@ -42,5 +42,10 @@
   "ROOMS.EDIT_ROOM": "تعديل القاعة",
   "ROOMS.UPDATE": "تحديث",
   "ROOMS.UPDATE_SUCCESS": "تم تحديث القاعة بنجاح.",
-  "ROOMS.ACTIONS": "الإجراءات"
+  "ROOMS.ACTIONS": "الإجراءات",
+  "ROOMS.ADVANCED_FILTERS": "تصفية إضافية",
+  "ROOMS.MARK_ACTIVE": "تعيين كنشطة",
+  "ROOMS.MARK_INACTIVE": "تعيين كغير نشطة",
+  "ROOMS.STATUS_UPDATE_SUCCESS": "تم تحديث حالة القاعة بنجاح.",
+  "ROOMS.STATUS_UPDATE_ERROR": "تعذر تحديث حالة القاعة. يرجى المحاولة مرة أخرى."
 }

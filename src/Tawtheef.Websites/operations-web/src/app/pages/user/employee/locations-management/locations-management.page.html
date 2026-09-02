@@ -21,24 +21,25 @@
         </div>
       </div>
 
-      <div class="row g-3 mb-4">
-        <div class="col-12 col-md-6 filter-field">
-          <label class="form-label" for="location-name-filter">
-            {{ 'LOCATIONS.SEARCH' | translate }}
-          </label>
-          <p-iconfield class="search-icon-field w-100">
-            <p-inputicon styleClass="pi pi-search"></p-inputicon>
-            <input
-              pInputText
-              id="location-name-filter"
-              type="search"
-              class="w-100 form-control"
-              [(ngModel)]="search"
-              (ngModelChange)="onSearchChange()"
-              [placeholder]="'LOCATIONS.SEARCH_PLACEHOLDER' | translate" />
-          </p-iconfield>
-        </div>
-      </div>
+      <app-page-filters
+        [advancedLabel]="'LOCATIONS.SEARCH' | translate"
+        [clearLabel]="'LOCATIONS.SEARCH' | translate"
+        [showSecondary]="false"
+        [showAdvanced]="false"
+        [showClear]="false">
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="pi pi-search"></p-inputicon>
+          <input
+            pInputText
+            id="location-name-filter"
+            type="search"
+            class="w-100 form-control"
+            [(ngModel)]="search"
+            (ngModelChange)="onSearchChange()"
+            [attr.aria-label]="'LOCATIONS.SEARCH' | translate"
+            [placeholder]="'LOCATIONS.SEARCH_PLACEHOLDER' | translate" />
+        </p-iconfield>
+      </app-page-filters>
 
       @if (loading()) {
         <div class="small text-muted mb-2">{{ 'LOCATIONS.LOADING' | translate }}</div>

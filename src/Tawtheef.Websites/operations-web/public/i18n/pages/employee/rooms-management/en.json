@@ -42,5 +42,10 @@
   "ROOMS.EDIT_ROOM": "Edit Room",
   "ROOMS.UPDATE": "Update",
   "ROOMS.UPDATE_SUCCESS": "Room updated successfully.",
-  "ROOMS.ACTIONS": "Actions"
+  "ROOMS.ACTIONS": "Actions",
+  "ROOMS.ADVANCED_FILTERS": "Advanced Filters",
+  "ROOMS.MARK_ACTIVE": "Mark as active",
+  "ROOMS.MARK_INACTIVE": "Mark as inactive",
+  "ROOMS.STATUS_UPDATE_SUCCESS": "Room status updated successfully.",
+  "ROOMS.STATUS_UPDATE_ERROR": "Room status could not be updated. Please try again."
 }

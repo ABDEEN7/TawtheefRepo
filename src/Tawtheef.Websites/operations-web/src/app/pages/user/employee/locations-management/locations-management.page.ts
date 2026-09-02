@@ -19,6 +19,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 import { LocationDto, LocationFilters } from './models/location.dto';
 import { LocationsService } from './services/locations.service';
 import { LocationDialogComponent } from './dialogs/location-dialog/location-dialog.component';
@@ -34,6 +35,7 @@ import { LocationDialogComponent } from './dialogs/location-dialog/location-dial
     TranslatePipe,
     I18nNamespaceDirective,
     PaginationComponent,
+    PageFiltersComponent,
     HasPermissionDirective,
     TableModule,
     ButtonModule,
