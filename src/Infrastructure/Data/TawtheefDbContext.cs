@@ -22,6 +22,7 @@ using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.MinisterOffice;
 using Tawtheef.Domain.Entities.Notification;
+using Tawtheef.Domain.Entities.QuestionsBank;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Security;
@@ -140,6 +141,31 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     // Minister Office Tables
     public DbSet<MinisterOfficeCandidate> MinisterOfficeCandidates { get; set; }
     public DbSet<MinisterOfficeCandidateAuditLog> MinisterOfficeCandidateAuditLogs { get; set; }
+    
+    //Questions Bank Tables
+    public DbSet<Stage> Stages => Set<Stage>();
+    public DbSet<QuestionBankType> QuestionBankTypes => Set<QuestionBankType>();
+    public DbSet<QuestionType> QuestionTypes => Set<QuestionType>();
+    public DbSet<DifficultyLevel> DifficultyLevels => Set<DifficultyLevel>();
+    public DbSet<QuestionBankRequestType> QuestionBankRequestTypes => Set<QuestionBankRequestType>();
+    public DbSet<QuestionBankRequestStatus> QuestionBankRequestStatuses => Set<QuestionBankRequestStatus>();
+    public DbSet<QuestionChangeType> QuestionChangeTypes => Set<QuestionChangeType>();
+    public DbSet<QuestionBankRequestItemStatus> QuestionBankRequestItemStatuses => Set<QuestionBankRequestItemStatus>();
+    public DbSet<QuestionReviewDecision> QuestionReviewDecisions => Set<QuestionReviewDecision>();
+    public DbSet<QuestionBank> QuestionBanks => Set<QuestionBank>();
+    public DbSet<QuestionBankVersion> QuestionBankVersions => Set<QuestionBankVersion>();
+    public DbSet<Question> Questions => Set<Question>();
+    public DbSet<QuestionRevision> QuestionRevisions => Set<QuestionRevision>();
+    public DbSet<QuestionRevisionOption> QuestionRevisionOptions => Set<QuestionRevisionOption>();
+    public DbSet<QuestionBankVersionQuestion> QuestionBankVersionQuestions => Set<QuestionBankVersionQuestion>();
+    public DbSet<QuestionBankRequest> QuestionBankRequests => Set<QuestionBankRequest>();
+    public DbSet<QuestionBankAssignment> QuestionBankAssignments => Set<QuestionBankAssignment>();
+    public DbSet<QuestionBankRequestItem> QuestionBankRequestItems => Set<QuestionBankRequestItem>();
+    public DbSet<QuestionBankRequestItemReview> QuestionBankRequestItemReviews => Set<QuestionBankRequestItemReview>();
+    public DbSet<QuestionBankRequestReview> QuestionBankRequestReviews => Set<QuestionBankRequestReview>();
+    public DbSet<QuestionBankRequestHistory> QuestionBankRequestHistories => Set<QuestionBankRequestHistory>();
+    public DbSet<QuestionBankVersionChange> QuestionBankVersionChanges => Set<QuestionBankVersionChange>();
+    public DbSet<QuestionBankVersionChangeDetail> QuestionBankVersionChangeDetails => Set<QuestionBankVersionChangeDetail>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
