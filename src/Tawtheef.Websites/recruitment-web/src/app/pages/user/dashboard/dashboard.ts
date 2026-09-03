@@ -80,7 +80,7 @@ export class Dashboard implements OnInit {
       pageNumber: this.currentPage(),
       pageSize: this.itemsPerPage(),
       sortBy: 'CreatedDate',
-      sortDirection: 'asc'
+      sortDirection: 'desc'
     }
 
     this.candidateService.loadCandidateInvitations(searchFilters);
