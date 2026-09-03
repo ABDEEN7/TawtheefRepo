@@ -137,7 +137,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         if (linkedUser is not null)
         {
             if (linkedUser is not EmployeeUser)
-                return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+                return Result.Fail(ErrorsCodes.ExternalLoginEmployeeUserInvalidType);
 
             _log.Information("Azure resolve: already linked. UserId={UserId}", linkedUser.Id);
             return Result.Ok(linkedUser);
@@ -148,7 +148,7 @@ public sealed class AzureExternalCallbackLoginHandler(
         if (existingUser is not null)
         {
             if (existingUser is not EmployeeUser)
-                return Result.Fail(ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+                return Result.Fail(ErrorsCodes.ExternalLoginEmployeeUserInvalidType);
 
             _log.Information("Azure resolve: found by email; linking provider. UserId={UserId}", existingUser.Id);
             return await LinkProviderToExistingUserAsync(existingUser, claims.ProviderKey);
@@ -255,7 +255,7 @@ public sealed class AzureExternalCallbackLoginHandler(
     {
         if (user is not EmployeeUser employee)
             return Result.Fail<Unit>(
-                ErrorsCodes.ExternalLoginOfficeUserInvalidType);
+                ErrorsCodes.ExternalLoginEmployeeUserInvalidType);
 
         var result = await employeeProfileService.SyncFromDirectoryAsync(
             employee,

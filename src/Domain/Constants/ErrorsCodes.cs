@@ -41,6 +41,7 @@ public class ErrorsCodes
 
     public const string ExternalLoginNotLinkedOfficeUser = "EXTERNAL_LOGIN_NOT_LINKED_OFFICE_USER";
     public const string ExternalLoginOfficeUserInvalidType = "EXTERNAL_LOGIN_OFFICE_USER_INVALID_TYPE";
+    public const string ExternalLoginEmployeeUserInvalidType = "EXTERNAL_LOGIN_EMPLOYEE_USER_INVALID_TYPE";
     public const string ExternalLoginOfficeUserNotLinkedToOffice = "EXTERNAL_LOGIN_OFFICE_USER_NOT_LINKED_TO_OFFICE";
     public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound = "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
 
