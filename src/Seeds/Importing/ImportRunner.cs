@@ -61,6 +61,12 @@ internal sealed class ImportRunner(
             _context,
             ct);
 
+    public Task ImportQuestionBankLookupsAsync(
+        CancellationToken ct)
+        => QuestionBankLookupImporter.ImportAsync(
+            _context,
+            ct);
+
     public Task SeedApplicantsAsync(
         CancellationToken ct)
         => ApplicantImporter.ImportAsync(

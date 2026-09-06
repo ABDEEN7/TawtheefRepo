@@ -12,6 +12,7 @@ internal static class ImportCatalog
         new ImportStep { Code = "SKTYPE",  Title = "Import Skill Types (CSV)", RunAsync = (r, ct) => r.ImportSkillTypesAsync(ct) },
         new ImportStep { Code = "SKILL",   Title = "Import Skills (CSV)", DependsOn = ["SKTYPE"], RunAsync = (r, ct) => r.ImportSkillsAsync(ct) },
         new ImportStep { Code = "MSLINK",  Title = "Import Major-Skill Links (CSV)", DependsOn = ["MAJOR", "SKILL"], RunAsync = (r, ct) => r.ImportMajorSkillsAsync(ct) },
+        new ImportStep { Code = "QBLOOKUPS", Title = "Seed Question Bank Lookups", RunAsync = (r, ct) => r.ImportQuestionBankLookupsAsync(ct) },
         new ImportStep
         {
             Code = "APPLICANTS",
