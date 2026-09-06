@@ -117,8 +117,7 @@ export const Permissions = {
     View: 'exceptions.view',
     Create: 'exceptions.create',
     SendInvitation: 'exceptions.send-invitation',
-    Cancel: 'exceptions.cancel',
-  }
+    Cancel: 'exceptions.cancel',  
   },
   Rooms: {
     View: 'rooms.view',
