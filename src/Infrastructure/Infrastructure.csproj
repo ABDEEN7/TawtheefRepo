@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <RootNamespace>Tawtheef.Infrastructure</RootNamespace>
@@ -23,7 +23,7 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="Azure.Identity" />
         <PackageReference Include="Azure.Storage.Blobs" />

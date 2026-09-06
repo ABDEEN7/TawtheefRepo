@@ -16,6 +16,7 @@ using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Content;
+using Tawtheef.Domain.Entities.Interview;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
@@ -69,6 +70,9 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserType> UserType { get; set; }
     public DbSet<WorkType> WorkType { get; set; }
     public DbSet<SponsorType> SponsorType { get; set; }
+    public DbSet<InterviewCommitteeType> InterviewCommitteeType { get; set; }
+    public DbSet<InterviewOrganizationScope> InterviewOrganizationScope { get; set; }
+    public DbSet<InterviewNoteType> InterviewNoteType { get; set; }
     public DbSet<CandidateTypeProviderLogin> CandidateTypeProviderLogin { get; set; }
     public DbSet<ProviderLogin> ProviderLogin { get; set; }
     public DbSet<Permission> Permission { get; set; }
@@ -140,6 +144,29 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     // Minister Office Tables
     public DbSet<MinisterOfficeCandidate> MinisterOfficeCandidates { get; set; }
     public DbSet<MinisterOfficeCandidateAuditLog> MinisterOfficeCandidateAuditLogs { get; set; }
+
+    // Interview Tables
+    public DbSet<InterviewTemplate> InterviewTemplates { get; set; }
+    public DbSet<InterviewTemplateVersion> InterviewTemplateVersions { get; set; }
+    public DbSet<InterviewTemplateEvaluationAxis> InterviewTemplateEvaluationAxes { get; set; }
+    public DbSet<InterviewTemplateEvaluationCriterion> InterviewTemplateEvaluationCriteria { get; set; }
+    public DbSet<InterviewEvaluationAxis> InterviewEvaluationAxes { get; set; }
+    public DbSet<InterviewEvaluationCriterion> InterviewEvaluationCriteria { get; set; }
+    public DbSet<JobInterviewTemplate> JobInterviewTemplates { get; set; }
+    public DbSet<InterviewCommittee> InterviewCommittees { get; set; }
+    public DbSet<InterviewCommitteeMember> InterviewCommitteeMembers { get; set; }
+    public DbSet<InterviewCommitteeMemberEvaluationAxis> InterviewCommitteeMemberEvaluationAxes { get; set; }
+    public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
+    public DbSet<InterviewAppointment> InterviewAppointments { get; set; }
+    public DbSet<InterviewMemberEvaluation> InterviewMemberEvaluations { get; set; }
+    public DbSet<InterviewMemberEvaluationCriterion> InterviewMemberEvaluationCriteria { get; set; }
+    public DbSet<InterviewOperationalIssue> InterviewOperationalIssues { get; set; }
+    public DbSet<InterviewAppointmentNote> InterviewAppointmentNotes { get; set; }
+    public DbSet<InterviewResultReport> InterviewResultReports { get; set; }
+    public DbSet<InterviewResultCandidate> InterviewResultCandidates { get; set; }
+    public DbSet<InterviewResultCandidateAxis> InterviewResultCandidateAxes { get; set; }
+    public DbSet<InterviewApprovalAction> InterviewApprovalActions { get; set; }
+    public DbSet<InterviewAuditLog> InterviewAuditLogs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
