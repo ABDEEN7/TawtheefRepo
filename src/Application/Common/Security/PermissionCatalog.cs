@@ -99,6 +99,9 @@ public static class PermissionCatalog
         Permissions.Exceptions.Create,
         Permissions.Exceptions.SendInvitation,
         Permissions.Exceptions.Cancel,
+        
+        Permissions.Locations.View,
+        Permissions.Locations.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

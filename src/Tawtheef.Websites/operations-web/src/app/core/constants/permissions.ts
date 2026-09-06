@@ -119,4 +119,13 @@ export const Permissions = {
     SendInvitation: 'exceptions.send-invitation',
     Cancel: 'exceptions.cancel',
   }
+  },
+  Rooms: {
+    View: 'rooms.view',
+    Manage: 'rooms.manage',
+  },
+  Locations: {
+    View: 'locations.view',
+    Manage: 'locations.manage',
+  },
 } as const;

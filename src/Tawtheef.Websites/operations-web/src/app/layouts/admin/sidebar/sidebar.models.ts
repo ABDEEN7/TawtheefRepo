@@ -27,6 +27,7 @@ export class Sidebar {
     { key: 'major-skill', label: 'internal.sidebar.major-skill', icon: 'hgi-list-setting', route: routes.portal.majorsSkillsManagement, permission: [Permissions.MajorSkills.View, Permissions.MajorSkills.Manage] },
     { key: 'kawader', label: 'internal.sidebar.kawader', icon: ' hgi-user-multiple', route: routes.portal.kawader, permission: Permissions.Kawader.Manage },
     { key: 'minister-office', label: 'internal.sidebar.ministerOffice', icon: 'hgi-office', route: routes.portal.ministerOfficeManagement, permission: Permissions.MinisterOffice.View },
+    { key: 'locations', label: 'internal.sidebar.locations', icon: 'hgi-location-01', route: routes.portal.locationsManagement, permission: Permissions.Locations.View },
 
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'hgi-mail-send-02', route: routes.portal.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'hgi-globe-02', route: routes.portal.countriesManagement, permission: Permissions.Countries.Manage },

@@ -188,4 +188,10 @@ public static class PermissionKeys
         public const string SendInvitation = "exceptions.send-invitation";
         public const string Cancel = "exceptions.cancel";
     }
+    
+    public static class Locations
+    {
+        public const string View = "locations.view";
+        public const string Manage = "locations.manage";
+    }
 }

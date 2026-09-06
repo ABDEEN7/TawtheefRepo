@@ -310,5 +310,10 @@
   "server-error.MISSING_REQUIRED_FIELDS": "Please complete all required fields.",
   "server-error.MINISTER_OFFICE_CANDIDATE_NOT_FOUND": "Minister Office candidate record not found.",
   "server-error.QID_EXPIRY_DATE_REQUIRED": "QID expiry date is required for identity validation.",
-  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "Job points are not pending approval."
+  "server-error.JOB_POINTS_NOT_PENDING_APPROVAL": "Job points are not pending approval.",
+  "server-error.ROOM_NAME_EXISTS_IN_LOCATION": "A room with the same Arabic or English name already exists in this location.",
+  "server-error.LOCATION_NAME_EXISTS_FOR_LINK": "A location with the same Arabic or English name already exists for this location link.",
+  "server-error.ROOM_NOT_FOUND": "Room not found.",
+  "server-error.LOCATION_NOT_FOUND": "Location not found.",
+  "server-error.LOCATION_ALREADY_USED": "This location cannot be deleted because it is used by one or more rooms."
 }

@@ -82,4 +82,6 @@
   "common.relativeTime.minutesAgo": "{{count}} min ago",
   "common.relativeTime.hoursAgo": "{{count}} h ago",
   "common.relativeTime.daysAgo": "{{count}} d ago"
+  ,"internal.sidebar.rooms": "Rooms Management",
+  "internal.sidebar.locations": "Locations Management"
 }
