@@ -1,0 +1,13 @@
+.rooms-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 32px;
+  color: #2c142f;
+}
+
+@media (max-width: 992px) {
+  .rooms-table ::ng-deep .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+}

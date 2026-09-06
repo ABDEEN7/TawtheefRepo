@@ -132,5 +132,8 @@ export const portalRoutes = {
   },
   get locationsManagement() {
     return this.portal + '/locations-management';
+  },
+  get roomsManagement() {
+    return this.portal + '/rooms-management';
   }
 }

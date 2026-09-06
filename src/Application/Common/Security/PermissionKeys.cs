@@ -194,4 +194,10 @@ public static class PermissionKeys
         public const string View = "locations.view";
         public const string Manage = "locations.manage";
     }
+
+    public static class Rooms
+    {
+        public const string View = "rooms.view";
+        public const string Manage = "rooms.manage";
+    }
 }

@@ -236,4 +236,10 @@ export const employeeRoutes: Routes = [
       import('./locations-management/locations-management.page')
         .then(m => m.LocationsManagementPage)
   },
+  {
+    path: 'rooms-management',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Rooms.View] },
+    loadComponent: () => import('./rooms-management/rooms-management.page').then(m => m.RoomsManagementPage)
+  },
 ];

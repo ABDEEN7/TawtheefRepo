@@ -6,3 +6,8 @@ export interface Lookups {
   name: string;
   description?: string;
 }
+
+export interface EnumOption<T> {
+  value: T;
+  label: string;
+}

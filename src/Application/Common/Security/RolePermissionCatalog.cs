@@ -79,6 +79,9 @@ public static class RolePermissionCatalog
                 Permissions.Cities.Manage.Key,
                 Permissions.Universities.View.Key,
                 Permissions.Universities.Manage.Key,
+
+                Permissions.Rooms.View.Key,
+                Permissions.Rooms.Manage.Key,
                 
                 Permissions.Locations.View.Key,
                 Permissions.Locations.Manage.Key
