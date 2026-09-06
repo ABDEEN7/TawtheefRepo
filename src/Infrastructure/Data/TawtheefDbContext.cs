@@ -16,6 +16,7 @@ using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Applicant;
 using Tawtheef.Domain.Entities.Auth;
 using Tawtheef.Domain.Entities.Content;
+using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Kawader;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
@@ -73,6 +74,24 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<CandidateTypeProviderLogin> CandidateTypeProviderLogin { get; set; }
     public DbSet<ProviderLogin> ProviderLogin { get; set; }
     public DbSet<Permission> Permission { get; set; }
+    public DbSet<ExamInterruptionPolicy> ExamInterruptionPolicy { get; set; }
+    public DbSet<ExamStatus> ExamStatus { get; set; }
+    public DbSet<ExamCategoryType> ExamCategoryType { get; set; }
+    public DbSet<RoomType> RoomType { get; set; }
+    public DbSet<RoomStatus> RoomStatus { get; set; }
+    public DbSet<TestSlotStatus> TestSlotStatus { get; set; }
+    public DbSet<TestSlotStaffRole> TestSlotStaffRole { get; set; }
+    public DbSet<TestSessionStatus> TestSessionStatus { get; set; }
+    public DbSet<TestAttemptInterruptionStatus> TestAttemptInterruptionStatus { get; set; }
+    public DbSet<TestAttemptInterruptionResolutionAction> TestAttemptInterruptionResolutionAction { get; set; }
+    public DbSet<TestSessionCandidateAttendanceStatus> TestSessionCandidateAttendanceStatus { get; set; }
+    public DbSet<TestSessionCandidateIdentityVerificationStatus> TestSessionCandidateIdentityVerificationStatus { get; set; }
+    public DbSet<TestSessionCandidateStatus> TestSessionCandidateStatus { get; set; }
+    public DbSet<TestAttemptStatus> TestAttemptStatus { get; set; }
+    public DbSet<TestAttemptPartStatus> TestAttemptPartStatus { get; set; }
+    public DbSet<ExamResultReportStatus> ExamResultReportStatus { get; set; }
+    public DbSet<ExamResultCandidateResultStatus> ExamResultCandidateResultStatus { get; set; }
+    public DbSet<ExamExemptionDecisionStatus> ExamExemptionDecisionStatus { get; set; }
 
     public DbSet<City> City { get; set; }
     public DbSet<Country> Country { get; set; }
@@ -128,6 +147,24 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<JobCandidateTypePercentage> JobCandidateTypePercentages { get; set; }
     public DbSet<JobCandidateNationalityPercentage> JobCandidateNationalityPercentages { get; set; }
     public DbSet<JobCandidateFilterSpecialization> JobCandidateFilterSpecializations { get; set; }
+
+    // Exams Tables
+    public DbSet<Location> Locations { get; set; }
+    public DbSet<Exam> Exams { get; set; }
+    public DbSet<ExamPart> ExamParts { get; set; }
+    public DbSet<ExamCategory> ExamCategories { get; set; }
+    public DbSet<Room> Rooms { get; set; }
+    public DbSet<TestSlot> TestSlots { get; set; }
+    public DbSet<TestSlotStaff> TestSlotStaff { get; set; }
+    public DbSet<TestSession> TestSessions { get; set; }
+    public DbSet<TestSessionCandidate> TestSessionCandidates { get; set; }
+    public DbSet<TestAttempt> TestAttempts { get; set; }
+    public DbSet<TestAttemptPart> TestAttemptParts { get; set; }
+    public DbSet<TestAttemptQuestion> TestAttemptQuestions { get; set; }
+    public DbSet<TestAttemptInterruption> TestAttemptInterruptions { get; set; }
+    public DbSet<ExamResultReport> ExamResultReports { get; set; }
+    public DbSet<ExamResultCandidate> ExamResultCandidates { get; set; }
+    public DbSet<ExamExemptionDecision> ExamExemptionDecisions { get; set; }
     public DbSet<HomeSuccessStory> HomeSuccessStories { get; set; }
     public DbSet<FAQ> Faqs { get; set; }
     // Notification Tables
