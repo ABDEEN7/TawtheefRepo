@@ -1,31 +1,31 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class QuestionTypeConfiguration
-    : IEntityTypeConfiguration<QuestionType>
+public class QuestionTypeConfiguration : LookupBaseConfiguration<QuestionType>
 {
-    public void Configure(
-        EntityTypeBuilder<QuestionType> builder)
+    public override void Configure(EntityTypeBuilder<QuestionType> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new QuestionType
+            {
+                Id = QuestionTypeIds.MULTIPLE_CHOICE,
+                BackendName = "MULTIPLE_CHOICE",
+                NameEn = "Multiple Choice",
+                NameAr = "اختيار من متعدد",
+                DisplayOrder = 1
+            },
+            new QuestionType
+            {
+                Id = QuestionTypeIds.TRUE_FALSE,
+                BackendName = "TRUE_FALSE",
+                NameEn = "True / False",
+                NameAr = "صح / خطأ",
+                DisplayOrder = 2
+            }
+        );
     }
 }

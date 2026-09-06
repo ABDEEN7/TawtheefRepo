@@ -335,6 +335,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -721093517,
+                            ClaimType = "permission",
+                            ClaimValue = "locations.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -688729387,
+                            ClaimType = "permission",
+                            ClaimValue = "locations.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -1522804134,
                             ClaimType = "permission",
                             ClaimValue = "major-skill.management",
@@ -436,6 +450,20 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = -1795627862,
                             ClaimType = "permission",
                             ClaimValue = "roles.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -853440182,
+                            ClaimType = "permission",
+                            ClaimValue = "rooms.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1900294407,
+                            ClaimType = "permission",
+                            ClaimValue = "rooms.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
@@ -2090,6 +2118,1272 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("HomeSuccessStory", "app");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Exam", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowPreviousQuestion")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("DecisionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("InterruptionPolicyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TitleAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TitleEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalQuestions")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("InterruptionPolicyId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("Exam", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("EasyQuestionCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ExamPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("HardQuestionCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<int>("MediumQuestionCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.Property<decimal>("WeightPercent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamPartId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamCategory", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamExemptionDecision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("InvitationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("InvitationId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamExemptionDecision", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamPart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ExamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<int>("PartNo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("QualificationScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TitleAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TitleEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamPart", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamResultCandidate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<decimal?>("EducationalScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("ExamResultReportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("FinalScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("InvitationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<bool>("IsQualified")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ResultStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("SkillsScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("SnapshotAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("SpecializedScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("TestAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamResultReportId");
+
+                    b.HasIndex("InvitationId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ResultStatusId");
+
+                    b.HasIndex("TestAttemptId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamResultCandidate", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamResultReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AppliedQualificationScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("DecisionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("ExamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamResultReport", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("LocationLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("Location", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Room", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoomTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("RoomTypeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("Room", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttempt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSessionCandidateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TestSessionCandidateId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttempt", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptInterruption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<DateTime>("InterruptedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ResolutionActionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ResolvedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TestAttemptPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ResolutionActionId");
+
+                    b.HasIndex("ResolvedById");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TestAttemptId");
+
+                    b.HasIndex("TestAttemptPartId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptInterruption", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptPart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("ExamPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<int?>("LastQuestionNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamPartId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TestAttemptId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptPart", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("ExamCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<int>("OrderNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SavedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TestAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamCategoryId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("TestAttemptId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptQuestion", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("ExamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<int>("SessionNo")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSlotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TestSlotId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSession", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSessionCandidate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AttendanceStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AuthorizedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("IdentityVerificationNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("IdentityVerificationStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InvitationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("RescheduleReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceStatusId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IdentityVerificationStatusId");
+
+                    b.HasIndex("InvitationId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TestSessionId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSessionCandidate", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessCodeHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("SlotDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("StartedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TitleAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TitleEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("StartedById");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSlot", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSlotStaff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94)
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestSlotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("StaffUserId");
+
+                    b.HasIndex("TestSlotId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSlotStaff", "hr");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Kawader.KawaderQid", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2611,6 +3905,19 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "حملة الوثائق القطرية",
                             NameEn = "Holders of Qatari Documents"
+                        },
+                        new
+                        {
+                            Id = new Guid("f650aa0c-ab45-422c-9c9e-3b2246409ef2"),
+                            BackendName = "PermanentResident",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DescriptionAr = "حامل الإقامة الدائمة",
+                            DescriptionEn = "Permanent Resident",
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "حامل الإقامة الدائمة",
+                            NameEn = "Permanent Resident"
                         });
                 });
 
@@ -2648,6 +3955,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            CandidateTypeId = new Guid("f650aa0c-ab45-422c-9c9e-3b2246409ef2"),
+                            ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
+                        },
+                        new
+                        {
                             CandidateTypeId = new Guid("50f14c55-d5f0-4bba-930e-ab73b012e6cb"),
                             ProviderLoginId = new Guid("b8854959-1e46-4595-b51f-de3c09e3ed85")
                         },
@@ -2664,6 +3976,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             CandidateTypeId = new Guid("7b06bc91-88b3-46ec-b6cc-ef2338864d41"),
+                            ProviderLoginId = new Guid("fc379bb9-39f7-458a-85f8-6e54d1780178")
+                        },
+                        new
+                        {
+                            CandidateTypeId = new Guid("f650aa0c-ab45-422c-9c9e-3b2246409ef2"),
                             ProviderLoginId = new Guid("fc379bb9-39f7-458a-85f8-6e54d1780178")
                         },
                         new
@@ -3095,6 +4412,884 @@ namespace Tawtheef.Infrastructure.Migrations
                             ManagementId = new Guid("453aa49d-8f16-a85b-9991-c8355ac8bf00"),
                             NameAr = "الاتصالات والاعلام",
                             NameEn = "Communications and Media"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.DifficultyLevel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("DifficultyLevel", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("59e7808a-916b-44c4-92a9-41dd1c6e24e4"),
+                            BackendName = "EASY",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "سهل",
+                            NameEn = "Easy"
+                        },
+                        new
+                        {
+                            Id = new Guid("580deb45-9304-4fcb-905e-868f5db3848b"),
+                            BackendName = "MEDIUM",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "متوسط",
+                            NameEn = "Medium"
+                        },
+                        new
+                        {
+                            Id = new Guid("9bbee09c-e2a3-463b-9901-4b646200074d"),
+                            BackendName = "HARD",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "صعب",
+                            NameEn = "Hard"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamCategoryType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamCategoryType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e7c03fb9-c9a3-4187-a731-88873a230983"),
+                            BackendName = "Specialized",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تخصصي",
+                            NameEn = "Specialized"
+                        },
+                        new
+                        {
+                            Id = new Guid("6b165f67-6da7-4715-a815-e9f735704b49"),
+                            BackendName = "Educational",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تربوي",
+                            NameEn = "Educational"
+                        },
+                        new
+                        {
+                            Id = new Guid("6552e6b6-b339-4476-ab86-60f225ac3582"),
+                            BackendName = "Skills",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مهارات",
+                            NameEn = "Skills"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamExemptionDecisionStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamExemptionDecisionStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5a79c067-a14d-4c8d-acac-97b965814679"),
+                            BackendName = "Proposed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مقترح",
+                            NameEn = "Proposed"
+                        },
+                        new
+                        {
+                            Id = new Guid("e902ef1e-7c78-4e44-a978-b40e962a41b8"),
+                            BackendName = "Approved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("8df71003-be3b-4cdd-a965-9ca3f73a2551"),
+                            BackendName = "Rejected",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوض",
+                            NameEn = "Rejected"
+                        },
+                        new
+                        {
+                            Id = new Guid("c8bf2d58-54b1-40bc-a1ec-ec7af1427ed0"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamInterruptionPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamInterruptionPolicy", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("546f8fe0-29ed-4dd2-a7dc-611248258166"),
+                            BackendName = "ResumeOnly",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "الاستئناف فقط",
+                            NameEn = "Resume Only"
+                        },
+                        new
+                        {
+                            Id = new Guid("2153126f-8d36-4c35-a698-edb984b85829"),
+                            BackendName = "RescheduleOnly",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إعادة الجدولة فقط",
+                            NameEn = "Reschedule Only"
+                        },
+                        new
+                        {
+                            Id = new Guid("7994a759-00d2-4dc7-806a-dbb311276160"),
+                            BackendName = "ResumeOrReschedule",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "الاستئناف أو إعادة الجدولة",
+                            NameEn = "Resume or Reschedule"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamResultCandidateResultStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamResultCandidateResultStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("76055057-d4b7-4791-a7df-8ab5c80e116d"),
+                            BackendName = "Passed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ناجح",
+                            NameEn = "Passed"
+                        },
+                        new
+                        {
+                            Id = new Guid("24bd3d0e-7980-494c-a84d-167a81419030"),
+                            BackendName = "Failed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "راسب",
+                            NameEn = "Failed"
+                        },
+                        new
+                        {
+                            Id = new Guid("385ff451-2293-4023-a33d-235f8d5fdb3f"),
+                            BackendName = "NoShow",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "لم يحضر",
+                            NameEn = "No Show"
+                        },
+                        new
+                        {
+                            Id = new Guid("fb22f73d-0ab6-4031-a4bf-a219bbb07cd5"),
+                            BackendName = "NotCompleted",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غير مكتمل",
+                            NameEn = "Not Completed"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamResultReportStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamResultReportStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ddff4a54-538e-4082-a799-97f6243f3d26"),
+                            BackendName = "Creating",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد الإنشاء",
+                            NameEn = "Creating"
+                        },
+                        new
+                        {
+                            Id = new Guid("3369b08f-2dd3-4485-a899-1515c63ce8b1"),
+                            BackendName = "UnderReview",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد المراجعة",
+                            NameEn = "Under Review"
+                        },
+                        new
+                        {
+                            Id = new Guid("e5032918-cb5d-4ca4-a10a-95002a1e97a0"),
+                            BackendName = "Returned",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معاد",
+                            NameEn = "Returned"
+                        },
+                        new
+                        {
+                            Id = new Guid("bac8cd24-bbb0-40ac-a800-9fe838622ad8"),
+                            BackendName = "Approved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("d2afd367-0383-44cf-acd6-dcf563acb053"),
+                            BackendName = "Closed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مغلق",
+                            NameEn = "Closed"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("ExamStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8d3322b5-9743-440d-a5d3-be71edc793a1"),
+                            BackendName = "Draft",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مسودة",
+                            NameEn = "Draft"
+                        },
+                        new
+                        {
+                            Id = new Guid("3f33a442-953f-418c-af00-5220ee6a92b8"),
+                            BackendName = "PendingApproval",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد الاعتماد",
+                            NameEn = "Pending Approval"
+                        },
+                        new
+                        {
+                            Id = new Guid("eca730c1-fdac-4b1b-a678-70a34cdc607f"),
+                            BackendName = "Returned",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معاد",
+                            NameEn = "Returned"
+                        },
+                        new
+                        {
+                            Id = new Guid("a72cd921-edff-4f23-aea8-176b5b1ff3b7"),
+                            BackendName = "Approved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("e332af61-057e-4e65-a1a0-306be4ef41a1"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
                         });
                 });
 
@@ -5153,6 +7348,973 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankAssignmentStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankAssignmentStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9b38c5a0-fb16-44f2-8239-cb5ee704129d"),
+                            Code = "ASSIGNED",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            NameAr = "تم الإسناد",
+                            NameEn = "Assigned"
+                        },
+                        new
+                        {
+                            Id = new Guid("8b73c382-c04b-49f7-bb78-4bc235df872f"),
+                            Code = "QUESTION_ENTRY_IN_PROGRESS",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            NameAr = "قيد إدخال الأسئلة",
+                            NameEn = "Question Entry In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("c6cddace-de75-4a6e-8d1f-65e7e93ba4ed"),
+                            Code = "QUESTION_ENTRY_COMPLETED",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            NameAr = "تم إنهاء إدخال الأسئلة",
+                            NameEn = "Question Entry Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("238e3c8d-84de-4d70-8a1f-192ac93224ba"),
+                            Code = "RETURNED_FOR_MODIFICATION",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            NameAr = "معاد للتعديل",
+                            NameEn = "Returned for Modification"
+                        },
+                        new
+                        {
+                            Id = new Guid("c035e63f-d866-488f-affd-9ae08a7043dd"),
+                            Code = "MODIFICATION_COMPLETED",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            NameAr = "تم إنهاء التعديلات",
+                            NameEn = "Modification Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("a8ca906a-e1a3-44c9-87c1-8b4ec6192ab0"),
+                            Code = "COMPLETED",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            NameAr = "مكتمل",
+                            NameEn = "Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("a4851953-f48a-4aa9-afb9-b51dfbc1e4d8"),
+                            Code = "CANCELLED",
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionBankRequestItemStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("19760735-e5f0-4236-9fff-8487f9f057ef"),
+                            BackendName = "DRAFT",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مسودة",
+                            NameEn = "Draft"
+                        },
+                        new
+                        {
+                            Id = new Guid("c5ed702c-cfca-4d7e-8bf9-98cdf15f2106"),
+                            BackendName = "PENDING_REVIEW",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بانتظار المراجعة",
+                            NameEn = "Pending Review"
+                        },
+                        new
+                        {
+                            Id = new Guid("1914dd04-27d9-468d-b03e-813df6ce87ff"),
+                            BackendName = "APPROVED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("bfa1d9c1-a284-452b-8b59-a2d5fc0a6dfe"),
+                            BackendName = "NEEDS_MODIFICATION",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "يحتاج إلى تعديل",
+                            NameEn = "Needs Modification"
+                        },
+                        new
+                        {
+                            Id = new Guid("217164f8-c23d-4913-a549-16f80186f9cb"),
+                            BackendName = "REJECTED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوض",
+                            NameEn = "Rejected"
+                        },
+                        new
+                        {
+                            Id = new Guid("f48eedf5-4fe9-4ded-931b-c76bd5c9ba80"),
+                            BackendName = "REMOVED_FROM_REQUEST",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تمت إزالته من الطلب",
+                            NameEn = "Removed from Request"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionBankRequestStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4b25e8db-92f1-4b4c-baab-756a5d1fd3f8"),
+                            BackendName = "PENDING_ASSIGNMENT",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بانتظار الإسناد",
+                            NameEn = "Pending Assignment"
+                        },
+                        new
+                        {
+                            Id = new Guid("66fbfd41-563e-4a12-a006-8a970285f62b"),
+                            BackendName = "QUESTION_ENTRY_IN_PROGRESS",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد إدخال الأسئلة",
+                            NameEn = "Question Entry In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("97c0610c-a992-43e1-b9a1-bfdbcf5b34b0"),
+                            BackendName = "PENDING_REVIEW",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بانتظار المراجعة",
+                            NameEn = "Pending Review"
+                        },
+                        new
+                        {
+                            Id = new Guid("f5cbde41-7e46-4793-953f-ebe5f8e31570"),
+                            BackendName = "MODIFICATION_IN_PROGRESS",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد التعديل",
+                            NameEn = "Modification In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("8b6d8c90-2e40-4957-ac52-bd46b0ae9726"),
+                            BackendName = "ISSUED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تم الإصدار",
+                            NameEn = "Issued"
+                        },
+                        new
+                        {
+                            Id = new Guid("77687c70-161f-4a6c-977e-95f86b37d724"),
+                            BackendName = "CANCELLED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = new Guid("fa2e079c-9361-4e5a-9cbd-39dcb73a1520"),
+                            BackendName = "REJECTED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوض",
+                            NameEn = "Rejected"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionBankRequestType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("59659e5d-cf4c-46c5-bea1-3198a0f5a58c"),
+                            BackendName = "CREATE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إنشاء",
+                            NameEn = "Create"
+                        },
+                        new
+                        {
+                            Id = new Guid("4fa8e626-6395-4987-b949-73cb070148d4"),
+                            BackendName = "MAINTENANCE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "صيانة",
+                            NameEn = "Maintenance"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionBankType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a7f9646b-fcc3-4a00-944c-ceed82acd557"),
+                            BackendName = "SPECIALIZED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تخصصي",
+                            NameEn = "Specialized"
+                        },
+                        new
+                        {
+                            Id = new Guid("686928db-b630-4689-b265-ae17eded73cf"),
+                            BackendName = "SKILLS",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مهارات",
+                            NameEn = "Skills"
+                        },
+                        new
+                        {
+                            Id = new Guid("0ef8f0d9-02d7-4863-9bfe-e63355f3686e"),
+                            BackendName = "EDUCATIONAL",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تربوي",
+                            NameEn = "Educational"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionChangeType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionChangeType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("dd984c21-7b25-444b-85a9-78767e337ddc"),
+                            BackendName = "ADD",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إضافة",
+                            NameEn = "Add"
+                        },
+                        new
+                        {
+                            Id = new Guid("f7abde66-546b-4055-bfed-215c47bea845"),
+                            BackendName = "UPDATE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تعديل",
+                            NameEn = "Update"
+                        },
+                        new
+                        {
+                            Id = new Guid("f02136e2-ac6c-4d3e-9c37-efd28587177d"),
+                            BackendName = "DELETE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "حذف",
+                            NameEn = "Delete"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionReviewDecision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionReviewDecision", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("73df4c1d-05a0-4bb4-9f19-5889a791aa27"),
+                            BackendName = "APPROVED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("a29e6157-401f-49ac-ba46-98ecd8ca73dd"),
+                            BackendName = "NEEDS_MODIFICATION",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "يحتاج إلى تعديل",
+                            NameEn = "Needs Modification"
+                        },
+                        new
+                        {
+                            Id = new Guid("a0ce4f21-955b-4290-bf88-fc1775a21410"),
+                            BackendName = "REJECTED",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوض",
+                            NameEn = "Rejected"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("04a6e083-d38f-4838-a820-402fa4c53a39"),
+                            BackendName = "MULTIPLE_CHOICE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "اختيار من متعدد",
+                            NameEn = "Multiple Choice"
+                        },
+                        new
+                        {
+                            Id = new Guid("62d2e3f9-562d-45f1-ace4-867b929cae43"),
+                            BackendName = "TRUE_FALSE",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "صح / خطأ",
+                            NameEn = "True / False"
+                        });
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RatingGrade", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5433,6 +8595,249 @@ namespace Tawtheef.Infrastructure.Migrations
                             BackendName = "Other",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "أخرى",
+                            NameEn = "Other"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RoomStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("RoomStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4a728d18-ba82-4c00-a053-f95a6a638de4"),
+                            BackendName = "Active",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "نشطة",
+                            NameEn = "Active"
+                        },
+                        new
+                        {
+                            Id = new Guid("4e3a41f3-20d4-430b-a9fa-d175777b90ff"),
+                            BackendName = "Inactive",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غير نشطة",
+                            NameEn = "Inactive"
+                        },
+                        new
+                        {
+                            Id = new Guid("c588f1a1-3666-41f7-a826-0c0b32594243"),
+                            BackendName = "Maintenance",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "صيانة",
+                            NameEn = "Maintenance"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RoomType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("RoomType", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aa2ccf78-fff4-4b2c-a843-1d88f6029c68"),
+                            BackendName = "ExamRoom",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غرفة اختبار",
+                            NameEn = "Exam Room"
+                        },
+                        new
+                        {
+                            Id = new Guid("fd3c28b0-60f4-4b4e-a61a-a148090691a2"),
+                            BackendName = "InterviewRoom",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غرفة مقابلة",
+                            NameEn = "Interview Room"
+                        },
+                        new
+                        {
+                            Id = new Guid("268c28c4-5ab5-4f2a-a050-901a46da9b86"),
+                            BackendName = "LabRoom",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غرفة مختبر",
+                            NameEn = "Lab Room"
+                        },
+                        new
+                        {
+                            Id = new Guid("779f2dce-f563-492a-a434-44f24dd2d0ae"),
+                            BackendName = "Other",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
                             IsActive = true,
                             IsDeleted = false,
                             NameAr = "أخرى",
@@ -5955,6 +9360,122 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Stage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("Stage", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cc8ed439-fc4b-442c-b998-a190d0a4e97e"),
+                            BackendName = "PRIMARY",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "المرحلة الابتدائية",
+                            NameEn = "Primary"
+                        },
+                        new
+                        {
+                            Id = new Guid("34265c85-30ca-40ac-abaa-560d175860e0"),
+                            BackendName = "PREPARATORY",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "المرحلة الإعدادية",
+                            NameEn = "Preparatory"
+                        },
+                        new
+                        {
+                            Id = new Guid("362bf79c-b5da-4145-86ea-b4babdd7e022"),
+                            BackendName = "SECONDARY",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "المرحلة الثانوية",
+                            NameEn = "Secondary"
+                        });
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.StudyType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6173,6 +9694,1320 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "الوزارة",
                             NameEn = "Ministry"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionResolutionAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptInterruptionResolutionAction", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("76698ef2-ed94-47e0-8772-72a49372f384"),
+                            BackendName = "Resume",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "استئناف",
+                            NameEn = "Resume"
+                        },
+                        new
+                        {
+                            Id = new Guid("4ec227a3-e99b-4f7f-b7e7-c732a3d58b29"),
+                            BackendName = "Reschedule",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إعادة الجدولة",
+                            NameEn = "Reschedule"
+                        },
+                        new
+                        {
+                            Id = new Guid("a10637d3-dd47-4cf0-8c0f-9e480d7e0576"),
+                            BackendName = "Cancel",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إلغاء",
+                            NameEn = "Cancel"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptInterruptionStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b3aa445b-ebfe-4278-a79c-e59e105844aa"),
+                            BackendName = "Open",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مفتوح",
+                            NameEn = "Open"
+                        },
+                        new
+                        {
+                            Id = new Guid("b31c3a15-6d18-4e7b-bb38-c03e7baedc42"),
+                            BackendName = "Resolved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تم الحل",
+                            NameEn = "Resolved"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptPartStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptPartStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2e520f0b-1fe3-4d5d-aa03-2d192de69599"),
+                            BackendName = "NotStarted",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "لم يبدأ",
+                            NameEn = "Not Started"
+                        },
+                        new
+                        {
+                            Id = new Guid("07c2f269-6135-40f9-a146-6957271a4415"),
+                            BackendName = "InProgress",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد التنفيذ",
+                            NameEn = "In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("cee388fa-585f-480a-ac6f-6688143ff92e"),
+                            BackendName = "Completed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مكتمل",
+                            NameEn = "Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("6a32c2bc-11ca-4834-a3ed-3eaa7f622f50"),
+                            BackendName = "TimedOut",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "انتهى الوقت",
+                            NameEn = "Timed Out"
+                        },
+                        new
+                        {
+                            Id = new Guid("251ec109-529e-49c3-a3c0-626b974b5d37"),
+                            BackendName = "Interrupted",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "متوقف",
+                            NameEn = "Interrupted"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestAttemptStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f31ffad4-c04a-451a-abdd-877e4e9919a6"),
+                            BackendName = "NotStarted",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "لم يبدأ",
+                            NameEn = "Not Started"
+                        },
+                        new
+                        {
+                            Id = new Guid("f449c806-019b-48b6-a58d-1ba047ccc822"),
+                            BackendName = "InProgress",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد التنفيذ",
+                            NameEn = "In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("5a970db4-a244-449e-abe5-2500cd0d8a9a"),
+                            BackendName = "Interrupted",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "متوقف",
+                            NameEn = "Interrupted"
+                        },
+                        new
+                        {
+                            Id = new Guid("4b10262f-4d4d-4075-a4fa-8dabcdedbeb1"),
+                            BackendName = "Completed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مكتمل",
+                            NameEn = "Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("470a5a87-8bf5-42e1-a350-22958764153d"),
+                            BackendName = "TimedOut",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "انتهى الوقت",
+                            NameEn = "Timed Out"
+                        },
+                        new
+                        {
+                            Id = new Guid("7adf1e9d-24f7-4fff-a2ec-248d14a6254b"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateAttendanceStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSessionCandidateAttendanceStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5fec8448-15bc-406e-a70c-7d90be7fd362"),
+                            BackendName = "Pending",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد الانتظار",
+                            NameEn = "Pending"
+                        },
+                        new
+                        {
+                            Id = new Guid("a3250ce0-5679-43fa-a257-9f545507fa5e"),
+                            BackendName = "Present",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "حاضر",
+                            NameEn = "Present"
+                        },
+                        new
+                        {
+                            Id = new Guid("5f4bc80b-ca7f-4f55-a394-cc4102007a39"),
+                            BackendName = "NoShow",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "لم يحضر",
+                            NameEn = "No Show"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateIdentityVerificationStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSessionCandidateIdentityVerificationStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d086861a-62a7-4f66-a014-b4245da3ff82"),
+                            BackendName = "Pending",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد الانتظار",
+                            NameEn = "Pending"
+                        },
+                        new
+                        {
+                            Id = new Guid("58e27acd-91c7-4b11-a874-c28daa7916a5"),
+                            BackendName = "Matched",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مطابق",
+                            NameEn = "Matched"
+                        },
+                        new
+                        {
+                            Id = new Guid("bcd7322c-f79d-41ba-a3dd-00407fc984a6"),
+                            BackendName = "NotMatched",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "غير مطابق",
+                            NameEn = "Not Matched"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSessionCandidateStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ec074f24-591a-41e4-ac6a-4b186c6043b0"),
+                            BackendName = "Assigned",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "تم التعيين",
+                            NameEn = "Assigned"
+                        },
+                        new
+                        {
+                            Id = new Guid("29747ce1-e3b6-45ff-a740-59730f5e5833"),
+                            BackendName = "Authorized",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مصرح",
+                            NameEn = "Authorized"
+                        },
+                        new
+                        {
+                            Id = new Guid("c8a60391-f3b2-4afd-a0e3-15492812b141"),
+                            BackendName = "Started",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بدأ",
+                            NameEn = "Started"
+                        },
+                        new
+                        {
+                            Id = new Guid("b60c31b5-b819-4cf3-ae25-fd9d075b4db7"),
+                            BackendName = "Completed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مكتمل",
+                            NameEn = "Completed"
+                        },
+                        new
+                        {
+                            Id = new Guid("213abc60-4724-4f6c-a939-04eaf4deef78"),
+                            BackendName = "Rescheduled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "أعيدت جدولته",
+                            NameEn = "Rescheduled"
+                        },
+                        new
+                        {
+                            Id = new Guid("ca2ae8f7-8fc3-4c7d-ae0c-872b4e13b451"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSessionStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11364bf4-c7bb-4326-a441-238864e53612"),
+                            BackendName = "Draft",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مسودة",
+                            NameEn = "Draft"
+                        },
+                        new
+                        {
+                            Id = new Guid("a60f9202-8ab6-4c72-a5a4-43de299b46d6"),
+                            BackendName = "Approved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمدة",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("3e3d2acc-4a2b-476c-acc1-eac2e9bb5380"),
+                            BackendName = "Ready",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "جاهزة",
+                            NameEn = "Ready"
+                        },
+                        new
+                        {
+                            Id = new Guid("16b3ac19-2ff1-491f-acca-7663c19c226b"),
+                            BackendName = "InProgress",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "قيد التنفيذ",
+                            NameEn = "In Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("82b9fbdd-c9ec-46b5-a27b-001b47b22991"),
+                            BackendName = "Closed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مغلقة",
+                            NameEn = "Closed"
+                        },
+                        new
+                        {
+                            Id = new Guid("e543df74-3311-441e-aa14-928a918cf952"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغاة",
+                            NameEn = "Cancelled"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSlotStaffRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSlotStaffRole", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f8535d6c-a02e-46d8-a124-db986e51d5fc"),
+                            BackendName = "HallSupervisor",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مشرف القاعة",
+                            NameEn = "Hall Supervisor"
+                        },
+                        new
+                        {
+                            Id = new Guid("7020e361-a374-4ebd-ab69-dd95d1de8789"),
+                            BackendName = "Monitor",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مراقب",
+                            NameEn = "Monitor"
+                        },
+                        new
+                        {
+                            Id = new Guid("493cd1f0-2573-4140-a5e3-84c239b6a0c4"),
+                            BackendName = "Support",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "دعم",
+                            NameEn = "Support"
+                        });
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSlotStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("TestSlotStatus", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("02a5a982-e326-403c-a8da-34b2f33d88f0"),
+                            BackendName = "Draft",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مسودة",
+                            NameEn = "Draft"
+                        },
+                        new
+                        {
+                            Id = new Guid("7995eaf8-baaf-4dcc-a30d-0becc5a8e4d8"),
+                            BackendName = "Approved",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معتمد",
+                            NameEn = "Approved"
+                        },
+                        new
+                        {
+                            Id = new Guid("fd397696-6596-4482-ae56-4c187813a65e"),
+                            BackendName = "Ready",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "جاهز",
+                            NameEn = "Ready"
+                        },
+                        new
+                        {
+                            Id = new Guid("cc71a094-b1b0-4c44-ab10-f48a8cc12140"),
+                            BackendName = "Started",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بدأ",
+                            NameEn = "Started"
+                        },
+                        new
+                        {
+                            Id = new Guid("46ae567b-7f97-47ef-a960-9fd9efd32a53"),
+                            BackendName = "Closed",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مغلق",
+                            NameEn = "Closed"
+                        },
+                        new
+                        {
+                            Id = new Guid("215d0bfd-1ad4-4613-af9e-79d977dfd637"),
+                            BackendName = "Rescheduled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "أعيدت جدولته",
+                            NameEn = "Rescheduled"
+                        },
+                        new
+                        {
+                            Id = new Guid("4ff15b36-d258-48f4-ab1c-2380dfc0d1b0"),
+                            BackendName = "Cancelled",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ملغي",
+                            NameEn = "Cancelled"
                         });
                 });
 
@@ -6839,6 +11674,1164 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("UserId", "Channel", "IsDismissed", "IsRead");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.Question", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("QuestionCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("QuestionCode")
+                        .IsUnique()
+                        .HasFilter("[QuestionCode] IS NOT NULL");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("Question", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("CurrentApprovedVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid?>("JobTitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ManagementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionBankTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid?>("StageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("CurrentApprovedVersionId");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("JobTitleId");
+
+                    b.HasIndex("ManagementId");
+
+                    b.HasIndex("QuestionBankTypeId")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [QuestionBankTypeId] IN ('686928db-b630-4689-b265-ae17eded73cf', '0ef8f0d9-02d7-4863-9bfe-e63355f3686e')");
+
+                    b.HasIndex("StageId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionBankTypeId", "ManagementId", "JobTitleId")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [QuestionBankTypeId] = 'a7f9646b-fcc3-4a00-944c-ceed82acd557'");
+
+                    b.ToTable("QuestionBank", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AssignedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<DateTime?>("LastModificationCompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastReturnedForModificationAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MinimumQuestionCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("QuestionBankRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("QuestionEntryCompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("QuestionEntryStartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionBankRequestId", "EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankAssignment", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BaseVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<int>("CurrentReviewRound")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<DateTime?>("FinalDecisionAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("FinalDecisionById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FinalDecisionNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("QuestionBankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RequestTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SubmittedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BaseVersionId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("FinalDecisionById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("QuestionBankId");
+
+                    b.HasIndex("RequestTypeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("SubmittedById");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("QuestionBankRequest", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid?>("FromStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PerformedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PerformedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("FromStatusId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("PerformedById");
+
+                    b.HasIndex("ToStatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("RequestId", "PerformedAt");
+
+                    b.ToTable("QuestionBankRequestHistory", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangeTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("CurrentProposedRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid?>("OriginalRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionBankAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RemovalNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("RemovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangeTypeId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("CurrentProposedRevisionId");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("OriginalRevisionId");
+
+                    b.HasIndex("QuestionBankAssignmentId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("RemovedById");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("RequestId", "QuestionId")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankRequestItem", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItemReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid>("DecisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("RequestItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReviewNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReviewRound")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ReviewedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ReviewedRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DecisionId");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ReviewedById");
+
+                    b.HasIndex("ReviewedRevisionId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("RequestItemId", "ReviewRound")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankRequestItemReview", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ReviewRound")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ReviewedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ReviewedById");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("RequestId", "ReviewRound")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankRequestReview", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid>("CreatedFromRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid?>("PreviousVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionBankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("CreatedFromRequestId")
+                        .IsUnique();
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("PreviousVersionId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionBankId", "VersionNo")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankVersion", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChange", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangeRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChangeTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ChangedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid?>("FromBankVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid?>("NewQuestionRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NewSnapshotJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OldQuestionRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OldSnapshotJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionBankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToBankVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangeRequestId");
+
+                    b.HasIndex("ChangeTypeId");
+
+                    b.HasIndex("ChangedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("FromBankVersionId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("NewQuestionRevisionId");
+
+                    b.HasIndex("OldQuestionRevisionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionBankId", "ChangedAt");
+
+                    b.HasIndex("ToBankVersionId", "QuestionId")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankVersionChange", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChangeDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("FieldPath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.Property<Guid>("VersionChangeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("VersionChangeId");
+
+                    b.ToTable("QuestionBankVersionChangeDetail", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("QuestionBankVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRequestItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("QuestionRevisionId");
+
+                    b.HasIndex("SourceRequestItemId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionBankVersionId", "QuestionId")
+                        .IsUnique();
+
+                    b.ToTable("QuestionBankVersionQuestion", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<Guid>("DifficultyLevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ExplanationAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExplanationEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("QuestionTextAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionTextEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RevisionNo")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SourceRequestItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DifficultyLevelId");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("QuestionTypeId");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("SourceRequestItemId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionId", "RevisionNo")
+                        .IsUnique();
+
+                    b.ToTable("QuestionRevision", "hr");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevisionOption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("OptionTextAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionTextEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.HasIndex("QuestionRevisionId", "DisplayOrder")
+                        .IsUnique();
+
+                    b.ToTable("QuestionRevisionOption", "hr");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.AuditTrailEntry", b =>
@@ -10045,6 +16038,54 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "الاستثناءات - إلغاء",
                             NameEn = "Exceptions - Cancel"
+                        },
+                        new
+                        {
+                            Id = new Guid("0eb0193c-0ace-ac59-b02d-08e1679a4347"),
+                            BackendName = "locations.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 82,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "المواقع - عرض",
+                            NameEn = "Locations - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("ba0e8dfa-d8a2-5158-b2b9-2272331ea692"),
+                            BackendName = "locations.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 83,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "إدارة المواقع",
+                            NameEn = "Locations - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("6d31ec9d-8e04-005e-b326-7221d0fa2438"),
+                            BackendName = "rooms.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 80,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "القاعات - عرض",
+                            NameEn = "Rooms - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("a86ab789-83ea-2152-891b-382c2e970edc"),
+                            BackendName = "rooms.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 81,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "إدارة القاعات",
+                            NameEn = "Rooms - Manage"
                         });
                 });
 
@@ -10774,63 +16815,6 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.ToTable("UserSession");
                 });
 
-            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
-                {
-                    b.HasBaseType("Tawtheef.Domain.Entities.Users.User");
-
-                    b.HasDiscriminator().HasValue("AdminUser");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("26058720-5808-435a-abbf-d7a4e751f51e"),
-                            AccessFailedCount = 0,
-                            AgreedToTerms = false,
-                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
-                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "t-m.abdin-dev@edu.gov.qa",
-                            EmailConfirmed = true,
-                            FullNameAr = "t-m.abdin-dev",
-                            FullNameEn = "t-m.abdin-dev",
-                            IsBlocked = false,
-                            IsDeleted = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "T-M.ABDIN-DEV@EDU.GOV.QA",
-                            NormalizedUserName = "T-M.ABDIN-DEV@EDU.GOV.QA",
-                            OtpAttempts = 0,
-                            OtpSendsInWindow = 0,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
-                            TwoFactorEnabled = false,
-                            UserName = "t-m.abdin-dev@edu.gov.qa",
-                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
-                        },
-                        new
-                        {
-                            Id = new Guid("a8e0f354-2e23-41e1-9e1b-a1501b72dc4b"),
-                            AccessFailedCount = 0,
-                            AgreedToTerms = false,
-                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
-                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "t-a.jaber-dev@edu.gov.qa",
-                            EmailConfirmed = true,
-                            FullNameAr = "t-a.jaber-dev",
-                            FullNameEn = "t-a.jaber-dev",
-                            IsBlocked = false,
-                            IsDeleted = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "T-A.JABER-DEV@EDU.GOV.QA",
-                            NormalizedUserName = "T-A.JABER-DEV@EDU.GOV.QA",
-                            OtpAttempts = 0,
-                            OtpSendsInWindow = 0,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
-                            TwoFactorEnabled = false,
-                            UserName = "t-a.jaber-dev@edu.gov.qa",
-                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
-                        });
-                });
-
             modelBuilder.Entity("Tawtheef.Domain.Entities.Users.ApplicantUser", b =>
                 {
                     b.HasBaseType("Tawtheef.Domain.Entities.Users.User");
@@ -10964,6 +16948,63 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("OfficeId");
 
                     b.HasDiscriminator().HasValue("OfficeUser");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Users.AdminUser", b =>
+                {
+                    b.HasBaseType("Tawtheef.Domain.Entities.Users.EmployeeUser");
+
+                    b.HasDiscriminator().HasValue("AdminUser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("26058720-5808-435a-abbf-d7a4e751f51e"),
+                            AccessFailedCount = 0,
+                            AgreedToTerms = false,
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
+                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "t-m.abdin-dev@edu.gov.qa",
+                            EmailConfirmed = true,
+                            FullNameAr = "t-m.abdin-dev",
+                            FullNameEn = "t-m.abdin-dev",
+                            IsBlocked = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "T-M.ABDIN-DEV@EDU.GOV.QA",
+                            NormalizedUserName = "T-M.ABDIN-DEV@EDU.GOV.QA",
+                            OtpAttempts = 0,
+                            OtpSendsInWindow = 0,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            TwoFactorEnabled = false,
+                            UserName = "t-m.abdin-dev@edu.gov.qa",
+                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
+                        },
+                        new
+                        {
+                            Id = new Guid("a8e0f354-2e23-41e1-9e1b-a1501b72dc4b"),
+                            AccessFailedCount = 0,
+                            AgreedToTerms = false,
+                            ConcurrencyStamp = "75a677a7-c93d-4940-8666-4d648343104c",
+                            CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "t-a.jaber-dev@edu.gov.qa",
+                            EmailConfirmed = true,
+                            FullNameAr = "t-a.jaber-dev",
+                            FullNameEn = "t-a.jaber-dev",
+                            IsBlocked = false,
+                            IsDeleted = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "T-A.JABER-DEV@EDU.GOV.QA",
+                            NormalizedUserName = "T-A.JABER-DEV@EDU.GOV.QA",
+                            OtpAttempts = 0,
+                            OtpSendsInWindow = 0,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a984b6f5-e904-44b0-8d0d-5e93c07b1510",
+                            TwoFactorEnabled = false,
+                            UserName = "t-a.jaber-dev@edu.gov.qa",
+                            UserTypeId = new Guid("a1b2c3d4-e5f6-4879-8a3b-5c6d7e8f9a0b")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -11600,6 +17641,707 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Exam", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamInterruptionPolicy", "InterruptionPolicy")
+                        .WithMany()
+                        .HasForeignKey("InterruptionPolicyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("InterruptionPolicy");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamCategory", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamCategoryType", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.ExamPart", "ExamPart")
+                        .WithMany()
+                        .HasForeignKey("ExamPartId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("ExamPart");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamExemptionDecision", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Invitation", "Invitation")
+                        .WithMany()
+                        .HasForeignKey("InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamExemptionDecisionStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Invitation");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamPart", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamResultCandidate", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.ExamResultReport", "ExamResultReport")
+                        .WithMany()
+                        .HasForeignKey("ExamResultReportId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Invitation", "Invitation")
+                        .WithMany()
+                        .HasForeignKey("InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamResultCandidateResultStatus", "ResultStatus")
+                        .WithMany()
+                        .HasForeignKey("ResultStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestAttempt", "TestAttempt")
+                        .WithMany()
+                        .HasForeignKey("TestAttemptId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("ExamResultReport");
+
+                    b.Navigation("Invitation");
+
+                    b.Navigation("ResultStatus");
+
+                    b.Navigation("TestAttempt");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.ExamResultReport", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.ExamResultReportStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Location", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.Room", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.RoomType", "RoomType")
+                        .WithMany()
+                        .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.RoomStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("RoomType");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttempt", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestAttemptStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestSessionCandidate", "TestSessionCandidate")
+                        .WithMany()
+                        .HasForeignKey("TestSessionCandidateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("TestSessionCandidate");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptInterruption", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionResolutionAction", "ResolutionAction")
+                        .WithMany()
+                        .HasForeignKey("ResolutionActionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestAttempt", "TestAttempt")
+                        .WithMany()
+                        .HasForeignKey("TestAttemptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestAttemptPart", "TestAttemptPart")
+                        .WithMany()
+                        .HasForeignKey("TestAttemptPartId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("ResolutionAction");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("TestAttempt");
+
+                    b.Navigation("TestAttemptPart");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptPart", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.ExamPart", "ExamPart")
+                        .WithMany()
+                        .HasForeignKey("ExamPartId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestAttemptPartStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestAttempt", "TestAttempt")
+                        .WithMany()
+                        .HasForeignKey("TestAttemptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("ExamPart");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("TestAttempt");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptQuestion", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.ExamCategory", "ExamCategory")
+                        .WithMany()
+                        .HasForeignKey("ExamCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestAttempt", "TestAttempt")
+                        .WithMany()
+                        .HasForeignKey("TestAttemptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("ExamCategory");
+
+                    b.Navigation("TestAttempt");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSession", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSessionStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestSlot", "TestSlot")
+                        .WithMany()
+                        .HasForeignKey("TestSlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("TestSlot");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSessionCandidate", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateAttendanceStatus", "AttendanceStatus")
+                        .WithMany()
+                        .HasForeignKey("AttendanceStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateIdentityVerificationStatus", "IdentityVerificationStatus")
+                        .WithMany()
+                        .HasForeignKey("IdentityVerificationStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Recruitment.Invitation", "Invitation")
+                        .WithMany()
+                        .HasForeignKey("InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestSession", "TestSession")
+                        .WithMany()
+                        .HasForeignKey("TestSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AttendanceStatus");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("IdentityVerificationStatus");
+
+                    b.Navigation("Invitation");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("TestSession");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSlot", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSlotStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSlotStaff", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.TestSlotStaffRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Exams.TestSlot", "TestSlot")
+                        .WithMany()
+                        .HasForeignKey("TestSlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("TestSlot");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Kawader.KawaderQid", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -11795,6 +18537,174 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("DeletedBy");
 
                     b.Navigation("Management");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.DifficultyLevel", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamCategoryType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamExemptionDecisionStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamInterruptionPolicy", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamResultCandidateResultStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamResultReportStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ExamStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -12330,6 +19240,174 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionChangeType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionReviewDecision", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RatingGrade", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -12355,6 +19433,54 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Religion", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RoomStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RoomType", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
@@ -12474,6 +19600,30 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Stage", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.StudyType", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
@@ -12499,6 +19649,246 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TargetEntity", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionResolutionAction", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptInterruptionStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptPartStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestAttemptStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateAttendanceStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateIdentityVerificationStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionCandidateStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSessionStatus", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSlotStaffRole", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.TestSlotStatus", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
@@ -12698,6 +20088,749 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.Question", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "CurrentApprovedVersion")
+                        .WithMany()
+                        .HasForeignKey("CurrentApprovedVersionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.NoneSeeds.JobTitle", "JobTitle")
+                        .WithMany()
+                        .HasForeignKey("JobTitleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.Management", "Management")
+                        .WithMany()
+                        .HasForeignKey("ManagementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankType", "QuestionBankType")
+                        .WithMany()
+                        .HasForeignKey("QuestionBankTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.Stage", "Stage")
+                        .WithMany("QuestionBanks")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("CurrentApprovedVersion");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("JobTitle");
+
+                    b.Navigation("Management");
+
+                    b.Navigation("QuestionBankType");
+
+                    b.Navigation("Stage");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankAssignment", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "QuestionBankRequest")
+                        .WithMany("Assignments")
+                        .HasForeignKey("QuestionBankRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankAssignmentStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("QuestionBankRequest");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "BaseVersion")
+                        .WithMany()
+                        .HasForeignKey("BaseVersionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "FinalDecisionBy")
+                        .WithMany()
+                        .HasForeignKey("FinalDecisionById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", "QuestionBank")
+                        .WithMany("Requests")
+                        .HasForeignKey("QuestionBankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestType", "RequestType")
+                        .WithMany("Requests")
+                        .HasForeignKey("RequestTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", "Status")
+                        .WithMany("Requests")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "SubmittedBy")
+                        .WithMany()
+                        .HasForeignKey("SubmittedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("BaseVersion");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("FinalDecisionBy");
+
+                    b.Navigation("QuestionBank");
+
+                    b.Navigation("RequestType");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("SubmittedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestHistory", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", "FromStatus")
+                        .WithMany("FromHistories")
+                        .HasForeignKey("FromStatusId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "Request")
+                        .WithMany("History")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", "ToStatus")
+                        .WithMany("ToHistories")
+                        .HasForeignKey("ToStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("FromStatus");
+
+                    b.Navigation("Request");
+
+                    b.Navigation("ToStatus");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionChangeType", "ChangeType")
+                        .WithMany("RequestItems")
+                        .HasForeignKey("ChangeTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "CurrentProposedRevision")
+                        .WithMany()
+                        .HasForeignKey("CurrentProposedRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "OriginalRevision")
+                        .WithMany()
+                        .HasForeignKey("OriginalRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankAssignment", "QuestionBankAssignment")
+                        .WithMany("RequestItems")
+                        .HasForeignKey("QuestionBankAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.Question", "Question")
+                        .WithMany("RequestItems")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "RemovedBy")
+                        .WithMany()
+                        .HasForeignKey("RemovedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "Request")
+                        .WithMany("Items")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatus", "Status")
+                        .WithMany("RequestItems")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ChangeType");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("CurrentProposedRevision");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("OriginalRevision");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("QuestionBankAssignment");
+
+                    b.Navigation("RemovedBy");
+
+                    b.Navigation("Request");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItemReview", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionReviewDecision", "Decision")
+                        .WithMany("ItemReviews")
+                        .HasForeignKey("DecisionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", "RequestItem")
+                        .WithMany("Reviews")
+                        .HasForeignKey("RequestItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "ReviewedRevision")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ReviewedRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Decision");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("RequestItem");
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("ReviewedRevision");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestReview", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "Request")
+                        .WithMany("Reviews")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Request");
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "CreatedFromRequest")
+                        .WithMany()
+                        .HasForeignKey("CreatedFromRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "PreviousVersion")
+                        .WithMany("NextVersions")
+                        .HasForeignKey("PreviousVersionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", "QuestionBank")
+                        .WithMany("Versions")
+                        .HasForeignKey("QuestionBankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("CreatedFromRequest");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("PreviousVersion");
+
+                    b.Navigation("QuestionBank");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChange", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", "ChangeRequest")
+                        .WithMany()
+                        .HasForeignKey("ChangeRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionChangeType", "ChangeType")
+                        .WithMany("VersionChanges")
+                        .HasForeignKey("ChangeTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "FromBankVersion")
+                        .WithMany()
+                        .HasForeignKey("FromBankVersionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "NewQuestionRevision")
+                        .WithMany()
+                        .HasForeignKey("NewQuestionRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "OldQuestionRevision")
+                        .WithMany()
+                        .HasForeignKey("OldQuestionRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", "QuestionBank")
+                        .WithMany("VersionChanges")
+                        .HasForeignKey("QuestionBankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.Question", "Question")
+                        .WithMany("VersionChanges")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "ToBankVersion")
+                        .WithMany()
+                        .HasForeignKey("ToBankVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ChangeRequest");
+
+                    b.Navigation("ChangeType");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("FromBankVersion");
+
+                    b.Navigation("NewQuestionRevision");
+
+                    b.Navigation("OldQuestionRevision");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("QuestionBank");
+
+                    b.Navigation("ToBankVersion");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChangeDetail", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChange", "VersionChange")
+                        .WithMany("Details")
+                        .HasForeignKey("VersionChangeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+
+                    b.Navigation("VersionChange");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionQuestion", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", "QuestionBankVersion")
+                        .WithMany("Questions")
+                        .HasForeignKey("QuestionBankVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.Question", "Question")
+                        .WithMany("BankVersionQuestions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "QuestionRevision")
+                        .WithMany("BankVersionQuestions")
+                        .HasForeignKey("QuestionRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", "SourceRequestItem")
+                        .WithMany()
+                        .HasForeignKey("SourceRequestItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("QuestionBankVersion");
+
+                    b.Navigation("QuestionRevision");
+
+                    b.Navigation("SourceRequestItem");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.DifficultyLevel", "DifficultyLevel")
+                        .WithMany("QuestionRevisions")
+                        .HasForeignKey("DifficultyLevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.Question", "Question")
+                        .WithMany("Revisions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.QuestionType", "QuestionType")
+                        .WithMany("QuestionRevisions")
+                        .HasForeignKey("QuestionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", "SourceRequestItem")
+                        .WithMany()
+                        .HasForeignKey("SourceRequestItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("DifficultyLevel");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("QuestionType");
+
+                    b.Navigation("SourceRequestItem");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevisionOption", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", "QuestionRevision")
+                        .WithMany("Options")
+                        .HasForeignKey("QuestionRevisionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("QuestionRevision");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -14118,6 +22251,11 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("CandidateTypeProviderLogins");
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.DifficultyLevel", b =>
+                {
+                    b.Navigation("QuestionRevisions");
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Management", b =>
                 {
                     b.Navigation("Departments");
@@ -14138,6 +22276,109 @@ namespace Tawtheef.Infrastructure.Migrations
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.ProviderLogin", b =>
                 {
                     b.Navigation("CandidateTypeProviderLogins");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatus", b =>
+                {
+                    b.Navigation("RequestItems");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatus", b =>
+                {
+                    b.Navigation("FromHistories");
+
+                    b.Navigation("Requests");
+
+                    b.Navigation("ToHistories");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionBankRequestType", b =>
+                {
+                    b.Navigation("Requests");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionChangeType", b =>
+                {
+                    b.Navigation("RequestItems");
+
+                    b.Navigation("VersionChanges");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionReviewDecision", b =>
+                {
+                    b.Navigation("ItemReviews");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.QuestionType", b =>
+                {
+                    b.Navigation("QuestionRevisions");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Stage", b =>
+                {
+                    b.Navigation("QuestionBanks");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.Question", b =>
+                {
+                    b.Navigation("BankVersionQuestions");
+
+                    b.Navigation("RequestItems");
+
+                    b.Navigation("Revisions");
+
+                    b.Navigation("VersionChanges");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBank", b =>
+                {
+                    b.Navigation("Requests");
+
+                    b.Navigation("VersionChanges");
+
+                    b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankAssignment", b =>
+                {
+                    b.Navigation("RequestItems");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequest", b =>
+                {
+                    b.Navigation("Assignments");
+
+                    b.Navigation("History");
+
+                    b.Navigation("Items");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", b =>
+                {
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersion", b =>
+                {
+                    b.Navigation("NextVersions");
+
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankVersionChange", b =>
+                {
+                    b.Navigation("Details");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionRevision", b =>
+                {
+                    b.Navigation("BankVersionQuestions");
+
+                    b.Navigation("Options");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Recruitment.Invitation", b =>

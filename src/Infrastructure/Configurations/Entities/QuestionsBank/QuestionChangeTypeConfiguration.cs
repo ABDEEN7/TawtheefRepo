@@ -1,31 +1,39 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class QuestionChangeTypeConfiguration
-    : IEntityTypeConfiguration<QuestionChangeType>
+public class QuestionChangeTypeConfiguration : LookupBaseConfiguration<QuestionChangeType>
 {
-    public void Configure(
-        EntityTypeBuilder<QuestionChangeType> builder)
+    public override void Configure(EntityTypeBuilder<QuestionChangeType> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new QuestionChangeType
+            {
+                Id = QuestionChangeTypeIds.ADD,
+                BackendName = "ADD",
+                NameEn = "Add",
+                NameAr = "إضافة",
+                DisplayOrder = 1
+            },
+            new QuestionChangeType
+            {
+                Id = QuestionChangeTypeIds.UPDATE,
+                BackendName = "UPDATE",
+                NameEn = "Update",
+                NameAr = "تعديل",
+                DisplayOrder = 2
+            },
+            new QuestionChangeType
+            {
+                Id = QuestionChangeTypeIds.DELETE,
+                BackendName = "DELETE",
+                NameEn = "Delete",
+                NameAr = "حذف",
+                DisplayOrder = 3
+            }
+        );
     }
 }

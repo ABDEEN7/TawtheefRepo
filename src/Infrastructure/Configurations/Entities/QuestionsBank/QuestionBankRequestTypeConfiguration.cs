@@ -1,31 +1,31 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class QuestionBankRequestTypeConfiguration
-    : IEntityTypeConfiguration<QuestionBankRequestType>
+public class QuestionBankRequestTypeConfiguration : LookupBaseConfiguration<QuestionBankRequestType>
 {
-    public void Configure(
-        EntityTypeBuilder<QuestionBankRequestType> builder)
+    public override void Configure(EntityTypeBuilder<QuestionBankRequestType> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new QuestionBankRequestType
+            {
+                Id = QuestionBankRequestTypeIds.CREATE,
+                BackendName = "CREATE",
+                NameEn = "Create",
+                NameAr = "إنشاء",
+                DisplayOrder = 1
+            },
+            new QuestionBankRequestType
+            {
+                Id = QuestionBankRequestTypeIds.MAINTENANCE,
+                BackendName = "MAINTENANCE",
+                NameEn = "Maintenance",
+                NameAr = "صيانة",
+                DisplayOrder = 2
+            }
+        );
     }
 }

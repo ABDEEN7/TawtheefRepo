@@ -1,31 +1,39 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class QuestionBankTypeConfiguration
-    : IEntityTypeConfiguration<QuestionBankType>
+public class QuestionBankTypeConfiguration : LookupBaseConfiguration<QuestionBankType>
 {
-    public void Configure(
-        EntityTypeBuilder<QuestionBankType> builder)
+    public override void Configure(EntityTypeBuilder<QuestionBankType> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new QuestionBankType
+            {
+                Id = QuestionBankTypeIds.SPECIALIZED,
+                BackendName = "SPECIALIZED",
+                NameEn = "Specialized",
+                NameAr = "تخصصي",
+                DisplayOrder = 1
+            },
+            new QuestionBankType
+            {
+                Id = QuestionBankTypeIds.SKILLS,
+                BackendName = "SKILLS",
+                NameEn = "Skills",
+                NameAr = "مهارات",
+                DisplayOrder = 2
+            },
+            new QuestionBankType
+            {
+                Id = QuestionBankTypeIds.EDUCATIONAL,
+                BackendName = "EDUCATIONAL",
+                NameEn = "Educational",
+                NameAr = "تربوي",
+                DisplayOrder = 3
+            }
+        );
     }
 }

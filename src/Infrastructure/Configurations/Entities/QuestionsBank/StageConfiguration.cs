@@ -1,31 +1,39 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class StageConfiguration
-    : IEntityTypeConfiguration<Stage>
+public class StageConfiguration : LookupBaseConfiguration<Stage>
 {
-    public void Configure(
-        EntityTypeBuilder<Stage> builder)
+    public override void Configure(EntityTypeBuilder<Stage> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new Stage
+            {
+                Id = StageIds.Primary,
+                BackendName = "PRIMARY",
+                NameEn = "Primary",
+                NameAr = "المرحلة الابتدائية",
+                DisplayOrder = 1
+            },
+            new Stage
+            {
+                Id = StageIds.Preparatory,
+                BackendName = "PREPARATORY",
+                NameEn = "Preparatory",
+                NameAr = "المرحلة الإعدادية",
+                DisplayOrder = 2
+            },
+            new Stage
+            {
+                Id = StageIds.Secondary,
+                BackendName = "SECONDARY",
+                NameEn = "Secondary",
+                NameAr = "المرحلة الثانوية",
+                DisplayOrder = 3
+            }
+        );
     }
 }

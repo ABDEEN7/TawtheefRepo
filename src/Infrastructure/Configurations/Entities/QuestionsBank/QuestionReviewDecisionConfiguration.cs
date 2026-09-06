@@ -1,31 +1,39 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Tawtheef.Infrastructure.Configurations.Entities.QuestionsBank;
+namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class QuestionReviewDecisionConfiguration
-    : IEntityTypeConfiguration<QuestionReviewDecision>
+public class QuestionReviewDecisionConfiguration : LookupBaseConfiguration<QuestionReviewDecision>
 {
-    public void Configure(
-        EntityTypeBuilder<QuestionReviewDecision> builder)
+    public override void Configure(EntityTypeBuilder<QuestionReviewDecision> builder)
     {
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        base.Configure(builder);
 
-        builder.Property(x => x.NameAr)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.NameEn)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.BackendName)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.HasIndex(x => x.BackendName)
-            .IsUnique()
-            .HasFilter("[IsDeleted] = 0");
+        builder.HasData(
+            new QuestionReviewDecision
+            {
+                Id = QuestionReviewDecisionIds.APPROVED,
+                BackendName = "APPROVED",
+                NameEn = "Approved",
+                NameAr = "معتمد",
+                DisplayOrder = 1
+            },
+            new QuestionReviewDecision
+            {
+                Id = QuestionReviewDecisionIds.NEEDS_MODIFICATION,
+                BackendName = "NEEDS_MODIFICATION",
+                NameEn = "Needs Modification",
+                NameAr = "يحتاج إلى تعديل",
+                DisplayOrder = 2
+            },
+            new QuestionReviewDecision
+            {
+                Id = QuestionReviewDecisionIds.REJECTED,
+                BackendName = "REJECTED",
+                NameEn = "Rejected",
+                NameAr = "مرفوض",
+                DisplayOrder = 3
+            }
+        );
     }
 }
