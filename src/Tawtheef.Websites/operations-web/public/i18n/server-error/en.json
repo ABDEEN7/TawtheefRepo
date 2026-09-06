@@ -28,6 +28,7 @@
   "server-error.ACCOUNT_STATUS_NOT_ALLOWED_FOR_LOGIN": "Account status does not allow login.",
   "server-error.EXTERNAL_LOGIN_NOT_LINKED_OFFICE_USER": "External login is not linked to an office user.",
   "server-error.EXTERNAL_LOGIN_OFFICE_USER_INVALID_TYPE": "Invalid office user type.",
+  "server-error.EXTERNAL_LOGIN_EMPLOYEE_USER_INVALID_TYPE": "Invalid employee user type.",
   "server-error.EXTERNAL_LOGIN_OFFICE_USER_NOT_LINKED_TO_OFFICE": "Office user is not linked to an office.",
   "server-error.EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND": "The linked office was deleted or not found.",
   "server-error.QATAR_PASS_QID_NOT_ALLOWED": "Qatar ID is not allowed.",
