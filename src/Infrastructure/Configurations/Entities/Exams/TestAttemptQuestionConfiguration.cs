@@ -19,5 +19,17 @@ public class TestAttemptQuestionConfiguration : BaseEntityConfiguration<TestAtte
             .WithMany()
             .HasForeignKey(x => x.ExamCategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Question)
+            .WithMany()
+            .HasForeignKey(x => x.QuestionId)
+            .IsRequired(true)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.SelectedQuestionRevisionOption)
+            .WithMany()
+            .HasForeignKey(x => x.SelectedQuestionRevisionOptionId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
