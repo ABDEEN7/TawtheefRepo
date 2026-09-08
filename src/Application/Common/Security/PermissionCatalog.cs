@@ -103,6 +103,9 @@ public static class PermissionCatalog
         Permissions.Locations.View,
         Permissions.Locations.Manage,
 
+        Permissions.Exams.View,
+        Permissions.Exams.Create,
+
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,
     ]);

@@ -1,0 +1,124 @@
+<section class="exams-shell" i18nNamespace="pages/employee/exams-management">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+          <h3 class="fw-bold mb-0">{{ 'EXAMS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'EXAMS.DESCRIPTION' | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12">
+          <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <button pButton type="button" *hasPermission="Permissions.Exams.Create" [disabled]="true">
+              <span pButtonLabel>{{ 'EXAMS.CREATE' | translate }}</span>
+              <i class="fa-solid fa-plus" pButtonIcon></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <app-page-filters [advancedLabel]="'EXAMS.ADVANCED_FILTERS' | translate"
+        [clearLabel]="'EXAMS.CLEAR_FILTERS' | translate"
+        [advancedExpanded]="advancedFiltersExpanded()"
+        [activeAdvancedCount]="activeAdvancedFilterCount()"
+        (advancedToggled)="toggleAdvancedFilters()" (filtersCleared)="clearFilters()">
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="fa-solid fa-magnifying-glass" />
+          <input pInputText id="exam-search" type="search" class="w-100 form-control"
+            [(ngModel)]="search" (ngModelChange)="onSearchChange()"
+            [attr.aria-label]="'EXAMS.SEARCH' | translate"
+            [placeholder]="'EXAMS.SEARCH' | translate" />
+        </p-iconfield>
+        <div filterSecondary class="filter-field">
+          <label class="form-label" for="exam-status">{{ 'EXAMS.STATUS' | translate }}</label>
+          <p-select inputId="exam-status" class="w-100" [options]="statusOptions()"
+            optionLabel="name" optionValue="id" [(ngModel)]="selectedStatusId"
+            (ngModelChange)="applyFilters()" [showClear]="true" appendTo="body"
+            [placeholder]="'EXAMS.ALL_STATUSES' | translate" />
+        </div>
+        <div advancedFilters class="row g-3">
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="exam-specialization">{{ 'EXAMS.SPECIALIZATION' | translate }}</label>
+            <p-select inputId="exam-specialization" class="w-100" [options]="specializationOptions()"
+              optionLabel="name" optionValue="id" [(ngModel)]="selectedSpecializationId"
+              (ngModelChange)="applyFilters()" [showClear]="true" [filter]="true" appendTo="body"
+              [placeholder]="'EXAMS.ALL_SPECIALIZATIONS' | translate" />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="exam-created-from">{{ 'EXAMS.CREATED_FROM' | translate }}</label>
+            <p-datepicker inputId="exam-created-from" class="w-100" [fluid]="true"
+              [(ngModel)]="createdFrom" (ngModelChange)="applyFilters()" [readonlyInput]="true"
+              [maxDate]="createdTo" [invalid]="invalidCreatedRange()"
+              [showIcon]="true" [showClear]="true" dateFormat="yy-mm-dd" appendTo="body"
+              [placeholder]="'EXAMS.CREATED_FROM' | translate" />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="exam-created-to">{{ 'EXAMS.CREATED_TO' | translate }}</label>
+            <p-datepicker inputId="exam-created-to" class="w-100" [fluid]="true"
+              [(ngModel)]="createdTo" (ngModelChange)="applyFilters()" [readonlyInput]="true"
+              [minDate]="createdFrom" [invalid]="invalidCreatedRange()"
+              [showIcon]="true" [showClear]="true" dateFormat="yy-mm-dd" appendTo="body"
+              [placeholder]="'EXAMS.CREATED_TO' | translate" />
+            @if (invalidCreatedRange()) {
+              <small class="text-danger" role="alert">{{ 'EXAMS.INVALID_CREATED_RANGE' | translate }}</small>
+            }
+          </div>
+        </div>
+      </app-page-filters>
+
+      <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap" aria-live="polite">
+        @if (loading()) {
+          <div class="small text-muted">{{ 'EXAMS.LOADING' | translate }}</div>
+        }
+        @if (loadError() || lookupError()) {
+          <div class="text-danger" role="alert">{{ 'EXAMS.LOAD_ERROR' | translate }}</div>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="exams()" dataKey="id" [loading]="loading()">
+            <ng-template #header>
+              <tr>
+                <th>{{ 'EXAMS.NUMBER' | translate }}</th>
+                <th>{{ 'EXAMS.JOB_TITLE' | translate }}</th>
+                <th>{{ 'EXAMS.SPECIALIZATION' | translate }}</th>
+                <th>{{ 'EXAMS.TOTAL_QUESTIONS' | translate }}</th>
+                <th>{{ 'EXAMS.TOTAL_DURATION' | translate }}</th>
+                <th>{{ 'EXAMS.STATUS' | translate }}</th>
+                <th>{{ 'EXAMS.CREATED_DATE' | translate }}</th>
+                <th>{{ 'EXAMS.LAST_UPDATED' | translate }}</th>
+                <th>{{ 'EXAMS.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-exam>
+              <tr>
+                <td class="fw-semibold"><bdi>{{ exam.examNo }}</bdi></td>
+                <td>{{ exam.jobTitle }}</td>
+                <td>{{ exam.specializations.join('، ') || ('EXAMS.NOT_AVAILABLE' | translate) }}</td>
+                <td>{{ exam.totalQuestions }}</td>
+                <td>{{ 'EXAMS.DURATION_MINUTES' | translate: { count: exam.totalDurationMinutes } }}</td>
+                <td><p-tag severity="secondary" [value]="exam.status.name" /></td>
+                <td>{{ exam.createdDate | date: 'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ exam.lastUpdated | date: 'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ 'EXAMS.NOT_AVAILABLE' | translate }}</td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr>
+                <td colspan="9" class="text-center py-4 text-muted">
+                  @if (!loading() && !loadError()) { {{ 'EXAMS.EMPTY' | translate }} }
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination [currentPage]="filters().pageNumber" [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalItems()" (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)" />
+        </div>
+      }
+    </div>
+  </div>
+</section>

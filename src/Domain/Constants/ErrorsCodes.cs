@@ -2,6 +2,7 @@ namespace Tawtheef.Domain.Constants;
 
 public class ErrorsCodes
 {
+    public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
     // =========================================================
     // COMMON / GENERIC
     // =========================================================

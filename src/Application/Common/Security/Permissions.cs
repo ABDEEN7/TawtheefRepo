@@ -36,6 +36,27 @@ public static class Permissions
                 83);
     }
 
+    public static class Exams
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Exams.View,
+                nameof(PermissionKeys.Exams),
+                PermissionAction.View,
+                "Job Exams - View",
+                "اختبارات الوظائف - عرض",
+                106);
+
+        public static readonly PermissionDefinition Create =
+            Def(
+                PermissionKeys.Exams.Create,
+                nameof(PermissionKeys.Exams),
+                PermissionAction.Create,
+                "Job Exams - Create",
+                "اختبارات الوظائف - إنشاء",
+                107);
+    }
+
     public static class Rooms
     {
         public static readonly PermissionDefinition View =

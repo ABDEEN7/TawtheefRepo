@@ -83,5 +83,6 @@
   "common.relativeTime.hoursAgo": "{{count}} h ago",
   "common.relativeTime.daysAgo": "{{count}} d ago",
   "internal.sidebar.rooms": "Rooms Management",
+  "internal.sidebar.exams": "Job Exams",
   "internal.sidebar.locations": "Locations Management"
 }

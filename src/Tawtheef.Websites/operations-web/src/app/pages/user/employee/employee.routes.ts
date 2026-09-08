@@ -1,8 +1,16 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '../../../core/guards/route-guard/permission-guards';
 import { Permissions } from '../../../core/constants/permissions';
+import { portalRoutes } from '../../../routes/portal-routes';
 
 export const employeeRoutes: Routes = [
+  {
+    path: portalRoutes.examsManagementPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View] },
+    loadComponent: () => import('./exams-management/exams-management.component')
+      .then(m => m.ExamsManagementComponent)
+  },
   {
     path: 'dashboard',
     canActivate: [permissionGuard],
