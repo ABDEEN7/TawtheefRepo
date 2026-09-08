@@ -124,6 +124,9 @@ export const Permissions = {
     View: 'rooms.view',
     Manage: 'rooms.manage',
   },
+  QuestionBanks: {
+    View: 'question-banks.view',
+  },
   Locations: {
     View: 'locations.view',
     Manage: 'locations.manage',

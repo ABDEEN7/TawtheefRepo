@@ -372,6 +372,16 @@ export class EndpointsService {
     send: this.getFullUrl('/notification-tester/send'),
     preview: this.getFullUrl('/notification-tester/preview'),
   };
+  questionBanks = {
+    list: this.getFullUrl('/questionbanks'),
+    lookups: {
+      questionBankTypes: this.getFullUrl('/questionbanks/lookups/question-bank-types'),
+      managements: this.getFullUrl('/questionbanks/lookups/managements'),
+      jobTitles: this.getFullUrl('/questionbanks/lookups/job-titles'),
+      stages: this.getFullUrl('/questionbanks/lookups/stages')
+    }
+  };
+
   rooms = {
     create: this.getFullUrl('/rooms'),
     list: this.getFullUrl('/rooms'),

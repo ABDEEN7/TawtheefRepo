@@ -135,5 +135,8 @@ export const portalRoutes = {
   },
   get roomsManagement() {
     return this.portal + '/rooms-management';
+  },
+  get questionBanks() {
+    return this.portal + '/question-banks';
   }
 }

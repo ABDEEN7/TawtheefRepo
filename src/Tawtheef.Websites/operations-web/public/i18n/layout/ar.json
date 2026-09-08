@@ -84,5 +84,6 @@
   "common.relativeTime.hoursAgo": "منذ {{count}} ساعة",
   "common.relativeTime.daysAgo": "منذ {{count}} يوم",
   "internal.sidebar.rooms": "إدارة القاعات",
+  "internal.sidebar.question-banks": "بنوك الأسئلة",
   "internal.sidebar.locations": "إدارة المواقع"
 }
