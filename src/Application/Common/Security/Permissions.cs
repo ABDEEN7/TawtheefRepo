@@ -57,6 +57,18 @@ public static class Permissions
                 81);
     }
 
+    public static class QuestionBanks
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.QuestionBanks.View,
+                nameof(PermissionKeys.QuestionBanks),
+                PermissionAction.View,
+                "Question Banks - View",
+                "بنوك الأسئلة - عرض",
+                84);
+    }
+
     // =========================
     // Admin Console
     // =========================

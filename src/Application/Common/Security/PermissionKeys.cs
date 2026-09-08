@@ -200,4 +200,9 @@ public static class PermissionKeys
         public const string View = "rooms.view";
         public const string Manage = "rooms.manage";
     }
+
+    public static class QuestionBanks
+    {
+        public const string View = "question-banks.view";
+    }
 }
