@@ -1,0 +1,125 @@
+<section class="question-banks-shell" i18nNamespace="pages/employee/question-banks">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-12">
+          <h3 class="fw-bold mb-0">{{ 'QUESTION_BANKS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'QUESTION_BANKS.DESCRIPTION' | translate }}</p>
+        </div>
+      </div>
+
+      <app-page-filters
+        [advancedLabel]="'QUESTION_BANKS.ADVANCED_FILTERS' | translate"
+        [clearLabel]="'QUESTION_BANKS.CLEAR_FILTERS' | translate"
+        [advancedExpanded]="advancedFiltersExpanded()"
+        [activeAdvancedCount]="activeAdvancedFilterCount()"
+        [showClear]="true"
+        (advancedToggled)="toggleAdvancedFilters()"
+        (filtersCleared)="clearFilters()">
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="pi pi-search"></p-inputicon>
+          <input pInputText id="question-bank-search" type="search" class="w-100 form-control"
+            [(ngModel)]="search" (ngModelChange)="onSearchChange()"
+            [attr.aria-label]="'QUESTION_BANKS.SEARCH' | translate"
+            [placeholder]="'QUESTION_BANKS.SEARCH_PLACEHOLDER' | translate" />
+        </p-iconfield>
+
+        <div filterSecondary class="filter-field">
+          <label class="form-label" for="question-bank-type-filter">{{ 'QUESTION_BANKS.TYPE' | translate }}</label>
+          <p-select inputId="question-bank-type-filter" class="w-100" [options]="questionBankTypes()"
+            optionValue="id" [(ngModel)]="selectedQuestionBankTypeId" (ngModelChange)="onFilterChange()"
+            [showClear]="true" [placeholder]="'QUESTION_BANKS.ALL_TYPES' | translate" appendTo="body">
+            <ng-template pTemplate="selectedItem" let-option>{{ optionName(option) }}</ng-template>
+            <ng-template pTemplate="item" let-option>{{ optionName(option) }}</ng-template>
+          </p-select>
+        </div>
+
+        <div advancedFilters class="row g-3">
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="management-filter">{{ 'QUESTION_BANKS.MANAGEMENT' | translate }}</label>
+            <p-select inputId="management-filter" class="w-100" [options]="managements()" optionValue="id"
+              [(ngModel)]="selectedManagementId" (ngModelChange)="onFilterChange()" [showClear]="true"
+              [placeholder]="'QUESTION_BANKS.ALL_MANAGEMENTS' | translate" appendTo="body">
+              <ng-template pTemplate="selectedItem" let-option>{{ optionName(option) }}</ng-template>
+              <ng-template pTemplate="item" let-option>{{ optionName(option) }}</ng-template>
+            </p-select>
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="job-title-filter">{{ 'QUESTION_BANKS.JOB_TITLE' | translate }}</label>
+            <p-select inputId="job-title-filter" class="w-100" [options]="jobTitles()" optionValue="id"
+              [(ngModel)]="selectedJobTitleId" (ngModelChange)="onFilterChange()" [showClear]="true"
+              [placeholder]="'QUESTION_BANKS.ALL_JOB_TITLES' | translate" appendTo="body">
+              <ng-template pTemplate="selectedItem" let-option>{{ optionName(option) }}</ng-template>
+              <ng-template pTemplate="item" let-option>{{ optionName(option) }}</ng-template>
+            </p-select>
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="stage-filter">{{ 'QUESTION_BANKS.STAGE' | translate }}</label>
+            <p-select inputId="stage-filter" class="w-100" [options]="stages()" optionValue="id"
+              [(ngModel)]="selectedStageId" (ngModelChange)="onFilterChange()" [showClear]="true"
+              [placeholder]="'QUESTION_BANKS.ALL_STAGES' | translate" appendTo="body">
+              <ng-template pTemplate="selectedItem" let-option>{{ optionName(option) }}</ng-template>
+              <ng-template pTemplate="item" let-option>{{ optionName(option) }}</ng-template>
+            </p-select>
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="status-filter">{{ 'QUESTION_BANKS.STATUS' | translate }}</label>
+            <p-select inputId="status-filter" class="w-100" [options]="statusOptions()" optionLabel="label"
+              optionValue="value" [(ngModel)]="selectedIsActive" (ngModelChange)="onFilterChange()"
+              [showClear]="true" [placeholder]="'QUESTION_BANKS.ALL_STATUSES' | translate" appendTo="body">
+            </p-select>
+          </div>
+        </div>
+      </app-page-filters>
+
+      <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap">
+        @if (loading()) {
+          <div class="small text-muted">{{ 'QUESTION_BANKS.LOADING' | translate }}</div>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="questionBanks()" dataKey="id" class="question-banks-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'QUESTION_BANKS.TYPE' | translate }}</th>
+                <th>{{ 'QUESTION_BANKS.MANAGEMENT' | translate }}</th>
+                <th>{{ 'QUESTION_BANKS.JOB_TITLE' | translate }}</th>
+                <th>{{ 'QUESTION_BANKS.STAGE' | translate }}</th>
+                <th>{{ 'QUESTION_BANKS.CURRENT_VERSION' | translate }}</th>
+                <th>{{ 'QUESTION_BANKS.STATUS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-bank>
+              <tr>
+                <td class="fw-semibold">{{ localizedName(bank.questionBankTypeNameAr, bank.questionBankTypeNameEn) }}</td>
+                <td>{{ localizedName(bank.managementNameAr, bank.managementNameEn) }}</td>
+                <td>{{ localizedName(bank.jobTitleNameAr, bank.jobTitleNameEn) }}</td>
+                <td>{{ localizedName(bank.stageNameAr, bank.stageNameEn) }}</td>
+                <td>{{ bank.currentVersionNo != null ? 'V' + bank.currentVersionNo : ('QUESTION_BANKS.NOT_ISSUED' | translate) }}</td>
+                <td>
+                  <p-tag [severity]="bank.isActive ? 'success' : 'secondary'"
+                    [value]="(bank.isActive ? 'QUESTION_BANKS.ACTIVE' : 'QUESTION_BANKS.INACTIVE') | translate"></p-tag>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td [attr.colspan]="6" class="text-center py-4 text-muted" [class.d-none]="loading()">
+                  {{ 'QUESTION_BANKS.EMPTY' | translate }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && totalCount() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination [currentPage]="filters().pageNumber" [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalCount()" (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -237,6 +237,12 @@ export const employeeRoutes: Routes = [
         .then(m => m.LocationsManagementPage)
   },
   {
+    path: 'question-banks',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBanks.View] },
+    loadComponent: () => import('./question-banks/question-banks.page').then(m => m.QuestionBanksPage)
+  },
+  {
     path: 'rooms-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Rooms.View] },
