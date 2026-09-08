@@ -6,4 +6,5 @@ public static class Schemas
     public const string Hr = "hr";
     public const string Applicant = "app";
     public const string Profile = "pro";
+    public const string Interview = "itv";
 }

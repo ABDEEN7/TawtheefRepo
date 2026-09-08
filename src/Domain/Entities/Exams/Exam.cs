@@ -9,6 +9,7 @@ namespace Tawtheef.Domain.Entities.Exams;
 public class Exam : EventEntity
 {
     public Guid JobId { get; set; }
+    public required string ExamNo { get; set; }
     public required string TitleAr { get; set; }
     public string? TitleEn { get; set; }
     public int TotalQuestions { get; set; }

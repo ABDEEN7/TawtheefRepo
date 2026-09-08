@@ -19,6 +19,12 @@ public class ExamCategoryConfiguration : BaseEntityConfiguration<ExamCategory>
             .WithMany()
             .HasForeignKey(x => x.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.QuestionBankVersion)
+            .WithMany()
+            .HasForeignKey(x => x.QuestionBankVersionId)
+            .IsRequired(true)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 
