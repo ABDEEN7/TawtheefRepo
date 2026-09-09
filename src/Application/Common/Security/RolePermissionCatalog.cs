@@ -22,6 +22,8 @@ public static class RolePermissionCatalog
                 
             ],
             [SystemRoleIds.HrManager] = [
+                Permissions.Exams.View.Key,
+                Permissions.Exams.Create.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
@@ -101,6 +103,8 @@ public static class RolePermissionCatalog
                 Permissions.CandidateUsers.View.Key,
             ],
             [SystemRoleIds.Employee] = [
+                Permissions.Exams.View.Key,
+                Permissions.Exams.Create.Key,
             ],
 
             [SystemRoleIds.OfficeAdmin] = [

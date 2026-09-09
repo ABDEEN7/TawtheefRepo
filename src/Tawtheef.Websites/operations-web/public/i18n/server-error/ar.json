@@ -1,4 +1,5 @@
 {
+  "server-error.EXAM_CREATED_DATE_RANGE_INVALID": "لا يمكن أن يكون تاريخ الإنشاء من بعد تاريخ الإنشاء إلى.",
   "server-error.UNAUTHORIZED_ACTION": "غير مصرح لك بتنفيذ هذا الإجراء.",
   "server-error.INVALID_RECAPTCHA": "فشل التحقق من رمز الأمان.",
   "server-error.INVALID_DEVICE_ID": "معرّف الجهاز غير صالح.",

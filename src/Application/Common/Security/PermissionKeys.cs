@@ -195,6 +195,12 @@ public static class PermissionKeys
         public const string Manage = "locations.manage";
     }
 
+    public static class Exams
+    {
+        public const string View = "exams.view";
+        public const string Create = "exams.create";
+    }
+
     public static class Rooms
     {
         public const string View = "rooms.view";
