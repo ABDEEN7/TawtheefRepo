@@ -2,7 +2,6 @@ namespace Tawtheef.Domain.Constants;
 
 public class ErrorsCodes
 {
-    public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
     // =========================================================
     // COMMON / GENERIC
     // =========================================================
@@ -305,6 +304,13 @@ public class ErrorsCodes
     #region MOI Service
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
     public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
+    #endregion
+    
+    // =========================================================
+    // Exam
+    // =========================================================
+    #region Exam
+    public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
