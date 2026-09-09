@@ -396,6 +396,11 @@ public class ErrorsCodes
     public const string MinisterOfficeCandidateNotFound = "MINISTER_OFFICE_CANDIDATE_NOT_FOUND";
     public const string QidExpiryDateRequired = "QID_EXPIRY_DATE_REQUIRED";
     #endregion
+
+    #region Interview - Evaluation Bank
+    public const string InterviewEvaluationAxisNotFound = "INTERVIEW_EVALUATION_AXIS_NOT_FOUND";
+    public const string InterviewEvaluationCriterionNotFound = "INTERVIEW_EVALUATION_CRITERION_NOT_FOUND";
+    #endregion
 }
 public static class CandidateEligibilityConditionCodes
 {

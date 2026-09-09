@@ -200,4 +200,10 @@ public static class PermissionKeys
         public const string View = "rooms.view";
         public const string Manage = "rooms.manage";
     }
+
+    public static class InterviewEvaluationBank
+    {
+        public const string View = "interview-evaluation-bank.view";
+        public const string Manage = "interview-evaluation-bank.manage";
+    }
 }

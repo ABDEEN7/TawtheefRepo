@@ -763,4 +763,28 @@ public static class Permissions
                 "الاستثناءات - إلغاء",
                 105);
     }
+
+    #region InterviewEvaluationBank
+    public static class InterviewEvaluationBank
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewEvaluationBank.View,
+                nameof(PermissionKeys.InterviewEvaluationBank),
+                PermissionAction.View,
+                "Interview Evaluation Bank - View",
+                "بنك المحاور والمعايير - عرض",
+                102);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewEvaluationBank.Manage,
+                nameof(PermissionKeys.InterviewEvaluationBank),
+                PermissionAction.Manage,
+                "Interview Evaluation Bank - Manage",
+                "بنك المحاور والمعايير - إدارة",
+                103);
+    }
+    #endregion
+
 }
