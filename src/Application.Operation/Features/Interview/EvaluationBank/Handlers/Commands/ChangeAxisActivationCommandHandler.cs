@@ -1,0 +1,27 @@
+﻿using Application.Operation.Features.Interview.EvaluationBank.Commands;
+using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Interview;
+
+namespace Application.Operation.Features.Interview.EvaluationBank.Handlers.Commands;
+
+public sealed class ChangeAxisActivationCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<ChangeAxisActivationCommand, IResult<Unit>>
+{
+    public async Task<IResult<Unit>> Handle(ChangeAxisActivationCommand request, CancellationToken cancellationToken)
+    {
+        var repo = unitOfWork.GetEntityRepository<InterviewEvaluationAxis>().DbSet;
+        var axis = await repo.FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+        if(axis is null)
+        {
+            return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewEvaluationAxisNotFound));
+        }
+
+        axis.IsActive = request.IsActive;
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Ok(Unit.Value);
+    }
+}

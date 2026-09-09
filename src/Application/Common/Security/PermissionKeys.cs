@@ -180,4 +180,10 @@ public static class PermissionKeys
         public const string View = "invitation-expiry-configuration.view";
         public const string Manage = "invitation-expiry-configuration.manage";
     }
+
+    public static class InterviewEvaluationBank
+    {
+        public const string View = "interview-evaluation-bank.view";
+        public const string Manage = "interview-evaluation-bank.manage";
+    }
 }

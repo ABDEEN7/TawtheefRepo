@@ -94,6 +94,9 @@ public static class PermissionCatalog
 
         Permissions.InvitationExpiryConfiguration.View,
         Permissions.InvitationExpiryConfiguration.Manage,
+
+        Permissions.InterviewEvaluationBank.View,
+        Permissions.InterviewEvaluationBank.Manage,
     ]);
 
     public static readonly ISet<string> Keys =
