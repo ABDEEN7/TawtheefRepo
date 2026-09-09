@@ -24,6 +24,7 @@ public static class RolePermissionCatalog
             [SystemRoleIds.HrManager] = [
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
+                Permissions.Exams.WorkflowActions.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 

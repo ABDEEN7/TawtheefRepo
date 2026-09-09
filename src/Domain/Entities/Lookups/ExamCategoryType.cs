@@ -3,6 +3,7 @@ using Tawtheef.Domain.Common;
 
 namespace Tawtheef.Domain.Entities.Lookups;
 
+// delete this lookup and replace to QuestionBankTypeIds
 public static class ExamCategoryTypeIds
 {
     public static readonly Guid Specialized = Guid.Parse("e7c03fb9-c9a3-4187-a731-88873a230983");

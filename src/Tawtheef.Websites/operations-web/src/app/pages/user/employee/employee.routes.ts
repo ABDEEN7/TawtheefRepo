@@ -5,6 +5,27 @@ import { portalRoutes } from '../../../routes/portal-routes';
 
 export const employeeRoutes: Routes = [
   {
+    path: portalRoutes.createExamPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.Create], examMode: 'create' },
+    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
+      .then(m => m.ExamWorkflowComponent)
+  },
+  {
+    path: portalRoutes.editExamPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.Create], examMode: 'edit' },
+    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
+      .then(m => m.ExamWorkflowComponent)
+  },
+  {
+    path: portalRoutes.viewExamPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View], examMode: 'view' },
+    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
+      .then(m => m.ExamWorkflowComponent)
+  },
+  {
     path: portalRoutes.examsManagementPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.View] },

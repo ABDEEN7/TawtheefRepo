@@ -1,0 +1,123 @@
+<div [formGroup]="form">
+  <div class="row g-3 mb-3">
+    @if (!hideCategory) {
+      <div class="col-md-4">
+        <label class="form-label" [for]="prefix + '-category'">{{
+          'EXAM_WIZARD.CATEGORY' | translate
+        }}</label>
+        <p-select
+          [inputId]="prefix + '-category'"
+          class="w-100"
+          formControlName="categoryId"
+          [options]="categoryOptions()"
+          [optionLabel]="language.isRtl ? 'nameAr' : 'nameEn'"
+          optionValue="id"
+          appendTo="body"
+          (onChange)="form.controls.questionBankVersionId.setValue('')"
+        />
+      </div>
+    }
+    <div [class]="hideCategory ? 'col-md-12' : 'col-md-8'">
+      <label class="form-label" [for]="prefix + '-bank'">{{
+        'EXAM_WIZARD.BANK' | translate
+      }}</label>
+      <p-select
+        [inputId]="prefix + '-bank'"
+        class="w-100"
+        formControlName="questionBankVersionId"
+        [options]="bankOptions()"
+        optionLabel="label"
+        optionValue="id"
+        appendTo="body"
+        [filter]="true"
+      />
+      @if (!bankOptions().length) {
+        <small class="text-muted">{{ 'EXAM_WIZARD.NO_BANKS' | translate }}</small>
+      }
+      @if (form.controls.questionBankVersionId.value && !bank) {
+        <small class="text-danger">{{ 'EXAM_WIZARD.ERROR.BANK' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" [for]="prefix + '-count'">{{
+        'EXAM_WIZARD.QUESTION_COUNT' | translate
+      }}</label>
+      <p-inputnumber
+        [inputId]="prefix + '-count'"
+        formControlName="questionCount"
+        [min]="0"
+        [max]="2147483647"
+        [useGrouping]="false"
+        styleClass="w-100"
+      />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" [for]="prefix + '-weight'">{{
+        'EXAM_WIZARD.WEIGHT' | translate
+      }}</label>
+      <p-inputnumber
+        [inputId]="prefix + '-weight'"
+        formControlName="weightPercent"
+        [min]="0"
+        [max]="100"
+        [maxFractionDigits]="2"
+        suffix="%"
+        styleClass="w-100"
+      />
+    </div>
+  </div>
+  @if (bank; as selected) {
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-lg-3">
+        <div class="card bg-light mb-0">
+          <div class="card-body">
+            <span class="text-muted">{{ 'EXAM_WIZARD.AVAILABLE_TOTAL' | translate }}</span>
+            <h4 class="mb-0 mt-2">{{ selected.total }}</h4>
+          </div>
+        </div>
+      </div>
+      @for (difficulty of difficulties; track difficulty.key) {
+        <div class="col-6 col-lg-3">
+          <div class="card bg-light mb-0">
+            <div class="card-body">
+              <span class="text-muted">{{ 'EXAM_WIZARD.' + difficulty.key | translate }}</span>
+              <h4 class="mb-0 mt-2">{{ selected[difficulty.available] }}</h4>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+  <h5>{{ 'EXAM_WIZARD.DISTRIBUTION' | translate }}</h5>
+  <p-table [value]="difficulties" [tableStyle]="{ 'min-width': '24rem' }">
+    <ng-template #header
+      ><tr>
+        <th>{{ 'EXAM_WIZARD.DIFFICULTY' | translate }}</th>
+        <th>{{ 'EXAM_WIZARD.QUESTION_COUNT' | translate }}</th>
+      </tr></ng-template
+    >
+    <ng-template #body let-difficulty
+      ><tr>
+        <td>
+          <label [for]="prefix + '-' + difficulty.key">{{
+            'EXAM_WIZARD.' + difficulty.key | translate
+          }}</label>
+        </td>
+        <td>
+          <p-inputnumber
+            [inputId]="prefix + '-' + difficulty.key"
+            [formControlName]="difficulty.control"
+            [min]="0"
+            [max]="2147483647"
+            [useGrouping]="false"
+          />
+        </td></tr
+    ></ng-template>
+    <ng-template #footer
+      ><tr>
+        <td>{{ 'EXAM_WIZARD.TOTAL' | translate }}</td>
+        <td>{{ total }}</td>
+      </tr></ng-template
+    >
+  </p-table>
+</div>

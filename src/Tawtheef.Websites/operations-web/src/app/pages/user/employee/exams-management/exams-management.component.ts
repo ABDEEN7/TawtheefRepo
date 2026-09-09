@@ -1,4 +1,6 @@
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { portalRoutes } from '../../../../routes/portal-routes';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -27,11 +29,27 @@ import { ExamsService } from './services/exams.service';
   standalone: true,
   templateUrl: './exams-management.component.html',
   styleUrl: './exams-management.component.scss',
-  imports: [CommonModule, FormsModule, TranslatePipe, ButtonModule, DatePickerModule,
-    IconFieldModule, InputIconModule, InputTextModule, Select, TableModule, TagModule,
-    PaginationComponent, PageFiltersComponent, HasPermissionDirective, I18nNamespaceDirective]
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    TranslatePipe,
+    ButtonModule,
+    DatePickerModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    Select,
+    TableModule,
+    TagModule,
+    PaginationComponent,
+    PageFiltersComponent,
+    HasPermissionDirective,
+    I18nNamespaceDirective,
+  ],
 })
 export class ExamsManagementComponent implements OnInit {
+  protected readonly routes = portalRoutes;
   private readonly service = inject(ExamsService);
   private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
@@ -48,7 +66,9 @@ export class ExamsManagementComponent implements OnInit {
   readonly specializationOptions = signal<dropdownOptionsModel[]>([]);
   readonly advancedFiltersExpanded = signal(false);
   readonly filters = signal<ExamFilters>({
-    pageNumber: 1, pageSize: 10, language: this.language.get()
+    pageNumber: 1,
+    pageSize: 10,
+    language: this.language.get(),
   });
 
   search = '';
@@ -58,45 +78,52 @@ export class ExamsManagementComponent implements OnInit {
   createdTo: Date | null = null;
 
   ngOnInit(): void {
-    this.listRequests$.pipe(
-      switchMap(() => {
-        this.loading.set(true);
-        this.loadError.set(false);
-        return this.service.list(this.filters()).pipe(
-          catchError(() => {
-            this.loadError.set(true);
-            return of(null);
-          }),
-          finalize(() => this.loading.set(false))
-        );
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(response => {
-      this.exams.set(response?.items ?? []);
-      this.totalItems.set(response?.metadata?.totalCount ?? 0);
-    });
+    this.listRequests$
+      .pipe(
+        switchMap(() => {
+          this.loading.set(true);
+          this.loadError.set(false);
+          return this.service.list(this.filters()).pipe(
+            catchError(() => {
+              this.loadError.set(true);
+              return of(null);
+            }),
+            finalize(() => this.loading.set(false)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.exams.set(response?.items ?? []);
+        this.totalItems.set(response?.metadata?.totalCount ?? 0);
+      });
 
-    this.filterChanges$.pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
+    this.filterChanges$
+      .pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.applyFilters());
 
-    this.language.current$.pipe(
-      switchMap(language => {
-        this.filters.update(filters => ({ ...filters, language }));
-        this.listRequests$.next();
-        this.lookupError.set(false);
-        return forkJoin({
-          statuses: this.service.getStatuses(language),
-          specializations: this.service.getSpecializations(language)
-        }).pipe(catchError(() => {
-          this.lookupError.set(true);
-          return of({ statuses: [], specializations: [] });
-        }));
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(lookups => {
-      this.statusOptions.set(lookups.statuses);
-      this.specializationOptions.set(lookups.specializations);
-    });
+    this.language.current$
+      .pipe(
+        switchMap((language) => {
+          this.filters.update((filters) => ({ ...filters, language }));
+          this.listRequests$.next();
+          this.lookupError.set(false);
+          return forkJoin({
+            statuses: this.service.getStatuses(language),
+            specializations: this.service.getSpecializations(language),
+          }).pipe(
+            catchError(() => {
+              this.lookupError.set(true);
+              return of({ statuses: [], specializations: [] });
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((lookups) => {
+        this.statusOptions.set(lookups.statuses);
+        this.specializationOptions.set(lookups.specializations);
+      });
   }
 
   onSearchChange(): void {
@@ -106,11 +133,14 @@ export class ExamsManagementComponent implements OnInit {
   applyFilters(): void {
     if (this.invalidCreatedRange()) return;
 
-    this.filters.update(filters => ({
-      ...filters, pageNumber: 1, search: this.search.trim() || undefined,
-      specializationId: this.selectedSpecializationId, statusId: this.selectedStatusId,
+    this.filters.update((filters) => ({
+      ...filters,
+      pageNumber: 1,
+      search: this.search.trim() || undefined,
+      specializationId: this.selectedSpecializationId,
+      statusId: this.selectedStatusId,
       createdFrom: this.toDateFilter(this.createdFrom),
-      createdTo: this.toDateFilter(this.createdTo)
+      createdTo: this.toDateFilter(this.createdTo),
     }));
     this.listRequests$.next();
   }
@@ -125,8 +155,11 @@ export class ExamsManagementComponent implements OnInit {
   }
 
   activeAdvancedFilterCount(): number {
-    return Number(!!this.selectedSpecializationId) +
-      Number(!!this.createdFrom) + Number(!!this.createdTo);
+    return (
+      Number(!!this.selectedSpecializationId) +
+      Number(!!this.createdFrom) +
+      Number(!!this.createdTo)
+    );
   }
 
   invalidCreatedRange(): boolean {
@@ -144,16 +177,20 @@ export class ExamsManagementComponent implements OnInit {
   }
 
   toggleAdvancedFilters(): void {
-    this.advancedFiltersExpanded.update(expanded => !expanded);
+    this.advancedFiltersExpanded.update((expanded) => !expanded);
   }
 
   onPageChange(pageNumber: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber }));
+    this.filters.update((filters) => ({ ...filters, pageNumber }));
     this.listRequests$.next();
   }
 
   onPageSizeChange(pageSize: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber: 1, pageSize }));
+    this.filters.update((filters) => ({ ...filters, pageNumber: 1, pageSize }));
     this.listRequests$.next();
+  }
+
+  isEditable(exam: ExamListItemDto): boolean {
+    return exam.status.backendName === 'Draft' || exam.status.backendName === 'Returned';
   }
 }
