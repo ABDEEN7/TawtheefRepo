@@ -6,7 +6,7 @@ using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(QuestionBank), Schema = Schemas.Hr)]
-public class QuestionBank : BaseEntity
+public class QuestionBank : EventEntity
 {
     public Guid? ManagementId { get; set; }
 

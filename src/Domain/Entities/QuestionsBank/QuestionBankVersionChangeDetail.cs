@@ -4,7 +4,7 @@ using Tawtheef.Domain.Common;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(QuestionBankVersionChangeDetail), Schema = Schemas.Hr)]
-public class QuestionBankVersionChangeDetail : BaseEntity
+public class QuestionBankVersionChangeDetail : EventEntity
 {
     public Guid VersionChangeId { get; set; }
 
