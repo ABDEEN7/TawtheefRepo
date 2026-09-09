@@ -724,7 +724,7 @@ public static class Permissions
                 nameof(PermissionKeys.InvitationExpiryConfiguration),
                 PermissionAction.View,
                 "Invitation Expiry Configuration - View",
-                "Invitation Expiry Configuration - View",
+                "إعدادات انتهاء صلاحية الدعوة - عرض",
                 100);
 
         public static readonly PermissionDefinition Manage =
@@ -733,7 +733,7 @@ public static class Permissions
                 nameof(PermissionKeys.InvitationExpiryConfiguration),
                 PermissionAction.Manage,
                 "Invitation Expiry Configuration - Manage",
-                "Invitation Expiry Configuration - Manage",
+                "إعدادات انتهاء صلاحية الدعوة - إدارة",
                 101);
     }
 
