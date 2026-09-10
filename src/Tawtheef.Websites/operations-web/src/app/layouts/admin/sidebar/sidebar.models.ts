@@ -29,6 +29,7 @@ export class Sidebar {
     { key: 'minister-office', label: 'internal.sidebar.ministerOffice', icon: 'hgi-office', route: routes.portal.ministerOfficeManagement, permission: Permissions.MinisterOffice.View },
     { key: 'locations', label: 'internal.sidebar.locations', icon: 'hgi-location-01', route: routes.portal.locationsManagement, permission: Permissions.Locations.View },
     { key: 'rooms', label: 'internal.sidebar.rooms', icon: 'hgi-building-03', route: routes.portal.roomsManagement, permission: Permissions.Rooms.View },
+    { key: 'exams', label: 'internal.sidebar.exams', icon: 'hgi-task-01', route: routes.portal.examsManagement, permission: Permissions.Exams.View },
     { key: 'question-banks', label: 'internal.sidebar.question-banks', icon: 'hgi-file-validation', route: routes.portal.questionBanks, permission: Permissions.QuestionBanks.View },
     { key: 'question-bank-requests', label: 'internal.sidebar.question-bank-requests', icon: 'hgi-task-01', route: routes.portal.questionBankRequests, permission: Permissions.QuestionBankRequests.View },
 

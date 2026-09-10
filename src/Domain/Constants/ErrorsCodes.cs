@@ -305,6 +305,13 @@ public class ErrorsCodes
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
     public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
     #endregion
+    
+    // =========================================================
+    // Exam
+    // =========================================================
+    #region Exam
+    public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
+    #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
@@ -395,6 +402,46 @@ public class ErrorsCodes
     public const string MissingRequiredFields = "MISSING_REQUIRED_FIELDS";
     public const string MinisterOfficeCandidateNotFound = "MINISTER_OFFICE_CANDIDATE_NOT_FOUND";
     public const string QidExpiryDateRequired = "QID_EXPIRY_DATE_REQUIRED";
+    #endregion
+
+    #region Interview - Evaluation Bank
+    public const string InterviewEvaluationAxisNotFound = "INTERVIEW_EVALUATION_AXIS_NOT_FOUND";
+    public const string InterviewEvaluationCriterionNotFound = "INTERVIEW_EVALUATION_CRITERION_NOT_FOUND";
+    #endregion
+
+    #region Interview - Evaluation Template
+    public const string InterviewTemplateNotFound = "INTERVIEW_TEMPLATE_NOT_FOUND";
+    public const string InterviewOrganizationScopeNotFound = "INTERVIEW_ORGANIZATION_SCOPE_NOT_FOUND";
+
+    public const string InterviewTemplateVersionNotFound = "INTERVIEW_TEMPLATE_VERSION_NOT_FOUND";
+    public const string InterviewTemplateVersionLocked = "INTERVIEW_TEMPLATE_VERSION_LOCKED";
+    public const string InterviewTemplateVersionNotDraftOrReturned = "INTERVIEW_TEMPLATE_VERSION_NOT_DRAFT_OR_RETURNED";
+    public const string InterviewTemplateVersionNotPendingApproval = "INTERVIEW_TEMPLATE_VERSION_NOT_PENDING_APPROVAL";
+    public const string InterviewTemplateVersionNotCancellable = "INTERVIEW_TEMPLATE_VERSION_NOT_CANCELLABLE";
+    public const string InterviewTemplateVersionNotApproved = "INTERVIEW_TEMPLATE_VERSION_NOT_APPROVED";
+
+    public const string InterviewTemplateVersionAxisNotFound = "INTERVIEW_TEMPLATE_VERSION_AXIS_NOT_FOUND";
+    public const string InterviewTemplateVersionAxisAlreadyExists = "INTERVIEW_TEMPLATE_VERSION_AXIS_ALREADY_EXISTS";
+
+    public const string InterviewTemplateVersionCriterionNotFound = "INTERVIEW_TEMPLATE_VERSION_CRITERION_NOT_FOUND";
+    public const string InterviewTemplateVersionCriterionSourceConflict = "INTERVIEW_TEMPLATE_VERSION_CRITERION_SOURCE_CONFLICT";
+
+    public const string JobTitleNotFound = "JOB_TITLE_NOT_FOUND"; // must add it in JobRegion but i usedit just on interview module.
+    #endregion
+
+
+    #region Interview - Committee
+    public const string InterviewCommitteeNotFound = "INTERVIEW_COMMITTEE_NOT_FOUND";
+    public const string InterviewCommitteeCoreNotEditable = "INTERVIEW_COMMITTEE_CORE_NOT_EDITABLE";
+    public const string InterviewCommitteeMembersNotEditable = "INTERVIEW_COMMITTEE_MEMBERS_NOT_EDITABLE";
+    public const string InterviewCommitteeNotDraft = "INTERVIEW_COMMITTEE_NOT_DRAFT";
+    public const string InterviewCommitteeNotPendingApproval = "INTERVIEW_COMMITTEE_NOT_PENDING_APPROVAL";
+    public const string InterviewCommitteeNotCancellable = "INTERVIEW_COMMITTEE_NOT_CANCELLABLE";
+    public const string InterviewCommitteeNotApproved = "INTERVIEW_COMMITTEE_NOT_APPROVED";
+    public const string InterviewCommitteeNotStopped = "INTERVIEW_COMMITTEE_NOT_STOPPED";
+    public const string InterviewCommitteeJobNotPublished = "INTERVIEW_COMMITTEE_JOB_NOT_PUBLISHED";
+    public const string InterviewCommitteeAlreadyExistsForJob = "INTERVIEW_COMMITTEE_ALREADY_EXISTS_FOR_JOB";
+    public const string JobNotFound = "JOB_NOT_FOUND";
     #endregion
 }
 public static class CandidateEligibilityConditionCodes

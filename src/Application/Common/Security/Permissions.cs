@@ -36,6 +36,27 @@ public static class Permissions
                 83);
     }
 
+    public static class Exams
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.Exams.View,
+                nameof(PermissionKeys.Exams),
+                PermissionAction.View,
+                "Job Exams - View",
+                "اختبارات الوظائف - عرض",
+                106);
+
+        public static readonly PermissionDefinition Create =
+            Def(
+                PermissionKeys.Exams.Create,
+                nameof(PermissionKeys.Exams),
+                PermissionAction.Create,
+                "Job Exams - Create",
+                "اختبارات الوظائف - إنشاء",
+                107);
+    }
+
     public static class Rooms
     {
         public static readonly PermissionDefinition View =
@@ -786,4 +807,74 @@ public static class Permissions
                 "الاستثناءات - إلغاء",
                 105);
     }
+
+    #region InterviewEvaluationBank
+    public static class InterviewEvaluationBank
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewEvaluationBank.View,
+                nameof(PermissionKeys.InterviewEvaluationBank),
+                PermissionAction.View,
+                "Interview Evaluation Bank - View",
+                "بنك المحاور والمعايير - عرض",
+                102);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewEvaluationBank.Manage,
+                nameof(PermissionKeys.InterviewEvaluationBank),
+                PermissionAction.Manage,
+                "Interview Evaluation Bank - Manage",
+                "بنك المحاور والمعايير - إدارة",
+                103);
+    }
+    #endregion
+
+    #region InterviewEvaluationTemplate
+    public static class InterviewEvaluationTemplate
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewEvaluationTemplate.View,
+                nameof(PermissionKeys.InterviewEvaluationTemplate),
+                PermissionAction.View,
+                "Interview Evaluation Template - View",
+                "قوالب المقابلات - عرض",
+                104);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewEvaluationTemplate.Manage,
+                nameof(PermissionKeys.InterviewEvaluationTemplate),
+                PermissionAction.Manage,
+                "Interview Evaluation Template - Manage",
+                "قوالب المقابلات - إدارة",
+                105);
+    }
+    #endregion
+
+    #region InterviewCommittee
+    public static class InterviewCommittee
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewCommittee.View,
+                nameof(PermissionKeys.InterviewCommittee),
+                PermissionAction.View,
+                "Interview Committee - View",
+                "لجان المقابلات - عرض",
+                106);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewCommittee.Manage,
+                nameof(PermissionKeys.InterviewCommittee),
+                PermissionAction.Manage,
+                "Interview Committee - Manage",
+                "لجان المقابلات - إدارة",
+                107);
+    }
+    #endregion
+
 }

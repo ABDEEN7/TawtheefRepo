@@ -103,12 +103,24 @@ public static class PermissionCatalog
         Permissions.Locations.View,
         Permissions.Locations.Manage,
 
+        Permissions.Exams.View,
+        Permissions.Exams.Create,
+
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,
 
         Permissions.QuestionBanks.View,
         Permissions.QuestionBankRequests.View,
         Permissions.QuestionBankRequests.Create,
+
+        Permissions.InterviewEvaluationBank.View,
+        Permissions.InterviewEvaluationBank.Manage,
+
+        Permissions.InterviewEvaluationTemplate.View,
+        Permissions.InterviewEvaluationTemplate.Manage,
+
+        Permissions.InterviewCommittee.View,
+        Permissions.InterviewCommittee.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

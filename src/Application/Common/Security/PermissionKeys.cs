@@ -195,6 +195,12 @@ public static class PermissionKeys
         public const string Manage = "locations.manage";
     }
 
+    public static class Exams
+    {
+        public const string View = "exams.view";
+        public const string Create = "exams.create";
+    }
+
     public static class Rooms
     {
         public const string View = "rooms.view";
@@ -210,5 +216,22 @@ public static class PermissionKeys
     {
         public const string View = "question-bank-requests.view";
         public const string Create = "question-bank-requests.create";
+    }
+
+    public static class InterviewEvaluationBank
+    {
+        public const string View = "interview-evaluation-bank.view";
+        public const string Manage = "interview-evaluation-bank.manage";
+    }
+    public static class InterviewEvaluationTemplate
+    {
+        public const string View = "interview-evaluation-template.view";
+        public const string Manage = "interview-evaluation-template.manage";
+    }
+
+    public static class InterviewCommittee
+    {
+        public const string View = "interview-committee.view";
+        public const string Manage = "interview-committee.manage";
     }
 }

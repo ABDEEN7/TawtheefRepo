@@ -22,6 +22,8 @@ public static class RolePermissionCatalog
                 
             ],
             [SystemRoleIds.HrManager] = [
+                Permissions.Exams.View.Key,
+                Permissions.Exams.Create.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
@@ -88,7 +90,17 @@ public static class RolePermissionCatalog
                 
                 Permissions.QuestionBanks.View.Key,
                 Permissions.QuestionBankRequests.View.Key,
-                Permissions.QuestionBankRequests.Create.Key
+                Permissions.QuestionBankRequests.Create.Key,
+                Permissions.Locations.Manage.Key,
+
+                Permissions.InterviewEvaluationBank.View.Key,
+                Permissions.InterviewEvaluationBank.Manage.Key,
+
+                Permissions.InterviewEvaluationTemplate.View.Key,
+                Permissions.InterviewEvaluationTemplate.Manage.Key,
+
+                Permissions.InterviewCommittee.View.Key,
+                Permissions.InterviewCommittee.Manage.Key,
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,
@@ -102,6 +114,8 @@ public static class RolePermissionCatalog
                 Permissions.CandidateUsers.View.Key,
             ],
             [SystemRoleIds.Employee] = [
+                Permissions.Exams.View.Key,
+                Permissions.Exams.Create.Key,
             ],
 
             [SystemRoleIds.OfficeAdmin] = [
@@ -170,7 +184,17 @@ public static class RolePermissionCatalog
                 Permissions.Cities.View.Key,
                 Permissions.Cities.Manage.Key,
                 Permissions.Universities.View.Key,
-                Permissions.Universities.Manage.Key
+                Permissions.Universities.Manage.Key,
+
+                Permissions.InterviewEvaluationBank.View.Key,
+                Permissions.InterviewEvaluationBank.Manage.Key,
+
+                Permissions.InterviewEvaluationTemplate.View.Key,
+                Permissions.InterviewEvaluationTemplate.Manage.Key,
+
+                Permissions.InterviewCommittee.View.Key,
+                Permissions.InterviewCommittee.Manage.Key,
+
             ]
         };
 }

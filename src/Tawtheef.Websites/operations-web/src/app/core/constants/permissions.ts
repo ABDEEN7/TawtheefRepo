@@ -151,6 +151,10 @@ export const Permissions = {
     View: 'rooms.view',
     Manage: 'rooms.manage',
   },
+  Exams: {
+    View: 'exams.view',
+    Create: 'exams.create',
+  },
 
   QuestionBanks: {
     View: 'question-banks.view',

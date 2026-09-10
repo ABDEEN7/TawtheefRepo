@@ -372,6 +372,12 @@ export class EndpointsService {
     send: this.getFullUrl('/notification-tester/send'),
     preview: this.getFullUrl('/notification-tester/preview'),
   };
+  exams = {
+    list: this.getFullUrl('/exams'),
+    statuses: this.getFullUrl('/exams/lookups/statuses'),
+    specializations: this.getFullUrl('/exams/lookups/specializations')
+  };
+
   questionBanks = {
     list: this.getFullUrl('/questionbanks'),
     lookups: {

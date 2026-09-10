@@ -72,7 +72,9 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserType> UserType { get; set; }
     public DbSet<WorkType> WorkType { get; set; }
     public DbSet<SponsorType> SponsorType { get; set; }
-    public DbSet<InterviewCommitteeType> InterviewCommitteeType { get; set; }
+
+    //removed cuz we get the category from the job category(acadimic , adminstrative , labor) and we don't need to have a separate table for it
+    //public DbSet<InterviewCommitteeType> InterviewCommitteeType { get; set; } 
     public DbSet<InterviewOrganizationScope> InterviewOrganizationScope { get; set; }
     public DbSet<InterviewNoteType> InterviewNoteType { get; set; }
     public DbSet<CandidateTypeProviderLogin> CandidateTypeProviderLogin { get; set; }
@@ -217,7 +219,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<InterviewTemplateEvaluationCriterion> InterviewTemplateEvaluationCriteria { get; set; }
     public DbSet<InterviewEvaluationAxis> InterviewEvaluationAxes { get; set; }
     public DbSet<InterviewEvaluationCriterion> InterviewEvaluationCriteria { get; set; }
-    public DbSet<JobInterviewTemplate> JobInterviewTemplates { get; set; }
+    //public DbSet<JobInterviewTemplate> JobInterviewTemplates { get; set; } // romoved now we link the job with the commitee
     public DbSet<InterviewCommittee> InterviewCommittees { get; set; }
     public DbSet<InterviewCommitteeMember> InterviewCommitteeMembers { get; set; }
     public DbSet<InterviewCommitteeMemberEvaluationAxis> InterviewCommitteeMemberEvaluationAxes { get; set; }

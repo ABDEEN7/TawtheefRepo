@@ -136,6 +136,10 @@ export const portalRoutes = {
   get roomsManagement() {
     return this.portal + '/rooms-management';
   },
+  examsManagementPath: 'exams-management',
+  get examsManagement() {
+    return this.portal + '/' + this.examsManagementPath;
+  },
   get questionBanks() {
     return this.portal + '/question-banks';
   },
