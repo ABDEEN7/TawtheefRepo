@@ -28,25 +28,25 @@ public sealed class QuestionBankRequestsController(IMediator mediator) : Control
     [HttpGet("lookups/question-bank-types")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> QuestionBankTypes(CancellationToken cancellationToken) =>
-        (await mediator.Send(new GetQuestionBankTypesQuery { Language = Request.Headers.AcceptLanguage }, cancellationToken)).ToActionResult();
+        (await mediator.Send(new GetQuestionBankTypesQuery { Language = Request.Headers.AcceptLanguage.ToString() }, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/managements")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> Managements(CancellationToken cancellationToken) =>
-        (await mediator.Send(new GetManagemntsQuery { Language = Request.Headers.AcceptLanguage }, cancellationToken)).ToActionResult();
+        (await mediator.Send(new GetManagemntsQuery { Language = Request.Headers.AcceptLanguage.ToString() }, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/job-titles")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> JobTitles(CancellationToken cancellationToken) =>
-        (await mediator.Send(new GetJobTitlesQuery { Language = Request.Headers.AcceptLanguage, PaginatedRequest = new PaginatedRequest { PageNumber = 1, PageSize = 10000 } }, cancellationToken)).ToActionResult();
+        (await mediator.Send(new GetJobTitlesQuery { Language = Request.Headers.AcceptLanguage.ToString(), PaginatedRequest = new PaginatedRequest { PageNumber = 1, PageSize = 10000 } }, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/request-types")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> RequestTypes(CancellationToken cancellationToken) =>
-        (await mediator.Send(new GetQuestionBankRequestTypesQuery { Language = Request.Headers.AcceptLanguage }, cancellationToken)).ToActionResult();
+        (await mediator.Send(new GetQuestionBankRequestTypesQuery { Language = Request.Headers.AcceptLanguage.ToString() }, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/statuses")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> Statuses(CancellationToken cancellationToken) =>
-        (await mediator.Send(new GetQuestionBankRequestStatusesQuery { Language = Request.Headers.AcceptLanguage }, cancellationToken)).ToActionResult();
+        (await mediator.Send(new GetQuestionBankRequestStatusesQuery { Language = Request.Headers.AcceptLanguage.ToString() }, cancellationToken)).ToActionResult();
 }
