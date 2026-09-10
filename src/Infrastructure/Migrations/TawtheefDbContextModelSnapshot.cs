@@ -440,6 +440,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -1904264941,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-requests.create",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -2007772309,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-requests.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -366377821,
                             ClaimType = "permission",
                             ClaimValue = "question-banks.view",
@@ -18263,6 +18277,30 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "بنوك الأسئلة - عرض",
                             NameEn = "Question Banks - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("a17c8e1c-5f04-f257-909b-d59c99e09e11"),
+                            BackendName = "question-bank-requests.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 85,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "طلبات بنوك الأسئلة - عرض",
+                            NameEn = "Question Bank Requests - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("120f32b4-f103-4353-b9a8-92ef7430a22d"),
+                            BackendName = "question-bank-requests.create",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 86,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "طلبات بنوك الأسئلة - إنشاء",
+                            NameEn = "Question Bank Requests - Create"
                         });
                 });
 
