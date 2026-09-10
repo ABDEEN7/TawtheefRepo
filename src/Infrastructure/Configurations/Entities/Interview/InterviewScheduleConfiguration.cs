@@ -18,9 +18,9 @@ public sealed class InterviewScheduleConfiguration : BaseEntityConfiguration<Int
             .HasForeignKey(x => x.JobId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.JobInterviewTemplate)
+        builder.HasOne(x => x.InterviewTemplate)
             .WithMany()
-            .HasForeignKey(x => x.JobInterviewTemplateId)
+            .HasForeignKey(x => x.InterviewTemplateId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -18,18 +18,12 @@ public sealed class InterviewCommitteeConfiguration : BaseEntityConfiguration<In
             .HasForeignKey(x => x.JobId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.JobInterviewTemplate)
-            .WithMany()
-            .HasForeignKey(x => x.JobInterviewTemplateId)
+        builder.HasOne(x => x.InterviewTemplate)
+            .WithMany(t => t.Committees)
+            .HasForeignKey(x => x.InterviewTemplateId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.CommitteeType)
-            .WithMany()
-            .HasForeignKey(x => x.CommitteeTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // One CURRENT committee per job; replacing one deactivates the previous instead of
-        // a bare unique JobId, same pattern as UX_JobInterviewTemplate_Active.
+        // One CURRENT committee per job; replacing one deactivates the previous instead of a bare unique JobId.
         builder.HasIndex(x => x.JobId)
             .IsUnique()
             .HasFilter("[IsActive] = 1")

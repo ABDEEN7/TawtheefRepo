@@ -206,4 +206,15 @@ public static class PermissionKeys
         public const string View = "interview-evaluation-bank.view";
         public const string Manage = "interview-evaluation-bank.manage";
     }
+    public static class InterviewEvaluationTemplate
+    {
+        public const string View = "interview-evaluation-template.view";
+        public const string Manage = "interview-evaluation-template.manage";
+    }
+
+    public static class InterviewCommittee
+    {
+        public const string View = "interview-committee.view";
+        public const string Manage = "interview-committee.manage";
+    }
 }
