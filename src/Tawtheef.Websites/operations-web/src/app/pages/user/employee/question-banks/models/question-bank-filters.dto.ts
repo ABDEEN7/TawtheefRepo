@@ -5,6 +5,5 @@ export interface QuestionBankFilters extends PaginatedRequest {
   questionBankTypeId?: string;
   managementId?: string;
   jobTitleId?: string;
-  stageId?: string;
   isActive?: boolean;
 }

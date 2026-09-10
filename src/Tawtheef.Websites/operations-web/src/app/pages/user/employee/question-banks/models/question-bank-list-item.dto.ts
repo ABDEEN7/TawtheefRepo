@@ -9,9 +9,6 @@ export interface QuestionBankListItemDto {
   jobTitleId?: string | null;
   jobTitleNameAr?: string | null;
   jobTitleNameEn?: string | null;
-  stageId?: string | null;
-  stageNameAr?: string | null;
-  stageNameEn?: string | null;
   currentApprovedVersionId?: string | null;
   currentVersionNo?: number | null;
   isActive: boolean;

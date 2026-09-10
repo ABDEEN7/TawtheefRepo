@@ -2,10 +2,17 @@
   <div class="card card-table mb-4">
     <div class="card-body">
       <div class="row mb-4">
-        <div class="col-12">
+        <div class="col">
           <h3 class="fw-bold mb-0">{{ 'QUESTION_BANKS.TITLE' | translate }}</h3>
           <p class="text-muted mt-2 mb-0">{{ 'QUESTION_BANKS.DESCRIPTION' | translate }}</p>
         </div>
+        @if (canCreateRequest()) {
+          <div class="col-auto">
+            <button type="button" class="btn btn-primary" (click)="newRequest()">
+              <i class="fa-solid fa-plus me-2"></i>{{ 'QUESTION_BANKS.NEW_REQUEST' | translate }}
+            </button>
+          </div>
+        }
       </div>
 
       <app-page-filters
@@ -54,15 +61,6 @@
             </p-select>
           </div>
           <div class="col-12 col-md-6 filter-field">
-            <label class="form-label" for="stage-filter">{{ 'QUESTION_BANKS.STAGE' | translate }}</label>
-            <p-select inputId="stage-filter" class="w-100" [options]="stages()" optionValue="id"
-              [(ngModel)]="selectedStageId" (ngModelChange)="onFilterChange()" [showClear]="true"
-              [placeholder]="'QUESTION_BANKS.ALL_STAGES' | translate" appendTo="body">
-              <ng-template pTemplate="selectedItem" let-option>{{ optionName(option) }}</ng-template>
-              <ng-template pTemplate="item" let-option>{{ optionName(option) }}</ng-template>
-            </p-select>
-          </div>
-          <div class="col-12 col-md-6 filter-field">
             <label class="form-label" for="status-filter">{{ 'QUESTION_BANKS.STATUS' | translate }}</label>
             <p-select inputId="status-filter" class="w-100" [options]="statusOptions()" optionLabel="label"
               optionValue="value" [(ngModel)]="selectedIsActive" (ngModelChange)="onFilterChange()"
@@ -85,7 +83,6 @@
                 <th>{{ 'QUESTION_BANKS.TYPE' | translate }}</th>
                 <th>{{ 'QUESTION_BANKS.MANAGEMENT' | translate }}</th>
                 <th>{{ 'QUESTION_BANKS.JOB_TITLE' | translate }}</th>
-                <th>{{ 'QUESTION_BANKS.STAGE' | translate }}</th>
                 <th>{{ 'QUESTION_BANKS.CURRENT_VERSION' | translate }}</th>
                 <th>{{ 'QUESTION_BANKS.STATUS' | translate }}</th>
               </tr>
@@ -95,7 +92,6 @@
                 <td class="fw-semibold">{{ localizedName(bank.questionBankTypeNameAr, bank.questionBankTypeNameEn) }}</td>
                 <td>{{ localizedName(bank.managementNameAr, bank.managementNameEn) }}</td>
                 <td>{{ localizedName(bank.jobTitleNameAr, bank.jobTitleNameEn) }}</td>
-                <td>{{ localizedName(bank.stageNameAr, bank.stageNameEn) }}</td>
                 <td>{{ bank.currentVersionNo != null ? 'V' + bank.currentVersionNo : ('QUESTION_BANKS.NOT_ISSUED' | translate) }}</td>
                 <td>
                   <p-tag [severity]="bank.isActive ? 'success' : 'secondary'"
@@ -105,7 +101,7 @@
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td [attr.colspan]="6" class="text-center py-4 text-muted" [class.d-none]="loading()">
+                <td [attr.colspan]="5" class="text-center py-4 text-muted" [class.d-none]="loading()">
                   {{ 'QUESTION_BANKS.EMPTY' | translate }}
                 </td>
               </tr>

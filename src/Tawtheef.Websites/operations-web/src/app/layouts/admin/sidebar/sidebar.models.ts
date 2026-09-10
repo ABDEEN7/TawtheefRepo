@@ -30,6 +30,7 @@ export class Sidebar {
     { key: 'locations', label: 'internal.sidebar.locations', icon: 'hgi-location-01', route: routes.portal.locationsManagement, permission: Permissions.Locations.View },
     { key: 'rooms', label: 'internal.sidebar.rooms', icon: 'hgi-building-03', route: routes.portal.roomsManagement, permission: Permissions.Rooms.View },
     { key: 'question-banks', label: 'internal.sidebar.question-banks', icon: 'hgi-file-validation', route: routes.portal.questionBanks, permission: Permissions.QuestionBanks.View },
+    { key: 'question-bank-requests', label: 'internal.sidebar.question-bank-requests', icon: 'hgi-task-01', route: routes.portal.questionBankRequests, permission: Permissions.QuestionBankRequests.View },
 
     { key: 'offices', label: 'admin.sidebar.offices', icon: 'hgi-mail-send-02', route: routes.portal.officesManagement, permission: Permissions.Offices.Manage },
     { key: 'countries', label: 'admin.sidebar.countries', icon: 'hgi-globe-02', route: routes.portal.countriesManagement, permission: Permissions.Countries.Manage },

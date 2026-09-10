@@ -156,6 +156,11 @@ export const Permissions = {
     View: 'question-banks.view',
   },
 
+  QuestionBankRequests: {
+    View: 'question-bank-requests.view',
+    Create: 'question-bank-requests.create',
+  },
+
   Locations: {
     View: 'locations.view',
     Manage: 'locations.manage',
