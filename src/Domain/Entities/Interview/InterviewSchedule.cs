@@ -11,8 +11,11 @@ public class InterviewSchedule : EventEntity
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
 
-    public Guid JobInterviewTemplateId { get; set; }
-    public JobInterviewTemplate? JobInterviewTemplate { get; set; }
+    // public Guid JobInterviewTemplateId { get; set; }
+    // public JobInterviewTemplate? JobInterviewTemplate { get; set; }
+
+    public Guid InterviewTemplateId { get; set; }
+    public InterviewTemplate? InterviewTemplate { get; set; }
 
     public required string TitleAr { get; set; }
     public string? TitleEn { get; set; }
