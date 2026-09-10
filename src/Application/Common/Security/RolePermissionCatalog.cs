@@ -86,7 +86,9 @@ public static class RolePermissionCatalog
                 Permissions.Locations.View.Key,
                 Permissions.Locations.Manage.Key,
                 
-                Permissions.QuestionBanks.View.Key
+                Permissions.QuestionBanks.View.Key,
+                Permissions.QuestionBankRequests.View.Key,
+                Permissions.QuestionBankRequests.Create.Key
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,

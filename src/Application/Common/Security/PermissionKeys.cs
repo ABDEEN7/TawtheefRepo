@@ -205,4 +205,10 @@ public static class PermissionKeys
     {
         public const string View = "question-banks.view";
     }
+
+    public static class QuestionBankRequests
+    {
+        public const string View = "question-bank-requests.view";
+        public const string Create = "question-bank-requests.create";
+    }
 }

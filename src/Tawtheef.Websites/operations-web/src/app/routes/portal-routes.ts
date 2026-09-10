@@ -138,5 +138,8 @@ export const portalRoutes = {
   },
   get questionBanks() {
     return this.portal + '/question-banks';
+  },
+  get questionBankRequests() {
+    return this.portal + '/question-bank-requests';
   }
 }

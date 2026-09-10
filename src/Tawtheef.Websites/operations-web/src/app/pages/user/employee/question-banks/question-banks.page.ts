@@ -19,6 +19,10 @@ import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options
 import { QuestionBankFilters } from './models/question-bank-filters.dto';
 import { QuestionBankListItemDto } from './models/question-bank-list-item.dto';
 import { QuestionBanksService } from './services/question-banks.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
+import { routes } from '../../../../routes/routes';
 
 @Component({
   selector: 'app-question-banks',
@@ -47,6 +51,8 @@ export class QuestionBanksPage implements OnInit {
   private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges$ = new Subject<string>();
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
 
   readonly questionBanks = signal<QuestionBankListItemDto[]>([]);
   readonly loading = signal(false);
@@ -55,7 +61,6 @@ export class QuestionBanksPage implements OnInit {
   readonly questionBankTypes = signal<dropdownOptionsModel[]>([]);
   readonly managements = signal<dropdownOptionsModel[]>([]);
   readonly jobTitles = signal<dropdownOptionsModel[]>([]);
-  readonly stages = signal<dropdownOptionsModel[]>([]);
   readonly currentLang = signal<Lang>(this.language.get());
   readonly advancedFiltersExpanded = signal(false);
   readonly statusOptions = computed(() => {
@@ -70,7 +75,6 @@ export class QuestionBanksPage implements OnInit {
   selectedQuestionBankTypeId?: string;
   selectedManagementId?: string;
   selectedJobTitleId?: string;
-  selectedStageId?: string;
   selectedIsActive?: boolean;
 
   ngOnInit(): void {
@@ -97,7 +101,7 @@ export class QuestionBanksPage implements OnInit {
 
   activeAdvancedFilterCount(): number {
     return Number(!!this.selectedManagementId) + Number(!!this.selectedJobTitleId) +
-      Number(!!this.selectedStageId) + Number(this.selectedIsActive !== undefined);
+      Number(this.selectedIsActive !== undefined);
   }
 
   clearFilters(): void {
@@ -105,7 +109,6 @@ export class QuestionBanksPage implements OnInit {
     this.selectedQuestionBankTypeId = undefined;
     this.selectedManagementId = undefined;
     this.selectedJobTitleId = undefined;
-    this.selectedStageId = undefined;
     this.selectedIsActive = undefined;
     this.applyFilters();
   }
@@ -139,7 +142,6 @@ export class QuestionBanksPage implements OnInit {
       questionBankTypeId: this.selectedQuestionBankTypeId,
       managementId: this.selectedManagementId,
       jobTitleId: this.selectedJobTitleId,
-      stageId: this.selectedStageId,
       isActive: this.selectedIsActive
     }));
     this.loadQuestionBanks();
@@ -149,14 +151,12 @@ export class QuestionBanksPage implements OnInit {
     forkJoin({
       questionBankTypes: this.service.getQuestionBankTypes(),
       managements: this.service.getManagements(),
-      jobTitles: this.service.getJobTitles(),
-      stages: this.service.getStages()
+      jobTitles: this.service.getJobTitles()
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: lookups => {
         this.questionBankTypes.set(lookups.questionBankTypes);
         this.managements.set(lookups.managements);
         this.jobTitles.set(lookups.jobTitles);
-        this.stages.set(lookups.stages);
         this.loadQuestionBanks();
       },
       error: () => this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR'))
@@ -174,5 +174,16 @@ export class QuestionBanksPage implements OnInit {
         },
         error: () => this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR'))
       });
+  }
+
+  canCreateRequest(): boolean {
+    return this.auth.hasPermission([
+      Permissions.QuestionBankRequests.View,
+      Permissions.QuestionBankRequests.Create
+    ], true);
+  }
+
+  newRequest(): void {
+    void this.router.navigate([routes.portal.questionBankRequests], { queryParams: { action: 'create' } });
   }
 }

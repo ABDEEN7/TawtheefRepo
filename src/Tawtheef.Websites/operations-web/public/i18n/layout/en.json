@@ -84,5 +84,6 @@
   "common.relativeTime.daysAgo": "{{count}} d ago",
   "internal.sidebar.rooms": "Rooms Management",
   "internal.sidebar.question-banks": "Question Banks",
+  "internal.sidebar.question-bank-requests": "Question Bank Requests",
   "internal.sidebar.locations": "Locations Management"
 }

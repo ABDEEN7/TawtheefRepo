@@ -107,6 +107,8 @@ public static class PermissionCatalog
         Permissions.Rooms.Manage,
 
         Permissions.QuestionBanks.View,
+        Permissions.QuestionBankRequests.View,
+        Permissions.QuestionBankRequests.Create,
     ]);
 
     public static readonly ISet<string> Keys =

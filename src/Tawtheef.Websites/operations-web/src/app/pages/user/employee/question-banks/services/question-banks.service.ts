@@ -31,7 +31,4 @@ export class QuestionBanksService {
     return this.http.get<dropdownOptionsModel[]>(this.endpoints.questionBanks.lookups.jobTitles);
   }
 
-  getStages(): Observable<dropdownOptionsModel[]> {
-    return this.http.get<dropdownOptionsModel[]>(this.endpoints.questionBanks.lookups.stages);
-  }
 }

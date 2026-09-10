@@ -69,6 +69,17 @@ public static class Permissions
                 84);
     }
 
+    public static class QuestionBankRequests
+    {
+        public static readonly PermissionDefinition View = Def(
+            PermissionKeys.QuestionBankRequests.View, nameof(PermissionKeys.QuestionBankRequests),
+            PermissionAction.View, "Question Bank Requests - View", "طلبات بنوك الأسئلة - عرض", 85);
+
+        public static readonly PermissionDefinition Create = Def(
+            PermissionKeys.QuestionBankRequests.Create, nameof(PermissionKeys.QuestionBankRequests),
+            PermissionAction.Create, "Question Bank Requests - Create", "طلبات بنوك الأسئلة - إنشاء", 86);
+    }
+
     // =========================
     // Admin Console
     // =========================

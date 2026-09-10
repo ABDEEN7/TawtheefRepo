@@ -9,8 +9,6 @@
   "QUESTION_BANKS.ALL_MANAGEMENTS": "All managements",
   "QUESTION_BANKS.JOB_TITLE": "Job Title",
   "QUESTION_BANKS.ALL_JOB_TITLES": "All job titles",
-  "QUESTION_BANKS.STAGE": "Stage",
-  "QUESTION_BANKS.ALL_STAGES": "All stages",
   "QUESTION_BANKS.CURRENT_VERSION": "Current Version",
   "QUESTION_BANKS.STATUS": "Status",
   "QUESTION_BANKS.ALL_STATUSES": "All statuses",
@@ -21,5 +19,6 @@
   "QUESTION_BANKS.CLEAR_FILTERS": "Clear Filters",
   "QUESTION_BANKS.LOADING": "Loading question banks",
   "QUESTION_BANKS.EMPTY": "No question banks found",
-  "QUESTION_BANKS.LOAD_ERROR": "Question banks could not be loaded. Please try again."
+  "QUESTION_BANKS.LOAD_ERROR": "Question banks could not be loaded. Please try again.",
+  "QUESTION_BANKS.NEW_REQUEST": "New Request"
 }
