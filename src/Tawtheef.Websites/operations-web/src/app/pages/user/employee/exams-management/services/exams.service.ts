@@ -52,6 +52,18 @@ export class ExamsService {
       : this.http.post<SavedExamDto>(this.endpoints.exams.list, exam, { submit });
   }
 
+  returnForEdit(id: string, note: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.exams.return(id), { note });
+  }
+
+  reject(id: string, note: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.exams.reject(id), { note });
+  }
+
+  approve(id: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.exams.approve(id), {});
+  }
+
   list(filters: ExamFilters): Observable<PaginatedResult<ExamListItemDto>> {
     return this.http.get<PaginatedResult<ExamListItemDto>>(this.endpoints.exams.list, filters);
   }

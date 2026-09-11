@@ -24,11 +24,13 @@ import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-na
 import { ExamsService } from '../services/exams.service';
 import { categoryForm, examForm, partForm } from './helper/exam-wizard.form';
 import { validateExam, validatePart } from './helper/exam-wizard.validation';
-import { ExamCategoryComponent } from './exam-category/exam-category.component';
 import { ExamLookupItemDto, ExamLookupsDto } from '../models/exam-lookups.dto';
 import { ExamJobDto } from '../models/exam-job.dto';
 import { ExamBankDto } from '../models/exam-bank.dto';
 import { ExamConfigurationDto } from '../models/exam-configuration.dto';
+import { ExamWorkflowActionComponent } from '../exam-workflow-action/exam-workflow-action.component';
+import { ExamCategoryComponent } from './exam-category/exam-category.component';
+import { ReturnExamDialogComponent } from '../return-exam-dialog/return-exam-dialog.component';
 
 @Component({
   selector: 'app-exam-workflow',
@@ -49,6 +51,7 @@ import { ExamConfigurationDto } from '../models/exam-configuration.dto';
     TextareaModule,
     I18nNamespaceDirective,
     ExamCategoryComponent,
+    ExamWorkflowActionComponent,
   ],
   providers: [DialogService],
 })
@@ -79,12 +82,16 @@ export class ExamWorkflowComponent implements OnInit {
   jobLoading = false;
   searching = false;
   saving = false;
+  workflowSubmitting = false;
   loadFailed = false;
   jobFailed = false;
   submitted = false;
   draftId: string | null = null;
   examNo = '';
   configurationReturnNote: string | null = null;
+  decisionByName: string | null = null;
+  decisionAt: string | null = null;
+  examStatusBackendName: string | null = null;
   errors: string[] = [];
 
   get examId(): string | null {
@@ -238,6 +245,9 @@ export class ExamWorkflowComponent implements OnInit {
     this.draftId = this.examId;
     this.selectedJob = this.jobs.find((job) => job.id === configuration.jobId) ?? null;
     this.configurationReturnNote = configuration.decisionNotes;
+    this.decisionByName = configuration.decisionByName ?? null;
+    this.decisionAt = configuration.decisionAt ?? null;
+    this.examStatusBackendName = configuration.statusBackendName;
     this.form.patchValue({
       jobId: configuration.jobId,
       titleAr: configuration.titleAr,
@@ -387,6 +397,7 @@ export class ExamWorkflowComponent implements OnInit {
       ...this.form.getRawValue(),
       totalQuestions: this.totalQuestions,
       decisionNotes: this.configurationReturnNote ?? null,
+      statusBackendName: this.examStatusBackendName ?? '',
     };
   }
 
@@ -435,6 +446,113 @@ export class ExamWorkflowComponent implements OnInit {
         },
         error: () => this.notifyError(),
       });
+  }
+
+  onApproveClicked(): void {
+    const examId = this.examId;
+    if (
+      !examId ||
+      this.workflowSubmitting ||
+      this.examStatusBackendName !== 'PendingApproval' ||
+      !this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    )
+      return;
+
+    this.workflowSubmitting = true;
+    const dialogRef = this.dialogs.open(ConfirmationDialogComponent, {
+      header: this.translate.instant('EXAMS.APPROVE_TITLE'),
+      width: 'min(32rem, 95vw)',
+      modal: true,
+      data: {
+        type: 'submit',
+        description: 'EXAMS.APPROVE_CONFIRMATION',
+        confirmText: 'EXAMS.CONFIRM_APPROVE',
+      },
+    });
+    if (!dialogRef) {
+      this.workflowSubmitting = false;
+      return;
+    }
+
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+      if (confirmed !== true || this.examStatusBackendName !== 'PendingApproval') {
+        this.workflowSubmitting = false;
+        return;
+      }
+
+      this.service
+        .approve(examId)
+        .pipe(
+          finalize(() => (this.workflowSubmitting = false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(this.translate.instant('EXAMS.APPROVE_SUCCESS'));
+            this.load();
+          },
+          error: () => this.notifications.error(this.translate.instant('EXAMS.APPROVE_FAILED')),
+        });
+    });
+  }
+
+  onReturnClicked(): void {
+    const examId = this.examId;
+    if (
+      !examId ||
+      this.examStatusBackendName !== 'PendingApproval' ||
+      !this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    )
+      return;
+
+    const dialogRef = this.dialogs.open(ReturnExamDialogComponent, {
+      header: this.translate.instant('EXAMS.RETURN_TITLE'),
+      width: 'min(32rem, 95vw)',
+      modal: true,
+      data: { examId, action: 'return' },
+    });
+
+    if (!dialogRef) return;
+
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((returned) => {
+      if (!returned) return;
+
+      this.notifications.success(this.translate.instant('EXAMS.RETURN_SUCCESS'));
+      this.examStatusBackendName = null;
+      this.load();
+    });
+  }
+
+  onRejectClicked(): void {
+    const examId = this.examId;
+    if (
+      !examId ||
+      this.workflowSubmitting ||
+      this.examStatusBackendName !== 'PendingApproval' ||
+      !this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    )
+      return;
+
+    this.workflowSubmitting = true;
+    const dialogRef = this.dialogs.open(ReturnExamDialogComponent, {
+      header: this.translate.instant('EXAMS.REJECT_TITLE'),
+      width: 'min(32rem, 95vw)',
+      modal: true,
+      data: { examId, action: 'reject' },
+    });
+    if (!dialogRef) {
+      this.workflowSubmitting = false;
+      return;
+    }
+
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((rejected) => {
+      this.workflowSubmitting = false;
+      if (!rejected) return;
+
+      this.notifications.success(this.translate.instant('EXAMS.REJECT_SUCCESS'));
+      this.examStatusBackendName = null;
+      this.load();
+    });
   }
 
   cancel(): void {

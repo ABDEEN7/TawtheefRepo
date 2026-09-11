@@ -106,5 +106,16 @@ public sealed class ExamsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Return(Guid id, [FromBody] ReturnExamRequest request, CancellationToken ct)
         => (await mediator.Send(new ReturnExamCommand(id, request.Note), ct)).ToActionResult();
 
+    [HttpPost("{id:guid}/approve")]
+    [AuthorizePermission(PermissionKeys.Exams.WorkflowActions)]
+    public async Task<IActionResult> Approve(Guid id, CancellationToken ct)
+        => (await mediator.Send(new ApproveExamCommand(id), ct)).ToActionResult();
+
+    [HttpPost("{id:guid}/reject")]
+    [AuthorizePermission(PermissionKeys.Exams.WorkflowActions)]
+    public async Task<IActionResult> Reject(Guid id, [FromBody] RejectExamRequest request, CancellationToken ct)
+        => (await mediator.Send(new RejectExamCommand(id, request.Note), ct)).ToActionResult();
+
     public sealed record ReturnExamRequest(string? Note);
+    public sealed record RejectExamRequest(string? Note);
 }

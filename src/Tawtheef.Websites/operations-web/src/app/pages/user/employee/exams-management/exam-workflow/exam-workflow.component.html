@@ -67,6 +67,24 @@
             <p class="mb-0 text-break">{{ configurationReturnNote }}</p>
           </div>
         }
+        @if (isViewMode && examStatusBackendName === 'REJECTED' && configurationReturnNote) {
+          <div class="alert alert-danger my-4" role="note">
+            <h5 class="mb-2">{{ 'EXAM_WIZARD.REJECTION_NOTE' | translate }}</h5>
+            <p class="mb-3 text-break">{{ configurationReturnNote }}</p>
+            @if (decisionByName || decisionAt) {
+              <dl class="row mb-0 small">
+                @if (decisionByName) {
+                  <dt class="col-sm-3">{{ 'EXAM_WIZARD.DECISION_BY' | translate }}</dt>
+                  <dd class="col-sm-9">{{ decisionByName }}</dd>
+                }
+                @if (decisionAt) {
+                  <dt class="col-sm-3">{{ 'EXAM_WIZARD.DECISION_AT' | translate }}</dt>
+                  <dd class="col-sm-9">{{ decisionAt | date: 'medium' }}</dd>
+                }
+              </dl>
+            }
+          </div>
+        }
         @if (errors.length) {
           <div class="alert alert-danger mt-3">
             @for (error of errors; track error) {
@@ -225,6 +243,7 @@
             </div>
           </div>
         </form>
+        
         <ng-template
           #part
           let-group="group"
@@ -305,3 +324,11 @@
     </div>
   </div>
 </section>
+
+          <app-exam-workflow-action
+            [statusBackendName]="examStatusBackendName"
+            [submitting]="saving || workflowSubmitting"
+            (approveClicked)="onApproveClicked()"
+            (returnClicked)="onReturnClicked()"
+            (rejectClicked)="onRejectClicked()"
+          />

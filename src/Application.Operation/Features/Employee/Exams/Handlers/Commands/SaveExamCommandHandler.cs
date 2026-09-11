@@ -10,6 +10,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
@@ -29,7 +30,13 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
 
             var jobScope = await unitOfWork.Context.Set<Job>().AsNoTracking()
                 .Where(x => x.Id == request.Exam.JobId)
-                .Select(x => new { x.ManagementId, x.JobTitleId })
+                .Select(x => new
+                {
+                    x.ManagementId,
+                    x.JobTitleId,
+                    JobTitleAr = x.JobTitle!.JobNameAr,
+                    JobTitleEn = x.JobTitle!.JobNameEn,
+                })
                 .FirstOrDefaultAsync(token);
             if (jobScope == null || !await unitOfWork.Context.Set<ExamInterruptionPolicy>()
                     .AnyAsync(x => x.Id == request.Exam.InterruptionPolicyId, token))
@@ -78,7 +85,6 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
             else
             {
                 exam = request.Exam.Adapt<Exam>();
-                // Include deleted rows so a previously allocated number is never reused.
                 var prefix = $"EX-{DateTime.UtcNow.Year}-";
                 var numbers = await repository.DbSet.IgnoreQueryFilters().AsNoTracking()
                     .Where(x => x.ExamNo.StartsWith(prefix)).Select(x => x.ExamNo).ToListAsync(token);
@@ -90,7 +96,10 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
             }
 
             exam.TotalQuestions = checked((int)categories.Sum(x => (long)x.QuestionCount));
-            exam.StatusId = request.Submit ? ExamStatusIds.PendingApproval : ExamStatusIds.Draft;
+            if (request.Submit)
+                exam.StatusId = ExamStatusIds.PendingApproval;
+            else if (!request.DraftId.HasValue)
+                exam.StatusId = ExamStatusIds.Draft;
             foreach (var partDto in request.Exam.Parts)
             {
                 var part = partDto.Adapt<ExamPart>();
@@ -104,6 +113,16 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
                     var addedCategory = await unitOfWork.GetEntityRepository<ExamCategory>().AddAsync(category);
                     if (addedCategory.IsFailed) return Result.Fail<SavedExamDto>(ErrorsCodes.InvalidRequest);
                 }
+            }
+            if (request.Submit)
+            {
+                exam.AddDomainEvent(new ExamSubmittedForApprovalDomainEvent(
+                    exam.Id,
+                    exam.ExamNo,
+                    exam.TitleAr,
+                    exam.TitleEn,
+                    jobScope.JobTitleAr,
+                    jobScope.JobTitleEn));
             }
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(new SavedExamDto(exam.Id, exam.ExamNo));

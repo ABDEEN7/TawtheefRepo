@@ -1,5 +1,12 @@
 {
+  "EXAMS.APPROVE_TITLE": "اعتماد الاختبار",
+  "EXAMS.APPROVE_CONFIRMATION": "هل أنت متأكد من اعتماد هذا الاختبار؟",
+  "EXAMS.CONFIRM_APPROVE": "تأكيد الاعتماد",
+  "EXAMS.APPROVE_SUCCESS": "تم اعتماد الاختبار.",
+  "EXAMS.APPROVE_FAILED": "تعذر اعتماد الاختبار. يرجى المحاولة مرة أخرى.",
   "EXAMS.RETURN": "إرجاع للتعديل",
+  "EXAMS.APPROVE": "اعتماد",
+  "EXAMS.REJECT": "رفض",
   "EXAMS.RETURN_TITLE": "إرجاع الاختبار للتعديل",
   "EXAMS.RETURN_NOTE": "ملاحظة الإرجاع",
   "EXAMS.RETURN_NOTE_PLACEHOLDER": "وضّح التعديلات المطلوبة",
@@ -99,4 +106,14 @@
   "EXAM_WIZARD.ERROR.WEIGHT": "يجب أن يساوي مجموع أوزان جميع التصنيفات في الاختبار 100% تمامًا.",
   "EXAM_WIZARD.ERROR.TOTAL": "يجب أن يساوي إجمالي الأسئلة مجموع أسئلة جميع التصنيفات وألا يتجاوز النطاق المسموح."
   ,"EXAM_WIZARD.ERROR.STRUCTURE": "يجب أن يحتوي الاختبار على الجزء التخصصي الأول الثابت وجزء ثانٍ بتصنيفات غير تخصصية فريدة."
+  ,"EXAMS.REJECT_TITLE": "رفض الاختبار"
+  ,"EXAMS.REJECT_NOTE": "ملاحظة الرفض"
+  ,"EXAMS.REJECT_NOTE_PLACEHOLDER": "وضح سبب رفض الاختبار"
+  ,"EXAMS.REJECT_NOTE_REQUIRED": "ملاحظة الرفض مطلوبة."
+  ,"EXAMS.CONFIRM_REJECT": "تأكيد الرفض"
+  ,"EXAMS.REJECT_SUCCESS": "تم رفض الاختبار."
+  ,"EXAMS.REJECT_FAILED": "تعذر رفض الاختبار. يرجى المحاولة مرة أخرى."
+  ,"EXAM_WIZARD.REJECTION_NOTE": "ملاحظة رفض المراجع"
+  ,"EXAM_WIZARD.DECISION_BY": "تم القرار بواسطة"
+  ,"EXAM_WIZARD.DECISION_AT": "تاريخ القرار"
 }

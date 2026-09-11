@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
@@ -27,30 +26,16 @@ public sealed class ReturnExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUse
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var note = request.Note.Trim();
-        var decisionAt = DateTime.UtcNow;
-        exam.StatusId = ExamStatusIds.Returned;
-        exam.ApprovedById = reviewerId;
-        exam.ApprovedAt = decisionAt;
+        var metadata = new ExamWorkflowMetadata(
+            reviewerId,
+            DateTime.UtcNow,
+            nameof(ExamStatusIds.PendingApproval),
+            nameof(ExamStatusIds.Returned));
+        metadata.ApplyDecision(exam, ExamStatusIds.Returned);
         exam.DecisionNotes = note;
 
-        await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(new ActionLog
-        {
-            UserId = reviewerId,
-            LogType = ActionLogType.Employee,
-            ActionType = "ExamReturnedForEdit",
-            Section = "ExamWorkflow",
-            EntityId = exam.Id,
-            Notes = JsonSerializer.Serialize(new
-            {
-                examId = exam.Id,
-                examNumber = exam.ExamNo,
-                previousStatus = nameof(ExamStatusIds.PendingApproval),
-                status = nameof(ExamStatusIds.Returned),
-                performedBy = reviewerId,
-                performedAt = decisionAt,
-                returnNote = note,
-            }),
-        }, ct);
+        await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
+            metadata.CreateActionLog(exam, "ExamReturnedForEdit", note), ct);
 
         if (exam.CreatedById.HasValue)
             exam.AddDomainEvent(new ExamReturnedForEditDomainEvent(exam.CreatedById.Value, exam.Id, exam.ExamNo, note));

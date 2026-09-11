@@ -17,7 +17,7 @@ public sealed class GetExistingExamQueryHandler(IUnitOfWork unitOfWork)
     {
         var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking()
             .Where(x => x.JobId == request.JobId && x.StatusId == ExamStatusIds.Approved)
-            .OrderByDescending(x => x.ApprovedAt).ThenByDescending(x => x.CreatedDate).ThenBy(x => x.Id)
+            .OrderByDescending(x => x.DecisionAt).ThenByDescending(x => x.CreatedDate).ThenBy(x => x.Id)
             .FirstOrDefaultAsync(ct);
         if (exam == null) return Result.Ok<ExamConfigurationDto?>(null);
         var dto = exam.Adapt<ExamConfigurationDto>();

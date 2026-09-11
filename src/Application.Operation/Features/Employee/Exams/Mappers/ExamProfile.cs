@@ -9,8 +9,8 @@ public sealed class ExamProfile : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<ExamConfigurationDto, Exam>()
-            .Ignore(x => x.Id, x => x.ExamNo, x => x.StatusId, x => x.ApprovedById,
-                x => x.ApprovedAt, x => x.DecisionNotes)
+            .Ignore(x => x.Id, x => x.ExamNo, x => x.StatusId, x => x.DecisionById,
+                x => x.DecisionAt, x => x.DecisionNotes)
             .Map(x => x.TitleAr, x => x.TitleAr.Trim())
             .Map(x => x.TitleEn, x => x.TitleEn == null ? null : x.TitleEn.Trim())
             .Map(x => x.Notes, x => x.Notes == null ? null : x.Notes.Trim());

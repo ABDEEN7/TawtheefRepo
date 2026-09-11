@@ -24,6 +24,12 @@ public class ExamConfiguration : BaseEntityConfiguration<Exam>
             .WithMany()
             .HasForeignKey(x => x.StatusId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.DecisionBy)
+            .WithMany()
+            .HasForeignKey(x => x.DecisionById)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

@@ -1,6 +1,6 @@
 using Tawtheef.Notifications.Attributes;
 
-namespace Tawtheef.Notifications.Templates.ExamReturnedForEdit;
+namespace Tawtheef.Notifications.Templates.ExamReturnedForEditNotification;
 
 public static class ExamReturnedForEditNotification
 {

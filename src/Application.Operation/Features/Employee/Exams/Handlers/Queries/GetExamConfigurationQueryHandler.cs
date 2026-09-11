@@ -17,12 +17,15 @@ public sealed class GetExamConfigurationQueryHandler(IUnitOfWork unitOfWork)
     public async Task<IResult<ExamConfigurationDto>> Handle(GetExamConfigurationQuery request,
         CancellationToken ct)
     {
-        var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking()
+        var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking().Include(x => x.Status).Include(x => x.DecisionBy)
             .FirstOrDefaultAsync(x => x.Id == request.ExamId &&
                 (request.IsViewMode || x.StatusId == ExamStatusIds.Draft || x.StatusId == ExamStatusIds.Returned), ct);
         if (exam == null) return Result.Fail<ExamConfigurationDto>(ErrorsCodes.InvalidRequest);
 
         var dto = exam.Adapt<ExamConfigurationDto>();
+        dto.StatusBackendName = exam.Status?.BackendName;
+        dto.DecisionAt = exam.DecisionAt;
+        dto.DecisionByName = exam.DecisionBy?.FullNameEn ?? exam.DecisionBy?.FullNameAr;
         var parts = await unitOfWork.Context.Set<ExamPart>().AsNoTracking()
             .Where(x => x.ExamId == exam.Id).OrderBy(x => x.PartNo).ToListAsync(ct);
         var partIds = parts.Select(x => x.Id).ToList();

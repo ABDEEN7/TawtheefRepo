@@ -1,0 +1,16 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.ExamSubmittedForApprovalNotification.ExamSubmittedForApprovalNotificationModel>
+
+@{
+    var branding = Model.Branding;
+    var exam = Model.Model;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>@branding.ProductNameEn - Exam submitted for approval</title></head>
+<body>
+  <p>An exam has been submitted for your approval.</p>
+  <p><strong>Exam:</strong> @exam.ExamNumber — @(exam.ExamTitleEn ?? exam.ExamTitleAr)</p>
+  <p><strong>Job:</strong> @exam.JobTitleEn</p>
+</body>
+</html>

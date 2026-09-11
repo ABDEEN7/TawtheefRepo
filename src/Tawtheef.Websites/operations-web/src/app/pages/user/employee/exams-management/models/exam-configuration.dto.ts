@@ -9,5 +9,8 @@ export interface ExamConfigurationDto {
   notes: string | null;
   totalQuestions: number;
   decisionNotes: string | null;
+  decisionByName?: string | null;
+  decisionAt?: string | null;
+  statusBackendName: string | null;
   parts: ExamPartDto[];
 }
