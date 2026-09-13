@@ -7,12 +7,89 @@
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>@branding.ProductNameAr - رفض الاختبار</title></head>
-<body style="margin:0;padding:0;background:#f6f7fb;color:#111827;font-family:Arial,sans-serif;">
-  <div style="max-width:600px;margin:24px auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
-    <div style="height:8px;background:@branding.PrimaryHex;"></div>
-    <div style="padding:28px;"><h1 style="margin:0 0 12px;font-size:22px;">تم رفض الاختبار</h1><p>تم رفض الاختبار <strong>@exam.ExamNumber</strong>.</p><p style="padding:12px;background:#fef2f2;border-radius:8px;"><strong>سبب الرفض:</strong><br>@exam.Note</p></div>
-    <div style="padding:0 28px 24px;color:#6b7280;font-size:12px;">مع التحية،<br>فريق @branding.ProductNameAr</div>
-  </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>@branding.ProductNameAr - تم رفض الاختبار</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111827;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 24px auto;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .06);
+        }
+
+        .brand-bar {
+            height: 8px;
+            background: @branding.PrimaryHex;
+        }
+
+        .content {
+            padding: 28px;
+            text-align: right;
+        }
+
+        .title {
+            margin: 0 0 12px;
+            font-size: 22px;
+        }
+
+        .text {
+            margin: 0 0 16px;
+            font-size: 15px;
+            line-height: 22px;
+        }
+
+        .note {
+            padding: 12px;
+            background: #f7f1f5;
+            border-radius: 8px;
+        }
+
+        .footer {
+            padding: 0 28px 24px;
+            color: #6b7280;
+            font-size: 12px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="container">
+        <div class="brand-bar"></div>
+
+        <div class="content">
+            <h1 class="title">تم رفض الاختبار</h1>
+
+            <p class="text">تحية طيبة،</p>
+
+            <p class="text">
+                تم رفض الاختبار <strong>@exam.ExamNumber</strong>.
+            </p>
+
+            <p class="text note">
+                <strong>سبب الرفض:</strong><br>
+                @exam.Note
+            </p>
+        </div>
+
+        <div class="footer">
+            مع التحيات،<br>
+            فريق عمل @branding.ProductNameAr
+        </div>
+    </div>
 </body>
 </html>

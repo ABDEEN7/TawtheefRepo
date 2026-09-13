@@ -478,7 +478,7 @@ export class ExamWorkflowComponent implements OnInit {
           );
           if (submit) {
             this.submitted = true;
-            void this.router.navigateByUrl(portalRoutes.examsManagement);
+            this.navigateToExamManagement();
           }
         },
         error: () => this.notifyError(),
@@ -526,7 +526,7 @@ export class ExamWorkflowComponent implements OnInit {
         .subscribe({
           next: () => {
             this.notifications.success(this.translate.instant('EXAMS.APPROVE_SUCCESS'));
-            this.load();
+            this.navigateToExamManagement();
           },
           error: () => this.notifications.error(this.translate.instant('EXAMS.APPROVE_FAILED')),
         });
@@ -555,8 +555,7 @@ export class ExamWorkflowComponent implements OnInit {
       if (!returned) return;
 
       this.notifications.success(this.translate.instant('EXAMS.RETURN_SUCCESS'));
-      this.examStatusBackendName = null;
-      this.load();
+      this.navigateToExamManagement();
     });
   }
 
@@ -587,8 +586,7 @@ export class ExamWorkflowComponent implements OnInit {
       if (!rejected) return;
 
       this.notifications.success(this.translate.instant('EXAMS.REJECT_SUCCESS'));
-      this.examStatusBackendName = null;
-      this.load();
+      this.navigateToExamManagement();
     });
   }
 
@@ -613,6 +611,10 @@ export class ExamWorkflowComponent implements OnInit {
 
   private notifyError(): void {
     this.notifications.error(this.translate.instant('EXAM_WIZARD.REQUEST_FAILED'));
+  }
+
+  private navigateToExamManagement(): void {
+    void this.router.navigateByUrl(portalRoutes.examsManagement);
   }
 
   private resetFixedParts(): void {
