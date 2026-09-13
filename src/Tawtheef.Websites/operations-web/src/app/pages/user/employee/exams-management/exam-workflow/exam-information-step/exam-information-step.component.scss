@@ -1,0 +1,15 @@
+:host {
+  display: contents;
+}
+
+.exam-form-grid > * {
+  min-width: 0;
+}
+
+::ng-deep .exam-form-grid {
+  .p-inputtext,
+  .p-select {
+    max-width: 100%;
+    min-width: 0;
+  }
+}

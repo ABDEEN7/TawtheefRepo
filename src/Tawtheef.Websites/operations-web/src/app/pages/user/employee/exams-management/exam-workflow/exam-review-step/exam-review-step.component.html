@@ -1,0 +1,46 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-checkmark-badge-01 me-1"></i>{{ 'EXAM_WIZARD.REVIEW' | translate }}
+</h5>
+@for (item of parts; track item.partNo; let i = $index) {
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+        <h5 class="text-primary d-flex align-items-center mb-0">
+          <i class="hgi hgi-stroke hgi-clipboard-check-01 me-1"></i
+          >{{ (i === 0 ? 'EXAM_WIZARD.PART_ONE' : 'EXAM_WIZARD.PART_TWO') | translate }}
+        </h5>
+        @if (!isViewMode) {
+          <button pButton type="button" [outlined]="true" (click)="editRequested.emit(i + 2)">
+            {{ 'EXAM_WIZARD.EDIT' | translate }}
+          </button>
+        }
+      </div>
+      <p class="exam-review-meta">
+        {{ item.titleAr }} — {{ item.durationMinutes }} {{ 'EXAM_WIZARD.DURATION' | translate }}
+      </p>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table class="distribution-table" [value]="item.categories"
+            ><ng-template #header
+              ><tr>
+                <th>{{ 'EXAM_WIZARD.CATEGORY' | translate }}</th>
+                <th>{{ 'EXAM_WIZARD.QUESTION_COUNT' | translate }}</th>
+                <th>{{ 'EXAM_WIZARD.WEIGHT' | translate }}</th>
+              </tr></ng-template
+            ><ng-template #body let-category
+              ><tr>
+                <td>{{ lookupName(category.categoryId) }}</td>
+                <td>{{ category.questionCount }}</td>
+                <td>{{ category.weightPercent }}%</td>
+              </tr></ng-template
+            ></p-table
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+}
+<div class="alert" [class.alert-success]="!hasReviewErrors" [class.alert-warning]="hasReviewErrors">
+  {{ 'EXAMS.TOTAL_QUESTIONS' | translate }}: {{ totalQuestions }} —
+  {{ 'EXAM_WIZARD.TOTAL_WEIGHT' | translate }}: {{ totalWeight }}%
+</div>

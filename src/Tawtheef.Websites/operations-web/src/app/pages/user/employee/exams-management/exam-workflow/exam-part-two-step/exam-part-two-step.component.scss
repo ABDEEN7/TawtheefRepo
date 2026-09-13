@@ -1,0 +1,9 @@
+:host { display: contents; }
+
+.exam-part-form,
+.exam-part-fields > * { min-width: 0; }
+
+::ng-deep .exam-part-fields {
+  .p-inputtext,
+  .p-inputnumber { max-width: 100%; min-width: 0; }
+}

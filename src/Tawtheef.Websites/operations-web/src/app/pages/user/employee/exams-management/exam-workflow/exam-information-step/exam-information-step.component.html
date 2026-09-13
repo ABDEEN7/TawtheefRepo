@@ -1,0 +1,74 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-briefcase-03 me-1"></i>
+  {{ 'EXAM_WIZARD.INFO' | translate }}
+</h5>
+<div class="row g-3 exam-form-grid" [formGroup]="form">
+  <div class="col-lg-4">
+    <label class="form-label"
+      >{{ 'EXAM_WIZARD.JOB' | translate }} <span class="text-danger">*</span></label
+    ><p-select
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      formControlName="jobId"
+      [options]="jobOptions()"
+      optionLabel="label"
+      optionValue="id"
+      [filter]="true"
+      (onFilter)="jobSearch.emit($event.filter)"
+      (onChange)="onJobSelected()"
+      appendTo="body"
+    />
+  </div>
+  <div class="col-lg-4">
+    <label class="form-label"
+      >{{ 'EXAM_WIZARD.TITLE_AR' | translate }} <span class="text-danger">*</span></label
+    ><input
+      pInputText
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      formControlName="titleAr"
+      maxlength="200"
+    />
+  </div>
+  <div class="col-lg-4">
+    <label class="form-label">{{ 'EXAM_WIZARD.TITLE_EN' | translate }}</label
+    ><input
+      pInputText
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      formControlName="titleEn"
+      maxlength="200"
+    />
+  </div>
+  <div class="col-md-6">
+    <label class="form-label"
+      >{{ 'EXAM_WIZARD.POLICY' | translate }} <span class="text-danger">*</span></label
+    ><p-select
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      formControlName="interruptionPolicyId"
+      [options]="lookups.interruptionPolicies"
+      [optionLabel]="language.isRtl ? 'nameAr' : 'nameEn'"
+      optionValue="id"
+      appendTo="body"
+    />
+  </div>
+  <div class="col-md-6 d-flex align-items-center gap-2 pt-4">
+    <p-checkbox
+      formControlName="allowPreviousQuestion"
+      [binary]="true"
+      [class.bg-light]="isViewMode"
+    /><label>{{ 'EXAM_WIZARD.ALLOW_PREVIOUS' | translate }}</label>
+  </div>
+  <div class="col-12">
+    <label class="form-label">{{ 'EXAM_WIZARD.NOTES' | translate }}</label
+    ><textarea
+      pTextarea
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      formControlName="notes"
+      rows="3"
+      maxlength="2000"
+    ></textarea>
+  </div>
+</div>

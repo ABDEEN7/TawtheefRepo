@@ -5,13 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
 import { DialogService } from 'primeng/dynamicdialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { TextareaModule } from 'primeng/textarea';
 import { catchError, debounceTime, finalize, forkJoin, map, of, Subject, switchMap } from 'rxjs';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
@@ -22,15 +17,18 @@ import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confi
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { ExamsService } from '../services/exams.service';
-import { categoryForm, examForm, partForm } from './helper/exam-wizard.form';
+import { examForm, partForm } from './helper/exam-wizard.form';
 import { validateExam, validatePart } from './helper/exam-wizard.validation';
 import { ExamLookupItemDto, ExamLookupsDto } from '../models/exam-lookups.dto';
 import { ExamJobDto } from '../models/exam-job.dto';
 import { ExamBankDto } from '../models/exam-bank.dto';
 import { ExamConfigurationDto } from '../models/exam-configuration.dto';
 import { ExamWorkflowActionComponent } from '../exam-workflow-action/exam-workflow-action.component';
-import { ExamCategoryComponent } from './exam-category/exam-category.component';
 import { ReturnExamDialogComponent } from '../return-exam-dialog/return-exam-dialog.component';
+import { ExamInformationStepComponent } from './exam-information-step/exam-information-step.component';
+import { ExamPartOneStepComponent } from './exam-part-one-step/exam-part-one-step.component';
+import { ExamPartTwoStepComponent } from './exam-part-two-step/exam-part-two-step.component';
+import { ExamReviewStepComponent } from './exam-review-step/exam-review-step.component';
 
 @Component({
   selector: 'app-exam-workflow',
@@ -42,16 +40,14 @@ import { ReturnExamDialogComponent } from '../return-exam-dialog/return-exam-dia
     ReactiveFormsModule,
     TranslatePipe,
     ButtonModule,
-    CheckboxModule,
-    InputNumberModule,
-    InputTextModule,
-    SelectModule,
     TableModule,
-    TextareaModule,
     FaDirArrowDirective,
     I18nNamespaceDirective,
-    ExamCategoryComponent,
     ExamWorkflowActionComponent,
+    ExamInformationStepComponent,
+    ExamPartOneStepComponent,
+    ExamPartTwoStepComponent,
+    ExamReviewStepComponent,
   ],
   providers: [DialogService],
 })
@@ -83,7 +79,6 @@ export class ExamWorkflowComponent implements OnInit {
   searching = false;
   saving = false;
   workflowSubmitting = false;
-  private partTwoCategoriesInitialized = false;
   loadFailed = false;
   jobFailed = false;
   submitted = false;
@@ -157,24 +152,8 @@ export class ExamWorkflowComponent implements OnInit {
   get categories() {
     return this.parts.getRawValue().flatMap((p) => p.categories);
   }
-  get partOne() {
-    return this.parts.at(0);
-  }
-  get partTwo() {
-    return this.parts.at(1);
-  }
-  get nonSpecializedCategories() {
-    return this.lookups.categories.filter(
-      (category) => category.id !== this.lookups.specializedCategoryId,
-    );
-  }
   get totalQuestions() {
     return this.categories.reduce((sum, c) => sum + (c.questionCount || 0), 0);
-  }
-  get totalWeight() {
-    return (
-      this.categories.reduce((sum, c) => sum + Math.round((c.weightPercent || 0) * 100), 0) / 100
-    );
   }
   get totalDuration() {
     return this.parts.getRawValue().reduce((sum, p) => sum + (p.durationMinutes || 0), 0);
@@ -262,7 +241,6 @@ export class ExamWorkflowComponent implements OnInit {
           this.jobs = result.jobs;
           this.resetFixedParts();
           if (result.configuration) this.applyConfiguration(result.configuration);
-          else this.initializePartTwoCategories();
           this.banks = result.banks ?? [];
           if (this.isViewMode) this.form.disable({ emitEvent: false });
         },
@@ -295,29 +273,6 @@ export class ExamWorkflowComponent implements OnInit {
     return value ? (this.language.isRtl ? value.nameAr : value.nameEn) : '';
   }
 
-  lookupName(id: string, options: ExamLookupItemDto[]): string {
-    return this.name(options.find((x) => x.id === id));
-  }
-
-  get specializedCategories(): ExamLookupItemDto[] {
-    const specialized = this.lookups.categories.find(
-      (x) => x.id === this.lookups.specializedCategoryId,
-    );
-
-    return specialized ? [specialized] : [];
-  }
-
-  jobOptions() {
-    return this.jobs.map((job) => ({ ...job, label: job.jobNumber + ' — ' + this.name(job) }));
-  }
-
-  categoryIds(index: number): string[] {
-    return this.parts
-      .at(index)
-      .controls.categories.getRawValue()
-      .map((c) => c.categoryId);
-  }
-
   reviewErrors(): string[] {
     return validateExam(
       this.configuration(),
@@ -343,8 +298,7 @@ export class ExamWorkflowComponent implements OnInit {
     this.searches$.next(search);
   }
 
-  selectJob(): void {
-    const id = this.form.controls.jobId.value;
+  onJobSelected(id: string): void {
     this.selectedJob = this.jobs.find((j) => j.id === id) ?? null;
     this.banks = [];
     this.parts.controls.forEach((p) =>
@@ -389,25 +343,6 @@ export class ExamWorkflowComponent implements OnInit {
         this.step = 1;
         this.errors = [];
       });
-  }
-
-  addCategory(categoryId = '', markDirty = true): void {
-    if (this.partTwo.controls.categories.length >= this.nonSpecializedCategories.length) return;
-    const category = categoryForm();
-    category.controls.categoryId.setValue(categoryId);
-    this.partTwo.controls.categories.push(category);
-    if (markDirty) this.form.markAsDirty();
-  }
-
-  private initializePartTwoCategories(): void {
-    if (!this.isCreateMode || this.partTwoCategoriesInitialized) return;
-    this.nonSpecializedCategories.forEach((category) => this.addCategory(category.id, false));
-    this.partTwoCategoriesInitialized = true;
-  }
-
-  removeCategory(categoryIndex: number): void {
-    this.partTwo.controls.categories.removeAt(categoryIndex);
-    this.form.markAsDirty();
   }
 
   goTo(target: number): void {
