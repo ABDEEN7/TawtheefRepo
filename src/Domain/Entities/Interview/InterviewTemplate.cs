@@ -21,4 +21,7 @@ public class InterviewTemplate : EventEntity
     public Guid? DepartmentId { get; set; }
     public Department? Department { get; set; }
     public bool IsActive { get; set; } = true;
+
+    // A template is created standalone (no committee selected yet); committees link back to it one at a time as they're created, so one template can end up serving many committees.
+    public ICollection<InterviewCommittee> Committees { get; set; } = [];
 }

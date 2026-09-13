@@ -812,4 +812,50 @@ public static class Permissions
     }
     #endregion
 
+    #region InterviewEvaluationTemplate
+    public static class InterviewEvaluationTemplate
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewEvaluationTemplate.View,
+                nameof(PermissionKeys.InterviewEvaluationTemplate),
+                PermissionAction.View,
+                "Interview Evaluation Template - View",
+                "قوالب المقابلات - عرض",
+                104);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewEvaluationTemplate.Manage,
+                nameof(PermissionKeys.InterviewEvaluationTemplate),
+                PermissionAction.Manage,
+                "Interview Evaluation Template - Manage",
+                "قوالب المقابلات - إدارة",
+                105);
+    }
+    #endregion
+
+    #region InterviewCommittee
+    public static class InterviewCommittee
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewCommittee.View,
+                nameof(PermissionKeys.InterviewCommittee),
+                PermissionAction.View,
+                "Interview Committee - View",
+                "لجان المقابلات - عرض",
+                106);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewCommittee.Manage,
+                nameof(PermissionKeys.InterviewCommittee),
+                PermissionAction.Manage,
+                "Interview Committee - Manage",
+                "لجان المقابلات - إدارة",
+                107);
+    }
+    #endregion
+
 }
