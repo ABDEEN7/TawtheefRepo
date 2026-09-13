@@ -9,6 +9,14 @@ import { ExamCategoryForm } from '../helper/exam-wizard.form';
 import { ExamBankDto } from '../../models/exam-bank.dto';
 import { ExamLookupItemDto } from '../../models/exam-lookups.dto';
 
+type DifficultyRow = {
+  key: 'EASY' | 'MEDIUM' | 'HARD';
+  control: 'easyQuestionCount' | 'mediumQuestionCount' | 'hardQuestionCount';
+  available: 'easy' | 'medium' | 'hard';
+};
+
+type TotalRow = { key: 'TOTAL' };
+
 @Component({
   selector: 'app-exam-category',
   standalone: true,
@@ -23,13 +31,18 @@ export class ExamCategoryComponent {
   @Input() categories: ExamLookupItemDto[] = [];
   @Input() usedCategories: string[] = [];
   @Input() hideCategory = false;
+  @Input() isViewMode = false;
 
   readonly language = inject(LanguageService);
   private readonly translate = inject(TranslateService);
-  readonly difficulties = [
-    { key: 'EASY', control: 'easyQuestionCount' as const, available: 'easy' as const },
-    { key: 'MEDIUM', control: 'mediumQuestionCount' as const, available: 'medium' as const },
-    { key: 'HARD', control: 'hardQuestionCount' as const, available: 'hard' as const },
+  readonly difficulties: readonly DifficultyRow[] = [
+    { key: 'EASY', control: 'easyQuestionCount', available: 'easy' },
+    { key: 'MEDIUM', control: 'mediumQuestionCount', available: 'medium' },
+    { key: 'HARD', control: 'hardQuestionCount', available: 'hard' },
+  ];
+  readonly distributionRows: (DifficultyRow | TotalRow)[] = [
+    ...this.difficulties,
+    { key: 'TOTAL' },
   ];
 
   get bank() {
@@ -39,6 +52,19 @@ export class ExamCategoryComponent {
   get total() {
     const c = this.form.getRawValue();
     return (c.easyQuestionCount || 0) + (c.mediumQuestionCount || 0) + (c.hardQuestionCount || 0);
+  }
+
+  get hasDistributionAvailabilityError() {
+    return this.difficulties.some((difficulty) => this.hasDifficultyAvailabilityError(difficulty));
+  }
+
+  get isDistributionAvailable() {
+    return !!this.bank && !this.hasDistributionAvailabilityError;
+  }
+
+  hasDifficultyAvailabilityError(difficulty: DifficultyRow) {
+    const bank = this.bank;
+    return !!bank && this.form.controls[difficulty.control].value > bank[difficulty.available];
   }
 
   categoryOptions() {

@@ -90,6 +90,7 @@
               [maxDate]="createdTo"
               [invalid]="invalidCreatedRange()"
               [showIcon]="true"
+              [iconDisplay]="'input'"
               [showClear]="true"
               dateFormat="yy-mm-dd"
               appendTo="body"
@@ -110,6 +111,7 @@
               [minDate]="createdFrom"
               [invalid]="invalidCreatedRange()"
               [showIcon]="true"
+              [iconDisplay]="'input'"
               [showClear]="true"
               dateFormat="yy-mm-dd"
               appendTo="body"
@@ -146,9 +148,9 @@
                 <th>{{ 'EXAMS.TOTAL_QUESTIONS' | translate }}</th>
                 <th>{{ 'EXAMS.TOTAL_DURATION' | translate }}</th>
                 <th>{{ 'EXAMS.STATUS' | translate }}</th>
-                <th>{{ 'EXAMS.CREATED_DATE' | translate }}</th>
-                <th>{{ 'EXAMS.LAST_UPDATED' | translate }}</th>
-                <th>{{ 'EXAMS.ACTIONS' | translate }}</th>
+                <th class="text-nowrap">{{ 'EXAMS.CREATED_DATE' | translate }}</th>
+                <th class="text-nowrap">{{ 'EXAMS.LAST_UPDATED' | translate }}</th>
+                <th class="text-center">{{ 'EXAMS.ACTIONS' | translate }}</th>
               </tr>
             </ng-template>
             <ng-template #body let-exam>
@@ -165,29 +167,31 @@
                   {{ 'EXAMS.DURATION_MINUTES' | translate: { count: exam.totalDurationMinutes } }}
                 </td>
                 <td><p-tag severity="secondary" [value]="exam.status.name" /></td>
-                <td>{{ exam.createdDate | date: 'yyyy-MM-dd HH:mm' }}</td>
-                <td>{{ exam.lastUpdated | date: 'yyyy-MM-dd HH:mm' }}</td>
-                <td>
-                  <a
-                    pButton
-                    type="button"
-                    *hasPermission="Permissions.Exams.View"
-                    [routerLink]="routes.viewExam(exam.id)"
-                  >
-                    <span pButtonLabel>{{ 'EXAMS.VIEW' | translate }}</span>
-                    <i class="fa-solid fa-eye" pButtonIcon></i>
-                  </a>
-                  @if (isEditable(exam)) {
+                <td class="text-nowrap">{{ exam.createdDate | date: 'yyyy/MM/dd HH:mm' }}</td>
+                <td class="text-nowrap">{{ exam.lastUpdated | date: 'yyyy/MM/dd HH:mm' }}</td>
+                <td class="text-center">
+                  <div class="action-buttons justify-content-center">
                     <a
-                      pButton
-                      type="button"
-                      *hasPermission="Permissions.Exams.Create"
-                      [routerLink]="routes.editExam(exam.id)"
+                      class="btn btn-action-icon"
+                      *hasPermission="Permissions.Exams.View"
+                      [routerLink]="routes.viewExam(exam.id)"
+                      [pTooltip]="'EXAMS.VIEW' | translate"
+                      tooltipPosition="top"
                     >
-                      <span pButtonLabel>{{ 'EXAM_WIZARD.EDIT' | translate }}</span>
-                      <i class="fa-solid fa-pen" pButtonIcon></i>
+                      <i class="hgi hgi-stroke hgi-view"></i>
                     </a>
-                  }
+                    @if (isEditable(exam)) {
+                      <a
+                        class="btn btn-action-icon"
+                        *hasPermission="Permissions.Exams.Create"
+                        [routerLink]="routes.editExam(exam.id)"
+                        [pTooltip]="'EXAM_WIZARD.EDIT' | translate"
+                        tooltipPosition="top"
+                      >
+                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                      </a>
+                    }
+                  </div>
                 </td>
               </tr>
             </ng-template>

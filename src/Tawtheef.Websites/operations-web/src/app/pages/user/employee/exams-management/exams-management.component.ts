@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
 import { Permissions } from '../../../../core/constants/permissions';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -42,6 +43,7 @@ import { ExamsService } from './services/exams.service';
     Select,
     TableModule,
     TagModule,
+    TooltipModule,
     PaginationComponent,
     PageFiltersComponent,
     HasPermissionDirective,

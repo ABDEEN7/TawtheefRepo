@@ -10,7 +10,6 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { StepperModule } from 'primeng/stepper';
 import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { catchError, debounceTime, finalize, forkJoin, map, of, Subject, switchMap } from 'rxjs';
@@ -20,6 +19,7 @@ import { LanguageService } from '../../../../../core/services/language.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { portalRoutes } from '../../../../../routes/portal-routes';
 import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { ExamsService } from '../services/exams.service';
 import { categoryForm, examForm, partForm } from './helper/exam-wizard.form';
@@ -46,9 +46,9 @@ import { ReturnExamDialogComponent } from '../return-exam-dialog/return-exam-dia
     InputNumberModule,
     InputTextModule,
     SelectModule,
-    StepperModule,
     TableModule,
     TextareaModule,
+    FaDirArrowDirective,
     I18nNamespaceDirective,
     ExamCategoryComponent,
     ExamWorkflowActionComponent,
@@ -83,6 +83,7 @@ export class ExamWorkflowComponent implements OnInit {
   searching = false;
   saving = false;
   workflowSubmitting = false;
+  private partTwoCategoriesInitialized = false;
   loadFailed = false;
   jobFailed = false;
   submitted = false;
@@ -93,6 +94,28 @@ export class ExamWorkflowComponent implements OnInit {
   decisionAt: string | null = null;
   examStatusBackendName: string | null = null;
   errors: string[] = [];
+  readonly wizardSteps = [
+    {
+      id: 1,
+      label: 'EXAM_WIZARD.INFO',
+      icon: 'hgi hgi-stroke hgi-briefcase-03 me-1',
+    },
+    {
+      id: 2,
+      label: 'EXAM_WIZARD.PART_ONE',
+      icon: 'hgi hgi-stroke hgi-school me-1 fw-normal',
+    },
+    {
+      id: 3,
+      label: 'EXAM_WIZARD.PART_TWO',
+      icon: 'hgi hgi-stroke hgi-clipboard-check-01',
+    },
+    {
+      id: 4,
+      label: 'EXAM_WIZARD.REVIEW',
+      icon: 'hgi hgi-stroke hgi-sent me-1',
+    },
+  ];
 
   get examId(): string | null {
     return this.route.snapshot.paramMap.get('examId');
@@ -117,6 +140,11 @@ export class ExamWorkflowComponent implements OnInit {
   get pageTitle(): string {
     if (this.isViewMode) return 'EXAM_WIZARD.VIEW';
     return this.isEditMode ? 'EXAM_WIZARD.EDIT' : 'EXAMS.CREATE';
+  }
+
+  get headerSubtitle(): string {
+    if (this.isViewMode) return 'EXAM_WIZARD.SUBTITLES.VIEW';
+    return this.isEditMode ? 'EXAM_WIZARD.SUBTITLES.EDIT' : 'EXAM_WIZARD.SUBTITLES.CREATE';
   }
 
   get parts() {
@@ -234,6 +262,7 @@ export class ExamWorkflowComponent implements OnInit {
           this.jobs = result.jobs;
           this.resetFixedParts();
           if (result.configuration) this.applyConfiguration(result.configuration);
+          else this.initializePartTwoCategories();
           this.banks = result.banks ?? [];
           if (this.isViewMode) this.form.disable({ emitEvent: false });
         },
@@ -362,10 +391,18 @@ export class ExamWorkflowComponent implements OnInit {
       });
   }
 
-  addCategory(): void {
+  addCategory(categoryId = '', markDirty = true): void {
     if (this.partTwo.controls.categories.length >= this.nonSpecializedCategories.length) return;
-    this.partTwo.controls.categories.push(categoryForm());
-    this.form.markAsDirty();
+    const category = categoryForm();
+    category.controls.categoryId.setValue(categoryId);
+    this.partTwo.controls.categories.push(category);
+    if (markDirty) this.form.markAsDirty();
+  }
+
+  private initializePartTwoCategories(): void {
+    if (!this.isCreateMode || this.partTwoCategoriesInitialized) return;
+    this.nonSpecializedCategories.forEach((category) => this.addCategory(category.id, false));
+    this.partTwoCategoriesInitialized = true;
   }
 
   removeCategory(categoryIndex: number): void {

@@ -1,4 +1,7 @@
 {
+  "EXAM_WIZARD.SUBTITLES.CREATE": "أدخل تفاصيل الاختبار",
+  "EXAM_WIZARD.SUBTITLES.EDIT": "قم بتعديل تفاصيل الاختبار",
+  "EXAM_WIZARD.SUBTITLES.VIEW": "راجع تفاصيل الاختبار",
   "EXAMS.APPROVE_TITLE": "اعتماد الاختبار",
   "EXAMS.APPROVE_CONFIRMATION": "هل أنت متأكد من اعتماد هذا الاختبار؟",
   "EXAMS.CONFIRM_APPROVE": "تأكيد الاعتماد",

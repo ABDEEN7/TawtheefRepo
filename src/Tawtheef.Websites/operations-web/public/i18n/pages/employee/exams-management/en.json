@@ -1,4 +1,7 @@
 {
+  "EXAM_WIZARD.SUBTITLES.CREATE": "Enter exam details",
+  "EXAM_WIZARD.SUBTITLES.EDIT": "Update exam details",
+  "EXAM_WIZARD.SUBTITLES.VIEW": "Review exam details",
   "EXAMS.APPROVE_TITLE": "Approve exam",
   "EXAMS.APPROVE_CONFIRMATION": "Are you sure you want to approve this exam?",
   "EXAMS.CONFIRM_APPROVE": "Confirm approve",
