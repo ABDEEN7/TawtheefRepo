@@ -42,12 +42,12 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
                     .AnyAsync(x => x.Id == request.Exam.InterruptionPolicyId, token))
                 return Result.Fail<SavedExamDto>(ErrorsCodes.InvalidRequest);
 
-            var categoryTypeIds = await unitOfWork.Context.Set<ExamCategoryType>().AsNoTracking()
+            var categoryTypeIds = await unitOfWork.Context.Set<QuestionBankType>().AsNoTracking()
                 .Select(x => x.Id).ToListAsync(token);
             var partTwo = request.Exam.Parts[1];
-            if (!categoryTypeIds.Contains(ExamCategoryTypeIds.Specialized) ||
-                partTwo.Categories.Count > categoryTypeIds.Count(id => id != ExamCategoryTypeIds.Specialized) ||
-                partTwo.Categories.Any(category => !categoryTypeIds.Contains(category.CategoryId)))
+            if (!categoryTypeIds.Contains(QuestionBankTypeIds.Specialized) ||
+                partTwo.Categories.Count > categoryTypeIds.Count(id => id != QuestionBankTypeIds.Specialized) ||
+                partTwo.Categories.Any(category => !categoryTypeIds.Contains(category.QuestionBankTypeId)))
                 return Result.Fail<SavedExamDto>(ErrorsCodes.InvalidRequest);
 
             var categories = request.Exam.Parts.SelectMany(x => x.Categories).ToList();
@@ -56,7 +56,7 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
             foreach (var category in categories)
             {
                 var bank = banks.FirstOrDefault(x => x.Id == category.QuestionBankVersionId &&
-                    x.CategoryId == category.CategoryId);
+                    x.QuestionBankTypeId == category.QuestionBankTypeId);
                 if (bank == null || (request.Submit &&
                     (category.EasyQuestionCount > bank.Easy ||
                      category.MediumQuestionCount > bank.Medium ||

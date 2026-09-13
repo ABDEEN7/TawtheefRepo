@@ -39,9 +39,9 @@ internal static class ExamBankSelection
                         (v.EffectiveTo == null || v.EffectiveTo > now) &&
                         (v.QuestionBank.ManagementId == null || v.QuestionBank.ManagementId == managementId) &&
                         (v.QuestionBank.JobTitleId == null || v.QuestionBank.JobTitleId == jobTitleId) &&
-                        (v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.SPECIALIZED ||
-                         v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.EDUCATIONAL ||
-                         v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.SKILLS));
+                        (v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Specialized ||
+                         v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Educational ||
+                         v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Skills));
 
         var banks = await eligibleVersions
             .OrderBy(v => v.QuestionBank.QuestionBankType.NameAr).ThenByDescending(v => v.VersionNo)
@@ -75,9 +75,10 @@ internal static class ExamBankSelection
             statisticsByVersionId.TryGetValue(bank.VersionId, out var bankStatistics);
             return new ExamBankDto(
                 bank.VersionId,
-                bank.QuestionBankTypeId == QuestionBankTypeIds.SPECIALIZED ? ExamCategoryTypeIds.Specialized :
-                bank.QuestionBankTypeId == QuestionBankTypeIds.EDUCATIONAL ? ExamCategoryTypeIds.Educational :
-                ExamCategoryTypeIds.Skills,
+                // bank.QuestionBankTypeId == QuestionBankTypeIds.Specialized ? ExamCategoryTypeIds.Specialized :
+                // bank.QuestionBankTypeId == QuestionBankTypeIds.EDUCATIONAL ? ExamCategoryTypeIds.Educational :
+                // ExamCategoryTypeIds.Skills,
+                bank.QuestionBankTypeId,
                 bank.NameAr,
                 bank.NameEn,
                 bank.VersionNo,

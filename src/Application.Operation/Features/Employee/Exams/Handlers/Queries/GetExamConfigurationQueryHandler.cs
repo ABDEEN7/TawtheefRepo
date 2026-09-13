@@ -30,7 +30,7 @@ public sealed class GetExamConfigurationQueryHandler(IUnitOfWork unitOfWork)
             .Where(x => x.ExamId == exam.Id).OrderBy(x => x.PartNo).ToListAsync(ct);
         var partIds = parts.Select(x => x.Id).ToList();
         var categories = await unitOfWork.Context.Set<ExamCategory>().AsNoTracking()
-            .Where(x => partIds.Contains(x.ExamPartId)).OrderBy(x => x.CategoryId).ToListAsync(ct);
+            .Where(x => partIds.Contains(x.ExamPartId)).OrderBy(x => x.QuestionBankTypeId).ToListAsync(ct);
         dto.Parts = parts.Select(part =>
         {
             var result = part.Adapt<ExamPartDto>();

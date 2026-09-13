@@ -74,7 +74,7 @@
   "EXAM_WIZARD.QUALIFICATION": "Qualification score (%)",
   "EXAM_WIZARD.CATEGORY": "Category",
   "EXAM_WIZARD.BANK": "Approved question bank version",
-  "EXAM_WIZARD.BANK_LABEL": "{{name}} — Version {{version}} ({{id}})",
+  "EXAM_WIZARD.BANK_LABEL": "{{name}} — Version {{version}}",
   "EXAM_WIZARD.QUESTION_COUNT": "Question count",
   "EXAM_WIZARD.WEIGHT": "Weight (%)",
   "EXAM_WIZARD.AVAILABLE_TOTAL": "Total available questions",

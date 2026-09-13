@@ -80,7 +80,6 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<Permission> Permission { get; set; }
     public DbSet<ExamInterruptionPolicy> ExamInterruptionPolicy { get; set; }
     public DbSet<ExamStatus> ExamStatus { get; set; }
-    public DbSet<ExamCategoryType> ExamCategoryType { get; set; }
     public DbSet<RoomType> RoomType { get; set; }
     public DbSet<RoomStatus> RoomStatus { get; set; }
     public DbSet<TestSlotStatus> TestSlotStatus { get; set; }

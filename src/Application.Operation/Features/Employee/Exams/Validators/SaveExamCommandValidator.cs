@@ -34,18 +34,18 @@ public sealed class SaveExamCommandValidator : AbstractValidator<SaveExamCommand
         var parts = request.Exam.Parts;
         if (parts == null || parts.Count != 2 || parts.Any(p => p == null || p.Categories == null)) return false;
         if (parts[0].PartNo != 1 || parts[1].PartNo != 2 || parts[0].Categories.Count != 1 ||
-            parts[0].Categories[0].CategoryId != ExamCategoryTypeIds.Specialized ||
-            parts[1].Categories.Any(c => c.CategoryId == ExamCategoryTypeIds.Specialized) ||
-            parts[1].Categories.Select(c => c.CategoryId).Distinct().Count() != parts[1].Categories.Count)
+            parts[0].Categories[0].QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
+            parts[1].Categories.Any(c => c.QuestionBankTypeId == QuestionBankTypeIds.Specialized) ||
+            parts[1].Categories.Select(c => c.QuestionBankTypeId).Distinct().Count() != parts[1].Categories.Count)
             return false;
         return parts.All(p => p.DurationMinutes >= 0 &&
             p.TitleAr != null && p.TitleAr.Length <= 200 && (p.TitleEn?.Length ?? 0) <= 200 &&
             (p.QualificationScore == null || p.QualificationScore is >= 0 and <= 100) &&
-            p.Categories.All(c => c != null && c.CategoryId != Guid.Empty &&
+            p.Categories.All(c => c != null && c.QuestionBankTypeId != Guid.Empty &&
                 c.QuestionBankVersionId != Guid.Empty && c.QuestionCount >= 0 &&
                 c.WeightPercent is >= 0 and <= 100 && decimal.Round(c.WeightPercent, 2) == c.WeightPercent &&
                 c.EasyQuestionCount >= 0 && c.MediumQuestionCount >= 0 && c.HardQuestionCount >= 0) &&
-            p.Categories.Select(c => c.CategoryId).Distinct().Count() == p.Categories.Count) &&
+            p.Categories.Select(c => c.QuestionBankTypeId).Distinct().Count() == p.Categories.Count) &&
             parts.SelectMany(p => p.Categories).Sum(c => (long)c.QuestionCount) <= int.MaxValue;
     }
 

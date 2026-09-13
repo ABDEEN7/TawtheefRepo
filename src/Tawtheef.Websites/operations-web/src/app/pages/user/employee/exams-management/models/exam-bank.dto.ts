@@ -1,7 +1,7 @@
 import { ExamLookupItemDto } from "./exam-lookups.dto";
 
 export interface ExamBankDto extends ExamLookupItemDto {
-  categoryId: string;
+  questionBankTypeId: string;
   versionNo: number;
   total: number;
   easy: number;

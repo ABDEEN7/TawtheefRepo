@@ -43,13 +43,13 @@ export class ExamPartTwoStepComponent implements OnInit {
   }
 
   categoryIds(): string[] {
-    return this.form.controls.categories.getRawValue().map((category) => category.categoryId);
+    return this.form.controls.categories.getRawValue().map((category) => category.questionBankTypeId);
   }
 
   addCategory(categoryId = '', markDirty = true): void {
     if (this.form.controls.categories.length >= this.nonSpecializedCategories.length) return;
     const category = categoryForm();
-    category.controls.categoryId.setValue(categoryId);
+    category.controls.questionBankTypeId.setValue(categoryId);
     this.form.controls.categories.push(category);
     if (markDirty) this.form.markAsDirty();
   }

@@ -64,7 +64,7 @@
   "EXAM_WIZARD.QUALIFICATION": "درجة التأهيل (%)",
   "EXAM_WIZARD.CATEGORY": "التصنيف",
   "EXAM_WIZARD.BANK": "نسخة بنك الأسئلة المعتمدة",
-  "EXAM_WIZARD.BANK_LABEL": "{{name}} — النسخة {{version}} ({{id}})",
+  "EXAM_WIZARD.BANK_LABEL": "{{name}} — النسخة {{version}}",
   "EXAM_WIZARD.QUESTION_COUNT": "عدد الأسئلة",
   "EXAM_WIZARD.WEIGHT": "الوزن (%)",
   "EXAM_WIZARD.AVAILABLE_TOTAL": "إجمالي الأسئلة المتاحة",

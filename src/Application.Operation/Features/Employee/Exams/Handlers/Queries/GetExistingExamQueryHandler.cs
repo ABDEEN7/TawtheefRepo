@@ -25,7 +25,7 @@ public sealed class GetExistingExamQueryHandler(IUnitOfWork unitOfWork)
             .Where(x => x.ExamId == exam.Id).OrderBy(x => x.PartNo).ToListAsync(ct);
         var ids = parts.Select(x => x.Id).ToList();
         var categories = await unitOfWork.Context.Set<ExamCategory>().AsNoTracking()
-            .Where(x => ids.Contains(x.ExamPartId)).OrderBy(x => x.CategoryId).ToListAsync(ct);
+            .Where(x => ids.Contains(x.ExamPartId)).OrderBy(x => x.QuestionBankTypeId).ToListAsync(ct);
         dto.Parts = parts.Select(part =>
         {
             var result = part.Adapt<ExamPartDto>();

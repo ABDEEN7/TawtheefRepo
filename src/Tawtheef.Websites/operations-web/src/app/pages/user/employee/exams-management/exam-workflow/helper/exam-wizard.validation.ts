@@ -19,12 +19,12 @@ export function validatePart(part: ExamPartDto, banks: ExamBankDto[], final: boo
   if (final && (!part.titleAr?.trim() || part.durationMinutes <= 0 || !part.categories.length)) {
     errors.add('PART_COMPLETE');
   }
-  if (new Set(part.categories.map((c) => c.categoryId)).size !== part.categories.length) {
+  if (new Set(part.categories.map((c) => c.questionBankTypeId)).size !== part.categories.length) {
     errors.add('DUPLICATE_CATEGORY');
   }
   for (const category of part.categories) {
     const bank = banks.find(
-      (b) => b.id === category.questionBankVersionId && b.categoryId === category.categoryId,
+      (b) => b.id === category.questionBankVersionId && b.questionBankTypeId === category.questionBankTypeId,
     );
     if (!bank) errors.add('BANK');
     if (
@@ -78,9 +78,9 @@ export function validateExam(
     exam.parts[0]?.partNo !== 1 ||
     exam.parts[1]?.partNo !== 2 ||
     exam.parts[0]?.categories.length !== 1 ||
-    exam.parts[0]?.categories[0]?.categoryId !== specializedCategoryId ||
-    exam.parts[1]?.categories.some((c) => c.categoryId === specializedCategoryId) ||
-    new Set(exam.parts[1]?.categories.map((c) => c.categoryId)).size !==
+    exam.parts[0]?.categories[0]?.questionBankTypeId !== specializedCategoryId ||
+    exam.parts[1]?.categories.some((c) => c.questionBankTypeId === specializedCategoryId) ||
+    new Set(exam.parts[1]?.categories.map((c) => c.questionBankTypeId)).size !==
       exam.parts[1]?.categories.length ||
     exam.parts[1]?.categories.length > Math.max(0, categoryCount - 1)
   )

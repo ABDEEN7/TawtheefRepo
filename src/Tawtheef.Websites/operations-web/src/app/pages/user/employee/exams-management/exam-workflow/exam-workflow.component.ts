@@ -289,7 +289,6 @@ export class ExamWorkflowComponent implements OnInit {
       ? this.translate.instant('EXAM_WIZARD.BANK_LABEL', {
           name: this.name(bank),
           version: bank.versionNo,
-          id: bank.id,
         })
       : this.translate.instant('EXAM_WIZARD.EMPTY');
   }
@@ -563,7 +562,7 @@ export class ExamWorkflowComponent implements OnInit {
         qualificationScore: null,
         categories: [
           {
-            categoryId: this.lookups.specializedCategoryId,
+            questionBankTypeId: this.lookups.specializedCategoryId,
             questionBankVersionId: '',
             questionCount: 0,
             weightPercent: 0,

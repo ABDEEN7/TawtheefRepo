@@ -27,7 +27,7 @@ public sealed class ApproveExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUs
                 "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
                 "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
                 "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Exam approval lock unavailable', 1;",
-                [$"Tawtheef.Exam.Approve.{request.ExamId}"], token);
+                [$"Tawtheef.Exam.Workflow.{request.ExamId}"], token);
 
             var exam = await unitOfWork.GetEntityRepository<Exam>().DbSet
                 .FirstOrDefaultAsync(x => x.Id == request.ExamId && x.StatusId == ExamStatusIds.PendingApproval,
@@ -53,7 +53,7 @@ public sealed class ApproveExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUs
             foreach (var category in categories)
             {
                 var bank = banks.FirstOrDefault(x => x.Id == category.QuestionBankVersionId &&
-                    x.CategoryId == category.CategoryId);
+                    x.QuestionBankTypeId == category.QuestionBankTypeId);
                 if (bank == null || category.EasyQuestionCount > bank.Easy ||
                     category.MediumQuestionCount > bank.Medium || category.HardQuestionCount > bank.Hard)
                     return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);

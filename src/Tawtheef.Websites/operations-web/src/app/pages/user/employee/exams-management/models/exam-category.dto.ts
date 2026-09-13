@@ -1,5 +1,5 @@
 export interface ExamCategoryDto {
-  categoryId: string;
+  questionBankTypeId: string;
   questionBankVersionId: string;
   questionCount: number;
   weightPercent: number;

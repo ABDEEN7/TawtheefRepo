@@ -32,7 +32,7 @@ export function partForm(partNo: 1 | 2, value?: ExamPartDto) {
 
 export function categoryForm(value?: ExamCategoryDto) {
   return new FormGroup({
-    categoryId: control(value?.categoryId ?? ''),
+    questionBankTypeId: control(value?.questionBankTypeId ?? ''),
     questionBankVersionId: control(value?.questionBankVersionId ?? ''),
     questionCount: control(value?.questionCount ?? 0),
     weightPercent: control(value?.weightPercent ?? 0),

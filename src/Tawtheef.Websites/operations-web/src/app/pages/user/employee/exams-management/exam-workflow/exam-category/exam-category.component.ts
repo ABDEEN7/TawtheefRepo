@@ -69,19 +69,18 @@ export class ExamCategoryComponent {
 
   categoryOptions() {
     return this.categories.filter(
-      (c) => c.id === this.form.controls.categoryId.value || !this.usedCategories.includes(c.id),
+      (c) => c.id === this.form.controls.questionBankTypeId.value || !this.usedCategories.includes(c.id),
     );
   }
 
   bankOptions() {
     return this.banks
-      .filter((b) => b.categoryId === this.form.controls.categoryId.value)
+      .filter((b) => b.questionBankTypeId === this.form.controls.questionBankTypeId.value)
       .map((b) => ({
         ...b,
         label: this.translate.instant('EXAM_WIZARD.BANK_LABEL', {
           name: this.language.isRtl ? b.nameAr : b.nameEn,
           version: b.versionNo,
-          id: b.id,
         }),
       }));
   }

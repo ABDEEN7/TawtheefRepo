@@ -27,7 +27,7 @@ public sealed class RejectExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUse
                 "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
                 "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
                 "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Exam workflow lock unavailable', 1;",
-                [$"Tawtheef.Exam.Approve.{request.ExamId}"], token);
+                [$"Tawtheef.Exam.Workflow.{request.ExamId}"], token);
 
             var exam = await unitOfWork.GetEntityRepository<Exam>().DbSet
                 .FirstOrDefaultAsync(x => x.Id == request.ExamId && x.StatusId == ExamStatusIds.PendingApproval,
