@@ -110,6 +110,10 @@ public static class PermissionCatalog
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,
 
+        Permissions.QuestionBanks.View,
+        Permissions.QuestionBankRequests.View,
+        Permissions.QuestionBankRequests.Create,
+
         Permissions.InterviewEvaluationBank.View,
         Permissions.InterviewEvaluationBank.Manage,
 
@@ -117,7 +121,7 @@ public static class PermissionCatalog
         Permissions.InterviewEvaluationTemplate.Manage,
 
         Permissions.InterviewCommittee.View,
-        Permissions.InterviewCommittee.Manage,
+        Permissions.InterviewCommittee.Manage
     ]);
 
     public static readonly ISet<string> Keys =

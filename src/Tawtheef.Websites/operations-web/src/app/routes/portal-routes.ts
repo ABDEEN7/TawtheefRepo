@@ -151,5 +151,11 @@ export const portalRoutes = {
   },
   get examsManagement() {
     return this.portal + '/' + this.examsManagementPath;
+  },
+  get questionBanks() {
+    return this.portal + '/question-banks';
+  },
+  get questionBankRequests() {
+    return this.portal + '/question-bank-requests';
   }
 }

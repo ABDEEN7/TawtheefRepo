@@ -391,6 +391,27 @@ export class EndpointsService {
     specializations: this.getFullUrl('/exams/lookups/specializations')
   };
 
+  questionBanks = {
+    list: this.getFullUrl('/questionbanks'),
+    lookups: {
+      questionBankTypes: this.getFullUrl('/questionbanks/lookups/question-bank-types'),
+      managements: this.getFullUrl('/questionbanks/lookups/managements'),
+      jobTitles: this.getFullUrl('/questionbanks/lookups/job-titles')
+    }
+  };
+
+  questionBankRequests = {
+    list: this.getFullUrl('/questionbankrequests'),
+    create: this.getFullUrl('/questionbankrequests'),
+    lookups: {
+      questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
+      managements: this.getFullUrl('/questionbankrequests/lookups/managements'),
+      jobTitles: this.getFullUrl('/questionbankrequests/lookups/job-titles'),
+      requestTypes: this.getFullUrl('/questionbankrequests/lookups/request-types'),
+      statuses: this.getFullUrl('/questionbankrequests/lookups/statuses')
+    }
+  };
+
   rooms = {
     create: this.getFullUrl('/rooms'),
     list: this.getFullUrl('/rooms'),
