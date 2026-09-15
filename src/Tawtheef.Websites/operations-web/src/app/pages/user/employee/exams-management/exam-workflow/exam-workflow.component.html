@@ -24,15 +24,15 @@
       } @else if (loadFailed) {
         <div class="alert alert-danger">{{ 'EXAM_WIZARD.REQUEST_FAILED' | translate }}</div>
       } @else {
-        <div class="card card-table exam-wizard-stepper-card mb-4">
+        <div class="card card-table workflow-stepper-card mb-4">
           <div class="card-body">
-            <div class="exam-stepper-container">
-              <div class="exam-stepper">
+            <div class="workflow-stepper-container">
+              <div class="workflow-stepper">
                 @for (wizardStep of wizardSteps; track wizardStep.id; let last = $last) {
-                  <div class="exam-step-wrapper">
+                  <div class="workflow-step-wrapper">
                     <button
                       type="button"
-                      class="exam-step-label"
+                      class="workflow-step-label"
                       [class.active]="step === wizardStep.id"
                       [class.completed]="step > wizardStep.id"
                       (click)="goTo(wizardStep.id)"
@@ -40,24 +40,24 @@
                       <i [class]="wizardStep.icon"></i>
                       <span>{{ wizardStep.label | translate }}</span>
                     </button>
-                    <div class="exam-step-progress">
+                    <div class="workflow-step-progress">
                       <button
                         type="button"
-                        class="exam-step-circle"
+                        class="workflow-step-circle"
                         [class.active]="step === wizardStep.id"
                         [class.completed]="step > wizardStep.id"
                         (click)="goTo(wizardStep.id)"
                         [attr.aria-label]="wizardStep.label | translate"
                       >
                         @if (step === wizardStep.id) {
-                          <span class="exam-step-inner-circle"></span>
+                          <span class="workflow-step-inner-circle"></span>
                         } @else if (step > wizardStep.id) {
-                          <span class="exam-step-checkmark">&#10003;</span>
+                          <span class="workflow-step-checkmark">&#10003;</span>
                         }
                       </button>
                       @if (!last) {
                         <div
-                          class="exam-connector-line"
+                          class="workflow-connector-line"
                           [class.completed]="step > wizardStep.id"
                         ></div>
                       }

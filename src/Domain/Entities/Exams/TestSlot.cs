@@ -7,6 +7,7 @@ namespace Tawtheef.Domain.Entities.Exams;
 [Table(nameof(TestSlot), Schema = Schemas.Hr)]
 public class TestSlot : EventEntity
 {
+    public required string SlotNo { get; set; }
     public required string TitleAr { get; set; }
     public string? TitleEn { get; set; }
     public Guid RoomId { get; set; }

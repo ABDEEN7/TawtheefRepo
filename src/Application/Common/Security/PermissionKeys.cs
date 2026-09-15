@@ -202,6 +202,12 @@ public static class PermissionKeys
         public const string WorkflowActions = "examWorkflowActions";
     }
 
+    public static class TestSlots
+    {
+        public const string View = "test-slots.view";
+        public const string Create = "test-slots.create";
+    }
+
     public static class Rooms
     {
         public const string View = "rooms.view";

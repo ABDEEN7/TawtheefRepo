@@ -25,6 +25,8 @@ public static class RolePermissionCatalog
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
                 Permissions.Exams.WorkflowActions.Key,
+                Permissions.TestSlots.View.Key,
+                Permissions.TestSlots.Create.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
@@ -112,6 +114,8 @@ public static class RolePermissionCatalog
             [SystemRoleIds.Employee] = [
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
+                Permissions.TestSlots.View.Key,
+                Permissions.TestSlots.Create.Key,
             ],
 
             [SystemRoleIds.OfficeAdmin] = [

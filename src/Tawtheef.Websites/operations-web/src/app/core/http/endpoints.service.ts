@@ -391,6 +391,12 @@ export class EndpointsService {
     specializations: this.getFullUrl('/exams/lookups/specializations')
   };
 
+  testSlots = {
+    list: this.getFullUrl('/test-slots'),
+    availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
+    wizardAvailableRooms: this.getFullUrl('/test-slots/wizard/rooms'),
+  };
+
   rooms = {
     create: this.getFullUrl('/rooms'),
     list: this.getFullUrl('/rooms'),

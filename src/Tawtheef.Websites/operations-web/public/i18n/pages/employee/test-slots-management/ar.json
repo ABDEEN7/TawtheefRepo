@@ -1,0 +1,46 @@
+{
+  "TEST_SLOTS.TITLE": "فترات الاختبار",
+  "TEST_SLOTS.DESCRIPTION": "البحث وعرض فترات الاختبار.",
+  "TEST_SLOTS.ADVANCED_FILTERS": "البحث المتقدم",
+  "TEST_SLOTS.CLEAR_FILTERS": "مسح عوامل التصفية",
+  "TEST_SLOTS.SEARCH": "البحث برقم الفترة أو العنوان",
+  "TEST_SLOTS.NUMBER": "رقم الفترة",
+  "TEST_SLOTS.PERIOD_TITLE": "العنوان",
+  "TEST_SLOTS.ROOM": "القاعة",
+  "TEST_SLOTS.ALL_ROOMS": "جميع القاعات",
+  "TEST_SLOTS.DATE_FROM": "التاريخ من",
+  "TEST_SLOTS.DATE_TO": "التاريخ إلى",
+  "TEST_SLOTS.INVALID_DATE_RANGE": "لا يمكن أن يكون التاريخ من بعد التاريخ إلى.",
+  "TEST_SLOTS.DATE": "التاريخ",
+  "TEST_SLOTS.TIME": "الوقت",
+  "TEST_SLOTS.CANDIDATES": "المرشحون",
+  "TEST_SLOTS.HALL_SUPERVISOR": "رئيس القاعة",
+  "TEST_SLOTS.STATUS": "الحالة",
+  "TEST_SLOTS.ACTIONS": "الإجراءات",
+  "TEST_SLOTS.LOADING": "جارٍ تحميل فترات الاختبار",
+  "TEST_SLOTS.LOAD_ERROR": "تعذر تحميل فترات الاختبار أو خيارات القاعات. يرجى المحاولة مرة أخرى.",
+  "TEST_SLOTS.EMPTY": "لا توجد فترات اختبار تطابق عوامل التصفية المحددة.",
+  "TEST_SLOTS.NOT_AVAILABLE": "—"
+  ,"TEST_SLOTS.CREATE": "إنشاء فترة اختبار"
+  ,"TEST_SLOT_WIZARD.CREATE": "إنشاء فترة اختبار"
+  ,"TEST_SLOT_WIZARD.SUBTITLE": "أدخل بيانات فترة الاختبار"
+  ,"TEST_SLOT_WIZARD.BACK": "العودة إلى فترات الاختبار"
+  ,"TEST_SLOT_WIZARD.SLOT_DETAILS": "بيانات الفترة"
+  ,"TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "تعيين الفريق"
+  ,"TEST_SLOT_WIZARD.REVIEW": "المراجعة"
+  ,"TEST_SLOT_WIZARD.TITLE_AR": "عنوان الفترة"
+  ,"TEST_SLOT_WIZARD.TITLE_EN": "العنوان بالإنجليزية"
+  ,"TEST_SLOT_WIZARD.ROOM": "القاعة"
+  ,"TEST_SLOT_WIZARD.DATE": "التاريخ"
+  ,"TEST_SLOT_WIZARD.START_TIME": "وقت البداية"
+  ,"TEST_SLOT_WIZARD.END_TIME": "وقت النهاية"
+  ,"TEST_SLOT_WIZARD.NEXT": "التالي"
+  ,"TEST_SLOT_WIZARD.PREVIOUS": "السابق"
+  ,"TEST_SLOT_WIZARD.CANCEL": "إلغاء"
+  ,"TEST_SLOT_WIZARD.LOADING": "جارٍ تحميل القاعات المتاحة…"
+  ,"TEST_SLOT_WIZARD.REQUEST_FAILED": "تعذر تحميل القاعات المتاحة. يرجى المحاولة مرة أخرى."
+  ,"TEST_SLOT_WIZARD.LEAVE_MESSAGE": "مغادرة المعالج؟ ستفقد التغييرات التي أجريتها."
+  ,"TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "ستتوفر هذه الخطوة قريبًا."
+  ,"TEST_SLOT_WIZARD.ERROR.DETAILS": "أدخل بيانات الفترة المطلوبة."
+  ,"TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "يجب أن يكون وقت النهاية بعد وقت البداية."
+}

@@ -33,6 +33,20 @@ export const employeeRoutes: Routes = [
       .then(m => m.ExamsManagementComponent)
   },
   {
+    path: portalRoutes.createTestSlotPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.Create] },
+    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
+      .then(m => m.TestSlotCreatePage)
+  },
+  {
+    path: portalRoutes.testSlotsManagementPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.View] },
+    loadComponent: () => import('./test-slots-management/test-slots-management.component')
+      .then(m => m.TestSlotsManagementComponent)
+  },
+  {
     path: 'dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },

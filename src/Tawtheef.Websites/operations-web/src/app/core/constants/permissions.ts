@@ -128,6 +128,10 @@ export const Permissions = {
     Create: 'exams.create',
     WorkflowActions: 'examWorkflowActions',
   },
+  TestSlots: {
+    View: 'test-slots.view',
+    Create: 'test-slots.create',
+  },
   Locations: {
     View: 'locations.view',
     Manage: 'locations.manage',

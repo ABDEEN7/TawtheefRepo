@@ -1,0 +1,46 @@
+{
+  "TEST_SLOTS.TITLE": "Exam Periods",
+  "TEST_SLOTS.DESCRIPTION": "Search and view exam periods.",
+  "TEST_SLOTS.ADVANCED_FILTERS": "Advanced Filters",
+  "TEST_SLOTS.CLEAR_FILTERS": "Clear Filters",
+  "TEST_SLOTS.SEARCH": "Search by period number or title",
+  "TEST_SLOTS.NUMBER": "Period Number",
+  "TEST_SLOTS.PERIOD_TITLE": "Title",
+  "TEST_SLOTS.ROOM": "Room",
+  "TEST_SLOTS.ALL_ROOMS": "All rooms",
+  "TEST_SLOTS.DATE_FROM": "Date from",
+  "TEST_SLOTS.DATE_TO": "Date to",
+  "TEST_SLOTS.INVALID_DATE_RANGE": "Date from cannot be later than date to.",
+  "TEST_SLOTS.DATE": "Date",
+  "TEST_SLOTS.TIME": "Time",
+  "TEST_SLOTS.CANDIDATES": "Candidates",
+  "TEST_SLOTS.HALL_SUPERVISOR": "Hall supervisor",
+  "TEST_SLOTS.STATUS": "Status",
+  "TEST_SLOTS.ACTIONS": "Actions",
+  "TEST_SLOTS.LOADING": "Loading exam periods",
+  "TEST_SLOTS.LOAD_ERROR": "Unable to load exam periods or room options. Please try again.",
+  "TEST_SLOTS.EMPTY": "No exam periods match the selected filters.",
+  "TEST_SLOTS.NOT_AVAILABLE": "—"
+  ,"TEST_SLOTS.CREATE": "Create exam period"
+  ,"TEST_SLOT_WIZARD.CREATE": "Create exam period"
+  ,"TEST_SLOT_WIZARD.SUBTITLE": "Enter exam period details"
+  ,"TEST_SLOT_WIZARD.BACK": "Back to exam periods"
+  ,"TEST_SLOT_WIZARD.SLOT_DETAILS": "Period details"
+  ,"TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "Assign team"
+  ,"TEST_SLOT_WIZARD.REVIEW": "Review"
+  ,"TEST_SLOT_WIZARD.TITLE_AR": "Arabic title"
+  ,"TEST_SLOT_WIZARD.TITLE_EN": "English title"
+  ,"TEST_SLOT_WIZARD.ROOM": "Room"
+  ,"TEST_SLOT_WIZARD.DATE": "Date"
+  ,"TEST_SLOT_WIZARD.START_TIME": "Start time"
+  ,"TEST_SLOT_WIZARD.END_TIME": "End time"
+  ,"TEST_SLOT_WIZARD.NEXT": "Next"
+  ,"TEST_SLOT_WIZARD.PREVIOUS": "Previous"
+  ,"TEST_SLOT_WIZARD.CANCEL": "Cancel"
+  ,"TEST_SLOT_WIZARD.LOADING": "Loading available rooms…"
+  ,"TEST_SLOT_WIZARD.REQUEST_FAILED": "Unable to load available rooms. Please try again."
+  ,"TEST_SLOT_WIZARD.LEAVE_MESSAGE": "Leave this wizard? Your changes will be lost."
+  ,"TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "This step will be available soon."
+  ,"TEST_SLOT_WIZARD.ERROR.DETAILS": "Enter the required period details."
+  ,"TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "End time must be later than start time."
+}

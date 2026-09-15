@@ -151,5 +151,13 @@ export const portalRoutes = {
   },
   get examsManagement() {
     return this.portal + '/' + this.examsManagementPath;
+  },
+  testSlotsManagementPath: 'test-slots-management',
+  createTestSlotPath: 'test-slots-management/create',
+  get createTestSlot() {
+    return this.portal + '/' + this.createTestSlotPath;
+  },
+  get testSlotsManagement() {
+    return this.portal + '/' + this.testSlotsManagementPath;
   }
 }

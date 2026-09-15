@@ -85,5 +85,6 @@
   "common.relativeTime.daysAgo": "منذ {{count}} يوم",
   "internal.sidebar.rooms": "إدارة القاعات",
   "internal.sidebar.exams": "اختبارات الوظائف",
+  "internal.sidebar.testSlots": "فترات الاختبار",
   "internal.sidebar.locations": "إدارة المواقع"
 }

@@ -1027,3 +1027,43 @@ body.rtl .p-datepicker-year-next-button {
 .decorations {
   display: none;
 }
+
+/*--------------------------------------------------------------
+# Workflow steppers
+--------------------------------------------------------------*/
+.workflow-stepper-card { overflow: hidden; }
+.workflow-stepper-container { overflow-x: auto; }
+.workflow-stepper { display: flex; align-items: stretch; width: 100%; min-width: 680px; margin-inline: auto; }
+.workflow-step-wrapper { display: flex; flex: 1 1 0; flex-direction: column; min-width: 0; position: relative; }
+.workflow-step-label, .workflow-step-circle { padding: 0; border: 0; background: transparent; }
+.workflow-step-label { display: flex; flex: 1; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 48px; color: #999; font-family: $font-primary; font-size: 16px; font-weight: 600; text-align: center; transition: color .3s ease; }
+.workflow-step-label.active, .workflow-step-label.completed { color: $color-primary; }
+.workflow-step-label i { flex: 0 0 auto; font-size: 18px; }
+.workflow-step-progress { display: flex; flex-shrink: 0; align-items: center; justify-content: center; position: relative; width: 100%; margin-top: 8px; }
+.workflow-step-circle { display: flex; flex: 0 0 auto; align-items: center; justify-content: center; position: relative; z-index: 1; width: 32px; height: 32px; border: 2px solid #cbcbcb; border-radius: 50%; background: #fff; color: #fff; transition: all .3s ease; }
+.workflow-step-circle.active { border-color: $color-primary; }
+.workflow-step-circle.completed { border-color: $color-primary; background: $color-primary; }
+.workflow-step-inner-circle { width: 12px; height: 12px; border-radius: 50%; background: $color-primary; }
+.workflow-step-checkmark { color: #fff; font-size: 16px; line-height: 1; }
+.workflow-connector-line { position: absolute; z-index: 0; inset-inline-start: 50%; top: 50%; width: 100%; height: 3px; border-radius: 2px; background: #cbcbcb; transform: translateY(-50%); transition: background .3s ease; }
+.workflow-connector-line.completed { background: $color-primary; }
+.workflow-form, .workflow-form-grid, .workflow-form-grid > * { min-width: 0; }
+.workflow-form-grid .p-inputtext, .workflow-form-grid .p-select, .workflow-form-grid .p-datepicker { max-width: 100%; min-width: 0; }
+
+@media (max-width: 640px) {
+  .workflow-stepper-container { overflow: visible; }
+  .workflow-stepper { flex-direction: column; align-items: stretch; width: 100%; min-width: 0; }
+  .workflow-step-wrapper { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: start; column-gap: 12px; flex: none; }
+  .workflow-step-wrapper:not(:last-child) { padding-bottom: 24px; }
+  .workflow-step-progress { grid-column: 1; grid-row: 1; position: static; width: 32px; margin-top: 0; }
+  .workflow-step-circle { box-sizing: border-box; }
+  .workflow-connector-line { inset-inline-start: 15px; top: 16px; width: 2px; height: 100%; transform: none; }
+}
+
+.management-list-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 32px;
+  color: #2c142f;
+}
