@@ -214,6 +214,17 @@ public static class PermissionKeys
         public const string Manage = "rooms.manage";
     }
 
+    public static class QuestionBanks
+    {
+        public const string View = "question-banks.view";
+    }
+
+    public static class QuestionBankRequests
+    {
+        public const string View = "question-bank-requests.view";
+        public const string Create = "question-bank-requests.create";
+    }
+
     public static class InterviewEvaluationBank
     {
         public const string View = "interview-evaluation-bank.view";

@@ -73,10 +73,11 @@ public sealed class ExamsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ViewBanks([FromQuery] Guid jobId, CancellationToken ct)
         => (await mediator.Send(new GetExamBanksQuery(jobId), ct)).ToActionResult();
 
-    [HttpGet("wizard/existing")]
-    [AuthorizePermission(PermissionKeys.Exams.View)]
-    public async Task<IActionResult> Existing([FromQuery] Guid jobId, CancellationToken ct)
-        => (await mediator.Send(new GetExistingExamQuery(jobId), ct)).ToActionResult();
+    [HttpGet("wizard/job-selection")]
+    [AuthorizePermission(PermissionKeys.Exams.Create)]
+    public async Task<IActionResult> JobSelection([FromQuery] Guid jobId, [FromQuery] Guid? excludeExamId,
+        CancellationToken ct)
+        => (await mediator.Send(new GetExamJobSelectionQuery(jobId, excludeExamId), ct)).ToActionResult();
 
     [HttpGet("{id:guid}/configuration")]
     [AuthorizePermission(PermissionKeys.Exams.Create)]

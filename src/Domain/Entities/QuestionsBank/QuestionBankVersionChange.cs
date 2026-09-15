@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(QuestionBankVersionChange), Schema = Schemas.Hr)]
-public class QuestionBankVersionChange : BaseEntity
+public class QuestionBankVersionChange : EventEntity
 {
     public Guid QuestionBankId { get; set; }
 

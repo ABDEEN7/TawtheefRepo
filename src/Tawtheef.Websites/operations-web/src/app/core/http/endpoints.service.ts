@@ -379,7 +379,7 @@ export class EndpointsService {
     wizardBanks: this.getFullUrl('/exams/wizard/banks'),
     viewJobs: this.getFullUrl('/exams/wizard/view/jobs'),
     viewBanks: this.getFullUrl('/exams/wizard/view/banks'),
-    existing: this.getFullUrl('/exams/wizard/existing'),
+    jobSelection: this.getFullUrl('/exams/wizard/job-selection'),
     configuration: (id: string) => this.getFullUrl(`/exams/${id}/configuration`),
     viewConfiguration: (id: string) => this.getFullUrl(`/exams/${id}/configuration/view`),
     approve: (id: string) => this.getFullUrl(`/exams/${id}/approve`),
@@ -395,6 +395,27 @@ export class EndpointsService {
     list: this.getFullUrl('/test-slots'),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
     wizardAvailableRooms: this.getFullUrl('/test-slots/wizard/rooms'),
+  };
+
+  questionBanks = {
+    list: this.getFullUrl('/questionbanks'),
+    lookups: {
+      questionBankTypes: this.getFullUrl('/questionbanks/lookups/question-bank-types'),
+      managements: this.getFullUrl('/questionbanks/lookups/managements'),
+      jobTitles: this.getFullUrl('/questionbanks/lookups/job-titles')
+    }
+  };
+
+  questionBankRequests = {
+    list: this.getFullUrl('/questionbankrequests'),
+    create: this.getFullUrl('/questionbankrequests'),
+    lookups: {
+      questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
+      managements: this.getFullUrl('/questionbankrequests/lookups/managements'),
+      jobTitles: this.getFullUrl('/questionbankrequests/lookups/job-titles'),
+      requestTypes: this.getFullUrl('/questionbankrequests/lookups/request-types'),
+      statuses: this.getFullUrl('/questionbankrequests/lookups/statuses')
+    }
   };
 
   rooms = {

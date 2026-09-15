@@ -10,6 +10,7 @@ import { ExamJobDto } from '../models/exam-job.dto';
 import { ExamBankDto } from '../models/exam-bank.dto';
 import { ExamConfigurationDto } from '../models/exam-configuration.dto';
 import { SavedExamDto } from '../models/saved-exam.dto';
+import { ExamJobSelectionDto } from '../models/exam-job-selection.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ExamsService {
@@ -36,8 +37,11 @@ export class ExamsService {
     );
   }
 
-  existing(jobId: string): Observable<ExamConfigurationDto | null> {
-    return this.http.get<ExamConfigurationDto | null>(this.endpoints.exams.existing, { jobId });
+  jobSelection(jobId: string, excludeExamId?: string): Observable<ExamJobSelectionDto> {
+    return this.http.get<ExamJobSelectionDto>(this.endpoints.exams.jobSelection, {
+      jobId,
+      excludeExamId,
+    });
   }
 
   configuration(id: string, view = false): Observable<ExamConfigurationDto> {

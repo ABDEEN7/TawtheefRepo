@@ -102,6 +102,29 @@ public static class Permissions
                 81);
     }
 
+    public static class QuestionBanks
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.QuestionBanks.View,
+                nameof(PermissionKeys.QuestionBanks),
+                PermissionAction.View,
+                "Question Banks - View",
+                "بنوك الأسئلة - عرض",
+                84);
+    }
+
+    public static class QuestionBankRequests
+    {
+        public static readonly PermissionDefinition View = Def(
+            PermissionKeys.QuestionBankRequests.View, nameof(PermissionKeys.QuestionBankRequests),
+            PermissionAction.View, "Question Bank Requests - View", "طلبات بنوك الأسئلة - عرض", 85);
+
+        public static readonly PermissionDefinition Create = Def(
+            PermissionKeys.QuestionBankRequests.Create, nameof(PermissionKeys.QuestionBankRequests),
+            PermissionAction.Create, "Question Bank Requests - Create", "طلبات بنوك الأسئلة - إنشاء", 86);
+    }
+
     // =========================
     // Admin Console
     // =========================
@@ -757,7 +780,7 @@ public static class Permissions
                 nameof(PermissionKeys.InvitationExpiryConfiguration),
                 PermissionAction.View,
                 "Invitation Expiry Configuration - View",
-                "Invitation Expiry Configuration - View",
+                "إعدادات انتهاء صلاحية الدعوة - عرض",
                 100);
 
         public static readonly PermissionDefinition Manage =
@@ -766,7 +789,7 @@ public static class Permissions
                 nameof(PermissionKeys.InvitationExpiryConfiguration),
                 PermissionAction.Manage,
                 "Invitation Expiry Configuration - Manage",
-                "Invitation Expiry Configuration - Manage",
+                "إعدادات انتهاء صلاحية الدعوة - إدارة",
                 101);
     }
 

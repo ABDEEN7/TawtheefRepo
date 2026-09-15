@@ -5,7 +5,7 @@ using Tawtheef.Domain.Entities.Lookups;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(QuestionBankRequestHistory), Schema = Schemas.Hr)]
-public class QuestionBankRequestHistory : BaseEntity
+public class QuestionBankRequestHistory : EventEntity
 {
 
     public Guid RequestId { get; set; }

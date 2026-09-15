@@ -159,5 +159,11 @@ export const portalRoutes = {
   },
   get testSlotsManagement() {
     return this.portal + '/' + this.testSlotsManagementPath;
+  },
+  get questionBanks() {
+    return this.portal + '/question-banks';
+  },
+  get questionBankRequests() {
+    return this.portal + '/question-bank-requests';
   }
 }

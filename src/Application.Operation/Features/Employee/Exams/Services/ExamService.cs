@@ -1,25 +1,31 @@
 using Application.Operation.Features.Employee.Exams.DTOs;
-using Application.Operation.Features.Employee.Exams.Queries;
-using FluentResults;
 using Mapster;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 
-namespace Application.Operation.Features.Employee.Exams.Handlers.Queries;
+namespace Application.Operation.Features.Employee.Exams.Services;
 
-public sealed class GetExistingExamQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetExistingExamQuery, IResult<ExamConfigurationDto?>>
+public sealed class ExamService(IUnitOfWork unitOfWork)
 {
-    public async Task<IResult<ExamConfigurationDto?>> Handle(GetExistingExamQuery request, CancellationToken ct)
+    public Task<bool> HasPendingApprovalExamForJobAsync(
+        Guid jobId,
+        Guid? excludeExamId,
+        CancellationToken ct)
+        => unitOfWork.Context.Set<Exam>().AsNoTracking()
+            .AnyAsync(x => x.JobId == jobId &&
+                x.StatusId == ExamStatusIds.PendingApproval &&
+                (!excludeExamId.HasValue || x.Id != excludeExamId.Value), ct);
+
+    public async Task<ExamConfigurationDto?> GetApprovedForJobAsync(Guid jobId, CancellationToken ct)
     {
         var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking()
-            .Where(x => x.JobId == request.JobId && x.StatusId == ExamStatusIds.Approved)
+            .Where(x => x.JobId == jobId && x.StatusId == ExamStatusIds.Approved)
             .OrderByDescending(x => x.DecisionAt).ThenByDescending(x => x.CreatedDate).ThenBy(x => x.Id)
             .FirstOrDefaultAsync(ct);
-        if (exam == null) return Result.Ok<ExamConfigurationDto?>(null);
+        if (exam == null) return null;
+
         var dto = exam.Adapt<ExamConfigurationDto>();
         var parts = await unitOfWork.Context.Set<ExamPart>().AsNoTracking()
             .Where(x => x.ExamId == exam.Id).OrderBy(x => x.PartNo).ToListAsync(ct);
@@ -32,6 +38,6 @@ public sealed class GetExistingExamQueryHandler(IUnitOfWork unitOfWork)
             result.Categories = categories.Where(x => x.ExamPartId == part.Id).Adapt<List<ExamCategoryDto>>();
             return result;
         }).ToList();
-        return Result.Ok<ExamConfigurationDto?>(dto);
+        return dto;
     }
 }

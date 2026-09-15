@@ -9,6 +9,9 @@ public class ExamConfiguration : BaseEntityConfiguration<Exam>
     public override void Configure(EntityTypeBuilder<Exam> builder)
     {
         base.Configure(builder);
+        
+        builder.HasIndex(x => x.ExamNo)
+            .IsUnique();
 
         builder.HasOne(x => x.Job)
             .WithMany()

@@ -4,7 +4,7 @@ using Tawtheef.Domain.Common;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(Question), Schema = Schemas.Hr)]
-public class Question : BaseEntity
+public class Question : EventEntity
 {
     public string? QuestionCode { get; set; }
     
