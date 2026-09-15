@@ -1,18 +1,16 @@
 using Application.Operation.Features.Employee.QuestionBankRequests.Commands;
 using FluentResults;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.QuestionBankRequests.Handlers.Commands;
 
 public sealed class CreateQuestionBankRequestCommandHandler(
-    IUnitOfWork unitOfWork, ICurrentUserService currentUserService, UserManager<User> userManager)
+    IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
     : IRequestHandler<CreateQuestionBankRequestCommand, IResult<Guid>>
 {
     private static readonly Guid[] OpenStatuses =
@@ -30,14 +28,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
 
         if (!Guid.TryParse(currentUserService.UserId, out var userId))
             return Result.Fail<Guid>(new Error("Unauthorized").WithMetadata("Code", "Unauthorized"));
-
-        var employeeProfileId = await userManager.Users.AsNoTracking()
-            .OfType<EmployeeUser>()
-            .Where(x => x.Id == userId)
-            .Select(x => (Guid?)x.EmployeeProfileId)
-            .SingleOrDefaultAsync(cancellationToken);
-        if (!employeeProfileId.HasValue)
-            return Result.Fail<Guid>(new Error("Unauthorized").WithMetadata("Code", "Unauthorized"));
+        
 
         return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {
@@ -77,7 +68,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 StatusId = QuestionBankRequestStatusIds.PendingAssignment,
                 CurrentReviewRound = 0,
                 Reason = request.Reason?.Trim(),
-                SubmittedById = employeeProfileId.Value,
+                SubmittedById = userId,
                 SubmittedAt = DateTime.UtcNow
             };
             await unitOfWork.GetEntityRepository<QuestionBankRequest>().AddAsync(questionBankRequest, ct);
