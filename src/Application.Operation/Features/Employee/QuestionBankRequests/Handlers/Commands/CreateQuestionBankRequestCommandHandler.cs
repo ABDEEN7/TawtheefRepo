@@ -27,8 +27,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (validation is not null) return Result.Fail<Guid>(validation);
 
         if (!Guid.TryParse(currentUserService.UserId, out var userId))
-            return Result.Fail<Guid>(new Error("Unauthorized").WithMetadata("Code", "Unauthorized"));
-        
+            return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
 
         return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {
@@ -39,7 +38,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
                  (x.QuestionBank.ManagementId == request.ManagementId && x.QuestionBank.JobTitleId == request.JobTitleId)), ct);
             if (openConflict)
-                return Conflict("A question bank creation request is already in progress for the selected data.");
+                return Result.Fail<Guid>(ErrorsCodes.QuestionBankCreationRequestAlreadyInProgress);
 
             var banks = unitOfWork.GetEntityRepository<QuestionBank>().DbSet;
             var bankConflict = await banks.AsNoTracking().AnyAsync(x =>
@@ -47,7 +46,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
                  (x.ManagementId == request.ManagementId && x.JobTitleId == request.JobTitleId)), ct);
             if (bankConflict)
-                return Conflict("A question bank already exists for the selected data. Please submit a maintenance request for the existing bank.");
+                return Result.Fail<Guid>(ErrorsCodes.QuestionBankAlreadyExists);
 
             var bank = new QuestionBank
             {
@@ -77,28 +76,22 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         }, cancellationToken);
     }
 
-    private static Error? ValidateTarget(CreateQuestionBankRequestCommand request)
+    private static string? ValidateTarget(CreateQuestionBankRequestCommand request)
     {
         if (request.StageId.HasValue)
-            return Validation("Stage is not supported for question bank creation requests.");
+            return ErrorsCodes.QuestionBankCreationRequestStageNotSupported;
 
         if (request.QuestionBankTypeId == QuestionBankTypeIds.SPECIALIZED)
             return request.ManagementId.HasValue && request.JobTitleId.HasValue
                 ? null
-                : Validation("Management and job title are required for specialized question banks.");
+                : ErrorsCodes.SpecializedQuestionBankTargetRequired;
 
         if (request.QuestionBankTypeId is var type &&
             (type == QuestionBankTypeIds.SKILLS || type == QuestionBankTypeIds.EDUCATIONAL))
             return request.ManagementId.HasValue || request.JobTitleId.HasValue
-                ? Validation("Management and job title must be empty for this question bank type.")
+                ? ErrorsCodes.QuestionBankTargetNotAllowed
                 : null;
 
-        return Validation("Invalid question bank type.");
+        return ErrorsCodes.InvalidQuestionBankType;
     }
-
-    private static IResult<Guid> Conflict(string message) =>
-        Result.Fail<Guid>(new Error(message).WithMetadata("Code", "Conflict").WithMetadata("UserMessage", message));
-
-    private static Error Validation(string message) =>
-        new Error(message).WithMetadata("Code", "Validation").WithMetadata("UserMessage", message);
 }
