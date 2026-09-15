@@ -185,14 +185,17 @@ export class ExamWorkflowComponent implements OnInit {
     this.jobChanges$
       .pipe(
         switchMap((jobId) => {
+          if (!jobId) return of(null);
+
           this.jobLoading = true;
           this.jobFailed = false;
-          return forkJoin({
-            banks: this.service.banks(jobId, this.isViewMode),
-            existing: this.auth.hasPermission(Permissions.Exams.View)
-              ? this.service.existing(jobId).pipe(catchError(() => of(null)))
-              : of(null),
-          }).pipe(
+          return this.service.jobSelection(jobId, this.draftId ?? undefined).pipe(
+            switchMap((selection) => {
+              if (selection.hasPendingApprovalExam) return of({ selection, banks: null });
+              return this.service
+                .banks(jobId, this.isViewMode)
+                .pipe(map((banks) => ({ selection, banks })));
+            }),
             catchError(() => {
               this.jobFailed = true;
               return of(null);
@@ -204,8 +207,23 @@ export class ExamWorkflowComponent implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        this.banks = result.banks;
-        if (result.existing) this.offerCopy(result.existing);
+        if (result.selection.hasPendingApprovalExam) {
+          this.notifications.warn(
+            this.translate.instant('server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB'),
+          );
+          this.form.controls.jobId.setValue(this.selectedJob?.id ?? '', { emitEvent: false });
+          return;
+        }
+
+        this.selectedJob = this.jobs.find((job) => job.id === this.form.controls.jobId.value) ?? null;
+        this.banks = result.banks ?? [];
+        this.parts.controls.forEach((part) =>
+          part.controls.categories.controls.forEach((category) =>
+            category.controls.questionBankVersionId.setValue(''),
+          ),
+        );
+        this.errors = [];
+        if (result.selection.approvedExam) this.offerCopy(result.selection.approvedExam);
       });
   }
 
@@ -298,13 +316,20 @@ export class ExamWorkflowComponent implements OnInit {
   }
 
   onJobSelected(id: string): void {
-    this.selectedJob = this.jobs.find((j) => j.id === id) ?? null;
+    if (id) {
+      this.jobChanges$.next(id);
+      return;
+    }
+
+    this.selectedJob = null;
     this.banks = [];
-    this.parts.controls.forEach((p) =>
-      p.controls.categories.controls.forEach((c) => c.controls.questionBankVersionId.setValue('')),
+    this.parts.controls.forEach((part) =>
+      part.controls.categories.controls.forEach((category) =>
+        category.controls.questionBankVersionId.setValue(''),
+      ),
     );
     this.errors = [];
-    if (id) this.jobChanges$.next(id);
+    this.jobChanges$.next('');
   }
 
   retryJob(): void {
@@ -415,7 +440,8 @@ export class ExamWorkflowComponent implements OnInit {
             this.navigateToExamManagement();
           }
         },
-        error: () => this.notifyError(),
+        // The centralized error interceptor displays localized business errors returned by the API.
+        error: () => {},
       });
   }
 

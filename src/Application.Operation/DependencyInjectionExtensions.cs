@@ -9,6 +9,7 @@ using Application.Operation.Features.Employee.JobManagement.JobCandidates.Servic
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Services;
+using Application.Operation.Features.Employee.Exams.Services;
 using Application.Operation.Features.Employee.ProfileManagement.ProfileDistribution.Handlers;
 using FluentValidation;
 using Mapster;
@@ -59,6 +60,7 @@ namespace Application.Operation
                 services.RegisterCandidateUsersServices();
                 services.RegisterJobManagementServices();
                 services.RegisterJobInvitationSummaryServices();
+                services.AddScoped<ExamService>();
             }
 
             private void RegisterEmployeeCommonServices()

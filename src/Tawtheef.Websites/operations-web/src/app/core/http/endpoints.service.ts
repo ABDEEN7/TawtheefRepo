@@ -379,7 +379,7 @@ export class EndpointsService {
     wizardBanks: this.getFullUrl('/exams/wizard/banks'),
     viewJobs: this.getFullUrl('/exams/wizard/view/jobs'),
     viewBanks: this.getFullUrl('/exams/wizard/view/banks'),
-    existing: this.getFullUrl('/exams/wizard/existing'),
+    jobSelection: this.getFullUrl('/exams/wizard/job-selection'),
     configuration: (id: string) => this.getFullUrl(`/exams/${id}/configuration`),
     viewConfiguration: (id: string) => this.getFullUrl(`/exams/${id}/configuration/view`),
     approve: (id: string) => this.getFullUrl(`/exams/${id}/approve`),
