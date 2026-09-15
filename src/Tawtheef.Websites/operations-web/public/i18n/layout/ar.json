@@ -85,5 +85,7 @@
   "common.relativeTime.daysAgo": "منذ {{count}} يوم",
   "internal.sidebar.rooms": "إدارة القاعات",
   "internal.sidebar.exams": "اختبارات الوظائف",
+  "internal.sidebar.question-banks": "بنوك الأسئلة",
+  "internal.sidebar.question-bank-requests": "طلبات بنوك الأسئلة",
   "internal.sidebar.locations": "إدارة المواقع"
 }

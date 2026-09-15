@@ -6,7 +6,7 @@ using Tawtheef.Domain.Entities.Users;
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
 [Table(nameof(QuestionBankRequestItemReview), Schema = Schemas.Hr)]
-public class QuestionBankRequestItemReview : BaseEntity
+public class QuestionBankRequestItemReview : EventEntity
 {
     public Guid RequestItemId { get; set; }
 
