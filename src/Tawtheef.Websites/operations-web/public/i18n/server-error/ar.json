@@ -316,5 +316,11 @@
   "server-error.LOCATION_NAME_EXISTS_FOR_LINK": "يوجد موقع بالاسم العربي أو الإنجليزي نفسه لرابط الموقع هذا.",
   "server-error.ROOM_NOT_FOUND": "القاعة غير موجودة.",
   "server-error.LOCATION_NOT_FOUND": "الموقع غير موجود.",
-  "server-error.LOCATION_ALREADY_USED": "لا يمكن حذف الموقع لأنه مستخدم في قاعة واحدة أو أكثر."
+  "server-error.LOCATION_ALREADY_USED": "لا يمكن حذف الموقع لأنه مستخدم في قاعة واحدة أو أكثر.",
+  "server-error.QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS": "يوجد بالفعل طلب إنشاء بنك أسئلة قيد المعالجة للبيانات المحددة.",
+  "server-error.QUESTION_BANK_ALREADY_EXISTS": "يوجد بالفعل بنك أسئلة للبيانات المحددة. يرجى تقديم طلب صيانة للبنك الموجود.",
+  "server-error.QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED": "المرحلة غير مدعومة في طلبات إنشاء بنوك الأسئلة.",
+  "server-error.SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED": "الإدارة والمسمى الوظيفي مطلوبان لبنوك الأسئلة التخصصية.",
+  "server-error.QUESTION_BANK_TARGET_NOT_ALLOWED": "يجب عدم تحديد الإدارة والمسمى الوظيفي لهذا النوع من بنوك الأسئلة.",
+  "server-error.INVALID_QUESTION_BANK_TYPE": "نوع بنك الأسئلة غير صالح."
 }

@@ -316,5 +316,11 @@
   "server-error.LOCATION_NAME_EXISTS_FOR_LINK": "A location with the same Arabic or English name already exists for this location link.",
   "server-error.ROOM_NOT_FOUND": "Room not found.",
   "server-error.LOCATION_NOT_FOUND": "Location not found.",
-  "server-error.LOCATION_ALREADY_USED": "This location cannot be deleted because it is used by one or more rooms."
+  "server-error.LOCATION_ALREADY_USED": "This location cannot be deleted because it is used by one or more rooms.",
+  "server-error.QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS": "A question bank creation request is already in progress for the selected data.",
+  "server-error.QUESTION_BANK_ALREADY_EXISTS": "A question bank already exists for the selected data. Please submit a maintenance request for the existing bank.",
+  "server-error.QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED": "Stage is not supported for question bank creation requests.",
+  "server-error.SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED": "Management and job title are required for specialized question banks.",
+  "server-error.QUESTION_BANK_TARGET_NOT_ALLOWED": "Management and job title must be empty for this question bank type.",
+  "server-error.INVALID_QUESTION_BANK_TYPE": "Invalid question bank type."
 }
