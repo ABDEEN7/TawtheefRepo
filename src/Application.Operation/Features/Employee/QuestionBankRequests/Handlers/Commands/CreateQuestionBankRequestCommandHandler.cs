@@ -45,7 +45,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
             var openConflict = await requests.AsNoTracking().AnyAsync(x =>
                 x.RequestTypeId == QuestionBankRequestTypeIds.CREATE && OpenStatuses.Contains(x.StatusId) &&
                 x.QuestionBank.QuestionBankTypeId == request.QuestionBankTypeId &&
-                (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
+                (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.QuestionBank.ManagementId == request.ManagementId && x.QuestionBank.JobTitleId == request.JobTitleId)), ct);
             if (openConflict)
                 return Conflict("A question bank creation request is already in progress for the selected data.");
@@ -53,7 +53,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
             var banks = unitOfWork.GetEntityRepository<QuestionBank>().DbSet;
             var bankConflict = await banks.AsNoTracking().AnyAsync(x =>
                 x.QuestionBankTypeId == request.QuestionBankTypeId &&
-                (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
+                (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.ManagementId == request.ManagementId && x.JobTitleId == request.JobTitleId)), ct);
             if (bankConflict)
                 return Conflict("A question bank already exists for the selected data. Please submit a maintenance request for the existing bank.");
@@ -91,13 +91,13 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (request.StageId.HasValue)
             return Validation("Stage is not supported for question bank creation requests.");
 
-        if (request.QuestionBankTypeId == QuestionBankTypeIds.SPECIALIZED)
+        if (request.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
             return request.ManagementId.HasValue && request.JobTitleId.HasValue
                 ? null
                 : Validation("Management and job title are required for specialized question banks.");
 
         if (request.QuestionBankTypeId is var type &&
-            (type == QuestionBankTypeIds.SKILLS || type == QuestionBankTypeIds.EDUCATIONAL))
+            (type == QuestionBankTypeIds.Skills || type == QuestionBankTypeIds.Educational))
             return request.ManagementId.HasValue || request.JobTitleId.HasValue
                 ? Validation("Management and job title must be empty for this question bank type.")
                 : null;
