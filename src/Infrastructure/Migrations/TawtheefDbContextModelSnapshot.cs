@@ -23330,7 +23330,7 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankAssignment", b =>
                 {
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "AssignedByUser")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "AssignedByUser")
                         .WithMany()
                         .HasForeignKey("AssignedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -23346,7 +23346,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "Employee")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -23401,7 +23401,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("DeletedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "FinalDecisionBy")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "FinalDecisionBy")
                         .WithMany()
                         .HasForeignKey("FinalDecisionById")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -23424,7 +23424,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "SubmittedBy")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "SubmittedBy")
                         .WithMany()
                         .HasForeignKey("SubmittedById")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -23541,7 +23541,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "RemovedBy")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "RemovedBy")
                         .WithMany()
                         .HasForeignKey("RemovedById")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -23610,7 +23610,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "ReviewedBy")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "ReviewedBy")
                         .WithMany()
                         .HasForeignKey("ReviewedById")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -23659,7 +23659,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tawtheef.Domain.Entities.Users.EmployeeProfile", "ReviewedBy")
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "ReviewedBy")
                         .WithMany()
                         .HasForeignKey("ReviewedById")
                         .OnDelete(DeleteBehavior.Restrict)

@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
 
@@ -29,9 +30,13 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (!Guid.TryParse(currentUserService.UserId, out var userId))
             return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
 
+
+        var requestsRepo = unitOfWork.GetEntityRepository<QuestionBankRequest>();
+        var banksRepo = unitOfWork.GetEntityRepository<QuestionBank>();
+
         return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {
-            var requests = unitOfWork.GetEntityRepository<QuestionBankRequest>().DbSet;
+            var requests = requestsRepo.DbSet;
             var openConflict = await requests.AsNoTracking().AnyAsync(x =>
                 x.RequestTypeId == QuestionBankRequestTypeIds.CREATE && OpenStatuses.Contains(x.StatusId) &&
                 x.QuestionBank.QuestionBankTypeId == request.QuestionBankTypeId &&
@@ -40,7 +45,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
             if (openConflict)
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankCreationRequestAlreadyInProgress);
 
-            var banks = unitOfWork.GetEntityRepository<QuestionBank>().DbSet;
+            var banks = banksRepo.DbSet;
             var bankConflict = await banks.AsNoTracking().AnyAsync(x =>
                 x.QuestionBankTypeId == request.QuestionBankTypeId &&
                 (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
@@ -57,7 +62,8 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 IsActive = false,
                 CurrentApprovedVersionId = null
             };
-            await unitOfWork.GetEntityRepository<QuestionBank>().AddAsync(bank, ct);
+
+            await banksRepo.AddAsync(bank, ct);
 
             var questionBankRequest = new QuestionBankRequest
             {
@@ -70,7 +76,8 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 SubmittedById = userId,
                 SubmittedAt = DateTime.UtcNow
             };
-            await unitOfWork.GetEntityRepository<QuestionBankRequest>().AddAsync(questionBankRequest, ct);
+
+            await requestsRepo.AddAsync(questionBankRequest, ct);
             await unitOfWork.SaveChangesAsync(ct);
             return Result.Ok(questionBankRequest.Id);
         }, cancellationToken);

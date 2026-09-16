@@ -19,6 +19,13 @@ public sealed class ListQuestionBankRequestsQueryHandler(IUnitOfWork unitOfWork,
     {
         var search = request.Search?.Trim();
         var query = unitOfWork.GetEntityRepository<QuestionBankRequest>().DbSet.AsNoTracking()
+            .Include(x => x.RequestType)
+            .Include(x => x.Status)
+            .Include(x => x.SubmittedBy)
+            .Include(x => x.QuestionBank)
+            .Include(x => x.QuestionBank.QuestionBankType)
+            .Include(x => x.QuestionBank.Management)
+            .Include(x => x.QuestionBank.JobTitle)
             .WhereIf(!string.IsNullOrWhiteSpace(search), x =>
                 EF.Functions.Like(x.RequestType.NameAr, $"%{search}%") || EF.Functions.Like(x.RequestType.NameEn, $"%{search}%") ||
                 EF.Functions.Like(x.Status.NameAr, $"%{search}%") || EF.Functions.Like(x.Status.NameEn, $"%{search}%") ||
