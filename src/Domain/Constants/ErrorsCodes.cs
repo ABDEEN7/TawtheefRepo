@@ -320,6 +320,7 @@ public class ErrorsCodes
     // =========================================================
     #region Exam
     public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
+    public const string ExamPendingApprovalAlreadyExistsForJob = "EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";

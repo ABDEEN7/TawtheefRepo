@@ -1,5 +1,6 @@
 {
   "server-error.EXAM_CREATED_DATE_RANGE_INVALID": "Created From cannot be later than Created To.",
+  "server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB": "There is already an exam request for this job awaiting approval.",
   "server-error.UNAUTHORIZED_ACTION": "You are not authorized to perform this action.",
   "server-error.INVALID_RECAPTCHA": "Recaptcha verification failed.",
   "server-error.INVALID_DEVICE_ID": "Invalid device identifier.",

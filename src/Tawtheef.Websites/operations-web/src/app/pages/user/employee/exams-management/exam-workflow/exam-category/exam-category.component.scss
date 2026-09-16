@@ -1,0 +1,17 @@
+.exam-category-form {
+  min-width: 0;
+}
+
+:host ::ng-deep {
+  .exam-form-grid > * {
+    min-width: 0;
+  }
+
+  .exam-form-grid .p-select,
+  .exam-form-grid .p-inputnumber,
+  .exam-form-grid .p-inputnumber-input {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+}

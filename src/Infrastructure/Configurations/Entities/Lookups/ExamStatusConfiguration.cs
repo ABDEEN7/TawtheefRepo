@@ -48,6 +48,11 @@ public class ExamStatusConfiguration : LookupBaseConfiguration<ExamStatus>
                 NameEn = "Cancelled",
                 NameAr = "ملغي",
                 DisplayOrder = 5
+            },
+            new ExamStatus
+            {
+                Id = ExamStatusIds.Rejected, BackendName = "REJECTED", NameEn = "Rejected",
+                NameAr = "مرفوض", DisplayOrder = 6
             }
         );
     }

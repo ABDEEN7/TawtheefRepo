@@ -1,0 +1,18 @@
+@if (active) {
+  <div class="exam-part-form" [formGroup]="form">
+    <h5 class="text-primary d-flex align-items-center my-3"><i class="hgi hgi-stroke hgi-clipboard-check-01 me-1"></i>{{ 'EXAM_WIZARD.PART_TWO' | translate }}</h5>
+    <div class="row g-3 mb-3 exam-part-fields">
+      <div class="col-12 col-md-6 col-xl-4"><label class="form-label">{{ 'EXAM_WIZARD.TITLE_AR' | translate }} <span class="text-danger">*</span></label><input pInputText id="part-ar-1" class="w-100" [class.bg-light]="isViewMode" formControlName="titleAr" maxlength="200" /></div>
+      <div class="col-12 col-md-6 col-xl-4"><label class="form-label">{{ 'EXAM_WIZARD.TITLE_EN' | translate }}</label><input pInputText class="w-100" [class.bg-light]="isViewMode" formControlName="titleEn" maxlength="200" /></div>
+      <div class="col-12 col-sm-6 col-xl-2"><label class="form-label">{{ 'EXAM_WIZARD.DURATION' | translate }}</label><p-inputnumber formControlName="durationMinutes" [min]="0" styleClass="w-100" [inputStyleClass]="isViewMode ? 'bg-light' : ''" /></div>
+      <div class="col-12 col-sm-6 col-xl-2"><label class="form-label">{{ 'EXAM_WIZARD.QUALIFICATION' | translate }}</label><p-inputnumber formControlName="qualificationScore" [min]="0" [max]="100" suffix="%" styleClass="w-100" [inputStyleClass]="isViewMode ? 'bg-light' : ''" /></div>
+    </div>
+    @for (category of form.controls.categories.controls; track category; let c = $index) {
+      <div class="card card-table mb-3"><div class="card-body">
+        @if (!isViewMode) { <div class="text-end mb-2"><button pButton type="button" severity="danger" [outlined]="true" (click)="removeCategory(c)">{{ 'EXAM_WIZARD.REMOVE_CATEGORY' | translate }}</button></div> }
+        <app-exam-category [form]="category" [prefix]="'category-1-' + c" [isViewMode]="isViewMode" [banks]="banks" [categories]="nonSpecializedCategories" [usedCategories]="categoryIds()" [hideCategory]="false" />
+      </div></div>
+    }
+    @if (!isViewMode && form.controls.categories.length < nonSpecializedCategories.length) { <button pButton type="button" [outlined]="true" (click)="addCategory()">{{ 'EXAM_WIZARD.ADD_CATEGORY' | translate }}</button> }
+  </div>
+}

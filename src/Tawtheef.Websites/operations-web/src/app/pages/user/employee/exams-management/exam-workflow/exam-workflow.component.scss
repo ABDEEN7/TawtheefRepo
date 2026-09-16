@@ -1,0 +1,242 @@
+.exam-wizard-stepper-card {
+  overflow: hidden;
+}
+
+.exam-stepper-container {
+  overflow-x: auto;
+}
+
+.exam-stepper {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 680px;
+  margin-inline: auto;
+}
+
+.exam-step-wrapper {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.exam-step-label,
+.exam-step-circle {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.exam-step-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 48px;
+  color: #999;
+  font-family: 'Cairo', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  transition: color 0.3s ease;
+
+  &.active,
+  &.completed {
+    color: #8a1538;
+  }
+
+  i {
+    flex: 0 0 auto;
+    font-size: 18px;
+  }
+}
+
+.exam-step-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.exam-step-circle {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbcbcb;
+  border-radius: 50%;
+  background: #fff;
+  color: #fff;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-color: #8a1538;
+  }
+
+  &.completed {
+    border-color: #8a1538;
+    background: #8a1538;
+  }
+}
+
+.exam-step-inner-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #8a1538;
+}
+
+.exam-step-checkmark {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.exam-connector-line {
+  position: absolute;
+  z-index: 0;
+  inset-inline-start: 50%;
+  top: 50%;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: #cbcbcb;
+  // transform: translateY(-50%);
+  transition: background 0.3s ease;
+
+  &.completed {
+    background: #8a1538;
+  }
+}
+
+// :host-context([dir='rtl']) .exam-connector-line {
+//   inset-inline-start: auto;
+//   inset-inline-end: 50%;
+// }
+
+.exam-step-label {
+  flex: 1;
+}
+
+.exam-step-progress {
+  flex-shrink: 0;
+}
+
+.exam-connector-line {
+  transform: translateY(-50%);
+}
+
+@media (max-width: 640px) {
+  .exam-stepper-container {
+    overflow: visible;
+  }
+
+  .exam-stepper {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    gap: 0;
+  }
+
+  .exam-step-wrapper {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: start;
+    column-gap: 12px;
+    flex: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .exam-step-wrapper:not(:last-child) {
+    padding-bottom: 24px;
+  }
+
+  .exam-step-label {
+  flex: none;
+}
+
+  .exam-step-progress {
+    grid-column: 1;
+    grid-row: 1;
+    position: static;
+    width: 32px;
+    margin-top: 0;
+  }
+
+  .exam-step-circle {
+    box-sizing: border-box;
+  }
+
+  .exam-connector-line {
+    inset-inline-start: 15px;
+    top: 16px;
+    width: 2px;
+    height: 100%;
+    transform: none;
+  }
+}
+
+.exam-workflow-page {
+  color: #2c142f;
+
+  .exam-summary-details {
+    dt {
+      margin-bottom: 0.25rem;
+      color: #495057;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    dd {
+      margin-bottom: 0;
+      color: #2c142f;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .exam-workflow-form,
+  .exam-part-form {
+    min-width: 0;
+  }
+
+  .exam-form-grid > *,
+  .exam-part-fields > * {
+    min-width: 0;
+  }
+
+  ::ng-deep {
+    .exam-form-grid .p-inputtext,
+    .exam-form-grid .p-select,
+    .exam-form-grid .p-inputnumber,
+    .exam-part-fields .p-inputtext,
+    .exam-part-fields .p-select,
+    .exam-part-fields .p-inputnumber {
+      max-width: 100%;
+      min-width: 0;
+    }
+
+  }
+}
+
+@media (max-width: 767.98px) {
+  .exam-workflow-page {
+    .exam-summary-details > div {
+      margin-bottom: 0.75rem;
+    }
+  }
+}

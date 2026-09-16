@@ -15,9 +15,9 @@ internal static class QuestionBankLookupImporter
         await UpsertLookupAsync<QuestionBankType>(
             context,
             [
-                new(QuestionBankTypeIds.SPECIALIZED, "SPECIALIZED", "تخصصي", "Specialized", 1),
-                new(QuestionBankTypeIds.SKILLS, "SKILLS", "مهارات", "Skills", 2),
-                new(QuestionBankTypeIds.EDUCATIONAL, "EDUCATIONAL", "تربوي", "Educational", 3)
+                new(QuestionBankTypeIds.Specialized, "Specialized", "تخصصي", "Specialized", 1),
+                new(QuestionBankTypeIds.Skills, "Skills", "مهارات", "Skills", 2),
+                new(QuestionBankTypeIds.Educational, "Educational", "تربوي", "Educational", 3)
             ],
             ct);
 

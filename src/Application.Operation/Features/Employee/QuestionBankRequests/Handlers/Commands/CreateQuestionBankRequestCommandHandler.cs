@@ -35,7 +35,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
             var openConflict = await requests.AsNoTracking().AnyAsync(x =>
                 x.RequestTypeId == QuestionBankRequestTypeIds.CREATE && OpenStatuses.Contains(x.StatusId) &&
                 x.QuestionBank.QuestionBankTypeId == request.QuestionBankTypeId &&
-                (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
+                (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.QuestionBank.ManagementId == request.ManagementId && x.QuestionBank.JobTitleId == request.JobTitleId)), ct);
             if (openConflict)
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankCreationRequestAlreadyInProgress);
@@ -43,7 +43,7 @@ public sealed class CreateQuestionBankRequestCommandHandler(
             var banks = unitOfWork.GetEntityRepository<QuestionBank>().DbSet;
             var bankConflict = await banks.AsNoTracking().AnyAsync(x =>
                 x.QuestionBankTypeId == request.QuestionBankTypeId &&
-                (request.QuestionBankTypeId != QuestionBankTypeIds.SPECIALIZED ||
+                (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.ManagementId == request.ManagementId && x.JobTitleId == request.JobTitleId)), ct);
             if (bankConflict)
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankAlreadyExists);
@@ -81,13 +81,13 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (request.StageId.HasValue)
             return ErrorsCodes.QuestionBankCreationRequestStageNotSupported;
 
-        if (request.QuestionBankTypeId == QuestionBankTypeIds.SPECIALIZED)
+        if (request.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
             return request.ManagementId.HasValue && request.JobTitleId.HasValue
                 ? null
                 : ErrorsCodes.SpecializedQuestionBankTargetRequired;
 
         if (request.QuestionBankTypeId is var type &&
-            (type == QuestionBankTypeIds.SKILLS || type == QuestionBankTypeIds.EDUCATIONAL))
+            (type == QuestionBankTypeIds.Skills || type == QuestionBankTypeIds.Educational))
             return request.ManagementId.HasValue || request.JobTitleId.HasValue
                 ? ErrorsCodes.QuestionBankTargetNotAllowed
                 : null;

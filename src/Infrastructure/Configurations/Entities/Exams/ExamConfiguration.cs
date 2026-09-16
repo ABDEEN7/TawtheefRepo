@@ -9,6 +9,9 @@ public class ExamConfiguration : BaseEntityConfiguration<Exam>
     public override void Configure(EntityTypeBuilder<Exam> builder)
     {
         base.Configure(builder);
+        
+        builder.HasIndex(x => x.ExamNo)
+            .IsUnique();
 
         builder.HasOne(x => x.Job)
             .WithMany()
@@ -23,6 +26,12 @@ public class ExamConfiguration : BaseEntityConfiguration<Exam>
         builder.HasOne(x => x.Status)
             .WithMany()
             .HasForeignKey(x => x.StatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.DecisionBy)
+            .WithMany()
+            .HasForeignKey(x => x.DecisionById)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -55,6 +55,10 @@ public static class Permissions
                 "Job Exams - Create",
                 "اختبارات الوظائف - إنشاء",
                 107);
+        public static readonly PermissionDefinition WorkflowActions =
+            Def(PermissionKeys.Exams.WorkflowActions, nameof(PermissionKeys.Exams), PermissionAction.Manage,
+                "Job Exams - Workflow Actions", "إجراءات سير عمل اختبارات الوظائف", 108);
+
     }
 
     public static class Rooms
