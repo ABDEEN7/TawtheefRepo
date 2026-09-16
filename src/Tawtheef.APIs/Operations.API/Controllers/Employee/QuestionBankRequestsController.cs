@@ -16,11 +16,13 @@ namespace Operations.API.Controllers.Employee;
 public sealed class QuestionBankRequestsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
+    [HttpGet("list-question-bank-requests")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> List([FromQuery] ListQuestionBankRequestsQuery query, CancellationToken cancellationToken) =>
         (await mediator.Send(query, cancellationToken)).ToActionResult();
 
     [HttpPost]
+    [HttpPost("create-question-bank-request")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.Create)]
     public async Task<IActionResult> Create([FromBody] CreateQuestionBankRequestCommand command, CancellationToken cancellationToken) =>
         (await mediator.Send(command, cancellationToken)).ToActionResult();
