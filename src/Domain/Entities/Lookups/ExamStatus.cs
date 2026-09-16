@@ -10,6 +10,7 @@ public static class ExamStatusIds
     public static readonly Guid Returned = Guid.Parse("eca730c1-fdac-4b1b-a678-70a34cdc607f");
     public static readonly Guid Approved = Guid.Parse("a72cd921-edff-4f23-aea8-176b5b1ff3b7");
     public static readonly Guid Cancelled = Guid.Parse("e332af61-057e-4e65-a1a0-306be4ef41a1");
+    public static readonly Guid Rejected = Guid.Parse("c1d7506c-ff0a-42f5-9adf-cacf6d9d0681");
 }
 
 [Table(nameof(ExamStatus), Schema = Schemas.Lookup)]

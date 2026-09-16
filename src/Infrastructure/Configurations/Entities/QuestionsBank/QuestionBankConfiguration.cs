@@ -22,7 +22,7 @@ public class QuestionBankConfiguration
             .IsUnique()
             .HasFilter(
                 $"[IsDeleted] = 0 AND " +
-                $"[QuestionBankTypeId] = '{QuestionBankTypeIds.SPECIALIZED}'");
+                $"[QuestionBankTypeId] = '{QuestionBankTypeIds.Specialized}'");
 
         // Skills / Educational:
         // Only one active bank from each type in the whole system.
@@ -31,7 +31,7 @@ public class QuestionBankConfiguration
             .HasFilter(
                 $"[IsDeleted] = 0 AND " +
                 $"[QuestionBankTypeId] IN " +
-                $"('{QuestionBankTypeIds.SKILLS}', '{QuestionBankTypeIds.EDUCATIONAL}')");
+                $"('{QuestionBankTypeIds.Skills}', '{QuestionBankTypeIds.Educational}')");
 
         builder.HasQueryFilter(x => !x.IsDeleted);
 

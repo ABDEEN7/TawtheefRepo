@@ -1,0 +1,25 @@
+<section i18nNamespace="pages/employee/exams-management">
+  <label class="form-label fw-semibold" [attr.for]="action === 'reject' ? 'exam-reject-note' : 'exam-return-note'">
+    {{ (action === 'reject' ? 'EXAMS.REJECT_NOTE' : 'EXAMS.RETURN_NOTE') | translate }} <span class="text-danger">*</span>
+  </label>
+  <textarea
+    pTextarea
+    [id]="action === 'reject' ? 'exam-reject-note' : 'exam-return-note'"
+    class="form-control w-100"
+    rows="5"
+    [formControl]="note"
+    [attr.aria-invalid]="note.invalid && note.touched"
+    [placeholder]="(action === 'reject' ? 'EXAMS.REJECT_NOTE_PLACEHOLDER' : 'EXAMS.RETURN_NOTE_PLACEHOLDER') | translate"
+  ></textarea>
+  @if (note.invalid && note.touched) {
+    <small class="text-danger d-block mt-1" role="alert">{{ (action === 'reject' ? 'EXAMS.REJECT_NOTE_REQUIRED' : 'EXAMS.RETURN_NOTE_REQUIRED') | translate }}</small>
+  }
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" [disabled]="submitting()" (click)="close()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="note.invalid || submitting()" (click)="confirm()">
+      {{ (action === 'reject' ? 'EXAMS.CONFIRM_REJECT' : 'EXAMS.CONFIRM_RETURN') | translate }}
+    </button>
+  </div>
+</section>

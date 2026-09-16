@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Exams;
 
@@ -17,11 +18,12 @@ public class Exam : EventEntity
     public Guid InterruptionPolicyId { get; set; }
     public Guid StatusId { get; set; }
     public string? Notes { get; set; }
-    public Guid? ApprovedById { get; set; }
-    public DateTime? ApprovedAt { get; set; }
+    public Guid? DecisionById { get; set; }
+    public DateTime? DecisionAt { get; set; }
     public string? DecisionNotes { get; set; }
 
     public Job? Job { get; set; }
     public ExamInterruptionPolicy? InterruptionPolicy { get; set; }
     public ExamStatus? Status { get; set; }
+    public User? DecisionBy { get; set; }
 }

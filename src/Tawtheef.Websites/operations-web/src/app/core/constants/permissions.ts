@@ -154,6 +154,7 @@ export const Permissions = {
   Exams: {
     View: 'exams.view',
     Create: 'exams.create',
+    WorkflowActions: 'examWorkflowActions',
   },
 
   QuestionBanks: {

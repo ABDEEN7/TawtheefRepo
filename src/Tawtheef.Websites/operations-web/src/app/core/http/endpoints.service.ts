@@ -373,6 +373,19 @@ export class EndpointsService {
     preview: this.getFullUrl('/notification-tester/preview'),
   };
   exams = {
+    wizardLookups: this.getFullUrl('/exams/wizard/lookups'),
+    viewLookups: this.getFullUrl('/exams/wizard/view/lookups'),
+    wizardJobs: this.getFullUrl('/exams/wizard/jobs'),
+    wizardBanks: this.getFullUrl('/exams/wizard/banks'),
+    viewJobs: this.getFullUrl('/exams/wizard/view/jobs'),
+    viewBanks: this.getFullUrl('/exams/wizard/view/banks'),
+    jobSelection: this.getFullUrl('/exams/wizard/job-selection'),
+    configuration: (id: string) => this.getFullUrl(`/exams/${id}/configuration`),
+    viewConfiguration: (id: string) => this.getFullUrl(`/exams/${id}/configuration/view`),
+    approve: (id: string) => this.getFullUrl(`/exams/${id}/approve`),
+    return: (id: string) => this.getFullUrl(`/exams/${id}/return`),
+    reject: (id: string) => this.getFullUrl(`/exams/${id}/reject`),
+    update: (id: string) => this.getFullUrl(`/exams/${id}`),
     list: this.getFullUrl('/exams'),
     statuses: this.getFullUrl('/exams/lookups/statuses'),
     specializations: this.getFullUrl('/exams/lookups/specializations')

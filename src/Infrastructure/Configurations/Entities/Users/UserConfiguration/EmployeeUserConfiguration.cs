@@ -14,8 +14,8 @@ public class EmployeeUserConfiguration : ApplicationUserConfiguration<EmployeeUs
         builder.HasData(
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId1, "t-m.abdin@edu.gov.qa"),
             GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId2, "t-a.jaber@edu.gov.qa"),
-            GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId3, "m.alhaddad@edu.gov.qa"),
-            GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId4, "na.almarri@edu.gov.qa")
+            GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId3, "m.alhaddad@edu.gov.qa")
+            // GenerateEmployeeSuperAdmin(EmployeeSuperAdminIds.EmployeeId4, "na.almarri@edu.gov.qa")
         );
         return;
 

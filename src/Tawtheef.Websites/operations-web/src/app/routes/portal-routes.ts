@@ -137,6 +137,18 @@ export const portalRoutes = {
     return this.portal + '/rooms-management';
   },
   examsManagementPath: 'exams-management',
+  createExamPath: 'exams-management/create',
+  editExamPath: 'exams-management/:examId/edit',
+  viewExamPath: 'exams-management/:examId/view',
+  get createExam() {
+    return this.portal + '/' + this.createExamPath;
+  },
+  editExam(examId: string) {
+    return this.portal + `/exams-management/${examId}/edit`;
+  },
+  viewExam(examId: string) {
+    return this.portal + `/exams-management/${examId}/view`;
+  },
   get examsManagement() {
     return this.portal + '/' + this.examsManagementPath;
   },

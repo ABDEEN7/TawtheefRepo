@@ -1,0 +1,65 @@
+<div class="exam-part-form" [formGroup]="form">
+  <h5 class="text-primary d-flex align-items-center my-3">
+    <i class="hgi hgi-stroke hgi-school me-1"></i>
+    {{ 'EXAM_WIZARD.PART_ONE' | translate }}
+  </h5>
+  <div class="row g-3 mb-3 exam-part-fields">
+    <div class="col-12 col-md-6 col-xl-4">
+      <label class="form-label"
+        >{{ 'EXAM_WIZARD.TITLE_AR' | translate }} <span class="text-danger">*</span></label
+      ><input
+        pInputText
+        id="part-ar-0"
+        class="w-100"
+        [class.bg-light]="isViewMode"
+        formControlName="titleAr"
+        maxlength="200"
+      />
+    </div>
+    <div class="col-12 col-md-6 col-xl-4">
+      <label class="form-label">{{ 'EXAM_WIZARD.TITLE_EN' | translate }}</label
+      ><input
+        pInputText
+        class="w-100"
+        [class.bg-light]="isViewMode"
+        formControlName="titleEn"
+        maxlength="200"
+      />
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+      <label class="form-label">{{ 'EXAM_WIZARD.DURATION' | translate }}</label
+      ><p-inputnumber
+        formControlName="durationMinutes"
+        [min]="0"
+        styleClass="w-100"
+        [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      />
+    </div>
+    <div class="col-12 col-sm-6 col-xl-2">
+      <label class="form-label">{{ 'EXAM_WIZARD.QUALIFICATION' | translate }}</label
+      ><p-inputnumber
+        formControlName="qualificationScore"
+        [min]="0"
+        [max]="100"
+        suffix="%"
+        styleClass="w-100"
+        [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      />
+    </div>
+  </div>
+  @for (category of form.controls.categories.controls; track category; let c = $index) {
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <app-exam-category
+          [form]="category"
+          [prefix]="'category-0-' + c"
+          [isViewMode]="isViewMode"
+          [banks]="banks"
+          [categories]="specializedCategories"
+          [usedCategories]="[]"
+          [hideCategory]="true"
+        />
+      </div>
+    </div>
+  }
+</div>

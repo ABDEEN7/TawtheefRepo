@@ -12,24 +12,24 @@ public class QuestionBankTypeConfiguration : LookupBaseConfiguration<QuestionBan
         builder.HasData(
             new QuestionBankType
             {
-                Id = QuestionBankTypeIds.SPECIALIZED,
-                BackendName = "SPECIALIZED",
+                Id = QuestionBankTypeIds.Specialized,
+                BackendName = nameof(QuestionBankTypeIds.Specialized),
                 NameEn = "Specialized",
                 NameAr = "تخصصي",
                 DisplayOrder = 1
             },
             new QuestionBankType
             {
-                Id = QuestionBankTypeIds.SKILLS,
-                BackendName = "SKILLS",
+                Id = QuestionBankTypeIds.Skills,
+                BackendName = nameof(QuestionBankTypeIds.Skills),
                 NameEn = "Skills",
                 NameAr = "مهارات",
                 DisplayOrder = 2
             },
             new QuestionBankType
             {
-                Id = QuestionBankTypeIds.EDUCATIONAL,
-                BackendName = "EDUCATIONAL",
+                Id = QuestionBankTypeIds.Educational,
+                BackendName = nameof(QuestionBankTypeIds.Educational),
                 NameEn = "Educational",
                 NameAr = "تربوي",
                 DisplayOrder = 3

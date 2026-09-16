@@ -1,0 +1,172 @@
+<div class="exam-category-form" [formGroup]="form">
+  <div class="row g-3 mb-3 exam-form-grid">
+    @if (!hideCategory) {
+      <div class="col-md-4">
+        <label class="form-label" [for]="prefix + '-category'">{{
+          'EXAM_WIZARD.CATEGORY' | translate
+        }}</label>
+        <p-select
+          [inputId]="prefix + '-category'"
+          class="w-100"
+          [class.bg-light]="isViewMode"
+          formControlName="questionBankTypeId"
+          [options]="categoryOptions()"
+          [optionLabel]="language.isRtl ? 'nameAr' : 'nameEn'"
+          optionValue="id"
+          appendTo="body"
+          (onChange)="form.controls.questionBankVersionId.setValue('')"
+        />
+      </div>
+    }
+    <div [class]="hideCategory ? 'col-md-12' : 'col-md-8'">
+      <label class="form-label" [for]="prefix + '-bank'">{{
+        'EXAM_WIZARD.BANK' | translate
+      }}</label>
+      <p-select
+        [inputId]="prefix + '-bank'"
+        class="w-100"
+        [class.bg-light]="isViewMode"
+        formControlName="questionBankVersionId"
+        [options]="bankOptions()"
+        optionLabel="label"
+        optionValue="id"
+        appendTo="body"
+        [filter]="true"
+      />
+      @if (!bankOptions().length) {
+        <small class="text-muted">{{ 'EXAM_WIZARD.NO_BANKS' | translate }}</small>
+      }
+      @if (form.controls.questionBankVersionId.value && !bank) {
+        <small class="text-danger">{{ 'EXAM_WIZARD.ERROR.BANK' | translate }}</small>
+      }
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" [for]="prefix + '-count'">{{
+        'EXAM_WIZARD.QUESTION_COUNT' | translate
+      }}</label>
+      <p-inputnumber
+        [inputId]="prefix + '-count'"
+        formControlName="questionCount"
+        [min]="0"
+        [max]="2147483647"
+        [useGrouping]="false"
+        styleClass="w-100"
+        [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      />
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" [for]="prefix + '-weight'">{{
+        'EXAM_WIZARD.WEIGHT' | translate
+      }}</label>
+      <p-inputnumber
+        [inputId]="prefix + '-weight'"
+        formControlName="weightPercent"
+        [min]="0"
+        [max]="100"
+        [maxFractionDigits]="2"
+        suffix="%"
+        styleClass="w-100"
+        [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      />
+    </div>
+  </div>
+  @if (bank; as selected) {
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-lg-3">
+        <div class="card card-table bg-info-light border-0 h-100 mb-0">
+          <div class="card-body d-flex align-items-center justify-content-between p-3">
+            <div class="d-flex flex-column">
+              <div class="h2 fw-bold">{{ selected.total }}</div>
+              <p class="mb-0">{{ 'EXAM_WIZARD.AVAILABLE_TOTAL' | translate }}</p>
+            </div>
+            <i class="hgi hgi-stroke hgi-book-open-01 text-blue h2"></i>
+          </div>
+        </div>
+      </div>
+      @for (difficulty of difficulties; track difficulty.key) {
+        <div class="col-6 col-lg-3">
+          <div
+            class="card card-table border-0 h-100 mb-0"
+            [class.bg-success-light]="difficulty.key === 'EASY'"
+            [class.bg-alert-light]="difficulty.key === 'MEDIUM'"
+            [class.bg-danger-subtle]="difficulty.key === 'HARD'"
+          >
+            <div class="card-body d-flex align-items-center justify-content-between p-3">
+              <div class="d-flex flex-column">
+                <div class="h2 fw-bold">{{ selected[difficulty.available] }}</div>
+                <p class="mb-0">{{ 'EXAM_WIZARD.' + difficulty.key | translate }}</p>
+              </div>
+              <i
+                class="hgi hgi-stroke h2"
+                [class.hgi-checkmark-circle-02]="difficulty.key === 'EASY'"
+                [class.text-success]="difficulty.key === 'EASY'"
+                [class.hgi-alert-02]="difficulty.key === 'MEDIUM'"
+                [class.text-warning]="difficulty.key === 'MEDIUM'"
+                [class.hgi-cancel-circle]="difficulty.key === 'HARD'"
+                [class.text-danger]="difficulty.key === 'HARD'"
+              ></i>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+  <h5 class="text-primary d-flex align-items-center mt-4 mb-3">
+    <i class="hgi hgi-stroke hgi-clipboard-check-01 me-1"></i>
+    {{ 'EXAM_WIZARD.DISTRIBUTION' | translate }}
+  </h5>
+  <div class="table-card rounded overflow-hidden">
+    <div class="table-responsive">
+      <p-table class="distribution-table" [value]="distributionRows">
+        <ng-template #header
+          ><tr>
+            <th>{{ 'EXAM_WIZARD.DIFFICULTY' | translate }}</th>
+            <th>{{ 'EXAM_WIZARD.QUESTION_COUNT' | translate }}</th>
+          </tr></ng-template
+        >
+        <ng-template #body let-row
+          ><tr>
+            @if (row.key === 'TOTAL') {
+              <td
+                class="fw-bold"
+                [class.bg-success-light]="isDistributionAvailable"
+                [class.bg-danger-subtle]="hasDistributionAvailabilityError"
+              >
+                {{ 'EXAM_WIZARD.TOTAL' | translate }}
+              </td>
+              <td
+                class="fw-bold"
+                [class.bg-success-light]="isDistributionAvailable"
+                [class.bg-danger-subtle]="hasDistributionAvailabilityError"
+              >
+                {{ total }}
+              </td>
+            } @else {
+              <td>
+                <label [for]="prefix + '-' + row.key">{{
+                  'EXAM_WIZARD.' + row.key | translate
+                }}</label>
+              </td>
+              <td>
+                <p-inputnumber
+                  [inputId]="prefix + '-' + row.key"
+                  [formControlName]="row.control"
+                  [min]="0"
+                  [max]="2147483647"
+                  [useGrouping]="false"
+                  [inputStyleClass]="
+                    isViewMode
+                      ? 'bg-light'
+                      : hasDifficultyAvailabilityError(row)
+                        ? 'is-invalid'
+                        : ''
+                  "
+                />
+              </td>
+            }
+          </tr
+        ></ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

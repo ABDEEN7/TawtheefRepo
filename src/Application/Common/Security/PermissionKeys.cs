@@ -199,6 +199,7 @@ public static class PermissionKeys
     {
         public const string View = "exams.view";
         public const string Create = "exams.create";
+        public const string WorkflowActions = "examWorkflowActions";
     }
 
     public static class Rooms
