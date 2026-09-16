@@ -20,7 +20,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
 import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
-import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
+import { RoomListItemDto } from '../rooms-management/models/room-list-item.dto';
 import { TestSlotFilters, TestSlotListItemDto } from './models/test-slot-list-item.dto';
 import { TestSlotsService } from './services/test-slots.service';
 
@@ -45,7 +45,7 @@ export class TestSlotsManagementComponent implements OnInit {
   readonly testSlots = signal<TestSlotListItemDto[]>([]);
   readonly Permissions = Permissions;
   readonly routes = portalRoutes;
-  readonly availableRooms = signal<dropdownOptionsModel[]>([]);
+  readonly availableRooms = signal<RoomListItemDto[]>([]);
   readonly loading = signal(false);
   readonly loadError = signal(false);
   readonly lookupError = signal(false);
@@ -61,6 +61,10 @@ export class TestSlotsManagementComponent implements OnInit {
   selectedRoomId: string | undefined;
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
+
+  get roomLabel(): 'nameAr' | 'nameEn' {
+    return this.language.isRtl ? 'nameAr' : 'nameEn';
+  }
 
   ngOnInit(): void {
     this.listRequests$

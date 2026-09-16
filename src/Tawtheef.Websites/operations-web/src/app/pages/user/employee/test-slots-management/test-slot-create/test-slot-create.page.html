@@ -77,8 +77,10 @@
             <form class="workflow-form" [formGroup]="form">
               @if (step === 1) {
                 <app-slot-details [form]="form" [rooms]="rooms()" />
+              } @else if (step === 2) {
+                <app-team-assignment [form]="form" [rooms]="rooms()" [state]="teamAssignment()" (stateChange)="updateTeamAssignment($event)" />
               } @else {
-                <div class="text-muted py-4">{{ 'TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED' | translate }}</div>
+                <app-test-slot-review [form]="form" [rooms]="rooms()" [team]="teamAssignment()" [staffConflicts]="staffConflicts()" (editTeamRequested)="goTo(2)" />
               }
               <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
                 <button
@@ -106,6 +108,10 @@
                     >
                       {{ 'TEST_SLOT_WIZARD.NEXT' | translate }}
                       <i class="hgi" faDirArrow="end"></i>
+                    </button>
+                  } @else {
+                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="create()" [disabled]="saving">
+                      {{ 'TEST_SLOT_WIZARD.CREATE_SLOT' | translate }}
                     </button>
                   }
                 </div>

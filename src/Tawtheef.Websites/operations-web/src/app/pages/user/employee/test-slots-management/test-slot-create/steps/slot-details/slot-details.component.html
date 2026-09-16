@@ -25,7 +25,7 @@
       class="w-100"
       formControlName="roomId"
       [options]="rooms"
-      optionLabel="name"
+      [optionLabel]="roomLabel"
       optionValue="id"
       appendTo="body"
     />
@@ -39,6 +39,7 @@
       class="w-100"
       formControlName="slotDate"
       dateFormat="yy-mm-dd"
+      [minDate]="minSlotDate"
       appendTo="body"
     />
   </div>
@@ -51,7 +52,7 @@
       class="w-100"
       formControlName="startTime"
       [timeOnly]="true"
-      hourFormat="24"
+      hourFormat="12"
       appendTo="body"
     />
   </div>
@@ -64,7 +65,7 @@
       class="w-100"
       formControlName="endTime"
       [timeOnly]="true"
-      hourFormat="24"
+      hourFormat="12"
       appendTo="body"
     />
   </div>

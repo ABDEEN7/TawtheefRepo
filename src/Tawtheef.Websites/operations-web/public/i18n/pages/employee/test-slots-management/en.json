@@ -20,27 +20,50 @@
   "TEST_SLOTS.LOADING": "Loading exam periods",
   "TEST_SLOTS.LOAD_ERROR": "Unable to load exam periods or room options. Please try again.",
   "TEST_SLOTS.EMPTY": "No exam periods match the selected filters.",
-  "TEST_SLOTS.NOT_AVAILABLE": "—"
-  ,"TEST_SLOTS.CREATE": "Create exam period"
-  ,"TEST_SLOT_WIZARD.CREATE": "Create exam period"
-  ,"TEST_SLOT_WIZARD.SUBTITLE": "Enter exam period details"
-  ,"TEST_SLOT_WIZARD.BACK": "Back to exam periods"
-  ,"TEST_SLOT_WIZARD.SLOT_DETAILS": "Period details"
-  ,"TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "Assign team"
-  ,"TEST_SLOT_WIZARD.REVIEW": "Review"
-  ,"TEST_SLOT_WIZARD.TITLE_AR": "Arabic title"
-  ,"TEST_SLOT_WIZARD.TITLE_EN": "English title"
-  ,"TEST_SLOT_WIZARD.ROOM": "Room"
-  ,"TEST_SLOT_WIZARD.DATE": "Date"
-  ,"TEST_SLOT_WIZARD.START_TIME": "Start time"
-  ,"TEST_SLOT_WIZARD.END_TIME": "End time"
-  ,"TEST_SLOT_WIZARD.NEXT": "Next"
-  ,"TEST_SLOT_WIZARD.PREVIOUS": "Previous"
-  ,"TEST_SLOT_WIZARD.CANCEL": "Cancel"
-  ,"TEST_SLOT_WIZARD.LOADING": "Loading available rooms…"
-  ,"TEST_SLOT_WIZARD.REQUEST_FAILED": "Unable to load available rooms. Please try again."
-  ,"TEST_SLOT_WIZARD.LEAVE_MESSAGE": "Leave this wizard? Your changes will be lost."
-  ,"TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "This step will be available soon."
-  ,"TEST_SLOT_WIZARD.ERROR.DETAILS": "Enter the required period details."
-  ,"TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "End time must be later than start time."
+  "TEST_SLOTS.NOT_AVAILABLE": "—",
+  "TEST_SLOTS.CREATE": "Create exam period",
+  "TEST_SLOT_WIZARD.CREATE": "Create exam period",
+  "TEST_SLOT_WIZARD.SUBTITLE": "Enter exam period details",
+  "TEST_SLOT_WIZARD.BACK": "Back to exam periods",
+  "TEST_SLOT_WIZARD.SLOT_DETAILS": "Period details",
+  "TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "Assign team",
+  "TEST_SLOT_WIZARD.REVIEW": "Review",
+  "TEST_SLOT_WIZARD.TITLE_AR": "Arabic title",
+  "TEST_SLOT_WIZARD.TITLE_EN": "English title",
+  "TEST_SLOT_WIZARD.ROOM": "Room",
+  "TEST_SLOT_WIZARD.DATE": "Date",
+  "TEST_SLOT_WIZARD.START_TIME": "Start time",
+  "TEST_SLOT_WIZARD.END_TIME": "End time",
+  "TEST_SLOT_WIZARD.NEXT": "Next",
+  "TEST_SLOT_WIZARD.PREVIOUS": "Previous",
+  "TEST_SLOT_WIZARD.CANCEL": "Cancel",
+  "TEST_SLOT_WIZARD.LOADING": "Loading available rooms…",
+  "TEST_SLOT_WIZARD.REQUEST_FAILED": "Unable to load available rooms. Please try again.",
+  "TEST_SLOT_WIZARD.LEAVE_MESSAGE": "Leave this wizard? Your changes will be lost.",
+  "TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "This step will be available soon.",
+  "TEST_SLOT_WIZARD.ERROR.DETAILS": "Enter the required period details.",
+  "TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "End time must be later than start time.",
+  "TEST_SLOT_WIZARD.ERROR.ROOM_HEAD": "Select a room head.",
+  "TEST_SLOT_WIZARD.CAPACITY": "Capacity",
+  "TEST_SLOT_WIZARD.TIME": "Time",
+  "TEST_SLOT_WIZARD.ROOM_HEAD": "Room head",
+  "TEST_SLOT_WIZARD.SELECT_ROOM_HEAD": "Select room head",
+  "TEST_SLOT_WIZARD.TEAM_MEMBERS": "Team members",
+  "TEST_SLOT_WIZARD.SELECTED_COUNT": "{{count}} selected",
+  "TEST_SLOT_WIZARD.STAFF_SEARCH": "Search by employee, job title, or department",
+  "TEST_SLOT_WIZARD.EMPLOYEE": "Employee",
+  "TEST_SLOT_WIZARD.JOB_TITLE": "Job title",
+  "TEST_SLOT_WIZARD.DEPARTMENT": "Department",
+  "TEST_SLOT_WIZARD.SELECT_ALL": "Select all",
+  "TEST_SLOT_WIZARD.CLEAR_SELECTION": "Clear selection",
+  "TEST_SLOT_WIZARD.LOADING_STAFF": "Loading staff...",
+  "TEST_SLOT_WIZARD.NO_STAFF": "No staff found.",
+  "TEST_SLOT_WIZARD.ASSIGNED_TEAM": "Assigned team",
+  "TEST_SLOT_WIZARD.TEAM_MEMBER": "Team member",
+  "TEST_SLOT_WIZARD.ROLE": "Role",
+  "TEST_SLOT_WIZARD.EDIT": "Edit",
+  "TEST_SLOT_WIZARD.READY": "The exam period is ready to be created.",
+  "TEST_SLOT_WIZARD.CREATE_SLOT": "Create exam period",
+  "TEST_SLOT_WIZARD.CREATED": "Exam period created successfully.",
+  "TEST_SLOT_WIZARD.STAFF_CONFLICT": "One or more selected team members are assigned to another exam period during this time."
 }

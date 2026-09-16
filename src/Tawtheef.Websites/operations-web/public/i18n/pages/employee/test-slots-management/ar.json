@@ -20,27 +20,50 @@
   "TEST_SLOTS.LOADING": "جارٍ تحميل فترات الاختبار",
   "TEST_SLOTS.LOAD_ERROR": "تعذر تحميل فترات الاختبار أو خيارات القاعات. يرجى المحاولة مرة أخرى.",
   "TEST_SLOTS.EMPTY": "لا توجد فترات اختبار تطابق عوامل التصفية المحددة.",
-  "TEST_SLOTS.NOT_AVAILABLE": "—"
-  ,"TEST_SLOTS.CREATE": "إنشاء فترة اختبار"
-  ,"TEST_SLOT_WIZARD.CREATE": "إنشاء فترة اختبار"
-  ,"TEST_SLOT_WIZARD.SUBTITLE": "أدخل بيانات فترة الاختبار"
-  ,"TEST_SLOT_WIZARD.BACK": "العودة إلى فترات الاختبار"
-  ,"TEST_SLOT_WIZARD.SLOT_DETAILS": "بيانات الفترة"
-  ,"TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "تعيين الفريق"
-  ,"TEST_SLOT_WIZARD.REVIEW": "المراجعة"
-  ,"TEST_SLOT_WIZARD.TITLE_AR": "عنوان الفترة"
-  ,"TEST_SLOT_WIZARD.TITLE_EN": "العنوان بالإنجليزية"
-  ,"TEST_SLOT_WIZARD.ROOM": "القاعة"
-  ,"TEST_SLOT_WIZARD.DATE": "التاريخ"
-  ,"TEST_SLOT_WIZARD.START_TIME": "وقت البداية"
-  ,"TEST_SLOT_WIZARD.END_TIME": "وقت النهاية"
-  ,"TEST_SLOT_WIZARD.NEXT": "التالي"
-  ,"TEST_SLOT_WIZARD.PREVIOUS": "السابق"
-  ,"TEST_SLOT_WIZARD.CANCEL": "إلغاء"
-  ,"TEST_SLOT_WIZARD.LOADING": "جارٍ تحميل القاعات المتاحة…"
-  ,"TEST_SLOT_WIZARD.REQUEST_FAILED": "تعذر تحميل القاعات المتاحة. يرجى المحاولة مرة أخرى."
-  ,"TEST_SLOT_WIZARD.LEAVE_MESSAGE": "مغادرة المعالج؟ ستفقد التغييرات التي أجريتها."
-  ,"TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "ستتوفر هذه الخطوة قريبًا."
-  ,"TEST_SLOT_WIZARD.ERROR.DETAILS": "أدخل بيانات الفترة المطلوبة."
-  ,"TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "يجب أن يكون وقت النهاية بعد وقت البداية."
+  "TEST_SLOTS.NOT_AVAILABLE": "—",
+  "TEST_SLOTS.CREATE": "إنشاء فترة اختبار",
+  "TEST_SLOT_WIZARD.CREATE": "إنشاء فترة اختبار",
+  "TEST_SLOT_WIZARD.SUBTITLE": "أدخل بيانات فترة الاختبار",
+  "TEST_SLOT_WIZARD.BACK": "العودة إلى فترات الاختبار",
+  "TEST_SLOT_WIZARD.SLOT_DETAILS": "بيانات الفترة",
+  "TEST_SLOT_WIZARD.TEAM_ASSIGNMENT": "تعيين الفريق",
+  "TEST_SLOT_WIZARD.REVIEW": "المراجعة",
+  "TEST_SLOT_WIZARD.TITLE_AR": "عنوان الفترة",
+  "TEST_SLOT_WIZARD.TITLE_EN": "العنوان بالإنجليزية",
+  "TEST_SLOT_WIZARD.ROOM": "القاعة",
+  "TEST_SLOT_WIZARD.DATE": "التاريخ",
+  "TEST_SLOT_WIZARD.START_TIME": "وقت البداية",
+  "TEST_SLOT_WIZARD.END_TIME": "وقت النهاية",
+  "TEST_SLOT_WIZARD.NEXT": "التالي",
+  "TEST_SLOT_WIZARD.PREVIOUS": "السابق",
+  "TEST_SLOT_WIZARD.CANCEL": "إلغاء",
+  "TEST_SLOT_WIZARD.LOADING": "جارٍ تحميل القاعات المتاحة…",
+  "TEST_SLOT_WIZARD.REQUEST_FAILED": "تعذر تحميل القاعات المتاحة. يرجى المحاولة مرة أخرى.",
+  "TEST_SLOT_WIZARD.LEAVE_MESSAGE": "مغادرة المعالج؟ ستفقد التغييرات التي أجريتها.",
+  "TEST_SLOT_WIZARD.STEP_NOT_IMPLEMENTED": "ستتوفر هذه الخطوة قريبًا.",
+  "TEST_SLOT_WIZARD.ERROR.DETAILS": "أدخل بيانات الفترة المطلوبة.",
+  "TEST_SLOT_WIZARD.ERROR.TIME_RANGE": "يجب أن يكون وقت النهاية بعد وقت البداية.",
+  "TEST_SLOT_WIZARD.ERROR.ROOM_HEAD": "يرجى اختيار رئيس القاعة.",
+  "TEST_SLOT_WIZARD.CAPACITY": "السعة",
+  "TEST_SLOT_WIZARD.TIME": "الوقت",
+  "TEST_SLOT_WIZARD.ROOM_HEAD": "رئيس القاعة",
+  "TEST_SLOT_WIZARD.SELECT_ROOM_HEAD": "اختر رئيس القاعة",
+  "TEST_SLOT_WIZARD.TEAM_MEMBERS": "أعضاء الفريق",
+  "TEST_SLOT_WIZARD.SELECTED_COUNT": "{{count}} محدد",
+  "TEST_SLOT_WIZARD.STAFF_SEARCH": "ابحث بالموظف أو المسمى الوظيفي أو الإدارة",
+  "TEST_SLOT_WIZARD.EMPLOYEE": "الموظف",
+  "TEST_SLOT_WIZARD.JOB_TITLE": "المسمى الوظيفي",
+  "TEST_SLOT_WIZARD.DEPARTMENT": "الإدارة",
+  "TEST_SLOT_WIZARD.SELECT_ALL": "تحديد الكل",
+  "TEST_SLOT_WIZARD.CLEAR_SELECTION": "مسح التحديد",
+  "TEST_SLOT_WIZARD.LOADING_STAFF": "جاري تحميل الموظفين...",
+  "TEST_SLOT_WIZARD.NO_STAFF": "لا يوجد موظفون.",
+  "TEST_SLOT_WIZARD.ASSIGNED_TEAM": "الفريق المكلف",
+  "TEST_SLOT_WIZARD.TEAM_MEMBER": "عضو الفريق",
+  "TEST_SLOT_WIZARD.ROLE": "الدور",
+  "TEST_SLOT_WIZARD.EDIT": "تعديل",
+  "TEST_SLOT_WIZARD.READY": "فترة الاختبار جاهزة للإنشاء.",
+  "TEST_SLOT_WIZARD.CREATE_SLOT": "إنشاء الفترة",
+  "TEST_SLOT_WIZARD.CREATED": "تم إنشاء فترة الاختبار بنجاح.",
+  "TEST_SLOT_WIZARD.STAFF_CONFLICT": "يوجد عضو أو أكثر من الفريق محدد في فترة اختبار أخرى خلال هذا الوقت."
 }

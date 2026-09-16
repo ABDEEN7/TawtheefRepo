@@ -1,6 +1,12 @@
 {
   "server-error.EXAM_CREATED_DATE_RANGE_INVALID": "Created From cannot be later than Created To.",
   "server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB": "There is already an exam request for this job awaiting approval.",
+  "server-error.TEST_SLOT_TITLE_AR_ALREADY_EXISTS": "An exam period with the same Arabic title already exists.",
+  "server-error.TEST_SLOT_TITLE_EN_ALREADY_EXISTS": "An exam period with the same English title already exists.",
+  "server-error.TEST_SLOT_ROOM_NOT_AVAILABLE": "The selected room is not available.",
+  "server-error.TEST_SLOT_ROOM_SCHEDULE_CONFLICT": "The selected room is already occupied during this time.",
+  "server-error.TEST_SLOT_STAFF_SCHEDULE_CONFLICT": "One or more selected staff members are assigned to another exam period during this time.",
+  "server-error.TEST_SLOT_STAFF_ROLE_NOT_FOUND": "One or more selected staff roles are invalid.",
   "server-error.UNAUTHORIZED_ACTION": "You are not authorized to perform this action.",
   "server-error.INVALID_RECAPTCHA": "Recaptcha verification failed.",
   "server-error.INVALID_DEVICE_ID": "Invalid device identifier.",

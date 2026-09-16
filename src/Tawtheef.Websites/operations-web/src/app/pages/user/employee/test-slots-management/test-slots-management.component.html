@@ -35,7 +35,7 @@
         </p-iconfield>
         <div filterSecondary class="filter-field">
           <label class="form-label" for="test-slot-room">{{ 'TEST_SLOTS.ROOM' | translate }}</label>
-          <p-select inputId="test-slot-room" class="w-100" [options]="availableRooms()" optionLabel="name"
+          <p-select inputId="test-slot-room" class="w-100" [options]="availableRooms()" [optionLabel]="roomLabel"
             optionValue="id" [(ngModel)]="selectedRoomId" (ngModelChange)="applyFilters()" [showClear]="true"
             appendTo="body" [placeholder]="'TEST_SLOTS.ALL_ROOMS' | translate" />
         </div>

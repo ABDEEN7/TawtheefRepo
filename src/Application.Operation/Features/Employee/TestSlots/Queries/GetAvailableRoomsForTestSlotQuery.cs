@@ -1,7 +1,7 @@
 using FluentResults;
 using MediatR;
-using Tawtheef.Application.Common.Models;
+using Application.Operation.Features.Employee.Rooms.DTOs;
 
 namespace Application.Operation.Features.Employee.TestSlots.Queries;
 
-public sealed record GetAvailableRoomsForTestSlotQuery(string Language) : IRequest<IResult<List<DropdownOptions>>>;
+public sealed record GetAvailableRoomsForTestSlotQuery(string Language) : IRequest<IResult<List<RoomDto>>>;

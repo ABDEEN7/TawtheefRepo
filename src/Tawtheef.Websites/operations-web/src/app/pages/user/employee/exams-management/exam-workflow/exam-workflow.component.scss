@@ -1,21 +1,6 @@
 .exam-workflow-page {
   color: #2c142f;
 
-  .exam-summary-details {
-    dt {
-      margin-bottom: 0.25rem;
-      color: #495057;
-      font-size: 0.875rem;
-      font-weight: 700;
-    }
-
-    dd {
-      margin-bottom: 0;
-      color: #2c142f;
-      overflow-wrap: anywhere;
-    }
-  }
-
   .exam-workflow-form,
   .exam-part-form {
     min-width: 0;
@@ -36,11 +21,5 @@
       max-width: 100%;
       min-width: 0;
     }
-  }
-}
-
-@media (max-width: 767.98px) {
-  .exam-workflow-page .exam-summary-details > div {
-    margin-bottom: 0.75rem;
   }
 }

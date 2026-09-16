@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { dropdownOptionsModel } from '../../../../../../../shared/models/dropdown-options.model';
+import { LanguageService } from '../../../../../../../core/services/language.service';
+import { RoomListItemDto } from '../../../../rooms-management/models/room-list-item.dto';
 import { testSlotCreateForm } from '../../helper/test-slot-create.form';
 
 @Component({
@@ -15,6 +16,12 @@ import { testSlotCreateForm } from '../../helper/test-slot-create.form';
   imports: [ReactiveFormsModule, TranslatePipe, DatePickerModule, InputTextModule, SelectModule],
 })
 export class SlotDetailsComponent {
+  readonly language = inject(LanguageService);
+  readonly minSlotDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   @Input({ required: true }) form!: ReturnType<typeof testSlotCreateForm>;
-  @Input() rooms: dropdownOptionsModel[] = [];
+  @Input() rooms: RoomListItemDto[] = [];
+
+  get roomLabel(): 'nameAr' | 'nameEn' {
+    return this.language.isRtl ? 'nameAr' : 'nameEn';
+  }
 }

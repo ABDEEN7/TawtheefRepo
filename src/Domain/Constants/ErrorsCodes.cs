@@ -314,6 +314,15 @@ public class ErrorsCodes
     public const string ExamPendingApprovalAlreadyExistsForJob = "EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB";
     #endregion
 
+    #region Test Slots
+    public const string TestSlotTitleArAlreadyExists = "TEST_SLOT_TITLE_AR_ALREADY_EXISTS";
+    public const string TestSlotTitleEnAlreadyExists = "TEST_SLOT_TITLE_EN_ALREADY_EXISTS";
+    public const string TestSlotRoomNotAvailable = "TEST_SLOT_ROOM_NOT_AVAILABLE";
+    public const string TestSlotRoomScheduleConflict = "TEST_SLOT_ROOM_SCHEDULE_CONFLICT";
+    public const string TestSlotStaffScheduleConflict = "TEST_SLOT_STAFF_SCHEDULE_CONFLICT";
+    public const string TestSlotStaffRoleNotFound = "TEST_SLOT_STAFF_ROLE_NOT_FOUND";
+    #endregion
+
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
     public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
