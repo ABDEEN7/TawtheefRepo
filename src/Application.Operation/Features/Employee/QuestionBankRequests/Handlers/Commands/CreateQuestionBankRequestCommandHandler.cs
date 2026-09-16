@@ -1,18 +1,17 @@
 using Application.Operation.Features.Employee.QuestionBankRequests.Commands;
 using FluentResults;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
-using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.QuestionBankRequests.Handlers.Commands;
 
 public sealed class CreateQuestionBankRequestCommandHandler(
-    IUnitOfWork unitOfWork, ICurrentUserService currentUserService, UserManager<User> userManager)
+    IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
     : IRequestHandler<CreateQuestionBankRequestCommand, IResult<Guid>>
 {
     private static readonly Guid[] OpenStatuses =
@@ -29,34 +28,30 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (validation is not null) return Result.Fail<Guid>(validation);
 
         if (!Guid.TryParse(currentUserService.UserId, out var userId))
-            return Result.Fail<Guid>(new Error("Unauthorized").WithMetadata("Code", "Unauthorized"));
+            return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
 
-        var employeeProfileId = await userManager.Users.AsNoTracking()
-            .OfType<EmployeeUser>()
-            .Where(x => x.Id == userId)
-            .Select(x => (Guid?)x.EmployeeProfileId)
-            .SingleOrDefaultAsync(cancellationToken);
-        if (!employeeProfileId.HasValue)
-            return Result.Fail<Guid>(new Error("Unauthorized").WithMetadata("Code", "Unauthorized"));
+
+        var requestsRepo = unitOfWork.GetEntityRepository<QuestionBankRequest>();
+        var banksRepo = unitOfWork.GetEntityRepository<QuestionBank>();
 
         return await unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {
-            var requests = unitOfWork.GetEntityRepository<QuestionBankRequest>().DbSet;
+            var requests = requestsRepo.DbSet;
             var openConflict = await requests.AsNoTracking().AnyAsync(x =>
                 x.RequestTypeId == QuestionBankRequestTypeIds.CREATE && OpenStatuses.Contains(x.StatusId) &&
                 x.QuestionBank.QuestionBankTypeId == request.QuestionBankTypeId &&
                 (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.QuestionBank.ManagementId == request.ManagementId && x.QuestionBank.JobTitleId == request.JobTitleId)), ct);
             if (openConflict)
-                return Conflict("A question bank creation request is already in progress for the selected data.");
+                return Result.Fail<Guid>(ErrorsCodes.QuestionBankCreationRequestAlreadyInProgress);
 
-            var banks = unitOfWork.GetEntityRepository<QuestionBank>().DbSet;
+            var banks = banksRepo.DbSet;
             var bankConflict = await banks.AsNoTracking().AnyAsync(x =>
                 x.QuestionBankTypeId == request.QuestionBankTypeId &&
                 (request.QuestionBankTypeId != QuestionBankTypeIds.Specialized ||
                  (x.ManagementId == request.ManagementId && x.JobTitleId == request.JobTitleId)), ct);
             if (bankConflict)
-                return Conflict("A question bank already exists for the selected data. Please submit a maintenance request for the existing bank.");
+                return Result.Fail<Guid>(ErrorsCodes.QuestionBankAlreadyExists);
 
             var bank = new QuestionBank
             {
@@ -67,7 +62,8 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 IsActive = false,
                 CurrentApprovedVersionId = null
             };
-            await unitOfWork.GetEntityRepository<QuestionBank>().AddAsync(bank, ct);
+
+            await banksRepo.AddAsync(bank, ct);
 
             var questionBankRequest = new QuestionBankRequest
             {
@@ -77,37 +73,32 @@ public sealed class CreateQuestionBankRequestCommandHandler(
                 StatusId = QuestionBankRequestStatusIds.PendingAssignment,
                 CurrentReviewRound = 0,
                 Reason = request.Reason?.Trim(),
-                SubmittedById = employeeProfileId.Value,
+                SubmittedById = userId,
                 SubmittedAt = DateTime.UtcNow
             };
-            await unitOfWork.GetEntityRepository<QuestionBankRequest>().AddAsync(questionBankRequest, ct);
+
+            await requestsRepo.AddAsync(questionBankRequest, ct);
             await unitOfWork.SaveChangesAsync(ct);
             return Result.Ok(questionBankRequest.Id);
         }, cancellationToken);
     }
 
-    private static Error? ValidateTarget(CreateQuestionBankRequestCommand request)
+    private static string? ValidateTarget(CreateQuestionBankRequestCommand request)
     {
         if (request.StageId.HasValue)
-            return Validation("Stage is not supported for question bank creation requests.");
+            return ErrorsCodes.QuestionBankCreationRequestStageNotSupported;
 
         if (request.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
             return request.ManagementId.HasValue && request.JobTitleId.HasValue
                 ? null
-                : Validation("Management and job title are required for specialized question banks.");
+                : ErrorsCodes.SpecializedQuestionBankTargetRequired;
 
         if (request.QuestionBankTypeId is var type &&
             (type == QuestionBankTypeIds.Skills || type == QuestionBankTypeIds.Educational))
             return request.ManagementId.HasValue || request.JobTitleId.HasValue
-                ? Validation("Management and job title must be empty for this question bank type.")
+                ? ErrorsCodes.QuestionBankTargetNotAllowed
                 : null;
 
-        return Validation("Invalid question bank type.");
+        return ErrorsCodes.InvalidQuestionBankType;
     }
-
-    private static IResult<Guid> Conflict(string message) =>
-        Result.Fail<Guid>(new Error(message).WithMetadata("Code", "Conflict").WithMetadata("UserMessage", message));
-
-    private static Error Validation(string message) =>
-        new Error(message).WithMetadata("Code", "Validation").WithMetadata("UserMessage", message);
 }

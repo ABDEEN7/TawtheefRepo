@@ -24,6 +24,15 @@ public class ErrorsCodes
     public const string RoomNotFound = "ROOM_NOT_FOUND";
     #endregion
 
+    #region Question Banks
+    public const string QuestionBankCreationRequestAlreadyInProgress = "QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS";
+    public const string QuestionBankAlreadyExists = "QUESTION_BANK_ALREADY_EXISTS";
+    public const string QuestionBankCreationRequestStageNotSupported = "QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED";
+    public const string SpecializedQuestionBankTargetRequired = "SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED";
+    public const string QuestionBankTargetNotAllowed = "QUESTION_BANK_TARGET_NOT_ALLOWED";
+    public const string InvalidQuestionBankType = "INVALID_QUESTION_BANK_TYPE";
+    #endregion
+
     // =========================================================
     // TOKEN / CRYPTO
     // =========================================================
