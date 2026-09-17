@@ -13,6 +13,15 @@ namespace Operations.API.Controllers.Interview;
 [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class InterviewEvaluationTemplateController(IMediator mediator) : ControllerBase
 {
+    // ---- Lookups ----
+
+    [HttpGet("lookups")]
+    [AuthorizePermission(PermissionKeys.InterviewEvaluationTemplate.View, PermissionKeys.InterviewEvaluationTemplate.Manage)]
+    public async Task<IActionResult> ListTemplateLookups(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new ListTemplateLookupsQuery(), cancellationToken);
+        return result.ToActionResult();
+    }
     // ---- Templates ----
 
     [HttpGet("templates")]
