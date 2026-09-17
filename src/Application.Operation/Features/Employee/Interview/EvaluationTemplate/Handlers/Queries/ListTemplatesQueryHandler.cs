@@ -13,25 +13,40 @@ public sealed class ListTemplatesQueryHandler(IUnitOfWork unitOfWork)
 {
     public async Task<IResult<List<TemplateDto>>> Handle(ListTemplatesQuery request, CancellationToken cancellationToken)
     {
+        var versions = unitOfWork.GetEntityRepository<InterviewTemplateVersion>().DbSet.AsNoTracking();
+
         var templates = await unitOfWork.GetEntityRepository<InterviewTemplate>().DbSet
             .AsNoTracking()
             .OrderByDescending(t => t.CreatedDate)
-            .Select(t => new TemplateDto(
-                t.Id,
-                t.TitleAr,
-                t.TitleEn,
-                t.OrganizationScopeId,
-                t.OrganizationScope != null ? t.OrganizationScope.NameAr : null,
-                t.OrganizationScope != null ? t.OrganizationScope.NameEn : null,
-                t.JobTitleId,
-                t.JobTitle != null ? t.JobTitle.JobNameAr : null,
-                t.JobTitle != null ? t.JobTitle.JobNameEn : null,
-                t.DepartmentId,
-                t.Department != null ? t.Department.NameAr : null,
-                t.Department != null ? t.Department.NameEn : null,
-                t.IsActive))
+            .Select(t => new
+            {
+                Template = t,
+                Latest = versions
+                    .Where(v => v.InterviewTemplateId == t.Id)
+                    .OrderByDescending(v => v.VersionNo)
+                    .FirstOrDefault()
+            })
+            .Select(x => new TemplateDto(
+                x.Template.Id,
+                x.Template.TitleAr,
+                x.Template.TitleEn,
+                x.Template.OrganizationScopeId,
+                x.Template.OrganizationScope != null ? x.Template.OrganizationScope.NameAr : null,
+                x.Template.OrganizationScope != null ? x.Template.OrganizationScope.NameEn : null,
+                x.Template.JobTitleId,
+                x.Template.JobTitle != null ? x.Template.JobTitle.JobNameAr : null,
+                x.Template.JobTitle != null ? x.Template.JobTitle.JobNameEn : null,
+                x.Template.DepartmentId,
+                x.Template.Department != null ? x.Template.Department.NameAr : null,
+                x.Template.Department != null ? x.Template.Department.NameEn : null,
+                x.Template.IsActive,
+                x.Latest != null ? x.Latest.VersionNo : (int?)null,
+                x.Latest != null ? x.Latest.Status : (TemplateVersionStatus?)null,
+                x.Latest != null ? x.Latest.FinalScore : (decimal?)null,
+                x.Latest != null ? x.Latest.QualificationScore : (decimal?)null))
             .ToListAsync(cancellationToken);
 
         return Result.Ok(templates);
     }
 }
+
