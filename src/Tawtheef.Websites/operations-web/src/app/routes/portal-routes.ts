@@ -157,5 +157,8 @@ export const portalRoutes = {
   },
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
+  },
+  questionBankRequestDetails(id: string) {
+    return this.questionBankRequests + `/${id}`;
   }
 }

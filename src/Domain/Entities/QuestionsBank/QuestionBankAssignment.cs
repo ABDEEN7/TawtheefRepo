@@ -39,9 +39,9 @@ public class QuestionBankAssignment : EventEntity
 
     public QuestionBankAssignmentStatus Status { get; set; } = null!;
 
-    public User Employee { get; set; } = null!;
+    public EmployeeUser Employee { get; set; } = null!;
 
-    public User AssignedByUser { get; set; } = null!;
+    public EmployeeUser AssignedByUser { get; set; } = null!;
 
 
     public ICollection<QuestionBankRequestItem> RequestItems { get; set; }

@@ -40,9 +40,9 @@ public class QuestionBankRequest : EventEntity
 
     public QuestionBankRequestStatus Status { get; set; } = null!;
     
-    public User SubmittedBy { get; set; } = null!;
+    public EmployeeUser SubmittedBy { get; set; } = null!;
     
-    public User? FinalDecisionBy { get; set; }
+    public EmployeeUser? FinalDecisionBy { get; set; }
 
     public ICollection<QuestionBankRequestItem> Items { get; set; }
         = new List<QuestionBankRequestItem>();

@@ -45,7 +45,7 @@ public class QuestionBankRequestItem : EventEntity
 
     public QuestionRevision? CurrentProposedRevision { get; set; }
     
-    public User? RemovedBy { get; set; }
+    public EmployeeUser? RemovedBy { get; set; }
     
     public ICollection<QuestionBankRequestItemReview> Reviews { get; set; }
         = new List<QuestionBankRequestItemReview>();
