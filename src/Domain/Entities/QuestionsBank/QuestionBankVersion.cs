@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
@@ -31,6 +32,8 @@ public class QuestionBankVersion : EventEntity
         = new List<QuestionBankVersion>();
 
     public QuestionBankRequest CreatedFromRequest { get; set; } = null!;
+
+    public EmployeeUser? ApprovedBy { get; set; }
 
     public ICollection<QuestionBankVersionQuestion> Questions { get; set; }
         = new List<QuestionBankVersionQuestion>();

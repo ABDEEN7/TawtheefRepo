@@ -113,6 +113,7 @@ public static class PermissionCatalog
         Permissions.QuestionBanks.View,
         Permissions.QuestionBankRequests.View,
         Permissions.QuestionBankRequests.Create,
+        Permissions.QuestionBankRequests.Assign,
 
         Permissions.InterviewEvaluationBank.View,
         Permissions.InterviewEvaluationBank.Manage,

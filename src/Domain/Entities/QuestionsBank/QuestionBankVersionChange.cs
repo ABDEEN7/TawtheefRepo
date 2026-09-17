@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
@@ -46,6 +47,8 @@ public class QuestionBankVersionChange : EventEntity
     public QuestionRevision? OldQuestionRevision { get; set; }
 
     public QuestionRevision? NewQuestionRevision { get; set; }
+
+    public EmployeeUser ChangedBy { get; set; } = null!;
 
     public ICollection<QuestionBankVersionChangeDetail> Details { get; set; }
         = new List<QuestionBankVersionChangeDetail>();

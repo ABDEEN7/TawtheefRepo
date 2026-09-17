@@ -50,6 +50,7 @@
                             <th>{{'QUESTION_BANK_REQUESTS.STATUS'|translate}}</th>
                             <th>{{'QUESTION_BANK_REQUESTS.SUBMITTED_BY'|translate}}</th>
                             <th>{{'QUESTION_BANK_REQUESTS.SUBMITTED_AT'|translate}}</th>
+                            <th>{{'QUESTION_BANK_REQUESTS.ACTIONS'|translate}}</th>
                         </tr>
                     </ng-template><ng-template pTemplate="body" let-r>
                         <tr>
@@ -60,10 +61,11 @@
                             <td><p-tag severity="info" [value]="name(r.statusNameAr,r.statusNameEn)"></p-tag></td>
                             <td>{{name(r.submittedByNameAr,r.submittedByNameEn)}}</td>
                             <td>{{r.submittedAt|date:'medium'}}</td>
+                            <td><button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" [label]="'QUESTION_BANK_REQUESTS.VIEW'|translate" (click)="view(r.id)"></button></td>
                         </tr>
                     </ng-template><ng-template pTemplate="emptymessage">
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted" [class.d-none]="loading()">
+                            <td colspan="8" class="text-center py-4 text-muted" [class.d-none]="loading()">
                                 {{'QUESTION_BANK_REQUESTS.EMPTY'|translate}}</td>
                         </tr>
                     </ng-template></p-table></div>

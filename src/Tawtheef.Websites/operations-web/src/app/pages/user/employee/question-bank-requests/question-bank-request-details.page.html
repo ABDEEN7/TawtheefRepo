@@ -1,0 +1,23 @@
+<section i18nNamespace="pages/employee/question-bank-requests">
+@if(loading()){<div class="card"><div class="card-body text-muted">{{'QUESTION_BANK_REQUESTS.LOADING'|translate}}</div></div>}
+@if(details(); as r){
+  <div class="card mb-4"><div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0">{{'QUESTION_BANK_REQUESTS.DETAILS_TITLE'|translate}}</h3><p-tag severity="info" [value]="name(r.statusNameAr,r.statusNameEn)"></p-tag></div>
+    <div class="row g-4">
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.REQUEST_TYPE'|translate}}</div><div>{{name(r.requestTypeNameAr,r.requestTypeNameEn)}}</div></div>
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.BANK_TYPE'|translate}}</div><div>{{name(r.questionBankTypeNameAr,r.questionBankTypeNameEn)}}</div></div>
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.MANAGEMENT'|translate}}</div><div>{{name(r.managementNameAr,r.managementNameEn)}}</div></div>
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.JOB_TITLE'|translate}}</div><div>{{name(r.jobTitleNameAr,r.jobTitleNameEn)}}</div></div>
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.SUBMITTED_BY'|translate}}</div><div>{{name(r.submittedByNameAr,r.submittedByNameEn)}}</div></div>
+      <div class="col-md-6"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.SUBMITTED_AT'|translate}}</div><div>{{r.submittedAt|date:'medium'}}</div></div>
+      <div class="col-12"><div class="text-muted small">{{'QUESTION_BANK_REQUESTS.REASON'|translate}}</div><div>{{r.reason||'-'}}</div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h4 class="fw-bold mb-0">{{'QUESTION_BANK_REQUESTS.ASSIGNMENTS'|translate}}</h4>@if(canAssign()){<button pButton type="button" icon="pi pi-users" [label]="'QUESTION_BANK_REQUESTS.ASSIGN_EMPLOYEES'|translate" (click)="openAssign()"></button>}</div>
+    <div class="table-responsive"><p-table [value]="r.assignments"><ng-template pTemplate="header"><tr><th>{{'QUESTION_BANK_REQUESTS.EMPLOYEE'|translate}}</th><th>{{'QUESTION_BANK_REQUESTS.MINIMUM_QUESTIONS'|translate}}</th><th>{{'QUESTION_BANK_REQUESTS.ASSIGNMENT_STATUS'|translate}}</th><th>{{'QUESTION_BANK_REQUESTS.ASSIGNED_AT'|translate}}</th></tr></ng-template>
+      <ng-template pTemplate="body" let-a><tr><td>{{name(a.employeeNameAr,a.employeeNameEn)}}</td><td>{{a.minimumQuestionCount}}</td><td><p-tag severity="info" [value]="name(a.statusNameAr,a.statusNameEn)"></p-tag></td><td>{{a.assignedAt|date:'medium'}}</td></tr></ng-template>
+      <ng-template pTemplate="emptymessage"><tr><td colspan="4" class="text-center text-muted py-4">{{'QUESTION_BANK_REQUESTS.NO_ASSIGNMENTS'|translate}}</td></tr></ng-template></p-table></div>
+  </div>
+}
+</section>

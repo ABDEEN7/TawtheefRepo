@@ -403,6 +403,9 @@ export class EndpointsService {
   questionBankRequests = {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
+    details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
+    eligibleEmployees: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
+    assignments: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/assignments`),
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
       managements: this.getFullUrl('/questionbankrequests/lookups/managements'),
