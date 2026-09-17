@@ -12,4 +12,4 @@ public sealed record CreateCriterionCommand(
     string? NameEn,
     string? DescriptionAr,
     string? DescriptionEn,
-    bool IsActive) : IRequest<Result<Guid>>;
+    bool IsActive) : IRequest<IResult<Guid>>;
