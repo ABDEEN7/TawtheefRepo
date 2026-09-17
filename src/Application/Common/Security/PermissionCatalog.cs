@@ -121,7 +121,7 @@ public static class PermissionCatalog
         Permissions.InterviewEvaluationTemplate.Manage,
 
         Permissions.InterviewCommittee.View,
-        Permissions.InterviewCommittee.Manage
+        Permissions.InterviewCommittee.Manage,
     ]);
 
     public static readonly ISet<string> Keys =

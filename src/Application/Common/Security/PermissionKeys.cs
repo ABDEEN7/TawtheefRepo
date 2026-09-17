@@ -235,4 +235,21 @@ public static class PermissionKeys
         public const string View = "interview-committee.view";
         public const string Manage = "interview-committee.manage";
     }
+    public static class InterviewSchedule
+    {
+        public const string View = "interview-schedule.view";
+        public const string Manage = "interview-schedule.manage";
+    }
+
+    public static class InterviewEvaluation
+    {
+        public const string View = "interview-evaluation.view";
+        public const string Manage = "interview-evaluation.manage";
+    }
+
+    public static class InterviewResultReport
+    {
+        public const string View = "interview-result-report.view";
+        public const string Manage = "interview-result-report.manage";
+    }
 }

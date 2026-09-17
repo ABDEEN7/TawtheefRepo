@@ -60,7 +60,7 @@ public class InterviewCommittee : EventEntity
             JobId = jobId,
             InterviewTemplateId = interviewTemplateId,
             NameAr = nameAr,
-            NameEn = nameEn,   
+            NameEn = nameEn,
             ScopeDescription = scopeDescription,
             Notes = notes,
             Status = CommitteeStatus.Draft,
@@ -93,7 +93,7 @@ public class InterviewCommittee : EventEntity
         ScopeDescription = scopeDescription;
         Notes = notes;
 
-        // BRD: "معاد للتعديل - مسودة" — editing a Returned committee and saving it
+        // BRD: "معادة للتعديل → مسودة" — editing a Returned committee and saving it
         // is what moves it back to Draft; there is no separate "revert" action.
         if (Status == CommitteeStatus.Returned)
             Status = CommitteeStatus.Draft;
@@ -135,7 +135,7 @@ public class InterviewCommittee : EventEntity
         return Result.Ok();
     }
 
-    // BRD status table only lists Draft/PendingApproval as Cancel sources — not Returned. لا يمكن الغاء لجنة مصدقة او تم ارجاعها للتعديل  - ضمن قواعد العمل
+    // BRD state table only lists Draft/PendingApproval as Cancel sources — not Returned.
     public Result Cancel(string reason)
     {
         if (Status is not (CommitteeStatus.Draft or CommitteeStatus.PendingApproval))
@@ -171,7 +171,6 @@ public class InterviewCommittee : EventEntity
 
     // Per the BRD, this transition is system-triggered once every linked interview is
     // done — this method is the mechanism; what calls it is step 6/7's concern.
-    // اقفال اللجنة بعد انتهاء جميع المقابلات الخاصة بها
     public Result Close()
     {
         if (Status != CommitteeStatus.Approved)
@@ -184,6 +183,110 @@ public class InterviewCommittee : EventEntity
         AddDomainEvent(new CommitteeClosedEvent(this, DateTimeOffset.Now));
         return Result.Ok();
     }
+
+    // Needs the sibling Members in memory to enforce "one active Chair" / "a user sits on the
+    // committee once" - the same reason AddAxis lives on InterviewTemplateVersion rather than the child.
+    // The caller must still verify the user exists - a cross-aggregate lookup this entity cannot do.
+    public Result<InterviewCommitteeMember> AddMember(
+        Guid memberUserId, CommitteeRole role, bool participatesInEvaluation, EvaluationScope evaluationScope,
+        bool canViewCandidates, bool canAddNotes, bool canSubmitEvaluation, bool canViewOtherEvaluations,
+        bool canViewCommitteeSummary)
+    {
+        var editable = EnsureMembersEditable();
+        if (editable.IsFailed)
+            return Result.Fail<InterviewCommitteeMember>(editable.Errors);
+
+        if (role == CommitteeRole.Chair && Members.Any(m => m.IsActive && m.Role == CommitteeRole.Chair))
+            return Result.Fail<InterviewCommitteeMember>(new Error(ErrorsCodes.InterviewCommitteeChairAlreadyExists));
+
+        if (Members.Any(m => m.IsActive && m.MemberUserId == memberUserId))
+            return Result.Fail<InterviewCommitteeMember>(new Error(ErrorsCodes.InterviewCommitteeMemberAlreadyActive));
+
+        var member = InterviewCommitteeMember.Create(
+            Id, memberUserId, role, participatesInEvaluation, evaluationScope,
+            canViewCandidates, canAddNotes, canSubmitEvaluation, canViewOtherEvaluations, canViewCommitteeSummary);
+
+        member.InterviewCommittee = this;
+
+        Members.Add(member);
+        AddDomainEvent(new CommitteeMemberAddedEvent(this, member, DateTimeOffset.Now));
+        return Result.Ok(member);
+    }
+
+    public Result SetMembers(IReadOnlyCollection<CommitteeMemberInput> members)
+    {
+        var editable = EnsureMembersEditable();
+        if (editable.IsFailed)
+            return editable;
+        // minimum member , 1 chair and 2 other members (evaluator or observer)
+        if (members.Count < CommitteeConstants.MinimumCommitteeMembers)
+            return Result.Fail(new Error(ErrorsCodes.InterviewCommitteeMinimumMembersNotMet));
+
+        if (members.Count(m => m.Role == CommitteeRole.Chair) > 1)
+            return Result.Fail(new Error(ErrorsCodes.InterviewCommitteeChairAlreadyExists));
+
+        var incomingUserIds = members.Select(m => m.MemberUserId).ToHashSet();
+        foreach (var removedMember in Members.Where(m => m.IsActive && !incomingUserIds.Contains(m.MemberUserId)).ToList())
+        {
+            var removeResult = removedMember.Remove("Removed by committee member list update");
+            if (removeResult.IsFailed)
+                return removeResult;
+        }
+
+        foreach (var input in members)
+        {
+            var existingMember = Members.FirstOrDefault(m => m.IsActive && m.MemberUserId == input.MemberUserId);
+
+            InterviewCommitteeMember member;
+            if (existingMember is not null)
+            {
+                var updateResult = existingMember.Update(
+                    input.Role, input.ParticipatesInEvaluation, input.EvaluationScope,
+                    input.CanViewCandidates, input.CanAddNotes, input.CanSubmitEvaluation,
+                    input.CanViewOtherEvaluations, input.CanViewCommitteeSummary);
+                if (updateResult.IsFailed)
+                    return updateResult;
+
+                member = existingMember;
+            }
+            else
+            {
+                var addResult = AddMember(
+                    input.MemberUserId, input.Role, input.ParticipatesInEvaluation, input.EvaluationScope,
+                    input.CanViewCandidates, input.CanAddNotes, input.CanSubmitEvaluation,
+                    input.CanViewOtherEvaluations, input.CanViewCommitteeSummary);
+                if (addResult.IsFailed)
+                    return Result.Fail(addResult.Errors);
+
+                member = addResult.Value;
+            }
+
+            var axesResult = member.SetEvaluationAxes(input.EvaluationAxisIds);
+            if (axesResult.IsFailed)
+                return axesResult;
+        }
+
+        return Result.Ok();
+    }
+}
+
+// A single member row from the frontend's committee table, used to replace the whole roster in one
+// call via InterviewCommittee.SetMembers - not a MediatR command, just this aggregate method's input shape.
+// EvaluationScope is not carried here: the caller derives it from whether EvaluationAxisIds is empty
+// (AllAxes) or not (SelectedAxes) - the same default applies to every role, Chair included, matching
+// "by default the Chair evaluates all axes" without needing the frontend to enumerate them.
+public sealed record CommitteeMemberInput(
+    Guid MemberUserId,
+    CommitteeRole Role,
+    bool ParticipatesInEvaluation,
+    bool CanViewCandidates,
+    bool CanAddNotes,
+    bool CanSubmitEvaluation,
+    bool CanViewOtherEvaluations,
+    bool CanViewCommitteeSummary,
+    IReadOnlyCollection<Guid> EvaluationAxisIds)
+{
+    public EvaluationScope EvaluationScope => EvaluationAxisIds.Count > 0 ? EvaluationScope.SelectedAxes : EvaluationScope.AllAxes;
 }
 
 public enum CommitteeStatus
