@@ -1,0 +1,27 @@
+<div class="" i18nNamespace="pages/employee/interview-axes-criteria" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <div class="nav nav-pills flex-wrap stepper">
+        <button class="nav-link" [class.active]="store.activeTab() === 'axes'" (click)="service.switchTab('axes')">
+          <i class="pi pi-share-alt me-2"></i>
+          {{ 'INTERVIEW_AXES_CRITERIA.AXES_TAB' | translate }}
+        </button>
+        <button class="nav-link" [class.active]="store.activeTab() === 'criteria'" (click)="service.switchTab('criteria')">
+          <i class="pi pi-list-check me-2"></i>
+          {{ 'INTERVIEW_AXES_CRITERIA.CRITERIA_TAB' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      @if (store.activeTab() === 'axes') {
+        <app-axes-tab />
+      }
+      @if (store.activeTab() === 'criteria') {
+        <app-criteria-tab />
+      }
+    </div>
+  </div>
+</div>
