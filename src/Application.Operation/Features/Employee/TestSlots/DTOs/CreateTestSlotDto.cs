@@ -8,7 +8,7 @@ public sealed class CreateTestSlotDto
     public DateOnly SlotDate { get; init; }
     public TimeOnly StartTime { get; init; }
     public TimeOnly EndTime { get; init; }
-    public required List<CreateTestSlotStaffDto> Staff { get; init; }
+    public List<CreateTestSlotStaffDto>? Staff { get; init; }
 }
 
 public sealed class CreateTestSlotStaffDto
@@ -18,7 +18,26 @@ public sealed class CreateTestSlotStaffDto
     public bool IsActive { get; init; }
 }
 
-public sealed record CreatedTestSlotDto(Guid Id, string SlotNo);
+public sealed record SavedTestSlotDto(Guid Id);
+
+public sealed class TestSlotConfigurationDto
+{
+    public Guid Id { get; init; }
+    public required string TitleAr { get; init; }
+    public string? TitleEn { get; init; }
+    public Guid RoomId { get; init; }
+    public DateOnly SlotDate { get; init; }
+    public TimeOnly StartTime { get; init; }
+    public TimeOnly EndTime { get; init; }
+    public required List<TestSlotConfigurationStaffDto> Staff { get; init; }
+}
+
+public sealed class TestSlotConfigurationStaffDto
+{
+    public Guid StaffUserId { get; init; }
+    public required string Name { get; init; }
+    public Guid RoleId { get; init; }
+}
 
 public sealed record TestSlotStaffConflictDto(
     Guid StaffUserId,

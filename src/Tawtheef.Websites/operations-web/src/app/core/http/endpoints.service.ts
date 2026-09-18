@@ -394,8 +394,10 @@ export class EndpointsService {
   testSlots = {
     list: this.getFullUrl('/test-slots'),
     create: this.getFullUrl('/test-slots'),
+    update: (id: string) => this.getFullUrl(`/test-slots/${id}`),
+    configuration: (id: string) => this.getFullUrl(`/test-slots/${id}/configuration`),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
-    wizardAvailableRooms: this.getFullUrl('/test-slots/wizard/rooms'),
+    wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };
 
   questionBanks = {

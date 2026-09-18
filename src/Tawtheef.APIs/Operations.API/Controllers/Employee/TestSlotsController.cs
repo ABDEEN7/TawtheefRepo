@@ -16,9 +16,15 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [AuthorizePermission(PermissionKeys.TestSlots.Create)]
-    public async Task<IActionResult> CreateTestSlot([FromBody] CreateTestSlotDto testSlot,
+    public async Task<IActionResult> SaveTestSlot([FromBody] CreateTestSlotDto testSlot,
         CancellationToken cancellationToken)
-        => (await mediator.Send(new CreateTestSlotCommand(testSlot), cancellationToken)).ToActionResult();
+        => (await mediator.Send(new SaveTestSlotCommand(null, testSlot), cancellationToken)).ToActionResult();
+
+    [HttpPut("{id:guid}")]
+    [AuthorizePermission(PermissionKeys.TestSlots.Create)]
+    public async Task<IActionResult> UpdateTestSlot(Guid id, [FromBody] CreateTestSlotDto testSlot,
+        CancellationToken cancellationToken)
+        => (await mediator.Send(new SaveTestSlotCommand(id, testSlot), cancellationToken)).ToActionResult();
 
     [HttpGet]
     [AuthorizePermission(PermissionKeys.TestSlots.View)]
@@ -27,16 +33,21 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
         => (await mediator.Send(query, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/rooms")]
-    [AuthorizePermission(PermissionKeys.TestSlots.View)]
+    [AuthorizePermission(PermissionKeys.TestSlots.View, PermissionKeys.TestSlots.Create)]
     public async Task<IActionResult> GetAvailableRoomsForTestSlot([FromQuery] string language,
         CancellationToken cancellationToken)
         => (await mediator.Send(new GetAvailableRoomsForTestSlotQuery(language), cancellationToken))
             .ToActionResult();
 
-    [HttpGet("wizard/rooms")]
+    [HttpGet("wizard/staff")]
     [AuthorizePermission(PermissionKeys.TestSlots.Create)]
-    public async Task<IActionResult> GetAvailableRoomsForTestSlotWizard([FromQuery] string language,
+    public async Task<IActionResult> GetStaffMembers([FromQuery] GetTestSlotStaffMembersQuery query,
         CancellationToken cancellationToken)
-        => (await mediator.Send(new GetAvailableRoomsForTestSlotQuery(language), cancellationToken))
-            .ToActionResult();
+        => (await mediator.Send(query, cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/configuration")]
+    [AuthorizePermission(PermissionKeys.TestSlots.View, PermissionKeys.TestSlots.Create)]
+    public async Task<IActionResult> GetConfiguration(Guid id, [FromQuery] string language,
+        CancellationToken cancellationToken)
+        => (await mediator.Send(new GetTestSlotConfigurationQuery(id, language), cancellationToken)).ToActionResult();
 }

@@ -16,7 +16,8 @@ import { PaginationComponent } from '../../../../../../../shared/components/pagi
 import { RoomListItemDto } from '../../../../rooms-management/models/room-list-item.dto';
 import { UserDto } from '../../../../users-management/models/user.dto';
 import { UserFilters } from '../../../../users-management/models/user-filters.dto';
-import { UsersService } from '../../../../users-management/services/users.service';
+import { TestSlotStaffMemberDto } from '../../../models/test-slot-staff-member.dto';
+import { TestSlotsService } from '../../../services/test-slots.service';
 import { testSlotCreateForm } from '../../helper/test-slot-create.form';
 import { TeamAssignmentState } from '../../models/team-assignment-state.model';
 
@@ -28,7 +29,7 @@ import { TeamAssignmentState } from '../../models/team-assignment-state.model';
   imports: [DatePipe, FormsModule, TranslatePipe, CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, SelectModule, TableModule, PaginationComponent],
 })
 export class TeamAssignmentComponent implements OnInit {
-  private readonly usersService = inject(UsersService);
+  private readonly testSlotsService = inject(TestSlotsService);
   private readonly destroyRef = inject(DestroyRef);
   readonly language = inject(LanguageService);
   private readonly searchChanges$ = new Subject<string>();
@@ -36,59 +37,134 @@ export class TeamAssignmentComponent implements OnInit {
   @Input({ required: true }) form!: ReturnType<typeof testSlotCreateForm>;
   @Input() rooms: RoomListItemDto[] = [];
   @Input({ required: true }) state!: TeamAssignmentState;
+  @Input() isViewMode = false;
+  @Input() showRoomHeadError = false;
   @Output() stateChange = new EventEmitter<TeamAssignmentState>();
 
-  readonly users = signal<UserDto[]>([]);
+  readonly users = signal<TestSlotStaffMemberDto[]>([]);
   readonly metadata = signal<PaginationMetadata | null>(null);
   readonly loading = signal(false);
   readonly filters = signal<UserFilters>({ pageNumber: 1, pageSize: 10, search: null, isBlocked: false });
   department = '';
   readonly departments = signal<string[]>([]);
+  private roomHeadOptionsUsers: TestSlotStaffMemberDto[] | null = null;
+  private roomHeadOptionsRoomHead: UserDto | null | undefined;
+  private cachedRoomHeadOptions: UserDto[] = [];
+  private filteredUsersSource: TestSlotStaffMemberDto[] | null = null;
+  private filteredUsersSelectedStaff: UserDto[] | null = null;
+  private filteredUsersRoomHeadId: string | null | undefined;
+  private filteredUsersDepartment: string | null = null;
+  private cachedFilteredUsers: TestSlotStaffMemberDto[] = [];
 
   ngOnInit(): void {
     this.searchChanges$.pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(search => {
+      if (this.isViewMode) return;
       this.filters.update(filters => ({ ...filters, search: search.trim() || null, pageNumber: 1 }));
       this.loadUsers();
     });
-    this.loadUsers();
+    if (!this.isViewMode) this.loadUsers();
   }
 
   get room(): RoomListItemDto | undefined { return this.rooms.find(room => room.id === this.form.controls.roomId.value); }
   get roomName(): string { return (this.language.isRtl ? this.room?.nameAr : this.room?.nameEn) ?? '—'; }
   get roomCapacity(): number | string { return this.room?.capacity ?? '—'; }
-  get roomHeadOptions(): UserDto[] { return this.state.roomHead ? this.mergeUsers([this.state.roomHead], this.users()) : this.users(); }
+  get roomHeadOptions(): UserDto[] {
+    const users = this.users();
+    const roomHead = this.state.roomHead;
+    if (this.roomHeadOptionsUsers === users && this.roomHeadOptionsRoomHead === roomHead) {
+      return this.cachedRoomHeadOptions;
+    }
+
+    this.roomHeadOptionsUsers = users;
+    this.roomHeadOptionsRoomHead = roomHead;
+    this.cachedRoomHeadOptions = roomHead ? this.mergeUsers([roomHead], users) : users;
+    return this.cachedRoomHeadOptions;
+  }
   get selectedCount(): number { return this.state.selectedStaff.length; }
-  get allVisibleSelected(): boolean { return this.filteredUsers().length > 0 && this.filteredUsers().every(user => this.isSelected(user.id)); }
+  get allVisibleSelected(): boolean {
+    const visibleUsers = this.filteredUsers();
+    return visibleUsers.length > 0 && visibleUsers.every(user => this.isSelected(user.id));
+  }
   isSelected(userId: string): boolean { return this.state.selectedStaff.some(user => user.id === userId); }
-  onSearchChange(search: string): void { this.searchChanges$.next(search); }
+  onSearchChange(search: string): void { if (!this.isViewMode) this.searchChanges$.next(search); }
   onRoomHeadFilter(search: string): void { this.onSearchChange(search); }
   onDepartmentChange(department: string | null): void { this.department = department ?? ''; }
-  setRoomHead(user: UserDto | null): void { this.emit({ ...this.state, roomHead: user }); }
-  departmentName(user: UserDto): string { return user.section || '—'; }
-  jobTitle(user: UserDto): string { return user.roleNames?.join(', ') || user.roles?.map(role => role.name).join(', ') || '—'; }
-  filteredUsers(): UserDto[] { return this.department ? this.users().filter(user => this.departmentName(user) === this.department) : this.users(); }
+  get roomHeadUserId(): string | null { return this.state.roomHead?.id ?? null; }
+
+  setRoomHead(userId: string | null): void {
+    if (this.isViewMode) return;
+    const user = userId ? this.roomHeadOptions.find(option => option.id === userId) ?? null : null;
+    this.emit({
+      ...this.state,
+      roomHead: user,
+      selectedStaff: user
+        ? this.state.selectedStaff.filter(staff => staff.id !== user.id)
+        : this.state.selectedStaff,
+    });
+  }
+  departmentName(user: TestSlotStaffMemberDto): string { return user.departmentName || '—'; }
+  jobTitle(user: TestSlotStaffMemberDto): string { return user.jobTitle || '—'; }
+  filteredUsers(): TestSlotStaffMemberDto[] {
+    const users = this.users();
+    const selectedStaff = this.state.selectedStaff;
+    const roomHeadUserId = this.roomHeadUserId;
+    if (
+      this.filteredUsersSource === users &&
+      this.filteredUsersSelectedStaff === selectedStaff &&
+      this.filteredUsersRoomHeadId === roomHeadUserId &&
+      this.filteredUsersDepartment === this.department
+    ) {
+      return this.cachedFilteredUsers;
+    }
+
+    const usersById = new Map(users.map(user => [user.id, user]));
+    selectedStaff.forEach(user => {
+      if (!usersById.has(user.id)) {
+        usersById.set(user.id, { ...user, jobTitle: null, departmentName: null });
+      }
+    });
+    this.filteredUsersSource = users;
+    this.filteredUsersSelectedStaff = selectedStaff;
+    this.filteredUsersRoomHeadId = roomHeadUserId;
+    this.filteredUsersDepartment = this.department;
+    this.cachedFilteredUsers = [...usersById.values()].filter(
+      user => user.id !== roomHeadUserId && (!this.department || this.departmentName(user) === this.department),
+    );
+    return this.cachedFilteredUsers;
+  }
 
   toggleUser(user: UserDto, selected: boolean): void {
+    if (this.isViewMode) return;
     const selectedStaff = selected ? this.mergeUsers(this.state.selectedStaff, [user]) : this.state.selectedStaff.filter(staff => staff.id !== user.id);
     this.emit({ ...this.state, selectedStaff });
   }
   toggleVisible(selected: boolean): void {
+    if (this.isViewMode) return;
     const visible = this.filteredUsers();
     const visibleIds = new Set(visible.map(user => user.id));
     const selectedStaff = selected ? this.mergeUsers(this.state.selectedStaff, visible) : this.state.selectedStaff.filter(user => !visibleIds.has(user.id));
     this.emit({ ...this.state, selectedStaff });
   }
-  clearSelection(): void { this.emit({ ...this.state, selectedStaff: [] }); }
-  onPageChange(pageNumber: number): void { this.filters.update(filters => ({ ...filters, pageNumber })); this.loadUsers(); }
-  onPageSizeChange(pageSize: number): void { this.filters.update(filters => ({ ...filters, pageSize, pageNumber: 1 })); this.loadUsers(); }
+  clearSelection(): void { if (!this.isViewMode) this.emit({ ...this.state, selectedStaff: [] }); }
+  onPageChange(pageNumber: number): void {
+    if (this.isViewMode) return;
+    this.filters.update(filters => ({ ...filters, pageNumber }));
+    this.loadUsers();
+  }
+  onPageSizeChange(pageSize: number): void {
+    if (this.isViewMode) return;
+    this.filters.update(filters => ({ ...filters, pageSize, pageNumber: 1 }));
+    this.loadUsers();
+  }
 
   private loadUsers(): void {
+    if (this.isViewMode) return;
     this.loading.set(true);
-    this.usersService.getUsers(this.filters()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.testSlotsService.getStaffMembers(this.filters()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: response => {
         this.users.set(response.items);
         this.metadata.set(response.metadata);
-        this.departments.update(existing => [...new Set([...existing, ...response.items.map(user => user.section).filter((name): name is string => !!name)])]);
+        this.departments.update(existing => [...new Set([...existing, ...response.items.map(user => user.departmentName).filter((name): name is string => !!name)])]);
         this.loading.set(false);
       },
       error: () => { this.users.set([]); this.loading.set(false); },

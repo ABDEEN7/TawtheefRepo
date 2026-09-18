@@ -28,8 +28,7 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
 
         var testSlots = unitOfWork.GetEntityRepository<TestSlot>().DbSet.AsNoTracking()
             .WhereIf(!string.IsNullOrWhiteSpace(searchTerm),
-                testSlot => EF.Functions.Like(testSlot.SlotNo, $"%{searchTerm}%") ||
-                            EF.Functions.Like(testSlot.TitleAr, $"%{searchTerm}%") ||
+                testSlot => EF.Functions.Like(testSlot.TitleAr, $"%{searchTerm}%") ||
                             EF.Functions.Like(testSlot.TitleEn!, $"%{searchTerm}%"))
             .WhereIf(request.RoomId.HasValue, testSlot => testSlot.RoomId == request.RoomId);
 
@@ -46,7 +45,6 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
             .Select(testSlot => new
             {
                 testSlot.Id,
-                testSlot.SlotNo,
                 Title = isArabic ? testSlot.TitleAr : testSlot.TitleEn ?? testSlot.TitleAr,
                 testSlot.RoomId,
                 RoomName = isArabic ? testSlot.Room!.NameAr : testSlot.Room!.NameEn ?? testSlot.Room.NameAr,
@@ -93,7 +91,6 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
         var items = page.Items.Select(testSlot => new TestSlotListItemDto
         {
             Id = testSlot.Id,
-            SlotNo = testSlot.SlotNo,
             Title = testSlot.Title,
             RoomId = testSlot.RoomId,
             RoomName = testSlot.RoomName,

@@ -22,8 +22,15 @@ export interface CreateTestSlotDto {
   staff: CreateTestSlotStaffDto[];
 }
 
-export interface CreatedTestSlotDto {
+export interface TestSlotConfigurationDto extends Omit<CreateTestSlotDto, 'staff'> {
   id: string;
+  staff: TestSlotConfigurationStaffDto[];
+}
+
+export interface TestSlotConfigurationStaffDto {
+  staffUserId: string;
+  name: string;
+  roleId: string;
 }
 
 export interface TestSlotStaffConflictDto {

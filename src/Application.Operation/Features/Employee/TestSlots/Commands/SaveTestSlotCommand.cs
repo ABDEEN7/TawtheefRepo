@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Operation.Features.Employee.TestSlots.Commands;
 
-public sealed record CreateTestSlotCommand(CreateTestSlotDto TestSlot)
-    : IRequest<IResult<CreatedTestSlotDto>>;
+public sealed record SaveTestSlotCommand(Guid? Id, CreateTestSlotDto TestSlot)
+    : IRequest<IResult<SavedTestSlotDto>>;

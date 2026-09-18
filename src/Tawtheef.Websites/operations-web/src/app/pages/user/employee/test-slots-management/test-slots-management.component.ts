@@ -10,8 +10,9 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Permissions } from '../../../../core/constants/permissions';
@@ -30,9 +31,23 @@ import { TestSlotsService } from './services/test-slots.service';
   templateUrl: './test-slots-management.component.html',
   styleUrl: './test-slots-management.component.scss',
   imports: [
-    CommonModule, FormsModule, TranslatePipe, ButtonModule, DatePickerModule, IconFieldModule,
-    InputIconModule, InputTextModule, Select, TableModule, TagModule, PaginationComponent,
-    PageFiltersComponent, I18nNamespaceDirective, RouterLink, HasPermissionDirective,
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    ButtonModule,
+    DatePickerModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    Select,
+    TagModule,
+    TableModule,
+    TooltipModule,
+    PaginationComponent,
+    PageFiltersComponent,
+    I18nNamespaceDirective,
+    RouterLink,
+    HasPermissionDirective,
   ],
 })
 export class TestSlotsManagementComponent implements OnInit {

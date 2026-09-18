@@ -12,9 +12,9 @@
             >
               <i class="hgi fs-24" faDirArrow="start"></i>
             </button>
-            <h3 class="fw-bold mb-0">{{ 'TEST_SLOT_WIZARD.CREATE' | translate }}</h3>
+            <h3 class="fw-bold mb-0">{{ pageTitle | translate }}</h3>
           </div>
-          <p class="text-muted mt-2 mb-0">{{ 'TEST_SLOT_WIZARD.SUBTITLE' | translate }}</p>
+          <p class="text-muted mt-2 mb-0">{{ headerSubtitle | translate }}</p>
         </div>
       </div>
 
@@ -67,20 +67,25 @@
 
         <div class="card card-table">
           <div class="card-body">
-            @if (errors.length) {
-              <div class="alert alert-danger mt-3">
-                @for (error of errors; track error) {
-                  <div>{{ 'TEST_SLOT_WIZARD.ERROR.' + error | translate }}</div>
-                }
-              </div>
-            }
             <form class="workflow-form" [formGroup]="form">
               @if (step === 1) {
-                <app-slot-details [form]="form" [rooms]="rooms()" />
+                <app-slot-details
+                  [form]="form"
+                  [rooms]="rooms()"
+                  [isViewMode]="isViewMode"
+                  [validationErrors]="errors"
+                />
               } @else if (step === 2) {
-                <app-team-assignment [form]="form" [rooms]="rooms()" [state]="teamAssignment()" (stateChange)="updateTeamAssignment($event)" />
+                <app-team-assignment
+                  [form]="form"
+                  [rooms]="rooms()"
+                  [state]="teamAssignment()"
+                  [isViewMode]="isViewMode"
+                  [showRoomHeadError]="errors.includes('ROOM_HEAD')"
+                  (stateChange)="updateTeamAssignment($event)"
+                />
               } @else {
-                <app-test-slot-review [form]="form" [rooms]="rooms()" [team]="teamAssignment()" [staffConflicts]="staffConflicts()" (editTeamRequested)="goTo(2)" />
+                <app-test-slot-review [form]="form" [rooms]="rooms()" [team]="teamAssignment()" [staffConflicts]="staffConflicts()" [isViewMode]="isViewMode" (editTeamRequested)="goTo(2)" />
               }
               <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
                 <button
@@ -93,13 +98,15 @@
                   {{ 'TEST_SLOT_WIZARD.PREVIOUS' | translate }}
                 </button>
                 <div class="d-flex gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary light d-flex align-items-center gap-2"
-                    (click)="cancel()"
-                  >
-                    {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
-                  </button>
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary light d-flex align-items-center gap-2"
+                      (click)="cancel()"
+                    >
+                      {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
+                    </button>
+                  }
                   @if (step < wizardSteps.length) {
                     <button
                       type="button"
@@ -109,9 +116,9 @@
                       {{ 'TEST_SLOT_WIZARD.NEXT' | translate }}
                       <i class="hgi" faDirArrow="end"></i>
                     </button>
-                  } @else {
-                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="create()" [disabled]="saving">
-                      {{ 'TEST_SLOT_WIZARD.CREATE_SLOT' | translate }}
+                  } @else if (!isViewMode) {
+                    <button type="button" class="btn btn-success d-flex align-items-center gap-2" (click)="save()" [disabled]="saving">
+                      {{ (isEditMode ? 'TEST_SLOT_WIZARD.UPDATE' : 'TEST_SLOT_WIZARD.CREATE_SLOT') | translate }}
                     </button>
                   }
                 </div>

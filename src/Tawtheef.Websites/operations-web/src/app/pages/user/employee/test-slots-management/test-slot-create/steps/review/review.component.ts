@@ -22,6 +22,7 @@ export class ReviewComponent {
   @Input() rooms: RoomListItemDto[] = [];
   @Input({ required: true }) team!: TeamAssignmentState;
   @Input() staffConflicts: TestSlotStaffConflictDto[] = [];
+  @Input() isViewMode = false;
   @Output() editTeamRequested = new EventEmitter<void>();
 
   get roomName(): string {

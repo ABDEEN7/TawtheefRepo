@@ -45,16 +45,23 @@
     <p-select
       inputId="test-slot-room-head"
       class="w-100"
+      [class.bg-light]="isViewMode"
+      [class.p-invalid]="showRoomHeadError"
       [options]="roomHeadOptions"
       optionLabel="name"
-      [ngModel]="state.roomHead"
+      optionValue="id"
+      [ngModel]="roomHeadUserId"
       (onChange)="setRoomHead($event.value)"
       (onFilter)="onRoomHeadFilter($event.filter)"
       [showClear]="true"
       [filter]="true"
+      [disabled]="isViewMode"
       [placeholder]="'TEST_SLOT_WIZARD.SELECT_ROOM_HEAD' | translate"
       appendTo="body"
     />
+    @if (showRoomHeadError) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    }
   </div>
 
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
@@ -74,28 +81,32 @@
         <input
           pInputText
           class="w-100 form-control"
+          [class.bg-light]="isViewMode"
           type="search"
           [placeholder]="'TEST_SLOT_WIZARD.STAFF_SEARCH' | translate"
           (input)="onSearchChange($any($event.target).value)"
+          [disabled]="isViewMode"
         />
       </p-iconfield>
     </div>
     <div class="col-lg-3">
       <p-select
         class="w-100"
+        [class.bg-light]="isViewMode"
         [options]="departments()"
         [ngModel]="department"
         (onChange)="onDepartmentChange($event.value)"
         [showClear]="true"
+        [disabled]="isViewMode"
         [placeholder]="'TEST_SLOT_WIZARD.DEPARTMENT' | translate"
         appendTo="body"
       />
     </div>
     <div class="col-lg-3 d-flex gap-2 flex-wrap">
-      <button type="button" class="btn btn-outline-primary light" (click)="toggleVisible(true)">
+      <button type="button" class="btn btn-outline-primary light" (click)="toggleVisible(true)" [disabled]="isViewMode">
         {{ 'TEST_SLOT_WIZARD.SELECT_ALL' | translate }}
       </button>
-      <button type="button" class="btn btn-outline-primary light" (click)="clearSelection()">
+      <button type="button" class="btn btn-outline-primary light" (click)="clearSelection()" [disabled]="isViewMode">
         {{ 'TEST_SLOT_WIZARD.CLEAR_SELECTION' | translate }}
       </button>
     </div>
@@ -109,8 +120,10 @@
             <th class="text-center">
               <p-checkbox
                 [binary]="true"
+                [class.bg-light]="isViewMode"
                 [ngModel]="allVisibleSelected"
                 (onChange)="toggleVisible($event.checked)"
+                [disabled]="isViewMode"
               />
             </th>
             <th>{{ 'TEST_SLOT_WIZARD.EMPLOYEE' | translate }}</th>
@@ -123,8 +136,10 @@
             <td class="text-center">
               <p-checkbox
                 [binary]="true"
+                [class.bg-light]="isViewMode"
                 [ngModel]="isSelected(user.id)"
                 (onChange)="toggleUser(user, $event.checked)"
+                [disabled]="isViewMode"
               />
             </td>
             <td>

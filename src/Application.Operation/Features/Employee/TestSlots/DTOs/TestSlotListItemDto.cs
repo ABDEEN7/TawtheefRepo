@@ -5,7 +5,6 @@ namespace Application.Operation.Features.Employee.TestSlots.DTOs;
 public sealed record TestSlotListItemDto
 {
     public Guid Id { get; init; }
-    public required string SlotNo { get; init; }
     public required string Title { get; init; }
     public Guid RoomId { get; init; }
     public required string RoomName { get; init; }

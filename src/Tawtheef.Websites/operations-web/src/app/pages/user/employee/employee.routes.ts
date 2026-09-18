@@ -35,7 +35,21 @@ export const employeeRoutes: Routes = [
   {
     path: portalRoutes.createTestSlotPath,
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.TestSlots.Create] },
+    data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'create' },
+    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
+      .then(m => m.TestSlotCreatePage)
+  },
+  {
+    path: portalRoutes.editTestSlotPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'edit' },
+    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
+      .then(m => m.TestSlotCreatePage)
+  },
+  {
+    path: portalRoutes.viewTestSlotPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.View], testSlotMode: 'view' },
     loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
       .then(m => m.TestSlotCreatePage)
   },

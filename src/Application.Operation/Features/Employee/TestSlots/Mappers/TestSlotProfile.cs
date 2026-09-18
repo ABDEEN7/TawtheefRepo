@@ -10,7 +10,7 @@ public sealed class TestSlotProfile : IRegister
     {
         config.NewConfig<TestSlot, TestSlotListItemDto>()
             .Ignore(destination => destination.Title, destination => destination.RoomName,
-                destination => destination.CandidateCount, destination => destination.HallSupervisorId,
-                destination => destination.HallSupervisorName, destination => destination.Status);
+                destination => destination.CandidateCount, destination => destination.HallSupervisorId);
+        // destination => destination.HallSupervisorName, destination => destination.Status);
     }
 }

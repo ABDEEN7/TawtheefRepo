@@ -5,10 +5,11 @@ using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Operation.Features.Employee.TestSlots.Validators;
 
-public sealed class CreateTestSlotCommandValidator : AbstractValidator<CreateTestSlotCommand>
+public sealed class SaveTestSlotCommandValidator : AbstractValidator<SaveTestSlotCommand>
 {
-    public CreateTestSlotCommandValidator(TimeProvider timeProvider)
+    public SaveTestSlotCommandValidator(TimeProvider timeProvider)
     {
+        RuleFor(x => x.Id).NotEqual(Guid.Empty).When(x => x.Id.HasValue);
         RuleFor(x => x.TestSlot).NotNull();
         When(x => x.TestSlot != null, () =>
         {
@@ -25,7 +26,7 @@ public sealed class CreateTestSlotCommandValidator : AbstractValidator<CreateTes
         });
     }
 
-    private static bool HasValidStaff(CreateTestSlotCommand request)
+    private static bool HasValidStaff(SaveTestSlotCommand request)
     {
         var staff = request.TestSlot.Staff;
         return staff != null && staff.All(x => x.StaffUserId != Guid.Empty && x.IsActive &&

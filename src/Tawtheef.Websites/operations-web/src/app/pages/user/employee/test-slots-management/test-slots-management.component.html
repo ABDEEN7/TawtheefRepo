@@ -71,24 +71,47 @@
           <p-table [value]="testSlots()" dataKey="id" [loading]="loading()">
             <ng-template #header>
               <tr>
-                <th>{{ 'TEST_SLOTS.NUMBER' | translate }}</th><th>{{ 'TEST_SLOTS.PERIOD_TITLE' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.PERIOD_TITLE' | translate }}</th>
                 <th>{{ 'TEST_SLOTS.ROOM' | translate }}</th><th>{{ 'TEST_SLOTS.DATE' | translate }}</th>
                 <th>{{ 'TEST_SLOTS.TIME' | translate }}</th><th>{{ 'TEST_SLOTS.CANDIDATES' | translate }}</th>
-                <th>{{ 'TEST_SLOTS.HALL_SUPERVISOR' | translate }}</th><th>{{ 'TEST_SLOTS.STATUS' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.HALL_SUPERVISOR' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.STATUS' | translate }}</th>
                 <th class="text-center">{{ 'TEST_SLOTS.ACTIONS' | translate }}</th>
               </tr>
             </ng-template>
             <ng-template #body let-testSlot>
               <tr>
-                <td class="fw-semibold"><bdi>{{ testSlot.slotNo }}</bdi></td><td>{{ testSlot.title }}</td><td>{{ testSlot.roomName }}</td>
+                <td>{{ testSlot.title }}</td><td>{{ testSlot.roomName }}</td>
                 <td class="text-nowrap">{{ testSlot.slotDate | date: 'yyyy/MM/dd' }}</td>
                 <td class="text-nowrap"><bdi>{{ testSlot.startTime }} - {{ testSlot.endTime }}</bdi></td>
                 <td>{{ testSlot.candidateCount }}</td>
                 <td>{{ testSlot.hallSupervisorName || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</td>
-                <td><p-tag severity="secondary" [value]="testSlot.status.name" /></td><td></td>
+                <td><p-tag severity="secondary" [value]="testSlot.status.name" /></td>
+                <td class="text-center">
+                  <div class="action-buttons justify-content-center">
+                    <a
+                      class="btn btn-action-icon"
+                      *hasPermission="Permissions.TestSlots.View"
+                      [routerLink]="routes.viewTestSlot(testSlot.id)"
+                      [pTooltip]="'TEST_SLOTS.VIEW' | translate"
+                      tooltipPosition="top"
+                    >
+                      <i class="hgi hgi-stroke hgi-view"></i>
+                    </a>
+                    <a
+                      class="btn btn-action-icon"
+                      *hasPermission="Permissions.TestSlots.Create"
+                      [routerLink]="routes.editTestSlot(testSlot.id)"
+                      [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
+                      tooltipPosition="top"
+                    >
+                      <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                    </a>
+                  </div>
+                </td>
               </tr>
             </ng-template>
-            <ng-template #emptymessage><tr><td colspan="9" class="text-center py-4 text-muted">
+            <ng-template #emptymessage><tr><td colspan="8" class="text-center py-4 text-muted">
               @if (!loading() && !loadError()) { {{ 'TEST_SLOTS.EMPTY' | translate }} }
             </td></tr></ng-template>
           </p-table>

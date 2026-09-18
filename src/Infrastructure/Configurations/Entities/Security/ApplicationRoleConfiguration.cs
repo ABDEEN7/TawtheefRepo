@@ -93,6 +93,18 @@ public sealed class ApplicationRoleConfiguration
                 DescriptionEn = "Employee Super Admin",
                 IsSystemRole = false,
                 ConcurrencyStamp = "b8d1862f-102c-4e76-9d53-3e9452930ce0"
+            },
+            new ApplicationRole
+            {
+                Id = SystemRoleIds.TestSlotStaffMember,
+                Name = nameof(SystemRoleIds.TestSlotStaffMember),
+                NormalizedName = nameof(SystemRoleIds.TestSlotStaffMember).ToUpper(),
+                NameAr = "عضو فريق فترات الاختبار",
+                NameEn = "Test Slot Staff Member",
+                DescriptionAr = "عضو فريق فترات الاختبار",
+                DescriptionEn = "Test slot staff member",
+                IsSystemRole = true,
+                ConcurrencyStamp = "8500aa5d-c126-4ef1-8b82-6a179e1d2d3f"
             }
         );
     }

@@ -1,8 +1,7 @@
-import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import { dropdownOptionsModel } from "../../../../../shared/models/dropdown-options.model";
 
 export interface TestSlotListItemDto {
   id: string;
-  slotNo: string;
   title: string;
   roomId: string;
   roomName: string;
