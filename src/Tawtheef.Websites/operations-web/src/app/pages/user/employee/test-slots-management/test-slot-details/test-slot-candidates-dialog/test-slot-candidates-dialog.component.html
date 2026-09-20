@@ -1,0 +1,93 @@
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-5">
+    <p-iconfield class="search-icon-field w-100">
+      <p-inputicon styleClass="pi pi-search"></p-inputicon>
+      <input
+        pInputText
+        class="w-100 form-control"
+        type="search"
+        [(ngModel)]="search"
+        (ngModelChange)="applyFilters()"
+        [placeholder]="'TEST_SLOT_DETAILS.CANDIDATE_SEARCH' | translate"
+      />
+    </p-iconfield>
+  </div>
+  <div class="col-12 col-lg-4">
+    <p-select
+      class="w-100"
+      [options]="sessionOptions()"
+      optionLabel="label"
+      optionValue="id"
+      [(ngModel)]="selectedSessionId"
+      (onChange)="applyFilters()"
+      [showClear]="true"
+      [placeholder]="'TEST_SLOT_DETAILS.ALL_SESSIONS' | translate"
+      appendTo="body"
+    />
+  </div>
+  <div class="col-12 col-lg-3 d-flex align-items-center">
+    <button type="button" class="btn btn-outline-primary light" (click)="clearFilters()">
+      {{ 'TEST_SLOT_DETAILS.CLEAR_FILTERS' | translate }}
+    </button>
+  </div>
+</div>
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table [value]="candidates()" dataKey="candidateId" [loading]="loading()">
+      <ng-template #header
+        ><tr>
+          <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.EXAM_JOB' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.SESSION' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.ATTENDANCE' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.ATTEMPT_STATUS' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.NOTIFICATION' | translate }}</th>
+          <th>{{ 'TEST_SLOTS.ACTIONS' | translate }}</th>
+        </tr></ng-template
+      >
+      <ng-template #body let-candidate
+        ><tr>
+          <td>
+            <div class="fw-semibold">{{ candidate.candidateName }}</div>
+            <small class="text-muted">{{ candidate.qid || '—' }}</small>
+          </td>
+          <td>
+            <div class="fw-semibold">{{ candidate.examTitle }}</div>
+            <small class="text-muted">{{ candidate.jobTitle || '—' }}</small>
+          </td>
+          <td>
+            <div class="fw-semibold">{{ candidate.examNo }}</div>
+            <small class="text-muted">{{ candidate.sessionNo }}</small>
+          </td>
+          <td><p-tag severity="secondary" [value]="candidate.attendanceStatus" /></td>
+          <td><p-tag severity="secondary" [value]="candidate.attemptStatus" /></td>
+          <td>{{ candidate.notificationStatus || '—' }}</td>
+          <td>—</td>
+        </tr></ng-template
+      >
+      <ng-template #emptymessage
+        ><tr>
+          <td colspan="7" class="text-center py-4 text-muted">
+            {{ 'TEST_SLOT_DETAILS.NO_CANDIDATES' | translate }}
+          </td>
+        </tr></ng-template
+      >
+    </p-table>
+  </div>
+</div>
+@if (totalItems() > 0) {
+  <div class="pagination-box mt-3">
+    <app-pagination
+      [currentPage]="filters().pageNumber"
+      [itemsPerPage]="filters().pageSize"
+      [totalItems]="totalItems()"
+      (pageChanged)="onPageChange($event)"
+      (pageSizeChanged)="onPageSizeChange($event)"
+    />
+  </div>
+}
+<div class="d-flex justify-content-end gap-2 mt-4">
+  <button type="button" class="btn btn-outline-primary" (click)="close()">
+    {{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}
+  </button>
+</div>

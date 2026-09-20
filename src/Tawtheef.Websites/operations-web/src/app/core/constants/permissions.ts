@@ -159,6 +159,7 @@ export const Permissions = {
   TestSlots: {
     View: 'test-slots.view',
     Create: 'test-slots.create',
+    ViewAccessCode: 'test-slots.view-access-code',
   },
 
   QuestionBanks: {

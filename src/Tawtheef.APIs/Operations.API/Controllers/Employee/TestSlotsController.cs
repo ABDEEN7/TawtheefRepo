@@ -50,4 +50,25 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetConfiguration(Guid id, [FromQuery] string language,
         CancellationToken cancellationToken)
         => (await mediator.Send(new GetTestSlotConfigurationQuery(id, language), cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}")]
+    [AuthorizePermission(PermissionKeys.TestSlots.View)]
+    public async Task<IActionResult> GetDetails(Guid id, [FromQuery] string language, CancellationToken cancellationToken)
+        => (await mediator.Send(new GetTestSlotDetailsQuery(id, language), cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/sessions")]
+    [AuthorizePermission(PermissionKeys.TestSlots.View)]
+    public async Task<IActionResult> GetSessions(Guid id, [FromQuery] string language, CancellationToken cancellationToken)
+        => (await mediator.Send(new GetTestSlotSessionsQuery(id, language), cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/candidates")]
+    [AuthorizePermission(PermissionKeys.TestSlots.View)]
+    public async Task<IActionResult> GetCandidates(Guid id, [FromQuery] GetTestSlotCandidatesQuery query,
+        CancellationToken cancellationToken)
+        => (await mediator.Send(query with { TestSlotId = id }, cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/access-code")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ViewAccessCode)]
+    public async Task<IActionResult> GetAccessCode(Guid id, CancellationToken cancellationToken)
+        => (await mediator.Send(new GetTestSlotAccessCodeQuery(id), cancellationToken)).ToActionResult();
 }

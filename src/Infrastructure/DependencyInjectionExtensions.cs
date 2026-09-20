@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
@@ -161,6 +162,8 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<ISessionService, EfSessionService>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
+                services.AddDataProtection();
+                services.AddScoped<IAccessCodeProtector, AccessCodeProtector>();
                 services.AddScoped<IIdentityFieldProtectionContext, IdentityFieldProtectionContext>();
                 services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
                 services.AddSingleton<ILocalizationService, LocalizationService>();

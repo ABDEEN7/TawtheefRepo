@@ -1,0 +1,61 @@
+<section class="workflow-page" i18nNamespace="pages/employee/test-slots-management">
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+        <div class="col-lg-6 col-md-12">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a
+              class="btn btn-link p-0 text-primary d-inline-flex align-items-center"
+              [routerLink]="routes.testSlotsManagement"
+              [attr.aria-label]="'TEST_SLOT_WIZARD.BACK' | translate"
+            >
+              <i class="hgi fs-24" faDirArrow="start"></i>
+            </a>
+            <h3 class="fw-bold mb-0">{{ 'TEST_SLOT_DETAILS.TITLE' | translate }}</h3>
+          </div>
+          <p class="text-muted mt-2 mb-0">{{ 'TEST_SLOT_DETAILS.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+      @if (loading()) {
+        <p>{{ 'TEST_SLOT_DETAILS.LOADING' | translate }}</p>
+      } @else if (failed() || !details()) {
+        <div class="alert alert-danger">{{ 'TEST_SLOT_DETAILS.LOAD_ERROR' | translate }}</div>
+      } @else {
+        <div *hasPermission="permissions.TestSlots.ViewAccessCode">
+          <section
+            class="card card-table bg-primary text-white mb-4"
+            *ngIf="details()!.isCurrentUserRoomHead && details()!.hasRevealableAccessCode"
+          >
+            <div class="card-body d-flex justify-content-between align-items-center gap-3">
+              <div>
+                <div class="text-white-50">{{ 'TEST_SLOT_DETAILS.ACCESS_CODE' | translate }}</div>
+                <bdi class="fw-bold fs-4">{{ revealedAccessCode() || '••••••••' }}</bdi>
+              </div>
+              <button type="button" class="btn btn-outline-light" (click)="toggleAccessCode()">
+                {{
+                  (revealedAccessCode() ? 'TEST_SLOT_DETAILS.HIDE' : 'TEST_SLOT_DETAILS.SHOW')
+                    | translate
+                }}
+              </button>
+            </div>
+          </section>
+        </div>
+        <app-test-slot-basic-info [details]="details()!" />
+        <app-test-slot-candidates [testSlotId]="details()!.id" />
+        <div class="row gx-4 gy-0 align-items-start">
+          <div class="col-12 col-lg-6">
+            <app-test-slot-assignments
+              class="d-block w-100"
+              [staff]="details()!.staff"
+              [testSlotId]="details()!.id"
+              (assignmentsUpdated)="loadDetails()"
+            />
+          </div>
+          <div class="col-12 col-lg-6">
+            <app-test-slot-sessions class="d-block w-100" [testSlotId]="details()!.id" />
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using Application.Operation.Features.Employee.TestSlots.Commands;
 using Application.Operation.Features.Employee.TestSlots.DTOs;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -13,7 +15,7 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.TestSlots.Handlers.Commands;
 
-public sealed class SaveTestSlotCommandHandler(IUnitOfWork unitOfWork)
+public sealed class SaveTestSlotCommandHandler(IUnitOfWork unitOfWork, IAccessCodeProtector accessCodeProtector)
     : IRequestHandler<SaveTestSlotCommand, IResult<SavedTestSlotDto>>
 {
     public Task<IResult<SavedTestSlotDto>> Handle(SaveTestSlotCommand request, CancellationToken ct)
@@ -86,12 +88,7 @@ public sealed class SaveTestSlotCommandHandler(IUnitOfWork unitOfWork)
 
             var slot = request.Id is { } guid
                 ? await repository.DbSet.FirstOrDefaultAsync(x => x.Id == guid, token)
-                : new TestSlot
-                {
-                    AccessCodeHash = Convert.ToHexString(SHA256.HashData(RandomNumberGenerator.GetBytes(32))),
-                    StatusId = TestSlotStatusIds.Ready,
-                    TitleAr = string.Empty,
-                };
+                : CreateTestSlot();
             if (slot == null)
                 return Result.Fail<SavedTestSlotDto>(ErrorsCodes.InvalidRequest);
 
@@ -124,4 +121,15 @@ public sealed class SaveTestSlotCommandHandler(IUnitOfWork unitOfWork)
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(new SavedTestSlotDto(slot.Id));
         }, ct);
+
+    private TestSlot CreateTestSlot()
+    {
+        var accessCode = RandomNumberGenerator.GetInt32(1000, 10000).ToString(CultureInfo.InvariantCulture);
+        return new TestSlot
+        {
+            AccessCodeHash = accessCodeProtector.Protect(accessCode),
+            StatusId = TestSlotStatusIds.Ready,
+            TitleAr = string.Empty,
+        };
+    }
 }

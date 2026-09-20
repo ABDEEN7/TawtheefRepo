@@ -123,6 +123,10 @@ public static class RolePermissionCatalog
                 Permissions.TestSlots.Create.Key,
             ],
 
+            [SystemRoleIds.TestSlotStaffMember] = [
+                Permissions.TestSlots.ViewAccessCode.Key,
+            ],
+
             [SystemRoleIds.OfficeAdmin] = [
                 Permissions.OfficeUsers.View.Key,
                 Permissions.OfficeUsers.Manage.Key,

@@ -1,0 +1,97 @@
+<section class="card card-table bg-light mb-3" aria-label="test-slot-details">
+  <div class="card-body">
+    <h5 class="text-primary d-flex align-items-center mb-3">
+      <i class="hgi hgi-stroke hgi-calendar-03 me-1"></i>
+      {{ 'TEST_SLOT_DETAILS.BASIC_INFO' | translate }}
+    </h5>
+    <dl class="row g-3 mb-0 exam-summary-details">
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.TITLE_AR' | translate }}</dt>
+        <dd>{{ details.titleAr }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.TITLE_EN' | translate }}</dt>
+        <dd>{{ details.titleEn || '—' }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.STATUS' | translate }}</dt>
+        <dd><p-tag severity="secondary" [value]="details.status.name" /></dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.CANDIDATE_COUNT' | translate }}</dt>
+        <dd>{{ details.candidateCount }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.ROOM' | translate }}</dt>
+        <dd>{{ details.roomName }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.CAPACITY' | translate }}</dt>
+        <dd>{{ details.roomCapacity }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.DATE' | translate }}</dt>
+        <dd>{{ details.slotDate | date: 'yyyy/MM/dd' }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SLOT_DETAILS.TIME' | translate }}</dt>
+        <dd><bdi>{{ details.startTime }} - {{ details.endTime }}</bdi></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="row g-3 mb-4">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="workflow-review-summary-card workflow-review-summary-card--room h-100">
+              <i class="hgi hgi-stroke hgi-user-group workflow-review-summary-card__icon"></i>
+              <div class="workflow-review-summary-card__content">
+                <span class="workflow-review-summary-card__label">
+                  {{ 'TEST_SLOT_DETAILS.TOTAL_CANDIDATES' | translate }}
+                </span>
+                <strong class="workflow-review-summary-card__value">{{
+                  details.totalCandidates
+                }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="workflow-review-summary-card workflow-review-summary-card--date h-100">
+              <i class="hgi hgi-stroke hgi-user-check-01 workflow-review-summary-card__icon"></i>
+              <div class="workflow-review-summary-card__content">
+                <span class="workflow-review-summary-card__label">
+                  {{ 'TEST_SLOT_DETAILS.PRESENT_CANDIDATES' | translate }}
+                </span>
+                <strong class="workflow-review-summary-card__value">{{
+                  details.presentCandidates
+                }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="workflow-review-summary-card workflow-review-summary-card--time h-100">
+              <i class="hgi hgi-stroke hgi-clock-01 workflow-review-summary-card__icon"></i>
+              <div class="workflow-review-summary-card__content">
+                <span class="workflow-review-summary-card__label">
+                  {{ 'TEST_SLOT_DETAILS.WAITING_CANDIDATES' | translate }}
+                </span>
+                <strong class="workflow-review-summary-card__value">{{
+                  details.waitingCandidates
+                }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="workflow-review-summary-card workflow-review-summary-card--team h-100">
+              <i class="hgi hgi-stroke hgi-user-remove-01 workflow-review-summary-card__icon"></i>
+              <div class="workflow-review-summary-card__content">
+                <span class="workflow-review-summary-card__label">
+                  {{ 'TEST_SLOT_DETAILS.ABSENT_CANDIDATES' | translate }}
+                </span>
+                <strong class="workflow-review-summary-card__value">{{
+                  details.absentCandidates
+                }}</strong>
+              </div>
+            </div>
+          </div>
+        </section>

@@ -9,6 +9,7 @@ import { UserFilters } from '../../users-management/models/user-filters.dto';
 import { TestSlotStaffMemberDto } from '../models/test-slot-staff-member.dto';
 import { TestSlotFilters, TestSlotListItemDto } from '../models/test-slot-list-item.dto';
 import { CreateTestSlotDto, TestSlotConfigurationDto } from '../models/create-test-slot.dto';
+import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto } from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
 export class TestSlotsService {
@@ -29,6 +30,22 @@ export class TestSlotsService {
 
   configuration(id: string, language: string): Observable<TestSlotConfigurationDto> {
     return this.http.get<TestSlotConfigurationDto>(this.endpoints.testSlots.configuration(id), { language });
+  }
+
+  details(id: string, language: string): Observable<TestSlotDetailsDto> {
+    return this.http.get<TestSlotDetailsDto>(this.endpoints.testSlots.details(id), { language });
+  }
+
+  sessions(id: string, language: string): Observable<TestSlotSessionDto[]> {
+    return this.http.get<TestSlotSessionDto[]>(this.endpoints.testSlots.sessions(id), { language });
+  }
+
+  candidates(id: string, filters: TestSlotCandidateFilters): Observable<PaginatedResult<TestSlotCandidateListItemDto>> {
+    return this.http.get<PaginatedResult<TestSlotCandidateListItemDto>>(this.endpoints.testSlots.candidates(id), filters);
+  }
+
+  accessCode(id: string): Observable<TestSlotAccessCodeDto> {
+    return this.http.get<TestSlotAccessCodeDto>(this.endpoints.testSlots.accessCode(id));
   }
 
   save(testSlot: CreateTestSlotDto, id: string | null): Observable<void> {

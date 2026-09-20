@@ -396,6 +396,10 @@ export class EndpointsService {
     create: this.getFullUrl('/test-slots'),
     update: (id: string) => this.getFullUrl(`/test-slots/${id}`),
     configuration: (id: string) => this.getFullUrl(`/test-slots/${id}/configuration`),
+    details: (id: string) => this.getFullUrl(`/test-slots/${id}`),
+    sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
+    candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
+    accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };

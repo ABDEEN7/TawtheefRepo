@@ -853,6 +853,30 @@ body.rtl .p-datepicker-year-next-button {
   border-color: $grey-border;
 }
 
+// Shared search field used by management pages and TestSlot dialogs.
+.search-icon-field {
+  display: block;
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    text-align: start;
+    padding-inline-start: 1rem !important;
+    padding-inline-end: 3rem !important;
+  }
+
+  .p-inputicon {
+    position: absolute !important;
+    top: 50% !important;
+    inset-inline-end: 1rem !important;
+    inset-inline-start: auto !important;
+    margin: 0 !important;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}
+
 .upload-field {
   min-height: 45px !important;
   border: 1px solid $grey-border !important;
