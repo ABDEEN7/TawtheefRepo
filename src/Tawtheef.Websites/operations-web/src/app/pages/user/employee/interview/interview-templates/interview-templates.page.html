@@ -1,0 +1,11 @@
+<div i18nNamespace="pages/employee/interview-templates" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+  @if (store.view() === 'list') {
+    <app-templates-list />
+  }
+  @if (store.view() === 'wizard') {
+    <app-template-wizard />
+  }
+  @if (store.view() === 'detail') {
+    <app-template-detail />
+  }
+</div>

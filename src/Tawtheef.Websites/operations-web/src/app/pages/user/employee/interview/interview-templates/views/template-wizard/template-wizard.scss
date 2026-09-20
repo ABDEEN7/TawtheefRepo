@@ -1,0 +1,68 @@
+.wizard-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.wizard-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  cursor: pointer;
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    inset-inline-start: 50%;
+    width: 100%;
+    height: 2px;
+    background: #e3d5dd;
+    z-index: 0;
+  }
+
+  &.completed:not(:last-child)::after {
+    background: #8a1538;
+  }
+}
+
+.wizard-step-circle {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbcbcb;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #999;
+  position: relative;
+  z-index: 1;
+
+  .wizard-step.active & {
+    border-color: #8a1538;
+    color: #8a1538;
+  }
+
+  .wizard-step.completed & {
+    border-color: #8a1538;
+    background: #8a1538;
+    color: #fff;
+  }
+}
+
+.wizard-step-label {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+
+  .wizard-step.active &,
+  .wizard-step.completed & {
+    color: #8a1538;
+  }
+}

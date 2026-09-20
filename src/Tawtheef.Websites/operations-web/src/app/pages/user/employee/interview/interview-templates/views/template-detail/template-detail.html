@@ -1,0 +1,196 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="detail-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToList()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_TEMPLATES.DETAIL.BACK_TO_LIST' | translate }}
+      </button>
+      <button *hasPermission="Permissions.InterviewEvaluationTemplate.Manage" type="button" class="btn btn-outline-primary"
+        (click)="createNewVersion()">
+        <i class="hgi hgi-stroke hgi-copy-02 me-1"></i>{{ 'INTERVIEW_TEMPLATES.DETAIL.NEW_VERSION' | translate }}
+      </button>
+    </div>
+
+    @if (store.detailTemplate(); as template) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_AR' | translate }}</span>
+          <strong>{{ template.titleAr }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_EN' | translate }}</span>
+          <strong>{{ template.titleEn || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.COLUMN_STATUS' | translate }}</span>
+          <span class="pill" [class.success]="template.isActive !== false" [class.danger]="template.isActive === false">
+            {{ (template.isActive === false ? 'INTERVIEW_TEMPLATES.INACTIVE' : 'INTERVIEW_TEMPLATES.ACTIVE') | translate }}
+          </span>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_ORG_SCOPE' | translate }}</span>
+          <strong>{{ templateOrgScopeLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_JOB_TITLE' | translate }}</span>
+          <strong>{{ templateJobTitleLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_DEPARTMENT' | translate }}</span>
+          <strong>{{ templateDepartmentLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_TEMPLATES.DETAIL.VERSIONS_TITLE' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{{ 'INTERVIEW_TEMPLATES.DETAIL.COLUMN_VERSION_NO' | translate }}</th>
+              <th>{{ 'INTERVIEW_TEMPLATES.FIELD_FINAL_SCORE' | translate }}</th>
+              <th>{{ 'INTERVIEW_TEMPLATES.FIELD_QUALIFICATION_SCORE' | translate }}</th>
+              <th>{{ 'INTERVIEW_TEMPLATES.FIELD_CALCULATION_METHOD' | translate }}</th>
+              <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_STATUS' | translate }}</th>
+              <th>{{ 'INTERVIEW_TEMPLATES.DETAIL.COLUMN_APPROVED_AT' | translate }}</th>
+              <th *hasPermission="Permissions.InterviewEvaluationTemplate.Manage">{{ 'INTERVIEW_TEMPLATES.COLUMN_ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (version of store.detailVersions(); track version.id) {
+              <tr class="cursor-pointer" [class.table-active]="store.detailSelectedVersion()?.id === version.id"
+                (click)="selectVersion(version)">
+                <td>v{{ version.versionNo }}</td>
+                <td>{{ version.finalScore }}</td>
+                <td>{{ version.qualificationScore ?? '—' }}</td>
+                <td>{{ calculationMethodLabel(version) | translate }}</td>
+                <td>
+                  <span class="pill" [class.success]="statusPillClass(version.status) === 'success'"
+                    [class.warning]="statusPillClass(version.status) === 'warning'"
+                    [class.danger]="statusPillClass(version.status) === 'danger'"
+                    [class.info]="statusPillClass(version.status) === 'info'"
+                    [class.neutral]="statusPillClass(version.status) === 'neutral'">
+                    {{ statusLabel(version.status) | translate }}
+                  </span>
+                </td>
+                <td>{{ version.approvedAt ? (version.approvedAt | date:'dd-MM-yyyy HH:mm:ss') : '—' }}</td>
+                <td *hasPermission="Permissions.InterviewEvaluationTemplate.Manage" (click)="$event.stopPropagation()">
+                  <div class="action-buttons d-flex">
+                    @if (version.status === TemplateVersionStatus.Draft || version.status === TemplateVersionStatus.Returned) {
+                      <button type="button" class="btn" (click)="editVersion(version)"
+                        [pTooltip]="'common.edit' | translate" tooltipPosition="top">
+                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                      </button>
+                    }
+                    @if (version.status === TemplateVersionStatus.PendingApproval) {
+                      <button type="button" class="btn" (click)="approve(version)" [pTooltip]="'INTERVIEW_TEMPLATES.DETAIL.APPROVE' | translate"
+                        tooltipPosition="top">
+                        <i class="hgi hgi-stroke hgi-tick-01 text-success"></i>
+                      </button>
+                      <button type="button" class="btn" (click)="returnForEdit(version)"
+                        [pTooltip]="'INTERVIEW_TEMPLATES.DETAIL.RETURN' | translate" tooltipPosition="top">
+                        <i class="hgi hgi-stroke hgi-arrow-turn-backward text-warning"></i>
+                      </button>
+                    }
+                    @if (version.status !== TemplateVersionStatus.Approved && version.status !== TemplateVersionStatus.Cancelled && version.status !== TemplateVersionStatus.Superseded) {
+                      <button type="button" class="btn" (click)="cancelVersion(version)"
+                        [pTooltip]="'INTERVIEW_TEMPLATES.DETAIL.CANCEL_VERSION' | translate" tooltipPosition="top">
+                        <i class="hgi hgi-stroke hgi-cancel-01 text-danger"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_TEMPLATES.NO_RECORDS' | translate }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (store.detailSelectedVersion(); as version) {
+  @if (version.decisionNotes) {
+    <div class="note-card note-card--{{ statusPillClass(version.status) }} mb-3">
+      <div class="note-card-icon">
+        <i class="hgi hgi-stroke hgi-alert-circle"></i>
+      </div>
+      <div class="note-card-content">
+        <span class="note-card-title">{{ 'INTERVIEW_TEMPLATES.DETAIL.DECISION_NOTES_LABEL' | translate }}</span>
+        <p class="note-card-text">{{ version.decisionNotes }}</p>
+      </div>
+    </div>
+  }
+
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">{{ 'INTERVIEW_TEMPLATES.REVIEW_AXES_TITLE' | translate }}</h5>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_ORDER' | translate }}</th>
+                <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_AXIS' | translate }}</th>
+                <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_MAX_SCORE' | translate }}</th>
+                <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_QUALIFICATION_SCORE' | translate }}</th>
+                <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_CRITERIA_COUNT' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (axis of version.axes; track axis.id) {
+                <tr>
+                  <td>{{ axis.orderNo }}</td>
+                  <td>{{ store.isRtl() ? axis.axisNameAr : (axis.axisNameEn || axis.axisNameAr) }}</td>
+                  <td>{{ axis.maxScore }}</td>
+                  <td>{{ axis.qualificationScore ?? '—' }}</td>
+                  <td>{{ axis.criteria.length }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @for (axis of version.axes; track axis.id) {
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <h6 class="fw-bold mb-3">{{ store.isRtl() ? axis.axisNameAr : (axis.axisNameEn || axis.axisNameAr) }}</h6>
+        <div class="table-card rounded overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.CRITERION_COLUMN' | translate }}</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.FIELD_MAX_SCORE' | translate }}</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.FIELD_REQUIRED' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (criterion of axis.criteria; track criterion.id) {
+                  <tr>
+                    <td>{{ criterion.orderNo }}</td>
+                    <td>{{ criterionDisplayName(criterion) }}</td>
+                    <td>{{ criterion.maxScore }}</td>
+                    <td>{{ (criterion.isRequired ? 'INTERVIEW_TEMPLATES.REQUIRED_YES' : 'INTERVIEW_TEMPLATES.REQUIRED_NO') | translate }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
