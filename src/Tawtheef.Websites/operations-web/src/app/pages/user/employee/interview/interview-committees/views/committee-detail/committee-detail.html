@@ -1,0 +1,135 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToList()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_COMMITTEES.DETAIL.BACK_TO_LIST' | translate }}
+      </button>
+
+      @if (store.detailCommittee(); as committee) {
+        <div *hasPermission="Permissions.InterviewCommittee.Manage" class="d-flex gap-2 flex-wrap">
+          @if (canEdit(committee.status)) {
+            <button type="button" class="btn btn-outline-primary" (click)="edit()">
+              <i class="hgi hgi-stroke hgi-pencil-edit-02 me-1"></i>{{ 'common.edit' | translate }}
+            </button>
+          }
+          @if (canSubmit(committee.status)) {
+            <button type="button" class="btn btn-primary" (click)="submit()">
+              <i class="hgi hgi-stroke hgi-sent me-1"></i>{{ 'INTERVIEW_COMMITTEES.DETAIL.SUBMIT' | translate }}
+            </button>
+          }
+          @if (canDecide(committee.status)) {
+            <button type="button" class="btn btn-success" (click)="approve()">
+              <i class="hgi hgi-stroke hgi-tick-01 me-1"></i>{{ 'INTERVIEW_COMMITTEES.DETAIL.APPROVE' | translate }}
+            </button>
+            <button type="button" class="btn btn-outline-warning" (click)="returnForEdit()">
+              <i class="hgi hgi-stroke hgi-arrow-turn-backward me-1"></i>{{ 'INTERVIEW_COMMITTEES.DETAIL.RETURN' | translate }}
+            </button>
+          }
+          @if (canCancel(committee.status)) {
+            <button type="button" class="btn btn-outline-danger" (click)="cancelCommittee()">
+              <i class="hgi hgi-stroke hgi-cancel-01 me-1"></i>{{ 'INTERVIEW_COMMITTEES.DETAIL.CANCEL_COMMITTEE' | translate }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    @if (store.detailCommittee(); as committee) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_NUMBER' | translate }}</span>
+          <strong>{{ committee.code }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_NAME' | translate }}</span>
+          <strong>{{ committeeName() }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_STATUS' | translate }}</span>
+          <span [class]="'pill ' + statusPill(committee.status)">{{ statusLabel(committee.status) | translate }}</span>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_JOB' | translate }}</span>
+          <strong>{{ jobTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB_TYPE' | translate }}</span>
+          <strong>{{ committeeType() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.TEMPLATE' | translate }}</span>
+          <strong>{{ templateTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_CHAIR' | translate }}</span>
+          <strong>{{ chairName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBERS' | translate }}</span>
+          <strong>{{ committee.memberCount }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_APPROVAL_DATE' | translate }}</span>
+          <strong>{{ committee.approvedAt ? (committee.approvedAt | date: 'dd-MM-yyyy HH:mm:ss') : '—' }}</strong>
+        </div>
+        @if (committee.decisionNotes) {
+          <div class="col-12">
+            <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.DETAIL.DECISION_NOTES_LABEL' | translate }}</span>
+            <strong class="text-break">{{ committee.decisionNotes }}</strong>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_COMMITTEES.MEMBERS_TITLE' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
+              <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_ROLE' | translate }}</th>
+              <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</th>
+              <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_PERMISSIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of memberRows(); track row.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td class="fw-semibold">{{ row.name }}</td>
+                <td>{{ row.roleKey | translate }}</td>
+                <td>
+                  <div>{{ row.evaluationKey | translate }}</div>
+                  @if (row.axes.length) {
+                    <small class="text-muted">{{ row.axes.join(', ') }}</small>
+                  }
+                </td>
+                <td>
+                  <div class="d-flex flex-wrap gap-1">
+                    @for (key of row.permissionKeys; track key) {
+                      <span class="pill neutral">{{ key | translate }}</span>
+                    } @empty {
+                      <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.PERMISSION.NONE' | translate }}</span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  {{ (store.detailLoading() ? 'common.loading' : 'INTERVIEW_COMMITTEES.NO_MEMBERS') | translate }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

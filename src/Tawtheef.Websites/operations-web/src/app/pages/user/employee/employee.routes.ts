@@ -8,279 +8,421 @@ export const employeeRoutes: Routes = [
     path: portalRoutes.createExamPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.Create], examMode: 'create' },
-    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
-      .then(m => m.ExamWorkflowComponent)
+    loadComponent: () =>
+      import('./exams-management/exam-workflow/exam-workflow.component').then(
+        (m) => m.ExamWorkflowComponent,
+      ),
   },
   {
     path: portalRoutes.editExamPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.Create], examMode: 'edit' },
-    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
-      .then(m => m.ExamWorkflowComponent)
+    loadComponent: () =>
+      import('./exams-management/exam-workflow/exam-workflow.component').then(
+        (m) => m.ExamWorkflowComponent,
+      ),
   },
   {
     path: portalRoutes.viewExamPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.View], examMode: 'view' },
-    loadComponent: () => import('./exams-management/exam-workflow/exam-workflow.component')
-      .then(m => m.ExamWorkflowComponent)
+    loadComponent: () =>
+      import('./exams-management/exam-workflow/exam-workflow.component').then(
+        (m) => m.ExamWorkflowComponent,
+      ),
   },
   {
     path: portalRoutes.examsManagementPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.View] },
-    loadComponent: () => import('./exams-management/exams-management.component')
-      .then(m => m.ExamsManagementComponent)
+    loadComponent: () =>
+      import('./exams-management/exams-management.component').then(
+        (m) => m.ExamsManagementComponent,
+      ),
   },
   {
     path: 'dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },
-    loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard)
+    loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
     path: 'notifications',
-    loadComponent: () => import('../notifications/notifications.page').then(m => m.NotificationsPage)
+    loadComponent: () =>
+      import('../notifications/notifications.page').then((m) => m.NotificationsPage),
   },
   {
     path: 'admin-dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },
-    loadComponent: () => import('./admin-dashboard/admin-dashboard').then(m => m.AdminDashboard)
+    loadComponent: () => import('./admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
   },
   {
     path: 'approval-profile',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.View] },
-    loadComponent: () => import('./profile-managment/approval-list/profile-approval-list.page').then(m => m.ProfileApprovalListPage)
+    loadComponent: () =>
+      import('./profile-managment/approval-list/profile-approval-list.page').then(
+        (m) => m.ProfileApprovalListPage,
+      ),
   },
   {
     path: 'approval-profile/:profileId/wizard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Review] },
-    loadComponent: () => import('./profile-managment/approval-wizard/profile-approval-wizard.page').then(m => m.ProfileApprovalWizardPage)
+    loadComponent: () =>
+      import('./profile-managment/approval-wizard/profile-approval-wizard.page').then(
+        (m) => m.ProfileApprovalWizardPage,
+      ),
   },
   {
     path: 'approval-profile/:profileId/changes',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileApproval.Changes] },
-    loadComponent: () => import('./profile-managment/approval-detail/profile-approval-detail.page').then(m => m.ProfileApprovalDetailPage)
+    loadComponent: () =>
+      import('./profile-managment/approval-detail/profile-approval-detail.page').then(
+        (m) => m.ProfileApprovalDetailPage,
+      ),
   },
   {
     path: 'profile-distribution',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileDistribution.View] },
-    loadComponent: () => import('./profile-managment/distribution/profile-distribution.page').then(m => m.ProfileDistributionPage)
+    loadComponent: () =>
+      import('./profile-managment/distribution/profile-distribution.page').then(
+        (m) => m.ProfileDistributionPage,
+      ),
   },
   {
     path: 'job-invitation-summary',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobInvitations.View] },
-    loadComponent: () => import('./job-management/job-invitation-summary/job-invitation-summary').then(m => m.JobInvitationSummary)
+    loadComponent: () =>
+      import('./job-management/job-invitation-summary/job-invitation-summary').then(
+        (m) => m.JobInvitationSummary,
+      ),
   },
   {
     path: 'exceptions',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exceptions.View] },
-    loadComponent: () => import('./exceptions/exceptions.page').then(m => m.ExceptionsPage)
+    loadComponent: () => import('./exceptions/exceptions.page').then((m) => m.ExceptionsPage),
   },
   {
     path: 'job-invitation-summary-details/:jobId',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobInvitations.View] },
-    loadComponent: () => import('./job-management/job-invitation-summary-details/job-invitation-summary-details.component').then(m => m.JobInvitationSummaryDetailsComponent)
+    loadComponent: () =>
+      import('./job-management/job-invitation-summary-details/job-invitation-summary-details.component').then(
+        (m) => m.JobInvitationSummaryDetailsComponent,
+      ),
   },
   {
     path: 'organization-structures',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.OrganizationStructures.Manage] },
-    loadComponent: () => import('./organization-structures/organization-structures.page').then(m => m.OrganizationStructuresPage)
+    loadComponent: () =>
+      import('./organization-structures/organization-structures.page').then(
+        (m) => m.OrganizationStructuresPage,
+      ),
   },
   {
     path: 'jobs',
     canActivate: [permissionGuard],
-    loadChildren: () => import('./job-management/jobs.module').then(m => m.JobsModule),
+    loadChildren: () => import('./job-management/jobs.module').then((m) => m.JobsModule),
   },
   {
     path: 'majors-skills-management',
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.MajorSkills.View, Permissions.MajorSkills.Manage], requiredAll: false },
-    loadComponent: () => import('./majors-skills-management/majors-skills-management').then(m => m.MajorsSkillsManagementPage)
+    data: {
+      permissions: [Permissions.MajorSkills.View, Permissions.MajorSkills.Manage],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./majors-skills-management/majors-skills-management').then(
+        (m) => m.MajorsSkillsManagementPage,
+      ),
   },
   {
     path: 'kawader',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Kawader.Manage] },
-    loadComponent: () => import('./kawader/kawader.page').then(m => m.KawaderPage)
+    loadComponent: () => import('./kawader/kawader.page').then((m) => m.KawaderPage),
   },
   {
     path: 'candidate-users-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.CandidateUsers.View] },
-    loadComponent: () => import('./candidate-users-management/candidate-users-management.page').then(m => m.CandidateUsersManagementPage)
+    loadComponent: () =>
+      import('./candidate-users-management/candidate-users-management.page').then(
+        (m) => m.CandidateUsersManagementPage,
+      ),
   },
   {
     path: 'minister-office-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.MinisterOffice.View] },
-    loadComponent: () => import('./minister-office-management/minister-office-management.page').then(m => m.MinisterOfficeManagementPage)
+    loadComponent: () =>
+      import('./minister-office-management/minister-office-management.page').then(
+        (m) => m.MinisterOfficeManagementPage,
+      ),
   },
   {
     path: 'candidate-users-management/:profileId/view',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.CandidateUsers.View] },
-    loadComponent: () => import('./candidate-users-management/components/candidate-profile-summary/candidate-profile-summary.component').then(m => m.CandidateProfileSummaryComponent)
+    loadComponent: () =>
+      import('./candidate-users-management/components/candidate-profile-summary/candidate-profile-summary.component').then(
+        (m) => m.CandidateProfileSummaryComponent,
+      ),
   },
   {
     path: 'office-users-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.OfficeUsers.View] },
-    loadComponent: () => import('./office-users-management/office-users-management.page').then(m => m.OfficeUsersManagementPage)
+    loadComponent: () =>
+      import('./office-users-management/office-users-management.page').then(
+        (m) => m.OfficeUsersManagementPage,
+      ),
   },
   {
-    path: "roles-management",
-    loadComponent: () => import('./roles-management/roles-management').then(m => m.RolesManagement),
+    path: 'roles-management',
+    loadComponent: () =>
+      import('./roles-management/roles-management').then((m) => m.RolesManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Roles.Manage] },
   },
   {
-    path: "users-management",
-    loadComponent: () => import('./users-management/users-management').then(m => m.UsersManagement),
+    path: 'users-management',
+    loadComponent: () =>
+      import('./users-management/users-management').then((m) => m.UsersManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Users.Manage] },
   },
   {
-    path: "profile-logs",
-    loadComponent: () => import('./profile-logs/profile-logs').then(m => m.ProfileLogsComponent),
+    path: 'profile-logs',
+    loadComponent: () => import('./profile-logs/profile-logs').then((m) => m.ProfileLogsComponent),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileLogs.View] },
   },
   {
-    path: "offices-management",
-    loadComponent: () => import('./offices-management/offices-management').then(m => m.OfficesManagement),
+    path: 'offices-management',
+    loadComponent: () =>
+      import('./offices-management/offices-management').then((m) => m.OfficesManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Offices.Manage] },
   },
   {
-    path: "countries-management",
-    loadComponent: () => import('./countries-management/countries-management').then(m => m.CountriesManagement),
+    path: 'countries-management',
+    loadComponent: () =>
+      import('./countries-management/countries-management').then((m) => m.CountriesManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Countries.Manage] },
   },
   {
-    path: "languages-management",
-    loadComponent: () => import('./languages-management/languages-management').then(m => m.LanguagesManagement),
+    path: 'languages-management',
+    loadComponent: () =>
+      import('./languages-management/languages-management').then((m) => m.LanguagesManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Languages.Manage] },
   },
   {
-    path: "target-entities-management",
-    loadComponent: () => import('./target-entities-management/target-entities-management').then(m => m.TargetEntitiesManagement),
+    path: 'target-entities-management',
+    loadComponent: () =>
+      import('./target-entities-management/target-entities-management').then(
+        (m) => m.TargetEntitiesManagement,
+      ),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TargetEntities.Manage] },
   },
   {
-    path: "religions-management",
-    loadComponent: () => import('./religions-management/religions-management').then(m => m.ReligionsManagement),
+    path: 'religions-management',
+    loadComponent: () =>
+      import('./religions-management/religions-management').then((m) => m.ReligionsManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Religions.Manage] },
   },
   {
-    path: "universities-management",
-    loadComponent: () => import('./universities-management/universities-management').then(m => m.UniversitiesManagement),
+    path: 'universities-management',
+    loadComponent: () =>
+      import('./universities-management/universities-management').then(
+        (m) => m.UniversitiesManagement,
+      ),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Universities.View] },
   },
   {
-    path: "job-points-configuration",
-    loadComponent: () => import('./job-points-configuration/job-points-configuration.component').then(m => m.JobPointsConfigurationComponent),
+    path: 'job-points-configuration',
+    loadComponent: () =>
+      import('./job-points-configuration/job-points-configuration.component').then(
+        (m) => m.JobPointsConfigurationComponent,
+      ),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.JobPointsConfiguration.View, Permissions.JobPointsConfiguration.Manage], requiredAll: false },
+    data: {
+      permissions: [
+        Permissions.JobPointsConfiguration.View,
+        Permissions.JobPointsConfiguration.Manage,
+      ],
+      requiredAll: false,
+    },
   },
   {
-    path: "job-category-candidate-settings",
-    loadComponent: () => import('./job-category-candidate-settings/job-category-candidate-settings.component').then(m => m.JobCategoryCandidateSettingsComponent),
+    path: 'job-category-candidate-settings',
+    loadComponent: () =>
+      import('./job-category-candidate-settings/job-category-candidate-settings.component').then(
+        (m) => m.JobCategoryCandidateSettingsComponent,
+      ),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobCategoryCandidateSettings.View] },
   },
   {
-    path: "invitation-expiry-configuration",
-    loadComponent: () => import('./invitation-expiry-configuration/invitation-expiry-configuration.component').then(m => m.InvitationExpiryConfigurationComponent),
+    path: 'invitation-expiry-configuration',
+    loadComponent: () =>
+      import('./invitation-expiry-configuration/invitation-expiry-configuration.component').then(
+        (m) => m.InvitationExpiryConfigurationComponent,
+      ),
     canActivate: [permissionGuard],
-    data: { permissions: [Permissions.InvitationExpiryConfiguration.View, Permissions.InvitationExpiryConfiguration.Manage], requiredAll: false },
+    data: {
+      permissions: [
+        Permissions.InvitationExpiryConfiguration.View,
+        Permissions.InvitationExpiryConfiguration.Manage,
+      ],
+      requiredAll: false,
+    },
   },
   {
-    path: "job-titles-management",
-    loadComponent: () => import('./job-titles-management/job-titles-management.component').then(m => m.JobTitlesManagementComponent),
+    path: 'job-titles-management',
+    loadComponent: () =>
+      import('./job-titles-management/job-titles-management.component').then(
+        (m) => m.JobTitlesManagementComponent,
+      ),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.JobTitles.View] },
   },
   {
-    path: "system-admin-logs",
-    loadComponent: () => import('./system-admin-logs/system-admin-logs').then(m => m.SystemAdminLogsComponent),
+    path: 'system-admin-logs',
+    loadComponent: () =>
+      import('./system-admin-logs/system-admin-logs').then((m) => m.SystemAdminLogsComponent),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileLogs.View] },
   },
 
-
   {
-    path: "dashboard",
-    loadComponent: () => import('./admin-dashboard/admin-dashboard').then(m => m.AdminDashboard),
+    path: 'dashboard',
+    loadComponent: () => import('./admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },
   },
   {
-    path: "roles-management",
-    loadComponent: () => import('./roles-management/roles-management').then(m => m.RolesManagement),
+    path: 'roles-management',
+    loadComponent: () =>
+      import('./roles-management/roles-management').then((m) => m.RolesManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Roles.Manage] },
   },
   {
-    path: "system-admin-logs",
-    loadComponent: () => import('./system-admin-logs/system-admin-logs').then(m => m.SystemAdminLogsComponent),
+    path: 'system-admin-logs',
+    loadComponent: () =>
+      import('./system-admin-logs/system-admin-logs').then((m) => m.SystemAdminLogsComponent),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.ProfileLogs.View] },
   },
   {
-    path: "users-management",
-    loadComponent: () => import('./users-management/users-management').then(m => m.UsersManagement),
+    path: 'users-management',
+    loadComponent: () =>
+      import('./users-management/users-management').then((m) => m.UsersManagement),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Users.Manage] },
   },
   {
-    path: "home-content-management",
-    loadComponent: () => import('./home-content-management/home-content-management.component').then(m => m.HomeContentManagementComponent),
+    path: 'home-content-management',
+    loadComponent: () =>
+      import('./home-content-management/home-content-management.component').then(
+        (m) => m.HomeContentManagementComponent,
+      ),
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.HomeContent.Manage] },
   },
   {
-    path: "notification-tester",
-    loadComponent: () => import('./notification-tester/notification-tester.page').then(m => m.NotificationTesterPage),
+    path: 'notification-tester',
+    loadComponent: () =>
+      import('./notification-tester/notification-tester.page').then(
+        (m) => m.NotificationTesterPage,
+      ),
   },
   {
     path: 'locations-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Locations.View] },
     loadComponent: () =>
-      import('./locations-management/locations-management.page')
-        .then(m => m.LocationsManagementPage)
+      import('./locations-management/locations-management.page').then(
+        (m) => m.LocationsManagementPage,
+      ),
   },
   {
     path: 'question-banks',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBanks.View] },
-    loadComponent: () => import('./question-banks/question-banks.page').then(m => m.QuestionBanksPage)
+    loadComponent: () =>
+      import('./question-banks/question-banks.page').then((m) => m.QuestionBanksPage),
   },
   {
     path: 'question-bank-requests',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankRequests.View] },
-    loadComponent: () => import('./question-bank-requests/question-bank-requests.page').then(m => m.QuestionBankRequestsPage)
+    loadComponent: () =>
+      import('./question-bank-requests/question-bank-requests.page').then(
+        (m) => m.QuestionBankRequestsPage,
+      ),
   },
   {
     path: 'rooms-management',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Rooms.View] },
-    loadComponent: () => import('./rooms-management/rooms-management.page').then(m => m.RoomsManagementPage)
+    loadComponent: () =>
+      import('./rooms-management/rooms-management.page').then((m) => m.RoomsManagementPage),
+  },
+  // ----------------------------- interview routes part ------------------- //
+  {
+    path: 'interview-axes-criteria',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [
+        Permissions.InterviewEvaluationBank.View,
+        Permissions.InterviewEvaluationBank.Manage,
+      ],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-axes-criteria/interview-axes-criteria.page').then(
+        (m) => m.InterviewAxesCriteriaPage,
+      ),
+  },
+  {
+    path: 'interview-templates',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [
+        Permissions.InterviewEvaluationTemplate.View,
+        Permissions.InterviewEvaluationTemplate.Manage,
+      ],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-templates/interview-templates.page').then(
+        (m) => m.InterviewTemplatesPage,
+      ),
+  },
+  {
+    path: 'interview-committees',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [Permissions.InterviewCommittee.View, Permissions.InterviewCommittee.Manage],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-committees/interview-committees.page').then(
+        (m) => m.InterviewCommitteesPage,
+      ),
   },
 ];

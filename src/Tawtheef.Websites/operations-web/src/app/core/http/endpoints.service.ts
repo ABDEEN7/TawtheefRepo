@@ -493,4 +493,17 @@ export class EndpointsService {
         this.getFullUrl(`/InterviewEvaluationTemplate/versions/axes/criteria/${id}`),
     },
   };
+
+  interviewCommittee = {
+    list: this.getFullUrl('/InterviewCommittee'),
+    details: (id: string) => this.getFullUrl(`/InterviewCommittee/${id}`),
+    create: this.getFullUrl('/InterviewCommittee'),
+    update: this.getFullUrl('/InterviewCommittee'),
+    submit: this.getFullUrl('/InterviewCommittee/submit'),
+    approve: this.getFullUrl('/InterviewCommittee/approve'),
+    return: this.getFullUrl('/InterviewCommittee/return'),
+    cancel: this.getFullUrl('/InterviewCommittee/cancel'),
+    members: this.getFullUrl('/InterviewCommittee/members'),
+    eligibleMembers: this.getFullUrl('/InterviewCommittee/lookups/eligible-members'),
+  };
 }
