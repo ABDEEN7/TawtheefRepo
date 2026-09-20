@@ -1,0 +1,130 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_TEMPLATES.BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_TEMPLATES.TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_TEMPLATES.SUBTITLE' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.loadTemplates()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button *hasPermission="Permissions.InterviewEvaluationTemplate.Manage" pButton type="button" icon="pi pi-plus"
+      (click)="service.openCreateWizard()">
+      {{ 'INTERVIEW_TEMPLATES.CREATE_BUTTON' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-6 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.SEARCH_LABEL' | translate }}</label>
+            <input class="form-control" [placeholder]="'INTERVIEW_TEMPLATES.SEARCH_PLACEHOLDER' | translate"
+              [ngModel]="store.search()" (ngModelChange)="service.setSearch($event)" />
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.STATUS_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'INTERVIEW_TEMPLATES.STATUS_FILTER' | translate" [ngModel]="store.statusFilter()"
+              (ngModelChange)="service.setStatusFilter($event)">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ selected?.label ? (selected.label | translate) : ('INTERVIEW_TEMPLATES.STATUS_FILTER' | translate) }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table [value]="store.templates()" [rowHover]="true" responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_TITLE' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_ORG_SCOPE' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_JOB_TITLE' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_DEPARTMENT' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_STATUS' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_APPROVAL_STATUS' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_SCORE' | translate }}</th>
+          <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-template>
+        <tr class="cursor-pointer" (click)="openDetail(template)">
+          <td>
+            <div class="fw-semibold">{{ template.titleAr }}</div>
+            <small class="text-muted">{{ template.titleEn || '' }}</small>
+            @if (template.latestVersionNo) {
+              <small class="text-muted d-block">v{{ template.latestVersionNo }}</small>
+            }
+          </td>
+          <td>{{ (store.isRtl() ? template.organizationScopeNameAr : (template.organizationScopeNameEn ||
+            template.organizationScopeNameAr)) || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</td>
+          <td>{{ (store.isRtl() ? template.jobTitleNameAr : (template.jobTitleNameEn || template.jobTitleNameAr)) ||
+            ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</td>
+          <td>{{ (store.isRtl() ? template.departmentNameAr : (template.departmentNameEn || template.departmentNameAr)) ||
+            ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</td>
+          <td>
+            <span class="pill" [class.success]="template.isActive !== false" [class.danger]="template.isActive === false">
+              {{ template.isActive === false ? ('INTERVIEW_TEMPLATES.INACTIVE' | translate) : ('INTERVIEW_TEMPLATES.ACTIVE' |
+              translate) }}
+            </span>
+          </td>
+          <td>
+            @if (template.latestVersionStatus != null) {
+              <span class="pill" [class.success]="versionStatusPillClass(template.latestVersionStatus) === 'success'"
+                [class.warning]="versionStatusPillClass(template.latestVersionStatus) === 'warning'"
+                [class.danger]="versionStatusPillClass(template.latestVersionStatus) === 'danger'"
+                [class.info]="versionStatusPillClass(template.latestVersionStatus) === 'info'"
+                [class.neutral]="versionStatusPillClass(template.latestVersionStatus) === 'neutral'">
+                {{ versionStatusLabel(template.latestVersionStatus) | translate }}
+              </span>
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+          <td>
+            @if (template.latestVersionFinalScore != null) {
+              {{ template.latestVersionQualificationScore ?? '—' }}/{{ template.latestVersionFinalScore }}
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+          <td (click)="$event.stopPropagation()">
+            <div class="action-buttons d-flex">
+              <button type="button" class="btn" (click)="openDetail(template)" [pTooltip]="'INTERVIEW_TEMPLATES.VIEW' | translate"
+                tooltipPosition="top" [attr.aria-label]="'INTERVIEW_TEMPLATES.VIEW' | translate">
+                <i class="hgi hgi-stroke hgi-view"></i>
+              </button>
+
+              <p-toggle-switch *hasPermission="Permissions.InterviewEvaluationTemplate.Manage" [ngModel]="template.isActive !== false"
+                (ngModelChange)="service.toggleTemplateActive(template, $event)"
+                [pTooltip]="(template.isActive !== false ? 'INTERVIEW_TEMPLATES.DEACTIVATE' : 'INTERVIEW_TEMPLATES.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(template.isActive !== false ? 'INTERVIEW_TEMPLATES.DEACTIVATE' : 'INTERVIEW_TEMPLATES.ACTIVATE') | translate">
+              </p-toggle-switch>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_TEMPLATES.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

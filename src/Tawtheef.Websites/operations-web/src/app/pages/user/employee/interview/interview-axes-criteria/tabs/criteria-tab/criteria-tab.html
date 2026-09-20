@@ -1,0 +1,110 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_AXES_CRITERIA.CRITERIA_BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_AXES_CRITERIA.CRITERIA_TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_AXES_CRITERIA.CRITERIA_HINT' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshCriteria()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button *hasPermission="Permissions.InterviewEvaluationBank.Manage" pButton type="button" icon="pi pi-plus"
+      [disabled]="!store.criterionFilters().axisId" (click)="service.openCreateCriterion()">
+      {{ 'INTERVIEW_AXES_CRITERIA.CREATE_CRITERION' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_AXES_CRITERIA.FIELD_AXIS' | translate }}</label>
+            <p-select class="w-100" [options]="store.axisOptions()" optionLabel="label" optionValue="value"
+              [placeholder]="'INTERVIEW_AXES_CRITERIA.FIELD_AXIS' | translate" [ngModel]="store.criterionFilters().axisId"
+              (ngModelChange)="service.setCriterionAxis($event)">
+            </p-select>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_AXES_CRITERIA.SEARCH_LABEL' | translate }}</label>
+            <input class="form-control" [placeholder]="'INTERVIEW_AXES_CRITERIA.SEARCH_CRITERIA' | translate"
+              [ngModel]="store.criterionFilters().search" (ngModelChange)="service.setCriterionSearch($event)" />
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate" [ngModel]="store.criterionFilters().isActive"
+              (ngModelChange)="service.setCriterionStatus($event)">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ selected?.label ? (selected.label | translate) : ('INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate)
+                  }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table [value]="store.criteria()" [rowHover]="true" responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_AXES_CRITERIA.CRITERION_COLUMN' | translate }}</th>
+          <th>{{ 'INTERVIEW_AXES_CRITERIA.STATUS' | translate }}</th>
+          <th *hasPermission="Permissions.InterviewEvaluationBank.Manage">{{ 'INTERVIEW_AXES_CRITERIA.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-criterion>
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ criterion.nameAr }}</div>
+            <small class="text-muted">{{ criterion.nameEn || '' }}</small>
+          </td>
+          <td>
+            <span class="pill" [class.success]="criterion.isActive !== false" [class.danger]="criterion.isActive === false">
+              {{ criterion.isActive === false ? ('INTERVIEW_AXES_CRITERIA.INACTIVE' | translate) : ('INTERVIEW_AXES_CRITERIA.ACTIVE' |
+              translate) }}
+            </span>
+          </td>
+          <td *hasPermission="Permissions.InterviewEvaluationBank.Manage">
+            <div class="action-buttons d-flex">
+              <button type="button" class="btn" (click)="service.openEditCriterion(criterion)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top"
+                [attr.aria-label]="'common.edit' | translate">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
+
+              <p-toggle-switch [ngModel]="criterion.isActive !== false"
+                (ngModelChange)="service.toggleCriterionActive(criterion, $event)"
+                [pTooltip]="(criterion.isActive !== false ? 'INTERVIEW_AXES_CRITERIA.DEACTIVATE' : 'INTERVIEW_AXES_CRITERIA.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(criterion.isActive !== false ? 'INTERVIEW_AXES_CRITERIA.DEACTIVATE' : 'INTERVIEW_AXES_CRITERIA.ACTIVATE') | translate">
+              </p-toggle-switch>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center text-muted">{{ 'INTERVIEW_AXES_CRITERIA.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-pagination [currentPage]="store.criterionFilters().pageNumber" [totalItems]="store.criteriaMeta().totalCount"
+  [itemsPerPage]="store.criterionFilters().pageSize" (pageChanged)="service.onCriterionPageChange($event)"
+  (pageSizeChanged)="service.onCriterionPageSizeChange($event)" class="w-100 mt-4">
+</app-pagination>
