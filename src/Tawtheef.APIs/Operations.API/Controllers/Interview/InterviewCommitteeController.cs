@@ -113,4 +113,15 @@ public class InterviewCommitteeController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();
     }
+
+    // ---- Lookups ----
+
+    // Custom endpoint to get users who are eligible to be committee members based on their roles and permissions
+    [HttpGet("lookups/eligible-members")]
+    [AuthorizePermission(PermissionKeys.InterviewCommittee.Manage)] // can be customs permission also, i put it as mamnge permission for now
+    public async Task<IActionResult> ListEligibleMembers([FromQuery] ListEligibleCommitteeMembersQuery query, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
 }

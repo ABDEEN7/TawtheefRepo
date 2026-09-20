@@ -12,7 +12,7 @@ public sealed record TemplateVersionDto(
     CalculationMethod CalculationMethod,
     TemplateVersionStatus Status,
     bool IsLocked,
-    DateTime? EffectiveFrom,
+    DateTimeOffset? EffectiveFrom,
     Guid? ApprovedById,
-    DateTime? ApprovedAt,
+    DateTimeOffset? ApprovedAt,
     string? DecisionNotes);

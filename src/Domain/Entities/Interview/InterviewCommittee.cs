@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
-using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Interview.Committee;
@@ -12,14 +11,15 @@ namespace Tawtheef.Domain.Entities.Interview;
 [Table(nameof(InterviewCommittee), Schema = Schemas.Interview)]
 public class InterviewCommittee : EventEntity
 {
+    // Both are database-generated and never set by application code: Number comes from the
+    // itv.InterviewCommitteeNumber sequence and Code is a persisted column derived from it
+    // (COM-<year>-<number>), so it stays stable and gap-tolerant without a read-then-increment race.
+    public int Number { get; private set; }
+    public string Code { get; private set; } = null!;
+
     public Guid JobId { get; set; }
     public Job? Job { get; set; }
 
-    // commented this cuz now we linked the commitee directly with the interview template instead of the job interview template
-    // and the Commitee is linked with published job from Job Entity..
-
-    //public Guid JobInterviewTemplateId { get; set; }
-    //public JobInterviewTemplate? JobInterviewTemplate { get; set; }
 
     public Guid InterviewTemplateId { get; set; }
     public InterviewTemplate? InterviewTemplate { get; set; }
@@ -27,12 +27,8 @@ public class InterviewCommittee : EventEntity
     public required string NameAr { get; set; }
     public string? NameEn { get; set; }
 
-
     // No CommitteeType column here - it's derived from Job.JobCategory (Academic/Administrative/Labor)
-    // if the BRD later requires a explicit CommitteeType column, we can add it back in and make it optional,
-
-    //public Guid? CommitteeTypeId { get; set; }
-    //public InterviewCommitteeType? CommitteeType { get; set; }
+    // wherever it's needed, never duplicated onto this table.
     public string? ScopeDescription { get; set; }
     public string? Notes { get; set; }
 
@@ -169,7 +165,7 @@ public class InterviewCommittee : EventEntity
         return Result.Ok();
     }
 
-    // Per the BRD, this transition is system-triggered once every linked interview is
+    //Rule: Per the BRD, this transition is system-triggered once every linked interview is
     // done — this method is the mechanism; what calls it is step 6/7's concern.
     public Result Close()
     {
@@ -206,19 +202,21 @@ public class InterviewCommittee : EventEntity
             Id, memberUserId, role, participatesInEvaluation, evaluationScope,
             canViewCandidates, canAddNotes, canSubmitEvaluation, canViewOtherEvaluations, canViewCommitteeSummary);
 
+        // (as e.g. after SaveChanges
+        // or a query) - a caller that uses the returned member immediately (like SetMembers calling
+        // SetEvaluationAxes in the same loop) needs it set here, or EnsureMembersEditable() NREs.
         member.InterviewCommittee = this;
 
         Members.Add(member);
         AddDomainEvent(new CommitteeMemberAddedEvent(this, member, DateTimeOffset.Now));
         return Result.Ok(member);
     }
-
     public Result SetMembers(IReadOnlyCollection<CommitteeMemberInput> members)
     {
         var editable = EnsureMembersEditable();
         if (editable.IsFailed)
             return editable;
-        // minimum member , 1 chair and 2 other members (evaluator or observer)
+
         if (members.Count < CommitteeConstants.MinimumCommitteeMembers)
             return Result.Fail(new Error(ErrorsCodes.InterviewCommitteeMinimumMembersNotMet));
 

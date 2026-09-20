@@ -456,6 +456,7 @@ public class ErrorsCodes
     public const string InterviewCommitteeMemberAlreadyActive = "INTERVIEW_COMMITTEE_MEMBER_ALREADY_ACTIVE";
     public const string InterviewCommitteeChairAlreadyExists = "INTERVIEW_COMMITTEE_CHAIR_ALREADY_EXISTS";
     public const string InterviewCommitteeMinimumMembersNotMet = "INTERVIEW_COMMITTEE_MINIMUM_MEMBERS_NOT_MET";
+    public const string InterviewCommitteeMemberNotEligible = "INTERVIEW_COMMITTEE_MEMBER_NOT_ELIGIBLE";
     public const string InterviewCommitteeMemberScopeNotSelectedAxes = "INTERVIEW_COMMITTEE_MEMBER_SCOPE_NOT_SELECTED_AXES";
     public const string InterviewCommitteeMemberEvaluationAxisNotFound = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_NOT_FOUND";
     public const string InterviewCommitteeMemberEvaluationAxisAlreadyExists = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_ALREADY_EXISTS";
