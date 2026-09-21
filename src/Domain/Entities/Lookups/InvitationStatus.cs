@@ -16,6 +16,11 @@ public static class InvitationStatusIds
     public static readonly Guid PendingAttachmentApproval = Guid.Parse("6608F560-4DC0-4F2A-A190-6743A9A8C5CB");
     public static readonly Guid Read = Guid.Parse("64236C6A-167A-4213-B1D6-80C2C8C86DDE");
     public static readonly Guid Rejected = Guid.Parse("7103BA49-AD43-4751-B1A5-9084ACA69676");
+    // by system - set once a candidate passes the exam stage; consumed by Interview scheduling as the eligible-candidate pool.
+    public static readonly Guid InterviewEligible = Guid.Parse("3F6B6E1E-9C2B-4C7E-8B3E-2B6A6E7B9B10");
+    // by system - set when an Interview Result Report is approved with this candidate's FinalDecision.
+    public static readonly Guid CandidateForHiringProcess = Guid.Parse("5A2C3E4F-7B8D-4F1A-9C6E-1D3B5A7C9E2F");
+    public static readonly Guid WaitingList = Guid.Parse("8D4E6F1A-2B3C-4D5E-8F9A-1B2C3D4E5F6A");
 }
 [Table(nameof(InvitationStatus), Schema = Schemas.Lookup)]
 public class InvitationStatus : LookupBase

@@ -176,4 +176,29 @@ export const Permissions = {
     View: 'locations.view',
     Manage: 'locations.manage',
   },
+
+  InterviewEvaluationBank: {
+    View: 'interview-evaluation-bank.view',
+    Manage: 'interview-evaluation-bank.manage',
+  },
+  InterviewEvaluationTemplate: {
+    View: 'interview-evaluation-template.view',
+    Manage: 'interview-evaluation-template.manage',
+  },
+  InterviewCommittee: {
+    View: 'interview-committee.view',
+    Manage: 'interview-committee.manage',
+  },
+  InterviewSchedule: {
+    View: 'interview-schedule.view',
+    Manage: 'interview-schedule.manage',
+  },
+  InterviewEvaluation: {
+    View: 'interview-evaluation.view',
+    Manage: 'interview-evaluation.manage',
+  },
+  InterviewResultReport: {
+    View: 'interview-result-report.view',
+    Manage: 'interview-result-report.manage',
+  },
 } as const;

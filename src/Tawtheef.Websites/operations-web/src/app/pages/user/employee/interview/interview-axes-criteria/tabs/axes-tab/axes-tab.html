@@ -1,0 +1,103 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_AXES_CRITERIA.AXES_BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_AXES_CRITERIA.AXES_TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_AXES_CRITERIA.AXES_HINT' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.refreshAxes()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button *hasPermission="Permissions.InterviewEvaluationBank.Manage" pButton type="button" icon="pi pi-plus"
+      (click)="service.openCreateAxis()">
+      {{ 'INTERVIEW_AXES_CRITERIA.CREATE_AXIS' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_AXES_CRITERIA.SEARCH_LABEL' | translate }}</label>
+            <input class="form-control" [placeholder]="'INTERVIEW_AXES_CRITERIA.SEARCH_AXES' | translate"
+              [ngModel]="store.axisFilters().search" (ngModelChange)="service.setAxisSearch($event)" />
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [placeholder]="'INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate" [ngModel]="store.axisFilters().isActive"
+              (ngModelChange)="service.setAxisStatus($event)">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ selected?.label ? (selected.label | translate) : ('INTERVIEW_AXES_CRITERIA.STATUS_FILTER' | translate)
+                  }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table [value]="store.axes()" [rowHover]="true" responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_AXES_CRITERIA.AXIS_COLUMN' | translate }}</th>
+          <th>{{ 'INTERVIEW_AXES_CRITERIA.STATUS' | translate }}</th>
+          <th *hasPermission="Permissions.InterviewEvaluationBank.Manage">{{ 'INTERVIEW_AXES_CRITERIA.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-axis>
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ axis.nameAr }}</div>
+            <small class="text-muted">{{ axis.nameEn || '' }}</small>
+          </td>
+          <td>
+            <span class="pill" [class.success]="axis.isActive !== false" [class.danger]="axis.isActive === false">
+              {{ axis.isActive === false ? ('INTERVIEW_AXES_CRITERIA.INACTIVE' | translate) : ('INTERVIEW_AXES_CRITERIA.ACTIVE' |
+              translate) }}
+            </span>
+          </td>
+          <td *hasPermission="Permissions.InterviewEvaluationBank.Manage">
+            <div class="action-buttons d-flex">
+              <button type="button" class="btn" (click)="service.openEditAxis(axis)"
+                [pTooltip]="'common.edit' | translate" tooltipPosition="top"
+                [attr.aria-label]="'common.edit' | translate">
+                <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+              </button>
+
+              <p-toggle-switch [ngModel]="axis.isActive !== false"
+                (ngModelChange)="service.toggleAxisActive(axis, $event)"
+                [pTooltip]="(axis.isActive !== false ? 'INTERVIEW_AXES_CRITERIA.DEACTIVATE' : 'INTERVIEW_AXES_CRITERIA.ACTIVATE') | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="(axis.isActive !== false ? 'INTERVIEW_AXES_CRITERIA.DEACTIVATE' : 'INTERVIEW_AXES_CRITERIA.ACTIVATE') | translate">
+              </p-toggle-switch>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center text-muted">{{ 'INTERVIEW_AXES_CRITERIA.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-pagination [currentPage]="store.axisFilters().pageNumber" [totalItems]="store.axisMeta().totalCount"
+  [itemsPerPage]="store.axisFilters().pageSize" (pageChanged)="service.onAxisPageChange($event)"
+  (pageSizeChanged)="service.onAxisPageSizeChange($event)" class="w-100 mt-4">
+</app-pagination>

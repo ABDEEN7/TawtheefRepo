@@ -115,6 +115,40 @@ public class ApplicationStatusConfiguration : LookupBaseConfiguration<Invitation
                 DescriptionEn = "The invitation expired because the candidate did not respond within the specified time.",
                 DescriptionAr = "انتهت صلاحية الدعوة لأن المرشح لم يستجب خلال الوقت المحدد.",
                 DisplayOrder = 9
+            },
+            // 11 — INTERVIEW_ELIGIBLE
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.InterviewEligible,
+                BackendName = nameof(InvitationStatusIds.InterviewEligible),
+                NameEn = "Interview Eligible",
+                NameAr = "مؤهل للمقابلة",
+                DescriptionEn = "The candidate passed the exam stage and is eligible to be scheduled for an interview.",
+                DescriptionAr = "المرشح اجتاز مرحلة الاختبار وهو مؤهل لجدولة مقابلة.",
+                DisplayOrder = 10
+            },
+            // 12 — CANDIDATE_FOR_HIRING_PROCESS
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.CandidateForHiringProcess,
+                BackendName = nameof(InvitationStatusIds.CandidateForHiringProcess),
+                NameEn = "Candidate For Hiring Process",
+                NameAr = "مرشح لإستكمال اجراءات التعيين",
+                DescriptionEn = "The interview result report was approved with this candidate selected to proceed to hiring.",
+                DescriptionAr = "تم اعتماد تقرير نتائج المقابلة مع اختيار هذا المرشح لمواصلة عملية التعيين.",
+                DisplayOrder = 11
+            },
+
+            // 13 — WAITING_LIST
+            new InvitationStatus
+            {
+                Id = InvitationStatusIds.WaitingList,
+                BackendName = nameof(InvitationStatusIds.WaitingList),
+                NameEn = "Waiting List",
+                NameAr = "قائمة الانتظار",
+                DescriptionEn = "The interview result report was approved with this candidate placed on the waiting list.",
+                DescriptionAr = "تم اعتماد تقرير نتائج المقابلة مع وضع هذا المرشح على قائمة الانتظار.",
+                DisplayOrder = 12
             }
         );
     }

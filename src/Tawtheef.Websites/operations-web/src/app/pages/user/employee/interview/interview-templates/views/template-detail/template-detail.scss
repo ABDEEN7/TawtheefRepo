@@ -1,0 +1,106 @@
+.note-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid #e8e8e8;
+  background: #f7f7f7;
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    background: rgba(108, 117, 125, 0.12);
+    color: #4b4b4b;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  &-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #444;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &--warning {
+    background: #fff8ec;
+    border-color: #ffe3a6;
+
+    .note-card-icon {
+      background: rgba(245, 179, 66, 0.18);
+      color: #9a6b00;
+    }
+
+    .note-card-title {
+      color: #9a6b00;
+    }
+  }
+
+  &--danger {
+    background: #fdf2f2;
+    border-color: #f9d7d7;
+
+    .note-card-icon {
+      background: rgba(223, 109, 78, 0.18);
+      color: #cb2a2a;
+    }
+
+    .note-card-title {
+      color: #cb2a2a;
+    }
+  }
+
+  &--success {
+    background: #f1faf4;
+    border-color: #c5e7cf;
+
+    .note-card-icon {
+      background: rgba(43, 157, 118, 0.18);
+      color: #1f7a3a;
+    }
+
+    .note-card-title {
+      color: #1f7a3a;
+    }
+  }
+
+  &--info {
+    background: #f0f7ff;
+    border-color: #d5e7ff;
+
+    .note-card-icon {
+      background: rgba(78, 128, 234, 0.18);
+      color: #1a5fb4;
+    }
+
+    .note-card-title {
+      color: #1a5fb4;
+    }
+  }
+
+  &--neutral {
+    .note-card-title {
+      color: #4b4b4b;
+    }
+  }
+}
