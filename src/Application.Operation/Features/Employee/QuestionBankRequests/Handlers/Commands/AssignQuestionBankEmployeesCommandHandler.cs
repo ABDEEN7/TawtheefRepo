@@ -48,10 +48,14 @@ public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOf
             if (request.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
             {
                 if (request.QuestionBank.ManagementId is null) return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssigneeNotEligible);
-                var departmentCodes = unitOfWork.Context.Set<Department>().AsNoTracking()
-                    .Where(x => x.ManagementId == request.QuestionBank.ManagementId).Select(x => x.BackendName);
-                eligibleEmployees = eligibleEmployees.Where(x => x.EmployeeProfile!.DepartmentNumber != null &&
-                                                                  departmentCodes.Contains(x.EmployeeProfile.DepartmentNumber));
+                var departmentNumber = await unitOfWork.Context.Set<Management>().AsNoTracking()
+                    .Where(x => x.Id == request.QuestionBank.ManagementId)
+                    .Select(x => x.DepartmentNumber)
+                    .SingleOrDefaultAsync(ct);
+                if (string.IsNullOrWhiteSpace(departmentNumber))
+                    return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssigneeNotEligible);
+                eligibleEmployees = eligibleEmployees.Where(x =>
+                    x.EmployeeProfile!.DepartmentNumber == departmentNumber);
             }
             else
             {

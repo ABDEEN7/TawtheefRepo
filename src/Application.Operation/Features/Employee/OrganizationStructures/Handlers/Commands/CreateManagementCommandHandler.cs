@@ -40,7 +40,7 @@ public sealed class CreateManagementCommandHandler(IUnitOfWork uow)
             DescriptionEn = request.DescriptionEn,
             IsActive = request.IsActive,
             DisplayOrder = request.DisplayOrder,
-            DepartmentNumber = request.DepartmentNumber,
+            DepartmentNumber = request.DepartmentNumber.Trim(),
             BackendName = $"MGMT_{Guid.NewGuid():N}"[..16].ToUpper()
         };
 
