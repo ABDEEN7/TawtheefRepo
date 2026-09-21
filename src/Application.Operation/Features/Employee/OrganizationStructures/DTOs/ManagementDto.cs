@@ -6,6 +6,7 @@ public record ManagementDto : DropdownOptions
 {
     public bool IsActive { get; init; }
     public int DisplayOrder { get; init; }
+    public int DepartmentNumber { get; init; }
     public Guid SectorId { get; init; }
     public DropdownOptions? Sector { get; init; }
 }

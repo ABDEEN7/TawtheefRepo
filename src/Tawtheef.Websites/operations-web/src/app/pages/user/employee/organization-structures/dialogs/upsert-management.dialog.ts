@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
-import { Select } from 'primeng/select';
 import { RemoteSelectComponent } from '../../../../../shared/components/remote-select/remote-select';
 import { EndpointsService } from '../../../../../core/http/endpoints.service';
 
@@ -30,101 +30,154 @@ export interface UpsertManagementDialogData {
     FormsModule,
     TranslatePipe,
     InputTextModule,
+    InputNumberModule,
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
     RemoteSelectComponent,
   ],
   template: `
-  <div class="modal-body">
-       <form (ngSubmit)="save()" #f="ngForm" >
-             <div class="row">
-                  <div class="col-md-12 mb-3">
-                    <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
-                    <app-remote-select
-                      [searchUrl]="endpoints.organizationStructures.lookups.sectors"
-                      optionLabel="name"
-                      optionValue="id"
-                      [(ngModel)]="vm.sectorId"
-                      name="sectorId"
-                      [showClear]="true"
-                      [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
-                      [preloadedOptions]="data.sectors">
-                    </app-remote-select>
-                    <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
-                  </div>
-             </div>
-        
-
+    <div class="modal-body">
+      <form (ngSubmit)="save()" #f="ngForm">
         <div class="row">
-          <div class="col-md-6 mb-3">
-              <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_EN' | translate }}</label>
-              <input pInputText class="w-100 form-control"
-                    name="nameEn"
-                    [(ngModel)]="vm.nameEn"
-                    required
-                    maxlength="200"
-                    [placeholder]="'ORG_STRUCTURES.FIELD_NAME_EN' | translate" />
-              <small class="text-muted" *ngIf="f.submitted && !vm.nameEn">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
-          </div>
-          <div class="col-md-6 mb-3">
-              <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_AR' | translate }}</label>
-              <input pInputText class="w-100 form-control"
-                    name="nameAr"
-                    [(ngModel)]="vm.nameAr"
-                    required
-                    maxlength="200"
-                    [placeholder]="'ORG_STRUCTURES.FIELD_NAME_AR' | translate" />
-              <small class="text-muted" *ngIf="f.submitted && !vm.nameAr">{{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}</small>
+          <div class="col-md-12 mb-3">
+            <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_SECTOR' | translate }}</label>
+            <app-remote-select
+              [searchUrl]="endpoints.organizationStructures.lookups.sectors"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="vm.sectorId"
+              name="sectorId"
+              [showClear]="true"
+              [placeholder]="'ORG_STRUCTURES.FIELD_SECTOR' | translate"
+              [preloadedOptions]="data.sectors"
+            >
+            </app-remote-select>
+            <small class="text-muted" *ngIf="f.submitted && !vm.sectorId">{{
+              'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate
+            }}</small>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
-              <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate }}</label>
-              <textarea pInputTextarea rows="3" class="w-100 form-control"
-                      name="descriptionEn"
-                      [(ngModel)]="vm.descriptionEn"
-                      maxlength="500"
-                      [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate"></textarea>
+            <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_EN' | translate }}</label>
+            <input
+              pInputText
+              class="w-100 form-control"
+              name="nameEn"
+              [(ngModel)]="vm.nameEn"
+              required
+              maxlength="200"
+              [placeholder]="'ORG_STRUCTURES.FIELD_NAME_EN' | translate"
+            />
+            <small class="text-muted" *ngIf="f.submitted && !vm.nameEn">{{
+              'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate
+            }}</small>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_NAME_AR' | translate }}</label>
+            <input
+              pInputText
+              class="w-100 form-control"
+              name="nameAr"
+              [(ngModel)]="vm.nameAr"
+              required
+              maxlength="200"
+              [placeholder]="'ORG_STRUCTURES.FIELD_NAME_AR' | translate"
+            />
+            <small class="text-muted" *ngIf="f.submitted && !vm.nameAr">{{
+              'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate
+            }}</small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{
+              'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate
+            }}</label>
+            <textarea
+              pInputTextarea
+              rows="3"
+              class="w-100 form-control"
+              name="descriptionEn"
+              [(ngModel)]="vm.descriptionEn"
+              maxlength="500"
+              [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_EN' | translate"
+            ></textarea>
           </div>
 
           <div class="col-md-6 mb-3">
-                  <label class="form-label">{{ 'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate }}</label>
-                  <textarea pInputTextarea rows="3" class="w-100 form-control"
-                            name="descriptionAr"
-                      [(ngModel)]="vm.descriptionAr"
-                      maxlength="500"
-                      [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate"></textarea>
+            <label class="form-label">{{
+              'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate
+            }}</label>
+            <textarea
+              pInputTextarea
+              rows="3"
+              class="w-100 form-control"
+              name="descriptionAr"
+              [(ngModel)]="vm.descriptionAr"
+              maxlength="500"
+              [placeholder]="'ORG_STRUCTURES.FIELD_DESCRIPTION_AR' | translate"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="management-department-number">
+              {{ 'ORG_STRUCTURES.FIELD_DEPARTMENT_NUMBER' | translate }}
+            </label>
+            <p-input-number
+              inputId="management-department-number"
+              styleClass="w-100"
+              inputStyleClass="w-100 form-control"
+              name="departmentNumber"
+              [(ngModel)]="vm.departmentNumber"
+              [useGrouping]="false"
+              [min]="1"
+              [step]="1"
+              required
+              [placeholder]="'ORG_STRUCTURES.FIELD_DEPARTMENT_NUMBER' | translate"
+            >
+            </p-input-number>
+            <small class="text-muted" *ngIf="f.submitted && !hasValidDepartmentNumber()">
+              {{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}
+            </small>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-12">
-               <div class="d-flex gap-2">
-                     <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
-                    <span>{{ 'ORG_STRUCTURES.FIELD_ACTIVE' | translate }}</span>
-               </div>
-           
+            <div class="d-flex gap-2">
+              <p-toggle-switch [(ngModel)]="vm.isActive" name="isActive"></p-toggle-switch>
+              <span>{{ 'ORG_STRUCTURES.FIELD_ACTIVE' | translate }}</span>
+            </div>
           </div>
         </div>
 
-        
         <div class="modal-footer justify-content-end gap-3 border-0">
-              <button  type="button" class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center" (click)="cancel()">
-              <i class="hgi hgi-stroke hgi-cancel-01 text-primary"></i>
-              {{ 'ORG_STRUCTURES.CANCEL' | translate }}
-            </button>
-            <button  type="submit" class="btn btn-primary d-flex gap-2 justify-content-center align-items-center" [disabled]="!isValid()">
-              <i class="hgi hgi-stroke hgi-floppy-disk"></i>
-              {{ 'ORG_STRUCTURES.SAVE' | translate }}
-            </button>
+          <button
+            type="button"
+            class="btn btn-primary-outline d-flex text-primary gap-1 align-items-center"
+            (click)="cancel()"
+          >
+            <i class="hgi hgi-stroke hgi-cancel-01 text-primary"></i>
+            {{ 'ORG_STRUCTURES.CANCEL' | translate }}
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary d-flex gap-2 justify-content-center align-items-center"
+            [disabled]="!isValid()"
+          >
+            <i class="hgi hgi-stroke hgi-floppy-disk"></i>
+            {{ 'ORG_STRUCTURES.SAVE' | translate }}
+          </button>
         </div>
-
       </form>
-  </div>
-     
-  `
+    </div>
+  `,
 })
 export class UpsertManagementDialogComponent {
   ref = inject(DynamicDialogRef);
@@ -134,16 +187,36 @@ export class UpsertManagementDialogComponent {
   data = this.config?.data ?? { mode: 'create', sectors: [] };
 
   vm = {
-    sectorId: this.data.model?.sectorId ?? this.data.model?.sector?.id ?? this.data.sectors[0]?.id ?? '',
-    nameEn: this.data.model?.nameEn ?? this.data.model?.additionalData?.nameEn ?? this.data.model?.name ?? '',
+    sectorId:
+      this.data.model?.sectorId ?? this.data.model?.sector?.id ?? this.data.sectors[0]?.id ?? '',
+    nameEn:
+      this.data.model?.nameEn ??
+      this.data.model?.additionalData?.nameEn ??
+      this.data.model?.name ??
+      '',
     nameAr: this.data.model?.nameAr ?? this.data.model?.additionalData?.nameAr ?? '',
-    descriptionEn: this.data.model?.descriptionEn ?? this.data.model?.additionalData?.descriptionEn ?? this.data.model?.description ?? '',
-    descriptionAr: this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
-    isActive: (this.data.model?.isActive ?? true) !== false
+    descriptionEn:
+      this.data.model?.descriptionEn ??
+      this.data.model?.additionalData?.descriptionEn ??
+      this.data.model?.description ??
+      '',
+    descriptionAr:
+      this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
+    departmentNumber: this.data.model?.departmentNumber ?? (null as number | null),
+    isActive: (this.data.model?.isActive ?? true) !== false,
   };
 
+  hasValidDepartmentNumber(): boolean {
+    return Number.isInteger(this.vm.departmentNumber) && (this.vm.departmentNumber ?? 0) > 0;
+  }
+
   isValid(): boolean {
-    return !!this.vm.nameEn?.trim() && !!this.vm.nameAr?.trim() && !!this.vm.sectorId;
+    return (
+      !!this.vm.nameEn?.trim() &&
+      !!this.vm.nameAr?.trim() &&
+      !!this.vm.sectorId &&
+      this.hasValidDepartmentNumber()
+    );
   }
 
   save() {
@@ -154,7 +227,8 @@ export class UpsertManagementDialogComponent {
       nameAr: this.vm.nameAr.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
-      isActive: this.vm.isActive
+      departmentNumber: this.vm.departmentNumber,
+      isActive: this.vm.isActive,
     });
   }
 
