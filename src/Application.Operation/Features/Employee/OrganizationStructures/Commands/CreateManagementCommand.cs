@@ -10,5 +10,5 @@ public sealed record CreateManagementCommand(
     string? DescriptionAr,
     string? DescriptionEn,
     bool IsActive,
-    int DisplayOrder) : IRequest<IResult<Guid>>;
-
+    int DisplayOrder,
+    int DepartmentNumber) : IRequest<IResult<Guid>>;

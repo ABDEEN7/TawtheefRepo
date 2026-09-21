@@ -11,5 +11,5 @@ public sealed record UpdateManagementCommand(
     string? DescriptionAr,
     string? DescriptionEn,
     bool IsActive,
-    int DisplayOrder) : IRequest<IResult<Unit>>;
-
+    int DisplayOrder,
+    int DepartmentNumber) : IRequest<IResult<Unit>>;

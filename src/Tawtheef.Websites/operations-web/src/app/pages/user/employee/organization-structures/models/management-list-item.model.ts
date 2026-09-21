@@ -3,6 +3,7 @@ import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-opti
 export interface ManagementListItemModel extends dropdownOptionsModel {
   isActive?: boolean;
   displayOrder?: number;
+  departmentNumber: number;
   sectorId?: string;
   sector?: dropdownOptionsModel | null;
 }
