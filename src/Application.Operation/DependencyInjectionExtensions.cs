@@ -4,9 +4,9 @@ using Application.Operation.Features.Employee.Dashboard.Services.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Export;
 using Application.Operation.Features.Employee.Dashboard.Services.Read;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
-using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
+using Application.Operation.Features.Employee.JobManagement.JobInvitationSummary.Services;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Commands.Validators;
 using Application.Operation.Features.Employee.JobManagement.JobOperations.Services;
 using Application.Operation.Features.Employee.Exams.Services;
@@ -16,6 +16,7 @@ using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
+using Application.Operation.Features.Employee.Interview.Evaluation.Services;
 
 namespace Application.Operation
 {
@@ -61,6 +62,7 @@ namespace Application.Operation
                 services.RegisterJobManagementServices();
                 services.RegisterJobInvitationSummaryServices();
                 services.AddScoped<ExamService>();
+                services.RegisterInterviewServices();
             }
 
             private void RegisterEmployeeCommonServices()
@@ -110,6 +112,11 @@ namespace Application.Operation
                 services.AddScoped<JobInvitationSummaryQueryBuilder>();
                 services.AddScoped<JobInvitationSummaryExcelExporter>();
                 services.AddScoped<ProfileDistributionProjection>();
+            }
+
+            private void RegisterInterviewServices()
+            {
+                services.AddScoped<EvaluationAccessResolver>();
             }
 
             private void RegisterValidators()

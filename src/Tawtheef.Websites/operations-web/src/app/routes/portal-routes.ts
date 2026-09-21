@@ -60,10 +60,10 @@ export const portalRoutes = {
     return this.portal + '/jobs/job-points-review/' + jobId;
   },
   get majorsSkillsManagement() {
-    return this.portal + '/majors-skills-management'
+    return this.portal + '/majors-skills-management';
   },
   get organizationStructures() {
-    return this.portal + '/organization-structures'
+    return this.portal + '/organization-structures';
   },
   get kawader() {
     return this.portal + '/kawader';
@@ -81,7 +81,6 @@ export const portalRoutes = {
     return this.portal + '/office-users-management';
   },
 
-
   get profileLogs() {
     return this.portal + '/profile-logs';
   },
@@ -89,46 +88,46 @@ export const portalRoutes = {
     return this.portal + '/system-admin-logs';
   },
   get roleManagement() {
-    return this.portal + '/roles-management'
+    return this.portal + '/roles-management';
   },
   get usersManagement() {
-    return this.portal + '/users-management'
+    return this.portal + '/users-management';
   },
   get officesManagement() {
-    return this.portal + '/offices-management'
+    return this.portal + '/offices-management';
   },
   get countriesManagement() {
-    return this.portal + '/countries-management'
+    return this.portal + '/countries-management';
   },
   get languagesManagement() {
-    return this.portal + '/languages-management'
+    return this.portal + '/languages-management';
   },
   get targetEntitiesManagement() {
-    return this.portal + '/target-entities-management'
+    return this.portal + '/target-entities-management';
   },
   get religionsManagement() {
-    return this.portal + '/religions-management'
+    return this.portal + '/religions-management';
   },
   get universitiesManagement() {
-    return this.portal + '/universities-management'
+    return this.portal + '/universities-management';
   },
   get jobPointsConfiguration() {
-    return this.portal + '/job-points-configuration'
+    return this.portal + '/job-points-configuration';
   },
   get jobCategoryCandidateSettings() {
-    return this.portal + '/job-category-candidate-settings'
+    return this.portal + '/job-category-candidate-settings';
   },
   get invitationExpiryConfiguration() {
-    return this.portal + '/invitation-expiry-configuration'
+    return this.portal + '/invitation-expiry-configuration';
   },
   get homeContentManagement() {
-    return this.portal + '/home-content-management'
+    return this.portal + '/home-content-management';
   },
   get jobTitlesManagement() {
-    return this.portal + '/job-titles-management'
+    return this.portal + '/job-titles-management';
   },
   get notificationTester() {
-    return this.portal + '/notification-tester'
+    return this.portal + '/notification-tester';
   },
   get locationsManagement() {
     return this.portal + '/locations-management';
@@ -160,5 +159,23 @@ export const portalRoutes = {
   },
   questionBankRequestDetails(id: string) {
     return this.questionBankRequests + `/${id}`;
-  }
-}
+  },
+  get interviewAxesCriteria() {
+    return this.portal + '/interview-axes-criteria';
+  },
+  get interviewTemplates() {
+    return this.portal + '/interview-templates';
+  },
+  get interviewCommittees() {
+    return this.portal + '/interview-committees';
+  },
+  get interviews() {
+    return this.portal + '/interviews';
+  },
+  get startInterview() {
+    return this.portal + '/start-interview';
+  },
+  get approveInterview() {
+    return this.portal + '/approve-interview';
+  },
+};

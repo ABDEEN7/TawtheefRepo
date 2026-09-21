@@ -1,8 +1,7 @@
-﻿using Application.Operation.Features.Interview.Committee.Commands;
-using Application.Operation.Features.Interview.Committee.Queries;
+﻿using Application.Operation.Features.Employee.Interview.Committee.Commands;
+using Application.Operation.Features.Employee.Interview.Committee.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
@@ -101,6 +100,17 @@ public class InterviewCommitteeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CloseCommittee([FromBody] CloseCommitteeCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
+        return result.ToActionResult();
+    }
+
+
+    // ---- Members ----
+
+    [HttpGet("members")]
+    [AuthorizePermission(PermissionKeys.InterviewCommittee.View, PermissionKeys.InterviewCommittee.Manage)]
+    public async Task<IActionResult> ListCommitteeMembers([FromQuery] ListCommitteeMembersQuery query, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();
     }
 }

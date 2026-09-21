@@ -460,6 +460,93 @@ public class ErrorsCodes
     public const string InterviewCommitteeJobNotPublished = "INTERVIEW_COMMITTEE_JOB_NOT_PUBLISHED";
     public const string InterviewCommitteeAlreadyExistsForJob = "INTERVIEW_COMMITTEE_ALREADY_EXISTS_FOR_JOB";
     public const string JobNotFound = "JOB_NOT_FOUND";
+    public const string InterviewCommitteeMemberNotFound = "INTERVIEW_COMMITTEE_MEMBER_NOT_FOUND";
+    public const string InterviewCommitteeMemberAlreadyActive = "INTERVIEW_COMMITTEE_MEMBER_ALREADY_ACTIVE";
+    public const string InterviewCommitteeChairAlreadyExists = "INTERVIEW_COMMITTEE_CHAIR_ALREADY_EXISTS";
+    public const string InterviewCommitteeMinimumMembersNotMet = "INTERVIEW_COMMITTEE_MINIMUM_MEMBERS_NOT_MET";
+    public const string InterviewCommitteeMemberScopeNotSelectedAxes = "INTERVIEW_COMMITTEE_MEMBER_SCOPE_NOT_SELECTED_AXES";
+    public const string InterviewCommitteeMemberEvaluationAxisNotFound = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_NOT_FOUND";
+    public const string InterviewCommitteeMemberEvaluationAxisAlreadyExists = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_ALREADY_EXISTS";
+    public const string InterviewTemplateHasNoApprovedVersion = "INTERVIEW_TEMPLATE_HAS_NO_APPROVED_VERSION";
+    #endregion
+
+    #region Interview - Schedule
+    public const string InterviewScheduleNotFound = "INTERVIEW_SCHEDULE_NOT_FOUND";
+    public const string InterviewScheduleNotEditable = "INTERVIEW_SCHEDULE_NOT_EDITABLE";
+    public const string InterviewScheduleNotDraft = "INTERVIEW_SCHEDULE_NOT_DRAFT";
+    public const string InterviewScheduleNotProposed = "INTERVIEW_SCHEDULE_NOT_PROPOSED";
+    public const string InterviewScheduleNotPendingApproval = "INTERVIEW_SCHEDULE_NOT_PENDING_APPROVAL";
+    public const string InterviewScheduleNotCancellable = "INTERVIEW_SCHEDULE_NOT_CANCELLABLE";
+    public const string InterviewScheduleNotApproved = "INTERVIEW_SCHEDULE_NOT_APPROVED";
+    public const string InterviewScheduleNotReadyForExecution = "INTERVIEW_SCHEDULE_NOT_READY_FOR_EXECUTION";
+    public const string InterviewScheduleNotInProgress = "INTERVIEW_SCHEDULE_NOT_IN_PROGRESS";
+
+    // Create/resubmit 
+    public const string InterviewScheduleCommitteeNotFound = "INTERVIEW_SCHEDULE_COMMITTEE_NOT_FOUND";
+    public const string InterviewScheduleCommitteeNotApproved = "INTERVIEW_SCHEDULE_COMMITTEE_NOT_APPROVED";
+    public const string InterviewScheduleNoEligibleCandidates = "INTERVIEW_SCHEDULE_NO_ELIGIBLE_CANDIDATES";
+
+    // Period
+    public const string InterviewScheduleNoPeriods = "INTERVIEW_SCHEDULE_NO_PERIODS";
+    public const string InterviewSchedulePeriodInvalidTime = "INTERVIEW_SCHEDULE_PERIOD_INVALID_TIME";
+    public const string InterviewSchedulePeriodMissingLocation = "INTERVIEW_SCHEDULE_PERIOD_MISSING_LOCATION";
+    public const string InterviewSchedulePeriodOverlapsSelf = "INTERVIEW_SCHEDULE_PERIOD_OVERLAPS_SELF";
+    public const string InterviewSchedulePeriodOverlapsExisting = "INTERVIEW_SCHEDULE_PERIOD_OVERLAPS_EXISTING";
+    public const string InterviewSchedulePeriodZeroCapacity = "INTERVIEW_SCHEDULE_PERIOD_ZERO_CAPACITY";
+    public const string InterviewScheduleDurationTooShort = "INTERVIEW_SCHEDULE_DURATION_TOO_SHORT";
+    public const string InterviewScheduleBufferInvalid = "INTERVIEW_SCHEDULE_BUFFER_INVALID";
+    public const string InterviewScheduleCandidateUnassigned = "INTERVIEW_SCHEDULE_CANDIDATE_UNASSIGNED";
+    public const string InterviewScheduleInsufficientCapacity = "INTERVIEW_SCHEDULE_INSUFFICIENT_CAPACITY";
+    public const string InterviewScheduleSlotNotFound = "INTERVIEW_SCHEDULE_SLOT_NOT_FOUND";
+    public const string InterviewScheduleSlotAlreadyAssigned = "INTERVIEW_SCHEDULE_SLOT_ALREADY_ASSIGNED";
+    public const string InterviewScheduleCandidateNotEligible = "INTERVIEW_SCHEDULE_CANDIDATE_NOT_ELIGIBLE";
+    public const string InterviewScheduleCandidateAlreadyAssigned = "INTERVIEW_SCHEDULE_CANDIDATE_ALREADY_ASSIGNED";
+    public const string InterviewAppointmentRescheduleNotAllowed = "INTERVIEW_APPOINTMENT_RESCHEDULE_NOT_ALLOWED";
+    #endregion
+
+    #region Interview - Appointment
+    public const string InterviewAppointmentNotFound = "INTERVIEW_APPOINTMENT_NOT_FOUND";
+    public const string InterviewAppointmentNotEditable = "INTERVIEW_APPOINTMENT_NOT_EDITABLE";
+    public const string InterviewAppointmentNotHeld = "INTERVIEW_APPOINTMENT_NOT_HELD";
+    public const string InterviewAppointmentNotScheduled = "INTERVIEW_APPOINTMENT_NOT_SCHEDULED";
+    public const string InterviewAppointmentAttendanceNotRecorded = "INTERVIEW_APPOINTMENT_ATTENDANCE_NOT_RECORDED";
+    public const string InterviewAppointmentNotInInterview = "INTERVIEW_APPOINTMENT_NOT_IN_INTERVIEW";
+    public const string InterviewAppointmentNotUnderEvaluation = "INTERVIEW_APPOINTMENT_NOT_UNDER_EVALUATION";
+    public const string InterviewAppointmentNotCompleted = "INTERVIEW_APPOINTMENT_NOT_COMPLETED";
+
+    // Cross-cutting conflict checks (global, not scoped to one schedule)
+    public const string InterviewAppointmentCandidateConflict = "INTERVIEW_APPOINTMENT_CANDIDATE_CONFLICT";
+    public const string InterviewAppointmentCommitteeConflict = "INTERVIEW_APPOINTMENT_COMMITTEE_CONFLICT";
+    public const string InterviewAppointmentRoomConflict = "INTERVIEW_APPOINTMENT_ROOM_CONFLICT";
+    public const string InterviewAppointmentNotificationNotAllowed = "INTERVIEW_APPOINTMENT_NOTIFICATION_NOT_ALLOWED";
+    public const string InterviewAppointmentAlreadyRescheduledOnce = "INTERVIEW_APPOINTMENT_ALREADY_RESCHEDULED_ONCE";
+    public const string InterviewAppointmentNotEvaluable = "INTERVIEW_APPOINTMENT_NOT_EVALUABLE";
+    #endregion
+
+    #region Interview - Member Evaluation
+    public const string InterviewMemberEvaluationNotFound = "INTERVIEW_MEMBER_EVALUATION_NOT_FOUND";
+    public const string InterviewMemberEvaluationAlreadySubmitted = "INTERVIEW_MEMBER_EVALUATION_ALREADY_SUBMITTED";
+    public const string InterviewMemberEvaluationScoreOutOfRange = "INTERVIEW_MEMBER_EVALUATION_SCORE_OUT_OF_RANGE";
+    public const string InterviewMemberEvaluationCriterionOutOfScope = "INTERVIEW_MEMBER_EVALUATION_CRITERION_OUT_OF_SCOPE";
+    public const string InterviewMemberEvaluationRequiredCriterionMissing = "INTERVIEW_MEMBER_EVALUATION_REQUIRED_CRITERION_MISSING";
+    public const string InterviewMemberEvaluationNotAssignedToAppointment = "INTERVIEW_MEMBER_EVALUATION_NOT_ASSIGNED_TO_APPOINTMENT";
+    public const string InterviewMemberEvaluationSummaryAccessDenied = "INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED";
+    #endregion
+
+    #region Interview - Operational Issue
+    public const string InterviewOperationalIssueNotFound = "INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND";
+    public const string InterviewOperationalIssueNotOpen = "INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN";
+    #endregion
+
+    #region Interview - Result Report
+    public const string InterviewResultReportNotFound = "INTERVIEW_RESULT_REPORT_NOT_FOUND";
+    public const string InterviewResultReportNotUnderReview = "INTERVIEW_RESULT_REPORT_NOT_UNDER_REVIEW";
+    public const string InterviewResultCandidateDecisionMissing = "INTERVIEW_RESULT_CANDIDATE_DECISION_MISSING";
+    public const string InterviewResultCandidateNotQualifiedForDecision = "INTERVIEW_RESULT_CANDIDATE_NOT_QUALIFIED_FOR_DECISION";
+    public const string InterviewResultReportBlockedByOperationalIssue = "INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE";
+    public const string InterviewResultReportCalculationMethodNotSupported = "INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED";
+    public const string InterviewResultReportMissingInvitationStatusMapping = "INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING";
+    public const string InterviewResultReportNotReadyForReschedule = "INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE";
     #endregion
 }
 public static class CandidateEligibilityConditionCodes

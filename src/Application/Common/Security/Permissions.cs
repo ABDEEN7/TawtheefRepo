@@ -885,4 +885,73 @@ public static class Permissions
     }
     #endregion
 
+    #region InterviewSchedule
+    public static class InterviewSchedule
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewSchedule.View,
+                nameof(PermissionKeys.InterviewSchedule),
+                PermissionAction.View,
+                "Interview Schedule - View",
+                "جدولة المقابلات - عرض",
+                108);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewSchedule.Manage,
+                nameof(PermissionKeys.InterviewSchedule),
+                PermissionAction.Manage,
+                "Interview Schedule - Manage",
+                "جدولة المقابلات - إدارة",
+                109);
+    }
+    #endregion
+
+    #region InterviewEvaluation
+    public static class InterviewEvaluation
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewEvaluation.View,
+                nameof(PermissionKeys.InterviewEvaluation),
+                PermissionAction.View,
+                "Interview Evaluation - View",
+                 "تقيم المقابلات - عرض",
+                110);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewEvaluation.Manage,
+                nameof(PermissionKeys.InterviewEvaluation),
+                PermissionAction.Manage,
+                "Interview Evaluation - Manage",
+                "تقيم المقابلات - إدارة",
+                111);
+    }
+    #endregion
+
+    #region InterviewResultReport
+    public static class InterviewResultReport
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewResultReport.View,
+                nameof(PermissionKeys.InterviewResultReport),
+                PermissionAction.View,
+                "Interview Result Report - View",
+                 "تقرير نتائج المقابلات - عرض",
+                112);
+
+        public static readonly PermissionDefinition Manage =
+            Def(
+                PermissionKeys.InterviewResultReport.Manage,
+                nameof(PermissionKeys.InterviewResultReport),
+                PermissionAction.Manage,
+                "Interview Result Report - Manage",
+                "تقرير نتائج المقابلات - إدارة",
+                113);
+    }
+    #endregion
+
 }

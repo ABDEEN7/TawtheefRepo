@@ -1,5 +1,5 @@
-﻿using Application.Operation.Features.Interview.EvaluationBank.Commands;
-using Application.Operation.Features.Interview.EvaluationBank.Handlers.Queries;
+﻿using Application.Operation.Features.Employee.Interview.EvaluationBank.Commands;
+using Application.Operation.Features.Employee.Interview.EvaluationBank.Handlers.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

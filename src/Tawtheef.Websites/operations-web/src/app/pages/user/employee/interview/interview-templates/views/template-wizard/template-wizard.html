@@ -1,0 +1,425 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center" (click)="service.cancelWizard()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>
+      </button>
+      <h3 class="fw-bold mb-0">{{ wizardTitleKey() | translate }}</h3>
+      @if (isNewVersionMode || isEditMode) {
+        <span class="text-muted">— {{ store.wizardTemplateTitle() }}</span>
+      }
+    </div>
+
+    <div class="wizard-steps mb-4">
+      @for (step of steps; track step) {
+        <div class="wizard-step" [class.active]="store.wizardStep() === step" [class.completed]="store.wizardStep() > step"
+          (click)="goToStep(step)">
+          <div class="wizard-step-circle">
+            @if (store.wizardStep() > step) {
+              <i class="hgi hgi-stroke hgi-tick-01"></i>
+            } @else {
+              <span>{{ step }}</span>
+            }
+          </div>
+          <span class="wizard-step-label">{{ stepLabels[step] | translate }}</span>
+        </div>
+      }
+    </div>
+
+    @if (store.wizardStep() === 1) {
+      <section>
+        <h5 class="fw-bold mb-3">{{ 'INTERVIEW_TEMPLATES.WIZARD.STEP1_LABEL' | translate }}</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_AR' | translate }} <span class="text-danger">*</span></label>
+            <input pInputText class="form-control w-100" maxlength="200" [disabled]="isNewVersionMode"
+              [ngModel]="store.wizardInfo().titleAr" (ngModelChange)="service.updateInfo({ titleAr: $event })" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_EN' | translate }}</label>
+            <input pInputText class="form-control w-100" maxlength="200" [disabled]="isNewVersionMode"
+              [ngModel]="store.wizardInfo().titleEn" (ngModelChange)="service.updateInfo({ titleEn: $event })" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_ORG_SCOPE' | translate }}</label>
+            <p-select class="w-100" [options]="orgScopeOptions()" optionLabel="label" optionValue="value" [showClear]="true"
+              [appendTo]="'body'" [disabled]="isNewVersionMode" [placeholder]="'INTERVIEW_TEMPLATES.GENERAL' | translate"
+              [ngModel]="store.wizardInfo().organizationScopeId"
+              (ngModelChange)="service.updateInfo({ organizationScopeId: $event ?? '' })">
+            </p-select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_JOB_TITLE' | translate }}</label>
+            <p-select class="w-100" [options]="jobTitleOptions()" optionLabel="label" optionValue="value" [showClear]="true"
+              [appendTo]="'body'" [disabled]="isNewVersionMode" [placeholder]="'INTERVIEW_TEMPLATES.GENERAL' | translate"
+              [ngModel]="store.wizardInfo().jobTitleId" (ngModelChange)="service.updateInfo({ jobTitleId: $event ?? '' })">
+            </p-select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_DEPARTMENT' | translate }}</label>
+            <p-select class="w-100" [options]="departmentOptions()" optionLabel="label" optionValue="value" [showClear]="true"
+              [appendTo]="'body'" [disabled]="isNewVersionMode" [placeholder]="'INTERVIEW_TEMPLATES.GENERAL' | translate"
+              [ngModel]="store.wizardInfo().departmentId" (ngModelChange)="service.updateInfo({ departmentId: $event ?? '' })">
+            </p-select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_FINAL_SCORE' | translate }} <span class="text-danger">*</span></label>
+            <input type="number" min="1" class="form-control w-100" [ngModel]="store.wizardInfo().finalScore"
+              (ngModelChange)="service.updateInfo({ finalScore: +$event || 0 })" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_QUALIFICATION_SCORE' | translate }}</label>
+            <input type="number" min="0" class="form-control w-100" [ngModel]="store.wizardInfo().qualificationScore"
+              (ngModelChange)="service.updateInfo({ qualificationScore: $event === '' || $event === null ? null : +$event })" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_TEMPLATES.FIELD_CALCULATION_METHOD' | translate }}</label>
+            <p-select class="w-100" [options]="calculationMethodOptions" optionLabel="label" optionValue="value"
+              [appendTo]="'body'"
+              [ngModel]="store.wizardInfo().calculationMethod" (ngModelChange)="service.updateInfo({ calculationMethod: $event })">
+              <ng-template pTemplate="selectedItem" let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template let-option pTemplate="item">
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </section>
+    }
+
+    @if (store.wizardStep() === 2) {
+      <section>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <div class="d-flex gap-4">
+            <div>
+              <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FINAL_SCORE_LABEL' | translate }}</span>
+              <strong>{{ store.wizardInfo().finalScore }}</strong>
+            </div>
+            <div>
+              <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.AXES_TOTAL_LABEL' | translate }}</span>
+              <strong [class.text-danger]="store.wizardAxesTotal() !== store.wizardInfo().finalScore">{{ store.wizardAxesTotal() }}</strong>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-primary" (click)="service.addAxisRow()">
+            <i class="hgi hgi-stroke hgi-add-01 me-1"></i>{{ 'INTERVIEW_TEMPLATES.ADD_AXIS' | translate }}
+          </button>
+        </div>
+
+        <div class="table-card rounded overflow-hidden">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th style="width:60px">{{ 'INTERVIEW_TEMPLATES.COLUMN_ORDER' | translate }}</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_AXIS' | translate }}</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_MAX_SCORE' | translate }}</th>
+                  <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_QUALIFICATION_SCORE' | translate }}</th>
+                  <th style="width:60px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (axis of store.wizardAxes(); track axis.localId) {
+                  <tr>
+                    <td>{{ axis.orderNo }}</td>
+                    <td style="min-width:220px">
+                      <p-select class="w-100" [options]="availableAxisOptions(axis.axisId)" optionLabel="label" optionValue="value"
+                        [appendTo]="'body'" [ngModel]="axis.axisId" (ngModelChange)="onAxisSelected(axis, $event)">
+                      </p-select>
+                    </td>
+                    <td style="min-width:120px">
+                      <input type="number" min="1" class="form-control" [ngModel]="axis.maxScore"
+                        (ngModelChange)="service.updateAxisRow(axis.localId, { maxScore: +$event || 0 })" />
+                    </td>
+                    <td style="min-width:140px">
+                      <input type="number" min="0" class="form-control" [ngModel]="axis.qualificationScore"
+                        [placeholder]="'INTERVIEW_TEMPLATES.OPTIONAL' | translate"
+                        (ngModelChange)="service.updateAxisRow(axis.localId, { qualificationScore: $event === '' || $event === null ? null : +$event })" />
+                    </td>
+                    <td>
+                      <button type="button" class="btn" (click)="service.removeAxisRow(axis.localId)">
+                        <i class="hgi hgi-stroke hgi-delete-02 text-danger"></i>
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center text-muted">{{ 'INTERVIEW_TEMPLATES.NO_AXES' | translate }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    }
+
+    @if (store.wizardStep() === 3) {
+      <section class="d-flex flex-column gap-3">
+        @for (axis of store.wizardAxes(); track axis.localId) {
+          <div class="card card-table">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                  <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.AXIS_LABEL' | translate }}</span>
+                  <h5 class="fw-bold mb-0">{{ axisLabel(axis.axisId) }}</h5>
+                </div>
+                <div class="d-flex gap-4">
+                  <div>
+                    <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.AXIS_SCORE_LABEL' | translate }}</span>
+                    <strong>{{ axis.maxScore }}</strong>
+                  </div>
+                  <div>
+                    <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.CRITERIA_TOTAL_LABEL' | translate }}</span>
+                    <strong [class.text-danger]="store.axisCriteriaTotal(axis) !== axis.maxScore">{{ store.axisCriteriaTotal(axis) }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-card rounded overflow-hidden mb-3">
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th style="width:40px">#</th>
+                        <th style="width:160px">{{ 'INTERVIEW_TEMPLATES.WIZARD.SOURCE' | translate }}</th>
+                        <th>{{ 'INTERVIEW_TEMPLATES.FIELD_CRITERION_NAME_AR' | translate }}</th>
+                        <th>{{ 'INTERVIEW_TEMPLATES.FIELD_CRITERION_NAME_EN' | translate }}</th>
+                        <th style="width:110px">{{ 'INTERVIEW_TEMPLATES.FIELD_MAX_SCORE' | translate }}</th>
+                        <th style="width:90px">{{ 'INTERVIEW_TEMPLATES.FIELD_REQUIRED' | translate }}</th>
+                        <th style="width:60px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (criterion of axis.criteria; track criterion.localId) {
+                        <tr>
+                          <td>{{ criterion.orderNo }}</td>
+                          <td>
+                            <p-select class="w-100" [options]="criterionModeOptions" optionLabel="label" optionValue="value"
+                              [appendTo]="'body'" [ngModel]="criterion.mode"
+                              (ngModelChange)="onCriterionModeChange(axis, criterion, $event)">
+                              <ng-template pTemplate="selectedItem" let-selected>
+                                <span>{{ selected?.label | translate }}</span>
+                              </ng-template>
+                              <ng-template let-option pTemplate="item">
+                                <span>{{ option.label | translate }}</span>
+                              </ng-template>
+                            </p-select>
+                          </td>
+                          @if (criterion.mode === 'bank') {
+                            <td colspan="2">
+                              <p-select class="w-100" [options]="criterionBankOptions(axis.axisId)" optionLabel="label" optionValue="value"
+                                [appendTo]="'body'" [placeholder]="'INTERVIEW_TEMPLATES.FIELD_CRITERION_BANK' | translate"
+                                [ngModel]="criterion.criterionId"
+                                (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { criterionId: $event })">
+                              </p-select>
+                            </td>
+                          } @else {
+                            <td>
+                              <input pInputText class="form-control" maxlength="200"
+                                [placeholder]="'INTERVIEW_TEMPLATES.FIELD_CRITERION_NAME_AR' | translate" [ngModel]="criterion.nameAr"
+                                (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { nameAr: $event })" />
+                            </td>
+                            <td>
+                              <input pInputText class="form-control" maxlength="200"
+                                [placeholder]="'INTERVIEW_TEMPLATES.FIELD_CRITERION_NAME_EN' | translate" [ngModel]="criterion.nameEn"
+                                (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { nameEn: $event })" />
+                            </td>
+                          }
+                          <td>
+                            <input type="number" min="1" class="form-control" [ngModel]="criterion.maxScore"
+                              (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { maxScore: +$event || 0 })" />
+                          </td>
+                          <td class="text-center">
+                            <p-toggle-switch [ngModel]="criterion.isRequired"
+                              (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { isRequired: $event })">
+                            </p-toggle-switch>
+                          </td>
+                          <td>
+                            <button type="button" class="btn" (click)="service.removeCriterionRow(axis.localId, criterion.localId)">
+                              <i class="hgi hgi-stroke hgi-delete-02 text-danger"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        @if (criterion.mode === 'custom') {
+                          <tr>
+                            <td></td>
+                            <td colspan="6">
+                              <div class="row g-2">
+                                <div class="col-md-6">
+                                  <textarea pInputTextarea rows="2" class="form-control w-100"
+                                    [placeholder]="'INTERVIEW_TEMPLATES.FIELD_CRITERION_DESCRIPTION_AR' | translate"
+                                    [ngModel]="criterion.descriptionAr"
+                                    (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { descriptionAr: $event })"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                  <textarea pInputTextarea rows="2" class="form-control w-100"
+                                    [placeholder]="'INTERVIEW_TEMPLATES.FIELD_CRITERION_DESCRIPTION_EN' | translate"
+                                    [ngModel]="criterion.descriptionEn"
+                                    (ngModelChange)="service.updateCriterionRow(axis.localId, criterion.localId, { descriptionEn: $event })"></textarea>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      } @empty {
+                        <tr>
+                          <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_TEMPLATES.NO_CRITERIA' | translate }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="service.addCriterionRow(axis.localId)">
+                <i class="hgi hgi-stroke hgi-add-01 me-1"></i>{{ 'INTERVIEW_TEMPLATES.ADD_CRITERION' | translate }}
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    @if (store.wizardStep() === 4) {
+      <section class="d-flex flex-column gap-3">
+        <div class="card card-table">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">{{ 'INTERVIEW_TEMPLATES.REVIEW_INFO_TITLE' | translate }}</h5>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="goToStep(1)">{{ 'common.edit' | translate }}</button>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_AR' | translate }}</span>
+                <strong>{{ store.wizardInfo().titleAr }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_TITLE_EN' | translate }}</span>
+                <strong>{{ store.wizardInfo().titleEn || '—' }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_ORG_SCOPE' | translate }}</span>
+                <strong>{{ orgScopeLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_JOB_TITLE' | translate }}</span>
+                <strong>{{ jobTitleLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_DEPARTMENT' | translate }}</span>
+                <strong>{{ departmentLabel() || ('INTERVIEW_TEMPLATES.GENERAL' | translate) }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_FINAL_SCORE' | translate }}</span>
+                <strong>{{ store.wizardInfo().finalScore }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_QUALIFICATION_SCORE' | translate }}</span>
+                <strong>{{ store.wizardInfo().qualificationScore ?? '—' }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_TEMPLATES.FIELD_CALCULATION_METHOD' | translate }}</span>
+                <strong>{{ calculationMethodLabel() | translate }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-table">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">{{ 'INTERVIEW_TEMPLATES.REVIEW_AXES_TITLE' | translate }}</h5>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="goToStep(2)">{{ 'common.edit' | translate }}</button>
+            </div>
+            <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_ORDER' | translate }}</th>
+                      <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_AXIS' | translate }}</th>
+                      <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_MAX_SCORE' | translate }}</th>
+                      <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_QUALIFICATION_SCORE' | translate }}</th>
+                      <th>{{ 'INTERVIEW_TEMPLATES.COLUMN_CRITERIA_COUNT' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (axis of store.wizardAxes(); track axis.localId) {
+                      <tr>
+                        <td>{{ axis.orderNo }}</td>
+                        <td>{{ axisLabel(axis.axisId) }}</td>
+                        <td>{{ axis.maxScore }}</td>
+                        <td>{{ axis.qualificationScore ?? '—' }}</td>
+                        <td>{{ axis.criteria.length }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        @for (axis of store.wizardAxes(); track axis.localId) {
+          <div class="card card-table">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">{{ axisLabel(axis.axisId) }}</h6>
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="goToStep(3)">{{ 'common.edit' | translate }}</button>
+              </div>
+              <div class="table-card rounded overflow-hidden">
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>{{ 'INTERVIEW_TEMPLATES.CRITERION_COLUMN' | translate }}</th>
+                        <th>{{ 'INTERVIEW_TEMPLATES.FIELD_MAX_SCORE' | translate }}</th>
+                        <th>{{ 'INTERVIEW_TEMPLATES.FIELD_REQUIRED' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (criterion of axis.criteria; track criterion.localId) {
+                        <tr>
+                          <td>{{ criterion.orderNo }}</td>
+                          <td>{{ criterionDisplayName(axis, criterion) }}</td>
+                          <td>{{ criterion.maxScore }}</td>
+                          <td>{{ (criterion.isRequired ? 'INTERVIEW_TEMPLATES.REQUIRED_YES' : 'INTERVIEW_TEMPLATES.REQUIRED_NO') | translate }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
+      <button class="btn btn-link" type="button" (click)="service.prevStep()" [disabled]="store.wizardStep() === 1 || store.wizardSaving()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01 me-1"></i>{{ 'INTERVIEW_TEMPLATES.WIZARD.PREVIOUS' | translate }}
+      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary" type="button" (click)="service.cancelWizard()" [disabled]="store.wizardSaving()">
+          {{ 'INTERVIEW_TEMPLATES.WIZARD.CANCEL' | translate }}
+        </button>
+        @if (store.wizardStep() < 4) {
+          <button class="btn btn-primary" type="button" (click)="service.nextStep()" [disabled]="store.wizardSaving()">
+            {{ 'INTERVIEW_TEMPLATES.WIZARD.NEXT' | translate }}<i class="hgi hgi-stroke hgi-arrow-left-01 ms-1"></i>
+          </button>
+        } @else {
+          <button class="btn btn-success" type="button" (click)="submit()" [disabled]="store.wizardSaving()">
+            @if (store.wizardSaving()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+            }
+            <i class="hgi hgi-stroke hgi-sent me-1"></i>{{ 'INTERVIEW_TEMPLATES.WIZARD.SUBMIT_FOR_APPROVAL' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

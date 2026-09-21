@@ -103,6 +103,15 @@ public static class RolePermissionCatalog
 
                 Permissions.InterviewCommittee.View.Key,
                 Permissions.InterviewCommittee.Manage.Key,
+
+                Permissions.InterviewSchedule.View.Key,
+                Permissions.InterviewSchedule.Manage.Key,
+
+                Permissions.InterviewEvaluation.View.Key,
+                Permissions.InterviewEvaluation.Manage.Key,
+
+                Permissions.InterviewResultReport.View.Key,
+                Permissions.InterviewResultReport.Manage.Key,
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,
@@ -196,6 +205,15 @@ public static class RolePermissionCatalog
 
                 Permissions.InterviewCommittee.View.Key,
                 Permissions.InterviewCommittee.Manage.Key,
+
+                Permissions.InterviewSchedule.View.Key,
+                Permissions.InterviewSchedule.Manage.Key,
+
+                Permissions.InterviewEvaluation.View.Key,
+                Permissions.InterviewEvaluation.Manage.Key,
+
+                Permissions.InterviewResultReport.View.Key,
+                Permissions.InterviewResultReport.Manage.Key,
 
             ]
         };

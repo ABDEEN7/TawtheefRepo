@@ -19,8 +19,9 @@ export class EndpointsService {
     refresh: this.getFullUrl(`/auth/refresh-token`),
     externalLogin: (provider: string, returnUrl: string | null = null) =>
       this.getFullUrl(
-        `/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''
-        }`
+        `/auth/external-login?provider=${CaseUtils.toPascalCase(provider)}${
+          returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''
+        }`,
       ),
     externalLoginUsingToken: this.getFullUrl(`/auth/external-login/token`),
     logout: this.getFullUrl(`/auth/logout`),
@@ -54,7 +55,8 @@ export class EndpointsService {
 
   job = {
     job: this.getFullUrl('/job'),
-    changeStatus: (jobId: GUID, statusId: GUID) => this.getFullUrl(`/job/${jobId}/status?statusId=${statusId}`),
+    changeStatus: (jobId: GUID, statusId: GUID) =>
+      this.getFullUrl(`/job/${jobId}/status?statusId=${statusId}`),
     jobApproval: this.getFullUrl('/jobApproval'),
     getLatestReview: (jobId: GUID) => this.getFullUrl(`/jobApproval/${jobId}/latest`),
     jobPoints: this.getFullUrl('/jobPoints'),
@@ -65,7 +67,8 @@ export class EndpointsService {
     rejectJobPoints: (jobId: GUID) => this.getFullUrl(`/jobPoints/${jobId}/reject`),
     searchJob: this.getFullUrl('/job/search'),
     exportJobs: this.getFullUrl('/job/export'),
-    CountByStatus: (jobStatusId: GUID) => this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
+    CountByStatus: (jobStatusId: GUID) =>
+      this.getFullUrl(`/job/stats/count?jobStatusId=${jobStatusId}`),
     copyTemplate: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy-template`),
     copyFromPrevious: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/copy`),
     checkJobInvitations: (jobId: GUID) => this.getFullUrl(`/job/${jobId}/has-invitations`),
@@ -93,8 +96,8 @@ export class EndpointsService {
       targetEntities: this.getFullUrl('/job/lookups/target-entities'),
       nationalities: this.getFullUrl('/job/lookups/nationalities'),
       jobStatus: this.getFullUrl('/job/lookups/job-status'),
-      jobInvitesStatus: this.getFullUrl('/job/lookups/invitation-statuses')
-    }
+      jobInvitesStatus: this.getFullUrl('/job/lookups/invitation-statuses'),
+    },
   };
 
   jobCandidates = {
@@ -105,8 +108,11 @@ export class EndpointsService {
     sendInvitations: this.getFullUrl('/jobCandidates/send-invitations'),
     filters: this.getFullUrl('/jobCandidates/filters'),
     categorySettings: this.getFullUrl('/jobCandidates/category-settings'),
-    invitationExpiryConfiguration: this.getFullUrl('/jobCandidates/invitation-expiry-configuration'),
-    eligibilityCheck: (jobId: string, candidateId: string) => this.getFullUrl(`/jobCandidates/${jobId}/${candidateId}/eligibility-check`),
+    invitationExpiryConfiguration: this.getFullUrl(
+      '/jobCandidates/invitation-expiry-configuration',
+    ),
+    eligibilityCheck: (jobId: string, candidateId: string) =>
+      this.getFullUrl(`/jobCandidates/${jobId}/${candidateId}/eligibility-check`),
     searchAllCandidates: this.getFullUrl('/jobCandidates/search-all'),
     lookups: {
       candidateTypes: this.getFullUrl('/jobCandidates/lookups/candidate-types'),
@@ -124,23 +130,26 @@ export class EndpointsService {
     targetEntities: this.getFullUrl('/profile-approvals/target-entities'),
     candidateTypes: this.getFullUrl('/profile-approvals/candidate-types'),
     detail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}`),
-    changesDetail: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/changes`),
-    reviewItem: (reviewItemId: string) => this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
-    startReview: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
-    decision: (profileId: string, section: string) => this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
+    changesDetail: (profileId: string) =>
+      this.getFullUrl(`/profile-approvals/${profileId}/changes`),
+    reviewItem: (reviewItemId: string) =>
+      this.getFullUrl(`/profile-approvals/review-items/${reviewItemId}`),
+    startReview: (profileId: string) =>
+      this.getFullUrl(`/profile-approvals/${profileId}/start-review`),
+    decision: (profileId: string, section: string) =>
+      this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/decision`),
     sectionInternalNote: (profileId: string, section: string) =>
       this.getFullUrl(`/profile-approvals/${profileId}/sections/${section}/internal-note`),
     finalize: (profileId: string) => this.getFullUrl(`/profile-approvals/${profileId}/finalize`),
   };
 
-
   operationsDashboard = {
-      overview: this.getFullUrl('/operations-dashboard/overview'),
-      years: this.getFullUrl('/operations-dashboard/years'),
-      latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
-      latestInvitations: this.getFullUrl('/operations-dashboard/invitations/latest'),
-      teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
-      exportList: this.getFullUrl('/operations-dashboard/export-list'),
+    overview: this.getFullUrl('/operations-dashboard/overview'),
+    years: this.getFullUrl('/operations-dashboard/years'),
+    latestJobs: this.getFullUrl('/operations-dashboard/jobs/latest'),
+    latestInvitations: this.getFullUrl('/operations-dashboard/invitations/latest'),
+    teamPerformance: this.getFullUrl('/operations-dashboard/team-performance'),
+    exportList: this.getFullUrl('/operations-dashboard/export-list'),
   };
   distribution = {
     files: this.getFullUrl('/profile-distributions/profiles'),
@@ -151,7 +160,7 @@ export class EndpointsService {
     employeeLookup: this.getFullUrl('/profile-distributions/employees/lookup'),
     assignManual: this.getFullUrl('/profile-distributions/assign/manual'),
     assignAuto: this.getFullUrl('/profile-distributions/assign/auto'),
-    reassign: this.getFullUrl('/profile-distributions/reassign')
+    reassign: this.getFullUrl('/profile-distributions/reassign'),
   };
 
   JobInvitationSummary = {
@@ -161,14 +170,16 @@ export class EndpointsService {
       jobInfo: (jobId: string) => this.getFullUrl(`/jobInvitationSummary/${jobId}/info`),
       stats: this.getFullUrl(`/jobInvitationSummary/get-invitations-stats`),
       rows: this.getFullUrl(`/jobInvitationSummary/get-invitations-details`),
-      getAttachments: (invitationId: string) => this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments`),
-      reviewAttachment: (invitationId: string, attachmentId: string) => this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments/${attachmentId}/review`)
+      getAttachments: (invitationId: string) =>
+        this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments`),
+      reviewAttachment: (invitationId: string, attachmentId: string) =>
+        this.getFullUrl(`/jobInvitationSummary/${invitationId}/attachments/${attachmentId}/review`),
     },
     lookups: {
       jobStatuses: this.getFullUrl(`/jobInvitationSummary/lookups/job-statuses`),
       jobCategories: this.getFullUrl(`/jobInvitationSummary/lookups/job-categories`),
-      departments: this.getFullUrl(`/jobInvitationSummary/lookups/departments`)
-    }
+      departments: this.getFullUrl(`/jobInvitationSummary/lookups/departments`),
+    },
   };
 
   roles = {
@@ -179,14 +190,14 @@ export class EndpointsService {
     updateRole: (id: string) => this.getFullUrl(`/roles/update-role/${id}`),
     deleteRole: (id: string) => this.getFullUrl(`/roles/delete-role/${id}`),
 
-    listPermissions: this.getFullUrl('/roles/list-permissions')
+    listPermissions: this.getFullUrl('/roles/list-permissions'),
   };
 
   users = {
     listUsers: this.getFullUrl('/userManagement/list-users'),
     userRoles: (id: string) => this.getFullUrl(`/userManagement/${id}/roles`),
     userRoleIds: (id: string) => this.getFullUrl(`/userManagement/${id}/role-ids`),
-    blockStatus: (id: string) => this.getFullUrl(`/userManagement/${id}/block-status`)
+    blockStatus: (id: string) => this.getFullUrl(`/userManagement/${id}/block-status`),
   };
 
   candidateUsers = {
@@ -194,7 +205,7 @@ export class EndpointsService {
     export: this.getFullUrl('/candidateUsers/export'),
     blockStatus: (id: string) => this.getFullUrl(`/candidateUsers/${id}/block-status`),
     profile: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile`),
-    profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`)
+    profileLogs: (id: string) => this.getFullUrl(`/candidateUsers/${id}/profile-logs`),
   };
 
   exceptions = {
@@ -207,15 +218,16 @@ export class EndpointsService {
     departments: this.getFullUrl('/exceptions/departments'),
     jobs: this.getFullUrl('/exceptions/jobs'),
     create: this.getFullUrl('/exceptions'),
-    sendInvitation: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/send-invitation`),
-    cancel: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/cancel`)
+    sendInvitation: (exceptionId: GUID) =>
+      this.getFullUrl(`/exceptions/${exceptionId}/send-invitation`),
+    cancel: (exceptionId: GUID) => this.getFullUrl(`/exceptions/${exceptionId}/cancel`),
   };
 
   officeUsers = {
     list: this.getFullUrl('/officeUsers'),
     create: this.getFullUrl('/officeUsers'),
     update: (id: string) => this.getFullUrl(`/officeUsers/${id}`),
-    blockStatus: (id: string) => this.getFullUrl(`/officeUsers/${id}/block-status`)
+    blockStatus: (id: string) => this.getFullUrl(`/officeUsers/${id}/block-status`),
   };
 
   offices = {
@@ -228,7 +240,8 @@ export class EndpointsService {
     updateStatus: (id: string) => this.getFullUrl(`/offices/${id}/status`),
     updateOfficeUserBlockStatus: (officeId: string, userId: string) =>
       this.getFullUrl(`/offices/${officeId}/users/${userId}/block-status`),
-    setOfficeAdmin: (officeId: string, userId: string) => this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`)
+    setOfficeAdmin: (officeId: string, userId: string) =>
+      this.getFullUrl(`/offices/${officeId}/set-admin/${userId}`),
   };
 
   languages = {
@@ -236,14 +249,14 @@ export class EndpointsService {
     languageDetails: (id: string) => this.getFullUrl(`/languages/language-details/${id}`),
     createLanguage: this.getFullUrl('/languages/create-language'),
     updateLanguage: (id: string) => this.getFullUrl(`/languages/update-language/${id}`),
-    updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`)
+    updateStatus: (id: string) => this.getFullUrl(`/languages/${id}/status`),
   };
   religions = {
     listReligions: this.getFullUrl('/religions/list-religions'),
     religionDetails: (id: string) => this.getFullUrl(`/religions/religion-details/${id}`),
     createReligion: this.getFullUrl('/religions/create-religion'),
     updateReligion: (id: string) => this.getFullUrl(`/religions/update-religion/${id}`),
-    updateStatus: (id: string) => this.getFullUrl(`/religions/${id}/status`)
+    updateStatus: (id: string) => this.getFullUrl(`/religions/${id}/status`),
   };
   universities = {
     listUniversities: this.getFullUrl('/universities/list-universities'),
@@ -253,24 +266,26 @@ export class EndpointsService {
     updateStatus: (id: string) => this.getFullUrl(`/universities/${id}/status`),
     lookups: {
       countries: this.getFullUrl('/universities/lookups/countries'),
-      cities: (countryId: string) => this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`)
-    }
+      cities: (countryId: string) =>
+        this.getFullUrl(`/universities/lookups/cities?countryId=${countryId}`),
+    },
   };
 
   jobTitles = {
     list: this.getFullUrl('/jobtitles'),
     create: this.getFullUrl('/jobtitles'),
     update: (id: string) => this.getFullUrl(`/jobtitles/${id}`),
-    delete: (id: string) => this.getFullUrl(`/jobtitles/${id}`)
+    delete: (id: string) => this.getFullUrl(`/jobtitles/${id}`),
   };
 
   homeContent = {
     successStories: this.getFullUrl('/home-content/success-stories'),
     successStory: (id: string) => this.getFullUrl(`/home-content/success-stories/${id}`),
-    successStoryStatus: (id: string) => this.getFullUrl(`/home-content/success-stories/${id}/status`),
+    successStoryStatus: (id: string) =>
+      this.getFullUrl(`/home-content/success-stories/${id}/status`),
     faqs: this.getFullUrl('/home-content/faqs'),
     faq: (id: string) => this.getFullUrl(`/home-content/faqs/${id}`),
-    faqStatus: (id: string) => this.getFullUrl(`/home-content/faqs/${id}/status`)
+    faqStatus: (id: string) => this.getFullUrl(`/home-content/faqs/${id}/status`),
   };
   profileLogs = {
     list: this.getFullUrl('/profile-logs'),
@@ -283,10 +298,12 @@ export class EndpointsService {
   };
   targetEntities = {
     listTargetEntities: this.getFullUrl('/targetentities/list-target-entities'),
-    targetEntityDetails: (id: string) => this.getFullUrl(`/targetentities/target-entity-details/${id}`),
+    targetEntityDetails: (id: string) =>
+      this.getFullUrl(`/targetentities/target-entity-details/${id}`),
     createTargetEntity: this.getFullUrl('/targetentities/create-target-entity'),
-    updateTargetEntity: (id: string) => this.getFullUrl(`/targetentities/update-target-entity/${id}`),
-    updateStatus: (id: string) => this.getFullUrl(`/targetentities/${id}/status`)
+    updateTargetEntity: (id: string) =>
+      this.getFullUrl(`/targetentities/update-target-entity/${id}`),
+    updateStatus: (id: string) => this.getFullUrl(`/targetentities/${id}/status`),
   };
   majorSkillsManagement = {
     list: this.getFullUrl('/MajorSkillsManagement'),
@@ -299,20 +316,20 @@ export class EndpointsService {
       sub_list: this.getFullUrl('/MajorsManagement/GetSubMajors'),
       create: this.getFullUrl('/MajorsManagement'),
       update: this.getFullUrl('/MajorsManagement'),
-      changeActivation: this.getFullUrl('/MajorsManagement/change-activation')
+      changeActivation: this.getFullUrl('/MajorsManagement/change-activation'),
     },
     skills: {
       list: this.getFullUrl('/SkillsManagement'),
       create: this.getFullUrl('/SkillsManagement'),
       update: this.getFullUrl('/SkillsManagement'),
-      changeActivation: this.getFullUrl('/SkillsManagement/change-activation')
+      changeActivation: this.getFullUrl('/SkillsManagement/change-activation'),
     },
     lookups: {
       skills: this.getFullUrl('/SkillsManagement/lookups/skills'),
       skillTypes: this.getFullUrl('/SkillsManagement/lookups/skill-types'),
       majors: this.getFullUrl('/MajorSkillsManagement/lookups/majors'),
       subMajors: this.getFullUrl('/MajorSkillsManagement/lookups/sub-majors'),
-    }
+    },
   };
 
   organizationStructures = {
@@ -320,46 +337,47 @@ export class EndpointsService {
       list: this.getFullUrl('/OrganizationStructures/sectors'),
       create: this.getFullUrl('/OrganizationStructures/sectors'),
       update: (id: string) => this.getFullUrl(`/OrganizationStructures/sectors/${id}`),
-      changeActivation: this.getFullUrl('/OrganizationStructures/sectors/change-activation')
+      changeActivation: this.getFullUrl('/OrganizationStructures/sectors/change-activation'),
     },
     managements: {
       list: this.getFullUrl('/OrganizationStructures/managements'),
       create: this.getFullUrl('/OrganizationStructures/managements'),
       update: (id: string) => this.getFullUrl(`/OrganizationStructures/managements/${id}`),
-      changeActivation: this.getFullUrl('/OrganizationStructures/managements/change-activation')
+      changeActivation: this.getFullUrl('/OrganizationStructures/managements/change-activation'),
     },
     departments: {
       list: this.getFullUrl('/OrganizationStructures/departments'),
       create: this.getFullUrl('/OrganizationStructures/departments'),
       update: (id: string) => this.getFullUrl(`/OrganizationStructures/departments/${id}`),
-      changeActivation: this.getFullUrl('/OrganizationStructures/departments/change-activation')
+      changeActivation: this.getFullUrl('/OrganizationStructures/departments/change-activation'),
     },
     lookups: {
       sectors: this.getFullUrl('/OrganizationStructures/lookups/sectors'),
       managements: (sectorId: string) =>
         this.getFullUrl(`/OrganizationStructures/lookups/managements?sectorId=${sectorId}`),
       departments: (managementId: string) =>
-        this.getFullUrl(`/OrganizationStructures/lookups/departments?managementId=${managementId}`)
-    }
+        this.getFullUrl(`/OrganizationStructures/lookups/departments?managementId=${managementId}`),
+    },
   };
 
   countries = {
     listCountries: this.getFullUrl('/countryManagement/list-countries'),
     createCountry: this.getFullUrl('/countryManagement/create-country'),
     updateCountry: (id: string) => this.getFullUrl(`/countryManagement/update-country/${id}`),
-    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`)
+    updateStatus: (id: string) => this.getFullUrl(`/countryManagement/${id}/status`),
   };
   cities = {
     listCities: this.getFullUrl('/cityManagement/list-cities'),
     createCity: this.getFullUrl('/cityManagement/create-city'),
     updateCity: (id: string) => this.getFullUrl(`/cityManagement/update-city/${id}`),
-    updateStatus: (id: string) => this.getFullUrl(`/cityManagement/${id}/status`)
+    updateStatus: (id: string) => this.getFullUrl(`/cityManagement/${id}/status`),
   };
 
   ministerOffice = {
     candidates: this.getFullUrl('/MinisterOffice/candidates'),
     phone: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/phone`),
-    followUpStatus: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/follow-up-status`),
+    followUpStatus: (id: string) =>
+      this.getFullUrl(`/MinisterOffice/candidates/${id}/follow-up-status`),
     invitations: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/invitations`),
     auditLog: (id: string) => this.getFullUrl(`/MinisterOffice/candidates/${id}/audit-log`),
     genders: this.getFullUrl('/MinisterOffice/lookups/genders'),
@@ -388,7 +406,7 @@ export class EndpointsService {
     update: (id: string) => this.getFullUrl(`/exams/${id}`),
     list: this.getFullUrl('/exams'),
     statuses: this.getFullUrl('/exams/lookups/statuses'),
-    specializations: this.getFullUrl('/exams/lookups/specializations')
+    specializations: this.getFullUrl('/exams/lookups/specializations'),
   };
 
   questionBanks = {
@@ -396,8 +414,8 @@ export class EndpointsService {
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbanks/lookups/question-bank-types'),
       managements: this.getFullUrl('/questionbanks/lookups/managements'),
-      jobTitles: this.getFullUrl('/questionbanks/lookups/job-titles')
-    }
+      jobTitles: this.getFullUrl('/questionbanks/lookups/job-titles'),
+    },
   };
 
   questionBankRequests = {
@@ -411,8 +429,8 @@ export class EndpointsService {
       managements: this.getFullUrl('/questionbankrequests/lookups/managements'),
       jobTitles: this.getFullUrl('/questionbankrequests/lookups/job-titles'),
       requestTypes: this.getFullUrl('/questionbankrequests/lookups/request-types'),
-      statuses: this.getFullUrl('/questionbankrequests/lookups/statuses')
-    }
+      statuses: this.getFullUrl('/questionbankrequests/lookups/statuses'),
+    },
   };
 
   rooms = {
@@ -422,14 +440,60 @@ export class EndpointsService {
     lookups: {
       roomTypes: this.getFullUrl('/rooms/lookups/room-types'),
       roomStatuses: this.getFullUrl('/rooms/lookups/room-statuses'),
-      locations: this.getFullUrl('/rooms/lookups/locations')
-    }
+      locations: this.getFullUrl('/rooms/lookups/locations'),
+    },
   };
 
   locations = {
     list: this.getFullUrl('/locations'),
     create: this.getFullUrl('/locations'),
     update: (id: string) => this.getFullUrl(`/locations/${id}`),
-    delete: (id: string) => this.getFullUrl(`/locations/${id}`)
+    delete: (id: string) => this.getFullUrl(`/locations/${id}`),
+  };
+
+  interviewEvaluationBank = {
+    axes: {
+      list: this.getFullUrl('/InterviewEvaluationBank/axes'),
+      create: this.getFullUrl('/InterviewEvaluationBank/axes'),
+      update: this.getFullUrl('/InterviewEvaluationBank/axes'),
+      changeActivation: this.getFullUrl('/InterviewEvaluationBank/axes/change-activation'),
+    },
+    criteria: {
+      list: this.getFullUrl('/InterviewEvaluationBank/criteria'),
+      create: this.getFullUrl('/InterviewEvaluationBank/criteria'),
+      update: this.getFullUrl('/InterviewEvaluationBank/criteria'),
+      changeActivation: this.getFullUrl('/InterviewEvaluationBank/criteria/change-activation'),
+    },
+  };
+
+  interviewEvaluationTemplate = {
+    lookups: this.getFullUrl('/InterviewEvaluationTemplate/lookups'),
+    templates: {
+      list: this.getFullUrl('/InterviewEvaluationTemplate/templates'),
+      create: this.getFullUrl('/InterviewEvaluationTemplate/templates'),
+      update: this.getFullUrl('/InterviewEvaluationTemplate/templates'),
+      changeActivation: this.getFullUrl('/InterviewEvaluationTemplate/templates/change-activation'),
+    },
+    versions: {
+      list: this.getFullUrl('/InterviewEvaluationTemplate/versions'),
+      details: this.getFullUrl('/InterviewEvaluationTemplate/versions/details'),
+      create: this.getFullUrl('/InterviewEvaluationTemplate/versions'),
+      update: this.getFullUrl('/InterviewEvaluationTemplate/versions'),
+      submit: this.getFullUrl('/InterviewEvaluationTemplate/versions/submit'),
+      approve: this.getFullUrl('/InterviewEvaluationTemplate/versions/approve'),
+      return: this.getFullUrl('/InterviewEvaluationTemplate/versions/return'),
+      cancel: this.getFullUrl('/InterviewEvaluationTemplate/versions/cancel'),
+    },
+    axes: {
+      add: this.getFullUrl('/InterviewEvaluationTemplate/versions/axes'),
+      update: this.getFullUrl('/InterviewEvaluationTemplate/versions/axes'),
+      remove: (id: string) => this.getFullUrl(`/InterviewEvaluationTemplate/versions/axes/${id}`),
+    },
+    criteria: {
+      add: this.getFullUrl('/InterviewEvaluationTemplate/versions/axes/criteria'),
+      update: this.getFullUrl('/InterviewEvaluationTemplate/versions/axes/criteria'),
+      remove: (id: string) =>
+        this.getFullUrl(`/InterviewEvaluationTemplate/versions/axes/criteria/${id}`),
+    },
   };
 }
