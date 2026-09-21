@@ -1,0 +1,138 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_SCHEDULE.BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_SCHEDULE.TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_SCHEDULE.SUBTITLE' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.loadSchedules()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button *hasPermission="Permissions.InterviewSchedule.Manage" pButton type="button" icon="pi pi-plus"
+      (click)="service.openCreateWizard()">
+      {{ 'INTERVIEW_SCHEDULE.CREATE_BUTTON' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_SCHEDULE.SEARCH_LABEL' | translate }}</label>
+            <input class="form-control" [placeholder]="'INTERVIEW_SCHEDULE.SEARCH_PLACEHOLDER' | translate"
+              [ngModel]="store.search()" (ngModelChange)="service.setSearch($event)" />
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_SCHEDULE.JOB_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="store.jobOptions()" optionLabel="label" optionValue="value" [filter]="true"
+              filterBy="label" [showClear]="true" [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_SCHEDULE.JOB_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_SCHEDULE.JOB_FILTER' | translate"
+              [ngModel]="store.jobFilter()" (ngModelChange)="service.setJobFilter($event)" />
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_SCHEDULE.TYPE_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="typeOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [appendTo]="'body'" [placeholder]="'INTERVIEW_SCHEDULE.TYPE_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_SCHEDULE.TYPE_FILTER' | translate"
+              [ngModel]="store.typeFilter()" (ngModelChange)="service.setTypeFilter($event)">
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_SCHEDULE.STATUS_FILTER' | translate }}</label>
+            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
+              [appendTo]="'body'" [placeholder]="'INTERVIEW_SCHEDULE.STATUS_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_SCHEDULE.STATUS_FILTER' | translate"
+              [ngModel]="store.statusFilter()" (ngModelChange)="service.setStatusFilter($event)">
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table [value]="store.pagedSchedules()" [loading]="store.listLoading()" [rowHover]="true" responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_JOB' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TIME' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TYPE' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_COMMITTEE' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_CANDIDATES' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_STATUS' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-schedule>
+        <tr class="cursor-pointer" (click)="service.openDetail(schedule)">
+          <td>{{ jobTitle(schedule) || '—' }}</td>
+          <td>
+            @if (schedule.firstSessionDate) {
+              <bdi dir="ltr">{{ schedule.firstSessionDate | date: 'dd-MM-yyyy' }}@if (schedule.lastSessionDate && schedule.lastSessionDate !== schedule.firstSessionDate) { - {{ schedule.lastSessionDate | date: 'dd-MM-yyyy' }}}</bdi>
+            } @else {
+              —
+            }
+          </td>
+          <td>
+            @if (schedule.earliestStartTime) {
+              <bdi dir="ltr">{{ timeOf(schedule.earliestStartTime) | date: 'h:mm a' }}@if (schedule.latestEndTime) { - {{ timeOf(schedule.latestEndTime) | date: 'h:mm a' }}}</bdi>
+            } @else {
+              —
+            }
+          </td>
+          <td>{{ interviewTypeLabel(schedule) | translate }}</td>
+          <td>{{ committeeName(schedule) || '—' }}</td>
+          <td>{{ schedule.candidatesCount }}</td>
+          <td>
+            <span [class]="'pill ' + statusPill(schedule.status)">
+              {{ statusLabel(schedule.status) | translate }}
+            </span>
+          </td>
+          <td (click)="$event.stopPropagation()">
+            <div class="action-buttons d-flex">
+              <button type="button" class="btn" (click)="service.openDetail(schedule)"
+                [pTooltip]="'INTERVIEW_SCHEDULE.VIEW' | translate" tooltipPosition="top"
+                [attr.aria-label]="'INTERVIEW_SCHEDULE.VIEW' | translate">
+                <i class="hgi hgi-stroke hgi-view"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.NO_RECORDS' | translate }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+@if (store.schedules().length > 0) {
+  <app-pagination [currentPage]="store.currentPage()" [totalItems]="store.schedules().length"
+    [itemsPerPage]="store.pageSize()" (pageChanged)="service.onPageChange($event)"
+    (pageSizeChanged)="service.onPageSizeChange($event)" class="w-100 mt-4">
+  </app-pagination>
+}

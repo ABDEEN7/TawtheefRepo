@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { TableModule } from 'primeng/table';
+
 import { HasPermissionDirective } from '../../../../../../../shared/directives/has-permission.directive';
 import { Permissions } from '../../../../../../../core/constants/permissions';
 import { DialogHelperService } from '../../../../../../../core/services/dialog-helper.service';
@@ -31,7 +33,7 @@ interface MemberRow {
   selector: 'app-committee-detail',
   templateUrl: './committee-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, TranslatePipe, HasPermissionDirective],
+  imports: [DatePipe, TranslatePipe, TableModule, HasPermissionDirective],
 })
 export class CommitteeDetailComponent {
   readonly Permissions = Permissions;

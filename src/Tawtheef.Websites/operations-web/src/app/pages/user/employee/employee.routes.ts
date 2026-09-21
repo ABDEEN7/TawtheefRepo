@@ -425,4 +425,16 @@ export const employeeRoutes: Routes = [
         (m) => m.InterviewCommitteesPage,
       ),
   },
+  {
+    path: 'interviews',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [Permissions.InterviewSchedule.View, Permissions.InterviewSchedule.Manage],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-schedule/interview-schedule.page').then(
+        (m) => m.InterviewSchedulePage,
+      ),
+  },
 ];

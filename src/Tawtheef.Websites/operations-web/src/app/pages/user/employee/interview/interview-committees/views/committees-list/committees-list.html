@@ -5,11 +5,22 @@
     <p class="fs-16 m-0">{{ 'INTERVIEW_COMMITTEES.SUBTITLE' | translate }}</p>
   </div>
   <div class="col-md-6 text-end d-flex justify-content-end gap-2">
-    <button pButton type="button" class="p-button-outlined" icon="pi pi-refresh" (click)="service.loadCommittees()">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined"
+      icon="pi pi-refresh"
+      (click)="service.loadCommittees()"
+    >
       {{ 'common.refresh' | translate }}
     </button>
-    <button *hasPermission="Permissions.InterviewCommittee.Manage" pButton type="button" icon="pi pi-plus"
-      (click)="service.openCreateWizard()">
+    <button
+      *hasPermission="Permissions.InterviewCommittee.Manage"
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      (click)="service.openCreateWizard()"
+    >
       {{ 'INTERVIEW_COMMITTEES.CREATE_BUTTON' | translate }}
     </button>
   </div>
@@ -22,14 +33,27 @@
         <div class="row align-items-end g-3">
           <div class="col-lg-6 col-md-6">
             <label class="form-label">{{ 'INTERVIEW_COMMITTEES.SEARCH_LABEL' | translate }}</label>
-            <input class="form-control" [placeholder]="'INTERVIEW_COMMITTEES.SEARCH_PLACEHOLDER' | translate"
-              [ngModel]="store.search()" (ngModelChange)="service.setSearch($event)" />
+            <input
+              class="form-control"
+              [placeholder]="'INTERVIEW_COMMITTEES.SEARCH_PLACEHOLDER' | translate"
+              [ngModel]="store.search()"
+              (ngModelChange)="service.setSearch($event)"
+            />
           </div>
           <div class="col-lg-6 col-md-6">
             <label class="form-label">{{ 'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate }}</label>
-            <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true"
-              [appendTo]="'body'" [placeholder]="'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate"
-              [ngModel]="store.statusFilter()" (ngModelChange)="service.setStatusFilter($event)">
+            <p-select
+              class="w-100"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate"
+              [ngModel]="store.statusFilter()"
+              (ngModelChange)="service.setStatusFilter($event)"
+            >
               <ng-template #selectedItem let-selected>
                 <span>{{ selected?.label | translate }}</span>
               </ng-template>
@@ -46,8 +70,12 @@
 
 <div class="table-card rounded overflow-hidden">
   <div class="table-responsive">
-    <p-table [value]="store.committees()" [loading]="store.listLoading()" [rowHover]="true" responsiveLayout="scroll">
-
+    <p-table
+      [value]="store.committees()"
+      [loading]="store.listLoading()"
+      [rowHover]="true"
+      responsiveLayout="scroll"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_NUMBER' | translate }}</th>
@@ -76,15 +104,26 @@
           <td>{{ committee.approvedAt ? (committee.approvedAt | date: 'dd-MM-yyyy') : '—' }}</td>
           <td (click)="$event.stopPropagation()">
             <div class="action-buttons d-flex">
-              <button type="button" class="btn" (click)="service.openDetail(committee)"
-                [pTooltip]="'INTERVIEW_COMMITTEES.VIEW' | translate" tooltipPosition="top"
-                [attr.aria-label]="'INTERVIEW_COMMITTEES.VIEW' | translate">
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openDetail(committee)"
+                [pTooltip]="'INTERVIEW_COMMITTEES.VIEW' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'INTERVIEW_COMMITTEES.VIEW' | translate"
+              >
                 <i class="hgi hgi-stroke hgi-view"></i>
               </button>
               @if (canEdit(committee)) {
-                <button *hasPermission="Permissions.InterviewCommittee.Manage" type="button" class="btn"
-                  (click)="service.openEditWizard(committee)" [pTooltip]="'common.edit' | translate" tooltipPosition="top"
-                  [attr.aria-label]="'common.edit' | translate">
+                <button
+                  *hasPermission="Permissions.InterviewCommittee.Manage"
+                  type="button"
+                  class="btn"
+                  (click)="service.openEditWizard(committee)"
+                  [pTooltip]="'common.edit' | translate"
+                  tooltipPosition="top"
+                  [attr.aria-label]="'common.edit' | translate"
+                >
                   <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
                 </button>
               }
@@ -95,7 +134,9 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_COMMITTEES.NO_RECORDS' | translate }}</td>
+          <td colspan="8" class="text-center text-muted">
+            {{ 'INTERVIEW_COMMITTEES.NO_RECORDS' | translate }}
+          </td>
         </tr>
       </ng-template>
     </p-table>

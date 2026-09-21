@@ -1,7 +1,8 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, firstValueFrom, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { catchError, distinctUntilChanged, firstValueFrom, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { LanguageService } from '../../../../../core/services/language.service';
@@ -34,6 +35,10 @@ import {
 // Search-as-you-type dropdowns show at most this many rows; the user narrows further by typing.
 const MAX_JOB_OPTIONS = 30;
 
+// Which committee's detail view is open lives in the URL (?committee=<id>) rather than only in memory: switching the language
+// reloads the whole app, and without it the page would come back on the list instead of the same committee.
+const COMMITTEE_QUERY_PARAM = 'committee';
+
 @Injectable()
 export class InterviewCommitteesFacade {
   private destroyRef = inject(DestroyRef);
@@ -44,6 +49,8 @@ export class InterviewCommitteesFacade {
   private notify = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Resolved once, on the first job search: the Published status id comes from the job-status lookup.
   private publishedJobStatusId$ = this.jobLookups.loadJobStatus().pipe(
@@ -57,8 +64,40 @@ export class InterviewCommitteesFacade {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lang) => this.store.setCurrentLang(lang));
 
+    // Emits the current value right away, so a page loaded on ?committee=<id> opens that detail before its first render.
+    this.route.queryParamMap
+      .pipe(
+        map((params) => params.get(COMMITTEE_QUERY_PARAM)),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((id) => this.syncViewWithUrl(id));
+
     this.loadCommittees();
     this.loadApprovedTemplates();
+  }
+
+  // The URL decides between list and detail; the wizard is not URL-driven, so it is left alone here.
+  private syncViewWithUrl(id: string | null) {
+    if (id) {
+      if (this.store.view() === 'detail' && this.store.detailCommittee()?.id === id) return;
+      this.store.setView('detail');
+      this.loadDetail(id);
+      return;
+    }
+
+    if (this.store.view() === 'detail') {
+      this.store.setView('list');
+      this.loadCommittees();
+    }
+  }
+
+  private setUrlCommittee(id: string | null) {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { [COMMITTEE_QUERY_PARAM]: id },
+      queryParamsHandling: 'merge',
+    });
   }
 
   // ======== List ========
@@ -182,6 +221,9 @@ export class InterviewCommitteesFacade {
 
         this.store.resetWizardForEdit(committee, job, template, chair ? userFromMember(chair) : null, others);
         this.store.setView('wizard');
+        // Editing from the detail view leaves ?committee=<id> behind; clear it now that the wizard is showing (clearing it
+        // earlier would make the URL sync send the user back to the list).
+        this.setUrlCommittee(null);
       },
     });
   }
@@ -425,15 +467,15 @@ export class InterviewCommitteesFacade {
 
   // ======== Detail ========
   openDetail(committee: CommitteeModel) {
+    // Show what the list row already knows straight away; the URL change is what actually opens the view and loads
+    // the fresh record (see syncViewWithUrl).
     this.store.setDetailCommittee(committee);
     this.store.setDetailMembers([]);
-    this.store.setView('detail');
-    this.loadDetail(committee.id);
+    this.setUrlCommittee(committee.id);
   }
 
   backToList() {
-    this.store.setView('list');
-    this.loadCommittees();
+    this.setUrlCommittee(null);
   }
 
   loadDetail(id: string) {
@@ -444,7 +486,11 @@ export class InterviewCommitteesFacade {
         this.store.setDetailMembers(members);
         this.store.setDetailLoading(false);
       },
-      error: () => this.store.setDetailLoading(false),
+      // A committee that can't be loaded (deleted, or a stale/bad ?committee= link) leaves nothing to show - back to the list.
+      error: () => {
+        this.store.setDetailLoading(false);
+        this.backToList();
+      },
     });
   }
 

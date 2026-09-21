@@ -88,8 +88,8 @@
     <h5 class="fw-bold mb-3">{{ 'INTERVIEW_COMMITTEES.MEMBERS_TITLE' | translate }}</h5>
     <div class="table-card rounded overflow-hidden">
       <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle mb-0">
-          <thead>
+        <p-table [value]="memberRows()" [loading]="store.detailLoading()" [rowHover]="true">
+          <ng-template pTemplate="header">
             <tr>
               <th style="width:50px">#</th>
               <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
@@ -97,38 +97,35 @@
               <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</th>
               <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_PERMISSIONS' | translate }}</th>
             </tr>
-          </thead>
-          <tbody>
-            @for (row of memberRows(); track row.id; let i = $index) {
-              <tr>
-                <td>{{ i + 1 }}</td>
-                <td class="fw-semibold">{{ row.name }}</td>
-                <td>{{ row.roleKey | translate }}</td>
-                <td>
-                  <div>{{ row.evaluationKey | translate }}</div>
-                  @if (row.axes.length) {
-                    <small class="text-muted">{{ row.axes.join(', ') }}</small>
+          </ng-template>
+          <ng-template pTemplate="body" let-row let-i="rowIndex">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td class="fw-semibold">{{ row.name }}</td>
+              <td>{{ row.roleKey | translate }}</td>
+              <td>
+                <div>{{ row.evaluationKey | translate }}</div>
+                @if (row.axes.length) {
+                  <small class="text-muted">{{ row.axes.join(', ') }}</small>
+                }
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-1">
+                  @for (key of row.permissionKeys; track key) {
+                    <span class="pill neutral">{{ key | translate }}</span>
+                  } @empty {
+                    <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.PERMISSION.NONE' | translate }}</span>
                   }
-                </td>
-                <td>
-                  <div class="d-flex flex-wrap gap-1">
-                    @for (key of row.permissionKeys; track key) {
-                      <span class="pill neutral">{{ key | translate }}</span>
-                    } @empty {
-                      <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.PERMISSION.NONE' | translate }}</span>
-                    }
-                  </div>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="5" class="text-center text-muted">
-                  {{ (store.detailLoading() ? 'common.loading' : 'INTERVIEW_COMMITTEES.NO_MEMBERS') | translate }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center text-muted">{{ 'INTERVIEW_COMMITTEES.NO_MEMBERS' | translate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
-using Application.Operation.Features.Employee.Interview.Schedule.Services;
 using Application.Operation.Features.Employee.Interview.Schedule.DTOs;
+using Application.Operation.Features.Employee.Interview.Schedule.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +22,7 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
         if (appointment is null)
             return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewAppointmentNotFound));
 
-        // role : reschedule of an individual appointment is only allowed while the parent
+        // schedule.md: reschedule of an individual appointment is only allowed while the parent
         // schedule is Approved or Returned.
         if (appointment.InterviewSchedule!.Status is not (ScheduleStatus.Approved or ScheduleStatus.Returned))
             return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewAppointmentRescheduleNotAllowed));

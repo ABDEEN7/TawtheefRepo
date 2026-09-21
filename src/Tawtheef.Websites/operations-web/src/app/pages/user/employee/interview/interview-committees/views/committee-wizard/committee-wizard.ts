@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Select } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
 
 import { InterviewCommitteesStore, WizardStep } from '../../interview-committees.store';
 import { InterviewCommitteesFacade } from '../../interview-committees.facade';
@@ -24,9 +25,11 @@ import {
   WizardUser,
 } from '../../models/wizard-draft.model';
 
+// Everything the review table shows is precomputed: a p-table row is untyped in the template, so the row carries the
+// ready-made translation key instead of the template indexing a lookup with an `any`.
 interface ReviewRow {
   name: string;
-  role: CommitteeRole;
+  roleKey: string;
   evaluationKey: string;
   axes: string[];
 }
@@ -36,7 +39,7 @@ interface ReviewRow {
   templateUrl: './committee-wizard.html',
   styleUrls: ['./committee-wizard.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TranslatePipe, Select, InputTextModule, LazySelectComponent],
+  imports: [FormsModule, TranslatePipe, Select, InputTextModule, TableModule, LazySelectComponent],
 })
 export class CommitteeWizardComponent {
   store = inject(InterviewCommitteesStore);
@@ -44,7 +47,6 @@ export class CommitteeWizardComponent {
 
   readonly EvaluationScope = EvaluationScope;
   readonly minimumMembers = MINIMUM_COMMITTEE_MEMBERS;
-  readonly roleLabels = COMMITTEE_ROLE_LABELS;
 
   readonly steps: WizardStep[] = [1, 2, 3];
   readonly stepLabels: Record<WizardStep, string> = {
@@ -61,6 +63,9 @@ export class CommitteeWizardComponent {
 
   readonly searchJobs = this.service.searchJobs;
   readonly searchMembers = this.service.searchEligibleMembers;
+
+  // Rows hold live controls (dropdowns, checkboxes); tracking by id keeps a row's DOM alive when its draft object is replaced.
+  readonly trackByLocalId = (_index: number, member: WizardMemberDraft) => member.localId;
 
   // Picked users are rendered from these; caching keeps each option's identity stable between change-detection
   // passes so the child dropdown isn't handed a "new" selection every time.
@@ -107,7 +112,7 @@ export class CommitteeWizardComponent {
     if (chair) {
       rows.push({
         name: this.service.userLabel(chair),
-        role: CommitteeRole.Chair,
+        roleKey: COMMITTEE_ROLE_LABELS[CommitteeRole.Chair],
         evaluationKey: 'INTERVIEW_COMMITTEES.SCOPE.ALL_AXES',
         axes: [],
       });
@@ -118,7 +123,7 @@ export class CommitteeWizardComponent {
       const selected = evaluates && member.evaluationScope === EvaluationScope.SelectedAxes;
       rows.push({
         name: member.user ? this.service.userLabel(member.user) : '—',
-        role: member.role,
+        roleKey: COMMITTEE_ROLE_LABELS[member.role],
         evaluationKey: !evaluates
           ? 'INTERVIEW_COMMITTEES.SCOPE.NOT_EVALUATING'
           : selected

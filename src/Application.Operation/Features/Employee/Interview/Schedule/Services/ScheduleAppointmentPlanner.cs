@@ -5,9 +5,8 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Services;
 
-// Pure computation - no DB access - so Create and Update (resubmit) handlers, and the preview
-// query, all share the exact same slot-generation and distribution rules : "never
-// trust a client-submitted capacity/slot list - always recompute server-side").
+// Pure computation - no DB access - so Create and Update (resubmit) handlers, and the preview query
+// always recompute server-side").
 public static class ScheduleAppointmentPlanner
 {
     public static int ComputeCapacity(TimeOnly startTime, TimeOnly endTime, int durationMinutes, int bufferMinutes)
@@ -72,6 +71,57 @@ public static class ScheduleAppointmentPlanner
         }
 
         return Result.Ok(slots.OrderBy(s => s.StartAt).ToList());
+    }
+
+    // Inverse of GenerateSlots: folds a persisted slot list back into the periods it was generated from.
+    // Slots of one period step by duration+buffer, so a slot continues the previous one exactly when it
+    // starts at previous.EndAt + buffer; anything else begins a new period. Regenerating the returned
+    // periods therefore yields the same slot set (the end time is the last slot's end, which can be earlier
+    // than the end the user originally typed if it wasn't aligned to a slot boundary).
+    public static List<PeriodInputDto> ReconstructPeriods(IEnumerable<GeneratedSlotDto> slots, int bufferMinutes)
+    {
+        var periods = new List<PeriodInputDto>();
+
+        var groups = slots
+            .GroupBy(s => (s.Date, s.RoomId, s.RemoteMeetingUrl, s.RemoteMeetingInstructions))
+            .OrderBy(g => g.Key.Date);
+
+        foreach (var group in groups)
+        {
+            DateTime? runStart = null;
+            var runEnd = default(DateTime);
+
+            void Flush()
+            {
+                if (runStart is null)
+                    return;
+
+                periods.Add(new PeriodInputDto(
+                    group.Key.Date,
+                    TimeOnly.FromDateTime(runStart.Value),
+                    TimeOnly.FromDateTime(runEnd),
+                    group.Key.RoomId,
+                    group.Key.RemoteMeetingUrl,
+                    group.Key.RemoteMeetingInstructions));
+            }
+
+            foreach (var slot in group.OrderBy(s => s.StartAt))
+            {
+                if (runStart is not null && slot.StartAt == runEnd.AddMinutes(bufferMinutes))
+                {
+                    runEnd = slot.EndAt;
+                    continue;
+                }
+
+                Flush();
+                runStart = slot.StartAt;
+                runEnd = slot.EndAt;
+            }
+
+            Flush();
+        }
+
+        return periods.OrderBy(p => p.Date).ThenBy(p => p.StartTime).ToList();
     }
 
     // Walks the sorted slot list and the eligible-candidate list in parallel, pairing them 1:1.

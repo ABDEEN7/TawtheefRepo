@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap, ParamMap, Router } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -6,11 +7,14 @@ import { NotificationService } from '../../../../../core/services/notification.s
 import { LanguageService } from '../../../../../core/services/language.service';
 import { JobLookupService } from '../../job-management/services/job-lookup.service';
 import { InterviewTemplatesService } from '../interview-templates/services/interview-templates.service';
+import { TemplateVersionStatus } from '../interview-templates/models/enums';
+import { TemplateVersionDetailsModel, TemplateVersionModel } from '../interview-templates/models/template-version.model';
 
 import { InterviewCommitteesFacade } from './interview-committees.facade';
 import { InterviewCommitteesStore } from './interview-committees.store';
 import { InterviewCommitteesService } from './services/interview-committees.service';
-import { CommitteeRole, EvaluationScope } from './models/enums';
+import { CommitteeModel } from './models/committee.model';
+import { CommitteeRole, CommitteeStatus, EvaluationScope } from './models/enums';
 import { WizardMemberDraft, WizardUser } from './models/wizard-draft.model';
 
 const user = (id: string): WizardUser => ({ id, nameAr: `مستخدم ${id}`, nameEn: `User ${id}`, email: `${id}@example.com` });
@@ -24,11 +28,34 @@ const member = (id: string, patch: Partial<WizardMemberDraft> = {}): WizardMembe
   ...patch,
 });
 
+const committee = (id = 'c1'): CommitteeModel => ({
+  id,
+  code: 'COM-2026-0001',
+  jobId: 'job-1',
+  jobTitleNameAr: 'وظيفة',
+  jobTitleNameEn: 'Job',
+  interviewTemplateId: 'tpl-1',
+  interviewTemplateTitleAr: 'قالب',
+  interviewTemplateTitleEn: 'Template',
+  committeeTypeId: 'type-1',
+  committeeTypeNameAr: 'أكاديمي',
+  committeeTypeNameEn: 'Academic',
+  nameAr: 'لجنة',
+  nameEn: 'Committee',
+  memberCount: 3,
+  status: CommitteeStatus.Draft,
+  isActive: true,
+});
+
 describe('InterviewCommitteesFacade', () => {
   let facade: InterviewCommitteesFacade;
   let store: InterviewCommitteesStore;
   let api: jasmine.SpyObj<InterviewCommitteesService>;
+  let templatesApi: jasmine.SpyObj<InterviewTemplatesService>;
   let notify: jasmine.SpyObj<NotificationService>;
+  let router: jasmine.SpyObj<Router>;
+  // Stands in for the router's query string: tests push a new value exactly as the router would after a navigation.
+  let queryParams$: BehaviorSubject<ParamMap>;
 
   // A wizard that passes every check: job + approved template with two axes, a chair and two more members.
   function fillValidWizard() {
@@ -58,9 +85,22 @@ describe('InterviewCommitteesFacade', () => {
       'createCommittee',
       'updateCommittee',
       'submitCommittee',
+      'getCommittee',
+      'listMembers',
     ]);
     api.listCommittees.and.returnValue(of([]));
+    api.getCommittee.and.returnValue(of(committee()));
+    api.listMembers.and.returnValue(of([]));
+    templatesApi = jasmine.createSpyObj<InterviewTemplatesService>('InterviewTemplatesService', [
+      'listTemplates',
+      'listTemplateVersions',
+      'getTemplateVersionDetails',
+    ]);
+    templatesApi.listTemplates.and.returnValue(of([]));
     notify = jasmine.createSpyObj<NotificationService>('NotificationService', ['success', 'error']);
+    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    router.navigate.and.resolveTo(true);
+    queryParams$ = new BehaviorSubject<ParamMap>(convertToParamMap({}));
 
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot()],
@@ -68,7 +108,9 @@ describe('InterviewCommitteesFacade', () => {
         InterviewCommitteesStore,
         InterviewCommitteesFacade,
         { provide: InterviewCommitteesService, useValue: api },
-        { provide: InterviewTemplatesService, useValue: {} },
+        { provide: InterviewTemplatesService, useValue: templatesApi },
+        { provide: Router, useValue: router },
+        { provide: ActivatedRoute, useValue: { queryParamMap: queryParams$.asObservable() } },
         { provide: JobLookupService, useValue: { loadJobStatus: () => of([]), getStatusIdByEnum: () => undefined } },
         { provide: NotificationService, useValue: notify },
         { provide: LanguageService, useValue: { get: () => 'en', current$: new BehaviorSubject('en') } },
@@ -233,6 +275,100 @@ describe('InterviewCommitteesFacade', () => {
     it('counts the chair toward the roster size and hides everyone already picked from the pickers', () => {
       expect(store.wizardRosterSize()).toBe(3);
       expect([...store.wizardSelectedUserIds()].sort()).toEqual(['chair', 'm1', 'm2']);
+    });
+  });
+
+  // Switching language reloads the whole app, so "which committee is open" has to live in the URL to survive it.
+  describe('detail view is driven by ?committee=<id>', () => {
+    const openUrl = (id: string | null) => queryParams$.next(convertToParamMap(id ? { committee: id } : {}));
+    const navigatedTo = (id: string | null) =>
+      router.navigate.calls.allArgs().some(([, extras]) => extras?.queryParams?.['committee'] === id);
+
+    beforeEach(() => {
+      store.setView('list'); // the outer setup leaves the wizard open
+    });
+
+    it('opens that committee straight away when the page loads on ?committee=<id> (the language-switch reload)', () => {
+      openUrl('c1');
+
+      facade.init();
+
+      expect(store.view()).toBe('detail');
+      expect(api.getCommittee).toHaveBeenCalledOnceWith('c1');
+      expect(api.listMembers).toHaveBeenCalledOnceWith('c1');
+      expect(store.detailCommittee()?.id).toBe('c1');
+    });
+
+    it('stays on the list when there is no ?committee param', () => {
+      facade.init();
+
+      expect(store.view()).toBe('list');
+      expect(api.getCommittee).not.toHaveBeenCalled();
+    });
+
+    it('opening a committee puts its id in the URL, and the URL change is what opens the detail', () => {
+      facade.init();
+
+      facade.openDetail(committee('c9'));
+
+      expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParamsHandling: 'merge' }));
+      expect(navigatedTo('c9')).toBeTrue();
+      expect(store.detailCommittee()?.id).toBe('c9'); // header pre-filled from the list row while the record loads
+
+      openUrl('c9'); // what the router does next
+
+      expect(store.view()).toBe('detail');
+      expect(api.getCommittee).toHaveBeenCalledOnceWith('c9');
+    });
+
+    it('back-to-list removes the param', () => {
+      facade.init();
+
+      facade.backToList();
+
+      expect(navigatedTo(null)).toBeTrue();
+    });
+
+    it('returns to the list, and reloads it, when the param goes away (back button, sidebar link)', () => {
+      openUrl('c1');
+      facade.init();
+      api.listCommittees.calls.reset();
+
+      openUrl(null);
+
+      expect(store.view()).toBe('list');
+      expect(api.listCommittees).toHaveBeenCalledTimes(1);
+    });
+
+    it('sends the user back to the list when the committee in the URL cannot be loaded', () => {
+      api.getCommittee.and.returnValue(throwError(() => new Error('404')));
+      openUrl('gone');
+
+      facade.init();
+
+      expect(navigatedTo(null)).toBeTrue();
+    });
+
+    it('editing from the detail clears the param only once the wizard is showing, and the wizard is not bounced to the list', () => {
+      // Only the fields the facade reads; the rest of the models is irrelevant to this test.
+      templatesApi.listTemplateVersions.and.returnValue(
+        of([{ id: 'v1', status: TemplateVersionStatus.Approved }] as unknown as TemplateVersionModel[]),
+      );
+      templatesApi.getTemplateVersionDetails.and.returnValue(
+        of({ versionNo: 1, finalScore: 100, qualificationScore: null, axes: [] } as unknown as TemplateVersionDetailsModel),
+      );
+      openUrl('c1');
+      facade.init();
+      router.navigate.calls.reset();
+
+      facade.openEditWizard(committee('c1'));
+
+      expect(store.view()).toBe('wizard');
+      expect(navigatedTo(null)).toBeTrue();
+
+      openUrl(null); // the router applies that navigation
+
+      expect(store.view()).toBe('wizard');
     });
   });
 });

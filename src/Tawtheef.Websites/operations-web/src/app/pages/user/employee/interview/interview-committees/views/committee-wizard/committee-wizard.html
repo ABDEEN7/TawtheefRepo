@@ -44,6 +44,7 @@
             <p-select class="w-100" [options]="templateOptions()" optionLabel="label" optionValue="value" [filter]="true"
               filterBy="label" [showClear]="true" [appendTo]="'body'" [disabled]="isEditMode()"
               [loading]="store.wizardTemplateLoading()" [placeholder]="'INTERVIEW_COMMITTEES.FIELD_TEMPLATE_PLACEHOLDER' | translate"
+              [ariaLabel]="'INTERVIEW_COMMITTEES.FIELD_TEMPLATE' | translate"
               [ngModel]="store.wizardInfo().templateId || null" (ngModelChange)="service.selectTemplate($event)" />
           </div>
           <div class="col-md-6">
@@ -196,8 +197,8 @@
 
             <div class="table-card rounded overflow-hidden">
               <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                  <thead>
+                <p-table [value]="store.wizardMembers()" [rowTrackBy]="trackByLocalId" [rowHover]="true">
+                  <ng-template pTemplate="header">
                     <tr>
                       <th style="width:50px">#</th>
                       <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
@@ -206,21 +207,34 @@
                       <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_AXES' | translate }}</th>
                       <th style="width:60px"></th>
                     </tr>
-                  </thead>
-                  <tbody>
-                    @for (member of store.wizardMembers(); track member.localId; let i = $index) {
-                      <tr>
-                        <td>{{ i + 1 }}</td>
-                        <td style="min-width:260px">
-                          <app-lazy-select [search]="searchMembers" [selected]="userOption(member.user)"
-                            [excludeValues]="store.wizardSelectedUserIds()"
-                            [placeholder]="'INTERVIEW_COMMITTEES.FIELD_MEMBER_PLACEHOLDER' | translate"
-                            [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate"
-                            (selectedChange)="onMemberSelected(member, $event)" />
-                        </td>
-                        <td style="min-width:170px">
-                          <p-select class="w-100" [options]="roleOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
-                            [ngModel]="member.role" (ngModelChange)="service.changeMemberRole(member.localId, $event)">
+                  </ng-template>
+                  <ng-template pTemplate="body" let-member let-i="rowIndex">
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td style="min-width:260px">
+                        <app-lazy-select [search]="searchMembers" [selected]="userOption(member.user)"
+                          [excludeValues]="store.wizardSelectedUserIds()"
+                          [placeholder]="'INTERVIEW_COMMITTEES.FIELD_MEMBER_PLACEHOLDER' | translate"
+                          [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate"
+                          (selectedChange)="onMemberSelected(member, $event)" />
+                      </td>
+                      <td style="min-width:170px">
+                        <p-select class="w-100" [options]="roleOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+                          [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_ROLE' | translate"
+                          [ngModel]="member.role" (ngModelChange)="service.changeMemberRole(member.localId, $event)">
+                          <ng-template #selectedItem let-selected>
+                            <span>{{ selected?.label | translate }}</span>
+                          </ng-template>
+                          <ng-template #item let-option>
+                            <span>{{ option.label | translate }}</span>
+                          </ng-template>
+                        </p-select>
+                      </td>
+                      <td style="min-width:170px">
+                        @if (evaluates(member)) {
+                          <p-select class="w-100" [options]="scopeOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+                            [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate"
+                            [ngModel]="member.evaluationScope" (ngModelChange)="service.changeMemberScope(member.localId, $event)">
                             <ng-template #selectedItem let-selected>
                               <span>{{ selected?.label | translate }}</span>
                             </ng-template>
@@ -228,55 +242,43 @@
                               <span>{{ option.label | translate }}</span>
                             </ng-template>
                           </p-select>
-                        </td>
-                        <td style="min-width:170px">
-                          @if (evaluates(member)) {
-                            <p-select class="w-100" [options]="scopeOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
-                              [ngModel]="member.evaluationScope" (ngModelChange)="service.changeMemberScope(member.localId, $event)">
-                              <ng-template #selectedItem let-selected>
-                                <span>{{ selected?.label | translate }}</span>
-                              </ng-template>
-                              <ng-template #item let-option>
-                                <span>{{ option.label | translate }}</span>
-                              </ng-template>
-                            </p-select>
-                          } @else {
-                            <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.SCOPE.NOT_EVALUATING' | translate }}</span>
-                          }
-                        </td>
-                        <td style="min-width:220px">
-                          @if (!evaluates(member)) {
-                            <span class="text-muted">—</span>
-                          } @else if (member.evaluationScope === EvaluationScope.SelectedAxes) {
-                            <div class="d-flex flex-column gap-1">
-                              @for (axis of axes(); track axis.id) {
-                                <div class="form-check mb-0">
-                                  <input class="form-check-input" type="checkbox" [id]="member.localId + '-' + axis.id"
-                                    [checked]="member.axisIds.includes(axis.id)" (change)="onAxisToggle(member, axis.id, $event)" />
-                                  <label class="form-check-label" [attr.for]="member.localId + '-' + axis.id">{{ axisLabel(axis) }}</label>
-                                </div>
-                              } @empty {
-                                <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.NO_AXES_AVAILABLE' | translate }}</span>
-                              }
-                            </div>
-                          } @else {
-                            <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.EVALUATES_ALL_AXES' | translate }}</span>
-                          }
-                        </td>
-                        <td>
-                          <button type="button" class="btn" [attr.aria-label]="'INTERVIEW_COMMITTEES.REMOVE_MEMBER' | translate"
-                            (click)="service.removeMember(member.localId)">
-                            <i class="hgi hgi-stroke hgi-delete-02 text-danger"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    } @empty {
-                      <tr>
-                        <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_COMMITTEES.NO_MEMBERS' | translate }}</td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
+                        } @else {
+                          <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.SCOPE.NOT_EVALUATING' | translate }}</span>
+                        }
+                      </td>
+                      <td style="min-width:220px">
+                        @if (!evaluates(member)) {
+                          <span class="text-muted">—</span>
+                        } @else if (member.evaluationScope === EvaluationScope.SelectedAxes) {
+                          <div class="d-flex flex-column gap-1">
+                            @for (axis of axes(); track axis.id) {
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" [id]="member.localId + '-' + axis.id"
+                                  [checked]="member.axisIds.includes(axis.id)" (change)="onAxisToggle(member, axis.id, $event)" />
+                                <label class="form-check-label" [attr.for]="member.localId + '-' + axis.id">{{ axisLabel(axis) }}</label>
+                              </div>
+                            } @empty {
+                              <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.NO_AXES_AVAILABLE' | translate }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.EVALUATES_ALL_AXES' | translate }}</span>
+                        }
+                      </td>
+                      <td>
+                        <button type="button" class="btn" [attr.aria-label]="'INTERVIEW_COMMITTEES.REMOVE_MEMBER' | translate"
+                          (click)="service.removeMember(member.localId)">
+                          <i class="hgi hgi-stroke hgi-delete-02 text-danger"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_COMMITTEES.NO_MEMBERS' | translate }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
               </div>
             </div>
           </div>
@@ -346,8 +348,8 @@
             </div>
             <div class="table-card rounded overflow-hidden">
               <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                  <thead>
+                <p-table [value]="reviewRows()" [rowHover]="true">
+                  <ng-template pTemplate="header">
                     <tr>
                       <th style="width:50px">#</th>
                       <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
@@ -355,29 +357,27 @@
                       <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</th>
                       <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_AXES' | translate }}</th>
                     </tr>
-                  </thead>
-                  <tbody>
-                    @for (row of reviewRows(); track $index) {
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td class="fw-semibold">{{ row.name }}</td>
-                        <td>{{ roleLabels[row.role] | translate }}</td>
-                        <td>{{ row.evaluationKey | translate }}</td>
-                        <td>
-                          @if (row.axes.length) {
-                            <div class="d-flex flex-wrap gap-2">
-                              @for (name of row.axes; track name) {
-                                <span class="axis-chip">{{ name }}</span>
-                              }
-                            </div>
-                          } @else {
-                            <span class="text-muted">—</span>
-                          }
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-row let-i="rowIndex">
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td class="fw-semibold">{{ row.name }}</td>
+                      <td>{{ row.roleKey | translate }}</td>
+                      <td>{{ row.evaluationKey | translate }}</td>
+                      <td>
+                        @if (row.axes.length) {
+                          <div class="d-flex flex-wrap gap-2">
+                            @for (name of row.axes; track name) {
+                              <span class="axis-chip">{{ name }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
               </div>
             </div>
           </div>

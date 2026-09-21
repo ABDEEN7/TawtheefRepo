@@ -8,4 +8,6 @@ public sealed record GeneratedSlotDto(
     DateTime EndAt,
     Guid? RoomId,
     string? RemoteMeetingUrl,
-    string? RemoteMeetingInstructions);
+    string? RemoteMeetingInstructions,
+    string? RoomNameAr = null,
+    string? RoomNameEn = null);

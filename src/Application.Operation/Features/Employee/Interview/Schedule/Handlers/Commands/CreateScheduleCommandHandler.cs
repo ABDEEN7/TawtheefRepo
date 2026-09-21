@@ -67,10 +67,6 @@ public sealed class CreateScheduleCommandHandler(IUnitOfWork unitOfWork)
         if (proposeResult.IsFailed)
             return Result.Fail<Guid>(proposeResult.Errors);
 
-        var submitResult = schedule.Submit();
-        if (submitResult.IsFailed)
-            return Result.Fail<Guid>(submitResult.Errors);
-
         await unitOfWork.GetEntityRepository<InterviewAuditLog>().AddAsync(new InterviewAuditLog
         {
             EntityType = nameof(InterviewSchedule),

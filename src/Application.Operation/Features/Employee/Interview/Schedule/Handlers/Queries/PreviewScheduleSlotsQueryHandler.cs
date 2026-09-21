@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Entities.Exams;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
@@ -68,26 +70,39 @@ public sealed class PreviewScheduleSlotsQueryHandler(IUnitOfWork unitOfWork, Use
         }
 
         var assignedInvitationIds = pairs.Where(p => p.InvitationId is not null).Select(p => p.InvitationId!.Value).ToList();
-        var candidateNames = await LoadCandidateNamesAsync(assignedInvitationIds, cancellationToken);
+        var candidates = await LoadCandidatesAsync(assignedInvitationIds, cancellationToken);
+        var roomNames = await LoadRoomNamesAsync(pairs.Select(p => p.Slot.RoomId), cancellationToken);
 
         var slotPreviews = pairs
             .Select(p =>
             {
-                string? nameAr = null, nameEn = null;
-                if (p.InvitationId is not null && candidateNames.TryGetValue(p.InvitationId.Value, out var names))
-                    (nameAr, nameEn) = names;
+                string? nameAr = null, nameEn = null, qid = null;
+                if (p.InvitationId is not null && candidates.TryGetValue(p.InvitationId.Value, out var candidate))
+                    (nameAr, nameEn, qid) = candidate;
 
-                return new ScheduleSlotPreviewDto(p.Slot, p.InvitationId, nameAr, nameEn);
+                var slot = p.Slot;
+                if (slot.RoomId is not null && roomNames.TryGetValue(slot.RoomId.Value, out var roomName))
+                    slot = slot with { RoomNameAr = roomName.NameAr, RoomNameEn = roomName.NameEn };
+
+                return new ScheduleSlotPreviewDto(slot, p.InvitationId, nameAr, nameEn, qid);
             })
             .ToList();
 
         var unassignedCount = Math.Max(0, eligibleIds.Count - assignedInvitationIds.Count);
 
-        var dto = new SchedulePlanPreviewDto(slotsResult.Value.Count, eligibleIds.Count, unassignedCount, slotPreviews);
+        var dto = new SchedulePlanPreviewDto(
+            slotsResult.Value.Count,
+            eligibleIds.Count,
+            eligibleCandidates.Count(c => c.GenderId == GenderIds.Male),
+            eligibleCandidates.Count(c => c.GenderId == GenderIds.Female),
+            unassignedCount,
+            slotPreviews);
         return Result.Ok(dto);
     }
 
-    private async Task<Dictionary<Guid, (string? NameAr, string? NameEn)>> LoadCandidateNamesAsync(
+    // Name + personal ID (UserProfile.NationalNumber) per invitation - the profile is optional, so a candidate
+    // without one simply has no QID.
+    private async Task<Dictionary<Guid, (string? NameAr, string? NameEn, string? Qid)>> LoadCandidatesAsync(
         List<Guid> invitationIds, CancellationToken cancellationToken)
     {
         if (invitationIds.Count == 0)
@@ -96,7 +111,7 @@ public sealed class PreviewScheduleSlotsQueryHandler(IUnitOfWork unitOfWork, Use
         var invitations = await unitOfWork.GetEntityRepository<Invitation>().DbSet
             .AsNoTracking()
             .Where(i => invitationIds.Contains(i.Id))
-            .Select(i => new { i.Id, i.ApplicantId })
+            .Select(i => new { i.Id, i.ApplicantId, Qid = i.Applicant!.Profile!.NationalNumber })
             .ToListAsync(cancellationToken);
 
         var applicantIds = invitations.Select(i => i.ApplicantId).Distinct().ToList();
@@ -110,7 +125,20 @@ public sealed class PreviewScheduleSlotsQueryHandler(IUnitOfWork unitOfWork, Use
             i =>
             {
                 var applicant = applicants.FirstOrDefault(a => a.Id == i.ApplicantId);
-                return (applicant?.FullNameAr, applicant?.FullNameEn);
+                return (applicant?.FullNameAr, applicant?.FullNameEn, i.Qid);
             });
+    }
+
+    private async Task<Dictionary<Guid, (string NameAr, string? NameEn)>> LoadRoomNamesAsync(
+        IEnumerable<Guid?> roomIds, CancellationToken cancellationToken)
+    {
+        var ids = roomIds.Where(id => id is not null).Select(id => id!.Value).Distinct().ToList();
+        if (ids.Count == 0)
+            return [];
+
+        return await unitOfWork.GetEntityRepository<Room>().DbSet
+            .AsNoTracking()
+            .Where(r => ids.Contains(r.Id))
+            .ToDictionaryAsync(r => r.Id, r => (r.NameAr, r.NameEn), cancellationToken);
     }
 }

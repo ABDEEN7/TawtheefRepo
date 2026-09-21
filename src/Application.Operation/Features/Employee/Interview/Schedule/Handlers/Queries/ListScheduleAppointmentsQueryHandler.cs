@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Handlers.Queries;
@@ -22,23 +23,26 @@ public sealed class ListScheduleAppointmentsQueryHandler(IUnitOfWork unitOfWork)
                 a.InvitationId,
                 a.Invitation != null ? a.Invitation.Applicant!.FullNameAr : null,
                 a.Invitation != null ? a.Invitation.Applicant!.FullNameEn : null,
+                a.Invitation != null ? a.Invitation.Applicant!.Profile!.NationalNumber : null,
                 a.InterviewCommitteeId,
                 a.InterviewType,
                 a.RoomId,
+                a.Room != null ? a.Room.NameAr : null,
+                a.Room != null ? a.Room.NameEn : null,
                 a.RemoteMeetingUrl,
                 a.RemoteMeetingInstructions,
                 a.StartAt,
                 a.EndAt,
                 a.Status,
                 a.AttendanceStatus,
-                a.ActualStartAt,
-                a.ActualEndAt,
-                a.ClosedAt,
+                a.ActualStartAt.AsUtcOffset(),
+                a.ActualEndAt.AsUtcOffset(),
+                a.ClosedAt.AsUtcOffset(),
                 a.RescheduledFromAppointmentId,
                 a.RescheduleReason,
                 a.CancellationReason,
-                a.InvitationSentAt,
-                a.LastReminderSentAt,
+                a.InvitationSentAt.AsUtcOffset(),
+                a.LastReminderSentAt.AsUtcOffset(),
                 a.ReminderCount))
             .ToListAsync(cancellationToken);
 
