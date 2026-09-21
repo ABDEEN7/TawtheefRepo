@@ -729,6 +729,13 @@ body.ltr
   &__label { color: #6c757d; font-size: 0.75rem; font-weight: 600; }
   &__value { color: #2c142f; font-size: 0.9375rem; overflow-wrap: anywhere; }
 
+  &--candidate {
+    justify-content: space-between;
+
+    .workflow-review-summary-card__content { order: 1; }
+    .workflow-review-summary-card__icon { order: 2; }
+  }
+
   &--room { background-color: #eef4ff; border-color: #d7e4fb; color: #3569ba; }
   &--date { background-color: #eef8f2; border-color: #d4e9dd; color: #29875d; }
   &--time { background-color: #fff7e6; border-color: #f2dfb3; color: #b77916; }
