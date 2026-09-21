@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
@@ -30,7 +29,6 @@ export interface UpsertManagementDialogData {
     FormsModule,
     TranslatePipe,
     InputTextModule,
-    InputNumberModule,
     Textarea,
     ToggleSwitchModule,
     ButtonModule,
@@ -129,19 +127,18 @@ export interface UpsertManagementDialogData {
             <label class="form-label" for="management-department-number">
               {{ 'ORG_STRUCTURES.FIELD_DEPARTMENT_NUMBER' | translate }}
             </label>
-            <p-input-number
-              inputId="management-department-number"
-              styleClass="w-100"
-              inputStyleClass="w-100 form-control"
+            <input
+              pInputText
+              id="management-department-number"
+              class="w-100 form-control"
               name="departmentNumber"
               [(ngModel)]="vm.departmentNumber"
-              [useGrouping]="false"
-              [min]="1"
-              [step]="1"
               required
+              maxlength="50"
+              pattern="[0-9]+"
+              inputmode="numeric"
               [placeholder]="'ORG_STRUCTURES.FIELD_DEPARTMENT_NUMBER' | translate"
-            >
-            </p-input-number>
+            />
             <small class="text-muted" *ngIf="f.submitted && !hasValidDepartmentNumber()">
               {{ 'ORG_STRUCTURES.VALIDATION_REQUIRED' | translate }}
             </small>
@@ -202,12 +199,12 @@ export class UpsertManagementDialogComponent {
       '',
     descriptionAr:
       this.data.model?.descriptionAr ?? this.data.model?.additionalData?.descriptionAr ?? '',
-    departmentNumber: this.data.model?.departmentNumber ?? (null as number | null),
+    departmentNumber: this.data.model?.departmentNumber ?? '',
     isActive: (this.data.model?.isActive ?? true) !== false,
   };
 
   hasValidDepartmentNumber(): boolean {
-    return Number.isInteger(this.vm.departmentNumber) && (this.vm.departmentNumber ?? 0) > 0;
+    return /^[0-9]+$/.test(this.vm.departmentNumber?.trim() ?? '');
   }
 
   isValid(): boolean {
@@ -227,7 +224,7 @@ export class UpsertManagementDialogComponent {
       nameAr: this.vm.nameAr.trim(),
       descriptionEn: this.vm.descriptionEn?.trim() || null,
       descriptionAr: this.vm.descriptionAr?.trim() || null,
-      departmentNumber: this.vm.departmentNumber,
+      departmentNumber: this.vm.departmentNumber.trim(),
       isActive: this.vm.isActive,
     });
   }

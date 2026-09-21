@@ -12,4 +12,4 @@ public sealed record UpdateManagementCommand(
     string? DescriptionEn,
     bool IsActive,
     int DisplayOrder,
-    int DepartmentNumber) : IRequest<IResult<Unit>>;
+    string DepartmentNumber) : IRequest<IResult<Unit>>;
