@@ -12,42 +12,42 @@ using Tawtheef.Domain.Entities.Users;
 namespace Application.Operation.Features.Employee.QuestionBankRequests.Handlers.Commands;
 
 public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
-    : IRequestHandler<AssignQuestionBankEmployeesCommand, IResult>
+    : IRequestHandler<AssignQuestionBankEmployeesCommand, IResult<Unit>>
 {
-    public async Task<IResult> Handle(AssignQuestionBankEmployeesCommand command, CancellationToken cancellationToken)
+    public async Task<IResult<Unit>> Handle(AssignQuestionBankEmployeesCommand command, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(currentUserService.UserId, out var currentUserId))
-            return Result.Fail(ErrorsCodes.InvalidUserIdentifier);
+            return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
 
         var currentEmployeeUserExists = await unitOfWork.Context.Set<EmployeeUser>().AsNoTracking()
             .AnyAsync(x => x.Id == currentUserId && !x.IsDeleted && !x.IsBlocked, cancellationToken);
         if (!currentEmployeeUserExists)
-            return Result.Fail(ErrorsCodes.InvalidUserIdentifier);
-        if (command.Assignments.Count == 0) return Result.Fail(ErrorsCodes.QuestionBankAssignmentsRequired);
+            return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
+        if (command.Assignments.Count == 0) return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentsRequired);
         if (command.Assignments.Any(x => x.EmployeeId == Guid.Empty || x.MinimumQuestionCount <= 0 || x.Notes?.Length > 1000))
-            return Result.Fail(ErrorsCodes.QuestionBankAssignmentsRequired);
+            return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentsRequired);
         var employeeIds = command.Assignments.Select(x => x.EmployeeId).ToArray();
-        if (employeeIds.Distinct().Count() != employeeIds.Length) return Result.Fail(ErrorsCodes.DuplicateQuestionBankAssignee);
+        if (employeeIds.Distinct().Count() != employeeIds.Length) return Result.Fail<Unit>(ErrorsCodes.DuplicateQuestionBankAssignee);
 
-        return await unitOfWork.ExecuteInTransactionAsync<IResult>(async ct =>
+        return await unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async ct =>
         {
             var request = await unitOfWork.GetEntityRepository<QuestionBankRequest>().DbSet
                 .Include(x => x.QuestionBank).SingleOrDefaultAsync(x => x.Id == command.RequestId, ct);
-            if (request is null) return Result.Fail(ErrorsCodes.QuestionBankRequestNotFound);
+            if (request is null) return Result.Fail<Unit>(ErrorsCodes.QuestionBankRequestNotFound);
             if (request.StatusId != QuestionBankRequestStatusIds.PendingAssignment &&
                 request.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
-                return Result.Fail(ErrorsCodes.QuestionBankRequestNotPendingAssignment);
+                return Result.Fail<Unit>(ErrorsCodes.QuestionBankRequestNotPendingAssignment);
 
             if (await unitOfWork.GetEntityRepository<QuestionBankAssignment>().DbSet.AsNoTracking()
                     .AnyAsync(x => x.QuestionBankRequestId == request.Id && employeeIds.Contains(x.EmployeeId), ct))
-                return Result.Fail(ErrorsCodes.QuestionBankAssignmentAlreadyExists);
+                return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentAlreadyExists);
 
             var eligibleEmployees = unitOfWork.Context.Set<EmployeeUser>().AsNoTracking()
                 .Where(x => employeeIds.Contains(x.Id) && !x.IsDeleted && !x.IsBlocked &&
                             x.EmployeeProfile != null && !x.EmployeeProfile.IsDeleted);
             if (request.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
             {
-                if (request.QuestionBank.ManagementId is null) return Result.Fail(ErrorsCodes.QuestionBankAssigneeNotEligible);
+                if (request.QuestionBank.ManagementId is null) return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssigneeNotEligible);
                 var departmentCodes = unitOfWork.Context.Set<Department>().AsNoTracking()
                     .Where(x => x.ManagementId == request.QuestionBank.ManagementId).Select(x => x.BackendName);
                 eligibleEmployees = eligibleEmployees.Where(x => x.EmployeeProfile!.DepartmentNumber != null &&
@@ -56,11 +56,11 @@ public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOf
             else
             {
                 // No organization-wide scope rule exists for global banks yet; fail closed.
-                return Result.Fail(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
+                return Result.Fail<Unit>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
             }
 
             if (await eligibleEmployees.CountAsync(ct) != employeeIds.Length)
-                return Result.Fail(ErrorsCodes.QuestionBankAssigneeNotEligible);
+                return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssigneeNotEligible);
 
             var now = DateTime.UtcNow;
             var assignmentRepo = unitOfWork.GetEntityRepository<QuestionBankAssignment>();
@@ -83,7 +83,7 @@ public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOf
                 }, ct);
             }
             await unitOfWork.SaveChangesAsync(ct);
-            return Result.Ok();
+            return Result.Ok(Unit.Value);
         }, cancellationToken);
     }
 }
