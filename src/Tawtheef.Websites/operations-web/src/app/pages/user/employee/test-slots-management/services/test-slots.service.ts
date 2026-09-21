@@ -8,7 +8,11 @@ import { RoomListItemDto } from '../../rooms-management/models/room-list-item.dt
 import { UserFilters } from '../../users-management/models/user-filters.dto';
 import { TestSlotStaffMemberDto } from '../models/test-slot-staff-member.dto';
 import { TestSlotFilters, TestSlotListItemDto } from '../models/test-slot-list-item.dto';
-import { CreateTestSlotDto, TestSlotConfigurationDto } from '../models/create-test-slot.dto';
+import {
+  CreateTestSlotDto,
+  TestSlotConfigurationDto,
+  UpdateTestSlotAssignmentsDto,
+} from '../models/create-test-slot.dto';
 import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto } from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -54,6 +58,10 @@ export class TestSlotsService {
 
   close(id: string): Observable<void> {
     return this.http.post<void>(this.endpoints.testSlots.close(id), {});
+  }
+
+  updateAssignments(id: string, assignments: UpdateTestSlotAssignmentsDto): Observable<void> {
+    return this.http.put<void>(this.endpoints.testSlots.assignments(id), assignments);
   }
 
   save(testSlot: CreateTestSlotDto, id: string | null): Observable<void> {

@@ -7,9 +7,9 @@ import { NotificationService } from '../../../../../../core/services/notificatio
 import { LanguageService } from '../../../../../../core/services/language.service';
 import { UserDto } from '../../../users-management/models/user.dto';
 import {
-  CreateTestSlotDto,
   TestSlotConfigurationDto,
   TestSlotStaffRoleIds,
+  UpdateTestSlotAssignmentsDto,
 } from '../../models/create-test-slot.dto';
 import { TestSlotsService } from '../../services/test-slots.service';
 import {
@@ -84,7 +84,7 @@ export class TestSlotAssignmentDialogComponent implements OnInit {
 
     this.saving.set(true);
     this.service
-      .save(this.createRequest(), this.data.testSlotId)
+      .updateAssignments(this.data.testSlotId, this.createRequest())
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
@@ -99,18 +99,11 @@ export class TestSlotAssignmentDialogComponent implements OnInit {
     if (!this.saving()) this.ref.close();
   }
 
-  private createRequest(): CreateTestSlotDto {
-    const configuration = this.configuration!;
+  private createRequest(): UpdateTestSlotAssignmentsDto {
     const roomHead = this.roomHead()!;
     const teamMemberIds = new Set(this.teamMembers().map(member => member.id));
     teamMemberIds.delete(roomHead.id);
     return {
-      titleAr: configuration.titleAr,
-      titleEn: configuration.titleEn ?? '',
-      roomId: configuration.roomId,
-      slotDate: configuration.slotDate,
-      startTime: configuration.startTime,
-      endTime: configuration.endTime,
       staff: [
         { staffUserId: roomHead.id, roleId: TestSlotStaffRoleIds.hallSupervisor, isActive: true },
         ...[...teamMemberIds].map(staffUserId => ({

@@ -4,7 +4,7 @@
       <h5 class="fw-bold mb-0">{{ 'TEST_SLOT_DETAILS.ASSIGNMENTS' | translate }}</h5>
       @if (canAddAssignment()) {
         <button
-          *hasPermission="permissions.TestSlots.Create"
+          *hasPermission="[permissions.TestSlots.Create, permissions.TestSlots.View]"
           type="button"
           class="btn btn-primary d-inline-flex align-items-center gap-2"
           (click)="openAssignmentDialog()"

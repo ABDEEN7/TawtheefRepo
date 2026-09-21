@@ -22,6 +22,10 @@ export interface CreateTestSlotDto {
   staff: CreateTestSlotStaffDto[];
 }
 
+export interface UpdateTestSlotAssignmentsDto {
+  staff: CreateTestSlotStaffDto[];
+}
+
 export interface TestSlotConfigurationDto extends Omit<CreateTestSlotDto, 'staff'> {
   id: string;
   staff: TestSlotConfigurationStaffDto[];

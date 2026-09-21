@@ -420,6 +420,7 @@ export class EndpointsService {
     accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
     start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
     close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
+    assignments: (id: string) => this.getFullUrl(`/test-slots/${id}/assignments`),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };

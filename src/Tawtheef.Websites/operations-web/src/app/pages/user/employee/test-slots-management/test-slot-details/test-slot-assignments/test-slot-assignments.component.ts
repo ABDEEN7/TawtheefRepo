@@ -3,6 +3,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
 import { Permissions } from '../../../../../../core/constants/permissions';
+import { AuthService } from '../../../../../../core/auth/auth.service';
 import { HasPermissionDirective } from '../../../../../../shared/directives/has-permission.directive';
 import { TestSlotStaffDetailsDto } from '../../models/test-slot-details.dto';
 import { TestSlotStatusIds } from '../../models/test-slot-status.ids';
@@ -20,13 +21,17 @@ export class TestSlotAssignmentsComponent {
   @Input({ required: true }) staff!: TestSlotStaffDetailsDto[];
   @Input({ required: true }) testSlotId!: string;
   @Input({ required: true }) statusId!: string;
+  @Input({ required: true }) isCurrentUserRoomHead!: boolean;
   @Output() assignmentsUpdated = new EventEmitter<void>();
 
   private readonly dialogs = inject(DialogService);
   private readonly translate = inject(TranslateService);
+  private readonly auth = inject(AuthService);
 
   canAddAssignment(): boolean {
-    return this.statusId !== TestSlotStatusIds.closed;
+    return this.statusId !== TestSlotStatusIds.closed &&
+      (this.auth.hasPermission(Permissions.TestSlots.Create) ||
+        (this.auth.hasPermission(Permissions.TestSlots.View) && this.isCurrentUserRoomHead));
   }
 
   openAssignmentDialog(): void {

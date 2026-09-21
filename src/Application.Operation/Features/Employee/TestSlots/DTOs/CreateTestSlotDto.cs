@@ -8,14 +8,19 @@ public sealed class CreateTestSlotDto
     public DateOnly SlotDate { get; init; }
     public TimeOnly StartTime { get; init; }
     public TimeOnly EndTime { get; init; }
-    public List<CreateTestSlotStaffDto>? Staff { get; init; }
+    public List<TestSlotStaffAssignmentDto>? Staff { get; init; }
 }
 
-public sealed class CreateTestSlotStaffDto
+public sealed class TestSlotStaffAssignmentDto
 {
     public Guid StaffUserId { get; init; }
     public Guid RoleId { get; init; }
     public bool IsActive { get; init; }
+}
+
+public sealed class UpdateTestSlotAssignmentsDto
+{
+    public List<TestSlotStaffAssignmentDto>? Staff { get; init; }
 }
 
 public sealed record SavedTestSlotDto(Guid Id);

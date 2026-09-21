@@ -26,6 +26,13 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
         => (await mediator.Send(new SaveTestSlotCommand(id, testSlot), cancellationToken)).ToActionResult();
 
+    [HttpPut("{id:guid}/assignments")]
+    [AuthorizePermission(PermissionKeys.TestSlots.Create, PermissionKeys.TestSlots.View)]
+    public async Task<IActionResult> UpdateTestSlotAssignments(Guid id,
+        [FromBody] UpdateTestSlotAssignmentsDto assignments, CancellationToken cancellationToken)
+        => (await mediator.Send(new UpdateTestSlotAssignmentsCommand(id, assignments), cancellationToken))
+            .ToActionResult();
+
     [HttpPost("{id:guid}/start")]
     [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
     public async Task<IActionResult> StartTestSlot(Guid id, CancellationToken cancellationToken)
@@ -50,7 +57,7 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
             .ToActionResult();
 
     [HttpGet("wizard/staff")]
-    [AuthorizePermission(PermissionKeys.TestSlots.Create)]
+    [AuthorizePermission(PermissionKeys.TestSlots.Create, PermissionKeys.TestSlots.View)]
     public async Task<IActionResult> GetStaffMembers([FromQuery] GetTestSlotStaffMembersQuery query,
         CancellationToken cancellationToken)
         => (await mediator.Send(query, cancellationToken)).ToActionResult();
