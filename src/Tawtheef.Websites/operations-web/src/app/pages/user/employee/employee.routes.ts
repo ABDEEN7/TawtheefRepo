@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '../../../core/guards/route-guard/permission-guards';
+import { testSlotEditStatusGuard } from './test-slots-management/test-slot-edit-status.guard';
 import { Permissions } from '../../../core/constants/permissions';
 import { portalRoutes } from '../../../routes/portal-routes';
 
@@ -41,7 +42,7 @@ export const employeeRoutes: Routes = [
   },
   {
     path: portalRoutes.editTestSlotPath,
-    canActivate: [permissionGuard],
+    canActivate: [permissionGuard, testSlotEditStatusGuard],
     data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'edit' },
     loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
       .then(m => m.TestSlotCreatePage)

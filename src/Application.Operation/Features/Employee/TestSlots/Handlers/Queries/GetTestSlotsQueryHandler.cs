@@ -2,18 +2,25 @@ using Application.Operation.Features.Employee.TestSlots.DTOs;
 using Application.Operation.Features.Employee.TestSlots.Queries;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Common.Models;
 using Tawtheef.Application.Common.Models.Pagination;
+using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.TestSlots.Handlers.Queries;
 
-public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserRepository userRepository)
+public sealed class GetTestSlotsQueryHandler(
+    IUnitOfWork unitOfWork,
+    IUserRepository userRepository,
+    ICurrentUserService currentUser)
     : IRequestHandler<GetTestSlotsQuery, IResult<PaginatedResult<TestSlotListItemDto>>>
 {
     public async Task<IResult<PaginatedResult<TestSlotListItemDto>>> Handle(
@@ -25,6 +32,7 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
         var sessions = unitOfWork.GetEntityRepository<TestSession>().DbSet.AsNoTracking();
         var candidates = unitOfWork.GetEntityRepository<TestSessionCandidate>().DbSet.AsNoTracking();
         var staff = unitOfWork.GetEntityRepository<TestSlotStaff>().DbSet.AsNoTracking();
+        var currentUserId = Guid.TryParse(currentUser.UserId, out var userId) ? userId : Guid.Empty;
 
         var testSlots = unitOfWork.GetEntityRepository<TestSlot>().DbSet.AsNoTracking()
             .WhereIf(!string.IsNullOrWhiteSpace(searchTerm),
@@ -37,6 +45,30 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
 
         if (request.DateTo is { } dateTo)
             testSlots = testSlots.Where(testSlot => testSlot.SlotDate <= dateTo);
+
+        if (currentUserId != Guid.Empty)
+        {
+            var userRoles = unitOfWork.Context.Set<IdentityUserRole<Guid>>()
+                .Where(userRole => userRole.UserId == currentUserId);
+            var hasTestSlotStaffMemberRole = await userRoles.AnyAsync(
+                userRole => userRole.RoleId == SystemRoleIds.TestSlotStaffMember,
+                cancellationToken);
+            var hasBroaderTestSlotAccess = await userRoles
+                .Where(userRole => userRole.RoleId != SystemRoleIds.TestSlotStaffMember)
+                .Join(unitOfWork.Context.Set<IdentityRoleClaim<Guid>>(),
+                    userRole => userRole.RoleId,
+                    roleClaim => roleClaim.RoleId,
+                    (_, roleClaim) => roleClaim)
+                .AnyAsync(roleClaim => roleClaim.ClaimType == RoleClaimTypes.Permission &&
+                                      roleClaim.ClaimValue == PermissionKeys.TestSlots.View,
+                    cancellationToken);
+
+            if (hasTestSlotStaffMemberRole && !hasBroaderTestSlotAccess)
+            {
+                testSlots = testSlots.Where(testSlot => staff.Any(member =>
+                    member.TestSlotId == testSlot.Id && member.StaffUserId == currentUserId && member.IsActive));
+            }
+        }
 
         var page = await testSlots
             .OrderByDescending(testSlot => testSlot.SlotDate)
@@ -59,6 +91,11 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
                     .OrderBy(member => member.Id)
                     .Select(member => (Guid?)member.StaffUserId)
                     .FirstOrDefault(),
+                IsCurrentUserAssigned = currentUserId != Guid.Empty && staff.Any(member =>
+                    member.TestSlotId == testSlot.Id && member.StaffUserId == currentUserId && member.IsActive),
+                IsCurrentUserRoomHead = currentUserId != Guid.Empty && staff.Any(member =>
+                    member.TestSlotId == testSlot.Id && member.StaffUserId == currentUserId && member.IsActive &&
+                    member.RoleId == TestSlotStaffRoleIds.HallSupervisor),
                 Status = new DropdownOptions
                 {
                     Id = testSlot.StatusId,
@@ -102,6 +139,8 @@ public sealed class GetTestSlotsQueryHandler(IUnitOfWork unitOfWork, IUserReposi
             HallSupervisorName = testSlot.HallSupervisorId is { } supervisorId
                 ? supervisorNames.GetValueOrDefault(supervisorId)
                 : null,
+            IsCurrentUserAssigned = testSlot.IsCurrentUserAssigned,
+            IsCurrentUserRoomHead = testSlot.IsCurrentUserRoomHead,
             Status = testSlot.Status
         }).ToList();
 

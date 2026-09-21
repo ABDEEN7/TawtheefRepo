@@ -207,6 +207,7 @@ public static class PermissionKeys
         public const string View = "test-slots.view";
         public const string Create = "test-slots.create";
         public const string ViewAccessCode = "test-slots.view-access-code";
+        public const string ManagePeriod = "test-slots.manage-period";
     }
 
     public static class Rooms

@@ -23,6 +23,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RoomListItemDto } from '../rooms-management/models/room-list-item.dto';
 import { TestSlotFilters, TestSlotListItemDto } from './models/test-slot-list-item.dto';
+import { TestSlotStatusIds } from './models/test-slot-status.ids';
 import { TestSlotsService } from './services/test-slots.service';
 
 @Component({
@@ -172,6 +173,10 @@ export class TestSlotsManagementComponent implements OnInit {
   onPageSizeChange(pageSize: number): void {
     this.filters.update(filters => ({ ...filters, pageNumber: 1, pageSize }));
     this.listRequests$.next();
+  }
+
+  canEditFromGrid(testSlot: TestSlotListItemDto): boolean {
+    return testSlot.status.id === TestSlotStatusIds.ready;
   }
 
   private toDateFilter(date: Date | null): string | undefined {

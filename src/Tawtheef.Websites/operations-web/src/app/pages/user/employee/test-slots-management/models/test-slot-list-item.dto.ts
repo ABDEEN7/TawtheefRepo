@@ -11,6 +11,8 @@ export interface TestSlotListItemDto {
   candidateCount: number;
   hallSupervisorId?: string;
   hallSupervisorName?: string;
+  isCurrentUserAssigned: boolean;
+  isCurrentUserRoomHead: boolean;
   status: dropdownOptionsModel;
 }
 

@@ -98,15 +98,17 @@
                     >
                       <i class="hgi hgi-stroke hgi-view"></i>
                     </a>
-                    <a
-                      class="btn btn-action-icon"
-                      *hasPermission="Permissions.TestSlots.Create"
-                      [routerLink]="routes.editTestSlot(testSlot.id)"
-                      [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
-                      tooltipPosition="top"
-                    >
-                      <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
-                    </a>
+                    @if (canEditFromGrid(testSlot)) {
+                      <a
+                        class="btn btn-action-icon"
+                        *hasPermission="Permissions.TestSlots.Create"
+                        [routerLink]="routes.editTestSlot(testSlot.id)"
+                        [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
+                        tooltipPosition="top"
+                      >
+                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                      </a>
+                    }
                   </div>
                 </td>
               </tr>

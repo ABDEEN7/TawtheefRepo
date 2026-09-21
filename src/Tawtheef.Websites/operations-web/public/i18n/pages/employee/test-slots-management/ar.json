@@ -119,5 +119,10 @@
   "TEST_SLOT_DETAILS.CANDIDATE_SEARCH": "البحث باسم المرشح أو الرقم الشخصي",
   "TEST_SLOT_DETAILS.ALL_SESSIONS": "كل الجلسات",
   "TEST_SLOT_DETAILS.CLEAR_FILTERS": "إلغاء التصفية",
-  "TEST_SLOT_DETAILS.CLOSE": "إغلاق"
+  "TEST_SLOT_DETAILS.CLOSE": "إغلاق",
+  "TEST_SLOT_DETAILS.START_PERIOD": "بدء الفترة",
+  "TEST_SLOT_DETAILS.STARTED": "تم بدء فترة الاختبار بنجاح.",
+  "TEST_SLOT_DETAILS.CLOSE_PERIOD": "إغلاق الفترة",
+  "TEST_SLOT_DETAILS.CLOSE_PERIOD_CONFIRMATION": "هل ترغب في إغلاق هذه الفترة؟",
+  "TEST_SLOT_DETAILS.CLOSED": "تم إغلاق فترة الاختبار بنجاح."
 }

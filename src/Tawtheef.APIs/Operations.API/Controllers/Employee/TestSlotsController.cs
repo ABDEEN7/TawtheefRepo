@@ -26,6 +26,16 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
         => (await mediator.Send(new SaveTestSlotCommand(id, testSlot), cancellationToken)).ToActionResult();
 
+    [HttpPost("{id:guid}/start")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
+    public async Task<IActionResult> StartTestSlot(Guid id, CancellationToken cancellationToken)
+        => (await mediator.Send(new StartTestSlotCommand(id), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/close")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
+    public async Task<IActionResult> CloseTestSlot(Guid id, CancellationToken cancellationToken)
+        => (await mediator.Send(new CloseTestSlotCommand(id), cancellationToken)).ToActionResult();
+
     [HttpGet]
     [AuthorizePermission(PermissionKeys.TestSlots.View)]
     public async Task<IActionResult> GetTestSlots([FromQuery] GetTestSlotsQuery query,

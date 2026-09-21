@@ -15,6 +15,31 @@
           </div>
           <p class="text-muted mt-2 mb-0">{{ 'TEST_SLOT_DETAILS.SUBTITLE' | translate }}</p>
         </div>
+        @if (canStart() && details()!.isCurrentUserRoomHead) {
+          <div class="col-lg-6 col-md-12 d-flex justify-content-lg-end mt-3 mt-lg-0">
+            <button
+              *hasPermission="permissions.TestSlots.ManagePeriod"
+              type="button"
+              class="btn btn-primary"
+              (click)="startPeriod()"
+              [disabled]="starting()"
+            >
+              {{ 'TEST_SLOT_DETAILS.START_PERIOD' | translate }}
+            </button>
+          </div>
+        } @else if (canClose() && details()!.isCurrentUserRoomHead) {
+          <div class="col-lg-6 col-md-12 d-flex justify-content-lg-end mt-3 mt-lg-0">
+            <button
+              *hasPermission="permissions.TestSlots.ManagePeriod"
+              type="button"
+              class="btn btn-primary"
+              (click)="closePeriod()"
+              [disabled]="closing()"
+            >
+              {{ 'TEST_SLOT_DETAILS.CLOSE_PERIOD' | translate }}
+            </button>
+          </div>
+        }
       </div>
       @if (loading()) {
         <p>{{ 'TEST_SLOT_DETAILS.LOADING' | translate }}</p>
@@ -48,6 +73,7 @@
               class="d-block w-100"
               [staff]="details()!.staff"
               [testSlotId]="details()!.id"
+              [statusId]="details()!.status.id"
               (assignmentsUpdated)="loadDetails()"
             />
           </div>

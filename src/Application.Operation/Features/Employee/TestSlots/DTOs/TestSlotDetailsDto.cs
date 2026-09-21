@@ -19,6 +19,7 @@ public sealed class TestSlotDetailsDto
     public int WaitingCandidates { get; init; }
     public int AbsentCandidates { get; init; }
     public required List<TestSlotStaffDetailsDto> Staff { get; init; }
+    public bool IsCurrentUserAssigned { get; init; }
     public bool IsCurrentUserRoomHead { get; init; }
     public bool HasRevealableAccessCode { get; init; }
 }

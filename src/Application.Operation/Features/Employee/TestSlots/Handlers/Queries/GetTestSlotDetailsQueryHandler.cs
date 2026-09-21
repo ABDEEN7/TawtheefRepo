@@ -50,6 +50,8 @@ public sealed class GetTestSlotDetailsQueryHandler(IUnitOfWork unitOfWork, ICurr
                     .OrderBy(s => s.Id).Select(s =>
                     new TestSlotStaffDetailsDto(s.StaffUserId, isArabic ? s.StaffUser!.FullNameAr : s.StaffUser!.FullNameEn,
                         isArabic ? s.Role!.NameAr : s.Role!.NameEn)).ToList(),
+                IsCurrentUserAssigned = currentUserId != Guid.Empty && unitOfWork.Context.Set<TestSlotStaff>()
+                    .Any(s => s.TestSlotId == x.Id && s.IsActive && s.StaffUserId == currentUserId),
                 IsCurrentUserRoomHead = currentUserId != Guid.Empty && unitOfWork.Context.Set<TestSlotStaff>()
                     .Any(s => s.TestSlotId == x.Id && s.IsActive && s.RoleId == TestSlotStaffRoleIds.HallSupervisor &&
                               s.StaffUserId == currentUserId),

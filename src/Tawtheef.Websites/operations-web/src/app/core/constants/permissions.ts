@@ -160,6 +160,7 @@ export const Permissions = {
     View: 'test-slots.view',
     Create: 'test-slots.create',
     ViewAccessCode: 'test-slots.view-access-code',
+    ManagePeriod: 'test-slots.manage-period',
   },
 
   QuestionBanks: {

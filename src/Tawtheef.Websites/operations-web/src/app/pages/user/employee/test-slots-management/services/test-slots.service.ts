@@ -48,6 +48,14 @@ export class TestSlotsService {
     return this.http.get<TestSlotAccessCodeDto>(this.endpoints.testSlots.accessCode(id));
   }
 
+  start(id: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSlots.start(id), {});
+  }
+
+  close(id: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSlots.close(id), {});
+  }
+
   save(testSlot: CreateTestSlotDto, id: string | null): Observable<void> {
     const options = {
       headers: { [HDR.SkipError]: 'true' },

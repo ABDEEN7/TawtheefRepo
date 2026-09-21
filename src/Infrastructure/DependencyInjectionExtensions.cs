@@ -329,6 +329,7 @@ namespace Tawtheef.Infrastructure
                 
                 // Operation-only options (do not ValidateOnStart unless always present in Operation app settings)
                 services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+                AddValidatedOptions<TestSlotSettings>(services, configuration, TestSlotSettings.SectionName);
 
                 // Operation-only services
                 services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();

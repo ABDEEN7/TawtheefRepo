@@ -400,6 +400,8 @@ export class EndpointsService {
     sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
     candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
     accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
+    start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
+    close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };

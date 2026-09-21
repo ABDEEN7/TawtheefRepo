@@ -321,6 +321,10 @@ public class ErrorsCodes
     public const string TestSlotRoomScheduleConflict = "TEST_SLOT_ROOM_SCHEDULE_CONFLICT";
     public const string TestSlotStaffScheduleConflict = "TEST_SLOT_STAFF_SCHEDULE_CONFLICT";
     public const string TestSlotStaffRoleNotFound = "TEST_SLOT_STAFF_ROLE_NOT_FOUND";
+    public const string TestSlotCannotBeStartedInCurrentStatus = "TEST_SLOT_CANNOT_BE_STARTED_IN_CURRENT_STATUS";
+    public const string TestSlotCannotBeClosedInCurrentStatus = "TEST_SLOT_CANNOT_BE_CLOSED_IN_CURRENT_STATUS";
+    public const string TestSlotCanOnlyBeStartedOnScheduledDate = "TEST_SLOT_CAN_ONLY_BE_STARTED_ON_SCHEDULED_DATE";
+    public const string TestSlotStartTooEarly = "TEST_SLOT_START_TOO_EARLY";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";

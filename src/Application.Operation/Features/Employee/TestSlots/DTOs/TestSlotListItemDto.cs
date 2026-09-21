@@ -14,5 +14,7 @@ public sealed record TestSlotListItemDto
     public int CandidateCount { get; init; }
     public Guid? HallSupervisorId { get; init; }
     public string? HallSupervisorName { get; init; }
+    public bool IsCurrentUserAssigned { get; init; }
+    public bool IsCurrentUserRoomHead { get; init; }
     public required DropdownOptions Status { get; init; }
 }

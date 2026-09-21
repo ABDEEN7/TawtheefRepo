@@ -119,5 +119,10 @@
   "TEST_SLOT_DETAILS.CANDIDATE_SEARCH": "Search by candidate name or QID",
   "TEST_SLOT_DETAILS.ALL_SESSIONS": "All sessions",
   "TEST_SLOT_DETAILS.CLEAR_FILTERS": "Clear filters",
-  "TEST_SLOT_DETAILS.CLOSE": "Close"
+  "TEST_SLOT_DETAILS.CLOSE": "Close",
+  "TEST_SLOT_DETAILS.START_PERIOD": "Start Period",
+  "TEST_SLOT_DETAILS.STARTED": "Exam period started successfully.",
+  "TEST_SLOT_DETAILS.CLOSE_PERIOD": "Close Period",
+  "TEST_SLOT_DETAILS.CLOSE_PERIOD_CONFIRMATION": "Do you want to close this period?",
+  "TEST_SLOT_DETAILS.CLOSED": "Exam period closed successfully."
 }

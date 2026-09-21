@@ -7,7 +7,7 @@ export interface TestSlotDetailsDto {
   slotDate: string; startTime: string; endTime: string; status: dropdownOptionsModel; candidateCount: number;
   totalCandidates: number; presentCandidates: number; waitingCandidates: number; absentCandidates: number;
   staff: TestSlotStaffDetailsDto[];
-  isCurrentUserRoomHead: boolean; hasRevealableAccessCode: boolean;
+  isCurrentUserAssigned: boolean; isCurrentUserRoomHead: boolean; hasRevealableAccessCode: boolean;
 }
 
 export interface TestSlotAccessCodeDto { accessCode: string; }

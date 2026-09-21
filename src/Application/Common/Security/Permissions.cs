@@ -82,6 +82,9 @@ public static class Permissions
         public static readonly PermissionDefinition ViewAccessCode =
             Def(PermissionKeys.TestSlots.ViewAccessCode, nameof(PermissionKeys.TestSlots), PermissionAction.View,
                 "Exam Periods - View Access Code", "فترات الاختبار - عرض رمز الدخول", 111);
+        public static readonly PermissionDefinition ManagePeriod =
+            Def(PermissionKeys.TestSlots.ManagePeriod, nameof(PermissionKeys.TestSlots), PermissionAction.Manage,
+                "Exam Periods - Manage Period", "فترات الاختبار - إدارة الفترة", 112);
     }
 
     public static class Rooms
