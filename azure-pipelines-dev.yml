@@ -4,3 +4,103 @@ trigger:
       - Development_Sprint1
 
 pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  displayName: Build all applications
+
+  jobs:
+
+  # -------------------------
+  # Operations Web
+  # -------------------------
+  - job: BuildOperationsWeb
+    displayName: Build operations-web
+
+    steps:
+    - task: UseNode@1
+      inputs:
+        version: '22.x'
+
+    - script: npm ci
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
+      displayName: Install dependencies
+
+    - script: npm run build:pre-stage
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
+      displayName: Build operations-web
+
+
+  # -------------------------
+  # Recruitment Web
+  # -------------------------
+  - job: BuildRecruitmentWeb
+    displayName: Build recruitment-web
+
+    steps:
+    - task: UseNode@1
+      inputs:
+        version: '22.x'
+
+    - script: npm ci
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
+      displayName: Install dependencies
+
+    - script: npm run build:pre-stage
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
+      displayName: Build recruitment-web
+
+
+  # -------------------------
+  # Operations API
+  # -------------------------
+  - job: BuildOperationsApi
+    displayName: Build Operations API
+
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: sdk
+        version: '10.0.x'
+
+    - script: >
+        dotnet restore
+        src/Tawtheef.APIs/Operations.API/Operations.API.csproj
+      displayName: Restore Operations API
+
+    - script: >
+        dotnet publish
+        src/Tawtheef.APIs/Operations.API/Operations.API.csproj
+        --configuration Release
+        --no-restore
+        --output $(Build.ArtifactStagingDirectory)/operations-api
+      displayName: Publish Operations API
+
+
+  # -------------------------
+  # Recruitment API
+  # -------------------------
+  - job: BuildRecruitmentApi
+    displayName: Build Recruitment API
+
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: sdk
+        version: '10.0.x'
+
+    - script: >
+        dotnet restore
+        src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj
+      displayName: Restore Recruitment API
+
+    - script: >
+        dotnet publish
+        src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj
+        --configuration Release
+        --no-restore
+        --output $(Build.ArtifactStagingDirectory)/recruitment-api
+      displayName: Publish Recruitment API
