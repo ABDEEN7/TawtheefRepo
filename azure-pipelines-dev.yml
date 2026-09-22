@@ -8,48 +8,106 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- group: Tawtheef-DEV-PublishPasswords
+
+
+# ============================================================
+# BUILD
+# Builds all four deployable applications.
+# Every application must succeed before deployment can start.
+# ============================================================
 stages:
+
 - stage: Build
   displayName: Build all applications
 
   jobs:
 
+  # ==========================================================
+  # Operations Web
+  # ==========================================================
   - job: BuildOperationsWeb
     displayName: Build operations-web
+
     steps:
+
     - task: UseNode@1
+      displayName: Use Node.js
       inputs:
         version: '22.x'
 
     - script: npm ci
-      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
       displayName: Install dependencies
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
 
     - script: npm run build:pre-stage
-      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
       displayName: Build operations-web
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
+
+    - task: ArchiveFiles@2
+      displayName: Package operations-web
+      inputs:
+        rootFolderOrFile: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web/dist/operations-web/browser
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/operation-web.zip
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish operation-web artifact
+      inputs:
+        targetPath: $(Build.ArtifactStagingDirectory)/operation-web.zip
+        artifact: operation-web
 
 
+  # ==========================================================
+  # Recruitment Web
+  # ==========================================================
   - job: BuildRecruitmentWeb
     displayName: Build recruitment-web
+
     steps:
+
     - task: UseNode@1
+      displayName: Use Node.js
       inputs:
         version: '22.x'
 
     - script: npm ci
-      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
       displayName: Install dependencies
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
 
     - script: npm run build:pre-stage
-      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
       displayName: Build recruitment-web
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
+
+    - task: ArchiveFiles@2
+      displayName: Package recruitment-web
+      inputs:
+        rootFolderOrFile: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web/dist/recruitment-web/browser
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/recruitment-web.zip
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish recruitment-web artifact
+      inputs:
+        targetPath: $(Build.ArtifactStagingDirectory)/recruitment-web.zip
+        artifact: recruitment-web
 
 
+  # ==========================================================
+  # Operations API
+  # ==========================================================
   - job: BuildOperationsApi
     displayName: Build Operations API
+
     steps:
+
     - task: UseDotNet@2
+      displayName: Use .NET 10
       inputs:
         packageType: sdk
         version: '10.0.x'
@@ -67,11 +125,32 @@ stages:
         --output $(Build.ArtifactStagingDirectory)/operations-api
       displayName: Publish Operations API
 
+    - task: ArchiveFiles@2
+      displayName: Package Operations API
+      inputs:
+        rootFolderOrFile: $(Build.ArtifactStagingDirectory)/operations-api
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/operation-api.zip
+        replaceExistingArchive: true
 
+    - task: PublishPipelineArtifact@1
+      displayName: Publish operation-api artifact
+      inputs:
+        targetPath: $(Build.ArtifactStagingDirectory)/operation-api.zip
+        artifact: operation-api
+
+
+  # ==========================================================
+  # Recruitment API
+  # ==========================================================
   - job: BuildRecruitmentApi
     displayName: Build Recruitment API
+
     steps:
+
     - task: UseDotNet@2
+      displayName: Use .NET 10
       inputs:
         packageType: sdk
         version: '10.0.x'
@@ -88,3 +167,391 @@ stages:
         --no-restore
         --output $(Build.ArtifactStagingDirectory)/recruitment-api
       displayName: Publish Recruitment API
+
+    - task: ArchiveFiles@2
+      displayName: Package Recruitment API
+      inputs:
+        rootFolderOrFile: $(Build.ArtifactStagingDirectory)/recruitment-api
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/recruitment-api.zip
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish recruitment-api artifact
+      inputs:
+        targetPath: $(Build.ArtifactStagingDirectory)/recruitment-api.zip
+        artifact: recruitment-api
+
+
+# ============================================================
+# DEPLOY DEV
+#
+# Runs only when:
+# 1. Every Build job succeeded
+# 2. Source branch is Development_Sprint1
+# 3. DEV Environment approval/checks pass
+# ============================================================
+- stage: Deploy_DEV
+  displayName: Deploy DEV
+
+  dependsOn: Build
+
+  condition: >
+    and(
+      succeeded(),
+      eq(variables['Build.SourceBranch'], 'refs/heads/Development_Sprint1')
+    )
+
+  jobs:
+
+  # ==========================================================
+  # Deploy Operations Web
+  # ==========================================================
+  - deployment: DeployOperationsWeb
+    displayName: Deploy operations-web
+    environment: DEV
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: none
+          - download: none
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download operation-web artifact
+            inputs:
+              buildType: current
+              artifactName: operation-web
+              targetPath: $(Pipeline.Workspace)/operation-web
+
+          - task: DownloadSecureFile@1
+            name: operationsWebPublishProfile
+            displayName: Load Operations Web publish profile
+            inputs:
+              secureFile: App-Tawtheef-Operations-Web-Dev-01.PublishSettings
+
+          - bash: |
+              set -euo pipefail
+
+              export PROFILE_PATH="$(operationsWebPublishProfile.secureFilePath)"
+              export PACKAGE_PATH="$(Pipeline.Workspace)/operation-web/operation-web.zip"
+
+              python3 <<'PY'
+              import os
+              import subprocess
+              import xml.etree.ElementTree as ET
+              from urllib.parse import urlsplit
+
+              profile_path = os.environ["PROFILE_PATH"]
+              package_path = os.environ["PACKAGE_PATH"]
+              password = os.environ["PUBLISH_PASSWORD"]
+
+              root = ET.parse(profile_path).getroot()
+              profiles = root.findall(".//publishProfile")
+
+              profile = next(
+                  (
+                      p for p in profiles
+                      if p.attrib.get("publishMethod", "").lower() == "msdeploy"
+                  ),
+                  None
+              )
+
+              if profile is None:
+                  raise SystemExit("MSDeploy profile not found in PublishSettings file.")
+
+              publish_url = profile.attrib["publishUrl"]
+              username = profile.attrib["userName"]
+
+              if "://" not in publish_url:
+                  publish_url = "https://" + publish_url
+
+              parsed = urlsplit(publish_url)
+              kudu_url = f"{parsed.scheme}://{parsed.netloc}/api/publish?type=zip"
+
+              subprocess.run(
+                  [
+                      "curl",
+                      "--fail-with-body",
+                      "--show-error",
+                      "--silent",
+                      "--request", "POST",
+                      "--user", f"{username}:{password}",
+                      "--upload-file", package_path,
+                      kudu_url
+                  ],
+                  check=True
+              )
+
+              print("Operations Web deployment completed.")
+              PY
+            displayName: Deploy operations-web
+            env:
+              PUBLISH_PASSWORD: $(OperationsWebPublishPassword)
+
+
+  # ==========================================================
+  # Deploy Recruitment Web
+  # ==========================================================
+  - deployment: DeployRecruitmentWeb
+    displayName: Deploy recruitment-web
+    environment: DEV
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: none
+          - download: none
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download recruitment-web artifact
+            inputs:
+              buildType: current
+              artifactName: recruitment-web
+              targetPath: $(Pipeline.Workspace)/recruitment-web
+
+          - task: DownloadSecureFile@1
+            name: recruitmentWebPublishProfile
+            displayName: Load Recruitment Web publish profile
+            inputs:
+              secureFile: App-Tawtheef-Recruitment-Web-Dev-01.PublishSettings
+
+          - bash: |
+              set -euo pipefail
+
+              export PROFILE_PATH="$(recruitmentWebPublishProfile.secureFilePath)"
+              export PACKAGE_PATH="$(Pipeline.Workspace)/recruitment-web/recruitment-web.zip"
+
+              python3 <<'PY'
+              import os
+              import subprocess
+              import xml.etree.ElementTree as ET
+              from urllib.parse import urlsplit
+
+              profile_path = os.environ["PROFILE_PATH"]
+              package_path = os.environ["PACKAGE_PATH"]
+              password = os.environ["PUBLISH_PASSWORD"]
+
+              root = ET.parse(profile_path).getroot()
+              profiles = root.findall(".//publishProfile")
+
+              profile = next(
+                  (
+                      p for p in profiles
+                      if p.attrib.get("publishMethod", "").lower() == "msdeploy"
+                  ),
+                  None
+              )
+
+              if profile is None:
+                  raise SystemExit("MSDeploy profile not found in PublishSettings file.")
+
+              publish_url = profile.attrib["publishUrl"]
+              username = profile.attrib["userName"]
+
+              if "://" not in publish_url:
+                  publish_url = "https://" + publish_url
+
+              parsed = urlsplit(publish_url)
+              kudu_url = f"{parsed.scheme}://{parsed.netloc}/api/publish?type=zip"
+
+              subprocess.run(
+                  [
+                      "curl",
+                      "--fail-with-body",
+                      "--show-error",
+                      "--silent",
+                      "--request", "POST",
+                      "--user", f"{username}:{password}",
+                      "--upload-file", package_path,
+                      kudu_url
+                  ],
+                  check=True
+              )
+
+              print("Recruitment Web deployment completed.")
+              PY
+            displayName: Deploy recruitment-web
+            env:
+              PUBLISH_PASSWORD: $(RecruitmentWebPublishPassword)
+
+
+  # ==========================================================
+  # Deploy Operations API
+  # ==========================================================
+  - deployment: DeployOperationsApi
+    displayName: Deploy Operations API
+    environment: DEV
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: none
+          - download: none
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download operation-api artifact
+            inputs:
+              buildType: current
+              artifactName: operation-api
+              targetPath: $(Pipeline.Workspace)/operation-api
+
+          - task: DownloadSecureFile@1
+            name: operationsApiPublishProfile
+            displayName: Load Operations API publish profile
+            inputs:
+              secureFile: App-Tawtheef-Operations-Api-Dev-01.PublishSettings
+
+          - bash: |
+              set -euo pipefail
+
+              export PROFILE_PATH="$(operationsApiPublishProfile.secureFilePath)"
+              export PACKAGE_PATH="$(Pipeline.Workspace)/operation-api/operation-api.zip"
+
+              python3 <<'PY'
+              import os
+              import subprocess
+              import xml.etree.ElementTree as ET
+              from urllib.parse import urlsplit
+
+              profile_path = os.environ["PROFILE_PATH"]
+              package_path = os.environ["PACKAGE_PATH"]
+              password = os.environ["PUBLISH_PASSWORD"]
+
+              root = ET.parse(profile_path).getroot()
+              profiles = root.findall(".//publishProfile")
+
+              profile = next(
+                  (
+                      p for p in profiles
+                      if p.attrib.get("publishMethod", "").lower() == "msdeploy"
+                  ),
+                  None
+              )
+
+              if profile is None:
+                  raise SystemExit("MSDeploy profile not found in PublishSettings file.")
+
+              publish_url = profile.attrib["publishUrl"]
+              username = profile.attrib["userName"]
+
+              if "://" not in publish_url:
+                  publish_url = "https://" + publish_url
+
+              parsed = urlsplit(publish_url)
+              kudu_url = f"{parsed.scheme}://{parsed.netloc}/api/publish?type=zip"
+
+              subprocess.run(
+                  [
+                      "curl",
+                      "--fail-with-body",
+                      "--show-error",
+                      "--silent",
+                      "--request", "POST",
+                      "--user", f"{username}:{password}",
+                      "--upload-file", package_path,
+                      kudu_url
+                  ],
+                  check=True
+              )
+
+              print("Operations API deployment completed.")
+              PY
+            displayName: Deploy Operations API
+            env:
+              PUBLISH_PASSWORD: $(OperationsApiPublishPassword)
+
+
+  # ==========================================================
+  # Deploy Recruitment API
+  # ==========================================================
+  - deployment: DeployRecruitmentApi
+    displayName: Deploy Recruitment API
+    environment: DEV
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - checkout: none
+          - download: none
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download recruitment-api artifact
+            inputs:
+              buildType: current
+              artifactName: recruitment-api
+              targetPath: $(Pipeline.Workspace)/recruitment-api
+
+          - task: DownloadSecureFile@1
+            name: recruitmentApiPublishProfile
+            displayName: Load Recruitment API publish profile
+            inputs:
+              secureFile: App-Tawtheef-Recruitment-Api-Dev-01.PublishSettings
+
+          - bash: |
+              set -euo pipefail
+
+              export PROFILE_PATH="$(recruitmentApiPublishProfile.secureFilePath)"
+              export PACKAGE_PATH="$(Pipeline.Workspace)/recruitment-api/recruitment-api.zip"
+
+              python3 <<'PY'
+              import os
+              import subprocess
+              import xml.etree.ElementTree as ET
+              from urllib.parse import urlsplit
+
+              profile_path = os.environ["PROFILE_PATH"]
+              package_path = os.environ["PACKAGE_PATH"]
+              password = os.environ["PUBLISH_PASSWORD"]
+
+              root = ET.parse(profile_path).getroot()
+              profiles = root.findall(".//publishProfile")
+
+              profile = next(
+                  (
+                      p for p in profiles
+                      if p.attrib.get("publishMethod", "").lower() == "msdeploy"
+                  ),
+                  None
+              )
+
+              if profile is None:
+                  raise SystemExit("MSDeploy profile not found in PublishSettings file.")
+
+              publish_url = profile.attrib["publishUrl"]
+              username = profile.attrib["userName"]
+
+              if "://" not in publish_url:
+                  publish_url = "https://" + publish_url
+
+              parsed = urlsplit(publish_url)
+              kudu_url = f"{parsed.scheme}://{parsed.netloc}/api/publish?type=zip"
+
+              subprocess.run(
+                  [
+                      "curl",
+                      "--fail-with-body",
+                      "--show-error",
+                      "--silent",
+                      "--request", "POST",
+                      "--user", f"{username}:{password}",
+                      "--upload-file", package_path,
+                      kudu_url
+                  ],
+                  check=True
+              )
+
+              print("Recruitment API deployment completed.")
+              PY
+            displayName: Deploy Recruitment API
+            env:
+              PUBLISH_PASSWORD: $(RecruitmentApiPublishPassword)
