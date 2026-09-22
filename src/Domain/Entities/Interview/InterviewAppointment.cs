@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Tawtheef.Domain.Entities.Interview;
@@ -21,9 +22,8 @@ public class InterviewAppointment : EventEntity
 
     public InterviewType InterviewType { get; set; }
 
-    // NOOOOOOTE  : Must add a Room entity and FK after merge  the branches just store the ID.
-    // Guid for now; add the FK later.
     public Guid? RoomId { get; set; }
+    public Room? Room { get; set; }
     public string? RemoteMeetingUrl { get; set; }
     public string? RemoteMeetingInstructions { get; set; }
 
@@ -107,6 +107,9 @@ public class InterviewAppointment : EventEntity
 
     // Marks THIS row superseded; the handler creates the new replacement row and links
     // it back via RescheduledFromAppointmentId. AttendanceStatus is left untouched.
+    // allowCompleted is a narrow, caller-verified exception for the Final Review corrective-reschedule
+    // scenario only (a Completed appointment whose schedule's result report is still UnderReview) -
+    // every other EnsureEditable() guard (AssignCandidate/UnassignCandidate/Cancel) is untouched.
     public Result MarkRescheduled(string reason, bool allowCompleted = false)
     {
         var editable = EnsureEditable();
@@ -182,7 +185,7 @@ public class InterviewAppointment : EventEntity
         return Result.Ok();
     }
 
-    // Notification gating : first send sets InvitationSentAt: every later
+    // Notification gating (schedule.md): first send sets InvitationSentAt: every later
     // send is a reminder and bumps LastReminderSentAt/ReminderCount instead. The caller
     // must verify the parent InterviewSchedule.Status is Approved or Closed beforehand -
     // a cross-aggregate check this entity cannot perform itself.

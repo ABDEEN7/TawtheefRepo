@@ -1,0 +1,139 @@
+.wizard-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.wizard-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  cursor: pointer;
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    inset-inline-start: 50%;
+    width: 100%;
+    height: 2px;
+    background: #e3d5dd;
+    z-index: 0;
+  }
+
+  &.completed:not(:last-child)::after {
+    background: #8a1538;
+  }
+}
+
+.wizard-step-circle {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbcbcb;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #999;
+  position: relative;
+  z-index: 1;
+
+  .wizard-step.active & {
+    border-color: #8a1538;
+    color: #8a1538;
+  }
+
+  .wizard-step.completed & {
+    border-color: #8a1538;
+    background: #8a1538;
+    color: #fff;
+  }
+}
+
+.wizard-step-label {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+
+  .wizard-step.active &,
+  .wizard-step.completed & {
+    color: #8a1538;
+  }
+}
+
+// Read-only fact blocks (job / committee summary) - label above value, wrapping on narrow widths.
+.info-panel {
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 16px 18px;
+}
+
+// 4-up stat grid (eligible/male/female/capacity, or the review step's totals) - one colored icon chip per card.
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  height: 100%;
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.blue {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+  }
+  &.green {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+  }
+  &.pink {
+    background: rgba(138, 21, 56, 0.08);
+    color: #8a1538;
+  }
+  &.gold {
+    background: rgba(255, 193, 7, 0.15);
+    color: #b8860b;
+  }
+}
+
+.stat-card-value {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.notice {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+
+  &.warning {
+    background: rgba(255, 193, 7, 0.12);
+    color: #8a6900;
+    border: 1px solid rgba(255, 193, 7, 0.35);
+  }
+}

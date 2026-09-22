@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.EvaluationTemplate.Handlers.Queries;
@@ -26,9 +27,9 @@ public sealed class ListTemplateVersionsQueryHandler(IUnitOfWork unitOfWork)
                 v.CalculationMethod,
                 v.Status,
                 v.IsLocked,
-                v.EffectiveFrom,
+                v.EffectiveFrom.AsUtcOffset(),
                 v.ApprovedById,
-                v.ApprovedAt,
+                v.ApprovedAt.AsUtcOffset(),
                 v.DecisionNotes))
             .ToListAsync(cancellationToken);
 

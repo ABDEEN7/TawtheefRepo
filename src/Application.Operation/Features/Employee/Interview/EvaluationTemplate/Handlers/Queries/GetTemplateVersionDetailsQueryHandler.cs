@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Interview;
 
@@ -61,9 +62,9 @@ public sealed class GetTemplateVersionDetailsQueryHandler(IUnitOfWork unitOfWork
             version.CalculationMethod,
             version.Status,
             version.IsLocked,
-            version.EffectiveFrom,
+            version.EffectiveFrom.AsUtcOffset(),
             version.ApprovedById,
-            version.ApprovedAt,
+            version.ApprovedAt.AsUtcOffset(),
             version.DecisionNotes,
             axes);
 

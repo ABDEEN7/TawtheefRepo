@@ -33,7 +33,7 @@ public sealed class UpdateScheduleCommandHandler(IUnitOfWork unitOfWork)
         if (templateResult.IsFailed)
             return Result.Fail<Unit>(templateResult.Errors);
 
-        // Editing regenerates the appointment list from scratch (role :). This schedule's own
+        // Editing regenerates the appointment list from scratch (schedule.md). This schedule's own
         // current appointments are still in the DB at this point (deleted below, right before
         // SaveChanges) - both checks explicitly exclude them by Id rather than relying on delete
         // ordering, since a plain query never sees not-yet-saved changes anyway.
@@ -87,10 +87,6 @@ public sealed class UpdateScheduleCommandHandler(IUnitOfWork unitOfWork)
         var proposeResult = schedule.Propose();
         if (proposeResult.IsFailed)
             return Result.Fail<Unit>(proposeResult.Errors);
-
-        var submitResult = schedule.Submit();
-        if (submitResult.IsFailed)
-            return Result.Fail<Unit>(submitResult.Errors);
 
         await unitOfWork.GetEntityRepository<InterviewAuditLog>().AddAsync(new InterviewAuditLog
         {

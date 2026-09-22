@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Committee.Handlers.Queries;
@@ -37,7 +38,7 @@ public sealed class ListCommitteeMembersQueryHandler(IUnitOfWork unitOfWork)
                 m.CanViewOtherEvaluations,
                 m.CanViewCommitteeSummary,
                 m.IsActive,
-                m.RemovedAt,
+                m.RemovedAt.AsUtcOffset(),
                 m.RemovalReason,
                 m.EvaluationAxes
                     .Select(a => new CommitteeMemberEvaluationAxisDto(

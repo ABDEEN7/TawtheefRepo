@@ -512,4 +512,36 @@ export class EndpointsService {
         this.getFullUrl(`/InterviewEvaluationTemplate/versions/axes/criteria/${id}`),
     },
   };
+
+  interviewCommittee = {
+    list: this.getFullUrl('/InterviewCommittee'),
+    details: (id: string) => this.getFullUrl(`/InterviewCommittee/${id}`),
+    create: this.getFullUrl('/InterviewCommittee'),
+    update: this.getFullUrl('/InterviewCommittee'),
+    submit: this.getFullUrl('/InterviewCommittee/submit'),
+    approve: this.getFullUrl('/InterviewCommittee/approve'),
+    return: this.getFullUrl('/InterviewCommittee/return'),
+    cancel: this.getFullUrl('/InterviewCommittee/cancel'),
+    members: this.getFullUrl('/InterviewCommittee/members'),
+    eligibleMembers: this.getFullUrl('/InterviewCommittee/lookups/eligible-members'),
+  };
+
+  interviewSchedule = {
+    list: this.getFullUrl('/InterviewSchedule'),
+    details: (id: string) => this.getFullUrl(`/InterviewSchedule/${id}`),
+    creationContext: this.getFullUrl('/InterviewSchedule/creation-context'),
+    preview: this.getFullUrl('/InterviewSchedule/preview'),
+    appointments: this.getFullUrl('/InterviewSchedule/appointments'),
+    create: this.getFullUrl('/InterviewSchedule'),
+    update: this.getFullUrl('/InterviewSchedule'),
+    submit: this.getFullUrl('/InterviewSchedule/submit'),
+    approve: this.getFullUrl('/InterviewSchedule/approve'),
+    return: this.getFullUrl('/InterviewSchedule/return'),
+    cancel: this.getFullUrl('/InterviewSchedule/cancel'),
+    appointmentReschedule: this.getFullUrl('/InterviewSchedule/appointments/reschedule'),
+    appointmentSendNotification: this.getFullUrl(
+      '/InterviewSchedule/appointments/send-notification',
+    ),
+    lookupRooms: this.getFullUrl('/InterviewSchedule/lookups/rooms'),
+  };
 }

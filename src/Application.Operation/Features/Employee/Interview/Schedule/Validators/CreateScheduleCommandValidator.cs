@@ -1,5 +1,4 @@
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
-using Application.Operation.Features.Employee.Interview.Schedule.Validators;
 using FluentValidation;
 using Tawtheef.Domain.Constants;
 

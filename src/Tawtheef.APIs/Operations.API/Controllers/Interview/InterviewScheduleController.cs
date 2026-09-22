@@ -73,6 +73,14 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPut("submit")]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    public async Task<IActionResult> SubmitSchedule([FromBody] SubmitScheduleCommand command, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToActionResult();
+    }
+
     [HttpPut("approve")]
     [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
     public async Task<IActionResult> ApproveSchedule([FromBody] ApproveScheduleCommand command, CancellationToken cancellationToken)
@@ -184,6 +192,18 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SendAppointmentNotification([FromBody] SendAppointmentNotificationCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
+        return result.ToActionResult();
+    }
+
+    // ---- Lookups ----
+
+    // Manage only: only the wizard's Step 2 period dialog calls this, to populate the In-Person
+    // room picker. Searchable + capped server-side rather than paginated (dropdown feed).
+    [HttpGet("lookups/rooms")]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    public async Task<IActionResult> ListInterviewRooms([FromQuery] ListInterviewRoomsQuery query, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
         return result.ToActionResult();
     }
 }

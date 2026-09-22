@@ -1,0 +1,144 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_COMMITTEES.BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_COMMITTEES.TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_COMMITTEES.SUBTITLE' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined"
+      icon="pi pi-refresh"
+      (click)="service.loadCommittees()"
+    >
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button
+      *hasPermission="Permissions.InterviewCommittee.Manage"
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      (click)="service.openCreateWizard()"
+    >
+      {{ 'INTERVIEW_COMMITTEES.CREATE_BUTTON' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-6 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.SEARCH_LABEL' | translate }}</label>
+            <input
+              class="form-control"
+              [placeholder]="'INTERVIEW_COMMITTEES.SEARCH_PLACEHOLDER' | translate"
+              [ngModel]="store.search()"
+              (ngModelChange)="service.setSearch($event)"
+            />
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_COMMITTEES.STATUS_FILTER' | translate"
+              [ngModel]="store.statusFilter()"
+              (ngModelChange)="service.setStatusFilter($event)"
+            >
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table
+      [value]="store.committees()"
+      [loading]="store.listLoading()"
+      [rowHover]="true"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_NUMBER' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_NAME' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_JOB' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_CHAIR' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBERS' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_STATUS' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_APPROVAL_DATE' | translate }}</th>
+          <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-committee>
+        <tr class="cursor-pointer" (click)="service.openDetail(committee)">
+          <td class="fw-semibold">{{ committee.code }}</td>
+          <td>{{ committeeName(committee) }}</td>
+          <td>{{ jobTitle(committee) || '—' }}</td>
+          <td>{{ chairName(committee) || '—' }}</td>
+          <td>{{ committee.memberCount }}</td>
+          <td>
+            <span [class]="'pill ' + statusPill(committee.status)">
+              {{ statusLabel(committee.status) | translate }}
+            </span>
+          </td>
+          <td>{{ committee.approvedAt ? (committee.approvedAt | date: 'dd-MM-yyyy') : '—' }}</td>
+          <td (click)="$event.stopPropagation()">
+            <div class="action-buttons d-flex">
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openDetail(committee)"
+                [pTooltip]="'INTERVIEW_COMMITTEES.VIEW' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'INTERVIEW_COMMITTEES.VIEW' | translate"
+              >
+                <i class="hgi hgi-stroke hgi-view"></i>
+              </button>
+              @if (canEdit(committee)) {
+                <button
+                  *hasPermission="Permissions.InterviewCommittee.Manage"
+                  type="button"
+                  class="btn"
+                  (click)="service.openEditWizard(committee)"
+                  [pTooltip]="'common.edit' | translate"
+                  tooltipPosition="top"
+                  [attr.aria-label]="'common.edit' | translate"
+                >
+                  <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-muted">
+            {{ 'INTERVIEW_COMMITTEES.NO_RECORDS' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

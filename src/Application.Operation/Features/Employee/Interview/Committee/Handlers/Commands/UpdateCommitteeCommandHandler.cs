@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Operation.Features.Employee.Interview.Committee.Commands;
+using Application.Operation.Features.Employee.Interview.Committee.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -11,10 +12,12 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.Interview.Committee.Handlers.Commands;
 
-public sealed class UpdateCommitteeCommandHandler(IUnitOfWork unitOfWork , UserManager<User> userManager)
+public sealed class UpdateCommitteeCommandHandler(
+    IUnitOfWork unitOfWork, UserManager<User> userManager, CommitteeMemberEligibilityService eligibility)
     : IRequestHandler<UpdateCommitteeCommand, IResult<Unit>>
 {
     private sealed record CommitteeCoreSnapshot(string NameAr, string? NameEn, string? ScopeDescription, string? Notes);
+
     public async Task<IResult<Unit>> Handle(UpdateCommitteeCommand request, CancellationToken cancellationToken)
     {
         var committee = await unitOfWork.GetEntityRepository<InterviewCommittee>().DbSet
@@ -37,6 +40,9 @@ public sealed class UpdateCommitteeCommandHandler(IUnitOfWork unitOfWork , UserM
                 .CountAsync(u => memberUserIds.Contains(u.Id), cancellationToken);
             if (existingUserCount != memberUserIds.Distinct().Count())
                 return Result.Fail<Unit>(new Error(ErrorsCodes.UserNotFound));
+
+            if (!await eligibility.AreAllEligibleAsync(memberUserIds, cancellationToken))
+                return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewCommitteeMemberNotEligible));
         }
 
         var allAxisIds = request.Members.SelectMany(m => m.EvaluationAxisIds).Distinct().ToList();

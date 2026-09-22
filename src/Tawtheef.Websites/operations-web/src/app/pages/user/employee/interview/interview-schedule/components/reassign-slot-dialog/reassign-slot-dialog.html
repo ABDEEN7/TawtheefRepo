@@ -1,0 +1,24 @@
+<div class="d-flex flex-column gap-3 p-2">
+  <p class="text-muted mb-0">
+    {{ 'INTERVIEW_SCHEDULE.WIZARD.REASSIGN_FOR' | translate }} <strong>{{ candidateName }}</strong>
+  </p>
+
+  <p-select
+    class="w-100"
+    optionLabel="label"
+    optionValue="value"
+    [options]="options"
+    [appendTo]="'body'"
+    [placeholder]="'INTERVIEW_SCHEDULE.WIZARD.SELECT_SLOT' | translate"
+    [(ngModel)]="selectedSlotStartAt"
+  />
+
+  <div class="d-flex justify-content-end gap-2 mt-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+      {{ 'INTERVIEW_SCHEDULE.WIZARD.CANCEL' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="save()">
+      {{ 'INTERVIEW_SCHEDULE.WIZARD.SAVE' | translate }}
+    </button>
+  </div>
+</div>

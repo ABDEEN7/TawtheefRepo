@@ -7,8 +7,8 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Services;
 
-// Double-booking checks are global, not scoped to one schedule - a committee or an
-// InPerson room can only be in one active appointment at a time across the entire system.
+// Double-booking checks are global, not scoped to one schedule : a committee or an
+// InPerson room can only be in one active appointment at a time.
 public static class ScheduleConflictChecker
 {
     // Mirrors IX_Appointment_Conflict's filter: everything except Closed/Rescheduled/Cancelled

@@ -2,8 +2,7 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.DTOs;
 
-// Everything the wizard's step 1/2 needs for a Job: identity fields, the linked (already-created)
-// Committee and its roster, and the eligible-candidate pool stats for the step-2 cards.
+// Everything the wizard's step 1/2 needs for a Job: identity fields.
 public sealed record ScheduleCreationContextDto(
     Guid JobId,
     string JobTitleNameAr,
