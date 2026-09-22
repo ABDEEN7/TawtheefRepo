@@ -43,6 +43,17 @@ public sealed class SaveTestSlotCommandHandler(IUnitOfWork unitOfWork, IAccessCo
                                                      testSlot.EndTime > x.StartTime, token))
                 return Result.Fail<SavedTestSlotDto>(ErrorsCodes.TestSlotRoomScheduleConflict);
 
+            var staffValidationResult = await TestSlotAssignmentOperations.ValidateAsync(
+                unitOfWork,
+                slotId,
+                testSlot.SlotDate,
+                testSlot.StartTime,
+                testSlot.EndTime,
+                testSlot.Staff ?? [],
+                token);
+            if (staffValidationResult.IsFailed)
+                return Result.Fail<SavedTestSlotDto>(staffValidationResult.Errors);
+
             var slot = request.Id is { } guid
                 ? await repository.DbSet.FirstOrDefaultAsync(x => x.Id == guid, token)
                 : CreateTestSlot();

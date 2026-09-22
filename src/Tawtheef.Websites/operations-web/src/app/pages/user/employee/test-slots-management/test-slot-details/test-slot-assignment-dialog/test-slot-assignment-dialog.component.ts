@@ -91,7 +91,7 @@ export class TestSlotAssignmentDialogComponent implements OnInit {
           this.notifications.success(this.translate.instant('TEST_SLOT_DETAILS.ASSIGNMENTS_UPDATED'));
           this.ref.close(true);
         },
-        error: () => this.notifications.error(this.translate.instant('TEST_SLOT_WIZARD.STAFF_CONFLICT')),
+        // error: () => this.notifications.error(this.translate.instant('TEST_SLOT_WIZARD.STAFF_CONFLICT')),
       });
   }
 

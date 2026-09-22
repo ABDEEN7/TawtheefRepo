@@ -128,6 +128,22 @@ namespace Tawtheef.Infrastructure
                 AddValidatedOptions<EmailSettings>(services, configuration, EmailSettings.SectionName);
                 AddValidatedOptions<GraphEmailSettings>(services, configuration, GraphEmailSettings.SectionName);
                 AddValidatedOptions<StorageSettings>(services, configuration, StorageSettings.SectionName);
+                services.AddOptions<TestSlotAccessCodeOptions>()
+                    .Bind(configuration.GetSection(TestSlotAccessCodeOptions.SectionName))
+                    .ValidateDataAnnotations()
+                    .Validate(options =>
+                    {
+                        try
+                        {
+                            AccessCodeProtector.DecodeEncryptionKey(options.EncryptionKey);
+                            return true;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            return false;
+                        }
+                    }, "TestSlotAccessCode:EncryptionKey must be valid Base64 and decode to exactly 32 bytes.")
+                    .ValidateOnStart();
 
                 // Optional settings that you may want in both apps (no ValidateOnStart here)
                 services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));

@@ -20,6 +20,48 @@ internal static class TestSlotAssignmentOperations
         IReadOnlyCollection<TestSlotStaffAssignmentDto> requestedStaff,
         CancellationToken token)
     {
+        var validationResult = await ValidateAsync(
+            unitOfWork,
+            testSlot.Id,
+            testSlot.SlotDate,
+            testSlot.StartTime,
+            testSlot.EndTime,
+            requestedStaff,
+            token);
+        if (validationResult.IsFailed)
+            return validationResult;
+
+        var existingStaff = await unitOfWork.Context.Set<TestSlotStaff>()
+            .Where(x => x.TestSlotId == testSlot.Id).ToListAsync(token);
+        var previousActiveStaff = existingStaff.Where(staff => staff.IsActive).ToList();
+        unitOfWork.RemoveRange(existingStaff);
+        foreach (var staffDto in requestedStaff)
+        {
+            var staff = new TestSlotStaff
+            {
+                TestSlotId = testSlot.Id,
+                StaffUserId = staffDto.StaffUserId,
+                RoleId = staffDto.RoleId,
+                IsActive = true,
+            };
+            if ((await unitOfWork.GetEntityRepository<TestSlotStaff>().AddAsync(staff, token)).IsFailed)
+                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+        }
+
+        AddAssignmentChangeEvents(testSlot, previousActiveStaff, requestedStaff);
+
+        return Result.Ok(Unit.Value);
+    }
+
+    public static async Task<IResult<Unit>> ValidateAsync(
+        IUnitOfWork unitOfWork,
+        Guid testSlotId,
+        DateOnly slotDate,
+        TimeOnly startTime,
+        TimeOnly endTime,
+        IReadOnlyCollection<TestSlotStaffAssignmentDto> requestedStaff,
+        CancellationToken token)
+    {
         var staffIds = requestedStaff.Select(x => x.StaffUserId).Distinct().ToList();
         if (requestedStaff.Count == 0 || staffIds.Count != requestedStaff.Count ||
             requestedStaff.Any(staff => staff.StaffUserId == Guid.Empty || !staff.IsActive ||
@@ -45,9 +87,9 @@ internal static class TestSlotAssignmentOperations
             return Result.Fail<Unit>(ErrorsCodes.TestSlotStaffRoleNotFound);
 
         var staffConflicts = await unitOfWork.Context.Set<TestSlotStaff>().AsNoTracking()
-            .Where(x => x.TestSlotId != testSlot.Id && x.IsActive && staffIds.Contains(x.StaffUserId) &&
-                        x.TestSlot!.SlotDate == testSlot.SlotDate && testSlot.StartTime < x.TestSlot.EndTime &&
-                        testSlot.EndTime > x.TestSlot.StartTime)
+            .Where(x => x.TestSlotId != testSlotId && x.IsActive && staffIds.Contains(x.StaffUserId) &&
+                        x.TestSlot!.SlotDate == slotDate && startTime < x.TestSlot.EndTime &&
+                        endTime > x.TestSlot.StartTime)
             .Select(x => new TestSlotStaffConflictDto(x.StaffUserId, x.StaffUser!.FullNameAr,
                 x.TestSlot!.TitleAr, x.TestSlot.SlotDate, x.TestSlot.StartTime, x.TestSlot.EndTime))
             .ToListAsync(token);
@@ -56,25 +98,6 @@ internal static class TestSlotAssignmentOperations
                 .WithMetadata("Code", ErrorsCodes.TestSlotStaffScheduleConflict)
                 .WithMetadata("StatusCode", StatusCodes.Status409Conflict)
                 .WithMetadata("ConflictDetails", staffConflicts));
-
-        var existingStaff = await unitOfWork.Context.Set<TestSlotStaff>()
-            .Where(x => x.TestSlotId == testSlot.Id).ToListAsync(token);
-        var previousActiveStaff = existingStaff.Where(staff => staff.IsActive).ToList();
-        unitOfWork.RemoveRange(existingStaff);
-        foreach (var staffDto in requestedStaff)
-        {
-            var staff = new TestSlotStaff
-            {
-                TestSlotId = testSlot.Id,
-                StaffUserId = staffDto.StaffUserId,
-                RoleId = staffDto.RoleId,
-                IsActive = true,
-            };
-            if ((await unitOfWork.GetEntityRepository<TestSlotStaff>().AddAsync(staff, token)).IsFailed)
-                return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
-        }
-
-        AddAssignmentChangeEvents(testSlot, previousActiveStaff, requestedStaff);
 
         return Result.Ok(Unit.Value);
     }
