@@ -61,7 +61,8 @@ public sealed class GetScheduleCreationContextQueryHandler(IUnitOfWork unitOfWor
             })
             .ToList();
 
-        var eligibleCandidates = await ScheduleEligibilityResolver.GetEligibleCandidatesAsync(unitOfWork, request.JobId, cancellationToken);
+        var eligibleCandidates = await ScheduleEligibilityResolver.GetEligibleCandidatesAsync(
+            unitOfWork, request.JobId, cancellationToken, excludeScheduleId: request.ExcludeScheduleId);
 
         var dto = new ScheduleCreationContextDto(
             job.Id,

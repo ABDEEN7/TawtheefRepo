@@ -1,0 +1,414 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center"
+        [attr.aria-label]="'INTERVIEW_COMMITTEES.WIZARD.BACK_TO_LIST' | translate" (click)="service.cancelWizard()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>
+      </button>
+      <h3 class="fw-bold mb-0">{{ titleKey() | translate }}</h3>
+      @if (isEditMode() && store.wizardCommitteeCode()) {
+        <span class="text-muted">— {{ store.wizardCommitteeCode() }}</span>
+      }
+    </div>
+
+    <div class="wizard-steps mb-4">
+      @for (step of steps; track step) {
+        <div class="wizard-step" [class.active]="store.wizardStep() === step" [class.completed]="store.wizardStep() > step"
+          (click)="goToStep(step)">
+          <div class="wizard-step-circle">
+            @if (store.wizardStep() > step) {
+              <i class="hgi hgi-stroke hgi-tick-01"></i>
+            } @else {
+              <span>{{ step }}</span>
+            }
+          </div>
+          <span class="wizard-step-label">{{ stepLabels[step] | translate }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- ============ Step 1: basic information ============ -->
+    @if (store.wizardStep() === 1) {
+      <section class="d-flex flex-column gap-3">
+        <h5 class="fw-bold mb-0">{{ 'INTERVIEW_COMMITTEES.WIZARD.STEP1_LABEL' | translate }}</h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.FIELD_JOB' | translate }} <span class="text-danger">*</span></label>
+            <app-lazy-select [search]="searchJobs" [selected]="jobOption()" [disabled]="isEditMode()" [showClear]="true"
+              [placeholder]="'INTERVIEW_COMMITTEES.FIELD_JOB_PLACEHOLDER' | translate"
+              [ariaLabel]="'INTERVIEW_COMMITTEES.FIELD_JOB' | translate" (selectedChange)="service.selectJob($event)" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.FIELD_TEMPLATE' | translate }} <span class="text-danger">*</span></label>
+            <p-select class="w-100" [options]="templateOptions()" optionLabel="label" optionValue="value" [filter]="true"
+              filterBy="label" [showClear]="true" [appendTo]="'body'" [disabled]="isEditMode()"
+              [loading]="store.wizardTemplateLoading()" [placeholder]="'INTERVIEW_COMMITTEES.FIELD_TEMPLATE_PLACEHOLDER' | translate"
+              [ariaLabel]="'INTERVIEW_COMMITTEES.FIELD_TEMPLATE' | translate"
+              [ngModel]="store.wizardInfo().templateId || null" (ngModelChange)="service.selectTemplate($event)" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.FIELD_NAME_AR' | translate }} <span class="text-danger">*</span></label>
+            <input pInputText class="form-control w-100" maxlength="200" [ngModel]="store.wizardInfo().nameAr"
+              (ngModelChange)="service.updateInfo({ nameAr: $event })" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_COMMITTEES.FIELD_NAME_EN' | translate }}</label>
+            <input pInputText class="form-control w-100" maxlength="200" [ngModel]="store.wizardInfo().nameEn"
+              (ngModelChange)="service.updateInfo({ nameEn: $event })" />
+          </div>
+        </div>
+
+        @if (store.wizardJob() || store.wizardTemplate() || store.wizardTemplateLoading()) {
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="info-panel h-100">
+                <h6 class="fw-bold mb-3">{{ 'INTERVIEW_COMMITTEES.INFO.JOB_TITLE' | translate }}</h6>
+                @if (store.wizardJob(); as job) {
+                  <div class="row g-3">
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB' | translate }}</span>
+                      <strong>{{ localized(job.titleAr, job.titleEn) || '—' }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB_NUMBER' | translate }}</span>
+                      <strong>{{ job.jobNumber || '—' }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.DEPARTMENT' | translate }}</span>
+                      <strong>{{ job.departmentName || '—' }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB_TYPE' | translate }}</span>
+                      <strong>{{ job.categoryName || '—' }}</strong>
+                    </div>
+                  </div>
+                } @else {
+                  <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.INFO.SELECT_JOB_HINT' | translate }}</span>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-panel h-100">
+                <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                  {{ 'INTERVIEW_COMMITTEES.INFO.TEMPLATE_TITLE' | translate }}
+                  @if (store.wizardTemplateLoading()) {
+                    <span class="spinner-border spinner-border-sm"></span>
+                  }
+                </h6>
+                @if (store.wizardTemplate(); as template) {
+                  <div class="row g-3">
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.TEMPLATE' | translate }}</span>
+                      <strong>{{ localized(template.titleAr, template.titleEn) || '—' }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.VERSION' | translate }}</span>
+                      <strong>v{{ template.versionNo }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.SCORE' | translate }}</span>
+                      <strong>{{ template.qualificationScore ?? '—' }}/{{ template.finalScore }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                      <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.AXES_COUNT' | translate }}</span>
+                      <strong>{{ template.axes.length }}</strong>
+                    </div>
+                    <div class="col-12 d-flex flex-wrap gap-2">
+                      @for (axis of template.axes; track axis.id) {
+                        <span class="axis-chip">{{ axisLabel(axis) }}</span>
+                      }
+                    </div>
+                  </div>
+                } @else if (!store.wizardTemplateLoading()) {
+                  <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.INFO.SELECT_TEMPLATE_HINT' | translate }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ============ Step 2: members ============ -->
+    @if (store.wizardStep() === 2) {
+      <section class="d-flex flex-column gap-3">
+        <div class="info-panel">
+          <div class="row g-3">
+            <div class="col-md-3 col-6">
+              <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.FIELD_NAME' | translate }}</span>
+              <strong>{{ committeeName() || '—' }}</strong>
+            </div>
+            <div class="col-md-3 col-6">
+              <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB' | translate }}</span>
+              @if (store.wizardJob(); as job) {
+                <strong>{{ localized(job.titleAr, job.titleEn) || '—' }}</strong>
+              } @else {
+                <strong>—</strong>
+              }
+            </div>
+            <div class="col-md-3 col-6">
+              <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.TEMPLATE' | translate }}</span>
+              @if (store.wizardTemplate(); as template) {
+                <strong>{{ localized(template.titleAr, template.titleEn) }} (v{{ template.versionNo }})</strong>
+              } @else {
+                <strong>—</strong>
+              }
+            </div>
+            <div class="col-md-3 col-6">
+              <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.AXES_COUNT' | translate }}</span>
+              <strong>{{ axes().length }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-table">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">{{ 'INTERVIEW_COMMITTEES.CHAIR_TITLE' | translate }}</h5>
+            <div class="row g-3 align-items-end">
+              <div class="col-md-6">
+                <label class="form-label">{{ 'INTERVIEW_COMMITTEES.FIELD_CHAIR' | translate }} <span class="text-danger">*</span></label>
+                <app-lazy-select [search]="searchMembers" [selected]="userOption(store.wizardChair())"
+                  [excludeValues]="store.wizardSelectedUserIds()" [showClear]="true"
+                  [placeholder]="'INTERVIEW_COMMITTEES.FIELD_CHAIR_PLACEHOLDER' | translate"
+                  [ariaLabel]="'INTERVIEW_COMMITTEES.FIELD_CHAIR' | translate" (selectedChange)="onChairSelected($event)" />
+              </div>
+              <div class="col-md-6">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</span>
+                <strong>{{ 'INTERVIEW_COMMITTEES.CHAIR_EVALUATES_ALL' | translate }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-table">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+              <div>
+                <h5 class="fw-bold mb-0">{{ 'INTERVIEW_COMMITTEES.MEMBERS_TITLE' | translate }}</h5>
+                <small [class.text-danger]="store.wizardRosterSize() < minimumMembers" [class.text-muted]="store.wizardRosterSize() >= minimumMembers">
+                  {{ 'INTERVIEW_COMMITTEES.ROSTER_COUNT' | translate: { count: store.wizardRosterSize(), min: minimumMembers } }}
+                </small>
+              </div>
+              <button type="button" class="btn btn-outline-primary" (click)="service.addMember()">
+                <i class="hgi hgi-stroke hgi-add-01 me-1"></i>{{ 'INTERVIEW_COMMITTEES.ADD_MEMBER' | translate }}
+              </button>
+            </div>
+
+            <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+                <p-table [value]="store.wizardMembers()" [rowTrackBy]="trackByLocalId" [rowHover]="true">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width:50px">#</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_ROLE' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_AXES' | translate }}</th>
+                      <th style="width:60px"></th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-member let-i="rowIndex">
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td style="min-width:260px">
+                        <app-lazy-select [search]="searchMembers" [selected]="userOption(member.user)"
+                          [excludeValues]="store.wizardSelectedUserIds()"
+                          [placeholder]="'INTERVIEW_COMMITTEES.FIELD_MEMBER_PLACEHOLDER' | translate"
+                          [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate"
+                          (selectedChange)="onMemberSelected(member, $event)" />
+                      </td>
+                      <td style="min-width:170px">
+                        <p-select class="w-100" [options]="roleOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+                          [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_ROLE' | translate"
+                          [ngModel]="member.role" (ngModelChange)="service.changeMemberRole(member.localId, $event)">
+                          <ng-template #selectedItem let-selected>
+                            <span>{{ selected?.label | translate }}</span>
+                          </ng-template>
+                          <ng-template #item let-option>
+                            <span>{{ option.label | translate }}</span>
+                          </ng-template>
+                        </p-select>
+                      </td>
+                      <td style="min-width:170px">
+                        @if (evaluates(member)) {
+                          <p-select class="w-100" [options]="scopeOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+                            [ariaLabel]="'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate"
+                            [ngModel]="member.evaluationScope" (ngModelChange)="service.changeMemberScope(member.localId, $event)">
+                            <ng-template #selectedItem let-selected>
+                              <span>{{ selected?.label | translate }}</span>
+                            </ng-template>
+                            <ng-template #item let-option>
+                              <span>{{ option.label | translate }}</span>
+                            </ng-template>
+                          </p-select>
+                        } @else {
+                          <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.SCOPE.NOT_EVALUATING' | translate }}</span>
+                        }
+                      </td>
+                      <td style="min-width:220px">
+                        @if (!evaluates(member)) {
+                          <span class="text-muted">—</span>
+                        } @else if (member.evaluationScope === EvaluationScope.SelectedAxes) {
+                          <div class="d-flex flex-column gap-1">
+                            @for (axis of axes(); track axis.id) {
+                              <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" [id]="member.localId + '-' + axis.id"
+                                  [checked]="member.axisIds.includes(axis.id)" (change)="onAxisToggle(member, axis.id, $event)" />
+                                <label class="form-check-label" [attr.for]="member.localId + '-' + axis.id">{{ axisLabel(axis) }}</label>
+                              </div>
+                            } @empty {
+                              <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.NO_AXES_AVAILABLE' | translate }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">{{ 'INTERVIEW_COMMITTEES.EVALUATES_ALL_AXES' | translate }}</span>
+                        }
+                      </td>
+                      <td>
+                        <button type="button" class="btn" [attr.aria-label]="'INTERVIEW_COMMITTEES.REMOVE_MEMBER' | translate"
+                          (click)="service.removeMember(member.localId)">
+                          <i class="hgi hgi-stroke hgi-delete-02 text-danger"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_COMMITTEES.NO_MEMBERS' | translate }}</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ============ Step 3: review & submit ============ -->
+    @if (store.wizardStep() === 3) {
+      <section class="d-flex flex-column gap-3">
+        <div class="card card-table">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">{{ 'INTERVIEW_COMMITTEES.REVIEW_INFO_TITLE' | translate }}</h5>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="goToStep(1)">{{ 'common.edit' | translate }}</button>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.FIELD_NAME_AR' | translate }}</span>
+                <strong>{{ store.wizardInfo().nameAr }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.FIELD_NAME_EN' | translate }}</span>
+                <strong>{{ store.wizardInfo().nameEn || '—' }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.JOB' | translate }}</span>
+                @if (store.wizardJob(); as job) {
+                  <strong>{{ localized(job.titleAr, job.titleEn) || '—' }}</strong>
+                } @else {
+                  <strong>—</strong>
+                }
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.DEPARTMENT' | translate }}</span>
+                <strong>{{ store.wizardJob()?.departmentName || '—' }}</strong>
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.INFO.TEMPLATE' | translate }}</span>
+                @if (store.wizardTemplate(); as template) {
+                  <strong>{{ localized(template.titleAr, template.titleEn) }} (v{{ template.versionNo }})</strong>
+                } @else {
+                  <strong>—</strong>
+                }
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.FIELD_CHAIR' | translate }}</span>
+                @if (store.wizardChair(); as chair) {
+                  <strong>{{ service.userLabel(chair) }}</strong>
+                } @else {
+                  <strong>—</strong>
+                }
+              </div>
+              <div class="col-md-4">
+                <span class="text-muted d-block">{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBERS' | translate }}</span>
+                <strong>{{ store.wizardRosterSize() }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-table">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">{{ 'INTERVIEW_COMMITTEES.MEMBERS_TITLE' | translate }}</h5>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="goToStep(2)">{{ 'common.edit' | translate }}</button>
+            </div>
+            <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+                <p-table [value]="reviewRows()" [rowHover]="true">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width:50px">#</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_MEMBER' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_ROLE' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_EVALUATION' | translate }}</th>
+                      <th>{{ 'INTERVIEW_COMMITTEES.COLUMN_AXES' | translate }}</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-row let-i="rowIndex">
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td class="fw-semibold">{{ row.name }}</td>
+                      <td>{{ row.roleKey | translate }}</td>
+                      <td>{{ row.evaluationKey | translate }}</td>
+                      <td>
+                        @if (row.axes.length) {
+                          <div class="d-flex flex-wrap gap-2">
+                            @for (name of row.axes; track name) {
+                              <span class="axis-chip">{{ name }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top flex-wrap">
+      <button class="btn btn-link" type="button" (click)="service.prevStep()" [disabled]="store.wizardStep() === 1 || store.wizardSaving()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01 me-1"></i>{{ 'INTERVIEW_COMMITTEES.WIZARD.PREVIOUS' | translate }}
+      </button>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-outline-primary" type="button" (click)="service.cancelWizard()" [disabled]="store.wizardSaving()">
+          {{ 'INTERVIEW_COMMITTEES.WIZARD.CANCEL' | translate }}
+        </button>
+        @if (store.wizardStep() < 3) {
+          <button class="btn btn-primary" type="button" (click)="service.nextStep()" [disabled]="store.wizardSaving()">
+            {{ 'INTERVIEW_COMMITTEES.WIZARD.NEXT' | translate }}<i class="hgi hgi-stroke hgi-arrow-left-01 ms-1"></i>
+          </button>
+        } @else {
+          <button class="btn btn-outline-primary" type="button" (click)="saveDraft()" [disabled]="store.wizardSaving()">
+            <i class="hgi hgi-stroke hgi-floppy-disk me-1"></i>{{ 'INTERVIEW_COMMITTEES.WIZARD.SAVE_DRAFT' | translate }}
+          </button>
+          <button class="btn btn-success" type="button" (click)="sendForApproval()" [disabled]="store.wizardSaving()">
+            @if (store.wizardSaving()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+            }
+            <i class="hgi hgi-stroke hgi-sent me-1"></i>{{ 'INTERVIEW_COMMITTEES.WIZARD.SEND_FOR_APPROVAL' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

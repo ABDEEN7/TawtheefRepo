@@ -30,6 +30,7 @@ using Tawtheef.Domain.Entities.Recruitment.JobDetails;
 using Tawtheef.Domain.Entities.Security;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data.Interceptors;
+using Tawtheef.Infrastructure.Configurations.Entities.Interview;
 
 namespace Tawtheef.Infrastructure.Data;
 
@@ -247,7 +248,10 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 
         // Apply configurations
         builder.ApplyConfigurationsFromAssembly(typeof(TawtheefDbContext).Assembly);
-        
+
+        // Feeds InterviewCommittee.Number (and through it the COM-<year>-<number> Code).
+        builder.HasSequence<int>(InterviewCommitteeConfiguration.CommitteeNumberSequence, Schemas.Interview);
+
         // Notification table specific indexes
         builder.Entity<Notification>()
             .HasIndex(n => n.IdempotencyKey)

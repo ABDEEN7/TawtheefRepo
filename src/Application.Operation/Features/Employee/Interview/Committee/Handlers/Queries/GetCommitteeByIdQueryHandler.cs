@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Interview;
 
@@ -19,6 +20,7 @@ public sealed class GetCommitteeByIdQueryHandler(IUnitOfWork unitOfWork)
             .Where(c => c.Id == request.Id)
             .Select(c => new CommitteeDto(
                 c.Id,
+                c.Code,
                 c.JobId,
                 c.Job != null && c.Job.JobTitle != null ? c.Job.JobTitle.JobNameAr : null,
                 c.Job != null && c.Job.JobTitle != null ? c.Job.JobTitle.JobNameEn : null,
@@ -30,13 +32,16 @@ public sealed class GetCommitteeByIdQueryHandler(IUnitOfWork unitOfWork)
                 c.Job.JobCategory.NameEn,
                 c.NameAr,
                 c.NameEn,
+                c.Members.Where(m => m.IsActive && m.Role == CommitteeRole.Chair).Select(m => m.MemberUser!.FullNameAr).FirstOrDefault(),
+                c.Members.Where(m => m.IsActive && m.Role == CommitteeRole.Chair).Select(m => m.MemberUser!.FullNameEn).FirstOrDefault(),
+                c.Members.Count(m => m.IsActive),
                 c.ScopeDescription,
                 c.Notes,
                 c.Status,
                 c.IsActive,
                 c.ApprovedById,
-                c.ApprovedAt,
-                c.ClosedAt,
+                c.ApprovedAt.AsUtcOffset(),
+                c.ClosedAt.AsUtcOffset(),
                 c.DecisionNotes))
             .FirstOrDefaultAsync(cancellationToken);
 

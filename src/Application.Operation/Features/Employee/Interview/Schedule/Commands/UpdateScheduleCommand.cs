@@ -6,7 +6,7 @@ using Tawtheef.Domain.Entities.Interview;
 namespace Application.Operation.Features.Employee.Interview.Schedule.Commands;
 
 // Edit/resubmit of a Returned schedule - regenerates the whole appointment list from scratch and
-// flips the status back to PendingApproval. Same payload shape as Create + Id.
+// flips the status back to PendingApproval (schedule.md). Same payload shape as Create + Id.
 public sealed record UpdateScheduleCommand(
     Guid Id,
     InterviewType InterviewType,

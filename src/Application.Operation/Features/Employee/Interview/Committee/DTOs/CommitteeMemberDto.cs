@@ -19,6 +19,6 @@ public sealed record CommitteeMemberDto(
     bool CanViewOtherEvaluations,
     bool CanViewCommitteeSummary,
     bool IsActive,
-    DateTime? RemovedAt,
+    DateTimeOffset? RemovedAt,
     string? RemovalReason,
     List<CommitteeMemberEvaluationAxisDto> EvaluationAxes);

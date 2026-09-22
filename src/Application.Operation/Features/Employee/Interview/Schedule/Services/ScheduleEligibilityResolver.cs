@@ -10,7 +10,7 @@ namespace Application.Operation.Features.Employee.Interview.Schedule.Services;
 
 public sealed record EligibleCandidate(Guid InvitationId, Guid? GenderId);
 
-// Shared precondition/pool resolution ( "Preconditions before an InterviewSchedule can
+// Shared precondition/pool resolution (schedule.md "Preconditions before an InterviewSchedule can
 // be created") used by Create, Update (resubmit) and the preview/context queries alike, so all
 // four always agree on who is eligible and whether the committee/template are ready.
 public static class ScheduleEligibilityResolver

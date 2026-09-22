@@ -1,0 +1,144 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToList()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.BACK_TO_LIST' | translate }}
+      </button>
+
+      @if (store.detailSchedule(); as schedule) {
+        <div *hasPermission="Permissions.InterviewSchedule.Manage" class="d-flex gap-2 flex-wrap">
+          @if (canEdit(schedule.status)) {
+            <button type="button" class="btn btn-outline-primary" (click)="edit()">
+              <i class="hgi hgi-stroke hgi-pencil-edit-02 me-1"></i>{{ 'common.edit' | translate }}
+            </button>
+          }
+          @if (canSubmit(schedule.status)) {
+            <button type="button" class="btn btn-primary" (click)="submit()">
+              <i class="hgi hgi-stroke hgi-sent me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.SUBMIT' | translate }}
+            </button>
+          }
+          @if (canDecide(schedule.status)) {
+            <button type="button" class="btn btn-success" (click)="approve()">
+              <i class="hgi hgi-stroke hgi-tick-01 me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.APPROVE' | translate }}
+            </button>
+            <button type="button" class="btn btn-outline-warning" (click)="returnForEdit()">
+              <i class="hgi hgi-stroke hgi-arrow-turn-backward me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.RETURN' | translate }}
+            </button>
+          }
+          @if (canCancel(schedule.status)) {
+            <button type="button" class="btn btn-outline-danger" (click)="cancelSchedule()">
+              <i class="hgi hgi-stroke hgi-cancel-01 me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.CANCEL_SCHEDULE' | translate }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    @if (store.detailSchedule(); as schedule) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.COLUMN_JOB' | translate }}</span>
+          <strong>{{ jobTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.FIELD_TYPE' | translate }}</span>
+          <strong>{{ interviewTypeLabel() | translate }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.COLUMN_STATUS' | translate }}</span>
+          <span [class]="'pill ' + statusPill(schedule.status)">{{ statusLabel(schedule.status) | translate }}</span>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.FIELD_COMMITTEE' | translate }}</span>
+          <strong>{{ committeeName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.FIELD_DURATION' | translate }}</span>
+          <strong>{{ schedule.defaultDurationMinutes }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.COLUMN_APPROVAL_DATE' | translate }}</span>
+          <strong>{{ schedule.approvedAt ? (schedule.approvedAt | date: 'dd-MM-yyyy HH:mm:ss') : '—' }}</strong>
+        </div>
+        @if (schedule.decisionNotes) {
+          <div class="col-12">
+            <span class="text-muted d-block">{{ 'INTERVIEW_SCHEDULE.DETAIL.DECISION_NOTES_LABEL' | translate }}</span>
+            <strong class="text-break">{{ schedule.decisionNotes }}</strong>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_SCHEDULE.DETAIL.APPOINTMENTS_TITLE' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="store.detailAppointments()" [loading]="store.detailLoading()" [rowHover]="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_CANDIDATE' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TIME' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_LOCATION' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_STATUS' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.DETAIL.NOTIFICATION' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_ACTIONS' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-appointment>
+            <tr>
+              <td>
+                <div class="fw-semibold">{{ candidateName(appointment) || '—' }}</div>
+                @if (appointment.candidateQid) {
+                  <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.QID_LABEL' | translate }}: <bdi dir="ltr">{{ appointment.candidateQid }}</bdi></small>
+                }
+              </td>
+              <td>{{ appointment.startAt | date: 'dd-MM-yyyy' }}</td>
+              <td><bdi dir="ltr">{{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi></td>
+              <td>{{ location(appointment) || '—' }}</td>
+              <td>
+                <span [class]="'pill ' + appointmentStatusPill(appointment.status)">
+                  {{ appointmentStatusLabel(appointment.status) | translate }}
+                </span>
+              </td>
+              <td>
+                @if (appointment.lastReminderSentAt) {
+                  <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.DETAIL.REMINDER_SENT_AT' | translate }} {{ appointment.lastReminderSentAt | date: 'dd-MM-yyyy HH:mm' }}</small>
+                } @else if (appointment.invitationSentAt) {
+                  <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.DETAIL.NOTIFIED_AT' | translate }} {{ appointment.invitationSentAt | date: 'dd-MM-yyyy HH:mm' }}</small>
+                } @else {
+                  <span class="pill neutral">{{ 'INTERVIEW_SCHEDULE.DETAIL.NOT_NOTIFIED' | translate }}</span>
+                }
+              </td>
+              <td (click)="$event.stopPropagation()">
+                <div class="action-buttons d-flex" *hasPermission="Permissions.InterviewSchedule.Manage">
+                  @if (store.detailSchedule() && canSendReminder(store.detailSchedule()!.status) && appointment.invitationId) {
+                    <button type="button" class="btn" (click)="sendReminder(appointment)"
+                      [pTooltip]="(appointment.invitationSentAt ? 'INTERVIEW_SCHEDULE.DETAIL.SEND_REMINDER' : 'INTERVIEW_SCHEDULE.DETAIL.SEND_NOTIFICATION') | translate"
+                      tooltipPosition="top">
+                      <i class="hgi hgi-stroke hgi-notification-02"></i>
+                    </button>
+                  }
+                  @if (store.detailSchedule() && canReschedule(store.detailSchedule()!.status) && appointment.invitationId) {
+                    <button type="button" class="btn" (click)="reschedule(appointment)"
+                      [pTooltip]="'INTERVIEW_SCHEDULE.DETAIL.RESCHEDULE' | translate" tooltipPosition="top">
+                      <i class="hgi hgi-stroke hgi-calendar-03"></i>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.DETAIL.NO_APPOINTMENTS' | translate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

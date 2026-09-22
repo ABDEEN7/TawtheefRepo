@@ -20,6 +20,7 @@ public sealed class ListCommitteesQueryHandler(IUnitOfWork unitOfWork)
             .OrderByDescending(c => c.CreatedDate)
             .Select(c => new CommitteeDto(
                 c.Id,
+                c.Code,
                 c.JobId,
                 c.Job != null && c.Job.JobTitle != null ? c.Job.JobTitle.JobNameAr : null,
                 c.Job != null && c.Job.JobTitle != null ? c.Job.JobTitle.JobNameEn : null,
@@ -31,13 +32,16 @@ public sealed class ListCommitteesQueryHandler(IUnitOfWork unitOfWork)
                 c.Job.JobCategory.NameEn,
                 c.NameAr,
                 c.NameEn,
+                c.Members.Where(m => m.IsActive && m.Role == CommitteeRole.Chair).Select(m => m.MemberUser!.FullNameAr).FirstOrDefault(),
+                c.Members.Where(m => m.IsActive && m.Role == CommitteeRole.Chair).Select(m => m.MemberUser!.FullNameEn).FirstOrDefault(),
+                c.Members.Count(m => m.IsActive),
                 c.ScopeDescription,
                 c.Notes,
                 c.Status,
                 c.IsActive,
                 c.ApprovedById,
-                c.ApprovedAt,
-                c.ClosedAt,
+                c.ApprovedAt.AsUtcOffset(),
+                c.ClosedAt.AsUtcOffset(),
                 c.DecisionNotes))
             .ToListAsync(cancellationToken);
 

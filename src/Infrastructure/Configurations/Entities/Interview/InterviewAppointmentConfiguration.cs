@@ -31,6 +31,10 @@ public sealed class InterviewAppointmentConfiguration : BaseEntityConfiguration<
             .WithMany()
             .HasForeignKey(x => x.RescheduledFromAppointmentId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.Room)
+            .WithMany()
+            .HasForeignKey(x => x.RoomId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.ToTable(t => t.HasCheckConstraint("CK_Appointment_Time", "[EndAt] > [StartAt]"));
 

@@ -9,10 +9,12 @@ using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 using Application.Operation.Features.Employee.Interview.Committee.Commands;
+using Application.Operation.Features.Employee.Interview.Committee.Services;
 
 namespace Application.Operation.Features.Employee.Interview.Committee.Handlers.Commands;
 
-public sealed class CreateCommitteeCommandHandler(IUnitOfWork unitOfWork, UserManager<User> userManager)
+public sealed class CreateCommitteeCommandHandler(
+    IUnitOfWork unitOfWork, UserManager<User> userManager, CommitteeMemberEligibilityService eligibility)
     : IRequestHandler<CreateCommitteeCommand, IResult<Guid>>
 {
     public async Task<IResult<Guid>> Handle(CreateCommitteeCommand request, CancellationToken cancellationToken)
@@ -44,6 +46,9 @@ public sealed class CreateCommitteeCommandHandler(IUnitOfWork unitOfWork, UserMa
                 .CountAsync(u => memberUserIds.Contains(u.Id), cancellationToken);
             if (existingUserCount != memberUserIds.Distinct().Count())
                 return Result.Fail<Guid>(new Error(ErrorsCodes.UserNotFound));
+
+            if (!await eligibility.AreAllEligibleAsync(memberUserIds, cancellationToken))
+                return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewCommitteeMemberNotEligible));
         }
 
         var allAxisIds = request.Members.SelectMany(m => m.EvaluationAxisIds).Distinct().ToList();
