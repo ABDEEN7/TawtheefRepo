@@ -92,6 +92,7 @@ public static class RolePermissionCatalog
                 Permissions.QuestionBanks.View.Key,
                 Permissions.QuestionBankRequests.View.Key,
                 Permissions.QuestionBankRequests.Create.Key,
+                Permissions.QuestionBankRequests.Assign.Key,
                 Permissions.Locations.Manage.Key,
 
                 Permissions.InterviewEvaluationBank.View.Key,

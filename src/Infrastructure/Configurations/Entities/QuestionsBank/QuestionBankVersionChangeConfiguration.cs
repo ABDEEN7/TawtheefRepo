@@ -62,5 +62,10 @@ public class QuestionBankVersionChangeConfiguration
             .WithMany()
             .HasForeignKey(x => x.NewQuestionRevisionId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.ChangedBy)
+            .WithMany()
+            .HasForeignKey(x => x.ChangedById)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -30,7 +30,6 @@ public sealed class CreateQuestionBankRequestCommandHandler(
         if (!Guid.TryParse(currentUserService.UserId, out var userId))
             return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
 
-
         var requestsRepo = unitOfWork.GetEntityRepository<QuestionBankRequest>();
         var banksRepo = unitOfWork.GetEntityRepository<QuestionBank>();
 

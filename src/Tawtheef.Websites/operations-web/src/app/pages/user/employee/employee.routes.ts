@@ -272,6 +272,12 @@ export const employeeRoutes: Routes = [
     loadComponent: () => import('./question-banks/question-banks.page').then(m => m.QuestionBanksPage)
   },
   {
+    path: 'question-bank-requests/:id',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankRequests.View] },
+    loadComponent: () => import('./question-bank-requests/question-bank-request-details.page').then(m => m.QuestionBankRequestDetailsPage)
+  },
+  {
     path: 'question-bank-requests',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankRequests.View] },

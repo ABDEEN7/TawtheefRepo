@@ -20,5 +20,5 @@ public class QuestionBankRequestReview : EventEntity
 
     public QuestionBankRequest Request { get; set; } = null!;
 
-    public User ReviewedBy { get; set; } = null!;
+    public EmployeeUser ReviewedBy { get; set; } = null!;
 }
