@@ -1,0 +1,6 @@
+trigger:
+  branches:
+    include:
+      - Development_Sprint1
+
+pr: none
