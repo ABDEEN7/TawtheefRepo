@@ -14,12 +14,8 @@ stages:
 
   jobs:
 
-  # -------------------------
-  # Operations Web
-  # -------------------------
   - job: BuildOperationsWeb
     displayName: Build operations-web
-
     steps:
     - task: UseNode@1
       inputs:
@@ -34,12 +30,8 @@ stages:
       displayName: Build operations-web
 
 
-  # -------------------------
-  # Recruitment Web
-  # -------------------------
   - job: BuildRecruitmentWeb
     displayName: Build recruitment-web
-
     steps:
     - task: UseNode@1
       inputs:
@@ -54,12 +46,8 @@ stages:
       displayName: Build recruitment-web
 
 
-  # -------------------------
-  # Operations API
-  # -------------------------
   - job: BuildOperationsApi
     displayName: Build Operations API
-
     steps:
     - task: UseDotNet@2
       inputs:
@@ -80,12 +68,8 @@ stages:
       displayName: Publish Operations API
 
 
-  # -------------------------
-  # Recruitment API
-  # -------------------------
   - job: BuildRecruitmentApi
     displayName: Build Recruitment API
-
     steps:
     - task: UseDotNet@2
       inputs:
