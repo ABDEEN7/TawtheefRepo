@@ -25,6 +25,9 @@ public static class RolePermissionCatalog
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
                 Permissions.Exams.WorkflowActions.Key,
+                Permissions.TestSlots.View.Key,
+                Permissions.TestSlots.Create.Key,
+                Permissions.TestSlots.ManagePeriod.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
@@ -124,9 +127,17 @@ public static class RolePermissionCatalog
                 Permissions.JobsPoints.Approve.Key,
                 Permissions.CandidateUsers.View.Key,
             ],
-            [SystemRoleIds.Employee] = [
-                Permissions.Exams.View.Key,
-                Permissions.Exams.Create.Key,
+            // [SystemRoleIds.Employee] = [
+            //     Permissions.Exams.View.Key,
+            //     Permissions.Exams.Create.Key,
+            //     Permissions.TestSlots.View.Key,
+            //     Permissions.TestSlots.Create.Key,
+            // ],
+
+            [SystemRoleIds.TestSlotStaffMember] = [
+                Permissions.TestSlots.View.Key,
+                Permissions.TestSlots.ViewAccessCode.Key,
+                Permissions.TestSlots.ManagePeriod.Key,
             ],
 
             [SystemRoleIds.OfficeAdmin] = [

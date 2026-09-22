@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '../../../core/guards/route-guard/permission-guards';
+import { testSlotEditStatusGuard } from './test-slots-management/test-slot-edit-status.guard';
 import { Permissions } from '../../../core/constants/permissions';
 import { portalRoutes } from '../../../routes/portal-routes';
 
@@ -39,6 +40,34 @@ export const employeeRoutes: Routes = [
       import('./exams-management/exams-management.component').then(
         (m) => m.ExamsManagementComponent,
       ),
+  },
+  {
+    path: portalRoutes.createTestSlotPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'create' },
+    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
+      .then(m => m.TestSlotCreatePage)
+  },
+  {
+    path: portalRoutes.editTestSlotPath,
+    canActivate: [permissionGuard, testSlotEditStatusGuard],
+    data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'edit' },
+    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
+      .then(m => m.TestSlotCreatePage)
+  },
+  {
+    path: portalRoutes.viewTestSlotPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.View] },
+    loadComponent: () => import('./test-slots-management/test-slot-details/test-slot-details.page')
+      .then(m => m.TestSlotDetailsPage)
+  },
+  {
+    path: portalRoutes.testSlotsManagementPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSlots.View] },
+    loadComponent: () => import('./test-slots-management/test-slots-management.component')
+      .then(m => m.TestSlotsManagementComponent)
   },
   {
     path: 'dashboard',

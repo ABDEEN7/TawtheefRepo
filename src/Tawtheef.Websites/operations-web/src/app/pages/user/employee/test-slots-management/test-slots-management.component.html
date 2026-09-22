@@ -1,0 +1,129 @@
+<section class="management-list-shell" i18nNamespace="pages/employee/test-slots-management">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row align-items-center mb-4">
+        <div class="col-lg-6 col-md-12">
+          <h3 class="fw-bold mb-0">{{ 'TEST_SLOTS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'TEST_SLOTS.DESCRIPTION' | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12 d-flex justify-content-lg-end mt-3 mt-lg-0">
+          <a
+            class="btn btn-primary d-inline-flex align-items-center gap-2"
+            [routerLink]="routes.createTestSlot"
+            *hasPermission="Permissions.TestSlots.Create"
+          >
+            <i class="hgi hgi-stroke hgi-add-01"></i>
+            {{ 'TEST_SLOTS.CREATE' | translate }}
+          </a>
+        </div>
+      </div>
+
+      <app-page-filters
+        [advancedLabel]="'TEST_SLOTS.ADVANCED_FILTERS' | translate"
+        [clearLabel]="'TEST_SLOTS.CLEAR_FILTERS' | translate"
+        [advancedExpanded]="advancedFiltersExpanded()"
+        [activeAdvancedCount]="activeAdvancedFilterCount()"
+        (advancedToggled)="toggleAdvancedFilters()"
+        (filtersCleared)="clearFilters()"
+      >
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="fa-solid fa-magnifying-glass" />
+          <input pInputText id="test-slot-search" type="search" class="w-100 form-control"
+            [(ngModel)]="searchTerm" (ngModelChange)="onTextFilterChange()"
+            [attr.aria-label]="'TEST_SLOTS.SEARCH' | translate"
+            [placeholder]="'TEST_SLOTS.SEARCH' | translate" />
+        </p-iconfield>
+        <div filterSecondary class="filter-field">
+          <label class="form-label" for="test-slot-room">{{ 'TEST_SLOTS.ROOM' | translate }}</label>
+          <p-select inputId="test-slot-room" class="w-100" [options]="availableRooms()" [optionLabel]="roomLabel"
+            optionValue="id" [(ngModel)]="selectedRoomId" (ngModelChange)="applyFilters()" [showClear]="true"
+            appendTo="body" [placeholder]="'TEST_SLOTS.ALL_ROOMS' | translate" />
+        </div>
+        <div advancedFilters class="row g-3">
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-slot-date-from">{{ 'TEST_SLOTS.DATE_FROM' | translate }}</label>
+            <p-datepicker inputId="test-slot-date-from" class="w-100" [fluid]="true" [(ngModel)]="dateFrom"
+              (ngModelChange)="applyFilters()" [readonlyInput]="true" [maxDate]="dateTo"
+              [invalid]="invalidDateRange()" [showIcon]="true" [iconDisplay]="'input'" [showClear]="true"
+              dateFormat="yy-mm-dd" appendTo="body" [placeholder]="'TEST_SLOTS.DATE_FROM' | translate" />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-slot-date-to">{{ 'TEST_SLOTS.DATE_TO' | translate }}</label>
+            <p-datepicker inputId="test-slot-date-to" class="w-100" [fluid]="true" [(ngModel)]="dateTo"
+              (ngModelChange)="applyFilters()" [readonlyInput]="true" [minDate]="dateFrom"
+              [invalid]="invalidDateRange()" [showIcon]="true" [iconDisplay]="'input'" [showClear]="true"
+              dateFormat="yy-mm-dd" appendTo="body" [placeholder]="'TEST_SLOTS.DATE_TO' | translate" />
+            @if (invalidDateRange()) {
+              <small class="text-danger" role="alert">{{ 'TEST_SLOTS.INVALID_DATE_RANGE' | translate }}</small>
+            }
+          </div>
+        </div>
+      </app-page-filters>
+
+      <div class="card-head d-flex justify-content-between align-items-start gap-2 flex-wrap" aria-live="polite">
+        @if (loading()) { <div class="small text-muted">{{ 'TEST_SLOTS.LOADING' | translate }}</div> }
+        @if (loadError() || lookupError()) {
+          <div class="text-danger" role="alert">{{ 'TEST_SLOTS.LOAD_ERROR' | translate }}</div>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="testSlots()" dataKey="id" [loading]="loading()">
+            <ng-template #header>
+              <tr>
+                <th>{{ 'TEST_SLOTS.PERIOD_TITLE' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.ROOM' | translate }}</th><th>{{ 'TEST_SLOTS.DATE' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.TIME' | translate }}</th><th>{{ 'TEST_SLOTS.CANDIDATES' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.HALL_SUPERVISOR' | translate }}</th>
+                <th>{{ 'TEST_SLOTS.STATUS' | translate }}</th>
+                <th class="text-center">{{ 'TEST_SLOTS.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-testSlot>
+              <tr>
+                <td>{{ testSlot.title }}</td><td>{{ testSlot.roomName }}</td>
+                <td class="text-nowrap">{{ testSlot.slotDate | date: 'yyyy/MM/dd' }}</td>
+                <td class="text-nowrap"><bdi>{{ testSlot.startTime }} - {{ testSlot.endTime }}</bdi></td>
+                <td>{{ testSlot.candidateCount }}</td>
+                <td>{{ testSlot.hallSupervisorName || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</td>
+                <td><p-tag severity="secondary" [value]="testSlot.status.name" /></td>
+                <td class="text-center">
+                  <div class="action-buttons justify-content-center">
+                    <a
+                      class="btn btn-action-icon"
+                      *hasPermission="Permissions.TestSlots.View"
+                      [routerLink]="routes.viewTestSlot(testSlot.id)"
+                      [pTooltip]="'TEST_SLOTS.VIEW' | translate"
+                      tooltipPosition="top"
+                    >
+                      <i class="hgi hgi-stroke hgi-view"></i>
+                    </a>
+                    @if (canEditFromGrid(testSlot)) {
+                      <a
+                        class="btn btn-action-icon"
+                        *hasPermission="Permissions.TestSlots.Create"
+                        [routerLink]="routes.editTestSlot(testSlot.id)"
+                        [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
+                        tooltipPosition="top"
+                      >
+                        <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
+                      </a>
+                    }
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage><tr><td colspan="8" class="text-center py-4 text-muted">
+              @if (!loading() && !loadError()) { {{ 'TEST_SLOTS.EMPTY' | translate }} }
+            </td></tr></ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3"><app-pagination [currentPage]="filters().pageNumber"
+          [itemsPerPage]="filters().pageSize" [totalItems]="totalItems()" (pageChanged)="onPageChange($event)"
+          (pageSizeChanged)="onPageSizeChange($event)" /></div>
+      }
+    </div>
+  </div>
+</section>

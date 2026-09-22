@@ -1,0 +1,43 @@
+<section class="card card-table mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+      <h5 class="fw-bold mb-0">{{ 'TEST_SLOT_DETAILS.ASSIGNMENTS' | translate }}</h5>
+      @if (canAddAssignment()) {
+        <button
+          *hasPermission="[permissions.TestSlots.Create, permissions.TestSlots.View]"
+          type="button"
+          class="btn btn-primary d-inline-flex align-items-center gap-2"
+          (click)="openAssignmentDialog()"
+        >
+          <i class="hgi hgi-stroke hgi-add-01"></i>
+          {{ 'TEST_SLOT_DETAILS.ADD_ASSIGNMENT' | translate }}
+        </button>
+      }
+    </div>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="staff" dataKey="userId">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'TEST_SLOT_DETAILS.NAME' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.ROLE' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-member>
+            <tr>
+              <td>{{ member.name }}</td>
+              <td>{{ member.roleName }}</td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="2" class="text-center py-4 text-muted">
+                {{ 'TEST_SLOT_DETAILS.NO_STAFF' | translate }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</section>

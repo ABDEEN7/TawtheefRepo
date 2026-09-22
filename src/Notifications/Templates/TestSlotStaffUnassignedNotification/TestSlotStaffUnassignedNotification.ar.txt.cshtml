@@ -1,0 +1,3 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.TestSlotStaffUnassignedNotification.TestSlotStaffUnassignedNotificationModel>
+@{ var role = Model.Model.RoleId == Tawtheef.Domain.Entities.Lookups.TestSlotStaffRoleIds.HallSupervisor ? "رئيس القاعة" : "مراقب"; }
+تم إلغاء تكليفك كـ @role لفترة الاختبار @Model.Model.TestSlotTitleAr بتاريخ @Model.Model.SlotDate.ToString("yyyy/MM/dd").

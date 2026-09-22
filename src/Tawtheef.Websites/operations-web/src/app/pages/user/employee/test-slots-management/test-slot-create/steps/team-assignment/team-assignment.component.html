@@ -1,0 +1,48 @@
+<section class="team-assignment">
+  <section class="card card-table bg-light my-4" aria-label="test-slot-summary">
+    <div class="card-body">
+      <h5 class="text-primary d-flex align-items-center mb-3">
+        <i class="hgi hgi-stroke hgi-calendar-03 me-1"></i>
+        {{ 'TEST_SLOT_WIZARD.SLOT_DETAILS' | translate }}
+      </h5>
+      <dl class="row mb-0 exam-summary-details">
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SLOT_WIZARD.TITLE_AR' | translate }}</dt>
+          <dd>{{ form.controls.titleAr.value || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SLOT_WIZARD.TITLE_EN' | translate }}</dt>
+          <dd>{{ form.controls.titleEn.value || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</dd>
+        </div>
+        <div class="col-md-2">
+          <dt>{{ 'TEST_SLOT_WIZARD.ROOM' | translate }}</dt>
+          <dd>
+            <div>{{ roomName }}</div>
+            <small class="text-muted">
+              {{ 'TEST_SLOT_WIZARD.CAPACITY' | translate }} {{ roomCapacity }}
+            </small>
+          </dd>
+        </div>
+        <div class="col-md-2">
+          <dt>{{ 'TEST_SLOT_WIZARD.DATE' | translate }}</dt>
+          <dd>{{ form.controls.slotDate.value | date: 'yyyy-MM-dd' }}</dd>
+        </div>
+        <div class="col-md-2">
+          <dt>{{ 'TEST_SLOT_WIZARD.TIME' | translate }}</dt>
+          <dd>
+            {{ form.controls.startTime.value | date: 'hh:mm a' }} -
+            {{ form.controls.endTime.value | date: 'hh:mm a' }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <app-test-slot-team-assignment-selector
+    [selectedRoomHead]="state.roomHead"
+    [selectedTeamMembers]="state.selectedStaff"
+    [isViewMode]="isViewMode"
+    [showRoomHeadError]="showRoomHeadError"
+    (assignmentChange)="updateAssignment($event)"
+  />
+</section>

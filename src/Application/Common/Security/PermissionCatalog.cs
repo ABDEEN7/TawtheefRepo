@@ -107,6 +107,11 @@ public static class PermissionCatalog
         Permissions.Exams.Create,
         Permissions.Exams.WorkflowActions,
 
+        Permissions.TestSlots.View,
+        Permissions.TestSlots.Create,
+        Permissions.TestSlots.ViewAccessCode,
+        Permissions.TestSlots.ManagePeriod,
+
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,
 

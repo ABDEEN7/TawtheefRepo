@@ -1,0 +1,34 @@
+<section class="card card-table mb-4">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'TEST_SLOT_DETAILS.SESSIONS' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="sessions()" dataKey="id">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'TEST_SLOT_DETAILS.SESSION' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.EXAM' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE_COUNT' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.STATUS' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-session>
+            <tr>
+              <td>{{ session.sessionNo }}</td>
+              <td>{{ session.examNo }}</td>
+              <td>{{ session.candidateCount }}</td>
+              <td>{{ session.statusName }}</td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">
+                {{ 'TEST_SLOT_DETAILS.NO_SESSIONS' | translate }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</section>

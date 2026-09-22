@@ -19,6 +19,11 @@ public class AdminRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<
             {
                 UserId = AdminUserIds.Admin2UserId,
                 RoleId = SystemRoleIds.SystemAdmin,
+            },
+            new IdentityUserRole<Guid>
+            {
+                UserId = AdminUserIds.Admin2UserId,
+                RoleId = SystemRoleIds.TestSlotStaffMember,
             }
         );
     }

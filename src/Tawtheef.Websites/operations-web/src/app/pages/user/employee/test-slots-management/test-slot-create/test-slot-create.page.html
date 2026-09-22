@@ -1,0 +1,132 @@
+<section class="workflow-page" i18nNamespace="pages/employee/test-slots-management">
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row align-items-center mb-3">
+        <div class="col-lg-6 col-md-12">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-primary d-inline-flex align-items-center"
+              (click)="cancel()"
+              [attr.aria-label]="'TEST_SLOT_WIZARD.BACK' | translate"
+            >
+              <i class="hgi fs-24" faDirArrow="start"></i>
+            </button>
+            <h3 class="fw-bold mb-0">{{ pageTitle | translate }}</h3>
+          </div>
+          <p class="text-muted mt-2 mb-0">{{ headerSubtitle | translate }}</p>
+        </div>
+      </div>
+
+      @if (loading) {
+        <p>{{ 'TEST_SLOT_WIZARD.LOADING' | translate }}</p>
+      } @else if (loadFailed) {
+        <div class="alert alert-danger">{{ 'TEST_SLOT_WIZARD.REQUEST_FAILED' | translate }}</div>
+      } @else {
+        <div class="card card-table workflow-stepper-card mb-4">
+          <div class="card-body">
+            <div class="workflow-stepper-container">
+              <div class="workflow-stepper">
+                @for (wizardStep of wizardSteps; track wizardStep.id; let last = $last) {
+                  <div class="workflow-step-wrapper">
+                    <button
+                      type="button"
+                      class="workflow-step-label"
+                      [class.active]="step === wizardStep.id"
+                      [class.completed]="step > wizardStep.id"
+                      (click)="goTo(wizardStep.id)"
+                    >
+                      <i [class]="wizardStep.icon"></i>
+                      <span>{{ wizardStep.label | translate }}</span>
+                    </button>
+                    <div class="workflow-step-progress">
+                      <button
+                        type="button"
+                        class="workflow-step-circle"
+                        [class.active]="step === wizardStep.id"
+                        [class.completed]="step > wizardStep.id"
+                        (click)="goTo(wizardStep.id)"
+                        [attr.aria-label]="wizardStep.label | translate"
+                      >
+                        @if (step === wizardStep.id) {
+                          <span class="workflow-step-inner-circle"></span>
+                        } @else if (step > wizardStep.id) {
+                          <span class="workflow-step-checkmark">&#10003;</span>
+                        }
+                      </button>
+                      @if (!last) {
+                        <div class="workflow-connector-line" [class.completed]="step > wizardStep.id"></div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-table">
+          <div class="card-body">
+            <form class="workflow-form" [formGroup]="form">
+              @if (step === 1) {
+                <app-slot-details
+                  [form]="form"
+                  [rooms]="rooms()"
+                  [isViewMode]="isViewMode"
+                  [validationErrors]="errors"
+                />
+              } @else if (step === 2) {
+                <app-team-assignment
+                  [form]="form"
+                  [rooms]="rooms()"
+                  [state]="teamAssignment()"
+                  [isViewMode]="isViewMode"
+                  [showRoomHeadError]="errors.includes('ROOM_HEAD')"
+                  (stateChange)="updateTeamAssignment($event)"
+                />
+              } @else {
+                <app-test-slot-review [form]="form" [rooms]="rooms()" [team]="teamAssignment()" [staffConflicts]="staffConflicts()" [isViewMode]="isViewMode" (editTeamRequested)="goTo(2)" />
+              }
+              <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
+                <button
+                  type="button"
+                  class="btn btn-link d-flex align-items-center gap-2"
+                  (click)="goTo(step - 1)"
+                  [disabled]="step === 1"
+                >
+                  <i class="hgi" faDirArrow="start"></i>
+                  {{ 'TEST_SLOT_WIZARD.PREVIOUS' | translate }}
+                </button>
+                <div class="d-flex gap-2">
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary light d-flex align-items-center gap-2"
+                      (click)="cancel()"
+                    >
+                      {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
+                    </button>
+                  }
+                  @if (step < wizardSteps.length) {
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary light d-flex align-items-center gap-2"
+                      (click)="goTo(step + 1)"
+                    >
+                      {{ 'TEST_SLOT_WIZARD.NEXT' | translate }}
+                      <i class="hgi" faDirArrow="end"></i>
+                    </button>
+                  } @else if (!isViewMode) {
+                    <button type="button" class="btn btn-success d-flex align-items-center gap-2" (click)="save()" [disabled]="saving">
+                      {{ (isEditMode ? 'TEST_SLOT_WIZARD.UPDATE' : 'TEST_SLOT_WIZARD.CREATE_SLOT') | translate }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

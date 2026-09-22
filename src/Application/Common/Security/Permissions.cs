@@ -61,6 +61,32 @@ public static class Permissions
 
     }
 
+    public static class TestSlots
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.TestSlots.View,
+                nameof(PermissionKeys.TestSlots),
+                PermissionAction.View,
+                "Exam Periods - View",
+                "فترات الاختبار - عرض",
+                109);
+        public static readonly PermissionDefinition Create =
+            Def(
+                PermissionKeys.TestSlots.Create,
+                nameof(PermissionKeys.TestSlots),
+                PermissionAction.Create,
+                "Exam Periods - Create",
+                "فترات الاختبار - إنشاء",
+                110);
+        public static readonly PermissionDefinition ViewAccessCode =
+            Def(PermissionKeys.TestSlots.ViewAccessCode, nameof(PermissionKeys.TestSlots), PermissionAction.View,
+                "Exam Periods - View Access Code", "فترات الاختبار - عرض رمز الدخول", 111);
+        public static readonly PermissionDefinition ManagePeriod =
+            Def(PermissionKeys.TestSlots.ManagePeriod, nameof(PermissionKeys.TestSlots), PermissionAction.Manage,
+                "Exam Periods - Manage Period", "فترات الاختبار - إدارة الفترة", 112);
+    }
+
     public static class Rooms
     {
         public static readonly PermissionDefinition View =

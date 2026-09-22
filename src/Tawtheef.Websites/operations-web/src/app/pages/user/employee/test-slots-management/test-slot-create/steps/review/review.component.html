@@ -1,0 +1,85 @@
+<section class="test-slot-review">
+  <h5 class="text-primary d-flex align-items-center my-3">
+    <i class="hgi hgi-stroke hgi-checkmark-badge-01 me-1"></i>
+    {{ 'TEST_SLOT_WIZARD.REVIEW' | translate }}
+  </h5>
+
+  <div class="row g-3 mb-3">
+    <div class="col-sm-6 col-xl-3">
+      <div class="workflow-review-summary-card workflow-review-summary-card--room h-100">
+        <i class="hgi hgi-stroke hgi-building-03 workflow-review-summary-card__icon"></i>
+        <div class="workflow-review-summary-card__content"><span class="workflow-review-summary-card__label">{{ 'TEST_SLOT_WIZARD.ROOM' | translate }}</span><strong class="workflow-review-summary-card__value">{{ roomName }}</strong></div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="workflow-review-summary-card workflow-review-summary-card--date h-100">
+        <i class="hgi hgi-stroke hgi-calendar-03 workflow-review-summary-card__icon"></i>
+        <div class="workflow-review-summary-card__content"><span class="workflow-review-summary-card__label">{{ 'TEST_SLOT_WIZARD.DATE' | translate }}</span><strong class="workflow-review-summary-card__value">{{ form.controls.slotDate.value | date: 'yyyy-MM-dd' }}</strong></div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="workflow-review-summary-card workflow-review-summary-card--time h-100">
+        <i class="hgi hgi-stroke hgi-clock-01 workflow-review-summary-card__icon"></i>
+        <div class="workflow-review-summary-card__content"><span class="workflow-review-summary-card__label">{{ 'TEST_SLOT_WIZARD.TIME' | translate }}</span><strong class="workflow-review-summary-card__value"><bdi>{{ form.controls.startTime.value | date: 'hh:mm a' }} - {{ form.controls.endTime.value | date: 'hh:mm a' }}</bdi></strong></div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="workflow-review-summary-card workflow-review-summary-card--team h-100">
+        <i class="hgi hgi-stroke hgi-user-group workflow-review-summary-card__icon"></i>
+        <div class="workflow-review-summary-card__content"><span class="workflow-review-summary-card__label">{{ 'TEST_SLOT_WIZARD.TEAM_MEMBERS' | translate }}</span><strong class="workflow-review-summary-card__value">{{ staff.length }}</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="card card-table bg-light mb-3" aria-label="test-slot-details">
+    <div class="card-body">
+      <h5 class="text-primary d-flex align-items-center mb-3"><i class="hgi hgi-stroke hgi-calendar-03 me-1"></i>{{ 'TEST_SLOT_WIZARD.SLOT_DETAILS' | translate }}</h5>
+      <dl class="row mb-0 exam-summary-details">
+        <div class="col-md"><dt>{{ 'TEST_SLOT_WIZARD.TITLE_AR' | translate }}</dt><dd>{{ form.controls.titleAr.value }}</dd></div>
+        <div class="col-md"><dt>{{ 'TEST_SLOT_WIZARD.TITLE_EN' | translate }}</dt><dd>{{ form.controls.titleEn.value || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</dd></div>
+        <div class="col-md"><dt>{{ 'TEST_SLOT_WIZARD.ROOM' | translate }}</dt><dd><div>{{ roomName }}</div><small class="text-muted">{{ 'TEST_SLOT_WIZARD.CAPACITY' | translate }} {{ roomCapacity }}</small></dd></div>
+        <div class="col-md"><dt>{{ 'TEST_SLOT_WIZARD.TIME' | translate }}</dt><dd><bdi>{{ form.controls.startTime.value | date: 'hh:mm a' }} - {{ form.controls.endTime.value | date: 'hh:mm a' }}</bdi></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+        <h5 class="text-primary d-flex align-items-center mb-0"><i class="hgi hgi-stroke hgi-user-group me-1"></i>{{ 'TEST_SLOT_WIZARD.ASSIGNED_TEAM' | translate }}</h5>
+        @if (!isViewMode) {
+          <button pButton type="button" [outlined]="true" (click)="editTeamRequested.emit()">{{ 'TEST_SLOT_WIZARD.EDIT' | translate }}</button>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden"><div class="table-responsive">
+        <p-table class="distribution-table" [value]="staff">
+          <ng-template #header><tr><th>{{ 'TEST_SLOT_WIZARD.ROLE' | translate }}</th><th>{{ 'TEST_SLOT_WIZARD.EMPLOYEE' | translate }}</th><th>{{ 'TEST_SLOT_WIZARD.ROOM' | translate }}</th></tr></ng-template>
+          <ng-template #body let-member><tr><td>{{ member.role | translate }}</td><td>{{ member.employee }}</td><td>{{ member.room }}</td></tr></ng-template>
+        </p-table>
+      </div></div>
+    </div>
+  </div>
+
+  @if (staffConflicts.length) {
+    <div class="alert alert-danger mb-0" role="alert">
+      <div class="d-flex align-items-center gap-2 fw-semibold mb-2">
+        <i class="hgi hgi-stroke hgi-alert-02"></i>
+        {{ 'TEST_SLOT_WIZARD.STAFF_CONFLICT' | translate }}
+      </div>
+      <ul class="mb-0 ps-3">
+        @for (conflict of staffConflicts; track conflict.staffUserId + conflict.slotTitle) {
+          <li>
+            <strong>{{ conflict.staffDisplayName }}</strong>
+            — {{ conflict.slotTitle }} ({{ conflict.slotDate }},
+            <bdi>{{ formatConflictTime(conflict.startTime) }} - {{ formatConflictTime(conflict.endTime) }}</bdi>)
+          </li>
+        }
+      </ul>
+    </div>
+  } @else {
+    <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+      <i class="hgi hgi-stroke hgi-checkmark-badge-01"></i>
+      {{ 'TEST_SLOT_WIZARD.READY' | translate }}
+    </div>
+  }
+</section>
