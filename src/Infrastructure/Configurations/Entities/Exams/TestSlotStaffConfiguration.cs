@@ -15,6 +15,11 @@ public class TestSlotStaffConfiguration : BaseEntityConfiguration<TestSlotStaff>
             .HasForeignKey(x => x.TestSlotId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.StaffUser)
+            .WithMany()
+            .HasForeignKey(x => x.StaffUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(x => x.Role)
             .WithMany()
             .HasForeignKey(x => x.RoleId)

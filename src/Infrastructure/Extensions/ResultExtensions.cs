@@ -121,7 +121,8 @@ public static class ResultExtensions
     {
         return key.Equals("Code", StringComparison.OrdinalIgnoreCase)
             || key.Equals("UserMessage", StringComparison.OrdinalIgnoreCase)
-            || key.Equals("StatusCode", StringComparison.OrdinalIgnoreCase);
+            || key.Equals("StatusCode", StringComparison.OrdinalIgnoreCase)
+            || key.Equals("ConflictDetails", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool ShouldIncludeDetailedErrors()

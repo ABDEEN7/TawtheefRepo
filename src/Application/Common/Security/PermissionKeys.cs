@@ -202,6 +202,14 @@ public static class PermissionKeys
         public const string WorkflowActions = "examWorkflowActions";
     }
 
+    public static class TestSlots
+    {
+        public const string View = "test-slots.view";
+        public const string Create = "test-slots.create";
+        public const string ViewAccessCode = "test-slots.view-access-code";
+        public const string ManagePeriod = "test-slots.manage-period";
+    }
+
     public static class Rooms
     {
         public const string View = "rooms.view";
@@ -217,6 +225,7 @@ public static class PermissionKeys
     {
         public const string View = "question-bank-requests.view";
         public const string Create = "question-bank-requests.create";
+        public const string Assign = "question-bank-requests.assign";
     }
 
     public static class InterviewEvaluationBank

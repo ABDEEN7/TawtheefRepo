@@ -31,6 +31,14 @@ public class ErrorsCodes
     public const string SpecializedQuestionBankTargetRequired = "SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED";
     public const string QuestionBankTargetNotAllowed = "QUESTION_BANK_TARGET_NOT_ALLOWED";
     public const string InvalidQuestionBankType = "INVALID_QUESTION_BANK_TYPE";
+    public const string QuestionBankRequestNotFound = "QUESTION_BANK_REQUEST_NOT_FOUND";
+    public const string QuestionBankRequestNotPendingAssignment = "QUESTION_BANK_REQUEST_NOT_PENDING_ASSIGNMENT";
+    public const string QuestionBankAssignmentsRequired = "QUESTION_BANK_ASSIGNMENTS_REQUIRED";
+    public const string DuplicateQuestionBankAssignee = "DUPLICATE_QUESTION_BANK_ASSIGNEE";
+    public const string QuestionBankAssigneeNotFound = "QUESTION_BANK_ASSIGNEE_NOT_FOUND";
+    public const string QuestionBankAssigneeNotEligible = "QUESTION_BANK_ASSIGNEE_NOT_ELIGIBLE";
+    public const string QuestionBankEmployeeScopeNotConfigured = "QUESTION_BANK_EMPLOYEE_SCOPE_NOT_CONFIGURED";
+    public const string QuestionBankAssignmentAlreadyExists = "QUESTION_BANK_ASSIGNMENT_ALREADY_EXISTS";
     #endregion
 
     // =========================================================
@@ -321,6 +329,19 @@ public class ErrorsCodes
     #region Exam
     public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
     public const string ExamPendingApprovalAlreadyExistsForJob = "EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB";
+    #endregion
+
+    #region Test Slots
+    public const string TestSlotTitleArAlreadyExists = "TEST_SLOT_TITLE_AR_ALREADY_EXISTS";
+    public const string TestSlotTitleEnAlreadyExists = "TEST_SLOT_TITLE_EN_ALREADY_EXISTS";
+    public const string TestSlotRoomNotAvailable = "TEST_SLOT_ROOM_NOT_AVAILABLE";
+    public const string TestSlotRoomScheduleConflict = "TEST_SLOT_ROOM_SCHEDULE_CONFLICT";
+    public const string TestSlotStaffScheduleConflict = "TEST_SLOT_STAFF_SCHEDULE_CONFLICT";
+    public const string TestSlotStaffRoleNotFound = "TEST_SLOT_STAFF_ROLE_NOT_FOUND";
+    public const string TestSlotCannotBeStartedInCurrentStatus = "TEST_SLOT_CANNOT_BE_STARTED_IN_CURRENT_STATUS";
+    public const string TestSlotCannotBeClosedInCurrentStatus = "TEST_SLOT_CANNOT_BE_CLOSED_IN_CURRENT_STATUS";
+    public const string TestSlotCanOnlyBeStartedOnScheduledDate = "TEST_SLOT_CAN_ONLY_BE_STARTED_ON_SCHEDULED_DATE";
+    public const string TestSlotStartTooEarly = "TEST_SLOT_START_TOO_EARLY";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";

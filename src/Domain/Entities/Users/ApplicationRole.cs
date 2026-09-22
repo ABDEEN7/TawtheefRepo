@@ -17,6 +17,8 @@ public static class SystemRoleIds
     
     // Temporary Role for testing
     public static Guid EmployeeSuperAdmin = Guid.Parse("d8689e0c-d872-42e9-87b7-c3bb27305e07");
+
+    public static Guid TestSlotStaffMember = Guid.Parse("b6fc27dc-93ec-4b04-b3a7-311655e87b7f");
 }
 public class ApplicationRole : IdentityRole<Guid>
 {

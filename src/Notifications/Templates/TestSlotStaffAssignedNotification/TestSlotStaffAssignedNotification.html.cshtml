@@ -1,0 +1,3 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.TestSlotStaffAssignedNotification.TestSlotStaffAssignedNotificationModel>
+@{ var role = Model.Model.RoleId == Tawtheef.Domain.Entities.Lookups.TestSlotStaffRoleIds.HallSupervisor ? "Room Head" : "Monitor"; }
+<p>You have been assigned as @role for test period @(Model.Model.TestSlotTitleEn ?? Model.Model.TestSlotTitleAr) on @Model.Model.SlotDate.ToString("yyyy/MM/dd").</p>

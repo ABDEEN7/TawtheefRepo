@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div formArrayName="assignments" class="d-flex flex-column gap-3">
+    @for (group of assignments.controls; track $index; let i = $index) {
+      <div [formGroupName]="i" class="row g-3 align-items-start border-bottom pb-3">
+        <div class="col-md-4"><label class="form-label">{{'QUESTION_BANK_REQUESTS.EMPLOYEE'|translate}}</label>
+          <p-select class="w-100" formControlName="employeeId" [options]="employees" optionValue="id" optionLabel="name" [filter]="true"></p-select>
+          @if(invalid(i,'employeeId')){<small class="text-danger">{{'QUESTION_BANK_REQUESTS.REQUIRED'|translate}}</small>}
+          @if(duplicate(i)){<small class="text-danger d-block">{{'QUESTION_BANK_REQUESTS.DUPLICATE_EMPLOYEE'|translate}}</small>}
+        </div>
+        <div class="col-md-3"><label class="form-label">{{'QUESTION_BANK_REQUESTS.MINIMUM_QUESTIONS'|translate}}</label>
+          <p-inputnumber class="w-100" formControlName="minimumQuestionCount" [min]="1" [useGrouping]="false"></p-inputnumber>
+          @if(invalid(i,'minimumQuestionCount')){<small class="text-danger">{{'QUESTION_BANK_REQUESTS.POSITIVE_REQUIRED'|translate}}</small>}
+        </div>
+        <div class="col-md-4"><label class="form-label">{{'QUESTION_BANK_REQUESTS.NOTES'|translate}}</label><textarea pTextarea class="w-100" rows="2" formControlName="notes"></textarea>
+          @if(invalid(i,'notes')){<small class="text-danger">{{'QUESTION_BANK_REQUESTS.NOTES_MAX'|translate}}</small>}
+        </div>
+        <div class="col-md-1 pt-4"><button pButton type="button" class="p-button-text p-button-danger" icon="pi pi-trash" [disabled]="assignments.length===1" (click)="remove(i)"></button></div>
+      </div>
+    }
+  </div>
+  <button pButton type="button" class="p-button-text mt-3" icon="pi pi-plus" [label]="'QUESTION_BANK_REQUESTS.ADD_EMPLOYEE'|translate" (click)="add()"></button>
+  <div class="d-flex justify-content-end gap-2 mt-4"><button pButton type="button" class="p-button-outlined" [label]="'QUESTION_BANK_REQUESTS.CANCEL'|translate" [disabled]="saving()" (click)="cancel()"></button><button pButton type="submit" [label]="'QUESTION_BANK_REQUESTS.ASSIGN'|translate" [loading]="saving()"></button></div>
+</form>

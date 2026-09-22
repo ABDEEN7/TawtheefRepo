@@ -1,4 +1,4 @@
-import { GUID } from '../shared/types/guid.type';
+import { GUID } from "../shared/types/guid.type";
 
 export const portalRoutes = {
   portal: '/portal',
@@ -151,13 +151,31 @@ export const portalRoutes = {
   get examsManagement() {
     return this.portal + '/' + this.examsManagementPath;
   },
+  testSlotsManagementPath: 'test-slots-management',
+  createTestSlotPath: 'test-slots-management/create',
+  editTestSlotPath: 'test-slots-management/:testSlotId/edit',
+  viewTestSlotPath: 'test-slots-management/:testSlotId/view',
+  get createTestSlot() {
+    return this.portal + '/' + this.createTestSlotPath;
+  },
+  editTestSlot(testSlotId: string) {
+    return this.portal + `/test-slots-management/${testSlotId}/edit`;
+  },
+  viewTestSlot(testSlotId: string) {
+    return this.portal + `/test-slots-management/${testSlotId}/view`;
+  },
+  get testSlotsManagement() {
+    return this.portal + '/' + this.testSlotsManagementPath;
+  },
   get questionBanks() {
     return this.portal + '/question-banks';
   },
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
   },
-
+  questionBankRequestDetails(id: string) {
+    return this.questionBankRequests + `/${id}`;
+  },
   get interviewAxesCriteria() {
     return this.portal + '/interview-axes-criteria';
   },

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
@@ -127,6 +128,22 @@ namespace Tawtheef.Infrastructure
                 AddValidatedOptions<EmailSettings>(services, configuration, EmailSettings.SectionName);
                 AddValidatedOptions<GraphEmailSettings>(services, configuration, GraphEmailSettings.SectionName);
                 AddValidatedOptions<StorageSettings>(services, configuration, StorageSettings.SectionName);
+                services.AddOptions<TestSlotAccessCodeOptions>()
+                    .Bind(configuration.GetSection(TestSlotAccessCodeOptions.SectionName))
+                    .ValidateDataAnnotations()
+                    .Validate(options =>
+                    {
+                        try
+                        {
+                            AccessCodeProtector.DecodeEncryptionKey(options.EncryptionKey);
+                            return true;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            return false;
+                        }
+                    }, "TestSlotAccessCode:EncryptionKey must be valid Base64 and decode to exactly 32 bytes.")
+                    .ValidateOnStart();
 
                 // Optional settings that you may want in both apps (no ValidateOnStart here)
                 services.Configure<EmailDispatcherSettings>(configuration.GetSection(EmailDispatcherSettings.SectionName));
@@ -161,6 +178,8 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<ISessionService, EfSessionService>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
+                services.AddDataProtection();
+                services.AddScoped<IAccessCodeProtector, AccessCodeProtector>();
                 services.AddScoped<IIdentityFieldProtectionContext, IdentityFieldProtectionContext>();
                 services.AddScoped<IMediaUrlResolver, MediaUrlResolver>();
                 services.AddSingleton<ILocalizationService, LocalizationService>();
@@ -326,6 +345,7 @@ namespace Tawtheef.Infrastructure
                 
                 // Operation-only options (do not ValidateOnStart unless always present in Operation app settings)
                 services.Configure<HrServiceSettings>(configuration.GetSection(HrServiceSettings.SectionName));
+                AddValidatedOptions<TestSlotSettings>(services, configuration, TestSlotSettings.SectionName);
 
                 // Operation-only services
                 services.AddScoped<IEmployeeProfileService, EmployeeProfileService>();

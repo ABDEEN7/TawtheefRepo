@@ -63,29 +63,6 @@
     }
   }
 
-  .search-icon-field {
-    display: block;
-    position: relative;
-    width: 100%;
-
-    input {
-      width: 100%;
-      text-align: start;
-      padding-inline-start: 1rem !important;
-      padding-inline-end: 3rem !important;
-    }
-
-    .p-inputicon {
-      position: absolute !important;
-      top: 50% !important;
-      inset-inline-end: 1rem !important;
-      inset-inline-start: auto !important;
-      margin: 0 !important;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-  }
-
   .profile-filter-multiselect,
   .filter-toolbar__secondary .p-select,
   .advanced-filters-panel .p-select,

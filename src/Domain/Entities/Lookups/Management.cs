@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Domain.Common;
 
@@ -14,6 +15,8 @@ public static class ManagementIds
 [Index(nameof(SectorId))]
 public class Management : LookupBase
 {
+    [MaxLength(50)]
+    public string DepartmentNumber { get; set; } = string.Empty;
     public Guid SectorId { get; set; }
     public Sector? Sector { get; set; }
 

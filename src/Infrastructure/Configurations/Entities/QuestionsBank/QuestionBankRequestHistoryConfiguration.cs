@@ -34,5 +34,10 @@ public class QuestionBankRequestHistoryConfiguration
             .WithMany(x => x.ToHistories)
             .HasForeignKey(x => x.ToStatusId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.PerformedBy)
+            .WithMany()
+            .HasForeignKey(x => x.PerformedById)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

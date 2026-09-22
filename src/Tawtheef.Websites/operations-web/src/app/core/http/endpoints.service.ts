@@ -409,6 +409,22 @@ export class EndpointsService {
     specializations: this.getFullUrl('/exams/lookups/specializations'),
   };
 
+  testSlots = {
+    list: this.getFullUrl('/test-slots'),
+    create: this.getFullUrl('/test-slots'),
+    update: (id: string) => this.getFullUrl(`/test-slots/${id}`),
+    configuration: (id: string) => this.getFullUrl(`/test-slots/${id}/configuration`),
+    details: (id: string) => this.getFullUrl(`/test-slots/${id}`),
+    sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
+    candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
+    accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
+    start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
+    close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
+    assignments: (id: string) => this.getFullUrl(`/test-slots/${id}/assignments`),
+    availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
+    wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
+  };
+
   questionBanks = {
     list: this.getFullUrl('/questionbanks'),
     lookups: {
@@ -421,6 +437,9 @@ export class EndpointsService {
   questionBankRequests = {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
+    details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
+    eligibleEmployees: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
+    assignments: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/assignments`),
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
       managements: this.getFullUrl('/questionbankrequests/lookups/managements'),

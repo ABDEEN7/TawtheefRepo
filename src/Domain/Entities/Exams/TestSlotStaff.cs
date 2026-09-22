@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Exams;
 
@@ -13,5 +14,6 @@ public class TestSlotStaff : EventEntity
     public bool IsActive { get; set; }
 
     public TestSlot? TestSlot { get; set; }
+    public User? StaffUser { get; set; }
     public TestSlotStaffRole? Role { get; set; }
 }

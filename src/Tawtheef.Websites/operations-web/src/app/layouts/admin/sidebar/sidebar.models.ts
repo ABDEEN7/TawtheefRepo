@@ -147,6 +147,14 @@ export class Sidebar {
       permission: Permissions.QuestionBankRequests.View,
     },
 
+    { 
+      key: 'test-slots',
+      label: 'internal.sidebar.testSlots',
+      icon: 'hgi-calendar-03',
+      route: routes.portal.testSlotsManagement,
+      permission: Permissions.TestSlots.View
+    },
+    
     {
       key: 'interview-axes-criteria',
       label: 'internal.sidebar.interview-axes-criteria',

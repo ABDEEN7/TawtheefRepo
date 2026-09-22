@@ -97,9 +97,9 @@ stages:
         displayName: Build operations-web
         condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.opsChanged'], 'true')
         steps:
-          - task: NodeTool@0
+          - task: UseNode@1
             inputs:
-              versionSpec: '22.x'
+              version: '22.x'
           - script: |
               echo "Building operations-web..."              
               cd src/Tawtheef.Websites/operations-web
@@ -124,9 +124,9 @@ stages:
         displayName: Build recruitment-web
         condition: eq(stageDependencies.detect_changes_stage.detect.outputs['detectChanges.recChanged'], 'true')
         steps:
-          - task: NodeTool@0
+          - task: UseNode@1
             inputs:
-              versionSpec: '22.x'
+              version: '22.x'
           - script: |
               echo "Building recruitment-web..."              
               cd src/Tawtheef.Websites/recruitment-web

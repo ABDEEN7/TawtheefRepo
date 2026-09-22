@@ -1,0 +1,124 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-calendar-03 me-1"></i>
+  {{ 'TEST_SLOT_WIZARD.SLOT_DETAILS' | translate }}
+</h5>
+
+<div class="row g-3 workflow-form-grid" [formGroup]="form">
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-title-ar">
+      {{ 'TEST_SLOT_WIZARD.TITLE_AR' | translate }} <span class="text-danger">*</span>
+    </label>
+    <input
+      pInputText
+      id="test-slot-title-ar"
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      [class.p-invalid]="titleArIsEmpty() || showError('titleAr') || hasValidationError('TITLE_AR_DUPLICATE')"
+      formControlName="titleAr"
+      maxlength="200"
+    />
+    @if (titleArIsEmpty()) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    } @else if (showError('titleAr')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.MAX_LENGTH' | translate }}</small>
+    } @else if (hasValidationError('TITLE_AR_DUPLICATE')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.TITLE_AR_DUPLICATE' | translate }}</small>
+    }
+  </div>
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-title-en">
+      {{ 'TEST_SLOT_WIZARD.TITLE_EN' | translate }}
+    </label>
+    <input
+      pInputText
+      id="test-slot-title-en"
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      [class.p-invalid]="showError('titleEn') || hasValidationError('TITLE_EN_DUPLICATE')"
+      formControlName="titleEn"
+      maxlength="200"
+    />
+    @if (showError('titleEn')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.MAX_LENGTH' | translate }}</small>
+    } @else if (hasValidationError('TITLE_EN_DUPLICATE')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.TITLE_EN_DUPLICATE' | translate }}</small>
+    }
+  </div>
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-create-room">
+      {{ 'TEST_SLOT_WIZARD.ROOM' | translate }} <span class="text-danger">*</span>
+    </label>
+    <p-select
+      inputId="test-slot-create-room"
+      class="w-100"
+      [class.bg-light]="isViewMode"
+      [class.p-invalid]="showError('roomId')"
+      formControlName="roomId"
+      [options]="rooms"
+      [optionLabel]="roomLabel"
+      optionValue="id"
+      appendTo="body"
+    />
+    @if (showError('roomId')) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    }
+  </div>
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-date">
+      {{ 'TEST_SLOT_WIZARD.DATE' | translate }} <span class="text-danger">*</span>
+    </label>
+    <p-datepicker
+      inputId="test-slot-date"
+      class="w-100"
+      [class.p-invalid]="showError('slotDate') || hasValidationError('DATE_RANGE')"
+      [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      formControlName="slotDate"
+      dateFormat="yy-mm-dd"
+      [minDate]="isViewMode ? undefined : minSlotDate"
+      appendTo="body"
+    />
+    @if (showError('slotDate')) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    } @else if (hasValidationError('DATE_RANGE')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.DATE_RANGE' | translate }}</small>
+    }
+  </div>
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-start-time">
+      {{ 'TEST_SLOT_WIZARD.START_TIME' | translate }} <span class="text-danger">*</span>
+    </label>
+    <p-datepicker
+      inputId="test-slot-start-time"
+      class="w-100"
+      [class.p-invalid]="showError('startTime')"
+      [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      formControlName="startTime"
+      [timeOnly]="true"
+      hourFormat="12"
+      appendTo="body"
+    />
+    @if (showError('startTime')) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    }
+  </div>
+  <div class="col-lg-6">
+    <label class="form-label" for="test-slot-end-time">
+      {{ 'TEST_SLOT_WIZARD.END_TIME' | translate }} <span class="text-danger">*</span>
+    </label>
+    <p-datepicker
+      inputId="test-slot-end-time"
+      class="w-100"
+      [class.p-invalid]="showError('endTime') || hasValidationError('TIME_RANGE')"
+      [inputStyleClass]="isViewMode ? 'bg-light' : ''"
+      formControlName="endTime"
+      [timeOnly]="true"
+      hourFormat="12"
+      appendTo="body"
+    />
+    @if (showError('endTime')) {
+      <small class="text-danger">{{ 'validation.required_filed' | translate }}</small>
+    } @else if (hasValidationError('TIME_RANGE')) {
+      <small class="text-danger">{{ 'TEST_SLOT_WIZARD.ERROR.TIME_RANGE' | translate }}</small>
+    }
+  </div>
+</div>

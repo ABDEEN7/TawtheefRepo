@@ -27,6 +27,21 @@ public sealed class QuestionBankRequestsController(IMediator mediator) : Control
     public async Task<IActionResult> Create([FromBody] CreateQuestionBankRequestCommand command, CancellationToken cancellationToken) =>
         (await mediator.Send(command, cancellationToken)).ToActionResult();
 
+    [HttpGet("{id:guid}")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
+    public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken) =>
+        (await mediator.Send(new GetQuestionBankRequestDetailsQuery(id), cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/eligible-employees")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Assign)]
+    public async Task<IActionResult> EligibleEmployees(Guid id, [FromQuery] string? search, CancellationToken cancellationToken) =>
+        (await mediator.Send(new GetEligibleQuestionBankEmployeesQuery(id, search), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/assignments")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Assign)]
+    public async Task<IActionResult> Assign(Guid id, [FromBody] AssignQuestionBankEmployeesCommand command, CancellationToken cancellationToken) =>
+        (await mediator.Send(command with { RequestId = id }, cancellationToken)).ToActionResult();
+
     [HttpGet("lookups/question-bank-types")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> QuestionBankTypes(CancellationToken cancellationToken) =>
