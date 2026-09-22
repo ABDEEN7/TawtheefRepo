@@ -29,6 +29,14 @@ public class InterviewMemberEvaluationController(IMediator mediator) : Controlle
         return result.ToActionResult();
     }
 
+    [HttpGet("appointments/{appointmentId:guid}/context")]
+    [AuthorizePermission(PermissionKeys.InterviewEvaluation.View, PermissionKeys.InterviewEvaluation.Manage)]
+    public async Task<IActionResult> GetAppointmentEvaluationContext(Guid appointmentId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetAppointmentEvaluationContextQuery(appointmentId), cancellationToken);
+        return result.ToActionResult();
+    }
+
     [HttpPut("draft")]
     [AuthorizePermission(PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> SaveMemberEvaluationDraft([FromBody] SaveMemberEvaluationDraftCommand command, CancellationToken cancellationToken)

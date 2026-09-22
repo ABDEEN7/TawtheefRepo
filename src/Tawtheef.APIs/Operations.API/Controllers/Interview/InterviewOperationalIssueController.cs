@@ -14,7 +14,9 @@ namespace Operations.API.Controllers.Interview;
 public class InterviewOperationalIssueController(IMediator mediator) : ControllerBase
 {
     [HttpGet("appointments/{appointmentId:guid}")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.View, PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(
+    PermissionKeys.InterviewSchedule.View, PermissionKeys.InterviewSchedule.Manage,
+    PermissionKeys.InterviewEvaluation.View, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> ListAppointmentOperationalIssues(Guid appointmentId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new ListAppointmentOperationalIssuesQuery(appointmentId), cancellationToken);
@@ -22,7 +24,7 @@ public class InterviewOperationalIssueController(IMediator mediator) : Controlle
     }
 
     [HttpPost]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> CreateOperationalIssue([FromBody] CreateOperationalIssueCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -30,7 +32,7 @@ public class InterviewOperationalIssueController(IMediator mediator) : Controlle
     }
 
     [HttpPut("resolve")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> ResolveOperationalIssue([FromBody] ResolveOperationalIssueCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -38,7 +40,7 @@ public class InterviewOperationalIssueController(IMediator mediator) : Controlle
     }
 
     [HttpPut("waive")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> WaiveOperationalIssue([FromBody] WaiveOperationalIssueCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -46,7 +48,7 @@ public class InterviewOperationalIssueController(IMediator mediator) : Controlle
     }
 
     [HttpPut("blocking")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> UpdateOperationalIssueBlocking([FromBody] UpdateOperationalIssueBlockingCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);

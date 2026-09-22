@@ -1,0 +1,102 @@
+<div class="d-flex flex-column gap-3 p-2">
+  <p class="text-muted mb-0">
+    {{ 'INTERVIEW_EVALUATION.ISSUES.FOR' | translate }} <strong>{{ candidateLabel }}</strong>
+  </p>
+
+  <div class="table-card rounded overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_TYPE' | translate }}</th>
+            <th>{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_DESCRIPTION' | translate }}</th>
+            <th>{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_BLOCKING' | translate }}</th>
+            <th>{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_STATUS' | translate }}</th>
+            <th *hasPermission="canManage">{{ 'INTERVIEW_EVALUATION.COLUMN_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (issue of issues(); track issue.id) {
+            <tr>
+              <td>{{ typeLabel(issue.issueType) | translate }}</td>
+              <td class="text-break">{{ issue.description || '—' }}</td>
+              <td>{{ (issue.isBlocking ? 'common.yes' : 'common.no') | translate }}</td>
+              <td>
+                <span [class]="'pill ' + statusPill(issue.status)">{{ statusLabel(issue.status) | translate }}</span>
+                @if (issue.resolutionNotes) {
+                  <div class="text-muted small mt-1">{{ issue.resolutionNotes }}</div>
+                }
+              </td>
+              <td *hasPermission="canManage">
+                @if (issue.status === OperationalIssueStatus.Open) {
+                  <div class="d-flex gap-1">
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="resolve(issue)">
+                      {{ 'INTERVIEW_EVALUATION.ISSUES.RESOLVE' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="waive(issue)">
+                      {{ 'INTERVIEW_EVALUATION.ISSUES.WAIVE' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" (click)="toggleBlocking(issue)">
+                      {{ (issue.isBlocking ? 'INTERVIEW_EVALUATION.ISSUES.UNMARK_BLOCKING' : 'INTERVIEW_EVALUATION.ISSUES.MARK_BLOCKING') | translate }}
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.ISSUES.NO_ISSUES' | translate }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *hasPermission="canManage">
+    @if (!showCreateForm()) {
+      <button type="button" class="btn btn-outline-primary" (click)="showCreateForm.set(true)">
+        <i class="hgi hgi-stroke hgi-add-01 me-1"></i>{{ 'INTERVIEW_EVALUATION.ISSUES.ADD' | translate }}
+      </button>
+    } @else {
+      <div class="card card-table">
+        <div class="card-body d-flex flex-column gap-3">
+          <div>
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_TYPE' | translate }}</label>
+            <p-select class="w-100" [options]="typeOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_EVALUATION.ISSUES.TYPE_PLACEHOLDER' | translate" [(ngModel)]="newType">
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+          <div>
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_DESCRIPTION' | translate }}</label>
+            <textarea pTextarea rows="2" class="w-100" [(ngModel)]="newDescription"></textarea>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <p-checkbox [binary]="true" [(ngModel)]="newIsBlocking" inputId="newIsBlocking" />
+            <label for="newIsBlocking" class="form-label mb-0">{{ 'INTERVIEW_EVALUATION.ISSUES.COLUMN_BLOCKING' | translate }}</label>
+          </div>
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary" (click)="showCreateForm.set(false)">
+              {{ 'INTERVIEW_EVALUATION.CANCEL' | translate }}
+            </button>
+            <button type="button" class="btn btn-primary" (click)="createIssue()">
+              {{ 'INTERVIEW_EVALUATION.ISSUES.SAVE' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="d-flex justify-content-end mt-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      {{ 'INTERVIEW_EVALUATION.CLOSE' | translate }}
+    </button>
+  </div>
+</div>

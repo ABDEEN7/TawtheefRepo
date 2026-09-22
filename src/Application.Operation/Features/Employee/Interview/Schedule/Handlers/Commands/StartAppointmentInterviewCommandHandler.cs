@@ -1,3 +1,4 @@
+using Application.Operation.Features.Employee.Interview.Evaluation.Services;
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
 using FluentResults;
 using MediatR;
@@ -8,7 +9,7 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Handlers.Commands;
 
-public sealed class StartAppointmentInterviewCommandHandler(IUnitOfWork unitOfWork)
+public sealed class StartAppointmentInterviewCommandHandler(IUnitOfWork unitOfWork, EvaluationAccessResolver accessResolver)
     : IRequestHandler<StartAppointmentInterviewCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(StartAppointmentInterviewCommand request, CancellationToken cancellationToken)
@@ -17,6 +18,10 @@ public sealed class StartAppointmentInterviewCommandHandler(IUnitOfWork unitOfWo
             .FirstOrDefaultAsync(a => a.Id == request.AppointmentId, cancellationToken);
         if (appointment is null)
             return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewAppointmentNotFound));
+
+        var accessResult = await accessResolver.EnsureChairOrBypassAsync(appointment.InterviewCommitteeId, cancellationToken);
+        if (accessResult.IsFailed)
+            return Result.Fail<Unit>(accessResult.Errors);
 
         var result = appointment.StartInterview();
         if (result.IsFailed)

@@ -131,8 +131,12 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
 
     // ---- Appointments ----
 
+    // Also accepts InterviewEvaluation.Manage: these two actions are the chair's Attendance
+    // Registration step in the Evaluation stage, so a committee Chair who holds only the evaluation
+    // permission (not InterviewSchedule.Manage) must be able to call them.
+
     [HttpPut("appointments/attendance")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> RecordAppointmentAttendance([FromBody] RecordAppointmentAttendanceCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
@@ -140,7 +144,7 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("appointments/start-interview")]
-    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage, PermissionKeys.InterviewEvaluation.Manage)]
     public async Task<IActionResult> StartAppointmentInterview([FromBody] StartAppointmentInterviewCommand command, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);

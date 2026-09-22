@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Interview;
+using Tawtheef.Application.Extensions;
 
 namespace Application.Operation.Features.Employee.Interview.OperationalIssue.Handlers.Queries;
 
@@ -19,7 +20,7 @@ public sealed class ListAppointmentOperationalIssuesQueryHandler(IUnitOfWork uni
             .OrderByDescending(i => i.CreatedDate)
             .Select(i => new OperationalIssueDto(
                 i.Id, i.InterviewAppointmentId, i.IssueType, i.Description, i.IsBlocking, i.Status,
-                i.ResolvedById, i.ResolvedAt, i.ResolutionNotes, i.CreatedDate))
+                i.ResolvedById, i.ResolvedAt.AsUtcOffset(), i.ResolutionNotes, i.CreatedDate.AsUtcOffset()))
             .ToListAsync(cancellationToken);
 
         return Result.Ok(issues);
