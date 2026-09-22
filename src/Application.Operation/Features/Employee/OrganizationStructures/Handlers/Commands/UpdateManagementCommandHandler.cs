@@ -45,9 +45,9 @@ public sealed class UpdateManagementCommandHandler(IUnitOfWork uow)
         management.DescriptionEn = request.DescriptionEn;
         management.IsActive = request.IsActive;
         management.DisplayOrder = request.DisplayOrder;
+        management.DepartmentNumber = request.DepartmentNumber.Trim();
 
         await uow.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);
     }
 }
-

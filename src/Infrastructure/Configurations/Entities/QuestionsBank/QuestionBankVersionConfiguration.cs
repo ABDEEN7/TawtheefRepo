@@ -31,6 +31,12 @@ public class QuestionBankVersionConfiguration
             .WithMany()
             .HasForeignKey(x => x.CreatedFromRequestId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.ApprovedBy)
+            .WithMany()
+            .HasForeignKey(x => x.ApprovedById)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
         
         builder.HasIndex(x => x.CreatedFromRequestId)
             .IsUnique();

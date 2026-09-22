@@ -18,6 +18,7 @@ public class OrganizationStructuresProfile : IRegister
             .Map(d => d, s => s.Adapt<DropdownOptions>())
             .Map(d => d.IsActive, s => s.IsActive)
             .Map(d => d.DisplayOrder, s => s.DisplayOrder)
+            .Map(d => d.DepartmentNumber, s => s.DepartmentNumber)
             .Map(d => d.SectorId, s => s.SectorId)
             .Map(d => d.Sector, s => s.Sector == null ? null : s.Sector.Adapt<DropdownOptions>());
 

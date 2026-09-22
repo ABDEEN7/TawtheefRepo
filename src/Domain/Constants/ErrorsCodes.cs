@@ -31,6 +31,14 @@ public class ErrorsCodes
     public const string SpecializedQuestionBankTargetRequired = "SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED";
     public const string QuestionBankTargetNotAllowed = "QUESTION_BANK_TARGET_NOT_ALLOWED";
     public const string InvalidQuestionBankType = "INVALID_QUESTION_BANK_TYPE";
+    public const string QuestionBankRequestNotFound = "QUESTION_BANK_REQUEST_NOT_FOUND";
+    public const string QuestionBankRequestNotPendingAssignment = "QUESTION_BANK_REQUEST_NOT_PENDING_ASSIGNMENT";
+    public const string QuestionBankAssignmentsRequired = "QUESTION_BANK_ASSIGNMENTS_REQUIRED";
+    public const string DuplicateQuestionBankAssignee = "DUPLICATE_QUESTION_BANK_ASSIGNEE";
+    public const string QuestionBankAssigneeNotFound = "QUESTION_BANK_ASSIGNEE_NOT_FOUND";
+    public const string QuestionBankAssigneeNotEligible = "QUESTION_BANK_ASSIGNEE_NOT_ELIGIBLE";
+    public const string QuestionBankEmployeeScopeNotConfigured = "QUESTION_BANK_EMPLOYEE_SCOPE_NOT_CONFIGURED";
+    public const string QuestionBankAssignmentAlreadyExists = "QUESTION_BANK_ASSIGNMENT_ALREADY_EXISTS";
     #endregion
 
     // =========================================================

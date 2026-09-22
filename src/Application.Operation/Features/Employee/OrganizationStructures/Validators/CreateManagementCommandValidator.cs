@@ -16,5 +16,10 @@ public sealed class CreateManagementCommandValidator : AbstractValidator<CreateM
         RuleFor(x => x.NameEn)
             .NotEmpty()
             .MaximumLength(200);
+
+        RuleFor(x => x.DepartmentNumber)
+            .NotEmpty()
+            .MaximumLength(50)
+            .Matches("^[0-9]+$");
     }
 }

@@ -1,4 +1,4 @@
-import { GUID } from '../shared/types/guid.type';
+import { GUID } from "../shared/types/guid.type";
 
 export const portalRoutes = {
   portal: '/portal',
@@ -173,7 +173,9 @@ export const portalRoutes = {
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
   },
-
+  questionBankRequestDetails(id: string) {
+    return this.questionBankRequests + `/${id}`;
+  },
   get interviewAxesCriteria() {
     return this.portal + '/interview-axes-criteria';
   },

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
@@ -27,4 +28,6 @@ public class QuestionBankRequestHistory : EventEntity
     public QuestionBankRequestStatus? FromStatus { get; set; }
 
     public QuestionBankRequestStatus ToStatus { get; set; } = null!;
+
+    public EmployeeUser PerformedBy { get; set; } = null!;
 }

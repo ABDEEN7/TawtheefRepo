@@ -17,5 +17,10 @@ public sealed class UpdateManagementCommandValidator : AbstractValidator<UpdateM
         RuleFor(x => x.NameEn)
             .NotEmpty()
             .MaximumLength(200);
+
+        RuleFor(x => x.DepartmentNumber)
+            .NotEmpty()
+            .MaximumLength(50)
+            .Matches("^[0-9]+$");
     }
 }

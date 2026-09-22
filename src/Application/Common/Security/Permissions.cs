@@ -129,6 +129,10 @@ public static class Permissions
         public static readonly PermissionDefinition Create = Def(
             PermissionKeys.QuestionBankRequests.Create, nameof(PermissionKeys.QuestionBankRequests),
             PermissionAction.Create, "Question Bank Requests - Create", "طلبات بنوك الأسئلة - إنشاء", 86);
+
+        public static readonly PermissionDefinition Assign = Def(
+            PermissionKeys.QuestionBankRequests.Assign, nameof(PermissionKeys.QuestionBankRequests),
+            PermissionAction.Manage, "Question Bank Requests - Assign", "طلبات بنوك الأسئلة - إسناد", 87);
     }
 
     // =========================
