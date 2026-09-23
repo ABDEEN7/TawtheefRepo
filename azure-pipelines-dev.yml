@@ -202,16 +202,13 @@ stages:
       name: Tawtheef-Private-Agents
 
     steps:
-    - powershell: |
-        Resolve-DnsName app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
-
-        Test-NetConnection `
-          app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net `
-          -Port 443
-
-        curl.exe -I `
-          https://app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
+    - task: CmdLine@2
       displayName: Test SCM connectivity
+      inputs:
+        script: |
+          nslookup app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
+
+          curl.exe -I https://app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
 
 # ============================================================
 # DEPLOY DEV
