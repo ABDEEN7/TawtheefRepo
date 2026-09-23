@@ -389,6 +389,18 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: 'question-bank-assignments/:assignmentId/questions',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
+    loadComponent: () => import('./question-bank-assignments/question-entry.page').then(m => m.QuestionEntryPage),
+  },
+  {
+    path: 'question-bank-assignments',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
+    loadComponent: () => import('./question-bank-assignments/question-bank-assignments.page').then(m => m.QuestionBankAssignmentsPage),
+  },
+  {
     path: 'question-banks',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBanks.View] },

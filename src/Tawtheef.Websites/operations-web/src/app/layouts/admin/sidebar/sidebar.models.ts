@@ -133,6 +133,13 @@ export class Sidebar {
       permission: Permissions.Exams.View,
     },
     {
+      key: 'question-bank-assignments',
+      label: 'internal.sidebar.question-bank-assignments',
+      icon: 'hgi-task-daily-01',
+      route: routes.portal.questionBankAssignments,
+      permission: Permissions.QuestionBankAssignments.Manage,
+    },
+    {
       key: 'question-banks',
       label: 'internal.sidebar.question-banks',
       icon: 'hgi-file-validation',

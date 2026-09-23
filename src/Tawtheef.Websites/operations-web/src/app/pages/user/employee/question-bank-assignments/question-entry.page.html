@@ -1,0 +1,130 @@
+<div class="container-fluid py-4">
+  @if (workspace(); as workspace) {
+    <div class="d-flex justify-content-between">
+      <h1>{{ 'QUESTION_ASSIGNMENTS.ENTRY_TITLE' | translate }}</h1>
+      <p-button
+        icon="pi pi-arrow-left"
+        [label]="'QUESTION_ASSIGNMENTS.BACK' | translate"
+        severity="secondary"
+        (onClick)="back()"
+      />
+    </div>
+
+    <div class="card p-3 my-3">
+      <div class="row">
+        <div class="col-md-3">
+          <strong>{{ 'QUESTION_ASSIGNMENTS.BANK_TYPE' | translate }}</strong>
+          <div>
+            {{
+              localized(
+                workspace.questionBank.questionBankTypeNameAr,
+                workspace.questionBank.questionBankTypeNameEn
+              )
+            }}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <strong>{{ 'QUESTION_ASSIGNMENTS.MANAGEMENT' | translate }}</strong>
+          <div>
+            {{
+              localized(
+                workspace.questionBank.managementNameAr,
+                workspace.questionBank.managementNameEn
+              )
+            }}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <strong>{{ 'QUESTION_ASSIGNMENTS.JOB_TITLE' | translate }}</strong>
+          <div>
+            {{
+              localized(
+                workspace.questionBank.jobTitleNameAr,
+                workspace.questionBank.jobTitleNameEn
+              )
+            }}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <strong>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</strong>
+          <div>
+            {{
+              localized(
+                workspace.assignment.statusNameAr,
+                workspace.assignment.statusNameEn
+              )
+            }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col">
+          {{ 'QUESTION_ASSIGNMENTS.REQUIRED' | translate }}:
+          {{ workspace.progress.minimumQuestionCount }}
+        </div>
+        <div class="col">
+          {{ 'QUESTION_ASSIGNMENTS.ENTERED' | translate }}:
+          {{ workspace.progress.currentQuestionCount }}
+        </div>
+        <div class="col">
+          {{ 'QUESTION_ASSIGNMENTS.REMAINING' | translate }}:
+          {{ workspace.progress.remainingQuestionCount }}
+        </div>
+      </div>
+      <p-progressbar class="mt-2" [value]="percent()" />
+    </div>
+
+    @if (editable) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'QUESTION_ASSIGNMENTS.ADD' | translate"
+        (onClick)="add()"
+      />
+    }
+
+    <p-table class="d-block mt-3" [value]="workspace.questions">
+      <ng-template #header>
+        <tr>
+          <th>{{ 'QUESTION_ASSIGNMENTS.QUESTION' | translate }}</th>
+          <th>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</th>
+          <th>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</th>
+          <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
+          @if (editable) {
+            <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-question>
+        <tr>
+          <td>{{ localized(question.questionTextAr, question.questionTextEn) }}</td>
+          <td>{{ localized(question.questionTypeNameAr, question.questionTypeNameEn) }}</td>
+          <td>{{ localized(question.difficultyNameAr, question.difficultyNameEn) }}</td>
+          <td>{{ localized(question.statusNameAr, question.statusNameEn) }}</td>
+          @if (editable) {
+            <td>
+              <p-button icon="pi pi-pencil" [text]="true" (onClick)="edit(question)" />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                (onClick)="remove(question)"
+              />
+            </td>
+          }
+        </tr>
+      </ng-template>
+    </p-table>
+
+    @if (editable) {
+      <div class="mt-4 text-end">
+        <p-button
+          [label]="'QUESTION_ASSIGNMENTS.FINISH' | translate"
+          [disabled]="!workspace.progress.canFinish"
+          (onClick)="finish()"
+        />
+      </div>
+    }
+  }
+</div>
