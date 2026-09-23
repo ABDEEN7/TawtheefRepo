@@ -118,6 +118,7 @@ namespace Application.Operation
             private void RegisterInterviewServices()
             {
                 services.AddScoped<EvaluationAccessResolver>();
+                services.AddScoped<EvaluationSessionAccessResolver>();
                 services.AddScoped<CommitteeMemberEligibilityService>();
             }
 

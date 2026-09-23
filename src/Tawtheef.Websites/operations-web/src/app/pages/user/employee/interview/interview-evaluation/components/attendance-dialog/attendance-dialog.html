@@ -1,0 +1,46 @@
+<div class="d-flex flex-column gap-3 p-2">
+  <p class="text-muted mb-0">{{ 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.REVIEW_HINT' | translate }}</p>
+
+  <div class="card card-table">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-6">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_NAME' | translate }}</span>
+          <strong>{{ candidateName || '—' }}</strong>
+        </div>
+        <div class="col-6">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_QID' | translate }}</span>
+          <strong><bdi dir="ltr">{{ candidateQid || '—' }}</bdi></strong>
+        </div>
+        <div class="col-12">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.JOB' | translate }}</span>
+          <strong>{{ jobTitle || '—' }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <label class="form-label">{{ 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.STATUS_LABEL' | translate }}</label>
+    <p-select class="w-100" [options]="statusOptions" optionLabel="label" optionValue="value" [appendTo]="'body'"
+      [placeholder]="'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.STATUS_PLACEHOLDER' | translate"
+      [ariaLabel]="'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.STATUS_LABEL' | translate"
+      [(ngModel)]="status">
+      <ng-template #selectedItem let-selected>
+        <span>{{ selected?.label | translate }}</span>
+      </ng-template>
+      <ng-template #item let-option>
+        <span>{{ option.label | translate }}</span>
+      </ng-template>
+    </p-select>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+      {{ 'INTERVIEW_EVALUATION.CANCEL' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="confirm()">
+      {{ 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.CONFIRM' | translate }}
+    </button>
+  </div>
+</div>

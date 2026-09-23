@@ -13,7 +13,12 @@ import { JobQueryFilter } from '../../../job-management/models/job-query-filter.
 import { AppointmentModel } from '../models/appointment.model';
 import { InterviewType, ScheduleStatus } from '../models/enums';
 import { SchedulePlanPreviewModel } from '../models/plan-preview.model';
-import { CreationContextModel, RoomOptionModel, ScheduleListItemModel, ScheduleModel } from '../models/schedule.model';
+import {
+  CreationContextModel,
+  RoomOptionModel,
+  ScheduleListItemModel,
+  ScheduleModel,
+} from '../models/schedule.model';
 
 // The pickers are search-as-you-type: fired on every (debounced) keystroke, so they must not flip the global
 // loading overlay each time.
@@ -102,7 +107,11 @@ export class InterviewScheduleService {
   }
 
   searchRooms(search: string): Observable<RoomOptionModel[]> {
-    return this.http.get<RoomOptionModel[]>(this.endpoints.interviewSchedule.lookupRooms, { search: search || undefined }, SKIP_LOADING);
+    return this.http.get<RoomOptionModel[]>(
+      this.endpoints.interviewSchedule.lookupRooms,
+      { search: search || undefined },
+      SKIP_LOADING,
+    );
   }
 
   // ---- Schedules ----
@@ -125,11 +134,18 @@ export class InterviewScheduleService {
   }
 
   previewSlots(payload: PreviewSchedulePayload): Observable<SchedulePlanPreviewModel> {
-    return this.http.post<SchedulePlanPreviewModel>(this.endpoints.interviewSchedule.preview, payload, undefined, SKIP_LOADING);
+    return this.http.post<SchedulePlanPreviewModel>(
+      this.endpoints.interviewSchedule.preview,
+      payload,
+      undefined,
+      SKIP_LOADING,
+    );
   }
 
   listAppointments(interviewScheduleId: string): Observable<AppointmentModel[]> {
-    return this.http.get<AppointmentModel[]>(this.endpoints.interviewSchedule.appointments, { interviewScheduleId });
+    return this.http.get<AppointmentModel[]>(this.endpoints.interviewSchedule.appointments, {
+      interviewScheduleId,
+    });
   }
 
   createSchedule(payload: CreateSchedulePayload): Observable<string> {
@@ -162,6 +178,22 @@ export class InterviewScheduleService {
   }
 
   sendAppointmentNotification(appointmentId: string): Observable<void> {
-    return this.http.put<void>(this.endpoints.interviewSchedule.appointmentSendNotification, { appointmentId });
+    return this.http.put<void>(this.endpoints.interviewSchedule.appointmentSendNotification, {
+      appointmentId,
+    });
+  }
+
+  // AttendanceStatus mirrors Tawtheef.Domain.Entities.Interview.AttendanceStatus (Present=1, NoShow=2, Withdrew=3, Late=4).
+  recordAppointmentAttendance(appointmentId: string, attendanceStatus: number): Observable<void> {
+    return this.http.put<void>(this.endpoints.interviewSchedule.appointmentAttendance, {
+      appointmentId,
+      attendanceStatus,
+    });
+  }
+
+  startAppointmentInterview(appointmentId: string): Observable<void> {
+    return this.http.put<void>(this.endpoints.interviewSchedule.appointmentStartInterview, {
+      appointmentId,
+    });
   }
 }

@@ -3,6 +3,7 @@ using Application.Operation.Features.Employee.Interview.ResultReport.Queries;
 using Application.Operation.Features.Employee.Interview.ResultReport.Services;
 using Application.Operation.Features.Employee.Interview.OperationalIssue.DTOs;
 using FluentResults;
+using Tawtheef.Application.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -48,7 +49,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
             .OrderByDescending(i => i.CreatedDate)
             .Select(i => new OperationalIssueDto(
                 i.Id, i.InterviewAppointmentId, i.IssueType, i.Description, i.IsBlocking, i.Status,
-                i.ResolvedById, i.ResolvedAt, i.ResolutionNotes, i.CreatedDate))
+                i.ResolvedById, i.ResolvedAt.AsUtcOffset(), i.ResolutionNotes, i.CreatedDate.AsUtcOffset()))
             .ToListAsync(cancellationToken))
             .GroupBy(i => i.InterviewAppointmentId)
             .ToDictionary(g => g.Key, g => g.ToList());

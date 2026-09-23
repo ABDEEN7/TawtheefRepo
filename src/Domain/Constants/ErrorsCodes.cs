@@ -535,6 +535,7 @@ public class ErrorsCodes
     public const string InterviewAppointmentNotificationNotAllowed = "INTERVIEW_APPOINTMENT_NOTIFICATION_NOT_ALLOWED";
     public const string InterviewAppointmentAlreadyRescheduledOnce = "INTERVIEW_APPOINTMENT_ALREADY_RESCHEDULED_ONCE";
     public const string InterviewAppointmentNotEvaluable = "INTERVIEW_APPOINTMENT_NOT_EVALUABLE";
+    public const string InterviewAppointmentAttendanceForbidden = "INTERVIEW_APPOINTMENT_ATTENDANCE_FORBIDDEN";
     #endregion
 
     #region Interview - Member Evaluation
@@ -545,6 +546,7 @@ public class ErrorsCodes
     public const string InterviewMemberEvaluationRequiredCriterionMissing = "INTERVIEW_MEMBER_EVALUATION_REQUIRED_CRITERION_MISSING";
     public const string InterviewMemberEvaluationNotAssignedToAppointment = "INTERVIEW_MEMBER_EVALUATION_NOT_ASSIGNED_TO_APPOINTMENT";
     public const string InterviewMemberEvaluationSummaryAccessDenied = "INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED";
+    public const string InterviewEvaluationSessionAccessDenied = "INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED";
     #endregion
 
     #region Interview - Operational Issue
