@@ -1,0 +1,221 @@
+<div class="row mb-3 align-items-center">
+  <div class="col-md-6">
+    <p class="fw-bold text-primary mb-0">{{ 'INTERVIEW_EVALUATION.BADGE' | translate }}</p>
+    <h3 class="fw-bold mb-0">{{ 'INTERVIEW_EVALUATION.TITLE' | translate }}</h3>
+    <p class="fs-16 m-0">{{ 'INTERVIEW_EVALUATION.SUBTITLE' | translate }}</p>
+  </div>
+  <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined"
+      icon="pi pi-refresh"
+      (click)="service.loadSessions()"
+    >
+      {{ 'common.refresh' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="row align-items-end g-3">
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.SEARCH_LABEL' | translate }}</label>
+            <input
+              class="form-control"
+              [placeholder]="'INTERVIEW_EVALUATION.SEARCH_PLACEHOLDER' | translate"
+              [ngModel]="store.search()"
+              (ngModelChange)="service.setSearch($event)"
+            />
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.JOB_FILTER' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="store.jobOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_EVALUATION.JOB_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_EVALUATION.JOB_FILTER' | translate"
+              [ngModel]="store.jobFilter()"
+              (ngModelChange)="service.setJobFilter($event)"
+            />
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.TYPE_FILTER' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="typeOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_EVALUATION.TYPE_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_EVALUATION.TYPE_FILTER' | translate"
+              [ngModel]="store.typeFilter()"
+              (ngModelChange)="service.setTypeFilter($event)"
+            >
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.STATUS_FILTER' | translate }}</label>
+            <p-select
+              class="w-100"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="true"
+              [appendTo]="'body'"
+              [placeholder]="'INTERVIEW_EVALUATION.STATUS_FILTER' | translate"
+              [ariaLabel]="'INTERVIEW_EVALUATION.STATUS_FILTER' | translate"
+              [ngModel]="store.statusFilter()"
+              (ngModelChange)="service.setStatusFilter($event)"
+            >
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card rounded overflow-hidden">
+  <div class="table-responsive">
+    <p-table
+      [value]="store.pagedSessions()"
+      [loading]="store.listLoading()"
+      [rowHover]="true"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_DATE' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_TIME' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_JOB' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_COMMITTEE' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_LOCATION' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_CANDIDATES' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_PROGRESS' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.COLUMN_ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr class="cursor-pointer" (click)="service.openSession(row)">
+          <td>
+            @if (row.firstSessionDate) {
+              <bdi dir="ltr"
+                >{{ row.firstSessionDate | date: 'dd-MM-yyyy' }}
+                @if (row.lastSessionDate && row.lastSessionDate !== row.firstSessionDate) {
+                  - {{ row.lastSessionDate | date: 'dd-MM-yyyy' }}
+                }
+              </bdi>
+            } @else {
+              —
+            }
+          </td>
+          <td>
+            @if (row.earliestStartTime) {
+              <bdi dir="ltr"
+                >{{ timeOf(row.earliestStartTime) | date: 'h:mm a' }}
+                @if (row.latestEndTime) {
+                  - {{ timeOf(row.latestEndTime) | date: 'h:mm a' }}
+                }
+              </bdi>
+            } @else {
+              —
+            }
+          </td>
+          <td>{{ jobTitle(row) || '—' }}</td>
+          <td>{{ committeeName(row) || '—' }}</td>
+          <td>
+            @if (row.roomNames.length === 1) {
+              {{ row.roomNames[0] }}
+            } @else if (row.roomNames.length > 1) {
+              <span [pTooltip]="row.roomNames.join(', ')" tooltipPosition="top">
+                {{
+                  'INTERVIEW_EVALUATION.SESSION_LIST.MULTIPLE_LOCATIONS'
+                    | translate: { count: row.roomNames.length }
+                }}
+              </span>
+            } @else {
+              {{ interviewTypeLabel(row) | translate }}
+            }
+          </td>
+          <td>{{ row.candidatesCount }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2" style="min-width: 120px">
+              <div class="progress flex-grow-1" style="height: 6px">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  [style.width.%]="progressPercent(row)"
+                ></div>
+              </div>
+              <small class="text-muted"
+                ><bdi dir="ltr"
+                  >{{ row.completedAppointmentsCount }}/{{
+                    row.totalAssignedAppointmentsCount
+                  }}</bdi
+                ></small
+              >
+            </div>
+          </td>
+          <td (click)="$event.stopPropagation()">
+            <div class="action-buttons d-flex">
+              <button
+                type="button"
+                class="btn"
+                (click)="service.openSession(row)"
+                [pTooltip]="'INTERVIEW_EVALUATION.VIEW' | translate"
+                tooltipPosition="top"
+                [attr.aria-label]="'INTERVIEW_EVALUATION.VIEW' | translate"
+              >
+                <i class="hgi hgi-stroke hgi-view"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-muted">
+            {{ 'INTERVIEW_EVALUATION.SESSION_LIST.NO_RECORDS' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+@if (store.sessions().length > 0) {
+  <app-pagination
+    [currentPage]="store.currentPage()"
+    [totalItems]="store.sessions().length"
+    [itemsPerPage]="store.pageSize()"
+    (pageChanged)="service.onPageChange($event)"
+    (pageSizeChanged)="service.onPageSizeChange($event)"
+    class="w-100 mt-4"
+  >
+  </app-pagination>
+}

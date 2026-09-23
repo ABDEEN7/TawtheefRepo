@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Interview;
 using Tawtheef.Domain.Entities.Users;
@@ -72,7 +73,7 @@ public sealed class ListAppointmentEvaluationsQueryHandler(
                     m.Role,
                     evaluation?.Status,
                     evaluation?.TotalScore,
-                    evaluation?.SubmittedAt);
+                    evaluation?.SubmittedAt.AsUtcOffset());
             })
             .ToList();
 

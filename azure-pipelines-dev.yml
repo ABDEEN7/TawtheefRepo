@@ -1,0 +1,188 @@
+trigger:
+  branches:
+    include:
+      - Development_Sprint1
+
+pr: none
+
+pool:
+  vmImage: ubuntu-24.04
+
+stages:
+
+# ============================================================
+# BUILD ALL DEPLOYABLE APPLICATIONS
+# ============================================================
+- stage: Build
+  displayName: Build all applications
+
+  jobs:
+
+  # ==========================================================
+  # Operations Web
+  # ==========================================================
+  - job: BuildOperationsWeb
+    displayName: Build operations-web
+
+    steps:
+    - task: UseNode@1
+      displayName: Use Node.js 22
+      inputs:
+        version: '22.x'
+
+    - script: |
+        if [ -f package-lock.json ]; then
+          echo "package-lock.json found, using npm ci"
+          npm ci
+        else
+          echo "No package-lock.json found, using npm install"
+          npm install
+        fi
+      displayName: Install dependencies
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
+
+    - script: npm run build:pre-stage
+      displayName: Build operations-web
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web
+
+    - task: ArchiveFiles@2
+      displayName: Package operations-web
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/src/Tawtheef.Websites/operations-web/dist/operations-web/browser'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/operation-web.zip'
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish operation-web artifact
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/operation-web.zip'
+        artifact: operation-web
+
+
+  # ==========================================================
+  # Recruitment Web
+  # ==========================================================
+  - job: BuildRecruitmentWeb
+    displayName: Build recruitment-web
+
+    steps:
+    - task: UseNode@1
+      displayName: Use Node.js 22
+      inputs:
+        version: '22.x'
+
+    - script: |
+        if [ -f package-lock.json ]; then
+          echo "package-lock.json found, using npm ci"
+          npm ci
+        else
+          echo "No package-lock.json found, using npm install"
+          npm install
+        fi
+      displayName: Install dependencies
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
+
+    - script: npm run build:pre-stage
+      displayName: Build recruitment-web
+      workingDirectory: $(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web
+
+    - task: ArchiveFiles@2
+      displayName: Package recruitment-web
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/src/Tawtheef.Websites/recruitment-web/dist/recruitment-web/browser'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/recruitment-web.zip'
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish recruitment-web artifact
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/recruitment-web.zip'
+        artifact: recruitment-web
+
+
+  # ==========================================================
+  # Operations API
+  # ==========================================================
+  - job: BuildOperationsApi
+    displayName: Build Operations API
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use .NET 10
+      inputs:
+        packageType: sdk
+        version: '10.0.x'
+
+    - script: >
+        dotnet restore
+        src/Tawtheef.APIs/Operations.API/Operations.API.csproj
+      displayName: Restore Operations API
+
+    - script: >
+        dotnet publish
+        src/Tawtheef.APIs/Operations.API/Operations.API.csproj
+        --configuration Release
+        --no-restore
+        --output $(Build.ArtifactStagingDirectory)/operations-api
+      displayName: Publish Operations API
+
+    - task: ArchiveFiles@2
+      displayName: Package Operations API
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/operations-api'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/operation-api.zip'
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish operation-api artifact
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/operation-api.zip'
+        artifact: operation-api
+
+
+  # ==========================================================
+  # Recruitment API
+  # ==========================================================
+  - job: BuildRecruitmentApi
+    displayName: Build Recruitment API
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use .NET 10
+      inputs:
+        packageType: sdk
+        version: '10.0.x'
+
+    - script: >
+        dotnet restore
+        src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj
+      displayName: Restore Recruitment API
+
+    - script: >
+        dotnet publish
+        src/Tawtheef.APIs/Recruitment.API/Recruitment.API.csproj
+        --configuration Release
+        --no-restore
+        --output $(Build.ArtifactStagingDirectory)/recruitment-api
+      displayName: Publish Recruitment API
+
+    - task: ArchiveFiles@2
+      displayName: Package Recruitment API
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/recruitment-api'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/recruitment-api.zip'
+        replaceExistingArchive: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish recruitment-api artifact
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/recruitment-api.zip'
+        artifact: recruitment-api

@@ -12,13 +12,11 @@ namespace Application.Operation.Features.Employee.Interview.Evaluation.Services;
 // Resource-owner resolution for the Member Evaluation feature. InterviewEvaluation.{View,Manage}
 // is seeded only onto HrManager/EmployeeSuperAdmin, same as every other Interview permission pair -
 // an admin who wants a plain committee member (Employee/DepartmentManager) to submit their own
-// evaluations grants it via a custom role created on the Roles admin page.
-
-//Committee Member
-//   ↓
-//Has Evaluation permission
-//   ↓
-//But can evaluate only assigned Appointment
+// evaluations grants it via a custom role created on the Roles admin page instead of it being baked
+// onto a system role (system roles - IsSystemRole=true - can't be edited there at all). Whoever ends
+// up holding the permission, the attribute only opens the endpoint category; this resolver is what
+// actually restricts a caller to their own assigned appointment. Mirrors the existing
+// EmployeeJobAccessContextProvider/EmployeeJobAccessScope idiom used for Job self-service access.
 public sealed class EvaluationAccessResolver(
     IUnitOfWork unitOfWork, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor)
 {
@@ -56,5 +54,28 @@ public sealed class EvaluationAccessResolver(
         var user = httpContextAccessor.HttpContext?.User;
         return user is not null
             && (user.IsInRole(nameof(SystemRoleIds.HrManager)) || user.IsInRole(nameof(SystemRoleIds.EmployeeSuperAdmin)));
+    }
+
+    // Attendance registration / starting the interview are chair-administrative actions, distinct
+    // from GetAssignedMemberAsync's "own scoring form" ownership rule - a Chair may not even have
+    // CanSubmitEvaluation. Reuses the same HR/SuperAdmin bypass as the committee-summary rule.
+    public async Task<Result> EnsureChairOrBypassAsync(Guid interviewCommitteeId, CancellationToken cancellationToken)
+    {
+        if (HasSummaryRoleBypass())
+            return Result.Ok();
+
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId is null)
+            return Forbidden();
+
+        var isChair = await unitOfWork.GetEntityRepository<InterviewCommitteeMember>().DbSet
+            .AnyAsync(m => m.InterviewCommitteeId == interviewCommitteeId
+                && m.MemberUserId == currentUserId.Value && m.IsActive && m.Role == CommitteeRole.Chair, cancellationToken);
+
+        return isChair ? Result.Ok() : Forbidden();
+
+        static Result Forbidden() =>
+            Result.Fail(new Error(ErrorsCodes.InterviewAppointmentAttendanceForbidden)
+                .WithMetadata("StatusCode", StatusCodes.Status403Forbidden));
     }
 }

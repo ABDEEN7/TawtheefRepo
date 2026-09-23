@@ -550,6 +550,33 @@ export class EndpointsService {
     appointmentSendNotification: this.getFullUrl(
       '/InterviewSchedule/appointments/send-notification',
     ),
+    appointmentAttendance: this.getFullUrl('/InterviewSchedule/appointments/attendance'),
+    appointmentStartInterview: this.getFullUrl('/InterviewSchedule/appointments/start-interview'),
     lookupRooms: this.getFullUrl('/InterviewSchedule/lookups/rooms'),
+  };
+
+  interviewEvaluationSession = {
+    list: this.getFullUrl('/InterviewEvaluationSession'),
+    details: (id: string) => this.getFullUrl(`/InterviewEvaluationSession/${id}`),
+    appointments: (id: string) => this.getFullUrl(`/InterviewEvaluationSession/${id}/appointments`),
+  };
+
+  interviewMemberEvaluation = {
+    form: this.getFullUrl('/InterviewMemberEvaluation/form'),
+    summary: (appointmentId: string) =>
+      this.getFullUrl(`/InterviewMemberEvaluation/appointments/${appointmentId}/summary`),
+    context: (appointmentId: string) =>
+      this.getFullUrl(`/InterviewMemberEvaluation/appointments/${appointmentId}/context`),
+    draft: this.getFullUrl('/InterviewMemberEvaluation/draft'),
+    submit: this.getFullUrl('/InterviewMemberEvaluation/submit'),
+  };
+
+  interviewOperationalIssue = {
+    list: (appointmentId: string) =>
+      this.getFullUrl(`/InterviewOperationalIssue/appointments/${appointmentId}`),
+    create: this.getFullUrl('/InterviewOperationalIssue'),
+    resolve: this.getFullUrl('/InterviewOperationalIssue/resolve'),
+    waive: this.getFullUrl('/InterviewOperationalIssue/waive'),
+    blocking: this.getFullUrl('/InterviewOperationalIssue/blocking'),
   };
 }

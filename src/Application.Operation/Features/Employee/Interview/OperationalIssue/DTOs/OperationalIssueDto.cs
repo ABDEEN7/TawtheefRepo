@@ -10,6 +10,6 @@ public sealed record OperationalIssueDto(
     bool IsBlocking,
     OperationalIssueStatus Status,
     Guid? ResolvedById,
-    DateTime? ResolvedAt,
+    DateTimeOffset? ResolvedAt,
     string? ResolutionNotes,
-    DateTime CreatedDate);
+    DateTimeOffset CreatedDate);

@@ -1,0 +1,201 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToSession()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_EVALUATION.SESSION.BACK_TO_SESSION' | translate }}
+      </button>
+
+      <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn" (click)="manageIssues()">
+          <i class="hgi hgi-stroke hgi-alert-02 me-1"></i>{{ 'INTERVIEW_EVALUATION.ISSUES.TITLE' | translate }}
+        </button>
+        @if (store.candidateContext()?.hasChairOrBypassAccess) {
+          @if (store.selectedAppointment()?.attendanceStatus) {
+            <button type="button" class="btn btn-outline-success" disabled>
+              <i class="hgi hgi-stroke hgi-checkmark-circle-02 me-1"></i>{{ 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.REGISTERED' | translate }}
+            </button>
+          } @else {
+            <button type="button" class="btn btn-primary" (click)="openAttendanceDialog()">
+              <i class="hgi hgi-stroke hgi-checkmark-circle-02 me-1"></i>{{ 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.TITLE' | translate }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+
+    @if (store.selectedAppointment(); as appointment) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_NAME' | translate }}</span>
+          <strong>{{ candidateName(appointment) || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_QID' | translate }}</span>
+          <strong><bdi dir="ltr">{{ appointment.candidateQid || '—' }}</bdi></strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.JOB' | translate }}</span>
+          <strong>{{ jobTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.INTERVIEW_DATE' | translate }}</span>
+          <strong><bdi dir="ltr">{{ appointment.startAt | date: 'dd-MM-yyyy' }}</bdi></strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.TIME_RANGE' | translate }}</span>
+          <strong><bdi dir="ltr">{{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi></strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.COMMITTEE' | translate }}</span>
+          <strong>{{ committeeName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.ROOM' | translate }}</span>
+          <strong>{{ location(appointment) || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.APPOINTMENT_STATUS' | translate }}</span>
+          <span [class]="'pill ' + appointmentStatusPill(appointment.status)">{{ appointmentStatusLabel(appointment.status) | translate }}</span>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.ATTENDANCE' | translate }}</span>
+          @if (attendanceLabel(appointment)) {
+            <span [class]="'pill ' + attendancePill(appointment)">{{ attendanceLabel(appointment) | translate }}</span>
+          } @else {
+            <strong>{{ 'INTERVIEW_EVALUATION.CANDIDATE.NOT_REGISTERED' | translate }}</strong>
+          }
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.CANDIDATE.OVERALL_PROGRESS' | translate }}</span>
+          @if (overallProgress(); as progress) {
+            <strong><bdi dir="ltr">{{ progress.submitted }}/{{ progress.total }}</bdi> {{ 'INTERVIEW_EVALUATION.CANDIDATE.MEMBERS_SUBMITTED' | translate }}</strong>
+          } @else if (store.candidateForm()?.status; as myStatus) {
+            <span [class]="'pill ' + memberStatusPill(myStatus)">{{ memberStatusLabel(myStatus) | translate }}</span>
+          } @else {
+            <strong>—</strong>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (store.candidateForm(); as form) {
+  @if (!form.canEdit) {
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+      <i class="hgi hgi-stroke hgi-information-circle"></i>
+      @if (form.status === MemberEvaluationStatus.Submitted) {
+        {{ 'INTERVIEW_EVALUATION.CANDIDATE.LOCKED_SUBMITTED' | translate }}
+      } @else {
+        {{ 'INTERVIEW_EVALUATION.CANDIDATE.LOCKED_ATTENDANCE' | translate }}
+      }
+    </div>
+  }
+
+  @for (axis of form.axes; track axis.axisId) {
+    <div class="card card-table mb-3" [class.opacity-50]="!form.canEdit">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">{{ axisName(axis.axisNameAr, axis.axisNameEn) }}</h6>
+          <span class="text-muted">{{ 'INTERVIEW_EVALUATION.CANDIDATE.AXIS_MAX_SCORE' | translate }}: {{ axis.maxScore }}</span>
+        </div>
+        <div class="table-card rounded overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.CRITERION_COLUMN' | translate }}</th>
+                  <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.MAX_SCORE_COLUMN' | translate }}</th>
+                  <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.SCORE_COLUMN' | translate }}</th>
+                  <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.NOTES_COLUMN' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (criterion of axis.criteria; track criterion.criterionId) {
+                  <tr>
+                    <td>
+                      <div class="fw-semibold">
+                        {{ criterionName(criterion.nameAr, criterion.nameEn) }}
+                        @if (criterion.isRequired) { <span class="text-danger">*</span> }
+                      </div>
+                      @if (criterionDescription(criterion.descriptionAr, criterion.descriptionEn)) {
+                        <div class="text-muted small">{{ criterionDescription(criterion.descriptionAr, criterion.descriptionEn) }}</div>
+                      }
+                    </td>
+                    <td>{{ criterion.maxScore }}</td>
+                    <td style="min-width: 120px;">
+                      <p-inputNumber [(ngModel)]="criterion.score" [min]="0" [max]="criterion.maxScore"
+                        [minFractionDigits]="0" [maxFractionDigits]="2" [useGrouping]="false"
+                        [disabled]="!form.canEdit" [inputStyleClass]="'w-100'" class="w-100" />
+                    </td>
+                    <td style="min-width: 200px;">
+                      <input type="text" class="form-control" [(ngModel)]="criterion.notes" [disabled]="!form.canEdit" />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <label class="form-label">{{ 'INTERVIEW_EVALUATION.CANDIDATE.GENERAL_NOTES' | translate }}</label>
+      <textarea pTextarea rows="3" class="w-100" [(ngModel)]="form.generalNotes" [disabled]="!form.canEdit"></textarea>
+
+      @if (form.canEdit) {
+        <div class="d-flex justify-content-end gap-2 mt-3" *hasPermission="Permissions.InterviewEvaluation.Manage">
+          <button type="button" class="btn btn-outline-primary" [disabled]="store.candidateSaving()" (click)="saveDraft()">
+            {{ 'INTERVIEW_EVALUATION.CANDIDATE.SAVE_DRAFT' | translate }}
+          </button>
+          <button type="button" class="btn btn-primary" [disabled]="store.candidateSaving()" (click)="submit()">
+            {{ 'INTERVIEW_EVALUATION.CANDIDATE.SUBMIT' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+@if (store.candidateContext()?.hasChairOrBypassAccess && store.candidateSummary(); as summary) {
+  <div class="card card-table mb-3">
+    <div class="card-body">
+      <h6 class="fw-bold mb-3">{{ 'INTERVIEW_EVALUATION.CANDIDATE.COMMITTEE_SUMMARY_TITLE' | translate }}</h6>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.MEMBER_COLUMN' | translate }}</th>
+                <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.ROLE_COLUMN' | translate }}</th>
+                <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.MEMBER_STATUS_COLUMN' | translate }}</th>
+                <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.TOTAL_SCORE_COLUMN' | translate }}</th>
+                <th>{{ 'INTERVIEW_EVALUATION.CANDIDATE.SUBMITTED_AT_COLUMN' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (member of summary.members; track member.interviewCommitteeMemberId) {
+                <tr>
+                  <td>{{ store.isRtl() ? member.memberFullNameAr : (member.memberFullNameEn || member.memberFullNameAr) }}</td>
+                  <td>{{ memberRoleLabel(member.role) | translate }}</td>
+                  <td>
+                    @if (member.status !== null) {
+                      <span [class]="'pill ' + memberStatusPill(member.status)">{{ memberStatusLabel(member.status) | translate }}</span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td>{{ member.totalScore ?? '—' }}</td>
+                  <td>{{ member.submittedAt ? (member.submittedAt | date: 'dd-MM-yyyy HH:mm') : '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+}

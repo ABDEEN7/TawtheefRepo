@@ -1,0 +1,142 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToList()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_EVALUATION.SESSION.BACK_TO_LIST' | translate }}
+      </button>
+    </div>
+
+    @if (store.detailSchedule(); as schedule) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_JOB' | translate }}</span>
+          <strong>{{ jobTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_COMMITTEE' | translate }}</span>
+          <strong>{{ committeeName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_STATUS' | translate }}</span>
+          <span [class]="'pill ' + statusPill(schedule.status)">{{ statusLabel(schedule.status) | translate }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<div class="stat-cards mb-3">
+  <div class="stat-card blue">
+    <i class="hgi hgi-stroke hgi-user-group-02 stat-icon"></i>
+    <div class="stat-copy">
+      <div class="stat-label">{{ 'INTERVIEW_EVALUATION.SESSION.STATS.TOTAL' | translate }}</div>
+      <div class="stat-value">{{ sessionStats().total }}</div>
+    </div>
+  </div>
+  <div class="stat-card green">
+    <i class="hgi hgi-stroke hgi-checkmark-circle-02 stat-icon"></i>
+    <div class="stat-copy">
+      <div class="stat-label">{{ 'INTERVIEW_EVALUATION.SESSION.STATS.COMPLETE' | translate }}</div>
+      <div class="stat-value">{{ sessionStats().complete }}</div>
+    </div>
+  </div>
+  <div class="stat-card gold">
+    <i class="hgi hgi-stroke hgi-play stat-icon"></i>
+    <div class="stat-copy">
+      <div class="stat-label">{{ 'INTERVIEW_EVALUATION.SESSION.STATS.UNDER_EVALUATION' | translate }}</div>
+      <div class="stat-value">{{ sessionStats().underEvaluation }}</div>
+    </div>
+  </div>
+  <div class="stat-card rose">
+    <i class="hgi hgi-stroke hgi-clock-01 stat-icon"></i>
+    <div class="stat-copy">
+      <div class="stat-label">{{ 'INTERVIEW_EVALUATION.SESSION.STATS.AWAITING' | translate }}</div>
+      <div class="stat-value">{{ sessionStats().awaiting }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_EVALUATION.SESSION.APPOINTMENTS_TITLE' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="store.detailAppointments()" [loading]="store.detailLoading()" [rowHover]="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_CANDIDATE' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_TIME' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_LOCATION' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_SCHEDULE_STATUS' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_ATTENDANCE_STATUS' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.EVALUATION_PROGRESS' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.COLUMN_ACTIONS' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-appointment>
+            <tr>
+              <td>
+                <div class="fw-semibold">{{ candidateName(appointment) || '—' }}</div>
+                @if (appointment.candidateQid) {
+                  <small class="text-muted">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_QID' | translate }}: <bdi dir="ltr">{{ appointment.candidateQid }}</bdi></small>
+                }
+              </td>
+              <td><bdi dir="ltr">{{ appointment.startAt | date: 'dd-MM-yyyy' }} · {{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi></td>
+              <td>{{ location(appointment) || '—' }}</td>
+              <td>
+                <span [class]="'pill ' + appointmentStatusPill(appointment.status)">
+                  {{ appointmentStatusLabel(appointment.status) | translate }}
+                </span>
+              </td>
+              <td>
+                @if (attendanceLabel(appointment); as label) {
+                  <span [class]="'pill ' + attendancePill(appointment)">{{ label | translate }}</span>
+                } @else {
+                  <span class="text-muted">{{ 'INTERVIEW_EVALUATION.CANDIDATE.NOT_REGISTERED' | translate }}</span>
+                }
+              </td>
+              <td>
+                @if (evaluationProgress(appointment); as progress) {
+                  <bdi dir="ltr">{{ progress.submitted }}/{{ progress.total }}</bdi>
+                } @else {
+                  —
+                }
+              </td>
+              <td (click)="$event.stopPropagation()">
+                <div class="action-buttons d-flex">
+                  @if (canStartOrContinue(appointment)) {
+                    <button type="button" class="btn" (click)="startOrContinue(appointment)"
+                      [pTooltip]="startOrContinueLabel(appointment) | translate" tooltipPosition="top">
+                      <i class="hgi hgi-stroke hgi-task-edit-01"></i>
+                    </button>
+                  }
+                  <button type="button" class="btn" (click)="viewDetails(appointment)"
+                    [pTooltip]="'INTERVIEW_EVALUATION.SESSION.APPOINTMENT_DETAILS' | translate" tooltipPosition="top">
+                    <i class="hgi hgi-stroke hgi-view"></i>
+                  </button>
+                  @if (appointment.invitationId) {
+                    <button type="button" class="btn position-relative" (click)="manageIssues(appointment)"
+                      [pTooltip]="'INTERVIEW_EVALUATION.ISSUES.TITLE' | translate" tooltipPosition="top">
+                      <i class="hgi hgi-stroke hgi-alert-02"></i>
+                      @if (totalIssuesCount(appointment); as total) {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                          [class.bg-danger]="openIssuesCount(appointment) > 0" [class.bg-secondary]="openIssuesCount(appointment) === 0">
+                          {{ total }}
+                        </span>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.SESSION.NO_APPOINTMENTS' | translate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
