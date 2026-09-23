@@ -170,6 +170,8 @@ export const portalRoutes = {
   get questionBanks() {
     return this.portal + '/question-banks';
   },
+  get questionBankAssignments() { return this.portal + '/question-bank-assignments'; },
+  questionBankAssignmentQuestions(id: string) { return this.questionBankAssignments + `/${id}/questions`; },
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
   },

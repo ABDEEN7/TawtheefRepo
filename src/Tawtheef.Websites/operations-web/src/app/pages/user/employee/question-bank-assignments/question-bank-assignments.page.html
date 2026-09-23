@@ -1,0 +1,50 @@
+<div class="container-fluid py-4">
+  <h1>{{ 'QUESTION_ASSIGNMENTS.TITLE' | translate }}</h1>
+
+  <p-table [value]="assignments()" [loading]="loading()" responsiveLayout="scroll">
+    <ng-template #header>
+      <tr>
+        <th>{{ 'QUESTION_ASSIGNMENTS.BANK_TYPE' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.MANAGEMENT' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.JOB_TITLE' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.MINIMUM' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.ENTERED' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.ASSIGNED_AT' | translate }}</th>
+        <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-assignment>
+      <tr>
+        <td>
+          {{
+            localized(
+              assignment.questionBankTypeNameAr,
+              assignment.questionBankTypeNameEn
+            )
+          }}
+        </td>
+        <td>
+          {{ localized(assignment.managementNameAr, assignment.managementNameEn) }}
+        </td>
+        <td>{{ localized(assignment.jobTitleNameAr, assignment.jobTitleNameEn) }}</td>
+        <td>{{ assignment.minimumQuestionCount }}</td>
+        <td>{{ assignment.currentQuestionCount }}</td>
+        <td>
+          <p-tag [value]="localized(assignment.statusNameAr, assignment.statusNameEn)" />
+        </td>
+        <td>{{ assignment.assignedAt | date: 'mediumDate' }}</td>
+        <td>
+          <p-button [label]="action(assignment) | translate" (onClick)="open(assignment)" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="8">{{ 'QUESTION_ASSIGNMENTS.EMPTY' | translate }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
