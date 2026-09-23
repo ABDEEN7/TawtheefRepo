@@ -45,29 +45,37 @@ export const employeeRoutes: Routes = [
     path: portalRoutes.createTestSlotPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'create' },
-    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
-      .then(m => m.TestSlotCreatePage)
+    loadComponent: () =>
+      import('./test-slots-management/test-slot-create/test-slot-create.page').then(
+        (m) => m.TestSlotCreatePage,
+      ),
   },
   {
     path: portalRoutes.editTestSlotPath,
     canActivate: [permissionGuard, testSlotEditStatusGuard],
     data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'edit' },
-    loadComponent: () => import('./test-slots-management/test-slot-create/test-slot-create.page')
-      .then(m => m.TestSlotCreatePage)
+    loadComponent: () =>
+      import('./test-slots-management/test-slot-create/test-slot-create.page').then(
+        (m) => m.TestSlotCreatePage,
+      ),
   },
   {
     path: portalRoutes.viewTestSlotPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSlots.View] },
-    loadComponent: () => import('./test-slots-management/test-slot-details/test-slot-details.page')
-      .then(m => m.TestSlotDetailsPage)
+    loadComponent: () =>
+      import('./test-slots-management/test-slot-details/test-slot-details.page').then(
+        (m) => m.TestSlotDetailsPage,
+      ),
   },
   {
     path: portalRoutes.testSlotsManagementPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSlots.View] },
-    loadComponent: () => import('./test-slots-management/test-slots-management.component')
-      .then(m => m.TestSlotsManagementComponent)
+    loadComponent: () =>
+      import('./test-slots-management/test-slots-management.component').then(
+        (m) => m.TestSlotsManagementComponent,
+      ),
   },
   {
     path: 'dashboard',
@@ -399,7 +407,10 @@ export const employeeRoutes: Routes = [
     path: 'question-bank-requests/:id',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankRequests.View] },
-    loadComponent: () => import('./question-bank-requests/question-bank-request-details.page').then(m => m.QuestionBankRequestDetailsPage)
+    loadComponent: () =>
+      import('./question-bank-requests/question-bank-request-details.page').then(
+        (m) => m.QuestionBankRequestDetailsPage,
+      ),
   },
   {
     path: 'question-bank-requests',
@@ -470,6 +481,18 @@ export const employeeRoutes: Routes = [
     loadComponent: () =>
       import('./interview/interview-schedule/interview-schedule.page').then(
         (m) => m.InterviewSchedulePage,
+      ),
+  },
+  {
+    path: 'start-interview',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [Permissions.InterviewEvaluation.View, Permissions.InterviewEvaluation.Manage],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-evaluation/interview-evaluation.page').then(
+        (m) => m.InterviewEvaluationPage,
       ),
   },
 ];
