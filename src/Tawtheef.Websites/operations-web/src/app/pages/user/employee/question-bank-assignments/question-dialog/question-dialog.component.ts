@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import {
   AssignmentQuestion,
+  AssignmentOption,
   QuestionTypes,
 } from '../models/question-bank-assignment.models';
 
@@ -64,7 +65,7 @@ export class QuestionDialogComponent {
     questionTextEn: [''],
     explanationAr: [''],
     explanationEn: [''],
-    options: this.fb.array([]),
+    options: this.fb.array<AssignmentOption>([]),
   });
 
   get options(): FormArray {
@@ -112,8 +113,8 @@ export class QuestionDialogComponent {
     const hasQuestion = !!(value.questionTextAr?.trim() || value.questionTextEn?.trim());
     const hasValidOptions =
       value.options.every(
-        (option) => !!(option.optionTextAr?.trim() || option.optionTextEn?.trim()),
-      ) && value.options.filter((option) => option.isCorrect).length === 1;
+        (option) => !!(option?.optionTextAr?.trim() || option?.optionTextEn?.trim()),
+      ) && value.options.filter((option) => option?.isCorrect).length === 1;
 
     if (this.form.valid && hasQuestion && hasValidOptions) {
       this.ref.close(value);

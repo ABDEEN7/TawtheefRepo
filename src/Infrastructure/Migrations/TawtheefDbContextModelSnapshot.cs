@@ -547,6 +547,13 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -1873868507,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-assignments.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -2132548858,
                             ClaimType = "permission",
                             ClaimValue = "question-bank-requests.assign",
@@ -649,6 +656,13 @@ namespace Tawtheef.Infrastructure.Migrations
                             ClaimType = "permission",
                             ClaimValue = "users.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1769273956,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-assignments.manage",
+                            RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
                         },
                         new
                         {
@@ -18360,6 +18374,18 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "طلبات بنوك الأسئلة - إسناد",
                             NameEn = "Question Bank Requests - Assign"
+                        },
+                        new
+                        {
+                            Id = new Guid("0e00482c-788c-ef59-ac2b-8404b84e2bf3"),
+                            BackendName = "question-bank-assignments.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 88,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "مهام بنوك الأسئلة - إدارة",
+                            NameEn = "Question Bank Assignments - Manage"
                         },
                         new
                         {
