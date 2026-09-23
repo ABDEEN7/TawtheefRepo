@@ -1,6 +1,5 @@
 {
   "server-error.EXAM_CREATED_DATE_RANGE_INVALID": "Created From cannot be later than Created To.",
-  "server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB": "There is already an exam request for this job awaiting approval.",
   "server-error.TEST_SLOT_TITLE_AR_ALREADY_EXISTS": "An exam period with the same Arabic title already exists.",
   "server-error.TEST_SLOT_TITLE_EN_ALREADY_EXISTS": "An exam period with the same English title already exists.",
   "server-error.TEST_SLOT_ROOM_NOT_AVAILABLE": "The selected room is not available.",

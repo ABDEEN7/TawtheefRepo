@@ -1,6 +1,5 @@
 {
   "server-error.EXAM_CREATED_DATE_RANGE_INVALID": "لا يمكن أن يكون تاريخ الإنشاء من بعد تاريخ الإنشاء إلى.",
-  "server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB": "يوجد طلب اختبار لهذه الوظيفة بانتظار الموافقة",
   "server-error.TEST_SLOT_TITLE_AR_ALREADY_EXISTS": "توجد فترة اختبار بنفس العنوان العربي.",
   "server-error.TEST_SLOT_TITLE_EN_ALREADY_EXISTS": "توجد فترة اختبار بنفس العنوان الإنجليزي.",
   "server-error.TEST_SLOT_ROOM_NOT_AVAILABLE": "القاعة المحددة غير متاحة.",
