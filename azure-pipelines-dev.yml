@@ -189,6 +189,29 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/recruitment-api.zip'
         artifact: recruitment-api
 
+- stage: TestPrivateAgent
+  displayName: Test private agent
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+  - job: TestConnectivity
+    displayName: Test private App Service access
+
+    pool:
+      name: Tawtheef-Private-Agents
+
+    steps:
+    - powershell: |
+        Resolve-DnsName app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
+
+        Test-NetConnection `
+          app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net `
+          -Port 443
+
+        curl.exe -I `
+          https://app-tawtheef-operations-api-dev-01-frcpgze6cva6g7bs.scm.qatarcentral-01.azurewebsites.net
+      displayName: Test SCM connectivity
 
 # ============================================================
 # DEPLOY DEV
@@ -201,7 +224,7 @@ stages:
 - stage: Deploy_DEV
   displayName: Deploy DEV
 
-  dependsOn: Build
+  dependsOn: TestPrivateAgent
 
   condition: >
     and(
