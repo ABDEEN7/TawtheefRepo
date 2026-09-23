@@ -438,7 +438,8 @@ export class EndpointsService {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
     details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
-    eligibleEmployees: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
+    eligibleEmployees: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
     assignments: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/assignments`),
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
@@ -570,5 +571,11 @@ export class EndpointsService {
     resolve: this.getFullUrl('/InterviewOperationalIssue/resolve'),
     waive: this.getFullUrl('/InterviewOperationalIssue/waive'),
     blocking: this.getFullUrl('/InterviewOperationalIssue/blocking'),
+  };
+  interviewResultReport = {
+    list: this.getFullUrl('/InterviewResultReport'),
+    bySchedule: (scheduleId: string) =>
+      this.getFullUrl(`/InterviewResultReport/schedule/${scheduleId}`),
+    approve: this.getFullUrl('/InterviewResultReport/approve'),
   };
 }

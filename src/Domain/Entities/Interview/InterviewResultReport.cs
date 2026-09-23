@@ -9,6 +9,9 @@ namespace Tawtheef.Domain.Entities.Interview;
 [Table(nameof(InterviewResultReport), Schema = Schemas.Interview)]
 public class InterviewResultReport : EventEntity
 {
+    // serial Num,Code (REP-INT-<year>-<number>).
+    public int Number { get; private set; }
+    public string Code { get; private set; } = null!;
     public Guid InterviewScheduleId { get; set; }
     public InterviewSchedule? InterviewSchedule { get; set; }
 

@@ -251,6 +251,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 
         // Feeds InterviewCommittee.Number (and through it the COM-<year>-<number> Code).
         builder.HasSequence<int>(InterviewCommitteeConfiguration.CommitteeNumberSequence, Schemas.Interview);
+        // Feeds InterviewResultReport.Number (REP-INT-<year>-<number>)
+        builder.HasSequence<int>(InterviewResultReportConfiguration.ReportNumberSequence, Schemas.Interview);
 
         // Notification table specific indexes
         builder.Entity<Notification>()

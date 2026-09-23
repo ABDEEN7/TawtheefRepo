@@ -19,12 +19,12 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
     public async Task<IResult<ResultReportDto>> Handle(GetResultReportByScheduleQuery request, CancellationToken cancellationToken)
     {
         var report = await unitOfWork.GetEntityRepository<InterviewResultReport>().DbSet
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(r => r.InterviewSchedule).ThenInclude(s => s!.Job).ThenInclude(j => j!.JobTitle)
-            .Include(r => r.Candidates).ThenInclude(c => c.Axes).ThenInclude(a => a.InterviewTemplateEvaluationAxis).ThenInclude(ax => ax!.InterviewEvaluationAxis)
-            .Include(r => r.Candidates).ThenInclude(c => c.InterviewAppointment).ThenInclude(a => a!.Invitation).ThenInclude(i => i!.Applicant).ThenInclude(a => a!.Profile)
-            .FirstOrDefaultAsync(r => r.InterviewScheduleId == request.ScheduleId, cancellationToken);
+    .AsNoTracking()
+    .AsSplitQuery()
+    .Include(r => r.InterviewSchedule).ThenInclude(s => s!.Job).ThenInclude(j => j!.JobTitle)
+    .Include(r => r.Candidates).ThenInclude(c => c.Axes).ThenInclude(a => a.InterviewTemplateEvaluationAxis).ThenInclude(ax => ax!.InterviewEvaluationAxis)
+    .Include(r => r.Candidates).ThenInclude(c => c.InterviewAppointment).ThenInclude(a => a!.Invitation).ThenInclude(i => i!.Applicant).ThenInclude(a => a!.Profile)
+    .FirstOrDefaultAsync(r => r.InterviewScheduleId == request.ScheduleId, cancellationToken);
 
         if (report is null)
             return Result.Fail<ResultReportDto>(new Error(ErrorsCodes.InterviewResultReportNotFound));
@@ -66,12 +66,14 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
                     c.InterviewAppointmentId,
                     c.InterviewAppointment?.Invitation?.Applicant?.FullNameAr ?? string.Empty,
                     c.InterviewAppointment?.Invitation?.Applicant?.FullNameEn,
+                    c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalNumber,
                     c.FinalScore,
                     c.QualificationScore,
                     c.IsQualified,
                     c.FinalDecision,
+                    c.DecisionReason,
                     suggestedDecision,
-                    c.SnapshotAt,
+                    c.SnapshotAt.AsUtcOffset(),
                     issuesByAppointment.GetValueOrDefault(c.InterviewAppointmentId, []),
                     c.Axes
                         .Select(a => new ResultCandidateAxisDto(
@@ -87,6 +89,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
 
         var dto = new ResultReportDto(
             report.Id,
+            report.Code,
             report.InterviewScheduleId,
             report.InterviewSchedule.TitleAr,
             report.InterviewSchedule.TitleEn,
@@ -95,7 +98,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
             report.AppliedQualificationScore,
             report.Status,
             report.ApprovedById,
-            report.ApprovedAt,
+            report.ApprovedAt.AsUtcOffset(),
             report.DecisionNotes,
             candidates);
 

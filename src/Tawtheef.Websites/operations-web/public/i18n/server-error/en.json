@@ -404,5 +404,13 @@
   "server-error.INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED": "You don't have access to this committee's evaluation summary.",
   "server-error.INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED": "You don't have access to this interview session.",
   "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND": "The operational issue was not found.",
-  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "This operational issue has already been resolved or waived."
+  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "This operational issue has already been resolved or waived.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_FOUND": "The interview result report was not found.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_UNDER_REVIEW": "This result report is no longer under review.",
+  "server-error.INTERVIEW_RESULT_CANDIDATE_DECISION_MISSING": "A final decision is required for every candidate in the report.",
+  "server-error.INTERVIEW_RESULT_CANDIDATE_NOT_QUALIFIED_FOR_DECISION": "A candidate who did not reach the qualification score can only be rejected.",
+  "server-error.INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE": "The report cannot be approved while a candidate has an open blocking operational issue.",
+  "server-error.INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED": "The interview template's calculation method is not supported for result reports.",
+  "server-error.INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING": "No application status is mapped to one of the selected final decisions.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "The result report is not in a state that allows rescheduling."
 }

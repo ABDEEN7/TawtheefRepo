@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.ResultReport.Handlers.Queries;
@@ -24,14 +25,16 @@ public sealed class ListResultReportsQueryHandler(IUnitOfWork unitOfWork)
             .OrderByDescending(r => r.CreatedDate)
             .Select(r => new ResultReportListItemDto(
                 r.Id,
+                r.Code,
                 r.InterviewScheduleId,
                 r.InterviewSchedule!.TitleAr,
                 r.InterviewSchedule.TitleEn,
                 r.InterviewSchedule.Job!.JobTitle!.JobNameAr,
                 r.InterviewSchedule.Job.JobTitle.JobNameEn,
+                r.AppliedQualificationScore,
                 r.Status,
                 r.Candidates.Count,
-                r.ApprovedAt))
+                r.ApprovedAt.AsUtcOffset()))
             .ToListAsync(cancellationToken);
 
         return Result.Ok(reports);

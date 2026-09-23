@@ -495,4 +495,19 @@ export const employeeRoutes: Routes = [
         (m) => m.InterviewEvaluationPage,
       ),
   },
+  {
+    path: 'approve-interview',
+    canActivate: [permissionGuard],
+    data: {
+      permissions: [
+        Permissions.InterviewResultReport.View,
+        Permissions.InterviewResultReport.Manage,
+      ],
+      requiredAll: false,
+    },
+    loadComponent: () =>
+      import('./interview/interview-result-report/interview-result-report.page').then(
+        (m) => m.InterviewResultReportPage,
+      ),
+  },
 ];

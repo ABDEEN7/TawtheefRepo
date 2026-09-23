@@ -1,0 +1,164 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backToList()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.BACK_TO_LIST' | translate }}
+      </button>
+
+      @if (store.isUnderReview()) {
+        <div *hasPermission="Permissions.InterviewResultReport.Manage">
+          <button type="button" class="btn btn-primary" [disabled]="!canApprove()" (click)="approve()">
+            <i class="hgi hgi-stroke hgi-checkmark-circle-02 me-1"></i>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.APPROVE' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SUMMARY_TITLE' | translate }}</h5>
+    @if (store.report(); as report) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SERIAL' | translate }}</span>
+          <strong><bdi dir="ltr">{{ report.code }}</bdi></strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.JOB' | translate }}</span>
+          <strong>{{ jobName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SCHEDULE' | translate }}</span>
+          <strong>{{ scheduleTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.QUALIFICATION_SCORE' | translate }}</span>
+          <strong>{{ report.appliedQualificationScore !== null ? (report.appliedQualificationScore | number: '1.0-2') : '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATE_COUNT' | translate }}</span>
+          <strong>{{ report.candidates.length }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.STATUS' | translate }}</span>
+          <span [class]="'pill ' + statusPill(report.status)">{{ statusLabel(report.status) | translate }}</span>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.APPROVE_DATE' | translate }}</span>
+          <strong>
+            @if (report.approvedAt) {
+              <bdi dir="ltr">{{ report.approvedAt | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+            } @else {
+              —
+            }
+          </strong>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (store.isUnderReview() && hasOpenBlockingIssue()) {
+  <div class="alert alert-warning d-flex align-items-center gap-2 mb-3">
+    <i class="hgi hgi-stroke hgi-alert-02"></i>
+    {{ 'INTERVIEW_RESULT_REPORT.DETAIL.BLOCKED_BY_ISSUE' | translate }}
+  </div>
+}
+
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATES_TITLE' | translate }}</h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="store.report()?.candidates ?? []" [loading]="store.reportLoading()" [rowHover]="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_CANDIDATE' | translate }}</th>
+              <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_SCORE' | translate }}</th>
+              <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_QUALIFICATION' | translate }}</th>
+              <th style="min-width: 240px;">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_DECISION' | translate }}</th>
+              <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_AXES_SCORES' | translate }}</th>
+              <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_NOTES' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-candidate>
+            <tr>
+              <td>
+                <div class="fw-semibold">{{ candidateName(candidate) || '—' }}</div>
+                @if (candidate.candidateQid) {
+                  <small class="text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATE_QID' | translate }}: <bdi dir="ltr">{{ candidate.candidateQid }}</bdi></small>
+                }
+              </td>
+              <td class="fw-semibold">{{ candidate.finalScore | number: '1.0-2' }}</td>
+              <td>
+                <span [class]="'pill ' + (candidate.isQualified ? 'success' : 'danger')">
+                  {{ (candidate.isQualified ? 'INTERVIEW_RESULT_REPORT.QUALIFIED' : 'INTERVIEW_RESULT_REPORT.NOT_QUALIFIED') | translate }}
+                </span>
+              </td>
+              <td>
+                @if (editable()) {
+                  <p-select class="w-100" [options]="decisionOptions(candidate)" optionLabel="label" optionValue="value"
+                    optionDisabled="disabled" [appendTo]="'body'"
+                    [ariaLabel]="'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_DECISION' | translate"
+                    [ngModel]="store.decisions()[candidate.id]" (ngModelChange)="service.setDecision(candidate.id, $event)">
+                    <ng-template #selectedItem let-selected>
+                      <span>{{ selected?.label | translate }}</span>
+                    </ng-template>
+                    <ng-template #item let-option>
+                      <span>{{ option.label | translate }}</span>
+                    </ng-template>
+                  </p-select>
+                  @if (isOverridden(candidate)) {
+                    <input type="text" class="form-control form-control-sm mt-2" maxlength="2000"
+                      [placeholder]="'INTERVIEW_RESULT_REPORT.DETAIL.REASON_PLACEHOLDER' | translate"
+                      [attr.aria-label]="'INTERVIEW_RESULT_REPORT.DETAIL.REASON_PLACEHOLDER' | translate"
+                      [ngModel]="store.reasons()[candidate.id]" (ngModelChange)="service.setReason(candidate.id, $event)" />
+                  }
+                } @else if (candidate.finalDecision) {
+                  <span [class]="'pill ' + decisionPill(candidate.finalDecision)">{{ decisionLabel(candidate.finalDecision) | translate }}</span>
+                  @if (candidate.decisionReason) {
+                    <div class="text-muted small mt-1 text-break">{{ candidate.decisionReason }}</div>
+                  }
+                } @else {
+                  —
+                }
+              </td>
+              <td>
+                @for (axis of candidate.axes; track axis.axisId) {
+                  <div class="d-flex justify-content-between gap-3 small">
+                    <span>{{ axisName(axis) || '—' }}</span>
+                    <strong [class.text-danger]="axis.qualificationMet === false"
+                      [pTooltip]="axis.qualificationScore !== null ? ('INTERVIEW_RESULT_REPORT.DETAIL.AXIS_QUALIFICATION_SCORE' | translate: { score: axis.qualificationScore }) : ''"
+                      tooltipPosition="top">{{ axis.score | number: '1.0-2' }}</strong>
+                  </div>
+                } @empty {
+                  —
+                }
+              </td>
+              <td>
+                @if (candidate.operationalIssues.length) {
+                  <div class="action-buttons d-flex">
+                    <button type="button" class="btn position-relative" (click)="viewNotes(candidate)"
+                      [pTooltip]="'INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE' | translate" tooltipPosition="top"
+                      [attr.aria-label]="'INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE' | translate">
+                      <i class="hgi hgi-stroke hgi-alert-02"></i>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                        [class.bg-danger]="openIssuesCount(candidate) > 0" [class.bg-secondary]="openIssuesCount(candidate) === 0">
+                        {{ candidate.operationalIssues.length }}
+                      </span>
+                    </button>
+                  </div>
+                } @else {
+                  —
+                }
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.NO_CANDIDATES' | translate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -404,5 +404,13 @@
   "server-error.INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED": "ليس لديك صلاحية الوصول إلى ملخص تقييم هذه اللجنة.",
   "server-error.INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED": "ليس لديك صلاحية الوصول إلى هذه الجلسة.",
   "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND": "لم يتم العثور على المشكلة التشغيلية.",
-  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "تم حل هذه المشكلة التشغيلية أو التنازل عنها مسبقًا."
+  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "تم حل هذه المشكلة التشغيلية أو التنازل عنها مسبقًا.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_FOUND": "لم يتم العثور على تقرير نتائج المقابلات.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_UNDER_REVIEW": "تقرير النتائج لم يعد قيد المراجعة.",
+  "server-error.INTERVIEW_RESULT_CANDIDATE_DECISION_MISSING": "يجب تحديد القرار النهائي لكل مرشح في التقرير.",
+  "server-error.INTERVIEW_RESULT_CANDIDATE_NOT_QUALIFIED_FOR_DECISION": "المرشح الذي لم يحقق درجة التأهيل يمكن رفضه فقط.",
+  "server-error.INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE": "لا يمكن اعتماد التقرير لوجود مشكلة تشغيلية مانعة مفتوحة لأحد المرشحين.",
+  "server-error.INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED": "طريقة الاحتساب في نموذج المقابلة غير مدعومة لتقارير النتائج.",
+  "server-error.INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING": "لا توجد حالة طلب مرتبطة بأحد القرارات النهائية المختارة.",
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "تقرير النتائج ليس في حالة تسمح بإعادة الجدولة."
 }

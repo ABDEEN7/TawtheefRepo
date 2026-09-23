@@ -1,0 +1,10 @@
+<!-- interview-evaluation is loaded too for its operational-issue type/status labels (reused, not copied). -->
+<div [i18nNamespace]="['pages/employee/interview-result-report', 'pages/employee/interview-evaluation']"
+  [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+  @if (store.view() === 'list') {
+    <app-reports-list />
+  }
+  @if (store.view() === 'report') {
+    <app-report-detail />
+  }
+</div>
