@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ProgressBar } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
+import { Observable } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { routes } from '../../../../routes/routes';
@@ -116,12 +117,16 @@ export class QuestionEntryPage {
       data: { question },
     });
 
+    if (!ref) {
+      return;
+    }
+
     ref.onClose.subscribe((input?: QuestionInput) => {
       if (!input) {
         return;
       }
 
-      const request = question
+      const request: Observable<unknown> = question
         ? this.service.edit(this.assignmentId, question.itemId, input)
         : this.service.add(this.assignmentId, input);
 
