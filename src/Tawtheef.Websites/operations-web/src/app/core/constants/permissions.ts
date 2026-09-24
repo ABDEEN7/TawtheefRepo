@@ -162,6 +162,11 @@ export const Permissions = {
     ViewAccessCode: 'test-slots.view-access-code',
     ManagePeriod: 'test-slots.manage-period',
   },
+  TestSessions: {
+    View: 'test-sessions.view',
+    Create: 'test-sessions.create',
+    WorkflowActions: 'testSessionsWorkflowActions',
+  },
 
   QuestionBanks: {
     View: 'question-banks.view',

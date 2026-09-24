@@ -425,6 +425,11 @@ export class EndpointsService {
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };
 
+  testSessions = {
+    list: this.getFullUrl('/test-sessions'),
+    lookups: this.getFullUrl('/test-sessions/lookups'),
+  };
+
   questionBanks = {
     list: this.getFullUrl('/questionbanks'),
     lookups: {

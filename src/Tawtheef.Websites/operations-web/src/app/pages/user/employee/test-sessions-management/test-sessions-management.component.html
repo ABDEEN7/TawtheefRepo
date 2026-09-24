@@ -1,0 +1,263 @@
+<section class="management-list-shell" i18nNamespace="pages/employee/test-sessions-management">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row align-items-center mb-4">
+        <div class="col-lg-6 col-md-12">
+          <h3 class="fw-bold mb-0">{{ 'TEST_SESSIONS.TITLE' | translate }}</h3>
+          <p class="text-muted mt-2 mb-0">{{ 'TEST_SESSIONS.DESCRIPTION' | translate }}</p>
+        </div>
+        <div class="col-lg-6 col-md-12 d-flex justify-content-lg-end mt-3 mt-lg-0">
+          <button pButton type="button" disabled *hasPermission="Permissions.TestSessions.Create">
+            <span pButtonLabel>{{ 'TEST_SESSIONS.CREATE' | translate }}</span
+            ><i class="fa-solid fa-plus" pButtonIcon></i>
+          </button>
+        </div>
+      </div>
+      <app-page-filters
+        [advancedLabel]="'TEST_SESSIONS.ADVANCED_FILTERS' | translate"
+        [clearLabel]="'TEST_SESSIONS.CLEAR_FILTERS' | translate"
+        [advancedExpanded]="advancedFiltersExpanded()"
+        [activeAdvancedCount]="activeAdvancedFilterCount()"
+        (advancedToggled)="toggleAdvancedFilters()"
+        (filtersCleared)="clearFilters()"
+      >
+        <p-iconfield filterSearch class="search-icon-field w-100"
+          ><p-inputicon styleClass="fa-solid fa-magnifying-glass" /><input
+            pInputText
+            id="test-session-search"
+            type="search"
+            class="w-100 form-control"
+            [(ngModel)]="searchText"
+            (ngModelChange)="onSearchChange()"
+            [attr.aria-label]="'TEST_SESSIONS.SEARCH' | translate"
+            [placeholder]="'TEST_SESSIONS.SEARCH' | translate"
+        /></p-iconfield>
+       
+        <div filterSecondary class="filter-field">
+          <label class="form-label" for="test-session-status">{{
+            'TEST_SESSIONS.STATUS' | translate
+          }}</label
+          ><p-select
+            inputId="test-session-status"
+            class="w-100"
+            [options]="lookups().statuses"
+            optionLabel="name"
+            optionValue="id"
+            [(ngModel)]="selectedStatusId"
+            (ngModelChange)="applyFilters()"
+            [showClear]="true"
+            appendTo="body"
+            [placeholder]="'TEST_SESSIONS.ALL_STATUSES' | translate"
+          />
+        </div>
+         
+        
+        <div advancedFilters class="row g-3">
+          <div  class="col-12 col-md-6 filter-field">
+          <label class="form-label" for="test-session-exam">{{
+            'TEST_SESSIONS.EXAM' | translate
+          }}</label
+          ><p-select
+            inputId="test-session-exam"
+            class="w-100"
+            [options]="lookups().exams"
+            optionLabel="name"
+            optionValue="id"
+            [(ngModel)]="selectedExamId"
+            (ngModelChange)="applyFilters()"
+            [showClear]="true"
+            appendTo="body"
+            [placeholder]="'TEST_SESSIONS.ALL_EXAMS' | translate"
+          />
+        </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-job">{{
+              'TEST_SESSIONS.JOB_TITLE' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-job"
+              class="w-100"
+              [options]="lookups().jobs"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedJobId"
+              (ngModelChange)="applyFilters()"
+              [showClear]="true"
+              [filter]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_JOBS' | translate"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-from-date">{{
+              'TEST_SESSIONS.FROM_DATE' | translate
+            }}</label
+            ><p-datepicker
+              inputId="test-session-from-date"
+              class="w-100"
+              [fluid]="true"
+              [(ngModel)]="selectedFromDate"
+              (ngModelChange)="applyFilters()"
+              [readonlyInput]="true"
+              [showIcon]="true"
+              [iconDisplay]="'input'"
+              [showClear]="true"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-to-date">{{
+              'TEST_SESSIONS.TO_DATE' | translate
+            }}</label
+            ><p-datepicker
+              inputId="test-session-to-date"
+              class="w-100"
+              [fluid]="true"
+              [(ngModel)]="selectedToDate"
+              (ngModelChange)="applyFilters()"
+              [readonlyInput]="true"
+              [showIcon]="true"
+              [iconDisplay]="'input'"
+              [showClear]="true"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-room">{{
+              'TEST_SESSIONS.ROOM' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-room"
+              class="w-100"
+              [options]="lookups().rooms"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedRoomId"
+              (ngModelChange)="onRoomChange()"
+              [showClear]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_ROOMS' | translate"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-period">{{
+              'TEST_SESSIONS.PERIOD' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-period"
+              class="w-100"
+              [options]="lookups().periods"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedPeriod"
+              (ngModelChange)="applyFilters()"
+              [showClear]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_PERIODS' | translate"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-nationality">{{
+              'TEST_SESSIONS.NATIONALITY' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-nationality"
+              class="w-100"
+              [options]="lookups().nationalities"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedNationalityId"
+              (ngModelChange)="applyFilters()"
+              [showClear]="true"
+              [filter]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_NATIONALITIES' | translate"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-gender">{{
+              'TEST_SESSIONS.GENDER' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-gender"
+              class="w-100"
+              [options]="lookups().genders"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedGenderId"
+              (ngModelChange)="applyFilters()"
+              [showClear]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_GENDERS' | translate"
+            />
+          </div>
+        </div>
+      </app-page-filters>
+      <div class="card-head" aria-live="polite">
+        @if (loading()) {
+          <div class="small text-muted">{{ 'TEST_SESSIONS.LOADING' | translate }}</div>
+        }
+        @if (loadError() || lookupError()) {
+          <div class="text-danger" role="alert">{{ 'TEST_SESSIONS.LOAD_ERROR' | translate }}</div>
+        }
+      </div>
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="sessions()" dataKey="id" [loading]="loading()"
+            ><ng-template #header
+              ><tr>
+                <th>{{ 'TEST_SESSIONS.NUMBER' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.EXAM' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.JOB_TITLE' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.DATE' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.PERIOD' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.ROOM' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.CANDIDATES' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.ROOM_HEAD' | translate }}</th>
+                <th>{{ 'TEST_SESSIONS.STATUS' | translate }}</th>
+                <th class="text-center">{{ 'TEST_SESSIONS.ACTIONS' | translate }}</th>
+              </tr></ng-template
+            ><ng-template #body let-session
+              ><tr>
+                <td class="fw-semibold">
+                  <bdi>{{ session.sessionNo }}</bdi>
+                </td>
+                <td>{{ session.examName }}</td>
+                <td>{{ session.jobTitle }}</td>
+                <td class="text-nowrap">{{ session.sessionDate | date: 'yyyy/MM/dd' }}</td>
+                <td>{{ session.period }}</td>
+                <td>{{ session.roomName }}</td>
+                <td>{{ session.candidateCount }}</td>
+                <td>{{ session.roomHeadName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
+                <td><p-tag severity="secondary" [value]="session.status.name" /></td>
+                <td class="text-center">
+                  <div class="action-buttons justify-content-center"></div>
+                </td></tr></ng-template
+            ><ng-template #emptymessage
+              ><tr>
+                <td colspan="10" class="text-center py-4 text-muted">
+                  @if (!loading() && !loadError()) {
+                    {{ 'TEST_SESSIONS.EMPTY' | translate }}
+                  }
+                </td>
+              </tr></ng-template
+            ></p-table
+          >
+        </div>
+      </div>
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination
+            [currentPage]="filters().pageNumber"
+            [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalItems()"
+            (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</section>

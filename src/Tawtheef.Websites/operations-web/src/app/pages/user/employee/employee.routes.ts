@@ -78,6 +78,15 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: portalRoutes.testSessionsManagementPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.View] },
+    loadComponent: () =>
+      import('./test-sessions-management/test-sessions-management.component').then(
+        (m) => m.TestSessionsManagementComponent,
+      ),
+  },
+  {
     path: 'dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },

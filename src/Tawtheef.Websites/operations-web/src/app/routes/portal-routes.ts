@@ -167,6 +167,10 @@ export const portalRoutes = {
   get testSlotsManagement() {
     return this.portal + '/' + this.testSlotsManagementPath;
   },
+  testSessionsManagementPath: 'test-sessions-management',
+  get testSessionsManagement() {
+    return this.portal + '/' + this.testSessionsManagementPath;
+  },
   get questionBanks() {
     return this.portal + '/question-banks';
   },

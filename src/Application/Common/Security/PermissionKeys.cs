@@ -210,6 +210,13 @@ public static class PermissionKeys
         public const string ManagePeriod = "test-slots.manage-period";
     }
 
+    public static class TestSessions
+    {
+        public const string View = "test-sessions.view";
+        public const string Create = "test-sessions.create";
+        public const string WorkflowActions = "testSessionsWorkflowActions";
+    }
+
     public static class Rooms
     {
         public const string View = "rooms.view";
