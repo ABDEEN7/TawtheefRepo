@@ -8,24 +8,27 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.ResultReport.Services;
 
-// Auto-generation entry point, called from SubmitMemberEvaluationCommandHandler right after it
-// completes an appointment - fires the whole schedule's InterviewResultReport exactly once, the
-// moment the LAST live appointment in the schedule reaches Completed. Every early exit here returns
-// Ok(): a legitimate member Submit must never fail because the schedule/template isn't ready yet or
-// isn't configured for a supported calculation method - this is a silent no-op, not a user-facing error.
+// Auto-generation entry point, called (before SaveChanges, same transaction) from every action that
+// can be the one that finishes a schedule: a member Submit that completes an appointment, a manual
+// CompleteAppointmentEvaluation, recording NoShow/Withdrew attendance, and cancelling an appointment.
+// Fires the whole schedule's InterviewResultReport exactly once, the moment the LAST live appointment
+// becomes ready for review. Every early exit here returns Ok(): the triggering action must never fail
+// because the schedule/template isn't ready yet or isn't configured for a supported calculation
+// method - this is a silent no-op, not a user-facing error.
 public static class InterviewResultCalculationService
 {
     public static async Task<Result> TryGenerateReportIfScheduleDoneAsync(
         IUnitOfWork unitOfWork, Guid interviewScheduleId, CancellationToken cancellationToken)
     {
-        // "Live" = has a real candidate (not Held) and wasn't pulled out of the running (not
-        // Cancelled/Rescheduled - a Rescheduled row is superseded by a new one, which is itself live).
-        var liveAppointments = await unitOfWork.GetEntityRepository<InterviewAppointment>().DbSet
-            .Where(a => a.InterviewScheduleId == interviewScheduleId
-                && a.InvitationId != null
-                && a.Status != AppointmentStatus.Cancelled
-                && a.Status != AppointmentStatus.Rescheduled)
-            .ToListAsync(cancellationToken);
+        // Live-candidate rule (InterviewAppointment.IsLiveCandidate) is applied in memory, not in SQL:
+        // callers run this before SaveChanges, and EF hands back the caller's tracked instance, so an
+        // appointment the caller just cancelled still reads as Scheduled in the DB but Cancelled here -
+        // it must drop out, not block generation.
+        var liveAppointments = (await unitOfWork.GetEntityRepository<InterviewAppointment>().DbSet
+            .Where(a => a.InterviewScheduleId == interviewScheduleId && a.InvitationId != null)
+            .ToListAsync(cancellationToken))
+            .Where(InterviewAppointment.IsLiveCandidateCompiled)
+            .ToList();
 
         if (liveAppointments.Count == 0)
             return Result.Ok();

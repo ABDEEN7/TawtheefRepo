@@ -27,10 +27,10 @@ const SKIP_LOADING = { headers: { 'X-Skip-Loading': 'true' } };
 // Job search fetches one over-sized page; jobs are narrowed further by typing. Server caps PageSize at 50.
 const JOB_SEARCH_PAGE_SIZE = 50;
 
+// startAt/endAt are UTC ISO instants (see schedule-time.ts).
 export interface PeriodInputPayload {
-  date: string;
-  startTime: string;
-  endTime: string;
+  startAt: string;
+  endAt: string;
   roomId?: string | null;
   remoteMeetingUrl?: string | null;
   remoteMeetingInstructions?: string | null;

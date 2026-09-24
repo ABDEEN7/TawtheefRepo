@@ -31,6 +31,10 @@ export const QUALIFIED_ONLY_DECISIONS: FinalDecision[] = [
   FinalDecision.WaitingList,
 ];
 
+// List-only pseudo status: a report soft-deleted because an appointment was rescheduled before approval.
+export const DISCARDED_REPORT_FILTER = 'discarded' as const;
+export type ResultReportListStatusFilter = ResultReportStatus | typeof DISCARDED_REPORT_FILTER;
+
 export const RESULT_REPORT_STATUS_LABELS: Record<ResultReportStatus, string> = {
   [ResultReportStatus.Creating]: 'INTERVIEW_RESULT_REPORT.STATUS.CREATING',
   [ResultReportStatus.UnderReview]: 'INTERVIEW_RESULT_REPORT.STATUS.UNDER_REVIEW',

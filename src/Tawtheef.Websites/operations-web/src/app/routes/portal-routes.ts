@@ -1,4 +1,4 @@
-import { GUID } from "../shared/types/guid.type";
+import { GUID } from '../shared/types/guid.type';
 
 export const portalRoutes = {
   portal: '/portal',
@@ -193,5 +193,8 @@ export const portalRoutes = {
   },
   get approveInterview() {
     return this.portal + '/approve-interview';
+  },
+  get interviewDashboard() {
+    return this.portal + '/interview-dashboard';
   },
 };

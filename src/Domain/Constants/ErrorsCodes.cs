@@ -563,6 +563,11 @@ public class ErrorsCodes
     public const string InterviewResultReportCalculationMethodNotSupported = "INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED";
     public const string InterviewResultReportMissingInvitationStatusMapping = "INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING";
     public const string InterviewResultReportNotReadyForReschedule = "INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE";
+    public const string InterviewResultReportFinalizedNoReschedule = "INTERVIEW_RESULT_REPORT_FINALIZED_NO_RESCHEDULE";
+    #endregion
+
+    #region Interview - Dashboard
+    public const string InterviewDashboardSectionForbidden = "INTERVIEW_DASHBOARD_SECTION_FORBIDDEN";
     #endregion
 }
 public static class CandidateEligibilityConditionCodes

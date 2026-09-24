@@ -45,8 +45,8 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
                 a.Room?.NameEn,
                 a.RemoteMeetingUrl,
                 a.RemoteMeetingInstructions,
-                a.StartAt,
-                a.EndAt,
+                a.StartAt.AsUtcOffset(),
+                a.EndAt.AsUtcOffset(),
                 a.Status,
                 a.AttendanceStatus,
                 a.ActualStartAt.AsUtcOffset(),
@@ -71,11 +71,11 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
         var periods = ScheduleAppointmentPlanner
             .ReconstructPeriods(
                 liveAppointments.Select(a => new GeneratedSlotDto(
-                    DateOnly.FromDateTime(a.StartAt), a.StartAt, a.EndAt,
+                    a.StartAt, a.EndAt,
                     a.RoomId, a.RemoteMeetingUrl, a.RemoteMeetingInstructions)),
                 schedule.DefaultBufferMinutes)
             .Select(p => new SchedulePeriodDto(
-                p.Date, p.StartTime, p.EndTime,
+                p.StartAt, p.EndAt,
                 p.RoomId,
                 p.RoomId is not null && roomNames.TryGetValue(p.RoomId.Value, out var room) ? room.NameAr : null,
                 p.RoomId is not null && roomNames.TryGetValue(p.RoomId.Value, out room) ? room.NameEn : null,

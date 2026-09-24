@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { permissionGuard } from '../../../core/guards/route-guard/permission-guards';
 import { testSlotEditStatusGuard } from './test-slots-management/test-slot-edit-status.guard';
-import { Permissions } from '../../../core/constants/permissions';
+import { InterviewDashboardPermissions, Permissions } from '../../../core/constants/permissions';
 import { portalRoutes } from '../../../routes/portal-routes';
 
 export const employeeRoutes: Routes = [
@@ -508,6 +508,15 @@ export const employeeRoutes: Routes = [
     loadComponent: () =>
       import('./interview/interview-result-report/interview-result-report.page').then(
         (m) => m.InterviewResultReportPage,
+      ),
+  },
+  {
+    path: 'interview-dashboard',
+    canActivate: [permissionGuard],
+    data: { permissions: InterviewDashboardPermissions, requiredAll: false },
+    loadComponent: () =>
+      import('./interview/interview-dashboard/interview-dashboard.page').then(
+        (m) => m.InterviewDashboardPage,
       ),
   },
 ];

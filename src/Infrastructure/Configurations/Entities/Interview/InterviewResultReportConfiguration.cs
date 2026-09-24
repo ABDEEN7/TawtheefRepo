@@ -33,9 +33,12 @@ public sealed class InterviewResultReportConfiguration : BaseEntityConfiguration
             .HasForeignKey(x => x.ApprovedById)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // One report per schedule.
+        // One live report per schedule. Discarded (soft-deleted) reports stay in the table for history,
+        // so the uniqueness only applies to non-deleted rows - otherwise the regenerated report after a
+        // reschedule could never be inserted.
         builder.HasIndex(x => x.InterviewScheduleId)
             .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UQ_ResultReport");
     }
 }

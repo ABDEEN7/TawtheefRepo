@@ -412,5 +412,6 @@
   "server-error.INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE": "The report cannot be approved while a candidate has an open blocking operational issue.",
   "server-error.INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED": "The interview template's calculation method is not supported for result reports.",
   "server-error.INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING": "No application status is mapped to one of the selected final decisions.",
-  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "The result report is not in a state that allows rescheduling."
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "The result report is not in a state that allows rescheduling.",
+  "server-error.INTERVIEW_RESULT_REPORT_FINALIZED_NO_RESCHEDULE": "This schedule's result report is already approved, so its candidates can no longer be rescheduled."
 }

@@ -94,5 +94,6 @@
   "internal.sidebar.interview-committee": "Interview Committees",
   "internal.sidebar.interviews": "Interviews",
   "internal.sidebar.start-interview": "Start Interview",
-  "internal.sidebar.approve-interview": "Approve Interview"
+  "internal.sidebar.approve-interview": "Approve Interview",
+  "internal.sidebar.interview-dashboard": "Interview Dashboard"
 }

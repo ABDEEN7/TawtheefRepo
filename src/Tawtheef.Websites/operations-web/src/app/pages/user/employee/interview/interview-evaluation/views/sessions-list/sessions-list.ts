@@ -11,6 +11,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
 
 import { InterviewType, ScheduleStatus } from '../../../interview-schedule/models/enums';
+import { SessionSummary, summarizeSessions } from '../../../interview-schedule/models/schedule-time';
 
 import { InterviewEvaluationStore, ELIGIBLE_SESSION_STATUSES } from '../../interview-evaluation.store';
 import { InterviewEvaluationFacade } from '../../interview-evaluation.facade';
@@ -49,10 +50,9 @@ export class SessionsListComponent {
     return this.store.isRtl() ? ar || en || '' : en || ar || '';
   }
 
-  timeOf(value?: string | null): Date | null {
-    if (!value) return null;
-    const [hours, minutes] = value.split(':').map(Number);
-    return new Date(2000, 0, 1, hours, minutes);
+  // Session days and daily hours in the viewer's timezone (the API sends UTC instants).
+  sessionSummary(row: SessionListRowModel): SessionSummary | null {
+    return summarizeSessions(row.sessions);
   }
 
   jobTitle(row: SessionListRowModel): string {

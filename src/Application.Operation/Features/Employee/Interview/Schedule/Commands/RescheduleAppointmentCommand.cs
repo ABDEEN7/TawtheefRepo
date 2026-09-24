@@ -9,8 +9,8 @@ namespace Application.Operation.Features.Employee.Interview.Schedule.Commands;
 // Only allowed while the parent InterviewSchedule is Approved or Returned.
 public sealed record RescheduleAppointmentCommand(
     Guid AppointmentId,
-    DateTime NewStartAt,
-    DateTime NewEndAt,
+    DateTimeOffset NewStartAt,
+    DateTimeOffset NewEndAt,
     Guid? RoomId,
     string? RemoteMeetingUrl,
     string? RemoteMeetingInstructions,

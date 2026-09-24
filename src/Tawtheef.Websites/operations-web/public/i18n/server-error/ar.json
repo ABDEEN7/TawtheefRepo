@@ -412,5 +412,6 @@
   "server-error.INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE": "لا يمكن اعتماد التقرير لوجود مشكلة تشغيلية مانعة مفتوحة لأحد المرشحين.",
   "server-error.INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED": "طريقة الاحتساب في نموذج المقابلة غير مدعومة لتقارير النتائج.",
   "server-error.INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING": "لا توجد حالة طلب مرتبطة بأحد القرارات النهائية المختارة.",
-  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "تقرير النتائج ليس في حالة تسمح بإعادة الجدولة."
+  "server-error.INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE": "تقرير النتائج ليس في حالة تسمح بإعادة الجدولة.",
+  "server-error.INTERVIEW_DASHBOARD_SECTION_FORBIDDEN": "ليس لديك صلاحية لعرض هذا التقرير الخاص بالمقابلات."
 }

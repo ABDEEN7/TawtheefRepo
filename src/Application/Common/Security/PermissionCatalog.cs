@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Tawtheef.Domain.Entities.Security;
 
 namespace Tawtheef.Application.Common.Security;
 
@@ -128,6 +129,16 @@ public static class PermissionCatalog
 
         Permissions.InterviewCommittee.View,
         Permissions.InterviewCommittee.Manage,
+
+        Permissions.InterviewSchedule.View,
+        Permissions.InterviewSchedule.Manage,
+
+        Permissions.InterviewEvaluation.View,
+        Permissions.InterviewEvaluation.Manage,
+
+        Permissions.InterviewResultReport.View,
+        Permissions.InterviewResultReport.Manage,
+
     ]);
 
     public static readonly ISet<string> Keys =

@@ -51,6 +51,12 @@ public class InterviewResultReport : EventEntity
         return Result.Ok();
     }
 
+    // Approved/Closed reports have already pushed their final decisions onto the candidates' invitations,
+    // so they can never be replaced. Anything earlier (still being reviewed) can be discarded - soft
+    // deleted - when the candidate set changes, and the schedule regenerates a fresh report once done.
+    [NotMapped]
+    public bool IsFinalized => Status is ResultReportStatus.Approved or ResultReportStatus.Closed;
+
     // Cross-cutting checks the entity cannot perform itself (operational-issue blocking, the
     // Invitation-status sync) live in the handler - this only owns the report+candidate state machine.
     public Result Approve(Guid approverId, IReadOnlyDictionary<Guid, (FinalDecision Decision, string? Reason)> decisions)

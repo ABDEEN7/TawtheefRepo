@@ -27,6 +27,18 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
         if (appointment.InterviewSchedule!.Status is not (ScheduleStatus.Approved or ScheduleStatus.Returned))
             return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewAppointmentRescheduleNotAllowed));
 
+        // The schedule's current (non-discarded) result report, if one was already generated. Held slots
+        // have no candidate, so they're never part of a report and can move freely.
+        var report = appointment.InvitationId is null
+            ? null
+            : await unitOfWork.GetEntityRepository<InterviewResultReport>().DbSet
+                .Include(r => r.Candidates)
+                .FirstOrDefaultAsync(r => r.InterviewScheduleId == appointment.InterviewScheduleId, cancellationToken);
+
+        // Final decisions were already pushed to the candidates' invitations - the candidate set is frozen.
+        if (report is { IsFinalized: true })
+            return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewResultReportFinalizedNoReschedule));
+
         // Corrective reschedule during Final Review: a Completed appointment is normally locked
         // (EnsureEditable), but a candidate whose interview had a problem may need one redo once the
         // schedule's result report exists and is still under review. Narrowly scoped - only allowed
@@ -38,15 +50,16 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
             if (appointment.RescheduledFromAppointmentId is not null)
                 return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewAppointmentAlreadyRescheduledOnce));
 
-            var reportUnderReview = await unitOfWork.GetEntityRepository<InterviewResultReport>().DbSet
-                .AnyAsync(r => r.InterviewScheduleId == appointment.InterviewScheduleId && r.Status == ResultReportStatus.UnderReview, cancellationToken);
-            if (!reportUnderReview)
+            if (report?.Status != ResultReportStatus.UnderReview)
                 return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewResultReportNotReadyForReschedule));
 
             allowCompletedReschedule = true;
         }
 
-        if (request.NewEndAt <= request.NewStartAt)
+        var newStartAt = request.NewStartAt.UtcDateTime;
+        var newEndAt = request.NewEndAt.UtcDateTime;
+
+        if (newEndAt <= newStartAt)
             return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewSchedulePeriodInvalidTime));
 
         var hasLocation = appointment.InterviewType == InterviewType.InPerson
@@ -56,7 +69,7 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
             return Result.Fail<Guid>(new Error(ErrorsCodes.InterviewSchedulePeriodMissingLocation));
 
         var newSlot = new GeneratedSlotDto(
-            DateOnly.FromDateTime(request.NewStartAt), request.NewStartAt, request.NewEndAt,
+            newStartAt, newEndAt,
             request.RoomId, request.RemoteMeetingUrl, request.RemoteMeetingInstructions);
 
         var conflictResult = await ScheduleConflictChecker.ValidateNoConflictsAsync(
@@ -71,7 +84,11 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
         var replacement = appointment.InterviewSchedule.AddAppointment(
             appointment.InterviewCommitteeId, appointment.InterviewType, request.RoomId,
             request.RemoteMeetingUrl, request.RemoteMeetingInstructions,
-            request.NewStartAt, request.NewEndAt, appointment.InvitationId, appointment.Id);
+            newStartAt, newEndAt, appointment.InvitationId, appointment.Id);
+
+        // Add explicitly so EF generates the replacement's Id now - otherwise it's only assigned at
+        // SaveChanges and the audit row below records NewAppointmentId as Guid.Empty.
+        await unitOfWork.GetEntityRepository<InterviewAppointment>().AddAsync(replacement, cancellationToken);
 
         await unitOfWork.GetEntityRepository<InterviewAuditLog>().AddAsync(new InterviewAuditLog
         {
@@ -82,6 +99,27 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
             NewValues = JsonSerializer.Serialize(new { NewAppointmentId = replacement.Id, replacement.StartAt, replacement.EndAt, replacement.RoomId, replacement.RemoteMeetingUrl }),
             Reason = request.Reason
         }, cancellationToken);
+
+        // The report no longer matches the schedule's candidates (this one now has a new, not-yet-held
+        // appointment), so it is discarded - soft deleted, still listed as "Discarded" on the approval
+        // page - and InterviewResultCalculationService regenerates a fresh one once the replacement
+        // appointment is finished like any other.
+        if (report is not null)
+        {
+            // Candidates go with it: UQ_ResultCandidate (one live result per appointment) would otherwise
+            // block the regenerated report from re-scoring the unchanged appointments.
+            await unitOfWork.GetEntityRepository<InterviewResultCandidate>().DeleteRangeAsync(report.Candidates);
+            await unitOfWork.GetEntityRepository<InterviewResultReport>().DeleteAsync(report);
+            await unitOfWork.GetEntityRepository<InterviewAuditLog>().AddAsync(new InterviewAuditLog
+            {
+                EntityType = nameof(InterviewResultReport),
+                EntityId = report.Id,
+                Action = InterviewResultReportAuditActions.Discarded,
+                OldValues = JsonSerializer.Serialize(new { report.Status }),
+                NewValues = JsonSerializer.Serialize(new { RescheduledAppointmentId = appointment.Id, NewAppointmentId = replacement.Id }),
+                Reason = request.Reason
+            }, cancellationToken);
+        }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(replacement.Id);

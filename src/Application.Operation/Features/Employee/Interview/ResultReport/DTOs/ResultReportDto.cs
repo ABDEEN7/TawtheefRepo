@@ -28,4 +28,9 @@ public sealed record ResultReportListItemDto(
     decimal? AppliedQualificationScore,
     ResultReportStatus Status,
     int CandidateCount,
-    DateTimeOffset? ApprovedAt);
+    DateTimeOffset? ApprovedAt,
+    // Discarded = soft-deleted because an appointment was rescheduled before approval. Listed for
+    // traceability only - it can't be opened or approved; the schedule gets a regenerated report.
+    bool IsDiscarded,
+    DateTimeOffset? DiscardedAt,
+    string? DiscardReason);

@@ -87,16 +87,17 @@
       <ng-template pTemplate="body" let-schedule>
         <tr class="cursor-pointer" (click)="service.openDetail(schedule)">
           <td>{{ jobTitle(schedule) || '—' }}</td>
+          @let sessions = sessionSummary(schedule);
           <td>
-            @if (schedule.firstSessionDate) {
-              <bdi dir="ltr">{{ schedule.firstSessionDate | date: 'dd-MM-yyyy' }}@if (schedule.lastSessionDate && schedule.lastSessionDate !== schedule.firstSessionDate) { - {{ schedule.lastSessionDate | date: 'dd-MM-yyyy' }}}</bdi>
+            @if (sessions) {
+              <bdi dir="ltr">{{ sessions.firstDate | date: 'dd-MM-yyyy' }}@if (sessions.multiDay) { - {{ sessions.lastDate | date: 'dd-MM-yyyy' }}}</bdi>
             } @else {
               —
             }
           </td>
           <td>
-            @if (schedule.earliestStartTime) {
-              <bdi dir="ltr">{{ timeOf(schedule.earliestStartTime) | date: 'h:mm a' }}@if (schedule.latestEndTime) { - {{ timeOf(schedule.latestEndTime) | date: 'h:mm a' }}}</bdi>
+            @if (sessions) {
+              <bdi dir="ltr">{{ sessions.earliestStart | date: 'h:mm a' }} - {{ sessions.latestEnd | date: 'h:mm a' }}</bdi>
             } @else {
               —
             }

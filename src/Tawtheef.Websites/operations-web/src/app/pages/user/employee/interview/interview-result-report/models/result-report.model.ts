@@ -14,6 +14,10 @@ export interface ResultReportListItemModel {
   status: ResultReportStatus;
   candidateCount: number;
   approvedAt: string | null;
+  // Soft-deleted because an appointment was rescheduled before approval - listed read-only, never opened.
+  isDiscarded: boolean;
+  discardedAt: string | null;
+  discardReason: string | null;
 }
 
 // Mirrors ResultCandidateAxisDto.

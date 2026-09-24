@@ -13,7 +13,13 @@ import { PaginationComponent } from '../../../../../../../shared/components/pagi
 import { InterviewResultReportStore } from '../../interview-result-report.store';
 import { InterviewResultReportFacade } from '../../interview-result-report.facade';
 import { ResultReportListItemModel } from '../../models/result-report.model';
-import { RESULT_REPORT_STATUS_LABELS, RESULT_REPORT_STATUS_PILL, ResultReportStatus } from '../../models/enums';
+import {
+  DISCARDED_REPORT_FILTER,
+  RESULT_REPORT_STATUS_LABELS,
+  RESULT_REPORT_STATUS_PILL,
+  ResultReportListStatusFilter,
+  ResultReportStatus,
+} from '../../models/enums';
 
 @Component({
   selector: 'app-reports-list',
@@ -29,12 +35,15 @@ export class ReportsListComponent {
 
   // Creating is transient and never persisted (InterviewResultReport.Create/MarkReadyForReview), so
   // it is never offered as a filter.
-  readonly statusOptions = [
-    ResultReportStatus.UnderReview,
-    ResultReportStatus.Returned,
-    ResultReportStatus.Approved,
-    ResultReportStatus.Closed,
-  ].map((status) => ({ value: status, label: RESULT_REPORT_STATUS_LABELS[status] }));
+  readonly statusOptions: { value: ResultReportListStatusFilter; label: string }[] = [
+    ...[
+      ResultReportStatus.UnderReview,
+      ResultReportStatus.Returned,
+      ResultReportStatus.Approved,
+      ResultReportStatus.Closed,
+    ].map((status) => ({ value: status, label: RESULT_REPORT_STATUS_LABELS[status] })),
+    { value: DISCARDED_REPORT_FILTER, label: 'INTERVIEW_RESULT_REPORT.STATUS.DISCARDED' },
+  ];
 
   jobName(row: ResultReportListItemModel): string {
     return this.service.localized(row.jobNameAr, row.jobNameEn);
@@ -52,8 +61,13 @@ export class ReportsListComponent {
     return RESULT_REPORT_STATUS_PILL[status];
   }
 
+  isReviewable(row: ResultReportListItemModel): boolean {
+    return !row.isDiscarded && row.status === ResultReportStatus.UnderReview;
+  }
+
   actionLabel(row: ResultReportListItemModel): string {
-    return row.status === ResultReportStatus.UnderReview
+    if (row.isDiscarded) return 'INTERVIEW_RESULT_REPORT.LIST.DISCARDED_NO_OPEN';
+    return this.isReviewable(row)
       ? 'INTERVIEW_RESULT_REPORT.LIST.REVIEW_AND_APPROVE'
       : 'INTERVIEW_RESULT_REPORT.LIST.VIEW_RESULTS';
   }

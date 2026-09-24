@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.Interview.Schedule.DTOs;
 using Application.Operation.Features.Employee.Interview.Schedule.Queries;
+using Application.Operation.Features.Employee.Interview.Schedule.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
                     .Where(a => a.Status != AppointmentStatus.Rescheduled && a.Status != AppointmentStatus.Cancelled)
                     .Select(a => new { a.StartAt, a.EndAt })
                     .ToList(),
+                s.DefaultBufferMinutes,
                 s.DefaultInterviewType,
                 CandidatesCount = s.Appointments.Count(a =>
                     a.InvitationId != null && a.Status != AppointmentStatus.Rescheduled && a.Status != AppointmentStatus.Cancelled),
@@ -51,7 +53,10 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
 
         var result = raw.Select(s =>
         {
-            var hasSlots = s.Slots.Count > 0;
+            var sessions = ScheduleAppointmentPlanner
+                .ReconstructPeriods(s.Slots.Select(x => new GeneratedSlotDto(x.StartAt, x.EndAt, null, null, null)), s.DefaultBufferMinutes)
+                .Select(p => new ScheduleSessionDto(p.StartAt, p.EndAt))
+                .ToList();
             committeeByJob.TryGetValue(s.JobId, out var committee);
 
             return new ScheduleListItemDto(
@@ -62,10 +67,7 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
                 s.JobTitleNameEn,
                 committee?.NameAr,
                 committee?.NameEn,
-                hasSlots ? DateOnly.FromDateTime(s.Slots.Min(x => x.StartAt)) : null,
-                hasSlots ? DateOnly.FromDateTime(s.Slots.Max(x => x.StartAt)) : null,
-                hasSlots ? s.Slots.Min(x => TimeOnly.FromDateTime(x.StartAt)) : null,
-                hasSlots ? s.Slots.Max(x => TimeOnly.FromDateTime(x.EndAt)) : null,
+                sessions,
                 s.DefaultInterviewType,
                 s.CandidatesCount,
                 s.Status);

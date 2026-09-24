@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
@@ -47,6 +48,15 @@ public class InterviewAppointment : EventEntity
     public DateTime? LastReminderSentAt { get; set; }
     public int ReminderCount { get; set; }
 
+    // "Live" candidate appointment = has a real candidate (not a Held slot) and wasn't pulled out of the
+    // running (not Cancelled/Rescheduled - a Rescheduled row is superseded by its replacement, which is
+    // itself live). Single definition shared by result-report generation and the Interview Dashboard;
+    public static readonly Expression<Func<InterviewAppointment, bool>> IsLiveCandidate = a =>
+        a.InvitationId != null
+        && a.Status != AppointmentStatus.Cancelled
+        && a.Status != AppointmentStatus.Rescheduled;
+
+    public static readonly Func<InterviewAppointment, bool> IsLiveCandidateCompiled = IsLiveCandidate.Compile();
     public static InterviewAppointment Create(
         Guid interviewScheduleId, Guid interviewCommitteeId, InterviewType interviewType,
         Guid? roomId, string? remoteMeetingUrl, string? remoteMeetingInstructions,

@@ -203,3 +203,18 @@ export const Permissions = {
     Manage: 'interview-result-report.manage',
   },
 } as const;
+
+// Each section is still gated by its own module permission -  InterviewDashboardAccessResolver.
+// no need for grant every user dashboard permission will use exsiting granted permissions for interview module.
+export const InterviewDashboardPermissions: string[] = [
+  Permissions.InterviewEvaluationTemplate.View,
+  Permissions.InterviewEvaluationTemplate.Manage,
+  Permissions.InterviewCommittee.View,
+  Permissions.InterviewCommittee.Manage,
+  Permissions.InterviewSchedule.View,
+  Permissions.InterviewSchedule.Manage,
+  Permissions.InterviewEvaluation.View,
+  Permissions.InterviewEvaluation.Manage,
+  Permissions.InterviewResultReport.View,
+  Permissions.InterviewResultReport.Manage,
+];

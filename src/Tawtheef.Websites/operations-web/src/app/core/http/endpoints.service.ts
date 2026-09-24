@@ -578,4 +578,12 @@ export class EndpointsService {
       this.getFullUrl(`/InterviewResultReport/schedule/${scheduleId}`),
     approve: this.getFullUrl('/InterviewResultReport/approve'),
   };
+  interviewDashboard = {
+    overview: this.getFullUrl('/InterviewDashboard/overview'),
+    schedules: this.getFullUrl('/InterviewDashboard/schedules'),
+    candidates: this.getFullUrl('/InterviewDashboard/candidates'),
+    results: this.getFullUrl('/InterviewDashboard/results'),
+    issues: this.getFullUrl('/InterviewDashboard/issues'),
+    lookups: this.getFullUrl('/InterviewDashboard/lookups'),
+  };
 }

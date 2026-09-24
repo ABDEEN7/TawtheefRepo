@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Operation.Features.Employee.Interview.Evaluation.Services;
+using Application.Operation.Features.Employee.Interview.ResultReport.Services;
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
 using FluentResults;
 using MediatR;
@@ -35,6 +36,13 @@ public sealed class RecordAppointmentAttendanceCommandHandler(IUnitOfWork unitOf
             Action = InterviewAppointmentAuditActions.AttendanceRecorded,
             NewValues = JsonSerializer.Serialize(new { request.AttendanceStatus })
         }, cancellationToken);
+
+        // A NoShow/Withdrew candidate counts as done for final review, so recording one can be what
+        // finishes the schedule (e.g. the evaluated candidates were already Completed earlier).
+        var generateResult = await InterviewResultCalculationService.TryGenerateReportIfScheduleDoneAsync(
+            unitOfWork, appointment.InterviewScheduleId, cancellationToken);
+        if (generateResult.IsFailed)
+            return Result.Fail<Unit>(generateResult.Errors);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);

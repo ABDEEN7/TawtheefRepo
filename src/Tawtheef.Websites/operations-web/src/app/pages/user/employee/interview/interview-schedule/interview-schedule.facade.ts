@@ -26,6 +26,7 @@ import { LazySelectOption } from './models/lazy-select-option.model';
 import { SchedulePlanPreviewModel } from './models/plan-preview.model';
 import { RoomOptionModel, ScheduleListItemModel, ScheduleModel } from './models/schedule.model';
 import { newPeriodDraft, PeriodDraft, WizardJobContext } from './models/wizard-draft.model';
+import { localToUtcIso } from './models/schedule-time';
 
 // Search-as-you-type dropdowns show at most this many rows; the user narrows further by typing.
 const MAX_JOB_OPTIONS = 30;
@@ -367,9 +368,8 @@ export class InterviewScheduleFacade {
 
   private buildPeriodPayloads(): PeriodInputPayload[] {
     return this.store.wizardPeriods().map((p) => ({
-      date: p.date,
-      startTime: p.startTime,
-      endTime: p.endTime,
+      startAt: localToUtcIso(p.date, p.startTime),
+      endAt: localToUtcIso(p.date, p.endTime),
       roomId: p.room?.id ?? null,
       remoteMeetingUrl: p.remoteMeetingUrl,
       remoteMeetingInstructions: p.remoteMeetingInstructions,

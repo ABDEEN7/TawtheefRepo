@@ -66,14 +66,26 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-row>
-        <tr class="cursor-pointer" (click)="service.openReport(row)">
-          <td><bdi dir="ltr" class="fw-semibold">{{ row.code }}</bdi></td>
+        <!-- A discarded report (superseded after a reschedule) stays listed for traceability but is inert. -->
+        <tr [class.cursor-pointer]="!row.isDiscarded" [style.opacity]="row.isDiscarded ? 0.55 : null"
+          [attr.aria-disabled]="row.isDiscarded ? 'true' : null" (click)="service.openReport(row)">
+          <td>
+            <bdi dir="ltr" class="fw-semibold" [class.text-decoration-line-through]="row.isDiscarded">{{ row.code }}</bdi>
+          </td>
           <td>{{ jobName(row) || '—' }}</td>
           <td>{{ scheduleTitle(row) || '—' }}</td>
           <td>{{ row.candidateCount }}</td>
           <td>{{ row.appliedQualificationScore !== null ? (row.appliedQualificationScore | number: '1.0-2') : '—' }}</td>
           <td>
-            <span [class]="'pill ' + statusPill(row.status)">{{ statusLabel(row.status) | translate }}</span>
+            @if (row.isDiscarded) {
+              <span class="pill secondary" tabindex="0" tooltipPosition="top"
+                [pTooltip]="'INTERVIEW_RESULT_REPORT.LIST.DISCARDED_HINT' | translate: { date: (row.discardedAt | date: 'dd-MM-yyyy HH:mm'), reason: row.discardReason || '—' }">
+                <i class="pi pi-ban" aria-hidden="true"></i>
+                {{ 'INTERVIEW_RESULT_REPORT.STATUS.DISCARDED' | translate }}
+              </span>
+            } @else {
+              <span [class]="'pill ' + statusPill(row.status)">{{ statusLabel(row.status) | translate }}</span>
+            }
           </td>
           <td>
             @if (row.approvedAt) {
@@ -84,11 +96,11 @@
           </td>
           <td (click)="$event.stopPropagation()">
             <div class="action-buttons d-flex">
-              <button type="button" class="btn" (click)="service.openReport(row)"
+              <button type="button" class="btn" (click)="service.openReport(row)" [disabled]="row.isDiscarded"
                 [pTooltip]="actionLabel(row) | translate" tooltipPosition="top"
                 [attr.aria-label]="actionLabel(row) | translate">
-                <i class="hgi hgi-stroke" [class.hgi-checkmark-circle-02]="row.status === ResultReportStatus.UnderReview"
-                  [class.hgi-view]="row.status !== ResultReportStatus.UnderReview"></i>
+                <i class="hgi hgi-stroke" [class.hgi-checkmark-circle-02]="isReviewable(row)"
+                  [class.hgi-view]="!isReviewable(row)"></i>
               </button>
             </div>
           </td>

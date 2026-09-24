@@ -1,6 +1,5 @@
-// Mirrors GeneratedSlotDto.
+// Mirrors GeneratedSlotDto. startAt/endAt are UTC instants; the day shown is derived from startAt.
 export interface GeneratedSlotModel {
-  date: string;
   startAt: string;
   endAt: string;
   roomId?: string | null;

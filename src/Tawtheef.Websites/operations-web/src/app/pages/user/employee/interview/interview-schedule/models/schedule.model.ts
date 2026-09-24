@@ -11,23 +11,25 @@ export interface ScheduleListItemModel {
   // The job's active committee (resolved server-side; the schedule itself has no committee FK).
   committeeNameAr?: string | null;
   committeeNameEn?: string | null;
-  // The days the schedule runs ("yyyy-MM-dd"; equal for a single-day schedule) and the daily hours envelope across
-  // them (earliest slot start .. latest slot end, "HH:mm:ss"). All derived from the live slots.
-  firstSessionDate?: string | null;
-  lastSessionDate?: string | null;
-  earliestStartTime?: string | null;
-  latestEndTime?: string | null;
+  // The live slots folded into contiguous sittings, as UTC instants. The displayed days and daily hours are
+  // derived from them in the viewer's timezone (summarizeSessions in schedule-time.ts).
+  sessions: ScheduleSessionModel[];
   defaultInterviewType: InterviewType;
   candidatesCount: number;
   status: ScheduleStatus;
 }
 
+// Mirrors ScheduleSessionDto (UTC instants).
+export interface ScheduleSessionModel {
+  startAt: string;
+  endAt: string;
+}
+
 // Mirrors SchedulePeriodDto - the period a saved schedule's live slots were generated from (reconstructed
-// server-side; periods themselves are never stored). Dates/times arrive as "yyyy-MM-dd" / "HH:mm:ss".
+// server-side; periods themselves are never stored). startAt/endAt are UTC instants.
 export interface SchedulePeriodModel {
-  date: string;
-  startTime: string;
-  endTime: string;
+  startAt: string;
+  endAt: string;
   roomId?: string | null;
   roomNameAr?: string | null;
   roomNameEn?: string | null;
