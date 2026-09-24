@@ -1,17 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { LanguageService } from '../../../../core/services/language.service';
-import { routes } from '../../../../routes/routes';
-import {
-  AssignmentStatuses,
-  MyAssignment,
-} from './models/question-bank-assignment.models';
-import { QuestionBankAssignmentsService } from './services/question-bank-assignments.service';
+import {CommonModule} from '@angular/common';
+import {Component, inject, signal} from '@angular/core';
+import {Router} from '@angular/router';
+import {TranslatePipe} from '@ngx-translate/core';
+import {ButtonModule} from 'primeng/button';
+import {TableModule} from 'primeng/table';
+import {TagModule} from 'primeng/tag';
+import {LanguageService} from '../../../../core/services/language.service';
+import {routes} from '../../../../routes/routes';
+import {AssignmentStatuses, MyAssignment,} from './models/question-bank-assignment.models';
+import {QuestionBankAssignmentsService} from './services/question-bank-assignments.service';
 
 @Component({
   selector: 'app-question-bank-assignments',
