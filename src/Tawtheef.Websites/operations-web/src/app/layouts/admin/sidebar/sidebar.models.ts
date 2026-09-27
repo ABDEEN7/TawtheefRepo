@@ -134,7 +134,7 @@ export class Sidebar {
     },
     {
       key: 'exam-results',
-      label: 'نتائج الاختبارات / Exam Results',
+      label: 'internal.sidebar.exam-results',
       icon: 'hgi-task-done-01',
       route: routes.portal.examResults,
       permission: Permissions.Exams.View,

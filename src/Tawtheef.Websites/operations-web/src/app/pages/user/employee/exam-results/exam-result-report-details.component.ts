@@ -8,7 +8,17 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { catchError, distinctUntilChanged, finalize, map, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  distinctUntilChanged,
+  finalize,
+  map,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Permissions } from '../../../../core/constants/permissions';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -18,7 +28,11 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { FaDirArrowDirective } from '../../../../shared/directives/dir-arrow.directive';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { ConfirmationDialogComponent } from '../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
-import { ExamResultCandidate, ExamResultLookup, ExamResultReportDetails } from './models/exam-result-report.models';
+import {
+  ExamResultCandidate,
+  ExamResultLookup,
+  ExamResultReportDetails,
+} from './models/exam-result-report.models';
 import { ExamResultReportsService } from './exam-result-reports.service';
 import { ExamResultCandidateAttemptDialogComponent } from './exam-result-candidate-attempt-dialog.component';
 import { ReturnExamResultReportDialogComponent } from './return-exam-result-report-dialog.component';
@@ -28,8 +42,17 @@ import { RescheduleExamResultCandidateDialogComponent } from './reschedule-exam-
 @Component({
   selector: 'app-exam-result-report-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe, TableModule, TagModule, TooltipModule,
-    I18nNamespaceDirective, FaDirArrowDirective, HasPermissionDirective],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TranslatePipe,
+    TableModule,
+    TagModule,
+    TooltipModule,
+    I18nNamespaceDirective,
+    FaDirArrowDirective,
+    HasPermissionDirective,
+  ],
   templateUrl: './exam-result-report-details.component.html',
   providers: [DialogService],
 })
@@ -53,26 +76,32 @@ export class ExamResultReportDetailsComponent implements OnInit {
   readonly actionDialogOpen = signal(false);
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(
-      map(params => params.get('reportId')),
-      distinctUntilChanged(),
-      switchMap(reportId => this.reload$.pipe(
-        startWith(void 0),
-        switchMap(() => {
-          this.loading.set(true);
-          this.loadError.set(false);
-          this.report.set(null);
-          return reportId ? this.service.details(reportId).pipe(
-            catchError(() => {
-              this.loadError.set(true);
-              return of(null);
+    this.route.paramMap
+      .pipe(
+        map((params) => params.get('reportId')),
+        distinctUntilChanged(),
+        switchMap((reportId) =>
+          this.reload$.pipe(
+            startWith(void 0),
+            switchMap(() => {
+              this.loading.set(true);
+              this.loadError.set(false);
+              this.report.set(null);
+              return reportId
+                ? this.service.details(reportId).pipe(
+                    catchError(() => {
+                      this.loadError.set(true);
+                      return of(null);
+                    }),
+                  )
+                : of(null);
             }),
-          ) : of(null);
-        }),
-      )),
-      tap(() => this.loading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(report => this.report.set(report));
+          ),
+        ),
+        tap(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((report) => this.report.set(report));
   }
 
   localized(ar: string | null, en: string | null): string {
@@ -86,16 +115,18 @@ export class ExamResultReportDetailsComponent implements OnInit {
   formatDate(value: string | null): string {
     return value
       ? new Intl.DateTimeFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
-          dateStyle: 'medium', timeStyle: 'short',
+          dateStyle: 'medium',
+          timeStyle: 'short',
         }).format(new Date(value))
       : '—';
   }
 
   formatNumber(value: number | null): string {
-    return value === null ? '—' : new Intl.NumberFormat(
-      this.language.get() === 'ar' ? 'ar-SA' : 'en',
-      { maximumFractionDigits: 2 },
-    ).format(value);
+    return value === null
+      ? '—'
+      : new Intl.NumberFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
+          maximumFractionDigits: 2,
+        }).format(value);
   }
 
   openAttempt(candidateResultId: string): void {
@@ -113,14 +144,23 @@ export class ExamResultReportDetailsComponent implements OnInit {
   }
 
   hasPendingActions(report: ExamResultReportDetails): boolean {
-    return report.candidates.some(candidate => candidate.resultStatus.backendName === 'RequiresAction');
+    return report.candidates.some(
+      (candidate) => candidate.resultStatus.backendName === 'RequiresAction',
+    );
   }
 
   approve(): void {
     const report = this.report();
-    if (!report || report.status.backendName !== 'UnderReview' || this.hasPendingActions(report) ||
-        this.loading() || this.submitting() || this.actionDialogOpen() ||
-        !this.auth.hasPermission(Permissions.Exams.ApproveResults)) return;
+    if (
+      !report ||
+      report.status.backendName !== 'UnderReview' ||
+      this.hasPendingActions(report) ||
+      this.loading() ||
+      this.submitting() ||
+      this.actionDialogOpen() ||
+      !this.auth.hasPermission(Permissions.Exams.ApproveResults)
+    )
+      return;
 
     this.actionDialogOpen.set(true);
     const ref = this.dialogs.open(ConfirmationDialogComponent, {
@@ -133,36 +173,57 @@ export class ExamResultReportDetailsComponent implements OnInit {
         confirmText: 'EXAM_RESULTS.APPROVE_REPORT',
       },
     });
-    if (!ref) { this.actionDialogOpen.set(false); return; }
-    ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
+    if (!ref) {
+      this.actionDialogOpen.set(false);
+      return;
+    }
+    ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       this.actionDialogOpen.set(false);
       const latestReport = this.report();
-      if (confirmed !== true || !latestReport || latestReport.id !== report.id ||
-          latestReport.status.backendName !== 'UnderReview' ||
-          this.hasPendingActions(latestReport)) return;
+      if (
+        confirmed !== true ||
+        !latestReport ||
+        latestReport.id !== report.id ||
+        latestReport.status.backendName !== 'UnderReview' ||
+        this.hasPendingActions(latestReport)
+      )
+        return;
       this.submitting.set(true);
-      this.service.approve(report.id, { decisionNotes: null }).pipe(
-        finalize(() => this.submitting.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('EXAM_RESULTS.APPROVE_SUCCESS'));
-          this.reload$.next();
-        },
-        error: (error: unknown) => this.notifications.error(this.translate.instant(
-          this.hasPendingActionsError(error)
-            ? 'EXAM_RESULTS.PENDING_ACTIONS'
-            : 'EXAM_RESULTS.APPROVE_FAILED',
-        )),
-      });
+      this.service
+        .approve(report.id, { decisionNotes: null })
+        .pipe(
+          finalize(() => this.submitting.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(this.translate.instant('EXAM_RESULTS.APPROVE_SUCCESS'));
+            this.reload$.next();
+          },
+          error: (error: unknown) =>
+            this.notifications.error(
+              this.translate.instant(
+                this.hasPendingActionsError(error)
+                  ? 'EXAM_RESULTS.PENDING_ACTIONS'
+                  : 'EXAM_RESULTS.APPROVE_FAILED',
+              ),
+            ),
+        });
     });
   }
 
   returnForProcessing(): void {
     const report = this.report();
-    if (!report || report.status.backendName !== 'UnderReview' || !this.hasPendingActions(report) || this.loading() ||
-        this.submitting() || this.actionDialogOpen() ||
-        !this.auth.hasPermission(Permissions.Exams.WorkflowActions)) return;
+    if (
+      !report ||
+      report.status.backendName !== 'UnderReview' ||
+      !this.hasPendingActions(report) ||
+      this.loading() ||
+      this.submitting() ||
+      this.actionDialogOpen() ||
+      !this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    )
+      return;
 
     this.actionDialogOpen.set(true);
     const ref = this.dialogs.open(ReturnExamResultReportDialogComponent, {
@@ -172,38 +233,58 @@ export class ExamResultReportDetailsComponent implements OnInit {
       closable: true,
       dismissableMask: false,
     });
-    if (!ref) { this.actionDialogOpen.set(false); return; }
+    if (!ref) {
+      this.actionDialogOpen.set(false);
+      return;
+    }
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((reason: unknown) => {
       this.actionDialogOpen.set(false);
       const latestReport = this.report();
-      if (typeof reason !== 'string' || !reason.trim() ||
-          !latestReport || latestReport.id !== report.id ||
-          latestReport.status.backendName !== 'UnderReview' ||
-          !this.hasPendingActions(latestReport)) return;
+      if (
+        typeof reason !== 'string' ||
+        !reason.trim() ||
+        !latestReport ||
+        latestReport.id !== report.id ||
+        latestReport.status.backendName !== 'UnderReview' ||
+        !this.hasPendingActions(latestReport)
+      )
+        return;
       this.submitting.set(true);
-      this.service.returnForProcessing(report.id, { reason: reason.trim() }).pipe(
-        finalize(() => this.submitting.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('EXAM_RESULTS.RETURN_SUCCESS'));
-          this.reload$.next();
-        },
-        error: () => this.notifications.error(this.translate.instant('EXAM_RESULTS.RETURN_FAILED')),
-      });
+      this.service
+        .returnForProcessing(report.id, { reason: reason.trim() })
+        .pipe(
+          finalize(() => this.submitting.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(this.translate.instant('EXAM_RESULTS.RETURN_SUCCESS'));
+            this.reload$.next();
+          },
+          error: () =>
+            this.notifications.error(this.translate.instant('EXAM_RESULTS.RETURN_FAILED')),
+        });
     });
   }
 
   canResolveNotCompleted(report: ExamResultReportDetails, candidate: ExamResultCandidate): boolean {
-    return report.status.backendName === 'Returned' &&
+    return (
+      report.status.backendName === 'Returned' &&
       candidate.resultStatus.backendName === 'RequiresAction' &&
-      this.auth.hasPermission(Permissions.Exams.WorkflowActions);
+      this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    );
   }
 
   reschedule(candidate: ExamResultCandidate): void {
     const report = this.report();
-    if (!report || !this.canResolveNotCompleted(report, candidate) ||
-        this.loading() || this.submitting() || this.actionDialogOpen()) return;
+    if (
+      !report ||
+      !this.canResolveNotCompleted(report, candidate) ||
+      this.loading() ||
+      this.submitting() ||
+      this.actionDialogOpen()
+    )
+      return;
 
     this.actionDialogOpen.set(true);
     const ref = this.dialogs.open(RescheduleExamResultCandidateDialogComponent, {
@@ -215,7 +296,10 @@ export class ExamResultReportDetailsComponent implements OnInit {
       dismissableMask: false,
       data: { reportId: report.id, candidateResultId: candidate.id },
     });
-    if (!ref) { this.actionDialogOpen.set(false); return; }
+    if (!ref) {
+      this.actionDialogOpen.set(false);
+      return;
+    }
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((completed: unknown) => {
       this.actionDialogOpen.set(false);
       if (completed !== true || this.report()?.id !== report.id) return;
@@ -226,8 +310,14 @@ export class ExamResultReportDetailsComponent implements OnInit {
 
   resolveNotCompleted(candidate: ExamResultCandidate): void {
     const report = this.report();
-    if (!report || !this.canResolveNotCompleted(report, candidate) ||
-        this.loading() || this.submitting() || this.actionDialogOpen()) return;
+    if (
+      !report ||
+      !this.canResolveNotCompleted(report, candidate) ||
+      this.loading() ||
+      this.submitting() ||
+      this.actionDialogOpen()
+    )
+      return;
 
     this.actionDialogOpen.set(true);
     const ref = this.dialogs.open(ResolveExamResultCandidateDialogComponent, {
@@ -237,45 +327,72 @@ export class ExamResultReportDetailsComponent implements OnInit {
       closable: true,
       dismissableMask: false,
     });
-    if (!ref) { this.actionDialogOpen.set(false); return; }
+    if (!ref) {
+      this.actionDialogOpen.set(false);
+      return;
+    }
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((notes: unknown) => {
       this.actionDialogOpen.set(false);
       const latestReport = this.report();
-      const latestCandidate = latestReport?.candidates.find(item => item.id === candidate.id);
-      if (typeof notes !== 'string' || !notes.trim() ||
-          !latestReport || latestReport.id !== report.id || !latestCandidate ||
-          !this.canResolveNotCompleted(latestReport, latestCandidate)) return;
+      const latestCandidate = latestReport?.candidates.find((item) => item.id === candidate.id);
+      if (
+        typeof notes !== 'string' ||
+        !notes.trim() ||
+        !latestReport ||
+        latestReport.id !== report.id ||
+        !latestCandidate ||
+        !this.canResolveNotCompleted(latestReport, latestCandidate)
+      )
+        return;
 
       this.submitting.set(true);
-      this.service.resolveNotCompleted(report.id, candidate.id, {
-        resolutionNotes: notes.trim(),
-      }).pipe(
-        finalize(() => this.submitting.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('EXAM_RESULTS.RESOLVE_NOT_COMPLETED_SUCCESS'));
-          this.reload$.next();
-        },
-        error: () => this.notifications.error(
-          this.translate.instant('EXAM_RESULTS.RESOLVE_NOT_COMPLETED_FAILED')),
-      });
+      this.service
+        .resolveNotCompleted(report.id, candidate.id, {
+          resolutionNotes: notes.trim(),
+        })
+        .pipe(
+          finalize(() => this.submitting.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(
+              this.translate.instant('EXAM_RESULTS.RESOLVE_NOT_COMPLETED_SUCCESS'),
+            );
+            this.reload$.next();
+          },
+          error: () =>
+            this.notifications.error(
+              this.translate.instant('EXAM_RESULTS.RESOLVE_NOT_COMPLETED_FAILED'),
+            ),
+        });
     });
   }
 
-  canAcceptCalculatedScore(report: ExamResultReportDetails, candidate: ExamResultCandidate): boolean {
-    return report.status.backendName === 'Returned' &&
+  canAcceptCalculatedScore(
+    report: ExamResultReportDetails,
+    candidate: ExamResultCandidate,
+  ): boolean {
+    return (
+      report.status.backendName === 'Returned' &&
       candidate.resultStatus.backendName === 'RequiresAction' &&
       (candidate.attemptStatus?.backendName === 'Completed' ||
-       candidate.attemptStatus?.backendName === 'TimedOut') &&
+        candidate.attemptStatus?.backendName === 'TimedOut') &&
       candidate.hasOpenInterruption &&
-      this.auth.hasPermission(Permissions.Exams.WorkflowActions);
+      this.auth.hasPermission(Permissions.Exams.WorkflowActions)
+    );
   }
 
   acceptCalculatedScore(candidate: ExamResultCandidate): void {
     const report = this.report();
-    if (!report || !this.canAcceptCalculatedScore(report, candidate) ||
-        this.loading() || this.submitting() || this.actionDialogOpen()) return;
+    if (
+      !report ||
+      !this.canAcceptCalculatedScore(report, candidate) ||
+      this.loading() ||
+      this.submitting() ||
+      this.actionDialogOpen()
+    )
+      return;
 
     this.actionDialogOpen.set(true);
     const ref = this.dialogs.open(ConfirmationDialogComponent, {
@@ -293,39 +410,64 @@ export class ExamResultReportDetailsComponent implements OnInit {
         inputMaxLength: 2000,
       },
     });
-    if (!ref) { this.actionDialogOpen.set(false); return; }
+    if (!ref) {
+      this.actionDialogOpen.set(false);
+      return;
+    }
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((notes: unknown) => {
       this.actionDialogOpen.set(false);
       const latestReport = this.report();
-      const latestCandidate = latestReport?.candidates.find(item => item.id === candidate.id);
-      if (typeof notes !== 'string' || !notes.trim() ||
-          !latestReport || latestReport.id !== report.id || !latestCandidate ||
-          !this.canAcceptCalculatedScore(latestReport, latestCandidate)) return;
+      const latestCandidate = latestReport?.candidates.find((item) => item.id === candidate.id);
+      if (
+        typeof notes !== 'string' ||
+        !notes.trim() ||
+        !latestReport ||
+        latestReport.id !== report.id ||
+        !latestCandidate ||
+        !this.canAcceptCalculatedScore(latestReport, latestCandidate)
+      )
+        return;
 
       this.submitting.set(true);
-      this.service.acceptCalculatedScore(report.id, candidate.id, {
-        resolutionNotes: notes.trim(),
-      }).pipe(
-        finalize(() => this.submitting.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('EXAM_RESULTS.ACCEPT_CALCULATED_SCORE_SUCCESS'));
-          this.reload$.next();
-        },
-        error: () => this.notifications.error(
-          this.translate.instant('EXAM_RESULTS.ACCEPT_CALCULATED_SCORE_FAILED')),
-      });
+      this.service
+        .acceptCalculatedScore(report.id, candidate.id, {
+          resolutionNotes: notes.trim(),
+        })
+        .pipe(
+          finalize(() => this.submitting.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(
+              this.translate.instant('EXAM_RESULTS.ACCEPT_CALCULATED_SCORE_SUCCESS'),
+            );
+            this.reload$.next();
+          },
+          error: () =>
+            this.notifications.error(
+              this.translate.instant('EXAM_RESULTS.ACCEPT_CALCULATED_SCORE_FAILED'),
+            ),
+        });
     });
   }
 
   private hasPendingActionsError(error: unknown): boolean {
     if (!(error instanceof HttpErrorResponse)) return false;
     const body: unknown = error.error;
-    if (typeof body !== 'object' || body === null || !('error' in body) ||
-        !Array.isArray(body.error)) return false;
-    return body.error.some((entry: unknown) =>
-      typeof entry === 'object' && entry !== null && 'message' in entry &&
-      entry.message === 'EXAM_RESULT_REPORT_HAS_PENDING_ACTIONS');
+    if (
+      typeof body !== 'object' ||
+      body === null ||
+      !('error' in body) ||
+      !Array.isArray(body.error)
+    )
+      return false;
+    return body.error.some(
+      (entry: unknown) =>
+        typeof entry === 'object' &&
+        entry !== null &&
+        'message' in entry &&
+        entry.message === 'EXAM_RESULT_REPORT_HAS_PENDING_ACTIONS',
+    );
   }
 }
