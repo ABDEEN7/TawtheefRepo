@@ -9,12 +9,13 @@ import {LanguageService} from '../../../../core/services/language.service';
 import {routes} from '../../../../routes/routes';
 import {AssignmentStatuses, MyAssignment,} from './models/question-bank-assignment.models';
 import {QuestionBankAssignmentsService} from './services/question-bank-assignments.service';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-question-bank-assignments',
   standalone: true,
   templateUrl: './question-bank-assignments.page.html',
-  imports: [CommonModule, TranslatePipe, ButtonModule, TableModule, TagModule],
+  imports: [CommonModule, TranslatePipe, ButtonModule, TableModule, TagModule, I18nNamespaceDirective],
 })
 export class QuestionBankAssignmentsPage {
   private readonly service = inject(QuestionBankAssignmentsService);
