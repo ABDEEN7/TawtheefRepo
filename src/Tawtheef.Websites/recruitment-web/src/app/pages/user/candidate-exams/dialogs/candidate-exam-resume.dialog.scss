@@ -1,0 +1,74 @@
+.exam-resume-dialog {
+  min-width: 0;
+}
+
+.resume-description {
+  margin-block-end: 1rem;
+  color: var(--bs-secondary-color);
+}
+
+.required::after {
+  margin-inline-start: 0.2rem;
+  color: var(--bs-danger);
+  content: '*';
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-block-start: 1.25rem;
+}
+
+.dialog-actions .btn,
+.dialog-state .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.dialog-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.dialog-state h2,
+.dialog-state p {
+  margin: 0;
+}
+
+.dialog-state__icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.4rem;
+}
+
+.dialog-state__icon--error {
+  color: var(--bs-danger);
+  background: rgba(var(--bs-danger-rgb), 0.1);
+}
+
+@media (max-width: 575.98px) {
+  .dialog-actions {
+    flex-direction: column;
+  }
+
+  .dialog-actions .btn {
+    width: 100%;
+  }
+}

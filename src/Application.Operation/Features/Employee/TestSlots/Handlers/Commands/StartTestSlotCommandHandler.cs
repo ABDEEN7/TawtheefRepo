@@ -48,6 +48,42 @@ public sealed class StartTestSlotCommandHandler(
                 .AddMinutes(-settings.Value.StartAllowedBeforeMinutes);
             if (localNow < earliestStart)
                 return Result.Fail<Unit>(ErrorsCodes.TestSlotStartTooEarly);
+            
+            var scheduledEnd =
+                testSlot.SlotDate.ToDateTime(testSlot.EndTime);
+
+            if (localNow >= scheduledEnd)
+            {
+                return Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotStartWindowClosed);
+            }
+            
+            var sessions = await unitOfWork.Context
+                .Set<TestSession>()
+                .Where(x =>
+                    x.TestSlotId == testSlot.Id &&
+                    x.StatusId != TestSessionStatusIds.Cancelled)
+                .ToListAsync(token);
+
+            if (sessions.Count == 0)
+            {
+                return Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotSessionStateInvalid);
+            }
+
+            if (sessions.Any(x =>
+                    x.StatusId != TestSessionStatusIds.Approved &&
+                    x.StatusId != TestSessionStatusIds.Ready))
+            {
+                return Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotSessionStateInvalid);
+            }
+
+            foreach (var session in sessions)
+            {
+                session.StatusId =
+                    TestSessionStatusIds.InProgress;
+            }
 
             testSlot.StatusId = TestSlotStatusIds.Started;
             testSlot.StartedById = userId;

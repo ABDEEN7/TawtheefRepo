@@ -13,7 +13,7 @@ import {
   TestSlotConfigurationDto,
   UpdateTestSlotAssignmentsDto,
 } from '../models/create-test-slot.dto';
-import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto } from '../models/test-slot-details.dto';
+import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto, VerifyTestSlotCandidateIdentityRequest } from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
 export class TestSlotsService {
@@ -46,6 +46,28 @@ export class TestSlotsService {
 
   candidates(id: string, filters: TestSlotCandidateFilters): Observable<PaginatedResult<TestSlotCandidateListItemDto>> {
     return this.http.get<PaginatedResult<TestSlotCandidateListItemDto>>(this.endpoints.testSlots.candidates(id), filters);
+  }
+
+  markPresent(id: string, candidateId: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSlots.markPresent(id, candidateId), {});
+  }
+
+  verifyIdentity(id: string, candidateId: string, request: VerifyTestSlotCandidateIdentityRequest): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSlots.verifyIdentity(id, candidateId), request);
+  }
+
+  authorizeEntry(id: string, candidateId: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSlots.authorizeEntry(id, candidateId), {});
+  }
+
+  authorizeResume(testAttemptId: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.candidateExamAttempts.authorizeResume(testAttemptId), {
+      resolutionNotes: null,
+    });
+  }
+
+  reportOperationalIssue(testAttemptId: string, reason: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.candidateExamAttempts.reportOperationalIssue(testAttemptId), { reason });
   }
 
   accessCode(id: string): Observable<TestSlotAccessCodeDto> {

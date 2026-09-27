@@ -13,6 +13,7 @@ import { TestSlotCandidatesDialogComponent } from '../test-slot-candidates-dialo
 })
 export class TestSlotCandidatesComponent {
   @Input({ required: true }) testSlotId!: string;
+  @Input({ required: true }) isCurrentUserRoomHead!: boolean;
   private readonly dialogs = inject(DialogService);
   private readonly translate = inject(TranslateService);
 
@@ -23,7 +24,7 @@ export class TestSlotCandidatesComponent {
       modal: true,
       closable: true,
       dismissableMask: false,
-      data: { testSlotId: this.testSlotId },
+      data: { testSlotId: this.testSlotId, isCurrentUserRoomHead: this.isCurrentUserRoomHead },
     });
   }
 }

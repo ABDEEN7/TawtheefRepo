@@ -417,12 +417,40 @@ export class EndpointsService {
     details: (id: string) => this.getFullUrl(`/test-slots/${id}`),
     sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
     candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
+    markPresent: (id: string, candidateId: string) => this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/mark-present`),
+    verifyIdentity: (id: string, candidateId: string) => this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/verify-identity`),
+    authorizeEntry: (id: string, candidateId: string) => this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/authorize-entry`),
     accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
     start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
     close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
     assignments: (id: string) => this.getFullUrl(`/test-slots/${id}/assignments`),
     availableRooms: this.getFullUrl('/test-slots/lookups/rooms'),
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
+  };
+
+  candidateExamAttempts = {
+    authorizeResume: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/authorize-resume`),
+    reportOperationalIssue: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/operational-issue`),
+  };
+
+  examResultReports = {
+    list: this.getFullUrl('/exam-result-reports'),
+    details: (reportId: string) => this.getFullUrl(`/exam-result-reports/${reportId}`),
+    candidateAttempt: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/attempt`),
+    rescheduleOptions: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/reschedule-options`),
+    approve: (reportId: string) => this.getFullUrl(`/exam-result-reports/${reportId}/approve`),
+    returnForProcessing: (reportId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/return-for-processing`),
+    resolveNotCompleted: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/resolve-not-completed`),
+    acceptCalculatedScore: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/accept-calculated-score`),
+    reschedule: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/reschedule`),
   };
 
   questionBanks = {

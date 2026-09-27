@@ -23,7 +23,7 @@ public class ExamCategoryConfiguration : BaseEntityConfiguration<ExamCategory>
         builder.HasOne(x => x.QuestionBankVersion)
             .WithMany()
             .HasForeignKey(x => x.QuestionBankVersionId)
-            .IsRequired(true)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

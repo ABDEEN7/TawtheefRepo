@@ -11,13 +11,18 @@ public class ExamResultCandidateConfiguration : BaseEntityConfiguration<ExamResu
         base.Configure(builder);
 
         builder.HasOne(x => x.ExamResultReport)
-            .WithMany()
+            .WithMany(x => x.Candidates)
             .HasForeignKey(x => x.ExamResultReportId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Invitation)
             .WithMany()
             .HasForeignKey(x => x.InvitationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.TestSessionCandidate)
+            .WithMany()
+            .HasForeignKey(x => x.TestSessionCandidateId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.TestAttempt)
@@ -29,6 +34,16 @@ public class ExamResultCandidateConfiguration : BaseEntityConfiguration<ExamResu
             .WithMany()
             .HasForeignKey(x => x.ResultStatusId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new
+            {
+                x.ExamResultReportId,
+                x.InvitationId
+            })
+            .IsUnique();
+        
+        builder.HasIndex(x => x.TestSessionCandidateId)
+            .IsUnique()
+            .HasFilter("[TestSessionCandidateId] IS NOT NULL");
     }
 }
-

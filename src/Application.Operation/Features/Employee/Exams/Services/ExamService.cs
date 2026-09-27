@@ -15,8 +15,8 @@ public sealed class ExamService(IUnitOfWork unitOfWork)
         CancellationToken ct)
         => unitOfWork.Context.Set<Exam>().AsNoTracking()
             .AnyAsync(x => x.JobId == jobId &&
-                x.StatusId == ExamStatusIds.PendingApproval &&
-                (!excludeExamId.HasValue || x.Id != excludeExamId.Value), ct);
+                           x.StatusId == ExamStatusIds.PendingApproval &&
+                           (!excludeExamId.HasValue || x.Id != excludeExamId.Value), ct);
 
     public async Task<ExamConfigurationDto?> GetApprovedForJobAsync(Guid jobId, CancellationToken ct)
     {
@@ -32,12 +32,15 @@ public sealed class ExamService(IUnitOfWork unitOfWork)
         var ids = parts.Select(x => x.Id).ToList();
         var categories = await unitOfWork.Context.Set<ExamCategory>().AsNoTracking()
             .Where(x => ids.Contains(x.ExamPartId)).OrderBy(x => x.QuestionBankTypeId).ToListAsync(ct);
-        dto.Parts = parts.Select(part =>
-        {
-            var result = part.Adapt<ExamPartDto>();
-            result.Categories = categories.Where(x => x.ExamPartId == part.Id).Adapt<List<ExamCategoryDto>>();
-            return result;
-        }).ToList();
+        dto.Parts =
+        [
+            .. parts.Select(part =>
+            {
+                var result = part.Adapt<ExamPartDto>();
+                result.Categories = categories.Where(x => x.ExamPartId == part.Id).Adapt<List<ExamCategoryDto>>();
+                return result;
+            })
+        ];
         return dto;
     }
 }

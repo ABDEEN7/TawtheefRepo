@@ -10,9 +10,12 @@ public class TestAttemptConfiguration : BaseEntityConfiguration<TestAttempt>
     {
         base.Configure(builder);
 
+        builder.HasIndex(x => x.TestSessionCandidateId)
+            .IsUnique();
+
         builder.HasOne(x => x.TestSessionCandidate)
-            .WithMany()
-            .HasForeignKey(x => x.TestSessionCandidateId)
+            .WithOne(x => x.TestAttempt)
+            .HasForeignKey<TestAttempt>(x => x.TestSessionCandidateId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Status)

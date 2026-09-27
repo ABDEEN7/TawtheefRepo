@@ -37,7 +37,8 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
                       throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
     var clientId = builder.Configuration["KeyVault:ClientId"] ??
                    throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
-    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
+    var credential =
+        new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
 
@@ -91,7 +92,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
         ?? ctx.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
         ?? ctx.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
-    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled") 
+    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled")
         && !string.IsNullOrWhiteSpace(sinkAiCs))
     {
         lc.WriteTo.ApplicationInsights(
@@ -101,7 +102,8 @@ builder.Host.UseSerilog((ctx, services, lc) =>
 });
 
 // ----- Services -----
-builder.Services.Configure<ForwardedHeadersOptions>(o => {
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
@@ -114,37 +116,40 @@ builder.Services.AddControllers(options =>
     {
         options.Filters.AddService<AdminActionAuditFilter>();
     })
-    .ConfigureApiBehaviorOptions(options => {
-    options.InvalidModelStateResponseFactory = ctx => {
-        var correlationId = ctx.HttpContext.GetCorrelationId();
-        var problem = new ValidationProblemDetails(ctx.ModelState) {
-            Status  = StatusCodes.Status400BadRequest,
-            Type    = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
-            Title   = "One or more validation errors occurred.",
-            Detail  = "See the 'errors' property for details.",
-            Instance= ctx.HttpContext.Request.Path,
-            Extensions = {
-                ["traceId"] = correlationId,
-                ["correlationId"] = correlationId,
-                ["ticket"] = correlationId
-            }
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = ctx =>
+        {
+            var correlationId = ctx.HttpContext.GetCorrelationId();
+            var problem = new ValidationProblemDetails(ctx.ModelState)
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                Title = "One or more validation errors occurred.",
+                Detail = "See the 'errors' property for details.",
+                Instance = ctx.HttpContext.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = correlationId, ["correlationId"] = correlationId, ["ticket"] = correlationId
+                }
+            };
+
+            return new BadRequestObjectResult(problem);
         };
+    });
 
-        return new BadRequestObjectResult(problem);
-    };
-});
-
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(myCors, policy =>
         policy.WithOrigins(builder.Configuration["AppConfig:FrontendUrl"]!)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .WithExposedHeaders(
-                  "Content-Disposition",
-                  "X-Blocked-By",
-                  HttpContextExtensions.CorrelationIdHeaderName,
-                  HttpContextExtensions.RequestIdHeaderName));
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders(
+                "Content-Disposition",
+                "X-Blocked-By",
+                HttpContextExtensions.CorrelationIdHeaderName,
+                HttpContextExtensions.RequestIdHeaderName));
 });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
@@ -155,7 +160,8 @@ builder.Services.AddHsts(options =>
 });
 
 
-if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) {
+if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
+{
     builder.Services.AddSwagger();
 }
 
@@ -177,11 +183,13 @@ app.Use(async (ctx, next) =>
 
     await next();
 });
-app.UseSerilogRequestLogging(opts => {
-    opts.EnrichDiagnosticContext = (diagCtx, httpCtx) => {
+app.UseSerilogRequestLogging(opts =>
+{
+    opts.EnrichDiagnosticContext = (diagCtx, httpCtx) =>
+    {
         var userId = httpCtx.User.FindFirst("sub")?.Value
                      ?? httpCtx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         diagCtx.Set("CorrelationId", httpCtx.GetCorrelationId());
         diagCtx.Set("UserId", userId ?? "anonymous");
         diagCtx.Set("QueryString", httpCtx.Request.QueryString.HasValue ? httpCtx.Request.QueryString.Value : "");
@@ -206,7 +214,8 @@ app.UseExceptionHandler(appBuilder =>
         if (exceptionHandlerPathFeature?.Error != null)
         {
             var handler = context.RequestServices.GetRequiredService<CustomExceptionHandler>();
-            var handled = await handler.TryHandleAsync(context, exceptionHandlerPathFeature.Error, CancellationToken.None);
+            var handled =
+                await handler.TryHandleAsync(context, exceptionHandlerPathFeature.Error, CancellationToken.None);
             if (!handled)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -222,7 +231,7 @@ if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
 app.UseHttpsRedirection();
 
 app.UseCors(myCors);
-app.UseCookiePolicy(); 
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.Use(async (ctx, next) =>
 {

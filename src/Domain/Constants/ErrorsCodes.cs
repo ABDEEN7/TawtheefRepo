@@ -5,7 +5,9 @@ public class ErrorsCodes
     // =========================================================
     // COMMON / GENERIC
     // =========================================================
+
     #region Common Errors
+
     public const string UnauthorizedAction = "UNAUTHORIZED_ACTION";
     public const string EmailRequired = "EMAIL_REQUIRED";
     public const string NameArRequired = "NAME_AR_REQUIRED";
@@ -22,12 +24,19 @@ public class ErrorsCodes
     public const string ItemNotFound = "ITEM_NOT_FOUND";
     public const string RoomNameExistsInLocation = "ROOM_NAME_EXISTS_IN_LOCATION";
     public const string RoomNotFound = "ROOM_NOT_FOUND";
+
     #endregion
 
     #region Question Banks
-    public const string QuestionBankCreationRequestAlreadyInProgress = "QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS";
+
+    public const string QuestionBankCreationRequestAlreadyInProgress =
+        "QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS";
+
     public const string QuestionBankAlreadyExists = "QUESTION_BANK_ALREADY_EXISTS";
-    public const string QuestionBankCreationRequestStageNotSupported = "QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED";
+
+    public const string QuestionBankCreationRequestStageNotSupported =
+        "QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED";
+
     public const string SpecializedQuestionBankTargetRequired = "SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED";
     public const string QuestionBankTargetNotAllowed = "QUESTION_BANK_TARGET_NOT_ALLOWED";
     public const string InvalidQuestionBankType = "INVALID_QUESTION_BANK_TYPE";
@@ -39,19 +48,25 @@ public class ErrorsCodes
     public const string QuestionBankAssigneeNotEligible = "QUESTION_BANK_ASSIGNEE_NOT_ELIGIBLE";
     public const string QuestionBankEmployeeScopeNotConfigured = "QUESTION_BANK_EMPLOYEE_SCOPE_NOT_CONFIGURED";
     public const string QuestionBankAssignmentAlreadyExists = "QUESTION_BANK_ASSIGNMENT_ALREADY_EXISTS";
+
     #endregion
 
     // =========================================================
     // TOKEN / CRYPTO
     // =========================================================
+
     #region Validation Token Errors
+
     public const string InvalidAlgorithm = "INVALID_ALGORITHM";
+
     #endregion
 
     // =========================================================
     // LOGIN / AUTH
     // =========================================================
+
     #region Login Errors
+
     public const string ProfileNotFound = "PROFILE_NOT_FOUND";
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string EmailAlreadyInUse = "EMAIL_ALREADY_IN_USE";
@@ -62,22 +77,30 @@ public class ErrorsCodes
     public const string ExternalLoginOfficeUserInvalidType = "EXTERNAL_LOGIN_OFFICE_USER_INVALID_TYPE";
     public const string ExternalLoginEmployeeUserInvalidType = "EXTERNAL_LOGIN_EMPLOYEE_USER_INVALID_TYPE";
     public const string ExternalLoginOfficeUserNotLinkedToOffice = "EXTERNAL_LOGIN_OFFICE_USER_NOT_LINKED_TO_OFFICE";
-    public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound = "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
+
+    public const string ExternalLoginOfficeUserOfficeDeletedOrNotFound =
+        "EXTERNAL_LOGIN_OFFICE_USER_OFFICE_DELETED_OR_NOT_FOUND";
 
     public const string QatarPassQidNotAllowed = "QATAR_PASS_QID_NOT_ALLOWED";
     public const string QatarResidentInvalidQid = "QATAR_RESIDENT_INVALID_QID";
     public const string QatarResidentPhoneInvalid = "QATAR_RESIDENT_PHONE_INVALID";
     public const string QatarResidentPhoneMismatch = "QATAR_RESIDENT_PHONE_MISMATCH";
     public const string QatarResidentVerificationFailed = "QATAR_RESIDENT_VERIFICATION_FAILED";
-    public const string QatarResidentVerificationTemporarilyUnavailable = "QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE";
+
+    public const string QatarResidentVerificationTemporarilyUnavailable =
+        "QATAR_RESIDENT_VERIFICATION_TEMPORARILY_UNAVAILABLE";
+
     public const string UserIsOfficer = "USER_IS_OFFICER";
     public const string UserIsApplicant = "USER_IS_APPLICANT";
+
     #endregion
 
     // =========================================================
     // ROLES / SECURITY
     // =========================================================
+
     #region Role Management Errors
+
     public const string RoleNotFound = "ROLE_NOT_FOUND";
     public const string RoleNameExists = "ROLE_NAME_EXISTS";
     public const string InvalidPermission = "INVALID_PERMISSION";
@@ -87,12 +110,15 @@ public class ErrorsCodes
     public const string SystemAdminBlockNotAllowed = "SYSTEM_ADMIN_BLOCK_NOT_ALLOWED";
     public const string SystemRoleRequired = "SYSTEM_ROLE_REQUIRED";
     public const string SystemRoleChangeNotAllowed = "SYSTEM_ROLE_CHANGE_NOT_ALLOWED";
+
     #endregion
 
     // =========================================================
     // SESSION / REFRESH TOKEN
     // =========================================================
+
     #region Refresh Token Errors
+
     public const string AccessTokenRequired = "ACCESS_TOKEN_REQUIRED";
     public const string RefreshTokenRequired = "REFRESH_TOKEN_REQUIRED";
     public const string InvalidAccessToken = "INVALID_ACCESS_TOKEN";
@@ -100,12 +126,15 @@ public class ErrorsCodes
     public const string RefreshTokenNotFound = "REFRESH_TOKEN_NOT_FOUND";
     public const string InactiveRefreshToken = "INACTIVE_REFRESH_TOKEN";
     public const string SessionRevoked = "SESSION_REVOKED";
+
     #endregion
 
     // =========================================================
     // OTP / VERIFICATION
     // =========================================================
+
     #region Verification Errors
+
     public const string VerificationCodeExpired = "VERIFICATION_CODE_EXPIRED";
     public const string TooManyAttempts = "TOO_MANY_ATTEMPTS";
     public const string InvalidVerificationCode = "INVALID_VERIFICATION_CODE";
@@ -113,13 +142,18 @@ public class ErrorsCodes
     public const string SendOtpLimitReached = "SEND_OTP_LIMIT_REACHED";
     public const string UserPhoneRequired = "USER_PHONE_REQUIRED";
     public const string PhoneVerificationRateLimited = "PHONE_VERIFICATION_RATE_LIMITED";
-    public const string ShouldVerifyQatarPhoneNumberBeforeAssignIt = "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
+
+    public const string ShouldVerifyQatarPhoneNumberBeforeAssignIt =
+        "SHOULD_VERIFIY_QATAR_PHONE_NUMBER_BEFORE_ASSIGN_IT";
+
     #endregion
 
     // =========================================================
     // PROFILE CORE
     // =========================================================
+
     #region Update Profile Errors
+
     public const string UserProfileNotCompleted = "USER_PROFILE_NOT_COMPLETED";
     public const string UserProfileNotFound = "USER_PROFILE_NOT_FOUND";
     public const string ProfileNotUnderReview = "PROFILE_NOT_UNDER_REVIEW";
@@ -136,7 +170,7 @@ public class ErrorsCodes
     public const string ExperienceNotFound = "EXPERIENCE_NOT_FOUND";
     public const string LanguageProfileNotFound = "LANGUAGE_PROFILE_NOT_FOUND";
     public const string TrainingNotFound = "TRAINING_NOT_FOUND";
-    
+
     public const string CanNotModifiedApprovedDocument = "CAN_NOT_MODIFIED_APPROVED_DOCUMENT";
 
     public const string DuplicateNationalNumber = "DUPLICATE_NATIONAL_NUMBER";
@@ -160,13 +194,15 @@ public class ErrorsCodes
     public const string InvalidExperienceQualification = "INVALID_EXPERIENCE_QUALIFICATION";
     public const string ExperienceBeforeGraduation = "EXPERIENCE_BEFORE_GRADUATION";
     public const string NoChangesMade = "NO_CHANGES_MADE";
-    
+
     #endregion
 
     // =========================================================
     // EXTERNAL AUTH
     // =========================================================
+
     #region External Authentication Errors
+
     public static string ExternalLoginError(string error) => $"EXTERNAL_LOGIN_ERROR: {error}";
     public const string ExternalLoginInfoNotFound = "EXTERNAL_LOGIN_INFO_NOT_FOUND";
     public const string ExternalLoginEmailNotFound = "EXTERNAL_LOGIN_EMAIL_NOT_FOUND";
@@ -177,12 +213,15 @@ public class ErrorsCodes
     public const string ExternalLoginInvalidToken = "EXTERNAL_LOGIN_INVALID_TOKEN";
     public const string ExternalLoginMissingProviderKey = "EXTERNAL_LOGIN_MISSING_PROVIDER_KEY";
     public const string InvalidRequest = "INVALID_REQUEST";
+
     #endregion
 
     // =========================================================
     // STORAGE
     // =========================================================
+
     #region Storage Errors
+
     public const string ConfigMissing = "CONFIG_MISSING";
     public const string NotPublicResource = "NOT_PUBLIC_RESOURCE";
     public const string InvalidBlobKey = "INVALID_BLOB_KEY";
@@ -191,20 +230,25 @@ public class ErrorsCodes
     public const string NotFound = "NOT_FOUND";
     public const string Cancelled = "CANCELLED";
     public const string EmptyFile = "EMPTY_FILE";
+
     #endregion
 
     #region Resources Error
+
     public const string BlobSignKeyConfigMissing = "BLOB_SIGN_KEY_CONFIG_MISSING";
     public const string OnlyPrivateBlobKeysAllowed = "ONLY_PRIVATE_BLOB_KEYS_ALLOWED";
     public const string UnExpectedError = "UN_EXPECTED_ERROR";
     public const string FileNotFound = "FILE_NOT_FOUND";
     public const string UrlFileExpired = "URL_FILE_EXPIRED";
+
     #endregion
 
     // =========================================================
     // USER PROFILE FILES
     // =========================================================
+
     #region User Profile
+
     public const string InvalidDegreesJson = "INVALID_DEGREES_JSON";
     public const string InvalidExperiencesJson = "INVALID_EXPERIENCES_JSON";
     public const string InvalidTrainingCoursesJson = "INVALID_TRAINING_COURSES_JSON";
@@ -244,24 +288,30 @@ public class ErrorsCodes
     public const string ExperienceRequired = "EXPERIENCE_REQUIRED";
     public const string SkillOrLanguageRequired = "SKILL_OR_LANGUAGE_REQUIRED";
     public const string UserUpdateFailed = "USER_UPDATE_FAILED";
+
     #endregion
 
     // =========================================================
     // ATTACHMENT RULES
     // =========================================================
+
     #region Attachments
+
     public const string AttachmentNotFound = "ATTACHMENT_NOT_FOUND";
     public const string AttachmentNotEditableInRevision = "ATTACHMENT_NOT_EDITABLE_IN_REVISION";
     public const string InvalidAttachmentId = "INVALID_ATTACHMENT_ID";
     public const string PreviousProfileStepIncomplete = "PREVIOUS_PROFILE_STEP_INCOMPLETE";
     public const string CandidateTypeChangeNotAllowed = "CANDIDATE_TYPE_CHANGE_NOT_ALLOWED";
     public const string NationalAddressNotAllowed = "NATIONAL_ADDRESS_NOT_ALLOWED";
+
     #endregion
 
     // =========================================================
     // DISTRIBUTION
     // =========================================================
+
     #region Profile Distribution
+
     public const string DistributionEmployeeNotActive = "DISTRIBUTION_EMPLOYEE_NOT_ACTIVE";
     public const string DistributionProfilesNotFound = "DISTRIBUTION_PROFILES_NOT_FOUND";
     public const string DistributionFinalStatusNotAllowed = "DISTRIBUTION_FINAL_STATUS_NOT_ALLOWED";
@@ -271,24 +321,30 @@ public class ErrorsCodes
     public const string DistributionModeRequired = "DISTRIBUTION_MODE_REQUIRED";
     public const string DistributionPerEmployeeLimitReached = "DISTRIBUTION_PER_EMPLOYEE_LIMIT_REACHED";
     public const string ProfileNotAssignable = "PROFILE_NOT_ASSIGNABLE";
+
     #endregion
 
     // =========================================================
     // JOBS
     // =========================================================
+
     #region Job Management
+
     public const string InvitationNotFound = "INVITATION_NOT_FOUND";
     public const string InvitationStatusChangeNotAllowed = "INVITATION_STATUS_CHANGE_NOT_ALLOWED";
     public const string JobRequiredAttachmentMissing = "JOB_REQUIRED_ATTACHMENT_MISSING";
     public const string JobRequiredAttachmentUploadFailed = "JOB_REQUIRED_ATTACHMENT_UPLOAD_FAILED";
 
     public const string InvitationExpiryDaysInvalid = "INVITATION_EXPIRY_DAYS_INVALID";
+
     #endregion
 
     // =========================================================
     // EXCEPTIONS
     // =========================================================
+
     #region Exceptions
+
     public const string ExceptionCandidateNotFound = "EXCEPTION_CANDIDATE_NOT_FOUND";
     public const string ExceptionCandidateProfileNotApproved = "EXCEPTION_CANDIDATE_PROFILE_NOT_APPROVED";
     public const string ExceptionProofFileTooLarge = "EXCEPTION_PROOF_FILE_TOO_LARGE";
@@ -301,37 +357,49 @@ public class ErrorsCodes
     public const string InvitationExceptionNotReadyToSend = "INVITATION_EXCEPTION_NOT_READY_TO_SEND";
     public const string InvitationExceptionProofNotFound = "INVITATION_EXCEPTION_PROOF_NOT_FOUND";
     public const string InvitationExceptionCannotBeCancelled = "INVITATION_EXCEPTION_CANNOT_BE_CANCELLED";
+
     #endregion
 
     // =========================================================
     // ORGANIZATION
     // =========================================================
+
     #region Organization Structures
+
     public const string SectorNotFound = "SECTOR_NOT_FOUND";
     public const string SectorNameAlreadyExists = "SECTOR_NAME_ALREADY_EXISTS";
     public const string ManagementNotFound = "MANAGEMENT_NOT_FOUND";
     public const string ManagementNameAlreadyExists = "MANAGEMENT_NAME_ALREADY_EXISTS";
     public const string DepartmentNotFound = "DEPARTMENT_NOT_FOUND";
     public const string DepartmentNameAlreadyExists = "DEPARTMENT_NAME_ALREADY_EXISTS";
+
     #endregion
 
     // =========================================================
     // EXTERNAL SERVICES
     // =========================================================
+
     #region MOI Service
+
     public const string MOIDataNotFound = "MOI_DATA_NOT_FOUND";
     public const string MOIFailedRequest = "MOI_FAILED_REQUEST";
+
     #endregion
-    
+
     // =========================================================
     // Exam
     // =========================================================
+
     #region Exam
+
     public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
     public const string ExamPendingApprovalAlreadyExistsForJob = "EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB";
+    public const string ExamResultReportHasNoPendingActions = "EXAM_RESULT_REPORT_HAS_NO_PENDING_ACTIONS";
+
     #endregion
 
     #region Test Slots
+
     public const string TestSlotTitleArAlreadyExists = "TEST_SLOT_TITLE_AR_ALREADY_EXISTS";
     public const string TestSlotTitleEnAlreadyExists = "TEST_SLOT_TITLE_EN_ALREADY_EXISTS";
     public const string TestSlotRoomNotAvailable = "TEST_SLOT_ROOM_NOT_AVAILABLE";
@@ -342,48 +410,70 @@ public class ErrorsCodes
     public const string TestSlotCannotBeClosedInCurrentStatus = "TEST_SLOT_CANNOT_BE_CLOSED_IN_CURRENT_STATUS";
     public const string TestSlotCanOnlyBeStartedOnScheduledDate = "TEST_SLOT_CAN_ONLY_BE_STARTED_ON_SCHEDULED_DATE";
     public const string TestSlotStartTooEarly = "TEST_SLOT_START_TOO_EARLY";
+    public const string TestSlotSessionStateInvalid = "TEST_SLOT_SESSION_STATE_INVALID";
+    public const string TestSlotStartWindowClosed = "TEST_SLOT_START_WINDOW_CLOSED";
+    public const string TestSlotCannotBeClosedBeforeEnd = "TEST_SLOT_CANNOT_BE_CLOSED_BEFORE_END";
+    public const string TestSlotHasActiveExamAttempts = "TEST_SLOT_HAS_ACTIVE_EXAM_ATTEMPTS";
+    public const string TestSlotCandidateIdentityNotesRequired = "TEST_SLOT_CANDIDATE_IDENTITY_NOTES_REQUIRED";
+    public const string TestSlotCandidateHallStateInvalid = "TEST_SLOT_CANDIDATE_HALL_STATE_INVALID";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
     public const string EmployeeDirectoryInvalidPayload = "EMPLOYEE_DIRECTORY_INVALID_PAYLOAD";
     public const string EmployeeDirectoryUserNotFound = "EMPLOYEE_DIRECTORY_USER_NOT_FOUND";
     public const string EmployeeProfileIdentityConflict = "EMPLOYEE_PROFILE_IDENTITY_CONFLICT";
-    public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader = "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
+
+    public const string QatariPeopleNotAllowedLoginBeforeRegisterOnKawader =
+        "QATARI_PEOPLE_NOT_ALLOWED_LOGIN_BEFORE_REGISTER_ON_KAWADER";
 
     // =========================================================
     // LOOKUPS
     // =========================================================
+
     #region Countries
+
     public const string CountryNotFound = "COUNTRY_NOT_FOUND";
+
     #endregion
 
     #region Languages
+
     public const string LanguageNotFound = "LANGUAGE_NOT_FOUND";
     public const string LanguageNameExists = "LANGUAGE_NAME_EXISTS";
+
     #endregion
 
     #region Universities
+
     public const string UniversityNotFound = "UNIVERSITY_NOT_FOUND";
     public const string UniversityNameExists = "UNIVERSITY_NAME_EXISTS";
     public const string CityNotFound = "CITY_NOT_FOUND";
+
     #endregion
 
     #region Religions
+
     public const string ReligionNotFound = "RELIGION_NOT_FOUND";
     public const string ReligionNameExists = "RELIGION_NAME_EXISTS";
+
     #endregion
 
     #region Target Entities
+
     public const string TargetEntityNotFound = "TARGET_ENTITY_NOT_FOUND";
     public const string TargetEntityNameExists = "TARGET_ENTITY_NAME_EXISTS";
+
     #endregion
 
     #region Job Titles
+
     public const string JobTitleNumberExists = "JOB_TITLE_NUMBER_EXISTS";
     public const string JobTitleInUse = "JOB_TITLE_IN_USE";
+
     #endregion
 
     #region Offices
+
     public const string OfficeNotFound = "OFFICE_NOT_FOUND";
     public const string OfficeAdminEmailInvalid = "OFFICE_ADMIN_EMAIL_INVALID";
     public const string OfficeAdminEmailExists = "OFFICE_ADMIN_EMAIL_EXISTS";
@@ -399,15 +489,19 @@ public class ErrorsCodes
     public const string OfficeAdminAssignFailed = "OFFICE_ADMIN_ASSIGN_FAILED";
     public const string OfficeAdminBlockNotAllowed = "OFFICE_ADMIN_BLOCK_NOT_ALLOWED";
     public const string OfficeAdminEmailChangeNotAllowed = "OFFICE_ADMIN_EMAIL_CHANGE_NOT_ALLOWED";
+
     #endregion
 
     #region Locations
+
     public const string LocationNotFound = "LOCATION_NOT_FOUND";
     public const string LocationNameExistsForLink = "LOCATION_NAME_EXISTS_FOR_LINK";
     public const string LocationAlreadyUsed = "LOCATION_ALREADY_USED";
+
     #endregion
 
     #region Major Managements
+
     public const string MajorNotFound = "MAJOR_NOT_FOUND";
     public const string MajorAlreadyUsed = "MAJOR_ALREADY_USED";
     public const string ChangingHierarchyTypeNotAllowed = "CHANGING_HIERARCHY_TYPE_NOT_ALLOWED";
@@ -415,17 +509,27 @@ public class ErrorsCodes
     public const string MajorSkillLinkAlreadyExists = "MAJOR_SKILL_LINK_ALREADY_EXISTS";
     public const string MajorSkillLinkNotFound = "MAJOR_SKILL_LINK_NOT_FOUND";
     public const string CannotLinkInactiveMajorOrSkill = "CANNOT_LINK_INACTIVE_MAJOR_OR_SKILL";
-    public const string CannotActivateMajorSkillLinkBecauseParentMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE";
-    public const string CannotActivateMajorSkillLinkBecauseMajorIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE";
-    public const string CannotActivateMajorSkillLinkBecauseSkillIsInactive = "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE";
+
+    public const string CannotActivateMajorSkillLinkBecauseParentMajorIsInactive =
+        "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_PARENT_MAJOR_IS_INACTIVE";
+
+    public const string CannotActivateMajorSkillLinkBecauseMajorIsInactive =
+        "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_MAJOR_IS_INACTIVE";
+
+    public const string CannotActivateMajorSkillLinkBecauseSkillIsInactive =
+        "CANNOT_ACTIVATE_MAJOR_SKILL_LINK_BECAUSE_SKILL_IS_INACTIVE";
+
     #endregion
 
     #region Skill Managements
+
     public const string SkillNotFound = "SKILL_NOT_FOUND";
     public const string SkillAlreadyUsed = "SKILL_ALREADY_USED";
+
     #endregion
 
     #region Minister Office
+
     public const string InvalidQidFormat = "INVALID_QID_FORMAT";
     public const string InvalidPhoneFormat = "INVALID_PHONE_FORMAT";
     public const string MoiValidationFailed = "MOI_FAILED_REQUEST";
@@ -433,14 +537,18 @@ public class ErrorsCodes
     public const string MissingRequiredFields = "MISSING_REQUIRED_FIELDS";
     public const string MinisterOfficeCandidateNotFound = "MINISTER_OFFICE_CANDIDATE_NOT_FOUND";
     public const string QidExpiryDateRequired = "QID_EXPIRY_DATE_REQUIRED";
+
     #endregion
 
     #region Interview - Evaluation Bank
+
     public const string InterviewEvaluationAxisNotFound = "INTERVIEW_EVALUATION_AXIS_NOT_FOUND";
     public const string InterviewEvaluationCriterionNotFound = "INTERVIEW_EVALUATION_CRITERION_NOT_FOUND";
+
     #endregion
 
     #region Interview - Evaluation Template
+
     public const string InterviewTemplateNotFound = "INTERVIEW_TEMPLATE_NOT_FOUND";
     public const string InterviewOrganizationScopeNotFound = "INTERVIEW_ORGANIZATION_SCOPE_NOT_FOUND";
 
@@ -455,13 +563,18 @@ public class ErrorsCodes
     public const string InterviewTemplateVersionAxisAlreadyExists = "INTERVIEW_TEMPLATE_VERSION_AXIS_ALREADY_EXISTS";
 
     public const string InterviewTemplateVersionCriterionNotFound = "INTERVIEW_TEMPLATE_VERSION_CRITERION_NOT_FOUND";
-    public const string InterviewTemplateVersionCriterionSourceConflict = "INTERVIEW_TEMPLATE_VERSION_CRITERION_SOURCE_CONFLICT";
 
-    public const string JobTitleNotFound = "JOB_TITLE_NOT_FOUND"; // must add it in JobRegion but i usedit just on interview module.
+    public const string InterviewTemplateVersionCriterionSourceConflict =
+        "INTERVIEW_TEMPLATE_VERSION_CRITERION_SOURCE_CONFLICT";
+
+    public const string
+        JobTitleNotFound = "JOB_TITLE_NOT_FOUND"; // must add it in JobRegion but i usedit just on interview module.
+
     #endregion
 
 
     #region Interview - Committee
+
     public const string InterviewCommitteeNotFound = "INTERVIEW_COMMITTEE_NOT_FOUND";
     public const string InterviewCommitteeCoreNotEditable = "INTERVIEW_COMMITTEE_CORE_NOT_EDITABLE";
     public const string InterviewCommitteeMembersNotEditable = "INTERVIEW_COMMITTEE_MEMBERS_NOT_EDITABLE";
@@ -478,13 +591,22 @@ public class ErrorsCodes
     public const string InterviewCommitteeChairAlreadyExists = "INTERVIEW_COMMITTEE_CHAIR_ALREADY_EXISTS";
     public const string InterviewCommitteeMinimumMembersNotMet = "INTERVIEW_COMMITTEE_MINIMUM_MEMBERS_NOT_MET";
     public const string InterviewCommitteeMemberNotEligible = "INTERVIEW_COMMITTEE_MEMBER_NOT_ELIGIBLE";
-    public const string InterviewCommitteeMemberScopeNotSelectedAxes = "INTERVIEW_COMMITTEE_MEMBER_SCOPE_NOT_SELECTED_AXES";
-    public const string InterviewCommitteeMemberEvaluationAxisNotFound = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_NOT_FOUND";
-    public const string InterviewCommitteeMemberEvaluationAxisAlreadyExists = "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_ALREADY_EXISTS";
+
+    public const string InterviewCommitteeMemberScopeNotSelectedAxes =
+        "INTERVIEW_COMMITTEE_MEMBER_SCOPE_NOT_SELECTED_AXES";
+
+    public const string InterviewCommitteeMemberEvaluationAxisNotFound =
+        "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_NOT_FOUND";
+
+    public const string InterviewCommitteeMemberEvaluationAxisAlreadyExists =
+        "INTERVIEW_COMMITTEE_MEMBER_EVALUATION_AXIS_ALREADY_EXISTS";
+
     public const string InterviewTemplateHasNoApprovedVersion = "INTERVIEW_TEMPLATE_HAS_NO_APPROVED_VERSION";
+
     #endregion
 
     #region Interview - Schedule
+
     public const string InterviewScheduleNotFound = "INTERVIEW_SCHEDULE_NOT_FOUND";
     public const string InterviewScheduleNotEditable = "INTERVIEW_SCHEDULE_NOT_EDITABLE";
     public const string InterviewScheduleNotDraft = "INTERVIEW_SCHEDULE_NOT_DRAFT";
@@ -516,9 +638,11 @@ public class ErrorsCodes
     public const string InterviewScheduleCandidateNotEligible = "INTERVIEW_SCHEDULE_CANDIDATE_NOT_ELIGIBLE";
     public const string InterviewScheduleCandidateAlreadyAssigned = "INTERVIEW_SCHEDULE_CANDIDATE_ALREADY_ASSIGNED";
     public const string InterviewAppointmentRescheduleNotAllowed = "INTERVIEW_APPOINTMENT_RESCHEDULE_NOT_ALLOWED";
+
     #endregion
 
     #region Interview - Appointment
+
     public const string InterviewAppointmentNotFound = "INTERVIEW_APPOINTMENT_NOT_FOUND";
     public const string InterviewAppointmentNotEditable = "INTERVIEW_APPOINTMENT_NOT_EDITABLE";
     public const string InterviewAppointmentNotHeld = "INTERVIEW_APPOINTMENT_NOT_HELD";
@@ -536,35 +660,187 @@ public class ErrorsCodes
     public const string InterviewAppointmentAlreadyRescheduledOnce = "INTERVIEW_APPOINTMENT_ALREADY_RESCHEDULED_ONCE";
     public const string InterviewAppointmentNotEvaluable = "INTERVIEW_APPOINTMENT_NOT_EVALUABLE";
     public const string InterviewAppointmentAttendanceForbidden = "INTERVIEW_APPOINTMENT_ATTENDANCE_FORBIDDEN";
+
     #endregion
 
     #region Interview - Member Evaluation
+
     public const string InterviewMemberEvaluationNotFound = "INTERVIEW_MEMBER_EVALUATION_NOT_FOUND";
     public const string InterviewMemberEvaluationAlreadySubmitted = "INTERVIEW_MEMBER_EVALUATION_ALREADY_SUBMITTED";
     public const string InterviewMemberEvaluationScoreOutOfRange = "INTERVIEW_MEMBER_EVALUATION_SCORE_OUT_OF_RANGE";
-    public const string InterviewMemberEvaluationCriterionOutOfScope = "INTERVIEW_MEMBER_EVALUATION_CRITERION_OUT_OF_SCOPE";
-    public const string InterviewMemberEvaluationRequiredCriterionMissing = "INTERVIEW_MEMBER_EVALUATION_REQUIRED_CRITERION_MISSING";
-    public const string InterviewMemberEvaluationNotAssignedToAppointment = "INTERVIEW_MEMBER_EVALUATION_NOT_ASSIGNED_TO_APPOINTMENT";
-    public const string InterviewMemberEvaluationSummaryAccessDenied = "INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED";
+
+    public const string InterviewMemberEvaluationCriterionOutOfScope =
+        "INTERVIEW_MEMBER_EVALUATION_CRITERION_OUT_OF_SCOPE";
+
+    public const string InterviewMemberEvaluationRequiredCriterionMissing =
+        "INTERVIEW_MEMBER_EVALUATION_REQUIRED_CRITERION_MISSING";
+
+    public const string InterviewMemberEvaluationNotAssignedToAppointment =
+        "INTERVIEW_MEMBER_EVALUATION_NOT_ASSIGNED_TO_APPOINTMENT";
+
+    public const string InterviewMemberEvaluationSummaryAccessDenied =
+        "INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED";
+
     public const string InterviewEvaluationSessionAccessDenied = "INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED";
+
     #endregion
 
     #region Interview - Operational Issue
+
     public const string InterviewOperationalIssueNotFound = "INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND";
     public const string InterviewOperationalIssueNotOpen = "INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN";
+
     #endregion
 
     #region Interview - Result Report
+
     public const string InterviewResultReportNotFound = "INTERVIEW_RESULT_REPORT_NOT_FOUND";
     public const string InterviewResultReportNotUnderReview = "INTERVIEW_RESULT_REPORT_NOT_UNDER_REVIEW";
     public const string InterviewResultCandidateDecisionMissing = "INTERVIEW_RESULT_CANDIDATE_DECISION_MISSING";
-    public const string InterviewResultCandidateNotQualifiedForDecision = "INTERVIEW_RESULT_CANDIDATE_NOT_QUALIFIED_FOR_DECISION";
-    public const string InterviewResultReportBlockedByOperationalIssue = "INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE";
-    public const string InterviewResultReportCalculationMethodNotSupported = "INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED";
-    public const string InterviewResultReportMissingInvitationStatusMapping = "INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING";
+
+    public const string InterviewResultCandidateNotQualifiedForDecision =
+        "INTERVIEW_RESULT_CANDIDATE_NOT_QUALIFIED_FOR_DECISION";
+
+    public const string InterviewResultReportBlockedByOperationalIssue =
+        "INTERVIEW_RESULT_REPORT_BLOCKED_BY_OPERATIONAL_ISSUE";
+
+    public const string InterviewResultReportCalculationMethodNotSupported =
+        "INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED";
+
+    public const string InterviewResultReportMissingInvitationStatusMapping =
+        "INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING";
+
     public const string InterviewResultReportNotReadyForReschedule = "INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE";
+
+    #endregion
+
+    #region Candidate Exam
+    public const string CandidateExamAssignmentNotFound = "CANDIDATE_EXAM_ASSIGNMENT_NOT_FOUND";
+    public const string CandidateExamInvitationNotEligible = "CANDIDATE_EXAM_INVITATION_NOT_ELIGIBLE";
+    public const string CandidateExamNotApproved = "CANDIDATE_EXAM_NOT_APPROVED";
+    public const string CandidateExamAttendanceNotPresent = "CANDIDATE_EXAM_ATTENDANCE_NOT_PRESENT";
+    public const string CandidateExamIdentityNotMatched = "CANDIDATE_EXAM_IDENTITY_NOT_MATCHED";
+    public const string CandidateExamNotAuthorized = "CANDIDATE_EXAM_NOT_AUTHORIZED";
+    public const string CandidateExamAlreadyStarted = "CANDIDATE_EXAM_ALREADY_STARTED";
+    public const string CandidateExamAlreadyCompleted = "CANDIDATE_EXAM_ALREADY_COMPLETED";
+    public const string CandidateExamRescheduled = "CANDIDATE_EXAM_RESCHEDULED";
+    public const string CandidateExamCancelled = "CANDIDATE_EXAM_CANCELLED";
+    public const string CandidateExamSlotNotRunning = "CANDIDATE_EXAM_SLOT_NOT_RUNNING";
+    public const string CandidateExamSessionNotRunning = "CANDIDATE_EXAM_SESSION_NOT_RUNNING";
+    public const string CandidateExamInvalidAccessCode = "CANDIDATE_EXAM_INVALID_ACCESS_CODE";
+    public const string CandidateExamHasNoParts = "CANDIDATE_EXAM_HAS_NO_PARTS";
+    public const string CandidateExamAttemptStructureInvalid = "CANDIDATE_EXAM_ATTEMPT_STRUCTURE_INVALID";
+    public const string CandidateExamAttemptAlreadyStarted = "CANDIDATE_EXAM_ATTEMPT_ALREADY_STARTED";
+    public const string CandidateExamAttemptInterrupted = "CANDIDATE_EXAM_ATTEMPT_INTERRUPTED";
+    public const string CandidateExamAttemptCompleted = "CANDIDATE_EXAM_ATTEMPT_COMPLETED";
+    public const string CandidateExamAttemptTimedOut = "CANDIDATE_EXAM_ATTEMPT_TIMED_OUT";
+    public const string CandidateExamAttemptCancelled = "CANDIDATE_EXAM_ATTEMPT_CANCELLED";
+    public const string CandidateExamAttemptStatusInvalid = "CANDIDATE_EXAM_ATTEMPT_STATUS_INVALID";
+    public const string CandidateExamAttemptNotFound = "CANDIDATE_EXAM_ATTEMPT_NOT_FOUND";
+    public const string CandidateExamConfigurationInvalid = "CANDIDATE_EXAM_CONFIGURATION_INVALID";
+    public const string CandidateExamQuestionBankVersionInvalid = "CANDIDATE_EXAM_QUESTION_BANK_VERSION_INVALID";
+    public const string CandidateExamQuestionBankTypeMismatch = "CANDIDATE_EXAM_QUESTION_BANK_TYPE_MISMATCH";
+    public const string CandidateExamQuestionRevisionMismatch = "CANDIDATE_EXAM_QUESTION_REVISION_MISMATCH";
+    public const string CandidateExamInsufficientQuestions = "CANDIDATE_EXAM_INSUFFICIENT_QUESTIONS";
+    public const string CandidateExamExistingQuestionSetInvalid = "CANDIDATE_EXAM_EXISTING_QUESTION_SET_INVALID";
+    public const string CandidateExamStartStateInvalid = "CANDIDATE_EXAM_START_STATE_INVALID";
+    public const string CandidateExamFirstPartDurationInvalid = "CANDIDATE_EXAM_FIRST_PART_DURATION_INVALID";
+    public const string CandidateExamAttemptNotStarted = "CANDIDATE_EXAM_ATTEMPT_NOT_STARTED";
+    public const string CandidateExamCurrentStateInvalid = "CANDIDATE_EXAM_CURRENT_STATE_INVALID";
+    public const string CandidateExamCurrentQuestionInvalid = "CANDIDATE_EXAM_CURRENT_QUESTION_INVALID";
+    public const string CandidateExamInvalidQuestionOption = "CANDIDATE_EXAM_INVALID_QUESTION_OPTION";
+    public const string CandidateExamPartTimeExpired = "CANDIDATE_EXAM_PART_TIME_EXPIRED";
+    public const string CandidateExamPreviousNotAllowed = "CANDIDATE_EXAM_PREVIOUS_NOT_ALLOWED";
+    public const string CandidateExamInvalidNavigationTarget = "CANDIDATE_EXAM_INVALID_NAVIGATION_TARGET";
+    public const string CandidateExamNoNextQuestion = "CANDIDATE_EXAM_NO_NEXT_QUESTION";
+    public const string CandidateExamPartNotCurrent = "CANDIDATE_EXAM_PART_NOT_CURRENT";
+    public const string CandidateExamPartNotReadyToComplete = "CANDIDATE_EXAM_PART_NOT_READY_TO_COMPLETE";
+    public const string CandidateExamEntryWindowClosed = "CANDIDATE_EXAM_ENTRY_WINDOW_CLOSED";
+    public const string CandidateExamNextPartStateInvalid = "CANDIDATE_EXAM_NEXT_PART_STATE_INVALID";
+    public const string CandidateExamNextPartQuestionsInvalid = "CANDIDATE_EXAM_NEXT_PART_QUESTIONS_INVALID";
+    public const string CandidateExamNextPartDurationInvalid = "CANDIDATE_EXAM_NEXT_PART_DURATION_INVALID";
+    public const string CandidateExamPartTransitionStateInvalid = "CANDIDATE_EXAM_PART_TRANSITION_STATE_INVALID";
+    public const string CandidateExamPartTimeNotExpired = "CANDIDATE_EXAM_PART_TIME_NOT_EXPIRED";
+    public const string CandidateExamTimeoutStateInvalid = "CANDIDATE_EXAM_TIMEOUT_STATE_INVALID";
+    public const string CandidateExamPartAlreadyCompleted = "CANDIDATE_EXAM_PART_ALREADY_COMPLETED";
+    public const string CandidateExamActiveSessionInvalid = "CANDIDATE_EXAM_ACTIVE_SESSION_INVALID";
+    public const string CandidateExamResumeAuthorizationUnavailable = "CANDIDATE_EXAM_RESUME_AUTHORIZATION_UNAVAILABLE";
+    public const string CandidateExamOperationalIssueReasonRequired = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_REASON_REQUIRED";
+    public const string CandidateExamOperationalIssueStateInvalid = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_STATE_INVALID";
+    public const string CandidateExamOperationalIssueAlreadyOpen = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_ALREADY_OPEN";
+
+    #endregion
+    
+    #region Exam Result Report
+
+    public const string ExamResultReportNotFound =
+        "EXAM_RESULT_REPORT_NOT_FOUND";
+
+    public const string ExamResultReportNotCreating =
+        "EXAM_RESULT_REPORT_NOT_CREATING";
+
+    public const string ExamResultReportNotUnderReview =
+        "EXAM_RESULT_REPORT_NOT_UNDER_REVIEW";
+
+    public const string ExamResultReportNotReturned =
+        "EXAM_RESULT_REPORT_NOT_RETURNED";
+
+    public const string ExamResultCandidateNotFound =
+        "EXAM_RESULT_CANDIDATE_NOT_FOUND";
+
+    public const string ExamResultCandidateNotRequiresAction =
+        "EXAM_RESULT_CANDIDATE_NOT_REQUIRES_ACTION";
+
+    public const string ExamResultCandidateResolutionStateInvalid =
+        "EXAM_RESULT_CANDIDATE_RESOLUTION_STATE_INVALID";
+
+    public const string TestSessionCandidateCannotBeRescheduled =
+        "TEST_SESSION_CANDIDATE_CANNOT_BE_RESCHEDULED";
+    public const string TestSessionCandidateRescheduleReasonRequired =
+        "TEST_SESSION_CANDIDATE_RESCHEDULE_REASON_REQUIRED";
+    public const string ExamResultCandidateRescheduleStateInvalid =
+        "EXAM_RESULT_CANDIDATE_RESCHEDULE_STATE_INVALID";
+    public const string ExamResultCandidateAlreadyRescheduled =
+        "EXAM_RESULT_CANDIDATE_ALREADY_RESCHEDULED";
+    public const string ExamResultCandidateActiveAssignmentExists =
+        "EXAM_RESULT_CANDIDATE_ACTIVE_ASSIGNMENT_EXISTS";
+    public const string ExamResultCandidateTargetSessionInvalid =
+        "EXAM_RESULT_CANDIDATE_TARGET_SESSION_INVALID";
+    public const string ExamResultCandidateTargetSlotNotFuture =
+        "EXAM_RESULT_CANDIDATE_TARGET_SLOT_NOT_FUTURE";
+    public const string ExamResultCandidateTargetSlotFull =
+        "EXAM_RESULT_CANDIDATE_TARGET_SLOT_FULL";
+    public const string ExamResultCandidateInterruptionStateInvalid =
+        "EXAM_RESULT_CANDIDATE_INTERRUPTION_STATE_INVALID";
+    public const string ExamResultCandidateAcceptScoreStateInvalid =
+        "EXAM_RESULT_CANDIDATE_ACCEPT_SCORE_STATE_INVALID";
+    public const string ExamResultCandidateOpenInterruptionNotFound =
+        "EXAM_RESULT_CANDIDATE_OPEN_INTERRUPTION_NOT_FOUND";
+    public const string ExamResultCandidateMultipleOpenInterruptions =
+        "EXAM_RESULT_CANDIDATE_MULTIPLE_OPEN_INTERRUPTIONS";
+    public const string ExamResultReportHasPendingActions =
+        "EXAM_RESULT_REPORT_HAS_PENDING_ACTIONS";
+
+    public const string ExamResultReportReturnReasonRequired =
+        "EXAM_RESULT_REPORT_RETURN_REASON_REQUIRED";
+
+    public const string ExamResultReportNotApproved =
+        "EXAM_RESULT_REPORT_NOT_APPROVED";
+    
+    public const string ExamResultReportHasNoCandidates =
+        "EXAM_RESULT_REPORT_HAS_NO_CANDIDATES";
+
+    public const string ExamResultReportSessionsNotClosed =
+        "EXAM_RESULT_REPORT_SESSIONS_NOT_CLOSED";
+
+    public const string ExamResultReportInvitationStateInvalid =
+        "EXAM_RESULT_REPORT_INVITATION_STATE_INVALID";
+
     #endregion
 }
+
+
+
 public static class CandidateEligibilityConditionCodes
 {
     public const string ProfileApproved = "PROFILE_APPROVED";

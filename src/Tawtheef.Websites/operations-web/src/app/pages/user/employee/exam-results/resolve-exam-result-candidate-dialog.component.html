@@ -1,0 +1,22 @@
+<section i18nNamespace="pages/employee/exam-results">
+  <p>{{ 'EXAM_RESULTS.RESOLVE_NOT_COMPLETED_CONFIRMATION' | translate }}</p>
+  <label class="form-label fw-semibold" for="exam-result-resolution-notes">
+    {{ 'EXAM_RESULTS.RESOLUTION_NOTES' | translate }} <span class="text-danger">*</span>
+  </label>
+  <textarea pTextarea id="exam-result-resolution-notes" class="form-control w-100"
+    rows="5" [formControl]="notes" maxlength="2000"
+    [attr.aria-invalid]="notes.invalid && notes.touched"></textarea>
+  @if (notes.invalid && notes.touched) {
+    <small class="text-danger d-block mt-1" role="alert">
+      {{ 'EXAM_RESULTS.RESOLUTION_NOTES_REQUIRED' | translate }}
+    </small>
+  }
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="notes.invalid" (click)="confirm()">
+      {{ 'EXAM_RESULTS.RESOLVE_NOT_COMPLETED' | translate }}
+    </button>
+  </div>
+</section>

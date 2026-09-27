@@ -42,6 +42,24 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: portalRoutes.examResultDetailsPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View] },
+    loadComponent: () =>
+      import('./exam-results/exam-result-report-details.component').then(
+        (m) => m.ExamResultReportDetailsComponent,
+      ),
+  },
+  {
+    path: portalRoutes.examResultsPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View] },
+    loadComponent: () =>
+      import('./exam-results/exam-result-reports-list.component').then(
+        (m) => m.ExamResultReportsListComponent,
+      ),
+  },
+  {
     path: portalRoutes.createTestSlotPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'create' },

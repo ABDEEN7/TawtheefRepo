@@ -40,6 +40,8 @@
           <th>{{ 'TEST_SLOT_DETAILS.EXAM_JOB' | translate }}</th>
           <th>{{ 'TEST_SLOT_DETAILS.SESSION' | translate }}</th>
           <th>{{ 'TEST_SLOT_DETAILS.ATTENDANCE' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.IDENTITY_STATUS' | translate }}</th>
+          <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE_STATUS' | translate }}</th>
           <th>{{ 'TEST_SLOT_DETAILS.ATTEMPT_STATUS' | translate }}</th>
           <th>{{ 'TEST_SLOT_DETAILS.NOTIFICATION' | translate }}</th>
           <th>{{ 'TEST_SLOTS.ACTIONS' | translate }}</th>
@@ -60,14 +62,56 @@
             <small class="text-muted">{{ candidate.sessionNo }}</small>
           </td>
           <td><p-tag severity="secondary" [value]="candidate.attendanceStatus" /></td>
+          <td>
+            <p-tag severity="secondary" [value]="candidate.identityVerificationStatus" />
+            @if (candidate.identityVerificationNotes) { <div class="small text-muted">{{ candidate.identityVerificationNotes }}</div> }
+          </td>
+          <td><p-tag severity="secondary" [value]="candidate.candidateStatus" /></td>
           <td><p-tag severity="secondary" [value]="candidate.attemptStatus" /></td>
           <td>{{ candidate.notificationStatus || '—' }}</td>
-          <td>—</td>
+          <td>
+            @if (canMarkPresent(candidate)) {
+              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="markPresent(candidate)">{{ 'TEST_SLOT_DETAILS.MARK_PRESENT' | translate }}</button>
+            }
+            @if (canVerifyIdentity(candidate)) {
+              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="verifyIdentity(candidate)">{{ 'TEST_SLOT_DETAILS.VERIFY_IDENTITY' | translate }}</button>
+            }
+            @if (canAuthorizeEntry(candidate)) {
+              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="authorizeEntry(candidate)">{{ 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY' | translate }}</button>
+            }
+            @if (isOperationalIssueRecorded(candidate)) {
+              <p-tag severity="warn" [value]="'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED' | translate" />
+            } @else if (canReportOperationalIssue(candidate)) {
+              <button type="button" class="btn btn-sm btn-outline-warning me-2"
+                (click)="reportOperationalIssue(candidate)">
+                {{ 'TEST_SLOT_DETAILS.REPORT_OPERATIONAL_ISSUE' | translate }}
+              </button>
+            }
+            @if (isResumeAuthorized(candidate)) {
+              <p-tag severity="success" [value]="'TEST_SLOT_DETAILS.RESUME_AUTHORIZED' | translate" />
+            } @else if (canAuthorizeResume(candidate)) {
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
+                [disabled]="authorizingAttemptId() !== null"
+                (click)="authorizeResume(candidate)"
+              >
+                @if (authorizingAttemptId() === candidate.testAttemptId) {
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  {{ 'TEST_SLOT_DETAILS.AUTHORIZING_RESUME' | translate }}
+                } @else {
+                  {{ 'TEST_SLOT_DETAILS.AUTHORIZE_RESUME' | translate }}
+                }
+              </button>
+            } @else if (!isOperationalIssueRecorded(candidate) && !canReportOperationalIssue(candidate)) {
+              —
+            }
+          </td>
         </tr></ng-template
       >
       <ng-template #emptymessage
         ><tr>
-          <td colspan="7" class="text-center py-4 text-muted">
+          <td colspan="9" class="text-center py-4 text-muted">
             {{ 'TEST_SLOT_DETAILS.NO_CANDIDATES' | translate }}
           </td>
         </tr></ng-template

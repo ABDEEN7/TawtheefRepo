@@ -178,6 +178,32 @@ export class EndpointsService {
     }
   };
 
+  candidateExams = {
+    list: this.getFullUrl('/candidate-exams'),
+    validateAccessCode: (testSessionCandidateId: string) =>
+      this.getFullUrl(`/candidate-exams/${testSessionCandidateId}/validate-access-code`),
+    start: (testSessionCandidateId: string) =>
+      this.getFullUrl(`/candidate-exams/${testSessionCandidateId}/start`),
+    attempts: {
+      currentQuestion: (testAttemptId: string) =>
+        this.getFullUrl(`/candidate-exams/attempts/${testAttemptId}/current-question`),
+      answer: (testAttemptId: string, testAttemptQuestionId: string) =>
+        this.getFullUrl(
+          `/candidate-exams/attempts/${testAttemptId}/questions/${testAttemptQuestionId}/answer`
+        ),
+      navigate: (testAttemptId: string) =>
+        this.getFullUrl(`/candidate-exams/attempts/${testAttemptId}/navigate`),
+      submit: (testAttemptId: string, testAttemptPartId: string) =>
+        this.getFullUrl(
+          `/candidate-exams/attempts/${testAttemptId}/parts/${testAttemptPartId}/submit`
+        ),
+      timeout: (testAttemptId: string, testAttemptPartId: string) =>
+        this.getFullUrl(
+          `/candidate-exams/attempts/${testAttemptId}/parts/${testAttemptPartId}/timeout`
+        )
+    }
+  };
+
   homeContent = {
     content: this.getFullUrl('/home-content')
   };

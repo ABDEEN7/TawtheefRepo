@@ -43,6 +43,22 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CloseTestSlot(Guid id, CancellationToken cancellationToken)
         => (await mediator.Send(new CloseTestSlotCommand(id), cancellationToken)).ToActionResult();
 
+    [HttpPost("{id:guid}/candidates/{candidateId:guid}/mark-present")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
+    public async Task<IActionResult> MarkCandidatePresent(Guid id, Guid candidateId, CancellationToken cancellationToken)
+        => (await mediator.Send(new MarkTestSlotCandidatePresentCommand(id, candidateId), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/candidates/{candidateId:guid}/verify-identity")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
+    public async Task<IActionResult> VerifyCandidateIdentity(Guid id, Guid candidateId,
+        [FromBody] VerifyTestSlotCandidateIdentityDto request, CancellationToken cancellationToken)
+        => (await mediator.Send(new VerifyTestSlotCandidateIdentityCommand(id, candidateId, request.Matched, request.Notes), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/candidates/{candidateId:guid}/authorize-entry")]
+    [AuthorizePermission(PermissionKeys.TestSlots.ManagePeriod)]
+    public async Task<IActionResult> AuthorizeCandidateEntry(Guid id, Guid candidateId, CancellationToken cancellationToken)
+        => (await mediator.Send(new AuthorizeTestSlotCandidateEntryCommand(id, candidateId), cancellationToken)).ToActionResult();
+
     [HttpGet]
     [AuthorizePermission(PermissionKeys.TestSlots.View)]
     public async Task<IActionResult> GetTestSlots([FromQuery] GetTestSlotsQuery query,

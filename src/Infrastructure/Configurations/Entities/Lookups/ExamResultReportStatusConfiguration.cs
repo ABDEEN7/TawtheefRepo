@@ -30,7 +30,7 @@ public class ExamResultReportStatusConfiguration : LookupBaseConfiguration<ExamR
                 Id = ExamResultReportStatusIds.Returned,
                 BackendName = nameof(ExamResultReportStatusIds.Returned),
                 NameEn = "Returned",
-                NameAr = "معاد",
+                NameAr = "معاد للمعالجة",
                 DisplayOrder = 3
             },
             new ExamResultReportStatus

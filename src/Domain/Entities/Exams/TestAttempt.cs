@@ -11,7 +11,10 @@ public class TestAttempt : EventEntity
     public Guid StatusId { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
-
+    public Guid? ActiveSessionId { get; set; }
     public TestSessionCandidate? TestSessionCandidate { get; set; }
     public TestAttemptStatus? Status { get; set; }
+    public ICollection<TestAttemptPart> Parts { get; set; } = new List<TestAttemptPart>();
+    public ICollection<TestAttemptQuestion> Questions { get; set; } = new List<TestAttemptQuestion>();
+    public ICollection<CandidateExamConnection> Connections { get; set; } = new List<CandidateExamConnection>();
 }

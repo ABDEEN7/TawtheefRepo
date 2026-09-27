@@ -19,7 +19,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
@@ -38,6 +37,7 @@ using Tawtheef.Application.Common.Models.Logges;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Common.Validations;
 using Tawtheef.Domain.Configurations.Settings;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Infrastructure.Data;
 using Tawtheef.Infrastructure.Data.Interceptors;
@@ -164,7 +164,7 @@ namespace Tawtheef.Infrastructure
                 services.AddInfrastructureHttpClients(configuration);
 
                 // Notification (Common)
-                services.AddNotificationServicesCommon(configuration);
+                services.AddNotificationServicesCommon();
 
                 // Validators
                 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -217,7 +217,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<IJobRepository, JobRepository>();
             }
 
-            private void AddNotificationServicesCommon(IConfiguration configuration)
+            private void AddNotificationServicesCommon()
             {
                 services.AddSingleton<IEmailBranding, DefaultBranding>();
                 services.AddSingleton<IEmailTransport, GraphEmailTransport>();
@@ -465,8 +465,10 @@ namespace Tawtheef.Infrastructure
                     .AddPolicyScheme(AuthSchemes.Smart, "Cookie or Bearer", o =>
                     {
                         o.ForwardDefaultSelector = ctx =>
-                            ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
-                            h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                            (ctx.Request.Headers.TryGetValue("Authorization", out var h) &&
+                             h.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) ||
+                            (ctx.Request.Path.StartsWithSegments(CandidateExamRealtimeConstants.HubPath) &&
+                             ctx.Request.Query.ContainsKey("access_token"))
                                 ? JwtBearerDefaults.AuthenticationScheme
                                 : AuthSchemes.AppCookieScheme;
                     })
@@ -486,6 +488,14 @@ namespace Tawtheef.Infrastructure
 
                         options.Events = new JwtBearerEvents
                         {
+                            OnMessageReceived = ctx =>
+                            {
+                                if (ctx.Request.Path.StartsWithSegments(CandidateExamRealtimeConstants.HubPath) &&
+                                    ctx.Request.Query.TryGetValue("access_token", out var token) &&
+                                    !string.IsNullOrWhiteSpace(token))
+                                    ctx.Token = token;
+                                return Task.CompletedTask;
+                            },
                             OnTokenValidated = async ctx =>
                             {
                                 var sidFromToken =

@@ -133,6 +133,13 @@ export class Sidebar {
       permission: Permissions.Exams.View,
     },
     {
+      key: 'exam-results',
+      label: 'نتائج الاختبارات / Exam Results',
+      icon: 'hgi-task-done-01',
+      route: routes.portal.examResults,
+      permission: Permissions.Exams.View,
+    },
+    {
       key: 'question-banks',
       label: 'internal.sidebar.question-banks',
       icon: 'hgi-file-validation',

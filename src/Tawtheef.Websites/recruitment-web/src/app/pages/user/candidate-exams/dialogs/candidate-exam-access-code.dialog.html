@@ -1,0 +1,106 @@
+<section class="exam-entry-dialog" i18nNamespace="pages/user/candidate-exams">
+  @if (registrationFailed()) {
+    <div class="dialog-state" role="alert">
+      <div class="dialog-state__icon dialog-state__icon--error" aria-hidden="true">
+        <i class="fa-solid fa-link-slash"></i>
+      </div>
+      <h2>{{ 'candidate_exams.entry.connectionErrorTitle' | translate }}</h2>
+      <p>{{ 'candidate_exams.entry.connectionErrorAfterStart' | translate }}</p>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="retryingRegistration()"
+        (click)="retryRegistration()"
+      >
+        @if (retryingRegistration()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          {{ 'candidate_exams.entry.retryingConnection' | translate }}
+        } @else {
+          <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+          {{ 'candidate_exams.entry.retryConnection' | translate }}
+        }
+      </button>
+    </div>
+  } @else {
+    <form
+      [formGroup]="form"
+      (ngSubmit)="validated() || recoveringStart ? startExam() : validateAccessCode()"
+    >
+      <div class="mb-3">
+        <label for="candidateExamAccessCode" class="form-label required">
+          {{ 'candidate_exams.entry.accessCode' | translate }}
+        </label>
+        <input
+          id="candidateExamAccessCode"
+          type="text"
+          class="form-control"
+          pInputText
+          formControlName="accessCode"
+          autocomplete="off"
+          spellcheck="false"
+          [attr.aria-describedby]="
+            form.controls.accessCode.touched && form.controls.accessCode.invalid
+              ? 'candidateExamAccessCodeError'
+              : null
+          "
+        />
+        @if (form.controls.accessCode.touched && form.controls.accessCode.hasError('required')) {
+          <small id="candidateExamAccessCodeError" class="text-danger">
+            {{ 'candidate_exams.entry.accessCodeRequired' | translate }}
+          </small>
+        }
+      </div>
+
+      @if (validationFailed()) {
+        <div class="alert alert-danger" role="alert">
+          {{ 'candidate_exams.entry.validationError' | translate }}
+        </div>
+      }
+
+      @if (validated()) {
+        <div class="alert alert-success" role="status">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          {{ 'candidate_exams.entry.accessAccepted' | translate }}
+        </div>
+        <div class="start-warning" role="note">
+          <i class="fa-solid fa-clock" aria-hidden="true"></i>
+          <div>
+            <strong>{{ 'candidate_exams.entry.startWarningTitle' | translate }}</strong>
+            <p>{{ 'candidate_exams.entry.startWarning' | translate }}</p>
+          </div>
+        </div>
+      }
+
+      @if (startFailed()) {
+        <div class="alert alert-danger" role="alert">
+          {{ 'candidate_exams.entry.startError' | translate }}
+        </div>
+      }
+
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="validating() || starting()">
+          @if (validating()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            {{ 'candidate_exams.entry.validating' | translate }}
+          } @else if (starting()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            {{ 'candidate_exams.entry.starting' | translate }}
+          } @else if (validated() || recoveringStart) {
+            {{ 'candidate_exams.entry.startExam' | translate }}
+          } @else {
+            {{ 'candidate_exams.entry.validate' | translate }}
+          }
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          [disabled]="validating() || starting()"
+          (click)="cancel()"
+        >
+          {{ 'candidate_exams.entry.cancel' | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

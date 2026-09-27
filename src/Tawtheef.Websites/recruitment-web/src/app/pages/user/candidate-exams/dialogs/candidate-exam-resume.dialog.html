@@ -1,0 +1,81 @@
+<section class="exam-resume-dialog" i18nNamespace="pages/user/candidate-exams">
+  @if (registrationFailed()) {
+    <div class="dialog-state" role="alert">
+      <div class="dialog-state__icon dialog-state__icon--error" aria-hidden="true">
+        <i class="fa-solid fa-link-slash"></i>
+      </div>
+      <h2>{{ 'candidate_exams.resume.connectionErrorTitle' | translate }}</h2>
+      <p>{{ 'candidate_exams.resume.connectionError' | translate }}</p>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="retryingRegistration()"
+        (click)="retryRegistration()"
+      >
+        @if (retryingRegistration()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          {{ 'candidate_exams.resume.retryingConnection' | translate }}
+        } @else {
+          <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+          {{ 'candidate_exams.resume.retryConnection' | translate }}
+        }
+      </button>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="resumeExam()">
+      <p class="resume-description">{{ 'candidate_exams.resume.description' | translate }}</p>
+
+      <div class="mb-3">
+        <label for="candidateExamResumeAccessCode" class="form-label required">
+          {{ 'candidate_exams.resume.accessCode' | translate }}
+        </label>
+        <input
+          id="candidateExamResumeAccessCode"
+          type="text"
+          class="form-control"
+          pInputText
+          formControlName="accessCode"
+          autocomplete="off"
+          spellcheck="false"
+          [attr.aria-describedby]="
+            form.controls.accessCode.touched && form.controls.accessCode.invalid
+              ? 'candidateExamResumeAccessCodeError'
+              : null
+          "
+        />
+        @if (form.controls.accessCode.touched && form.controls.accessCode.hasError('required')) {
+          <small id="candidateExamResumeAccessCodeError" class="text-danger">
+            {{ 'candidate_exams.resume.accessCodeRequired' | translate }}
+          </small>
+        }
+      </div>
+
+      @if (resumeFailed()) {
+        <div class="alert alert-danger" role="alert">
+          {{ 'candidate_exams.resume.resumeFailed' | translate }}
+        </div>
+      }
+
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="resuming()">
+          @if (resuming()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            {{ 'candidate_exams.resume.resuming' | translate }}
+          } @else if (resumeFailed()) {
+            {{ 'candidate_exams.resume.retryResume' | translate }}
+          } @else {
+            {{ 'candidate_exams.resume.resumeExam' | translate }}
+          }
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          [disabled]="resuming()"
+          (click)="cancel()"
+        >
+          {{ 'candidate_exams.resume.cancel' | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

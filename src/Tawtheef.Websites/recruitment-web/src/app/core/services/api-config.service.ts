@@ -8,4 +8,8 @@ export class ApiConfigService {
   get baseUrl(): string {
     return this._baseUrl;
   }
+
+  get apiOrigin(): string {
+    return new URL(this._baseUrl).origin;
+  }
 }
