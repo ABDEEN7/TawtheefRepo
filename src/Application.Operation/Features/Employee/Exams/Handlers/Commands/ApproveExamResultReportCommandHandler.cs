@@ -147,6 +147,9 @@ public sealed class ApproveExamResultReportCommandHandler(
                     return Result.Fail<Unit>(closeResult.Errors);
                 }
 
+                report.AddDomainEvent(new Tawtheef.Domain.Events.Operation.Employee.Exams.ExamResultReportApprovedDomainEvent(
+                    report.Id, report.ExamId, qualifiedCandidates.Count));
+
                 await unitOfWork
                     .GetEntityRepository<ActionLog>()
                     .AddAsync(

@@ -149,6 +149,9 @@ public sealed class ReportCandidateExamOperationalIssueCommandHandler(
                 .Set<TestAttemptInterruption>()
                 .AddAsync(interruption, token);
 
+            attempt.AddDomainEvent(new Tawtheef.Domain.Events.Operation.Employee.Exams.CandidateExamOperationalIssueReportedDomainEvent(
+                interruption.Id, attempt.Id, slot.Id));
+
             await unitOfWork.GetEntityRepository<ActionLog>()
                 .AddAsync(new ActionLog
                 {

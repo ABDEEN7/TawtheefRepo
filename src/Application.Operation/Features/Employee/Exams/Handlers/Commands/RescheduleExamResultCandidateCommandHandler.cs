@@ -9,6 +9,8 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
@@ -66,6 +68,7 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .AsNoTracking()
                 .Include(x => x.TestSlot)
                 .ThenInclude(x => x!.Room)
+                .ThenInclude(x => x!.Location)
                 .SingleOrDefaultAsync(x => x.Id == request.TargetTestSessionId, token);
             if (targetSession is null || targetSession.Id == currentAssignment.TestSessionId ||
                 targetSession.ExamId != report.ExamId ||
@@ -169,6 +172,22 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 RescheduledFromTestSessionCandidateId = currentAssignmentId
             };
             await unitOfWork.Context.Set<TestSessionCandidate>().AddAsync(replacement, token);
+
+            var applicantId = await unitOfWork.Context.Set<Invitation>()
+                .AsNoTracking()
+                .Where(x => x.Id == currentAssignment.InvitationId)
+                .Select(x => x.ApplicantId)
+                .SingleAsync(token);
+            var examDetails = await unitOfWork.Context.Set<Exam>()
+                .AsNoTracking()
+                .Where(x => x.Id == report.ExamId)
+                .Select(x => new { x.TitleAr, x.TitleEn })
+                .SingleAsync(token);
+            replacement.AddDomainEvent(new CandidateExamRescheduledDomainEvent(
+                replacement.Id, applicantId, examDetails.TitleAr, examDetails.TitleEn,
+                targetSlot.SlotDate, targetSlot.StartTime,
+                room.Location!.NameAr, room.Location.NameEn,
+                room.NameAr, room.NameEn, targetSession.SessionNo));
 
             candidate.TestSessionCandidateId = replacement.Id;
             candidate.TestSessionCandidate = replacement;

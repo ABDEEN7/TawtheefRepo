@@ -1,0 +1,3 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.CandidateExamRescheduledNotification.CandidateExamRescheduledNotificationModel>
+<p>Your exam appointment for @(Model.Model.ExamTitleEn ?? Model.Model.ExamTitleAr) has been rescheduled.</p>
+<p>New date: @Model.Model.SlotDate.ToString("yyyy/MM/dd"), start time: @Model.Model.StartTime.ToString("HH:mm"), location: @(Model.Model.LocationEn ?? Model.Model.LocationAr), room: @(Model.Model.RoomEn ?? Model.Model.RoomAr), session: @Model.Model.SessionNo.</p>

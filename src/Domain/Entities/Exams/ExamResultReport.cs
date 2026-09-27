@@ -3,6 +3,7 @@ using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Tawtheef.Domain.Entities.Exams;
 
@@ -34,6 +35,7 @@ public class ExamResultReport : EventEntity
     {
         return new ExamResultReport
         {
+            Id = Guid.NewGuid(),
             ExamId = examId,
             SpecializedQualificationThreshold =
                 specializedQualificationThreshold,
@@ -51,6 +53,7 @@ public class ExamResultReport : EventEntity
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
+        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, DateTime.UtcNow));
 
         return Result.Ok();
     }
@@ -86,6 +89,7 @@ public class ExamResultReport : EventEntity
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
+        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, DateTime.UtcNow));
         return Result.Ok();
     }
 
