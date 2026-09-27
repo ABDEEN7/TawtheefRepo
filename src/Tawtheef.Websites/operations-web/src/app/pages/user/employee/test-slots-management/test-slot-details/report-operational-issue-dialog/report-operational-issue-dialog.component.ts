@@ -23,7 +23,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
         <button type="button" class="btn btn-outline-secondary" (click)="ref.close()">
           {{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}
         </button>
-        <button type="button" class="btn btn-warning" [disabled]="!reason.trim()" (click)="save()">
+        <button type="button" class="btn btn-primary" [disabled]="!reason.trim()" (click)="save()">
           {{ 'TEST_SLOT_DETAILS.REPORT_OPERATIONAL_ISSUE' | translate }}
         </button>
       </div>

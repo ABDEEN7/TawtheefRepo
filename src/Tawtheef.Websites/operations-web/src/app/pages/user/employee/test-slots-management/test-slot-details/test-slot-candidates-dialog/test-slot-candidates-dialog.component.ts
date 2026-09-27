@@ -25,6 +25,7 @@ import {
 import { TestSlotsService } from '../../services/test-slots.service';
 import { VerifyIdentityDialogComponent } from './verify-identity-dialog.component';
 import { ReportOperationalIssueDialogComponent } from '../report-operational-issue-dialog/report-operational-issue-dialog.component';
+import { StatusSeverity } from '../../../../../../shared/types/status-severity.type';
 
 interface TestSlotCandidatesDialogData {
   testSlotId: string;
@@ -119,78 +120,110 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
     this.ref.close();
   }
 
- private canAct(candidate: TestSlotCandidateListItemDto): boolean {
-  return (
-    this.data.isCurrentUserRoomHead &&
-    this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-    candidate.sessionStatusBackendName === 'InProgress' &&
-    candidate.candidateStatusBackendName === 'Assigned' &&
-    this.actingCandidateId() === null
-  );
-}
+  private canAct(candidate: TestSlotCandidateListItemDto): boolean {
+    return (
+      this.data.isCurrentUserRoomHead &&
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
+      candidate.sessionStatusBackendName === 'InProgress' &&
+      candidate.candidateStatusBackendName === 'Assigned' &&
+      this.actingCandidateId() === null
+    );
+  }
 
   canMarkPresent(candidate: TestSlotCandidateListItemDto): boolean {
     return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Pending';
   }
 
   canVerifyIdentity(candidate: TestSlotCandidateListItemDto): boolean {
-    return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Present' &&
-      candidate.identityVerificationStatusBackendName === 'Pending';
+    return (
+      this.canAct(candidate) &&
+      candidate.attendanceStatusBackendName === 'Present' &&
+      candidate.identityVerificationStatusBackendName === 'Pending'
+    );
   }
 
   canAuthorizeEntry(candidate: TestSlotCandidateListItemDto): boolean {
-    return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Present' &&
-      candidate.identityVerificationStatusBackendName === 'Matched';
+    return (
+      this.canAct(candidate) &&
+      candidate.attendanceStatusBackendName === 'Present' &&
+      candidate.identityVerificationStatusBackendName === 'Matched'
+    );
   }
 
   markPresent(candidate: TestSlotCandidateListItemDto): void {
     if (!this.canMarkPresent(candidate)) return;
-    this.runCandidateAction(candidate.candidateId, this.service.markPresent(this.data.testSlotId, candidate.candidateId));
+    this.runCandidateAction(
+      candidate.candidateId,
+      this.service.markPresent(this.data.testSlotId, candidate.candidateId),
+    );
   }
 
   verifyIdentity(candidate: TestSlotCandidateListItemDto): void {
     if (!this.canVerifyIdentity(candidate)) return;
     const dialog = this.dialogs.open(VerifyIdentityDialogComponent, {
       header: this.translate.instant('TEST_SLOT_DETAILS.VERIFY_IDENTITY'),
-      width: 'min(30rem, 95vw)', modal: true,
+      width: 'min(30rem, 95vw)',
+      modal: true,
     });
-    dialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((request: VerifyTestSlotCandidateIdentityRequest | undefined) => {
-      if (!request || !this.canVerifyIdentity(candidate)) return;
-      this.runCandidateAction(candidate.candidateId,
-        this.service.verifyIdentity(this.data.testSlotId, candidate.candidateId, request));
-    });
+    dialog?.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((request: VerifyTestSlotCandidateIdentityRequest | undefined) => {
+        if (!request || !this.canVerifyIdentity(candidate)) return;
+        this.runCandidateAction(
+          candidate.candidateId,
+          this.service.verifyIdentity(this.data.testSlotId, candidate.candidateId, request),
+        );
+      });
   }
 
   authorizeEntry(candidate: TestSlotCandidateListItemDto): void {
     if (!this.canAuthorizeEntry(candidate)) return;
     const dialog = this.dialogs.open(ConfirmationDialogComponent, {
       header: this.translate.instant('TEST_SLOT_DETAILS.AUTHORIZE_ENTRY'),
-      width: 'min(30rem, 95vw)', modal: true,
-      data: { type: 'warning', description: 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY_CONFIRMATION',
-        confirmText: 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY' },
+      width: 'min(30rem, 95vw)',
+      modal: true,
+      data: {
+        type: 'warning',
+        primaryActionStyle: true,
+        description: 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY_CONFIRMATION',
+        confirmText: 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY',
+      },
     });
-    dialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed: boolean | undefined) => {
-      if (confirmed !== true || !this.canAuthorizeEntry(candidate)) return;
-      this.runCandidateAction(candidate.candidateId,
-        this.service.authorizeEntry(this.data.testSlotId, candidate.candidateId));
-    });
+    dialog?.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean | undefined) => {
+        if (confirmed !== true || !this.canAuthorizeEntry(candidate)) return;
+        this.runCandidateAction(
+          candidate.candidateId,
+          this.service.authorizeEntry(this.data.testSlotId, candidate.candidateId),
+        );
+      });
   }
 
-  private runCandidateAction(candidateId: string, action: import('rxjs').Observable<void>,
-    successKey = 'TEST_SLOT_DETAILS.HALL_ACTION_SUCCESS'): void {
+  private runCandidateAction(
+    candidateId: string,
+    action: import('rxjs').Observable<void>,
+    successKey = 'TEST_SLOT_DETAILS.HALL_ACTION_SUCCESS',
+  ): void {
     this.actingCandidateId.set(candidateId);
-    action.pipe(finalize(() => this.actingCandidateId.set(null)), takeUntilDestroyed(this.destroyRef))
+    action
+      .pipe(
+        finalize(() => this.actingCandidateId.set(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: () => {
           this.notifications.success(this.translate.instant(successKey));
           this.loadCandidates();
         },
-        error: () => this.notifications.error(this.translate.instant('TEST_SLOT_DETAILS.HALL_ACTION_FAILED')),
+        error: () =>
+          this.notifications.error(this.translate.instant('TEST_SLOT_DETAILS.HALL_ACTION_FAILED')),
       });
   }
 
   canReportOperationalIssue(candidate: TestSlotCandidateListItemDto): boolean {
-    return this.data.isCurrentUserRoomHead &&
+    return (
+      this.data.isCurrentUserRoomHead &&
       this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
       candidate.sessionStatusBackendName === 'InProgress' &&
       candidate.candidateStatusBackendName === 'Completed' &&
@@ -199,46 +232,56 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
         candidate.attemptStatusBackendName === 'TimedOut') &&
       !candidate.hasOpenInterruption &&
       this.actingCandidateId() === null &&
-      this.authorizingAttemptId() === null;
+      this.authorizingAttemptId() === null
+    );
   }
 
   isOperationalIssueRecorded(candidate: TestSlotCandidateListItemDto): boolean {
-    return candidate.hasOpenInterruption &&
+    return (
+      candidate.hasOpenInterruption &&
       (candidate.attemptStatusBackendName === 'Completed' ||
-        candidate.attemptStatusBackendName === 'TimedOut');
+        candidate.attemptStatusBackendName === 'TimedOut')
+    );
   }
 
   reportOperationalIssue(candidate: TestSlotCandidateListItemDto): void {
     if (!this.canReportOperationalIssue(candidate) || !candidate.testAttemptId) return;
     const dialog = this.dialogs.open(ReportOperationalIssueDialogComponent, {
       header: this.translate.instant('TEST_SLOT_DETAILS.REPORT_OPERATIONAL_ISSUE'),
-      width: 'min(32rem, 95vw)', modal: true,
+      width: 'min(32rem, 95vw)',
+      modal: true,
     });
-    dialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((reason: string | undefined) => {
-      if (typeof reason !== 'string' || !reason.trim() ||
-          !this.canReportOperationalIssue(candidate) || !candidate.testAttemptId) return;
-      this.runCandidateAction(candidate.candidateId,
-        this.service.reportOperationalIssue(candidate.testAttemptId, reason.trim()),
-        'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS');
-    });
+    dialog?.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((reason: string | undefined) => {
+        if (
+          typeof reason !== 'string' ||
+          !reason.trim() ||
+          !this.canReportOperationalIssue(candidate) ||
+          !candidate.testAttemptId
+        )
+          return;
+        this.runCandidateAction(
+          candidate.candidateId,
+          this.service.reportOperationalIssue(candidate.testAttemptId, reason.trim()),
+          'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS',
+        );
+      });
   }
 
   canAuthorizeResume(candidate: TestSlotCandidateListItemDto): boolean {
-  return (
-    candidate.testAttemptId !== null &&
-    candidate.attemptStatusBackendName === 'Interrupted' &&
-    !candidate.resumeAuthorized &&
-    this.data.isCurrentUserRoomHead &&
-    this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
-  );
-}
+    return (
+      candidate.testAttemptId !== null &&
+      candidate.attemptStatusBackendName === 'Interrupted' &&
+      !candidate.resumeAuthorized &&
+      this.data.isCurrentUserRoomHead &&
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
+    );
+  }
 
   isResumeAuthorized(candidate: TestSlotCandidateListItemDto): boolean {
-  return (
-    candidate.attemptStatusBackendName === 'Interrupted' &&
-    candidate.resumeAuthorized
-  );
-}
+    return candidate.attemptStatusBackendName === 'Interrupted' && candidate.resumeAuthorized;
+  }
 
   authorizeResume(candidate: TestSlotCandidateListItemDto): void {
     const testAttemptId = candidate.testAttemptId;
@@ -256,6 +299,7 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
       modal: true,
       data: {
         type: 'warning',
+        primaryActionStyle: true,
         description: 'TEST_SLOT_DETAILS.AUTHORIZE_RESUME_CONFIRMATION',
         confirmText: 'TEST_SLOT_DETAILS.AUTHORIZE_RESUME',
       },
@@ -309,5 +353,72 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
           this.loading.set(false);
         },
       });
+  }
+
+  attendanceSeverity(backendName: string): StatusSeverity {
+    switch (backendName) {
+      case 'Present':
+        return 'success';
+
+      case 'NoShow':
+        return 'danger';
+
+      default:
+        return 'secondary';
+    }
+  }
+
+  identitySeverity(backendName: string): StatusSeverity {
+    switch (backendName) {
+      case 'Matched':
+        return 'success';
+
+      case 'NotMatched':
+        return 'danger';
+
+      case 'Pending':
+        return 'info';
+
+      default:
+        return 'secondary';
+    }
+  }
+
+  candidateStatusSeverity(backendName: string): StatusSeverity {
+    switch (backendName) {
+      case 'Authorized':
+      case 'Completed':
+        return 'success';
+
+      case 'Started':
+      case 'Rescheduled':
+        return 'info';
+
+      case 'Cancelled':
+        return 'danger';
+
+      default:
+        return 'secondary';
+    }
+  }
+
+  attemptStatusSeverity(backendName?: string | null): StatusSeverity {
+    switch (backendName) {
+      case 'Completed':
+        return 'success';
+
+      case 'TimedOut':
+      case 'Interrupted':
+        return 'warn';
+
+      case 'InProgress':
+        return 'info';
+
+      case 'Cancelled':
+        return 'danger';
+
+      default:
+        return 'secondary';
+    }
   }
 }

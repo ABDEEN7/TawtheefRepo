@@ -12,18 +12,45 @@ import { VerifyTestSlotCandidateIdentityRequest } from '../../models/test-slot-d
   template: `
     <div class="d-grid gap-3">
       <label for="identity-match">{{ 'TEST_SLOT_DETAILS.VERIFY_IDENTITY' | translate }}</label>
-      <p-select inputId="identity-match" [options]="choices" optionLabel="label" optionValue="value"
-        [(ngModel)]="matched" [placeholder]="'TEST_SLOT_DETAILS.SELECT_IDENTITY_RESULT' | translate" appendTo="body" />
-      <label for="identity-notes">{{ 'TEST_SLOT_DETAILS.IDENTITY_NOTES' | translate }}
-        @if (matched === false) { <span class="text-danger">*</span> }
+      <p-select
+        inputId="identity-match"
+        [options]="choices"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="matched"
+        [placeholder]="'TEST_SLOT_DETAILS.SELECT_IDENTITY_RESULT' | translate"
+        appendTo="body"
+      />
+      <label for="identity-notes"
+        >{{ 'TEST_SLOT_DETAILS.IDENTITY_NOTES' | translate }}
+        @if (matched === false) {
+          <span class="text-danger">*</span>
+        }
       </label>
-      <textarea id="identity-notes" class="form-control" rows="3" maxlength="1000" [(ngModel)]="notes"></textarea>
+      <textarea
+        id="identity-notes"
+        class="form-control"
+        rows="3"
+        maxlength="1000"
+        [(ngModel)]="notes"
+      ></textarea>
       @if (matched === false && !notes.trim()) {
-        <small class="text-danger" role="alert">{{ 'validation.required_filed' | translate }}</small>
+        <small class="text-danger" role="alert">{{
+          'validation.required_filed' | translate
+        }}</small>
       }
       <div class="d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-outline-secondary" (click)="ref.close()">{{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}</button>
-        <button type="button" class="btn btn-primary" [disabled]="matched === null || (matched === false && !notes.trim())" (click)="save()">{{ 'TEST_SLOT_DETAILS.VERIFY_IDENTITY' | translate }}</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="ref.close()">
+          {{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="matched === null || (matched === false && !notes.trim())"
+          (click)="save()"
+        >
+          {{ 'TEST_SLOT_DETAILS.VERIFY_IDENTITY' | translate }}
+        </button>
       </div>
     </div>
   `,

@@ -193,7 +193,7 @@ export class TestSlotCreatePage implements OnInit {
         header: this.translate.instant('TEST_SLOT_WIZARD.CANCEL'),
         width: 'min(32rem, 95vw)',
         modal: true,
-        data: { type: 'warning', description: 'TEST_SLOT_WIZARD.LEAVE_MESSAGE' },
+        data: { type: 'warning', primaryActionStyle: true, description: 'TEST_SLOT_WIZARD.LEAVE_MESSAGE' },
       })
       ?.onClose.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmed => {

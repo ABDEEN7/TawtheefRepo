@@ -26,99 +26,327 @@
     />
   </div>
   <div class="col-12 col-lg-3 d-flex align-items-center">
-    <button type="button" class="btn btn-outline-primary light" (click)="clearFilters()">
+    <button type="button" class="btn btn-outline-secondary" (click)="clearFilters()">
       {{ 'TEST_SLOT_DETAILS.CLEAR_FILTERS' | translate }}
     </button>
   </div>
 </div>
 <div class="table-card rounded overflow-hidden">
   <div class="table-responsive">
-    <p-table [value]="candidates()" dataKey="candidateId" [loading]="loading()">
-      <ng-template #header
-        ><tr>
-          <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.EXAM_JOB' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.SESSION' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.ATTENDANCE' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.IDENTITY_STATUS' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE_STATUS' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.ATTEMPT_STATUS' | translate }}</th>
-          <th>{{ 'TEST_SLOT_DETAILS.NOTIFICATION' | translate }}</th>
-          <th>{{ 'TEST_SLOTS.ACTIONS' | translate }}</th>
-        </tr></ng-template
-      >
-      <ng-template #body let-candidate
-        ><tr>
+    <p-table
+      [value]="candidates()"
+      dataKey="candidateId"
+      [loading]="loading()"
+    >
+      <ng-template #header>
+        <tr>
+          <th>
+            {{ 'TEST_SLOT_DETAILS.CANDIDATE' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.EXAM_JOB' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.SESSION' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.ATTENDANCE' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.IDENTITY_STATUS' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.CANDIDATE_STATUS' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.ATTEMPT_STATUS' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOT_DETAILS.NOTIFICATION' | translate }}
+          </th>
+
+          <th>
+            {{ 'TEST_SLOTS.ACTIONS' | translate }}
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-candidate>
+        <tr>
           <td>
-            <div class="fw-semibold">{{ candidate.candidateName }}</div>
-            <small class="text-muted">{{ candidate.qid || '—' }}</small>
-          </td>
-          <td>
-            <div class="fw-semibold">{{ candidate.examTitle }}</div>
-            <small class="text-muted">{{ candidate.jobTitle || '—' }}</small>
-          </td>
-          <td>
-            <div class="fw-semibold">{{ candidate.examNo }}</div>
-            <small class="text-muted">{{ candidate.sessionNo }}</small>
-          </td>
-          <td><p-tag severity="secondary" [value]="candidate.attendanceStatus" /></td>
-          <td>
-            <p-tag severity="secondary" [value]="candidate.identityVerificationStatus" />
-            @if (candidate.identityVerificationNotes) { <div class="small text-muted">{{ candidate.identityVerificationNotes }}</div> }
-          </td>
-          <td><p-tag severity="secondary" [value]="candidate.candidateStatus" /></td>
-          <td><p-tag severity="secondary" [value]="candidate.attemptStatus" /></td>
-          <td>{{ candidate.notificationStatus || '—' }}</td>
-          <td>
-            @if (canMarkPresent(candidate)) {
-              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="markPresent(candidate)">{{ 'TEST_SLOT_DETAILS.MARK_PRESENT' | translate }}</button>
-            }
-            @if (canVerifyIdentity(candidate)) {
-              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="verifyIdentity(candidate)">{{ 'TEST_SLOT_DETAILS.VERIFY_IDENTITY' | translate }}</button>
-            }
-            @if (canAuthorizeEntry(candidate)) {
-              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="authorizeEntry(candidate)">{{ 'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY' | translate }}</button>
-            }
-            @if (isOperationalIssueRecorded(candidate)) {
-              <p-tag severity="warn" [value]="'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED' | translate" />
-            } @else if (canReportOperationalIssue(candidate)) {
-              <button type="button" class="btn btn-sm btn-outline-warning me-2"
-                (click)="reportOperationalIssue(candidate)">
-                {{ 'TEST_SLOT_DETAILS.REPORT_OPERATIONAL_ISSUE' | translate }}
-              </button>
-            }
-            @if (isResumeAuthorized(candidate)) {
-              <p-tag severity="success" [value]="'TEST_SLOT_DETAILS.RESUME_AUTHORIZED' | translate" />
-            } @else if (canAuthorizeResume(candidate)) {
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
-                [disabled]="authorizingAttemptId() !== null"
-                (click)="authorizeResume(candidate)"
-              >
-                @if (authorizingAttemptId() === candidate.testAttemptId) {
-                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                  {{ 'TEST_SLOT_DETAILS.AUTHORIZING_RESUME' | translate }}
-                } @else {
-                  {{ 'TEST_SLOT_DETAILS.AUTHORIZE_RESUME' | translate }}
-                }
-              </button>
-            } @else if (!isOperationalIssueRecorded(candidate) && !canReportOperationalIssue(candidate)) {
-              —
+            <div class="fw-semibold">
+              {{ candidate.candidateName }}
+            </div>
+
+            @if (candidate.qid) {
+              <small class="text-muted">
+                {{ candidate.qid }}
+              </small>
             }
           </td>
-        </tr></ng-template
-      >
-      <ng-template #emptymessage
-        ><tr>
-          <td colspan="9" class="text-center py-4 text-muted">
-            {{ 'TEST_SLOT_DETAILS.NO_CANDIDATES' | translate }}
+
+          <td>
+            <div class="fw-semibold">
+              {{ candidate.examTitle }}
+            </div>
+
+            @if (candidate.jobTitle) {
+              <small class="text-muted">
+                {{ candidate.jobTitle }}
+              </small>
+            }
           </td>
-        </tr></ng-template
-      >
+
+          <td>
+            <div class="fw-semibold">
+              {{ candidate.examNo }}
+            </div>
+
+            <small class="text-muted">
+              {{ candidate.sessionNo }}
+            </small>
+          </td>
+
+          <td>
+            <p-tag
+              [severity]="
+                attendanceSeverity(
+                  candidate.attendanceStatusBackendName
+                )
+              "
+              [value]="candidate.attendanceStatus"
+            />
+          </td>
+
+          <td>
+            <p-tag
+              [severity]="
+                identitySeverity(
+                  candidate.identityVerificationStatusBackendName
+                )
+              "
+              [value]="candidate.identityVerificationStatus"
+            />
+
+            @if (candidate.identityVerificationNotes) {
+              <div class="small text-muted mt-1">
+                {{ candidate.identityVerificationNotes }}
+              </div>
+            }
+          </td>
+
+          <td>
+            <p-tag
+              [severity]="
+                candidateStatusSeverity(
+                  candidate.candidateStatusBackendName
+                )
+              "
+              [value]="candidate.candidateStatus"
+            />
+          </td>
+
+          <td>
+            @if (candidate.attemptStatus) {
+              <p-tag
+                [severity]="
+                  attemptStatusSeverity(
+                    candidate.attemptStatusBackendName
+                  )
+                "
+                [value]="candidate.attemptStatus"
+              />
+            }
+          </td>
+
+          <td>
+            @if (candidate.notificationStatus) {
+              {{ candidate.notificationStatus }}
+            }
+          </td>
+
+          <td>
+            <div class="candidate-actions">
+              @if (canMarkPresent(candidate)) {
+                <button
+                  type="button"
+                  class="
+                    btn
+                    btn-sm
+                    btn-outline-primary
+                    candidate-action-btn
+                  "
+                  (click)="markPresent(candidate)"
+                >
+                  <i
+                    class="pi pi-check"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+                    'TEST_SLOT_DETAILS.MARK_PRESENT'
+                      | translate
+                  }}
+                </button>
+              }
+
+              @if (canVerifyIdentity(candidate)) {
+                <button
+                  type="button"
+                  class="
+                    btn
+                    btn-sm
+                    btn-outline-primary
+                    candidate-action-btn
+                  "
+                  (click)="verifyIdentity(candidate)"
+                >
+                  <i
+                    class="pi pi-id-card"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+                    'TEST_SLOT_DETAILS.VERIFY_IDENTITY'
+                      | translate
+                  }}
+                </button>
+              }
+
+              @if (canAuthorizeEntry(candidate)) {
+                <button
+                  type="button"
+                  class="
+                    btn
+                    btn-sm
+                    btn-primary
+                    candidate-action-btn
+                  "
+                  (click)="authorizeEntry(candidate)"
+                >
+                  <i
+                    class="pi pi-sign-in"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+                    'TEST_SLOT_DETAILS.AUTHORIZE_ENTRY'
+                      | translate
+                  }}
+                </button>
+              }
+
+              @if (isOperationalIssueRecorded(candidate)) {
+                <p-tag
+                  severity="warn"
+                  [value]="
+                    'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED'
+                      | translate
+                  "
+                />
+              } @else if (
+                canReportOperationalIssue(candidate)
+              ) {
+                <button
+                  type="button"
+                  class="
+                    btn
+                    btn-sm
+                    btn-outline-primary
+                    candidate-action-btn
+                  "
+                  (click)="reportOperationalIssue(candidate)"
+                >
+                  <i
+                    class="pi pi-exclamation-triangle"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+                    'TEST_SLOT_DETAILS.REPORT_OPERATIONAL_ISSUE'
+                      | translate
+                  }}
+                </button>
+              }
+
+              @if (isResumeAuthorized(candidate)) {
+                <p-tag
+                  severity="success"
+                  [value]="
+                    'TEST_SLOT_DETAILS.RESUME_AUTHORIZED'
+                      | translate
+                  "
+                />
+              } @else if (canAuthorizeResume(candidate)) {
+                <button
+                  type="button"
+                  class="
+                    btn
+                    btn-sm
+                    btn-outline-primary
+                    candidate-action-btn
+                  "
+                  [disabled]="authorizingAttemptId() !== null"
+                  (click)="authorizeResume(candidate)"
+                >
+                  @if (
+                    authorizingAttemptId() ===
+                    candidate.testAttemptId
+                  ) {
+                    <span
+                      class="
+                        spinner-border
+                        spinner-border-sm
+                      "
+                      aria-hidden="true"
+                    ></span>
+
+                    {{
+                      'TEST_SLOT_DETAILS.AUTHORIZING_RESUME'
+                        | translate
+                    }}
+                  } @else {
+                    <i
+                      class="pi pi-refresh"
+                      aria-hidden="true"
+                    ></i>
+
+                    {{
+                      'TEST_SLOT_DETAILS.AUTHORIZE_RESUME'
+                        | translate
+                    }}
+                  }
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td
+            colspan="9"
+            class="text-center py-4 text-muted"
+          >
+            {{
+              'TEST_SLOT_DETAILS.NO_CANDIDATES'
+                | translate
+            }}
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
   </div>
 </div>
+
 @if (totalItems() > 0) {
   <div class="pagination-box mt-3">
     <app-pagination
@@ -130,8 +358,22 @@
     />
   </div>
 }
-<div class="d-flex justify-content-end gap-2 mt-4">
-  <button type="button" class="btn btn-outline-primary" (click)="close()">
+
+<div class="d-flex justify-content-end mt-4">
+  <button
+    type="button"
+    class="
+      btn
+      btn-outline-secondary
+      dialog-close-btn
+    "
+    (click)="close()"
+  >
+    <i
+      class="pi pi-times"
+      aria-hidden="true"
+    ></i>
+
     {{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}
   </button>
 </div>

@@ -128,6 +128,7 @@ export class TestSlotDetailsPage implements OnInit {
     this.closing.set(true);
     const dialogRef = this.dialogs.openConfirmDialog({
       type: 'warning',
+      primaryActionStyle: true,
       title: 'TEST_SLOT_DETAILS.CLOSE_PERIOD',
       description: 'TEST_SLOT_DETAILS.CLOSE_PERIOD_CONFIRMATION',
     });

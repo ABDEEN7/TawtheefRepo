@@ -313,11 +313,11 @@
 
                   <!-- Actions -->
                   <td>
-                    <div class="d-flex flex-column align-items-start gap-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
                       <button
                         *hasPermission="permissions.Exams.ViewAttemptDetails"
                         type="button"
-                        class="btn btn-link btn-sm p-0"
+                        class="btn btn-outline-primary btn-sm"
                         (click)="openAttempt(candidate.id)"
                       >
                         {{ 'EXAM_RESULTS.ATTEMPT_DETAILS' | translate }}

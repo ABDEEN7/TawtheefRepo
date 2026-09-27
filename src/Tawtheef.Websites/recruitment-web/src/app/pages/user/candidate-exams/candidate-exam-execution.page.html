@@ -95,7 +95,7 @@
       } @else if (reconnectRegistrationFailed()) {
         <div class="alert alert-danger realtime-status" role="alert">
           <span>{{ 'candidate_exams.execution.reconnectFailed' | translate }}</span>
-          <button type="button" class="btn btn-sm btn-outline-danger" (click)="backToExams()">
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="backToExams()">
             {{ 'candidate_exams.execution.backToExams' | translate }}
           </button>
         </div>
@@ -132,7 +132,7 @@
             }}
           </span>
           @if (timeoutFailed()) {
-            <button type="button" class="btn btn-sm btn-outline-danger" (click)="retryTimeout()">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="retryTimeout()">
               {{ 'candidate_exams.execution.retry' | translate }}
             </button>
           }
@@ -157,7 +157,7 @@
           @if (submissionFailed()) {
             <button
               type="button"
-              class="btn btn-sm btn-outline-danger"
+              class="btn btn-sm btn-outline-primary"
               [disabled]="
                 connectionStatus() !== 'connected' ||
                 reconnectRegistrationPending() ||
@@ -263,7 +263,7 @@
             @if (navigationRequiresReload()) {
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger"
+                class="btn btn-sm btn-outline-primary"
                 (click)="retryNavigation()"
               >
                 {{ 'candidate_exams.execution.retry' | translate }}
@@ -302,7 +302,7 @@
           ) {
             <button
               type="button"
-              class="btn btn-outline-danger"
+              class="btn btn-primary"
               [disabled]="
                 questionMutationsBlocked() ||
                 answerSaveState() === 'saving' ||

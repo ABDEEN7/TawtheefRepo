@@ -10,7 +10,7 @@
     (assignmentChange)="updateAssignment($event)"
   />
   <div class="d-flex justify-content-end gap-2 mt-4">
-    <button type="button" class="btn btn-outline-primary" (click)="cancel()" [disabled]="saving()">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="saving()">
       {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
     </button>
     <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving()">

@@ -94,6 +94,7 @@
                       *hasPermission="Permissions.TestSlots.View"
                       [routerLink]="routes.viewTestSlot(testSlot.id)"
                       [pTooltip]="'TEST_SLOTS.VIEW' | translate"
+                      [attr.aria-label]="'TEST_SLOTS.VIEW' | translate"
                       tooltipPosition="top"
                     >
                       <i class="hgi hgi-stroke hgi-view"></i>
@@ -104,6 +105,7 @@
                         *hasPermission="Permissions.TestSlots.Create"
                         [routerLink]="routes.editTestSlot(testSlot.id)"
                         [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
+                        [attr.aria-label]="'TEST_SLOT_WIZARD.EDIT' | translate"
                         tooltipPosition="top"
                       >
                         <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>
