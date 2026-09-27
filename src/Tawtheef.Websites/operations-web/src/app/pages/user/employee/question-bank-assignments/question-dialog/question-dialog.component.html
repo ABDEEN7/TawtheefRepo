@@ -1,0 +1,85 @@
+<form [formGroup]="form" (ngSubmit)="save()" class="d-grid gap-3">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</label>
+      <p-select formControlName="questionTypeId" [options]="types">
+        <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+        <ng-template #selectedItem let-option>{{ option.label | translate }}</ng-template>
+      </p-select>
+    </div>
+
+    <div class="col-md-6">
+      <label>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</label>
+      <p-select formControlName="difficultyLevelId" [options]="difficulties">
+        <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+        <ng-template #selectedItem let-option>{{ option.label | translate }}</ng-template>
+      </p-select>
+    </div>
+  </div>
+
+  <div>
+    <label>{{ 'QUESTION_ASSIGNMENTS.QUESTION_AR' | translate }}</label>
+    <input pInputText formControlName="questionTextAr" class="w-100" />
+  </div>
+
+  <div>
+    <label>{{ 'QUESTION_ASSIGNMENTS.QUESTION_EN' | translate }}</label>
+    <input pInputText formControlName="questionTextEn" class="w-100" />
+  </div>
+
+  <div formArrayName="options">
+    <label>{{ 'QUESTION_ASSIGNMENTS.OPTIONS' | translate }}</label>
+    @for (option of options.controls; track $index) {
+      <div [formGroupName]="$index" class="row g-2 mb-2 align-items-center">
+        <div class="col">
+          <input
+            pInputText
+            formControlName="optionTextAr"
+            [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_AR' | translate"
+            class="w-100"
+          />
+        </div>
+        <div class="col">
+          <input
+            pInputText
+            formControlName="optionTextEn"
+            [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_EN' | translate"
+            class="w-100"
+          />
+        </div>
+        <div class="col-auto">
+          <p-checkbox
+            [binary]="true"
+            formControlName="isCorrect"
+            (onChange)="setCorrect($index)"
+          />
+        </div>
+        <div class="col-auto">
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [text]="true"
+            (onClick)="removeOption($index)"
+          />
+        </div>
+      </div>
+    }
+  </div>
+
+  <p-button
+    [label]="'QUESTION_ASSIGNMENTS.ADD_OPTION' | translate"
+    icon="pi pi-plus"
+    [text]="true"
+    (onClick)="addOption()"
+  />
+
+  <div class="d-flex justify-content-end gap-2">
+    <p-button
+      [label]="'QUESTION_ASSIGNMENTS.CANCEL' | translate"
+      severity="secondary"
+      [text]="true"
+      (onClick)="cancel()"
+    />
+    <p-button type="submit" [label]="'QUESTION_ASSIGNMENTS.SAVE' | translate" />
+  </div>
+</form>
