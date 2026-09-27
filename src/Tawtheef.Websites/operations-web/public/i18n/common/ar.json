@@ -103,6 +103,7 @@
   "common.fontScale.decrease": "تصغير الخط",
   "common.fontScale.reset": "إعادة تعيين الخط",
   "admin.sidebar.notificationTester": "مختبر الإشعارات",
+  "common.viewDetails": "عرض التفاصيل",
   "NOTIFICATION_TESTER": {
     "PAGE_TITLE": "مختبر قوالب الإشعارات",
     "PAGE_SUBTITLE": "معاينة وإرسال إشعارات تجريبية عبر جميع القنوات",

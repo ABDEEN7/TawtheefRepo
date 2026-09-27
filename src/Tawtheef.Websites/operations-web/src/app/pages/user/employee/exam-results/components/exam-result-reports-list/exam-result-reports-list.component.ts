@@ -21,6 +21,7 @@ import {
   ExamResultReportListItem,
 } from '../../models/exam-result-report.models';
 import { ExamResultReportsService } from '../../services/exam-result-reports.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-exam-result-reports-list',
@@ -34,12 +35,14 @@ import { ExamResultReportsService } from '../../services/exam-result-reports.ser
     InputIconModule,
     InputTextModule,
     TableModule,
+    TooltipModule,
     TagModule,
     PaginationComponent,
     PageFiltersComponent,
     I18nNamespaceDirective,
   ],
   templateUrl: './exam-result-reports-list.component.html',
+  styleUrl: './exam-result-reports-list.component.scss',
 })
 export class ExamResultReportsListComponent implements OnInit {
   private readonly service = inject(ExamResultReportsService);
@@ -136,6 +139,25 @@ export class ExamResultReportsListComponent implements OnInit {
 
   open(reportId: string): void {
     void this.router.navigateByUrl(portalRoutes.examResultDetails(reportId));
+  }
+
+  reportStatusSeverity(backendName: string): 'success' | 'warn' | 'info' | 'secondary' {
+    switch (backendName) {
+      case 'Approved':
+        return 'success';
+
+      case 'UnderReview':
+        return 'info';
+
+      case 'Returned':
+        return 'warn';
+
+      case 'Closed':
+        return 'secondary';
+
+      default:
+        return 'secondary';
+    }
   }
 
   private toDateFilter(date: Date | null): string | undefined {
