@@ -46,7 +46,7 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.View] },
     loadComponent: () =>
-      import('./exam-results/exam-result-report-details.component').then(
+      import('./exam-results/components/exam-result-report-details.component/exam-result-report-details.component').then(
         (m) => m.ExamResultReportDetailsComponent,
       ),
   },
@@ -55,7 +55,7 @@ export const employeeRoutes: Routes = [
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Exams.View] },
     loadComponent: () =>
-      import('./exam-results/exam-result-reports-list.component').then(
+      import('./exam-results/components/exam-result-reports-list/exam-result-reports-list.component').then(
         (m) => m.ExamResultReportsListComponent,
       ),
   },

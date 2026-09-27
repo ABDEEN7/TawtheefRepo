@@ -3,9 +3,15 @@
   <label class="form-label fw-semibold" for="exam-result-resolution-notes">
     {{ 'EXAM_RESULTS.RESOLUTION_NOTES' | translate }} <span class="text-danger">*</span>
   </label>
-  <textarea pTextarea id="exam-result-resolution-notes" class="form-control w-100"
-    rows="5" [formControl]="notes" maxlength="2000"
-    [attr.aria-invalid]="notes.invalid && notes.touched"></textarea>
+  <textarea
+    pTextarea
+    id="exam-result-resolution-notes"
+    class="form-control w-100"
+    rows="5"
+    [formControl]="notes"
+    maxlength="2000"
+    [attr.aria-invalid]="notes.invalid && notes.touched"
+  ></textarea>
   @if (notes.invalid && notes.touched) {
     <small class="text-danger d-block mt-1" role="alert">
       {{ 'EXAM_RESULTS.RESOLUTION_NOTES_REQUIRED' | translate }}

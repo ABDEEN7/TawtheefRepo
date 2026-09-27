@@ -11,21 +11,33 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { catchError, debounceTime, of, Subject, switchMap, tap } from 'rxjs';
-import { LanguageService } from '../../../../core/services/language.service';
-import { portalRoutes } from '../../../../routes/portal-routes';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
-import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { ExamResultReportFilters, ExamResultReportListItem } from './models/exam-result-report.models';
-import { ExamResultReportsService } from './exam-result-reports.service';
+import { LanguageService } from '../../../../../../core/services/language.service';
+import { portalRoutes } from '../../../../../../routes/portal-routes';
+import { PaginationComponent } from '../../../../../../shared/components/pagination/pagination.component';
+import { PageFiltersComponent } from '../../../../../../shared/components/page-filters/page-filters.component';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
+import {
+  ExamResultReportFilters,
+  ExamResultReportListItem,
+} from '../../models/exam-result-report.models';
+import { ExamResultReportsService } from '../../services/exam-result-reports.service';
 
 @Component({
   selector: 'app-exam-result-reports-list',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, TranslatePipe, DatePickerModule, IconFieldModule,
-    InputIconModule, InputTextModule, TableModule, TagModule, PaginationComponent,
-    PageFiltersComponent, I18nNamespaceDirective,
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    DatePickerModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    TableModule,
+    TagModule,
+    PaginationComponent,
+    PageFiltersComponent,
+    I18nNamespaceDirective,
   ],
   templateUrl: './exam-result-reports-list.component.html',
 })
@@ -53,38 +65,43 @@ export class ExamResultReportsListComponent implements OnInit {
   createdTo: Date | null = null;
 
   ngOnInit(): void {
-    this.requests$.pipe(
-      switchMap(() => {
-        this.loading.set(true);
-        this.loadError.set(false);
-        return this.service.list(this.filters()).pipe(
-          catchError(() => {
-            this.loadError.set(true);
-            return of(null);
-          }),
-        );
-      }),
-      tap(() => this.loading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(response => {
-      this.reports.set(response?.items ?? []);
-      this.totalItems.set(response?.metadata?.totalCount ?? 0);
-    });
+    this.requests$
+      .pipe(
+        switchMap(() => {
+          this.loading.set(true);
+          this.loadError.set(false);
+          return this.service.list(this.filters()).pipe(
+            catchError(() => {
+              this.loadError.set(true);
+              return of(null);
+            }),
+          );
+        }),
+        tap(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((response) => {
+        this.reports.set(response?.items ?? []);
+        this.totalItems.set(response?.metadata?.totalCount ?? 0);
+      });
 
-    this.searchChanges$.pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
+    this.searchChanges$
+      .pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.applyFilters());
 
-    this.language.current$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(language => {
-      this.filters.update(filters => ({ ...filters, language }));
+    this.language.current$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((language) => {
+      this.filters.update((filters) => ({ ...filters, language }));
       this.requests$.next();
     });
   }
 
-  onSearchChange(): void { this.searchChanges$.next(); }
+  onSearchChange(): void {
+    this.searchChanges$.next();
+  }
 
   applyFilters(): void {
     if (this.invalidCreatedRange()) return;
-    this.filters.update(filters => ({
+    this.filters.update((filters) => ({
       ...filters,
       pageNumber: 1,
       search: this.search.trim() || undefined,
@@ -108,25 +125,17 @@ export class ExamResultReportsListComponent implements OnInit {
   }
 
   onPageChange(pageNumber: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber }));
+    this.filters.update((filters) => ({ ...filters, pageNumber }));
     this.requests$.next();
   }
 
   onPageSizeChange(pageSize: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber: 1, pageSize }));
+    this.filters.update((filters) => ({ ...filters, pageNumber: 1, pageSize }));
     this.requests$.next();
   }
 
   open(reportId: string): void {
     void this.router.navigateByUrl(portalRoutes.examResultDetails(reportId));
-  }
-
-  formatDate(value: string | null): string {
-    return value
-      ? new Intl.DateTimeFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
-          dateStyle: 'medium', timeStyle: 'short',
-        }).format(new Date(value))
-      : '—';
   }
 
   private toDateFilter(date: Date | null): string | undefined {

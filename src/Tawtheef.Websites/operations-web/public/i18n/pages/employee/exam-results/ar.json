@@ -78,6 +78,8 @@
   "EXAM_RESULTS.RETURN_SUCCESS": "أعيد التقرير للمعالجة.",
   "EXAM_RESULTS.RETURN_FAILED": "تعذرت إعادة التقرير. حاول مرة أخرى.",
   "EXAM_RESULTS.CANDIDATE_ACTIONS": "الإجراءات",
+  "EXAM_RESULTS.SPECIALIZED_QUALIFIED": "تأهل تخصصي",
+  "EXAM_RESULTS.SPECIALIZED_NOT_QUALIFIED": "لم يتأهل تخصص",
   "EXAM_RESULTS.RESOLVE_NOT_COMPLETED": "اعتبار الاختبار غير مكتمل",
   "EXAM_RESULTS.RESOLVE_NOT_COMPLETED_CONFIRMATION": "هل تريد اعتبار نتيجة اختبار هذا المرشح غير مكتملة؟",
   "EXAM_RESULTS.RESOLUTION_NOTES": "ملاحظات المعالجة",

@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TextareaModule } from 'primeng/textarea';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
 
 @Component({
   selector: 'app-resolve-exam-result-candidate-dialog',

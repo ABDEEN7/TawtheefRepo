@@ -64,6 +64,8 @@
   "EXAM_RESULTS.SAVED_AT": "Saved at",
   "EXAM_RESULTS.OPTIONS": "Answer options",
   "EXAM_RESULTS.SELECTED": "Selected by candidate",
+  "EXAM_RESULTS.SPECIALIZED_QUALIFIED": "Specialized Qualified",
+  "EXAM_RESULTS.SPECIALIZED_NOT_QUALIFIED": "Specialized Not Qualified",
   "EXAM_RESULTS.NO_QUESTIONS": "No questions recorded for this part.",
   "EXAM_RESULTS.NO_PARTS": "No parts recorded for this attempt.",
   "EXAM_RESULTS.APPROVE_REPORT": "Approve report",

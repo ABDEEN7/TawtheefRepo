@@ -3,11 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { TagModule } from 'primeng/tag';
-import { LanguageService } from '../../../../core/services/language.service';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { ExamResultCandidateAttemptDetails, ExamResultLookup } from './models/exam-result-report.models';
-import { ExamResultReportsService } from './exam-result-reports.service';
-
+import { LanguageService } from '../../../../../../core/services/language.service';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
+import {
+  ExamResultCandidateAttemptDetails,
+  ExamResultLookup,
+} from '../../models/exam-result-report.models';
+import { ExamResultReportsService } from '../../services/exam-result-reports.service';
+import { DatePipe } from '@angular/common';
+import { TabsModule } from 'primeng/tabs';
 interface ExamResultCandidateAttemptDialogData {
   reportId: string;
   candidateResultId: string;
@@ -16,8 +20,9 @@ interface ExamResultCandidateAttemptDialogData {
 @Component({
   selector: 'app-exam-result-candidate-attempt-dialog',
   standalone: true,
-  imports: [TranslatePipe, TagModule, I18nNamespaceDirective],
+  imports: [TranslatePipe, TagModule, I18nNamespaceDirective, DatePipe, TabsModule],
   templateUrl: './exam-result-candidate-attempt-dialog.component.html',
+  styleUrl:'./exam-result-candidate-attempt-dialog.component.scss',
 })
 export class ExamResultCandidateAttemptDialogComponent implements OnInit {
   private readonly data = inject(DynamicDialogConfig<ExamResultCandidateAttemptDialogData>).data;
@@ -29,12 +34,18 @@ export class ExamResultCandidateAttemptDialogComponent implements OnInit {
   readonly loading = signal(true);
   readonly loadError = signal(false);
 
+  activePartId: string | number = '';
+
   ngOnInit(): void {
-    this.service.candidateAttempt(this.data.reportId, this.data.candidateResultId)
+    this.service
+      .candidateAttempt(this.data.reportId, this.data.candidateResultId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: attempt => {
+        next: (attempt) => {
           this.attempt.set(attempt);
+
+          this.activePartId = attempt.parts[0]?.testAttemptPartId ?? '';
+
           this.loading.set(false);
         },
         error: () => {
@@ -52,17 +63,13 @@ export class ExamResultCandidateAttemptDialogComponent implements OnInit {
     return lookup ? this.localized(lookup.nameAr, lookup.nameEn) : '—';
   }
 
-  formatDate(value: string | null): string {
-    return value
-      ? new Intl.DateTimeFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
-          dateStyle: 'medium', timeStyle: 'short',
-        }).format(new Date(value))
-      : '—';
-  }
+  optionStateClass(isSelected: boolean, isCorrect: boolean | null): string {
+    if (!isSelected) return '';
 
-  formatNumber(value: number | null): string {
-    return value === null ? '—' : new Intl.NumberFormat(
-      this.language.get() === 'ar' ? 'ar-SA' : 'en',
-    ).format(value);
+    if (isCorrect === true) return 'attempt-option--correct';
+
+    if (isCorrect === false) return 'attempt-option--incorrect';
+
+    return 'attempt-option--selected';
   }
 }

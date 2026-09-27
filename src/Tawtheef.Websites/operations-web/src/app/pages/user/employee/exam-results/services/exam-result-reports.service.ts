@@ -1,23 +1,23 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EndpointsService } from '../../../../core/http/endpoints.service';
-import { HttpService } from '../../../../core/http/http.service';
-import { PaginatedResult } from '../../../../core/models/paginated-result.model';
-import { HDR } from '../../../../core/utils/headers.flags';
+import { EndpointsService } from '../../../../../core/http/endpoints.service';
+import { HttpService } from '../../../../../core/http/http.service';
+import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
+import { HDR } from '../../../../../core/utils/headers.flags';
 import {
   ExamResultCandidateAttemptDetails,
   ExamResultReportDetails,
   ExamResultReportFilters,
   ExamResultReportListItem,
   ExamResultRescheduleOption,
-} from './models/exam-result-report.models';
+} from '../models/exam-result-report.models';
 import {
   AcceptExamResultCandidateCalculatedScoreRequest,
   ApproveExamResultReportRequest,
   RescheduleExamResultCandidateRequest,
   ResolveExamResultCandidateAsNotCompletedRequest,
   ReturnExamResultReportForProcessingRequest,
-} from './models/exam-result-report.requests';
+} from '../models/exam-result-report.requests';
 
 @Injectable({ providedIn: 'root' })
 export class ExamResultReportsService {

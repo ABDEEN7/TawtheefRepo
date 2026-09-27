@@ -1,0 +1,199 @@
+<section i18nNamespace="pages/employee/exam-results" class="attempt-details">
+  @if (loading()) {
+    <div class="text-muted py-4" role="status">
+      {{ 'EXAM_RESULTS.ATTEMPT_LOADING' | translate }}
+    </div>
+  } @else if (loadError() || !attempt()) {
+    <div class="alert alert-danger" role="alert">
+      {{ 'EXAM_RESULTS.ATTEMPT_LOAD_ERROR' | translate }}
+    </div>
+  } @else if (!attempt()!.hasAttempt) {
+    <div class="alert alert-info" role="status">
+      {{ 'EXAM_RESULTS.NO_ATTEMPT' | translate }}
+    </div>
+  } @else {
+    @let details = attempt()!;
+
+    <!-- Attempt summary -->
+    <div class="attempt-summary mb-4">
+      <div class="row g-0">
+        <div class="col-12 col-md-4 summary-item">
+          <div class="summary-label">
+            {{ 'EXAM_RESULTS.ATTEMPT_STATUS' | translate }}
+          </div>
+
+          <p-tag severity="success" [value]="lookupName(details.attemptStatus)" />
+        </div>
+
+        <div class="col-12 col-md-4 summary-item">
+          <div class="summary-label">
+            {{ 'EXAM_RESULTS.STARTED_AT' | translate }}
+          </div>
+
+          <div class="summary-value">
+            {{ details.startedAt | date: 'HH:mm:ss yyyy/MM/dd' }}
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 summary-item">
+          <div class="summary-label">
+            {{ 'EXAM_RESULTS.COMPLETED_AT' | translate }}
+          </div>
+
+          <div class="summary-value">
+            {{ details.completedAt | date: 'HH:mm:ss yyyy/MM/dd' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (details.parts.length) {
+      <p-tabs [(value)]="activePartId" class="attempt-tabs">
+        <p-tablist>
+          @for (part of details.parts; track part.testAttemptPartId) {
+            <p-tab [value]="part.testAttemptPartId">
+              <div class="d-flex align-items-center gap-2">
+                <span>
+                  {{ 'EXAM_RESULTS.PART' | translate }}
+                  {{ part.partNo }}
+                </span>
+
+                <span class="part-count">
+                  {{ part.questions.length }}
+                </span>
+              </div>
+            </p-tab>
+          }
+        </p-tablist>
+
+        <p-tabpanels>
+          @for (part of details.parts; track part.testAttemptPartId) {
+            <p-tabpanel [value]="part.testAttemptPartId">
+              <!-- Compact part summary -->
+              <div class="part-summary mb-3">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                  <div class="d-flex align-items-center gap-2">
+                    <strong>
+                      {{ 'EXAM_RESULTS.PART' | translate }}
+                      {{ part.partNo }}
+                    </strong>
+
+                    <p-tag severity="secondary" [value]="lookupName(part.status)" />
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-4 small text-muted">
+                    <span>
+                      {{ 'EXAM_RESULTS.STARTED_AT' | translate }}:
+                      <strong class="text-body">
+                        {{ part.startedAt | date: 'HH:mm:ss yyyy/MM/dd' }}
+                      </strong>
+                    </span>
+
+                    <span>
+                      {{ 'EXAM_RESULTS.COMPLETED_AT' | translate }}:
+                      <strong class="text-body">
+                        {{ part.completedAt | date: 'HH:mm:ss yyyy/MM/dd' }}
+                      </strong>
+                    </span>
+
+                    <span>
+                      {{ 'EXAM_RESULTS.DURATION_MINUTES' | translate }}:
+                      <strong class="text-body">
+                        {{ part.durationMinutesSnapshot }}
+                      </strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              @for (
+                question of part.questions;
+                track question.testAttemptQuestionId;
+                let questionIndex = $index
+              ) {
+                <article class="question-card">
+                  <div
+                    class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3"
+                  >
+                    <div>
+                      <div class="question-number">
+                        {{ 'EXAM_RESULTS.QUESTION' | translate }}
+                        {{ questionIndex + 1 }}
+                        /
+                        {{ part.questions.length }}
+                      </div>
+                    </div>
+
+                    @if (!question.isAnswered) {
+                      <p-tag severity="secondary" [value]="'EXAM_RESULTS.UNANSWERED' | translate" />
+                    } @else if (question.isCorrect === true) {
+                      <p-tag severity="success" [value]="'EXAM_RESULTS.CORRECT' | translate" />
+                    } @else if (question.isCorrect === false) {
+                      <p-tag severity="danger" [value]="'EXAM_RESULTS.INCORRECT' | translate" />
+                    } @else {
+                      <p-tag
+                        severity="secondary"
+                        [value]="'EXAM_RESULTS.CORRECTNESS_UNAVAILABLE' | translate"
+                      />
+                    }
+                  </div>
+
+                  <p class="question-text">
+                    {{ localized(question.questionTextAr, question.questionTextEn) }}
+                  </p>
+
+                  @if (question.options.length) {
+                    <div
+                      class="options-list"
+                      role="list"
+                      [attr.aria-label]="'EXAM_RESULTS.OPTIONS' | translate"
+                    >
+                      @for (option of question.options; track option.questionRevisionOptionId) {
+                        <div
+                          role="listitem"
+                          class="attempt-option"
+                          [class]="optionStateClass(option.isSelected, question.isCorrect)"
+                        >
+                          <span class="option-text">
+                            {{ localized(option.optionTextAr, option.optionTextEn) }}
+                          </span>
+
+                          @if (option.isSelected) {
+                            <span class="option-selected-icon">
+                              @if (question.isCorrect === true) {
+                                <i class="pi pi-check-circle" aria-hidden="true"></i>
+                              } @else if (question.isCorrect === false) {
+                                <i class="pi pi-times-circle" aria-hidden="true"></i>
+                              } @else {
+                                <i class="pi pi-circle-fill" aria-hidden="true"></i>
+                              }
+                            </span>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (question.savedAt) {
+                    <div class="question-footer">
+                      {{ 'EXAM_RESULTS.SAVED_AT' | translate }}:
+                      {{ question.savedAt | date: 'HH:mm:ss yyyy/MM/dd' }}
+                    </div>
+                  }
+                </article>
+              } @empty {
+                <div class="text-muted py-4">
+                  {{ 'EXAM_RESULTS.NO_QUESTIONS' | translate }}
+                </div>
+              }
+            </p-tabpanel>
+          }
+        </p-tabpanels>
+      </p-tabs>
+    } @else {
+      <div class="text-muted">
+        {{ 'EXAM_RESULTS.NO_PARTS' | translate }}
+      </div>
+    }
+  }
+</section>

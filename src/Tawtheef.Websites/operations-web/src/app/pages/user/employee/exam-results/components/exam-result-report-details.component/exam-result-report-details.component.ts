@@ -19,25 +19,25 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { Permissions } from '../../../../core/constants/permissions';
-import { LanguageService } from '../../../../core/services/language.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { portalRoutes } from '../../../../routes/portal-routes';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { FaDirArrowDirective } from '../../../../shared/directives/dir-arrow.directive';
-import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
-import { ConfirmationDialogComponent } from '../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { AuthService } from '../../../../../../core/auth/auth.service';
+import { Permissions } from '../../../../../../core/constants/permissions';
+import { LanguageService } from '../../../../../../core/services/language.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { portalRoutes } from '../../../../../../routes/portal-routes';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
+import { FaDirArrowDirective } from '../../../../../../shared/directives/dir-arrow.directive';
+import { HasPermissionDirective } from '../../../../../../shared/directives/has-permission.directive';
+import { ConfirmationDialogComponent } from '../../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 import {
   ExamResultCandidate,
   ExamResultLookup,
   ExamResultReportDetails,
-} from './models/exam-result-report.models';
-import { ExamResultReportsService } from './exam-result-reports.service';
-import { ExamResultCandidateAttemptDialogComponent } from './exam-result-candidate-attempt-dialog.component';
-import { ReturnExamResultReportDialogComponent } from './return-exam-result-report-dialog.component';
-import { ResolveExamResultCandidateDialogComponent } from './resolve-exam-result-candidate-dialog.component';
-import { RescheduleExamResultCandidateDialogComponent } from './reschedule-exam-result-candidate-dialog.component';
+} from '../../models/exam-result-report.models';
+import { ExamResultReportsService } from '../../services/exam-result-reports.service';
+import { ExamResultCandidateAttemptDialogComponent } from '../../dialogs/exam-result-candidate-attempt/exam-result-candidate-attempt-dialog.component';
+import { ResolveExamResultCandidateDialogComponent } from '../../dialogs/resolve-exam-result-candidate/resolve-exam-result-candidate-dialog.component';
+import { RescheduleExamResultCandidateDialogComponent } from '../../dialogs/reschedule-exam-result-candidate/reschedule-exam-result-candidate-dialog.component';
+import { ReturnExamResultReportDialogComponent } from '../../dialogs/return-exam-result-report/return-exam-result-report-dialog.component';
 
 @Component({
   selector: 'app-exam-result-report-details',
@@ -112,21 +112,31 @@ export class ExamResultReportDetailsComponent implements OnInit {
     return lookup ? this.localized(lookup.nameAr, lookup.nameEn) : '—';
   }
 
-  formatDate(value: string | null): string {
-    return value
-      ? new Intl.DateTimeFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        }).format(new Date(value))
-      : '—';
+  resultStatusSeverity(backendName: string): 'success' | 'warn' | 'secondary' {
+    switch (backendName) {
+      case 'QualifiedForInterview':
+        return 'success';
+
+      case 'RequiresAction':
+        return 'warn';
+
+      default:
+        return 'secondary';
+    }
   }
 
-  formatNumber(value: number | null): string {
-    return value === null
-      ? '—'
-      : new Intl.NumberFormat(this.language.get() === 'ar' ? 'ar-SA' : 'en', {
-          maximumFractionDigits: 2,
-        }).format(value);
+  attemptStatusSeverity(backendName: string | undefined): 'success' | 'warn' | 'secondary' {
+    switch (backendName) {
+      case 'Completed':
+        return 'success';
+
+      case 'TimedOut':
+      case 'Interrupted':
+        return 'warn';
+
+      default:
+        return 'secondary';
+    }
   }
 
   openAttempt(candidateResultId: string): void {
@@ -267,7 +277,7 @@ export class ExamResultReportDetailsComponent implements OnInit {
     });
   }
 
-  canResolveNotCompleted(report: ExamResultReportDetails, candidate: ExamResultCandidate): boolean {
+  canResolveCandidate(report: ExamResultReportDetails, candidate: ExamResultCandidate): boolean {
     return (
       report.status.backendName === 'Returned' &&
       candidate.resultStatus.backendName === 'RequiresAction' &&
@@ -279,7 +289,7 @@ export class ExamResultReportDetailsComponent implements OnInit {
     const report = this.report();
     if (
       !report ||
-      !this.canResolveNotCompleted(report, candidate) ||
+      !this.canResolveCandidate(report, candidate) ||
       this.loading() ||
       this.submitting() ||
       this.actionDialogOpen()
@@ -312,7 +322,7 @@ export class ExamResultReportDetailsComponent implements OnInit {
     const report = this.report();
     if (
       !report ||
-      !this.canResolveNotCompleted(report, candidate) ||
+      !this.canResolveCandidate(report, candidate) ||
       this.loading() ||
       this.submitting() ||
       this.actionDialogOpen()
@@ -341,7 +351,7 @@ export class ExamResultReportDetailsComponent implements OnInit {
         !latestReport ||
         latestReport.id !== report.id ||
         !latestCandidate ||
-        !this.canResolveNotCompleted(latestReport, latestCandidate)
+        !this.canResolveCandidate(latestReport, latestCandidate)
       )
         return;
 
