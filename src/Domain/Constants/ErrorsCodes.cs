@@ -39,6 +39,11 @@ public class ErrorsCodes
     public const string QuestionBankAssigneeNotEligible = "QUESTION_BANK_ASSIGNEE_NOT_ELIGIBLE";
     public const string QuestionBankEmployeeScopeNotConfigured = "QUESTION_BANK_EMPLOYEE_SCOPE_NOT_CONFIGURED";
     public const string QuestionBankAssignmentAlreadyExists = "QUESTION_BANK_ASSIGNMENT_ALREADY_EXISTS";
+    public const string QuestionBankAssignmentNotFound = "QUESTION_BANK_ASSIGNMENT_NOT_FOUND";
+    public const string QuestionBankAssignmentNotEditable = "QUESTION_BANK_ASSIGNMENT_NOT_EDITABLE";
+    public const string QuestionBankAssignmentQuestionNotFound = "QUESTION_BANK_ASSIGNMENT_QUESTION_NOT_FOUND";
+    public const string QuestionBankMinimumQuestionCountNotMet = "QUESTION_BANK_MINIMUM_QUESTION_COUNT_NOT_MET";
+    public const string InvalidQuestionEntry = "INVALID_QUESTION_ENTRY";
     #endregion
 
     // =========================================================

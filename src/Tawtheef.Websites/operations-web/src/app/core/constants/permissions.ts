@@ -167,6 +167,10 @@ export const Permissions = {
     View: 'question-banks.view',
   },
 
+  QuestionBankAssignments: {
+    Manage: 'question-bank-assignments.manage',
+  },
+
   QuestionBankRequests: {
     View: 'question-bank-requests.view',
     Create: 'question-bank-requests.create',

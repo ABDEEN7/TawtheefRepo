@@ -120,6 +120,13 @@ public static class Permissions
                 84);
     }
 
+    public static class QuestionBankAssignments
+    {
+        public static readonly PermissionDefinition Manage = Def(
+            PermissionKeys.QuestionBankAssignments.Manage, nameof(PermissionKeys.QuestionBankAssignments),
+            PermissionAction.Manage, "Question Bank Assignments - Manage", "مهام بنوك الأسئلة - إدارة", 88);
+    }
+
     public static class QuestionBankRequests
     {
         public static readonly PermissionDefinition View = Def(

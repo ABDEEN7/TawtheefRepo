@@ -89,11 +89,11 @@
   "internal.sidebar.question-banks": "بنوك الأسئلة",
   "internal.sidebar.question-bank-requests": "طلبات بنوك الأسئلة",
   "internal.sidebar.locations": "إدارة المواقع",
-
   "internal.sidebar.interview-axes-criteria": "محاور ومعايير المقابلات",
   "internal.sidebar.interview-template": "قوالب المقابلات",
   "internal.sidebar.interview-committee": "لجان المقابلات",
   "internal.sidebar.interviews": "المقابلات",
   "internal.sidebar.start-interview": "بدء المقابلة",
-  "internal.sidebar.approve-interview": "اعتماد نتائج المقابلة"
+  "internal.sidebar.approve-interview": "اعتماد نتائج المقابلة",
+  "internal.sidebar.question-bank-assignments": "مهام بنوك الأسئلة"
 }

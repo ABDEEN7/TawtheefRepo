@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tawtheef.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Tawtheef.Infrastructure.Data;
 namespace Tawtheef.Infrastructure.Migrations
 {
     [DbContext(typeof(TawtheefDbContext))]
-    partial class TawtheefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260923081043_QuestionBankEntry")]
+    partial class QuestionBankEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -18458,78 +18461,6 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "لجان المقابلات - إدارة",
                             NameEn = "Interview Committee - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("3126aa54-aa8b-4b51-bd72-992afea7c7dc"),
-                            BackendName = "interview-evaluation.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 110,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "تقيم المقابلات - عرض",
-                            NameEn = "Interview Evaluation - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("4f11ce47-e7c8-2f52-920a-2c992f6acd03"),
-                            BackendName = "interview-evaluation.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 111,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "تقيم المقابلات - إدارة",
-                            NameEn = "Interview Evaluation - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("dded038e-a98d-f356-b267-851e94524810"),
-                            BackendName = "interview-result-report.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 112,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "تقرير نتائج المقابلات - عرض",
-                            NameEn = "Interview Result Report - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("61963e13-e87c-935f-9b33-8a1c6fa4f29f"),
-                            BackendName = "interview-result-report.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 113,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "تقرير نتائج المقابلات - إدارة",
-                            NameEn = "Interview Result Report - Manage"
-                        },
-                        new
-                        {
-                            Id = new Guid("fe4a15d1-6b80-b65d-83b2-0007b60737a0"),
-                            BackendName = "interview-schedule.view",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 108,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "جدولة المقابلات - عرض",
-                            NameEn = "Interview Schedule - View"
-                        },
-                        new
-                        {
-                            Id = new Guid("68994108-43c5-6a56-ac33-5471af9d8411"),
-                            BackendName = "interview-schedule.manage",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 109,
-                            IsActive = true,
-                            IsAssignableToRole = true,
-                            IsDeleted = false,
-                            NameAr = "جدولة المقابلات - إدارة",
-                            NameEn = "Interview Schedule - Manage"
                         });
                 });
 
