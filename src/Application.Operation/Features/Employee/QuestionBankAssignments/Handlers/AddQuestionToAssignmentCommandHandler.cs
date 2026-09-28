@@ -19,7 +19,8 @@ public sealed class AddQuestionToAssignmentCommandHandler(IUnitOfWork uow, ICurr
 {
     public async Task<IResult<Guid>> Handle(AddQuestionToAssignmentCommand r, CancellationToken ct)
     {
-        if (!QuestionEntryRules.Valid(r.Question)) return Result.Fail<Guid>(ErrorsCodes.InvalidQuestionEntry);
+        if (!QuestionEntryRules.Valid(r.Question) || !await QuestionEntryRules.ValidResource(uow, r.Question.ResourceId, ct))
+            return Result.Fail<Guid>(ErrorsCodes.InvalidQuestionEntry);
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
         if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
         return await uow.ExecuteInTransactionAsync<IResult<Guid>>(async token =>

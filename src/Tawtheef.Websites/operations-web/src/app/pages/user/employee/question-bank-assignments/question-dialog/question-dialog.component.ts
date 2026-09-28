@@ -12,6 +12,9 @@ import {
   AssignmentOption,
   QuestionTypes,
 } from '../models/question-bank-assignment.models';
+import { RichContentEditorComponent } from '../../../../../shared/rich-content/rich-content-editor.component';
+import { RichContentInputComponent } from '../../../../../shared/rich-content/rich-content-input.component';
+import { hasMeaningfulRichContent } from '../../../../../shared/rich-content/rich-content.utils';
 
 @Component({
   selector: 'app-question-dialog',
@@ -25,6 +28,8 @@ import {
     InputTextModule,
     Select,
     Checkbox,
+    RichContentEditorComponent,
+    RichContentInputComponent,
   ],
 })
 export class QuestionDialogComponent {
@@ -65,8 +70,12 @@ export class QuestionDialogComponent {
     questionTextEn: [''],
     explanationAr: [''],
     explanationEn: [''],
+    resourceId: this.fb.control<string | null>(null),
     options: this.fb.array<AssignmentOption>([]),
   });
+  imageFile?: File;
+  imagePreview?: string;
+  imageError = false;
 
   get options(): FormArray {
     return this.form.controls.options;
@@ -78,11 +87,33 @@ export class QuestionDialogComponent {
     if (question) {
       this.form.patchValue(question);
       question.options.forEach((option) => this.addOption(option));
+      this.imagePreview = question.imageUrl ? this.resourceUrl(question.imageUrl) : undefined;
       return;
     }
 
     this.addOption();
     this.addOption();
+  }
+
+  chooseImage(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    this.imageError = !allowed.includes(file.type) || file.size === 0 || file.size > 1_000_000;
+    if (this.imageError) { input.value = ''; return; }
+    if (this.imagePreview?.startsWith('blob:')) URL.revokeObjectURL(this.imagePreview);
+    this.imageFile = file; this.imagePreview = URL.createObjectURL(file);
+  }
+
+  removeImage(): void {
+    if (this.imagePreview?.startsWith('blob:')) URL.revokeObjectURL(this.imagePreview);
+    this.imagePreview = undefined; this.imageFile = undefined; this.form.controls.resourceId.setValue(null);
+  }
+
+  private resourceUrl(blobKey: string): string {
+    const encoded = btoa(unescape(encodeURIComponent(blobKey))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return `/api/Resources/${encoded}`;
   }
 
   addOption(value: Partial<AssignmentQuestion['options'][number]> = {}): void {
@@ -110,14 +141,16 @@ export class QuestionDialogComponent {
 
   save(): void {
     const value = this.form.getRawValue();
-    const hasQuestion = !!(value.questionTextAr?.trim() || value.questionTextEn?.trim());
+    const hasAr = hasMeaningfulRichContent(value.questionTextAr);
+    const hasEn = hasMeaningfulRichContent(value.questionTextEn);
+    const hasQuestion = (hasAr && hasEn) || (!hasAr && !hasEn && !!(value.resourceId || this.imageFile));
     const hasValidOptions =
       value.options.every(
-        (option) => !!(option?.optionTextAr?.trim() || option?.optionTextEn?.trim()),
+        (option) => hasMeaningfulRichContent(option?.optionTextAr) && hasMeaningfulRichContent(option?.optionTextEn),
       ) && value.options.filter((option) => option?.isCorrect).length === 1;
 
     if (this.form.valid && hasQuestion && hasValidOptions) {
-      this.ref.close(value);
+      this.ref.close({ ...value, imageFile: this.imageFile });
       return;
     }
 

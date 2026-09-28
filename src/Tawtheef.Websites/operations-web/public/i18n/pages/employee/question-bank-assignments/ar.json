@@ -38,5 +38,13 @@
   "QUESTION_ASSIGNMENTS.TRUE_FALSE": "صح / خطأ",
   "QUESTION_ASSIGNMENTS.EASY": "سهل",
   "QUESTION_ASSIGNMENTS.MEDIUM": "متوسط",
-  "QUESTION_ASSIGNMENTS.HARD": "صعب"
+  "QUESTION_ASSIGNMENTS.HARD": "صعب",
+  "QUESTION_ASSIGNMENTS.ADVANCED_EDITOR": "المحرر المتقدم",
+  "QUESTION_ASSIGNMENTS.APPLY": "تطبيق",
+  "QUESTION_ASSIGNMENTS.QUESTION_IMAGE": "صورة السؤال (اختيارية عند إدخال النص باللغتين)",
+  "QUESTION_ASSIGNMENTS.CHOOSE_IMAGE": "اختيار صورة",
+  "QUESTION_ASSIGNMENTS.REPLACE_IMAGE": "استبدال الصورة",
+  "QUESTION_ASSIGNMENTS.REMOVE_IMAGE": "إزالة الصورة",
+  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "اختر صورة JPEG أو PNG أو WebP غير فارغة وبحجم لا يتجاوز 1 ميجابايت.",
+  "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "سؤال بصورة فقط"
 }
