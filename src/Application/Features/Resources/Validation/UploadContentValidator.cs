@@ -112,7 +112,7 @@ internal static class UploadContentValidator
             return true;
         }
 
-        if (segments.Count == 6 && segments[0].Equals("private", StringComparison.OrdinalIgnoreCase) &&
+        if (segments.Length == 6 && segments[0].Equals("private", StringComparison.OrdinalIgnoreCase) &&
             segments[1].Equals("operation", StringComparison.OrdinalIgnoreCase) &&
             segments[2].Equals("question-bank", StringComparison.OrdinalIgnoreCase) &&
             Guid.TryParse(segments[3], out _) &&
