@@ -35,7 +35,9 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
                 x.CurrentProposedRevision.DifficultyLevelId, x.CurrentProposedRevision.DifficultyLevel.NameAr,
                 x.CurrentProposedRevision.DifficultyLevel.NameEn, x.CurrentProposedRevision.QuestionTextAr,
                 x.CurrentProposedRevision.QuestionTextEn, x.CurrentProposedRevision.ExplanationAr,
-                x.CurrentProposedRevision.ExplanationEn, x.StatusId, x.Status.NameAr, x.Status.NameEn,
+                x.CurrentProposedRevision.ExplanationEn, x.CurrentProposedRevision.ResourceId,
+                x.CurrentProposedRevision.ResourceId == null ? null : x.CurrentProposedRevision.Resource!.Url,
+                x.StatusId, x.Status.NameAr, x.Status.NameEn,
                 x.CurrentProposedRevision.Options.OrderBy(o => o.DisplayOrder)
                     .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList())).ToListAsync(ct);
         var current = questions.Count; var bank = a.QuestionBankRequest.QuestionBank;

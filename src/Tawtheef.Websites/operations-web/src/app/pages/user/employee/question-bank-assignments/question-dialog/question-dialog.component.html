@@ -19,12 +19,24 @@
 
   <div>
     <label>{{ 'QUESTION_ASSIGNMENTS.QUESTION_AR' | translate }}</label>
-    <input pInputText formControlName="questionTextAr" class="w-100" />
+    <app-rich-content-editor formControlName="questionTextAr" direction="rtl" />
   </div>
 
   <div>
     <label>{{ 'QUESTION_ASSIGNMENTS.QUESTION_EN' | translate }}</label>
-    <input pInputText formControlName="questionTextEn" class="w-100" />
+    <app-rich-content-editor formControlName="questionTextEn" direction="ltr" />
+  </div>
+
+  <div>
+    <label class="d-block">{{ 'QUESTION_ASSIGNMENTS.QUESTION_IMAGE' | translate }}</label>
+    <input #imageInput type="file" class="d-none" accept="image/jpeg,image/png,image/webp" (change)="chooseImage($event)" />
+    <p-button type="button" icon="pi pi-image" [label]="(imagePreview ? 'QUESTION_ASSIGNMENTS.REPLACE_IMAGE' : 'QUESTION_ASSIGNMENTS.CHOOSE_IMAGE') | translate" [outlined]="true" (onClick)="imageInput.click()" />
+    @if (imagePreview) {
+      <div class="mt-2"><img [src]="imagePreview" class="img-thumbnail d-block mb-2" style="max-height: 220px" alt="" />
+        <p-button type="button" severity="danger" [text]="true" icon="pi pi-trash" [label]="'QUESTION_ASSIGNMENTS.REMOVE_IMAGE' | translate" (onClick)="removeImage()" />
+      </div>
+    }
+    @if (imageError) { <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.INVALID_IMAGE' | translate }}</small> }
   </div>
 
   <div formArrayName="options">
@@ -32,17 +44,17 @@
     @for (option of options.controls; track $index) {
       <div [formGroupName]="$index" class="row g-2 mb-2 align-items-center">
         <div class="col">
-          <input
-            pInputText
+          <app-rich-content-input
             formControlName="optionTextAr"
+            direction="rtl"
             [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_AR' | translate"
             class="w-100"
           />
         </div>
         <div class="col">
-          <input
-            pInputText
+          <app-rich-content-input
             formControlName="optionTextEn"
+            direction="ltr"
             [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_EN' | translate"
             class="w-100"
           />

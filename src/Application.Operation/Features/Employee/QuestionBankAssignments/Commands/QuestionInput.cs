@@ -7,4 +7,5 @@ public sealed record QuestionInput(
     string? QuestionTextEn,
     string? ExplanationAr,
     string? ExplanationEn,
+    Guid? ResourceId,
     IReadOnlyCollection<QuestionOptionInput> Options);
