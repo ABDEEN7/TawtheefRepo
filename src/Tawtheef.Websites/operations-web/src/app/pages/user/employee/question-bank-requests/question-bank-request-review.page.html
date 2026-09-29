@@ -1,0 +1,206 @@
+<section i18nNamespace="pages/employee/question-bank-requests">
+  <button
+    pButton
+    type="button"
+    class="p-button-text mb-3"
+    icon="pi pi-arrow-left"
+    [label]="'QUESTION_BANK_REQUESTS.BACK_TO_REQUEST' | translate"
+    (click)="back()"
+  ></button>
+  @if (loading()) {
+    <div class="card">
+      <div class="card-body text-muted">
+        {{ 'QUESTION_BANK_REQUESTS.REVIEW_LOADING' | translate }}
+      </div>
+    </div>
+  }
+  @if (review(); as r) {
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+          <h3 class="fw-bold mb-0">{{ 'QUESTION_BANK_REQUESTS.REVIEW_TITLE' | translate }}</h3>
+          <p-tag severity="info" [value]="name(r.requestStatusNameAr, r.requestStatusNameEn)" />
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <span class="review-label">{{
+              'QUESTION_BANK_REQUESTS.REQUEST_TYPE' | translate
+            }}</span>
+            <div>{{ name(r.requestTypeNameAr, r.requestTypeNameEn) }}</div>
+          </div>
+          <div class="col-md-4">
+            <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.BANK_TYPE' | translate }}</span>
+            <div>{{ name(r.questionBankTypeNameAr, r.questionBankTypeNameEn) }}</div>
+          </div>
+          <div class="col-md-4">
+            <span class="review-label">{{
+              'QUESTION_BANK_REQUESTS.REVIEW_ROUND' | translate
+            }}</span>
+            <div>{{ r.currentReviewRound + 1 }}</div>
+          </div>
+          <div class="col-md-6">
+            <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.MANAGEMENT' | translate }}</span>
+            <div>{{ name(r.managementNameAr, r.managementNameEn) }}</div>
+          </div>
+          <div class="col-md-6">
+            <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.JOB_TITLE' | translate }}</span>
+            <div>{{ name(r.jobTitleNameAr, r.jobTitleNameEn) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="fw-bold mb-3">{{ 'QUESTION_BANK_REQUESTS.QUESTIONS' | translate }}</h4>
+    @for (item of r.items; track item.requestItemId; let number = $index) {
+      <article class="card question-card mb-4">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            {{ 'QUESTION_BANK_REQUESTS.QUESTION' | translate }} {{ number + 1 }}
+          </h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.EMPLOYEE' | translate }}</span>
+              <div>{{ name(item.employeeNameAr, item.employeeNameEn) }}</div>
+            </div>
+            <div class="col-md-4">
+              <span class="review-label">{{
+                'QUESTION_BANK_REQUESTS.QUESTION_TYPE' | translate
+              }}</span>
+              <div>{{ name(item.questionTypeNameAr, item.questionTypeNameEn) }}</div>
+            </div>
+            <div class="col-md-4">
+              <span class="review-label">{{
+                'QUESTION_BANK_REQUESTS.DIFFICULTY' | translate
+              }}</span>
+              <div>{{ name(item.difficultyNameAr, item.difficultyNameEn) }}</div>
+            </div>
+          </div>
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <span class="review-label">{{
+                'QUESTION_BANK_REQUESTS.QUESTION_AR' | translate
+              }}</span
+              ><app-rich-content-renderer [content]="item.questionTextAr || ''" direction="rtl" />
+            </div>
+            <div class="col-lg-6">
+              <span class="review-label">{{
+                'QUESTION_BANK_REQUESTS.QUESTION_EN' | translate
+              }}</span
+              ><app-rich-content-renderer [content]="item.questionTextEn || ''" direction="ltr" />
+            </div>
+          </div>
+          @if (imageUrls.get(item.requestItemId); as imageUrl) {
+            <img
+              class="question-image img-thumbnail my-3"
+              [src]="imageUrl"
+              [alt]="'QUESTION_BANK_REQUESTS.QUESTION_IMAGE' | translate"
+            />
+          }
+          <div class="mt-4">
+            <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.ANSWERS' | translate }}</span>
+            <div class="answer-grid mt-2">
+              @for (option of item.options; track option.id) {
+                <div class="answer-option" [class.correct-answer]="option.isCorrect">
+                  <span aria-hidden="true">{{ option.isCorrect ? '●' : '○' }}</span
+                  ><app-rich-content-renderer
+                    [content]="option.optionTextAr || ''"
+                    direction="rtl"
+                  /><app-rich-content-renderer
+                    [content]="option.optionTextEn || ''"
+                    direction="ltr"
+                  />
+                </div>
+              }
+            </div>
+          </div>
+          @if (item.explanationAr || item.explanationEn) {
+            <div class="row g-4 mt-1">
+              <div class="col-lg-6">
+                <span class="review-label">{{
+                  'QUESTION_BANK_REQUESTS.EXPLANATION_AR' | translate
+                }}</span
+                ><app-rich-content-renderer [content]="item.explanationAr || ''" direction="rtl" />
+              </div>
+              <div class="col-lg-6">
+                <span class="review-label">{{
+                  'QUESTION_BANK_REQUESTS.EXPLANATION_EN' | translate
+                }}</span
+                ><app-rich-content-renderer [content]="item.explanationEn || ''" direction="ltr" />
+              </div>
+            </div>
+          }
+          <fieldset class="mt-4">
+            <legend class="review-label">
+              {{ 'QUESTION_BANK_REQUESTS.MANAGER_DECISION' | translate }}
+            </legend>
+            <div class="d-flex flex-wrap gap-4">
+              <label class="decision"
+                ><p-radiobutton
+                  [name]="'decision-' + item.requestItemId"
+                  [value]="decisions.Approved"
+                  [(ngModel)]="value(item.requestItemId).decisionId"
+                />
+                {{ 'QUESTION_BANK_REQUESTS.APPROVE' | translate }}</label
+              >
+              <label class="decision"
+                ><p-radiobutton
+                  [name]="'decision-' + item.requestItemId"
+                  [value]="decisions.NeedsModification"
+                  [(ngModel)]="value(item.requestItemId).decisionId"
+                />
+                {{ 'QUESTION_BANK_REQUESTS.NEEDS_MODIFICATION' | translate }}</label
+              >
+              <label class="decision"
+                ><p-radiobutton
+                  [name]="'decision-' + item.requestItemId"
+                  [value]="decisions.Rejected"
+                  [(ngModel)]="value(item.requestItemId).decisionId"
+                />
+                {{ 'QUESTION_BANK_REQUESTS.REJECT' | translate }}</label
+              >
+            </div>
+            @if (submitted() && !value(item.requestItemId).decisionId) {
+              <small class="text-danger d-block mt-2">{{
+                'QUESTION_BANK_REQUESTS.DECISION_REQUIRED' | translate
+              }}</small>
+            }
+          </fieldset>
+          <div class="mt-3">
+            <label class="review-label" [for]="'note-' + item.requestItemId"
+              >{{ 'QUESTION_BANK_REQUESTS.REVIEW_NOTE' | translate }}
+              @if (noteRequired(item.requestItemId)) {
+                *
+              }</label
+            ><textarea
+              pTextarea
+              class="w-100"
+              rows="3"
+              maxlength="2000"
+              [id]="'note-' + item.requestItemId"
+              [(ngModel)]="value(item.requestItemId).reviewNote"
+            ></textarea>
+            @if (
+              submitted() &&
+              noteRequired(item.requestItemId) &&
+              !value(item.requestItemId).reviewNote.trim()
+            ) {
+              <small class="text-danger">{{
+                'QUESTION_BANK_REQUESTS.REVIEW_NOTE_REQUIRED' | translate
+              }}</small>
+            }
+          </div>
+        </div>
+      </article>
+    }
+    <div class="d-flex justify-content-end mb-4">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-check"
+        [label]="'QUESTION_BANK_REQUESTS.SUBMIT_REVIEW' | translate"
+        [disabled]="submitting()"
+        (click)="submit()"
+      ></button>
+    </div>
+  }
+</section>

@@ -69,8 +69,8 @@
       [label]="
         (imagePreview || form.controls.resourceId.value
           ? 'QUESTION_ASSIGNMENTS.REPLACE_IMAGE'
-          : 'QUESTION_ASSIGNMENTS.CHOOSE_IMAGE')
-          | translate
+          : 'QUESTION_ASSIGNMENTS.CHOOSE_IMAGE'
+        ) | translate
       "
       [outlined]="true"
       (onClick)="imageInput.click()"
@@ -97,7 +97,9 @@
       </div>
     }
     @if (imageError) {
-      <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.INVALID_IMAGE' | translate }}</small>
+      <small class="text-danger d-block">{{
+        'QUESTION_ASSIGNMENTS.INVALID_IMAGE' | translate
+      }}</small>
     }
   </div>
 
@@ -106,12 +108,16 @@
     @for (option of options.controls; track $index) {
       <div [formGroupName]="$index" class="row g-2 mb-2 align-items-center">
         <div class="col">
-          <app-rich-content-input
-            formControlName="optionTextAr"
-            direction="rtl"
-            [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_AR' | translate"
-            class="w-100"
-          />
+          @if (isTrueFalse) {
+            <div class="form-control bg-body" dir="rtl">{{ option.value.optionTextAr }}</div>
+          } @else {
+            <app-rich-content-input
+              formControlName="optionTextAr"
+              direction="rtl"
+              [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_AR' | translate"
+              class="w-100"
+            />
+          }
           @if (optionInvalid($index, 'optionTextAr')) {
             <small class="text-danger d-block">
               {{ 'QUESTION_ASSIGNMENTS.OPTION_AR_REQUIRED' | translate }}
@@ -119,12 +125,16 @@
           }
         </div>
         <div class="col">
-          <app-rich-content-input
-            formControlName="optionTextEn"
-            direction="ltr"
-            [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_EN' | translate"
-            class="w-100"
-          />
+          @if (isTrueFalse) {
+            <div class="form-control bg-body" dir="ltr">{{ option.value.optionTextEn }}</div>
+          } @else {
+            <app-rich-content-input
+              formControlName="optionTextEn"
+              direction="ltr"
+              [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_EN' | translate"
+              class="w-100"
+            />
+          }
           @if (optionInvalid($index, 'optionTextEn')) {
             <small class="text-danger d-block">
               {{ 'QUESTION_ASSIGNMENTS.OPTION_EN_REQUIRED' | translate }}
@@ -132,25 +142,34 @@
           }
         </div>
         <div class="col-auto">
-          <p-checkbox
-            [binary]="true"
-            formControlName="isCorrect"
-            (onChange)="setCorrect($index)"
-          />
+          <label class="d-flex align-items-center gap-2">
+            <p-checkbox
+              [binary]="true"
+              formControlName="isCorrect"
+              (onChange)="setCorrect($index)"
+            />
+            @if (isTrueFalse) {
+              <span>{{ 'QUESTION_ASSIGNMENTS.CORRECT' | translate }}</span>
+            }
+          </label>
         </div>
-        <div class="col-auto">
-          <p-button
-            type="button"
-            icon="pi pi-trash"
-            severity="danger"
-            [text]="true"
-            (onClick)="removeOption($index)"
-          />
-        </div>
+        @if (!isTrueFalse) {
+          <div class="col-auto">
+            <p-button
+              type="button"
+              icon="pi pi-trash"
+              severity="danger"
+              [text]="true"
+              (onClick)="removeOption($index)"
+            />
+          </div>
+        }
       </div>
     }
     @if (submitted && options.length < 2) {
-      <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.MIN_OPTIONS' | translate }}</small>
+      <small class="text-danger d-block">{{
+        'QUESTION_ASSIGNMENTS.MIN_OPTIONS' | translate
+      }}</small>
     }
     @if (correctOptionInvalid()) {
       <small class="text-danger d-block">
@@ -159,13 +178,15 @@
     }
   </div>
 
-  <p-button
-    type="button"
-    [label]="'QUESTION_ASSIGNMENTS.ADD_OPTION' | translate"
-    icon="pi pi-plus"
-    [text]="true"
-    (onClick)="addOption()"
-  />
+  @if (!isTrueFalse) {
+    <p-button
+      type="button"
+      [label]="'QUESTION_ASSIGNMENTS.ADD_OPTION' | translate"
+      icon="pi pi-plus"
+      [text]="true"
+      (onClick)="addOption()"
+    />
+  }
 
   <div class="d-flex justify-content-end gap-2">
     <p-button

@@ -51,7 +51,16 @@ internal static class QuestionEntryRules
         if (q.Options.Count < 2 || q.Options.Count(x => x.IsCorrect) != 1 || q.Options.Select(x => x.DisplayOrder).Distinct().Count() != q.Options.Count) return false;
         if (q.Options.Any(x => !sanitizer.HasMeaningfulContent(x.OptionTextAr) ||
                                !sanitizer.HasMeaningfulContent(x.OptionTextEn))) return false;
-        return q.QuestionTypeId != QuestionTypeIds.TRUE_FALSE || q.Options.Count == 2;
+        if (q.QuestionTypeId != QuestionTypeIds.TRUE_FALSE) return true;
+
+        var ordered = q.Options.OrderBy(x => x.DisplayOrder).ToArray();
+        return ordered.Length == 2 &&
+               ordered[0].DisplayOrder == 1 &&
+               string.Equals(ordered[0].OptionTextAr?.Trim(), "صح", StringComparison.Ordinal) &&
+               string.Equals(ordered[0].OptionTextEn?.Trim(), "True", StringComparison.Ordinal) &&
+               ordered[1].DisplayOrder == 2 &&
+               string.Equals(ordered[1].OptionTextAr?.Trim(), "خطأ", StringComparison.Ordinal) &&
+               string.Equals(ordered[1].OptionTextEn?.Trim(), "False", StringComparison.Ordinal);
     }
     public static QuestionRevision Revision(Guid questionId, int number, Guid? itemId, QuestionInput q) => new()
     {
