@@ -61,6 +61,10 @@ export class QuestionEntryPage {
     return (this.language.get() === 'ar' ? ar : en) || '-';
   }
 
+  localizedContent(ar?: string, en?: string): string {
+    return (this.language.get() === 'ar' ? ar : en) || '';
+  }
+
   percent(): number {
     const progress = this.workspace()?.progress;
     if (!progress) {

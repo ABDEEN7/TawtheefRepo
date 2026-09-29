@@ -8,6 +8,7 @@ using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Application.Features.Resources.Commands;
 using Tawtheef.Application.Common.Services;
+using Tawtheef.Infrastructure.Security;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -52,6 +53,7 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurre
     }
 
     [HttpPost("{assignmentId:guid}/questions")]
+    [AllowRichText]
     public async Task<IActionResult> Add(
         Guid assignmentId,
         [FromBody] QuestionInput input,
@@ -62,6 +64,7 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurre
     }
 
     [HttpPut("{assignmentId:guid}/questions/{itemId:guid}")]
+    [AllowRichText]
     public async Task<IActionResult> Edit(
         Guid assignmentId,
         Guid itemId,

@@ -28,6 +28,14 @@ export class QuestionBankAssignmentsService {
     );
   }
 
+  image(blobKey: string): Observable<Blob> {
+    const encoded = this.toBase64Url(blobKey);
+    return this.http.get<Blob>(this.endpoints.questionBankAssignments.image(encoded), undefined, {
+      responseType: 'blob',
+      headers: { 'X-Skip-Loading': 'true' },
+    });
+  }
+
   add(id: string, input: QuestionInput): Observable<string> {
     return this.withUploadedImage(input).pipe(
       switchMap((question) => this.http.post<string>(this.endpoints.questionBankAssignments.questions(id), question)),
@@ -59,5 +67,12 @@ export class QuestionBankAssignmentsService {
 
   finish(id: string): Observable<void> {
     return this.http.post<void>(this.endpoints.questionBankAssignments.finish(id), {});
+  }
+
+  private toBase64Url(value: string): string {
+    const bytes = new TextEncoder().encode(value);
+    let binary = '';
+    bytes.forEach((byte) => (binary += String.fromCharCode(byte)));
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 }
