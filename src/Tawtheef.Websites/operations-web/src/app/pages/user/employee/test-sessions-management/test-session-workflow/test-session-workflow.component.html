@@ -1,4 +1,7 @@
-<section class="card card-table" i18nNamespace="pages/employee/test-sessions-management">
+<section
+  class="card card-table"
+  [i18nNamespace]="['pages/employee/test-sessions-management', 'pages/employee/test-slots-management']"
+>
   <div class="card-body">
     <h3 class="fw-bold mb-4">{{ 'TEST_SESSION_WIZARD.CREATE_TITLE' | translate }}</h3>
     <div class="card card-table workflow-stepper-card mb-4">
@@ -82,13 +85,99 @@
       />
     }
     @if (step === 4) {
-      <section class="card card-table bg-light">
-        <div class="card-body">
-          <h5 class="text-primary">{{ 'TEST_SESSION_WIZARD.STEP_ROOM_TEAM' | translate }}</h5>
-          <p class="text-muted mb-0">
-            {{ 'TEST_SESSION_WIZARD.TEAM_ROOM_STEP_DESCRIPTION' | translate }}
-          </p>
-        </div>
+      <section aria-labelledby="selected-period-team-title">
+        <h5 id="selected-period-team-title" class="text-primary d-flex align-items-center my-3">
+          {{ 'TEST_SESSION_WIZARD.SELECTED_PERIOD_TEAM_TITLE' | translate }}
+        </h5>
+        @if (localSession(); as session) {
+          @if (periodTeamLoading()) {
+            <p class="text-muted">{{ 'TEST_SLOT_DETAILS.LOADING_ASSIGNMENTS' | translate }}</p>
+          } @else if (periodTeamLoadFailed()) {
+            <div class="alert alert-danger mb-0">{{ 'TEST_SLOT_DETAILS.LOAD_ASSIGNMENTS_ERROR' | translate }}</div>
+          } @else {
+            <div class="table-card rounded overflow-hidden">
+              <div class="table-responsive">
+                <p-table [value]="[session]">
+                  <ng-template #header>
+                    <tr>
+                      <th>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</th>
+                      <th>{{ 'TEST_SESSION_WIZARD.ROOM_TIME' | translate }}</th>
+                      <th>{{ 'TEST_SLOT_WIZARD.ROOM_HEAD' | translate }}</th>
+                      <th>{{ 'TEST_SLOT_WIZARD.TEAM_MEMBERS' | translate }}</th>
+                      <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template #body>
+                    <tr>
+                      <td>{{ session.slot.slotName }}</td>
+                      <td>
+                        <div class="fw-semibold">{{ session.slot.roomName }}</div>
+                        <small class="d-block text-muted">
+                          {{ session.slot.slotDate | date: 'yyyy-MM-dd' }}
+                        </small>
+                        <small class="d-block text-muted">
+                          <bdi>{{ session.startTime }} - {{ session.endTime }}</bdi>
+                        </small>
+                      </td>
+                      <td>
+                        @if (periodTeam().roomHead; as roomHead) {
+                          <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle bg-light text-primary p-2">
+                              <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
+                            </span>
+                            <div>
+                              <div class="fw-semibold">{{ roomHead.name }}</div>
+                              @if (staffDetails(roomHead); as details) {
+                                <small class="text-muted">{{ details }}</small>
+                              }
+                            </div>
+                          </div>
+                        } @else {
+                          <span class="text-muted">
+                            {{ 'TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate }}
+                          </span>
+                        }
+                      </td>
+                      <td>
+                        @if (periodTeam().selectedStaff.length > 0) {
+                          <div class="d-flex flex-column gap-2">
+                            @for (member of periodTeam().selectedStaff; track member.id) {
+                              <div class="d-flex align-items-center gap-2">
+                                <span class="rounded-circle bg-light text-primary p-2">
+                                  <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
+                                </span>
+                                <div>
+                                  <div class="fw-semibold">{{ member.name }}</div>
+                                  @if (staffDetails(member); as details) {
+                                    <small class="text-muted">{{ details }}</small>
+                                  }
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted">
+                            {{ 'TEST_SESSION_WIZARD.NO_TEAM_MEMBERS' | translate }}
+                          </span>
+                        }
+                      </td>
+                      <td class="text-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-primary light"
+                          (click)="editPeriodTeam()"
+                          [disabled]="periodTeamLoading()"
+                        >
+                          {{ 'TEST_SESSION_WIZARD.EDIT_TEAM' | translate }}
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          }
+        }
       </section>
     }
     <div class="d-flex justify-content-between mt-4">

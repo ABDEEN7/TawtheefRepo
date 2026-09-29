@@ -1,3 +1,4 @@
+<div [i18nNamespace]="['pages/employee/test-slots-management', 'pages/employee/test-sessions-management']">
 @if (loading()) {
   <p class="mb-0">{{ 'TEST_SLOT_DETAILS.LOADING_ASSIGNMENTS' | translate }}</p>
 } @else if (loadFailed()) {
@@ -14,7 +15,8 @@
       {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
     </button>
     <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving()">
-      {{ 'TEST_SLOT_DETAILS.SAVE_ASSIGNMENTS' | translate }}
+      {{ (isLocalMode ? 'TEST_SESSION_WIZARD.APPLY_TEAM' : 'TEST_SLOT_DETAILS.SAVE_ASSIGNMENTS') | translate }}
     </button>
   </div>
 }
+</div>
