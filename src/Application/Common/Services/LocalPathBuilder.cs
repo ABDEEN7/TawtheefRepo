@@ -26,6 +26,9 @@ public static class LocalPathBuilder
     public static string HomeSuccessStoryImage(Guid storyId, Guid fileId, string ext, string hash, bool isPublic)
         => Key(Scope(isPublic), "operation", "home-content", "success-stories", storyId.ToString(), FileName(fileId, hash, ext));
 
+    public static string QuestionImage(Guid userId, Guid fileId, string ext, string hash)
+        => Key("private", "operation", "question-bank", userId.ToString(), "images", FileName(fileId, hash, ext));
+
     #endregion
 
     private static string Scope(bool isPublic) => isPublic ? "public" : "private";

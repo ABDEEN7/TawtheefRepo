@@ -98,7 +98,13 @@
 
       <ng-template #body let-question>
         <tr>
-          <td>{{ localized(question.questionTextAr, question.questionTextEn) }}</td>
+          <td>
+            @if (localizedContent(question.questionTextAr, question.questionTextEn); as content) {
+              <app-rich-content-renderer [content]="content" />
+            } @else if (question.resourceId) {
+              <i class="pi pi-image" [title]="'QUESTION_ASSIGNMENTS.IMAGE_ONLY' | translate"></i>
+            }
+          </td>
           <td>{{ localized(question.questionTypeNameAr, question.questionTypeNameEn) }}</td>
           <td>{{ localized(question.difficultyNameAr, question.difficultyNameEn) }}</td>
           <td>{{ localized(question.statusNameAr, question.statusNameEn) }}</td>

@@ -38,5 +38,22 @@
   "QUESTION_ASSIGNMENTS.TRUE_FALSE": "صح / خطأ",
   "QUESTION_ASSIGNMENTS.EASY": "سهل",
   "QUESTION_ASSIGNMENTS.MEDIUM": "متوسط",
-  "QUESTION_ASSIGNMENTS.HARD": "صعب"
+  "QUESTION_ASSIGNMENTS.HARD": "صعب",
+  "QUESTION_ASSIGNMENTS.ADVANCED_EDITOR": "المحرر المتقدم",
+  "QUESTION_ASSIGNMENTS.APPLY": "تطبيق",
+  "QUESTION_ASSIGNMENTS.QUESTION_IMAGE": "صورة السؤال (اختيارية عند إدخال النص باللغتين)",
+  "QUESTION_ASSIGNMENTS.CHOOSE_IMAGE": "اختيار صورة",
+  "QUESTION_ASSIGNMENTS.REPLACE_IMAGE": "استبدال الصورة",
+  "QUESTION_ASSIGNMENTS.REMOVE_IMAGE": "إزالة الصورة",
+  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "اختر صورة JPEG أو PNG أو WebP غير فارغة وبحجم لا يتجاوز 1 ميجابايت.",
+  "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "سؤال بصورة فقط",
+  "QUESTION_ASSIGNMENTS.PLEASE_SELECT": "يرجى الاختيار",
+  "QUESTION_ASSIGNMENTS.TYPE_REQUIRED": "نوع السؤال مطلوب.",
+  "QUESTION_ASSIGNMENTS.DIFFICULTY_REQUIRED": "مستوى الصعوبة مطلوب.",
+  "QUESTION_ASSIGNMENTS.QUESTION_CONTENT_REQUIRED": "أدخل السؤال بالعربية والإنجليزية معاً، أو أرفق صورة بدون نص.",
+  "QUESTION_ASSIGNMENTS.OPTION_AR_REQUIRED": "محتوى الخيار بالعربية مطلوب.",
+  "QUESTION_ASSIGNMENTS.OPTION_EN_REQUIRED": "محتوى الخيار بالإنجليزية مطلوب.",
+  "QUESTION_ASSIGNMENTS.MIN_OPTIONS": "يلزم إدخال خيارين للإجابة على الأقل.",
+  "QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION": "اختر إجابة صحيحة واحدة فقط.",
+  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "جارٍ تحميل معاينة الصورة…"
 }

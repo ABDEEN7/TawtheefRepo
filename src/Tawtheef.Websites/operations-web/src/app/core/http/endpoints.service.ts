@@ -435,6 +435,8 @@ export class EndpointsService {
   };
 
   questionBankAssignments = {
+    images: this.getFullUrl('/questionbankassignments/images'),
+    image: (encodedBlobKey: string) => this.getFullUrl(`/resources/${encodedBlobKey}`),
     list: this.getFullUrl('/questionbankassignments'),
     workspace: (id: string) => this.getFullUrl(`/questionbankassignments/${id}`),
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),
