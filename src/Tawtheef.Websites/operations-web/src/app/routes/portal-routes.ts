@@ -172,6 +172,9 @@ export const portalRoutes = {
   get createTestSession() {
     return this.portal + '/' + this.createTestSessionPath;
   },
+  editTestSession(testSessionId: string) {
+    return this.portal + `/${this.testSessionsManagementPath}/edit/${testSessionId}`;
+  },
   get testSessionsManagement() {
     return this.portal + '/' + this.testSessionsManagementPath;
   },

@@ -17,6 +17,7 @@ export class TestSessionExamSelectionStepComponent {
   @Input() selectedExamId?: string;
   @Input() examDetails?: TestSessionExamDetailsDto;
   @Input() loading = false;
+  @Input() disabled = false;
   @Input() showValidation = false;
   @Output() examSelected = new EventEmitter<string | undefined>();
 }

@@ -433,6 +433,7 @@ export class EndpointsService {
     readyTestSlots: this.getFullUrl('/test-sessions/wizard/ready-test-slots'),
       capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
     sessionSetup: this.getFullUrl('/test-sessions/wizard/session-setup'),
+    edit: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/edit`),
   };
 
   questionBanks = {

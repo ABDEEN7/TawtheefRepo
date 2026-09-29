@@ -5,6 +5,7 @@ import { HttpService } from '../../../../../core/http/http.service';
 import { PaginatedResult } from '../../../../../core/models/paginated-result.model';
 import {
   TestSessionFilters,
+  TestSessionEditDto,
   TestSessionListItemDto,
   TestSessionLookupsDto,
 } from '../models/test-session-list-item.dto';
@@ -15,6 +16,7 @@ import {
 } from '../models/test-session-candidate.dto';
 import { ReadyTestSlotFilters, ReadyTestSlotsDto } from '../models/ready-test-slot.dto';
 import { SaveTestSessionSetupDto, TestSessionSetupDto } from '../models/test-session-setup.dto';
+import { HDR } from '../../../../../core/utils/headers.flags';
 
 @Injectable({ providedIn: 'root' })
 export class TestSessionsService {
@@ -49,7 +51,16 @@ export class TestSessionsService {
     return this.http.get<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, { examId, testSlotId });
   }
 
+  edit(testSessionId: string, language: string): Observable<TestSessionEditDto> {
+    return this.http.get<TestSessionEditDto>(
+      this.endpoints.testSessions.edit(testSessionId),
+      { language },
+    );
+  }
+
   saveSessionSetup(setup: SaveTestSessionSetupDto): Observable<TestSessionSetupDto> {
-    return this.http.put<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, setup);
+    return this.http.put<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, setup, undefined, {
+      headers: { [HDR.SkipError]: 'true' },
+    });
   }
 }

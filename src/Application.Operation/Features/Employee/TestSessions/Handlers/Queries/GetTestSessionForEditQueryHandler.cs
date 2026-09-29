@@ -1,0 +1,82 @@
+using Application.Operation.Features.Employee.TestSessions.DTOs;
+using Application.Operation.Features.Employee.TestSessions.Queries;
+using Application.Operation.Features.Employee.TestSessions.Services;
+using FluentResults;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Exams;
+using Tawtheef.Domain.Entities.Lookups;
+
+namespace Application.Operation.Features.Employee.TestSessions.Handlers.Queries;
+
+public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetTestSessionForEditQuery, IResult<TestSessionEditDto>>
+{
+    public async Task<IResult<TestSessionEditDto>> Handle(GetTestSessionForEditQuery request, CancellationToken ct)
+    {
+        var isArabic = string.Equals(request.Language, "ar", StringComparison.OrdinalIgnoreCase);
+        var session = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
+            .Where(x => x.Id == request.TestSessionId)
+            .Select(x => new
+            {
+                x.Id,
+                x.SessionNo,
+                x.ExamId,
+                x.StatusId,
+                x.GenderFilter,
+                x.NationalityFilter,
+                x.TestSlotId,
+                x.StartTime,
+                x.EndTime,
+                InvitationIds = x.TestSessionCandidates.Select(candidate => candidate.InvitationId).ToList(),
+                SlotName = x.TestSlot == null ? null : isArabic ? x.TestSlot.TitleAr : x.TestSlot.TitleEn ?? x.TestSlot.TitleAr,
+                SlotDate = x.TestSlot == null ? null : (DateOnly?)x.TestSlot.SlotDate,
+                SlotStartTime = x.TestSlot == null ? null : (TimeOnly?)x.TestSlot.StartTime,
+                SlotEndTime = x.TestSlot == null ? null : (TimeOnly?)x.TestSlot.EndTime,
+                RoomId = x.TestSlot == null ? null : (Guid?)x.TestSlot.RoomId,
+                RoomName = x.TestSlot == null ? null : isArabic
+                    ? x.TestSlot.Room!.NameAr
+                    : x.TestSlot.Room!.NameEn ?? x.TestSlot.Room.NameAr,
+                RoomCapacity = x.TestSlot == null ? null : (int?)x.TestSlot.Room!.Capacity,
+                RoomIdForCapacity = x.TestSlot == null ? null : (Guid?)x.TestSlot.RoomId,
+                SlotDateForCapacity = x.TestSlot == null ? null : (DateOnly?)x.TestSlot.SlotDate
+            }).FirstOrDefaultAsync(ct);
+
+        if (session is null || !IsEditable(session.StatusId))
+            return Result.Fail<TestSessionEditDto>(ErrorsCodes.InvalidRequest);
+
+        var availableCapacity = 0;
+        if (session.TestSlotId.HasValue && session.StartTime.HasValue && session.EndTime.HasValue &&
+            session.RoomIdForCapacity.HasValue && session.SlotDateForCapacity.HasValue && session.RoomCapacity.HasValue)
+        {
+            var reservations = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
+                .Where(existing => existing.Id != session.Id &&
+                    existing.TestSlot!.RoomId == session.RoomIdForCapacity &&
+                    existing.TestSlot.SlotDate == session.SlotDateForCapacity &&
+                    existing.StartTime.HasValue && existing.EndTime.HasValue &&
+                    !TestSessionCapacityService.NonReservingStatusIds.Contains(existing.StatusId))
+                .Select(existing => new TestSessionCapacityReservation(
+                    existing.StartTime!.Value,
+                    existing.EndTime!.Value,
+                    unitOfWork.Context.Set<TestSessionCandidate>().Count(candidate =>
+                        candidate.TestSessionId == existing.Id)))
+                .ToListAsync(ct);
+
+            availableCapacity = Math.Max(0, session.RoomCapacity.Value -
+                TestSessionCapacityService.CalculatePeakOccupancy(
+                    reservations, session.StartTime.Value, session.EndTime.Value));
+        }
+
+        return Result.Ok(new TestSessionEditDto(
+            session.Id, session.SessionNo, session.ExamId, session.StatusId,
+            session.GenderFilter, session.NationalityFilter, session.InvitationIds,
+            session.TestSlotId, session.SlotName, session.SlotDate, session.SlotStartTime,
+            session.SlotEndTime, session.RoomId, session.RoomName, session.RoomCapacity,
+            session.StartTime, session.EndTime, availableCapacity));
+    }
+
+    private static bool IsEditable(Guid statusId) =>
+        statusId == TestSessionStatusIds.Draft || statusId == TestSessionStatusIds.Returned;
+}

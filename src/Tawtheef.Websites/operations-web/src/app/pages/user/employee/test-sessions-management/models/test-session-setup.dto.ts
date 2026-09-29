@@ -3,10 +3,11 @@ export type TestSessionNationalityFilter = 'Qatari' | 'NonQatari' | null;
 
 export interface TestSessionSetupDto {
   testSessionId: string;
+  sessionNo: string;
   examId: string;
-  testSlotId: string;
-  startTime: string;
-  endTime: string;
+  testSlotId?: string;
+  startTime?: string;
+  endTime?: string;
   genderFilter: TestSessionGenderFilter;
   nationalityFilter: TestSessionNationalityFilter;
   invitationIds: string[];
@@ -17,9 +18,9 @@ export interface TestSessionSetupDto {
 export interface SaveTestSessionSetupDto {
   testSessionId?: string;
   examId: string;
-  testSlotId: string;
-  startTime: string;
-  endTime: string;
+  testSlotId?: string;
+  startTime?: string;
+  endTime?: string;
   genderFilter: TestSessionGenderFilter;
   nationalityFilter: TestSessionNationalityFilter;
   invitationIds: string[];

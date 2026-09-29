@@ -55,12 +55,14 @@
         [exams]="lookups().exams"
         [selectedExamId]="selectedExamId"
         [examDetails]="details()"
+        [disabled]="editMode()"
         (examSelected)="onExamSelected($event)"
       />
     }
     @if (step === 2 && selectedExamId) {
       <app-test-session-candidates-step
         [examId]="selectedExamId"
+        [testSessionId]="testSessionId()"
         [genderFilter]="candidateGenderFilter()"
         [nationalityFilter]="candidateNationalityFilter()"
         [selectedCandidateIds]="selectedCandidateIds()"
@@ -234,7 +236,7 @@
                       </ng-template>
                       <ng-template #body>
                         <tr>
-                          <td><bdi>{{ 'TEST_SESSIONS.NOT_AVAILABLE' | translate }}</bdi></td>
+                          <td><bdi>{{ sessionNo() || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}</bdi></td>
                           <td class="text-nowrap">{{ session.slot.slotDate | date: 'yyyy-MM-dd' }}</td>
                           <td>{{ session.slot.slotName }}</td>
                           <td>{{ session.slot.roomName }}</td>
@@ -368,11 +370,25 @@
       >
         {{ 'TEST_SESSION_WIZARD.BACK' | translate }}
       </button>
-      @if (step === 5) {
-        <button type="button" class="btn btn-primary" [disabled]="!isReviewValid()">
-          {{ 'TEST_SESSION_WIZARD.SEND_TO_APPROVE' | translate }}
+      <div class="d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          [disabled]="!selectedExamId || saving()"
+          (click)="saveDraft()"
+        >
+          {{ 'TEST_SESSION_WIZARD.SAVE_DRAFT' | translate }}
         </button>
-      } @else {
+        @if (step === 5) {
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!isReviewValid() || saving()"
+            (click)="sendToApprove()"
+          >
+            {{ 'TEST_SESSION_WIZARD.SEND_TO_APPROVE' | translate }}
+          </button>
+        } @else {
         <button
           type="button"
           class="btn btn-primary"
@@ -381,7 +397,8 @@
         >
           {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
         </button>
-      }
+        }
+      </div>
     </div>
   </div>
 </section>

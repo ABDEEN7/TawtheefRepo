@@ -1,4 +1,5 @@
 using Application.Operation.Features.Employee.TestSessions.DTOs;
+using Application.Operation.Features.Employee.TestSessions.Commands;
 using Application.Operation.Features.Employee.TestSessions.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +37,14 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Candidates([FromQuery] GetTestSessionCandidatesQuery query, CancellationToken ct)
         => (await mediator.Send(query, ct)).ToActionResult();
 
+    [HttpGet("wizard/{testSessionId:guid}/edit")]
+    [AuthorizePermission(PermissionKeys.TestSessions.Create)]
+    public async Task<IActionResult> Edit(
+        Guid testSessionId,
+        [FromQuery] string language,
+        CancellationToken ct)
+        => (await mediator.Send(new GetTestSessionForEditQuery(testSessionId, language), ct)).ToActionResult();
+
     [HttpGet("wizard/ready-test-slots")]
     [AuthorizePermission(PermissionKeys.TestSessions.Create)]
     public async Task<IActionResult> ReadyTestSlots([FromQuery] GetReadyTestSlotsQuery query, CancellationToken ct)
@@ -46,13 +55,10 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Capacity([FromQuery] GetTestSessionCapacityQuery query, CancellationToken ct)
         => (await mediator.Send(query, ct)).ToActionResult();
 
-    // [HttpGet("wizard/session-setup")]
-    // [AuthorizePermission(PermissionKeys.TestSessions.Create)]
-    // public async Task<IActionResult> SessionSetup([FromQuery] GetTestSessionSetupQuery query, CancellationToken ct)
-    //     => (await mediator.Send(query, ct)).ToActionResult();
-    //
-    // [HttpPut("wizard/session-setup")]
-    // [AuthorizePermission(PermissionKeys.TestSessions.Create)]
-    // public async Task<IActionResult> SaveSessionSetup([FromBody] SaveTestSessionSetupDto setup, CancellationToken ct)
-    //     => (await mediator.Send(new SaveTestSessionSetupCommand(setup), ct)).ToActionResult();
+    [HttpPut("wizard/session-setup")]
+    [AuthorizePermission(PermissionKeys.TestSessions.Create)]
+    public async Task<IActionResult> SaveSessionSetup(
+        [FromBody] SaveTestSessionSetupDto setup,
+        CancellationToken ct)
+        => (await mediator.Send(new SaveTestSessionSetupCommand(setup), ct)).ToActionResult();
 }

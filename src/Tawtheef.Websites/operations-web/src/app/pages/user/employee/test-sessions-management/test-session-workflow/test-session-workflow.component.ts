@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { TestSessionCandidateSummaryDto } from '../models/test-session-candidate.dto';
@@ -12,12 +13,14 @@ import {
   TestSlotStaffRoleIds,
 } from '../../test-slots-management/models/create-test-slot.dto';
 import { TestSlotsService } from '../../test-slots-management/services/test-slots.service';
-import { TestSessionLookupsDto } from '../models/test-session-list-item.dto';
+import { TestSessionEditDto, TestSessionLookupsDto } from '../models/test-session-list-item.dto';
 import {
   TestSessionGenderFilter,
   TestSessionNationalityFilter,
 } from '../models/test-session-setup.dto';
 import { LanguageService } from '../../../../../core/services/language.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { portalRoutes } from '../../../../../routes/portal-routes';
 import { TestSessionsService } from '../services/test-sessions.service';
 import { TestSessionCandidatesStepComponent } from './test-session-candidates-step/test-session-candidates-step.component';
 import { TestSessionExamSelectionStepComponent } from './test-session-exam-selection-step/test-session-exam-selection-step.component';
@@ -43,6 +46,10 @@ export class TestSessionWorkflowComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly language = inject(LanguageService);
   private readonly testSlotsService = inject(TestSlotsService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
+  private readonly notifications = inject(NotificationService);
 
   readonly lookups = signal<Pick<TestSessionLookupsDto, 'exams' | 'rooms'>>({
     exams: [],
@@ -59,6 +66,11 @@ export class TestSessionWorkflowComponent {
   readonly candidateNationalityFilter = signal<TestSessionNationalityFilter>(null);
   readonly selectedCandidateIds = signal<string[]>([]);
   readonly localSession = signal<LocalTestSession | null>(null);
+  readonly testSessionId = signal<string | null>(null);
+  readonly sessionNo = signal<string | null>(null);
+  readonly saving = signal(false);
+  readonly editLoading = signal(false);
+  readonly editMode = signal(false);
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -100,13 +112,84 @@ export class TestSessionWorkflowComponent {
 
   constructor() {
     this.loadLookups(this.language.get());
+    const testSessionId = this.route.snapshot.paramMap.get('testSessionId');
+    if (testSessionId) {
+      this.editMode.set(true);
+      this.loadForEdit(testSessionId);
+    }
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((language) => this.loadLookups(language));
   }
 
+  private loadForEdit(testSessionId: string): void {
+    this.editLoading.set(true);
+    this.service
+      .edit(testSessionId, this.language.get())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (session) => {
+          this.restoreEditState(session);
+          this.editLoading.set(false);
+          this.service
+            .examDetails(session.examId, this.language.get())
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (details) => this.details.set(details),
+              error: () =>
+                this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED')),
+            });
+        },
+        error: () => {
+          this.editLoading.set(false);
+          this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED'));
+          void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+        },
+      });
+  }
+
+  private restoreEditState(session: TestSessionEditDto): void {
+    this.testSessionId.set(session.testSessionId);
+    this.sessionNo.set(session.sessionNo);
+    this.selectedExamId = session.examId;
+    this.candidateGenderFilter.set(session.genderFilter);
+    this.candidateNationalityFilter.set(session.nationalityFilter);
+    this.selectedCandidateIds.set(session.invitationIds);
+    this.candidateSelectionInitialized.set(session.invitationIds.length > 0);
+
+    if (
+      session.testSlotId && session.slotDate && session.slotStartTime && session.slotEndTime &&
+      session.roomId && session.roomName && session.slotName && session.roomCapacity != null &&
+      session.startTime && session.endTime
+    ) {
+      this.localSession.set({
+        slot: {
+          testSlotId: session.testSlotId,
+          slotName: session.slotName,
+          slotDate: session.slotDate,
+          startTime: session.slotStartTime,
+          endTime: session.slotEndTime,
+          roomId: session.roomId,
+          roomName: session.roomName,
+          roomCapacity: session.roomCapacity,
+          currentReservations: Math.max(0, session.roomCapacity - session.availableCapacity),
+          existingSessionCount: 0,
+          existingExamSessionCount: 0,
+          remainingCapacity: session.availableCapacity,
+          status: '',
+        },
+        startTime: session.startTime,
+        endTime: session.endTime,
+        availableCapacity: session.availableCapacity,
+      });
+    }
+  }
+
   onExamSelected(examId?: string): void {
+    if (this.editMode()) return;
     this.selectedExamId = examId;
+    this.testSessionId.set(null);
+    this.sessionNo.set(null);
     this.details.set(undefined);
     this.candidateGenderFilter.set(null);
     this.candidateNationalityFilter.set(null);
@@ -212,6 +295,66 @@ export class TestSessionWorkflowComponent {
     return session
       ? Math.max(session.availableCapacity - this.selectedCandidateIds().length, 0)
       : 0;
+  }
+
+  saveDraft(): void {
+    this.persistSession(false);
+  }
+
+  sendToApprove(): void {
+    this.persistSession(true);
+  }
+
+  private persistSession(sendToApprove: boolean): void {
+    const session = this.localSession();
+    if (
+      !this.selectedExamId ||
+      this.saving() ||
+      (sendToApprove && (!this.isReviewValid() || !session))
+    )
+      return;
+
+    this.saving.set(true);
+    this.service
+      .saveSessionSetup({
+        testSessionId: this.testSessionId() ?? undefined,
+        examId: this.selectedExamId,
+        testSlotId: session?.slot.testSlotId,
+        startTime: session?.startTime,
+        endTime: session?.endTime,
+        genderFilter: this.candidateGenderFilter(),
+        nationalityFilter: this.candidateNationalityFilter(),
+        invitationIds: this.selectedCandidateIds(),
+        sendToApprove,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: result => {
+          this.testSessionId.set(result.testSessionId);
+          this.sessionNo.set(result.sessionNo);
+          this.saving.set(false);
+          if (sendToApprove) {
+            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.SUBMIT_SUCCESS'));
+            void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+          } else {
+            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.DRAFT_SAVED'));
+          }
+        },
+        error: error => {
+          this.saving.set(false);
+          const capacityError = String(error?.error?.message ?? '').match(
+            /^TEST_SESSION_CAPACITY_INSUFFICIENT:(\d+)$/,
+          );
+          const message = capacityError
+            ? this.translate.instant('TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY', {
+                count: Number(capacityError[1]),
+              })
+            : null;
+          this.notifications.error(
+            message ?? this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED'),
+          );
+        },
+      });
   }
 
   roomHeadStaff(): TestSlotConfigurationStaffDto | null {

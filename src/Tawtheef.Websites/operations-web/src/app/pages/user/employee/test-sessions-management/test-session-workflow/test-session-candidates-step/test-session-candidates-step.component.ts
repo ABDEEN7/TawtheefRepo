@@ -48,6 +48,7 @@ import { PaginationComponent } from '../../../../../../shared/components/paginat
 export class TestSessionCandidatesStepComponent implements OnChanges {
   protected readonly InvitationSource = InvitationSource;
   readonly examId = input.required<string>();
+  readonly testSessionId = input<string | null>(null);
   readonly genderFilter = input<'Male' | 'Female' | null>(null);
   readonly nationalityFilter = input<'Qatari' | 'NonQatari' | null>(null);
   readonly selectedCandidateIds = input<string[]>([]);
@@ -114,13 +115,15 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['search']) this.currentPage.set(1);
-    if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter']) return;
+    if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter'] &&
+      !changes['testSessionId']) return;
 
     this.filters.update((filters) => ({
       ...filters,
       examId: this.examId(),
       genderFilter: this.genderFilter(),
       nationalityFilter: this.nationalityFilter(),
+      testSessionId: this.testSessionId() ?? undefined,
     }));
     this.currentPage.set(1);
     this.loadCandidates();

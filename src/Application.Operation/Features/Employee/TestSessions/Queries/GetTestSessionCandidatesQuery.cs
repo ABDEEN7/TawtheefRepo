@@ -11,4 +11,5 @@ public sealed record GetTestSessionCandidatesQuery : IRequest<IResult<TestSessio
     public string Language { get; init; } = "en";
     public TestSessionGenderFilter? GenderFilter { get; init; }
     public TestSessionNationalityFilter? NationalityFilter { get; init; }
+    public Guid? TestSessionId { get; init; }
 }

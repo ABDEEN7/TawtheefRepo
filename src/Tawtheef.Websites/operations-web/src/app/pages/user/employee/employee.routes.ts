@@ -78,6 +78,15 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: `${portalRoutes.testSessionsManagementPath}/edit/:testSessionId`,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.Create] },
+    loadComponent: () =>
+      import('./test-sessions-management/test-session-workflow/test-session-workflow.component').then(
+        (m) => m.TestSessionWorkflowComponent,
+      ),
+  },
+  {
     path: portalRoutes.createTestSessionPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSessions.Create] },

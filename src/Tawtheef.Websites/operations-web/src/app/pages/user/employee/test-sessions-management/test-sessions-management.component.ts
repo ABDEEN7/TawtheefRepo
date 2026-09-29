@@ -12,6 +12,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { Ripple } from 'primeng/ripple';
+import { Tooltip } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
 import { Permissions } from '../../../../core/constants/permissions';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -25,6 +27,7 @@ import {
   TestSessionFilters,
   TestSessionListItemDto,
   TestSessionLookupsDto,
+  TEST_SESSION_STATUS_IDS,
 } from './models/test-session-list-item.dto';
 import { TestSessionsService } from './services/test-sessions.service';
 
@@ -46,6 +49,8 @@ import { TestSessionsService } from './services/test-sessions.service';
     Select,
     TableModule,
     TagModule,
+    Ripple,
+    Tooltip,
     PaginationComponent,
     PageFiltersComponent,
     HasPermissionDirective,
@@ -167,6 +172,16 @@ export class TestSessionsManagementComponent implements OnInit {
   }
   createTestSession(): void {
     void this.router.navigateByUrl(portalRoutes.createTestSession);
+  }
+  canEdit(session: TestSessionListItemDto): boolean {
+    const statusId = session.status.id.toLowerCase();
+
+    return (
+      statusId === TEST_SESSION_STATUS_IDS.draft || statusId === TEST_SESSION_STATUS_IDS.returned
+    );
+  }
+  editTestSession(session: TestSessionListItemDto): void {
+    void this.router.navigateByUrl(portalRoutes.editTestSession(session.id));
   }
   activeAdvancedFilterCount(): number {
     return [

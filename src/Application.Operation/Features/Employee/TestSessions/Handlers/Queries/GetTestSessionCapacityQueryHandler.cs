@@ -21,8 +21,9 @@ public sealed class GetTestSessionCapacityQueryHandler(IUnitOfWork unitOfWork)
             return Result.Fail<TestSessionCapacityDto>(ErrorsCodes.InvalidRequest);
         var sessions = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
             .Where(x => x.TestSlot!.RoomId == slot.RoomId && x.TestSlot.SlotDate == slot.SlotDate)
+            .Where(x => x.StartTime.HasValue && x.EndTime.HasValue)
             .Where(x => !TestSessionCapacityService.NonReservingStatusIds.Contains(x.StatusId))
-            .Select(x => new TestSessionCapacityReservation(x.StartTime, x.EndTime,
+            .Select(x => new TestSessionCapacityReservation(x.StartTime!.Value, x.EndTime!.Value,
                 unitOfWork.Context.Set<TestSessionCandidate>().Count(c => c.TestSessionId == x.Id))).ToListAsync(ct);
         var available = Math.Max(0, slot.Capacity - TestSessionCapacityService.CalculatePeakOccupancy(sessions, request.StartTime, request.EndTime));
         return Result.Ok(new TestSessionCapacityDto(available, available >= request.SelectedCandidateCount));

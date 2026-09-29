@@ -24,7 +24,7 @@ public sealed class ListTestSessionsQueryHandler(IUnitOfWork unitOfWork)
         var staff = unitOfWork.GetEntityRepository<TestSlotStaff>().DbSet.AsNoTracking();
         var sessions = unitOfWork.GetEntityRepository<TestSession>().DbSet.AsNoTracking()
             .WhereIf(!string.IsNullOrWhiteSpace(search), session =>
-                EF.Functions.Like(session.SessionNo.ToString(), $"%{search}%") ||
+                EF.Functions.Like(session.SessionNo, $"%{search}%") ||
                 EF.Functions.Like(session.Exam!.TitleAr, $"%{search}%") ||
                 EF.Functions.Like(session.Exam.TitleEn!, $"%{search}%") ||
                 EF.Functions.Like(session.Exam.Job!.JobTitle!.JobNameAr, $"%{search}%") ||
@@ -45,8 +45,12 @@ public sealed class ListTestSessionsQueryHandler(IUnitOfWork unitOfWork)
                     candidate.TestSessionId == session.Id &&
                     candidate.Invitation!.Applicant!.Profile!.GenderId == request.GenderId));
 
-        var page = await sessions.OrderByDescending(session => session.TestSlot!.SlotDate)
-            .ThenBy(session => session.TestSlot!.StartTime).ThenBy(session => session.SessionNo)
+        var page = await sessions.OrderByDescending(session => session.TestSlot != null)
+            .ThenByDescending(session => session.TestSlot != null
+                ? (DateOnly?)session.TestSlot.SlotDate
+                : null)
+            .ThenBy(session => session.TestSlot != null ? (TimeOnly?)session.TestSlot.StartTime : null)
+            .ThenBy(session => session.SessionNo)
             .Select(session => new TestSessionListItemDto
             {
                 Id = session.Id,
@@ -55,14 +59,17 @@ public sealed class ListTestSessionsQueryHandler(IUnitOfWork unitOfWork)
                 ExamName = isArabic ? session.Exam!.TitleAr : session.Exam!.TitleEn ?? session.Exam.TitleAr,
                 JobId = session.Exam!.JobId,
                 JobTitle = isArabic ? session.Exam.Job!.JobTitle!.JobNameAr : session.Exam.Job!.JobTitle!.JobNameEn,
-                SessionDate = session.TestSlot!.SlotDate,
+                SessionDate = session.TestSlot == null ? null : session.TestSlot.SlotDate,
                 PeriodId = session.TestSlotId,
-                Period = isArabic ? session.TestSlot.TitleAr : session.TestSlot.TitleEn ?? session.TestSlot.TitleAr,
-                RoomId = session.TestSlot.RoomId,
-                RoomName =
-                    isArabic
-                        ? session.TestSlot.Room!.NameAr
-                        : session.TestSlot.Room!.NameEn ?? session.TestSlot.Room.NameAr,
+                Period = session.TestSlot == null
+                    ? null
+                    : isArabic ? session.TestSlot.TitleAr : session.TestSlot.TitleEn ?? session.TestSlot.TitleAr,
+                RoomId = session.TestSlot == null ? null : session.TestSlot.RoomId,
+                RoomName = session.TestSlot == null || session.TestSlot.Room == null
+                    ? null
+                    : isArabic
+                        ? session.TestSlot.Room.NameAr
+                        : session.TestSlot.Room.NameEn ?? session.TestSlot.Room.NameAr,
                 CandidateCount = candidates.Count(candidate => candidate.TestSessionId == session.Id),
                 RoomHeadName =
                     staff.Where(member =>

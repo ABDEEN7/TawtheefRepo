@@ -34,6 +34,8 @@ public sealed class GetTestSessionCandidatesQueryHandler(IUnitOfWork unitOfWork)
 
         var unavailableInvitationIds = unitOfWork.Context.Set<TestSessionCandidate>().AsNoTracking()
             .Where(candidate => candidate.TestSession!.ExamId == request.ExamId &&
+                                (!request.TestSessionId.HasValue ||
+                                 candidate.TestSessionId != request.TestSessionId.Value) &&
                                 candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
                                 candidate.TestSession.StatusId != TestSessionStatusIds.Rejected)
             .Select(candidate => candidate.InvitationId);

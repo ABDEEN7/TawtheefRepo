@@ -46,9 +46,10 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
             ? []
             : await unitOfWork.Context.Set<TestSession>().AsNoTracking()
                 .Where(session => roomIds.Contains(session.TestSlot!.RoomId) && dates.Contains(session.TestSlot.SlotDate))
+                .Where(session => session.StartTime.HasValue && session.EndTime.HasValue)
                 .Where(session => !TestSessionCapacityService.NonReservingStatusIds.Contains(session.StatusId))
                 .Select(session => new SessionRow(session.ExamId, session.TestSlot!.RoomId,
-                    session.TestSlot.SlotDate, session.StartTime, session.EndTime,
+                    session.TestSlot.SlotDate, session.StartTime!.Value, session.EndTime!.Value,
                     unitOfWork.Context.Set<TestSessionCandidate>().Count(candidate => candidate.TestSessionId == session.Id)))
                 .ToListAsync(ct);
 

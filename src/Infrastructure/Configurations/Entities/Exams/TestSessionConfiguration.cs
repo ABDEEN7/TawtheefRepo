@@ -10,8 +10,10 @@ public class TestSessionConfiguration : BaseEntityConfiguration<TestSession>
     {
         base.Configure(builder);
 
-        builder.Property(x => x.GenderFilter).IsRequired(false);
-        builder.Property(x => x.NationalityFilter).IsRequired(false);
+        builder.Property(x => x.SessionNo).HasMaxLength(32).IsRequired();
+        builder.HasIndex(x => x.SessionNo).IsUnique();
+        builder.Property(x => x.GenderFilter).HasConversion<string>().HasMaxLength(16).IsRequired(false);
+        builder.Property(x => x.NationalityFilter).HasConversion<string>().HasMaxLength(16).IsRequired(false);
 
         builder.HasOne(x => x.TestSlot)
             .WithMany()

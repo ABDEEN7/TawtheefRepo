@@ -221,7 +221,7 @@
                 <th>{{ 'TEST_SESSIONS.CANDIDATES' | translate }}</th>
                 <th>{{ 'TEST_SESSIONS.ROOM_HEAD' | translate }}</th>
                 <th>{{ 'TEST_SESSIONS.STATUS' | translate }}</th>
-                <th class="text-center">{{ 'TEST_SESSIONS.ACTIONS' | translate }}</th>
+                <th *hasPermission="Permissions.TestSessions.Create" class="text-center">{{ 'TEST_SESSIONS.ACTIONS' | translate }}</th>
               </tr></ng-template
             ><ng-template #body let-session
               ><tr>
@@ -230,14 +230,30 @@
                 </td>
                 <td>{{ session.examName }}</td>
                 <td>{{ session.jobTitle }}</td>
-                <td class="text-nowrap">{{ session.sessionDate | date: 'yyyy/MM/dd' }}</td>
-                <td>{{ session.period }}</td>
-                <td>{{ session.roomName }}</td>
+                <td class="text-nowrap">
+                  {{ session.sessionDate ? (session.sessionDate | date: 'yyyy/MM/dd') : ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}
+                </td>
+                <td>{{ session.period || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
+                <td>{{ session.roomName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
                 <td>{{ session.candidateCount }}</td>
                 <td>{{ session.roomHeadName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
                 <td><p-tag severity="secondary" [value]="session.status.name" /></td>
-                <td class="text-center">
-                  <div class="action-buttons justify-content-center"></div>
+                <td *hasPermission="Permissions.TestSessions.Create" class="text-center">
+                  <div class="action-buttons justify-content-center">
+                    @if (canEdit(session)) {
+                      <button
+                        pRipple
+                        type="button"
+                        class="btn"
+                        (click)="editTestSession(session)"
+                        [pTooltip]="'TEST_SESSIONS.EDIT' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="'TEST_SESSIONS.EDIT' | translate"
+                      >
+                        <i class="hgi hgi-stroke hgi-edit-02" pButtonIcon></i>
+                      </button>
+                    }
+                  </div>
                 </td></tr></ng-template
             ><ng-template #emptymessage
               ><tr>

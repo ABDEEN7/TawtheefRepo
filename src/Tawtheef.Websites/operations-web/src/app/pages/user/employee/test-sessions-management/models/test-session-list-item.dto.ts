@@ -2,18 +2,45 @@ import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-opti
 
 export interface TestSessionListItemDto {
   id: string;
-  sessionNo: number;
+  sessionNo: string;
   examId: string;
   examName: string;
   jobId: string;
   jobTitle: string;
-  sessionDate: string;
-  period: string;
-  roomId: string;
-  roomName: string;
+  sessionDate: string | null;
+  periodId?: string | null;
+  period: string | null;
+  roomId: string | null;
+  roomName: string | null;
   candidateCount: number;
   roomHeadName?: string;
   status: dropdownOptionsModel;
+}
+
+export const TEST_SESSION_STATUS_IDS = {
+  draft: '11364bf4-c7bb-4326-a441-238864e53612',
+  returned: '6c7b42ab-a356-47e6-93a1-a5e5a2dd09d4',
+} as const;
+
+export interface TestSessionEditDto {
+  testSessionId: string;
+  sessionNo: string;
+  examId: string;
+  statusId: string;
+  genderFilter: 'Male' | 'Female' | null;
+  nationalityFilter: 'Qatari' | 'NonQatari' | null;
+  invitationIds: string[];
+  testSlotId: string | null;
+  slotName: string | null;
+  slotDate: string | null;
+  slotStartTime: string | null;
+  slotEndTime: string | null;
+  roomId: string | null;
+  roomName: string | null;
+  roomCapacity: number | null;
+  startTime: string | null;
+  endTime: string | null;
+  availableCapacity: number;
 }
 
 export interface TestSessionFilters {

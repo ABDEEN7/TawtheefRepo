@@ -35,10 +35,10 @@ public class TestSessionStatusConfiguration : LookupBaseConfiguration<TestSessio
             },
             new TestSessionStatus
             {
-                Id = TestSessionStatusIds.InProgress,
-                BackendName = nameof(TestSessionStatusIds.InProgress),
-                NameEn = "In Progress",
-                NameAr = "قيد التنفيذ",
+                Id = TestSessionStatusIds.PendingApproval,
+                BackendName = nameof(TestSessionStatusIds.PendingApproval),
+                NameEn = "Pending Approval",
+                NameAr = "بانتظار الاعتماد",
                 DisplayOrder = 4
             },
             new TestSessionStatus
@@ -64,6 +64,14 @@ public class TestSessionStatusConfiguration : LookupBaseConfiguration<TestSessio
                 NameEn = "Rejected",
                 NameAr = "مرفوضة",
                 DisplayOrder = 7
+            },
+            new TestSessionStatus
+            {
+                Id = TestSessionStatusIds.Returned,
+                BackendName = nameof(TestSessionStatusIds.Returned),
+                NameEn = "Returned",
+                NameAr = "معاد",
+                DisplayOrder = 8
             }
         );
     }

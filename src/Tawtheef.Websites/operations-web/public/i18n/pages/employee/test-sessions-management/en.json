@@ -17,6 +17,7 @@
   "TEST_SESSIONS.ROOM_HEAD": "Room head",
   "TEST_SESSIONS.STATUS": "Status",
   "TEST_SESSIONS.ACTIONS": "Actions",
+  "TEST_SESSIONS.EDIT": "Edit test session",
   "TEST_SESSIONS.ALL_EXAMS": "All exams",
   "TEST_SESSIONS.ALL_STATUSES": "All statuses",
   "TEST_SESSIONS.ALL_JOBS": "All job titles",
@@ -146,9 +147,13 @@
   "TEST_SESSION_WIZARD.SEATS_REMAINING": "Seats remaining",
   "TEST_SESSION_WIZARD.REVIEW_READY": "Test session details are complete and ready to send for approval.",
   "TEST_SESSION_WIZARD.SEND_TO_APPROVE": "Send for approval",
+  "TEST_SESSION_WIZARD.DRAFT_SAVED": "Test session draft saved.",
+  "TEST_SESSION_WIZARD.SUBMIT_SUCCESS": "Test session sent for approval.",
+  "TEST_SESSION_WIZARD.SAVE_FAILED": "Unable to save the test session. Review the session and candidate details and try again.",
+  "TEST_SESSION_WIZARD.PENDING_APPROVAL": "Pending Approval",
+  "TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY": "The available capacity for the selected period and time is insufficient. {{count}} candidate(s) do not have seats.",
   "TEST_SESSION_WIZARD.TEAM_ROOM_STEP_DESCRIPTION": "Room team setup will be handled in this step.",
   "TEST_SESSION_WIZARD.INVITATION_SOURCE_EXCEPTIONAL": "Exceptional",
   "TEST_SESSION_WIZARD.SESSION_TIME_INVALID": "The selected time must be inside the period and meet the minimum exam duration.",
-  "TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY": "The room does not have sufficient seats during the selected time. {{count}} candidates do not have seats.",
   "TEST_SESSION_WIZARD.SESSION_CAPACITY_SUCCESS": "Capacity has been allocated for all candidates. You can proceed to the next step."
 }
