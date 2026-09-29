@@ -428,6 +428,11 @@ export class EndpointsService {
   testSessions = {
     list: this.getFullUrl('/test-sessions'),
     lookups: this.getFullUrl('/test-sessions/lookups'),
+    examDetails: (examId: string) => this.getFullUrl(`/test-sessions/wizard/exams/${examId}`),
+    candidates: this.getFullUrl('/test-sessions/wizard/candidates'),
+    readyTestSlots: this.getFullUrl('/test-sessions/wizard/ready-test-slots'),
+      capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
+    sessionSetup: this.getFullUrl('/test-sessions/wizard/session-setup'),
   };
 
   questionBanks = {

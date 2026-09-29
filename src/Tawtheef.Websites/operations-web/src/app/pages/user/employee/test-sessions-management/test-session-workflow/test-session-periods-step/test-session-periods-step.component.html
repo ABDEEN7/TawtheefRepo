@@ -1,0 +1,297 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-calendar-03 me-1"></i>
+  {{ 'TEST_SESSION_WIZARD.STEP_PERIODS' | translate }}
+</h5>
+<p class="text-muted mb-4">{{ 'TEST_SESSION_WIZARD.PERIODS_DESCRIPTION' | translate }}</p>
+
+<section class="card card-table bg-light mb-4">
+  <div class="card-body">
+    <h6 class="text-primary mb-3">{{ 'TEST_SESSION_WIZARD.EXAM_DURATION' | translate }}</h6>
+    <dl class="row g-3 mb-0 exam-summary-details">
+      @if (firstExamPart(); as firstPart) {
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.FIRST_EXAM' | translate }}</dt>
+          <dd>{{ firstPart.durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+        </div>
+      }
+      @if (secondExamPart(); as secondPart) {
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.SECOND_EXAM' | translate }}</dt>
+          <dd>{{ secondPart.durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+        </div>
+      }
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SESSION_WIZARD.TOTAL_DURATION' | translate }}</dt>
+        <dd>{{ examDetails().durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+      </div>
+      <div class="col-md-3">
+        <dt>{{ 'TEST_SESSION_WIZARD.NUMBER_OF_QUESTIONS' | translate }}</dt>
+        <dd>{{ examDetails().numberOfQuestions }}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div
+      class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--room h-100"
+    >
+      <i class="hgi hgi-stroke hgi-user-group workflow-review-summary-card__icon"></i>
+      <div class="workflow-review-summary-card__content">
+        <span class="workflow-review-summary-card__label">
+          {{ 'TEST_SESSION_WIZARD.TOTAL_CANDIDATES' | translate }}
+        </span>
+        <strong class="workflow-review-summary-card__value">{{
+          selectedCandidateIds().length
+        }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div
+      class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--date h-100"
+    >
+      <i class="hgi hgi-stroke hgi-calendar-03 workflow-review-summary-card__icon"></i>
+      <div class="workflow-review-summary-card__content">
+        <span class="workflow-review-summary-card__label">
+          {{ 'TEST_SESSION_WIZARD.SESSIONS_ADDED' | translate }}
+        </span>
+        <strong class="workflow-review-summary-card__value">{{
+          summary().existingExamSessionCount
+        }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div
+      class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--time h-100"
+    >
+      <i class="hgi hgi-stroke hgi-user-check-01 workflow-review-summary-card__icon"></i>
+      <div class="workflow-review-summary-card__content">
+        <span class="workflow-review-summary-card__label">
+          {{ 'TEST_SESSION_WIZARD.ALLOCATED_SEATS' | translate }}
+        </span>
+        <strong class="workflow-review-summary-card__value">{{
+          summary().existingExamCandidateCount
+        }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div
+      class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--team h-100"
+    >
+      <i class="hgi hgi-stroke hgi-user-remove-01 workflow-review-summary-card__icon"></i>
+      <div class="workflow-review-summary-card__content">
+        <span class="workflow-review-summary-card__label">
+          {{ 'TEST_SESSION_WIZARD.REMAINING' | translate }}
+        </span>
+        <strong class="workflow-review-summary-card__value">{{ remainingCandidates() }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-page-filters
+  [advancedLabel]="'TEST_SESSION_WIZARD.ADVANCED_FILTERS' | translate"
+  [clearLabel]="'TEST_SESSION_WIZARD.CLEAR_FILTERS' | translate"
+  [showAdvanced]="false"
+  (filtersCleared)="clearFilters()"
+>
+  <p-iconfield filterSearch class="search-icon-field w-100">
+    <p-inputicon styleClass="fa-solid fa-magnifying-glass" />
+    <input
+      pInputText
+      class="w-100 form-control"
+      type="search"
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChanged()"
+      [placeholder]="'TEST_SESSION_WIZARD.PERIOD_SEARCH' | translate"
+    />
+  </p-iconfield>
+  <div filterSecondary class="filter-field">
+    <label class="form-label" for="ready-slot-room">{{
+      'TEST_SESSION_WIZARD.ROOM' | translate
+    }}</label>
+    <p-select
+      inputId="ready-slot-room"
+      class="w-100"
+      [options]="rooms()"
+      optionLabel="name"
+      optionValue="id"
+      [(ngModel)]="selectedRoomId"
+      (ngModelChange)="applyFilters()"
+      [showClear]="true"
+      appendTo="body"
+      [placeholder]="'TEST_SESSION_WIZARD.ALL_ROOMS' | translate"
+    />
+  </div>
+  <div filterSecondary class="filter-field">
+    <label class="form-label" for="ready-slot-date">{{
+      'TEST_SESSION_WIZARD.DATE' | translate
+    }}</label>
+    <p-datepicker
+      inputId="ready-slot-date"
+      class="w-100"
+      [fluid]="true"
+      [(ngModel)]="selectedDate"
+      (ngModelChange)="applyFilters()"
+      [readonlyInput]="true"
+      [showIcon]="true"
+      [iconDisplay]="'input'"
+      [showClear]="true"
+      dateFormat="yy-mm-dd"
+      appendTo="body"
+    />
+  </div>
+</app-page-filters>
+
+@if (loadFailed()) {
+  <div class="alert alert-danger mt-3">
+    {{ 'TEST_SESSION_WIZARD.PERIODS_REQUEST_FAILED' | translate }}
+  </div>
+} @else {
+  <div class="table-card rounded overflow-hidden mt-3">
+    <div class="table-responsive">
+      <p-table [value]="slots()" dataKey="testSlotId" [loading]="loading()">
+        <ng-template #header
+          ><tr>
+            <th>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.ROOM' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.DATE_TIME' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.CURRENT_RESERVATIONS' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.EXISTING_SESSIONS' | translate }}</th>
+            <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
+          </tr></ng-template
+        >
+        <ng-template #body let-slot
+          ><tr>
+            <td>{{ slot.slotName }}</td>
+            <td>
+              <div>{{ slot.roomName }}</div>
+              <small class="text-muted"
+                >{{ slot.remainingCapacity }} / {{ slot.roomCapacity }}
+                {{ 'TEST_SESSION_WIZARD.CAPACITY_AVAILABLE' | translate }}</small
+              >
+            </td>
+            <td class="text-nowrap">
+              <div>{{ slot.slotDate | date: 'yyyy/MM/dd' }}</div>
+              <bdi>{{ slot.startTime }} - {{ slot.endTime }}</bdi>
+            </td>
+            <td>{{ slot.currentReservations }}</td>
+            <td>
+              {{ slot.existingSessionCount }}
+              <small class="d-block text-muted"
+                >{{ slot.existingExamSessionCount }}
+                {{ 'TEST_SESSION_WIZARD.FOR_SELECTED_EXAM' | translate }}</small
+              >
+            </td>
+            <td class="text-center">
+              <button
+                type="button"
+                class="btn btn-outline-primary light"
+                [disabled]="!!localSession()"
+                (click)="openSetup(slot)"
+              >
+                {{ 'TEST_SESSION_WIZARD.SETUP' | translate }}
+              </button>
+            </td>
+          </tr></ng-template
+        >
+        <ng-template #emptymessage
+          ><tr>
+            <td colspan="6" class="text-center py-4 text-muted">
+              {{ 'TEST_SESSION_WIZARD.NO_READY_PERIODS' | translate }}
+            </td>
+          </tr></ng-template
+        >
+      </p-table>
+    </div>
+  </div>
+}
+
+@if (totalItems() > 0) {
+  <div class="pagination-box mt-3">
+    <app-pagination
+      [currentPage]="filters().pageNumber"
+      [itemsPerPage]="filters().pageSize"
+      [totalItems]="totalItems()"
+      (pageChanged)="onPageChange($event)"
+      (pageSizeChanged)="onPageSizeChange($event)"
+    />
+  </div>
+}
+
+@if (localSession(); as session) {
+  <section class="mt-4" aria-labelledby="added-sessions-title">
+    <h5 id="added-sessions-title" class="text-primary d-flex align-items-center my-3">
+      {{ 'TEST_SESSION_WIZARD.ADDED_SESSION_TITLE' | translate }}
+    </h5>
+    <div class="table-card rounded overflow-hidden">
+      <div class="table-responsive">
+        <p-table [value]="[session]">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.ROOM' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.DATE' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.TIME' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.CANDIDATES' | translate }}</th>
+              <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-addedSession>
+            <tr>
+              <td>{{ addedSession.slot.slotName }}</td>
+              <td>{{ addedSession.slot.roomName }}</td>
+              <td>{{ addedSession.slot.slotDate | date: 'yyyy/MM/dd' }}</td>
+              <td class="text-nowrap">
+                <bdi>{{ addedSession.startTime }} - {{ addedSession.endTime }}</bdi>
+              </td>
+              <td>{{ selectedCandidateIds().length }}</td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary light"
+                    (click)="openSetup(addedSession.slot, addedSession)"
+                  >
+                    {{ 'TEST_SESSION_WIZARD.EDIT_SESSION' | translate }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger light btn-sm"
+                    (click)="deleteSession()"
+                    [title]="'TEST_SESSION_WIZARD.DELETE' | translate"
+                    [attr.aria-label]="'TEST_SESSION_WIZARD.DELETE' | translate"
+                  >
+                    <i class="hgi hgi-stroke hgi-delete-02" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    @if (selectedCandidateIds().length > 0) {
+      @if (isSessionCapacitySufficient()) {
+        <div class="alert alert-success d-flex align-items-center gap-2 mt-3 mb-0">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          <span>{{ 'TEST_SESSION_WIZARD.SESSION_CAPACITY_SUCCESS' | translate }}</span>
+        </div>
+      } @else if (isSessionTimeValid(session)) {
+        <div class="alert alert-danger mt-3 mb-0">
+          {{
+            'TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY' | translate: { count: sessionCapacityGap() }
+          }}
+        </div>
+      } @else {
+        <div class="alert alert-danger mt-3 mb-0">
+          {{ 'TEST_SESSION_WIZARD.SESSION_TIME_INVALID' | translate }}
+        </div>
+      }
+    }
+  </section>
+}

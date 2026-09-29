@@ -168,6 +168,10 @@ export const portalRoutes = {
     return this.portal + '/' + this.testSlotsManagementPath;
   },
   testSessionsManagementPath: 'test-sessions-management',
+  createTestSessionPath: 'test-sessions-management/create',
+  get createTestSession() {
+    return this.portal + '/' + this.createTestSessionPath;
+  },
   get testSessionsManagement() {
     return this.portal + '/' + this.testSessionsManagementPath;
   },

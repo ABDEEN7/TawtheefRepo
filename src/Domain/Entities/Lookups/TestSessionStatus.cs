@@ -11,6 +11,7 @@ public static class TestSessionStatusIds
     public static readonly Guid InProgress = Guid.Parse("16b3ac19-2ff1-491f-acca-7663c19c226b");
     public static readonly Guid Closed = Guid.Parse("82b9fbdd-c9ec-46b5-a27b-001b47b22991");
     public static readonly Guid Cancelled = Guid.Parse("e543df74-3311-441e-aa14-928a918cf952");
+    public static readonly Guid Rejected = Guid.Parse("f44d7a03-9eaf-498c-a3ad-6b6810b4c2da");
 }
 
 [Table(nameof(TestSessionStatus), Schema = Schemas.Lookup)]

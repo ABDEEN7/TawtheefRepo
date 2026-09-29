@@ -10,9 +10,14 @@ public class TestSession : EventEntity
     public Guid TestSlotId { get; set; }
     public Guid ExamId { get; set; }
     public int SessionNo { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
+    public TestSessionGenderFilter? GenderFilter { get; set; }
+    public TestSessionNationalityFilter? NationalityFilter { get; set; }
     public Guid StatusId { get; set; }
 
     public TestSlot? TestSlot { get; set; }
     public Exam? Exam { get; set; }
     public TestSessionStatus? Status { get; set; }
+    public ICollection<TestSessionCandidate> TestSessionCandidates { get; set; } = [];
 }

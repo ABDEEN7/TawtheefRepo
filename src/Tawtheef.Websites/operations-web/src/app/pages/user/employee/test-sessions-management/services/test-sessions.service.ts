@@ -8,6 +8,13 @@ import {
   TestSessionListItemDto,
   TestSessionLookupsDto,
 } from '../models/test-session-list-item.dto';
+import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
+import {
+  TestSessionCandidateFilters,
+  TestSessionCandidatesDto,
+} from '../models/test-session-candidate.dto';
+import { ReadyTestSlotFilters, ReadyTestSlotsDto } from '../models/ready-test-slot.dto';
+import { SaveTestSessionSetupDto, TestSessionSetupDto } from '../models/test-session-setup.dto';
 
 @Injectable({ providedIn: 'root' })
 export class TestSessionsService {
@@ -20,5 +27,29 @@ export class TestSessionsService {
 
   lookups(language: string, roomId?: string): Observable<TestSessionLookupsDto> {
     return this.http.get<TestSessionLookupsDto>(this.endpoints.testSessions.lookups, { language, roomId });
+  }
+
+  examDetails(examId: string, language: string): Observable<TestSessionExamDetailsDto> {
+    return this.http.get<TestSessionExamDetailsDto>(this.endpoints.testSessions.examDetails(examId), { language });
+  }
+
+  candidates(filters: TestSessionCandidateFilters): Observable<TestSessionCandidatesDto> {
+    return this.http.get<TestSessionCandidatesDto>(this.endpoints.testSessions.candidates, filters);
+  }
+
+  readyTestSlots(filters: ReadyTestSlotFilters): Observable<ReadyTestSlotsDto> {
+    return this.http.get<ReadyTestSlotsDto>(this.endpoints.testSessions.readyTestSlots, filters);
+  }
+
+  capacity(filters: { testSlotId: string; startTime: string; endTime: string; selectedCandidateCount: number }): Observable<{ availableSeats: number; isSufficient: boolean }> {
+    return this.http.get<{ availableSeats: number; isSufficient: boolean }>(this.endpoints.testSessions.capacity, filters);
+  }
+
+  sessionSetup(examId: string, testSlotId: string): Observable<TestSessionSetupDto> {
+    return this.http.get<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, { examId, testSlotId });
+  }
+
+  saveSessionSetup(setup: SaveTestSessionSetupDto): Observable<TestSessionSetupDto> {
+    return this.http.put<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, setup);
   }
 }

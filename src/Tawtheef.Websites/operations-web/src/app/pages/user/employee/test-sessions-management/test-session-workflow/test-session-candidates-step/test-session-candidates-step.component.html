@@ -1,0 +1,193 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-user-group me-1"></i>
+  {{ 'TEST_SESSION_WIZARD.STEP_CANDIDATES' | translate }}
+</h5>
+<p class="text-muted mb-4">{{ 'TEST_SESSION_WIZARD.CANDIDATES_DESCRIPTION' | translate }}</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-3">
+    <div class="candidate-summary-card">
+      <span>{{ 'TEST_SESSION_WIZARD.CANDIDATE_TOTAL' | translate }}</span>
+      <strong>{{ summary().total }}</strong>
+    </div>
+  </div>
+  <div class="col-12 col-md-3">
+    <div class="candidate-summary-card eligible">
+      <span>{{ 'TEST_SESSION_WIZARD.CANDIDATE_ELIGIBLE' | translate }}</span>
+      <strong>{{ summary().eligible }}</strong>
+    </div>
+  </div>
+  <div class="col-12 col-md-3">
+    <div class="candidate-summary-card not-ready">
+      <span>{{ 'TEST_SESSION_WIZARD.CANDIDATE_NOT_READY' | translate }}</span>
+      <strong>{{ summary().notReady }}</strong>
+    </div>
+  </div>
+  <div class="col-12 col-md-3">
+    <div class="candidate-summary-card excluded">
+      <span>{{ 'TEST_SESSION_WIZARD.ELIGIBILITY_Excluded' | translate }}</span>
+      <strong>{{ summary().excluded }}</strong>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6">
+    <p-select
+      class="w-100"
+      [options]="genderOptions"
+      [ngModel]="genderFilter()"
+      (ngModelChange)="genderFilterChanged.emit($event)"
+      [showClear]="true"
+      appendTo="body"
+      [placeholder]="'TEST_SESSION_WIZARD.GENDER_FILTER' | translate"
+    >
+      <ng-template #selectedItem let-option>
+        @if (option) {
+          {{ option.label | translate }}
+        }
+      </ng-template>
+      <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+    </p-select>
+  </div>
+  <div class="col-6">
+    <p-select
+      class="w-100"
+      [options]="nationalityOptions"
+      [ngModel]="nationalityFilter()"
+      (ngModelChange)="nationalityFilterChanged.emit($event)"
+      [showClear]="true"
+      appendTo="body"
+      [placeholder]="'TEST_SESSION_WIZARD.NATIONALITY_FILTER' | translate"
+    >
+      <ng-template #selectedItem let-option>
+        @if (option) {
+          {{ option.label | translate }}
+        }
+      </ng-template>
+      <ng-template #item let-option>{{ option.label | translate }}</ng-template>
+    </p-select>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-5">
+    <div class="p-input-icon-left w-100">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        class="w-100 form-control"
+        type="search"
+        [ngModel]="search()"
+        (ngModelChange)="onSearchChanged($event)"
+        [placeholder]="'TEST_SESSION_WIZARD.CANDIDATE_SEARCH' | translate"
+      />
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-3 d-flex align-items-center">
+    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()">
+      {{ 'TEST_SESSION_WIZARD.CLEAR_FILTERS' | translate }}
+    </button>
+  </div>
+</div>
+
+@if (loadFailed()) {
+  <div class="alert alert-danger">
+    {{ 'TEST_SESSION_WIZARD.CANDIDATES_REQUEST_FAILED' | translate }}
+  </div>
+} @else {
+  <div class="table-card rounded overflow-hidden">
+    <div class="table-responsive">
+      <p-table [value]="pagedCandidates()" dataKey="invitationId" [loading]="loading()">
+        <ng-template #header>
+          <tr>
+            <th>
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="allCandidatesSelected()"
+                (ngModelChange)="toggleAllCandidates($event)"
+              />
+            </th>
+            <th>{{ 'TEST_SESSION_WIZARD.CANDIDATE' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.JOB_TITLE' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.NATIONALITY' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.GENDER' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.HIGHEST_QUALIFICATION' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.QUALIFICATION_SCORE' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.ELIGIBILITY_STATUS' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-candidate>
+          <tr>
+            <td>
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="selectedCandidateIds().includes(candidate.invitationId)"
+                (ngModelChange)="toggleCandidate(candidate.invitationId, $event)"
+              />
+            </td>
+            <td>
+              <div class="fw-semibold">{{ candidate.candidateName }}</div>
+              <small class="text-muted">{{
+                candidate.candidateNumber || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate)
+              }}</small>
+            </td>
+            <td>{{ candidate.jobTitle || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}</td>
+            <td>
+              {{ candidate.nationality || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}
+            </td>
+            <td>{{ candidate.gender || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}</td>
+            <td>
+              {{
+                candidate.highestQualification || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate)
+              }}
+            </td>
+            <td>
+              {{
+                candidate.qualificationScore ?? ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate)
+              }}
+            </td>
+            <td>
+              <p-tag
+                [severity]="statusSeverity(candidate.eligibilityStatus)"
+                [value]="
+                  'TEST_SESSION_WIZARD.ELIGIBILITY_' + candidate.eligibilityStatus | translate
+                "
+              />
+              @if (
+                candidate.eligibilityStatus === 'Excluded' &&
+                candidate.source === InvitationSource.Exceptional
+              ) {
+                <small class="d-block text-muted mt-1">{{
+                  'TEST_SESSION_WIZARD.INVITATION_SOURCE_EXCEPTIONAL' | translate
+                }}</small>
+              } @else if (candidate.eligibilityReason) {
+                <small class="d-block text-muted mt-1">{{ candidate.eligibilityReason }}</small>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage
+          ><tr>
+            <td colspan="8" class="text-center py-4 text-muted">
+              {{ 'TEST_SESSION_WIZARD.NO_CANDIDATES' | translate }}
+            </td>
+          </tr></ng-template
+        >
+      </p-table>
+    </div>
+  </div>
+}
+
+@if (totalItems() > 0) {
+  <div class="pagination-box mt-3">
+    <app-pagination
+      [currentPage]="currentPage()"
+      [itemsPerPage]="itemsPerPage()"
+      [totalItems]="totalItems()"
+      (pageChanged)="onPageChange($event)"
+      (pageSizeChanged)="onPageSizeChange($event)"
+    />
+  </div>
+}

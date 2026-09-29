@@ -7,7 +7,12 @@
           <p class="text-muted mt-2 mb-0">{{ 'TEST_SESSIONS.DESCRIPTION' | translate }}</p>
         </div>
         <div class="col-lg-6 col-md-12 d-flex justify-content-lg-end mt-3 mt-lg-0">
-          <button pButton type="button" disabled *hasPermission="Permissions.TestSessions.Create">
+          <button
+            pButton
+            type="button"
+            (click)="createTestSession()"
+            *hasPermission="Permissions.TestSessions.Create"
+          >
             <span pButtonLabel>{{ 'TEST_SESSIONS.CREATE' | translate }}</span
             ><i class="fa-solid fa-plus" pButtonIcon></i>
           </button>
@@ -32,7 +37,7 @@
             [attr.aria-label]="'TEST_SESSIONS.SEARCH' | translate"
             [placeholder]="'TEST_SESSIONS.SEARCH' | translate"
         /></p-iconfield>
-       
+
         <div filterSecondary class="filter-field">
           <label class="form-label" for="test-session-status">{{
             'TEST_SESSIONS.STATUS' | translate
@@ -50,26 +55,25 @@
             [placeholder]="'TEST_SESSIONS.ALL_STATUSES' | translate"
           />
         </div>
-         
-        
+
         <div advancedFilters class="row g-3">
-          <div  class="col-12 col-md-6 filter-field">
-          <label class="form-label" for="test-session-exam">{{
-            'TEST_SESSIONS.EXAM' | translate
-          }}</label
-          ><p-select
-            inputId="test-session-exam"
-            class="w-100"
-            [options]="lookups().exams"
-            optionLabel="name"
-            optionValue="id"
-            [(ngModel)]="selectedExamId"
-            (ngModelChange)="applyFilters()"
-            [showClear]="true"
-            appendTo="body"
-            [placeholder]="'TEST_SESSIONS.ALL_EXAMS' | translate"
-          />
-        </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="test-session-exam">{{
+              'TEST_SESSIONS.EXAM' | translate
+            }}</label
+            ><p-select
+              inputId="test-session-exam"
+              class="w-100"
+              [options]="lookups().exams"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedExamId"
+              (ngModelChange)="applyFilters()"
+              [showClear]="true"
+              appendTo="body"
+              [placeholder]="'TEST_SESSIONS.ALL_EXAMS' | translate"
+            />
+          </div>
           <div class="col-12 col-md-6 filter-field">
             <label class="form-label" for="test-session-job">{{
               'TEST_SESSIONS.JOB_TITLE' | translate

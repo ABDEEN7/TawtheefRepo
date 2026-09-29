@@ -10,6 +10,9 @@ public class TestSessionConfiguration : BaseEntityConfiguration<TestSession>
     {
         base.Configure(builder);
 
+        builder.Property(x => x.GenderFilter).IsRequired(false);
+        builder.Property(x => x.NationalityFilter).IsRequired(false);
+
         builder.HasOne(x => x.TestSlot)
             .WithMany()
             .HasForeignKey(x => x.TestSlotId)

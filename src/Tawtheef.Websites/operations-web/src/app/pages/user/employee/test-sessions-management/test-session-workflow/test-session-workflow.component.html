@@ -1,0 +1,113 @@
+<section class="card card-table" i18nNamespace="pages/employee/test-sessions-management">
+  <div class="card-body">
+    <h3 class="fw-bold mb-4">{{ 'TEST_SESSION_WIZARD.CREATE_TITLE' | translate }}</h3>
+    <div class="card card-table workflow-stepper-card mb-4">
+      <div class="card-body">
+        <div class="workflow-stepper-container">
+          <div class="workflow-stepper">
+            @for (wizardStep of wizardSteps; track wizardStep.id; let last = $last) {
+              <div class="workflow-step-wrapper">
+                <button
+                  type="button"
+                  class="workflow-step-label"
+                  [class.active]="step === wizardStep.id"
+                  [class.completed]="step > wizardStep.id"
+                  (click)="goTo(wizardStep.id)"
+                >
+                  <i [class]="wizardStep.icon"></i><span>{{ wizardStep.label | translate }}</span>
+                </button>
+                <div class="workflow-step-progress">
+                  <button
+                    type="button"
+                    class="workflow-step-circle"
+                    [class.active]="step === wizardStep.id"
+                    [class.completed]="step > wizardStep.id"
+                    (click)="goTo(wizardStep.id)"
+                  >
+                    @if (step === wizardStep.id) {
+                      <span class="workflow-step-inner-circle"></span>
+                    } @else if (step > wizardStep.id) {
+                      <span class="workflow-step-checkmark">&#10003;</span>
+                    }
+                  </button>
+                  @if (!last) {
+                    <div
+                      class="workflow-connector-line"
+                      [class.completed]="step > wizardStep.id"
+                    ></div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    @if (loading) {
+      <p class="text-muted">{{ 'TEST_SESSION_WIZARD.LOADING_EXAM_DETAILS' | translate }}</p>
+    } @else if (step === 1) {
+      <app-test-session-exam-selection-step
+        [exams]="lookups().exams"
+        [selectedExamId]="selectedExamId"
+        [examDetails]="details()"
+        (examSelected)="onExamSelected($event)"
+      />
+    }
+    @if (step === 2 && selectedExamId) {
+      <app-test-session-candidates-step
+        [examId]="selectedExamId"
+        [genderFilter]="candidateGenderFilter()"
+        [nationalityFilter]="candidateNationalityFilter()"
+        [selectedCandidateIds]="selectedCandidateIds()"
+        [selectionInitialized]="candidateSelectionInitialized()"
+        [search]="candidateSearch()"
+        (genderFilterChanged)="onCandidateGenderFilterChanged($event)"
+        (nationalityFilterChanged)="onCandidateNationalityFilterChanged($event)"
+        (selectedCandidateIdsChanged)="selectedCandidateIds.set($event)"
+        (selectionInitializedChanged)="onCandidateSelectionInitialized($event)"
+        (searchChanged)="candidateSearch.set($event)"
+        (summaryChanged)="candidateSummary.set($event)"
+      />
+    }
+    @if (step === 3 && selectedExamId && details()) {
+      <app-test-session-periods-step
+        [examId]="selectedExamId"
+        [examDetails]="details()!"
+        [candidateSummary]="candidateSummary()"
+        [selectedCandidateIds]="selectedCandidateIds()"
+        [rooms]="lookups().rooms"
+        [localSession]="localSession()"
+        (sessionApplied)="localSession.set($event)"
+        (sessionDeleted)="localSession.set(null)"
+      />
+    }
+    @if (step === 4) {
+      <section class="card card-table bg-light">
+        <div class="card-body">
+          <h5 class="text-primary">{{ 'TEST_SESSION_WIZARD.STEP_ROOM_TEAM' | translate }}</h5>
+          <p class="text-muted mb-0">
+            {{ 'TEST_SESSION_WIZARD.TEAM_ROOM_STEP_DESCRIPTION' | translate }}
+          </p>
+        </div>
+      </section>
+    }
+    <div class="d-flex justify-content-between mt-4">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="step === 1"
+        (click)="goTo(step - 1)"
+      >
+        {{ 'TEST_SESSION_WIZARD.BACK' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="step === 4 || !canGoNext()"
+        (click)="goTo(step + 1)"
+      >
+        {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
+      </button>
+    </div>
+  </div>
+</section>

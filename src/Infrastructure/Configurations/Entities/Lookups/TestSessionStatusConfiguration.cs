@@ -56,6 +56,14 @@ public class TestSessionStatusConfiguration : LookupBaseConfiguration<TestSessio
                 NameEn = "Cancelled",
                 NameAr = "ملغاة",
                 DisplayOrder = 6
+            },
+            new TestSessionStatus
+            {
+                Id = TestSessionStatusIds.Rejected,
+                BackendName = nameof(TestSessionStatusIds.Rejected),
+                NameEn = "Rejected",
+                NameAr = "مرفوضة",
+                DisplayOrder = 7
             }
         );
     }
