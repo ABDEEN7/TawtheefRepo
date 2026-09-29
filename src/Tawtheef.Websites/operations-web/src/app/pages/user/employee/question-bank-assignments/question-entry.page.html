@@ -99,9 +99,9 @@
       <ng-template #body let-question>
         <tr>
           <td>
-            @if (localized(question.questionTextAr, question.questionTextEn); as content) {
+            @if (localizedContent(question.questionTextAr, question.questionTextEn); as content) {
               <app-rich-content-renderer [content]="content" />
-            } @else if (question.imageUrl) {
+            } @else if (question.resourceId) {
               <i class="pi pi-image" [title]="'QUESTION_ASSIGNMENTS.IMAGE_ONLY' | translate"></i>
             }
           </td>

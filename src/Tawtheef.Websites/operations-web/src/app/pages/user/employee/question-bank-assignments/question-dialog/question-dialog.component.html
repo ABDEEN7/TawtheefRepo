@@ -2,18 +2,40 @@
   <div class="row g-3">
     <div class="col-md-6">
       <label>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</label>
-      <p-select formControlName="questionTypeId" [options]="types">
+      <p-select
+        formControlName="questionTypeId"
+        [options]="types"
+        [placeholder]="'QUESTION_ASSIGNMENTS.PLEASE_SELECT' | translate"
+        [class.ng-dirty]="controlInvalid('questionTypeId')"
+        [class.ng-invalid]="controlInvalid('questionTypeId')"
+      >
         <ng-template #item let-option>{{ option.label | translate }}</ng-template>
         <ng-template #selectedItem let-option>{{ option.label | translate }}</ng-template>
       </p-select>
+      @if (controlInvalid('questionTypeId')) {
+        <small class="text-danger d-block">
+          {{ 'QUESTION_ASSIGNMENTS.TYPE_REQUIRED' | translate }}
+        </small>
+      }
     </div>
 
     <div class="col-md-6">
       <label>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</label>
-      <p-select formControlName="difficultyLevelId" [options]="difficulties">
+      <p-select
+        formControlName="difficultyLevelId"
+        [options]="difficulties"
+        [placeholder]="'QUESTION_ASSIGNMENTS.PLEASE_SELECT' | translate"
+        [class.ng-dirty]="controlInvalid('difficultyLevelId')"
+        [class.ng-invalid]="controlInvalid('difficultyLevelId')"
+      >
         <ng-template #item let-option>{{ option.label | translate }}</ng-template>
         <ng-template #selectedItem let-option>{{ option.label | translate }}</ng-template>
       </p-select>
+      @if (controlInvalid('difficultyLevelId')) {
+        <small class="text-danger d-block">
+          {{ 'QUESTION_ASSIGNMENTS.DIFFICULTY_REQUIRED' | translate }}
+        </small>
+      }
     </div>
   </div>
 
@@ -25,18 +47,58 @@
   <div>
     <label>{{ 'QUESTION_ASSIGNMENTS.QUESTION_EN' | translate }}</label>
     <app-rich-content-editor formControlName="questionTextEn" direction="ltr" />
+    @if (questionContentInvalid()) {
+      <small class="text-danger d-block">
+        {{ 'QUESTION_ASSIGNMENTS.QUESTION_CONTENT_REQUIRED' | translate }}
+      </small>
+    }
   </div>
 
   <div>
     <label class="d-block">{{ 'QUESTION_ASSIGNMENTS.QUESTION_IMAGE' | translate }}</label>
-    <input #imageInput type="file" class="d-none" accept="image/jpeg,image/png,image/webp" (change)="chooseImage($event)" />
-    <p-button type="button" icon="pi pi-image" [label]="(imagePreview ? 'QUESTION_ASSIGNMENTS.REPLACE_IMAGE' : 'QUESTION_ASSIGNMENTS.CHOOSE_IMAGE') | translate" [outlined]="true" (onClick)="imageInput.click()" />
+    <input
+      #imageInput
+      type="file"
+      class="d-none"
+      accept="image/jpeg,image/png,image/webp"
+      (change)="chooseImage($event)"
+    />
+    <p-button
+      type="button"
+      icon="pi pi-image"
+      [label]="
+        (imagePreview || form.controls.resourceId.value
+          ? 'QUESTION_ASSIGNMENTS.REPLACE_IMAGE'
+          : 'QUESTION_ASSIGNMENTS.CHOOSE_IMAGE')
+          | translate
+      "
+      [outlined]="true"
+      (onClick)="imageInput.click()"
+    />
+    @if (imageLoading) {
+      <div class="mt-2 text-muted">{{ 'QUESTION_ASSIGNMENTS.LOADING_IMAGE' | translate }}</div>
+    }
     @if (imagePreview) {
-      <div class="mt-2"><img [src]="imagePreview" class="img-thumbnail d-block mb-2" style="max-height: 220px" alt="" />
-        <p-button type="button" severity="danger" [text]="true" icon="pi pi-trash" [label]="'QUESTION_ASSIGNMENTS.REMOVE_IMAGE' | translate" (onClick)="removeImage()" />
+      <div class="mt-2">
+        <img
+          [src]="imagePreview"
+          class="img-thumbnail d-block mb-2"
+          style="max-height: 220px"
+          [alt]="'QUESTION_ASSIGNMENTS.QUESTION_IMAGE' | translate"
+        />
+        <p-button
+          type="button"
+          severity="danger"
+          [text]="true"
+          icon="pi pi-trash"
+          [label]="'QUESTION_ASSIGNMENTS.REMOVE_IMAGE' | translate"
+          (onClick)="removeImage()"
+        />
       </div>
     }
-    @if (imageError) { <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.INVALID_IMAGE' | translate }}</small> }
+    @if (imageError) {
+      <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.INVALID_IMAGE' | translate }}</small>
+    }
   </div>
 
   <div formArrayName="options">
@@ -50,6 +112,11 @@
             [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_AR' | translate"
             class="w-100"
           />
+          @if (optionInvalid($index, 'optionTextAr')) {
+            <small class="text-danger d-block">
+              {{ 'QUESTION_ASSIGNMENTS.OPTION_AR_REQUIRED' | translate }}
+            </small>
+          }
         </div>
         <div class="col">
           <app-rich-content-input
@@ -58,6 +125,11 @@
             [placeholder]="'QUESTION_ASSIGNMENTS.OPTION_EN' | translate"
             class="w-100"
           />
+          @if (optionInvalid($index, 'optionTextEn')) {
+            <small class="text-danger d-block">
+              {{ 'QUESTION_ASSIGNMENTS.OPTION_EN_REQUIRED' | translate }}
+            </small>
+          }
         </div>
         <div class="col-auto">
           <p-checkbox
@@ -68,6 +140,7 @@
         </div>
         <div class="col-auto">
           <p-button
+            type="button"
             icon="pi pi-trash"
             severity="danger"
             [text]="true"
@@ -76,9 +149,18 @@
         </div>
       </div>
     }
+    @if (submitted && options.length < 2) {
+      <small class="text-danger d-block">{{ 'QUESTION_ASSIGNMENTS.MIN_OPTIONS' | translate }}</small>
+    }
+    @if (correctOptionInvalid()) {
+      <small class="text-danger d-block">
+        {{ 'QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION' | translate }}
+      </small>
+    }
   </div>
 
   <p-button
+    type="button"
     [label]="'QUESTION_ASSIGNMENTS.ADD_OPTION' | translate"
     icon="pi pi-plus"
     [text]="true"
@@ -87,6 +169,7 @@
 
   <div class="d-flex justify-content-end gap-2">
     <p-button
+      type="button"
       [label]="'QUESTION_ASSIGNMENTS.CANCEL' | translate"
       severity="secondary"
       [text]="true"

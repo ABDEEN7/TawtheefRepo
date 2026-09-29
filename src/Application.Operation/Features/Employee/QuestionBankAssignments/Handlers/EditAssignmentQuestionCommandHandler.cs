@@ -11,15 +11,21 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
 using Tawtheef.Domain.Entities.Users;
+using Application.Operation.Features.Employee.QuestionBankAssignments.Services;
 
 namespace Application.Operation.Features.Employee.QuestionBankAssignments.Handlers;
 
-public sealed class EditAssignmentQuestionCommandHandler(IUnitOfWork uow, ICurrentUserService currentUser)
+public sealed class EditAssignmentQuestionCommandHandler(
+    IUnitOfWork uow,
+    ICurrentUserService currentUser,
+    IRichTextSanitizer richTextSanitizer)
     : IRequestHandler<EditAssignmentQuestionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(EditAssignmentQuestionCommand r, CancellationToken ct)
     {
-        if (!QuestionEntryRules.Valid(r.Question) || !await QuestionEntryRules.ValidResource(uow, r.Question.ResourceId, ct))
+        var questionInput = QuestionEntryRules.Sanitize(r.Question, richTextSanitizer);
+        if (!QuestionEntryRules.Valid(questionInput, richTextSanitizer) ||
+            !await QuestionEntryRules.ValidResource(uow, questionInput.ResourceId, ct))
             return Result.Fail<Unit>(ErrorsCodes.InvalidQuestionEntry);
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
         if (employeeId is null) return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
@@ -33,7 +39,7 @@ public sealed class EditAssignmentQuestionCommandHandler(IUnitOfWork uow, ICurre
             if (!QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) || item.QuestionBankAssignment.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
             var next = await uow.GetEntityRepository<QuestionRevision>().DbSet.Where(x => x.QuestionId == item.QuestionId).MaxAsync(x => (int?)x.RevisionNo, token) ?? 0;
-            var revision = QuestionEntryRules.Revision(item.QuestionId, next + 1, item.Id, r.Question);
+            var revision = QuestionEntryRules.Revision(item.QuestionId, next + 1, item.Id, questionInput);
             await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, token); item.CurrentProposedRevisionId = revision.Id;
             await uow.SaveChangesAsync(token); return Result.Ok(Unit.Value);
         }, ct);

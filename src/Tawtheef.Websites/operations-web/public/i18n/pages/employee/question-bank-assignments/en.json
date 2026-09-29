@@ -46,5 +46,14 @@
   "QUESTION_ASSIGNMENTS.REPLACE_IMAGE": "Replace image",
   "QUESTION_ASSIGNMENTS.REMOVE_IMAGE": "Remove image",
   "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "Choose a non-empty JPEG, PNG, or WebP image up to 1 MB.",
-  "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "Image-only question"
+  "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "Image-only question",
+  "QUESTION_ASSIGNMENTS.PLEASE_SELECT": "Please select",
+  "QUESTION_ASSIGNMENTS.TYPE_REQUIRED": "Question type is required.",
+  "QUESTION_ASSIGNMENTS.DIFFICULTY_REQUIRED": "Difficulty is required.",
+  "QUESTION_ASSIGNMENTS.QUESTION_CONTENT_REQUIRED": "Enter the question in both Arabic and English, or attach an image without text.",
+  "QUESTION_ASSIGNMENTS.OPTION_AR_REQUIRED": "Arabic option content is required.",
+  "QUESTION_ASSIGNMENTS.OPTION_EN_REQUIRED": "English option content is required.",
+  "QUESTION_ASSIGNMENTS.MIN_OPTIONS": "At least two answer options are required.",
+  "QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION": "Select exactly one correct answer.",
+  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "Loading image preview…"
 }
