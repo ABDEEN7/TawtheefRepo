@@ -95,6 +95,11 @@ export class TestSessionWorkflowComponent {
       label: 'TEST_SESSION_WIZARD.STEP_ROOM_TEAM',
       icon: 'hgi hgi-stroke hgi-user-group me-1',
     },
+    {
+      id: 5,
+      label: 'TEST_SESSION_WIZARD.STEP_REVIEW',
+      icon: 'hgi hgi-stroke hgi-clipboard-check-01 me-1',
+    },
   ];
 
   constructor() {
@@ -136,14 +141,16 @@ export class TestSessionWorkflowComponent {
   }
 
   goTo(target: number): void {
-    if (target < 1 || target > 4 || (target > 1 && !this.selectedExamId)) return;
+    if (target < 1 || target > 5 || (target > 1 && !this.selectedExamId)) return;
     if (target === 4 && (this.step !== 3 || !this.canGoNext())) return;
+    if (target === 5 && (this.step !== 4 || !this.isReviewValid())) return;
     if (target === 4) this.loadPeriodTeam();
     this.step = target;
   }
 
   canGoNext(): boolean {
     if (this.step === 1) return !!this.selectedExamId;
+    if (this.step === 4) return this.isReviewValid();
     if (this.step !== 3) return true;
 
     const session = this.localSession();
@@ -160,6 +167,57 @@ export class TestSessionWorkflowComponent {
       endTime > startTime &&
       endTime - startTime >= examDuration
     );
+  }
+
+  isReviewValid(): boolean {
+    const exam = this.details();
+    const session = this.localSession();
+    const selectedCandidateCount = this.selectedCandidateIds().length;
+
+    if (
+      !this.selectedExamId ||
+      !exam ||
+      exam.examId !== this.selectedExamId ||
+      selectedCandidateCount === 0 ||
+      !session ||
+      !session.slot.testSlotId ||
+      session.availableCapacity < selectedCandidateCount
+    )
+      return false;
+
+    const startTime = this.timeValue(session.startTime);
+    const endTime = this.timeValue(session.endTime);
+    const sessionTimeIsValid =
+      startTime >= this.timeValue(session.slot.startTime) &&
+      endTime <= this.timeValue(session.slot.endTime) &&
+      endTime > startTime &&
+      endTime - startTime >= exam.durationMinutes;
+    if (!sessionTimeIsValid) return false;
+
+    const team = this.periodTeam();
+    const roomHead = team.roomHead;
+    if (
+      this.periodTeamLoading() ||
+      this.periodTeamLoadFailed() ||
+      this.periodTeamSlotId !== session.slot.testSlotId ||
+      !roomHead ||
+      !roomHead.id
+    )
+      return false;
+
+    const memberIds = team.selectedStaff.map(member => member.id);
+    const assignedIds = [roomHead.id, ...memberIds];
+    return (
+      memberIds.every(id => id !== roomHead.id) &&
+      new Set(assignedIds).size === assignedIds.length
+    );
+  }
+
+  remainingReviewCapacity(): number {
+    const session = this.localSession();
+    return session
+      ? Math.max(session.availableCapacity - this.selectedCandidateIds().length, 0)
+      : 0;
   }
 
   editPeriodTeam(): void {

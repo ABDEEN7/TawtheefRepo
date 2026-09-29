@@ -3,7 +3,9 @@
   [i18nNamespace]="['pages/employee/test-sessions-management', 'pages/employee/test-slots-management']"
 >
   <div class="card-body">
-    <h3 class="fw-bold mb-4">{{ 'TEST_SESSION_WIZARD.CREATE_TITLE' | translate }}</h3>
+    <h3 id="test-session-review-title" class="fw-bold mb-4">
+      {{ (step === 5 ? 'TEST_SESSION_WIZARD.REVIEW_TITLE' : 'TEST_SESSION_WIZARD.CREATE_TITLE') | translate }}
+    </h3>
     <div class="card card-table workflow-stepper-card mb-4">
       <div class="card-body">
         <div class="workflow-stepper-container">
@@ -180,6 +182,206 @@
         }
       </section>
     }
+    @if (step === 5) {
+      @if (localSession(); as session) {
+        @if (details(); as exam) {
+          <section aria-labelledby="test-session-review-title">
+            <section class="card card-table bg-light mb-4">
+              <div class="card-body">
+                <h5 class="text-primary mb-3">
+                  {{ 'TEST_SESSION_WIZARD.REVIEW_EXAM_SUMMARY' | translate }}
+                </h5>
+                <dl class="row g-3 mb-0 exam-summary-details">
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.EXAM' | translate }}</dt>
+                    <dd>{{ exam.examName }}</dd>
+                  </div>
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.JOB_TITLE' | translate }}</dt>
+                    <dd>{{ exam.jobTitle }}</dd>
+                  </div>
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.MAIN_SPECIALIZATION' | translate }}</dt>
+                    <dd>
+                      {{ exam.mainSpecialization || exam.specialization || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}
+                    </dd>
+                  </div>
+                  @if (exam.subSpecialization) {
+                    <div class="col-md-3">
+                      <dt>{{ 'TEST_SESSION_WIZARD.SUB_SPECIALIZATION' | translate }}</dt>
+                      <dd>{{ exam.subSpecialization }}</dd>
+                    </div>
+                  }
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.EXAM_DURATION' | translate }}</dt>
+                    <dd>{{ exam.durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+                  </div>
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.NUMBER_OF_QUESTIONS' | translate }}</dt>
+                    <dd>{{ exam.numberOfQuestions }}</dd>
+                  </div>
+                  <div class="col-md-3">
+                    <dt>{{ 'TEST_SESSION_WIZARD.TOTAL_CANDIDATES' | translate }}</dt>
+                    <dd>{{ selectedCandidateIds().length }}</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+
+            <section class="card card-table mb-4">
+              <div class="card-body">
+                <h5 class="text-primary mb-3">
+                  {{ 'TEST_SESSION_WIZARD.REVIEW_SESSION_ROOM' | translate }}
+                </h5>
+                <div class="table-card rounded overflow-hidden">
+                  <div class="table-responsive">
+                    <p-table [value]="[session]">
+                      <ng-template #header>
+                        <tr>
+                          <th>{{ 'TEST_SESSION_WIZARD.SESSION_NUMBER' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.TEST_DATE' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.ROOM' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.TIME' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.ROOM_CAPACITY' | translate }}</th>
+                          <th>{{ 'TEST_SESSION_WIZARD.CANDIDATE_COUNT' | translate }}</th>
+                          <th>{{ 'TEST_SLOT_WIZARD.ROOM_HEAD' | translate }}</th>
+                          <th>{{ 'TEST_SLOT_WIZARD.TEAM_MEMBERS' | translate }}</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template #body>
+                        <tr>
+                          <td><bdi>{{ 'TEST_SESSIONS.NOT_AVAILABLE' | translate }}</bdi></td>
+                          <td class="text-nowrap">{{ session.slot.slotDate | date: 'yyyy-MM-dd' }}</td>
+                          <td>{{ session.slot.slotName }}</td>
+                          <td>{{ session.slot.roomName }}</td>
+                          <td class="text-nowrap">
+                            <bdi>{{ session.startTime }} - {{ session.endTime }}</bdi>
+                          </td>
+                          <td>{{ session.slot.roomCapacity }}</td>
+                          <td>{{ selectedCandidateIds().length }}</td>
+                          <td>
+                            @if (periodTeam().roomHead; as roomHead) {
+                              <div class="d-flex align-items-center gap-2">
+                                <span class="rounded-circle bg-light text-primary p-2">
+                                  <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
+                                </span>
+                                <div>
+                                  <div class="fw-semibold">{{ roomHead.name }}</div>
+                                  @if (staffDetails(roomHead); as roomHeadDetails) {
+                                    <small class="text-muted">{{ roomHeadDetails }}</small>
+                                  }
+                                </div>
+                              </div>
+                            } @else {
+                              <span class="text-muted">
+                                {{ 'TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate }}
+                              </span>
+                            }
+                          </td>
+                          <td>
+                            @if (periodTeam().selectedStaff.length > 0) {
+                              <div class="d-flex flex-column gap-2">
+                                @for (member of periodTeam().selectedStaff; track member.id) {
+                                  <div class="d-flex align-items-center gap-2">
+                                    <span class="rounded-circle bg-light text-primary p-2">
+                                      <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
+                                    </span>
+                                    <div>
+                                      <div class="fw-semibold">{{ member.name }}</div>
+                                      @if (staffDetails(member); as memberDetails) {
+                                        <small class="text-muted">{{ memberDetails }}</small>
+                                      }
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            } @else {
+                              <span class="text-muted">
+                                {{ 'TEST_SESSION_WIZARD.NO_TEAM_MEMBERS' | translate }}
+                              </span>
+                            }
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card card-table mb-4">
+              <div class="card-body">
+                <h5 class="text-primary mb-3">
+                  {{ 'TEST_SESSION_WIZARD.REVIEW_CAPACITY_SUMMARY' | translate }}
+                </h5>
+                <div class="row g-3">
+                  <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--room h-100">
+                      <i class="hgi hgi-stroke hgi-user-group workflow-review-summary-card__icon"></i>
+                      <div class="workflow-review-summary-card__content">
+                        <span class="workflow-review-summary-card__label">
+                          {{ 'TEST_SESSION_WIZARD.TOTAL_CANDIDATES' | translate }}
+                        </span>
+                        <strong class="workflow-review-summary-card__value">
+                          {{ selectedCandidateIds().length }}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--date h-100">
+                      <i class="hgi hgi-stroke hgi-chair-01 workflow-review-summary-card__icon"></i>
+                      <div class="workflow-review-summary-card__content">
+                        <span class="workflow-review-summary-card__label">
+                          {{ 'TEST_SESSION_WIZARD.AVAILABLE_CAPACITY' | translate }}
+                        </span>
+                        <strong class="workflow-review-summary-card__value">
+                          {{ session.availableCapacity }}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--time h-100">
+                      <i class="hgi hgi-stroke hgi-user-check-01 workflow-review-summary-card__icon"></i>
+                      <div class="workflow-review-summary-card__content">
+                        <span class="workflow-review-summary-card__label">
+                          {{ 'TEST_SESSION_WIZARD.SEATS_USED' | translate }}
+                        </span>
+                        <strong class="workflow-review-summary-card__value">
+                          {{ selectedCandidateIds().length }}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="workflow-review-summary-card workflow-review-summary-card--candidate workflow-review-summary-card--team h-100">
+                      <i class="hgi hgi-stroke hgi-chair-01 workflow-review-summary-card__icon"></i>
+                      <div class="workflow-review-summary-card__content">
+                        <span class="workflow-review-summary-card__label">
+                          {{ 'TEST_SESSION_WIZARD.SEATS_REMAINING' | translate }}
+                        </span>
+                        <strong class="workflow-review-summary-card__value">
+                          {{ remainingReviewCapacity() }}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            @if (isReviewValid()) {
+              <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+                <i class="hgi hgi-stroke hgi-check-circle" aria-hidden="true"></i>
+                {{ 'TEST_SESSION_WIZARD.REVIEW_READY' | translate }}
+              </div>
+            }
+          </section>
+        }
+      }
+    }
     <div class="d-flex justify-content-between mt-4">
       <button
         type="button"
@@ -189,14 +391,20 @@
       >
         {{ 'TEST_SESSION_WIZARD.BACK' | translate }}
       </button>
-      <button
-        type="button"
-        class="btn btn-primary"
-        [disabled]="step === 4 || !canGoNext()"
-        (click)="goTo(step + 1)"
-      >
-        {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
-      </button>
+      @if (step === 5) {
+        <button type="button" class="btn btn-primary" [disabled]="!isReviewValid()">
+          {{ 'TEST_SESSION_WIZARD.SEND_TO_APPROVE' | translate }}
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!canGoNext()"
+          (click)="goTo(step + 1)"
+        >
+          {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
+        </button>
+      }
     </div>
   </div>
 </section>
