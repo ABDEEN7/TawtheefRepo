@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, Input, inject } from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, inject, Input} from '@angular/core';
 import katex from 'katex';
 
 @Component({
@@ -12,11 +12,22 @@ export class RichContentRendererComponent implements AfterViewChecked {
   @Input() content = '';
   @Input() direction: 'rtl' | 'ltr' = 'ltr';
   ngAfterViewChecked(): void {
-    this.element.nativeElement.querySelectorAll<HTMLElement>('.ql-formula:not([data-rendered])').forEach((formula) => {
+    const formulas = this.element.nativeElement.querySelectorAll(
+      '.ql-formula:not([data-rendered])'
+    ) as NodeListOf<HTMLElement>;
+
+    formulas.forEach((formula: HTMLElement) => {
       try {
-        katex.render(formula.dataset['value'] ?? '', formula, { throwOnError: false });
+        katex.render(
+          formula.dataset['value'] ?? '',
+          formula,
+          { throwOnError: false }
+        );
+
         formula.dataset['rendered'] = 'true';
-      } catch { /* malformed expressions remain visible as their source value */ }
+      } catch {
+        // Malformed expressions remain visible as their source value
+      }
     });
   }
 }
