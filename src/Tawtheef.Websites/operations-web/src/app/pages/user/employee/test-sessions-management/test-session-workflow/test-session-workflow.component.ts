@@ -1,18 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { DialogService } from 'primeng/dynamicdialog';
+import { TranslatePipe } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { TestSessionCandidateSummaryDto } from '../models/test-session-candidate.dto';
 import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
 import { LocalTestSession } from '../models/ready-test-slot.dto';
-import { TestSlotTeamAssignmentSelection } from '../../test-slots-management/test-slot-create/steps/test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
-import { TestSlotStaffMemberDto } from '../../test-slots-management/models/test-slot-staff-member.dto';
-import { TestSlotStaffRoleIds } from '../../test-slots-management/models/create-test-slot.dto';
+import {
+  TestSlotConfigurationStaffDto,
+  TestSlotStaffRoleIds,
+} from '../../test-slots-management/models/create-test-slot.dto';
 import { TestSlotsService } from '../../test-slots-management/services/test-slots.service';
-import { TestSlotAssignmentDialogComponent } from '../../test-slots-management/test-slot-details/test-slot-assignment-dialog/test-slot-assignment-dialog.component';
 import { TestSessionLookupsDto } from '../models/test-session-list-item.dto';
 import {
   TestSessionGenderFilter,
@@ -29,7 +28,6 @@ import { TestSessionPeriodsStepComponent } from './test-session-periods-step/tes
   standalone: true,
   templateUrl: './test-session-workflow.component.html',
   styleUrl: './test-session-workflow.component.scss',
-  providers: [DialogService],
   imports: [
     CommonModule,
     TranslatePipe,
@@ -44,8 +42,6 @@ export class TestSessionWorkflowComponent {
   private readonly service = inject(TestSessionsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly language = inject(LanguageService);
-  private readonly dialogs = inject(DialogService);
-  private readonly translate = inject(TranslateService);
   private readonly testSlotsService = inject(TestSlotsService);
 
   readonly lookups = signal<Pick<TestSessionLookupsDto, 'exams' | 'rooms'>>({
@@ -63,10 +59,10 @@ export class TestSessionWorkflowComponent {
   readonly candidateNationalityFilter = signal<TestSessionNationalityFilter>(null);
   readonly selectedCandidateIds = signal<string[]>([]);
   readonly localSession = signal<LocalTestSession | null>(null);
-  readonly periodTeam = signal<TestSlotTeamAssignmentSelection>({ roomHead: null, selectedStaff: [] });
+  readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
-  private periodTeamSlotId: string | null = null;
+  private loadedTeamTestSlotId: string | null = null;
   private periodTeamLoadingSlotId: string | null = null;
   private periodTeamLoadRequest = 0;
   readonly candidateSelectionInitialized = signal(false);
@@ -194,21 +190,19 @@ export class TestSessionWorkflowComponent {
       endTime - startTime >= exam.durationMinutes;
     if (!sessionTimeIsValid) return false;
 
-    const team = this.periodTeam();
-    const roomHead = team.roomHead;
+    const roomHead = this.roomHeadStaff();
     if (
       this.periodTeamLoading() ||
       this.periodTeamLoadFailed() ||
-      this.periodTeamSlotId !== session.slot.testSlotId ||
-      !roomHead ||
-      !roomHead.id
+      this.loadedTeamTestSlotId !== session.slot.testSlotId ||
+      !roomHead?.staffUserId
     )
       return false;
 
-    const memberIds = team.selectedStaff.map(member => member.id);
-    const assignedIds = [roomHead.id, ...memberIds];
+    const memberIds = this.teamMemberStaff().map(member => member.staffUserId);
+    const assignedIds = [roomHead.staffUserId, ...memberIds];
     return (
-      memberIds.every(id => id !== roomHead.id) &&
+      memberIds.every(id => id !== roomHead.staffUserId) &&
       new Set(assignedIds).size === assignedIds.length
     );
   }
@@ -220,33 +214,15 @@ export class TestSessionWorkflowComponent {
       : 0;
   }
 
-  editPeriodTeam(): void {
-    const session = this.localSession();
-    if (
-      !session ||
-      this.periodTeamLoading() ||
-      this.periodTeamSlotId !== session.slot.testSlotId
-    )
-      return;
+  roomHeadStaff(): TestSlotConfigurationStaffDto | null {
+    return (
+      this.testSlotStaff().find(staff => staff.roleId === TestSlotStaffRoleIds.hallSupervisor) ?? null
+    );
+  }
 
-    const dialog = this.dialogs.open(TestSlotAssignmentDialogComponent, {
-      header: this.translate.instant('TEST_SESSION_WIZARD.EDIT_TEAM_TITLE'),
-      width: 'min(72rem, 95vw)',
-      modal: true,
-      closable: true,
-      dismissableMask: false,
-      data: { localMode: true, initialAssignment: this.periodTeam() },
-    });
-
-    dialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(assignment => {
-      if (!assignment?.roomHead) return;
-      this.periodTeam.set({
-        roomHead: assignment.roomHead,
-        selectedStaff: assignment.selectedStaff.filter(
-          (member: { id: string }) => member.id !== assignment.roomHead.id,
-        ),
-      });
-    });
+  teamMemberStaff(): TestSlotConfigurationStaffDto[] {
+    const roomHeadId = this.roomHeadStaff()?.staffUserId;
+    return this.testSlotStaff().filter(staff => staff.staffUserId !== roomHeadId);
   }
 
   private loadPeriodTeam(): void {
@@ -254,10 +230,10 @@ export class TestSessionWorkflowComponent {
     if (!session) return;
 
     const testSlotId = session.slot.testSlotId;
-    if (this.periodTeamSlotId === testSlotId || this.periodTeamLoadingSlotId === testSlotId) return;
+    if (this.loadedTeamTestSlotId === testSlotId || this.periodTeamLoadingSlotId === testSlotId) return;
 
-    this.periodTeam.set({ roomHead: null, selectedStaff: [] });
-    this.periodTeamSlotId = null;
+    this.testSlotStaff.set([]);
+    this.loadedTeamTestSlotId = null;
     this.periodTeamLoadingSlotId = testSlotId;
     this.periodTeamLoading.set(true);
     this.periodTeamLoadFailed.set(false);
@@ -270,22 +246,8 @@ export class TestSessionWorkflowComponent {
         next: configuration => {
           if (!this.isCurrentPeriodTeamRequest(requestId, testSlotId)) return;
 
-          const assignedStaff = configuration.staff.map(staff => ({
-            id: staff.staffUserId,
-            name: staff.name,
-            email: '',
-            isBlocked: false,
-          }));
-          const roomHeadId = configuration.staff.find(
-            staff => staff.roleId === TestSlotStaffRoleIds.hallSupervisor,
-          )?.staffUserId;
-          const roomHead = assignedStaff.find(staff => staff.id === roomHeadId) ?? null;
-
-          this.periodTeam.set({
-            roomHead,
-            selectedStaff: assignedStaff.filter(staff => staff.id !== roomHeadId),
-          });
-          this.periodTeamSlotId = testSlotId;
+          this.testSlotStaff.set(configuration.staff);
+          this.loadedTeamTestSlotId = testSlotId;
           this.periodTeamLoadingSlotId = null;
           this.periodTeamLoading.set(false);
         },
@@ -303,13 +265,6 @@ export class TestSessionWorkflowComponent {
       requestId === this.periodTeamLoadRequest &&
       this.localSession()?.slot.testSlotId === testSlotId
     );
-  }
-
-  staffDetails(user: { jobTitle?: string | null; departmentName?: string | null; email?: string }): string | null {
-    const staff = user as TestSlotStaffMemberDto;
-    const title = staff.jobTitle?.trim();
-    const department = staff.departmentName?.trim();
-    return [title, department].filter(Boolean).join(' / ') || user.email || null;
   }
 
   private timeValue(time: string): number {

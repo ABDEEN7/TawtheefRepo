@@ -106,7 +106,6 @@
                       <th>{{ 'TEST_SESSION_WIZARD.ROOM_TIME' | translate }}</th>
                       <th>{{ 'TEST_SLOT_WIZARD.ROOM_HEAD' | translate }}</th>
                       <th>{{ 'TEST_SLOT_WIZARD.TEAM_MEMBERS' | translate }}</th>
-                      <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
                     </tr>
                   </ng-template>
                   <ng-template #body>
@@ -122,16 +121,13 @@
                         </small>
                       </td>
                       <td>
-                        @if (periodTeam().roomHead; as roomHead) {
+                        @if (roomHeadStaff(); as roomHead) {
                           <div class="d-flex align-items-center gap-2">
                             <span class="rounded-circle bg-light text-primary p-2">
                               <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
                             </span>
                             <div>
                               <div class="fw-semibold">{{ roomHead.name }}</div>
-                              @if (staffDetails(roomHead); as details) {
-                                <small class="text-muted">{{ details }}</small>
-                              }
                             </div>
                           </div>
                         } @else {
@@ -141,18 +137,15 @@
                         }
                       </td>
                       <td>
-                        @if (periodTeam().selectedStaff.length > 0) {
+                        @if (teamMemberStaff().length > 0) {
                           <div class="d-flex flex-column gap-2">
-                            @for (member of periodTeam().selectedStaff; track member.id) {
+                            @for (member of teamMemberStaff(); track member.staffUserId) {
                               <div class="d-flex align-items-center gap-2">
                                 <span class="rounded-circle bg-light text-primary p-2">
                                   <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
                                 </span>
                                 <div>
                                   <div class="fw-semibold">{{ member.name }}</div>
-                                  @if (staffDetails(member); as details) {
-                                    <small class="text-muted">{{ details }}</small>
-                                  }
                                 </div>
                               </div>
                             }
@@ -162,16 +155,6 @@
                             {{ 'TEST_SESSION_WIZARD.NO_TEAM_MEMBERS' | translate }}
                           </span>
                         }
-                      </td>
-                      <td class="text-center">
-                        <button
-                          type="button"
-                          class="btn btn-outline-primary light"
-                          (click)="editPeriodTeam()"
-                          [disabled]="periodTeamLoading()"
-                        >
-                          {{ 'TEST_SESSION_WIZARD.EDIT_TEAM' | translate }}
-                        </button>
                       </td>
                     </tr>
                   </ng-template>
@@ -261,16 +244,13 @@
                           <td>{{ session.slot.roomCapacity }}</td>
                           <td>{{ selectedCandidateIds().length }}</td>
                           <td>
-                            @if (periodTeam().roomHead; as roomHead) {
+                            @if (roomHeadStaff(); as roomHead) {
                               <div class="d-flex align-items-center gap-2">
                                 <span class="rounded-circle bg-light text-primary p-2">
                                   <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
                                 </span>
                                 <div>
                                   <div class="fw-semibold">{{ roomHead.name }}</div>
-                                  @if (staffDetails(roomHead); as roomHeadDetails) {
-                                    <small class="text-muted">{{ roomHeadDetails }}</small>
-                                  }
                                 </div>
                               </div>
                             } @else {
@@ -280,18 +260,15 @@
                             }
                           </td>
                           <td>
-                            @if (periodTeam().selectedStaff.length > 0) {
+                            @if (teamMemberStaff().length > 0) {
                               <div class="d-flex flex-column gap-2">
-                                @for (member of periodTeam().selectedStaff; track member.id) {
+                                @for (member of teamMemberStaff(); track member.staffUserId) {
                                   <div class="d-flex align-items-center gap-2">
                                     <span class="rounded-circle bg-light text-primary p-2">
                                       <i class="hgi hgi-stroke hgi-user-circle" aria-hidden="true"></i>
                                     </span>
                                     <div>
                                       <div class="fw-semibold">{{ member.name }}</div>
-                                      @if (staffDetails(member); as memberDetails) {
-                                        <small class="text-muted">{{ memberDetails }}</small>
-                                      }
                                     </div>
                                   </div>
                                 }
