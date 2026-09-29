@@ -34,6 +34,13 @@ public sealed class GetQuestionBankRequestDetailsQueryHandler(IUnitOfWork unitOf
                 JobTitleNameAr = x.QuestionBank.JobTitle == null ? null : x.QuestionBank.JobTitle.JobNameAr,
                 JobTitleNameEn = x.QuestionBank.JobTitle == null ? null : x.QuestionBank.JobTitle.JobNameEn,
                 IsActive = x.QuestionBank.IsActive,
+                CanReview = x.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatusIds.PendingReview &&
+                    x.Items.Any(i => !i.IsDeleted && i.RemovedAt == null && i.CurrentProposedRevisionId != null &&
+                                     i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.PENDING_REVIEW),
+                PendingReviewItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.PENDING_REVIEW),
+                ApprovedItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.APPROVED),
+                NeedsModificationItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION),
+                RejectedItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.REJECTED),
                 Assignments = x.Assignments.OrderBy(a => a.AssignedAt).Select(a => new QuestionBankAssignmentDto
                 {
                     Id = a.Id, EmployeeId = a.EmployeeId, EmployeeNameAr = a.Employee.FullNameAr,

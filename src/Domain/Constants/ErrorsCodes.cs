@@ -43,6 +43,9 @@ public class ErrorsCodes
     public const string QuestionBankAssignmentNotEditable = "QUESTION_BANK_ASSIGNMENT_NOT_EDITABLE";
     public const string QuestionBankAssignmentQuestionNotFound = "QUESTION_BANK_ASSIGNMENT_QUESTION_NOT_FOUND";
     public const string QuestionBankMinimumQuestionCountNotMet = "QUESTION_BANK_MINIMUM_QUESTION_COUNT_NOT_MET";
+    public const string QuestionBankRequestNotReviewable = "QUESTION_BANK_REQUEST_NOT_REVIEWABLE";
+    public const string InvalidQuestionBankReview = "INVALID_QUESTION_BANK_REVIEW";
+    public const string StaleQuestionBankReview = "STALE_QUESTION_BANK_REVIEW";
     public const string InvalidQuestionEntry = "INVALID_QUESTION_ENTRY";
     #endregion
 

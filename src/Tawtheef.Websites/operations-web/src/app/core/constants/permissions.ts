@@ -175,6 +175,7 @@ export const Permissions = {
     View: 'question-bank-requests.view',
     Create: 'question-bank-requests.create',
     Assign: 'question-bank-requests.assign',
+    Review: 'question-bank-requests.review',
   },
 
   Locations: {

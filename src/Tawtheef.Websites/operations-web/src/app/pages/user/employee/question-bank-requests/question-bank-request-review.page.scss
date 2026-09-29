@@ -1,0 +1,45 @@
+.review-label {
+  display: block;
+  color: var(--p-text-muted-color);
+  font-size: 0.875rem;
+  margin-bottom: 0.35rem;
+}
+.question-card {
+  border-inline-start: 0.25rem solid var(--p-primary-color);
+}
+.question-image {
+  display: block;
+  max-height: 28rem;
+  max-width: min(100%, 48rem);
+  object-fit: contain;
+}
+.answer-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+.answer-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+.correct-answer {
+  border-color: var(--p-green-500);
+}
+.decision {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+@media (max-width: 576px) {
+  .answer-option {
+    grid-template-columns: auto 1fr;
+  }
+  .answer-option app-rich-content-renderer:last-child {
+    grid-column: 2;
+  }
+}

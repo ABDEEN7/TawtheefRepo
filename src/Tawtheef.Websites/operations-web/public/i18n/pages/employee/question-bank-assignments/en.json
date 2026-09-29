@@ -55,5 +55,6 @@
   "QUESTION_ASSIGNMENTS.OPTION_EN_REQUIRED": "English option content is required.",
   "QUESTION_ASSIGNMENTS.MIN_OPTIONS": "At least two answer options are required.",
   "QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION": "Select exactly one correct answer.",
+  "QUESTION_ASSIGNMENTS.CORRECT": "Correct",
   "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "Loading image preview…"
 }

@@ -440,7 +440,8 @@ export class EndpointsService {
     list: this.getFullUrl('/questionbankassignments'),
     workspace: (id: string) => this.getFullUrl(`/questionbankassignments/${id}`),
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),
-    question: (id: string, itemId: string) => this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
+    question: (id: string, itemId: string) =>
+      this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
     finish: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/finish`),
   };
 
@@ -448,8 +449,10 @@ export class EndpointsService {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
     details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
-    eligibleEmployees: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
+    eligibleEmployees: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
     assignments: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/assignments`),
+    review: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/review`),
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
       managements: this.getFullUrl('/questionbankrequests/lookups/managements'),

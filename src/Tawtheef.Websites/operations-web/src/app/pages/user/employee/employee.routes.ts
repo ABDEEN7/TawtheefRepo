@@ -400,13 +400,17 @@ export const employeeRoutes: Routes = [
     path: 'question-bank-assignments/:assignmentId/questions',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
-    loadComponent: () => import('./question-bank-assignments/question-entry.page').then(m => m.QuestionEntryPage),
+    loadComponent: () =>
+      import('./question-bank-assignments/question-entry.page').then((m) => m.QuestionEntryPage),
   },
   {
     path: 'question-bank-assignments',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
-    loadComponent: () => import('./question-bank-assignments/question-bank-assignments.page').then(m => m.QuestionBankAssignmentsPage),
+    loadComponent: () =>
+      import('./question-bank-assignments/question-bank-assignments.page').then(
+        (m) => m.QuestionBankAssignmentsPage,
+      ),
   },
   {
     path: 'question-banks',
@@ -414,6 +418,15 @@ export const employeeRoutes: Routes = [
     data: { permissions: [Permissions.QuestionBanks.View] },
     loadComponent: () =>
       import('./question-banks/question-banks.page').then((m) => m.QuestionBanksPage),
+  },
+  {
+    path: 'question-bank-requests/:id/review',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankRequests.Review] },
+    loadComponent: () =>
+      import('./question-bank-requests/question-bank-request-review.page').then(
+        (m) => m.QuestionBankRequestReviewPage,
+      ),
   },
   {
     path: 'question-bank-requests/:id',
