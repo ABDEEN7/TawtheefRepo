@@ -28,12 +28,12 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
         => (await mediator.Send(new GetTestSessionLookupsQuery(language, roomId), ct)).ToActionResult();
 
     [HttpGet("wizard/exams/{examId:guid}")]
-    [AuthorizePermission(PermissionKeys.TestSessions.Create)]
+    [AuthorizePermission(PermissionKeys.TestSessions.Create, PermissionKeys.TestSessions.View)]
     public async Task<IActionResult> ExamDetails(Guid examId, [FromQuery] string language, CancellationToken ct)
         => (await mediator.Send(new GetTestSessionExamDetailsQuery(examId, language), ct)).ToActionResult();
 
     [HttpGet("wizard/candidates")]
-    [AuthorizePermission(PermissionKeys.TestSessions.Create)]
+    [AuthorizePermission(PermissionKeys.TestSessions.Create, PermissionKeys.TestSessions.View)]
     public async Task<IActionResult> Candidates([FromQuery] GetTestSessionCandidatesQuery query, CancellationToken ct)
         => (await mediator.Send(query, ct)).ToActionResult();
 
@@ -44,6 +44,14 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
         [FromQuery] string language,
         CancellationToken ct)
         => (await mediator.Send(new GetTestSessionForEditQuery(testSessionId, language), ct)).ToActionResult();
+
+    [HttpGet("wizard/{testSessionId:guid}/view")]
+    [AuthorizePermission(PermissionKeys.TestSessions.View)]
+    public async Task<IActionResult> View(
+        Guid testSessionId,
+        [FromQuery] string language,
+        CancellationToken ct)
+        => (await mediator.Send(new GetTestSessionForEditQuery(testSessionId, language, ViewMode: true), ct)).ToActionResult();
 
     [HttpGet("wizard/ready-test-slots")]
     [AuthorizePermission(PermissionKeys.TestSessions.Create)]

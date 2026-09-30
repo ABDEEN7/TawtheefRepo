@@ -221,7 +221,7 @@
                 <th>{{ 'TEST_SESSIONS.CANDIDATES' | translate }}</th>
                 <th>{{ 'TEST_SESSIONS.ROOM_HEAD' | translate }}</th>
                 <th>{{ 'TEST_SESSIONS.STATUS' | translate }}</th>
-                <th *hasPermission="Permissions.TestSessions.Create" class="text-center">{{ 'TEST_SESSIONS.ACTIONS' | translate }}</th>
+                <th *hasPermission="[Permissions.TestSessions.View, Permissions.TestSessions.Create]" class="text-center">{{ 'TEST_SESSIONS.ACTIONS' | translate }}</th>
               </tr></ng-template
             ><ng-template #body let-session
               ><tr>
@@ -238,14 +238,27 @@
                 <td>{{ session.candidateCount }}</td>
                 <td>{{ session.roomHeadName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
                 <td><p-tag severity="secondary" [value]="session.status.name" /></td>
-                <td *hasPermission="Permissions.TestSessions.Create" class="text-center">
+                <td *hasPermission="[Permissions.TestSessions.View, Permissions.TestSessions.Create]" class="text-center">
                   <div class="action-buttons justify-content-center">
+                    <button
+                      pRipple
+                      type="button"
+                      class="btn"
+                      (click)="viewTestSession(session)"
+                      [pTooltip]="'TEST_SESSIONS.VIEW' | translate"
+                      tooltipPosition="top"
+                      [attr.aria-label]="'TEST_SESSIONS.VIEW' | translate"
+                      *hasPermission="Permissions.TestSessions.View"
+                    >
+                      <i class="hgi hgi-stroke hgi-view" pButtonIcon></i>
+                    </button>
                     @if (canEdit(session)) {
                       <button
                         pRipple
                         type="button"
                         class="btn"
                         (click)="editTestSession(session)"
+                        *hasPermission="Permissions.TestSessions.Create"
                         [pTooltip]="'TEST_SESSIONS.EDIT' | translate"
                         tooltipPosition="top"
                         [attr.aria-label]="'TEST_SESSIONS.EDIT' | translate"

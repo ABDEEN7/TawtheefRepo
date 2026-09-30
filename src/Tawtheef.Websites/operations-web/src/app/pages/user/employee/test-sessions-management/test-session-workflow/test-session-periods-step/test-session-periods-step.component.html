@@ -32,6 +32,7 @@
   </div>
 </section>
 
+@if (!readOnly()) {
 <div class="row g-3 mb-4">
   <div class="col-12 col-sm-6 col-xl-3">
     <div
@@ -210,6 +211,7 @@
     </div>
   </div>
 }
+}
 
 @if (totalItems() > 0) {
   <div class="pagination-box mt-3">
@@ -222,6 +224,7 @@
     />
   </div>
 }
+
 
 @if (localSession(); as session) {
   <section class="mt-4" aria-labelledby="added-sessions-title">
@@ -238,7 +241,9 @@
               <th>{{ 'TEST_SESSION_WIZARD.DATE' | translate }}</th>
               <th>{{ 'TEST_SESSION_WIZARD.TIME' | translate }}</th>
               <th>{{ 'TEST_SESSION_WIZARD.CANDIDATES' | translate }}</th>
+              @if (!readOnly()) {
               <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
+              }
             </tr>
           </ng-template>
           <ng-template #body let-addedSession>
@@ -250,7 +255,9 @@
                 <bdi>{{ addedSession.startTime }} - {{ addedSession.endTime }}</bdi>
               </td>
               <td>{{ selectedCandidateIds().length }}</td>
+              @if (!readOnly()) {
               <td class="text-center">
+                
                 <div class="d-flex justify-content-center gap-2">
                   <button
                     type="button"
@@ -270,6 +277,7 @@
                   </button>
                 </div>
               </td>
+            }
             </tr>
           </ng-template>
         </p-table>

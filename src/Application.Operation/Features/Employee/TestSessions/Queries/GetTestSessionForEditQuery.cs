@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Operation.Features.Employee.TestSessions.Queries;
 
-public sealed record GetTestSessionForEditQuery(Guid TestSessionId, string Language)
+public sealed record GetTestSessionForEditQuery(Guid TestSessionId, string Language, bool ViewMode = false)
     : IRequest<IResult<TestSessionEditDto>>;

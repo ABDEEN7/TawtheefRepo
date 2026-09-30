@@ -65,6 +65,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   readonly selectedCandidateIds = input.required<string[]>();
   readonly rooms = input.required<TestSessionLookupsDto['rooms']>();
   readonly localSession = input<LocalTestSession | null>(null);
+  readonly readOnly = input(false);
   readonly sessionApplied = output<LocalTestSession>();
   readonly sessionDeleted = output<void>();
 
@@ -149,6 +150,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   }
 
   openSetup(slot: ReadyTestSlotListItemDto, session?: LocalTestSession): void {
+    if (this.readOnly()) return;
     if (this.localSession() && !session) return;
 
     const ref = this.dialogService.open(TestSessionSetupDialogComponent, {
@@ -226,6 +228,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   }
 
   private loadSlots(): void {
+    if (this.readOnly()) return;
     if (!this.filters().examId) return;
 
     this.loading.set(true);

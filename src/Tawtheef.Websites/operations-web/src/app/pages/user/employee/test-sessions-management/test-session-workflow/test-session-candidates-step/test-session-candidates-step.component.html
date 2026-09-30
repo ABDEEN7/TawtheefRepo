@@ -38,6 +38,7 @@
       [options]="genderOptions"
       [ngModel]="genderFilter()"
       (ngModelChange)="genderFilterChanged.emit($event)"
+      [disabled]="readOnly()"
       [showClear]="true"
       appendTo="body"
       [placeholder]="'TEST_SESSION_WIZARD.GENDER_FILTER' | translate"
@@ -56,6 +57,7 @@
       [options]="nationalityOptions"
       [ngModel]="nationalityFilter()"
       (ngModelChange)="nationalityFilterChanged.emit($event)"
+      [disabled]="readOnly()"
       [showClear]="true"
       appendTo="body"
       [placeholder]="'TEST_SESSION_WIZARD.NATIONALITY_FILTER' | translate"
@@ -80,13 +82,14 @@
         type="search"
         [ngModel]="search()"
         (ngModelChange)="onSearchChanged($event)"
+        [disabled]="readOnly()"
         [placeholder]="'TEST_SESSION_WIZARD.CANDIDATE_SEARCH' | translate"
       />
     </div>
   </div>
 
   <div class="col-12 col-lg-3 d-flex align-items-center">
-    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()">
+    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()" [disabled]="readOnly()">
       {{ 'TEST_SESSION_WIZARD.CLEAR_FILTERS' | translate }}
     </button>
   </div>
@@ -107,6 +110,7 @@
                 [binary]="true"
                 [ngModel]="allCandidatesSelected()"
                 (ngModelChange)="toggleAllCandidates($event)"
+                [disabled]="readOnly()"
               />
             </th>
             <th>{{ 'TEST_SESSION_WIZARD.CANDIDATE' | translate }}</th>
@@ -125,6 +129,7 @@
                 [binary]="true"
                 [ngModel]="selectedCandidateIds().includes(candidate.invitationId)"
                 (ngModelChange)="toggleCandidate(candidate.invitationId, $event)"
+                [disabled]="readOnly()"
               />
             </td>
             <td>

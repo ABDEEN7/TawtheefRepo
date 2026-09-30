@@ -58,6 +58,13 @@ export class TestSessionsService {
     );
   }
 
+  view(testSessionId: string, language: string): Observable<TestSessionEditDto> {
+    return this.http.get<TestSessionEditDto>(
+      this.endpoints.testSessions.view(testSessionId),
+      { language },
+    );
+  }
+
   saveSessionSetup(setup: SaveTestSessionSetupDto): Observable<TestSessionSetupDto> {
     return this.http.put<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, setup, undefined, {
       headers: { [HDR.SkipError]: 'true' },

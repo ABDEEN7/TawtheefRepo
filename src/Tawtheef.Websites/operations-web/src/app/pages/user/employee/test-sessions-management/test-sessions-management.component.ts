@@ -183,6 +183,10 @@ export class TestSessionsManagementComponent implements OnInit {
   editTestSession(session: TestSessionListItemDto): void {
     void this.router.navigateByUrl(portalRoutes.editTestSession(session.id));
   }
+
+  viewTestSession(session: TestSessionListItemDto): void {
+    void this.router.navigateByUrl(portalRoutes.viewTestSession(session.id));
+  }
   activeAdvancedFilterCount(): number {
     return [
       this.selectedJobId,

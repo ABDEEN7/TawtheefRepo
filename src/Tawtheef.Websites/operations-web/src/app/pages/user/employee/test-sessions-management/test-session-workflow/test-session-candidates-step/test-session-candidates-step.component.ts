@@ -49,6 +49,7 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   protected readonly InvitationSource = InvitationSource;
   readonly examId = input.required<string>();
   readonly testSessionId = input<string | null>(null);
+  readonly readOnly = input(false);
   readonly genderFilter = input<'Male' | 'Female' | null>(null);
   readonly nationalityFilter = input<'Qatari' | 'NonQatari' | null>(null);
   readonly selectedCandidateIds = input<string[]>([]);

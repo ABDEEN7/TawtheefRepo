@@ -44,7 +44,7 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
                 SlotDateForCapacity = x.TestSlot == null ? null : (DateOnly?)x.TestSlot.SlotDate
             }).FirstOrDefaultAsync(ct);
 
-        if (session is null || !IsEditable(session.StatusId))
+        if (session is null || !request.ViewMode && !IsEditable(session.StatusId))
             return Result.Fail<TestSessionEditDto>(ErrorsCodes.InvalidRequest);
 
         var availableCapacity = 0;
@@ -79,4 +79,5 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
 
     private static bool IsEditable(Guid statusId) =>
         statusId == TestSessionStatusIds.Draft || statusId == TestSessionStatusIds.Returned;
+
 }

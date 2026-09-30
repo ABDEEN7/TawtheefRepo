@@ -13,7 +13,10 @@ import {
   TestSlotStaffRoleIds,
 } from '../../test-slots-management/models/create-test-slot.dto';
 import { TestSlotsService } from '../../test-slots-management/services/test-slots.service';
-import { TestSessionEditDto, TestSessionLookupsDto } from '../models/test-session-list-item.dto';
+import {
+  TestSessionEditDto,
+  TestSessionLookupsDto,
+} from '../models/test-session-list-item.dto';
 import {
   TestSessionGenderFilter,
   TestSessionNationalityFilter,
@@ -25,6 +28,7 @@ import { TestSessionsService } from '../services/test-sessions.service';
 import { TestSessionCandidatesStepComponent } from './test-session-candidates-step/test-session-candidates-step.component';
 import { TestSessionExamSelectionStepComponent } from './test-session-exam-selection-step/test-session-exam-selection-step.component';
 import { TestSessionPeriodsStepComponent } from './test-session-periods-step/test-session-periods-step.component';
+import { TestSessionWorkflowActionComponent } from './test-session-workflow-action/test-session-workflow-action.component';
 
 @Component({
   selector: 'app-test-session-workflow',
@@ -37,6 +41,7 @@ import { TestSessionPeriodsStepComponent } from './test-session-periods-step/tes
     TestSessionExamSelectionStepComponent,
     TestSessionCandidatesStepComponent,
     TestSessionPeriodsStepComponent,
+    TestSessionWorkflowActionComponent,
     TableModule,
     I18nNamespaceDirective,
   ],
@@ -71,6 +76,8 @@ export class TestSessionWorkflowComponent {
   readonly saving = signal(false);
   readonly editLoading = signal(false);
   readonly editMode = signal(false);
+  readonly viewMode = signal(false);
+  readonly statusId = signal<string | null>(null);
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -114,7 +121,8 @@ export class TestSessionWorkflowComponent {
     this.loadLookups(this.language.get());
     const testSessionId = this.route.snapshot.paramMap.get('testSessionId');
     if (testSessionId) {
-      this.editMode.set(true);
+      this.viewMode.set(this.route.snapshot.data['testSessionMode'] === 'view');
+      this.editMode.set(!this.viewMode());
       this.loadForEdit(testSessionId);
     }
     this.language.current$
@@ -124,8 +132,10 @@ export class TestSessionWorkflowComponent {
 
   private loadForEdit(testSessionId: string): void {
     this.editLoading.set(true);
-    this.service
-      .edit(testSessionId, this.language.get())
+    const loadSession = this.viewMode()
+      ? this.service.view(testSessionId, this.language.get())
+      : this.service.edit(testSessionId, this.language.get());
+    loadSession
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (session) => {
@@ -151,11 +161,12 @@ export class TestSessionWorkflowComponent {
   private restoreEditState(session: TestSessionEditDto): void {
     this.testSessionId.set(session.testSessionId);
     this.sessionNo.set(session.sessionNo);
+    this.statusId.set(session.statusId.toLowerCase());
     this.selectedExamId = session.examId;
     this.candidateGenderFilter.set(session.genderFilter);
     this.candidateNationalityFilter.set(session.nationalityFilter);
     this.selectedCandidateIds.set(session.invitationIds);
-    this.candidateSelectionInitialized.set(session.invitationIds.length > 0);
+    this.candidateSelectionInitialized.set(this.viewMode() || session.invitationIds.length > 0);
 
     if (
       session.testSlotId && session.slotDate && session.slotStartTime && session.slotEndTime &&
@@ -221,6 +232,11 @@ export class TestSessionWorkflowComponent {
 
   goTo(target: number): void {
     if (target < 1 || target > 5 || (target > 1 && !this.selectedExamId)) return;
+    if (this.viewMode()) {
+      if (target === 4) this.loadPeriodTeam();
+      this.step = target;
+      return;
+    }
     if (target === 4 && (this.step !== 3 || !this.canGoNext())) return;
     if (target === 5 && (this.step !== 4 || !this.isReviewValid())) return;
     if (target === 4) this.loadPeriodTeam();

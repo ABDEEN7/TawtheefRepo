@@ -175,6 +175,9 @@ export const portalRoutes = {
   editTestSession(testSessionId: string) {
     return this.portal + `/${this.testSessionsManagementPath}/edit/${testSessionId}`;
   },
+  viewTestSession(testSessionId: string) {
+    return this.portal + `/${this.testSessionsManagementPath}/${testSessionId}/view`;
+  },
   get testSessionsManagement() {
     return this.portal + '/' + this.testSessionsManagementPath;
   },

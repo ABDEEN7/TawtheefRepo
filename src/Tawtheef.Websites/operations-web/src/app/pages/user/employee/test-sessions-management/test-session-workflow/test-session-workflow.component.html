@@ -4,7 +4,15 @@
 >
   <div class="card-body">
     <h3 id="test-session-review-title" class="fw-bold mb-4">
-      {{ (step === 5 ? 'TEST_SESSION_WIZARD.REVIEW_TITLE' : 'TEST_SESSION_WIZARD.CREATE_TITLE') | translate }}
+      {{
+        (
+          viewMode()
+            ? 'TEST_SESSION_WIZARD.VIEW_TITLE'
+            : step === 5
+              ? 'TEST_SESSION_WIZARD.REVIEW_TITLE'
+              : 'TEST_SESSION_WIZARD.CREATE_TITLE'
+        ) | translate
+      }}
     </h3>
     <div class="card card-table workflow-stepper-card mb-4">
       <div class="card-body">
@@ -48,14 +56,14 @@
         </div>
       </div>
     </div>
-    @if (loading) {
+    @if (loading || editLoading()) {
       <p class="text-muted">{{ 'TEST_SESSION_WIZARD.LOADING_EXAM_DETAILS' | translate }}</p>
     } @else if (step === 1) {
       <app-test-session-exam-selection-step
         [exams]="lookups().exams"
         [selectedExamId]="selectedExamId"
         [examDetails]="details()"
-        [disabled]="editMode()"
+        [disabled]="editMode() || viewMode()"
         (examSelected)="onExamSelected($event)"
       />
     }
@@ -63,6 +71,7 @@
       <app-test-session-candidates-step
         [examId]="selectedExamId"
         [testSessionId]="testSessionId()"
+        [readOnly]="viewMode()"
         [genderFilter]="candidateGenderFilter()"
         [nationalityFilter]="candidateNationalityFilter()"
         [selectedCandidateIds]="selectedCandidateIds()"
@@ -84,6 +93,7 @@
         [selectedCandidateIds]="selectedCandidateIds()"
         [rooms]="lookups().rooms"
         [localSession]="localSession()"
+        [readOnly]="viewMode()"
         (sessionApplied)="localSession.set($event)"
         (sessionDeleted)="localSession.set(null)"
       />
@@ -371,6 +381,7 @@
         {{ 'TEST_SESSION_WIZARD.BACK' | translate }}
       </button>
       <div class="d-flex gap-2">
+        @if (!viewMode()) {
         <button
           type="button"
           class="btn btn-outline-primary"
@@ -379,7 +390,9 @@
         >
           {{ 'TEST_SESSION_WIZARD.SAVE_DRAFT' | translate }}
         </button>
+        }
         @if (step === 5) {
+          @if (!viewMode()) {
           <button
             type="button"
             class="btn btn-primary"
@@ -388,11 +401,12 @@
           >
             {{ 'TEST_SESSION_WIZARD.SEND_TO_APPROVE' | translate }}
           </button>
+          }
         } @else {
         <button
           type="button"
           class="btn btn-primary"
-          [disabled]="!canGoNext()"
+          [disabled]="!viewMode() && !canGoNext()"
           (click)="goTo(step + 1)"
         >
           {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
@@ -402,3 +416,4 @@
     </div>
   </div>
 </section>
+<app-test-session-workflow-action [statusId]="statusId()" [submitting]="saving()" />
