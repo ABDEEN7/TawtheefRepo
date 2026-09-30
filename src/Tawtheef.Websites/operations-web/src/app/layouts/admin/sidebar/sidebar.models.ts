@@ -161,6 +161,13 @@ export class Sidebar {
       route: routes.portal.testSlotsManagement,
       permission: Permissions.TestSlots.View
     },
+    {
+      key: 'test-sessions',
+      label: 'internal.sidebar.testSessions',
+      icon: 'hgi-calendar-03',
+      route: routes.portal.testSessionsManagement,
+      permission: Permissions.TestSessions.View,
+    },
     
     {
       key: 'interview-axes-criteria',

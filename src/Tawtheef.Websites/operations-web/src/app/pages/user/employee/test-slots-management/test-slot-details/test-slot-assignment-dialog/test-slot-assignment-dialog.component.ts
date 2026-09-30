@@ -5,6 +5,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { LanguageService } from '../../../../../../core/services/language.service';
+import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
 import { UserDto } from '../../../users-management/models/user.dto';
 import {
   TestSlotConfigurationDto,
@@ -18,7 +19,9 @@ import {
 } from '../../test-slot-create/steps/test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
 
 interface TestSlotAssignmentDialogData {
-  testSlotId: string;
+  testSlotId?: string;
+  localMode?: boolean;
+  initialAssignment?: TestSlotTeamAssignmentSelection;
 }
 
 @Component({
@@ -26,7 +29,7 @@ interface TestSlotAssignmentDialogData {
   standalone: true,
   templateUrl: './test-slot-assignment-dialog.component.html',
   styleUrl: './test-slot-assignment-dialog.component.scss',
-  imports: [ButtonModule, TranslatePipe, TestSlotTeamAssignmentSelectorComponent],
+  imports: [ButtonModule, TranslatePipe, TestSlotTeamAssignmentSelectorComponent, I18nNamespaceDirective],
 })
 export class TestSlotAssignmentDialogComponent implements OnInit {
   private readonly service = inject(TestSlotsService);
@@ -42,10 +45,25 @@ export class TestSlotAssignmentDialogComponent implements OnInit {
   readonly showRoomHeadError = signal(false);
   readonly roomHead = signal<UserDto | null>(null);
   readonly teamMembers = signal<UserDto[]>([]);
+  readonly isLocalMode = this.data.localMode === true;
   private configuration: TestSlotConfigurationDto | null = null;
 
   ngOnInit(): void {
-    this.service.configuration(this.data.testSlotId, this.language.get()).subscribe({
+    if (this.isLocalMode) {
+      this.roomHead.set(this.data.initialAssignment?.roomHead ?? null);
+      this.teamMembers.set(this.data.initialAssignment?.selectedStaff ?? []);
+      this.loading.set(false);
+      return;
+    }
+
+    const testSlotId = this.data.testSlotId;
+    if (!testSlotId) {
+      this.loadFailed.set(true);
+      this.loading.set(false);
+      return;
+    }
+
+    this.service.configuration(testSlotId, this.language.get()).subscribe({
       next: configuration => {
         this.configuration = configuration;
         const users = configuration.staff.map(staff => ({
@@ -75,16 +93,23 @@ export class TestSlotAssignmentDialogComponent implements OnInit {
   }
 
   save(): void {
-    if (this.saving() || !this.configuration) return;
+    if (this.saving() || (!this.isLocalMode && !this.configuration)) return;
     if (!this.roomHead()) {
       this.showRoomHeadError.set(true);
       this.notifications.error(this.translate.instant('validation.required_filed'));
       return;
     }
 
+    if (this.isLocalMode) {
+      const roomHead = this.roomHead()!;
+      const selectedStaff = this.teamMembers().filter(member => member.id !== roomHead.id);
+      this.ref.close({ roomHead, selectedStaff });
+      return;
+    }
+
     this.saving.set(true);
     this.service
-      .updateAssignments(this.data.testSlotId, this.createRequest())
+      .updateAssignments(this.data.testSlotId!, this.createRequest())
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
