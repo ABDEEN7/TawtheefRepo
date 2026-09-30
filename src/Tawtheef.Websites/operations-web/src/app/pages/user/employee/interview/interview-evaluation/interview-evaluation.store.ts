@@ -9,7 +9,11 @@ import { ScheduleModel } from '../interview-schedule/models/schedule.model';
 import { FinalDecision, ResultReportStatus } from '../interview-result-report/models/enums';
 
 import { SessionListRowModel } from './models/session-row.model';
-import { CommitteeReviewListItemModel, CommitteeReviewModel, SchoolStageOption } from './models/committee-review.model';
+import {
+  CommitteeReviewListItemModel,
+  CommitteeReviewModel,
+  SchoolStageOption,
+} from './models/committee-review.model';
 import { OperationalIssueModel } from './models/operational-issue.model';
 import {
   AppointmentEvaluationContextModel,
@@ -33,6 +37,7 @@ export const ELIGIBLE_SESSION_STATUSES: ScheduleStatus[] = [
   ScheduleStatus.Approved,
   ScheduleStatus.ReadyForExecution,
   ScheduleStatus.InProgress,
+  ScheduleStatus.Closed,
 ];
 
 @Injectable()
@@ -56,7 +61,9 @@ export class InterviewEvaluationStore {
     const options = new Map<string, { value: string; label: string }>();
     for (const s of this.sessionsResult()) {
       if (!s.jobTitleId || options.has(s.jobTitleId)) continue;
-      const label = this.isRtl() ? s.jobTitleNameAr || s.jobTitleNameEn : s.jobTitleNameEn || s.jobTitleNameAr;
+      const label = this.isRtl()
+        ? s.jobTitleNameAr || s.jobTitleNameEn
+        : s.jobTitleNameEn || s.jobTitleNameAr;
       if (label) options.set(s.jobTitleId, { value: s.jobTitleId, label });
     }
     return [...options.values()].sort((a, b) => a.label.localeCompare(b.label));
@@ -81,7 +88,9 @@ export class InterviewEvaluationStore {
       if (jobTitleId !== null && s.jobTitleId !== jobTitleId) return false;
       if (type !== null && s.defaultInterviewType !== type) return false;
       if (!term) return true;
-      return [s.jobTitleNameAr, s.jobTitleNameEn].some((value) => (value ?? '').toLowerCase().includes(term));
+      return [s.jobTitleNameAr, s.jobTitleNameEn].some((value) =>
+        (value ?? '').toLowerCase().includes(term),
+      );
     });
   });
 
@@ -135,7 +144,9 @@ export class InterviewEvaluationStore {
   reviewStages = signal<Record<string, string | null>>({});
 
   reviewEditable = computed(() => this.review()?.canEdit ?? false);
-  reviewInCommitteeStage = computed(() => this.review()?.status === ResultReportStatus.CommitteeReview);
+  reviewInCommitteeStage = computed(
+    () => this.review()?.status === ResultReportStatus.CommitteeReview,
+  );
 
   // The Committee Review action for a schedule: 'hidden' once its report is approved/closed,
   // 'disabled' while there's no report the caller can review, 'enabled' otherwise.
@@ -280,7 +291,11 @@ export class InterviewEvaluationStore {
     this.schoolStages.set(stages);
   }
 
-  seedReview(decisions: Record<string, FinalDecision>, reasons: Record<string, string>, stages: Record<string, string | null>) {
+  seedReview(
+    decisions: Record<string, FinalDecision>,
+    reasons: Record<string, string>,
+    stages: Record<string, string | null>,
+  ) {
     this.reviewDecisions.set(decisions);
     this.reviewReasons.set(reasons);
     this.reviewStages.set(stages);

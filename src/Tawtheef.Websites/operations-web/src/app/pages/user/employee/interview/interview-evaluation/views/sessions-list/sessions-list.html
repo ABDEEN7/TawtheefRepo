@@ -75,6 +75,7 @@
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_LOCATION' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_CANDIDATES' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_PROGRESS' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_STATUS' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.COLUMN_ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
@@ -118,6 +119,9 @@
               <small class="text-muted"><bdi dir="ltr">{{ row.completedAppointmentsCount }}/{{ row.totalAssignedAppointmentsCount }}</bdi></small>
             </div>
           </td>
+          <td>
+            <span [class]="'pill ' + statusPill(row.status)">{{ statusLabel(row.status) | translate }}</span>
+          </td>
           <td (click)="$event.stopPropagation()">
             <div class="action-buttons d-flex">
               <button type="button" class="btn" (click)="service.openSession(row)"
@@ -147,7 +151,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.SESSION_LIST.NO_RECORDS' | translate }}</td>
+          <td colspan="9" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.SESSION_LIST.NO_RECORDS' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>
