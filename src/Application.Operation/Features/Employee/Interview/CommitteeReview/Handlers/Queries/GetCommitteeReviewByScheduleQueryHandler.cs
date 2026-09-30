@@ -91,7 +91,15 @@ public sealed class GetCommitteeReviewByScheduleQueryHandler(
 
         var numberOfVacancies = report.InterviewSchedule!.Job!.NumberOfVacancies;
         var alreadyHiringCountForJob = await ResultReportReadService.CountAlreadyHiringForJobAsync(
-            unitOfWork, report.InterviewSchedule.JobId, cancellationToken);
+            unitOfWork, report.InterviewSchedule.JobId, report.Id, cancellationToken);
+        var suggestions = ResultCandidateSuggestionService.Suggest(
+            report.Candidates.Select(c => new SuggestionCandidate(
+                c.Id,
+                c.IsQualified,
+                c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalityId == CountryIds.Qatar,
+                c.FinalScore)),
+            numberOfVacancies,
+            alreadyHiringCountForJob);
         var issuesByAppointment = await ResultReportReadService.LoadIssuesByAppointmentAsync(unitOfWork, appointmentIds, cancellationToken);
 
         var candidates = report.Candidates
@@ -99,7 +107,6 @@ public sealed class GetCommitteeReviewByScheduleQueryHandler(
             .Select(c =>
             {
                 var applicant = c.InterviewAppointment?.Invitation?.Applicant;
-                var isQatari = applicant?.Profile?.NationalityId == CountryIds.Qatar;
                 var issues = issuesByAppointment.GetValueOrDefault(c.InterviewAppointmentId, []);
                 var attendanceStatus = c.InterviewAppointment?.AttendanceStatus;
                 var candidateEvaluations = evaluations.Where(e => e.InterviewAppointmentId == c.InterviewAppointmentId).ToList();
@@ -145,7 +152,7 @@ public sealed class GetCommitteeReviewByScheduleQueryHandler(
                     c.IsQualified,
                     attendanceStatus,
                     InterviewAppointment.IsLateCandidate(attendanceStatus, issues.Select(i => i.IssueType)),
-                    ResultCandidateSuggestionService.Suggest(c.IsQualified, isQatari, numberOfVacancies, alreadyHiringCountForJob),
+                    suggestions[c.Id],
                     c.ChairRecommendedDecision,
                     c.ChairRecommendationReason,
                     c.RecommendedSchoolStageId,

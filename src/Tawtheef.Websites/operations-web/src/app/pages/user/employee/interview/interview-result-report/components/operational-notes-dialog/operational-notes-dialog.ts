@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { OperationalIssueModel } from '../../../interview-evaluation/models/operational-issue.model';
 // Reused from interview-evaluation, not copied - the page loads that module's i18nNamespace too
-// (see interview-result-report.page.html).
 import {
   OPERATIONAL_ISSUE_STATUS_LABELS,
   OPERATIONAL_ISSUE_STATUS_PILL,
@@ -31,6 +30,7 @@ export interface OperationalNotesDialogData {
 })
 export class OperationalNotesDialogComponent implements OnInit {
   private dialogConfig = inject(DynamicDialogConfig<OperationalNotesDialogData>);
+  private dialogRef = inject(DynamicDialogRef);
 
   data!: OperationalNotesDialogData;
 
@@ -48,5 +48,9 @@ export class OperationalNotesDialogComponent implements OnInit {
 
   statusPill(status: OperationalIssueStatus): string {
     return OPERATIONAL_ISSUE_STATUS_PILL[status];
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 }

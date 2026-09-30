@@ -10,12 +10,18 @@ namespace Application.Operation.Features.Employee.Interview.ResultReport.Service
 // both screens feed ResultCandidateSuggestionService the same inputs and show the same issues.
 public static class ResultReportReadService
 {
-    // Scoped to the whole job (across every schedule/report for it), not just one report - a vacancy
-    // is filled once, regardless of which interview round the candidate came through.
-    public static Task<int> CountAlreadyHiringForJobAsync(IUnitOfWork unitOfWork, Guid jobId, CancellationToken cancellationToken) =>
+    // Scoped to the whole job (across every schedule/report for it) - a vacancy is filled once, regardless
+    // of which interview round the candidate came through. The report being suggested for is excluded: its
+    // own candidates are ranked against the vacancies by ResultCandidateSuggestionService, so counting their
+    // saved decisions here would spend the same vacancy twice. Soft-deleted reports don't count (the
+    // report's query filter doesn't reach through the navigation).
+    public static Task<int> CountAlreadyHiringForJobAsync(
+        IUnitOfWork unitOfWork, Guid jobId, Guid excludeReportId, CancellationToken cancellationToken) =>
         unitOfWork.GetEntityRepository<InterviewResultCandidate>().DbSet
             .Where(c => c.FinalDecision == FinalDecision.CandidateForHiringProcess
-                && c.InterviewResultReport!.InterviewSchedule!.JobId == jobId)
+                && c.InterviewResultReportId != excludeReportId
+                && !c.InterviewResultReport!.IsDeleted
+                && c.InterviewResultReport.InterviewSchedule!.JobId == jobId)
             .CountAsync(cancellationToken);
 
     public static async Task<Dictionary<Guid, List<OperationalIssueDto>>> LoadIssuesByAppointmentAsync(

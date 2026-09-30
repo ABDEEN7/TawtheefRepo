@@ -22,20 +22,32 @@
               <td class="text-break">{{ issue.description || '—' }}</td>
               <td>{{ (issue.isBlocking ? 'common.yes' : 'common.no') | translate }}</td>
               <td>
-                <span [class]="'pill ' + statusPill(issue.status)">{{ statusLabel(issue.status) | translate }}</span>
+                <span [class]="'pill ' + statusPill(issue.status)">{{
+                  statusLabel(issue.status) | translate
+                }}</span>
                 @if (issue.resolutionNotes) {
                   <div class="text-muted small mt-1">{{ issue.resolutionNotes }}</div>
                 }
               </td>
-              <td><bdi dir="ltr">{{ issue.createdDate | date: 'dd-MM-yyyy HH:mm' }}</bdi></td>
+              <td>
+                <bdi dir="ltr">{{ issue.createdDate | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+              </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.ISSUES.NO_ISSUES' | translate }}</td>
+              <td colspan="5" class="text-center text-muted">
+                {{ 'INTERVIEW_EVALUATION.ISSUES.NO_ISSUES' | translate }}
+              </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      {{ 'INTERVIEW_EVALUATION.CLOSE' | translate }}
+    </button>
   </div>
 </div>

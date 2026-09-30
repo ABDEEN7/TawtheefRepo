@@ -32,7 +32,15 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
 
         var numberOfVacancies = report.InterviewSchedule!.Job!.NumberOfVacancies;
         var alreadyHiringCountForJob = await ResultReportReadService.CountAlreadyHiringForJobAsync(
-            unitOfWork, report.InterviewSchedule.JobId, cancellationToken);
+            unitOfWork, report.InterviewSchedule.JobId, report.Id, cancellationToken);
+        var suggestions = ResultCandidateSuggestionService.Suggest(
+            report.Candidates.Select(c => new SuggestionCandidate(
+                c.Id,
+                c.IsQualified,
+                c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalityId == CountryIds.Qatar,
+                c.FinalScore)),
+            numberOfVacancies,
+            alreadyHiringCountForJob);
 
         // So the Final Reviewer sees which candidates have operational issues without a second call
         // (scheduleResult.md: "must see which candidates have operational issues and review them individually").
@@ -42,9 +50,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
         var candidates = report.Candidates
             .Select(c =>
             {
-                var isQatari = c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalityId == CountryIds.Qatar;
-                var suggestedDecision = ResultCandidateSuggestionService.Suggest(
-                    c.IsQualified, isQatari, numberOfVacancies, alreadyHiringCountForJob);
+                var suggestedDecision = suggestions[c.Id];
                 var issues = issuesByAppointment.GetValueOrDefault(c.InterviewAppointmentId, []);
                 var attendanceStatus = c.InterviewAppointment?.AttendanceStatus;
 
