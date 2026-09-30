@@ -547,6 +547,13 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -1873868507,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-assignments.manage",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -2132548858,
                             ClaimType = "permission",
                             ClaimValue = "question-bank-requests.assign",
@@ -649,6 +656,13 @@ namespace Tawtheef.Infrastructure.Migrations
                             ClaimType = "permission",
                             ClaimValue = "users.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1769273956,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-assignments.manage",
+                            RoleId = new Guid("5f12e420-f666-4af4-a8fa-4e4aa755fdcd")
                         },
                         new
                         {
@@ -18363,6 +18377,18 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("0e00482c-788c-ef59-ac2b-8404b84e2bf3"),
+                            BackendName = "question-bank-assignments.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 88,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "مهام بنوك الأسئلة - إدارة",
+                            NameEn = "Question Bank Assignments - Manage"
+                        },
+                        new
+                        {
                             Id = new Guid("6c983939-fc0e-7b5b-967c-90cb95289472"),
                             BackendName = "interview-evaluation-bank.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -18432,6 +18458,78 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "لجان المقابلات - إدارة",
                             NameEn = "Interview Committee - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("3126aa54-aa8b-4b51-bd72-992afea7c7dc"),
+                            BackendName = "interview-evaluation.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 110,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "تقيم المقابلات - عرض",
+                            NameEn = "Interview Evaluation - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("4f11ce47-e7c8-2f52-920a-2c992f6acd03"),
+                            BackendName = "interview-evaluation.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 111,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "تقيم المقابلات - إدارة",
+                            NameEn = "Interview Evaluation - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("dded038e-a98d-f356-b267-851e94524810"),
+                            BackendName = "interview-result-report.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 112,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "تقرير نتائج المقابلات - عرض",
+                            NameEn = "Interview Result Report - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("61963e13-e87c-935f-9b33-8a1c6fa4f29f"),
+                            BackendName = "interview-result-report.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 113,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "تقرير نتائج المقابلات - إدارة",
+                            NameEn = "Interview Result Report - Manage"
+                        },
+                        new
+                        {
+                            Id = new Guid("fe4a15d1-6b80-b65d-83b2-0007b60737a0"),
+                            BackendName = "interview-schedule.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 108,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جدولة المقابلات - عرض",
+                            NameEn = "Interview Schedule - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("68994108-43c5-6a56-ac33-5471af9d8411"),
+                            BackendName = "interview-schedule.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 109,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جدولة المقابلات - إدارة",
+                            NameEn = "Interview Schedule - Manage"
                         });
                 });
 
@@ -23993,6 +24091,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", "SourceRequestItem")
                         .WithMany()
                         .HasForeignKey("SourceRequestItemId")
@@ -24012,6 +24115,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("QuestionType");
+
+                    b.Navigation("Resource");
 
                     b.Navigation("SourceRequestItem");
 

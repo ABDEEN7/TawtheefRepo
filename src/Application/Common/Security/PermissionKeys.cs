@@ -228,6 +228,11 @@ public static class PermissionKeys
         public const string View = "question-banks.view";
     }
 
+    public static class QuestionBankAssignments
+    {
+        public const string Manage = "question-bank-assignments.manage";
+    }
+
     public static class QuestionBankRequests
     {
         public const string View = "question-bank-requests.view";

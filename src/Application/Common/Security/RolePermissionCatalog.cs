@@ -99,6 +99,7 @@ public static class RolePermissionCatalog
                 Permissions.QuestionBankRequests.View.Key,
                 Permissions.QuestionBankRequests.Create.Key,
                 Permissions.QuestionBankRequests.Assign.Key,
+                Permissions.QuestionBankAssignments.Manage.Key,
                 Permissions.Locations.Manage.Key,
 
                 Permissions.InterviewEvaluationBank.View.Key,
@@ -136,6 +137,9 @@ public static class RolePermissionCatalog
             //     Permissions.TestSlots.View.Key,
             //     Permissions.TestSlots.Create.Key,
             // ],
+            [SystemRoleIds.Employee] = [
+                Permissions.QuestionBankAssignments.Manage.Key,
+            ],
 
             [SystemRoleIds.TestSlotStaffMember] = [
                 Permissions.TestSlots.View.Key,

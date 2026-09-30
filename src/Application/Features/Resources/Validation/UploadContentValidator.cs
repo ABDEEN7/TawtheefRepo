@@ -57,6 +57,15 @@ internal static class UploadContentValidator
         ProfileLimits.MaxExperienceFileSizeBytes,
         ErrorsCodes.ExceptionProofFileTooLarge);
 
+    private static readonly UploadPolicy QuestionImagePolicy = new(
+        new HashSet<string>(Comparer) { ".jpg", ".jpeg", ".png", ".webp" },
+        new Dictionary<string, Func<Stream, bool>>(Comparer)
+        {
+            [".jpg"] = IsJpeg, [".jpeg"] = IsJpeg, [".png"] = IsPng, [".webp"] = IsWebP
+        },
+        new HashSet<string>(Comparer) { "image/jpeg", "image/png", "image/webp" },
+        ProfileLimits.MaxExperienceFileSizeBytes);
+
     public static Result Validate(string blobPath, IFormFile? file)
     {
         if (file is null or { Length: 0 })
@@ -100,6 +109,16 @@ internal static class UploadContentValidator
         if (IsInvitationExceptionProofPath(segments))
         {
             policy = InvitationExceptionProofPolicy;
+            return true;
+        }
+
+        if (segments.Length == 6 && segments[0].Equals("private", StringComparison.OrdinalIgnoreCase) &&
+            segments[1].Equals("operation", StringComparison.OrdinalIgnoreCase) &&
+            segments[2].Equals("question-bank", StringComparison.OrdinalIgnoreCase) &&
+            Guid.TryParse(segments[3], out _) &&
+            segments[4].Equals("images", StringComparison.OrdinalIgnoreCase))
+        {
+            policy = QuestionImagePolicy;
             return true;
         }
 
