@@ -14,6 +14,12 @@
         ) | translate
       }}
     </h3>
+    @if (decisionNote(); as note) {
+      <div class="alert alert-warning my-4" role="note">
+        <h5 class="mb-2">{{ 'TEST_SESSION_WIZARD.DECISION_NOTE' | translate }}</h5>
+        <p class="mb-0 text-break">{{ note }}</p>
+      </div>
+    }
     <div class="card card-table workflow-stepper-card mb-4">
       <div class="card-body">
         <div class="workflow-stepper-container">
@@ -420,4 +426,5 @@
   [statusId]="statusId()"
   [submitting]="saving()"
   (approveClicked)="onApproveClicked()"
+  (returnClicked)="onReturnClicked()"
 />

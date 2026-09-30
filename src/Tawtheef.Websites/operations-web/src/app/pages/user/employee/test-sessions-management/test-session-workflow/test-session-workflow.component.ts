@@ -35,6 +35,7 @@ import { TestSessionExamSelectionStepComponent } from './test-session-exam-selec
 import { TestSessionPeriodsStepComponent } from './test-session-periods-step/test-session-periods-step.component';
 import { TestSessionWorkflowActionComponent } from './test-session-workflow-action/test-session-workflow-action.component';
 import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { TestSessionDecisionDialogComponent } from './test-session-decision-dialog/test-session-decision-dialog.component';
 
 @Component({
   selector: 'app-test-session-workflow',
@@ -87,6 +88,7 @@ export class TestSessionWorkflowComponent {
   readonly editMode = signal(false);
   readonly viewMode = signal(false);
   readonly statusId = signal<string | null>(null);
+  readonly decisionNote = signal<string | null>(null);
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -171,6 +173,7 @@ export class TestSessionWorkflowComponent {
     this.testSessionId.set(session.testSessionId);
     this.sessionNo.set(session.sessionNo);
     this.statusId.set(session.statusId.toLowerCase());
+    this.decisionNote.set(session.decisionNote);
     this.selectedExamId = session.examId;
     this.candidateGenderFilter.set(session.genderFilter);
     this.candidateNationalityFilter.set(session.nationalityFilter);
@@ -363,6 +366,37 @@ export class TestSessionWorkflowComponent {
         },
         error: () => {},
       });
+    });
+  }
+
+  onReturnClicked(): void {
+    const testSessionId = this.testSessionId();
+    if (!testSessionId || this.saving() || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
+      !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)) return;
+
+    const dialogRef = this.dialogs.open(TestSessionDecisionDialogComponent, {
+      header: this.translate.instant('TEST_SESSION_WIZARD.RETURN_TITLE'),
+      width: 'min(32rem, 95vw)',
+      closable: true,
+      modal: true,
+      data: { action: 'return' },
+    });
+    if (!dialogRef) return;
+
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((note) => {
+      if (typeof note !== 'string' || !note.trim()) return;
+
+      this.saving.set(true);
+      this.service
+        .returnForEdit(testSessionId, note.trim())
+        .pipe(finalize(() => this.saving.set(false)), takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.RETURN_SUCCESS'));
+            void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+          },
+          error: () => this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.RETURN_FAILED')),
+        });
     });
   }
 

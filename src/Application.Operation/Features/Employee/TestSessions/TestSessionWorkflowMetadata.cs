@@ -12,7 +12,7 @@ internal sealed record TestSessionWorkflowMetadata(
 {
     internal void ApplyDecision(TestSession testSession, Guid statusId) => testSession.StatusId = statusId;
 
-    internal ActionLog CreateActionLog(TestSession testSession, string actionType) => new()
+    internal ActionLog CreateActionLog(TestSession testSession, string actionType, string? returnNote = null) => new()
     {
         UserId = ReviewerId,
         LogType = ActionLogType.Employee,
@@ -27,6 +27,7 @@ internal sealed record TestSessionWorkflowMetadata(
             status = NewStatus,
             performedBy = ReviewerId,
             performedAt = DecisionAt,
+            returnNote,
         }),
     };
 }

@@ -1,12 +1,14 @@
 using Application.Operation.Features.Employee.TestSessions.DTOs;
 using Application.Operation.Features.Employee.TestSessions.Queries;
 using Application.Operation.Features.Employee.TestSessions.Services;
+using System.Text.Json;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
+using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Queries;
@@ -69,12 +71,29 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
                     reservations, session.StartTime.Value, session.EndTime.Value));
         }
 
+        string? decisionNote = null;
+        if (session.StatusId == TestSessionStatusIds.Returned)
+        {
+            var actionLogNotes = await unitOfWork.Context.Set<ActionLog>().AsNoTracking()
+                .Where(log => log.EntityId == session.Id && log.Section == "TestSessionWorkflow" &&
+                              log.ActionType == "TestSessionReturnedForEdit")
+                .OrderByDescending(log => log.CreatedDate)
+                .Select(log => log.Notes)
+                .FirstOrDefaultAsync(ct);
+            if (!string.IsNullOrWhiteSpace(actionLogNotes))
+            {
+                using var document = JsonDocument.Parse(actionLogNotes);
+                if (document.RootElement.TryGetProperty("returnNote", out var noteElement))
+                    decisionNote = noteElement.GetString();
+            }
+        }
+
         return Result.Ok(new TestSessionEditDto(
             session.Id, session.SessionNo, session.ExamId, session.StatusId,
             session.GenderFilter, session.NationalityFilter, session.InvitationIds,
             session.TestSlotId, session.SlotName, session.SlotDate, session.SlotStartTime,
             session.SlotEndTime, session.RoomId, session.RoomName, session.RoomCapacity,
-            session.StartTime, session.EndTime, availableCapacity));
+            session.StartTime, session.EndTime, availableCapacity, decisionNote));
     }
 
     private static bool IsEditable(Guid statusId) =>
