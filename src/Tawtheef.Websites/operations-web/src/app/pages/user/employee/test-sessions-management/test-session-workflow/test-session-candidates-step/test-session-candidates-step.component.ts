@@ -66,6 +66,7 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   private readonly service = inject(TestSessionsService);
   private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
+  private loadSequence = 0;
 
   readonly candidates = signal<TestSessionCandidateListItemDto[]>([]);
   readonly searchedCandidates = computed(() => {
@@ -116,6 +117,9 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['search']) this.currentPage.set(1);
+    const backendFiltersChanged =
+      (!!changes['genderFilter'] && !changes['genderFilter'].firstChange) ||
+      (!!changes['nationalityFilter'] && !changes['nationalityFilter'].firstChange);
     if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter'] &&
       !changes['testSessionId']) return;
 
@@ -127,7 +131,7 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
       testSessionId: this.testSessionId() ?? undefined,
     }));
     this.currentPage.set(1);
-    this.loadCandidates();
+    this.loadCandidates(backendFiltersChanged);
   }
 
   onSearchChanged(search: string): void {
@@ -169,9 +173,10 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     this.selectedCandidateIdsChanged.emit([...ids]);
   }
 
-  private loadCandidates(): void {
+  private loadCandidates(reselectAllOnResult = false): void {
     if (!this.filters().examId) return;
 
+    const loadSequence = ++this.loadSequence;
     this.loading.set(true);
     this.loadFailed.set(false);
     this.stateChanged.emit(false);
@@ -180,11 +185,17 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+          if (loadSequence !== this.loadSequence) return;
+
           this.candidates.set(response.candidates);
+          const candidateIds = response.candidates.map((candidate) => candidate.invitationId);
+          const currentCandidateIds = new Set(candidateIds);
+          const selectedIds = reselectAllOnResult || !this.selectionInitialized()
+            ? candidateIds
+            : this.selectedCandidateIds().filter((id) => currentCandidateIds.has(id));
+          this.selectedCandidateIdsChanged.emit(selectedIds);
           if (!this.selectionInitialized()) {
-            this.selectionInitializedChanged.emit(
-              response.candidates.map((candidate) => candidate.invitationId),
-            );
+            this.selectionInitializedChanged.emit(candidateIds);
           }
           this.summary.set(response.summary);
           this.summaryChanged.emit(response.summary);
@@ -192,7 +203,10 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
           this.stateChanged.emit(true);
         },
         error: () => {
+          if (loadSequence !== this.loadSequence) return;
+
           this.candidates.set([]);
+          this.selectedCandidateIdsChanged.emit([]);
           this.summary.set({ total: 0, eligible: 0, notReady: 0, excluded: 0 });
           this.summaryChanged.emit({ total: 0, eligible: 0, notReady: 0, excluded: 0 });
           this.loading.set(false);

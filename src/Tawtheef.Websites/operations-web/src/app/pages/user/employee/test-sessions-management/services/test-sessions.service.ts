@@ -70,4 +70,8 @@ export class TestSessionsService {
       headers: { [HDR.SkipError]: 'true' },
     });
   }
+
+  approve(testSessionId: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSessions.approve(testSessionId), {});
+  }
 }

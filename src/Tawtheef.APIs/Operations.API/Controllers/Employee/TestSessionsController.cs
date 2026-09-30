@@ -69,4 +69,9 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
         [FromBody] SaveTestSessionSetupDto setup,
         CancellationToken ct)
         => (await mediator.Send(new SaveTestSessionSetupCommand(setup), ct)).ToActionResult();
+
+    [HttpPost("{id:guid}/approve")]
+    [AuthorizePermission(PermissionKeys.TestSessions.WorkflowActions)]
+    public async Task<IActionResult> Approve(Guid id, CancellationToken ct)
+        => (await mediator.Send(new ApproveTestSessionCommand(id), ct)).ToActionResult();
 }

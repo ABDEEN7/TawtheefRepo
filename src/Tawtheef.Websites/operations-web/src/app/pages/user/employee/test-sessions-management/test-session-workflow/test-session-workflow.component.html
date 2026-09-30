@@ -416,4 +416,8 @@
     </div>
   </div>
 </section>
-<app-test-session-workflow-action [statusId]="statusId()" [submitting]="saving()" />
+<app-test-session-workflow-action
+  [statusId]="statusId()"
+  [submitting]="saving()"
+  (approveClicked)="onApproveClicked()"
+/>

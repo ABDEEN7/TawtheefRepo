@@ -4,6 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
+import { DialogService } from 'primeng/dynamicdialog';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { Permissions } from '../../../../../core/constants/permissions';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { TestSessionCandidateSummaryDto } from '../models/test-session-candidate.dto';
 import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
@@ -16,6 +20,7 @@ import { TestSlotsService } from '../../test-slots-management/services/test-slot
 import {
   TestSessionEditDto,
   TestSessionLookupsDto,
+  TEST_SESSION_STATUS_IDS,
 } from '../models/test-session-list-item.dto';
 import {
   TestSessionGenderFilter,
@@ -29,6 +34,7 @@ import { TestSessionCandidatesStepComponent } from './test-session-candidates-st
 import { TestSessionExamSelectionStepComponent } from './test-session-exam-selection-step/test-session-exam-selection-step.component';
 import { TestSessionPeriodsStepComponent } from './test-session-periods-step/test-session-periods-step.component';
 import { TestSessionWorkflowActionComponent } from './test-session-workflow-action/test-session-workflow-action.component';
+import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-test-session-workflow',
@@ -45,9 +51,12 @@ import { TestSessionWorkflowActionComponent } from './test-session-workflow-acti
     TableModule,
     I18nNamespaceDirective,
   ],
+  providers: [DialogService],
 })
 export class TestSessionWorkflowComponent {
   private readonly service = inject(TestSessionsService);
+  private readonly auth = inject(AuthService);
+  private readonly dialogs = inject(DialogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly language = inject(LanguageService);
   private readonly testSlotsService = inject(TestSlotsService);
@@ -319,6 +328,42 @@ export class TestSessionWorkflowComponent {
 
   sendToApprove(): void {
     this.persistSession(true);
+  }
+
+  onApproveClicked(): void {
+    const testSessionId = this.testSessionId();
+    if (!testSessionId || this.saving() || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
+      !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)) return;
+
+    this.saving.set(true);
+    const dialogRef = this.dialogs.open(ConfirmationDialogComponent, {
+      header: this.translate.instant('TEST_SESSION_WIZARD.APPROVE_TITLE'),
+      width: 'min(32rem, 95vw)',
+      modal: true,
+      data: {
+        type: 'submit',
+        description: 'TEST_SESSION_WIZARD.APPROVE_CONFIRMATION',
+        confirmText: 'TEST_SESSION_WIZARD.CONFIRM_APPROVE',
+      },
+    });
+    if (!dialogRef) {
+      this.saving.set(false);
+      return;
+    }
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
+      if (confirmed !== true || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval) {
+        this.saving.set(false);
+        return;
+      }
+      this.service.approve(testSessionId).pipe(finalize(() => this.saving.set(false)),
+        takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.APPROVE_SUCCESS'));
+          void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+        },
+        error: () => {},
+      });
+    });
   }
 
   private persistSession(sendToApprove: boolean): void {
