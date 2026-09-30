@@ -21,7 +21,9 @@
         <div class="print-filters">
           <strong>{{ 'INTERVIEW_DASHBOARD.PRINT.FILTERS' | translate }}:</strong>
           @for (row of filterSummary(); track row.labelKey) {
-            <span class="print-filter-chip">{{ row.labelKey | translate }}: <bdi>{{ row.value }}</bdi></span>
+            <span class="print-filter-chip"
+              >{{ row.labelKey | translate }}: <bdi>{{ row.value }}</bdi></span
+            >
           } @empty {
             <span>{{ 'INTERVIEW_DASHBOARD.PRINT.NO_FILTERS' | translate }}</span>
           }
@@ -45,7 +47,7 @@
             <i class="hgi-stroke hgi-refresh" aria-hidden="true"></i>
             <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.REFRESH' | translate }}</span>
           </button>
-          <button
+          <!-- <button
             type="button"
             class="btn btn-primary dashboard-action-btn"
             (click)="facade.exportPdf()"
@@ -55,7 +57,7 @@
           >
             <i class="hgi-stroke hgi-printer" aria-hidden="true"></i>
             <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.EXPORT_PDF' | translate }}</span>
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -91,11 +93,16 @@
               }
             </section>
           } @else {
-            <section class="kpi-grid figma-kpi-grid" [class.is-refreshing]="store.overviewLoading()">
+            <section
+              class="kpi-grid figma-kpi-grid"
+              [class.is-refreshing]="store.overviewLoading()"
+            >
               @for (kpi of mainKpis(); track kpi.key) {
                 <ng-container *ngTemplateOutlet="kpiCard; context: { $implicit: kpi }" />
               } @empty {
-                <p class="text-muted m-0 empty-inline">{{ 'INTERVIEW_DASHBOARD.EMPTY.NO_SECTIONS' | translate }}</p>
+                <p class="text-muted m-0 empty-inline">
+                  {{ 'INTERVIEW_DASHBOARD.EMPTY.NO_SECTIONS' | translate }}
+                </p>
               }
             </section>
           }
@@ -120,7 +127,9 @@
             </div>
             <section class="pipeline-grid" [class.is-refreshing]="store.overviewLoading()">
               @for (kpi of pipelineKpis(); track kpi.key) {
-                <ng-container *ngTemplateOutlet="kpiCard; context: { $implicit: kpi, compact: true }" />
+                <ng-container
+                  *ngTemplateOutlet="kpiCard; context: { $implicit: kpi, compact: true }"
+                />
               }
             </section>
           </section>
@@ -145,7 +154,7 @@
                       chart: scheduleChart(),
                       items: scheduleStatusItems(),
                       total: overview.schedules.total,
-                      drillTab: 'schedules'
+                      drillTab: 'schedules',
                     }
                   "
                 />
@@ -161,7 +170,7 @@
                       chart: attendanceChart(),
                       items: attendanceItems(),
                       total: overview.candidates.scheduled,
-                      drillTab: 'candidates'
+                      drillTab: 'candidates',
                     }
                   "
                 />
@@ -178,7 +187,7 @@
                       items: decisionItems(),
                       total: overview.results.candidates,
                       drillTab: 'results',
-                      footer: reportStatusItems()
+                      footer: reportStatusItems(),
                     }
                   "
                 />
@@ -194,7 +203,7 @@
                       chart: typeChart(),
                       items: typeItems(),
                       total: overview.candidates.scheduled,
-                      drillTab: 'candidates'
+                      drillTab: 'candidates',
                     }
                   "
                 />
@@ -207,7 +216,9 @@
                   <article class="operation-card chart-card activity-card">
                     <div class="operation-card-header">
                       <div class="operation-card-title">
-                        <div class="operation-card-icon blue"><i class="hgi-stroke hgi-chart-line-data-01"></i></div>
+                        <div class="operation-card-icon blue">
+                          <i class="hgi-stroke hgi-chart-line-data-01"></i>
+                        </div>
                         <div>
                           <h4>{{ 'INTERVIEW_DASHBOARD.CHARTS.ACTIVITY' | translate }}</h4>
                           <small class="text-muted">
@@ -223,7 +234,12 @@
                     </div>
                     @if (hasActivity()) {
                       <div class="wide-chart-wrapper">
-                        <p-chart type="line" [data]="activityChart()" [options]="activityOptions()" height="100%" />
+                        <p-chart
+                          type="line"
+                          [data]="activityChart()"
+                          [options]="activityOptions()"
+                          height="100%"
+                        />
                       </div>
                     } @else {
                       <ng-container *ngTemplateOutlet="chartEmpty" />
@@ -234,20 +250,35 @@
                   <article class="operation-card chart-card issues-card">
                     <div class="operation-card-header">
                       <div class="operation-card-title">
-                        <div class="operation-card-icon orange"><i class="hgi-stroke hgi-alert-02"></i></div>
+                        <div class="operation-card-icon orange">
+                          <i class="hgi-stroke hgi-alert-02"></i>
+                        </div>
                         <div>
                           <h4>{{ 'INTERVIEW_DASHBOARD.CHARTS.ISSUES' | translate }}</h4>
                           <small class="text-muted">
-                            {{ 'INTERVIEW_DASHBOARD.CHARTS.ISSUES_SUMMARY' | translate: { open: overview.issues.open, total: overview.issues.total } }}
+                            {{
+                              'INTERVIEW_DASHBOARD.CHARTS.ISSUES_SUMMARY'
+                                | translate
+                                  : { open: overview.issues.open, total: overview.issues.total }
+                            }}
                           </small>
                         </div>
                       </div>
                     </div>
                     @if (overview.issues.total > 0) {
                       <div class="wide-chart-wrapper">
-                        <p-chart type="bar" [data]="issueChart()" [options]="issueOptions()" height="100%" />
+                        <p-chart
+                          type="bar"
+                          [data]="issueChart()"
+                          [options]="issueOptions()"
+                          height="100%"
+                        />
                       </div>
-                      <button class="operation-card-btn no-print" type="button" (click)="drill('issues')">
+                      <button
+                        class="operation-card-btn no-print"
+                        type="button"
+                        (click)="drill('issues')"
+                      >
                         <i class="hgi-stroke hgi-view"></i>
                         <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.VIEW_DETAILS' | translate }}</span>
                       </button>
@@ -319,7 +350,10 @@
         <i [class]="'hgi-stroke ' + kpi.icon" aria-hidden="true"></i>
       </div>
     </div>
-    <div class="kpi-value" [attr.aria-label]="(kpi.labelKey | translate) + ': ' + (kpi.value | number: '1.0-0')">
+    <div
+      class="kpi-value"
+      [attr.aria-label]="(kpi.labelKey | translate) + ': ' + (kpi.value | number: '1.0-0')"
+    >
       {{ kpi.value | number: '1.0-0' }}
     </div>
     <div class="kpi-status figma-kpi-status">
@@ -365,7 +399,9 @@
           <strong>{{ item.count | number: '1.0-0' }}</strong>
         </div>
       } @empty {
-        <p class="text-muted text-center m-0">{{ 'INTERVIEW_DASHBOARD.EMPTY.NO_DATA' | translate }}</p>
+        <p class="text-muted text-center m-0">
+          {{ 'INTERVIEW_DASHBOARD.EMPTY.NO_DATA' | translate }}
+        </p>
       }
     </div>
 
@@ -373,7 +409,9 @@
       <div class="legend-footer">
         <span class="text-muted">{{ 'INTERVIEW_DASHBOARD.CHARTS.REPORTS' | translate }}:</span>
         @for (row of footer; track row.label) {
-          <span class="legend-footer-chip">{{ row.label }} <strong>{{ row.count }}</strong></span>
+          <span class="legend-footer-chip"
+            >{{ row.label }} <strong>{{ row.count }}</strong></span
+          >
         }
       </div>
     }

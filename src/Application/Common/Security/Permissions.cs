@@ -980,4 +980,29 @@ public static class Permissions
     }
     #endregion
 
+    #region InterviewCommitteeReview
+    // Viewing the Committee Head Review (and its system suggestion) and overriding that suggestion
+    // are separate capabilities - the override is enforced server-side in SaveCommitteeReviewCommandHandler.
+    public static class InterviewCommitteeReview
+    {
+        public static readonly PermissionDefinition View =
+            Def(
+                PermissionKeys.InterviewCommitteeReview.View,
+                nameof(PermissionKeys.InterviewCommitteeReview),
+                PermissionAction.View,
+                "Committee Head Review - View",
+                "مراجعة نتائج اللجنة - عرض",
+                114);
+
+        public static readonly PermissionDefinition OverrideSuggestion =
+            Def(
+                PermissionKeys.InterviewCommitteeReview.OverrideSuggestion,
+                nameof(PermissionKeys.InterviewCommitteeReview),
+                PermissionAction.Changes,
+                "Committee Head Review - Override Suggestion",
+                "مراجعة نتائج اللجنة - تعديل المقترح",
+                115);
+    }
+    #endregion
+
 }

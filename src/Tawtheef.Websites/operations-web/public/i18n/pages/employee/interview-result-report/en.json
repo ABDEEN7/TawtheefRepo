@@ -60,7 +60,15 @@
   "INTERVIEW_RESULT_REPORT.DETAIL.CONFIRM_APPROVE_DESCRIPTION": "The selected final decisions will be saved and applied to each candidate's application. This cannot be undone.",
   "INTERVIEW_RESULT_REPORT.DETAIL.DECISIONS_REQUIRED": "Select a final decision for every candidate before approving.",
   "INTERVIEW_RESULT_REPORT.DETAIL.APPROVED_SUCCESS": "Interview results approved successfully.",
+  "INTERVIEW_RESULT_REPORT.DETAIL.CLOSED_BY_ATTENDANCE_HINT": "The appointment was closed for this reason, so the candidate is scored 0.",
 
   "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE": "Operational Notes",
-  "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.COLUMN_CREATED": "Created At"
+  "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.COLUMN_CREATED": "Created At",
+  "INTERVIEW_RESULT_REPORT.STATUS.DISCARDED": "Discarded",
+  "INTERVIEW_RESULT_REPORT.LIST.DISCARDED_HINT": "Discarded on {{date}} because a candidate was rescheduled (reason: {{reason}}). A new report is generated automatically once the schedule is complete.",
+  "INTERVIEW_RESULT_REPORT.LIST.DISCARDED_NO_OPEN": "Discarded report - replaced by the schedule's new report",
+  "INTERVIEW_RESULT_REPORT.STATUS.COMMITTEE_REVIEW": "Committee Review",
+  "INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_CHAIR_RECOMMENDATION": "Committee Head Recommendation",
+  "INTERVIEW_RESULT_REPORT.DETAIL.CHAIR_KEPT_SUGGESTION": "Same as system suggestion",
+  "INTERVIEW_RESULT_REPORT.DETAIL.SCHOOL_STAGE": "School Stage"
 }

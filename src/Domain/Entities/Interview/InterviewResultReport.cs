@@ -9,9 +9,12 @@ namespace Tawtheef.Domain.Entities.Interview;
 [Table(nameof(InterviewResultReport), Schema = Schemas.Interview)]
 public class InterviewResultReport : EventEntity
 {
-    // serial Num,Code (REP-INT-<year>-<number>).
+    // Both are database-generated and never set by application code - same pattern as
+    // InterviewCommittee: Number comes from the itv.InterviewResultReportNumber sequence and Code is a
+    // persisted column derived from it (REP-INT-<year>-<number>).
     public int Number { get; private set; }
     public string Code { get; private set; } = null!;
+
     public Guid InterviewScheduleId { get; set; }
     public InterviewSchedule? InterviewSchedule { get; set; }
 
@@ -25,6 +28,11 @@ public class InterviewResultReport : EventEntity
     public DateTime? ApprovedAt { get; set; }
     public DateTime? ClosedAt { get; set; }
     public string? DecisionNotes { get; set; }
+
+    // Committee Head Review - who sent the report on to final approval, and when.
+    public Guid? CommitteeReviewedById { get; set; }
+    public User? CommitteeReviewedBy { get; set; }
+    public DateTime? CommitteeReviewedAt { get; set; }
 
     public ICollection<InterviewResultCandidate> Candidates { get; set; } = [];
 
@@ -41,13 +49,29 @@ public class InterviewResultReport : EventEntity
     }
 
     // Called once, immediately after Create() and after all Candidates/Axes are attached, within the
-    // same generation call - callers never observe a persisted Creating report.
-    public Result MarkReadyForReview()
+    // same generation call - callers never observe a persisted Creating report. A new report first
+    // goes to the Committee Head (chair) review; only SendForApproval moves it on to UnderReview.
+    public Result MarkReadyForCommitteeReview()
     {
         if (Status != ResultReportStatus.Creating)
             return Result.Fail(new Error(ErrorsCodes.InterviewResultReportNotUnderReview));
 
+        Status = ResultReportStatus.CommitteeReview;
+        return Result.Ok();
+    }
+
+    // The chair may keep editing the recommendation after sending it, until the approver approves.
+    [NotMapped]
+    public bool IsCommitteeReviewEditable => Status is ResultReportStatus.CommitteeReview or ResultReportStatus.UnderReview;
+
+    public Result SendForApproval(Guid reviewerId)
+    {
+        if (Status != ResultReportStatus.CommitteeReview)
+            return Result.Fail(new Error(ErrorsCodes.InterviewResultReportNotInCommitteeReview));
+
         Status = ResultReportStatus.UnderReview;
+        CommitteeReviewedById = reviewerId;
+        CommitteeReviewedAt = DateTime.UtcNow;
         return Result.Ok();
     }
 
@@ -83,7 +107,11 @@ public class InterviewResultReport : EventEntity
 
 public enum ResultReportStatus
 {
+    // Declared in lifecycle order. The numbers are stored in the database, so they are never renumbered:
+    // CommitteeReview was added later and keeps 6 even though it comes second in the flow.
     Creating = 1,
+    // Generated, waiting for the Committee Head (chair) to review it and send it to final approval.
+    CommitteeReview = 6,
     UnderReview = 2,
     Returned = 3,
     Approved = 4,

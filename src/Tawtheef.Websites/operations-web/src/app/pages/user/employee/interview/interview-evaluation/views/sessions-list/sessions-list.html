@@ -125,6 +125,21 @@
                 [attr.aria-label]="'INTERVIEW_EVALUATION.VIEW' | translate">
                 <i class="hgi hgi-stroke hgi-view"></i>
               </button>
+              @if (store.committeeReviewState(row.id); as reviewState) {
+                @if (reviewState !== 'hidden') {
+                  <ng-container *hasPermission="Permissions.InterviewCommitteeReview.View">
+                    <!-- Disabled buttons swallow hover, so the tooltip sits on a wrapper. -->
+                    <span [pTooltip]="(reviewState === 'enabled' ? 'INTERVIEW_EVALUATION.REVIEW.OPEN' : 'INTERVIEW_EVALUATION.REVIEW.NOT_READY') | translate"
+                      tooltipPosition="top">
+                      <button type="button" class="btn" [disabled]="reviewState !== 'enabled'"
+                        (click)="service.openCommitteeReview(row.id)"
+                        [attr.aria-label]="'INTERVIEW_EVALUATION.REVIEW.OPEN' | translate">
+                        <i class="hgi hgi-stroke hgi-task-done-01"></i>
+                      </button>
+                    </span>
+                  </ng-container>
+                }
+              }
             </div>
           </td>
         </tr>

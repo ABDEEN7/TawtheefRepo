@@ -1,0 +1,81 @@
+// Mirrors the demo's 4-card session summary (prep-stat-card blue/green/gold/rose).
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 84px;
+  border: 1px solid #e2dddf;
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  &.blue {
+    background: #edf3fd;
+    border-color: #dbe7fa;
+    .stat-icon {
+      color: #4368b5;
+    }
+  }
+
+  &.green {
+    background: #eef5f1;
+    border-color: #dde8e0;
+    .stat-icon {
+      color: #5b8f6b;
+    }
+  }
+
+  &.gold {
+    background: #f7f0df;
+    border-color: #ebdfbf;
+    .stat-icon {
+      color: #b5882f;
+    }
+  }
+
+  &.rose {
+    background: #fbf2f4;
+    border-color: #f0dde3;
+    .stat-icon {
+      color: #b03a56;
+    }
+  }
+}
+
+.stat-icon {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.stat-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-label {
+  color: #8a8588;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  color: #151214;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}

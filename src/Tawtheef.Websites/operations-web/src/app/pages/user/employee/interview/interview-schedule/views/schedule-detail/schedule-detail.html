@@ -122,7 +122,7 @@
                       <i class="hgi hgi-stroke hgi-notification-02"></i>
                     </button>
                   }
-                  @if (store.detailSchedule() && canReschedule(store.detailSchedule()!.status) && appointment.invitationId) {
+                  @if (store.detailSchedule() && canReschedule(store.detailSchedule()!.status) && isMovable(appointment)) {
                     <button type="button" class="btn" (click)="reschedule(appointment)"
                       [pTooltip]="'INTERVIEW_SCHEDULE.DETAIL.RESCHEDULE' | translate" tooltipPosition="top">
                       <i class="hgi hgi-stroke hgi-calendar-03"></i>

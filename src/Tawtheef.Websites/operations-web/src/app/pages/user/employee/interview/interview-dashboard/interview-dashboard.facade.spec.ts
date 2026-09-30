@@ -1,6 +1,6 @@
 import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { LanguageService } from '../../../../../core/services/language.service';
@@ -21,15 +21,39 @@ describe('Interview dashboard date ranges', () => {
   it('resolves today / this week (Sunday start) / this month', () => {
     jasmine.clock().mockDate(new Date(2026, 8, 24, 15, 0)); // Thursday 24 Sep 2026
 
-    expect(resolveRange('today', null, null)).toEqual({ preset: 'today', from: '2026-09-24', to: '2026-09-24' });
-    expect(resolveRange('week', null, null)).toEqual({ preset: 'week', from: '2026-09-20', to: '2026-09-26' });
-    expect(resolveRange('month', null, null)).toEqual({ preset: 'month', from: '2026-09-01', to: '2026-09-30' });
+    expect(resolveRange('today', null, null)).toEqual({
+      preset: 'today',
+      from: '2026-09-24',
+      to: '2026-09-24',
+    });
+    expect(resolveRange('week', null, null)).toEqual({
+      preset: 'week',
+      from: '2026-09-20',
+      to: '2026-09-26',
+    });
+    expect(resolveRange('month', null, null)).toEqual({
+      preset: 'month',
+      from: '2026-09-01',
+      to: '2026-09-30',
+    });
   });
 
   it('keeps a valid custom range and repairs a reversed or half range', () => {
-    expect(resolveRange('custom', '2026-09-01', '2026-09-10')).toEqual({ preset: 'custom', from: '2026-09-01', to: '2026-09-10' });
-    expect(resolveRange('custom', '2026-09-10', '2026-09-01')).toEqual({ preset: 'custom', from: '2026-09-10', to: '2026-09-10' });
-    expect(resolveRange('custom', '2026-09-10', null)).toEqual({ preset: 'custom', from: '2026-09-10', to: '2026-09-10' });
+    expect(resolveRange('custom', '2026-09-01', '2026-09-10')).toEqual({
+      preset: 'custom',
+      from: '2026-09-01',
+      to: '2026-09-10',
+    });
+    expect(resolveRange('custom', '2026-09-10', '2026-09-01')).toEqual({
+      preset: 'custom',
+      from: '2026-09-10',
+      to: '2026-09-10',
+    });
+    expect(resolveRange('custom', '2026-09-10', null)).toEqual({
+      preset: 'custom',
+      from: '2026-09-10',
+      to: '2026-09-10',
+    });
   });
 
   it('falls back to all dates for a malformed custom range', () => {
@@ -56,7 +80,11 @@ describe('InterviewDashboardFacade URL state', () => {
   let store: InterviewDashboardStore;
   let facade: InterviewDashboardFacade;
 
-  const setup = (query: Record<string, string>, sections = overview(true, true), permissions = true) => {
+  const setup = (
+    query: Record<string, string>,
+    sections = overview(true, true),
+    permissions = true,
+  ) => {
     params$ = new BehaviorSubject(convertToParamMap(query));
     api = jasmine.createSpyObj<InterviewDashboardService>('InterviewDashboardService', [
       'getOverview',
@@ -66,13 +94,18 @@ describe('InterviewDashboardFacade URL state', () => {
       'listIssues',
       'lookups',
     ]);
-    const emptyPage = of({ items: [], metadata: { totalCount: 0, pageSize: 10, currentPage: 1 } as any });
+    const emptyPage = of({
+      items: [],
+      metadata: { totalCount: 0, pageSize: 10, currentPage: 1 } as any,
+    });
     api.getOverview.and.returnValue(of(sections));
     api.listSchedules.and.returnValue(emptyPage);
     api.listCandidates.and.returnValue(emptyPage);
     api.listResults.and.returnValue(emptyPage);
     api.listIssues.and.returnValue(emptyPage);
-    api.lookups.and.returnValue(of([{ id: 'job-1', nameAr: 'وظيفة', nameEn: 'Job', hintAr: null, hintEn: null }]));
+    api.lookups.and.returnValue(
+      of([{ id: 'job-1', nameAr: 'وظيفة', nameEn: 'Job', hintAr: null, hintEn: null }]),
+    );
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
 
     TestBed.configureTestingModule({
@@ -92,10 +125,24 @@ describe('InterviewDashboardFacade URL state', () => {
   };
 
   it('restores filters, tab and the job label from the URL', () => {
-    setup({ job: 'job-1', type: '2', decision: '3', tab: 'results', range: 'custom', from: '2026-09-01', to: '2026-09-05' });
+    setup({
+      job: 'job-1',
+      type: '2',
+      decision: '3',
+      tab: 'results',
+      range: 'custom',
+      from: '2026-09-01',
+      to: '2026-09-05',
+    });
 
     expect(store.filters()).toEqual(
-      jasmine.objectContaining({ jobId: 'job-1', interviewType: 2, finalDecision: 3, fromDate: '2026-09-01', toDate: '2026-09-05' }),
+      jasmine.objectContaining({
+        jobId: 'job-1',
+        interviewType: 2,
+        finalDecision: 3,
+        fromDate: '2026-09-01',
+        toDate: '2026-09-05',
+      }),
     );
     expect(store.activeTab()).toBe('results');
     expect(store.jobOption()?.label).toBe('Job');
@@ -112,7 +159,10 @@ describe('InterviewDashboardFacade URL state', () => {
   it('moves off a tab the server says the user may not see', () => {
     setup({ tab: 'results' }, overview(true, false), false);
 
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { tab: null } }));
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({ queryParams: { tab: null } }),
+    );
     expect(api.listResults).not.toHaveBeenCalled();
   });
 
@@ -134,5 +184,30 @@ describe('InterviewDashboardFacade URL state', () => {
 
     params$.next(convertToParamMap({ tab: 'issues', type: '1' }));
     expect(api.getOverview).toHaveBeenCalledTimes(2);
+  });
+
+  it('a KPI drill-down fetches the target table once instead of aborting its own request', () => {
+    setup({});
+    const pending = new Subject<any>();
+    api.listCandidates.and.returnValue(pending);
+
+    // What drill('candidates') does: set the quick view (starts the request), then switch the tab via the URL.
+    facade.setAttendanceView(null);
+    params$.next(convertToParamMap({ tab: 'candidates' }));
+
+    expect(api.listCandidates).toHaveBeenCalledTimes(1);
+    expect(pending.observed).toBeTrue();
+  });
+
+  it('still refetches an in-flight table when the filters change', () => {
+    setup({ tab: 'candidates' });
+    api.listCandidates.and.returnValue(new Subject<any>());
+    facade.setAttendanceView(null);
+    const before = api.listCandidates.calls.count();
+
+    params$.next(convertToParamMap({ tab: 'candidates', type: '1' }));
+
+    expect(api.listCandidates.calls.count()).toBe(before + 1);
+    expect(api.listCandidates.calls.mostRecent().args[0].interviewType).toBe(1);
   });
 });

@@ -54,6 +54,7 @@ export const FINAL_DECISION_COLOR: Record<FinalDecision, string> = {
 
 export const RESULT_REPORT_STATUS_COLOR: Record<ResultReportStatus, string> = {
   [ResultReportStatus.Creating]: C.muted,
+  [ResultReportStatus.CommitteeReview]: C.muted,
   [ResultReportStatus.UnderReview]: C.warning,
   [ResultReportStatus.Returned]: C.orange,
   [ResultReportStatus.Approved]: C.success,

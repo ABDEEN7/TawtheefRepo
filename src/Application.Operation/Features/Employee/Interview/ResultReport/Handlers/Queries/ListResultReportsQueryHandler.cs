@@ -24,7 +24,9 @@ public sealed class ListResultReportsQueryHandler(IUnitOfWork unitOfWork)
         var query = unitOfWork.GetEntityRepository<InterviewResultReport>().DbSet.AsNoTracking()
             .IgnoreQueryFilters()
             .Where(r => !r.InterviewSchedule!.IsDeleted
-                && (!r.IsDeleted || discards.Any(l => l.EntityId == r.Id)));
+                && (!r.IsDeleted || discards.Any(l => l.EntityId == r.Id)))
+            // Still with the Committee Head - reaches the approver only once the chair sends it on.
+            .Where(r => r.Status != ResultReportStatus.CommitteeReview);
 
         if (request.JobId.HasValue)
             query = query.Where(r => r.InterviewSchedule!.JobId == request.JobId.Value);

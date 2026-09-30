@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { LanguageService, Lang } from '../../../../../core/services/language.service';
 
-import { FinalDecision, ResultReportStatus } from './models/enums';
+import { DISCARDED_REPORT_FILTER, FinalDecision, ResultReportListStatusFilter, ResultReportStatus } from './models/enums';
 import { ResultReportListItemModel, ResultReportModel } from './models/result-report.model';
 
 export type ResultReportView = 'list' | 'report';
@@ -20,7 +20,7 @@ export class InterviewResultReportStore {
   private reportsResult = signal<ResultReportListItemModel[]>([]);
   listLoading = signal(false);
   search = signal('');
-  statusFilter = signal<ResultReportStatus | null>(null);
+  statusFilter = signal<ResultReportListStatusFilter | null>(null);
   jobFilter = signal<string | null>(null);
 
   // ResultReportListItemDto carries no JobId - the job filter keys on the Arabic job name (always
@@ -43,7 +43,9 @@ export class InterviewResultReportStore {
     const status = this.statusFilter();
     const job = this.jobFilter();
     return this.reportsResult().filter((r) => {
-      if (status !== null && r.status !== status) return false;
+      // A discarded report keeps its last status but is only shown under the "Discarded" filter.
+      if (status === DISCARDED_REPORT_FILTER && !r.isDiscarded) return false;
+      if (status !== null && status !== DISCARDED_REPORT_FILTER && (r.isDiscarded || r.status !== status)) return false;
       if (job !== null && r.jobNameAr !== job) return false;
       if (!term) return true;
       return [r.code, r.jobNameAr, r.jobNameEn, r.scheduleTitleAr, r.scheduleTitleEn].some((value) =>
@@ -97,7 +99,7 @@ export class InterviewResultReportStore {
     this.page.set(1);
   }
 
-  setStatusFilter(value: ResultReportStatus | null) {
+  setStatusFilter(value: ResultReportListStatusFilter | null) {
     this.statusFilter.set(value);
     this.page.set(1);
   }

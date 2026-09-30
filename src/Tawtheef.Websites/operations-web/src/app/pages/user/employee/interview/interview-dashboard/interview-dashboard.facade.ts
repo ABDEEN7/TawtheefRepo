@@ -101,7 +101,11 @@ export class InterviewDashboardFacade {
   setDatePreset(preset: DatePreset): void {
     if (preset === 'custom') {
       const { fromDate, toDate } = this.store.filters();
-      this.navigate({ [Q.range]: 'custom', [Q.from]: fromDate ?? toIsoDate(new Date()), [Q.to]: toDate ?? toIsoDate(new Date()) });
+      this.navigate({
+        [Q.range]: 'custom',
+        [Q.from]: fromDate ?? toIsoDate(new Date()),
+        [Q.to]: toDate ?? toIsoDate(new Date()),
+      });
       return;
     }
     this.navigate({ [Q.range]: preset === 'all' ? null : preset, [Q.from]: null, [Q.to]: null });
@@ -109,7 +113,11 @@ export class InterviewDashboardFacade {
 
   setCustomRange(from: Date | null, to: Date | null): void {
     if (!from) return;
-    this.navigate({ [Q.range]: 'custom', [Q.from]: toIsoDate(from), [Q.to]: toIsoDate(to ?? from) });
+    this.navigate({
+      [Q.range]: 'custom',
+      [Q.from]: toIsoDate(from),
+      [Q.to]: toIsoDate(to ?? from),
+    });
   }
 
   setJob(option: LazySelectOption | null): void {
@@ -130,7 +138,10 @@ export class InterviewDashboardFacade {
     this.navigate({ [Q.schedule]: option?.value ?? null });
   }
 
-  setEnumFilter(key: 'type' | 'scheduleStatus' | 'reportStatus' | 'decision', value: number | null): void {
+  setEnumFilter(
+    key: 'type' | 'scheduleStatus' | 'reportStatus' | 'decision',
+    value: number | null,
+  ): void {
     this.navigate({ [Q[key]]: value ?? null });
   }
 
@@ -138,7 +149,11 @@ export class InterviewDashboardFacade {
     this.store.jobOption.set(null);
     this.store.committeeOption.set(null);
     this.store.scheduleOption.set(null);
-    const cleared = Object.fromEntries(Object.values(Q).filter((k) => k !== Q.tab).map((k) => [k, null]));
+    const cleared = Object.fromEntries(
+      Object.values(Q)
+        .filter((k) => k !== Q.tab)
+        .map((k) => [k, null]),
+    );
     this.navigate(cleared);
   }
 
@@ -184,7 +199,9 @@ export class InterviewDashboardFacade {
     this.lookup(InterviewDashboardLookupKind.Job, term);
 
   readonly searchCommittees = (term: string): Observable<LazySelectOption[]> =>
-    this.lookup(InterviewDashboardLookupKind.Committee, term, { jobId: this.store.filters().jobId });
+    this.lookup(InterviewDashboardLookupKind.Committee, term, {
+      jobId: this.store.filters().jobId,
+    });
 
   readonly searchSchedules = (term: string): Observable<LazySelectOption[]> =>
     this.lookup(InterviewDashboardLookupKind.Schedule, term, { jobId: this.store.filters().jobId });
@@ -238,12 +255,16 @@ export class InterviewDashboardFacade {
     const filtersKey = JSON.stringify(filters);
     if (filtersKey !== this.lastFiltersKey) {
       this.lastFiltersKey = filtersKey;
-      // New filter set: every cached table page is stale.
-      for (const key of REPORT_TABS) this.patchTable(key, { page: null, pageNumber: 1 });
+      // New filter set: every cached table page is stale, including a request still in flight for the old one.
+      for (const key of REPORT_TABS)
+        this.patchTable(key, { page: null, pageNumber: 1, loading: false });
       this.loadOverview();
     }
     this.ensureTabAvailable();
-    if (!this.table(tab).page) this.loadTable(tab);
+    // A drill-down (KPI card) already started this table's request before switching the tab; loading again
+    // would make switchMap abort that request mid-query.
+    const table = this.table(tab);
+    if (!table.page && !table.loading) this.loadTable(tab);
   }
 
   private ensureTabAvailable(): void {
@@ -305,12 +326,20 @@ export class InterviewDashboardFacade {
         .subscribe((items) => set(items[0] ? this.toOption(items[0]) : null));
     };
 
-    restore(filters.jobId, this.store.jobOption(), InterviewDashboardLookupKind.Job, (o) => this.store.jobOption.set(o));
-    restore(filters.committeeId, this.store.committeeOption(), InterviewDashboardLookupKind.Committee, (o) =>
-      this.store.committeeOption.set(o),
+    restore(filters.jobId, this.store.jobOption(), InterviewDashboardLookupKind.Job, (o) =>
+      this.store.jobOption.set(o),
     );
-    restore(filters.scheduleId, this.store.scheduleOption(), InterviewDashboardLookupKind.Schedule, (o) =>
-      this.store.scheduleOption.set(o),
+    restore(
+      filters.committeeId,
+      this.store.committeeOption(),
+      InterviewDashboardLookupKind.Committee,
+      (o) => this.store.committeeOption.set(o),
+    );
+    restore(
+      filters.scheduleId,
+      this.store.scheduleOption(),
+      InterviewDashboardLookupKind.Schedule,
+      (o) => this.store.scheduleOption.set(o),
     );
   }
 
@@ -319,7 +348,9 @@ export class InterviewDashboardFacade {
     term: string,
     options: { jobId?: string } = {},
   ): Observable<LazySelectOption[]> {
-    return this.api.lookups(kind, term, options).pipe(map((items) => items.map((item) => this.toOption(item))));
+    return this.api
+      .lookups(kind, term, options)
+      .pipe(map((items) => items.map((item) => this.toOption(item))));
   }
 
   private toOption(item: InterviewDashboardLookup): LazySelectOption {

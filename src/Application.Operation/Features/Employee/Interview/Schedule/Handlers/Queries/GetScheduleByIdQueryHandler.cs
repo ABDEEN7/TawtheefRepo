@@ -30,6 +30,14 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.JobId == schedule.JobId && c.IsActive, cancellationToken);
 
+        var appointmentIds = schedule.Appointments.Select(a => a.Id).ToList();
+        var issueTypesByAppointment = (await unitOfWork.GetEntityRepository<InterviewOperationalIssue>().DbSet
+            .AsNoTracking()
+            .Where(i => appointmentIds.Contains(i.InterviewAppointmentId))
+            .Select(i => new { i.InterviewAppointmentId, i.IssueType })
+            .ToListAsync(cancellationToken))
+            .ToLookup(i => i.InterviewAppointmentId, i => i.IssueType);
+
         var appointments = schedule.Appointments
             .OrderBy(a => a.StartAt)
             .Select(a => new AppointmentDto(
@@ -57,7 +65,8 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
                 a.CancellationReason,
                 a.InvitationSentAt.AsUtcOffset(),
                 a.LastReminderSentAt.AsUtcOffset(),
-                a.ReminderCount))
+                a.ReminderCount,
+                InterviewAppointment.IsLateCandidate(a.AttendanceStatus, issueTypesByAppointment[a.Id])))
             .ToList();
 
         // Superseded (rescheduled) and cancelled rows are not part of the live slot set the edit wizard restores.

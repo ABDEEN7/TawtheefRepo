@@ -28,4 +28,6 @@ public sealed record AppointmentDto(
     string? CancellationReason,
     DateTimeOffset? InvitationSentAt,
     DateTimeOffset? LastReminderSentAt,
-    int ReminderCount);
+    int ReminderCount,
+    // Arrived late (InterviewAppointment.IsLateCandidate): attendance stays Present, the UI adds a hint.
+    bool IsLate);

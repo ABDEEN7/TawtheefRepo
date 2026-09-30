@@ -74,6 +74,7 @@
               <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_CANDIDATE' | translate }}</th>
               <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_SCORE' | translate }}</th>
               <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_QUALIFICATION' | translate }}</th>
+              <th style="min-width: 200px;">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_CHAIR_RECOMMENDATION' | translate }}</th>
               <th style="min-width: 240px;">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_DECISION' | translate }}</th>
               <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_AXES_SCORES' | translate }}</th>
               <th>{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_NOTES' | translate }}</th>
@@ -86,12 +87,42 @@
                 @if (candidate.candidateQid) {
                   <small class="text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATE_QID' | translate }}: <bdi dir="ltr">{{ candidate.candidateQid }}</bdi></small>
                 }
+                @if (candidate.isLate || closedAttendanceLabel(candidate)) {
+                  <div class="d-flex flex-wrap gap-1 mt-1">
+                    @if (closedAttendanceLabel(candidate); as attendanceLabel) {
+                      <span class="pill danger" [pTooltip]="'INTERVIEW_RESULT_REPORT.DETAIL.CLOSED_BY_ATTENDANCE_HINT' | translate" tooltipPosition="top">
+                        {{ attendanceLabel | translate }}
+                      </span>
+                    }
+                    @if (candidate.isLate) {
+                      <span class="pill warning" [pTooltip]="'INTERVIEW_EVALUATION.ATTENDANCE_STATUS.LATE_HINT' | translate" tooltipPosition="top">
+                        <i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i>
+                        {{ 'INTERVIEW_EVALUATION.ATTENDANCE_STATUS.LATE' | translate }}
+                      </span>
+                    }
+                  </div>
+                }
               </td>
               <td class="fw-semibold">{{ candidate.finalScore | number: '1.0-2' }}</td>
               <td>
                 <span [class]="'pill ' + (candidate.isQualified ? 'success' : 'danger')">
                   {{ (candidate.isQualified ? 'INTERVIEW_RESULT_REPORT.QUALIFIED' : 'INTERVIEW_RESULT_REPORT.NOT_QUALIFIED') | translate }}
                 </span>
+              </td>
+              <td>
+                @if (candidate.chairRecommendedDecision) {
+                  <span [class]="'pill ' + decisionPill(candidate.chairRecommendedDecision)">{{ decisionLabel(candidate.chairRecommendedDecision) | translate }}</span>
+                  @if (candidate.chairRecommendationReason) {
+                    <div class="text-muted small mt-1 text-break">{{ candidate.chairRecommendationReason }}</div>
+                  }
+                } @else {
+                  <span class="text-muted small">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CHAIR_KEPT_SUGGESTION' | translate }}</span>
+                }
+                @if (schoolStageName(candidate); as stage) {
+                  <div class="small mt-1">
+                    <span class="text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SCHOOL_STAGE' | translate }}:</span> {{ stage }}
+                  </div>
+                }
               </td>
               <td>
                 @if (editable()) {
@@ -154,7 +185,7 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.NO_CANDIDATES' | translate }}</td>
+              <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.NO_CANDIDATES' | translate }}</td>
             </tr>
           </ng-template>
         </p-table>

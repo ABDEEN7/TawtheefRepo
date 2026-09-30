@@ -1,0 +1,11 @@
+<div i18nNamespace="pages/employee/interview-evaluation" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+  @if (store.view() === 'list') {
+    <app-sessions-list />
+  }
+  @if (store.view() === 'session') {
+    <app-session-detail />
+  }
+  @if (store.view() === 'candidate') {
+    <app-candidate-evaluation />
+  }
+</div>

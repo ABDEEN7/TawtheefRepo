@@ -1,4 +1,4 @@
-import { Permissions } from '../../../core/constants/permissions';
+import { InterviewDashboardPermissions, Permissions } from '../../../core/constants/permissions';
 import { routes } from '../../../routes/routes';
 
 export interface MenuItem {
@@ -147,14 +147,20 @@ export class Sidebar {
       permission: Permissions.QuestionBankRequests.View,
     },
 
-    { 
+    {
       key: 'test-slots',
       label: 'internal.sidebar.testSlots',
       icon: 'hgi-calendar-03',
       route: routes.portal.testSlotsManagement,
-      permission: Permissions.TestSlots.View
+      permission: Permissions.TestSlots.View,
     },
-    
+    {
+      key: 'interview-dashboard',
+      label: 'internal.sidebar.interview-dashboard',
+      icon: 'hgi-dashboard-square-02',
+      route: routes.portal.interviewDashboard,
+      permission: InterviewDashboardPermissions,
+    },
     {
       key: 'interview-axes-criteria',
       label: 'internal.sidebar.interview-axes-criteria',

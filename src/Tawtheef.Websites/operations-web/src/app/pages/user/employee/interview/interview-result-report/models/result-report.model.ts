@@ -41,9 +41,20 @@ export interface ResultCandidateModel {
   finalScore: number;
   qualificationScore: number | null;
   isQualified: boolean;
+  // AttendanceStatus (interview-evaluation/models/enums): Absent (NoShow) / Withdrew explain a 0 score.
+  attendanceStatus: number | null;
+  // Arrived late - shown next to the candidate, lateness can affect selection priority.
+  isLate: boolean;
   finalDecision: FinalDecision | null;
   decisionReason: string | null;
   suggestedDecision: FinalDecision;
+  // Committee Head Review - the chair's override of suggestedDecision (null = kept the suggestion),
+  // which pre-fills the approver's dropdown, and the optional recommended school stage.
+  chairRecommendedDecision: FinalDecision | null;
+  chairRecommendationReason: string | null;
+  recommendedSchoolStageId: string | null;
+  recommendedSchoolStageNameAr: string | null;
+  recommendedSchoolStageNameEn: string | null;
   snapshotAt: string;
   operationalIssues: OperationalIssueModel[];
   axes: ResultCandidateAxisModel[];

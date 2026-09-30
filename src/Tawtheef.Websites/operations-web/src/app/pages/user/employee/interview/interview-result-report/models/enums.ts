@@ -1,6 +1,10 @@
 // Mirrors Tawtheef.Domain.Entities.Interview.ResultReportStatus.
+// Declared in lifecycle order; the numbers are the stored backend values and are never renumbered
+// (CommitteeReview was added later, so it keeps 6 even though it comes second in the flow).
 export enum ResultReportStatus {
   Creating = 1,
+  // Waiting for the Committee Head (chair) review - not yet sent to final approval.
+  CommitteeReview = 6,
   UnderReview = 2,
   Returned = 3,
   Approved = 4,
@@ -37,6 +41,7 @@ export type ResultReportListStatusFilter = ResultReportStatus | typeof DISCARDED
 
 export const RESULT_REPORT_STATUS_LABELS: Record<ResultReportStatus, string> = {
   [ResultReportStatus.Creating]: 'INTERVIEW_RESULT_REPORT.STATUS.CREATING',
+  [ResultReportStatus.CommitteeReview]: 'INTERVIEW_RESULT_REPORT.STATUS.COMMITTEE_REVIEW',
   [ResultReportStatus.UnderReview]: 'INTERVIEW_RESULT_REPORT.STATUS.UNDER_REVIEW',
   [ResultReportStatus.Returned]: 'INTERVIEW_RESULT_REPORT.STATUS.RETURNED',
   [ResultReportStatus.Approved]: 'INTERVIEW_RESULT_REPORT.STATUS.APPROVED',
@@ -45,6 +50,7 @@ export const RESULT_REPORT_STATUS_LABELS: Record<ResultReportStatus, string> = {
 
 export const RESULT_REPORT_STATUS_PILL: Record<ResultReportStatus, 'neutral' | 'warning' | 'danger' | 'success' | 'info'> = {
   [ResultReportStatus.Creating]: 'neutral',
+  [ResultReportStatus.CommitteeReview]: 'neutral',
   [ResultReportStatus.UnderReview]: 'warning',
   [ResultReportStatus.Returned]: 'danger',
   [ResultReportStatus.Approved]: 'success',

@@ -540,6 +540,7 @@ export class EndpointsService {
     return: this.getFullUrl('/InterviewSchedule/return'),
     cancel: this.getFullUrl('/InterviewSchedule/cancel'),
     appointmentReschedule: this.getFullUrl('/InterviewSchedule/appointments/reschedule'),
+    appointmentRescheduleSlots: this.getFullUrl('/InterviewSchedule/appointments/reschedule-slots'),
     appointmentSendNotification: this.getFullUrl(
       '/InterviewSchedule/appointments/send-notification',
     ),
@@ -577,6 +578,13 @@ export class EndpointsService {
     bySchedule: (scheduleId: string) =>
       this.getFullUrl(`/InterviewResultReport/schedule/${scheduleId}`),
     approve: this.getFullUrl('/InterviewResultReport/approve'),
+  };
+  interviewCommitteeReview = {
+    list: this.getFullUrl('/InterviewCommitteeReview'),
+    bySchedule: (scheduleId: string) =>
+      this.getFullUrl(`/InterviewCommitteeReview/schedule/${scheduleId}`),
+    save: this.getFullUrl('/InterviewCommitteeReview'),
+    schoolStages: this.getFullUrl('/InterviewCommitteeReview/lookups/school-stages'),
   };
   interviewDashboard = {
     overview: this.getFullUrl('/InterviewDashboard/overview'),

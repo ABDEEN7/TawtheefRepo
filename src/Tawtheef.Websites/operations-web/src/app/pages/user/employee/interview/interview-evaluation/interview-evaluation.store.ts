@@ -6,7 +6,10 @@ import { AppointmentModel } from '../interview-schedule/models/appointment.model
 import { InterviewType, ScheduleStatus } from '../interview-schedule/models/enums';
 import { ScheduleModel } from '../interview-schedule/models/schedule.model';
 
+import { FinalDecision, ResultReportStatus } from '../interview-result-report/models/enums';
+
 import { SessionListRowModel } from './models/session-row.model';
+import { CommitteeReviewListItemModel, CommitteeReviewModel, SchoolStageOption } from './models/committee-review.model';
 import { OperationalIssueModel } from './models/operational-issue.model';
 import {
   AppointmentEvaluationContextModel,
@@ -14,7 +17,14 @@ import {
   MemberEvaluationFormModel,
 } from './models/evaluation.model';
 
-export type EvaluationView = 'list' | 'session' | 'candidate';
+export type EvaluationView = 'list' | 'session' | 'candidate' | 'review';
+
+// Report statuses in which the chair can still open and edit the Committee Head Review - once the
+// report is approved (or closed) the Committee Review action is hidden.
+export const COMMITTEE_REVIEW_EDITABLE_STATUSES: ResultReportStatus[] = [
+  ResultReportStatus.CommitteeReview,
+  ResultReportStatus.UnderReview,
+];
 
 // Schedules whose interviewing can be running or has run - the "Start Interview" list only ever
 // shows these (see interview-evaluation.facade.ts loadSessions). Closed stays reachable only via
@@ -109,6 +119,31 @@ export class InterviewEvaluationStore {
     const id = this.selectedAppointmentId();
     return id ? (this.detailAppointments().find((a) => a.id === id) ?? null) : null;
   });
+
+  // ======== Committee Head Review ========
+  // Reports the caller may review, keyed by schedule id. A schedule missing here has no report yet
+  // (not every candidate is done) or the caller isn't its chair.
+  committeeReviews = signal<Record<string, CommitteeReviewListItemModel>>({});
+  review = signal<CommitteeReviewModel | null>(null);
+  reviewLoading = signal(false);
+  reviewSaving = signal(false);
+  schoolStages = signal<SchoolStageOption[]>([]);
+  // Chair's working selection, keyed by candidate id - seeded from the saved recommendation, or the
+  // system suggestion when the chair hasn't overridden it (see facade seedReview).
+  reviewDecisions = signal<Record<string, FinalDecision>>({});
+  reviewReasons = signal<Record<string, string>>({});
+  reviewStages = signal<Record<string, string | null>>({});
+
+  reviewEditable = computed(() => this.review()?.canEdit ?? false);
+  reviewInCommitteeStage = computed(() => this.review()?.status === ResultReportStatus.CommitteeReview);
+
+  // The Committee Review action for a schedule: 'hidden' once its report is approved/closed,
+  // 'disabled' while there's no report the caller can review, 'enabled' otherwise.
+  committeeReviewState(scheduleId: string | null | undefined): 'enabled' | 'disabled' | 'hidden' {
+    const entry = scheduleId ? this.committeeReviews()[scheduleId] : undefined;
+    if (!entry) return 'disabled';
+    return COMMITTEE_REVIEW_EDITABLE_STATUSES.includes(entry.status) ? 'enabled' : 'hidden';
+  }
 
   // ---- setters ----
   setCurrentLang(lang: Lang) {
@@ -222,5 +257,44 @@ export class InterviewEvaluationStore {
     this.candidateForm.set(null);
     this.candidateSummary.set(null);
     this.candidateIssues.set([]);
+  }
+
+  // ---- Committee Head Review ----
+  setCommitteeReviews(items: CommitteeReviewListItemModel[]) {
+    this.committeeReviews.set(Object.fromEntries(items.map((i) => [i.interviewScheduleId, i])));
+  }
+
+  setReview(review: CommitteeReviewModel | null) {
+    this.review.set(review);
+  }
+
+  setReviewLoading(value: boolean) {
+    this.reviewLoading.set(value);
+  }
+
+  setReviewSaving(value: boolean) {
+    this.reviewSaving.set(value);
+  }
+
+  setSchoolStages(stages: SchoolStageOption[]) {
+    this.schoolStages.set(stages);
+  }
+
+  seedReview(decisions: Record<string, FinalDecision>, reasons: Record<string, string>, stages: Record<string, string | null>) {
+    this.reviewDecisions.set(decisions);
+    this.reviewReasons.set(reasons);
+    this.reviewStages.set(stages);
+  }
+
+  setReviewDecision(candidateId: string, decision: FinalDecision) {
+    this.reviewDecisions.update((map) => ({ ...map, [candidateId]: decision }));
+  }
+
+  setReviewReason(candidateId: string, reason: string) {
+    this.reviewReasons.update((map) => ({ ...map, [candidateId]: reason }));
+  }
+
+  setReviewStage(candidateId: string, stageId: string | null) {
+    this.reviewStages.update((map) => ({ ...map, [candidateId]: stageId }));
   }
 }

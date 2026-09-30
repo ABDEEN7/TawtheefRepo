@@ -9,6 +9,8 @@ import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
 
 import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
+import { HasPermissionDirective } from '../../../../../../../shared/directives/has-permission.directive';
+import { Permissions } from '../../../../../../../core/constants/permissions';
 
 import { InterviewType, ScheduleStatus } from '../../../interview-schedule/models/enums';
 import { SessionSummary, summarizeSessions } from '../../../interview-schedule/models/schedule-time';
@@ -28,9 +30,21 @@ import {
   selector: 'app-sessions-list',
   templateUrl: './sessions-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, FormsModule, TranslatePipe, TableModule, ButtonModule, Select, Tooltip, PaginationComponent],
+  imports: [
+    DatePipe,
+    FormsModule,
+    TranslatePipe,
+    TableModule,
+    ButtonModule,
+    Select,
+    Tooltip,
+    PaginationComponent,
+    HasPermissionDirective,
+  ],
 })
 export class SessionsListComponent {
+  readonly Permissions = Permissions;
+
   store = inject(InterviewEvaluationStore);
   service = inject(InterviewEvaluationFacade);
 

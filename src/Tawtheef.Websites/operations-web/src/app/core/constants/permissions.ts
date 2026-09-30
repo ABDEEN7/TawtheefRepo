@@ -202,6 +202,10 @@ export const Permissions = {
     View: 'interview-result-report.view',
     Manage: 'interview-result-report.manage',
   },
+  InterviewCommitteeReview: {
+    View: 'interview-committee-review.view',
+    OverrideSuggestion: 'interview-committee-review.override-suggestion',
+  },
 } as const;
 
 // Each section is still gated by its own module permission -  InterviewDashboardAccessResolver.

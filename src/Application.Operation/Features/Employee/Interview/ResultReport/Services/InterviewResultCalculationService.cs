@@ -10,7 +10,8 @@ namespace Application.Operation.Features.Employee.Interview.ResultReport.Service
 
 // Auto-generation entry point, called (before SaveChanges, same transaction) from every action that
 // can be the one that finishes a schedule: a member Submit that completes an appointment, a manual
-// CompleteAppointmentEvaluation, recording NoShow/Withdrew attendance, and cancelling an appointment.
+// CompleteAppointmentEvaluation, recording an absent candidate, a Candidate Withdrawal operational
+// issue, and cancelling an appointment.
 // Fires the whole schedule's InterviewResultReport exactly once, the moment the LAST live appointment
 // becomes ready for review. Every early exit here returns Ok(): the triggering action must never fail
 // because the schedule/template isn't ready yet or isn't configured for a supported calculation
@@ -33,7 +34,7 @@ public static class InterviewResultCalculationService
         if (liveAppointments.Count == 0)
             return Result.Ok();
 
-        if (liveAppointments.Any(a => !IsReadyForReview(a)))
+        if (liveAppointments.Any(a => !a.IsReadyForReview))
             return Result.Ok();
 
         var alreadyExists = await unitOfWork.GetEntityRepository<InterviewResultReport>().DbSet
@@ -70,6 +71,16 @@ public static class InterviewResultCalculationService
 
         foreach (var appointment in liveAppointments)
         {
+            // Absent or withdrawn: scored 0 and never qualified, whatever was scored before a withdrawal -
+            // and even when the template has no qualification score (which would otherwise pass 0).
+            if (appointment.IsClosedByAttendance)
+            {
+                report.Candidates.Add(InterviewResultCandidate.Create(
+                    appointment.Id, 0, version.QualificationScore, isQualified: false,
+                    CalculationMethod.AverageOfEvaluators, DateTime.UtcNow));
+                continue;
+            }
+
             var evaluations = await unitOfWork.GetEntityRepository<InterviewMemberEvaluation>().DbSet
                 .AsNoTracking()
                 .Include(e => e.CriterionScores)
@@ -80,7 +91,7 @@ public static class InterviewResultCalculationService
             report.Candidates.Add(candidate);
         }
 
-        var readyResult = report.MarkReadyForReview();
+        var readyResult = report.MarkReadyForCommitteeReview();
         if (readyResult.IsFailed)
             return readyResult;
 
@@ -144,14 +155,4 @@ public static class InterviewResultCalculationService
 
         return candidate;
     }
-
-    // "Done" for final-review purposes, not just "evaluated" - StartInterview() requires
-    // AttendanceStatus == Present, so a NoShow/Withdrew appointment can NEVER reach Completed on its
-    // own. Without this, a schedule with even one such candidate would never generate a report at all,
-    // even though that candidate has clearly "reached the point where their evaluation/review is
-    // available" (there's simply nothing more to wait for). Late is deliberately excluded - it's a
-    // transient marker, expected to be corrected to Present once the candidate actually arrives.
-    private static bool IsReadyForReview(InterviewAppointment appointment) =>
-        appointment.Status is AppointmentStatus.Completed or AppointmentStatus.Closed
-        || appointment.AttendanceStatus is AttendanceStatus.NoShow or AttendanceStatus.Withdrew;
 }

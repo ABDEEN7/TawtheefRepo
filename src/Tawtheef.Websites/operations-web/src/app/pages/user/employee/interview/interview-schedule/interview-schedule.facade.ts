@@ -3,7 +3,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, distinctUntilChanged, firstValueFrom, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
+import {
+  catchError,
+  distinctUntilChanged,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+} from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { NotificationService } from '../../../../../core/services/notification.service';
@@ -24,6 +34,7 @@ import {
 import { InterviewType, ScheduleStatus } from './models/enums';
 import { LazySelectOption } from './models/lazy-select-option.model';
 import { SchedulePlanPreviewModel } from './models/plan-preview.model';
+import { RescheduleSlotModel } from './models/reschedule-slot.model';
 import { RoomOptionModel, ScheduleListItemModel, ScheduleModel } from './models/schedule.model';
 import { newPeriodDraft, PeriodDraft, WizardJobContext } from './models/wizard-draft.model';
 import { localToUtcIso } from './models/schedule-time';
@@ -141,8 +152,12 @@ export class InterviewScheduleFacade {
   // ======== Lookups ========
   searchJobs = (term: string): Observable<LazySelectOption<WizardJobContext>[]> =>
     this.publishedJobStatusId$.pipe(
-      switchMap((statusId) => (statusId ? this.api.searchPublishedJobs(statusId, term.trim()) : of(null))),
-      map((result) => (result?.items ?? []).slice(0, MAX_JOB_OPTIONS).map((job) => this.toJobOption(job))),
+      switchMap((statusId) =>
+        statusId ? this.api.searchPublishedJobs(statusId, term.trim()) : of(null),
+      ),
+      map((result) =>
+        (result?.items ?? []).slice(0, MAX_JOB_OPTIONS).map((job) => this.toJobOption(job)),
+      ),
       catchError(() => of([])),
     );
 
@@ -173,7 +188,9 @@ export class InterviewScheduleFacade {
       value: room.id,
       label: this.localized(room.nameAr, room.nameEn),
       hint: this.localized(room.locationNameAr, room.locationNameEn),
-      searchText: [room.nameAr, room.nameEn, room.locationNameAr, room.locationNameEn].filter(Boolean).join(' '),
+      searchText: [room.nameAr, room.nameEn, room.locationNameAr, room.locationNameEn]
+        .filter(Boolean)
+        .join(' '),
       data: room,
     };
   }
@@ -274,7 +291,9 @@ export class InterviewScheduleFacade {
     const code = body?.error?.[0]?.message || body?.detail || 'UN_EXPECTED_ERROR';
     const key = `server-error.${code}`;
     const translated = this.translate.instant(key);
-    return translated !== key ? translated : this.translate.instant('server-error.UN_EXPECTED_ERROR');
+    return translated !== key
+      ? translated
+      : this.translate.instant('server-error.UN_EXPECTED_ERROR');
   }
 
   // ======== Wizard: step 2 ========
@@ -309,8 +328,13 @@ export class InterviewScheduleFacade {
 
   // ======== Wizard: step 3 ========
   reassignCandidate(invitationId: string, newSlotStartAt: string) {
-    const existing = this.store.wizardManualAssignments().filter((m) => m.invitationId !== invitationId);
-    this.store.setWizardManualAssignments([...existing, { slotStartAt: newSlotStartAt, invitationId }]);
+    const existing = this.store
+      .wizardManualAssignments()
+      .filter((m) => m.invitationId !== invitationId);
+    this.store.setWizardManualAssignments([
+      ...existing,
+      { slotStartAt: newSlotStartAt, invitationId },
+    ]);
     this.schedulePreview();
   }
 
@@ -377,7 +401,9 @@ export class InterviewScheduleFacade {
   }
 
   private buildManualAssignmentPayloads(): ManualAssignmentPayload[] {
-    return this.store.wizardManualAssignments().map((m) => ({ slotStartAt: m.slotStartAt, invitationId: m.invitationId }));
+    return this.store
+      .wizardManualAssignments()
+      .map((m) => ({ slotStartAt: m.slotStartAt, invitationId: m.invitationId }));
   }
 
   // ======== Validation ========
@@ -391,16 +417,22 @@ export class InterviewScheduleFacade {
   private validateStep1(): boolean {
     const info = this.store.wizardInfo();
     if (!info.jobId) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.JOB_REQUIRED');
-    if (this.store.wizardContextLoading()) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.CONTEXT_LOADING');
-    if (!this.store.wizardContext()) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.CONTEXT_MISSING');
-    if (info.interviewType === null) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.TYPE_REQUIRED');
+    if (this.store.wizardContextLoading())
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.CONTEXT_LOADING');
+    if (!this.store.wizardContext())
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.CONTEXT_MISSING');
+    if (info.interviewType === null)
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.TYPE_REQUIRED');
     return true;
   }
 
   private validateStep2(): boolean {
-    if (this.store.wizardPeriods().length === 0) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PERIODS_REQUIRED');
-    if (this.store.wizardPreviewLoading()) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PREVIEW_PENDING');
-    if (!this.store.wizardPreview()) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PREVIEW_PENDING');
+    if (this.store.wizardPeriods().length === 0)
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PERIODS_REQUIRED');
+    if (this.store.wizardPreviewLoading())
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PREVIEW_PENDING');
+    if (!this.store.wizardPreview())
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PREVIEW_PENDING');
     return true;
   }
 
@@ -408,7 +440,9 @@ export class InterviewScheduleFacade {
     const preview = this.store.wizardPreview();
     if (!preview) return this.fail('INTERVIEW_SCHEDULE.VALIDATION.PREVIEW_PENDING');
     if (preview.unassignedCandidateCount > 0) {
-      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.UNASSIGNED_CANDIDATES', { count: preview.unassignedCandidateCount });
+      return this.fail('INTERVIEW_SCHEDULE.VALIDATION.UNASSIGNED_CANDIDATES', {
+        count: preview.unassignedCandidateCount,
+      });
     }
     return true;
   }
@@ -433,7 +467,9 @@ export class InterviewScheduleFacade {
       // No session-title field anywhere in the wizard - auto-generated from the job, matching the demo (which
       // doesn't collect one either).
       const titleAr = `جدول مقابلات - ${context.jobTitleNameAr}`;
-      const titleEn = context.jobTitleNameEn ? `Interview Schedule - ${context.jobTitleNameEn}` : null;
+      const titleEn = context.jobTitleNameEn
+        ? `Interview Schedule - ${context.jobTitleNameEn}`
+        : null;
       const core = {
         interviewType: info.interviewType!,
         titleAr,
@@ -455,7 +491,9 @@ export class InterviewScheduleFacade {
 
       if (sendForApproval) await firstValueFrom(this.api.submitSchedule(scheduleId!));
 
-      this.toast(sendForApproval ? 'INTERVIEW_SCHEDULE.SUBMIT_SUCCESS' : 'INTERVIEW_SCHEDULE.DRAFT_SAVED');
+      this.toast(
+        sendForApproval ? 'INTERVIEW_SCHEDULE.SUBMIT_SUCCESS' : 'INTERVIEW_SCHEDULE.DRAFT_SAVED',
+      );
       this.store.setView('list');
       this.loadSchedules();
     } catch {
@@ -495,7 +533,11 @@ export class InterviewScheduleFacade {
   }
 
   approveSchedule(id: string, decisionNotes: string | null) {
-    this.runDetailAction(this.api.approveSchedule(id, decisionNotes), 'INTERVIEW_SCHEDULE.APPROVED', id);
+    this.runDetailAction(
+      this.api.approveSchedule(id, decisionNotes),
+      'INTERVIEW_SCHEDULE.APPROVED',
+      id,
+    );
   }
 
   returnSchedule(id: string, reason: string) {
@@ -509,20 +551,33 @@ export class InterviewScheduleFacade {
   sendReminder(appointmentId: string, alreadySent: boolean) {
     this.api.sendAppointmentNotification(appointmentId).subscribe({
       next: () => {
-        this.toast(alreadySent ? 'INTERVIEW_SCHEDULE.REMINDER_SENT' : 'INTERVIEW_SCHEDULE.NOTIFICATION_SENT');
+        this.toast(
+          alreadySent ? 'INTERVIEW_SCHEDULE.REMINDER_SENT' : 'INTERVIEW_SCHEDULE.NOTIFICATION_SENT',
+        );
         const schedule = this.store.detailSchedule();
         if (schedule) this.loadDetail(schedule.id);
       },
     });
   }
 
+  // Handed to the reschedule dialog so it can load (and retry) its own slot list.
+  loadRescheduleSlots = (scheduleId: string, appointmentId: string): Observable<RescheduleSlotModel[]> =>
+    this.api.getRescheduleSlots(scheduleId, appointmentId);
+
   rescheduleAppointment(payload: RescheduleAppointmentPayload) {
+    const reload = () => {
+      const schedule = this.store.detailSchedule();
+      if (schedule) this.loadDetail(schedule.id);
+    };
+
     this.api.rescheduleAppointment(payload).subscribe({
       next: () => {
         this.toast('INTERVIEW_SCHEDULE.APPOINTMENT_RESCHEDULED');
-        const schedule = this.store.detailSchedule();
-        if (schedule) this.loadDetail(schedule.id);
+        reload();
       },
+      // The error toast comes from the HTTP layer. A failure usually means someone else changed the slot or the
+      // appointment meanwhile (slot taken, concurrent update), so refresh the table to show what's really booked.
+      error: () => reload(),
     });
   }
 

@@ -51,12 +51,35 @@ public class InterviewAppointment : EventEntity
     // "Live" candidate appointment = has a real candidate (not a Held slot) and wasn't pulled out of the
     // running (not Cancelled/Rescheduled - a Rescheduled row is superseded by its replacement, which is
     // itself live). Single definition shared by result-report generation and the Interview Dashboard;
+    // the expression translates to SQL, the compiled form evaluates tracked (unsaved) instances.
     public static readonly Expression<Func<InterviewAppointment, bool>> IsLiveCandidate = a =>
         a.InvitationId != null
         && a.Status != AppointmentStatus.Cancelled
         && a.Status != AppointmentStatus.Rescheduled;
 
     public static readonly Func<InterviewAppointment, bool> IsLiveCandidateCompiled = IsLiveCandidate.Compile();
+
+    // An open seat in its schedule: a generated slot nobody is assigned to (surplus capacity from
+    // creation, or a seat vacated by a reschedule). ScheduleAppointmentPlanner.DistributeCandidates
+    // pairs slots and candidates 1:1, so every slot seats exactly one candidate and an open slot is
+    // exactly one remaining seat. Shared by the reschedule slot lookup and the reschedule command.
+    public static readonly Expression<Func<InterviewAppointment, bool>> IsOpenSlot = a =>
+        a.Status == AppointmentStatus.Held && a.InvitationId == null;
+
+    public static readonly Func<InterviewAppointment, bool> IsOpenSlotCompiled = IsOpenSlot.Compile();
+
+    // "Done" for final-review purposes, not just "evaluated" - StartInterview() requires
+    // AttendanceStatus == Present, so a NoShow/Withdrew appointment can NEVER reach Completed on its
+    // own. Without this, a schedule with even one such candidate would never generate a report at all,
+    // even though that candidate has clearly "reached the point where their evaluation/review is
+    // available" (there's simply nothing more to wait for). ApplyAttendanceOutcome now closes those
+    // appointments outright; the attendance check still covers rows recorded before it did. A late
+    // candidate is Present and follows the normal flow.
+    [NotMapped]
+    public bool IsReadyForReview =>
+        Status is AppointmentStatus.Completed or AppointmentStatus.Closed
+        || AttendanceStatus is Interview.AttendanceStatus.NoShow or Interview.AttendanceStatus.Withdrew;
+
     public static InterviewAppointment Create(
         Guid interviewScheduleId, Guid interviewCommitteeId, InterviewType interviewType,
         Guid? roomId, string? remoteMeetingUrl, string? remoteMeetingInstructions,
@@ -115,7 +138,7 @@ public class InterviewAppointment : EventEntity
         return Result.Ok();
     }
 
-    // Marks THIS row superseded; the handler creates the new replacement row and links
+    // Marks THIS row superseded; the handler moves the candidate into the replacement row and links
     // it back via RescheduledFromAppointmentId. AttendanceStatus is left untouched.
     // allowCompleted is a narrow, caller-verified exception for the Final Review corrective-reschedule
     // scenario only (a Completed appointment whose schedule's result report is still UnderReview) -
@@ -126,8 +149,26 @@ public class InterviewAppointment : EventEntity
         if (editable.IsFailed && !(allowCompleted && Status == AppointmentStatus.Completed))
             return editable;
 
+        // Only the candidate's live booking can move. EnsureEditable lets an already-Rescheduled or
+        // Cancelled row through (it only guards started/finished interviews), and moving one of those
+        // would give the candidate a second live appointment next to the replacement they already have.
+        if (Status is not (AppointmentStatus.Scheduled or AppointmentStatus.Completed))
+            return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotScheduled));
+
         Status = AppointmentStatus.Rescheduled;
         RescheduleReason = reason;
+        return Result.Ok();
+    }
+
+    // The receiving side of a reschedule: this open slot takes over the candidate of the row that was
+    // just marked Rescheduled, and links back to it.
+    public Result AcceptRescheduledCandidate(Guid invitationId, Guid rescheduledFromAppointmentId)
+    {
+        var assignResult = AssignCandidate(invitationId);
+        if (assignResult.IsFailed)
+            return assignResult;
+
+        RescheduledFromAppointmentId = rescheduledFromAppointmentId;
         return Result.Ok();
     }
 
@@ -142,9 +183,71 @@ public class InterviewAppointment : EventEntity
         return Result.Ok();
     }
 
-    public Result RecordAttendance(AttendanceStatus attendanceStatus)
+    // The single place attendance changes, and with it the closure rules (attendance.md):
+    //
+    //   outcome   | AttendanceStatus    | Appointment
+    //   ----------+---------------------+-----------------------------------------------
+    //   Present   | Present             | normal flow (StartInterview is a separate step)
+    //   NoShow    | NoShow ("Absent")   | Scheduled -> Closed (only before the interview starts)
+    //   Withdrew  | Withdrew            | Scheduled / InInterview / UnderEvaluation -> Closed
+    //   Late      | unchanged (Present) | NOT closed - lateness is a flag (a Late operational issue)
+    //
+    // Invariant: an appointment is never Scheduled/InInterview/UnderEvaluation while its attendance is
+    // NoShow or Withdrew - those outcomes close it in the same call, and are final. The result report
+    // scores a closed-by-attendance candidate 0 (InterviewResultCalculationService).
+    // The caller decides who may record which outcome: the chair's attendance command only allows
+    // Present/NoShow; Withdrew and Late come from operational issues.
+    public Result ApplyAttendanceOutcome(AttendanceStatus outcome)
+    {
+        if (InvitationId is null)
+            return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotScheduled));
+
+        if (IsClosedByAttendance)
+            return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentAttendanceFinal));
+
+        switch (outcome)
+        {
+            case Interview.AttendanceStatus.Present:
+                // Re-confirming Present is harmless; a first Present is only recorded on a Scheduled booking.
+                if (Status != AppointmentStatus.Scheduled && AttendanceStatus != Interview.AttendanceStatus.Present)
+                    return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotScheduled));
+                AttendanceStatus = Interview.AttendanceStatus.Present;
+                return Result.Ok();
+
+            case Interview.AttendanceStatus.NoShow:
+                if (Status != AppointmentStatus.Scheduled || ActualStartAt is not null)
+                    return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentAbsentAfterStart));
+                return CloseWithAttendance(Interview.AttendanceStatus.NoShow);
+
+            case Interview.AttendanceStatus.Withdrew:
+                if (Status is not (AppointmentStatus.Scheduled or AppointmentStatus.InInterview or AppointmentStatus.UnderEvaluation))
+                    return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentWithdrawalNotAllowed));
+                return CloseWithAttendance(Interview.AttendanceStatus.Withdrew);
+
+            case Interview.AttendanceStatus.Late:
+                return Result.Ok();
+
+            default:
+                return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentAttendanceStatusNotAllowed));
+        }
+    }
+
+    // Lateness is a flag, not an attendance value: a Late operational issue on the appointment (attendance
+    // stays Present). AttendanceStatus.Late is still honoured for rows recorded before that rule. Queries
+    // that project straight to SQL spell the same rule inline.
+    public static bool IsLateCandidate(AttendanceStatus? attendanceStatus, IEnumerable<OperationalIssueType> issueTypes) =>
+        attendanceStatus == Interview.AttendanceStatus.Late || issueTypes.Contains(OperationalIssueType.Late);
+
+    // Absent/withdrawn: the appointment is over for good - no interview, no reschedule, score 0.
+    [NotMapped]
+    public bool IsClosedByAttendance =>
+        AttendanceStatus is Interview.AttendanceStatus.NoShow or Interview.AttendanceStatus.Withdrew;
+
+    private Result CloseWithAttendance(AttendanceStatus attendanceStatus)
     {
         AttendanceStatus = attendanceStatus;
+        Status = AppointmentStatus.Closed;
+        ClosedAt = DateTime.UtcNow;
         return Result.Ok();
     }
 
@@ -183,11 +286,12 @@ public class InterviewAppointment : EventEntity
         return Result.Ok();
     }
 
-    // A distinct, later, chair-triggered step from Completed -- "closing freezes
-    // evaluations and triggers calculation" (step 8, once it exists).
+    // A distinct, later step from Completed -- "closing freezes evaluations". Chair-triggered, or done
+    // by the schedule once its result report is approved. A NoShow/Withdrew candidate never reaches
+    // Completed, so anything ready for review (and not already Closed) may close.
     public Result Close()
     {
-        if (Status != AppointmentStatus.Completed)
+        if (Status == AppointmentStatus.Closed || !IsReadyForReview)
             return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotCompleted));
 
         Status = AppointmentStatus.Closed;

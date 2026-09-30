@@ -183,6 +183,15 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    // Manage only, same as the reschedule it feeds: the open slots a candidate can be moved into.
+    [HttpGet("appointments/reschedule-slots")]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    public async Task<IActionResult> GetAvailableSlotsForReschedule([FromQuery] GetAvailableSlotsForRescheduleQuery query, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(query, cancellationToken);
+        return result.ToActionResult();
+    }
+
     [HttpPut("appointments/reschedule")]
     [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
     public async Task<IActionResult> RescheduleAppointment([FromBody] RescheduleAppointmentCommand command, CancellationToken cancellationToken)

@@ -8,9 +8,7 @@ public sealed class RescheduleAppointmentCommandValidator : AbstractValidator<Re
     public RescheduleAppointmentCommandValidator()
     {
         RuleFor(x => x.AppointmentId).NotEmpty();
-        RuleFor(x => x.NewEndAt).GreaterThan(x => x.NewStartAt);
-        RuleFor(x => x.RemoteMeetingUrl).MaximumLength(1000);
-        RuleFor(x => x.RemoteMeetingInstructions).MaximumLength(1000);
+        RuleFor(x => x.TargetSlotId).NotEmpty();
         RuleFor(x => x.Reason).NotEmpty().MaximumLength(1000);
     }
 }

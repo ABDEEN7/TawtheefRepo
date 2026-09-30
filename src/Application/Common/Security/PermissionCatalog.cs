@@ -139,6 +139,9 @@ public static class PermissionCatalog
         Permissions.InterviewResultReport.View,
         Permissions.InterviewResultReport.Manage,
 
+        Permissions.InterviewCommitteeReview.View,
+        Permissions.InterviewCommitteeReview.OverrideSuggestion,
+
     ]);
 
     public static readonly ISet<string> Keys =

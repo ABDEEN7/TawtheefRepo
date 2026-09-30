@@ -60,7 +60,15 @@
   "INTERVIEW_RESULT_REPORT.DETAIL.CONFIRM_APPROVE_DESCRIPTION": "سيتم حفظ القرارات النهائية المختارة وتطبيقها على طلب كل مرشح. لا يمكن التراجع عن هذا الإجراء.",
   "INTERVIEW_RESULT_REPORT.DETAIL.DECISIONS_REQUIRED": "يرجى اختيار القرار النهائي لكل مرشح قبل الاعتماد.",
   "INTERVIEW_RESULT_REPORT.DETAIL.APPROVED_SUCCESS": "تم اعتماد نتائج المقابلات بنجاح.",
+  "INTERVIEW_RESULT_REPORT.DETAIL.CLOSED_BY_ATTENDANCE_HINT": "أُغلق الموعد لهذا السبب، لذا احتُسبت درجة المرشح صفرًا.",
 
   "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE": "الملاحظات التشغيلية",
-  "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.COLUMN_CREATED": "تاريخ الإنشاء"
+  "INTERVIEW_RESULT_REPORT.NOTES_DIALOG.COLUMN_CREATED": "تاريخ الإنشاء",
+  "INTERVIEW_RESULT_REPORT.STATUS.DISCARDED": "مُلغى",
+  "INTERVIEW_RESULT_REPORT.LIST.DISCARDED_HINT": "أُلغي بتاريخ {{date}} بسبب إعادة جدولة أحد المرشحين (السبب: {{reason}}). يُنشأ تقرير جديد تلقائياً عند اكتمال الجدول.",
+  "INTERVIEW_RESULT_REPORT.LIST.DISCARDED_NO_OPEN": "تقرير مُلغى - حلّ محله التقرير الجديد للجدول",
+  "INTERVIEW_RESULT_REPORT.STATUS.COMMITTEE_REVIEW": "مراجعة رئيس اللجنة",
+  "INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_CHAIR_RECOMMENDATION": "توصية رئيس اللجنة",
+  "INTERVIEW_RESULT_REPORT.DETAIL.CHAIR_KEPT_SUGGESTION": "مطابقة لمقترح النظام",
+  "INTERVIEW_RESULT_REPORT.DETAIL.SCHOOL_STAGE": "المرحلة الدراسية"
 }

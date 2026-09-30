@@ -13,7 +13,11 @@ import { Permissions } from '../../../../../../../core/constants/permissions';
 import { DialogHelperService } from '../../../../../../../core/services/dialog-helper.service';
 import { HasPermissionDirective } from '../../../../../../../shared/directives/has-permission.directive';
 
-import { OperationalIssueStatus } from '../../../interview-evaluation/models/enums';
+import {
+  ATTENDANCE_STATUS_LABELS,
+  AttendanceStatus,
+  OperationalIssueStatus,
+} from '../../../interview-evaluation/models/enums';
 
 import { InterviewResultReportStore } from '../../interview-result-report.store';
 import { InterviewResultReportFacade } from '../../interview-result-report.facade';
@@ -111,6 +115,18 @@ export class ReportDetailComponent {
 
   candidateName(candidate: ResultCandidateModel): string {
     return this.service.localized(candidate.candidateNameAr, candidate.candidateNameEn);
+  }
+
+  // "Absent" / "Withdrew" - the reason the candidate's appointment was closed with a 0 score.
+  closedAttendanceLabel(candidate: ResultCandidateModel): string | null {
+    const status = candidate.attendanceStatus as AttendanceStatus | null;
+    return status === AttendanceStatus.NoShow || status === AttendanceStatus.Withdrew
+      ? ATTENDANCE_STATUS_LABELS[status]
+      : null;
+  }
+
+  schoolStageName(candidate: ResultCandidateModel): string {
+    return this.service.localized(candidate.recommendedSchoolStageNameAr, candidate.recommendedSchoolStageNameEn);
   }
 
   axisName(axis: ResultCandidateAxisModel): string {

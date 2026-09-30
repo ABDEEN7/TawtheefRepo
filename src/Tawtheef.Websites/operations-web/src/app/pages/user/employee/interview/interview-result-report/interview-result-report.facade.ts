@@ -9,7 +9,7 @@ import { LanguageService } from '../../../../../core/services/language.service';
 
 import { InterviewResultReportStore } from './interview-result-report.store';
 import { ApproveResultReportPayload, InterviewResultReportService } from './services/interview-result-report.service';
-import { FinalDecision, ResultReportStatus } from './models/enums';
+import { FinalDecision, ResultReportListStatusFilter } from './models/enums';
 import { ResultReportListItemModel, ResultReportModel } from './models/result-report.model';
 
 // Same URL-driven-view approach as interview-evaluation: a language switch does a full reload, so the
@@ -81,7 +81,7 @@ export class InterviewResultReportFacade {
     this.store.setSearch(value);
   }
 
-  setStatusFilter(value: ResultReportStatus | null) {
+  setStatusFilter(value: ResultReportListStatusFilter | null) {
     this.store.setStatusFilter(value);
   }
 
@@ -99,6 +99,8 @@ export class InterviewResultReportFacade {
 
   // ======== Report (approval) view ========
   openReport(row: ResultReportListItemModel) {
+    // Discarded reports are superseded - the schedule URL always resolves to its current report.
+    if (row.isDiscarded) return;
     this.setUrl(row.interviewScheduleId);
   }
 
@@ -121,13 +123,14 @@ export class InterviewResultReportFacade {
     });
   }
 
-  // Persisted FinalDecision wins (approved report); otherwise the server-computed SuggestedDecision
-  // pre-fills the dropdown so every candidate always has a selected value.
+  // Persisted FinalDecision wins (approved report); otherwise the Committee Head's recommendation,
+  // then the server-computed SuggestedDecision, pre-fills the dropdown so every candidate always has
+  // a selected value.
   private seedDecisions(report: ResultReportModel) {
     const decisions: Record<string, FinalDecision> = {};
     const reasons: Record<string, string> = {};
     for (const c of report.candidates) {
-      decisions[c.id] = c.finalDecision ?? c.suggestedDecision;
+      decisions[c.id] = c.finalDecision ?? c.chairRecommendedDecision ?? c.suggestedDecision;
       if (c.decisionReason) reasons[c.id] = c.decisionReason;
     }
     this.store.setDecisions(decisions);

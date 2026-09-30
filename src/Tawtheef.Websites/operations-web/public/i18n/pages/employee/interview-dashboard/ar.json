@@ -65,7 +65,7 @@
   "INTERVIEW_DASHBOARD.HELP.HIRING": "المرشحون الذين كان قرارهم النهائي في تقرير نتائج معتمد \"مرشح لإجراءات التعيين\".",
   "INTERVIEW_DASHBOARD.HELP.WAITING_LIST": "المرشحون الذين كان قرارهم النهائي \"قائمة الانتظار\".",
   "INTERVIEW_DASHBOARD.HELP.REJECTED": "المرشحون الذين كان قرارهم النهائي \"مرفوض\".",
-  "INTERVIEW_DASHBOARD.HELP.OPEN_ISSUES": "الملاحظات التشغيلية على المقابلات المصفّاة التي ما زالت مفتوحة (لم تُعالج أو يُتجاوز عنها).",
+  "INTERVIEW_DASHBOARD.HELP.OPEN_ISSUES": "الملاحظات التشغيلية على المقابلات  التي ما زالت مفتوحة (لم تُعالج أو يُتجاوز عنها).",
   "INTERVIEW_DASHBOARD.HELP.APPROVED_TEMPLATES": "نماذج التقييم النشطة التي لديها نسخة معتمدة.",
   "INTERVIEW_DASHBOARD.HELP.APPROVED_COMMITTEES": "لجان المقابلات في حالة \"معتمدة\".",
   "INTERVIEW_DASHBOARD.HELP.SCHEDULED_SCHEDULES": "جداول المقابلات المعتمدة أو الجاهزة للتنفيذ.",
