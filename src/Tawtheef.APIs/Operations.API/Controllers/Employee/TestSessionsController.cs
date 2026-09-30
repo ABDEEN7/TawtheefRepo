@@ -82,4 +82,12 @@ public sealed class TestSessionsController(IMediator mediator) : ControllerBase
         [FromBody] ReturnTestSessionDto request,
         CancellationToken ct)
         => (await mediator.Send(new ReturnTestSessionCommand(id, request.DecisionNote), ct)).ToActionResult();
+
+    [HttpPost("{id:guid}/reject")]
+    [AuthorizePermission(PermissionKeys.TestSessions.WorkflowActions)]
+    public async Task<IActionResult> Reject(
+        Guid id,
+        [FromBody] ReturnTestSessionDto request,
+        CancellationToken ct)
+        => (await mediator.Send(new RejectTestSessionCommand(id, request.DecisionNote), ct)).ToActionResult();
 }

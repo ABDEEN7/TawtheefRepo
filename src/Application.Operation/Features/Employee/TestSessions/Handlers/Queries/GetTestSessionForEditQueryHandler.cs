@@ -72,18 +72,21 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
         }
 
         string? decisionNote = null;
-        if (session.StatusId == TestSessionStatusIds.Returned)
+        if (session.StatusId == TestSessionStatusIds.Returned ||
+            session.StatusId == TestSessionStatusIds.Rejected)
         {
             var actionLogNotes = await unitOfWork.Context.Set<ActionLog>().AsNoTracking()
                 .Where(log => log.EntityId == session.Id && log.Section == "TestSessionWorkflow" &&
-                              log.ActionType == "TestSessionReturnedForEdit")
+                              (log.ActionType == "TestSessionReturnedForEdit" ||
+                               log.ActionType == "TestSessionRejected"))
                 .OrderByDescending(log => log.CreatedDate)
                 .Select(log => log.Notes)
                 .FirstOrDefaultAsync(ct);
             if (!string.IsNullOrWhiteSpace(actionLogNotes))
             {
                 using var document = JsonDocument.Parse(actionLogNotes);
-                if (document.RootElement.TryGetProperty("returnNote", out var noteElement))
+                if (document.RootElement.TryGetProperty("decisionNote", out var noteElement) ||
+                    document.RootElement.TryGetProperty("returnNote", out noteElement))
                     decisionNote = noteElement.GetString();
             }
         }

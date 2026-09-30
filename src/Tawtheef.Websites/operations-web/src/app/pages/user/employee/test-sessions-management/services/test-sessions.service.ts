@@ -78,4 +78,8 @@ export class TestSessionsService {
   returnForEdit(testSessionId: string, decisionNote: string): Observable<void> {
     return this.http.post<void>(this.endpoints.testSessions.return(testSessionId), { decisionNote });
   }
+
+  reject(testSessionId: string, decisionNote: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSessions.reject(testSessionId), { decisionNote });
+  }
 }

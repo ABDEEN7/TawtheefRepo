@@ -370,16 +370,24 @@ export class TestSessionWorkflowComponent {
   }
 
   onReturnClicked(): void {
+    this.openDecisionDialog('return');
+  }
+
+  onRejectClicked(): void {
+    this.openDecisionDialog('reject');
+  }
+
+  private openDecisionDialog(action: 'return' | 'reject'): void {
     const testSessionId = this.testSessionId();
     if (!testSessionId || this.saving() || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
       !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)) return;
 
     const dialogRef = this.dialogs.open(TestSessionDecisionDialogComponent, {
-      header: this.translate.instant('TEST_SESSION_WIZARD.RETURN_TITLE'),
+      header: this.translate.instant(`TEST_SESSION_WIZARD.${action.toUpperCase()}_TITLE`),
       width: 'min(32rem, 95vw)',
       closable: true,
       modal: true,
-      data: { action: 'return' },
+      data: { action },
     });
     if (!dialogRef) return;
 
@@ -387,15 +395,25 @@ export class TestSessionWorkflowComponent {
       if (typeof note !== 'string' || !note.trim()) return;
 
       this.saving.set(true);
-      this.service
-        .returnForEdit(testSessionId, note.trim())
+      const decision = action === 'return'
+        ? this.service.returnForEdit(testSessionId, note.trim())
+        : this.service.reject(testSessionId, note.trim());
+      decision
         .pipe(finalize(() => this.saving.set(false)), takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.RETURN_SUCCESS'));
+            if (action === 'return') {
+              this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.RETURN_SUCCESS'));
+              void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+              return;
+            }
+
+            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.REJECT_SUCCESS'));
             void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
           },
-          error: () => this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.RETURN_FAILED')),
+          error: () => this.notifications.error(this.translate.instant(
+            `TEST_SESSION_WIZARD.${action.toUpperCase()}_FAILED`,
+          )),
         });
     });
   }
