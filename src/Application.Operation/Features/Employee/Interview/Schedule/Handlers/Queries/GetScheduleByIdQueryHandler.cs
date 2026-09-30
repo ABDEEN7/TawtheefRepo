@@ -26,9 +26,14 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
         if (schedule is null)
             return Result.Fail<ScheduleDto>(new Error(ErrorsCodes.InterviewScheduleNotFound));
 
+        // The schedule's own committee (on its appointments), not the job's current one - a closed/cancelled
+        // committee is replaced on the job by a new one. No appointments yet -> the job's active committee.
+        var committeeId = schedule.Appointments.Select(a => (Guid?)a.InterviewCommitteeId).FirstOrDefault();
         var committee = await unitOfWork.GetEntityRepository<InterviewCommittee>().DbSet
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.JobId == schedule.JobId && c.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(c => committeeId.HasValue
+                ? c.Id == committeeId.Value
+                : c.JobId == schedule.JobId && c.IsActive, cancellationToken);
 
         var appointmentIds = schedule.Appointments.Select(a => a.Id).ToList();
         var issueTypesByAppointment = (await unitOfWork.GetEntityRepository<InterviewOperationalIssue>().DbSet

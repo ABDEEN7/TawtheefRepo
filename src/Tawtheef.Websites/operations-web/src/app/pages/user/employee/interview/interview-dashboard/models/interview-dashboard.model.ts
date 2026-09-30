@@ -111,6 +111,8 @@ export interface InterviewDashboardCandidateRow {
   interviewType: InterviewType;
   status: AppointmentStatus;
   attendanceStatus: AttendanceStatus | null;
+  /** Late issue (or legacy Late attendance) - attendance itself stays Present. */
+  isLate: boolean;
   submittedEvaluations: number;
   requiredEvaluations: number;
 }

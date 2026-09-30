@@ -87,10 +87,16 @@ public sealed class GetInterviewDashboardOverviewQueryHandler(
         InterviewDashboardFilter filter, InterviewDashboardAccess access, CancellationToken cancellationToken)
     {
         var live = scope.LiveAppointments(filter, access);
+        var lateIssues = scope.LateIssues();
 
         var byStatusAndAttendance = await live
-            .GroupBy(a => new { a.Status, a.AttendanceStatus })
-            .Select(g => new { g.Key.Status, g.Key.AttendanceStatus, Count = g.Count() })
+            .GroupBy(a => new
+            {
+                a.Status,
+                a.AttendanceStatus,
+                HasLateIssue = lateIssues.Any(i => i.InterviewAppointmentId == a.Id)
+            })
+            .Select(g => new { g.Key.Status, g.Key.AttendanceStatus, g.Key.HasLateIssue, Count = g.Count() })
             .ToListAsync(cancellationToken);
 
         var byType = await live
@@ -106,18 +112,26 @@ public sealed class GetInterviewDashboardOverviewQueryHandler(
             .Select(g => new { g.Key, Count = g.Count() })
             .ToListAsync(cancellationToken);
 
+        // Exclusive buckets for the attendance pie (see InterviewDashboardQueryScope.LateIssues):
+        // Present / not recorded exclude late candidates, which are counted under Late instead.
         int Attendance(AttendanceStatus? status) =>
             byStatusAndAttendance.Where(x => x.AttendanceStatus == status).Sum(x => x.Count);
+        int OnTime(AttendanceStatus? status) =>
+            byStatusAndAttendance.Where(x => x.AttendanceStatus == status && !x.HasLateIssue).Sum(x => x.Count);
         int Status(params AppointmentStatus[] statuses) =>
             byStatusAndAttendance.Where(x => statuses.Contains(x.Status)).Sum(x => x.Count);
+        var late = byStatusAndAttendance
+            .Where(x => x.AttendanceStatus == AttendanceStatus.Late
+                || (x.HasLateIssue && (x.AttendanceStatus == AttendanceStatus.Present || x.AttendanceStatus == null)))
+            .Sum(x => x.Count);
 
         return new InterviewDashboardCandidateKpisDto(
             byStatusAndAttendance.Sum(x => x.Count),
-            Attendance(AttendanceStatus.Present),
-            Attendance(AttendanceStatus.Late),
+            OnTime(AttendanceStatus.Present),
+            late,
             Attendance(AttendanceStatus.NoShow),
             Attendance(AttendanceStatus.Withdrew),
-            Attendance(null),
+            OnTime(null),
             Status(AppointmentStatus.UnderEvaluation, AppointmentStatus.Completed, AppointmentStatus.Closed),
             Status(AppointmentStatus.Completed, AppointmentStatus.Closed),
             removed.Where(x => x.Key == AppointmentStatus.Rescheduled).Sum(x => x.Count),

@@ -22,6 +22,7 @@ import {
 import {
   ATTENDANCE_STATUS_LABELS,
   ATTENDANCE_STATUS_PILL,
+  AttendanceStatus,
   OPERATIONAL_ISSUE_STATUS_LABELS,
   OPERATIONAL_ISSUE_STATUS_PILL,
   OPERATIONAL_ISSUE_TYPE_LABELS,
@@ -42,7 +43,16 @@ import { AttendanceView, DecisionView, ReportTab } from '../../models/interview-
   templateUrl: './dashboard-reports.html',
   styleUrl: './dashboard-reports.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, TranslatePipe, TabsModule, TableModule, SelectModule, TooltipModule, PaginationComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    TabsModule,
+    TableModule,
+    SelectModule,
+    TooltipModule,
+    PaginationComponent,
+  ],
 })
 export class DashboardReportsComponent {
   readonly store = inject(InterviewDashboardStore);
@@ -59,15 +69,20 @@ export class DashboardReportsComponent {
   readonly ATTENDANCE_STATUS_LABELS: Record<number, string> = ATTENDANCE_STATUS_LABELS;
   readonly ATTENDANCE_STATUS_PILL: Record<number, string> = ATTENDANCE_STATUS_PILL;
   readonly OPERATIONAL_ISSUE_TYPE_LABELS: Record<number, string> = OPERATIONAL_ISSUE_TYPE_LABELS;
-  readonly OPERATIONAL_ISSUE_STATUS_LABELS: Record<number, string> = OPERATIONAL_ISSUE_STATUS_LABELS;
+  readonly OPERATIONAL_ISSUE_STATUS_LABELS: Record<number, string> =
+    OPERATIONAL_ISSUE_STATUS_LABELS;
   readonly OPERATIONAL_ISSUE_STATUS_PILL: Record<number, string> = OPERATIONAL_ISSUE_STATUS_PILL;
   readonly FINAL_DECISION_LABELS: Record<number, string> = FINAL_DECISION_LABELS;
   readonly FINAL_DECISION_PILL: Record<number, string> = FINAL_DECISION_PILL;
   readonly RESULT_REPORT_STATUS_LABELS: Record<number, string> = RESULT_REPORT_STATUS_LABELS;
   readonly RESULT_REPORT_STATUS_PILL: Record<number, string> = RESULT_REPORT_STATUS_PILL;
+  readonly AttendanceStatus = AttendanceStatus;
 
   readonly tabs = computed(() =>
-    this.store.availableTabs().map((tab) => ({ value: tab, labelKey: `INTERVIEW_DASHBOARD.REPORTS.TABS.${tab.toUpperCase()}` })),
+    this.store.availableTabs().map((tab) => ({
+      value: tab,
+      labelKey: `INTERVIEW_DASHBOARD.REPORTS.TABS.${tab.toUpperCase()}`,
+    })),
   );
 
   readonly attendanceOptions = [
@@ -89,19 +104,37 @@ export class DashboardReportsComponent {
   ];
 
   readonly issueStatusOptions = [
-    { value: OperationalIssueStatus.Open, label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Open] },
-    { value: OperationalIssueStatus.Resolved, label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Resolved] },
-    { value: OperationalIssueStatus.Waived, label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Waived] },
+    {
+      value: OperationalIssueStatus.Open,
+      label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Open],
+    },
+    {
+      value: OperationalIssueStatus.Resolved,
+      label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Resolved],
+    },
+    {
+      value: OperationalIssueStatus.Waived,
+      label: OPERATIONAL_ISSUE_STATUS_LABELS[OperationalIssueStatus.Waived],
+    },
   ];
 
   private readonly canOpenSchedules = computed(() =>
-    this.auth.hasPermission([Permissions.InterviewSchedule.View, Permissions.InterviewSchedule.Manage]),
+    this.auth.hasPermission([
+      Permissions.InterviewSchedule.View,
+      Permissions.InterviewSchedule.Manage,
+    ]),
   );
   private readonly canOpenSessions = computed(() =>
-    this.auth.hasPermission([Permissions.InterviewEvaluation.View, Permissions.InterviewEvaluation.Manage]),
+    this.auth.hasPermission([
+      Permissions.InterviewEvaluation.View,
+      Permissions.InterviewEvaluation.Manage,
+    ]),
   );
   readonly canOpenResults = computed(() =>
-    this.auth.hasPermission([Permissions.InterviewResultReport.View, Permissions.InterviewResultReport.Manage]),
+    this.auth.hasPermission([
+      Permissions.InterviewResultReport.View,
+      Permissions.InterviewResultReport.Manage,
+    ]),
   );
   readonly canOpenExecution = computed(() => this.canOpenSchedules() || this.canOpenSessions());
 
@@ -111,19 +144,27 @@ export class DashboardReportsComponent {
 
   // Deep links reuse each module's own URL contract (?schedule / ?appointment) and its permission.
   openSchedule(scheduleId: string): void {
-    if (this.canOpenSchedules()) this.router.navigate([routes.portal.interviews], { queryParams: { schedule: scheduleId } });
+    if (this.canOpenSchedules())
+      this.router.navigate([routes.portal.interviews], { queryParams: { schedule: scheduleId } });
     else if (this.canOpenSessions())
-      this.router.navigate([routes.portal.startInterview], { queryParams: { schedule: scheduleId } });
+      this.router.navigate([routes.portal.startInterview], {
+        queryParams: { schedule: scheduleId },
+      });
   }
 
   openAppointment(scheduleId: string, appointmentId: string): void {
     if (this.canOpenSessions())
-      this.router.navigate([routes.portal.startInterview], { queryParams: { schedule: scheduleId, appointment: appointmentId } });
+      this.router.navigate([routes.portal.startInterview], {
+        queryParams: { schedule: scheduleId, appointment: appointmentId },
+      });
     else this.openSchedule(scheduleId);
   }
 
   openReport(scheduleId: string): void {
-    if (this.canOpenResults()) this.router.navigate([routes.portal.approveInterview], { queryParams: { schedule: scheduleId } });
+    if (this.canOpenResults())
+      this.router.navigate([routes.portal.approveInterview], {
+        queryParams: { schedule: scheduleId },
+      });
   }
 
   name(ar: string | null | undefined, en: string | null | undefined): string {

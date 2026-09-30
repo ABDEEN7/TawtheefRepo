@@ -25,13 +25,19 @@ public sealed class ListInterviewDashboardCandidatesQueryHandler(
             return InterviewDashboardPaging.Forbidden<InterviewDashboardCandidateRowDto>();
 
         var query = scope.LiveAppointments(request, access);
+        var lateIssues = scope.LateIssues();
+        // Same exclusive buckets as the overview attendance pie : ( InterviewDashboardQueryScope.LateIssues).
         query = request.Attendance switch
         {
-            InterviewDashboardAttendanceView.Present => query.Where(a => a.AttendanceStatus == AttendanceStatus.Present),
+            InterviewDashboardAttendanceView.Present => query.Where(a => a.AttendanceStatus == AttendanceStatus.Present
+                && !lateIssues.Any(i => i.InterviewAppointmentId == a.Id)),
             InterviewDashboardAttendanceView.NoShow => query.Where(a => a.AttendanceStatus == AttendanceStatus.NoShow),
             InterviewDashboardAttendanceView.Withdrew => query.Where(a => a.AttendanceStatus == AttendanceStatus.Withdrew),
-            InterviewDashboardAttendanceView.Late => query.Where(a => a.AttendanceStatus == AttendanceStatus.Late),
-            InterviewDashboardAttendanceView.NotRecorded => query.Where(a => a.AttendanceStatus == null),
+            InterviewDashboardAttendanceView.Late => query.Where(a => a.AttendanceStatus == AttendanceStatus.Late
+                || ((a.AttendanceStatus == AttendanceStatus.Present || a.AttendanceStatus == null)
+                    && lateIssues.Any(i => i.InterviewAppointmentId == a.Id))),
+            InterviewDashboardAttendanceView.NotRecorded => query.Where(a => a.AttendanceStatus == null
+                && !lateIssues.Any(i => i.InterviewAppointmentId == a.Id)),
             _ => query
         };
 
@@ -53,6 +59,9 @@ public sealed class ListInterviewDashboardCandidatesQueryHandler(
                 a.InterviewType,
                 a.Status,
                 a.AttendanceStatus,
+                // InterviewAppointment.IsLateCandidate, spelled out so it translates to SQL.
+                IsLate = a.AttendanceStatus == AttendanceStatus.Late
+                    || lateIssues.Any(i => i.InterviewAppointmentId == a.Id),
                 Submitted = submitted.Count(e => e.InterviewAppointmentId == a.Id),
                 Required = quorumMembers.Count(m => m.InterviewCommitteeId == a.InterviewCommitteeId)
             })
@@ -62,6 +71,6 @@ public sealed class ListInterviewDashboardCandidatesQueryHandler(
         return await InterviewDashboardPaging.ToPageAsync(rows, r => new InterviewDashboardCandidateRowDto(
             r.Id, r.InterviewScheduleId, r.CandidateNameAr, r.CandidateNameEn, r.JobNameAr, r.JobNameEn,
             r.ScheduleTitleAr, r.ScheduleTitleEn, r.StartAt.AsUtcOffset(), r.InterviewType, r.Status, r.AttendanceStatus,
-            r.Submitted, r.Required), request, cancellationToken);
+            r.IsLate, r.Submitted, r.Required), request, cancellationToken);
     }
 }

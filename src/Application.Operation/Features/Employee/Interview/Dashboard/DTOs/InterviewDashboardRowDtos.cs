@@ -37,6 +37,8 @@ public sealed record InterviewDashboardCandidateRowDto(
     InterviewType InterviewType,
     AppointmentStatus Status,
     AttendanceStatus? AttendanceStatus,
+    // Arrived late (InterviewAppointment.IsLateCandidate): attendance stays Present, the UI adds a hint.
+    bool IsLate,
     int SubmittedEvaluations,
     int RequiredEvaluations);
 

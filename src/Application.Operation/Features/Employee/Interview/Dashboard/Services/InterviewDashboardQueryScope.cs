@@ -151,6 +151,12 @@ public sealed class InterviewDashboardQueryScope(IUnitOfWork unitOfWork)
 
     public IQueryable<InterviewOperationalIssue> AllIssues() => Set<InterviewOperationalIssue>();
 
+    // Lateness is a Late issue on the appointment (InterviewAppointment.IsLateCandidate); legacy rows carry
+    // AttendanceStatus.Late instead. For the attendance breakdown a late candidate counts as Late rather than
+    // Present / not recorded, while Absent / Withdrew stay what they are (they closed the appointment).
+    public IQueryable<InterviewOperationalIssue> LateIssues() =>
+        Set<InterviewOperationalIssue>().Where(i => i.IssueType == OperationalIssueType.Late);
+
     // Candidates whose report was soft-deleted must not count - the report's own query filter doesn't
     // reach through the navigation, so the check is explicit.
     private IQueryable<InterviewResultCandidate> ReportCandidates() =>
