@@ -88,7 +88,6 @@
   "internal.sidebar.question-banks": "Question Banks",
   "internal.sidebar.question-bank-requests": "Question Bank Requests",
   "internal.sidebar.locations": "Locations Management",
-
   "internal.sidebar.interview-axes-criteria": "Interview Axes and Criteria",
   "internal.sidebar.interview-template": "Interview Templates",
   "internal.sidebar.interview-committee": "Interview Committees",
@@ -96,4 +95,6 @@
   "internal.sidebar.start-interview": "Start Interview",
   "internal.sidebar.approve-interview": "Approve Interview",
   "internal.sidebar.interview-dashboard": "Interview Dashboard"
+  "internal.sidebar.approve-interview": "Approve Interview",
+  "internal.sidebar.question-bank-assignments": "My Question Assignments"
 }

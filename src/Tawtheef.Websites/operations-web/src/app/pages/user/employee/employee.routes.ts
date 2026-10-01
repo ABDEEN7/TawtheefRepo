@@ -78,6 +78,42 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: `${portalRoutes.testSessionsManagementPath}/edit/:testSessionId`,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.Create] },
+    loadComponent: () =>
+      import('./test-sessions-management/test-session-workflow/test-session-workflow.component').then(
+        (m) => m.TestSessionWorkflowComponent,
+      ),
+  },
+  {
+    path: `${portalRoutes.testSessionsManagementPath}/:testSessionId/view`,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.View], testSessionMode: 'view' },
+    loadComponent: () =>
+      import('./test-sessions-management/test-session-workflow/test-session-workflow.component').then(
+        (m) => m.TestSessionWorkflowComponent,
+      ),
+  },
+  {
+    path: portalRoutes.createTestSessionPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.Create] },
+    loadComponent: () =>
+      import('./test-sessions-management/test-session-workflow/test-session-workflow.component').then(
+        (m) => m.TestSessionWorkflowComponent,
+      ),
+  },
+  {
+    path: portalRoutes.testSessionsManagementPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.TestSessions.View] },
+    loadComponent: () =>
+      import('./test-sessions-management/test-sessions-management.component').then(
+        (m) => m.TestSessionsManagementComponent,
+      ),
+  },
+  {
     path: 'dashboard',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.Dashboard.View] },
@@ -395,6 +431,18 @@ export const employeeRoutes: Routes = [
       import('./locations-management/locations-management.page').then(
         (m) => m.LocationsManagementPage,
       ),
+  },
+  {
+    path: 'question-bank-assignments/:assignmentId/questions',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
+    loadComponent: () => import('./question-bank-assignments/question-entry.page').then(m => m.QuestionEntryPage),
+  },
+  {
+    path: 'question-bank-assignments',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
+    loadComponent: () => import('./question-bank-assignments/question-bank-assignments.page').then(m => m.QuestionBankAssignmentsPage),
   },
   {
     path: 'question-banks',

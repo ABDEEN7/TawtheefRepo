@@ -167,9 +167,25 @@ export const portalRoutes = {
   get testSlotsManagement() {
     return this.portal + '/' + this.testSlotsManagementPath;
   },
+  testSessionsManagementPath: 'test-sessions-management',
+  createTestSessionPath: 'test-sessions-management/create',
+  get createTestSession() {
+    return this.portal + '/' + this.createTestSessionPath;
+  },
+  editTestSession(testSessionId: string) {
+    return this.portal + `/${this.testSessionsManagementPath}/edit/${testSessionId}`;
+  },
+  viewTestSession(testSessionId: string) {
+    return this.portal + `/${this.testSessionsManagementPath}/${testSessionId}/view`;
+  },
+  get testSessionsManagement() {
+    return this.portal + '/' + this.testSessionsManagementPath;
+  },
   get questionBanks() {
     return this.portal + '/question-banks';
   },
+  get questionBankAssignments() { return this.portal + '/question-bank-assignments'; },
+  questionBankAssignmentQuestions(id: string) { return this.questionBankAssignments + `/${id}/questions`; },
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
   },

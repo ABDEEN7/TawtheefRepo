@@ -28,6 +28,9 @@ public static class RolePermissionCatalog
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.Create.Key,
                 Permissions.TestSlots.ManagePeriod.Key,
+                Permissions.TestSessions.View.Key,
+                Permissions.TestSessions.Create.Key,
+                Permissions.TestSessions.WorkflowActions.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
@@ -96,6 +99,7 @@ public static class RolePermissionCatalog
                 Permissions.QuestionBankRequests.View.Key,
                 Permissions.QuestionBankRequests.Create.Key,
                 Permissions.QuestionBankRequests.Assign.Key,
+                Permissions.QuestionBankAssignments.Manage.Key,
                 Permissions.Locations.Manage.Key,
 
                 Permissions.InterviewEvaluationBank.View.Key,
@@ -136,6 +140,9 @@ public static class RolePermissionCatalog
             //     Permissions.TestSlots.View.Key,
             //     Permissions.TestSlots.Create.Key,
             // ],
+            [SystemRoleIds.Employee] = [
+                Permissions.QuestionBankAssignments.Manage.Key,
+            ],
 
             [SystemRoleIds.TestSlotStaffMember] = [
                 Permissions.TestSlots.View.Key,

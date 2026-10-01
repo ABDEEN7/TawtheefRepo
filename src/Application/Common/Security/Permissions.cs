@@ -87,6 +87,19 @@ public static class Permissions
                 "Exam Periods - Manage Period", "فترات الاختبار - إدارة الفترة", 112);
     }
 
+    public static class TestSessions
+    {
+        public static readonly PermissionDefinition View = Def(PermissionKeys.TestSessions.View,
+            nameof(PermissionKeys.TestSessions), PermissionAction.View, "Test Sessions - View",
+            "جلسات الاختبار - عرض", 113);
+        public static readonly PermissionDefinition Create = Def(PermissionKeys.TestSessions.Create,
+            nameof(PermissionKeys.TestSessions), PermissionAction.Create, "Test Sessions - Create",
+            "جلسات الاختبار - إنشاء", 114);
+        public static readonly PermissionDefinition WorkflowActions = Def(PermissionKeys.TestSessions.WorkflowActions,
+            nameof(PermissionKeys.TestSessions), PermissionAction.Manage, "Test Sessions - Workflow Actions",
+            "إجراءات سير عمل جلسات الاختبار", 115);
+    }
+
     public static class Rooms
     {
         public static readonly PermissionDefinition View =
@@ -118,6 +131,13 @@ public static class Permissions
                 "Question Banks - View",
                 "بنوك الأسئلة - عرض",
                 84);
+    }
+
+    public static class QuestionBankAssignments
+    {
+        public static readonly PermissionDefinition Manage = Def(
+            PermissionKeys.QuestionBankAssignments.Manage, nameof(PermissionKeys.QuestionBankAssignments),
+            PermissionAction.Manage, "Question Bank Assignments - Manage", "مهام بنوك الأسئلة - إدارة", 88);
     }
 
     public static class QuestionBankRequests

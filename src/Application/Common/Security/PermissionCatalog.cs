@@ -113,6 +113,10 @@ public static class PermissionCatalog
         Permissions.TestSlots.ViewAccessCode,
         Permissions.TestSlots.ManagePeriod,
 
+        Permissions.TestSessions.View,
+        Permissions.TestSessions.Create,
+        Permissions.TestSessions.WorkflowActions,
+
         Permissions.Rooms.View,
         Permissions.Rooms.Manage,
 
@@ -120,6 +124,7 @@ public static class PermissionCatalog
         Permissions.QuestionBankRequests.View,
         Permissions.QuestionBankRequests.Create,
         Permissions.QuestionBankRequests.Assign,
+        Permissions.QuestionBankAssignments.Manage,
 
         Permissions.InterviewEvaluationBank.View,
         Permissions.InterviewEvaluationBank.Manage,

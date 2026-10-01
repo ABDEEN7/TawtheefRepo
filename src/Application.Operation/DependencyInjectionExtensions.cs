@@ -19,6 +19,7 @@ using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
+using Application.Operation.Features.Employee.QuestionBankAssignments.Services;
 
 namespace Application.Operation
 {
@@ -58,6 +59,7 @@ namespace Application.Operation
             
             private void RegisterFeatureServices()
             {
+                services.AddSingleton<IRichTextSanitizer, RichTextSanitizer>();
                 services.RegisterEmployeeCommonServices();
                 services.RegisterDashboardServices();
                 services.RegisterCandidateUsersServices();

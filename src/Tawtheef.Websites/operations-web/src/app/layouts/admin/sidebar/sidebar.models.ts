@@ -133,6 +133,13 @@ export class Sidebar {
       permission: Permissions.Exams.View,
     },
     {
+      key: 'question-bank-assignments',
+      label: 'internal.sidebar.question-bank-assignments',
+      icon: 'hgi-task-daily-01',
+      route: routes.portal.questionBankAssignments,
+      permission: Permissions.QuestionBankAssignments.Manage,
+    },
+    {
       key: 'question-banks',
       label: 'internal.sidebar.question-banks',
       icon: 'hgi-file-validation',
@@ -161,6 +168,14 @@ export class Sidebar {
       route: routes.portal.interviewDashboard,
       permission: InterviewDashboardPermissions,
     },
+    {
+      key: 'test-sessions',
+      label: 'internal.sidebar.testSessions',
+      icon: 'hgi-calendar-03',
+      route: routes.portal.testSessionsManagement,
+      permission: Permissions.TestSessions.View,
+    },
+    
     {
       key: 'interview-axes-criteria',
       label: 'internal.sidebar.interview-axes-criteria',

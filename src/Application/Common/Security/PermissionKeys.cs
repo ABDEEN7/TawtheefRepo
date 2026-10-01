@@ -199,7 +199,7 @@ public static class PermissionKeys
     {
         public const string View = "exams.view";
         public const string Create = "exams.create";
-        public const string WorkflowActions = "examWorkflowActions";
+        public const string WorkflowActions = "exams.workflow-action";
     }
 
     public static class TestSlots
@@ -208,6 +208,13 @@ public static class PermissionKeys
         public const string Create = "test-slots.create";
         public const string ViewAccessCode = "test-slots.view-access-code";
         public const string ManagePeriod = "test-slots.manage-period";
+    }
+
+    public static class TestSessions
+    {
+        public const string View = "test-sessions.view";
+        public const string Create = "test-sessions.create";
+        public const string WorkflowActions = "test-sessions.workflow-action";
     }
 
     public static class Rooms
@@ -219,6 +226,11 @@ public static class PermissionKeys
     public static class QuestionBanks
     {
         public const string View = "question-banks.view";
+    }
+
+    public static class QuestionBankAssignments
+    {
+        public const string Manage = "question-bank-assignments.manage";
     }
 
     public static class QuestionBankRequests

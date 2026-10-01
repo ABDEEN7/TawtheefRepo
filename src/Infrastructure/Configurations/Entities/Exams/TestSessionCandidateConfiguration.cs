@@ -11,7 +11,7 @@ public class TestSessionCandidateConfiguration : BaseEntityConfiguration<TestSes
         base.Configure(builder);
 
         builder.HasOne(x => x.TestSession)
-            .WithMany()
+            .WithMany(x => x.TestSessionCandidates)
             .HasForeignKey(x => x.TestSessionId)
             .OnDelete(DeleteBehavior.Restrict);
 

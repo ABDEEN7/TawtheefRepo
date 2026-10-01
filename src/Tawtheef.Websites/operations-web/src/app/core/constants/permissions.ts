@@ -154,7 +154,7 @@ export const Permissions = {
   Exams: {
     View: 'exams.view',
     Create: 'exams.create',
-    WorkflowActions: 'examWorkflowActions',
+    WorkflowActions: 'exams.workflow-action',
   },
   TestSlots: {
     View: 'test-slots.view',
@@ -162,9 +162,18 @@ export const Permissions = {
     ViewAccessCode: 'test-slots.view-access-code',
     ManagePeriod: 'test-slots.manage-period',
   },
+  TestSessions: {
+    View: 'test-sessions.view',
+    Create: 'test-sessions.create',
+    WorkflowActions: 'test-sessions.workflow-action',
+  },
 
   QuestionBanks: {
     View: 'question-banks.view',
+  },
+
+  QuestionBankAssignments: {
+    Manage: 'question-bank-assignments.manage',
   },
 
   QuestionBankRequests: {
