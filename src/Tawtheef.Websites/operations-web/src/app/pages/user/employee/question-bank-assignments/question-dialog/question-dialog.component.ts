@@ -1,22 +1,16 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy } from '@angular/core';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { startWith, Subscription } from 'rxjs';
-import { RichContentEditorComponent } from '../../../../../shared/rich-content/rich-content-editor.component';
-import { RichContentInputComponent } from '../../../../../shared/rich-content/rich-content-input.component';
-import { hasMeaningfulRichContent } from '../../../../../shared/rich-content/rich-content.utils';
-import {
-  AssignmentOption,
-  AssignmentQuestion,
-  QuestionTypes,
-} from '../models/question-bank-assignment.models';
-import { QuestionBankAssignmentsService } from '../services/question-bank-assignments.service';
+import {CommonModule} from '@angular/common';
+import {Component, inject, OnDestroy} from '@angular/core';
+import {FormArray, FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {TranslatePipe} from '@ngx-translate/core';
+import {ButtonModule} from 'primeng/button';
+import {Checkbox} from 'primeng/checkbox';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {InputTextModule} from 'primeng/inputtext';
+import {Select} from 'primeng/select';
+import {startWith, Subscription} from 'rxjs';
+import {hasMeaningfulRichContent} from '../../../../../shared/rich-content/rich-content.utils';
+import {AssignmentOption, AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
+import {QuestionBankAssignmentsService} from '../services/question-bank-assignments.service';
 
 @Component({
   selector: 'app-question-dialog',
@@ -30,8 +24,7 @@ import { QuestionBankAssignmentsService } from '../services/question-bank-assign
     InputTextModule,
     Select,
     Checkbox,
-    RichContentEditorComponent,
-    RichContentInputComponent,
+
   ],
 })
 export class QuestionDialogComponent implements OnDestroy {
@@ -244,13 +237,15 @@ export class QuestionDialogComponent implements OnDestroy {
         optionTextEn: ['True'],
         isCorrect: [trueOption?.isCorrect ?? (safelyUsePositions ? values[0].isCorrect : false)],
         displayOrder: [1],
-      }),
-      this.fb.group({
+      })
+    );
+    this.options.push(
+       this.fb.group({
         optionTextAr: ['خطأ'],
         optionTextEn: ['False'],
         isCorrect: [falseOption?.isCorrect ?? (safelyUsePositions ? values[1].isCorrect : false)],
         displayOrder: [2],
-      }),
+      })
     );
   }
 
