@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Operation.Features.Employee.Exams.Commands;
+using Application.Operation.Features.Employee.TestSessions.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,7 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 return Failure(ErrorsCodes.ExamResultReportNotReturned);
             if (candidate.ResultStatusId != ExamResultCandidateResultStatusIds.RequiresAction)
                 return Failure(ErrorsCodes.ExamResultCandidateNotRequiresAction);
-            if (candidate.TestSessionCandidateId is not Guid currentAssignmentId)
+            if (candidate.TestSessionCandidateId is not { } currentAssignmentId)
                 return Failure(ErrorsCodes.ExamResultCandidateRescheduleStateInvalid);
 
             var currentAssignment = await unitOfWork.Context.Set<TestSessionCandidate>()
@@ -70,38 +71,104 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .ThenInclude(x => x!.Room)
                 .ThenInclude(x => x!.Location)
                 .SingleOrDefaultAsync(x => x.Id == request.TargetTestSessionId, token);
-            if (targetSession is null || targetSession.Id == currentAssignment.TestSessionId ||
+            if (targetSession is null ||
+                targetSession.Id == currentAssignment.TestSessionId ||
                 targetSession.ExamId != report.ExamId ||
+                targetSession.StartTime is null ||
+                targetSession.EndTime is null ||
+                targetSession.StartTime >= targetSession.EndTime ||
                 (targetSession.StatusId != TestSessionStatusIds.Approved &&
                  targetSession.StatusId != TestSessionStatusIds.Ready) ||
-                targetSession.TestSlot is not { StatusId: var slotStatus, Room: { } room } ||
-                slotStatus != TestSlotStatusIds.Ready || room.StatusId != RoomStatusIds.Active ||
+                targetSession.TestSlot is not
+                {
+                    StatusId: var slotStatus,
+                    Room: { } room
+                } ||
+                (slotStatus != TestSlotStatusIds.Ready &&
+                 slotStatus != TestSlotStatusIds.Started) ||
+                room.StatusId != RoomStatusIds.Active ||
                 room.Capacity <= 0)
-                return Failure(ErrorsCodes.ExamResultCandidateTargetSessionInvalid);
+            {
+                return Failure(
+                    ErrorsCodes.ExamResultCandidateTargetSessionInvalid);
+            }
+
 
             var targetSlot = targetSession.TestSlot;
-            if (targetSlot.SlotDate.ToDateTime(targetSlot.StartTime) <=
-                timeProvider.GetLocalNow().DateTime)
+            var targetStartTime = targetSession.StartTime.Value;
+            var targetEndTime = targetSession.EndTime.Value;
+
+            if (targetStartTime < targetSlot.StartTime || targetEndTime > targetSlot.EndTime)
+            {
+                return Failure(ErrorsCodes.ExamResultCandidateTargetSessionInvalid);
+            }
+
+            var localNow = timeProvider.GetLocalNow().DateTime;
+
+            var targetStartsAt = targetSlot.SlotDate.ToDateTime(targetStartTime);
+
+            if (targetStartsAt <= localNow)
+            {
                 return Failure(ErrorsCodes.ExamResultCandidateTargetSlotNotFuture);
+            }
 
             // Capacity is shared by all sessions in the same physical room-time slot.
-            await AcquireLockAsync($"Tawtheef.CandidateExam.TestSlot.{targetSlot.Id}", token);
+            await AcquireLockAsync(
+                $"Tawtheef.TestSession.Room." +
+                $"{targetSlot.RoomId}." +
+                $"{targetSlot.SlotDate:yyyyMMdd}",
+                token);
 
-            var activeCandidateCount = await unitOfWork.Context.Set<TestSessionCandidate>()
+            await AcquireLockAsync(
+                $"Tawtheef.CandidateExam.TestSlot.{targetSlot.Id}",
+                token);
+
+            var reservations = await unitOfWork.Context
+                .Set<TestSession>()
                 .AsNoTracking()
-                .CountAsync(x => x.TestSession!.TestSlotId == targetSlot.Id &&
-                    x.StatusId != TestSessionCandidateStatusIds.Cancelled &&
-                    x.StatusId != TestSessionCandidateStatusIds.Rescheduled, token);
-            if (activeCandidateCount >= room.Capacity)
-                return Failure(ErrorsCodes.ExamResultCandidateTargetSlotFull);
+                .Where(existing =>
+                    existing.TestSlot != null &&
+                    existing.TestSlot.RoomId == targetSlot.RoomId &&
+                    existing.TestSlot.SlotDate == targetSlot.SlotDate &&
+                    existing.StartTime.HasValue &&
+                    existing.EndTime.HasValue &&
+                    !TestSessionCapacityService
+                        .NonReservingStatusIds
+                        .Contains(existing.StatusId))
+                .Select(existing =>
+                    new TestSessionCapacityReservation(
+                        existing.StartTime!.Value,
+                        existing.EndTime!.Value,
+                        unitOfWork.Context
+                            .Set<TestSessionCandidate>()
+                            .Count(assignment =>
+                                assignment.TestSessionId == existing.Id &&
+                                assignment.Id != currentAssignmentId &&
+                                assignment.StatusId !=
+                                TestSessionCandidateStatusIds.Cancelled &&
+                                assignment.StatusId !=
+                                TestSessionCandidateStatusIds.Rescheduled)))
+                .ToListAsync(token);
+
+            var occupiedSeats =
+                TestSessionCapacityService.CalculatePeakOccupancy(
+                    reservations,
+                    targetStartTime,
+                    targetEndTime);
+
+            if (occupiedSeats >= room.Capacity)
+            {
+                return Failure(
+                    ErrorsCodes.ExamResultCandidateTargetSlotFull);
+            }
 
             if (await unitOfWork.Context.Set<TestSessionCandidate>()
                     .AsNoTracking()
                     .AnyAsync(x => x.Id != currentAssignmentId &&
-                        x.InvitationId == candidate.InvitationId &&
-                        x.TestSession!.ExamId == report.ExamId &&
-                        x.StatusId != TestSessionCandidateStatusIds.Cancelled &&
-                        x.StatusId != TestSessionCandidateStatusIds.Rescheduled, token))
+                                   x.InvitationId == candidate.InvitationId &&
+                                   x.TestSession!.ExamId == report.ExamId &&
+                                   x.StatusId != TestSessionCandidateStatusIds.Cancelled &&
+                                   x.StatusId != TestSessionCandidateStatusIds.Rescheduled, token))
                 return Failure(ErrorsCodes.ExamResultCandidateActiveAssignmentExists);
 
             var rescheduledAt = timeProvider.GetUtcNow().UtcDateTime;
@@ -109,19 +176,19 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
             Guid? previousAttemptStatus = null;
             Guid? interruptionId = null;
 
-            if (candidate.TestAttemptId is Guid attemptId)
+            if (candidate.TestAttemptId is { } attemptId)
             {
                 await AcquireLockAsync($"Tawtheef.CandidateExam.Attempt.{attemptId}", token);
                 var attempt = await unitOfWork.Context.Set<TestAttempt>()
                     .SingleOrDefaultAsync(x => x.Id == attemptId &&
-                        x.TestSessionCandidateId == currentAssignmentId, token);
+                                               x.TestSessionCandidateId == currentAssignmentId, token);
                 if (attempt is null)
                     return Failure(ErrorsCodes.ExamResultCandidateRescheduleStateInvalid);
 
                 previousAttemptStatus = attempt.StatusId;
                 var openInterruptions = await unitOfWork.Context.Set<TestAttemptInterruption>()
                     .Where(x => x.TestAttemptId == attemptId &&
-                        x.StatusId == TestAttemptInterruptionStatusIds.Open)
+                                x.StatusId == TestAttemptInterruptionStatusIds.Open)
                     .Take(2)
                     .ToListAsync(token);
                 if (openInterruptions.Count != 1 || openInterruptions[0].ResolvedAt is not null)
@@ -130,7 +197,7 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 if (attempt.StatusId == TestAttemptStatusIds.Interrupted)
                 {
                     if (attempt.ActiveSessionId is not null ||
-                        openInterruptions[0].TestAttemptPartId is not Guid interruptedPartId ||
+                        openInterruptions[0].TestAttemptPartId is not { } interruptedPartId ||
                         !await unitOfWork.Context.Set<TestAttemptPart>().AnyAsync(x =>
                             x.Id == interruptedPartId && x.TestAttemptId == attemptId &&
                             x.StatusId == TestAttemptPartStatusIds.Interrupted, token))
@@ -185,7 +252,7 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .SingleAsync(token);
             replacement.AddDomainEvent(new CandidateExamRescheduledDomainEvent(
                 replacement.Id, applicantId, examDetails.TitleAr, examDetails.TitleEn,
-                targetSlot.SlotDate, targetSlot.StartTime,
+                targetSlot.SlotDate, targetStartTime,
                 room.Location!.NameAr, room.Location.NameEn,
                 room.NameAr, room.NameEn, targetSession.SessionNo));
 
@@ -217,6 +284,9 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                     newTestSessionCandidateId = replacement.Id,
                     oldTestSessionId = currentAssignment.TestSessionId,
                     newTestSessionId = targetSession.Id,
+                    newSessionDate = targetSlot.SlotDate,
+                    newSessionStartTime = targetStartTime,
+                    newSessionEndTime = targetEndTime,
                     oldTestAttemptId = previousAttemptId,
                     oldAttemptStatus = previousAttemptStatus,
                     interruptionId,
