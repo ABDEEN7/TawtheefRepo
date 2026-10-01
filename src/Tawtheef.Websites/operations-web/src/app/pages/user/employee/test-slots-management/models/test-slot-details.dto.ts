@@ -7,7 +7,7 @@ export interface TestSlotStaffDetailsDto {
 }
 export interface TestSlotSessionDto {
   id: string;
-  sessionNo: number;
+  sessionNo: string;
   examNo: string;
   statusName: string;
   candidateCount: number;
@@ -42,7 +42,7 @@ export interface TestSlotCandidateListItemDto {
   qid?: string;
   examTitle: string;
   jobTitle?: string;
-  sessionNo: number;
+  sessionNo: string;
   examNo: string;
   attendanceStatus: string;
   attemptStatus: string;

@@ -34,7 +34,7 @@ public sealed class StartCandidateExamCommandHandler(
         var testSlotId = await unitOfWork.Context.Set<TestSession>()
             .AsNoTracking()
             .Where(session => session.Id == initial.Value.TestSessionId)
-            .Select(session => (Guid?)session.TestSlotId)
+            .Select(session => session.TestSlotId)
             .SingleOrDefaultAsync(cancellationToken);
         if (testSlotId is null)
             return Failure(ErrorsCodes.CandidateExamAssignmentNotFound);
@@ -91,10 +91,10 @@ public sealed class StartCandidateExamCommandHandler(
                 if (current.IsFailed)
                     return Result.Fail<StartCandidateExamResponse>(current.Errors);
 
-                var candidate = await unitOfWork.Context.Set<TestSessionCandidate>()
-                    .SingleOrDefaultAsync(
-                        x => x.Id == command.TestSessionCandidateId,
-                        token);
+                var candidate = await unitOfWork.Context
+                    .Set<TestSessionCandidate>()
+                    .Include(x => x.TestSession)
+                    .SingleOrDefaultAsync(x => x.Id == command.TestSessionCandidateId, token);
 
                 var execution = await unitOfWork.Context.Set<TestAttempt>()
                     .Where(x => x.TestSessionCandidateId == command.TestSessionCandidateId)
@@ -103,12 +103,7 @@ public sealed class StartCandidateExamCommandHandler(
                         Attempt = x,
                         x.TestSessionCandidate!.TestSession!.Exam!.AllowPreviousQuestion,
                         Parts = x.Parts
-                            .Select(p => new
-                            {
-                                AttemptPart = p,
-                                p.ExamPart!.PartNo,
-                                p.ExamPart.DurationMinutes
-                            })
+                            .Select(p => new { AttemptPart = p, p.ExamPart!.PartNo, p.ExamPart.DurationMinutes })
                             .OrderBy(p => p.PartNo)
                             .ToList()
                     })
@@ -116,6 +111,36 @@ public sealed class StartCandidateExamCommandHandler(
 
                 if (candidate is null || execution is null || execution.Parts.Count == 0)
                     return Failure(ErrorsCodes.CandidateExamStartStateInvalid);
+
+                var session = candidate.TestSession;
+
+                if (session is null)
+                {
+                    return Failure(
+                        ErrorsCodes.CandidateExamStartStateInvalid);
+                }
+
+                if (candidate.StatusId ==
+                    TestSessionCandidateStatusIds.Started)
+                {
+                    if (session.StatusId !=
+                        TestSessionStatusIds.InProgress)
+                    {
+                        return Failure(
+                            ErrorsCodes.CandidateExamStartStateInvalid);
+                    }
+                }
+                else if (
+                    session.StatusId !=
+                    TestSessionStatusIds.Approved &&
+                    session.StatusId !=
+                    TestSessionStatusIds.Ready &&
+                    session.StatusId !=
+                    TestSessionStatusIds.InProgress)
+                {
+                    return Failure(
+                        ErrorsCodes.CandidateExamStartStateInvalid);
+                }
 
                 var first = execution.Parts[0];
 
@@ -168,6 +193,11 @@ public sealed class StartCandidateExamCommandHandler(
 
                 if (execution.Attempt.ActiveSessionId is not null)
                     return Failure(ErrorsCodes.CandidateExamStartStateInvalid);
+                
+                if (session.StatusId == TestSessionStatusIds.Approved || session.StatusId == TestSessionStatusIds.Ready)
+                {
+                    session.StatusId = TestSessionStatusIds.InProgress;
+                }
 
                 var startTimeUtc = timeProvider.GetUtcNow().UtcDateTime;
 

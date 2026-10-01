@@ -48,8 +48,14 @@ public sealed class CloseTestSlotCommandHandler(
 
             if (sessions.Count == 0 ||
                 sessions.Any(x =>
-                    x.StatusId != TestSessionStatusIds.InProgress &&
-                    x.StatusId != TestSessionStatusIds.Closed))
+                    x.StatusId !=
+                    TestSessionStatusIds.Approved &&
+                    x.StatusId !=
+                    TestSessionStatusIds.Ready &&
+                    x.StatusId !=
+                    TestSessionStatusIds.InProgress &&
+                    x.StatusId !=
+                    TestSessionStatusIds.Closed))
             {
                 return Result.Fail<Unit>(
                     ErrorsCodes.TestSlotSessionStateInvalid);
@@ -124,10 +130,9 @@ public sealed class CloseTestSlotCommandHandler(
                 }
             }
 
-            foreach (var session in sessions.Where(session => session.StatusId == TestSessionStatusIds.InProgress))
+            foreach (var session in sessions.Where( session => session.StatusId != TestSessionStatusIds.Closed))
             {
-                session.StatusId =
-                    TestSessionStatusIds.Closed;
+                session.StatusId = TestSessionStatusIds.Closed;
             }
 
             testSlot.StatusId =

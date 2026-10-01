@@ -13,7 +13,8 @@ namespace Application.Recruitment.Features.CandidateExams.Handlers.Queries;
 
 public sealed class GetCandidateExamAssignmentsQueryHandler(
     IUnitOfWork unitOfWork,
-    ILocalizationService localizationService)
+    ILocalizationService localizationService,
+    TimeProvider timeProvider)
     : IRequestHandler<GetCandidateExamAssignmentsQuery, IResult<List<CandidateExamAssignmentDto>>>
 {
     public async Task<IResult<List<CandidateExamAssignmentDto>>> Handle(
@@ -21,12 +22,15 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
         CancellationToken cancellationToken)
     {
         var isArabic = localizationService.GetCurrentLanguage() == "ar";
-
+        var localNow = timeProvider.GetLocalNow().DateTime;
+        var localDate = DateOnly.FromDateTime(localNow);
+        var localTime = TimeOnly.FromDateTime(localNow);
+        
         var assignments = await unitOfWork.GetEntityRepository<TestSessionCandidate>().DbSet
             .AsNoTracking()
             .Where(candidate => candidate.Invitation!.ApplicantId == query.UserId)
             .OrderBy(candidate => candidate.TestSession!.TestSlot!.SlotDate)
-            .ThenBy(candidate => candidate.TestSession!.TestSlot!.StartTime)
+            .ThenBy(candidate => candidate.TestSession!.StartTime)
             .ThenBy(candidate => candidate.TestSession!.SessionNo)
             .Select(candidate => new CandidateExamAssignmentDto
             {
@@ -43,8 +47,8 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
                 AllowPreviousQuestion = candidate.TestSession.Exam.AllowPreviousQuestion,
                 SessionNo = candidate.TestSession.SessionNo,
                 SlotDate = candidate.TestSession.TestSlot!.SlotDate,
-                StartTime = candidate.TestSession.TestSlot.StartTime,
-                EndTime = candidate.TestSession.TestSlot.EndTime,
+                StartTime = candidate.TestSession.StartTime!.Value,
+                EndTime = candidate.TestSession.EndTime!.Value,
                 RoomNameAr = candidate.TestSession.TestSlot.Room!.NameAr,
                 RoomNameEn = candidate.TestSession.TestSlot.Room.NameEn,
                 LocationNameAr = candidate.TestSession.TestSlot.Room.Location!.NameAr,
@@ -146,33 +150,51 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
                               || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Rescheduled
                                 ? CandidateExamEntryStates.Rescheduled
                                 : candidate.StatusId == TestSessionCandidateStatusIds.Started
-                                  ? CandidateExamEntryStates.Started
-                                  : candidate.AttendanceStatusId ==
-                                    TestSessionCandidateAttendanceStatusIds.NoShow
-                                    ? CandidateExamEntryStates.NoShow
-                                    : candidate.TestSession.StatusId == TestSessionStatusIds.Closed
-                                      || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Closed
-                                        ? CandidateExamEntryStates.Closed
-                                        : !candidate.Invitation!.IsAccepted
-                                          || candidate.Invitation.AcceptedAt == null
-                                          || candidate.Invitation.InvitationStatusId != InvitationStatusIds.ExamEligible
-                                          || candidate.TestSession.Exam.StatusId != ExamStatusIds.Approved
-                                            ? CandidateExamEntryStates.NotEligible
-                                            : candidate.TestSession.TestSlot.StatusId != TestSlotStatusIds.Started
-                                              || candidate.TestSession.StatusId != TestSessionStatusIds.InProgress
-                                                ? CandidateExamEntryStates.WaitingForSession
-                                                : candidate.AttendanceStatusId !=
-                                                  TestSessionCandidateAttendanceStatusIds.Present
-                                                    ? CandidateExamEntryStates.WaitingForAttendance
-                                                    : candidate.IdentityVerificationStatusId !=
-                                                      TestSessionCandidateIdentityVerificationStatusIds.Matched
-                                                        ? CandidateExamEntryStates.WaitingForIdentityVerification
-                                                        : candidate.StatusId != TestSessionCandidateStatusIds.Authorized
-                                                            ? candidate.StatusId ==
-                                                              TestSessionCandidateStatusIds.Assigned
-                                                                ? CandidateExamEntryStates.WaitingForAuthorization
-                                                                : CandidateExamEntryStates.Assigned
-                                                            : CandidateExamEntryStates.ReadyToEnter
+                                    ? CandidateExamEntryStates.Started
+                                    : candidate.AttendanceStatusId ==
+                                      TestSessionCandidateAttendanceStatusIds.NoShow
+                                        ? CandidateExamEntryStates.NoShow
+                                        : candidate.TestSession.StatusId == TestSessionStatusIds.Closed
+                                          || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Closed
+                                            ? CandidateExamEntryStates.Closed
+                                            : !candidate.Invitation!.IsAccepted
+                                              || candidate.Invitation.AcceptedAt == null
+                                              || candidate.Invitation.InvitationStatusId !=
+                                              InvitationStatusIds.ExamEligible
+                                              || candidate.TestSession.Exam.StatusId != ExamStatusIds.Approved
+                                                ? CandidateExamEntryStates.NotEligible
+                                                : candidate.TestSession.TestSlot.StatusId !=
+                                                  TestSlotStatusIds.Started
+                                                  || candidate.TestSession.StartTime == null
+                                                  || candidate.TestSession.EndTime == null
+                                                  || candidate.TestSession.TestSlot.SlotDate !=
+                                                  localDate
+                                                  || candidate.TestSession.StartTime.Value >
+                                                  localTime
+                                                  || candidate.TestSession.EndTime.Value <=
+                                                  localTime
+                                                  || (
+                                                      candidate.TestSession.StatusId !=
+                                                      TestSessionStatusIds.Approved &&
+                                                      candidate.TestSession.StatusId !=
+                                                      TestSessionStatusIds.Ready &&
+                                                      candidate.TestSession.StatusId !=
+                                                      TestSessionStatusIds.InProgress
+                                                  )
+                                                    ? CandidateExamEntryStates.WaitingForSession
+                                                    : candidate.AttendanceStatusId !=
+                                                      TestSessionCandidateAttendanceStatusIds.Present
+                                                        ? CandidateExamEntryStates.WaitingForAttendance
+                                                        : candidate.IdentityVerificationStatusId !=
+                                                          TestSessionCandidateIdentityVerificationStatusIds.Matched
+                                                            ? CandidateExamEntryStates.WaitingForIdentityVerification
+                                                            : candidate.StatusId !=
+                                                              TestSessionCandidateStatusIds.Authorized
+                                                                ? candidate.StatusId ==
+                                                                  TestSessionCandidateStatusIds.Assigned
+                                                                    ? CandidateExamEntryStates.WaitingForAuthorization
+                                                                    : CandidateExamEntryStates.Assigned
+                                                                : CandidateExamEntryStates.ReadyToEnter
             })
             .ToListAsync(cancellationToken);
 

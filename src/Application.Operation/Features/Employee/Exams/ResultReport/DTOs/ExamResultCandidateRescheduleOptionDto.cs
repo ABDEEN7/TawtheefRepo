@@ -2,7 +2,7 @@ namespace Application.Operation.Features.Employee.Exams.ResultReport.DTOs;
 
 public sealed record ExamResultCandidateRescheduleOptionDto(
     Guid TestSessionId,
-    int SessionNo,
+    string SessionNo,
     Guid TestSlotId,
     string SlotTitleAr,
     string? SlotTitleEn,

@@ -14,5 +14,6 @@ internal sealed record CandidateExamAssignmentValidationData(
     Guid AttendanceStatusId,
     Guid IdentityStatusId,
     DateOnly SlotDate,
-    TimeOnly SlotEndTime,
+    TimeOnly? SessionStartTime,
+    TimeOnly? SessionEndTime,
     string StoredAccessCode);

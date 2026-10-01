@@ -62,7 +62,7 @@ export interface ExamResultCandidate {
   candidateNameAr: string;
   candidateNameEn: string | null;
   nationalNumber: string | null;
-  sessionNo: number | null;
+  sessionNo: string | null;
   slotTitleAr: string | null;
   slotTitleEn: string | null;
   slotDate: string | null;
@@ -160,7 +160,7 @@ export interface ExamResultCandidateAttemptDetails {
 
 export interface ExamResultRescheduleOption {
   testSessionId: string;
-  sessionNo: number;
+  sessionNo: string;
   testSlotId: string;
   slotTitleAr: string;
   slotTitleEn: string | null;

@@ -43,8 +43,15 @@ internal static class TestSlotCandidateHallState
             .Include(x => x.TestSession)
             .FirstOrDefaultAsync(x => x.Id == candidateId && x.TestSession!.TestSlotId == slotId, token);
         if (candidate is null) return (null, Result.Fail<Unit>(ErrorsCodes.ItemNotFound));
-        if (candidate.TestSession!.StatusId != TestSessionStatusIds.InProgress)
-            return (null, Result.Fail<Unit>(ErrorsCodes.CandidateExamSessionNotRunning));
+        var sessionStatusId =
+            candidate.TestSession!.StatusId;
+
+        if (sessionStatusId != TestSessionStatusIds.Approved &&
+            sessionStatusId != TestSessionStatusIds.Ready &&
+            sessionStatusId != TestSessionStatusIds.InProgress)
+        {
+            return (null,Result.Fail<Unit>(ErrorsCodes.CandidateExamSessionNotRunning));
+        }
         if (candidate.StatusId == TestSessionCandidateStatusIds.Cancelled ||
             candidate.StatusId == TestSessionCandidateStatusIds.Rescheduled ||
             candidate.StatusId == TestSessionCandidateStatusIds.Completed)
@@ -71,7 +78,9 @@ public sealed class MarkTestSlotCandidatePresentCommandHandler(IUnitOfWork unitO
         }, ct);
 }
 
-public sealed class VerifyTestSlotCandidateIdentityCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+public sealed class VerifyTestSlotCandidateIdentityCommandHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser)
     : IRequestHandler<VerifyTestSlotCandidateIdentityCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(VerifyTestSlotCandidateIdentityCommand request, CancellationToken ct) =>
@@ -88,7 +97,9 @@ public sealed class VerifyTestSlotCandidateIdentityCommandHandler(IUnitOfWork un
 }
 
 public sealed class AuthorizeTestSlotCandidateEntryCommandHandler(
-    IUnitOfWork unitOfWork, ICurrentUserService currentUser, TimeProvider timeProvider)
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider)
     : IRequestHandler<AuthorizeTestSlotCandidateEntryCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(AuthorizeTestSlotCandidateEntryCommand request, CancellationToken ct) =>

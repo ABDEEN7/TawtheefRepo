@@ -33,7 +33,7 @@ export interface CandidateExamAssignment {
   readonly jobTitleEn: string;
   readonly totalQuestions: number;
   readonly allowPreviousQuestion: boolean;
-  readonly sessionNo: number;
+  readonly sessionNo: string;
   readonly slotDate: string;
   readonly startTime: string;
   readonly endTime: string;

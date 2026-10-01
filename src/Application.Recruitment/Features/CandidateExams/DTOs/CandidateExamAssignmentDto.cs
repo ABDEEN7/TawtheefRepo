@@ -15,7 +15,7 @@ public sealed record CandidateExamAssignmentDto
     public required string JobTitleEn { get; init; }
     public int TotalQuestions { get; init; }
     public bool AllowPreviousQuestion { get; init; }
-    public int SessionNo { get; init; }
+    public required string SessionNo { get; init; }
     public DateOnly SlotDate { get; init; }
     public TimeOnly StartTime { get; init; }
     public TimeOnly EndTime { get; init; }

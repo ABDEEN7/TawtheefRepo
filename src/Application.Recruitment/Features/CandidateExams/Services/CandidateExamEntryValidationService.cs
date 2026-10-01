@@ -50,7 +50,8 @@ public sealed class CandidateExamEntryValidationService(
                 x.AttendanceStatusId,
                 x.IdentityVerificationStatusId,
                 x.TestSession.TestSlot.SlotDate,
-                x.TestSession.TestSlot.EndTime,
+                x.TestSession.StartTime,
+                x.TestSession.EndTime,
                 x.TestSession.TestSlot.AccessCodeHash))
             .SingleOrDefaultAsync(cancellationToken);
 
@@ -69,21 +70,52 @@ public sealed class CandidateExamEntryValidationService(
             return Failure(ErrorsCodes.CandidateExamRescheduled, StatusCodes.Status409Conflict);
         if (a.CandidateStatusId == TestSessionCandidateStatusIds.Started && !allowStarted)
             return Failure(ErrorsCodes.CandidateExamAlreadyStarted, StatusCodes.Status409Conflict);
+        if (a.SessionStartTime is null || a.SessionEndTime is null)
+        {
+            return Failure(
+                ErrorsCodes.CandidateExamSessionNotRunning,
+                StatusCodes.Status409Conflict);
+        }
+
         if (a.CandidateStatusId != TestSessionCandidateStatusIds.Started)
         {
             var localNow = timeProvider.GetLocalNow().DateTime;
-            var scheduledEnd = a.SlotDate.ToDateTime(a.SlotEndTime);
+
+            var scheduledStart =
+                a.SlotDate.ToDateTime(a.SessionStartTime.Value);
+
+            var scheduledEnd =
+                a.SlotDate.ToDateTime(a.SessionEndTime.Value);
+
+            if (localNow < scheduledStart)
+            {
+                return Failure(
+                    ErrorsCodes.CandidateExamSessionNotRunning,
+                    StatusCodes.Status409Conflict);
+            }
 
             if (localNow >= scheduledEnd)
-            { 
-                return Failure( ErrorsCodes.CandidateExamEntryWindowClosed,StatusCodes.Status409Conflict);
+            {
+                return Failure(
+                    ErrorsCodes.CandidateExamEntryWindowClosed,
+                    StatusCodes.Status409Conflict);
             }
         }
 
         if (a.SlotStatusId != TestSlotStatusIds.Started)
             return Failure(ErrorsCodes.CandidateExamSlotNotRunning);
-        if (a.SessionStatusId != TestSessionStatusIds.InProgress)
+        if (a.CandidateStatusId == TestSessionCandidateStatusIds.Started)
+        {
+            if (a.SessionStatusId != TestSessionStatusIds.InProgress)
+            {
+                return Failure(ErrorsCodes.CandidateExamSessionNotRunning);
+            }
+        }
+        else if (a.SessionStatusId != TestSessionStatusIds.Approved && a.SessionStatusId != TestSessionStatusIds.Ready &&
+            a.SessionStatusId != TestSessionStatusIds.InProgress)
+        {
             return Failure(ErrorsCodes.CandidateExamSessionNotRunning);
+        }
         if (a.AttendanceStatusId != TestSessionCandidateAttendanceStatusIds.Present)
             return Failure(ErrorsCodes.CandidateExamAttendanceNotPresent);
         if (a.IdentityStatusId != TestSessionCandidateIdentityVerificationStatusIds.Matched)

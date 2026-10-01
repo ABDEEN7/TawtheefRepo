@@ -25,6 +25,11 @@ public sealed class StartTestSlotCommandHandler(
         {
             if (request.TestSlotId == Guid.Empty || !Guid.TryParse(currentUser.UserId, out var userId))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
+            
+            await TestSlotCandidateHallState.LockAsync(
+                unitOfWork,
+                request.TestSlotId,
+                token);
 
             var testSlot = await unitOfWork.GetEntityRepository<TestSlot>().DbSet
                 .FirstOrDefaultAsync(x => x.Id == request.TestSlotId, token);
@@ -48,7 +53,7 @@ public sealed class StartTestSlotCommandHandler(
                 .AddMinutes(-settings.Value.StartAllowedBeforeMinutes);
             if (localNow < earliestStart)
                 return Result.Fail<Unit>(ErrorsCodes.TestSlotStartTooEarly);
-            
+
             var scheduledEnd =
                 testSlot.SlotDate.ToDateTime(testSlot.EndTime);
 
@@ -57,7 +62,7 @@ public sealed class StartTestSlotCommandHandler(
                 return Result.Fail<Unit>(
                     ErrorsCodes.TestSlotStartWindowClosed);
             }
-            
+
             var sessions = await unitOfWork.Context
                 .Set<TestSession>()
                 .Where(x =>
@@ -65,24 +70,11 @@ public sealed class StartTestSlotCommandHandler(
                     x.StatusId != TestSessionStatusIds.Cancelled)
                 .ToListAsync(token);
 
-            if (sessions.Count == 0)
-            {
-                return Result.Fail<Unit>(
-                    ErrorsCodes.TestSlotSessionStateInvalid);
-            }
-
-            if (sessions.Any(x =>
-                    x.StatusId != TestSessionStatusIds.Approved &&
+            if (sessions.Count == 0 || sessions.Any(x => x.StatusId != TestSessionStatusIds.Approved &&
                     x.StatusId != TestSessionStatusIds.Ready))
             {
                 return Result.Fail<Unit>(
                     ErrorsCodes.TestSlotSessionStateInvalid);
-            }
-
-            foreach (var session in sessions)
-            {
-                session.StatusId =
-                    TestSessionStatusIds.InProgress;
             }
 
             testSlot.StatusId = TestSlotStatusIds.Started;

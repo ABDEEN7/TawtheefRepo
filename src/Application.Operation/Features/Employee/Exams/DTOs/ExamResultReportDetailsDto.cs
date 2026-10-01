@@ -28,7 +28,7 @@ public sealed record ExamResultReportCandidateDto(
     string? CandidateNameEn,
     string? NationalNumber,
 
-    int? SessionNo,
+    string? SessionNo,
     string? SlotTitleAr,
     string? SlotTitleEn,
     DateOnly? SlotDate,

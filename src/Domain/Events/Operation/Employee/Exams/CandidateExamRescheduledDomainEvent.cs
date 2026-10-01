@@ -13,4 +13,4 @@ public sealed record CandidateExamRescheduledDomainEvent(
     string? LocationEn,
     string RoomAr,
     string? RoomEn,
-    int SessionNo) : BaseEvent(DateTimeOffset.UtcNow);
+    string SessionNo) : BaseEvent(DateTimeOffset.UtcNow);

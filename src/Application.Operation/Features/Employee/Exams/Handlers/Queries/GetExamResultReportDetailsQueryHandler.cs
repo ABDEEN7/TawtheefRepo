@@ -154,8 +154,8 @@ public sealed class GetExamResultReportDetailsQueryHandler(
                     slot?.TitleAr,
                     slot?.TitleEn,
                     slot?.SlotDate,
-                    slot?.StartTime,
-                    slot?.EndTime,
+                    session?.StartTime,
+                    session?.EndTime,
                     ToLookup(
                         assignment?.AttendanceStatus),
                     ToLookup(
