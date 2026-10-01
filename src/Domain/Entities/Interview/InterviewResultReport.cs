@@ -108,12 +108,10 @@ public class InterviewResultReport : EventEntity
 public enum ResultReportStatus
 {
     // Declared in lifecycle order. The numbers are stored in the database, so they are never renumbered:
-    // CommitteeReview was added later and keeps 6 even though it comes second in the flow.
     Creating = 1,
-    // Generated, waiting for the Committee Head (chair) to review it and send it to final approval.
-    CommitteeReview = 6,
-    UnderReview = 2,
-    Returned = 3,
-    Approved = 4,
-    Closed = 5
+    CommitteeReview = 2,
+    UnderReview = 3,
+    Returned = 4,
+    Approved = 5,
+    Closed = 6
 }
