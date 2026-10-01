@@ -199,7 +199,7 @@ public static class PermissionKeys
     {
         public const string View = "exams.view";
         public const string Create = "exams.create";
-        public const string WorkflowActions = "exams.workflowAction";
+        public const string WorkflowActions = "exams.workflow-action";
     }
 
     public static class TestSlots
@@ -214,7 +214,7 @@ public static class PermissionKeys
     {
         public const string View = "test-sessions.view";
         public const string Create = "test-sessions.create";
-        public const string WorkflowActions = "test-sessions.workflowAction";
+        public const string WorkflowActions = "test-sessions.workflow-action";
     }
 
     public static class Rooms
