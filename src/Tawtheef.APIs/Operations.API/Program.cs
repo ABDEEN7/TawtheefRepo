@@ -173,7 +173,6 @@ app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseLanguageMiddleware();
 
-app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.Use(async (ctx, next) =>
 {
@@ -230,7 +229,9 @@ if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseCors(myCors);
+app.UseMiddleware<RequestSanitizationMiddleware>();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.Use(async (ctx, next) =>

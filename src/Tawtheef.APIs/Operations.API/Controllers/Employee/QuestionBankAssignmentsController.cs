@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Application.Common.Interfaces.Services.Security;
+using Tawtheef.Application.Features.Resources.Commands;
+using Tawtheef.Application.Common.Services;
+using Tawtheef.Infrastructure.Security;
 
 namespace Operations.API.Controllers.Employee;
 
@@ -13,8 +17,24 @@ namespace Operations.API.Controllers.Employee;
 [Microsoft.AspNetCore.Authorization.Authorize(
     AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [AuthorizePermission(PermissionKeys.QuestionBankAssignments.Manage)]
-public sealed class QuestionBankAssignmentsController(IMediator mediator) : ControllerBase
+public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurrentUserService currentUser) : ControllerBase
 {
+    [HttpPost("images")]
+    [RequestSizeLimit(Tawtheef.Domain.Constants.ProfileLimits.MaxExperienceFileSizeBytes + 65_536)]
+    public async Task<IActionResult> UploadImage(IFormFile file, CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(currentUser.UserId, out var userId)) return Unauthorized();
+        var uploadPath = await QuestionImageUploadPathFactory.CreateAsync(userId, file, cancellationToken);
+        var result = await mediator.Send(
+            new UploadAttachmentCommand(
+                userId,
+                uploadPath.FileId,
+                uploadPath.Path,
+                uploadPath.Hash,
+                file),
+            cancellationToken);
+        return result.ToActionResult();
+    }
     [HttpGet]
     public async Task<IActionResult> List(
         [FromQuery] ListMyQuestionBankAssignmentsQuery query,
@@ -33,6 +53,7 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator) : Cont
     }
 
     [HttpPost("{assignmentId:guid}/questions")]
+    [AllowRichText]
     public async Task<IActionResult> Add(
         Guid assignmentId,
         [FromBody] QuestionInput input,
@@ -43,6 +64,7 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator) : Cont
     }
 
     [HttpPut("{assignmentId:guid}/questions/{itemId:guid}")]
+    [AllowRichText]
     public async Task<IActionResult> Edit(
         Guid assignmentId,
         Guid itemId,

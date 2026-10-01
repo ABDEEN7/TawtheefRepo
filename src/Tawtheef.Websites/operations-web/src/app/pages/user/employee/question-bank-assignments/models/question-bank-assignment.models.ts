@@ -19,6 +19,10 @@ export interface AssignmentQuestion {
   difficultyNameEn: string;
   questionTextAr?: string;
   questionTextEn?: string;
+  explanationAr?: string;
+  explanationEn?: string;
+  resourceId?: string;
+  imageUrl?: string;
   statusId: string;
   statusNameAr: string;
   statusNameEn: string;
@@ -32,6 +36,8 @@ export interface QuestionInput {
   questionTextEn?: string;
   explanationAr?: string;
   explanationEn?: string;
+  resourceId?: string | null;
+  imageFile?: File;
   options: AssignmentOption[];
 }
 

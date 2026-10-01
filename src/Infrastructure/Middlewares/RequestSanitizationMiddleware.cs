@@ -2,14 +2,24 @@
 using Microsoft.AspNetCore.Http;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Infrastructure.Extensions;
+using Tawtheef.Infrastructure.Security;
 using HttpMethods = Microsoft.AspNetCore.Http.HttpMethods;
 
 namespace Tawtheef.Infrastructure.Middlewares
 {
     public class RequestSanitizationMiddleware(RequestDelegate next)
     {
-        private static readonly Regex HtmlRegex = new(
-            @"<script|</script|<[^>]+>",
+        private static readonly Regex HtmlMarkupRegex = new(
+            @"<[^>]+>",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled
+        );
+
+        private static readonly Regex ObviousDangerousContentRegex = new(
+            @"<\s*/?\s*(script|iframe|object|embed)\b" +
+            @"|javascript\s*:" +
+            @"|vbscript\s*:" +
+            @"|data\s*:\s*text/html" +
+            @"|on[a-zA-Z]+\s*=",
             RegexOptions.IgnoreCase | RegexOptions.Compiled
         );
 
@@ -20,8 +30,12 @@ namespace Tawtheef.Infrastructure.Middlewares
                 context.Request.Method.Equals(HttpMethods.Put, StringComparison.OrdinalIgnoreCase) ||
                 context.Request.Method.Equals(HttpMethods.Patch, StringComparison.OrdinalIgnoreCase))
             {
+                var allowRichText = context.GetEndpoint()?
+                    .Metadata
+                    .GetMetadata<AllowRichTextAttribute>() is not null;
+
                 // 1) Check headers
-                if (context.Request.Headers.Any(header => ContainsHtmlOrScript(header.Value.ToString())))
+                if (context.Request.Headers.Any(header => ContainsHtmlMarkup(header.Value.ToString())))
                 {
                     await Reject(context);
                     return;
@@ -38,7 +52,7 @@ namespace Tawtheef.Infrastructure.Middlewares
                     var body = await reader.ReadToEndAsync();
                     context.Request.Body.Position = 0;
 
-                    if (ContainsHtmlOrScript(body))
+                    if (ContainsUnsafeBodyContent(body, allowRichText))
                     {
                         await Reject(context);
                         return;
@@ -49,8 +63,8 @@ namespace Tawtheef.Infrastructure.Middlewares
                 {
                     var form = await context.Request.ReadFormAsync();
 
-                    if (form.Any(field => ContainsHtmlOrScript(field.Value.ToString())) || 
-                        form.Files.Any(file => ContainsHtmlOrScript(file.FileName)))
+                    if (form.Any(field => ContainsUnsafeBodyContent(field.Value.ToString(), allowRichText)) ||
+                        form.Files.Any(file => ContainsHtmlMarkup(file.FileName)))
                     {
                         await Reject(context);
                         return;
@@ -61,8 +75,14 @@ namespace Tawtheef.Infrastructure.Middlewares
             await next(context);
         }
 
-        private static bool ContainsHtmlOrScript(string input)
-            => !string.IsNullOrWhiteSpace(input) && HtmlRegex.IsMatch(input);
+        private static bool ContainsHtmlMarkup(string input)
+            => !string.IsNullOrWhiteSpace(input) && HtmlMarkupRegex.IsMatch(input);
+
+        private static bool ContainsUnsafeBodyContent(string input, bool allowRichText)
+            => !string.IsNullOrWhiteSpace(input) &&
+               (allowRichText
+                   ? ObviousDangerousContentRegex.IsMatch(input)
+                   : HtmlMarkupRegex.IsMatch(input));
 
         private static Task Reject(HttpContext context)
             => context.WriteErrorAsync(

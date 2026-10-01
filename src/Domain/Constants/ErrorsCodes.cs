@@ -420,6 +420,7 @@ public class ErrorsCodes
     public const string TestSlotHasActiveExamAttempts = "TEST_SLOT_HAS_ACTIVE_EXAM_ATTEMPTS";
     public const string TestSlotCandidateIdentityNotesRequired = "TEST_SLOT_CANDIDATE_IDENTITY_NOTES_REQUIRED";
     public const string TestSlotCandidateHallStateInvalid = "TEST_SLOT_CANDIDATE_HALL_STATE_INVALID";
+    public const string TestSessionInsufficientCapacity = "TEST_SESSION_INSUFFICIENT_CAPACITY";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";

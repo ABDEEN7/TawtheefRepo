@@ -1,0 +1,130 @@
+<section dir="auto">
+  <section class="card card-table bg-light mb-4">
+    <div class="card-body">
+      <h6 class="text-primary mb-3">{{ 'TEST_SESSION_WIZARD.PERIOD_INFORMATION' | translate }}</h6>
+      <dl class="row g-3 mb-0 exam-summary-details">
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</dt>
+          <dd>{{ slot.slotName }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.ROOM' | translate }}</dt>
+          <dd>{{ slot.roomName }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.DATE' | translate }}</dt>
+          <dd>{{ slot.slotDate }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.PERIOD_TIME' | translate }}</dt>
+          <dd>{{ slot.startTime }} - {{ slot.endTime }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.ROOM_CAPACITY' | translate }}</dt>
+          <dd>{{ slot.roomCapacity }}</dd>
+        </div>
+        @if (firstExamDuration(); as duration) {
+          <div class="col-md-3">
+            <dt>{{ 'TEST_SESSION_WIZARD.FIRST_EXAM' | translate }}</dt>
+            <dd>{{ duration }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+          </div>
+        }
+        @if (secondExamDuration(); as duration) {
+          <div class="col-md-3">
+            <dt>{{ 'TEST_SESSION_WIZARD.SECOND_EXAM' | translate }}</dt>
+            <dd>{{ duration }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+          </div>
+        }
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.TOTAL_DURATION' | translate }}</dt>
+          <dd>{{ exam.durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.NUMBER_OF_QUESTIONS' | translate }}</dt>
+          <dd>{{ exam.numberOfQuestions }}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0">{{ 'TEST_SESSION_WIZARD.SESSIONS_IN_PERIOD' | translate }}</h6>
+    @if (sessions().length === 0) {
+      <button class="btn btn-outline-primary light" type="button" (click)="addSession()">
+        {{ 'TEST_SESSION_WIZARD.ADD_SESSION' | translate }}
+      </button>
+    }
+  </div>
+  @if (sessions().length === 0) {
+    <div class="border rounded p-5 mb-3 text-center text-muted">
+      {{ 'TEST_SESSION_WIZARD.NO_SESSIONS_IN_PERIOD' | translate }}
+    </div>
+  }
+  @if (sessions().length === 1) {
+    <div class="table-card rounded overflow-hidden mb-3">
+      <div class="table-responsive">
+        <p-table [value]="sessions()">
+          <ng-template #header
+            ><tr>
+              <th>{{ 'TEST_SESSION_WIZARD.FROM' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.TO' | translate }}</th>
+              <th>{{ 'TEST_SESSION_WIZARD.AVAILABLE_CAPACITY' | translate }}</th>
+              <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
+            </tr></ng-template
+          >
+          <ng-template #body
+            ><tr>
+              <td>
+                <input
+                  type="time"
+                  class="form-control"
+                  [min]="normalizeTime(slot.startTime)"
+                  [max]="normalizeTime(slot.endTime)"
+                  [(ngModel)]="from"
+                  (ngModelChange)="onFromChanged()"
+                />
+              </td>
+              <td>
+                <input
+                  type="time"
+                  class="form-control"
+                  [min]="normalizeTime(slot.startTime)"
+                  [max]="normalizeTime(slot.endTime)"
+                  [(ngModel)]="to"
+                  (ngModelChange)="validate()"
+                />
+              </td>
+              <td>{{ availableSeats() }}</td>
+              <td class="text-center">
+                <button
+                  type="button"
+                  class="btn btn-outline-danger light btn-sm"
+                  (click)="delete()"
+                  [title]="'TEST_SESSION_WIZARD.DELETE' | translate"
+                >
+                  <i class="hgi hgi-stroke hgi-delete-02"></i>
+                </button>
+              </td></tr
+          ></ng-template>
+        </p-table>
+      </div>
+    </div>
+  }
+  @if (error(); as message) {
+    <div class="alert alert-danger">
+      {{ message | translate: { count: selectedCandidateCount - availableSeats() } }}
+    </div>
+  }
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button class="btn btn-light" type="button" (click)="cancel()">
+      {{ 'TEST_SESSION_WIZARD.CLOSE' | translate }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="button"
+      [disabled]="!added() || validationPending() || !!error()"
+      (click)="apply()"
+    >
+      {{ 'TEST_SESSION_WIZARD.SAVE_SESSIONS' | translate }}
+    </button>
+  </div>
+</section>

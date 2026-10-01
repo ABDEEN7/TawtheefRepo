@@ -37,5 +37,11 @@ public class QuestionRevisionConfiguration
             .HasForeignKey(x => x.SourceRequestItemId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Resource)
+            .WithMany()
+            .HasForeignKey(x => x.ResourceId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

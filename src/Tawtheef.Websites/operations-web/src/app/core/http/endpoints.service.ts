@@ -453,6 +453,19 @@ export class EndpointsService {
       this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/reschedule`),
   };
 
+  testSessions = {
+    list: this.getFullUrl('/test-sessions'),
+    lookups: this.getFullUrl('/test-sessions/lookups'),
+    examDetails: (examId: string) => this.getFullUrl(`/test-sessions/wizard/exams/${examId}`),
+    candidates: this.getFullUrl('/test-sessions/wizard/candidates'),
+    readyTestSlots: this.getFullUrl('/test-sessions/wizard/ready-test-slots'),
+      capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
+    sessionSetup: this.getFullUrl('/test-sessions/wizard/session-setup'),
+    edit: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/edit`),
+    view: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/view`),
+    approve: (id: string) => this.getFullUrl(`/test-sessions/${id}/approve`),
+  };
+
   questionBanks = {
     list: this.getFullUrl('/questionbanks'),
     lookups: {
@@ -463,6 +476,8 @@ export class EndpointsService {
   };
 
   questionBankAssignments = {
+    images: this.getFullUrl('/questionbankassignments/images'),
+    image: (encodedBlobKey: string) => this.getFullUrl(`/resources/${encodedBlobKey}`),
     list: this.getFullUrl('/questionbankassignments'),
     workspace: (id: string) => this.getFullUrl(`/questionbankassignments/${id}`),
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),

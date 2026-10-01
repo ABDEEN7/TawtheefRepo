@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities;
 
 namespace Tawtheef.Domain.Entities.QuestionsBank;
 
@@ -25,6 +26,8 @@ public class QuestionRevision : EventEntity
     public string? ExplanationEn { get; set; }
 
     public Guid? ResourceId { get; set; }
+
+    public Resource? Resource { get; set; }
 
     public Guid? SourceRequestItemId { get; set; }
     

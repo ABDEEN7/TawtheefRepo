@@ -1,0 +1,31 @@
+using Tawtheef.Domain.Entities.Lookups;
+
+namespace Application.Operation.Features.Employee.TestSessions.Services;
+
+public static class TestSessionCapacityService
+{
+    public static readonly Guid[] NonReservingStatusIds =
+    [TestSessionStatusIds.Draft, TestSessionStatusIds.Cancelled, TestSessionStatusIds.Rejected];
+
+    public static bool ReservesCapacity(Guid statusId) =>
+        !NonReservingStatusIds.Contains(statusId);
+
+    public static int CalculatePeakOccupancy(
+        IEnumerable<TestSessionCapacityReservation> reservations,
+        TimeOnly start,
+        TimeOnly end)
+    {
+        var events = reservations.Where(reservation => reservation.Start < end && reservation.End > start)
+            .SelectMany(reservation => new[]
+            {
+                (Time: reservation.Start < start ? start : reservation.Start, Delta: reservation.CandidateCount),
+                (Time: reservation.End > end ? end : reservation.End, Delta: -reservation.CandidateCount)
+            }).OrderBy(item => item.Time).ThenBy(item => item.Delta).ToList();
+        var occupancy = 0;
+        var peak = 0;
+        foreach (var item in events) { occupancy += item.Delta; peak = Math.Max(peak, occupancy); }
+        return peak;
+    }
+}
+
+public sealed record TestSessionCapacityReservation(TimeOnly Start, TimeOnly End, int CandidateCount);

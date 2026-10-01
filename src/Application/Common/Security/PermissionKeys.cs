@@ -199,7 +199,7 @@ public static class PermissionKeys
     {
         public const string View = "exams.view";
         public const string Create = "exams.create";
-        public const string WorkflowActions = "examWorkflowActions";
+        public const string WorkflowActions = "exams.workflow-action";
         public const string ApproveResults = "exams.approve-results";
         public const string ViewAttemptDetails = "exams.view-attempt-details";
     }
@@ -210,6 +210,13 @@ public static class PermissionKeys
         public const string Create = "test-slots.create";
         public const string ViewAccessCode = "test-slots.view-access-code";
         public const string ManagePeriod = "test-slots.manage-period";
+    }
+
+    public static class TestSessions
+    {
+        public const string View = "test-sessions.view";
+        public const string Create = "test-sessions.create";
+        public const string WorkflowActions = "test-sessions.workflow-action";
     }
 
     public static class Rooms

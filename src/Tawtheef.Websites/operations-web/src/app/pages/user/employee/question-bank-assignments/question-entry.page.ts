@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ProgressBar } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
+import { RichContentRendererComponent } from '../../../../shared/rich-content/rich-content-renderer.component';
 import { Observable } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -29,6 +30,7 @@ import { QuestionBankAssignmentsService } from './services/question-bank-assignm
     ButtonModule,
     ProgressBar,
     TableModule,
+    RichContentRendererComponent,
     DynamicDialogModule,
   ],
   providers: [DialogService],
@@ -57,6 +59,10 @@ export class QuestionEntryPage {
 
   localized(ar?: string, en?: string): string {
     return (this.language.get() === 'ar' ? ar : en) || '-';
+  }
+
+  localizedContent(ar?: string, en?: string): string {
+    return (this.language.get() === 'ar' ? ar : en) || '';
   }
 
   percent(): number {

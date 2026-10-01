@@ -24256,6 +24256,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Tawtheef.Domain.Entities.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Tawtheef.Domain.Entities.QuestionsBank.QuestionBankRequestItem", "SourceRequestItem")
                         .WithMany()
                         .HasForeignKey("SourceRequestItemId")
@@ -24275,6 +24280,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("QuestionType");
+
+                    b.Navigation("Resource");
 
                     b.Navigation("SourceRequestItem");
 

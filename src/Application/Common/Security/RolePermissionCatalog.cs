@@ -30,6 +30,9 @@ public static class RolePermissionCatalog
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.Create.Key,
                 Permissions.TestSlots.ManagePeriod.Key,
+                Permissions.TestSessions.View.Key,
+                Permissions.TestSessions.Create.Key,
+                Permissions.TestSessions.WorkflowActions.Key,
                 Permissions.Dashboard.View.Key,
                 Permissions.Dashboard.Manage.Key,
                 
