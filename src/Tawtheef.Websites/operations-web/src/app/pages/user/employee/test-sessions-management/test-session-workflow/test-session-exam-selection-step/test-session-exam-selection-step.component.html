@@ -1,0 +1,75 @@
+<h5 class="text-primary d-flex align-items-center my-3">
+  <i class="hgi hgi-stroke hgi-clipboard-check-01 me-1"></i
+  >{{ 'TEST_SESSION_WIZARD.STEP_EXAM' | translate }}
+</h5>
+<div class="row g-3 exam-selection-grid">
+  <div class="col-lg-6">
+    <label class="form-label" for="test-session-exam"
+      >{{ 'TEST_SESSION_WIZARD.EXAM' | translate }} <span class="text-danger">*</span></label
+    >
+    <p-select
+      inputId="test-session-exam"
+      class="w-100"
+      [options]="exams"
+      [disabled]="disabled"
+      optionLabel="name"
+      optionValue="id"
+      [(ngModel)]="selectedExamId"
+      (ngModelChange)="examSelected.emit($event)"
+      [filter]="true"
+      [showClear]="true"
+      appendTo="body"
+      [placeholder]="'TEST_SESSION_WIZARD.SELECT_EXAM' | translate"
+      [invalid]="showValidation && !selectedExamId"
+    />
+    @if (showValidation && !selectedExamId) {
+      <small class="text-danger">{{ 'TEST_SESSION_WIZARD.EXAM_REQUIRED' | translate }}</small>
+    }
+  </div>
+</div>
+@if (loading) {
+  <p class="text-muted mt-4 mb-0">{{ 'TEST_SESSION_WIZARD.LOADING_EXAM_DETAILS' | translate }}</p>
+} @else if (examDetails; as details) {
+  <section class="card card-table bg-light my-4" aria-label="selected-exam-summary">
+    <div class="card-body">
+      <h5 class="text-primary d-flex align-items-center mb-3">
+        <i class="hgi hgi-stroke hgi-briefcase-03 me-1"></i>
+        {{ 'TEST_SESSION_WIZARD.EXAM_DETAILS' | translate }}
+      </h5>
+      <dl class="row g-3 mb-0 exam-summary-details">
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.EXAM_NAME' | translate }}</dt>
+          <dd>{{ details.examName }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.JOB_TITLE' | translate }}</dt>
+          <dd>{{ details.jobTitle }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.MAIN_SPECIALIZATION' | translate }}</dt>
+          <dd>
+            {{ details.mainSpecialization || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) }}
+          </dd>
+        </div>
+        @if (details.subSpecialization) {
+          <div class="col-md-3">
+            <dt>{{ 'TEST_SESSION_WIZARD.SUB_SPECIALIZATION' | translate }}</dt>
+            <dd>{{ details.subSpecialization }}</dd>
+          </div>
+        }
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.EXAM_DURATION' | translate }}</dt>
+          <dd>{{ details.durationMinutes }} {{ 'TEST_SESSION_WIZARD.MINUTES' | translate }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.NUMBER_OF_QUESTIONS' | translate }}</dt>
+          <dd>{{ details.numberOfQuestions }}</dd>
+        </div>
+        <div class="col-md-3">
+          <dt>{{ 'TEST_SESSION_WIZARD.STATUS' | translate }}</dt>
+          <dd>{{ details.examStatus }}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+}

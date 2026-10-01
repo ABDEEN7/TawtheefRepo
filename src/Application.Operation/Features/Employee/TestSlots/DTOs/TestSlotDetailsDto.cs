@@ -31,10 +31,10 @@ public sealed record TestSlotCandidateListItemDto(
     string? Qid,
     string ExamTitle,
     string? JobTitle,
-    int SessionNo,
+    string SessionNo,
     string ExamNo,
     string AttendanceStatus,
     string AttemptStatus,
     string? NotificationStatus);
-public sealed record TestSlotSessionDto(Guid Id, int SessionNo, string ExamNo, string StatusName, int CandidateCount);
+public sealed record TestSlotSessionDto(Guid Id, string SessionNo, string ExamNo, string StatusName, int CandidateCount);
 public sealed record TestSlotAccessCodeDto(string AccessCode);
