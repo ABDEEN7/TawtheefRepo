@@ -80,8 +80,7 @@
           <ng-template pTemplate="header">
             <tr>
               <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_CANDIDATE' | translate }}</th>
-              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE' | translate }}</th>
-              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TIME' | translate }}</th>
+              <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE_TIME' | translate }}</th>
               <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_LOCATION' | translate }}</th>
               <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_STATUS' | translate }}</th>
               <th>{{ 'INTERVIEW_SCHEDULE.DETAIL.NOTIFICATION' | translate }}</th>
@@ -96,8 +95,18 @@
                   <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.QID_LABEL' | translate }}: <bdi dir="ltr">{{ appointment.candidateQid }}</bdi></small>
                 }
               </td>
-              <td>{{ appointment.startAt | date: 'dd-MM-yyyy' }}</td>
-              <td><bdi dir="ltr">{{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi></td>
+              <td>
+                <div class="date-time-cell">
+                  <span class="date-time-line">
+                    <span class="date-time-icon"><i class="hgi hgi-stroke hgi-calendar-03" aria-hidden="true"></i></span>
+                    <bdi dir="ltr" class="date-time-date">{{ appointment.startAt | date: 'dd-MM-yyyy' }}</bdi>
+                  </span>
+                  <span class="date-time-line">
+                    <span class="date-time-icon time"><i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i></span>
+                    <bdi dir="ltr" class="date-time-time">{{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi>
+                  </span>
+                </div>
+              </td>
               <td>{{ location(appointment) || '—' }}</td>
               <td>
                 <span [class]="'pill ' + appointmentStatusPill(appointment.status)">
@@ -134,7 +143,7 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.DETAIL.NO_APPOINTMENTS' | translate }}</td>
+              <td colspan="6" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.DETAIL.NO_APPOINTMENTS' | translate }}</td>
             </tr>
           </ng-template>
         </p-table>

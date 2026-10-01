@@ -68,8 +68,7 @@
     <p-table [value]="store.pagedSessions()" [loading]="store.listLoading()" [rowHover]="true" responsiveLayout="scroll">
       <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_DATE' | translate }}</th>
-          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_TIME' | translate }}</th>
+          <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_DATE_TIME' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_JOB' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_COMMITTEE' | translate }}</th>
           <th>{{ 'INTERVIEW_EVALUATION.SESSION_LIST.COLUMN_LOCATION' | translate }}</th>
@@ -85,14 +84,16 @@
           @let sessions = sessionSummary(row);
           <td>
             @if (sessions) {
-              <bdi dir="ltr">{{ sessions.firstDate | date: 'dd-MM-yyyy' }}@if (sessions.multiDay) { - {{ sessions.lastDate | date: 'dd-MM-yyyy' }}}</bdi>
-            } @else {
-              —
-            }
-          </td>
-          <td>
-            @if (sessions) {
-              <bdi dir="ltr">{{ sessions.earliestStart | date: 'h:mm a' }} - {{ sessions.latestEnd | date: 'h:mm a' }}</bdi>
+              <div class="date-time-cell">
+                <span class="date-time-line">
+                  <span class="date-time-icon"><i class="hgi hgi-stroke hgi-calendar-03" aria-hidden="true"></i></span>
+                  <bdi dir="ltr" class="date-time-date">{{ sessions.firstDate | date: 'dd-MM-yyyy' }}@if (sessions.multiDay) { - {{ sessions.lastDate | date: 'dd-MM-yyyy' }}}</bdi>
+                </span>
+                <span class="date-time-line">
+                  <span class="date-time-icon time"><i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i></span>
+                  <bdi dir="ltr" class="date-time-time">{{ sessions.earliestStart | date: 'h:mm a' }} - {{ sessions.latestEnd | date: 'h:mm a' }}</bdi>
+                </span>
+              </div>
             } @else {
               —
             }
@@ -151,7 +152,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="9" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.SESSION_LIST.NO_RECORDS' | translate }}</td>
+          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_EVALUATION.SESSION_LIST.NO_RECORDS' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>

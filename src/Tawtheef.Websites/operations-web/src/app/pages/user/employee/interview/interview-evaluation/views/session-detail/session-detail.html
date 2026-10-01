@@ -71,7 +71,7 @@
           <ng-template pTemplate="header">
             <tr>
               <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_CANDIDATE' | translate }}</th>
-              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_TIME' | translate }}</th>
+              <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_DATE_TIME' | translate }}</th>
               <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_LOCATION' | translate }}</th>
               <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_SCHEDULE_STATUS' | translate }}</th>
               <th>{{ 'INTERVIEW_EVALUATION.SESSION.COLUMN_ATTENDANCE_STATUS' | translate }}</th>
@@ -87,7 +87,18 @@
                   <small class="text-muted">{{ 'INTERVIEW_EVALUATION.CANDIDATE.CANDIDATE_QID' | translate }}: <bdi dir="ltr">{{ appointment.candidateQid }}</bdi></small>
                 }
               </td>
-              <td><bdi dir="ltr">{{ appointment.startAt | date: 'dd-MM-yyyy' }} · {{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi></td>
+              <td>
+                <div class="date-time-cell">
+                  <span class="date-time-line">
+                    <span class="date-time-icon"><i class="hgi hgi-stroke hgi-calendar-03" aria-hidden="true"></i></span>
+                    <bdi dir="ltr" class="date-time-date">{{ appointment.startAt | date: 'dd-MM-yyyy' }}</bdi>
+                  </span>
+                  <span class="date-time-line">
+                    <span class="date-time-icon time"><i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i></span>
+                    <bdi dir="ltr" class="date-time-time">{{ appointment.startAt | date: 'h:mm a' }} - {{ appointment.endAt | date: 'h:mm a' }}</bdi>
+                  </span>
+                </div>
+              </td>
               <td>{{ location(appointment) || '—' }}</td>
               <td>
                 <span [class]="'pill ' + appointmentStatusPill(appointment.status)">

@@ -74,8 +74,7 @@
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_JOB' | translate }}</th>
-          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE' | translate }}</th>
-          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TIME' | translate }}</th>
+          <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_DATE_TIME' | translate }}</th>
           <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_TYPE' | translate }}</th>
           <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_COMMITTEE' | translate }}</th>
           <th>{{ 'INTERVIEW_SCHEDULE.COLUMN_CANDIDATES' | translate }}</th>
@@ -90,14 +89,16 @@
           @let sessions = sessionSummary(schedule);
           <td>
             @if (sessions) {
-              <bdi dir="ltr">{{ sessions.firstDate | date: 'dd-MM-yyyy' }}@if (sessions.multiDay) { - {{ sessions.lastDate | date: 'dd-MM-yyyy' }}}</bdi>
-            } @else {
-              —
-            }
-          </td>
-          <td>
-            @if (sessions) {
-              <bdi dir="ltr">{{ sessions.earliestStart | date: 'h:mm a' }} - {{ sessions.latestEnd | date: 'h:mm a' }}</bdi>
+              <div class="date-time-cell">
+                <span class="date-time-line">
+                  <span class="date-time-icon"><i class="hgi hgi-stroke hgi-calendar-03" aria-hidden="true"></i></span>
+                  <bdi dir="ltr" class="date-time-date">{{ sessions.firstDate | date: 'dd-MM-yyyy' }}@if (sessions.multiDay) { - {{ sessions.lastDate | date: 'dd-MM-yyyy' }}}</bdi>
+                </span>
+                <span class="date-time-line">
+                  <span class="date-time-icon time"><i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i></span>
+                  <bdi dir="ltr" class="date-time-time">{{ sessions.earliestStart | date: 'h:mm a' }} - {{ sessions.latestEnd | date: 'h:mm a' }}</bdi>
+                </span>
+              </div>
             } @else {
               —
             }
@@ -124,7 +125,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.NO_RECORDS' | translate }}</td>
+          <td colspan="7" class="text-center text-muted">{{ 'INTERVIEW_SCHEDULE.NO_RECORDS' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>
