@@ -404,5 +404,6 @@
   "server-error.INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED": "ليس لديك صلاحية الوصول إلى ملخص تقييم هذه اللجنة.",
   "server-error.INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED": "ليس لديك صلاحية الوصول إلى هذه الجلسة.",
   "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND": "لم يتم العثور على المشكلة التشغيلية.",
-  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "تم حل هذه المشكلة التشغيلية أو التنازل عنها مسبقًا."
+  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "تم حل هذه المشكلة التشغيلية أو التنازل عنها مسبقًا.",
+  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "لا يمكن إرسال جلسة اختبار للاعتماد أو اعتمادها بتاريخ أو وقت سابق. يرجى إعادتها للتعديل واختيار فترة صالحة."
 }

@@ -283,7 +283,7 @@
         </p-table>
       </div>
     </div>
-    @if (selectedCandidateIds().length > 0) {
+    @if (!readOnly() && selectedCandidateIds().length > 0) {
       @if (isSessionCapacitySufficient()) {
         <div class="alert alert-success d-flex align-items-center gap-2 mt-3 mb-0">
           <i class="fa-solid fa-circle-check" aria-hidden="true"></i>

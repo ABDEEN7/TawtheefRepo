@@ -9,6 +9,7 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import { TestSessionCandidateSummaryDto } from '../models/test-session-candidate.dto';
 import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
 import { LocalTestSession } from '../models/ready-test-slot.dto';
@@ -50,6 +51,7 @@ import { TestSessionDecisionDialogComponent } from './test-session-decision-dial
     TestSessionPeriodsStepComponent,
     TestSessionWorkflowActionComponent,
     TableModule,
+    FaDirArrowDirective,
     I18nNamespaceDirective,
   ],
   providers: [DialogService],
@@ -89,6 +91,9 @@ export class TestSessionWorkflowComponent {
   readonly viewMode = signal(false);
   readonly statusId = signal<string | null>(null);
   readonly decisionNote = signal<string | null>(null);
+  readonly decisionByName = signal<string | null>(null);
+  readonly decisionAt = signal<string | null>(null);
+  readonly statusBackendName = signal<string | null>(null);
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -174,6 +179,9 @@ export class TestSessionWorkflowComponent {
     this.sessionNo.set(session.sessionNo);
     this.statusId.set(session.statusId.toLowerCase());
     this.decisionNote.set(session.decisionNote);
+    this.decisionByName.set(session.decisionByName ?? null);
+    this.decisionAt.set(session.decisionAt ?? null);
+    this.statusBackendName.set(session.statusBackendName ?? null);
     this.selectedExamId = session.examId;
     this.candidateGenderFilter.set(session.genderFilter);
     this.candidateNationalityFilter.set(session.nationalityFilter);
@@ -375,6 +383,10 @@ export class TestSessionWorkflowComponent {
 
   onRejectClicked(): void {
     this.openDecisionDialog('reject');
+  }
+
+  navigateToTestSessionsManagement(): void {
+    void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
   }
 
   private openDecisionDialog(action: 'return' | 'reject'): void {

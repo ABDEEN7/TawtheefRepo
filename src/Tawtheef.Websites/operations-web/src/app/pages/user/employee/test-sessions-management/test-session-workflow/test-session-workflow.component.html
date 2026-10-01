@@ -3,23 +3,31 @@
   [i18nNamespace]="['pages/employee/test-sessions-management', 'pages/employee/test-slots-management']"
 >
   <div class="card-body">
-    <h3 id="test-session-review-title" class="fw-bold mb-4">
-      {{
-        (
-          viewMode()
-            ? 'TEST_SESSION_WIZARD.VIEW_TITLE'
-            : step === 5
-              ? 'TEST_SESSION_WIZARD.REVIEW_TITLE'
-              : 'TEST_SESSION_WIZARD.CREATE_TITLE'
-        ) | translate
-      }}
-    </h3>
-    @if (decisionNote(); as note) {
-      <div class="alert alert-warning my-4" role="note">
-        <h5 class="mb-2">{{ 'TEST_SESSION_WIZARD.DECISION_NOTE' | translate }}</h5>
-        <p class="mb-0 text-break">{{ note }}</p>
+    <div class="row align-items-center mb-3">
+      <div class="col-lg-6 col-md-12">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            class="btn btn-link p-0 text-primary d-inline-flex align-items-center"
+            (click)="navigateToTestSessionsManagement()"
+            [attr.aria-label]="'TEST_SESSION_WIZARD.BACK_TO_LIST' | translate"
+          >
+            <i class="hgi fs-24" faDirArrow="start"></i>
+          </button>
+          <h3 id="test-session-review-title" class="fw-bold mb-0">
+            {{
+              (
+                viewMode()
+                  ? 'TEST_SESSION_WIZARD.VIEW_TITLE'
+                  : step === 5
+                    ? 'TEST_SESSION_WIZARD.REVIEW_TITLE'
+                    : 'TEST_SESSION_WIZARD.CREATE_TITLE'
+              ) | translate
+            }}
+          </h3>
+        </div>
       </div>
-    }
+    </div>
     <div class="card card-table workflow-stepper-card mb-4">
       <div class="card-body">
         <div class="workflow-stepper-container">
@@ -62,6 +70,29 @@
         </div>
       </div>
     </div>
+    @if (viewMode() && decisionNote(); as note) {
+      <div
+        class="alert my-4"
+        [class.alert-danger]="statusBackendName() === 'REJECTED'"
+        [class.alert-warning]="statusBackendName() !== 'REJECTED'"
+        role="note"
+      >
+        <h5 class="mb-2">{{ 'TEST_SESSION_WIZARD.DECISION_NOTE' | translate }}</h5>
+        <p class="mb-3 text-break">{{ note }}</p>
+        @if (decisionByName() || decisionAt()) {
+          <dl class="row mb-0 small">
+            @if (decisionByName()) {
+              <dt class="col-sm-3">{{ 'TEST_SESSION_WIZARD.DECISION_BY' | translate }}</dt>
+              <dd class="col-sm-9">{{ decisionByName() }}</dd>
+            }
+            @if (decisionAt()) {
+              <dt class="col-sm-3">{{ 'TEST_SESSION_WIZARD.DECISION_AT' | translate }}</dt>
+              <dd class="col-sm-9">{{ decisionAt() | date: 'medium' }}</dd>
+            }
+          </dl>
+        }
+      </div>
+    }
     @if (loading || editLoading()) {
       <p class="text-muted">{{ 'TEST_SESSION_WIZARD.LOADING_EXAM_DETAILS' | translate }}</p>
     } @else if (step === 1) {
@@ -367,7 +398,7 @@
               </div>
             </section>
 
-            @if (isReviewValid()) {
+            @if (!viewMode() && isReviewValid()) {
               <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
                 <i class="hgi hgi-stroke hgi-check-circle" aria-hidden="true"></i>
                 {{ 'TEST_SESSION_WIZARD.REVIEW_READY' | translate }}
@@ -377,13 +408,14 @@
         }
       }
     }
-    <div class="d-flex justify-content-between mt-4">
+    <div class="d-flex justify-content-between gap-2 mt-4 pt-3 border-top">
       <button
         type="button"
-        class="btn btn-outline-secondary"
+        class="btn btn-link d-flex align-items-center gap-2"
         [disabled]="step === 1"
         (click)="goTo(step - 1)"
       >
+        <i class="hgi" faDirArrow="start"></i>
         {{ 'TEST_SESSION_WIZARD.BACK' | translate }}
       </button>
       <div class="d-flex gap-2">
@@ -411,11 +443,12 @@
         } @else {
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-outline-primary light d-flex align-items-center gap-2"
           [disabled]="!viewMode() && !canGoNext()"
           (click)="goTo(step + 1)"
         >
           {{ 'TEST_SESSION_WIZARD.NEXT' | translate }}
+          <i class="hgi" faDirArrow="end"></i>
         </button>
         }
       </div>

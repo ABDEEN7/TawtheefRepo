@@ -10,6 +10,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Queries;
 
@@ -72,23 +73,39 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
         }
 
         string? decisionNote = null;
+        string? decisionByName = null;
+        DateTime? decisionAt = null;
+        var statusBackendName = session.StatusId == TestSessionStatusIds.Rejected
+            ? "REJECTED"
+            : session.StatusId == TestSessionStatusIds.Returned ? "RETURNED" : null;
         if (session.StatusId == TestSessionStatusIds.Returned ||
             session.StatusId == TestSessionStatusIds.Rejected)
         {
-            var actionLogNotes = await unitOfWork.Context.Set<ActionLog>().AsNoTracking()
+            var actionLog = await unitOfWork.Context.Set<ActionLog>().AsNoTracking()
                 .Where(log => log.EntityId == session.Id && log.Section == "TestSessionWorkflow" &&
                               (log.ActionType == "TestSessionReturnedForEdit" ||
                                log.ActionType == "TestSessionRejected"))
                 .OrderByDescending(log => log.CreatedDate)
-                .Select(log => log.Notes)
+                .Select(log => new { log.UserId, log.Notes, log.CreatedDate })
                 .FirstOrDefaultAsync(ct);
-            if (!string.IsNullOrWhiteSpace(actionLogNotes))
+            if (actionLog?.UserId is { } reviewerId)
             {
-                using var document = JsonDocument.Parse(actionLogNotes);
+                decisionByName = await unitOfWork.Context.Set<User>().AsNoTracking()
+                    .Where(user => user.Id == reviewerId)
+                    .Select(user => user.FullNameEn ?? user.FullNameAr)
+                    .FirstOrDefaultAsync(ct);
+            }
+            if (!string.IsNullOrWhiteSpace(actionLog?.Notes))
+            {
+                using var document = JsonDocument.Parse(actionLog.Notes);
                 if (document.RootElement.TryGetProperty("decisionNote", out var noteElement) ||
                     document.RootElement.TryGetProperty("returnNote", out noteElement))
                     decisionNote = noteElement.GetString();
+                if (document.RootElement.TryGetProperty("performedAt", out var performedAtElement) &&
+                    performedAtElement.TryGetDateTime(out var performedAt))
+                    decisionAt = performedAt;
             }
+            decisionAt ??= actionLog?.CreatedDate;
         }
 
         return Result.Ok(new TestSessionEditDto(
@@ -96,7 +113,8 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
             session.GenderFilter, session.NationalityFilter, session.InvitationIds,
             session.TestSlotId, session.SlotName, session.SlotDate, session.SlotStartTime,
             session.SlotEndTime, session.RoomId, session.RoomName, session.RoomCapacity,
-            session.StartTime, session.EndTime, availableCapacity, decisionNote));
+            session.StartTime, session.EndTime, availableCapacity, decisionNote, decisionByName,
+            decisionAt, statusBackendName));
     }
 
     private static bool IsEditable(Guid statusId) =>

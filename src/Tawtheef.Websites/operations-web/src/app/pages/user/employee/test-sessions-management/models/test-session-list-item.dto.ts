@@ -43,6 +43,9 @@ export interface TestSessionEditDto {
   endTime: string | null;
   availableCapacity: number;
   decisionNote: string | null;
+  decisionByName?: string | null;
+  decisionAt?: string | null;
+  statusBackendName?: string | null;
 }
 
 export interface TestSessionFilters {

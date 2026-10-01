@@ -21,4 +21,7 @@ public sealed record TestSessionEditDto(
     TimeOnly? StartTime,
     TimeOnly? EndTime,
     int AvailableCapacity,
-    string? DecisionNote);
+    string? DecisionNote,
+    string? DecisionByName,
+    DateTime? DecisionAt,
+    string? StatusBackendName);

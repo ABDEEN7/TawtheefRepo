@@ -56,6 +56,10 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
             (session.EndTime.Value - session.StartTime.Value).TotalMinutes < exam.Duration)
             return ValidationFailure();
 
+        if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(
+                schedule.SlotDate, session.StartTime.Value, DateTime.UtcNow))
+            return SchedulingTimeFailure();
+
         var staff = await unitOfWork.Context.Set<TestSlotStaff>().AsNoTracking()
             .Where(x => x.TestSlotId == schedule.Id && x.IsActive).Select(x => new TestSlotStaffAssignmentDto
             { StaffUserId = x.StaffUserId, RoleId = x.RoleId, IsActive = x.IsActive }).ToListAsync(ct);
@@ -114,6 +118,9 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
 
     private static IResult<Unit> ValidationFailure() => Result.Fail<Unit>(new Error("VALIDATION")
         .WithMetadata("Code", "Validation"));
+
+    private static IResult<Unit> SchedulingTimeFailure() => Result.Fail<Unit>(
+        new Error(ErrorsCodes.TestSessionScheduledTimeExpired).WithMetadata("Code", "Validation"));
 
     private static IResult<Unit> CapacityFailure(int count) => Result.Fail<Unit>(
         new Error(ErrorsCodes.TestSessionInsufficientCapacity).WithMetadata("Code", "Validation")

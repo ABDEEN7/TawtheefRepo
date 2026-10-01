@@ -404,5 +404,6 @@
   "server-error.INTERVIEW_MEMBER_EVALUATION_SUMMARY_ACCESS_DENIED": "You don't have access to this committee's evaluation summary.",
   "server-error.INTERVIEW_EVALUATION_SESSION_ACCESS_DENIED": "You don't have access to this interview session.",
   "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_FOUND": "The operational issue was not found.",
-  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "This operational issue has already been resolved or waived."
+  "server-error.INTERVIEW_OPERATIONAL_ISSUE_NOT_OPEN": "This operational issue has already been resolved or waived.",
+  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "A test session cannot be submitted or approved for a past date or time. Return it for editing and select a valid time slot."
 }

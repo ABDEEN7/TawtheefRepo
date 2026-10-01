@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
@@ -36,6 +37,7 @@ import { PaginationComponent } from '../../../../../../shared/components/paginat
   imports: [
     FormsModule,
     TranslatePipe,
+    IconFieldModule,
     InputIconModule,
     InputTextModule,
     CheckboxModule,

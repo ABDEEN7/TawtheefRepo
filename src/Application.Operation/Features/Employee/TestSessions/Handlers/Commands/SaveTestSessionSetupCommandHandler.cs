@@ -78,6 +78,11 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
             (setup.EndTime.Value - setup.StartTime.Value).TotalMinutes < exam.Duration))
             return ValidationFailure();
 
+        if (setup.SendToApprove && slot is not null &&
+            !TestSessionCapacityService.IsSessionStartCurrentOrFuture(
+                slot.SlotDate, setup.StartTime!.Value, DateTime.UtcNow))
+            return SchedulingTimeFailure();
+
         if (setup.SendToApprove && slot is not null)
         {
             await unitOfWork.Context.Database.ExecuteSqlRawAsync(
@@ -230,6 +235,10 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
 
     private static IResult<SavedTestSessionSetupDto> ValidationFailure()
         => Result.Fail<SavedTestSessionSetupDto>(new Error("VALIDATION")
+            .WithMetadata("Code", "Validation"));
+
+    private static IResult<SavedTestSessionSetupDto> SchedulingTimeFailure()
+        => Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionScheduledTimeExpired)
             .WithMetadata("Code", "Validation"));
 
     private static bool IsEditable(Guid statusId) =>
