@@ -31,10 +31,14 @@ public sealed class CandidateExamAttemptPreparationService(IUnitOfWork unitOfWor
             var examId = await unitOfWork.Context.Set<TestSessionCandidate>()
                 .AsNoTracking()
                 .Where(candidate => candidate.Id == testSessionCandidateId &&
-                    candidate.StatusId == TestSessionCandidateStatusIds.Authorized &&
-                    candidate.TestSession!.TestSlotId == testSlotId &&
-                    candidate.TestSession.StatusId == TestSessionStatusIds.InProgress &&
-                    candidate.TestSession.TestSlot!.StatusId == TestSlotStatusIds.Started)
+                                    candidate.StatusId == TestSessionCandidateStatusIds.Authorized &&
+                                    candidate.TestSession!.TestSlotId == testSlotId &&
+                                    (
+                                        candidate.TestSession.StatusId == TestSessionStatusIds.Approved ||
+                                        candidate.TestSession.StatusId == TestSessionStatusIds.Ready ||
+                                        candidate.TestSession.StatusId == TestSessionStatusIds.InProgress
+                                    ) &&
+                                    candidate.TestSession.TestSlot!.StatusId == TestSlotStatusIds.Started)
                 .Select(candidate => (Guid?)candidate.TestSession!.ExamId)
                 .SingleOrDefaultAsync(token);
 

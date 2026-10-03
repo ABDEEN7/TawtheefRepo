@@ -59,7 +59,22 @@ public class TestSessionCandidate : EventEntity
         AttendanceStatusId = TestSessionCandidateAttendanceStatusIds.Present;
         return Result.Ok();
     }
+    public Result MarkNoShow()
+    {
+        if (StatusId != TestSessionCandidateStatusIds.Assigned ||
+            AttendanceStatusId !=
+            TestSessionCandidateAttendanceStatusIds.Pending ||
+            AuthorizedAt is not null)
+        {
+            return Result.Fail(
+                ErrorsCodes.TestSlotCandidateHallStateInvalid);
+        }
 
+        AttendanceStatusId =
+            TestSessionCandidateAttendanceStatusIds.NoShow;
+
+        return Result.Ok();
+    }
     public Result VerifyIdentity(bool matched, string? notes)
     {
         if (AttendanceStatusId != TestSessionCandidateAttendanceStatusIds.Present ||

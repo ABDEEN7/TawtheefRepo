@@ -52,6 +52,12 @@ public sealed class CandidateExamEntryValidationService(
                 x.TestSession.TestSlot.SlotDate,
                 x.TestSession.StartTime,
                 x.TestSession.EndTime,
+                unitOfWork.Context
+                    .Set<ExamPart>()
+                    .Where(part =>
+                        part.ExamId == x.TestSession.ExamId)
+                    .Sum(part =>
+                        (int?)part.DurationMinutes) ?? 0,
                 x.TestSession.TestSlot.AccessCodeHash))
             .SingleOrDefaultAsync(cancellationToken);
 
@@ -77,15 +83,26 @@ public sealed class CandidateExamEntryValidationService(
                 StatusCodes.Status409Conflict);
         }
 
-        if (a.CandidateStatusId != TestSessionCandidateStatusIds.Started)
+        if (a.CandidateStatusId !=
+            TestSessionCandidateStatusIds.Started)
         {
-            var localNow = timeProvider.GetLocalNow().DateTime;
+            if (a.ExamDurationMinutes <= 0)
+            {
+                return Failure(
+                    ErrorsCodes.CandidateExamConfigurationInvalid,
+                    StatusCodes.Status409Conflict);
+            }
+
+            var localNow =
+                timeProvider.GetLocalNow().DateTime;
 
             var scheduledStart =
-                a.SlotDate.ToDateTime(a.SessionStartTime.Value);
+                a.SlotDate.ToDateTime(
+                    a.SessionStartTime.Value);
 
             var scheduledEnd =
-                a.SlotDate.ToDateTime(a.SessionEndTime.Value);
+                a.SlotDate.ToDateTime(
+                    a.SessionEndTime.Value);
 
             if (localNow < scheduledStart)
             {
@@ -94,7 +111,11 @@ public sealed class CandidateExamEntryValidationService(
                     StatusCodes.Status409Conflict);
             }
 
-            if (localNow >= scheduledEnd)
+            var latestAllowedStart =
+                scheduledEnd.AddMinutes(
+                    -a.ExamDurationMinutes);
+
+            if (localNow > latestAllowedStart)
             {
                 return Failure(
                     ErrorsCodes.CandidateExamEntryWindowClosed,
@@ -111,11 +132,13 @@ public sealed class CandidateExamEntryValidationService(
                 return Failure(ErrorsCodes.CandidateExamSessionNotRunning);
             }
         }
-        else if (a.SessionStatusId != TestSessionStatusIds.Approved && a.SessionStatusId != TestSessionStatusIds.Ready &&
-            a.SessionStatusId != TestSessionStatusIds.InProgress)
+        else if (a.SessionStatusId != TestSessionStatusIds.Approved &&
+                 a.SessionStatusId != TestSessionStatusIds.Ready &&
+                 a.SessionStatusId != TestSessionStatusIds.InProgress)
         {
             return Failure(ErrorsCodes.CandidateExamSessionNotRunning);
         }
+
         if (a.AttendanceStatusId != TestSessionCandidateAttendanceStatusIds.Present)
             return Failure(ErrorsCodes.CandidateExamAttendanceNotPresent);
         if (a.IdentityStatusId != TestSessionCandidateIdentityVerificationStatusIds.Matched)

@@ -8,4 +8,7 @@ public sealed class TestSlotSettings
 
     [Range(0, 1440)]
     public int StartAllowedBeforeMinutes { get; init; } = 60;
+
+    [Range(5, 3600)]
+    public int NoShowSweepSeconds { get; init; } = 30;
 }

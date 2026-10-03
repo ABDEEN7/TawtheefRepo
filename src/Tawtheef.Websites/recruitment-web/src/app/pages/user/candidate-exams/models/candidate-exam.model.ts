@@ -3,6 +3,7 @@ export type CandidateExamEntryState =
   | 'NotEligible'
   | 'WaitingForSession'
   | 'WaitingForAttendance'
+  | 'EntryWindowClosed'
   | 'WaitingForIdentityVerification'
   | 'WaitingForAuthorization'
   | 'ReadyToEnter'
@@ -48,6 +49,7 @@ export interface CandidateExamAssignment {
   readonly attendanceStatus: CandidateExamLookupOption;
   readonly identityVerificationStatus: CandidateExamLookupOption;
   readonly attemptStatus: CandidateExamLookupOption | null;
+  readonly resumeAuthorized: boolean;
   readonly authorizedAt: string | null;
   readonly entryState: CandidateExamEntryState;
 }

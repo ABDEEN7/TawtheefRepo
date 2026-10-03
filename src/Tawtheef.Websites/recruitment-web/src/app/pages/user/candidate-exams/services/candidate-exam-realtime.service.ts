@@ -66,9 +66,18 @@ export class CandidateExamRealtimeService {
     return connection.invoke<void>('RegisterAttempt', testAttemptId, activeSessionId);
   }
 
-  resumeAttempt(testAttemptId: string, accessCode: string): Promise<CandidateExamResumeResult> {
+  resumeAttempt(
+    testAttemptId: string,
+    accessCode: string,
+    activeSessionId: string,
+  ): Promise<CandidateExamResumeResult> {
     const connection = this.requireConnectedConnection();
-    return connection.invoke<CandidateExamResumeResult>('ResumeAttempt', testAttemptId, accessCode);
+    return connection.invoke<CandidateExamResumeResult>(
+      'ResumeAttempt',
+      testAttemptId,
+      accessCode,
+      activeSessionId,
+    );
   }
 
   disconnect(): Promise<void> {

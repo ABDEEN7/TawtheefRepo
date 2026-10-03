@@ -19,7 +19,6 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TestSessionsService } from '../../services/test-sessions.service';
-import { InvitationSource } from '../../../../../../core/enums/invitation-source.enum';
 import { LanguageService } from '../../../../../../core/services/language.service';
 import {
   TestSessionCandidateFilters,
@@ -46,7 +45,6 @@ import { PaginationComponent } from '../../../../../../shared/components/paginat
   ],
 })
 export class TestSessionCandidatesStepComponent implements OnChanges {
-  protected readonly InvitationSource = InvitationSource;
   readonly examId = input.required<string>();
   readonly testSessionId = input<string | null>(null);
   readonly readOnly = input(false);
@@ -84,11 +82,15 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     return this.searchedCandidates().slice(start, start + this.itemsPerPage());
   });
   readonly allCandidatesSelected = computed(() => {
-    const candidates = this.candidates();
+    const eligibleCandidates = this.candidates().filter(
+      (candidate) => candidate.eligibilityStatus === 'Eligible',
+    );
+
     const selectedIds = new Set(this.selectedCandidateIds());
+
     return (
-      candidates.length > 0 &&
-      candidates.every((candidate) => selectedIds.has(candidate.invitationId))
+      eligibleCandidates.length > 0 &&
+      eligibleCandidates.every((candidate) => selectedIds.has(candidate.invitationId))
     );
   });
   readonly summary = signal<TestSessionCandidateSummaryDto>({
@@ -120,8 +122,13 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     const backendFiltersChanged =
       (!!changes['genderFilter'] && !changes['genderFilter'].firstChange) ||
       (!!changes['nationalityFilter'] && !changes['nationalityFilter'].firstChange);
-    if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter'] &&
-      !changes['testSessionId']) return;
+    if (
+      !changes['examId'] &&
+      !changes['genderFilter'] &&
+      !changes['nationalityFilter'] &&
+      !changes['testSessionId']
+    )
+      return;
 
     this.filters.update((filters) => ({
       ...filters,
@@ -144,11 +151,15 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
 
   toggleAllCandidates(checked: boolean): void {
     const selectedIds = new Set(this.selectedCandidateIds());
-    this.candidates().forEach((candidate) => {
-      checked
-        ? selectedIds.add(candidate.invitationId)
-        : selectedIds.delete(candidate.invitationId);
-    });
+
+    this.candidates()
+      .filter((candidate) => candidate.eligibilityStatus === 'Eligible')
+      .forEach((candidate) => {
+        checked
+          ? selectedIds.add(candidate.invitationId)
+          : selectedIds.delete(candidate.invitationId);
+      });
+
     this.selectedCandidateIdsChanged.emit([...selectedIds]);
   }
 
@@ -167,9 +178,15 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     return status === 'Eligible' ? 'success' : status === 'NotReady' ? 'warn' : 'danger';
   }
 
-  toggleCandidate(invitationId: string, checked: boolean): void {
+  toggleCandidate(candidate: TestSessionCandidateListItemDto, checked: boolean): void {
+    if (candidate.eligibilityStatus !== 'Eligible') {
+      return;
+    }
+
     const ids = new Set(this.selectedCandidateIds());
-    checked ? ids.add(invitationId) : ids.delete(invitationId);
+
+    checked ? ids.add(candidate.invitationId) : ids.delete(candidate.invitationId);
+
     this.selectedCandidateIdsChanged.emit([...ids]);
   }
 
@@ -188,11 +205,14 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
           if (loadSequence !== this.loadSequence) return;
 
           this.candidates.set(response.candidates);
-          const candidateIds = response.candidates.map((candidate) => candidate.invitationId);
+          const candidateIds = response.candidates
+            .filter((candidate) => candidate.eligibilityStatus === 'Eligible')
+            .map((candidate) => candidate.invitationId);
           const currentCandidateIds = new Set(candidateIds);
-          const selectedIds = reselectAllOnResult || !this.selectionInitialized()
-            ? candidateIds
-            : this.selectedCandidateIds().filter((id) => currentCandidateIds.has(id));
+          const selectedIds =
+            reselectAllOnResult || !this.selectionInitialized()
+              ? candidateIds
+              : this.selectedCandidateIds().filter((id) => currentCandidateIds.has(id));
           this.selectedCandidateIdsChanged.emit(selectedIds);
           if (!this.selectionInitialized()) {
             this.selectionInitializedChanged.emit(candidateIds);

@@ -21,20 +21,13 @@ interface CandidateExamAccessCodeDialogData {
 @Component({
   selector: 'app-candidate-exam-access-code-dialog',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslatePipe,
-    InputText,
-    I18nNamespaceDirective,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, InputText, I18nNamespaceDirective],
   templateUrl: './candidate-exam-access-code.dialog.html',
   styleUrl: './candidate-exam-access-code.dialog.scss',
 })
 export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly config =
-    inject(DynamicDialogConfig<CandidateExamAccessCodeDialogData>);
+  private readonly config = inject(DynamicDialogConfig<CandidateExamAccessCodeDialogData>);
   private readonly ref = inject(DynamicDialogRef);
   private readonly candidateExamService = inject(CandidateExamService);
   private readonly candidateExamSession = inject(CandidateExamSessionService);
@@ -42,9 +35,8 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
   private readonly realtime = inject(CandidateExamRealtimeService);
   private readonly router = inject(Router);
 
-  readonly recoveringStart = this.pendingStart.get(
-    this.config.data.testSessionCandidateId,
-  ) !== null;
+  readonly recoveringStart =
+    this.pendingStart.get(this.config.data.testSessionCandidateId) !== null;
 
   readonly form = this.formBuilder.nonNullable.group({
     accessCode: ['', Validators.required],
@@ -77,12 +69,9 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
 
     try {
       await firstValueFrom(
-        this.candidateExamService.validateAccessCode(
-          this.testSessionCandidateId,
-          {
-            accessCode: this.form.controls.accessCode.value,
-          },
-        ),
+        this.candidateExamService.validateAccessCode(this.testSessionCandidateId, {
+          accessCode: this.form.controls.accessCode.value,
+        }),
       );
 
       this.validated.set(true);
@@ -112,9 +101,7 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
 
     // The same identifier survives a lost response and a page reload
     // within this browser tab.
-    const activeSessionId = this.pendingStart.getOrCreate(
-      this.testSessionCandidateId,
-    );
+    const activeSessionId = this.pendingStart.getOrCreate(this.testSessionCandidateId);
 
     let response: StartCandidateExamResponse;
 
@@ -139,13 +126,11 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
 
     this.startSucceeded = true;
     this.candidateExamSession.initializeFromStart(response);
-    this.pendingStart.clear(this.testSessionCandidateId);
 
     try {
-      await this.realtime.registerAttempt(
-        response.testAttemptId,
-        response.activeSessionId,
-      );
+      await this.realtime.registerAttempt(response.testAttemptId, response.activeSessionId);
+
+      this.pendingStart.clear(this.testSessionCandidateId);
 
       await this.navigateToExecution();
     } catch {
@@ -169,10 +154,8 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
 
     try {
       await this.realtime.connect();
-      await this.realtime.registerAttempt(
-        session.testAttemptId,
-        session.activeSessionId,
-      );
+      await this.realtime.registerAttempt(session.testAttemptId, session.activeSessionId);
+      this.pendingStart.clear(this.testSessionCandidateId);
       await this.navigateToExecution();
     } catch {
       this.registrationFailed.set(true);
@@ -197,14 +180,10 @@ export class CandidateExamAccessCodeDialogComponent implements OnDestroy {
   }
 
   private async navigateToExecution(): Promise<void> {
-    const navigated = await this.router.navigateByUrl(
-      routes.user.candidateExamExecution,
-    );
+    const navigated = await this.router.navigateByUrl(routes.user.candidateExamExecution);
 
     if (!navigated) {
-      throw new Error(
-        'Candidate Exam execution navigation was not completed.',
-      );
+      throw new Error('Candidate Exam execution navigation was not completed.');
     }
 
     this.ref.close(true);

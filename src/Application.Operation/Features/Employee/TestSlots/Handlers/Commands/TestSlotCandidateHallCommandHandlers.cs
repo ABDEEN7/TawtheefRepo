@@ -18,9 +18,16 @@ internal static class TestSlotCandidateHallState
             "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; IF @result < 0 THROW 51000, 'Test slot hall operation lock unavailable', 1;",
             [$"Tawtheef.CandidateExam.TestSlot.{slotId}"], token);
 
-    internal static async Task<(TestSessionCandidate? Candidate, IResult<Unit>? Failure)> LoadAsync(
-        IUnitOfWork unitOfWork, ICurrentUserService currentUser, Guid slotId, Guid candidateId,
-        CancellationToken token)
+    internal static async Task<
+            (TestSessionCandidate? Candidate,
+            IResult<Unit>? Failure)>
+        LoadAsync(
+            IUnitOfWork unitOfWork,
+            ICurrentUserService currentUser,
+            TimeProvider timeProvider,
+            Guid slotId,
+            Guid candidateId,
+            CancellationToken token)
     {
         if (slotId == Guid.Empty || candidateId == Guid.Empty || !Guid.TryParse(currentUser.UserId, out var userId))
             return (null, Result.Fail<Unit>(ErrorsCodes.InvalidRequest));
@@ -43,6 +50,28 @@ internal static class TestSlotCandidateHallState
             .Include(x => x.TestSession)
             .FirstOrDefaultAsync(x => x.Id == candidateId && x.TestSession!.TestSlotId == slotId, token);
         if (candidate is null) return (null, Result.Fail<Unit>(ErrorsCodes.ItemNotFound));
+        if (candidate.TestSession?.EndTime is null)
+        {
+            return (
+                null,
+                Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotCandidateHallStateInvalid));
+        }
+
+        var localNow =
+            timeProvider.GetLocalNow().DateTime;
+
+        var sessionEnd =
+            slot.SlotDate.ToDateTime(
+                candidate.TestSession.EndTime.Value);
+
+        if (localNow >= sessionEnd)
+        {
+            return (
+                null,
+                Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotCandidateHallStateInvalid));
+        }
         var sessionStatusId =
             candidate.TestSession!.StatusId;
 
@@ -60,14 +89,22 @@ internal static class TestSlotCandidateHallState
     }
 }
 
-public sealed class MarkTestSlotCandidatePresentCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+public sealed class MarkTestSlotCandidatePresentCommandHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider)
     : IRequestHandler<MarkTestSlotCandidatePresentCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(MarkTestSlotCandidatePresentCommand request, CancellationToken ct) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
-            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(unitOfWork, currentUser,
-                request.TestSlotId, request.CandidateId, token);
+            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(
+                    unitOfWork,
+                    currentUser,
+                    timeProvider,
+                    request.TestSlotId,
+                    request.CandidateId,
+                    token);
             if (failure is not null) return failure;
             if (candidate!.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.Present)
                 return Result.Ok(Unit.Value);
@@ -80,14 +117,20 @@ public sealed class MarkTestSlotCandidatePresentCommandHandler(IUnitOfWork unitO
 
 public sealed class VerifyTestSlotCandidateIdentityCommandHandler(
     IUnitOfWork unitOfWork,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider)
     : IRequestHandler<VerifyTestSlotCandidateIdentityCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(VerifyTestSlotCandidateIdentityCommand request, CancellationToken ct) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
-            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(unitOfWork, currentUser,
-                request.TestSlotId, request.CandidateId, token);
+            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(
+                unitOfWork,
+                currentUser,
+                timeProvider,
+                request.TestSlotId,
+                request.CandidateId,
+                token);
             if (failure is not null) return failure;
             var result = candidate!.VerifyIdentity(request.Matched, request.Notes);
             if (result.IsFailed) return Result.Fail<Unit>(result.Errors);
@@ -105,8 +148,13 @@ public sealed class AuthorizeTestSlotCandidateEntryCommandHandler(
     public Task<IResult<Unit>> Handle(AuthorizeTestSlotCandidateEntryCommand request, CancellationToken ct) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
-            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(unitOfWork, currentUser,
-                request.TestSlotId, request.CandidateId, token);
+            var (candidate, failure) = await TestSlotCandidateHallState.LoadAsync(
+                unitOfWork,
+                currentUser,
+                timeProvider,
+                request.TestSlotId,
+                request.CandidateId,
+                token);
             if (failure is not null) return failure;
             var result = candidate!.AuthorizeEntry(timeProvider.GetUtcNow().UtcDateTime);
             if (result.IsFailed) return Result.Fail<Unit>(result.Errors);

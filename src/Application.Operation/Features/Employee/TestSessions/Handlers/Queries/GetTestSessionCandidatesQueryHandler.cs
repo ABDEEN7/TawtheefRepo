@@ -1,4 +1,3 @@
-using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.TestSessions.DTOs;
 using Application.Operation.Features.Employee.TestSessions.Queries;
 using FluentResults;
@@ -53,29 +52,60 @@ public sealed class GetTestSessionCandidatesQueryHandler(IUnitOfWork unitOfWork)
                       invitation.Applicant.Profile.NationalityId != CountryIds.Qatar);
 
         var candidates = invitations.Where(invitation =>
-            invitation.Source == InvitationSource.Exceptional ||
-            (invitation.Source != InvitationSource.Exceptional &&
-             (invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-              invitation.InvitationStatusId == InvitationStatusIds.Read ||
-              (invitation.InvitationStatusId == InvitationStatusIds.ExamEligible &&
-               invitation.Applicant!.Profile != null &&
-               invitation.Applicant.Profile.Status == UserProfileStatus.Approved &&
-               invitation.Applicant.Profile.AvailableForRecruitment))));
+            invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
+            invitation.InvitationStatusId == InvitationStatusIds.Read ||
+            invitation.InvitationStatusId == InvitationStatusIds.PendingAttachmentApproval ||
+            invitation.InvitationStatusId == InvitationStatusIds.ReturnedAttachment ||
+            invitation.InvitationStatusId == InvitationStatusIds.ExamEligible);
 
-        var total = await candidates.CountAsync(ct);
-        var eligible = await candidates.CountAsync(invitation =>
-            invitation.Source != InvitationSource.Exceptional &&
-            invitation.InvitationStatusId == InvitationStatusIds.ExamEligible &&
-            invitation.Applicant!.Profile != null &&
-            invitation.Applicant.Profile.Status == UserProfileStatus.Approved &&
-            invitation.Applicant.Profile.AvailableForRecruitment, ct);
-        var notReady = await candidates.CountAsync(invitation =>
-            invitation.Source != InvitationSource.Exceptional &&
-            (invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-             invitation.InvitationStatusId == InvitationStatusIds.Read), ct);
-        var excluded = await candidates.CountAsync(
-            invitation => invitation.Source == InvitationSource.Exceptional,
-            ct);
+        var approvedExemptionInvitationIds =
+            unitOfWork.Context
+                .Set<ExamExemptionDecision>()
+                .AsNoTracking()
+                .Where(decision =>
+                    decision.StatusId ==
+                    ExamExemptionDecisionStatusIds.Approved)
+                .Select(decision => decision.InvitationId);
+
+        var proposedExemptionInvitationIds =
+            unitOfWork.Context
+                .Set<ExamExemptionDecision>()
+                .AsNoTracking()
+                .Where(decision =>
+                    decision.StatusId ==
+                    ExamExemptionDecisionStatusIds.Proposed)
+                .Select(decision => decision.InvitationId);
+
+        var total =
+            await candidates.CountAsync(ct);
+
+        var excluded =
+            await candidates.CountAsync(
+                invitation =>
+                    approvedExemptionInvitationIds
+                        .Contains(invitation.Id),
+                ct);
+
+        var eligible =
+            await candidates.CountAsync(
+                invitation =>
+                    !approvedExemptionInvitationIds
+                        .Contains(invitation.Id) &&
+                    !proposedExemptionInvitationIds
+                        .Contains(invitation.Id) &&
+                    invitation.IsAccepted &&
+                    invitation.AcceptedAt != null &&
+                    invitation.InvitationStatusId ==
+                    InvitationStatusIds.ExamEligible &&
+                    invitation.Applicant!.Profile != null &&
+                    invitation.Applicant.Profile.Status ==
+                    UserProfileStatus.Approved &&
+                    invitation.Applicant.Profile
+                        .AvailableForRecruitment,
+                ct);
+
+        var notReady =
+            total - eligible - excluded;
 
         var items = await candidates
             .OrderBy(invitation => invitation.Applicant!.FullNameAr)
@@ -85,10 +115,16 @@ public sealed class GetTestSessionCandidatesQueryHandler(IUnitOfWork unitOfWork)
                 invitation.Applicant!.Profile == null ? null : invitation.Applicant.Profile.NationalNumber,
                 isArabic ? invitation.Applicant.FullNameAr : invitation.Applicant.FullNameEn,
                 isArabic ? invitation.Job!.JobTitle!.JobNameAr : invitation.Job!.JobTitle!.JobNameEn,
-                invitation.Applicant.Profile!.Nationality == null ? null :
-                    (isArabic ? invitation.Applicant.Profile.Nationality.NameAr : invitation.Applicant.Profile.Nationality.NameEn),
-                invitation.Applicant.Profile!.Gender == null ? null :
-                    (isArabic ? invitation.Applicant.Profile.Gender.NameAr : invitation.Applicant.Profile.Gender.NameEn),
+                invitation.Applicant.Profile!.Nationality == null
+                    ? null
+                    : (isArabic
+                        ? invitation.Applicant.Profile.Nationality.NameAr
+                        : invitation.Applicant.Profile.Nationality.NameEn),
+                invitation.Applicant.Profile!.Gender == null
+                    ? null
+                    : (isArabic
+                        ? invitation.Applicant.Profile.Gender.NameAr
+                        : invitation.Applicant.Profile.Gender.NameEn),
                 unitOfWork.Context.Set<Qualification>()
                     .Where(qualification => qualification.UserProfileId == invitation.Applicant.Profile!.Id)
                     .OrderByDescending(qualification =>
@@ -120,18 +156,56 @@ public sealed class GetTestSessionCandidatesQueryHandler(IUnitOfWork unitOfWork)
                     .Select(qualification => qualification.GPA)
                     .FirstOrDefault(),
                 invitation.Source,
-                invitation.Source == InvitationSource.Exceptional
+                approvedExemptionInvitationIds.Contains(invitation.Id)
                     ? "Excluded"
-                    : invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-                      invitation.InvitationStatusId == InvitationStatusIds.Read
+                    : proposedExemptionInvitationIds.Contains(invitation.Id) ||
+                      !invitation.IsAccepted ||
+                      invitation.AcceptedAt == null ||
+                      invitation.InvitationStatusId !=
+                      InvitationStatusIds.ExamEligible ||
+                      invitation.Applicant!.Profile == null ||
+                      invitation.Applicant.Profile.Status !=
+                      UserProfileStatus.Approved ||
+                      !invitation.Applicant.Profile
+                          .AvailableForRecruitment
                         ? "NotReady"
                         : "Eligible",
-                invitation.Source == InvitationSource.Exceptional
-                    ? null
-                    : invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-                      invitation.InvitationStatusId == InvitationStatusIds.Read
-                        ? isArabic ? invitation.InvitationStatus!.NameAr : invitation.InvitationStatus!.NameEn
-                        : null))
+                approvedExemptionInvitationIds.Contains(invitation.Id)
+                    ? isArabic
+                        ? "مستثنى من الاختبار بقرار معتمد"
+                        : "Exempted from the exam by an approved decision"
+
+                    : proposedExemptionInvitationIds.Contains(invitation.Id)
+                        ? isArabic
+                            ? "قرار الاستثناء من الاختبار بانتظار الاعتماد"
+                            : "Exam exemption decision is pending approval"
+
+                        : invitation.InvitationStatusId !=
+                          InvitationStatusIds.ExamEligible
+                            ? isArabic
+                                ? invitation.InvitationStatus!.NameAr
+                                : invitation.InvitationStatus!.NameEn
+
+                            : !invitation.IsAccepted ||
+                              invitation.AcceptedAt == null
+                                ? isArabic
+                                    ? "الدعوة غير مقبولة"
+                                    : "Invitation has not been accepted"
+
+                                : invitation.Applicant!.Profile == null ||
+                                  invitation.Applicant.Profile.Status !=
+                                  UserProfileStatus.Approved
+                                    ? isArabic
+                                        ? "ملف المرشح غير معتمد"
+                                        : "Candidate profile is not approved"
+
+                                    : !invitation.Applicant.Profile
+                                        .AvailableForRecruitment
+                                        ? isArabic
+                                            ? "المرشح غير متاح للتوظيف"
+                                            : "Candidate is not available for recruitment"
+
+                                        : null))
             .ToListAsync(ct);
 
         return Result.Ok(new TestSessionCandidatesDto(

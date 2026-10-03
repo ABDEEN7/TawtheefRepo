@@ -34,8 +34,17 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
             return ValidationFailure();
 
         var schedule = await unitOfWork.Context.Set<TestSlot>().AsNoTracking().Where(x => x.Id == session.TestSlotId)
-            .Select(x => new { x.Id, x.RoomId, x.SlotDate, x.StartTime, x.EndTime, x.StatusId,
-                Capacity = x.Room!.Capacity, RoomStatusId = x.Room.StatusId }).FirstOrDefaultAsync(ct);
+            .Select(x => new
+            {
+                x.Id,
+                x.RoomId,
+                x.SlotDate,
+                x.StartTime,
+                x.EndTime,
+                x.StatusId,
+                x.Room!.Capacity,
+                RoomStatusId = x.Room.StatusId
+            }).FirstOrDefaultAsync(ct);
         if (session.TestSlotId is null || session.StartTime is null || session.EndTime is null ||
             session.StartTime >= session.EndTime || schedule is null ||
             schedule.StatusId != TestSlotStatusIds.Ready || schedule.RoomStatusId != RoomStatusIds.Active)
@@ -48,8 +57,13 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
             [$"Tawtheef.TestSession.Room.{schedule.RoomId}.{schedule.SlotDate:yyyyMMdd}"], ct);
 
         var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking().Where(x => x.Id == session.ExamId)
-            .Select(x => new { x.Id, x.JobId, Duration = unitOfWork.Context.Set<ExamPart>()
-                .Where(part => part.ExamId == x.Id).Sum(part => (int?)part.DurationMinutes) ?? 0 })
+            .Select(x => new
+            {
+                x.Id,
+                x.JobId,
+                Duration = unitOfWork.Context.Set<ExamPart>()
+                    .Where(part => part.ExamId == x.Id).Sum(part => (int?)part.DurationMinutes) ?? 0
+            })
             .FirstOrDefaultAsync(ct);
         if (exam is null || exam.Duration <= 0 || session.StartTime < schedule.StartTime ||
             session.EndTime > schedule.EndTime ||
@@ -58,7 +72,9 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
 
         var staff = await unitOfWork.Context.Set<TestSlotStaff>().AsNoTracking()
             .Where(x => x.TestSlotId == schedule.Id && x.IsActive).Select(x => new TestSlotStaffAssignmentDto
-            { StaffUserId = x.StaffUserId, RoleId = x.RoleId, IsActive = x.IsActive }).ToListAsync(ct);
+            {
+                StaffUserId = x.StaffUserId, RoleId = x.RoleId, IsActive = x.IsActive
+            }).ToListAsync(ct);
         if ((await TestSlotAssignmentOperations.ValidateAsync(unitOfWork, schedule.Id, schedule.SlotDate,
                 schedule.StartTime, schedule.EndTime, staff, ct)).IsFailed)
             return ValidationFailure();
@@ -77,22 +93,53 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
                 [$"Tawtheef.TestSession.Candidate.{session.ExamId}.{invitationId}"], ct);
         }
 
-        var validCandidateCount = await unitOfWork.Context.Set<Invitation>().AsNoTracking()
-            .Where(x => candidates.Contains(x.Id) && x.JobId == exam.JobId)
-            .Where(x => x.Source == InvitationSource.Exceptional ||
-                x.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-                x.InvitationStatusId == InvitationStatusIds.Read ||
-                (x.InvitationStatusId == InvitationStatusIds.ExamEligible && x.Applicant!.Profile != null &&
-                 x.Applicant.Profile.Status == UserProfileStatus.Approved && x.Applicant.Profile.AvailableForRecruitment))
-            .Where(x => !unitOfWork.Context.Set<TestSessionCandidate>().Any(candidate =>
-                candidate.InvitationId == x.Id && candidate.TestSession!.ExamId == session.ExamId &&
-                candidate.TestSessionId != session.Id && candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Rejected)).CountAsync(ct);
+        var validCandidateCount = await unitOfWork.Context
+            .Set<Invitation>()
+            .AsNoTracking()
+            .Where(x =>
+                candidates.Contains(x.Id) &&
+                x.JobId == exam.JobId)
+            .Where(x =>
+                x.IsAccepted &&
+                x.AcceptedAt != null &&
+                x.InvitationStatusId ==
+                InvitationStatusIds.ExamEligible &&
+                x.Applicant!.Profile != null &&
+                x.Applicant.Profile.Status ==
+                UserProfileStatus.Approved &&
+                x.Applicant.Profile
+                    .AvailableForRecruitment)
+            .Where(x =>
+                !unitOfWork.Context
+                    .Set<ExamExemptionDecision>()
+                    .Any(decision =>
+                        decision.InvitationId == x.Id &&
+                        (
+                            decision.StatusId ==
+                            ExamExemptionDecisionStatusIds.Proposed ||
+                            decision.StatusId ==
+                            ExamExemptionDecisionStatusIds.Approved
+                        )))
+            .Where(x =>
+                !unitOfWork.Context
+                    .Set<TestSessionCandidate>()
+                    .Any(candidate =>
+                        candidate.InvitationId == x.Id &&
+                        candidate.TestSession!.ExamId ==
+                        session.ExamId &&
+                        candidate.TestSessionId !=
+                        session.Id &&
+                        candidate.TestSession.StatusId !=
+                        TestSessionStatusIds.Cancelled &&
+                        candidate.TestSession.StatusId !=
+                        TestSessionStatusIds.Rejected))
+            .CountAsync(ct);
         if (validCandidateCount != candidates.Count)
             return ValidationFailure();
 
         var reservations = await unitOfWork.Context.Set<TestSession>().AsNoTracking().Where(x =>
-                x.TestSlot!.RoomId == schedule.RoomId && x.TestSlot.SlotDate == schedule.SlotDate && x.Id != session.Id &&
+                x.TestSlot!.RoomId == schedule.RoomId && x.TestSlot.SlotDate == schedule.SlotDate &&
+                x.Id != session.Id &&
                 !TestSessionCapacityService.NonReservingStatusIds.Contains(x.StatusId))
             .Select(x => new TestSessionCapacityReservation(x.StartTime!.Value, x.EndTime!.Value,
                 unitOfWork.Context.Set<TestSessionCandidate>().Count(candidate => candidate.TestSessionId == x.Id)))
@@ -105,9 +152,11 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
         var metadata = new TestSessionWorkflowMetadata(reviewerId, DateTime.UtcNow,
             nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Approved));
         metadata.ApplyDecision(session, TestSessionStatusIds.Approved);
-        await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(metadata.CreateActionLog(session, "TestSessionApproved"), ct);
+        await unitOfWork.GetEntityRepository<ActionLog>()
+            .AddAsync(metadata.CreateActionLog(session, "TestSessionApproved"), ct);
         if (session.CreatedById.HasValue)
-            session.AddDomainEvent(new TestSessionApprovedDomainEvent(session.CreatedById.Value, session.Id, session.SessionNo));
+            session.AddDomainEvent(
+                new TestSessionApprovedDomainEvent(session.CreatedById.Value, session.Id, session.SessionNo));
         await unitOfWork.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);
     }

@@ -18,15 +18,18 @@ public sealed class AuthorizeCandidateExamResumeCommandHandler(IUnitOfWork unitO
         CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync(async token =>
         {
-            await AcquireAttemptLockAsync(request.TestAttemptId, token);
-
             var testSlotId = await unitOfWork.Context.Set<TestAttempt>()
                 .AsNoTracking()
                 .Where(x => x.Id == request.TestAttemptId)
                 .Select(x => (Guid?)x.TestSessionCandidate!.TestSession!.TestSlotId)
                 .SingleOrDefaultAsync(token);
+
             if (testSlotId is null)
                 return Unavailable();
+
+// Lock order must stay Slot -> Attempt.
+            await AcquireTestSlotLockAsync(testSlotId.Value, token);
+            await AcquireAttemptLockAsync(request.TestAttemptId, token);
 
             var isHallSupervisor = await unitOfWork.Context.Set<TestSlotStaff>()
                 .AsNoTracking()
@@ -38,16 +41,23 @@ public sealed class AuthorizeCandidateExamResumeCommandHandler(IUnitOfWork unitO
                     .WithMetadata("StatusCode", StatusCodes.Status403Forbidden));
 
             var attemptIsEligible = await unitOfWork.Context.Set<TestAttempt>()
-                .AnyAsync(x => x.Id == request.TestAttemptId &&
-                    x.StatusId == TestAttemptStatusIds.Interrupted &&
-                    x.ActiveSessionId == null &&
-                    x.TestSessionCandidate!.StatusId == TestSessionCandidateStatusIds.Started &&
-                    x.TestSessionCandidate.TestSession!.StatusId == TestSessionStatusIds.InProgress &&
-                    x.TestSessionCandidate.TestSession.TestSlot!.StatusId == TestSlotStatusIds.Started &&
-                    (x.TestSessionCandidate.TestSession.Exam!.InterruptionPolicyId ==
-                     ExamInterruptionPolicyIds.ResumeOnly ||
-                     x.TestSessionCandidate.TestSession.Exam.InterruptionPolicyId ==
-                     ExamInterruptionPolicyIds.ResumeOrReschedule), token);
+                .AnyAsync(x =>
+                        x.Id == request.TestAttemptId &&
+                        x.TestSessionCandidate!.TestSession!.TestSlotId == testSlotId.Value &&
+                        x.StatusId == TestAttemptStatusIds.Interrupted &&
+                        x.ActiveSessionId == null &&
+                        x.TestSessionCandidate.StatusId == TestSessionCandidateStatusIds.Started &&
+                        x.TestSessionCandidate.TestSession.StatusId ==
+                        TestSessionStatusIds.InProgress &&
+                        x.TestSessionCandidate.TestSession.TestSlot!.StatusId ==
+                        TestSlotStatusIds.Started &&
+                        (
+                            x.TestSessionCandidate.TestSession.Exam!.InterruptionPolicyId ==
+                            ExamInterruptionPolicyIds.ResumeOnly ||
+                            x.TestSessionCandidate.TestSession.Exam.InterruptionPolicyId ==
+                            ExamInterruptionPolicyIds.ResumeOrReschedule
+                        ),
+                    token);
             if (!attemptIsEligible)
                 return Unavailable();
 
@@ -93,6 +103,15 @@ public sealed class AuthorizeCandidateExamResumeCommandHandler(IUnitOfWork unitO
             return Result.Ok(Unit.Value);
         }, cancellationToken);
 
+    private Task AcquireTestSlotLockAsync(
+        Guid testSlotId,
+        CancellationToken cancellationToken) =>
+        unitOfWork.Context.Database.ExecuteSqlRawAsync(
+            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
+            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
+            "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam resume authorization slot lock unavailable', 1;",
+            [$"Tawtheef.CandidateExam.TestSlot.{testSlotId}"],
+            cancellationToken);
     private Task AcquireAttemptLockAsync(Guid testAttemptId, CancellationToken cancellationToken) =>
         unitOfWork.Context.Database.ExecuteSqlRawAsync(
             "DECLARE @result int; EXEC @result = sys.sp_getapplock " +

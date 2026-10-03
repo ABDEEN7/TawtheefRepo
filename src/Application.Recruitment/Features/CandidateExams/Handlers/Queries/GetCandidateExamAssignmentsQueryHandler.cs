@@ -17,17 +17,16 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
     TimeProvider timeProvider)
     : IRequestHandler<GetCandidateExamAssignmentsQuery, IResult<List<CandidateExamAssignmentDto>>>
 {
-    public async Task<IResult<List<CandidateExamAssignmentDto>>> Handle(
-        GetCandidateExamAssignmentsQuery query,
+    public async Task<IResult<List<CandidateExamAssignmentDto>>> Handle(GetCandidateExamAssignmentsQuery query,
         CancellationToken cancellationToken)
     {
         var isArabic = localizationService.GetCurrentLanguage() == "ar";
         var localNow = timeProvider.GetLocalNow().DateTime;
         var localDate = DateOnly.FromDateTime(localNow);
         var localTime = TimeOnly.FromDateTime(localNow);
-        
-        var assignments = await unitOfWork.GetEntityRepository<TestSessionCandidate>().DbSet
-            .AsNoTracking()
+
+        var assignments = await unitOfWork.GetEntityRepository<TestSessionCandidate>()
+            .DbSet.AsNoTracking()
             .Where(candidate => candidate.Invitation!.ApplicantId == query.UserId)
             .OrderBy(candidate => candidate.TestSession!.TestSlot!.SlotDate)
             .ThenBy(candidate => candidate.TestSession!.StartTime)
@@ -86,7 +85,10 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
                     {
                         Id = candidate.TestSession.Status!.Id,
                         BackendName = candidate.TestSession.Status.BackendName,
-                        Name = isArabic ? candidate.TestSession.Status.NameAr : candidate.TestSession.Status.NameEn,
+                        Name =
+                            isArabic
+                                ? candidate.TestSession.Status.NameAr
+                                : candidate.TestSession.Status.NameEn,
                         Description =
                             isArabic
                                 ? candidate.TestSession.Status.DescriptionAr
@@ -111,92 +113,142 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
                                 ? candidate.AttendanceStatus.DescriptionAr
                                 : candidate.AttendanceStatus.DescriptionEn
                     },
-                IdentityVerificationStatus = new DropdownOptions
-                {
-                    Id = candidate.IdentityVerificationStatus!.Id,
-                    BackendName = candidate.IdentityVerificationStatus.BackendName,
-                    Name =
-                        isArabic
-                            ? candidate.IdentityVerificationStatus.NameAr
-                            : candidate.IdentityVerificationStatus.NameEn,
-                    Description =
-                        isArabic
-                            ? candidate.IdentityVerificationStatus.DescriptionAr
-                            : candidate.IdentityVerificationStatus.DescriptionEn
-                },
-                AttemptStatus = candidate.TestAttempt == null
-                    ? null
-                    : new DropdownOptions
+                IdentityVerificationStatus =
+                    new DropdownOptions
                     {
-                        Id = candidate.TestAttempt.Status!.Id,
-                        BackendName = candidate.TestAttempt.Status.BackendName,
-                        Name = isArabic
-                            ? candidate.TestAttempt.Status.NameAr
-                            : candidate.TestAttempt.Status.NameEn,
-                        Description = isArabic
-                            ? candidate.TestAttempt.Status.DescriptionAr
-                            : candidate.TestAttempt.Status.DescriptionEn
+                        Id = candidate.IdentityVerificationStatus!.Id,
+                        BackendName = candidate.IdentityVerificationStatus.BackendName,
+                        Name =
+                            isArabic
+                                ? candidate.IdentityVerificationStatus.NameAr
+                                : candidate.IdentityVerificationStatus.NameEn,
+                        Description =
+                            isArabic
+                                ? candidate.IdentityVerificationStatus.DescriptionAr
+                                : candidate.IdentityVerificationStatus.DescriptionEn
                     },
+                AttemptStatus =
+                    candidate.TestAttempt == null
+                        ? null
+                        : new DropdownOptions
+                        {
+                            Id = candidate.TestAttempt.Status!.Id,
+                            BackendName = candidate.TestAttempt.Status.BackendName,
+                            Name =
+                                isArabic
+                                    ? candidate.TestAttempt.Status.NameAr
+                                    : candidate.TestAttempt.Status.NameEn,
+                            Description =
+                                isArabic
+                                    ? candidate.TestAttempt.Status.DescriptionAr
+                                    : candidate.TestAttempt.Status.DescriptionEn
+                        },
+                ResumeAuthorized =
+                    candidate.TestAttempt != null
+                    && candidate.TestAttempt.StatusId == TestAttemptStatusIds.Interrupted
+                    && unitOfWork.Context.Set<TestAttemptInterruption>()
+                        .Any(interruption => interruption.TestAttemptId == candidate.TestAttempt.Id
+                                             && interruption.StatusId == TestAttemptInterruptionStatusIds.Open
+                                             && interruption.ResolutionActionId
+                                             == TestAttemptInterruptionResolutionActionIds.Resume
+                                             && interruption.ResolvedById != null
+                                             && interruption.ResolvedAt == null),
                 AuthorizedAt = candidate.AuthorizedAt,
-                EntryState =
-                    candidate.StatusId == TestSessionCandidateStatusIds.Completed
-                        ? CandidateExamEntryStates.Completed
-                        : candidate.StatusId == TestSessionCandidateStatusIds.Cancelled
-                          || candidate.TestSession.StatusId == TestSessionStatusIds.Cancelled
-                          || candidate.TestSession.Exam.StatusId == ExamStatusIds.Cancelled
-                          || candidate.TestSession.Exam.StatusId == ExamStatusIds.Rejected
-                            ? CandidateExamEntryStates.Cancelled
-                            : candidate.StatusId == TestSessionCandidateStatusIds.Rescheduled
-                              || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Rescheduled
-                                ? CandidateExamEntryStates.Rescheduled
-                                : candidate.StatusId == TestSessionCandidateStatusIds.Started
-                                    ? CandidateExamEntryStates.Started
-                                    : candidate.AttendanceStatusId ==
-                                      TestSessionCandidateAttendanceStatusIds.NoShow
-                                        ? CandidateExamEntryStates.NoShow
-                                        : candidate.TestSession.StatusId == TestSessionStatusIds.Closed
-                                          || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Closed
-                                            ? CandidateExamEntryStates.Closed
-                                            : !candidate.Invitation!.IsAccepted
-                                              || candidate.Invitation.AcceptedAt == null
-                                              || candidate.Invitation.InvitationStatusId !=
-                                              InvitationStatusIds.ExamEligible
-                                              || candidate.TestSession.Exam.StatusId != ExamStatusIds.Approved
-                                                ? CandidateExamEntryStates.NotEligible
-                                                : candidate.TestSession.TestSlot.StatusId !=
-                                                  TestSlotStatusIds.Started
-                                                  || candidate.TestSession.StartTime == null
-                                                  || candidate.TestSession.EndTime == null
-                                                  || candidate.TestSession.TestSlot.SlotDate !=
-                                                  localDate
-                                                  || candidate.TestSession.StartTime.Value >
-                                                  localTime
-                                                  || candidate.TestSession.EndTime.Value <=
-                                                  localTime
-                                                  || (
-                                                      candidate.TestSession.StatusId !=
-                                                      TestSessionStatusIds.Approved &&
-                                                      candidate.TestSession.StatusId !=
-                                                      TestSessionStatusIds.Ready &&
-                                                      candidate.TestSession.StatusId !=
-                                                      TestSessionStatusIds.InProgress
-                                                  )
-                                                    ? CandidateExamEntryStates.WaitingForSession
-                                                    : candidate.AttendanceStatusId !=
-                                                      TestSessionCandidateAttendanceStatusIds.Present
-                                                        ? CandidateExamEntryStates.WaitingForAttendance
-                                                        : candidate.IdentityVerificationStatusId !=
-                                                          TestSessionCandidateIdentityVerificationStatusIds.Matched
-                                                            ? CandidateExamEntryStates.WaitingForIdentityVerification
-                                                            : candidate.StatusId !=
-                                                              TestSessionCandidateStatusIds.Authorized
-                                                                ? candidate.StatusId ==
-                                                                  TestSessionCandidateStatusIds.Assigned
-                                                                    ? CandidateExamEntryStates.WaitingForAuthorization
-                                                                    : CandidateExamEntryStates.Assigned
-                                                                : CandidateExamEntryStates.ReadyToEnter
+                EntryState = candidate.StatusId == TestSessionCandidateStatusIds.Completed
+                    ?
+                    CandidateExamEntryStates.Completed
+                    : candidate.StatusId == TestSessionCandidateStatusIds.Cancelled
+                      || candidate.TestSession.StatusId == TestSessionStatusIds.Cancelled
+                      || candidate.TestSession.Exam.StatusId == ExamStatusIds.Cancelled
+                      || candidate.TestSession.Exam.StatusId == ExamStatusIds.Rejected
+                        ? CandidateExamEntryStates.Cancelled
+                        : candidate.StatusId == TestSessionCandidateStatusIds.Rescheduled
+                          || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Rescheduled
+                            ? CandidateExamEntryStates.Rescheduled
+                            : candidate.StatusId == TestSessionCandidateStatusIds.Started
+                                ? CandidateExamEntryStates.Started
+                                : candidate.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.NoShow
+                                    ? CandidateExamEntryStates.NoShow
+                                    : candidate.TestSession.StatusId == TestSessionStatusIds.Closed
+                                      || candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Closed
+                                        ? CandidateExamEntryStates.Closed
+                                        : !candidate.Invitation!.IsAccepted
+                                          || candidate.Invitation.AcceptedAt == null
+                                          || candidate.Invitation.InvitationStatusId
+                                          != InvitationStatusIds.ExamEligible
+                                          || candidate.TestSession.Exam.StatusId != ExamStatusIds.Approved
+                                            ? CandidateExamEntryStates.NotEligible
+                                            : candidate.TestSession.TestSlot.StatusId != TestSlotStatusIds.Started
+                                              || candidate.TestSession.StartTime == null
+                                              || candidate.TestSession.EndTime == null
+                                              || candidate.TestSession.TestSlot.SlotDate != localDate
+                                              || candidate.TestSession.StartTime.Value > localTime
+                                              || candidate.TestSession.EndTime.Value <= localTime
+                                              || (candidate.TestSession.StatusId != TestSessionStatusIds.Approved
+                                                  && candidate.TestSession.StatusId != TestSessionStatusIds.Ready
+                                                  && candidate.TestSession.StatusId
+                                                  != TestSessionStatusIds.InProgress)
+                                                ? CandidateExamEntryStates.WaitingForSession
+                                                : candidate.AttendanceStatusId
+                                                  != TestSessionCandidateAttendanceStatusIds.Present
+                                                    ? CandidateExamEntryStates.WaitingForAttendance
+                                                    : candidate.IdentityVerificationStatusId
+                                                      != TestSessionCandidateIdentityVerificationStatusIds.Matched
+                                                        ? CandidateExamEntryStates.WaitingForIdentityVerification
+                                                        : candidate.StatusId != TestSessionCandidateStatusIds
+                                                            .Authorized
+                                                            ? candidate.StatusId == TestSessionCandidateStatusIds
+                                                                .Assigned
+                                                                ? CandidateExamEntryStates.WaitingForAuthorization
+                                                                : CandidateExamEntryStates.Assigned
+                                                            : CandidateExamEntryStates.ReadyToEnter
             })
             .ToListAsync(cancellationToken);
+
+        if (assignments.Count == 0)
+        {
+            return Result.Ok(assignments);
+        }
+
+        var examIds = assignments.Select(x => x.ExamId).Distinct().ToArray();
+
+        var examDurations = await unitOfWork.Context.Set<ExamPart>()
+            .AsNoTracking()
+            .Where(part => examIds.Contains(part.ExamId))
+            .GroupBy(part => part.ExamId)
+            .Select(group => new { ExamId = group.Key, DurationMinutes = group.Sum(part => part.DurationMinutes) })
+            .ToDictionaryAsync(x => x.ExamId, x => x.DurationMinutes, cancellationToken);
+
+        assignments = assignments.Select(assignment =>
+            {
+                if (assignment.EntryState == CandidateExamEntryStates.Started
+                    || !examDurations.TryGetValue(assignment.ExamId, out var durationMinutes) || durationMinutes <= 0)
+                {
+                    return assignment;
+                }
+
+                var scheduledStart = assignment.SlotDate.ToDateTime(assignment.StartTime);
+
+                var scheduledEnd = assignment.SlotDate.ToDateTime(assignment.EndTime);
+
+                var latestAllowedStart = scheduledEnd.AddMinutes(-durationMinutes);
+
+                var isPreEntryState = assignment.EntryState == CandidateExamEntryStates.Assigned
+                                      || assignment.EntryState == CandidateExamEntryStates.WaitingForSession
+                                      || assignment.EntryState == CandidateExamEntryStates.WaitingForAttendance
+                                      || assignment.EntryState
+                                      == CandidateExamEntryStates.WaitingForIdentityVerification
+                                      || assignment.EntryState == CandidateExamEntryStates.WaitingForAuthorization
+                                      || assignment.EntryState == CandidateExamEntryStates.ReadyToEnter;
+
+                if (isPreEntryState && localNow >= scheduledStart && localNow > latestAllowedStart)
+                {
+                    return assignment with { EntryState = CandidateExamEntryStates.EntryWindowClosed };
+                }
+
+                return assignment;
+            })
+            .ToList();
 
         return Result.Ok(assignments);
     }

@@ -10,6 +10,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
 import { CandidateExamRealtimeService } from '../services/candidate-exam-realtime.service';
 import { CandidateExamSessionService } from '../services/candidate-exam-session.service';
+import { CandidateExamPendingResumeService } from '../services/candidate-exam-pending-resume.service';
 
 interface CandidateExamResumeDialogData {
   readonly testAttemptId: string;
@@ -29,7 +30,7 @@ export class CandidateExamResumeDialogComponent implements OnDestroy {
   private readonly candidateExamSession = inject(CandidateExamSessionService);
   private readonly realtime = inject(CandidateExamRealtimeService);
   private readonly router = inject(Router);
-
+  private readonly pendingResume = inject(CandidateExamPendingResumeService);
   readonly form = this.formBuilder.nonNullable.group({
     accessCode: ['', Validators.required],
   });
@@ -56,12 +57,15 @@ export class CandidateExamResumeDialogComponent implements OnDestroy {
     this.resumeFailed.set(false);
     this.registrationFailed.set(false);
 
+    const activeSessionId = this.pendingResume.getOrCreate(this.testAttemptId);
+
     let response: CandidateExamResumeResult;
     try {
       await this.realtime.connect();
       response = await this.realtime.resumeAttempt(
         this.testAttemptId,
         this.form.controls.accessCode.value,
+        activeSessionId,
       );
     } catch {
       this.resumeFailed.set(true);
@@ -76,9 +80,11 @@ export class CandidateExamResumeDialogComponent implements OnDestroy {
 
     try {
       await this.realtime.registerAttempt(response.testAttemptId, response.activeSessionId);
+      this.pendingResume.clear(response.testAttemptId);
     } catch (error) {
       console.error('[CandidateExam] RegisterAttempt failed', error);
       this.registrationFailed.set(true);
+      this.resuming.set(false);
       return;
     }
 
@@ -105,6 +111,9 @@ export class CandidateExamResumeDialogComponent implements OnDestroy {
     try {
       await this.realtime.connect();
       await this.realtime.registerAttempt(session.testAttemptId, session.activeSessionId);
+
+      this.pendingResume.clear(session.testAttemptId);
+
       await this.navigateToExecution();
     } catch {
       this.registrationFailed.set(true);
@@ -124,16 +133,12 @@ export class CandidateExamResumeDialogComponent implements OnDestroy {
   }
 
   private async navigateToExecution(): Promise<void> {
-  const navigated = await this.router.navigateByUrl(
-    routes.user.candidateExamExecution,
-  );
+    const navigated = await this.router.navigateByUrl(routes.user.candidateExamExecution);
 
-  if (!navigated) {
-    throw new Error(
-      'Candidate Exam execution navigation was not completed.',
-    );
+    if (!navigated) {
+      throw new Error('Candidate Exam execution navigation was not completed.');
+    }
+
+    this.ref.close(true);
   }
-
-  this.ref.close(true);
-}
 }

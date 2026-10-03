@@ -23,14 +23,13 @@ public sealed class CandidateExamInterruptionService(
     {
         var isOwned = await unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .AnyAsync(x => x.Id == attemptId &&
-                x.TestSessionCandidate!.Invitation!.ApplicantId == userId, cancellationToken);
+            .AnyAsync(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId,
+                cancellationToken);
 
         return isOwned && await TryInterruptCoreAsync(attemptId, userId, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Guid>> GetDueAttemptIdsAsync(int take,
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Guid>> GetDueAttemptIdsAsync(int take, CancellationToken cancellationToken)
     {
         if (take <= 0)
             return [];
@@ -38,52 +37,70 @@ public sealed class CandidateExamInterruptionService(
         var now = timeProvider.GetUtcNow().UtcDateTime;
         var cutoff = now.AddSeconds(-_settings.InterruptionGraceSeconds);
 
-        return await unitOfWork.Context.Set<TestAttempt>()
+        var resolvedResumes = unitOfWork.Context.Set<TestAttemptInterruption>()
             .AsNoTracking()
-            .Where(x => x.StatusId == TestAttemptStatusIds.InProgress &&
-               x.Parts.Any(part =>
-                   part.StatusId == TestAttemptPartStatusIds.InProgress &&
-                   part.EffectiveDeadlineAt > now) &&
-                x.Connections.Any() &&
-                !x.Connections.Any(connection => connection.ExpiresAt > now) &&
-                x.Connections.Max(connection => connection.ExpiresAt) <= cutoff)
-            .OrderBy(x => x.Connections.Max(connection => connection.LastSeenAt))
-            .Select(x => x.Id)
-            .Take(take)
+            .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Resolved
+                        && x.ResolutionActionId == TestAttemptInterruptionResolutionActionIds.Resume
+                        && x.ResolvedAt.HasValue);
+
+        return await (from attempt in unitOfWork.Context.Set<TestAttempt>().AsNoTracking()
+                let latestResumeAt =
+                    resolvedResumes.Where(interruption => interruption.TestAttemptId == attempt.Id)
+                        .Max(interruption => interruption.ResolvedAt)
+                where attempt.StatusId == TestAttemptStatusIds.InProgress
+                      && attempt.Parts.Any(part =>
+                          part.StatusId == TestAttemptPartStatusIds.InProgress && part.EffectiveDeadlineAt > now)
+                      && ((attempt.Connections.Any()
+                           && !attempt.Connections.Any(connection => connection.ExpiresAt > now)
+                           && attempt.Connections.Max(connection => connection.ExpiresAt)
+                           <= cutoff) || (!attempt.Connections.Any()
+                                          && ((latestResumeAt.HasValue
+                                               && latestResumeAt.Value <= cutoff)
+                                              || (!latestResumeAt.HasValue
+                                                  && attempt.StartedAt.HasValue
+                                                  && attempt.StartedAt.Value <= cutoff))))
+                orderby attempt.Connections.Any()
+                    ? attempt.Connections.Max(connection => connection.LastSeenAt)
+                    : latestResumeAt ?? attempt.StartedAt
+                select attempt.Id).Take(take)
             .ToListAsync(cancellationToken);
     }
 
-    private Task<bool> TryInterruptCoreAsync(Guid attemptId, Guid? userId,
-        CancellationToken cancellationToken) =>
+    private Task<bool> TryInterruptCoreAsync(Guid attemptId, Guid? userId, CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync(async token =>
         {
             await AcquireAttemptLockAsync(attemptId, token);
 
             var attempt = await unitOfWork.Context.Set<TestAttempt>()
-                .Where(x => x.Id == attemptId &&
-                    x.StatusId == TestAttemptStatusIds.InProgress &&
-                    x.TestSessionCandidate!.StatusId == TestSessionCandidateStatusIds.Started &&
-                    x.TestSessionCandidate.TestSession!.StatusId == TestSessionStatusIds.InProgress &&
-                    x.TestSessionCandidate.TestSession.TestSlot!.StatusId == TestSlotStatusIds.Started &&
-                    (!userId.HasValue || x.TestSessionCandidate.Invitation!.ApplicantId == userId.Value))
+                .Where(x => x.Id == attemptId && x.StatusId == TestAttemptStatusIds.InProgress
+                                              && x.TestSessionCandidate!.StatusId
+                                              == TestSessionCandidateStatusIds.Started
+                                              && x.TestSessionCandidate.TestSession!.StatusId
+                                              == TestSessionStatusIds.InProgress
+                                              && x.TestSessionCandidate.TestSession.TestSlot!.StatusId
+                                              == TestSlotStatusIds.Started
+                                              && (!userId.HasValue || x.TestSessionCandidate.Invitation!.ApplicantId
+                                                  == userId.Value))
                 .SingleOrDefaultAsync(token);
+
             if (attempt is null)
                 return false;
 
             var activeParts = await unitOfWork.Context.Set<TestAttemptPart>()
-                .Where(x => x.TestAttemptId == attemptId &&
-                    x.StatusId == TestAttemptPartStatusIds.InProgress)
+                .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptPartStatusIds.InProgress)
                 .Take(2)
                 .ToListAsync(token);
+
             if (activeParts.Count != 1)
                 return false;
 
             var now = timeProvider.GetUtcNow().UtcDateTime;
-            if (activeParts[0].EffectiveDeadlineAt is null ||
-                activeParts[0].EffectiveDeadlineAt <= now)
+
+            if (activeParts[0].EffectiveDeadlineAt is null || activeParts[0].EffectiveDeadlineAt <= now)
             {
                 return false;
             }
+
             var connectionState = await unitOfWork.Context.Set<CandidateExamConnection>()
                 .AsNoTracking()
                 .Where(x => x.TestAttemptId == attemptId)
@@ -96,29 +113,61 @@ public sealed class CandidateExamInterruptionService(
                 })
                 .SingleOrDefaultAsync(token);
 
-            if (connectionState is null || connectionState.HasActiveConnection ||
-                now < connectionState.LatestExpiresAt.AddSeconds(_settings.InterruptionGraceSeconds))
-                return false;
+            DateTime interruptedAt;
+
+            if (connectionState is null)
+            {
+                var latestResumeAt = await unitOfWork.Context.Set<TestAttemptInterruption>()
+                    .AsNoTracking()
+                    .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Resolved
+                                                             && x.ResolutionActionId
+                                                             == TestAttemptInterruptionResolutionActionIds.Resume
+                                                             && x.ResolvedAt.HasValue)
+                    .MaxAsync(x => x.ResolvedAt, token);
+
+                var disconnectedSince = latestResumeAt ?? attempt.StartedAt;
+
+                if (disconnectedSince is not { } disconnectedAt
+                    || now < disconnectedAt.AddSeconds(_settings.InterruptionGraceSeconds))
+                {
+                    return false;
+                }
+
+                interruptedAt = disconnectedAt;
+            }
+            else
+            {
+                if (connectionState.HasActiveConnection
+                    || now < connectionState.LatestExpiresAt.AddSeconds(_settings.InterruptionGraceSeconds))
+                {
+                    return false;
+                }
+
+                interruptedAt = connectionState.LatestLastSeenAt;
+            }
 
             var hasOpenInterruption = await unitOfWork.Context.Set<TestAttemptInterruption>()
                 .AsNoTracking()
-                .AnyAsync(x => x.TestAttemptId == attemptId &&
-                    x.StatusId == TestAttemptInterruptionStatusIds.Open, token);
+                .AnyAsync(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Open,
+                    token);
+
             if (hasOpenInterruption)
                 return false;
 
             attempt.StatusId = TestAttemptStatusIds.Interrupted;
             attempt.ActiveSessionId = null;
             activeParts[0].StatusId = TestAttemptPartStatusIds.Interrupted;
-            await unitOfWork.Context.Set<TestAttemptInterruption>().AddAsync(
-                new TestAttemptInterruption
-                {
-                    TestAttemptId = attemptId,
-                    TestAttemptPartId = activeParts[0].Id,
-                    InterruptedAt = connectionState.LatestLastSeenAt,
-                    Reason = ConnectionLostReason,
-                    StatusId = TestAttemptInterruptionStatusIds.Open
-                }, token);
+
+            await unitOfWork.Context.Set<TestAttemptInterruption>()
+                .AddAsync(
+                    new TestAttemptInterruption
+                    {
+                        TestAttemptId = attemptId,
+                        TestAttemptPartId = activeParts[0].Id,
+                        InterruptedAt = interruptedAt,
+                        Reason = ConnectionLostReason,
+                        StatusId = TestAttemptInterruptionStatusIds.Open
+                    }, token);
 
             await unitOfWork.SaveChangesAsync(token);
 
@@ -131,8 +180,8 @@ public sealed class CandidateExamInterruptionService(
 
     private Task AcquireAttemptLockAsync(Guid attemptId, CancellationToken cancellationToken) =>
         unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam interruption lock unavailable', 1;",
+            "DECLARE @result int; EXEC @result = sys.sp_getapplock "
+            + "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', "
+            + "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam interruption lock unavailable', 1;",
             [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], cancellationToken);
 }

@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
 using Application.Operation.Features.Employee.QuestionBankAssignments.Services;
+using Application.Operation.Features.Employee.TestSlots.Services;
 
 namespace Application.Operation
 {
@@ -66,6 +67,7 @@ namespace Application.Operation
                 services.RegisterJobInvitationSummaryServices();
                 services.AddScoped<ExamService>();
                 services.RegisterInterviewServices();
+                services.AddScoped<TestSessionNoShowService>();
             }
 
             private void RegisterEmployeeCommonServices()

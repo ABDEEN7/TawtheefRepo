@@ -27,9 +27,7 @@ export class CandidateExamService {
   private readonly endpoints = inject(EndpointsService);
 
   getAssignments(): Observable<CandidateExamAssignment[]> {
-    return this.http.get<CandidateExamAssignment[]>(
-      this.endpoints.candidateExams.list,
-    );
+    return this.http.get<CandidateExamAssignment[]>(this.endpoints.candidateExams.list);
   }
 
   validateAccessCode(
@@ -73,10 +71,7 @@ export class CandidateExamService {
     request: SaveCandidateExamAnswerRequest,
   ): Observable<SaveCandidateExamAnswerResponse> {
     return this.http.put<SaveCandidateExamAnswerResponse>(
-      this.endpoints.candidateExams.attempts.answer(
-        testAttemptId,
-        testAttemptQuestionId,
-      ),
+      this.endpoints.candidateExams.attempts.answer(testAttemptId, testAttemptQuestionId),
       request,
       undefined,
       this.examSessionOptions(activeSessionId),
@@ -102,10 +97,7 @@ export class CandidateExamService {
     activeSessionId: string,
   ): Observable<SubmitCandidateExamPartResponse> {
     return this.http.post<SubmitCandidateExamPartResponse>(
-      this.endpoints.candidateExams.attempts.submit(
-        testAttemptId,
-        testAttemptPartId,
-      ),
+      this.endpoints.candidateExams.attempts.submit(testAttemptId, testAttemptPartId),
       null,
       undefined,
       this.examSessionOptions(activeSessionId),
@@ -118,19 +110,14 @@ export class CandidateExamService {
     activeSessionId: string,
   ): Observable<TimeoutCandidateExamPartResponse> {
     return this.http.post<TimeoutCandidateExamPartResponse>(
-      this.endpoints.candidateExams.attempts.timeout(
-        testAttemptId,
-        testAttemptPartId,
-      ),
+      this.endpoints.candidateExams.attempts.timeout(testAttemptId, testAttemptPartId),
       null,
       undefined,
       this.examSessionOptions(activeSessionId),
     );
   }
 
-  private examSessionOptions(
-    activeSessionId: string,
-  ): { headers: HttpHeaders } {
+  private examSessionOptions(activeSessionId: string): { headers: HttpHeaders } {
     return {
       headers: new HttpHeaders({
         'X-Exam-Session-Id': activeSessionId,

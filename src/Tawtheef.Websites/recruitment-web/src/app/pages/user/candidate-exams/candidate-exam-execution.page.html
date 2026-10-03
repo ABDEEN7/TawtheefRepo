@@ -48,35 +48,20 @@
           {{ 'candidate_exams.execution.retry' | translate }}
         </button>
       </section>
-    } @else if (terminalOutcome(); as outcome) {
+    } @else if (terminalOutcome()) {
       <section class="execution-state terminal-state" aria-live="polite">
-        <div
-          class="execution-state__icon"
-          [class.execution-state__icon--error]="outcome === 'FAILED'"
-        >
-          <i
-            class="fa-solid"
-            [class.fa-circle-xmark]="outcome === 'FAILED'"
-            [class.fa-circle-check]="outcome === 'COMPLETED'"
-            aria-hidden="true"
-          ></i>
+        <div class="execution-state__icon" aria-hidden="true">
+          <i class="fa-solid fa-circle-info"></i>
         </div>
+
         <h1>
-          {{
-            (outcome === 'FAILED'
-              ? 'candidate_exams.execution.failed'
-              : 'candidate_exams.execution.completed'
-            ) | translate
-          }}
+          {{ 'candidate_exams.execution.ended' | translate }}
         </h1>
+
         <p>
-          {{
-            (outcome === 'FAILED'
-              ? 'candidate_exams.execution.failedDescription'
-              : 'candidate_exams.execution.completedDescription'
-            ) | translate
-          }}
+          {{ 'candidate_exams.execution.endedDescription' | translate }}
         </p>
+
         <button type="button" class="btn btn-primary" (click)="backToExams()">
           {{ 'candidate_exams.execution.backToExams' | translate }}
         </button>
@@ -102,11 +87,17 @@
       }
 
       @if (executionOutcome() === 'PASSED') {
-        <div class="alert alert-success outcome-notice" role="status">
+        <div class="alert alert-info outcome-notice" role="status">
           <div>
-            <strong>{{ 'candidate_exams.execution.passed' | translate }}</strong>
-            <span>{{ 'candidate_exams.execution.partTwoStarted' | translate }}</span>
+            <strong>
+              {{ 'candidate_exams.execution.partTwoStartedTitle' | translate }}
+            </strong>
+
+            <span>
+              {{ 'candidate_exams.execution.partTwoStarted' | translate }}
+            </span>
           </div>
+
           <button
             type="button"
             class="btn-close"

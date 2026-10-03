@@ -5,6 +5,7 @@ public static class CandidateExamEntryStates
     public const string Assigned = nameof(Assigned);
     public const string NotEligible = nameof(NotEligible);
     public const string WaitingForSession = nameof(WaitingForSession);
+    public const string EntryWindowClosed = nameof(EntryWindowClosed);
     public const string WaitingForAttendance = nameof(WaitingForAttendance);
     public const string WaitingForIdentityVerification = nameof(WaitingForIdentityVerification);
     public const string WaitingForAuthorization = nameof(WaitingForAuthorization);

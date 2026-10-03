@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Operations.API.Filters;
+using Operations.API.Realtime;
 using Serilog;
 using Serilog.Context;
 using Serilog.Exceptions;
@@ -109,6 +110,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationOperation(builder.Configuration);
+builder.Services.AddHostedService<TestSessionNoShowWorker>();
 builder.Services.AddScoped<AdminActionAuditFilter>();
 // builder.Services.AddRecaptcha(builder.Configuration.GetSection("RecaptchaSettings"));
 

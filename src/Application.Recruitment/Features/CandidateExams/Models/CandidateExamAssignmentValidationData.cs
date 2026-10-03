@@ -16,4 +16,5 @@ internal sealed record CandidateExamAssignmentValidationData(
     DateOnly SlotDate,
     TimeOnly? SessionStartTime,
     TimeOnly? SessionEndTime,
+    int ExamDurationMinutes,
     string StoredAccessCode);

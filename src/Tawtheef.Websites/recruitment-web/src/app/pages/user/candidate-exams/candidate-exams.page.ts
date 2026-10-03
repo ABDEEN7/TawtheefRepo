@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import { CandidateExamAssignment, CandidateExamEntryState } from './models/candi
 import { CandidateExamService } from './services/candidate-exam.service';
 import { CandidateExamSessionService } from './services/candidate-exam-session.service';
 import { CandidateExamPendingStartService } from './services/candidate-exam-pending-start.service';
+import { CandidateExamPendingResumeService } from './services/candidate-exam-pending-resume.service';
 
 type CandidateExamStatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 
@@ -23,7 +24,10 @@ interface CandidateExamStatusPresentation {
 
 const ENTRY_STATE_PRESENTATION: Record<CandidateExamEntryState, CandidateExamStatusPresentation> = {
   Assigned: { labelKey: 'candidate_exams.states.assigned', tone: 'neutral' },
-  NotEligible: { labelKey: 'candidate_exams.states.notEligible', tone: 'danger' },
+  NotEligible: {
+    labelKey: 'candidate_exams.states.notEligible',
+    tone: 'neutral',
+  },
   WaitingForSession: {
     labelKey: 'candidate_exams.states.waitingForSession',
     tone: 'info',
@@ -31,6 +35,10 @@ const ENTRY_STATE_PRESENTATION: Record<CandidateExamEntryState, CandidateExamSta
   WaitingForAttendance: {
     labelKey: 'candidate_exams.states.waitingForAttendance',
     tone: 'warning',
+  },
+  EntryWindowClosed: {
+    labelKey: 'candidate_exams.states.entryWindowClosed',
+    tone: 'neutral',
   },
   WaitingForIdentityVerification: {
     labelKey: 'candidate_exams.states.waitingForIdentityVerification',
@@ -56,7 +64,7 @@ const ENTRY_STATE_PRESENTATION: Record<CandidateExamEntryState, CandidateExamSta
   templateUrl: './candidate-exams.page.html',
   styleUrl: './candidate-exams.page.scss',
 })
-export class CandidateExamsPage implements OnInit {
+export class CandidateExamsPage implements OnInit, OnDestroy {
   private readonly candidateExamService = inject(CandidateExamService);
   private readonly candidateExamSession = inject(CandidateExamSessionService);
   private readonly language = inject(LanguageService);
@@ -64,6 +72,9 @@ export class CandidateExamsPage implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly pendingStart = inject(CandidateExamPendingStartService);
+  private readonly pendingResume = inject(CandidateExamPendingResumeService);
+
+  private resumeAuthorizationPoll: ReturnType<typeof setInterval> | null = null;
 
   readonly assignmentsResource = rxResource<CandidateExamAssignment[], void>({
     stream: () => this.candidateExamService.getAssignments(),
@@ -73,6 +84,33 @@ export class CandidateExamsPage implements OnInit {
   ngOnInit(): void {
     if (!this.candidateExamSession.hasActiveSession()) {
       this.candidateExamSession.restore();
+    }
+
+    this.resumeAuthorizationPoll = setInterval(() => {
+      if (this.assignmentsResource.isLoading()) {
+        return;
+      }
+
+      const waitingForResumeAuthorization = this.assignmentsResource
+        .value()
+        .some(
+          (assignment) =>
+            assignment.entryState === 'Started' &&
+            assignment.attemptStatus?.backendName === 'Interrupted' &&
+            !assignment.resumeAuthorized &&
+            assignment.testAttemptId !== null,
+        );
+
+      if (waitingForResumeAuthorization) {
+        this.assignmentsResource.reload();
+      }
+    }, 3000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.resumeAuthorizationPoll !== null) {
+      clearInterval(this.resumeAuthorizationPoll);
+      this.resumeAuthorizationPoll = null;
     }
   }
 
@@ -110,10 +148,12 @@ export class CandidateExamsPage implements OnInit {
 
   canContinueExam(assignment: CandidateExamAssignment): boolean {
     const session = this.candidateExamSession.session();
+
     return (
       assignment.entryState === 'Started' &&
       assignment.attemptStatus?.backendName === 'InProgress' &&
       assignment.testAttemptId !== null &&
+      this.pendingResume.get(assignment.testAttemptId) === null &&
       session?.testAttemptId === assignment.testAttemptId
     );
   }
@@ -127,10 +167,20 @@ export class CandidateExamsPage implements OnInit {
     );
   }
 
+  canRecoverResume(assignment: CandidateExamAssignment): boolean {
+    return (
+      assignment.entryState === 'Started' &&
+      assignment.attemptStatus?.backendName === 'InProgress' &&
+      assignment.testAttemptId !== null &&
+      this.pendingResume.get(assignment.testAttemptId) !== null
+    );
+  }
+
   canResumeExam(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
       assignment.attemptStatus?.backendName === 'Interrupted' &&
+      assignment.resumeAuthorized &&
       assignment.testAttemptId !== null
     );
   }
@@ -158,7 +208,13 @@ export class CandidateExamsPage implements OnInit {
   }
 
   openResumeDialog(assignment: CandidateExamAssignment): void {
-    if (!this.canResumeExam(assignment) || !assignment.testAttemptId) return;
+    if (
+  (!this.canResumeExam(assignment) &&
+    !this.canRecoverResume(assignment)) ||
+  !assignment.testAttemptId
+) {
+  return;
+}
 
     this.dialogService.open(CandidateExamResumeDialogComponent, {
       header: this.translate.instant('candidate_exams.resume.dialogTitle'),

@@ -48,14 +48,13 @@ public sealed class CloseTestSlotCommandHandler(
 
             if (sessions.Count == 0 ||
                 sessions.Any(x =>
-                    x.StatusId !=
-                    TestSessionStatusIds.Approved &&
-                    x.StatusId !=
-                    TestSessionStatusIds.Ready &&
-                    x.StatusId !=
-                    TestSessionStatusIds.InProgress &&
-                    x.StatusId !=
-                    TestSessionStatusIds.Closed))
+                    x.EndTime is null ||
+                    (
+                        x.StatusId != TestSessionStatusIds.Approved &&
+                        x.StatusId != TestSessionStatusIds.Ready &&
+                        x.StatusId != TestSessionStatusIds.InProgress &&
+                        x.StatusId != TestSessionStatusIds.Closed
+                    )))
             {
                 return Result.Fail<Unit>(
                     ErrorsCodes.TestSlotSessionStateInvalid);
@@ -80,57 +79,42 @@ public sealed class CloseTestSlotCommandHandler(
                     ErrorsCodes.TestSlotHasActiveExamAttempts);
             }
 
-            var localNow = timeProvider.GetLocalNow().DateTime;
+            var localNow =
+                timeProvider.GetLocalNow().DateTime;
 
-            var scheduledEnd =
-                testSlot.SlotDate.ToDateTime(testSlot.EndTime);
+            var latestSessionEndTime =
+                sessions
+                    .Select(x => x.EndTime!.Value)
+                    .Max();
 
-            var slotHasEnded =
-                localNow >= scheduledEnd;
+            var latestSessionEnd =
+                testSlot.SlotDate.ToDateTime(
+                    latestSessionEndTime);
 
-            if (!slotHasEnded)
+            if (localNow < latestSessionEnd)
             {
-                var hasUnfinishedCandidates =
-                    await unitOfWork.Context
-                        .Set<TestSessionCandidate>()
-                        .AsNoTracking()
-                        .AnyAsync(x =>
-                                sessionIds.Contains(x.TestSessionId) &&
-                                x.StatusId !=
-                                TestSessionCandidateStatusIds.Completed &&
-                                x.StatusId !=
-                                TestSessionCandidateStatusIds.Cancelled &&
-                                x.StatusId !=
-                                TestSessionCandidateStatusIds.Rescheduled,
-                            token);
+                return Result.Fail<Unit>(
+                    ErrorsCodes.TestSlotCannotBeClosedBeforeEnd);
+            }
+            
+            var noShows = await unitOfWork.Context
+                .Set<TestSessionCandidate>()
+                .Where(x =>
+                    sessionIds.Contains(x.TestSessionId) &&
+                    x.StatusId ==
+                    TestSessionCandidateStatusIds.Assigned &&
+                    x.AttendanceStatusId ==
+                    TestSessionCandidateAttendanceStatusIds.Pending &&
+                    x.TestAttempt == null)
+                .ToListAsync(token);
 
-                if (hasUnfinishedCandidates)
-                {
-                    return Result.Fail<Unit>(
-                        ErrorsCodes.TestSlotCannotBeClosedBeforeEnd);
-                }
+            foreach (var markNoShowResult in noShows.Select(candidate => candidate.MarkNoShow()).Where(markNoShowResult => markNoShowResult.IsFailed))
+            {
+                return Result.Fail<Unit>(
+                    markNoShowResult.Errors);
             }
 
-            if (slotHasEnded)
-            {
-                var noShows = await unitOfWork.Context
-                    .Set<TestSessionCandidate>()
-                    .Where(x =>
-                        sessionIds.Contains(x.TestSessionId) &&
-                        x.StatusId ==
-                        TestSessionCandidateStatusIds.Assigned &&
-                        x.AttendanceStatusId ==
-                        TestSessionCandidateAttendanceStatusIds.Pending &&
-                        x.TestAttempt == null)
-                    .ToListAsync(token);
-
-                foreach (var candidate in noShows)
-                {
-                    candidate.AttendanceStatusId = TestSessionCandidateAttendanceStatusIds.NoShow;
-                }
-            }
-
-            foreach (var session in sessions.Where( session => session.StatusId != TestSessionStatusIds.Closed))
+            foreach (var session in sessions.Where(session => session.StatusId != TestSessionStatusIds.Closed))
             {
                 session.StatusId = TestSessionStatusIds.Closed;
             }

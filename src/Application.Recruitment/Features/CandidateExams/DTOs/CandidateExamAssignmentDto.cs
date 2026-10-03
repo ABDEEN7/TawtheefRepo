@@ -30,6 +30,7 @@ public sealed record CandidateExamAssignmentDto
     public required DropdownOptions AttendanceStatus { get; init; }
     public required DropdownOptions IdentityVerificationStatus { get; init; }
     public DropdownOptions? AttemptStatus { get; init; }
+    public bool ResumeAuthorized { get; init; }
     public DateTime? AuthorizedAt { get; init; }
     public required string EntryState { get; init; }
 }

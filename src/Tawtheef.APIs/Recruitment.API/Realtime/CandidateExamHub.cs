@@ -13,23 +13,15 @@ public sealed class CandidateExamHub(
     CandidateExamResumeService resumeService,
     ILogger<CandidateExamHub> logger) : Hub
 {
-    public async Task RegisterAttempt(
-        Guid testAttemptId,
-        Guid activeSessionId)
+    public async Task RegisterAttempt(Guid testAttemptId, Guid activeSessionId)
     {
-        if (!Guid.TryParse(
-                Context.User?.FindFirstValue(ClaimTypes.NameIdentifier),
-                out var userId))
+        if (!Guid.TryParse(Context.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             throw Unavailable();
 
         try
         {
-            var registered = await connectionService.RegisterAsync(
-                userId,
-                testAttemptId,
-                activeSessionId,
-                Context.ConnectionId,
-                Context.ConnectionAborted);
+            var registered = await connectionService.RegisterAsync(userId, testAttemptId, activeSessionId,
+                Context.ConnectionId, Context.ConnectionAborted);
 
             if (!registered)
                 throw Unavailable();
@@ -42,9 +34,7 @@ public sealed class CandidateExamHub(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(
-                exception,
-                "Candidate exam connection registration failed for attempt {AttemptId}",
+            logger.LogWarning(exception, "Candidate exam connection registration failed for attempt {AttemptId}",
                 testAttemptId);
 
             throw Unavailable();
@@ -61,22 +51,23 @@ public sealed class CandidateExamHub(
         }
         catch (Exception cleanupException)
         {
-            logger.LogError(cleanupException,
-                "Candidate exam connection cleanup failed for connection {ConnectionId}",
+            logger.LogError(cleanupException, "Candidate exam connection cleanup failed for connection {ConnectionId}",
                 Context.ConnectionId);
         }
 
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task<CandidateExamResumeResult> ResumeAttempt(Guid testAttemptId,string accessCode)
+    public async Task<CandidateExamResumeResult> ResumeAttempt(Guid testAttemptId, string accessCode,
+        Guid activeSessionId)
     {
         if (!Guid.TryParse(Context.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             throw Unavailable();
 
         try
         {
-            var result = await resumeService.ResumeAsync(userId, testAttemptId,accessCode, Context.ConnectionAborted);
+            var result = await resumeService.ResumeAsync(userId, testAttemptId, accessCode, activeSessionId,
+                Context.ConnectionAborted);
             return result ?? throw Unavailable();
         }
         catch (HubException)
@@ -85,8 +76,7 @@ public sealed class CandidateExamHub(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception,
-                "Candidate exam resume failed for attempt {AttemptId}", testAttemptId);
+            logger.LogWarning(exception, "Candidate exam resume failed for attempt {AttemptId}", testAttemptId);
             throw Unavailable();
         }
     }
