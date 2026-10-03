@@ -25,4 +25,5 @@ export interface SaveTestSessionSetupDto {
   nationalityFilter: TestSessionNationalityFilter;
   invitationIds: string[];
   sendToApprove: boolean;
+  language: string;
 }

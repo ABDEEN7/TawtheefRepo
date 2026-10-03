@@ -75,6 +75,8 @@
   "TEST_SESSION_WIZARD.CANDIDATE_SEARCH": "البحث باسم المرشح أو رقمه",
   "TEST_SESSION_WIZARD.CLEAR_FILTERS": "مسح عوامل التصفية",
   "TEST_SESSION_WIZARD.CANDIDATES_REQUEST_FAILED": "تعذر تحميل المرشحين.",
+  "TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_MESSAGE": "يوجد مرشحون تم اختيار جلسات لهم في اختبار آخر لنفس الوظيفة. راجع مرحلة المرشحين للمزيد من المعلومات.",
+  "TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_QID": "QID: {{qid}}",
   "TEST_SESSION_WIZARD.CANDIDATE": "المرشح",
   "TEST_SESSION_WIZARD.NATIONALITY": "الجنسية",
   "TEST_SESSION_WIZARD.GENDER": "الجنس",

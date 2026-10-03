@@ -1,6 +1,7 @@
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.TestSessions.DTOs;
 using Application.Operation.Features.Employee.TestSessions.Queries;
+using Application.Operation.Features.Employee.TestSessions.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -32,17 +33,18 @@ public sealed class GetTestSessionCandidatesQueryHandler(IUnitOfWork unitOfWork)
         if (jobId is null)
             return Result.Fail<TestSessionCandidatesDto>(ErrorsCodes.InvalidRequest);
 
-        var unavailableInvitationIds = unitOfWork.Context.Set<TestSessionCandidate>().AsNoTracking()
-            .Where(candidate => candidate.TestSession!.ExamId == request.ExamId &&
-                                (!request.TestSessionId.HasValue ||
-                                 candidate.TestSessionId != request.TestSessionId.Value) &&
-                                candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
-                                candidate.TestSession.StatusId != TestSessionStatusIds.Rejected)
+        var currentTestSessionId = request.TestSessionId ?? Guid.Empty;
+        var unavailableInvitationIds = TestSessionCandidateConflictService
+            .BlockingAssignments(unitOfWork.Context, jobId.Value, currentTestSessionId)
             .Select(candidate => candidate.InvitationId);
 
         var invitations = unitOfWork.Context.Set<Invitation>().AsNoTracking()
             .Where(invitation => invitation.JobId == jobId.Value)
-            .Where(invitation => !unavailableInvitationIds.Contains(invitation.Id))
+            .Where(invitation => !unavailableInvitationIds.Contains(invitation.Id) ||
+                                 request.TestSessionId.HasValue &&
+                                 unitOfWork.Context.Set<TestSessionCandidate>().Any(candidate =>
+                                     candidate.TestSessionId == request.TestSessionId.Value &&
+                                     candidate.InvitationId == invitation.Id))
             .WhereIf(request.GenderFilter.HasValue, invitation =>
                 invitation.Applicant!.Profile!.GenderId ==
                 (request.GenderFilter == TestSessionGenderFilter.Male ? GenderIds.Male : GenderIds.Female))

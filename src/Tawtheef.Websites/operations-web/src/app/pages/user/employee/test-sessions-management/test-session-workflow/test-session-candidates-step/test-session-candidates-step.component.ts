@@ -24,6 +24,7 @@ import { InvitationSource } from '../../../../../../core/enums/invitation-source
 import { LanguageService } from '../../../../../../core/services/language.service';
 import {
   TestSessionCandidateFilters,
+  TestSessionCandidateConflictDto,
   TestSessionCandidateListItemDto,
   TestSessionCandidateSummaryDto,
 } from '../../models/test-session-candidate.dto';
@@ -55,6 +56,7 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   readonly genderFilter = input<'Male' | 'Female' | null>(null);
   readonly nationalityFilter = input<'Qatari' | 'NonQatari' | null>(null);
   readonly selectedCandidateIds = input<string[]>([]);
+  readonly conflicts = input<TestSessionCandidateConflictDto[]>([]);
   readonly selectionInitialized = input(false);
   readonly search = input('');
   readonly genderFilterChanged = output<'Male' | 'Female' | null>();

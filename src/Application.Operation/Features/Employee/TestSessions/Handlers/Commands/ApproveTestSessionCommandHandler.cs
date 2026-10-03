@@ -78,7 +78,7 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
                 "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, " +
                 "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; " +
                 "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{session.ExamId}.{invitationId}"], ct);
+                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
         }
 
         var validCandidateCount = await unitOfWork.Context.Set<Invitation>().AsNoTracking()
@@ -88,10 +88,9 @@ public sealed class ApproveTestSessionCommandHandler(IUnitOfWork unitOfWork, ICu
                 x.InvitationStatusId == InvitationStatusIds.Read ||
                 (x.InvitationStatusId == InvitationStatusIds.ExamEligible && x.Applicant!.Profile != null &&
                  x.Applicant.Profile.Status == UserProfileStatus.Approved && x.Applicant.Profile.AvailableForRecruitment))
-            .Where(x => !unitOfWork.Context.Set<TestSessionCandidate>().Any(candidate =>
-                candidate.InvitationId == x.Id && candidate.TestSession!.ExamId == session.ExamId &&
-                candidate.TestSessionId != session.Id && candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Rejected)).CountAsync(ct);
+            .Where(x => !TestSessionCandidateConflictService
+                .BlockingAssignments(unitOfWork.Context, exam.JobId, session.Id)
+                .Any(candidate => candidate.InvitationId == x.Id)).CountAsync(ct);
         if (validCandidateCount != candidates.Count)
             return ValidationFailure();
 

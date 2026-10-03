@@ -4,6 +4,20 @@
 </h5>
 <p class="text-muted mb-4">{{ 'TEST_SESSION_WIZARD.CANDIDATES_DESCRIPTION' | translate }}</p>
 
+@if (conflicts().length > 0) {
+  <div class="alert alert-danger mb-4" role="alert">
+    <p class="mb-2">{{ 'TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_MESSAGE' | translate }}</p>
+    <ul class="mb-0">
+      @for (conflict of conflicts(); track conflict.invitationId) {
+        <li>
+          <div class="fw-semibold">{{ conflict.candidateName }}</div>
+          <small>{{ 'TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_QID' | translate: { qid: conflict.qid || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) } }}</small>
+        </li>
+      }
+    </ul>
+  </div>
+}
+
 <div class="row g-3 mb-4">
   <div class="col-12 col-md-3">
     <div class="candidate-summary-card">

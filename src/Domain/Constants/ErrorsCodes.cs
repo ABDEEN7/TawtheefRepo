@@ -349,6 +349,7 @@ public class ErrorsCodes
     public const string TestSlotStartTooEarly = "TEST_SLOT_START_TOO_EARLY";
     public const string TestSessionInsufficientCapacity = "TEST_SESSION_INSUFFICIENT_CAPACITY";
     public const string TestSessionScheduledTimeExpired = "TEST_SESSION_SCHEDULED_TIME_EXPIRED";
+    public const string TestSessionCandidatesAlreadyAssigned = "TEST_SESSION_CANDIDATES_ALREADY_ASSIGNED";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
